@@ -1,0 +1,43 @@
+#!/usr/bin/perl -w
+
+#=============================================================================
+# $Id: u2h,v 1.1 2001/07/27 08:45:54 sunny Exp $
+# Converts from UTF-8 charset to HTML numeric entities (&#9786; and &#x263a;).
+# If "-l" is specified as first parameter, also convert latin-1 characters.
+# Created by &#216;yvind A. Holm. License: GNU GPL.
+#=============================================================================
+
+use strict;
+
+my $conv_latin = 0;
+defined($ARGV[0]) && ($ARGV[0] =~ /-l/) && ($conv_latin = 1, shift);
+
+while (<>) {
+	s/([\xc0-\xdf][\x80-\xbf])/decode_char($1)/ge;
+	s/([\xe0-\xef][\x80-\xbf][\x80-\xbf])/decode_char($1)/ge;
+	s/([\xf0-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf])/decode_char($1)/ge;
+	print;
+}
+
+sub decode_char {
+	my $Msg = shift;
+	my $Retval = "";
+	if ($Msg =~ /^([\xc0-\xdf])([\x80-\xbf])/) {
+		my $Val = ((ord($1) & 0x1f) << 6) | (ord($2) & 0x3f);
+		$Retval = ($conv_latin && ($Val <= 0xff)) ? chr($Val) : sprintf("&#%u;", $Val);
+	} elsif ($Msg =~ /^([\xe0-\xef])([\x80-\xbf])([\x80-\xbf])/) {
+		$Retval = join("", "&#",
+		          ((ord($1) & 0x0f) << 12) |
+		          ((ord($2) & 0x3f) <<  6) |
+		          (ord($3) & 0x3f), ";");
+	} elsif ($Msg =~ /^([\xf0-\xf7])([\x80-\xbf])([\x80-\xbf])([\x80-\xbf])/) {
+		$Retval = join("", "&#",
+		          ((ord($1) & 0x07) << 18) |
+		          ((ord($2) & 0x0f) << 12) |
+		          ((ord($3) & 0x3f) <<  6) |
+		          (ord($4) & 0x3f), ";");
+	}
+	return $Retval;
+} # decode_char()
+
+__END__
