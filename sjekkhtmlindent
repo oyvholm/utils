@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-# $Id: sjekkhtmlindent,v 1.2 1999/05/12 00:24:23 sunny Exp $
+# $Id: sjekkhtmlindent,v 1.3 2004/02/10 15:59:55 sunny Exp $
 # Sjekker at innrykkene på et webdokument er OK
-# Trenger sget og hf .
+# Trenger sget og hfa .
 # Syntax: $0 url
 
 diff -u <(sget $1) <(sget $1|hfa)
