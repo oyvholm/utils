@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # ╔══════════════════════════════════════════════════════════════
-# ║ $Id: gptrans_conv,v 1.10.2.9 2003/09/20 18:47:41 sunny Exp $
+# ║ $Id: gptrans_conv,v 1.10.2.10 2003/09/20 19:18:13 sunny Exp $
 # ║ Converts between various GPS formats
 # ║ Character set: UTF-8
 # ║ License: GNU General Public License
@@ -15,7 +15,7 @@ use Time::Local qw { timegm_nocheck };
 
 my $Debug = 0;
 
-my $rcs_str = '$Id: gptrans_conv,v 1.10.2.9 2003/09/20 18:47:41 sunny Exp $';
+my $rcs_str = '$Id: gptrans_conv,v 1.10.2.10 2003/09/20 19:18:13 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -28,7 +28,8 @@ my $Des = $opt_c ? "," : ".";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $last_time = 0;
-my ($last_lon, $last_lat, $last_alt, $last_line) = (1000, 1000, 100000, ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+my ($last_lon, $last_lat, $last_alt, $last_line) =
+   (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
 
 if ($opt_h) {
 	# Syntax screen to stdout and exit gracefully {{{
@@ -80,11 +81,11 @@ if ($opt_u) {
 				$end_date = "$Year$Month${Day}T$Hour$Min$Sec";
 			} else {
 				if ($found_dup) {
-					print("# $start_date-$end_date: CO: Uten mottak \x7B\x7B\x7B\n");
+					print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
 					for (@Dup) {
 						print($_);
 					}
-					print("# $start_date-$end_date: CO: Uten mottak \x7D\x7D\x7D\n# move\n$_");
+					print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n$_");
 					$found_dup = 0;
 				} else {
 					print($_);
@@ -102,11 +103,11 @@ if ($opt_u) {
 		}
 	}
 	if ($found_dup) {
-		print("# $start_date-$end_date: CO: Uten mottak \x7B\x7B\x7B\n");
+		print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
 		for (@Dup) {
 			print($_);
 		}
-		print("# $start_date-$end_date: CO: Uten mottak \x7D\x7D\x7D\n# move\n");
+		print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n");
 		$found_dup = 0;
 	}
 	exit(0);
@@ -415,4 +416,4 @@ sub D {
 }
 
 # vim: set fdm=marker ft=perl fenc=utf-8 :
-# End of file $Id: gptrans_conv,v 1.10.2.9 2003/09/20 18:47:41 sunny Exp $
+# End of file $Id: gptrans_conv,v 1.10.2.10 2003/09/20 19:18:13 sunny Exp $
