@@ -1,15 +1,16 @@
 #!/usr/bin/perl -w
 
-#===============================================
-# $Id: afv,v 1.10 2001/05/27 06:21:13 sunny Exp $
+#================================================
+# $Id: afv,v 1.11 2001/06/02 15:43:41 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
 # ©2001 Øyvind A. Holm. License: GNU GPL
-#===============================================
+#================================================
 
 use strict;
 use Fcntl ':flock';
+use File::Path;
 
 $| = 1;
 
@@ -19,8 +20,10 @@ my $root_dir = $ENV{AFVROOT};
 my ($do_loop, $sleep_time, $curr_dir) = (0, 5, `/bin/pwd`);
 chomp($curr_dir);
 
-my $dest_dir = "$root_dir$curr_dir"; create_dir($dest_dir, "Lager $dest_dir");
-my $afv_dir = "$dest_dir/$Dir";      create_dir($afv_dir, "/$Dir\n");
+my $dest_dir = "$root_dir$curr_dir";
+-d $dest_dir || mkpath($dest_dir, 1) || die("mkpath($dest_dir): $!");
+my $afv_dir = "$dest_dir/$Dir";
+-d $afv_dir || mkpath($afv_dir, 1) || die("mkpath($Dir): $!");
 
 if (defined($ARGV[0]) && $ARGV[0] =~ /^-l(\d+)/) {
 	$do_loop = 1;
@@ -32,7 +35,7 @@ my @Files = @ARGV;
 
 LOOP: foreach my $Curr (@Files) {
 	check_stop();
-	next LOOP unless -f $Curr;
+	next LOOP if (!-f $Curr || -l $Curr);
 	my $lock_time = 0;
 	my $lock_dir = "$afv_dir/$Curr.lock";
 	my $lastmd5_file = "$afv_dir/$Curr.lastmd5";
@@ -46,6 +49,13 @@ LOOP: foreach my $Curr (@Files) {
 
 	if (open(FromFP, "<$Curr")) {
 		if (flock(FromFP, LOCK_EX)) {
+			my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
+			my $to_file = "$dest_dir/$mtime.$Curr";
+			if (-e $to_file) {
+				close(FromFP);
+				rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+				next LOOP;
+			}
 			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
 			if (open(Md5FP, "| /usr/bin/md5sum >$currmd5_file")) {
 				while(<FromFP>) {
@@ -57,14 +67,13 @@ LOOP: foreach my $Curr (@Files) {
 				rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
 				exit;
 			}
+
 			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
 			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
 			if ($curr_md5 ne $last_md5) {
-				my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
 				print("$mtime.$Curr\n") unless $do_loop;
 				if (seek(FromFP, 0, 0)) {
-					my $to_file = ">$dest_dir/$mtime.$Curr";
-					if (open(ToFP, "$to_file")) {
+					if (open(ToFP, ">$to_file")) {
 						if (flock(ToFP, LOCK_EX)) {
 							while (<FromFP>) {
 								print(ToFP $_);
@@ -99,18 +108,6 @@ if ($do_loop) {
 	goto LOOP;
 }
 
-sub create_dir {
-	my ($Dir, $Msg) = @_;
-	unless (-d $Dir) {
-		print($Msg);
-		system("/bin/mkdir -p $Dir >/dev/null 2>&1"); # FIXME: Hack
-		# mkdir($Dir, 0777) || die("...Klarte ikke mkdir(): $!");
-		unless (-d $Dir) {
-			die("...Klarte ikke mkdir(\"$Dir\"): $!");
-		}
-	}
-} # create_dir()
-
 sub check_stop {
 	foreach ("$root_dir/stop", "$dest_dir/stop") {
 		if (-e $_) {
@@ -134,4 +131,4 @@ sub my_sleep {
 	}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.10 2001/05/27 06:21:13 sunny Exp $ ####
+#### End of file $Id: afv,v 1.11 2001/06/02 15:43:41 sunny Exp $ ####
