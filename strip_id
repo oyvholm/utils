@@ -39,7 +39,7 @@ while (defined($ARGV[0])) {
 
 sub process_line {
 	my $Retval = shift;
-	$Retval =~ s/(\$Date: .*?)\(..., \d+ ... \d\d\d\d\)( \$)/$1$2/g;
+	$Retval =~ s/(\$Date: .*?)\(..., \d+ ... \d\d\d\d\) (\$)/$1$2/g;
 	$Retval =~ s/\$(Id|Date): (.*?) \$/$2/g;
 	return($Retval);
 }
