@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: view_df,v 1.5 2003/10/02 00:53:19 sunny Exp $
+# $Id: view_df,v 1.6 2003/10/03 00:26:38 sunny Exp $
 
 lfile=$HOME/log/df.log
 
@@ -12,9 +12,9 @@ if [ "$1" = "-a" ]; then
 fi
 
 if [ "$2" != "" ]; then
-	deep $lfile | grep $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df | tail -$2 | ep >~/log/data
+	grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df | tail -$2 >~/log/data
 else
-	deep $lfile | grep $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df | ep >~/log/data
+	grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df >~/log/data
 fi
 
 cd ~/log
