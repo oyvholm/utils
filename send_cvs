@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# $Id: send_cvs,v 1.1 2003/08/24 15:18:02 sunny Exp $
+# Kopierer CVSROOT fram og tilbake
+
+if [ ! -e /sunba.mrk ]; then
+	echo "Hva pokkern er det du roter med? Du vet godt at dette scriptet bare skal" >&2
+	echo "kjøres på sunba. Fjott." >&2
+	exit 1
+fi
+
+if [ "$1" = "carmbb" -a "$2" = "sunba" ]; then
+	echo Kopierer CVSROOT fra carmbb til sunba. Simulerer først...
+	rsync -azvnP --delete carmbb:/home/sunny/Cvs /home/sunny
+	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
+	read
+	rsync -azvP --delete carmbb:/home/sunny/Cvs /home/sunny
+elif [ "$1" = "sunba" -a "$2" = "carmbb" ]; then
+	echo Kopierer CVSROOT fra sunba til carmbb. Simulerer først...
+	rsync -azvnP --delete /home/sunny/Cvs carmbb:/home/sunny
+	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
+	read
+	rsync -azvP --delete /home/sunny/Cvs carmbb:/home/sunny
+else
+	echo "Ukjente maskiner: \"$1\" \"$2\"" >&2
+	exit 1
+fi
+
+exit 0
