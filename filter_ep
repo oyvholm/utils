@@ -24,8 +24,8 @@ getopts('v');
 
 while (<>) {
     chomp;
-    if (/^(9\d{8})$/ || /^(1\d{9})$/) {
-        print("$_\n");
+    if (/\b(9\d{8})\b/ || /\b(1\d{9})\b/) {
+        print("$1\n");
     } else {
         $opt_v && print(STDERR "Linje $.: Ulovlig: \"$_\"\n");
     }
