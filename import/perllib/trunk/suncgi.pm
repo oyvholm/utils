@@ -5,7 +5,7 @@ package suncgi;
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
-# Lisens: GNU General Public License
+# Lisens: GNU General Public License ♥
 #=========================================================
 
 require Exporter;
@@ -87,7 +87,7 @@ sub content_type {
 		HTMLwarn("content_type(): \$suncgi::CharSet udefinert. Bruker \"$loc_charset\".");
 	}
 	if (length($ContType)) {
-		print "Content-Type: $ContType; charset=$loc_charset\n\n" ;
+		print("Content-Type: $ContType; charset=$loc_charset\n\n");
 	} else {
 		HTMLwarn("Intern feil: \$ContType ble ikke spesifisert til content_type()");
 	}
@@ -145,7 +145,7 @@ sub D {
 		seek(DebugFP, 0, 2) || ($err_msg = "Kan ikke seek’e til slutten av debugfila");
 	}
 	if (length($err_msg)) {
-		print <<END;
+		print(<<END);
 Content-type: text/html
 
 $suncgi::DTD_HTML4STRICT
@@ -336,7 +336,7 @@ sub get_cookie {
 
 sub set_cookie {
 	# {{{
-	# $expires must be in unix time format, if defined.  If not defined it sets the expiration to December 31, 1999.
+	# $expires must be in unix time format, if defined. If not defined it sets the expiration to December 31, 1999.
 	# If you want no expiration date set, set $expires = -1 (this causes the cookie to be deleted when user closes
 	# his/her browser).
 
@@ -360,7 +360,7 @@ sub set_cookie {
 		$expires = "";
 	} else {
 		$year += 1900;
-		$expires = "expires\=$days[$wday], $mday-$months[$mon]-$year $hour:$min:$seconds GMT; "; #form expiration from value passed to function.
+		$expires = "expires\=$days[$wday], $mday-$months[$mon]-$year $hour:$min:$seconds GMT; "; # form expiration from value passed to function.
 	}
 	if (!defined $domain) {
 		# set domain of cookie.  Default is current host.
@@ -372,7 +372,6 @@ sub set_cookie {
 	}
 	(!defined($sec) || !length($sec)) || ($sec = "0");
 	while (my ($Key, $Value) = each %suncgi::Cookie) {
-	# foreach my $key (keys %suncgi::Cookie) {
 		defined($Value) || ($Value = "");
 		$Value =~ s/ /+/g; #convert plus to space.
 		defined($sec) || ($sec = 0);
@@ -382,7 +381,7 @@ sub set_cookie {
 		push(@suncgi::cookies_done, $cookie_str);
 		undef $suncgi::Cookie{key};
 		# print cookie to browser,
-		# this must be done *before*	you print any content type headers.
+		# this must be done b̲e̲f̲o̲r̲e̲ you print any content type headers.
 	}
 	undef %suncgi::Cookie;
 	# }}}
@@ -390,14 +389,14 @@ sub set_cookie {
 
 sub delete_cookie {
 	# {{{
-	# to delete a cookie, simply pass delete_cookie the name of the cookie to delete.
-	# you may pass delete_cookie more than 1 name at a time.
+	# To delete a cookie, simply pass delete_cookie the name of the cookie to delete.
+	# You may pass delete_cookie more than 1 name at a time.
 	my (@to_delete) = @_;
 	my ($name);
 	foreach $name (@to_delete) {
-		undef $suncgi::Cookie{$name}; #undefines cookie so if you call set_cookie, it doesn’t reset the cookie.
-		print "Set-Cookie: $name=; expires=Thu, 01-Jan-1970 00:00:00 GMT;\n";
-		#this also must be done before you print any content type headers.
+		undef $suncgi::Cookie{$name}; # Undefines cookie so if you call set_cookie, it doesn’t reset the cookie.
+		print("Set-Cookie: $name=; expires=Thu, 01-Jan-1970 00:00:00 GMT;\n");
+		# This also must be done before you print any content type headers.
 	}
 	# }}}
 } # delete_cookie()
@@ -421,7 +420,7 @@ sub get_countervalue {
 	unless (-e $counter_file) {
 		open(TmpFP, ">$counter_file") || (HTMLwarn("$counter_file i get_countervalue(): Klarte ikke å lage fila: $!"), return(0));
 		flock(TmpFP, LOCK_EX);
-		print TmpFP "0\n";
+		print(TmpFP "0\n");
 		close(TmpFP);
 	}
 	open(TmpFP, "<$counter_file") || (HTMLwarn("$counter_file i get_countervalue(): Kan ikke åpne fila for lesing: $!"), return(0));
@@ -447,7 +446,7 @@ sub HTMLdie {
 	} else {
 		chomp($msg_str = $Msg);
 	}
-	print <<END;
+	h_print(<<END);
 Content-type: text/html
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
@@ -470,18 +469,18 @@ Content-type: text/html
 		</style>
 		<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
 END
-	print(<<END) if defined($suncgi::WebMaster);
+	h_print(<<END) if defined($suncgi::WebMaster);
 		<meta name="author" content="$suncgi::WebMaster">
 END
-	print <<END;
+	h_print(<<END);
 		<meta name="copyright" content="&#169; &#216;yvind A. Holm">
 		<meta name="description" content="CGI error">
 		<meta name="date" content="$utc_str">
 END
-	print(<<END) if defined($suncgi::WebMaster);
+	h_print(<<END) if defined($suncgi::WebMaster);
 		<link rev="made" href="mailto:$suncgi::WebMaster">
 END
-	print <<END;
+	h_print(<<END);
 		<!-- \x7D\x7D\x7D -->
 	</head>
 	<body>
@@ -528,7 +527,7 @@ sub HTMLwarn {
 	# Gjør det så stille og rolig som mulig.
 	if ($main::Utv || $main::Debug) {
 		print_header("CGI warning");
-		tab_print("<p><b>HTMLwarn(): $warn_str</b>\n");
+		h_print("<p><b>HTMLwarn(): $warn_str</b>\n");
 	}
 	if (-e ${suncgi::error_file}) {
 		open(ErrorFP, ">>${suncgi::error_file}") or return;
@@ -544,7 +543,7 @@ sub HTMLerror {
 	# Skriver en melding til brukeren, er ment som en mer anonym HTMLdie(). Får se om det er en god ting å ha. {{{
 	my $Txt = shift;
 	print_header("Feil");
-	print($Txt);
+	h_print($Txt);
 	exit;
 	# }}}
 } # HTMLerror()
@@ -647,16 +646,16 @@ sub print_doc {
 	if ($main::Debug) {
 		print_header("er i print_doc"); # debug
 		while (my ($act_name,$act_time) = each %doc_val) {
-			print("<br>\"$act_name\"\t\"$act_time\"\n");
+			h_print("<br>\"$act_name\"\t\"$act_time\"\n");
 		}
 	}
 	# my ($DocTitle, $html_version, $Language, $user_background, $Refresh, $no_body, $Description, $Keywords, @StyleSheet) = @_;
 	print_header($doc_val{title}, "", $doc_val{lang}, $doc_val{background}, $doc_val{refresh}, $doc_val{no_body}, $doc_val{description}, $doc_val{keywords});
 	while (<FromFP>) {
 		chomp;
-		tab_print("$_\n");
+		h_print("$_\n");
 	}
-	print <<END;
+	h_print(<<END);
 	</body>
 </html>
 END
@@ -743,7 +742,7 @@ sub print_footer {
 
 	# FIXME: Hardkoding av URL her pga av at ${suncgi::Url} har skifta navn.
 	# FIXME: I resten av HTML’en er det brukt <div align="center">.
-	tab_print(<<END);
+	h_print(<<END);
 <table width="$footer_width" cellpadding="0" cellspacing="0" border="$suncgi::Border" align="$footer_align">
 	<tr>
 		<td colspan="3">
@@ -770,8 +769,7 @@ sub print_footer {
 </table>
 END
 	unless ($no_end) {
-		Tabs(-2);
-		tab_print(<<END);
+		h_print(<<END);
 	</body>
 </html>
 END
@@ -786,7 +784,7 @@ sub print_header {
 	# &deb_pr("Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
 	if ($suncgi::header_done) {
 		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \$suncgi::header_done = $suncgi::header_done");
-		print("\n<!-- debug: print_header($DocTitle) selv om \$suncgi::header_done -->\n");
+		h_print("\n<!-- debug: print_header($DocTitle) selv om \$suncgi::header_done -->\n");
 		return;
 	} else {
 		$suncgi::header_done = 1;
@@ -805,43 +803,38 @@ sub print_header {
 	$html_version = $suncgi::DTD_HTML4LOOSE unless defined($html_version);
 	$no_body = 0 unless length($no_body);
 	my $DocumentTime = curr_utc_time();
-	length($RefreshStr) && ($RefreshStr = qq{<meta http-equiv="refresh" content="$RefreshStr" url="$suncgi::Url">});
+	length($RefreshStr) && ($RefreshStr = qq{\t\t<meta http-equiv="refresh" content="$RefreshStr" url="$suncgi::Url">});
 
 	content_type("text/html");
-	print $html_version;
-	print "\n<html lang=\"$head_lang\">\n";
-	Tabs(1);
+	print($html_version);
+	print("\n<html lang=\"$head_lang\">\n");
 	$head_script = "" unless defined($head_script);
 	if (defined(@main::rcs_array)) {
 		foreach(@main::rcs_array) {
-			tab_print("<!-- $_ -->\n");
+			h_print("\t<!-- $_ -->\n");
 		}
 	}
 	h_print(<<END);
-<head>
-	<!-- \x7B\x7B\x7B -->
-	<title>$DocTitle</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
+	<head>
+		<!-- \x7B\x7B\x7B -->
+		<title>$DocTitle</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
 END
-	Tabs(1);
 	h_print($RefreshStr) if length($RefreshStr);
 	h_print(<<END);
-<meta name="author" content="&#216;yvind A. Holm">
-<meta name="copyright" content="&#169; &#216;yvind A. Holm">
-<meta name="date" content="$DocumentTime">
+		<meta name="author" content="&#216;yvind A. Holm">
+		<meta name="copyright" content="&#169; &#216;yvind A. Holm">
+		<meta name="date" content="$DocumentTime">
 END
-	tab_print(<<END) if defined($suncgi::WebMaster);
-<link rev="made" href="mailto:$suncgi::WebMaster">
+	h_print(<<END) if defined($suncgi::WebMaster);
+		<link rev="made" href="mailto:$suncgi::WebMaster">
 END
-	# tab_print ("Tabs = Tabs\n");
 	h_print($style_sheet) if length($style_sheet);
 	h_print($head_script) if length($head_script);
-	h_print("<!-- \x7D\x7D\x7D -->\n");
-	Tabs(-1);
-	print("</head>\n");
+	h_print("\t\t<!-- \x7D\x7D\x7D -->\n");
+	h_print("\t</head>\n");
 	unless ($no_body) {
-		h_print("<body$body_attr>\n");
-		Tabs(1);
+		h_print("\t<body$body_attr>\n");
 	}
 	# }}}
 } # print_header()
@@ -849,17 +842,19 @@ END
 sub tab_print {
 	# {{{
 	my @Txt = @_;
+	my @call_info = caller;
+	# HTMLwarn("Hm, tab_print() ble brukt. Synderen er $call_info[1], linje$call_info[2]. ☠ og snyte.") if $main::Debug;
 
 	unless($suncgi::header_done) {
 		print_header("tab_print()-header");
-		print("\n<!-- debug: tab_print() før print_header(). Tar saken i egne hender. -->\n");
+		h_print("\n<!-- debug: tab_print() før print_header(). Tar saken i egne hender. -->\n");
 	}
 
 	foreach (@Txt) {
 		s/^(.*)/${suncgi::Tabs}$1/gm;
 		# Det jøkke sæ med denslags konvertering i disse nesten-UTF-8-tider.
 		# s/([\x7f-\xff])/sprintf("&#%u;", ord($1))/ge;
-		print "$_";
+		h_print("$_");
 	}
 	# }}}
 } # tab_print()
@@ -930,6 +925,10 @@ sub utf8_print {
 	# Forøvrig er jeg ikke så forbanna glad i den RFC’en.
 	# Henta fra SunbaseCGI.pm,v 1.14 2004/01/29 04:40:33
 	my $Txt = shift;
+	my @call_info = caller;
+
+	HTMLwarn("utf8_print(), for helsike? Avlegs! Gjort i $call_info[1], linje$call_info[2]. ☠ og snyte.") if $main::Debug;
+
 	if ($suncgi::CharSet =~ /^UTF-8$/i) {
 		$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
 		$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
@@ -955,7 +954,7 @@ sub h_print {
 	# numeriske entities.
 
 	my ($Txt, $from_charset, $no_entities) = @_;
-	deb_pr(join("|", "Går inn i h_print(", @_, ")"));
+	# deb_pr(join("|", "Går inn i h_print(", @_, ")"));
 	defined($from_charset) || ($from_charset = "UTF-8");
 	defined($no_entities) || ($no_entities = 0);
 	length($from_charset) || ($from_charset = "UTF-8");
@@ -1002,7 +1001,7 @@ sub h_print {
 } # h_print()
 
 sub utf8_to_entity {
-	# Konverterer en UTF-8-sekvens til en numerisk HTML-entitet eller ISO-8859-1. Brukes av utf8_print() og h_print() {{{
+	# Konverterer en UTF-8-sekvens til en numerisk HTML-entitet eller ISO-8859-1. Brukes av h_print() og utf8_print() {{{
 	# utf8_to_entity() er henta fra «u2h,v 1.7 2002/11/20 00:48:10 sunny»
 	# Da het den decode_char()
 	# Og så ble den henta derfra (SunbaseCGI.pm,v 1.14 2004/01/29 04:40:33) og hit.
@@ -1065,7 +1064,7 @@ sub utf8_to_entity {
 		}
 	}
 	# return("-") if ($Val eq 0x2010); # Vetta fan hvorfor den mangler i masse fonter, så man får seife litt. Den er egentlig ufattelig stygg den der, men hva i helsike skal man gjøre? FIXME: Er det verdt bråket? ☠!!!
-	deb_pr("utf8_to_entity(): \$Val = \"$Val\" før retval");
+	# deb_pr("utf8_to_entity(): \$Val = \"$Val\" før retval");
 	my $Retval = $use_latin1
 		? (
 			($Val <= 0xFF)
@@ -1074,7 +1073,7 @@ sub utf8_to_entity {
 		) : (
 			sprintf("&#%u;", $Val)
 		);
-	deb_pr("utf8_to_entity() returnerer \"$Retval\"");
+	# deb_pr("utf8_to_entity() returnerer \"$Retval\"");
 	return($Retval);
 	# }}}
 } # utf8_to_entity()
@@ -1098,37 +1097,37 @@ sub widechar {
 	my ($Val, $no_entities) = @_;
 	my $allow_illegal = 0;
 	if ($Val < 0x80) {
-		return sprintf($no_entities ? "%c" : "&#%u;", $Val);
+		return(sprintf($no_entities ? "%c" : "&#%u;", $Val));
 	} elsif ($Val < 0x800) {
-		return sprintf($no_entities ? "%c%c" : "&#%u;", 0xC0 | ($Val >> 6),
-		                       0x80 | ($Val & 0x3F));
+		return(sprintf($no_entities ? "%c%c" : "&#%u;", 0xC0 | ($Val >> 6),
+		                       0x80 | ($Val & 0x3F)));
 	} elsif ($Val < 0x10000) {
 		unless ($allow_illegal) {
 			if  (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
 				$Val = 0xFFFD;
 			}
 		}
-		return sprintf($no_entities ? "%c%c%c" : "&#%u;", 0xE0 |  ($Val >> 12),
+		return(sprintf($no_entities ? "%c%c%c" : "&#%u;", 0xE0 |  ($Val >> 12),
 		                         0x80 | (($Val >>  6) & 0x3F),
-		                         0x80 |  ($Val        & 0x3F));
+		                         0x80 |  ($Val        & 0x3F)));
 	} elsif ($Val < 0x200000) {
-		return sprintf($no_entities ? "%c%c%c%c" : "&#%u;", 0xF0 |  ($Val >> 18),
+		return(sprintf($no_entities ? "%c%c%c%c" : "&#%u;", 0xF0 |  ($Val >> 18),
 		                           0x80 | (($Val >> 12) & 0x3F),
 		                           0x80 | (($Val >>  6) & 0x3F),
-		                           0x80 |  ($Val        & 0x3F));
+		                           0x80 |  ($Val        & 0x3F)));
 	} elsif ($Val < 0x4000000) {
-		return sprintf($no_entities ? "%c%c%c%c%c" : "&#%u;", 0xF8 |  ($Val >> 24),
+		return(sprintf($no_entities ? "%c%c%c%c%c" : "&#%u;", 0xF8 |  ($Val >> 24),
 		                             0x80 | (($Val >> 18) & 0x3F),
 		                             0x80 | (($Val >> 12) & 0x3F),
 		                             0x80 | (($Val >>  6) & 0x3F),
-		                             0x80 | ( $Val        & 0x3F));
+		                             0x80 | ( $Val        & 0x3F)));
 	} elsif ($Val < 0x80000000) {
-		return sprintf($no_entities ? "%c%c%c%c%c%c" : "&#%u;", 0xFC |  ($Val >> 30),
+		return(sprintf($no_entities ? "%c%c%c%c%c%c" : "&#%u;", 0xFC |  ($Val >> 30),
 		                               0x80 | (($Val >> 24) & 0x3F),
 		                               0x80 | (($Val >> 18) & 0x3F),
 		                               0x80 | (($Val >> 12) & 0x3F),
 		                               0x80 | (($Val >>  6) & 0x3F),
-		                               0x80 | ( $Val        & 0x3F));
+		                               0x80 | ( $Val        & 0x3F)));
 	} else {
 		return widechar(0xFFFD);
 	}
@@ -1162,7 +1161,7 @@ Inneholder generelle HTML-rutiner som brukes hele tiden.
 
 (C)opyright 1999–2004 Øyvind A. Holm E<lt>F<sunny@sunbase.org>E<gt>
 
-Lisens: GNU General Public License
+Lisens: GNU General Public License ♥
 
 =head1 VARIABLER
 
@@ -1449,8 +1448,9 @@ Hvis den ikke er definert, brukes I<$suncgi::STD_DOCALIGN>.
 
 =item I<$no_vh>
 
-I<0> eller udefinert: Skriver I<Valid HTML>-logoen nederst i høyre
-hjørne. I<1>: Dropper den.
+I<0> eller udefinert:
+Skriver I<Valid HTML>-logoen nederst i høyre hjørne.
+I<1>: Dropper den.
 
 =item I<$no_end>
 
@@ -1513,7 +1513,7 @@ Konverterer til leselig datoformat.
 
 print_doc() er ikke ferdig, ellers svinger det visst.
 
-pod’en er muligens litt ute av sync med Tingenes Tilstand.
+pod’en er m̶u̶l̶i̶g̶e̶n̶s̶ ute av sync med Tingenes Tilstand™.
 Men det er vel sånt som forventes.
 
 =cut
