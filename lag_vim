@@ -1,17 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-# $Id: lag_vim,v 1.1 2004/02/09 01:02:54 sunny Exp $
+# $Id: lag_vim,v 1.2 2004/02/09 04:02:32 sunny Exp $
+# Mekker ihop ny, fin Vim.
 
-ping -c1 cvs.vim.sf.net && update_vim-clean
-mincvs_vim
+update_vim-clean
+
+echo ======== mincvs_vim
+mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; exit 1; }
+
 cd ~/src/other/vim/vim || { echo "cd ~/src/other/vim/vim: Ånn ðe tryn." >&2; exit 1; }
-if [ "$HNAME" = "petronas" ]; then
+
+if [ -e $HOME/.petronas.mrk ]; then
+	echo ======== Man er på petronas. Lag lokal vim.
 	vimdir=$HOME/local/prg/vim
+	echo ======== ./configure --prefix=$vimdir --with-features=huge --enable-multibyte
 	./configure --prefix=$vimdir --with-features=huge --enable-multibyte
 else
 	vimdir=/usr/local/prg/vim
+	echo ======== ./configure --prefix=$vimdir --with-features=huge --with-x --enable-gui=gtk --enable-multibyte
 	./configure --prefix=$vimdir --with-features=huge --with-x --enable-gui=gtk --enable-multibyte
 fi
+
+echo ======== make
 make
-echo Hvis det gikk bra, er det på tide å bli root.
-echo Ordnes seinere.
+echo
+
+if [ -e $HOME/.petronas.mrk ]; then
+	echo Vi er på petronas, så vi nøyer oss med det.
+else
+	echo Hvis det gikk bra, er det på tide å bli root.
+	echo Ordnes seinere.
+fi
