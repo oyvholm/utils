@@ -15,7 +15,7 @@ $| = 1;
 
 use Getopt::Std;
 our ($opt_h) = (0);
-getopts('h') || die("Option error. Use -h fopr help.");
+getopts('h') || die("Option error. Use -h for help.\n");
 
 $opt_h && usage(0);
 
