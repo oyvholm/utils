@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: dbk,v 1.14.2.3 2003/07/09 17:42:06 sunny Exp $
+# $Id: dbk,v 1.14.2.4 2003/07/11 12:29:03 sunny Exp $
 # Ny versjon av DBK-systemet.
 #
 # GPL-lisens. Åff cåårs.
@@ -16,11 +16,11 @@ use Fcntl ':flock';
 my $Debug = 0;
 $| = 1;
 
-print("\$#ARGV = $#ARGV\n") if $Debug;
+D("\$#ARGV = $#ARGV\n");
 
 my $Editor = "joe";
 my $dbk_dir = "$ENV{HOME}/dbk";
-my $Viewer = "lynx -homepage=file://$dbk_dir";
+my $Viewer = "lynx -assume_charset=UTF-8 -homepage=file://$dbk_dir";
 my $dbk_ext = ".html";
 my $dbk_lockext = ".lock";
 my $dir_mode = 0770;
@@ -39,20 +39,20 @@ getopts('bfhi:tz');
 
 &print_help(0) if $opt_h;
 
-print("$0: \$opt_t = $opt_t\n") if $Debug;
+D("$0: \$opt_t = $opt_t\n");
 
 my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime($curr_time);
 
 $Year += 1900;
 $Mon += 1;
 
-print("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst\n") if $Debug;
+D("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst\n");
 
 # Parameterparsing og initialisering av datovariabler {{{
 my $arg_count;
 my $time_str = ""; # Strengen som det vil bli leita etter og som blir satt inn.
 
-# CO: Begynnelse på parameterparsing. {{{
+# CO: Begynnelse på parameterparsing med parse_args() {{{
 # begin-base64 664 -
 # H4sIAKCL/DgCA1MrSCwqTo1PLEov1nBwDHIP07Tm4iouTVJAiCtUc3HmVio4
 # OILYtgoO8dZgvkpKfFp+aV4KUMgAKMLFmZZflJqYnKEBVqgJ0pWZpqChH6db
@@ -93,9 +93,9 @@ my @time_arr = localtime($time_sec);
 my $week_day = $time_arr[6];
 my $utc_diff = ($time_utc-$time_sec)/3600;
 
-print("Etter ARGV: $Year-$Mon-$Day\n") if $Debug;
-print("\$dbk_dir = $dbk_dir\n") if $Debug;
-print("\$opt_i = \"$opt_i\"\n") if $Debug;;
+D("Etter ARGV: $Year-$Mon-$Day\n");
+D("\$dbk_dir = $dbk_dir\n");
+D("\$opt_i = \"$opt_i\"\n");
 # }}}
 
 # Sjekk at alle directories er på plass {{{
@@ -112,7 +112,7 @@ unless (-d $year_dir) {
 	mkdir($year_dir, $dir_mode) || die("$0: $year_dir: Kan ikke lage directoryen: $!\n");
 }
 
-print("\$dbk_file = $dbk_file\n") if $Debug;
+D("\$dbk_file = $dbk_file\n");
 
 if ($opt_f) {
 	rmdir($lock_dir) || warn("$lock_dir: Kan ikke fjerne gammel lockdir med makt: $!\n");
@@ -224,20 +224,26 @@ sub insert_time {
 } # insert_time()
 
 sub is_utf8 {
-	# {{{
+	# Sjekker om en tekst inneholder ulovlige UTF-8-sekvenser og returnerer i så fall 0 {{{
 	my $Str = shift;
 	my $Retval = 1;
 	# Henta fra "find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny" og modifisert litt.
 	# FIXME: Godtar overlange sekvenser.
+	D("Str = \"$Str\"\n");
 	$Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	D("Str = \"$Str\"\n");
 	$Str =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	D("Str = \"$Str\"\n");
 	$Str =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	D("Str = \"$Str\"\n");
 	$Str =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//ge;
+	D("Str = \"$Str\"\n");
 	$Str =~ s/([\xC0-\xDF][\x80-\xBF])//ge;
+	D("Str = \"$Str\"\n");
 	$Retval = 0 if ($Str =~ /[\x80-\xFD]/);
 	return $Retval;
 	# }}}
-}
+} # is_utf8()
 
 sub insert_file {
 	# {{{
@@ -253,8 +259,9 @@ sub insert_file {
 	close(LocFP);
 	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_file(): $!\n");
 	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+	D("scalar(\@Linjer): \"" . scalar(@Linjer) . "\".\n");
 	foreach my $Curr (@Linjer) {
-		$Debug && print("Curr = \"$Curr\"\n");
+		D("Curr = \"$Curr\"\n");
 		is_utf8($Curr) || ($convert_from_latin1 = 1);
 		$convert_from_latin1 && ($Curr =~ s/([\x80-\xFF])/html_to_utf8(ord($1))/ge);
 		$Curr =~ s/&#(\d{1,10});/html_to_utf8($1)/ge;
@@ -263,6 +270,13 @@ sub insert_file {
 	}
 	# }}}
 } # insert_file()
+
+sub D {
+	# Skriver debuggingsmeldinger til stderr hvis $Debug {{{
+	my $Txt = shift;
+	$Debug && print(STDERR $Txt);
+	# }}}
+} # D()
 
 sub print_help {
 	# {{{
@@ -290,7 +304,7 @@ END
 } # print_help()
 
 sub html_to_utf8 {
-	# {{{
+	# Konverterer en streng med numeriske HTML-entities til UTF-8 {{{
 	# Henta fra "h2u,v 1.5 2002/11/20 00:09:40 sunny", da het den widechar() .
 	my $Val = shift;
 	my $allow_invalid = 0;
@@ -335,4 +349,4 @@ sub html_to_utf8 {
 
 __END__
 
-#### End of file $Id: dbk,v 1.14.2.3 2003/07/09 17:42:06 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.14.2.4 2003/07/11 12:29:03 sunny Exp $ ####
