@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: mk_local_links,v 1.1 2004/02/16 18:25:56 sunny Exp $
+# $Id: mk_local_links,v 1.2 2004/02/25 20:58:40 sunny Exp $
 # Lager symlinker i /usr/local/man/* og /usr/local/bin/ til greier i
 # /usr/local/prg/
 
@@ -13,7 +13,7 @@ for f in `seq 1 9`; do
 	echo "======== $currmandir ========"
 	[ -d $currmandir ] || mkdir $currmandir || { echo "$0: mkdir $currmandir: Gikk på trynet, kreperer." >&2; exit 1; }
 	cd $currmandir || { echo "$0: cd $currmandir: Klarte ikke å gå dit. Ytterst merkelig. Kreperer for sikkerhets skyld." >&2; exit 1; }
-	find ../../prg -type f | grep /man/ | grep "\\.$f\$" | xargs -i% ln -svf % .
+	find ../../prg -type f | grep /man/ | grep "\\.$f\$" | sort | xargs -i% ln -svf % .
 done
 
 # /usr/local/bin/
