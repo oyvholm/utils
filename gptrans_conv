@@ -449,5 +449,5 @@ sub D {
     # }}}
 }
 
-# vim: set fdm=marker ft=perl ts=4 sw=4 sts=4 et fo+=w fenc=utf-8 :
+# vim: set ft=perl ts=4 sw=4 sts=4 et fo+=w fenc=utf-8 :
 # End of file $Id$
