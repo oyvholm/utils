@@ -1,0 +1,6 @@
+
+# $Id: utf8-mode,v 1.1 2004/01/21 19:45:17 sunny Exp $
+
+bind U encoding utf-8 utf-8
+echo "Skifta til UTF-8."
+sleep 2
