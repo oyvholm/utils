@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: hfa,v 1.1 1999/04/18 21:17:05 sunny Exp $
+# $Id: hfa,v 1.2 2000/03/27 00:14:50 sunny Exp $
 # Samme som hf, men fjerner alle spacene i begynnelsen og slutten først
 
-rmspcall | hf
+rmspcall | hf $*
