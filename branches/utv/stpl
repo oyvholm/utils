@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.1.2.2 2003/10/08 03:01:20 sunny Exp $
+# $Id: stpl,v 1.1.2.3 2003/10/08 15:06:40 sunny Exp $
 # [Description]
 # Character set: UTF-8
 # License: GNU General Public License
@@ -14,11 +14,11 @@ $| = 1;
 
 use Getopt::Std;
 
-our ($opt_o, $opt_t, $opt_y) =
-    (     "",     "",     "");
-getopts('o:t:y:');
+our ($opt_k, $opt_o, $opt_t, $opt_x, $opt_y) =
+    (    "",     "",     "",     "",     "");
+getopts('ko:t:y:');
 
-my $rcs_id = '$Id: stpl,v 1.1.2.2 2003/10/08 03:01:20 sunny Exp $';
+my $rcs_id = '$Id: stpl,v 1.1.2.3 2003/10/08 15:06:40 sunny Exp $';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
@@ -40,14 +40,35 @@ process_file($data_file);
 
 exit(0);
 
+sub usage {
+	# {{{
+	print <<END;
+
+Syntax:
+
+  $0 [options] data_file
+
+Options:
+
+  -k         Keep temp file after plotting
+  -xrXX:YY   Use X range XX:YY
+  -yrXX:YY   Use Y range XX:YY
+
+END
+	exit(0);
+	# }}}
+}
+
 sub process_file {
 	# {{{
 	my $data_file = shift;
 	unless (-r $data_file) {
-		die("$0: $data_file: File is unreadable or dosn’t exist.\n");
+		die("$0: $data_file: File is unreadable or doesn’t exist.\n");
+		return undef;
 	}
-	open(GnupFP, ">$gnuplot_script") || die("$gnuplot_script: Can’t open file for write: $!\n");
-	print(GnupFP <<END);
+	if(open(GnupFP, ">$gnuplot_script")) {
+		# {{{
+		print(GnupFP <<END);
 #!/usr/bin/gnuplot -persist
 
 # \$\x49d\$
@@ -55,61 +76,82 @@ sub process_file {
 
 END
 
-	if (length($opt_y)) {
-		if ($opt_y =~ /^r(.*)/) {
-			# Y range specified {{{
-			my $Range = $1;
-			if ($opt_y =~ /^r([\d\-]+:[\d\-]+)$/) {
-				print(GnupFP "set yrange [$1]\n");
-			} else {
-				die("\"$Range\": Invalid Y range specified\n");
+		if (length($opt_x)) {
+			if ($opt_x =~ /^r(.*)/) {
+				# X range specified {{{
+				my $Range = $1;
+				if ($opt_x =~ /^r([\d\-]+:[\d\-]+)$/) {
+					print(GnupFP "set xrange [$1]\n");
+				} else {
+					warn("\"$Range\": Invalid X range specified, ignoring it\n");
+				}
+				# }}}
 			}
-			# }}}
 		}
-	}
+		if (length($opt_y)) {
+			if ($opt_y =~ /^r(.*)/) {
+				# Y range specified {{{
+				my $Range = $1;
+				if ($opt_y =~ /^r([\d\-]+:[\d\-]+)$/) {
+					print(GnupFP "set yrange [$1]\n");
+				} else {
+					die("\"$Range\": Invalid Y range specified\n");
+				}
+				# }}}
+			}
+		}
 
-	print(GnupFP <<END);
+		print(GnupFP <<END);
 set xdata time
 set grid
 set timefmt "%Y-%m-%dT%H:%M:%SZ"
 set format x "%Y-%m-%d"
 END
 
-	if (length($opt_o)) {
-		if ($opt_o =~ /.*\.ps$/i) {
-			print(GnupFP "set terminal postscript\nset output \"$opt_o\"\n");
-		} elsif ($opt_o =~ /.*\.png$/i) {
-			print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
+		if (length($opt_o)) {
+			if ($opt_o =~ /.*\.ps$/i) {
+				print(GnupFP "set terminal postscript\nset output \"$opt_o\"\n");
+			} elsif ($opt_o =~ /.*\.png$/i) {
+				print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
+			} else {
+				die("Unkonwn outfile type, has to be .ps or .png\n");
+			}
 		} else {
-			die("Unkonwn outfile type, has to be .ps or .png\n");
+			print(GnupFP "set terminal x11\n");
 		}
-	} else {
-		print(GnupFP "set terminal x11\n");
-	}
 
-	if (length($opt_t)) {
-		print(GnupFP "set title \"$opt_t\"\n");
-	}
-
-	while (<>) {
-		if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d)T(\d\d):(\d\d):(\d\d)\s+(\d+)/) {
+		if (length($opt_t)) {
+			print(GnupFP "set title \"$opt_t\"\n");
 		}
-	}
 
-	print(GnupFP <<END);
+		while (<>) {
+			if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d)T(\d\d):(\d\d):(\d\d)\s+(\d+)/) {
+			}
+		}
+
+		print(GnupFP <<END);
 plot \\
 "$data_file" using 1:2 title " " with line 7, \\
 "$data_file" using 1:2 smooth bezier title " " with line -1
 
 END
 
-	close(GnupFP);
+		close(GnupFP);
 
-	system("gnuplot -persist $gnuplot_script");
+		system("gnuplot -persist $gnuplot_script");
+		if ($opt_k) {
+			print(STDERR "Keeping temp file $gnuplot_script\n");
+		} else {
+			unlink($gnuplot_script) || warn("$gnuplot_script: Unable to delete temporary file: $!\n");
+		}
+		# }}}
+	} else {
+		warn("$gnuplot_script: Can’t open file for write: $!\n");
+	}
 	# }}}
 }
 
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.1.2.2 2003/10/08 03:01:20 sunny Exp $
+# End of file $Id: stpl,v 1.1.2.3 2003/10/08 15:06:40 sunny Exp $
