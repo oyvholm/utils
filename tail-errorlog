@@ -1,10 +1,11 @@
 #!/bin/bash
 
 #==========================================================
-# $Id: tail-errorlog,v 1.19 2004/02/10 19:03:35 sunny Exp $
+# $Id$
 # tail -f på error_log til httpd(8).
 #==========================================================
 
+prefix=`date -u +"%Y/*%Y-%m-%dZ.error_log"`
 if [ -e /sunba.mrk -o -e /carmbb.mrk -o -e /svdbb.mrk ]; then
 	tail -f /var/log/apache/error.log $*
 elif [ -e /grimme.mrk -o -e /recbb.mrk -o -e /toshbb.mrk -o -e /ba0614.mrk ]; then
@@ -12,13 +13,12 @@ elif [ -e /grimme.mrk -o -e /recbb.mrk -o -e /toshbb.mrk -o -e /ba0614.mrk ]; th
 elif [ -e /nett.mrk ]; then
 	if [ "$1" = "sunbase" -o "$1" = "sunbase.org" ]; then
 		shift
-		tail -f /home/badata/wrt/sunbase/log/httpd/error_log $*
+		tail -f /home/badata/wrt/sunbase/log/httpd/$prefix $*
 	else
-		tail -f /mnt/logs/httpd/$1/error_log $*
+		tail -f /mnt/logs/httpd/$1/$prefix $*
 		shift
 	fi
 elif [ -e /nett2.mrk ]; then
-	prefix=`date -u +"%Y/*%Y-%m-%dZ.error_log"`
 	tail -f \
 	/home/badata/wrt/sunbase/musthave.sunbase.org/log/httpd/error_log \
 	/home/badata/wrt/sunbase/snadder.sunbase.org/log/httpd/error_log \
