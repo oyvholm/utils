@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.10 2000/04/22 15:55:38 sunny Exp $
+# $Id: dbk,v 1.11 2000/04/24 17:54:38 sunny Exp $
 #
 # (C)opyleft Øyvind A. Holm <sunny256@mail.com>
 # GNU-lisens.
@@ -10,6 +10,7 @@ use Time::Local;
 use Fcntl ':flock';
 
 $Debug = 0;
+$| = 1;
 
 print("\$#ARGV = $#ARGV\n") if $Debug;
 
@@ -17,6 +18,7 @@ $Editor = "joe";
 $dbk_dir = "$ENV{HOME}/dbk";
 $Viewer = "lynx -homepage=file://$dbk_dir";
 $dbk_ext = ".html";
+$dbk_lockext = ".lock";
 $dir_mode = 0770;
 
 $curr_time = time;
@@ -26,7 +28,7 @@ $time_not_found = 0;
 @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 require 'getopts.pl';
-&Getopts('bhi:t');
+&Getopts('bfhi:tz');
 
 &print_help(0) if $opt_h;
 
@@ -89,6 +91,7 @@ print("\$opt_i = \"$opt_i\"\n") if $Debug;;
 
 $year_dir = "$dbk_dir/$Year";
 $dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
+$lock_file = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
 
 umask(0);
 unless (-d $dbk_dir) {
@@ -100,6 +103,23 @@ unless (-d $year_dir) {
 
 print("\$dbk_file = $dbk_file\n") if $Debug;
 
+if ($opt_f) {
+	unlink($lock_file) || die("$lock_file: Kan ikke fjerne gammel lockfil med makt: $!\n");
+}
+
+if (-e $lock_file) {
+	print(STDERR "Venter på at lockfila $lock_file skal forsvinne..");
+	while(-e $lock_file) {
+		print(".");
+		sleep(2);
+	}
+	print("OK\n");
+}
+
+open(LockFP, ">$lock_file") || die("$lock_file: Klarte ikke å lage lockfil");
+flock(LockFP, LOCK_EX);
+print(LockFP "$curr_time $$\n");
+
 unless (-f $dbk_file) {
 	open(FP, ">$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for skriving: $!\n");
 	print(FP "<h1>$day_name[$week_day] $Year-$Mon-$Day</h1>\n") || die("$0: $dbk_file: Kan ikke skrive header til fila: $!\n");
@@ -108,6 +128,7 @@ unless (-f $dbk_file) {
 
 if ($opt_t) {
 	$utc_str = sprintf("%s%02u00", $utc_diff < 0 ? "-" : "+", $utc_diff);
+	$utc_str = "" unless $opt_z;
 	if (length($time_str)) {
 		$time_str .= $utc_str;
 	} else {
@@ -140,10 +161,11 @@ unless ($opt_b) {
 $file_size = $stat_info[7];
 if ($file_size < $min_size) {
 	print("Ingenting ble skrevet, så jeg sletter driten.\n");
-	unlink($dbk_file) || die("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
+	unlink($dbk_file) || warn("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
 	rmdir($year_dir);
 }
 
+unlink($lock_file) || die("$0: $lock_file: Klarte ikke å slette lockfila: $!\n");
 exit(0);
 
 #### SUBRUTINER ####
@@ -201,11 +223,13 @@ Syntax: $0 [valg] [dag [måned [år]]] [HH:MM]
 
 Disse valgene (options) kan brukes:
 
--b      Batch mode, ikke start editor eller viewer.
--h      Skriv denne hjelpen
+-b    - Batch mode, ikke start editor eller viewer.
+-f    - Force, start dbk selv om lockfil eksisterer.
+-h    - Skriv denne hjelpen
 -i x  - Sett inn filen x istedenfor å bruke tastatur.
         Forventer -t eller klokkeslett.
--t      Legg til klokkeslettet akkurat i fila og går inn i editoren
+-t    - Legg til klokkeslettet akkurat nå i fila og gå inn i editoren
+-z    - Legg til tidssone til klokkeslett
 
 Klokkeslettet kan spesifiseres hvor som helst, men må starte med formatet
 "HH:" der HH er to siffer.
@@ -216,4 +240,4 @@ END
 
 __END__
 
-#### End of file $Id: dbk,v 1.10 2000/04/22 15:55:38 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.11 2000/04/24 17:54:38 sunny Exp $ ####
