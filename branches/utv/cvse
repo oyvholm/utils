@@ -1,15 +1,15 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: cvse,v 1.1.2.1 2003/05/22 23:42:32 sunny Exp $
+# $Id: cvse,v 1.1.2.2 2003/05/23 00:03:44 sunny Exp $
 # Edit cvs log messages via output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU GPL
+# License: GNU General Public License
 #================================================
 
 use strict;
 
-my ($curr_date, $curr_rev, $curr_rcs_file, $curr_work_file) = ("", "", "", "");
+my ($curr_rev, $curr_rcs_file, $curr_work_file) = ("", "", "");
 my @Curr = ();
 my %Entry = ();
 my ($Rev, $Line) = ("", "");
@@ -34,9 +34,7 @@ while (<>) {
 		}
 		# push(@Curr, $Line);
 		$Line = <>;
-		if ($Line =~ /^date: (\S+\s+\S+) .*/) {
-			$curr_date = $1;
-		} else {
+		unless ($Line =~ /^date: (\S+\s+\S+) .*/) {
 			warn("Expected \"date: \", got \"$Line\".\"");
 		}
 		if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
@@ -46,7 +44,6 @@ while (<>) {
 			D("Found \"^date: \" or \"^branches: \", skipping.\n");
 		}
 		# push(@Curr, $Line);
-		# $Rev = unpack("H*", "$curr_date$curr_rev");
 		$Rev = "$curr_work_file,v.$curr_rev";
 		# }}}
 	} elsif ($Line =~ /^=============================================================================$/) {
@@ -70,7 +67,7 @@ while (<>) {
 				warn("Wrong revision format \"$Curr\", skipping revision\n");
 			}
 		}
-		($curr_date, $curr_rev, $Rev) = ("", "", "");
+		($curr_rev, $Rev) = ("", "");
 		%Entry = ();
 		@Curr = ();
 		# print("$Line");
@@ -85,8 +82,6 @@ while (<>) {
 			if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
 				push(@Curr, $_);
 			}
-		} else {
-			# warn("\$Rev was empty with \$Line = \"$\"\n");
 		}
 		$header_done = 0;
 		# }}}
@@ -189,7 +184,7 @@ cvse - CVSEdit - edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.1 2003/05/22 23:42:32 sunny Exp $
+$Id: cvse,v 1.1.2.2 2003/05/23 00:03:44 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -207,6 +202,6 @@ Made by Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
 
 GNU General Public License.
 
-# End of file $Id: cvse,v 1.1.2.1 2003/05/22 23:42:32 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.2 2003/05/23 00:03:44 sunny Exp $
 
 __END__
