@@ -1,16 +1,16 @@
 #!/usr/bin/perl -w
 
-#=====================================================================
+#=======================================================================
 # $Id$
-# Splitter opp filer med filer som begynner med sekunder sia 1970 eller
-# en dato på ISO 8601-format. Legger delene som
-# $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] . Bruker bare verdier med 9 eller
-# 10 siffer i epoch. Med andre ord funker det greit fra og med
+# Splitter opp filer med filer som begynner med sekunder sia 1970 eller 
+# en dato på ISO 8601-format. Legger delene som 
+# $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] . Bruker bare verdier med 9 eller 
+# 10 siffer i epoch. Med andre ord funker det greit fra og med 
 # 1973-03-03 09:46:40 GMT til 2286-11-20 17:46:39 GMT.
 #
 # ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
 # Lisens: GNU General Public License ♥
-#=====================================================================
+#=======================================================================
 
 use strict;
 use Time::Local;
@@ -102,29 +102,29 @@ sub usage {
 
 Syntax: $0 [valg] [fil [flere filer [...]]]
 
-Programmet leser filer som har linjer som begynner med antall sekunder
-sia 1970-01-01 00:00:00 GMT fra stdin eller filnavn på kommandolinja og
-splitter dem i deler på formatet "DIR/åååå/[NAVN.]åååå-mm-dd[Z][.EXT]" .
-Bruker bare verdier med 9 eller 10 siffer. Med andre ord funker det
+Programmet leser filer som har linjer som begynner med antall sekunder 
+sia 1970-01-01 00:00:00 GMT fra stdin eller filnavn på kommandolinja og 
+splitter dem i deler på formatet "DIR/åååå/[NAVN.]åååå-mm-dd[Z][.EXT]" . 
+Bruker bare verdier med 9 eller 10 siffer. Med andre ord funker det 
 greit fra og med 1973-03-03 09:46:40 GMT til 2286-11-20 17:46:39 GMT.
 
-Og ja, den fungerer med ISO 8601-format også, det vil si
-"åååå-mm-ddTtt:mm:ssZ", "ååååmmddTttmmssZ", "åååå/mm/dd tt:mm:ss" eller
+Og ja, den fungerer med ISO 8601-format også, det vil si 
+"åååå-mm-ddTtt:mm:ssZ", "ååååmmddTttmmssZ", "åååå/mm/dd tt:mm:ss" eller 
 hva man skulle ønske.
 
 Valg:
 
 -d DIR   Plassér filene i DIR . Standard: "$Dir".
--e EXT   Bruk EXT som extension. (Automatisk punktum i begynnelsen.)
+-e EXT   Bruk EXT som extension. (Automatisk punktum i begynnelsen.) 
          Standard: "$Ext".
 -h       Hjælp mæ.
--n NAVN  Bruk NAVN som valgfritt prefiks i filnavnet. Automatisk punktum
+-n NAVN  Bruk NAVN som valgfritt prefiks i filnavnet. Automatisk punktum 
          på slutten. Standard: "$Name".
 -z       Pakk filene etterhvert som de er ferdigsplitta.
 
-Den splitter selvfølgelig opp filene på grunnlag av GMT. Folkeaksjonen
-Mot Sommertid slår til igjen. Ikke det med sol, utepils og miniskjørt
-her og der, men den klokkefløttinga er uendelig plagsom og lager i
+Den splitter selvfølgelig opp filene på grunnlag av GMT. Folkeaksjonen 
+Mot Sommertid slår til igjen. Ikke det med sol, utepils og miniskjørt 
+her og der, men den klokkefløttinga er uendelig plagsom og lager i 
 tillegg unøyaktighet i loggene.
 
 Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>.
