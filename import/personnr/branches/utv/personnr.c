@@ -3,7 +3,7 @@
  * Kontrollerer om norske personnumre er gyldige og kan også skrive ut alle
  * gyldige norske personnumre på angitte datoer.
  *
- * $Id: personnr.c,v 1.3.2.9 2004/02/28 02:50:10 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.10 2004/02/28 03:08:23 sunny Exp $
  *
  * Tegnsett brukt i denne fila: UTF-8
  *
@@ -20,12 +20,12 @@
  *          999/998 ned til 501/500. Personer som er født på 1900-tallet har
  *          personnummer i området 499/498 til 001/000.
  *
- *     50 = Kontrollsiffer som er regnet ut etter en spesiell formel. Enhver
+ *     50 = Kontrollsum som er regnet ut etter en spesiell formel. Enhver
  *          som kjenner denne formelen har mulighet for å kontrollere om det
  *          personnummeret som oppgis er beregnet på den riktige måten og
  *          dermed er gyldig.
  *
- * Formel for å regne ut kontrollsiffer:
+ * Formel for å regne ut kontrollsummen:
  *
  * Utgangspunktet er to faste rekker med multiplikatorer. Den første rekken
  * blir brukt til å regne ut første kontrollsiffer, og den andre rekken til
@@ -61,7 +61,7 @@
  */
 
 #define VERSION   "1.12"
-#define RCS_DATE  "$Date: 2004/02/28 02:50:10 $"
+#define RCS_DATE  "$Date: 2004/02/28 03:08:23 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,7 +74,7 @@
 #define EXIT_OK     0
 #define EXIT_ERROR  1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.9 2004/02/28 02:50:10 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.10 2004/02/28 03:08:23 sunny Exp $";
 
 int lovlig_personnr(char *);
 char *persnr(char *);
@@ -305,7 +305,8 @@ void usage(int retval)
 {
 	/* Send hjelpen til stdout og avslutt {{{ */
 	printf(
-		"personnr ver. %s (%s)\n"
+		"\n"
+		"personnr versjon %s (%s)\n"
 		"(C)opyleft Øyvind A. Holm <sunny@sunbase.org>\n"
 		"\n"
 		"Bruk: %s [personnummer|fødselsdato [...]]\n"
@@ -324,6 +325,9 @@ void usage(int retval)
 		"Programlisens: GNU General Public License, se fila COPYING for detaljer\n"
 		"eller les lisensen på <http://www.gnu.org/copyleft/gpl.html>.\n"
 		"\n"
+		"Nyeste versjon av programmet kan hentes fra\n"
+		"<http://www.sunbase.org/src/personnr>.\n"
+		"\n"
 		, VERSION, RCS_DATE, progname
 	);
 
@@ -332,4 +336,4 @@ void usage(int retval)
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.9 2004/02/28 02:50:10 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.10 2004/02/28 03:08:23 sunny Exp $ */
