@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: log_df,v 1.7 2004/03/28 05:57:43 sunny Exp $
+# $Id: log_df,v 1.8 2004/03/28 06:47:11 sunny Exp $
 
 logdir=$HOME/log
 
@@ -15,6 +15,6 @@ until mkdir $lockname 2>/dev/null; do
 	exit 1
 done
 
-df -P `cat $logdir/.disks` | grep / | perl -pe 'chomp(my $a = `date -u +"%Y-%m-%dT%H:%M:%SZ"`); s/^/$a /;' | /usr/sbin/cronolog -z 0 -S $logdir/curr_df $logdir/df/%Y/%Y-%m-%d.df.log
+df -P `cat $logdir/.disks` | grep / | perl -pe 'chomp(my $a = `date -u +"%Y-%m-%dT%H:%M:%SZ"`); s/^/$a /;' | cronolog -z 0 -S $logdir/curr_df $logdir/df/%Y/%Y-%m-%d.df.log
 
 rmdir $lockname
