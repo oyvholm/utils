@@ -12,11 +12,14 @@ lv_lockdir=$HOME/.lag_vim.LOCK
 [ "$1" = "-f" ] && { rmdir $lv_lockdir 2>/dev/null; shift; }
 mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
 
+[ "$1" = "-l" ] && { bruk_lokal=1; shift; }
 [ "$1" = "-x" ] && { med_x=1; }
 
-echo -e "======== update_vim-clean \x7B\x7B\x7B"
-update_vim-clean
-echo -e "\x7D\x7D\x7D"
+if [ "$bruk_lokal" != "1" ]; then
+	echo -e "======== update_vim-clean \x7B\x7B\x7B"
+	update_vim-clean
+	echo -e "\x7D\x7D\x7D"
+fi
 
 echo -e "======== mincvs_vim \x7B\x7B\x7B"
 mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
