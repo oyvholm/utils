@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+# $Id: fjern_here,v 1.1 2003/03/02 02:54:30 sunny Exp $
+# Konverterer tekst i «here documents» til print()-lignende greier.
+print("join(\"\",\n");
+while (<>) {
+	s/\t/\\t/g;
+	s/"/\\"/g;
+	s/^/"/;
+	s/$/\\n",/;
+	print;
+	}
+print(")\n");
