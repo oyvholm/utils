@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.1.2.5 2003/10/16 13:01:56 sunny Exp $
+# $Id: stpl,v 1.1.2.6 2003/10/16 16:17:19 sunny Exp $
 # Plot out data with gnuplot based on data type
 #
 # Character set: UTF-8
@@ -19,7 +19,7 @@ our ($opt_h, $opt_k, $opt_o, $opt_t, $opt_x, $opt_y) =
     (     0,      0,     "",     "",     "",     "");
 getopts('hko:t:y:');
 
-my $rcs_id = '$Id: stpl,v 1.1.2.5 2003/10/16 13:01:56 sunny Exp $';
+my $rcs_id = '$Id: stpl,v 1.1.2.6 2003/10/16 16:17:19 sunny Exp $';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
@@ -110,6 +110,8 @@ END
 		}
 
 		print(GnupFP <<END);
+set encoding iso_8859_1
+set samples 250
 set xdata time
 set grid
 set timefmt "%Y-%m-%dT%H:%M:%SZ"
@@ -118,7 +120,7 @@ END
 
 		if (length($opt_o)) {
 			if ($opt_o =~ /.*\.ps$/i) {
-				print(GnupFP "set terminal postscript enhanced color solid\nset output \"$opt_o\"\n");
+				print(GnupFP "set terminal postscript enhanced color solid 8\nset output \"$opt_o\"\n");
 			} elsif ($opt_o =~ /.*\.png$/i) {
 				print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
 			} else {
@@ -165,4 +167,4 @@ END
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.1.2.5 2003/10/16 13:01:56 sunny Exp $
+# End of file $Id: stpl,v 1.1.2.6 2003/10/16 16:17:19 sunny Exp $
