@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id: cunw,v 1.1 1999/04/23 20:50:40 sunny Exp $
+# Lister ut alle filer som ikke er registrert i CVS (Cvs-UNWanted)
+
+cvs stat `find . -type f | grep -v -e 'CVS/Entries$' -e 'CVS/Repository$' -e 'CVS/Root$' ` >/dev/null
