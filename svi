@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# $Id$
+
+svn info $* | grep "^URL: "
