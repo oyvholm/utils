@@ -1,0 +1,10 @@
+#!/bin/bash
+# $Id: rm_backup,v 1.1 1999/02/09 16:16:27 sunny Exp $
+
+_fjernes=`find . -type f | grep '~$'`
+
+if [ ! "$_fjernes" = "" ]; then
+  rm -v $_fjernes
+else
+  echo `basename $0`: Ingen backupfiler ble funnet >&2
+fi
