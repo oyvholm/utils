@@ -14,4 +14,5 @@ static char rcs_id_version_h[] = "$Id$";
 
 #endif /* ifndef _VERSION_H */
 
+/* vim: set ts=4 sw=4 sts=4 et fo+=w fenc=UTF-8 : */
 /**** End of file $Id$ ****/

@@ -1,7 +1,7 @@
 
 /*
 
-   NB! Husk å forandre navn på rcs_id_std_h til det den skal være.
+   NB! Husk Ã¥ forandre navn pÃ¥ rcs_id_std_h til det den skal vÃ¦re.
 
  * Main header file
  * $Id$
@@ -103,4 +103,5 @@ extern FILE *stddebug;
 
 #endif /* ifndef _STD_H */
 
+/* vim: set ts=4 sw=4 sts=4 et fo+=w fenc=UTF-8 : */
 /***** End of file $Id$ *****/

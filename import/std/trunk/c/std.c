@@ -50,126 +50,126 @@ FILE *stddebug = stderr;
 
 int main(int argc, char *argv[])
 {
-	int c,
-	    retval = EXIT_OK;
+    int c,
+        retval = EXIT_OK;
 
-	progname = argv[0];
+    progname = argv[0];
 
-	while (1)
-	{
-		int option_index = 0;
-		static struct option long_options[] = {
-			{  "debug", 0, 0,   0},
-			{   "help", 0, 0, 'h'},
+    while (1)
+    {
+        int option_index = 0;
+        static struct option long_options[] = {
+            {  "debug", 0, 0,   0},
+            {   "help", 0, 0, 'h'},
 #ifdef C_LICENSE
-			{"license", 0, 0,   0},
+            {"license", 0, 0,   0},
 #endif
-			{"version", 0, 0, 'V'},
-			{        0, 0, 0,   0}
-		};
+            {"version", 0, 0, 'V'},
+            {        0, 0, 0,   0}
+        };
 
-		/*
-		 * long_options:
-		 *
-		 * 1. const char  *name;
-		 * 2. int         has_arg;
-		 * 3. int         *flag;
-		 * 4. int         val;
-		 *
-		 */
+        /*
+         * long_options:
+         *
+         * 1. const char  *name;
+         * 2. int         has_arg;
+         * 3. int         *flag;
+         * 4. int         val;
+         *
+         */
 
-		c = getopt_long (argc, argv, "hV",
-		    long_options, &option_index);
+        c = getopt_long (argc, argv, "hV",
+            long_options, &option_index);
 
-		if (c == -1)
-			break;
+        if (c == -1)
+            break;
 
-		switch (c) {
-			case 0 :
-				if (!strcmp(long_options[option_index].name, "debug"))
-					debug = 1;
+        switch (c) {
+            case 0 :
+                if (!strcmp(long_options[option_index].name, "debug"))
+                    debug = 1;
 
 #ifdef C_LICENSE
-				else if (!strcmp(long_options[option_index].name, "license"))
-				{
-					fprintf(stdout,
-						"(C>opyleft Oyvind A. Holm <sunny@sunbase.org>\n"
-						"\n"
-						"This program is free software; you can redistribute it and/or modify\n"
-						"it under the terms of the GNU General Public License as published by\n"
-						"the Free Software Foundation; either version 2 of the License, or\n"
-						"(at your option) any later version.\n"
-						"\n"
-						"This program is distributed in the hope that it will be useful,\n"
-						"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-						"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-						"GNU General Public License for more details.\n"
-						"\n"
-						"You should have received a copy of the GNU General Public License\n"
-						"along with this program; if not, write to the Free Software\n"
-						"Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n"
-					);
-					return(EXIT_OK);
-				}
+                else if (!strcmp(long_options[option_index].name, "license"))
+                {
+                    fprintf(stdout,
+                        "(C>opyleft Oyvind A. Holm <sunny@sunbase.org>\n"
+                        "\n"
+                        "This program is free software; you can redistribute it and/or modify\n"
+                        "it under the terms of the GNU General Public License as published by\n"
+                        "the Free Software Foundation; either version 2 of the License, or\n"
+                        "(at your option) any later version.\n"
+                        "\n"
+                        "This program is distributed in the hope that it will be useful,\n"
+                        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+                        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+                        "GNU General Public License for more details.\n"
+                        "\n"
+                        "You should have received a copy of the GNU General Public License\n"
+                        "along with this program; if not, write to the Free Software\n"
+                        "Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n"
+                    );
+                    return(EXIT_OK);
+                }
 #endif /* ifdef C_LICENSE */
 
 #if 0
-				fprintf(stddebug, "option %s", long_options[option_index].name);
-				if (optarg)
-					fprintf(stddebug, " with arg %s", optarg);
-				fprintf(stddebug, "\n");
+                fprintf(stddebug, "option %s", long_options[option_index].name);
+                if (optarg)
+                    fprintf(stddebug, " with arg %s", optarg);
+                fprintf(stddebug, "\n");
 #endif /* if 0 */
-				break;
+                break;
 
-			case 'h' :
-				usage(EXIT_OK);
-				break;
+            case 'h' :
+                usage(EXIT_OK);
+                break;
 
-			case 'V' :
-				print_version();
-				return(EXIT_OK);
+            case 'V' :
+                print_version();
+                return(EXIT_OK);
 
-			case '?' :
-				usage(EXIT_ERROR);
-				break;
+            case '?' :
+                usage(EXIT_ERROR);
+                break;
 
-			default :
-				debpr1("getopt_long() returned character code %d\n", c);
-				break;
-		}
-	}
+            default :
+                debpr1("getopt_long() returned character code %d\n", c);
+                break;
+        }
+    }
 
-	debpr1("debugging is set to level %d\n", debug);
+    debpr1("debugging is set to level %d\n", debug);
 
-	if (debug && optind < argc) {
-		int t;
+    if (debug && optind < argc) {
+        int t;
 
-		debpr0("non-option args: ");
-		for (t = optind; t < argc; t++)
-			fprintf(stddebug, "%s ", argv[t]);
+        debpr0("non-option args: ");
+        for (t = optind; t < argc; t++)
+            fprintf(stddebug, "%s ", argv[t]);
 
-		fprintf(stddebug, "\n");
-	}
+        fprintf(stddebug, "\n");
+    }
 
-	/*
-	 * Code goes here
-	 */
+    /*
+     * Code goes here
+     */
 
-	/*
-	if (optind < argc) {
-		int  t;
+    /*
+    if (optind < argc) {
+        int  t;
 
-		for (t = optind; t < argc; t++)
-			retval |= process_file(argv[t]);
-	} else
-		retval |= process_file("-");
-	*/
+        for (t = optind; t < argc; t++)
+            retval |= process_file(argv[t]);
+    } else
+        retval |= process_file("-");
+    */
 
-	/* ...and stops here */
+    /* ...and stops here */
 
-	debpr1("Returning from main() with value %d\n", retval);
+    debpr1("Returning from main() with value %d\n", retval);
 
-	return(retval);
+    return(retval);
 } /* main() */
 
 /*
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 
 void  print_version(void)
 {
-	fprintf(stdout, "%s version %s - %s\n", progname, VERSION, RELEASE_DATE);
+    fprintf(stdout, "%s version %s - %s\n", progname, VERSION, RELEASE_DATE);
 } /* print_version() */
 
 /*
@@ -187,31 +187,32 @@ void  print_version(void)
 
 void usage(int retval)
 {
-	if (retval != EXIT_OK)
-		fprintf(stderr, "\nType \"%s --help\" for help screen. Returning with value %d.\n", progname, retval);
-	else {
-		fprintf(stdout, "\n");
-		print_version();
-		fprintf(stdout,
-			"\n"
-			"Usage: %s [options]\n"
-			"\n"
-			"Options:\n"
-			"\n"
-			"-h, --help     Show this help screen and exit gracefully\n"
-			"-V, --version  Display version information\n"
+    if (retval != EXIT_OK)
+        fprintf(stderr, "\nType \"%s --help\" for help screen. Returning with value %d.\n", progname, retval);
+    else {
+        fprintf(stdout, "\n");
+        print_version();
+        fprintf(stdout,
+            "\n"
+            "Usage: %s [options]\n"
+            "\n"
+            "Options:\n"
+            "\n"
+            "-h, --help     Show this help screen and exit gracefully\n"
+            "-V, --version  Display version information\n"
 #ifdef C_LICENSE
-			"    --license  Print the software license\n"
+            "    --license  Print the software license\n"
 #endif
-			"\n"
-			"Undocumented options (May disappear in future versions):\n"
-			"\n"
-			"    --debug    Print lots of annoying debug information\n"
-			"\n", progname
-		);
-	}
+            "\n"
+            "Undocumented options (May disappear in future versions):\n"
+            "\n"
+            "    --debug    Print lots of annoying debug information\n"
+            "\n", progname
+        );
+    }
 
-	exit(retval);
+    exit(retval);
 } /* usage() */
 
+/* vim: set ts=4 sw=4 sts=4 et fo+=w fenc=UTF-8 : */
 /***** End of file $Id$ *****/
