@@ -1,7 +1,9 @@
 
 /*
- * Skriver ut alle gyldige norske personnummer på angitte datoer
- * $Id: personnr.c,v 1.3.2.8 2004/02/28 02:34:14 sunny Exp $
+ * Kontrollerer om norske personnumre er gyldige og kan også skrive ut alle
+ * gyldige norske personnumre på angitte datoer.
+ *
+ * $Id: personnr.c,v 1.3.2.9 2004/02/28 02:50:10 sunny Exp $
  *
  * Tegnsett brukt i denne fila: UTF-8
  *
@@ -59,7 +61,7 @@
  */
 
 #define VERSION   "1.12"
-#define RCS_DATE  "$Date: 2004/02/28 02:34:14 $"
+#define RCS_DATE  "$Date: 2004/02/28 02:50:10 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,7 +74,7 @@
 #define EXIT_OK     0
 #define EXIT_ERROR  1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.8 2004/02/28 02:34:14 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.9 2004/02/28 02:50:10 sunny Exp $";
 
 int lovlig_personnr(char *);
 char *persnr(char *);
@@ -301,17 +303,10 @@ int process_personnr(char *buf)
 
 void usage(int retval)
 {
-	/* Send hjelpen til stdout {{{ */
-	int charnum; /* Pynteting. */
-
-	putchar('\n');
-	charnum = printf("%s ver. %s (%s) -- (C)opyleft Øyvind A. Holm <sunny@sunbase.org>", progname, VERSION, RCS_DATE);
-	putchar('\n');
-
-	for (; charnum; charnum--)
-		putchar('-'); /* Tar ikke UTF-8 så voldsomt godt, men vi overlever det. */
-
+	/* Send hjelpen til stdout og avslutt {{{ */
 	printf(
+		"personnr ver. %s (%s)\n"
+		"(C)opyleft Øyvind A. Holm <sunny@sunbase.org>\n"
 		"\n"
 		"Bruk: %s [personnummer|fødselsdato [...]]\n"
 		"\n"
@@ -329,7 +324,7 @@ void usage(int retval)
 		"Programlisens: GNU General Public License, se fila COPYING for detaljer\n"
 		"eller les lisensen på <http://www.gnu.org/copyleft/gpl.html>.\n"
 		"\n"
-		, progname
+		, VERSION, RCS_DATE, progname
 	);
 
 	exit(retval);
@@ -337,4 +332,4 @@ void usage(int retval)
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.8 2004/02/28 02:34:14 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.9 2004/02/28 02:50:10 sunny Exp $ */
