@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #========================================================================
-# $Id: hf,v 1.16 2004/02/10 16:12:42 sunny Exp $
+# $Id: hf,v 1.17 2004/02/28 08:19:59 sunny Exp $
 # Formatterer HTML-source med TAB’er
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
@@ -86,8 +86,8 @@ LINE: while (<>) {
 	} else {
 		print;
 	}
-	$is_pre = 1 if ($Line =~ /<(pre|script|style)\b.*>/i);
-	$is_pre = 0 if ($Line =~ m!</(pre|script|style)>!i);
+	$is_pre = 1 if ($Line =~ /<(pre|script|style|rdf:RDF)\b.*>/i);
+	$is_pre = 0 if ($Line =~ m!</(pre|script|style|rdf:RDF)>!i);
 	# }}}
 }
 
@@ -112,4 +112,4 @@ END
 	# }}}
 }
 
-# End of file $Id: hf,v 1.16 2004/02/10 16:12:42 sunny Exp $
+# End of file $Id: hf,v 1.17 2004/02/28 08:19:59 sunny Exp $
