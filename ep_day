@@ -1,26 +1,42 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: ep_day,v 1.4 2003/09/27 03:13:44 sunny Exp $
+# $Id: ep_day,v 1.5 2004/02/14 20:42:52 sunny Exp $
 # Samler en masse tidspunkter i epoch-format på for eksempel samme dag eller
 # hver time. Forventer antall sekunder siden 19700101T000000Z først på linja.
 #==============================================================================
 
 use strict;
+use Getopt::Std;
 
 $| = 1;
 
-my $Period = 1;
+our ($opt_d, $opt_h, $opt_w) =
+    (     0,      0,      0);
+
+getopts('d:hw:');
+
+my $Period = 0;
 my %Data = ();
-my $Lowest = 999_999_999_999_999_999; # Hm. Æ sei ikkje meir.
+my $Lowest = 4_294_967_295; # Hm. Æ sei ikkje meir. 2³²-1
 my $Highest = 0;
+
+$opt_h && usage(0);
 
 if (defined($ARGV[0]) && !($ARGV[0] =~ /[^0-9]/)) {
 	$Period = $ARGV[0];
 	shift;
-} else {
-	$Period = 86400;
 }
+
+if ($opt_d =~ /^\d+$/) {
+	$Period += $opt_d * 86400;
+}
+
+if ($opt_w =~ /^\d+$/) {
+	$Period += $opt_w * 7*86400;
+}
+
+$Period || ($Period = 86400);
 
 while (<>) {
 	if (/^(\d+)/) {
@@ -51,5 +67,27 @@ if (open(TmpFP, "| sort -n")) {
 	}
 	close(TmpFP);
 } else {
-	die("Klarte ikke å åpne pipe: $!");
+	die("Can’t open pipe: $!");
 }
+
+sub usage {
+	# {{{
+	my $Retval = shift;
+	print <<END;
+
+Syntax: $0 [options] [file [more files [even more files [you get the point]]]]
+
+Options:
+
+  -d N  Use N days as period
+  -n    Generate data up to current time, guarantees complete periods,
+        but data values may vary when executed at different timepoints.
+  -w N  Use N weeks as period
+
+
+END
+	exit $Retval;
+	# }}}
+}
+
+# End of file $Id: ep_day,v 1.5 2004/02/14 20:42:52 sunny Exp $
