@@ -3,15 +3,26 @@ package suncgi;
 require Exporter;
 @ISA = qw(Exporter);
 
-@EXPORT = qw(content_type curr_local_time curr_utc_time deb_pr
-escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
-HTMLwarn increase_counter log_access print_header tab_print tab_str Tabs
-url_encode print_doc sec_to_string);
+@EXPORT = qw{
+	content_type curr_local_time curr_utc_time deb_pr
+	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
+	HTMLwarn increase_counter log_access print_header tab_print tab_str
+	Tabs url_encode print_doc sec_to_string
+	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $Url $Utv $Debug
+	$doc_lang $doc_align $doc_width
+	$debug_file $error_file $log_dir
+	$DTD_HTML4FRAMESET $DTD_HTML4LOOSE $DTD_HTML4STRICT
+	@rcs_array
+};
 
-@EXPORT_OK = qw(print_footer);
+@EXPORT_OK = qw{
+	print_footer
+};
 # %EXPORT_TAGS = tag => [...];  # define names for sets of symbols
 
 use Fcntl ':flock';
+use strict;
+no strict 'vars';
 
 use subs qw{
 	content_type curr_local_time curr_utc_time deb_pr
@@ -26,7 +37,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $>
+S<$Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -124,7 +135,7 @@ Dette er som kjent bare lov i HTML når minst I<$DTD_HTML4LOOSE> brukes.
 Beslektet med I<${main::Debug}>, men hvis denne er definert, sitter man lokalt og tester.
 Ikke helt klargjort hvordan disse to skal fungere i forhold til hverandre, men når sida ligger offentlig, skal hverken I<${main::Debug}> eller I<${main::Utv}>
 
-=item I<${main::Border}>
+=item I<${suncgi::Border}>
 
 Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
@@ -139,15 +150,19 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 # use Time::Local; # curr_local_time() sin greie.
 
 $Tabs = "";
+$Utv = 0 unless defined($Utv);
+$Debug = 0 unless defined($Debug);
+$curr_utc = time;
 
-$rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $';
-$rcs_id = '$Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $';
-$rcs_date = '$Date: 2000/09/01 10:49:07 $';
+$rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $';
+$rcs_id = '$Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $';
+$rcs_date = '$Date: 2000/09/07 10:48:20 $';
+# @rcs_array = ();
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-$cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $ GD';
-$cvs_id = '$Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $ GD';
-$cvs_date = '$Date: 2000/09/01 10:49:07 $ GD';
+$cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $ GD';
+$cvs_id = '$Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $ GD';
+$cvs_date = '$Date: 2000/09/07 10:48:20 $ GD';
 
 $this_counter = "";
 
@@ -155,12 +170,28 @@ $DTD_HTML4FRAMESET = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN
 $DTD_HTML4LOOSE = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n};
 $DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n};
 
+$STD_LANG = "no";
 $STD_BACKGROUND = "";
-$STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
+$STD_CHARSET = "ISO-8859-1"; # Hvis $CharSet ikke er definert
 $STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
-$STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
+$STD_DOCWIDTH = '80%'; # Hvis ikke $doc_width er spesifisert
 $STD_HTMLDTD = $DTD_HTML4LOOSE;
 $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
+
+$CharSet = $STD_CHARSET;
+$doc_width = $STD_DOCWIDTH;
+$doc_align = $STD_DOCALIGN;
+$doc_lang = $STD_LANG;
+$Border = 0;
+$WebMaster = "";
+$Url = "";
+$debug_file = "";
+$error_file = "";
+
+$Footer = <<END;
+	</body>
+</html>
+END
 
 ###########################################################################
 #### Subrutiner
@@ -183,11 +214,11 @@ C<application/x-tar> og lignende.
 sub content_type {
 	my $ContType = shift;
 	my $loc_charset;
-	if (length($main::CharSet)) {
-		$loc_charset = $main::CharSet;
+	if (length($CharSet)) {
+		$loc_charset = $CharSet;
 	} else {
 		$loc_charset = $STD_CHARSET;
-		HTMLwarn("content_type(): \$main::CharSet udefinert. Bruker \"$loc_charset\".");
+		HTMLwarn("content_type(): \$CharSet udefinert. Bruker \"$loc_charset\".");
 	}
 	if (length($ContType)) {
 		print "Content-Type: $ContType; charset=$loc_charset\n\n" ;
@@ -281,13 +312,13 @@ B<FIXME:> Mer pod seinere.
 =cut
 
 sub deb_pr {
-	return unless ${main::Debug};
+	return unless $Debug;
 	my $Msg = shift;
 	my $err_msg = "";
-	if (-e ${main::debug_file}) {
-		open(DebugFP, "+<${main::debug_file}") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
+	if (-e $debug_file) {
+		open(DebugFP, "+<$debug_file") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
 	} else {
-		open(DebugFP, ">${main::debug_file}") || ($err_msg = "Klarte ikke å lage debugfila");
+		open(DebugFP, ">$debug_file") || ($err_msg = "Klarte ikke å lage debugfila");
 	}
 	unless(length($err_msg)) {
 		flock(DebugFP, LOCK_EX);
@@ -307,7 +338,7 @@ ${DTD_HTML4STRICT}
 		<h1>Intern feil i deb_pr()</h1>
 		<p>${err_msg}: <samp>$!</samp>
 		<p>Litt info:
-		<p>\${main::Debug} = "${main::Debug}"
+		<p>\$Debug = "$Debug"
 		<br>\${main::debug_file} = "${main::debug_file}"
 		<br>\${main::error_file} = "${main::error_file}"
 	</body>
@@ -384,14 +415,18 @@ B<FIXME:> Denne må utvides litt med flere Content-type'er.
 sub get_cgivars {
 	local($in, %in);
 	local($name, $value);
+	$in = "";
+	my $user_method = defined($ENV{REQUEST_METHOD}) ? $ENV{REQUEST_METHOD} : "";
+	# length($user_method) || ($user_method = "");
 
+	# length($ENV{REQUEST_METHOD}) ||
 	my $has_args = ($#ARGV > -1) ? 1 : 0;
 	if ($has_args) {
 		$in = $ARGV[0];
-	} elsif (($ENV{REQUEST_METHOD} eq 'GET') ||
-	         ($ENV{REQUEST_METHOD} eq 'HEAD')) {
+	} elsif (($user_method eq 'GET') ||
+	         ($user_method eq 'HEAD')) {
 		$in = $ENV{QUERY_STRING};
-	} elsif ($ENV{REQUEST_METHOD} eq 'POST') {
+	} elsif ($user_method eq 'POST') {
 		if ($ENV{CONTENT_TYPE} =~ m#^application/x-www-form-urlencoded$#i) {
 			length($ENV{CONTENT_LENGTH}) || HTMLdie("Ingen Content-Length vedlagt POST-forespørselen.");
 			read(STDIN, $in, $ENV{CONTENT_LENGTH});
@@ -400,8 +435,8 @@ sub get_cgivars {
 			exit;
 		}
 	} else {
-		if (length($ENV{REQUEST_METHOD})) {
-			HTMLdie("Programmet ble kalt med ukjent REQUEST_METHOD: \"$ENV{REQUEST_METHOD}\"");
+		if (length($user_method)) {
+			HTMLdie("Programmet ble kalt med ukjent REQUEST_METHOD: \"$user_method\"");
 			exit;
 		}
 	}
@@ -463,7 +498,7 @@ sub HTMLdie {
 
 	# &deb_pr(__LINE__ . ": HDIE: $Msg");
 	$Title || ($Title = "Intern feil");
-	if (!${main::Debug} && !${main::Utv}) {
+	if (!$Debug && !$Utv) {
 		$msg_str = "<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli fikset snart.";
 	} else {
 		chomp($msg_str = $Msg);
@@ -490,11 +525,19 @@ Content-type: text/html
 			-->
 		</style>
 		<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
-		<meta name="author" content="${main::WebMaster}">
+END
+	print(<<END) if defined($WebMaster);
+		<meta name="author" content="$WebMaster">
+END
+	print <<END;
 		<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
 		<meta name="description" content="CGI error">
 		<meta name="date" content="$curr_utc">
-		<link rev="made" href="mailto:${main::WebMaster}">
+END
+	print(<<END) if defined($WebMaster);
+		<link rev="made" href="mailto:$WebMaster">
+END
+	print <<END;
 	</head>
 	<body>
 		<h1>$Title</h1>
@@ -522,12 +565,11 @@ END
 
 =head2 HTMLwarn()
 
-En lightversjon av I<HTMLdie()>, den skriver kun til
-I<${main::error_file}>. Når det oppstår feil, men ikke trenger å rive ned
-hele systemet. Brukes til småting som tellere som ikke virker og sånn.
+En lightversjon av I<HTMLdie()>, den skriver kun til I<${main::error_file}>.
+Når det oppstår feil, men ikke trenger å rive ned hele systemet.
+Brukes til småting som tellere som ikke virker og sånn.
 
-B<FIXME:> Muligens det burde vært lagt inn at ${main::WebMaster} fikk mail om
-hver gang ting går på trynet.
+B<FIXME:> Muligens det burde vært lagt inn at $WebMaster fikk mail hver gang ting går på trynet.
 
 =cut
 
@@ -537,7 +579,7 @@ sub HTMLwarn {
 
 	# &deb_pr(__LINE__ . ": WARN: $Msg");
 	# Gjør det så stille og rolig som mulig.
-	if (${main::Utv} || ${main::Debug}) {
+	if ($Utv || $Debug) {
 		print_header("CGI warning");
 		tab_print("<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n");
 	}
@@ -718,7 +760,7 @@ sub print_doc {
 	$doc_val{lang} || HTMLwarn("$file_name: Mangler lang");
 	$doc_val{id} || HTMLwarn("$file_name: Mangler id");
 	# $doc_val{} || HTMLwarn("$file_name: Mangler ");
-	if (${main::Debug}) {
+	if ($Debug) {
 		print_header("er i print_doc"); # debug
 		while (($act_name,$act_time) = each %doc_val) {
 			print("<br>\"$act_name\"\t\"$act_time\"\n");
@@ -749,13 +791,13 @@ parameterne:
 =item I<$footer_width>
 
 Bredden på footeren i pixels. Hvis den ikke er definert, brukes
-I<${main::doc_width}>. Og hvis den heller ikke er definert, brukes
+I<${doc_width}>. Og hvis den heller ikke er definert, brukes
 I<$STD_DOCWIDTH> som default.
 
 =item I<$footer_align>
 
 Kan være I<left>, I<center> eller I<right>. Brukes av E<lt>tableE<gt>.
-Hvis udefinert, brukes I<${main::doc_align}>. Hvis den ikke er definert,
+Hvis udefinert, brukes I<$doc_align>. Hvis den ikke er definert,
 brukes I<$STD_DOCALIGN>.
 
 =item I<$no_vh>
@@ -776,10 +818,10 @@ sub print_footer {
 
 	# &deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
 	unless (length($footer_width)) {
-		$footer_width = length(${main::doc_width}) ? ${main::doc_width} : $STD_DOCWIDTH;
+		$footer_width = length($doc_width) ? $doc_width : $STD_DOCWIDTH;
 	}
 	unless (length($footer_align)) {
-		$footer_align = length(${main::doc_align}) ? ${main::doc_align} : $STD_DOCALIGN;
+		$footer_align = length($doc_align) ? $doc_align : $STD_DOCALIGN;
 	}
 	$no_vh = 0 unless length($no_vh);
 	$no_end = 0 unless length($no_end);
@@ -791,7 +833,7 @@ sub print_footer {
 	# FIXME: Hardkoding av URL her pga av at ${main::Url} har skifta navn.
 	# FIXME: I resten av HTML'en er det brukt <div align="center">.
 	tab_print(<<END);
-<table width="$footer_width" cellpadding="0" cellspacing="0" border="${main::Border}" align="$footer_align">
+<table width="$footer_width" cellpadding="0" cellspacing="0" border="$Border" align="$footer_align">
 	<tr>
 		<td colspan="3">
 			<hr>
@@ -799,7 +841,7 @@ sub print_footer {
 	</tr>
 	<tr>
 		<td align="center">
-			<table cellpadding="0" cellspacing="0" border="${main::Border}">
+			<table cellpadding="0" cellspacing="0" border="${suncgi::Border}">
 				<tr>
 					<td align="center">
 						<small>$rcs_str</small>
@@ -892,40 +934,42 @@ Parametere i print_header():
     Husk spacen i begynnelsen.
  6. HTML-versjon. F.eks. $DTD_HTML4STRICT. Default er $DTD_HTML4LOOSE.
  7. Språk. Default "no".
+ 8. no_body. 0 = Skriv <body>, 1 = Ikke skriv.
 
 =cut
 
 sub print_header {
-	local($DocTitle, $Refresh, $style_sheet, $head_script, $body_attr, $html_version, $doc_lang) = @_;
+	local($DocTitle, $Refresh, $style_sheet, $head_script, $body_attr, $html_version, $head_lang, $no_body) = @_;
 	# &deb_pr(__LINE__ . ": Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
 	if ($header_done) {
 		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \$header_done = $header_done");
 		print("\n<!-- debug: print_header($DocTitle) selv om \$header_done -->\n");
 		return;
 	}
-	$doc_lang = "no" unless length($doc_lang);
-	$html_version = $DTD_HTML4LOOSE unless length($html_version);
-	content_type("text/html");
+	$head_lang = $STD_LANG unless defined($head_lang);
+	$html_version = $DTD_HTML4LOOSE unless defined($html_version);
+	$no_body = 0 unless defined($no_body);
+	$body_attr = "" unless defined($body_attr);
 	my $DocumentTime = curr_utc_time();
-	$RefreshStr = (length($Refresh)) ? qq{<meta http-equiv="refresh" content="$Refresh" url="${main::Url}">} : "";
-	if (length(${main::user_background})) {
-		if (${main::user_background} =~ /\.(jpg|jpeg|png|gif)$/i) {
-			$BodyStr = "\t</head>\n\t<body background=\"${main::user_background}\"$body_attr>\n";
-			$BackgroundStr = "white";
-		} else {
-			$BackgroundStr = ${main::user_background};
-			$BodyStr = qq{</head>\n<body bgcolor="$BackgroundStr"$body_attr>\n};
-		}
-	} else {
-		$BackgroundStr = "white";
-		$BodyStr = qq{</head>\n<body bgcolor="$BackgroundStr"$body_attr>\n};
-	}
+	# $RefreshStr = "" unless defined($RefreshStr);
+	$RefreshStr = (defined($RefreshStr)) ? qq{<meta http-equiv="refresh" content="$Refresh" url="$Url">} : "";
+	# Fjas med $BodyStr
+	# begin-base64 664 -
+	# H4sIAJS7tTkCA62OvQ6CMBSFZ3iKhnSARXYQB1/BlYQUWkoRWyglxgA+u+VH
+	# BBKd3G5yvnvOZ7AU2AXhVGU2xCKJYpRcqRQNx44DWtMwBgC2N8S45zU1kSui
+	# B8ETuOHBzkva5SWhXclpR1nqQJdN3wY8C/y4KAkCYIXq6GYE4VPI9RnrAHzK
+	# gtD6NqOTAY6QUlL/Wv5UvABz/T1jioxhD0hRk7fAjvu24u90q6pddGdZmohC
+	# yMDadm7txp7eXDv8Uv3PYG++ANeynMjJAQAA
+	# ====
+
+	content_type("text/html");
 	print $html_version;
-	print "\n<html lang=\"$doc_lang\">\n";
+	print "\n<html lang=\"$head_lang\">\n";
 	Tabs(1);
+	$head_script = "" unless defined($head_script);
 	chomp($head_script);
-	if (scalar(@main::rcs_array)) {
-		foreach(@main::rcs_array) {
+	if (defined(@rcs_array)) {
+		foreach(@rcs_array) {
 			tab_print("<!-- $_ -->\n");
 		}
 	} else {
@@ -938,22 +982,26 @@ END
 <head>
 	<title>$DocTitle</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
-	$RefreshStr
-	<meta name="author" content="&Oslash;yvind A. Holm">
-	<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
-	<meta name="date" content="$DocumentTime">
-	<link rev="made" href="mailto:${main::WebMaster}">
 END
 	Tabs(1);
-	# print ("Tabs = $Tabs\n");
-	tab_print(<<END);
-$style_sheet
-$head_script
+	tab_print($RefreshStr) if length($RefreshStr);
+	tab_print <<END;
+<meta name="author" content="&Oslash;yvind A. Holm">
+<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
+<meta name="date" content="$DocumentTime">
 END
+	tab_print(<<END) if length($WebMaster);
+<link rev="made" href="mailto:$WebMaster">
+END
+	# tab_print ("Tabs = Tabs\n");
+	tab_print($style_sheet) if defined($style_sheet);
+	tab_print($head_script) if defined($head_script);
 	Tabs(-1);
-	# chomp($head_script);
-	tab_print($BodyStr);
-	Tabs(1);
+	tab_print("</head>\n");
+	unless ($no_body) {
+		tab_print("<body$body_attr>\n");
+		Tabs(1);
+	}
 	$header_done = 1;
 } # print_header()
 
@@ -965,8 +1013,6 @@ END
 Skriver ut på samme måte som print, men setter inn I<$Tabs> først på
 hver linje. Det er for å få riktige innrykk. Det forutsetter at
 I<$Tabs> er oppdatert til enhver tid.
-
-B<FIXME:> Legg inn konvertering av tegn > 0x7f til entities.
 
 =cut
 
@@ -985,7 +1031,7 @@ sub tab_print {
 =head2 tab_str()
 
 Fungerer på samme måte som I<tab_print()>, men returnerer en streng med
-innholdet istedenfor å skrive det ut. Mulignes det burde vært implementert
+innholdet istedenfor å skrive det ut. Muligens det burde vært implementert
 i I<tab_print()> på en eller annen måte, men blir ikke det tungvint?
 
 Vi lar det være sånn foreløpig.
@@ -1088,4 +1134,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $ ####
