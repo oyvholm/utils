@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: nettradio,v 1.1 2002/04/15 02:30:57 sunny Exp $
+# $Id: nettradio,v 1.1.2.1 2002/04/18 16:06:43 sunny Exp $
 # Spiller av nettradioer -- eller rettere sagt sender en
 # .ogg-strøm som kan lagres og tailes eller trøkkes inn i ogg123.
 

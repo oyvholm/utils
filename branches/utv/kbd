@@ -1,5 +1,5 @@
 #!/bin/sh
 
-# $Id: kbd,v 1.1 2002/04/15 07:56:01 sunny Exp $
+# $Id: kbd,v 1.1.2.1 2002/04/18 16:06:42 sunny Exp $
 
 kbdrate -r 30 -d 250

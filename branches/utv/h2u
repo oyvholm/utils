@@ -1,7 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=============================================================================
-# $Id: h2u,v 1.2.2.2 2002/03/16 20:41:00 sunny Exp $
+# $Id: h2u,v 1.2.2.3 2002/04/18 16:06:42 sunny Exp $
 # Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to UTF-8.
 #
 # Options:
@@ -11,7 +11,7 @@
 #=============================================================================
 
 use strict;
-require 'getopts.pl';
+require 'getopts.pl'; # FIXME: Generates a warning when command line option is used and -w is specified in the shebang.
 
 $main::opt_l = 0;
 
