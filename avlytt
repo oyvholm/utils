@@ -23,6 +23,15 @@ elif [ -e /nett2.mrk ]; then
     -e 'Cisco_[1-9].* -> ' \
     -e '(ns\.online\.no|194\.248\.216\.20|nett2\.ba\.no) -> (ns\.online\.no|194\.248\.216\.20|nett2\.ba\.no)' \
     -e ' HTTP Continuation'
+elif [ -e /sunba.mrk ]; then
+  tethereal -t ad -l -q -f '' $* | \
+  egrep -v \
+    -e '32\.10\.69\.18[01] .*TCP .*ssh' \
+    -e '(sunba\.sunbase\.org|ba0614|badomain.banett.ba.no) -> (ba0614|sunba\.sunbase\.org|badomain.banett.ba.no)' \
+    -e '(Intel|INTEL)_.*(Intel ANS |Ethernet II)' \
+    -e 'Cisco_[1-9].* -> ' \
+    -e ' ff:ff:ff:ff:ff:ff ' \
+    -e '0\.ffffffffffff'
 fi
 
 # vim: set ts=2 sw=2 sts=2 et :
