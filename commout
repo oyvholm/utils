@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Kommenterer ut stdin.
-# $Id: commout,v 1.9 2003/04/29 14:02:37 sunny Exp $
+# $Id: commout,v 1.10 2003/06/06 12:12:50 sunny Exp $
 
 $prog_name = "commout";
 
@@ -19,7 +19,7 @@ if ($#ARGV > -1) {
 
 length($ARGV[1]) && ($spc_str = " ");
 
-$is_html && print("<!--$spc_str" . $ARGV[1] . " \x7B\x7B\x7B\n") ||
+$is_html && print("<!--$spc_str" . $ARGV[1] . " CO: \x7B\x7B\x7B\n") ||
 $is_pre && printf("%s<pre>\n", $is_re ? "" : "<p>") ||
 $is_c && printf("/*$spc_str" . $ARGV[1] . "\n");
 
@@ -65,4 +65,4 @@ END
 	exit($Retval);
 } # print_help()
 
-#### End of file $Id: commout,v 1.9 2003/04/29 14:02:37 sunny Exp $ ####
+#### End of file $Id: commout,v 1.10 2003/06/06 12:12:50 sunny Exp $ ####
