@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# $Id: lag_vim,v 1.1 2004/02/09 01:02:54 sunny Exp $
+
+ping -c1 cvs.vim.sf.net && update_vim-clean
+mincvs_vim
+cd ~/src/other/vim/vim || { echo "cd ~/src/other/vim/vim: Ånn ðe tryn." >&2; exit 1; }
+if [ "$HNAME" = "petronas" ]; then
+	vimdir=$HOME/local/prg/vim
+	./configure --prefix=$vimdir --with-features=huge --enable-multibyte
+else
+	vimdir=/usr/local/prg/vim
+	./configure --prefix=$vimdir --with-features=huge --with-x --enable-gui=gtk --enable-multibyte
+fi
+make
+echo Hvis det gikk bra, er det på tide å bli root.
+echo Ordnes seinere.
