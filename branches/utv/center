@@ -1,15 +1,16 @@
 #!/usr/bin/perl -w
 
 #==================================================
-# $Id: center,v 1.1.2.1 2002/06/17 12:23:22 sunny Exp $
+# $Id: center,v 1.1.2.2 2003/08/30 18:54:21 sunny Exp $
 # Centers text
 #==================================================
 
 use strict;
 use Getopt::Std;
 
-our($opt_w, $opt_h);
-getopt('hw:');
+our ($opt_w, $opt_h) =
+    (    "",      0);
+getopts('hw:');
 
 if ($opt_h) {
 	print(<<END);
