@@ -1,51 +1,57 @@
 #!/bin/bash
 
-# Made by sunny@dataguard.no
+# $Id: mkt,v 1.2 1999/03/29 13:50:36 sunny Exp $
+# (C)opyleft 1999 sunny@tritech.no
+# License: GNU GPL
 
-if [ "x$1" = "x--help" -o "x$1" = "x-h" ]; then # WTF does bash complain here???????
-  echo Usage: $0 name_without_the_tar_gz_extension >&2
-  echo >&2
-  echo Creates a .tar.gz file of current directory tree and places it in >&2
-  echo parent directory. If nothing is specified, current dir is used. >&2
-  exit 1
+if [ "x$1" = "x--help" -o "x$1" = "x-h" ]; then
+	echo
+	echo Usage: $0 name_without_the_tar_gz_extension
+	echo
+	echo Creates a .tar.gz file of current directory tree and places it in
+	echo parent directory. If nothing is specified, current dir is used.
+	echo
+	exit 1
 fi
 
 _can_erase=0
 if [ $# -eq 0 ]; then
-  _pwd=`pwd`
-  _prefix=`basename $_pwd`
+	_pwd=`pwd`
+	_prefix=`basename $_pwd`
 else
-  _prefix=`basename $1`
-  _can_erase=1
+	_prefix=`basename $1`
+	_can_erase=1
 fi
 
 if [ -e ../$_prefix.tar -o -e ../$_prefix.tar.gz ]; then
-  echo $0: ../$_prefix.tar or ../$_prefix.tar.gz already exists >&2
-  exit 1
+	echo $0: ../$_prefix.tar or ../$_prefix.tar.gz already exists >&2
+	exit 1
 fi
 
 if [ -e ../$_prefix -a ! ../$_prefix -ef . ]; then
-  echo $0: ../$_prefix and current dir are not the same >&2
-  exit 1
+	echo $0: ../$_prefix and current dir are not the same >&2
+	exit 1
 fi
 
 if [ -e ../$_prefix -a ! -d ../$_prefix ]; then
-  echo $0: ../$_prefix: Not a directory >&2
-  exit 1
+	echo $0: ../$_prefix: Not a directory >&2
+	exit 1
 fi
 
 if [ ! -e ../$_prefix ]; then
-  cp -a . ../$_prefix || { echo "$0: Error running \"cp -a . ../$_prefix\"" >&2; exit 1 }
+	cp -a . ../$_prefix || { echo "$0: Error running \"cp -a . ../$_prefix\"" >&2; exit 1 }
 fi
 
 if [ ! -d ../$_prefix ]; then
-  echo $0: Unable to create directory ../$_prefix >&2
-  exit 1
+	echo $0: Unable to create directory ../$_prefix >&2
+	exit 1
 fi
 
 cd .. || { echo "$0: Cannot \"cd ..\"" >&2; exit 1 }
 tar cf $_prefix.tar $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\"" >&2; exit 1 }
 gzip -vN $_prefix.tar || { echo "$0: Error during \"gzip -vN $_prefix.tar\"" >&2; exit 1 }
 if [ "$_can_erase" -eq "1" ]; then
-  rm -rf $_prefix || { echo "$0: $_prefix: Can't remove directory" >&2; exit 1 }
+	rm -rf $_prefix || { echo "$0: $_prefix: Can't remove directory" >&2; exit 1 }
 fi
+
+#### End of file $Id: mkt,v 1.2 1999/03/29 13:50:36 sunny Exp $ ####
