@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $>
+S<$Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -128,9 +128,12 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 ###########################################################################
 
 my $Tabs = "";
-my $rcs_date = '$Date: 1999/04/28 17:14:03 $';
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $';
-my $rcs_id = '$Id: tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $';
+my $rcs_date = '$Date: 1999/04/29 11:57:44 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $';
+my $rcs_id = '$Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $';
+my $cvs_date = '$Date: 1999/04/29 11:57:44 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $ GD';
+my $cvs_id = '$Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $ GD';
 my $this_counter = "";
 
 my $FALSE = 0;
@@ -931,4 +934,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $ ####
