@@ -3,4 +3,4 @@
 # $Id$
 # Primitiv prompt for screenlogger osv.
 
-export PS1='$(date +"%Y-%m-%d %T") sunny@ba0614:\w$ '
+export PS1='$(date +"%Y-%m-%d %T") \u@\h:\w$ '
