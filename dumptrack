@@ -1,12 +1,19 @@
 #!/bin/sh
 
-# $Id: dumptrack,v 1.3 2003/06/19 10:28:13 sunny Exp $
+# $Id: dumptrack,v 1.4 2003/07/07 10:54:17 sunny Exp $
 # Dumper rådata fra GPS’en.
 
 dir=/home/sunny/src/cvs/gps/tracks/raw/`date +%Y/%m`
 fil=$dir/`u`.track.mayko
 
+rm /home/sunny/tr
+ln -s $dir /home/sunny/tr
+chown -v sunny.sunny /home/sunny/tr
+
 echo Dumper trackdata til "$fil".
+
 [ -d $dir ] || mkdir -p $dir || { echo mkdir $dir: Hm.; exit 1; }
+chown -v sunny.sunny $dir
+
 gpstrans -p/dev/modem -dt -m >$fil
 chown -v sunny.sunny $fil
