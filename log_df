@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: log_df,v 1.3 2003/09/30 06:09:06 sunny Exp $
+# $Id: log_df,v 1.4 2003/10/03 00:25:11 sunny Exp $
 
 logdir=$HOME/log
 
@@ -14,6 +14,6 @@ until mkdir $lockname 2>/dev/null; do
 	exit 1
 done
 
-df `cat $logdir/.disks` | grep / | perl -pe 'my $a = `u`; s/^/$a /;' >>$logdir/df.log
+df `cat $logdir/.disks` | grep / | perl -pe 'chomp(my $a = `date -u +"%Y-%m-%dT%H:%M:%SZ"`); s/^/$a /;' >>$logdir/df.log
 
 rmdir $lockname
