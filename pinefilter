@@ -1,11 +1,15 @@
 #!/bin/sh
 
 # ╔══════════════════════════════════════════════════════════════
-# ║ $Id: pinefilter,v 1.5 2003/08/11 16:15:55 sunny Exp $
+# ║ $Id: pinefilter,v 1.6 2004/01/24 04:57:54 sunny Exp $
 # ║ pine(1) har ikke helt støtte for UTF-8 enda, så meldingene
 # ║ filteres gjennom dette scriptet før visning.
 # ╚══════════════════════════════════════════════════════════════
 
-charset=$1
+if [ "$1" = "" ]; then
+	charset=ISO-8859-1
+else
+	charset=$1
+fi
 
-iconv -f $charset -t utf-8
+recode $charset..utf-8
