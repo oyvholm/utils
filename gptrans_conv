@@ -330,11 +330,11 @@ sub print_entry {
             # Default format used by the author. Yes, the Universe 
             # evolves around him. ☺
             # Seriously, up to "gptrans_conv,v 1.11 2003/08/03 02:35:51 
-            # sunny" the script was only used by myself, and I found 
-            # this format was the easiest to live with — Perl scripts 
-            # and shell utilities made conversion pretty painless. If 
-            # GPX or something other useful is implemented, that will be 
-            # the default.
+            # sunny" (r561) the script was only used by myself, and I 
+            # found this format was the easiest to live with — Perl 
+            # scripts and shell utilities made conversion pretty 
+            # painless. If GPX or something other useful is implemented, 
+            # that will be the default.
             # {{{
             $Lon =~ s/\./$Des/;
             $Lat =~ s/\./$Des/;
