@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# $Id: mk_local_links,v 1.4 2004/03/30 01:30:56 sunny Exp $
+#========================================================================
+# $Id: mk_local_links,v 1.5 2004/04/13 12:06:56 sunny Exp $
 # Lager symlinker i $prefix/man/man?/ og $prefix/{bin,sbin}/ til greier i
 # $prefix/prg/*/
+#========================================================================
 
 prefix=/usr/local
 
@@ -14,22 +16,25 @@ prefix=/usr/local
 # $prefix/man/*/
 for f in `seq 1 9`; do
 	currmandir=$prefix/man/man$f
-	echo "======== $currmandir ========"
+	echo "==== $currmandir ===="
 	[ -d $currmandir ] || mkdir $currmandir || { echo "$0: mkdir $currmandir: Gikk på trynet, kreperer." >&2; exit 1; }
 	cd $currmandir || { echo "$0: cd $currmandir: Klarte ikke å gå dit. Ytterst merkelig. Kreperer for sikkerhets skyld." >&2; exit 1; }
-	find ../../prg -type f | grep /man/ | grep "\\.$f\$" | sort | xargs -i% ln -svf % .
+	find ../../prg -type f | grep /man/ | egrep "\\.$f.?\$" | sort | xargs -i% ln -svf % .
 done
 
 # $prefix/bin/
+echo
 echo ======== $prefix/bin ========
 cd $prefix/bin || { echo "$0: cd $prefix/bin: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
 ln -svf ../prg/*/bin/* .
 
 # $prefix/sbin/
+echo
 echo ======== $prefix/sbin ========
 cd $prefix/sbin || { echo "$0: cd $prefix/sbin: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
 ln -svf ../prg/*/sbin/* .
 
+echo
 echo "======== Leiter etter daue linker... ========"
 cd $prefix || { echo "$0: cd $prefix: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
 find -type l | xargs file | grep "broken symbolic"
