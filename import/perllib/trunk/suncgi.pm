@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $
+# $Id: suncgi.pm,v 1.24 2000/12/12 11:36:14 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -16,7 +16,7 @@ require Exporter;
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn increase_counter log_access print_header tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
-	$query_string
+	$has_args $query_string
 	$log_requests $ignore_double_ip
 	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $base_url $Url
 	$css_default
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.24 2000/12/12 11:36:14 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -181,8 +181,8 @@ sub get_cgivars {
 	# length($user_method) || ($user_method = "");
 
 	# length($ENV{REQUEST_METHOD}) ||
-	my $has_args = ($#ARGV > -1) ? 1 : 0;
-	if ($has_args) {
+	$suncgi::has_args = ($#ARGV > -1) ? 1 : 0;
+	if ($suncgi::has_args) {
 		$in = $ARGV[0];
 	} elsif (($user_method =~ /^get$/i) ||
 	         ($user_method =~ /^head$/i)) {
@@ -616,7 +616,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $>
+S<$Id: suncgi.pm,v 1.24 2000/12/12 11:36:14 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1007,4 +1007,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.24 2000/12/12 11:36:14 sunny Exp $ ####
