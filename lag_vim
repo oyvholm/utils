@@ -1,11 +1,19 @@
 #!/bin/bash
 
+#=======================================================================
 # $Id$
-# Mekker ihop ny, fin Vim.
+# Mekker ihop ny, fin Vim. Hvis -x spesifiseres som første parameter, 
+# lages gvim også med X og saker. Standard oppførsel er å ikke lage med 
+# X, for det er som kjent et delay i begynnelsen hvis det er manko på 
+# X-forbindelse, og Vimmene har en tendens til å daue når X stoppes.
+#=======================================================================
 
 lv_lockdir=$HOME/.lag_vim.LOCK
 mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
 
+[ "$1" = "-x" ] && { med_x=1; }
+
+echo ======== update_vim-clean
 update_vim-clean
 
 echo ======== mincvs_vim
@@ -23,8 +31,8 @@ if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ];
 	[ -e $HOME/.vagabond.mrk ] && vim_size=normal
 else
 	vimdir=/usr/local/prg/vim
-	if [ -e /ba0614-woody.mrk -o -e /carmbb.mrk ]; then
-		echo ======== Er på ba0614 eller carmbb, lag feita Vim med X og gode greia
+	if [ "$med_x" = "1" ]; then
+		echo ======== Fikk beskjed om å lage Vim med X og gode greia
 		x_flags="--with-x --enable-gui=gtk"
 	fi
 fi
@@ -48,7 +56,4 @@ echo "cd $vimcompdir && rm -rf $vimdir && make install && cp -vp src/vim $vimdir
 
 rmdir $lv_lockdir
 
-# echo $installcmd
-# echo -n Trykk Enter for å gjøre det, eller CTRL-C for å feige ut...
-# read
-# $installcmd
+# vim: set ts=4 sw=4 sts=4 fenc=utf8 :
