@@ -1,15 +1,27 @@
 #!/bin/sh
 
-# $Id: afvctl,v 1.2 2001/05/14 15:24:32 sunny Exp $
+# $Id: afvctl,v 1.3 2001/05/20 18:37:51 sunny Exp $
 # Starter/stopper/viser status for alle afv'er
+
+currstop=$AFVROOT$(/bin/pwd)/stop
 
 case "$1" in
 	start)
 		echo -n Starter afv...
-		rm -f $AFVROOT/stop
+		rm -f $currstop
 		retval=$?
 	;;
 	stop)
+		echo -n Stopper afv...
+		touch $currstop
+		retval=$?
+	;;
+	startall)
+		echo -n Starter alle afv...
+		rm -f $AFVROOT/stop
+		retval=$?
+	;;
+	stopall)
 		echo -n Stopper afv...
 		touch $AFVROOT/stop
 		retval=$?
