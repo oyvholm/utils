@@ -7,14 +7,14 @@ dest=/home/sunny/src/svn/svnlog/trunk
 
 for f in *; do
 	echo ========== $f
-	cl $SR/$f >$dest/$f.log
+	svn log -v --xml $SR/$f >$dest/$f.log
 done
-cl http://svn.sunbase.org/repos/norwegian_vim >$dest/norwegian_vim.log
-cl http://svn.sunbase.org/repos/sandbox >$dest/sandbox.log
-cl http://svn.sunbase.org/repos/svnbook_nb >$dest/svnbook_nb.log
-cl http://svn.sunbase.org/repos/ssark >$dest/ssark.log
-cl http://svn.sunbase.org/repos/shwiki >$dest/shwiki.log
-cl http://svn.sunbase.org/repos/svnutils >$dest/svnutils.log
-cl http://svn.sunbase.org/repos/duppy >$dest/duppy.log
-cl http://svn.sunbase.org/repos/sunny >$dest/pubsunny.log
+svn log -v --xml http://svn.sunbase.org/repos/norwegian_vim >$dest/norwegian_vim.log
+svn log -v --xml http://svn.sunbase.org/repos/sandbox >$dest/sandbox.log
+svn log -v --xml http://svn.sunbase.org/repos/svnbook_nb >$dest/svnbook_nb.log
+svn log -v --xml http://svn.sunbase.org/repos/ssark >$dest/ssark.log
+svn log -v --xml http://svn.sunbase.org/repos/shwiki >$dest/shwiki.log
+svn log -v --xml http://svn.sunbase.org/repos/svnutils >$dest/svnutils.log
+svn log -v --xml http://svn.sunbase.org/repos/duppy >$dest/duppy.log
+svn log -v --xml http://svn.sunbase.org/repos/sunny >$dest/pubsunny.log
 
