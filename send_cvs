@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: send_cvs,v 1.5 2004/04/19 13:03:36 sunny Exp $
+# $Id$
 # Kopierer CVSROOT fram og tilbake
 
 if [ ! -e /sunba.mrk ]; then
@@ -11,24 +11,24 @@ fi
 
 if [ "$1" = "carmbb" -a "$2" = "sunba" ]; then
 	echo Kopierer CVSROOT fra carmbb til sunba. Simulerer først...
-	rsync -azvnP --delete carmbb:/home/sunny/Cvs /home/sunny
-	rsync -azvnP --delete carmbb:/home/sunny/Svn /home/sunny
+	rsync -avnP --delete carmbb:/home/sunny/Cvs /home/sunny
+	rsync -avnP --delete carmbb:/home/sunny/Svn /home/sunny
 	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
 	read
 	ssh sunny@carmbb "echo \"\$(u) $*\" >>/home/sunny/Cvs/CARMBB_TIL_SUNBA"
-	rsync -azvP --delete carmbb:/home/sunny/Cvs /home/sunny
-	rsync -azvP --delete carmbb:/home/sunny/Svn /home/sunny
+	rsync -avP --delete carmbb:/home/sunny/Cvs /home/sunny
+	rsync -avP --delete carmbb:/home/sunny/Svn /home/sunny
 elif [ "$1" = "sunba" -a "$2" = "carmbb" ]; then
 	echo Kopierer CVSROOT fra sunba til carmbb. Simulerer først...
 	rsync -avnP --delete nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
-	rsync -azvnP --delete /home/sunny/Cvs carmbb:/home/sunny
-	rsync -azvnP --delete /home/sunny/Svn carmbb:/home/sunny
+	rsync -avnP --delete /home/sunny/Cvs carmbb:/home/sunny
+	rsync -avnP --delete /home/sunny/Svn carmbb:/home/sunny
 	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
 	read
 	rsync -avP --delete nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
 	echo "$(u) $*" >>/home/sunny/Cvs/SUNBA_TIL_CARMBB
-	rsync -azvP --delete /home/sunny/Cvs carmbb:/home/sunny
-	rsync -azvP --delete /home/sunny/Svn carmbb:/home/sunny
+	rsync -avP --delete /home/sunny/Cvs carmbb:/home/sunny
+	rsync -avP --delete /home/sunny/Svn carmbb:/home/sunny
 else
 	echo "Ukjente maskiner: \"$1\" \"$2\"" >&2
 	exit 1
