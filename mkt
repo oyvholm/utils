@@ -1,26 +1,39 @@
 #!/bin/bash
 
-# $Id: mkt,v 1.2 1999/03/29 13:50:36 sunny Exp $
-# (C)opyleft 1999 sunny@tritech.no
+# Creates a .tar.gz file of current directory
+# $Id: mkt,v 1.3 1999/05/05 02:33:18 sunny Exp $
+# (C)opyleft 1999 sunny@dataguard.no
 # License: GNU GPL
 
 if [ "x$1" = "x--help" -o "x$1" = "x-h" ]; then
-	echo
-	echo Usage: $0 name_without_the_tar_gz_extension
-	echo
-	echo Creates a .tar.gz file of current directory tree and places it in
-	echo parent directory. If nothing is specified, current dir is used.
-	echo
+	cat <<END
+
+Usage: $0 [options] name_without_the_tar_gz_extension
+
+Creates a .tar.gz file of current directory tree and places it in
+parent directory. If nothing is specified, current dir is used.
+
+Options:
+
+-h, --help    Print this help message
+-r, --remove  Remove directory after packing
+
+END
 	exit 1
 fi
 
-_can_erase=0
+if [ "x$1" = "x--remove" -o "x$1" = "x-r" ]; then
+	_can_erase=1
+	shift
+else
+	_can_erase=0
+fi
+
 if [ $# -eq 0 ]; then
 	_pwd=`pwd`
 	_prefix=`basename $_pwd`
 else
 	_prefix=`basename $1`
-	_can_erase=1
 fi
 
 if [ -e ../$_prefix.tar -o -e ../$_prefix.tar.gz ]; then
@@ -48,10 +61,10 @@ if [ ! -d ../$_prefix ]; then
 fi
 
 cd .. || { echo "$0: Cannot \"cd ..\"" >&2; exit 1 }
-tar cf $_prefix.tar $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\"" >&2; exit 1 }
-gzip -vN $_prefix.tar || { echo "$0: Error during \"gzip -vN $_prefix.tar\"" >&2; exit 1 }
+tar cf $_prefix.tar $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\" in parent dir" >&2; exit 1 }
+gzip -vN $_prefix.tar || { echo "$0: Error running \"gzip -vN $_prefix.tar\" in parent dir" >&2; exit 1 }
 if [ "$_can_erase" -eq "1" ]; then
 	rm -rf $_prefix || { echo "$0: $_prefix: Can't remove directory" >&2; exit 1 }
 fi
 
-#### End of file $Id: mkt,v 1.2 1999/03/29 13:50:36 sunny Exp $ ####
+#### End of file $Id: mkt,v 1.3 1999/05/05 02:33:18 sunny Exp $ ####
