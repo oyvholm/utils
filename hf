@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #========================================================================
-# $Id: hf,v 1.11 2002/04/14 13:08:55 sunny Exp $
+# $Id: hf,v 1.12 2002/04/18 15:28:33 sunny Exp $
 # Formatterer HTML-source med TAB'er
 #
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -10,29 +10,27 @@
 #========================================================================
 
 use strict;
-# require 'getopts.pl';
-# &Getopts('hs');
+require 'getopts.pl';
+
+($main::opt_a, $main::opt_h, $main::opt_i, $main::opt_H, $main::opt_s) = (0, 0, 0, 0);
+&Getopts('ahHi:s');
 
 my $is_pre = 0;
-my ($opt_a, $opt_H) = (0, 0);
 my $prog_name = $0;
 $prog_name =~ s!.*/(.+?)$!$1!;
 
-&print_help() if ($ARGV[0] =~ /^(--help|-h)$/);
-if ($ARGV[0] =~ /^-a$/) {
-	$opt_a = 1;
-	shift;
-}
+print_help() if ($main::opt_h);
 
-if ($ARGV[0] =~ /^-H$/) {
-	$opt_H = 1;
-	shift;
-}
+# Gammel parameterparsing
+# begin-base64 664 -
+# H4sIADaAuTwCA8tMU9BQcQxyD4s2iFWwrVPQj9NNVNHXVKjm4lTJLyiJT1Sw
+# VTC05uIszshMK7HmquXiysTU4YGswwNdBwAguKNaYwAAAA==
+# ====
 
 $| = 1;
 
 my $Tabs = "";
-my $tab_indent = $ARGV[0] >= 0 ? shift : 0;
+my $tab_indent = $main::opt_i;
 my $orig_line = "";
 my @Elements = (
 	"applet", "blockquote", "body", "caption", "center", "colgroup",
@@ -47,19 +45,20 @@ for (; $tab_indent; $tab_indent--) {
 	$Tabs .= "\t";
 }
 
-my $line_exp = $opt_a ? '^\s+(.*)' : '^\t+(.*)';
+my $line_exp = $main::opt_a ? '^\s+(.*)' : '^\t+(.*)';
 my $header_indent = "";
 
-while (<>) {
+LINE: while (<>) {
 	my $Line = $_;
 	my $Element = "";
 	my $f = "";
 	my $out_line;
 
+	$main::opt_s && ($Line =~ /^%/) && (print($Line), next LINE);
 	unless($is_pre) {
-		# $Line =~ $opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
+		# $Line =~ $main::opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
 		$Line =~ s/$line_exp/$1/;
-		if ($opt_H && $Line =~ /<h([1-6]).*?>/i) {
+		if ($main::opt_H && $Line =~ /<h([1-6]).*?>/i) {
 			$header_indent = "\t" x ($1-1);
 		}
 		($Line =~ m!</body>!i) && ($header_indent = "");
@@ -103,12 +102,16 @@ Hvis filnavn skal spesifiseres, bruk 0.
 Eksempel: $prog_name 0 foo.html
 
 Options:
-  -a  Fjern space i begynnelsen av linja også før indenting.
-  -H  Legg til en TAB for hver <h1>, <h2>, <h3> osv for å lettere se
-      strukturen i dokumentet.
+  -a    Fjern space i begynnelsen av linja også før indenting.
+  -h    Vis denne hjelpen
+  -H    Legg til en TAB for hver <h1>, <h2>, <h3> osv for å lettere se
+        strukturen i dokumentet.
+  -i n  Start med n TAB'er som indent
+  -s    Dropp linjer som her en % i starten. Det er datafilene på
+        www.sunbase.org som er sånn.
 
 END
 	exit(0);
 } # print_help()
 
-#### End of file $Id: hf,v 1.11 2002/04/14 13:08:55 sunny Exp $ ####
+#### End of file $Id: hf,v 1.12 2002/04/18 15:28:33 sunny Exp $ ####
