@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $
+# $Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -11,7 +11,8 @@ require Exporter;
 @ISA = qw(Exporter);
 
 @EXPORT = qw{
-	%Opt
+	%Opt %Cookie
+	get_cookie set_cookie delete_cookie split_cookie
 	content_type create_file curr_local_time curr_utc_time deb_pr
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn increase_counter log_access print_header p_footer tab_print tab_str
@@ -40,7 +41,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -235,6 +236,73 @@ sub get_cgivars {
 	}
 	return %in;
 } # get_cgivars()
+
+sub get_cookie {
+	my ($chip, $val);
+		foreach (split(/; /, $ENV{'HTTP_COOKIE'})) {
+		# split cookie at each ; (cookie format is name=value; name=value; etc...)
+		# Convert plus to space (in case of encoding (not necessary, but recommended)
+		s/\+/ /g;
+		# Split into key and value.
+		($chip, $val) = split(/=/,$_,2); # splits on the first =.
+		# Convert %XX from hex numbers to alphanumeric
+		$chip =~ s/%([A-Fa-f0-9]{2})/pack("c",hex($1))/ge;
+		$val =~ s/%([A-Fa-f0-9]{2})/pack("c",hex($1))/ge;
+		# Associate key and value
+		$suncgi::Cookie{$chip} .= "\1" if (defined($suncgi::Cookie{$chip})); # \1 is the multiple separator
+		$suncgi::Cookie{$chip} .= $val;
+	}
+} # get_cookie()
+
+sub set_cookie {
+	# $expires must be in unix time format, if defined.  If not defined it sets the expiration to December 31, 1999.
+	# If you want no expiration date set, set $expires = -1 (this causes the cookie to be deleted when user closes
+	# his/her browser).
+
+	my ($expires, $domain, $path, $sec) = @_;
+	my (@days) = ("Sun","Mon","Tue","Wed","Thu","Fri","Sat");
+	my (@months) = ("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+	my ($seconds,$min,$hour,$mday,$mon,$year,$wday) = gmtime($expires) if ($expires > 0); #get date info if expiration set.
+	$seconds = "0" . $seconds if $seconds < 10; # formatting of date variables
+	$min = "0" . $min if $min < 10;
+	$hour = "0" . $hour if $hour < 10;
+	my (@secure) = ("","secure"); # add security to the cookie if defined.  I'm not too sure how this works.
+	if (!defined $expires) { $expires = " expires\=Fri, 31-Dec-1999 00:00:00 GMT;"; } # if expiration not set, expire at 12/31/1999
+	elsif ($expires == -1) { $expires = "" } # if expiration set to -1, then eliminate expiration of cookie.
+	else {
+		$year += 1900;
+		$expires = "expires\=$days[$wday], $mday-$months[$mon]-$year $hour:$min:$seconds GMT; "; #form expiration from value passed to function.
+	}
+	if (!defined $domain) { $domain = $ENV{'SERVER_NAME'}; } #set domain of cookie.  Default is current host.
+	if (!defined $path) { $path = "/"; } #set default path = "/"
+	# if (!defined $secure) { $secure = "0"; }
+	foreach my $key (keys %suncgi::Cookie) {
+		$suncgi::Cookie{$key} =~ s/ /+/g; #convert plus to space.
+		print "Set-Cookie: $key\=$suncgi::Cookie{$key}; $expires path\=$path; domain\=$domain; $secure[$sec]\n";
+		#print cookie to browser,
+		#this must be done *before*	you print any content type headers.
+	}
+} # set_cookie()
+
+sub delete_cookie {
+	# to delete a cookie, simply pass delete_cookie the name of the cookie to delete.
+	# you may pass delete_cookie more than 1 name at a time.
+	my (@to_delete) = @_;
+	my ($name);
+	foreach $name (@to_delete) {
+		undef $suncgi::Cookie{$name}; #undefines cookie so if you call set_cookie, it doesn't reset the cookie.
+		print "Set-Cookie: $name=deleted; expires=Thu, 01-Jan-1970 00:00:00 GMT;\n";
+		#this also must be done before you print any content type headers.
+	}
+} # delete_cookie()
+
+sub split_cookie {
+	# Splits a multi-valued parameter into a list of the constituent parameters
+
+	my ($param) = @_;
+	my (@params) = split ("\1", $param);
+	return (wantarray ? @params : $params[0]);
+} # split_cookie()
 
 sub get_countervalue {
 	my $counter_file = shift;
@@ -685,7 +753,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $>
+S<$Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1081,4 +1149,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $ ####
