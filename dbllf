@@ -1,9 +1,19 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-# Dobler LF så enkelte ting blir mer oversiktlig
-# $Id: dbllf,v 1.1 1999/05/03 21:09:45 badata Exp $
+#==================================================
+# $Id: dbllf,v 1.2 2004/04/19 12:55:08 sunny Exp $
+# Dobler LF sÃ¥ enkelte ting blir mer oversiktlig
+#==================================================
+
+use strict;
+
+$| = 1;
 
 while (<>) {
 	s/\n/\n\n/g;
 	print;
 }
+
+__END__
+
+# End of file $Id: dbllf,v 1.2 2004/04/19 12:55:08 sunny Exp $
