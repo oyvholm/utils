@@ -1,80 +1,59 @@
-#!/bin/bash
+#!/usr/bin/perl
 
-# Made by Øyvind A. Solheim <sunny@sunbase.com> 1997-11-18 07:36:26+02:00.
+# $Id: mklist,v 1.2 1999/02/26 10:34:14 sunny Exp $
+# Made by Øyvind A. Holm <sunny@tritech.no>
 
-_currtime=`utc`
-_lockfile=~sunny/MKLIST_LOCK
+use Fcntl ':flock';
 
-if [ `whoami` != root ]; then
-  echo $0: has to be root. >&2
-  exit 1
-fi
+my $curr_time = time;
+my $cvs_comment = "af-black-" . &sec2str($curr_time);
+my $lock_file = "/home/sunny/MKLIST_LOCK";
+my $af_dir = "/home/sunny/etc/af/black";
+my $af_file = "$af_dir/af-black.dat";
+my $find_path = "/"; # Evt. flere separeres med space
+my $stripgz_prog = "/home/sunny/bin/stripgz";
+my $sort_prog = "/bin/sort -k2";
+my $cvs_prog = "/usr/bin/cvs";
+my $sunny_uid = 502;
+my $sunny_gid = 502;
+my $cvs_root = "/home/sunny/cvsroot";
+# my $repository_name = "aftest-black"; # Sikkert ikke nødvendig.
+my $LogName = "sunny";
 
-if [ -e $_lockfile ]; then
-  echo "$0: $_lockfile: lock file" >&2
-  exit 1
-fi
+# print "EUID = \"$>\"\n";
 
-utc >$_lockfile
+$> && die("$0: Has to be root\n");
+die(sprintf("$0: Unknown find(1) version: \"%s\"\n", `find --version`)) unless (`find --version` =~ /GNU find/);
 
-_afdir=~sunny/etc/af/`date -u +"%Y"`
-_lastfile=$_afdir/last
-_tmplastfile=$_afdir/tmp.lastfile.tmp
-_findpath="/ /ba"
+# FIXME: Skal flock() brukes? Kommer seinere.
+die("$0: Lock file $lock_file exists\n") if (-e $lock_file);
 
-# Hvis -f spesifiseres som $1, fortsetter diffinga som før, men det blir
-# i tillegg tatt en find.
+open(LockFP, ">$lock_file") || die("$0: $lock_file: Can't open lock file: $!\n");
+flock(LockFP, LOCK_EX);
+printf(LockFP "%u\n", $curr_time);
+unless (-d $af_dir) {
+	mkdir($af_dir, 0755) or die("$0: $af_dir: Can't create directory: $!\n");
+}
+chdir $af_dir || die("$0: $af_dir: Can't chdir to directory: $!\n");
 
-if [ "$1" = "-f" ]; then
-  _optf=1
-fi
+$Result = system("(echo '# \$Id\$'; (find $find_path -xdev -type f -printf \"%TY%Tm%TdT%TH%TM%TS %p\\n\" | $stripgz_prog | $sort_prog)) >$af_file");
+$> = $sunny_uid;
+$) = $sunny_gid;
+$ENV{CVSROOT} = "$cvs_root";
+$ENV{LOGNAME} = "$LogName";
+# system("/usr/bin/printenv");
+system("$cvs_prog -Q -d $cvs_root commit -m \"$cvs_comment\"");
 
-if [ ! -d $_afdir ]; then
-  echo $0: $_afdir: directory not found. guess I have to create it, then.
-  mkdir -p $_afdir
-  if [ ! -d $_afdir ]; then
-    echo $0: $_afdir: unable to create directory >&2
-    rm -f $_lockfile
-    exit 1
-  fi
-fi
+close(LockFP);
+unlink($lock_file) or die("$0: $lock_file: Can't unlink lock file: $!\n");
 
-# Hvis $_lastfile eksisterer, skal det lages en diff mot den. Hvis den
-# mangler, lages en helt ny greie.
+# print "Like før slutten\n";
+exit;
 
-if [ "$_optf" = "1" ]; then
-  if [ ! -e $_lastfile ]; then
-    echo $0: $_lastfile: file not found, cannot use -f option
-    rm -f $_lockfile
-    exit 1
-  fi
-  mv $_lastfile $_tmplastfile
-fi
+sub sec2str {
+	my @TA = gmtime(shift);
+	my $UtcTime = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+	return($UtcTime);
+} # sec2str()
 
-if [ ! -e $_lastfile ]; then
-  if [ "$_optf" != "1" ]; then
-    gzip -rq $_afdir
-  fi
-  (
-    echo $_currtime; 
-    find $_findpath -xdev -type f -printf "%TY%Tm%TdT%TH%TM%TS %p\n" | /usr/local/bin/strip_gz | sort -k 2
-  ) >$_afdir/af.$_currtime.find
-  cp -p $_afdir/af.$_currtime.find $_lastfile
-  if [ "$_optf" = "1" ]; then
-    mv $_tmplastfile $_lastfile
-    echo $0: `utc`: spawning \"$0\"...
-    $0
-    echo $0: `utc`: ...ok. have a rather nice day.
-    rm -f $_lockfile
-    exit 1
-  fi
-else
-  (
-    echo $_currtime;
-    find $_findpath -xdev -type f -printf "%TY%Tm%TdT%TH%TM%TS %p\n" | /usr/local/bin/strip_gz | sort -k 2
-  ) >$_afdir/tmp.tmp
-  diff -U 0 $_afdir/last $_afdir/tmp.tmp >$_afdir/af.$_currtime.diff
-  mv $_afdir/tmp.tmp $_afdir/last
-fi
-gzip $_afdir/af.$_currtime.diff
-rm -f $_lockfile
+#### End of file $Id: mklist,v 1.2 1999/02/26 10:34:14 sunny Exp $ ####
