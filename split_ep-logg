@@ -1,0 +1,117 @@
+#!/usr/bin/perl -w
+
+#=====================================================================
+# $Id: split_ep-logg,v 1.1 2004/04/06 05:34:32 sunny Exp $
+# Splitter opp access_log fra httpd(8) på dato. Legger delene som
+# $Dir/åååå/[NAVN.]åååå-mm-ddZ.access_log .
+#
+# ©opyleft 2001–2004 Øyvind A. Holm <sunny@sunbase.org>
+# Lisens: GNU General Public License ♥
+#=====================================================================
+
+# 193.214.57.46 - - [18/Oct/2001:08:26:44 +0200] "POST / HTTP/1.0" 200 5147 "http://www.ba.no/00/07/12/9.html" "Mozilla/4.03 [en] (WinNT; I)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:44 +0200] "POST / HTTP/1.1" 200 15519 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:45 +0200] "GET / HTTP/1.1" 200 5137 "-" "Mozilla/4.0 (compatible; MSIE 5.0; Windows 95; DigExt; SenseWave 1.0; IEwebPlus)"
+# 193.213.227.243 - - [18/Oct/2001:08:26:45 +0200] "GET / HTTP/1.0" 200 14602 "http://www.ba.no/30/96/38/9.html" "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 4.0)"
+# 193.217.216.52 - - [18/Oct/2001:08:26:45 +0200] "POST /tabell.php HTTP/1.1" 200 24122 "http://www.nifs.no/tabell.php" "Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt)"
+# 193.213.227.243 - - [18/Oct/2001:08:26:45 +0200] "GET /images/forside/laptop.jpg HTTP/1.0" 200 5347 "-" "Mozilla/3.01 (compatible;)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:46 +0200] "POST / HTTP/1.1" 200 15461 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt; SenseWave 1.0)"
+# 62.113.158.68 - - [18/Oct/2001:08:26:46 +0200] "POST / HTTP/1.1" 200 17032 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:46 +0200] "GET / HTTP/1.1" 200 5144 "-" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT)"
+# 62.113.158.68 - - [18/Oct/2001:08:26:49 +0200] "POST / HTTP/1.1" 200 16747 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"
+
+use strict;
+use Time::Local;
+use Getopt::Std;
+
+our ($opt_d, $opt_h, $opt_n, $opt_z) =
+    (    "",      0,     "",      0);
+getopts('d:hn:z');
+
+$| = 1;
+
+my %Mnd = (
+	'Jan' => 0, 'Feb' => 1, 'Mar' => 2, 'Apr' => 3, 'May' =>  4, 'Jun' =>  5,
+	'Jul' => 6, 'Aug' => 7, 'Sep' => 8, 'Oct' => 9, 'Nov' => 10, 'Dec' => 11
+);
+
+my ( $Dir, $Fnavn, $Last, $compress_file) =
+   ("out",     "",    "",         $opt_z);
+
+$opt_h && usage(0);
+
+my $Name = length($opt_n) ? "$opt_n." : "";
+
+length($opt_d) && ($Dir = $opt_d);
+-d $Dir || mkdir($Dir, 0777) || die("mkdir(\"$Dir\"): $!");
+
+while (<>) {
+	if (m#^\S+.*? \[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)(\d\d)#) {
+		my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
+		   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
+		my $num_mnd = $Mnd{$Mon};
+		my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mnd, $Year);
+		$Secs -= ($zone_hour*3600 + $zone_min*60);
+		my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
+		$u_year += 1900; # Urgh
+		$Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02uZ.access_log", $Dir, $u_year, $Name, $u_year, $u_mon+1, $u_mday);
+		if ($Fnavn ne $Last) {
+			if ($compress_file && -e $Last) {
+				print(STDERR "Kjører \"/bin/gzip -N $Last &\"\n");
+				system("/bin/gzip -N $Last &");
+			}
+			print(STDERR "Ny fil: \"$Fnavn\"\n");
+			-d "$Dir/$u_year" || mkdir("$Dir/$u_year", 0777) || die("$0: mkdir(\"$Dir/$u_year\"): $!. R.I.P. & sånn.");
+			if (-e $Fnavn) {
+				die("\n$Fnavn: Fila finnes fra før.\nDet vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nMulig du må sortere fila. I alle tilfelle må $Fnavn slettes før jeg gjør noe som helst.\nEn annen mulighet er selvfølgelig å bruke et annet navn med \"-n\"-parameteret.\nOg hva mer var det jeg skulle si... Jo, jeg dør visst. Heidå.\n");
+			}
+			if (-e "$Fnavn.gz") {
+				die("\n$Fnavn.gz: Det ligger en pakka versjon av fila her fra før.\nDet vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nMulig du må sortere fila. I alle tilfelle må $Fnavn.gz slettes før jeg gjør noe som helst.\nEn annen mulighet er selvfølgelig å bruke et annet navn med \"-n\"-parameteret.\nOg hva mer var det jeg skulle si... Jo, jeg dør visst. Heidå.\n");
+			}
+			if (open(ToFP, ">$Fnavn")) {
+				seek(ToFP, 0, 2) || die("$Fnavn: seek() til slutten: $!");
+			} else {
+				die("$Fnavn: Åpning for skriving: $!");
+			}
+		}
+		print(ToFP $_) || die("Feil under skriving til $Fnavn: $!");
+	} else {
+		warn("Linje $.: Ukjent format: \"$_\"");
+	}
+	$Last = $Fnavn;
+}
+
+close(ToFP);
+
+sub usage {
+	my $Retval = shift;
+
+	print(<<END);
+
+Syntax: $0 [valg] [fil [flere filer [...]]]
+
+Programmet leser access_log fra stdin eller filnavn på kommandolinja og
+splitter dem i deler på formatet DIR/åååå/[NAVN.]åååå-mm-ddZ.access_log .
+
+Valg:
+
+-d DIR   Plassér filene i DIR . Standard: "$Dir".
+-h       Hjælp mæ.
+-n NAVN  Bruk NAVN som valgfritt navn i filnavnet.
+-z       Pakk filene etterhvert som de er ferdigsplitta.
+
+Den splitter selvfølgelig opp filene på grunnlag av UTC. Folkeaksjonen
+Mot Sommertid slår til igjen. Ikke det med sol, utepils og miniskjørt
+her og der, men den klokkefløttinga er uendelig plagsom og lager i
+tillegg unøyaktighet i loggene.
+
+Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>
+Lisens: GNU General Public License ♥
+
+END
+	exit($Retval);
+} # usage()
+
+__END__
+
+# End of file $Id: split_ep-logg,v 1.1 2004/04/06 05:34:32 sunny Exp $
