@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+# $Id: detab,v 1.1 1999/02/14 00:43:52 sunny Exp $
+
+$Tabs = $ARGV[0] ? $ARGV[0] : 1;
+
+while (<STDIN>) {
+	for (1..$Tabs) {
+		print "\t";
+	}
+	print "$_";
+}
+
+#### End of file $Id: detab,v 1.1 1999/02/14 00:43:52 sunny Exp $ ####
