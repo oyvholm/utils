@@ -1,12 +1,15 @@
 #!/bin/sh
 
 # Fyrer i gang httpd(8)
-# $Id: h1,v 1.4 2001/05/05 01:58:23 sunny Exp $
+# $Id: h1,v 1.5 2001/10/11 11:39:06 sunny Exp $
 
 if [ -e /ww.mrk ]; then
 	/etc/rc.d/init.d/apache start
 elif [ -e /recbb.mrk ]; then
 	/var/lib/apache/sbin/apachectl start
+elif [ -e /sunba.mrk ]; then
+	/etc/init.d/apache start
 else
+	echo Ukjent server, prøver standardløsning...
 	/etc/rc.d/init.d/httpd start
 fi
