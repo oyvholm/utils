@@ -1,5 +1,9 @@
 #!/bin/sh
 
-# $Id: utc,v 1.1 1999/02/17 03:25:19 sunny Exp $
+# $Id: utc,v 1.2 2003/06/30 11:02:09 sunny Exp $
 
-date -u +"%Y%m%dT%H%M%SZ"
+if [ "$1" = "-L" ]; then
+	date -u +"%Y-%m-%d %H:%M:%SZ"
+else
+	date -u +"%Y%m%dT%H%M%SZ"
+fi
