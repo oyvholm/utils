@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: log_load,v 1.1 2003/10/01 21:12:50 sunny Exp $
+# $Id: log_load,v 1.2 2003/10/03 00:28:13 sunny Exp $
 # Logger maskinload til ~/log/load.log
 
 logdir=$HOME/log
@@ -14,6 +14,6 @@ until mkdir $lockname 2>/dev/null; do
 	exit 1
 done
 
-(echo -n "`$HOME/bin/u` "; cat /proc/loadavg) >>$logdir/load.log
+(echo -n "`date -u +"%Y-%m-%dT%H:%M:%SZ"` "; cat /proc/loadavg) >>$logdir/load.log
 
 rmdir $lockname
