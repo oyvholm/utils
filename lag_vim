@@ -26,6 +26,7 @@ else
 fi
 
 echo ======== ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags
+CFLAGS=-g
 ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags
 
 echo ======== make
