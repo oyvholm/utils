@@ -9,7 +9,9 @@
 
 tmp_file=/tmp/epstat.$RANDOM.tmp
 wr_hours=1
+wr_min=0
 
+[ "$1" = "-m" ] && { shift; wr_min=1; } # -m lager minuttstatistikk også.
 [ "$1" = "-t" ] && { shift; wr_hours=0; } # -t forhindrer utskrift av timebasis
 
 cut -c 1-10 $* | sort -n | ep -l >$tmp_file
@@ -26,6 +28,12 @@ if [ "$wr_hours" = "1" ]; then
 	echo Antall hits pr. time:
 	echo
 	uniq -cw 13 $tmp_file | tr [T:] ' ' | cut -c 1-21 | perl -pe 's/^\s+(\d+)\s+(.*)$/$2\t$1/'
+fi
+
+if [ "$wr_min" = "1" ]; then
+	echo Antall hits pr. minutt:
+	echo
+	uniq -cw 16 $tmp_file | tr [T] ' ' | cut -c 1-24 | perl -pe 's/^\s+(\d+)\s+(.*)$/$2\t$1/'
 fi
 
 rm $tmp_file
