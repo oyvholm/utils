@@ -122,6 +122,7 @@ if ($opt_u) {
     # }}}
 }
 
+# Print possible header {{{
 if ($opt_o eq "gpstrans") {
     print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
 } elsif ($opt_o eq "ps") {
@@ -143,6 +144,7 @@ END
   <desc></desc>
 END
 }
+# }}}
 
 while (<>) {
     # Scan through stdin or specified files and send every GPS entry to 
@@ -238,6 +240,7 @@ while (<>) {
     # }}}
 }
 
+# Print possible footer {{{
 if ($opt_o eq "ps") {
     print(<<END);
 *U
@@ -249,6 +252,7 @@ END
 } elsif ($opt_o eq "xml") {
   print("</gpslog>\n");
 }
+# }}}
 
 exit(0);
 
@@ -258,6 +262,7 @@ sub read_xmlfile {
 }
 
 sub print_xml_gps {
+    # {{{
     my $Orig = shift;
     my $Str = $Orig;
     D("print_xml_gps(\"$Orig\")\n");
@@ -277,6 +282,7 @@ sub print_xml_gps {
     defined($Pos_Y) || ($Pos_Y = "");
     defined($Pos_Z) || ($Pos_Z = "");
     print_entry($Year, $Mon, $Day, $Hour, $Min, $Sec, $Pos_X, $Pos_Y, $Pos_Z);
+    # }}}
 }
 
 sub print_entry {
