@@ -1,0 +1,24 @@
+#!/usr/bin/perl -w
+
+# $Id: center,v 1.1 2002/06/13 11:09:32 sunny Exp $
+# Centers text according to the longest line
+
+my @Lines = <>;
+my $Longest = 0;
+
+for (@Lines) {
+	chomp;
+	s/^\s*(.*?)\s*$/$1/;
+	$Longest = length($_) if (length($_) > $Longest);
+}
+
+for my $Curr (@Lines) {
+	chomp($Curr);
+	$Curr =~ s/^\s*(.*?)\s*$/$1/;
+	my $curr_len = length($Curr);
+	if ($curr_len < $Longest) {
+		$Curr = (" " x int(($Longest-$curr_len)/2)) . $Curr;
+		$Curr .= " " x ($Longest-length($Curr));
+	}
+	print("$Curr\n");
+}
