@@ -6,7 +6,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $>
+S<$Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -120,14 +120,14 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $';
-my $rcs_id = '$Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $';
-my $rcs_date = '$Date: 2000/08/17 19:21:03 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $';
+my $rcs_id = '$Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $';
+my $rcs_date = '$Date: 2000/08/19 07:07:41 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $ GD';
-my $cvs_id = '$Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $ GD';
-my $cvs_date = '$Date: 2000/08/17 19:21:03 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $ GD';
+my $cvs_id = '$Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $ GD';
+my $cvs_date = '$Date: 2000/08/19 07:07:41 $ GD';
 
 my $this_counter = "";
 
@@ -165,9 +165,9 @@ C<application/x-tar> og lignende.
 
 sub content_type {
 	my $ContType = shift;
-	my $CharSet = $STD_CHARSET unless length(${main::CharSet});
+	# my $CharSet = $STD_CHARSET unless length(${main::CharSet});
 	if (length($ContType)) {
-		print "Content-Type: $ContType; charset=$CharSet\n\n" ;
+		print "Content-Type: $ContType; charset=$main::CharSet\n\n" ;
 	} else {
 		&HTMLwarn("Intern feil: \$ContType ble ikke spesifisert til &content_type()");
 	}
@@ -365,18 +365,20 @@ sub get_cgivars {
 	my $has_args = ($#ARGV > -1) ? $TRUE : $FALSE;
 	if ($has_args) {
 		$in = $ARGV[0];
-	} elsif (($ENV{'REQUEST_METHOD'} eq 'GET') ||
-	         ($ENV{'REQUEST_METHOD'} eq 'HEAD')) {
-		$in = $ENV{'QUERY_STRING'};
-	} elsif ($ENV{'REQUEST_METHOD'} eq 'POST') {
-		if ($ENV{'CONTENT_TYPE'} =~ m#^application/x-www-form-urlencoded$#i) {
-			length($ENV{'CONTENT_LENGTH'}) || &HTMLdie("Ingen Content-Length vedlagt POST-foresp&oslash;rselen.");
-			read(STDIN, $in, $ENV{'CONTENT_LENGTH'});
+	} elsif (($ENV{REQUEST_METHOD} eq 'GET') ||
+	         ($ENV{REQUEST_METHOD} eq 'HEAD')) {
+		$in = $ENV{QUERY_STRING};
+	} elsif ($ENV{REQUEST_METHOD} eq 'POST') {
+		if ($ENV{CONTENT_TYPE} =~ m#^application/x-www-form-urlencoded$#i) {
+			length($ENV{CONTENT_LENGTH}) || &HTMLdie("Ingen Content-Length vedlagt POST-forespørselen.");
+			read(STDIN, $in, $ENV{CONTENT_LENGTH});
 		} else {
-			&HTMLdie("Usupportert Content-Type: \"$ENV{'CONTENT_TYPE'}\"");
+			&HTMLdie("Usupportert Content-Type: \"$ENV{CONTENT_TYPE}\"") if length($ENV{CONTENT_TYPE});
+			exit;
 		}
 	} else {
-		&HTMLdie("Programmet ble kalt med ukjent REQUEST_METHOD: \"$ENV{'REQUEST_METHOD'}\"");
+		&HTMLdie("Programmet ble kalt med ukjent REQUEST_METHOD: \"$ENV{REQUEST_METHOD}\"") if length($ENV{REQUEST_METHOD});
+		exit;
 	}
 	foreach (split("[&;]", $in)) {
 		s/\+/ /g;
@@ -1008,6 +1010,23 @@ sub Tabs {
 
 ###########################################################################
 
+=head2 &url_encode()
+
+Konverterer en streng til format for bruk i URL'er.
+
+=cut
+
+sub url_encode {
+	my $String = shift;
+
+	$String =~ s/([\x00-\x20"#%&;<>?{}|\\\\^~`\[\]\x7F-\xFF])/
+	           sprintf ('%%%x', ord($1))/eg;
+
+	return $String;
+} # url_encode()
+
+###########################################################################
+
 =head1 BUGS
 
 Strukturen er ikke helt klar enda, det blir nok mange forandringer underveis.
@@ -1020,4 +1039,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $ ####
