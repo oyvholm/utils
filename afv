@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: afv,v 1.9 2001/05/27 03:27:34 sunny Exp $
+# $Id: afv,v 1.10 2001/05/27 06:21:13 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -123,17 +123,15 @@ sub check_stop {
 sub my_sleep {
 	my $Secs = shift;
 	my $start_time = time;
-	print("start = $start_time\n");
 	if ($Secs <= 2) {
 		check_stop();
 		sleep($Secs);
 	} else {
 		until(time >= $start_time+$Secs) {
-			print(time . "\n");
 			sleep(2);
 			check_stop();
 		}
 	}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.9 2001/05/27 03:27:34 sunny Exp $ ####
+#### End of file $Id: afv,v 1.10 2001/05/27 06:21:13 sunny Exp $ ####
