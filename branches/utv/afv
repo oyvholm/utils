@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.6 2003/05/29 13:14:06 sunny Exp $
+# $Id: afv,v 1.13.2.7 2004/04/11 21:23:22 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -53,7 +53,7 @@ LOOP: foreach my $FullCurr (@Files) {
 	my $currmd5_file = "$afv_dir/$Curr.currmd5";
 	my $start_lock = time;
 
-	until (mkdir("$lock_dir", 0777)) {
+	until (mkdir($lock_dir, 0777)) {
 		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
 		my_sleep(5);
 	}
@@ -61,7 +61,9 @@ LOOP: foreach my $FullCurr (@Files) {
 	if (open(FromFP, "<$Curr")) {
 		if (flock(FromFP, LOCK_EX)) {
 			my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
-			my $to_file = "$dest_dir/$mtime.$Curr";
+			my @TA = gmtime($mtime);
+			my $date_str = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+			my $to_file = "$dest_dir/$date_str.$Curr";
 			if (-e $to_file) {
 				close(FromFP);
 				goto CLEANUP;
@@ -81,7 +83,7 @@ LOOP: foreach my $FullCurr (@Files) {
 			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
 			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
 			if ($curr_md5 ne $last_md5) {
-				print("$mtime.$Curr\n") unless $do_loop;
+				print("$date_str.$Curr\n") unless $do_loop;
 				if (seek(FromFP, 0, 0)) {
 					if (open(ToFP, ">$to_file")) {
 						if (flock(ToFP, LOCK_EX)) {
@@ -171,4 +173,4 @@ sub my_sleep {
 	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.6 2003/05/29 13:14:06 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.7 2004/04/11 21:23:22 sunny Exp $ ####
