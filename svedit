@@ -1,6 +1,16 @@
 #!/bin/sh
 
+#=======================================================================
 # $Id$
-# Enkel sak for å redigere loggkommentaren i svn.
+# Simple shortcut for editing Subversion log messages.
+#=======================================================================
 
-svn pe svn:log -r$1 --revprop $*
+if [ "$1" = "" ]; then
+  echo "Syntax: svedit revnumber [additional svn commands]"
+  exit 1;
+fi
+revnum=$1
+shift
+svn pe svn:log -r$revnum --revprop $*
+
+# vim: set ts=2 sw=2 sts=2 expandtab :
