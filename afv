@@ -1,17 +1,18 @@
 #!/usr/bin/perl -w
 
 # Lagrer alle nye versjoner av en fil.
-# $Id: avf,v 1.1 2001/04/03 03:26:12 sunny Exp $
+# $Id: afv,v 1.1 2001/04/18 00:10:55 sunny Exp $
 
 use strict;
 use Fcntl ':flock';
 
-my $Dir = ".AVF";
+my $Dir = ".AFV";
 -d $Dir || mkdir($Dir, 0777) || die("$Dir: Klarte ikke mkdir(): $!");
 -d "$Dir/$Dir" || mkdir("$Dir/$Dir", 0777) || die("$Dir/$Dir: Klarte ikke mkdir(): $!");
 my @Files = @ARGV;
 
-foreach my $Curr (@Files) {
+LOOP: foreach my $Curr (@Files) {
+	next LOOP unless -f $Curr;
 	my $lock_time = 0;
 	my $lock_dir = "$Dir/$Dir/$Curr.lock";
 	my $lastmd5_file = "$Dir/$Dir/$Curr.lastmd5";
@@ -38,7 +39,7 @@ foreach my $Curr (@Files) {
 			my $last_md5 = `/bin/cat $lastmd5_file`;
 			if ($curr_md5 ne $last_md5) {
 				my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
-				print(STDERR "$Curr: mtime = $mtime\n");
+				print(STDERR "$mtime.$Curr\n");
 				if (seek(FromFP, 0, 0)) {
 					my $to_file = ">$Dir/$mtime.$Curr";
 					if (open(ToFP, "$to_file")) {
@@ -70,4 +71,4 @@ foreach my $Curr (@Files) {
 	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
 }
 
-#### End of file $Id: avf,v 1.1 2001/04/03 03:26:12 sunny Exp $ ####
+#### End of file $Id: afv,v 1.1 2001/04/18 00:10:55 sunny Exp $ ####
