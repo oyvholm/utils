@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# (C)opyleft 1998 Oyvind A. Solheim <sunny@dataguard.no>
+# $Id: getpic,v 1.2 1999/09/06 02:52:10 sunny Exp $
+# (C)opyleft 1998 Oyvind A. Solheim <sunny@pils.kvarteret.uib.no>
 # License: GNU GPL
 
 $Debug = 1;
@@ -11,7 +12,7 @@ $Prefix = "";
 print "md5sum /dev/null=\"$LastMd5\"\n" if $Debug;
 # Syntax: getpic url [prefix] [ext]
 
-print "argv = $#ARGV\n";
+print "argv = $#ARGV\n" if $Debug;
 
 if ($#ARGV < 1) {
 	print "\nSyntax: $0 url sleeptime_in_seconds [prefix] [ext]\n\n";
@@ -75,3 +76,5 @@ sub Utc {
 	$UtcTime=sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
 	return $UtcTime;
 }
+
+#### End of file $Id: getpic,v 1.2 1999/09/06 02:52:10 sunny Exp $ ####
