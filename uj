@@ -13,8 +13,8 @@ my $Editor = "";
 if (defined($ENV{EDITOR})) {
 	$Editor = $ENV{EDITOR};
 } else {
-	warn("\$EDITOR er ikke definert, setter den til \"joe\"\n");
-	$Editor = "joe";
+	warn("\$EDITOR er ikke definert, setter den til \"vim\"\n");
+	$Editor = "vim";
 }
 
 while (scalar(@err_list)) {
