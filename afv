@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.18 2004/04/15 13:54:32 sunny Exp $
+# $Id$
 # Lagrer alle nye versjoner av en fil.
 #
 # ©2001–2004 Øyvind A. Holm. Lisens: GNU GPL ♥
@@ -17,9 +17,9 @@ use Getopt::Std;
 
 our $Debug = 0;
 
-our ($opt_d, $opt_h, $opt_l) =
-    ("",     0,      ""    );
-getopts('d:hl:');
+our ($opt_d, $opt_h, $opt_l, $opt_s) =
+    ("",     0,      "",     0     );
+getopts('d:hl:s') || die("Ukjent valg, \"afv -h\" for hjelp\n");
 
 $| = 1;
 
@@ -46,6 +46,7 @@ Valg:
       for å kjøre den i bakgrunnen. Bruk afvctl(1) for å stoppe afv’er
       som kjører. Filnavn på filer som lagres blir ikke skrevet ut når
       "-l"-parameteret brukes.
+-s    Stopp afv-looper som kjører i denne katalogen.
 
 Som filnavn kan jokertegn (wildcards) også brukes. Hvis disse escapes,
 brukes den innebygde glob’en og nye filer blir lagt til når den går i
@@ -71,6 +72,25 @@ my $dest_dir = "";
 my $curr_dir = "";
 my ($do_loop, $sleep_time, $orig_dir) = (0, 5, `/bin/pwd`); # FIXME
 chomp($orig_dir);
+
+if ($opt_s) {
+	chomp($curr_dir = `/bin/pwd`);
+	$dest_dir = "$root_dir$curr_dir";
+	if (-d "$dest_dir/.") {
+		print("Stopper afv’er i $curr_dir...");
+		if (open(StopFP, ">$dest_dir/stop")) {
+			close(StopFP);
+			sleep(5);
+			unlink("$dest_dir/stop") || die("$dest_dir/stop: Klarte ikke å slette fila: $!");
+			print("OK\n");
+			exit(0);
+		} else {
+			die("$root_dir/stop: Klarte ikke å lage fila: $!");
+		}
+	} else {
+		die("$root_dir: Finner ikke katalogen.");
+	}
+}
 
 if (length($opt_l)) {
 	if ($opt_l =~ /^\d+$/) {
@@ -252,4 +272,4 @@ sub my_sleep {
 	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.18 2004/04/15 13:54:32 sunny Exp $ ####
+#### End of file $Id$ ####
