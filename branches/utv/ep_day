@@ -1,16 +1,22 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: ep_day,v 1.4 2003/09/27 03:13:44 sunny Exp $
+# $Id: ep_day,v 1.4.2.1 2003/10/13 22:54:49 sunny Exp $
 # Samler en masse tidspunkter i epoch-format på for eksempel samme dag eller
 # hver time. Forventer antall sekunder siden 19700101T000000Z først på linja.
 #==============================================================================
 
 use strict;
+use Getopt::Std;
 
 $| = 1;
 
-my $Period = 1;
+our ($opt_d, $opt_w) =
+    (     0,      0);
+
+getopts('d:w:');
+
+my $Period = 0;
 my %Data = ();
 my $Lowest = 999_999_999_999_999_999; # Hm. Æ sei ikkje meir.
 my $Highest = 0;
@@ -18,9 +24,17 @@ my $Highest = 0;
 if (defined($ARGV[0]) && !($ARGV[0] =~ /[^0-9]/)) {
 	$Period = $ARGV[0];
 	shift;
-} else {
-	$Period = 86400;
 }
+
+if ($opt_d =~ /^\d+$/) {
+	$Period += $opt_d * 86400;
+}
+
+if ($opt_w =~ /^\d+$/) {
+	$Period += $opt_w * 7*86400;
+}
+
+$Period || ($Period = 86400);
 
 while (<>) {
 	if (/^(\d+)/) {
