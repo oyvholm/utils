@@ -1,11 +1,11 @@
 
 # Makefile for std.c
-# $Id: Makefile,v 1.4 1999/04/26 09:28:50 sunny Exp $
+# $Id: Makefile,v 1.5 1999/05/04 11:50:15 sunny Exp $
 
 OBJS = std.o getopt.o
 CC = gcc
 LD = gcc
-CCFLAGS = -Wall -Wno-unused -O2 -c -g -ansi -pedantic
+CCFLAGS = -Wall -O2 -c -g -ansi -pedantic -Wno-unused
 LDFLAGS = -Wall
 EXEC = std
 
@@ -15,7 +15,7 @@ $(EXEC): $(OBJS)
 std.o: std.c std.h getopt.h Makefile
 	$(CC) $(CCFLAGS) std.c
 
-getopt.o: getopt.h Makefile tailor.h
+getopt.o: getopt.c getopt.h tailor.h Makefile
 	$(CC) $(CCFLAGS) getopt.c
 
 clean:
