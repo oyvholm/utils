@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# $Id: dumptrack,v 1.4 2003/07/07 10:54:17 sunny Exp $
+# $Id: dumptrack,v 1.5 2003/07/22 01:24:54 sunny Exp $
 # Dumper rådata fra GPS’en.
 
-dir=/home/sunny/src/cvs/gps/tracks/raw/`date +%Y/%m`
+dir=/home/sunny/src/dbk/gps/tracks/raw/`date +%Y/%m`
 fil=$dir/`u`.track.mayko
 
 rm /home/sunny/tr
