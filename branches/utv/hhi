@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.17 2003/04/24 19:04:23 sunny Exp $
+# $Id: hhi,v 1.1.2.18 2003/06/05 15:01:03 sunny Exp $
 # Html Header Indexer
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -10,8 +10,8 @@
 use strict;
 
 use Getopt::Std;
-our ($opt_l) = (2);
-getopts('l:');
+our ($opt_a, $opt_l) = (0, 2);
+getopts('al:');
 
 my $last_level = 1;
 my $start_level = 2;
@@ -64,12 +64,11 @@ while (<>) {
 			} else {
 				$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
 			}
-			unless (/<!-- nohhitoc -->/i) {
+			if (!/<!-- nohhitoc -->/i || $opt_a) {
 				push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
 				                     : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
 			}
 			$last_level = $header_level;
-		} else {
 		}
 		push(@Data, "$_");
 	} elsif (/<!-- hhitoc -->/i) {
@@ -128,6 +127,8 @@ for my $Line (@Data) {
 
 __END__
 
+# POD {{{
+
 =pod
 
 =head1 NAME
@@ -136,11 +137,11 @@ hhi - Html Header Indexer
 
 =head1 REVISION
 
-$Id: hhi,v 1.1.2.17 2003/04/24 19:04:23 sunny Exp $
+$Id: hhi,v 1.1.2.18 2003/06/05 15:01:03 sunny Exp $
 
 =head1 SYNOPSIS
 
-hhi [files [..]]
+hhi [options] [files [..]]
 
 =head1 DESCRIPTION
 
@@ -161,7 +162,7 @@ Every header will be have an index number inserted into the beginning of the hea
     <!-- /hhitoc -->
     <h2>Subsection #1</h2>
       <h3>Subsubsection #1.1</h3>
-      <h4>Header excluded from the index</h4> <!-- nohhitoc -->
+        <h4>Header excluded from the index</h4> <!-- nohhitoc -->
     <h2>Subsection #2</h2>
     <h2>Section with specified name</h2> <!-- hhiname secname -->
 
@@ -185,11 +186,26 @@ will be changed to
     <!-- /hhitoc -->
     <h2><a name="h-1">1.</a> Subsection #1</h2>
       <h3><a name="h-1.1">1.1</a> Subsubsection #1.1</h3>
-      <h4><a name="h-1.1.1">1.1.1</a> Header excluded from the index</h4> <!-- nohhitoc -->
+        <h4><a name="h-1.1.1">1.1.1</a> Header excluded from the index</h4> <!-- nohhitoc -->
     <h2><a name="h-2">2.</a> Subsection #2</h2>
     <h2><a name="secname">3.</a> Section with specified name</h2> <!-- hhiname secname -->
 
 To avoid creation of names like I<1.2..4>, header levels should not be skipped, do not let a E<lt>h4E<gt> follow a E<lt>h2E<gt> without a E<lt>h3E<gt> in between.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-a>
+
+Include all headers in the contents, even those marked with S<E<lt>!-- nohhitoc --E<gt>>.
+
+=item B<-l x>
+
+Start indexing at level x.
+Default value is 2, leaving E<lt>h1E<gt> headers untouched.
+
+=back
 
 =head1 BUGS
 
@@ -199,7 +215,7 @@ The source is untested on Perl versions prior to 5.6.1, any incompatibilities sh
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
+Made by E<216>yvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
 
 =head1 LICENCE
 
@@ -207,4 +223,6 @@ GNU General Public License.
 
 =cut
 
-# End of file $Id: hhi,v 1.1.2.17 2003/04/24 19:04:23 sunny Exp $
+# }}}
+
+# End of file $Id: hhi,v 1.1.2.18 2003/06/05 15:01:03 sunny Exp $
