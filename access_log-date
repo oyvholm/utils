@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: access_log-date,v 1.1 2004/03/30 06:53:01 sunny Exp $
+# $Id: access_log-date,v 1.2 2004/04/05 15:07:37 sunny Exp $
 # Leser første og siste datoen i access_log og skifter navn på den til
 # formatet NAVN.ååååmmddTttmmssZ-ååååmmddTttmmssZ.access_log
 #
-# ©opyleft 2001–2004 Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
 # Lisens: GNU General Public License ♥
 #=====================================================================
 
@@ -33,12 +33,18 @@ for $File (@ARGV) {
 	if (-e $File) {
 		my $Head = `head -1 $File`; # Halv-FIXME. Men det funker.
 		my $Tail = `tail -1 $File`;
-		my $Destfil = sprintf("%s%s-%s.access_log", $Name, access_date($Head), access_date($Tail));
-		if (-e $Destfil) {
-			warn("$Destfil finnes allerede, skifter ikke navn på $File\n");
+		if (length("$Head$Tail")) {
+			my $Destfil = sprintf("%s%s-%s.access_log", $Name, access_date($Head), access_date($Tail));
+			if (-e $Destfil) {
+				warn("$Destfil finnes allerede, skifter ikke filnavn.\n");
+			} else {
+				printf("%s → %s%s\n", $File, $Destfil, $opt_s ? " (simulerer)" : "");
+				unless ($opt_s) {
+					rename($File, $Destfil) || warn("rename($File, $Destfil): $!\n")
+				}
+			}
 		} else {
-			printf("%s → %s%s\n", $File, $Destfil, $opt_s ? " (simulerer)" : "");
-			rename($File, $Destfil) || warn("rename($File, $Destfil): $!\n") unless ($opt_s);
+			warn("$File: Fila er tom, skifter ikke navn på den.\n");
 		}
 	} else {
 		warn("$File: Finnes ikke.\n");
@@ -48,17 +54,17 @@ for $File (@ARGV) {
 sub access_date {
 	my $Linje = shift;
 	my $Retval = "";
-	if ($Linje =~ m#^\S+\s+\S+\s+\S+\s+\[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)(\d\d)#) { # OBS: Sjekker i̲k̲k̲e̲ minutter i tidssona. Det er for å få opp farta på trålinga.
+	if ($Linje =~ m#^\S+\s+\S+\s+\S+\s+\[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)(\d\d)#) {
 		my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
 		   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
 		my $num_mnd = $Mnd{$Mon};
 		my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mnd, $Year);
-		$Secs -= ($zone_hour*3600 + $zone_min*60); # Husk det med manglende minutter.
+		$Secs -= ($zone_hour*3600 + $zone_min*60);
 		my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
 		$u_year += 1900; # Urgh
 		$Retval = sprintf("%04u%02u%02uT%02u%02u%02uZ", $u_year, $u_mon+1, $u_mday, $u_hour, $u_min, $u_sec);
 	} else {
-		die("Ukjent format: \"$Linje\", avbryter.\n");
+		die("Ukjent linjeformat: \"$Linje\", avbryter.\n");
 	}
 	return($Retval);
 }
@@ -68,10 +74,16 @@ sub usage {
 
 	print(<<END);
 
-Syntax: $0 [valg] navn fil
+Syntax: $0 [valg] fil [flere filer [...]]
 
-Leser første og siste datoen i access_log og skifter navn på den til
-formatet NAVN.ååååmmddTttmmssZ-ååååmmddTttmmssZ.access_log
+Leser første og siste datoen i en access_log laget av Apache og skifter
+filnavnet til [NAVN.]ååååmmddTttmmssZ-ååååmmddTttmmssZ.access_log
+
+Valg:
+
+-h       Hjelpings.
+-n NAVN  Bruk NAVN som prefiks til filnavnet.
+-s       Simulering, ikke skift navn på fila.
 
 Det er selvfølgelig UTC som brukes. Trenger head(1) og tail(1).
 
@@ -84,4 +96,4 @@ END
 
 __END__
 
-# End of file $Id: access_log-date,v 1.1 2004/03/30 06:53:01 sunny Exp $
+# End of file $Id: access_log-date,v 1.2 2004/04/05 15:07:37 sunny Exp $
