@@ -1,10 +1,11 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.3 2004/02/10 05:00:43 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
-# (C)opyright 1999-2003 Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
+# Lisens: GNU General Public License
 #=========================================================
 
 require Exporter;
@@ -42,7 +43,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.3 2004/02/10 05:00:43 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -53,7 +54,7 @@ $suncgi::DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
 
 $suncgi::STD_LANG = "no";
 $suncgi::STD_BACKGROUND = "";
-$suncgi::STD_CHARSET = "ISO-8859-1"; # Hvis $suncgi::CharSet ikke er definert
+$suncgi::STD_CHARSET = "ISO-8859-1"; # Hvis $suncgi::CharSet ikke er definert. Latin1 foreløpig, men bare vent. Snart kommer UTF-8 og tar deg, og DA.... Say no more. Vi må bare vente litt.
 $suncgi::STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
 $suncgi::STD_DOCWIDTH = '95%'; # Hvis ikke $suncgi::doc_width er spesifisert
 $suncgi::STD_HTMLDTD = $suncgi::DTD_HTML4LOOSE;
@@ -139,7 +140,7 @@ sub D {
 	}
 	unless(length($err_msg)) {
 		flock(DebugFP, LOCK_EX);
-		seek(DebugFP, 0, 2) || ($err_msg = "Kan ikke seek'e til slutten av debugfila");
+		seek(DebugFP, 0, 2) || ($err_msg = "Kan ikke seek’e til slutten av debugfila");
 	}
 	if (length($err_msg)) {
 		print <<END;
@@ -186,7 +187,7 @@ sub deb_pr {
 	}
 	unless(length($err_msg)) {
 		flock(DebugFP, LOCK_EX);
-		seek(DebugFP, 0, 2) || ($err_msg = "Kan ikke seek'e til slutten av debugfila");
+		seek(DebugFP, 0, 2) || ($err_msg = "Kan ikke seek’e til slutten av debugfila");
 	}
 	if (length($err_msg)) {
 		print <<END;
@@ -345,7 +346,7 @@ sub set_cookie {
 		$min = "0" . $min if $min < 10;
 		$hour = "0" . $hour if $hour < 10;
 	}
-	my (@secure) = ("","secure"); # add security to the cookie if defined.  I'm not too sure how this works.
+	my (@secure) = ("","secure"); # add security to the cookie if defined.  I’m not too sure how this works.
 	if (!defined $expires) {
 		# if expiration not set, expire at 12/31/1999
 		$expires = " expires\=Fri, 31-Dec-1999 00:00:00 GMT;";
@@ -389,7 +390,7 @@ sub delete_cookie {
 	my (@to_delete) = @_;
 	my ($name);
 	foreach $name (@to_delete) {
-		undef $suncgi::Cookie{$name}; #undefines cookie so if you call set_cookie, it doesn't reset the cookie.
+		undef $suncgi::Cookie{$name}; #undefines cookie so if you call set_cookie, it doesn’t reset the cookie.
 		print "Set-Cookie: $name=; expires=Thu, 01-Jan-1970 00:00:00 GMT;\n";
 		#this also must be done before you print any content type headers.
 	}
@@ -450,6 +451,7 @@ Content-type: text/html
 	<!-- $suncgi::rcs_id -->
 	<!-- $main::rcs_id -->
 	<head>
+		<!-- \x7B\x7B\x7B -->
 		<title>$Title</title>
 		<style type="text/css">
 			<!--
@@ -467,7 +469,7 @@ END
 		<meta name="author" content="$suncgi::WebMaster">
 END
 	print <<END;
-		<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
+		<meta name="copyright" content="&#169; &#216;yvind A. Holm">
 		<meta name="description" content="CGI error">
 		<meta name="date" content="$utc_str">
 END
@@ -475,6 +477,7 @@ END
 		<link rev="made" href="mailto:$suncgi::WebMaster">
 END
 	print <<END;
+		<!-- \x7D\x7D\x7D -->
 	</head>
 	<body>
 		<h1>$Title</h1>
@@ -525,7 +528,7 @@ sub HTMLwarn {
 	# }}}
 } # HTMLwarn()
 
-# increase_counter() øker kun med 1 hvis IP'en er forskjellig fra forrige gang.
+# increase_counter() øker kun med 1 hvis IP’en er forskjellig fra forrige gang.
 # Hvis parameter 2 er !0, øker den uanskvett.
 
 sub increase_counter {
@@ -587,9 +590,9 @@ sub log_access {
 	my $File = "$log_dir/$Base.log";
 	my $Countfile = "$log_dir/$Base.count";
 	create_file($File);
-	open(LogFP, "+<$File") || (HTMLwarn("$File: Can't open access log for read/write: $!"), return);
+	open(LogFP, "+<$File") || (HTMLwarn("$File: Can’t open access log for read/write: $!"), return);
 	flock(LogFP, LOCK_EX);
-	seek(LogFP, 0, 2) || (HTMLwarn("$Countfile: Can't seek to EOF: $!"), close(LogFP), return);
+	seek(LogFP, 0, 2) || (HTMLwarn("$Countfile: Can’t seek to EOF: $!"), close(LogFP), return);
 	foreach my $var_name ('HTTP_USER_AGENT', 'REMOTE_ADDR', 'REMOTE_HOST', 'HTTP_REFERER') {
 		defined($ENV{$var_name}) || ($ENV{$var_name} = "");
 	}
@@ -721,7 +724,7 @@ sub print_footer {
 	my $count_str = length($suncgi::this_counter) ? "Du er bes&oslash;kende nummer $suncgi::this_counter p&aring; denne siden." : "&nbsp;";
 
 	# FIXME: Hardkoding av URL her pga av at ${suncgi::Url} har skifta navn.
-	# FIXME: I resten av HTML'en er det brukt <div align="center">.
+	# FIXME: I resten av HTML’en er det brukt <div align="center">.
 	tab_print(<<END);
 <table width="$footer_width" cellpadding="0" cellspacing="0" border="$suncgi::Border" align="$footer_align">
 	<tr>
@@ -798,6 +801,7 @@ sub print_header {
 	}
 	tab_print(<<END);
 <head>
+	<!-- \x7B\x7B\x7B -->
 	<title>$DocTitle</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
 END
@@ -814,6 +818,7 @@ END
 	# tab_print ("Tabs = Tabs\n");
 	tab_print($style_sheet) if length($style_sheet);
 	tab_print($head_script) if length($head_script);
+	tab_print("<!-- \x7D\x7D\x7D -->\n");
 	Tabs(-1);
 	tab_print("</head>\n");
 	unless ($no_body) {
@@ -912,7 +917,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.3 2004/02/10 05:00:43 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -925,7 +930,9 @@ Inneholder generelle HTML-rutiner som brukes hele tiden.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999-2003 Øyvind A. Holm E<lt>F<sunny@sunbase.org>E<gt>
+(C)opyright 1999–2004 Øyvind A. Holm E<lt>F<sunny@sunbase.org>E<gt>
+
+Lisens: GNU General Public License
 
 =head1 VARIABLER
 
@@ -938,7 +945,7 @@ under kjøring:
 
 =item I<${suncgi::Url}>
 
-URL'en til index.cgi.
+URL’en til index.cgi.
 Normalt sett blir denne satt til navnet på scriptet, for eksempel "I<index.cgi>" eller lignende.
 Før ble I<${suncgi::Url}> satt til full URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting for eksempel ble kjørt under F<httpsZ<>://>
 
@@ -959,7 +966,7 @@ Brukeren I<nobody> (eller hva nå httpd måtte kjøre under) skal ha skrive/lese
 
 =back
 
-NB: Disse må ikke være I<my>'et, de må være globale så de kan bli brukt av alle modulene.
+NB: Disse må ikke være I<my>’et, de må være globale så de kan bli brukt av alle modulene.
 
 =head2 Valgfrie variabler
 
@@ -993,7 +1000,7 @@ Eneste forskjellen hovedsaklig er at feilmeldinger går til skjerm i tillegg til
 
 =item I<${suncgi::Border}>
 
-Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
+Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>’es.
 
 =back
 
@@ -1099,7 +1106,7 @@ entities. Eksempel:
 
 	index.cgi?doc=login;username=suttleif;pwd=hemmelig
 
-B<FIXME:> Denne må utvides litt med flere Content-type'er.
+B<FIXME:> Denne må utvides litt med flere Content-type’er.
 
 =head2 get_countervalue()
 
@@ -1129,8 +1136,8 @@ B<FIXME:> Muligens det burde vært lagt inn at $suncgi::WebMaster fikk mail hver
 
 Øker telleren i en spesifisert fil med en.
 Fila skal inneholde et tall i ASCII-format.
-I tillegg lages en fil som heter F<{fil}.ip> som inneholder IP'en som brukeren er tilkoblet fra.
-Hvis IP'en er den samme som i fila, oppdateres ikke telleren.
+I tillegg lages en fil som heter F<{fil}.ip> som inneholder IP’en som brukeren er tilkoblet fra.
+Hvis IP’en er den samme som i fila, oppdateres ikke telleren.
 Hvis parameter 2 er I<!0>, øker telleren uanskvett.
 
 =head2 log_access()
@@ -1147,7 +1154,7 @@ B<FIXME:> Skriv mer her.
 
 Leser inn et dokument og konverterer det til HTML. Dette blir en av de
 mest sentrale rutinene i en hjemmeside, i og med at det skal ta seg av
-HTML-output'en. Istedenfor å fylle opp scriptene med HTML-koder, gjøres et
+HTML-output’en. Istedenfor å fylle opp scriptene med HTML-koder, gjøres et
 kall til F<print_doc()> som skriver ut sidene og genererer HTML.
 
 Formatet på fila består av to deler: Header og HTML. De første linjene
@@ -1283,7 +1290,7 @@ Vi lar det være sånn foreløpig.
 =head2 Tabs()
 
 Øker/minsker verdien av I<${suncgi::Tabs}>.
-Den kan ta ett parameter, en verdi som er negativ eller positiv alt ettersom man skal fjerne eller legge til TAB'er.
+Den kan ta ett parameter, en verdi som er negativ eller positiv alt ettersom man skal fjerne eller legge til TAB’er.
 Hvis man skriver
 
 	Tabs(-2);
@@ -1292,12 +1299,12 @@ fjernes to spacer, hvis man skriver
 
 	Tabs(5);
 
-legges 5 TAB'er til.
+legges 5 TAB’er til.
 Hvis ingen parametere spesifiseres, brukes 1 som default, altså en TAB legges til.
 
 =head2 url_encode()
 
-Konverterer en streng til format for bruk i URL'er.
+Konverterer en streng til format for bruk i URL’er.
 
 =head2 sec_to_string()
 
@@ -1307,11 +1314,11 @@ Konverterer til leselig datoformat.
 
 print_doc() er ikke ferdig, ellers svinger det visst.
 
-pod'en er muligens litt ute av sync med Tingenes Tilstand.
+pod’en er muligens litt ute av sync med Tingenes Tilstand.
 Men det er vel sånt som forventes.
 
 =cut
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.3 2004/02/10 05:00:43 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $ ####
