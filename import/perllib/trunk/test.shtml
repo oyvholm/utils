@@ -1,8 +1,25 @@
 title Demo på en liten greie
 keywords ingenting, er, som, lungemos, på, søndagstur
 background test.jpg
-id $Id: test.shtml,v 1.1 1999/04/08 15:00:37 sunny Exp $
+id $Id: test.shtml,v 1.2 1999/04/28 11:22:48 sunny Exp $
 owner sunny@tritech.no
-lang no
+# lang no
+
+<=footer>
+
+<hr>
+&copy; TriTech jada
+
+<=page forside>
+
+<=lang no>
 
 <h1>Her var det ikke mye</h1>
+
+<=lang en>
+
+<h1>Not much here</h1>
+
+<=lang de>
+
+<h1>Haben Sie Angst?</h1>
