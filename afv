@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: afv,v 1.6 2001/05/11 13:06:59 sunny Exp $
+# $Id: afv,v 1.7 2001/05/26 09:49:48 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -41,6 +41,7 @@ LOOP: foreach my $Curr (@Files) {
 
 	until (mkdir("$lock_dir", 0777)) {
 		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
+		check_stop();
 		sleep 5;
 	};
 
@@ -117,4 +118,4 @@ sub check_stop {
 	}
 } # check_stop()
 
-#### End of file $Id: afv,v 1.6 2001/05/11 13:06:59 sunny Exp $ ####
+#### End of file $Id: afv,v 1.7 2001/05/26 09:49:48 sunny Exp $ ####
