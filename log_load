@@ -1,19 +1,20 @@
 #!/bin/sh
 
-# $Id: log_load,v 1.3 2003/10/05 07:20:21 sunny Exp $
-# Logger maskinload til ~/log/load.log
+# $Id: log_load,v 1.4 2004/03/28 06:03:18 sunny Exp $
+# Logger maskinload til ~/log/load/ÅÅÅÅ/ÅÅÅÅ-MM-DD.load.log
 
 logdir=$HOME/log
 
-[ -d $logdir ] || mkdir -p logdir || { echo "mkdir $logdir: På trynet" >&2, exit 1; }
+[ -d $logdir ] || mkdir -p logdir || { echo "$0: mkdir $logdir: På trynet" >&2; exit 1; }
+[ -x /usr/sbin/cronolog ] || { echo "$0: Fant ikke /usr/sbin/cronolog, avbryter." >&2; exit 1; }
 
-lockname=$logdir/.load.log.swp
+lockname=$logdir/.curr_load.swp
 
 until mkdir $lockname 2>/dev/null; do
-	echo $0: $lockname: Lockdir finnes, avbryter. >&2
+	echo "$0: $lockname: Lockdir finnes, avbryter." >&2
 	exit 1
 done
 
-(echo -n "`date -u +"%Y-%m-%dT%H:%M:%SZ"` "; cat /proc/loadavg) >>$logdir/load.log
+(echo -n "`date -u +"%Y-%m-%dT%H:%M:%SZ"` "; cat /proc/loadavg) | /usr/sbin/cronolog -z 0 -S $logdir/curr_load $logdir/load/%Y/%Y-%m-%d.load.log
 
 rmdir $lockname
