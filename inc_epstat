@@ -1,12 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Id: inc_epstat,v 1.2 2002/07/15 13:24:45 sunny Exp $
+# $Id: inc_epstat,v 1.3 2003/09/22 05:05:41 sunny Exp $
 # Filter for å gjøre epstat-format brukbart i gnuplot.
 
 my $Count = 0;
 
 while (<>) {
 	$Count++;
-	s/^([\-\.\d]+)/$1\t$Count/;
+	s/^(.+)/$1\t$Count/;
 	print;
 }
