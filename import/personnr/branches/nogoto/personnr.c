@@ -3,7 +3,7 @@
  * Kontrollerer om norske personnumre er gyldige og kan også skrive ut alle
  * gyldige norske personnumre på angitte datoer.
  *
- * $Id: personnr.c,v 1.3.2.10.2.1 2004/02/29 02:45:58 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.10.2.2 2004/03/03 02:43:41 sunny Exp $
  *
  * Tegnsett brukt i denne fila: UTF-8
  *
@@ -61,7 +61,7 @@
  */
 
 #define VERSION   "1.12"
-#define RCS_DATE  "$Date: 2004/02/29 02:45:58 $"
+#define RCS_DATE  "$Date: 2004/03/03 02:43:41 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,7 +74,7 @@
 #define EXIT_OK     0
 #define EXIT_ERROR  1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.10.2.1 2004/02/29 02:45:58 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.10.2.2 2004/03/03 02:43:41 sunny Exp $";
 
 int lovlig_personnr(char *);
 char *persnr(char *);
@@ -336,5 +336,5 @@ void usage(int retval)
 	/* }}} */
 } /* usage() */
 
-/* vim600: set fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.10.2.1 2004/02/29 02:45:58 sunny Exp $ */
+/* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
+/* End of file $Id: personnr.c,v 1.3.2.10.2.2 2004/03/03 02:43:41 sunny Exp $ */
