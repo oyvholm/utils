@@ -1,14 +1,14 @@
 #!/usr/bin/perl -w
 
 #==================================================
-# $Id: center,v 1.2 2002/06/17 12:28:35 sunny Exp $
+# $Id: center,v 1.2.2.1 2002/06/17 12:47:07 sunny Exp $
 # Centers text
+# (Special version for Perl < 5.6.0)
 #==================================================
 
-use strict;
+# use strict;
 use Getopt::Std;
 
-our($opt_w) = 0;
 getopt('w:');
 
 my @Lines = <>;
