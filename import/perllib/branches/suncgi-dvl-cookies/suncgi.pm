@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.33.2.3 2001/06/05 04:48:27 sunny Exp $
+# $Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -42,7 +42,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.33.2.3 2001/06/05 04:48:27 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -298,13 +298,7 @@ sub set_cookie {
 	# foreach my $key (keys %suncgi::Cookie) {
 		defined($Value) || ($Value = "");
 		$Value =~ s/ /+/g; #convert plus to space.
-		my $t;
-		$t = $expires;
-		$t = $path;
-		$t = $domain;
-		$t = $sec;
-		$t = $secure[$sec];
-		print STDERR "sec = $sec\n";
+		defined($sec) || ($sec = 0);
 		my $cookie_str = "Set-Cookie: $Key\=$Value; $expires path\=$path; domain\=$domain; $secure[$sec]\n";
 		deb_pr($cookie_str);
 		print($cookie_str);
@@ -790,7 +784,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.33.2.3 2001/06/05 04:48:27 sunny Exp $>
+S<$Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1186,4 +1180,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.33.2.3 2001/06/05 04:48:27 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $ ####
