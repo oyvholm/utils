@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: afv_rename,v 1.3 2004/04/12 11:32:09 sunny Exp $
+# $Id: afv_rename,v 1.4 2004/04/12 20:06:14 sunny Exp $
 # Leser filnavn fra stdin og skifter navn på dem fra gammelt
 # afv-format (epoch) til ååååmmddTttmmssZ . Virker forsåvidt på
 # alle filer som begynner med et 9- eller 10-sifret nummer.
@@ -21,20 +21,31 @@ getopts('v');
 $| = 1;
 
 while (<>) {
-	if (/^(.*\/)(\d{9,10})(\..*)$/) {
-		my ($First, $Num, $Rest) =
-		   (    $1,   $2,    $3);
-		my @TA = gmtime($Num);
-		my $date_str = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
-		my $Dest = "$First$date_str$Rest";
-		unless (-e $Dest) {
-			if (rename("$First$Num$Rest", $Dest)) {
-				$opt_v && print("$First$Num$Rest → $Dest\n");
+	chomp();
+	if (/^(.*)\/([^\/]+?)$/) {
+		my ($Path, $File) =
+		   (   $1,    $2);
+
+		if ($File =~ /^(.*?)\b(\d{9,10})\b(.*)$/) {
+			my ($First, $Num, $Rest) =
+			   (    $1,   $2,    $3);
+			my $From = "$Path/$File";
+			if (-f $From) {
+				my @TA = gmtime($Num);
+				my $date_str = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+				my $Dest = "$Path/$First$date_str$Rest";
+				unless (-e $Dest) {
+					if (rename($From, $Dest)) {
+						$opt_v && print("$From → $Dest\n");
+					} else {
+						warn("rename(\"$From\", \"$Dest\"): $!\n");
+					}
+				} else {
+					warn("$Dest: File exists.\n");
+				}
 			} else {
-				warn("rename(\"$First$Num$Rest\", \"$Dest\"): $!\n");
+				warn("Ignoring non-regular file $From\n");
 			}
-		} else {
-			warn("$Dest: File exists.\n");
 		}
 	}
 }
@@ -42,4 +53,4 @@ while (<>) {
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: afv_rename,v 1.3 2004/04/12 11:32:09 sunny Exp $
+# End of file $Id: afv_rename,v 1.4 2004/04/12 20:06:14 sunny Exp $
