@@ -69,7 +69,7 @@ if ($opt_u) {
 		if (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
 			# {{{
 			my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
-			   ($1,       $2,       $3,     $4,    $5,     $6,   $7,    $8,    $9,   $10);
+			   (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
 			if (($lat_val eq $last_lat) && ($lon_val eq $last_lon)) {
 				unless ($found_dup) {
 					$start_date = "$Year$Month${Day}T$Hour$Min$Sec";
@@ -131,7 +131,7 @@ while (<>) {
 	} elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
 		# Author’s format, epoch style {{{
 		my ($ep_time, $lon_val, $lat_val, $Alt) =
-		   ($1,       $2,       $3,       $4);
+		   (      $1,       $2,       $3,   $4);
 		my ($Sec, $Min, $Hour, $Day, $Month, $Year, $Wday, $Yday) = gmtime($ep_time);
 		$Month++; # Urgh Ⅰ
 		$Year += 1900; # Urgh Ⅱ
@@ -140,13 +140,13 @@ while (<>) {
 	} elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
 		# Author’s format, human-readable date format {{{
 		my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
-		   ($1,    $2,     $3,   $4,    $5,   $6,   $7,       $8,       $9);
+		   (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
 		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
 		# }}}
 	} elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
 		# T	09/01/2002 11:51:26	60°23'36.3"	5°19'35.9" {{{
 		my ($Month, $Day, $Year, $Hour, $Min, $Sec, $lat_d, $lat_m, $lat_s, $lon_d, $lon_m, $lon_s) =
-		   ($1,     $2,   $3,    $4,    $5,   $6,   $7,     $8,     $9,     $10,    $11,    $12);
+		   (    $1,   $2,    $3,    $4,   $5,   $6,     $7,     $8,     $9,    $10,    $11,    $12);
 		my $lat_val = sprintf("%.5f", 1*($lat_d+($lat_m/60)+($lat_s/3600)));
 		my $lon_val = sprintf("%.5f", $lon_d+($lon_m/60)+($lon_s/3600));
 		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
@@ -154,7 +154,7 @@ while (<>) {
 	} elsif (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
 		# 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23 {{{
 		my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
-		   ($1,       $2,       $3,     $4,    $5,     $6,   $7,    $8,    $9,   $10);
+		   (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
 		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
 		# }}}
 	} elsif (/^
@@ -180,8 +180,8 @@ while (<>) {
 			(...............)
 			# }}}
 			/x) {
-		my ($Alfa, $Year,   $Month, $Day, $Hour, $Min, $Sec, $NS, $Y_deg, $Y_degmin, $Y_mindec, $EW, $X_deg, $X_degmin, $X_mindec, $Accur, $Alt, $Rest) =
-		   ($1,    $2+2000, $3,     $4,   $5,    $6,   $7,   $8,  $9,     $10,       $11,       $12, $13,    $14,       $15,       $16,    $17,  $18);
+		my ($Alfa,   $Year, $Month, $Day, $Hour, $Min, $Sec, $NS, $Y_deg, $Y_degmin, $Y_mindec, $EW, $X_deg, $X_degmin, $X_mindec, $Accur, $Alt, $Rest) =
+		   (   $1, $2+2000,     $3,   $4,    $5,   $6,   $7,  $8,     $9,       $10,       $11, $12,    $13,       $14,       $15,    $16,  $17,   $18);
 		my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
 		$last_time = $ep_time;
 		my $tmp_x = sprintf("%.5f", $X_deg + $X_degmin/60 + $X_mindec/60000);
@@ -192,8 +192,8 @@ while (<>) {
 		# }}}
 	} elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
 		# @020721221336__________________________________________ {{{
-		my ($Alfa, $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
-		   ($1,    $2+2000, $3,     $4,   $5,    $6,   $7,   $8);
+		my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
+		   (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
 		print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
 		$found_move = 1;
 		# }}}
@@ -323,7 +323,8 @@ sub sec_to_string {
 sub sec_to_readable {
 	# Convert seconds since 1970 to human-readable format (d:hh:mm:ss) {{{
 	my $secs = shift;
-	my ($Day, $Hour, $Min, $Sec) = (0, 0, 0, 0);
+	my ($Day, $Hour, $Min, $Sec) =
+	   (   0,     0,    0,    0);
 
 	$Day = int($secs/86400);
 	$secs -= $Day * 86400;
@@ -377,7 +378,8 @@ sub ddd_to_dms {
 	# Based on toDMS() from gpstrans-0.39 to ensure compatibility.
 	my $ddd = shift;
 	my $Neg = 0;
-	my ($Hour, $Min, $Sec) = (0, 0, 0);
+	my ($Hour, $Min, $Sec) =
+	   (    0,    0,    0);
 	my $Retval = "";
 
 	if ($ddd < 0.0) {
@@ -408,8 +410,7 @@ sub ddd_to_dms {
 
 sub D {
 	# Send debug messages to stderr if $Debug {{{
-	my $Txt = shift;
-	$Debug && print(STDERR $Txt);
+	$Debug && print(STDERR @_);
 	# }}}
 }
 
