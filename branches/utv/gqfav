@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cp -p $* /home/sunny/s/fav
+chmod +w /home/sunny/s/fav/$(basename $1)
+echo -ne \\a
