@@ -124,7 +124,9 @@ printf("\n%u file%s processed%s. %u revision%s changed, %u revision%s skipped. %
 exit 0;
 
 sub change_message {
-    # Changes a log message for a specific revision of a file if it has changed. {{{
+    # Changes a log message for a specific revision of a file if it has 
+    # changed.
+    # {{{
     my ($File, $Rev, $Txt) = @_;
     my $esc_file = escape_filename($File);
 
@@ -142,7 +144,10 @@ sub change_message {
     if ($Txt ne $compare_text) {
         print("\nChanging message for $esc_file rev. $Rev ...\n");
         if (!defined($missing_file{$File}) && !(-e $File)) {
-            # File does not exist in this revision, change revision to make it appear and make it possible for CVS to update the message {{{
+            # File does not exist in this revision, change revision to 
+            # make it appear and make it possible for CVS to update the 
+            # message
+            # {{{
             print("$esc_file not found, running cvs update with random revisions to try to make it appear...\n");
             for my $Curr (@all_revs) {
                 if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
@@ -213,7 +218,9 @@ sub change_message {
 }
 
 sub get_log_message {
-    # Returns the cvs log message for the specified revision of a file. Used by change_message(). {{{
+    # Returns the cvs log message for the specified revision of a file. 
+    # Used by change_message().
+    # {{{
     my ($File, $Rev) = @_;
     my $header_done = 0;
     my @Arr = ();
@@ -269,7 +276,9 @@ sub get_log_message {
 }
 
 sub escape_filename {
-    # Kludge for handling file names with spaces and characters that trigger shell functions {{{
+    # Kludge for handling file names with spaces and characters that 
+    # trigger shell functions
+    # {{{
     my $Name = shift;
     # $Name =~ s/\\/\\\\/g;
     # $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
