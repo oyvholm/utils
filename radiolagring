@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: radiolagring,v 1.2 2004/04/19 12:12:13 sunny Exp $
+# $Id: radiolagring,v 1.3 2004/04/24 16:09:36 sunny Exp $
 # Syntax: radiolagring navn kanal lengde
 
 export PATH=$HOME/bin:$HOME/bin/basnakk:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/X11R6/bin:/sbin:/usr/sbin:/usr/games
@@ -9,4 +9,8 @@ navn=$1
 kanal=$2
 lengde=$3
 
-timeout $[60*$lengde] wget -U "xmms/1.2.7" -O /home/sunny/dl/nettradio/`u`.$navn.nrk_$kanal.mp3 http://radio.hiof.no:8000/nrk-$kanal-128
+# Gyldige navn pr. 2004-04-24:
+# p1 p2 petre mpetre alltid-klassisk alltid-nyheter stortinget sami-radio
+dir=/home/sunny/dl/nettradio
+[ -d $dir/. ] || mkdir -p $dir
+timeout $[60*$lengde] wget -U "xmms/1.2.7" -O /home/sunny/dl/nettradio/`u`.$navn.nrk_$kanal.mp3 http://radio.hiof.no/nrk-$kanal-172.ogg
