@@ -37,6 +37,8 @@
 #define EXIT_OK     0
 #define EXIT_ERROR  1
 
+#define stddebug  stderr
+
 #define ENGLISH    1
 
 #ifndef C_LANG
@@ -100,7 +102,6 @@ extern void usage(int);
 static char rcs_id_std_h[] = "$Id$";
 extern char *progname;
 extern int  debug;
-extern FILE *stddebug;
 
 #endif /* ifndef _STD_H */
 

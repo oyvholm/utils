@@ -44,7 +44,6 @@ void usage(int);
 static char rcs_id[] = "$Id$";
 char *progname;
 int  debug = 0;
-FILE *stddebug = stderr;
 
 /*
  * main()
