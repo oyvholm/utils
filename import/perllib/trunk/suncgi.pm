@@ -1,5 +1,11 @@
 package suncgi;
 
+#========================================================
+# $Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $
+# Standardrutiner for cgi-bin-programmering.
+# (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
+#========================================================
+
 require Exporter;
 @ISA = qw(Exporter);
 
@@ -31,7 +37,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $>
+S<$Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -135,9 +141,9 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/10/15 10:09:34 $';
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/11/03 21:13:02 $';
 @suncgi::rcs_array = ();
 
 $suncgi::this_counter = "";
@@ -395,6 +401,9 @@ sub get_cgivars {
 	my ($in, %in);
 	my ($name, $value) = ("", "");
 	$in = "";
+	foreach my $var_name ('HTTP_USER_AGENT', 'REMOTE_ADDR', 'REMOTE_HOST', 'HTTP_REFERER', 'CONTENT_TYPE', 'CONTENT_LENGTH', 'QUERY_STRING') {
+		defined($ENV{$var_name}) || ($ENV{$var_name} = "");
+	}
 	my $user_method = defined($ENV{REQUEST_METHOD}) ? $ENV{REQUEST_METHOD} : "";
 	# length($user_method) || ($user_method = "");
 
@@ -422,9 +431,6 @@ sub get_cgivars {
 	if (length($suncgi::request_log_file) && $suncgi::log_requests && length($in)) {
 		local *ReqFP;
 		my $loc_in = $in;
-		foreach my $var_name ('HTTP_USER_AGENT', 'REMOTE_ADDR', 'REMOTE_HOST', 'HTTP_REFERER') {
-			defined($ENV{$var_name}) || ($ENV{$var_name} = "");
-		}
 		if (-e $suncgi::request_log_file) {
 			open(ReqFP, "+<$suncgi::request_log_file") || HTMLdie("$suncgi::request_log_file: Klarte ikke å åpne loggfila for r+w: $!");
 		} else {
@@ -1140,4 +1146,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $ ####
