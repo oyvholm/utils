@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.8 2003/07/14 03:43:50 sunny Exp $
+# $Id: gptrans_conv,v 1.9 2003/07/15 12:05:26 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -10,11 +10,11 @@ use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
-my $rcs_str = '$Id: gptrans_conv,v 1.8 2003/07/14 03:43:50 sunny Exp $';
+my $rcs_str = '$Id: gptrans_conv,v 1.9 2003/07/15 12:05:26 sunny Exp $';
 
-our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t) =
-    (     0,      0,      0,      0,     "",      0,      0);
-getopts('cdeho:st');
+our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
+    (     0,      0,      0,      0,     "",      0,      0,      0);
+getopts('cdeho:stu');
 
 $| = 1;
 
@@ -34,6 +34,7 @@ Syntax: gptrans_conv [options] [filer [...]]
           xgraph
   -s    Kort («Short») format på datoen
   -t    Lag skiller mellom tidspunkter med forskjell på mer enn fem minutter
+  -u    Kommenter ut data som mangler mottak
 
 END
 	exit(0);
@@ -45,6 +46,57 @@ my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $last_time = 0;
 my ($last_lat, $last_lon, $last_alt, $last_line) = (1000, 1000, 100000, ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+
+# Kunne vært et eget script på grunn av at det gjør sine helt egne greier, men like greit å samle det på en plass.
+# FIXME: Fjerner ikke første duplikatentryen.
+if ($opt_u) {
+	# {{{
+	my ($start_date, $end_date, $found_dup) = ("", "", 0);
+	my @Dup = ();
+	while (<>) {
+		if (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
+			my ($lon_val, $lat_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) = ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+			if (($lon_val eq $last_lon) && ($lat_val eq $last_lat)) {
+				unless ($found_dup) {
+					$start_date = "$Year$Month${Day}T$Hour$Min$Sec";
+					@Dup = ();
+					$found_dup = 1;
+				}
+				push(@Dup, "# $_");
+				$end_date = "$Year$Month${Day}T$Hour$Min$Sec";
+			} else {
+				if ($found_dup) {
+					print("# $start_date-$end_date: CO: Uten mottak \x7B\x7B\x7B\n");
+					for (@Dup) {
+						print($_);
+					}
+					print("# $start_date-$end_date: CO: Uten mottak \x7D\x7D\x7D\n# move\n$_");
+					$found_dup = 0;
+				} else {
+					print($_);
+				}
+			}
+			$last_lon = $lon_val;
+			$last_lat = $lat_val;
+		} else {
+			if ($found_dup) {
+				push(@Dup, $_);
+			} else {
+				print($_);
+			}
+		}
+	}
+	if ($found_dup) {
+		print("# $start_date-$end_date: CO: Uten mottak \x7B\x7B\x7B\n");
+		for (@Dup) {
+			print($_);
+		}
+		print("# $start_date-$end_date: CO: Uten mottak \x7D\x7D\x7D\n# move\n");
+		$found_dup = 0;
+	}
+	exit(0);
+	# }}}
+}
 
 if ($opt_o eq "ps") {
 	print(ps_header(532, 6034, 533, 6040));
@@ -128,6 +180,7 @@ while (<>) {
 		$Rest) =
 		($1, $2+2000, $3, $4, $5, $6, $7, $8);
 		print("\n") unless ($opt_o eq "xgraph");
+		$found_move = 1;
 		# print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, "?", "?", "?");
 		# }}}
 	} elsif (/^xmaplog /) {
@@ -290,4 +343,4 @@ END
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.8 2003/07/14 03:43:50 sunny Exp $
+# End of file $Id: gptrans_conv,v 1.9 2003/07/15 12:05:26 sunny Exp $
