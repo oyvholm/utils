@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id: unik_df,v 1.1 2003/09/30 05:00:28 sunny Exp $
+# Filtrerer bort duplikater i ~/log/df.log .
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+
+$| = 1;
+
+my $last_val = 0;
+
+while (<>) {
+	chomp;
+	if (/^(\S+) (\d+)/) {
+		unless ($2 eq $last_val) {
+			print("$1 $2\n");
+		}
+		$last_val = $2;
+	}
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id: unik_df,v 1.1 2003/09/30 05:00:28 sunny Exp $
