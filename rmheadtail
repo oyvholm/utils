@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: rmheadtail,v 1.1 2003/09/24 10:01:21 sunny Exp $
+# $Id: rmheadtail,v 1.2 2003/10/30 16:55:39 sunny Exp $
 # Removes first and last line from stdin or specified files
+#
 # Character set: UTF-8
 # License: GNU General Public License
 # ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
@@ -14,14 +15,15 @@ $| = 1;
 
 my @Data = <>;
 
-splice(@Data, 0, 1);
-splice(@Data, -1);
-
-for (@Data) {
-	print($_);
+if (scalar(@Data) > 2) {
+	splice(@Data, 0, 1);
+	splice(@Data, -1);
+	for (@Data) {
+		print($_);
+	}
 }
 
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: rmheadtail,v 1.1 2003/09/24 10:01:21 sunny Exp $
+# End of file $Id: rmheadtail,v 1.2 2003/10/30 16:55:39 sunny Exp $
