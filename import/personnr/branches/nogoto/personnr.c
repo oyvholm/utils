@@ -3,7 +3,7 @@
  * Kontrollerer om norske personnumre er gyldige og kan også skrive ut alle
  * gyldige norske personnumre på angitte datoer.
  *
- * $Id: personnr.c,v 1.3.2.10 2004/02/28 03:08:23 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.10.2.1 2004/02/29 02:45:58 sunny Exp $
  *
  * Tegnsett brukt i denne fila: UTF-8
  *
@@ -61,7 +61,7 @@
  */
 
 #define VERSION   "1.12"
-#define RCS_DATE  "$Date: 2004/02/28 03:08:23 $"
+#define RCS_DATE  "$Date: 2004/02/29 02:45:58 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,7 +74,7 @@
 #define EXIT_OK     0
 #define EXIT_ERROR  1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.10 2004/02/28 03:08:23 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.10.2.1 2004/02/29 02:45:58 sunny Exp $";
 
 int lovlig_personnr(char *);
 char *persnr(char *);
@@ -154,7 +154,7 @@ int lovlig_personnr(char *pers_str)
 char *persnr(char *orgbuf)
 {
 	/* Mottar peker til en buffer med plass til minst 12 tegn der de første 10 er fylt ut. Returnerer komplett nummer. {{{ */
-	int x, y, j, k;
+	int x, y, j, k, qfunc = 0;
 	static char buf[12];
 
 	strncpy(buf, orgbuf, 11);
@@ -170,20 +170,20 @@ char *persnr(char *orgbuf)
 
 	if (j == 10 || k == 10) { /* Hvis j eller k == 10 er nummeret falskt */
 		strcpy(buf, ""); /* Returnerer tom streng hvis ulovlig */
-		goto endfunc;
+		qfunc = 1;
 	}
 
-	if (j == 11)
-		j = 0;
-	if (k == 11)
-		k = 0;
+	if (!qfunc) {
+		if (j == 11)
+			j = 0;
+		if (k == 11)
+			k = 0;
 
-	buf[9] = j + '0';
-	buf[10] = k + '0';
-	buf[11] = '\0';
+		buf[9] = j + '0';
+		buf[10] = k + '0';
+		buf[11] = '\0';
+	}
 
-endfunc:
-;
 	return(buf);
 	/* }}} */
 } /* persnr() */
@@ -193,75 +193,76 @@ int persnr_date(char *birth_str)
 	/* Sender alle gyldige personnr for en viss dato til stdout {{{ */
 	register int i; /* Tellevariabel */
 	int retval = EXIT_OK,
-		startnum; /* Avhengig av curr_century */
+		startnum, /* Avhengig av curr_century */
+		qfunc = 0;
 	char buf[12], birthdate[20], tmpbuf[12], century[3], iso_date[12];
 	char curr_century = 1; /* 0 = 499 og nedover, 1 = 999 og nedover */
 
 	if ((strlen(birth_str) != 6) && (strlen(birth_str) != 8)) {
 		fprintf(stderr, "%s: \"%s\": Feil format på datoen. Formatet skal være ddmmåå eller ddmmåååå.\n", progname, birth_str);
 		retval |= EXIT_ERROR;
-		goto endfunc;
+		qfunc = 1;
 	}
 
-	sprintf(birthdate, "%.8s", birth_str);
+	if (!qfunc) {
+		sprintf(birthdate, "%.8s", birth_str);
 
-	strcpy(century, "20"); /* Standard århundre er 20xx */
+		strcpy(century, "20"); /* Standard århundre er 20xx */
 
-	/*
-	 * Her kommer det en sjekk som finner ut om det er spesifisert et
-	 * annet århundre, f.eks. 24091971, dvs. to ekstra siffer i året.
-	 */
+		/*
+		 * Her kommer det en sjekk som finner ut om det er spesifisert et
+		 * annet århundre, f.eks. 24091971, dvs. to ekstra siffer i året.
+		 */
 
-	if (strlen(birthdate) == 8) {
-		strncpy(century, birthdate + 4, 2); /* Muligens annet århundre på gang */
-		curr_century = (atoi(century) % 2) ? 0 : 1;
+		if (strlen(birthdate) == 8) {
+			strncpy(century, birthdate + 4, 2); /* Muligens annet århundre på gang */
+			curr_century = (atoi(century) % 2) ? 0 : 1;
 
-		strncpy(tmpbuf, birthdate, 11);
-		sprintf(birthdate, "%c%c%c%c%c%c",
-			birthdate[0],
-			birthdate[1],
+			strncpy(tmpbuf, birthdate, 11);
+			sprintf(birthdate, "%c%c%c%c%c%c",
+				birthdate[0],
+				birthdate[1],
+				birthdate[2],
+				birthdate[3],
+				birthdate[6],
+				birthdate[7]
+			);
+		}
+
+		startnum = curr_century ? 999 : 499; /* Hvilket århundre skal brukes? */
+
+		sprintf(iso_date, "%2.2s%c%c-%c%c-%c%c",
+			century,
+			birthdate[4],
+			birthdate[5],
 			birthdate[2],
 			birthdate[3],
-			birthdate[6],
-			birthdate[7]
+			birthdate[0],
+			birthdate[1]
 		);
+
+		fprintf(stdout, "\nListe over alle gyldige norske personnummer for %s:\n\n", iso_date);
+		fprintf(stdout, "Gutter:\n\n");
+		for (i = startnum; i >= (startnum-499); i -= 2) {
+			sprintf(buf, "%s%3.3d\n", birthdate, i);
+			strncpy(tmpbuf, persnr(buf), 11);
+			if (!strlen(tmpbuf))
+				continue;
+			fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
+		}
+
+		fprintf(stdout, "\nJenter:\n\n");
+		for (i = (startnum-1); i >= (startnum-499); i -= 2) {
+			sprintf(buf, "%s%3.3d\n", birthdate, i);
+			strncpy(tmpbuf, persnr(buf), 11);
+			if (!strlen(tmpbuf))
+				continue;
+			fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
+		}
+
+		fprintf(stdout, "\n--- Utlisting for %s slutt ---\n", iso_date);
 	}
 
-	startnum = curr_century ? 999 : 499; /* Hvilket århundre skal brukes? */
-
-	sprintf(iso_date, "%2.2s%c%c-%c%c-%c%c",
-		century,
-		birthdate[4],
-		birthdate[5],
-		birthdate[2],
-		birthdate[3],
-		birthdate[0],
-		birthdate[1]
-	);
-
-	fprintf(stdout, "\nListe over alle gyldige norske personnummer for %s:\n\n", iso_date);
-	fprintf(stdout, "Gutter:\n\n");
-	for (i = startnum; i >= (startnum-499); i -= 2) {
-		sprintf(buf, "%s%3.3d\n", birthdate, i);
-		strncpy(tmpbuf, persnr(buf), 11);
-		if (!strlen(tmpbuf))
-			continue;
-		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
-	}
-
-	fprintf(stdout, "\nJenter:\n\n");
-	for (i = (startnum-1); i >= (startnum-499); i -= 2) {
-		sprintf(buf, "%s%3.3d\n", birthdate, i);
-		strncpy(tmpbuf, persnr(buf), 11);
-		if (!strlen(tmpbuf))
-			continue;
-		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
-	}
-
-	fprintf(stdout, "\n--- Utlisting for %s slutt ---\n", iso_date);
-
-endfunc:
-;
 	return(retval);
 	/* }}} */
 } /* persnr_date() */
@@ -335,5 +336,5 @@ void usage(int retval)
 	/* }}} */
 } /* usage() */
 
-/* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.10 2004/02/28 03:08:23 sunny Exp $ */
+/* vim600: set fdl=0 ts=4 sw=4 : */
+/* End of file $Id: personnr.c,v 1.3.2.10.2.1 2004/02/29 02:45:58 sunny Exp $ */
