@@ -1,12 +1,21 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: sortcvs,v 1.1.2.4 2002/10/10 06:28:12 sunny Exp $
+# $Id: sortcvs,v 1.1.2.5 2003/12/14 14:32:58 sunny Exp $
 # Sorts the output from "cvs log" into chronological order.
-# Made by Oyvind A. Holm <sunny@sunbase.org>
+# Made by ؀yvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License
 #==============================================================================
 
 use strict;
+use Getopt::Std;
+
+our ($opt_a, $opt_h) =
+    (     0,      0);
+
+getopts('ah');
+
+$opt_h && print_help();
 
 my ($curr_date, $curr_rev) = ("", "");
 my @Curr = ();
@@ -38,7 +47,7 @@ while (<>) {
 		push(@Curr, $Line);
 		# $Rev = unpack("H*", "$curr_date$curr_rev");
 		$Rev = "$curr_date$curr_rev";
-	} elsif ($Line =~ /^=============================================================================$/) {
+	} elsif ($Line =~ /^=============================================================================$/ && !$opt_a) {
 		if (length($Rev) && scalar(@Curr)) {
 			$Entry{$Rev} = join("", @Curr);
 		}
@@ -60,6 +69,11 @@ while (<>) {
 			print("$Line");
 		}
 	}
+}
+
+sub print_help {
+	print("No help yet.\n");
+	exit(0);
 }
 
 __END__
