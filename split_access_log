@@ -2,7 +2,7 @@
 
 #=====================================================================
 # $Id$
-# Splitter opp access_log fra httpd(8) på dato. Legger delene som
+# Splitter opp access_log fra httpd(8) på dato. Legger delene som 
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] .
 #
 # ©opyleft 2001–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -20,15 +20,21 @@ getopts('d:e:hn:z');
 $| = 1;
 
 my %Mnd = (
-    'Jan' => 0, 'Feb' => 1, 'Mar' => 2, 'Apr' => 3, 'May' =>  4, 'Jun' =>  5,
-    'Jul' => 6, 'Aug' => 7, 'Sep' => 8, 'Oct' => 9, 'Nov' => 10, 'Dec' => 11
+    'Jan' => 0, 'Feb' =>  1, 'Mar' => 2,
+    'Apr' => 3, 'May' =>  4, 'Jun' => 5,
+    'Jul' => 6, 'Aug' =>  7, 'Sep' => 8,
+    'Oct' => 9, 'Nov' => 10, 'Dec' => 11
 );
 
 my ( $Dir,          $Ext, $Fnavn, $Last, $compress_file) =
    ("out", ".access_log",     "",    "",         $opt_z);
 
 my $Name = length($opt_n) ? "$opt_n." : "";
-($opt_e eq "UNDEF-E") || ($Ext = sprintf("%s%s", length($opt_e) ? "." : "", $opt_e));
+
+($opt_e eq "UNDEF-E") ||
+    ($Ext = sprintf("%s%s",
+                    length($opt_e) ? "." : "",
+                    $opt_e));
 
 $opt_h && usage(0);
 
@@ -37,16 +43,22 @@ length($opt_d) && ($Dir = $opt_d);
 
 while (<>) {
     if (m#^\S+.*? \[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)(\d\d)#) {
-        my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
-           (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
+        my ($Day, $Mon, $Year, $Hour, $Min, $Sec) =
+           (  $1,   $2,    $3,    $4,   $5,   $6);
+        my ($zone_hour, $zone_min) =
+           (        $7,        $8);
         my $num_mnd = $Mnd{$Mon};
         defined($num_mnd) || goto UNKNOWN_LINE_FORMAT;
         my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mnd, $Year);
         $Secs -= ($zone_hour*3600 + $zone_min*60);
-        my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
+        my ($u_sec,  $u_min, $u_hour,
+            $u_mday, $u_mon, $u_year,
+            $u_wday, $u_yday) = gmtime($Secs);
         $u_year += 1900; # Urgh
         $u_mon += 1; # Dobbelturgh
-        $Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02uZ%s", $Dir, $u_year, $Name, $u_year, $u_mon, $u_mday, $Ext);
+        $Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02uZ%s",
+                         $Dir, $u_year, $Name, $u_year, $u_mon, $u_mday, 
+                         $Ext);
         if ($Fnavn ne $Last) {
             if ($compress_file && -e $Last) {
                 close(ToFP);
@@ -54,35 +66,42 @@ while (<>) {
                     print(STDERR "Kjører \"/bin/gzip -N $Last &\"\n");
                     system("/bin/gzip -N $Last &");
                 } else {
-                    warn("$Last.gz: Fila eksisterer allerede, pakker ikke $Last . Må ordnes manuelt.\n");
+                    warn("$Last.gz: Fila eksisterer allerede, " .
+                         "pakker ikke $Last . Må ordnes manuelt.\n");
                 }
             }
-            -d "$Dir/$u_year" || mkdir("$Dir/$u_year", 0777) || die("$0: mkdir(\"$Dir/$u_year\"): $!. R.I.P. & sånn.");
+            -d "$Dir/$u_year" || mkdir("$Dir/$u_year", 0777) ||
+                die("$0: mkdir(\"$Dir/$u_year\"): $!. R.I.P. & sånn.");
             if (-e $Fnavn) {
-                warn("$Fnavn: Fila finnes fra før, skriver til \"$Fnavn.DUP\".\n");
+                warn("$Fnavn: Fila finnes fra før, skriver til " .
+                     "\"$Fnavn.DUP\".\n");
                 my $op_pref = (-e "$Fnavn.DUP") ? ">>" : ">";
                 if (open(ToFP, "$op_pref$Fnavn.DUP")) {
-                    seek(ToFP, 0, 2) || die("$Fnavn.DUP: seek() til slutten: $!");
+                    seek(ToFP, 0, 2) ||
+                        die("$Fnavn.DUP: seek() til slutten: $!");
                 } else {
                     die("$Fnavn.DUP: Åpning for skriving: $!");
                 }
             } else {
                 print(STDERR "Ny fil: \"$Fnavn\"\n");
                 if (open(ToFP, ">$Fnavn")) {
-                    seek(ToFP, 0, 2) || die("$Fnavn: seek() til slutten: $!");
+                    seek(ToFP, 0, 2) ||
+                        die("$Fnavn: seek() til slutten: $!");
                 } else {
                     die("$Fnavn: Åpning for skriving: $!");
                 }
             }
         }
-        print(ToFP $_) || die("Feil under skriving til $Fnavn(.DUP): $!");
+        print(ToFP $_) ||
+            die("Feil under skriving til $Fnavn(.DUP): $!");
     } else {
         UNKNOWN_LINE_FORMAT:
         my $err_name = length($Fnavn) ? "$Fnavn.ERR" : "$Dir/undef.ERR";
         warn("Linje $.: Ukjent format, skriver til \"$err_name\".\n");
         my $op_pref = (-e "$err_name") ? ">>" : ">";
         if (open(ErrFP, "$op_pref$err_name")) {
-            seek(ErrFP, 0, 2) || die("$err_name: seek() til slutten: $!");
+            seek(ErrFP, 0, 2) ||
+                die("$err_name: seek() til slutten: $!");
         } else {
             die("$err_name: Åpning for skriving: $!");
         }
@@ -99,23 +118,23 @@ sub usage {
 
 Syntax: $0 [valg] [fil [flere filer [...]]]
 
-Programmet leser access_log laget av Apache fra stdin eller filnavn på
-kommandolinja og splitter dem i deler på formatet
+Programmet leser access_log laget av Apache fra stdin eller filnavn på 
+kommandolinja og splitter dem i deler på formatet 
 DIR/åååå/[NAVN.]åååå-mm-ddZ.access_log .
 
 Valg:
 
 -d DIR   Plassér filene i DIR . Standard: "$Dir".
--e EXT   Bruk EXT som extension. (Automatisk punktum i begynnelsen.)
+-e EXT   Bruk EXT som extension. (Automatisk punktum i begynnelsen.) 
          Standard: "$Ext".
 -h       Hjælp mæ.
--n NAVN  Bruk NAVN som valgfritt prefiks i filnavnet. Automatisk punktum
+-n NAVN  Bruk NAVN som valgfritt prefiks i filnavnet. Automatisk punktum 
          på slutten. Standard: "$Name".
 -z       Pakk filene etterhvert som de er ferdigsplitta.
 
-Den splitter selvfølgelig opp filene på grunnlag av GMT. Folkeaksjonen
-Mot Sommertid slår til igjen. Ikke det med sol, utepils og miniskjørt
-her og der, men den klokkefløttinga er uendelig plagsom og lager i
+Den splitter selvfølgelig opp filene på grunnlag av GMT. Folkeaksjonen 
+Mot Sommertid slår til igjen. Ikke det med sol, utepils og miniskjørt 
+her og der, men den klokkefløttinga er uendelig plagsom og lager i 
 tillegg unøyaktighet i loggene.
 
 Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>.
