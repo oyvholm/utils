@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+
+# $Id: commify,v 1.1 2002/06/25 14:50:33 sunny Exp $
+# Setter inn punktumer i nummer.
+
+use strict;
+
+while (<>) {
+	s/(\d{3,})/commify($1)/ge;
+	print;
+}
+
+sub commify {
+	my $Str = reverse $_[0];
+	$Str =~ s/(\d\d\d)(?=\d)(?!\d*\,)/$1\./g;
+	return scalar reverse $Str;
+} # commify()
