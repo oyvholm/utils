@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: dbk,v 1.14.2.1 2003/07/09 13:29:17 sunny Exp $
+# $Id: dbk,v 1.14.2.2 2003/07/09 13:31:34 sunny Exp $
 # Ny versjon av DBK-systemet.
 #
-# GPL-lisens. Åff cåårs.
-# (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
+# GPL-lisens. Ã…ff cÃ¥Ã¥rs.
+# (C)opyleft Ã˜yvind A. Holm <sunny@sunbase.org>
 #================================================
 
 use strict;
@@ -25,7 +25,7 @@ my $dbk_lockext = ".lock";
 my $dir_mode = 0770;
 
 my $curr_time = time;
-my $opt_t = 0; # Legger til klokkeslettet på en egen linje
+my $opt_t = 0; # Legger til klokkeslettet pÃ¥ en egen linje
 my $opt_h = 0; # Skriver ut hjelpen
 my $time_not_found = 0;
 my @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
@@ -49,7 +49,7 @@ print("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Y
 my $arg_count;
 my $time_str = ""; # Strengen som det vil bli leita etter og som blir satt inn.
 
-# CO: Begynnelse på parameterparsing. {{{
+# CO: Begynnelse pÃ¥ parameterparsing. {{{
 # begin-base64 664 -
 # H4sIAKCL/DgCA1MrSCwqTo1PLEov1nBwDHIP07Tm4iouTVJAiCtUc3HmVio4
 # OILYtgoO8dZgvkpKfFp+aV4KUMgAKMLFmZZflJqYnKEBVqgJ0pWZpqChH6db
@@ -67,7 +67,7 @@ $Year = $ARGV[2] if $#ARGV >= 2;
 $Mon = sprintf("%02u", $ARGV[1]) if $#ARGV >= 1;
 $Day = sprintf("%02u", $ARGV[0]) if $#ARGV >= 0;
 
-# Når vi nærmer oss 2030 begynner dette å bli en fixme. :)
+# NÃ¥r vi nÃ¦rmer oss 2030 begynner dette Ã¥ bli en fixme. :)
 if ($Year < 30) {
 	$Year += 2000;
 } elsif ($Year < 100) {
@@ -80,9 +80,9 @@ $Hour =~ s/^(\d)$/0$1/;
 $Min =~ s/^(\d)$/0$1/;
 $Sec =~ s/^(\d)$/0$1/;
 
-die("$0: $Day: Feil format på datoen\n") unless ($Day =~ /^\d\d$/);
-die("$0: $Mon: Feil format på måneden\n") unless ($Mon =~ /^\d\d$/);
-die("$0: $Year: Feil format på året\n") unless ($Year =~ /^\d\d\d\d$/);
+die("$0: $Day: Feil format pÃ¥ datoen\n") unless ($Day =~ /^\d\d$/);
+die("$0: $Mon: Feil format pÃ¥ mÃ¥neden\n") unless ($Mon =~ /^\d\d$/);
+die("$0: $Year: Feil format pÃ¥ Ã¥ret\n") unless ($Year =~ /^\d\d\d\d$/);
 
 my $time_utc = timegm($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
 my $time_sec = timelocal($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
@@ -94,7 +94,7 @@ print("Etter ARGV: $Year-$Mon-$Day\n") if $Debug;
 print("\$dbk_dir = $dbk_dir\n") if $Debug;
 print("\$opt_i = \"$opt_i\"\n") if $Debug;;
 
-# Sjekk at alle directories er på plass
+# Sjekk at alle directories er pÃ¥ plass
 
 my $year_dir = "$dbk_dir/$Year";
 my $dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
@@ -117,22 +117,22 @@ if ($opt_f) {
 my $print_ok = 0;
 
 until (mkdir($lock_dir, 0777)) {
-	$print_ok || print(STDERR "Venter på at lockdir $lock_dir skal forsvinne..");
+	$print_ok || print(STDERR "Venter pÃ¥ at lockdir $lock_dir skal forsvinne..");
 	print(".");
 	sleep(1);
 	$print_ok = 1;
 }
 $print_ok &&print("OK\n");
 
-# open(LockFP, ">$lock_dir") || die("$lock_dir: Klarte ikke å lage lockfil");
+# open(LockFP, ">$lock_dir") || die("$lock_dir: Klarte ikke Ã¥ lage lockfil");
 # flock(LockFP, LOCK_EX);
 # print(LockFP "$curr_time $$\n");
 
-open(CheckFP, ">$year_dir/.check") || warn("$year_dir/.check: Klarte ikke å lage fila: $!. Nøye då.");
+open(CheckFP, ">$year_dir/.check") || warn("$year_dir/.check: Klarte ikke Ã¥ lage fila: $!. NÃ¸ye dÃ¥.");
 close(CheckFP);
 
 unless (-f $dbk_file) {
-	open(FP, ">$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for skriving: $!\n");
+	open(FP, ">$dbk_file") || die("$0: $dbk_file: Kan ikke Ã¥pne fila for skriving: $!\n");
 	print(FP "<h1>$day_name[$week_day] $Year-$Mon-$Day</h1>\n") || die("$0: $dbk_file: Kan ikke skrive header til fila: $!\n");
 	close(FP);
 }
@@ -148,11 +148,11 @@ if ($opt_t) {
 	} else {
 		$time_str = "$Hour:$Min:$Sec$utc_str";
 	}
-	open(dbkFP, "+<$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for lesing+skriving+flock: $!\n");
+	open(dbkFP, "+<$dbk_file") || die("$0: $dbk_file: Kan ikke Ã¥pne fila for lesing+skriving+flock: $!\n");
 	flock(dbkFP, LOCK_EX) || die("$0: $dbk_file: Klarte ikke flock(): $!\n");
 	my $which_line = &find_line($time_str);
 	if ($time_not_found) {
-		seek(dbkFP, 0, 2) || die("$dbk_file: Klarte ikke å seeke til slutten for å legge til LF: $!\n");
+		seek(dbkFP, 0, 2) || die("$dbk_file: Klarte ikke Ã¥ seeke til slutten for Ã¥ legge til LF: $!\n");
 		print(dbkFP "\n");
 		$which_line++;
 	}
@@ -175,12 +175,12 @@ unless ($opt_b) {
 my @stat_info = stat($dbk_file);
 my $file_size = $stat_info[7];
 if ($file_size < $min_size) {
-	print("Ingenting ble skrevet, så jeg sletter driten.\n");
-	unlink($dbk_file) || warn("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
+	print("Ingenting ble skrevet, sÃ¥ jeg sletter driten.\n");
+	unlink($dbk_file) || warn("$0: $dbk_file: Klarte ikke Ã¥ slette fila: $!\n");
 	rmdir($year_dir);
 }
 
-rmdir($lock_dir) || die("$0: $lock_dir: Klarte ikke å slette lockdir: $!\n");
+rmdir($lock_dir) || die("$0: $lock_dir: Klarte ikke Ã¥ slette lockdir: $!\n");
 exit(0);
 
 #### SUBRUTINER ####
@@ -190,7 +190,7 @@ sub find_line {
 	my $srch_time = shift;
 	my $last_line = 0;
 	my $Found = 0;
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila: $!\n");
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke Ã¥ gÃ¥ til begynnelsen av fila: $!\n");
 	while (<dbkFP>) {
 		if (/^<p><b>(\d\d:\d\d:\d\d)/i || /^<p><b>(\d\d:\d\d)/i) {
 			my $found_time = $1;
@@ -205,11 +205,11 @@ sub find_line {
 sub insert_time {
 	# {{{
 	my ($time_str, $line_num) = @_;
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_time(): $!\n");
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke Ã¥ gÃ¥ til begynnelsen av fila i insert_time(): $!\n");
 	my @Linjer = <dbkFP>;
 	splice(@Linjer, $line_num-1, 0, sprintf("<p><b>$time_str</b> -\n%s", $time_not_found ? "" : "\n"));
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_time(): $!\n");
-	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke Ã¥ seeke til starten i insert_time(): $!\n");
+	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke Ã¥ trunce fila til 0: $!\n");
 	foreach(@Linjer) {
 		print(dbkFP $_);
 	}
@@ -220,16 +220,16 @@ sub insert_file {
 	# {{{
 	my ($file_name, $line_num) = @_;
 	local *LocFP;
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_file(): $!\n");
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke Ã¥ gÃ¥ til begynnelsen av fila i insert_file(): $!\n");
 	my @Linjer = <dbkFP>;
 	my @InsLinj = "<p><b>$time_str</b> -\n";
-	open(LocFP, "<$file_name") || die("$file_name: Kan ikke åpne fila for lesing: $!\n");
+	open(LocFP, "<$file_name") || die("$file_name: Kan ikke Ã¥pne fila for lesing: $!\n");
 	push(@InsLinj, <LocFP>);
-	push(@InsLinj, "\n") unless $time_not_found; # Denne likte jeg egentlig fantastisk dårlig, men hvem bruker vel å ha to LF'er på slutten av fila?
+	push(@InsLinj, "\n") unless $time_not_found; # Denne likte jeg egentlig fantastisk dÃ¥rlig, men hvem bruker vel Ã¥ ha to LF'er pÃ¥ slutten av fila?
 	splice(@Linjer, $line_num-1, 0, @InsLinj);
 	close(LocFP);
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_file(): $!\n");
-	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke Ã¥ seeke til starten i insert_file(): $!\n");
+	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke Ã¥ trunce fila til 0: $!\n");
 	foreach(@Linjer) {
 		print(dbkFP $_);
 	}
@@ -241,19 +241,19 @@ sub print_help {
 	my $Retval = shift;
 	print <<END;
 
-Syntax: $0 [valg] [dag [måned [år]]] [HH:MM]
+Syntax: $0 [valg] [dag [mÃ¥ned [Ã¥r]]] [HH:MM]
 
 Disse valgene (options) kan brukes:
 
 -b    - Batch mode, ikke start editor eller viewer.
 -f    - Force, start dbk selv om lockdir eksisterer.
 -h    - Skriv denne hjelpen
--i x  - Sett inn filen x istedenfor å bruke tastatur.
+-i x  - Sett inn filen x istedenfor Ã¥ bruke tastatur.
         Forventer -t eller klokkeslett.
--t    - Legg til klokkeslettet akkurat nå i fila og gå inn i editoren
+-t    - Legg til klokkeslettet akkurat nÃ¥ i fila og gÃ¥ inn i editoren
 -z    - Legg til tidssone til klokkeslett
 
-Klokkeslettet kan spesifiseres hvor som helst, men må starte med formatet
+Klokkeslettet kan spesifiseres hvor som helst, men mÃ¥ starte med formatet
 "HH:" der HH er to siffer.
 
 END
@@ -263,4 +263,4 @@ END
 
 __END__
 
-#### End of file $Id: dbk,v 1.14.2.1 2003/07/09 13:29:17 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.14.2.2 2003/07/09 13:31:34 sunny Exp $ ####
