@@ -4,7 +4,7 @@
 # Latskap.
 
 if [ -d .svn/. ]; then
-	svn log $* | less
+	svn log -v $* | less
 else
 	cvs log $* | sortcvs | less
 fi
