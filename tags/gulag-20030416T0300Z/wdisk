@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# $Id: wdisk,v 1.1 2000/11/07 13:28:06 sunny Exp $
+# Overwrites fre space on a disk.
+# Should be run as root to overwrite super-user reserved space.
+
+[ -z $1 ] && { echo "Syntax: $0 directory" ; exit 1; }
+
+wdir=$1
+[ -d $wdir ] || { echo "$0: $wdir: Not a directory" >&2; exit 1; }
+[ -w $wdir ] || { echo "$0: $wdir: Need write access to this directory" >&2; exit 1; }
+datafil=$wdir/wdata.tmp
+count=1
+
+while :; do
+	echo -n Creating $datafil...
+	head -c 1234157 /dev/urandom >$datafil
+	echo OK
+	echo -n Filling disk...
+	cat <$datafil >>$datafil 2>/dev/null
+	echo OK
+	ls -l $datafil
+	echo -n sync...
+	sync
+	echo OK
+	echo -n sleep...
+	sleep 5
+	echo OK
+	echo -n Removing $datafil...
+	rm -fv $datafil
+	echo OK
+	echo ==== $count wipes done ====
+	echo
+	count=$[$count+1]
+done

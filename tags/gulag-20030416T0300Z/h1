@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Fyrer i gang httpd(8)
+# $Id: h1,v 1.10 2002/11/08 23:08:46 sunny Exp $
+
+if [ -e /nett.mrk -o -e /sunba.mrk -o -e /carmbb.mrk ]; then
+	/etc/init.d/apache start
+elif [ -e /toshbb.mrk ]; then
+	apachectl start
+elif [ -e /recbb.mrk ]; then
+	/var/lib/apache/sbin/apachectl start
+else
+	echo Ukjent server, prøver standardløsning...
+	if [ -x /etc/rc.d/init.d/httpd ]; then
+		/etc/rc.d/init.d/httpd start
+	elif [ -x /etc/init.d/apache ]; then
+		/etc/init.d/apache start
+	fi
+fi

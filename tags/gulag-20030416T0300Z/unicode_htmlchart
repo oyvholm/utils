@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+
+# $Id: unicode_htmlchart,v 1.1 2001/11/19 00:54:26 sunny Exp $
+# Skriv ut en dunge med Unicode-entities. For browsertest.
+
+use strict;
+
+for (0..65599) {
+	$_ % 32 || printf("\n%04X ", $_);
+	print("&#$_;");
+}
+print("\n");

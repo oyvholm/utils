@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+
+#=======================================================
+# $Id: find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny Exp $
+# Read filenames from stdin and print those who contains
+# eight-bit characters not encoded in UTF-8.
+#=======================================================
+
+use strict;
+
+# Warning: Does not barf on overlong sequences.
+
+while (<>) {
+	my $Orig = $_;
+	s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//ge;
+	s/([\xC0-\xDF][\x80-\xBF])//ge;
+	print $Orig if (/[\x80-\xFF]/);
+}
+
+__END__

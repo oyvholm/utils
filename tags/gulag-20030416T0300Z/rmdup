@@ -1,0 +1,48 @@
+#!/bin/bash
+
+#==============================================================================
+# $Id: rmdup,v 1.2 2002/10/04 08:46:52 sunny Exp $
+# Compares the files in directory $1 with existing files in directory $2
+# and removes the duplicates in directory $2.
+#==============================================================================
+
+if [ $# -ne 2 ]; then
+	echo $0: Invalid number of operands \($#\), shall be two. >&2
+	exit 1
+fi
+
+if [ ! -d "$1" ]; then
+	echo $0: Operand 1 \($1\) is not a directory >$2
+	exit 1
+fi
+
+if [ ! -d "$2" ]; then
+	echo $0: Operand 2 \($2\) is not a directory >&2
+	exit 1
+fi
+
+# BUG: Has to check that $1 and $2 are different dirs. Now it checks inode
+# on every file, it might skip files if they has the same link, but better
+# safe than sorry.
+#
+# Also... Files with weird names (spaces etc) could have unwanted results.
+# A check should be done for things like that. Later.
+
+# Future check for weird names
+# find $1 $2 | grep -e ' ' -e '\t' -e ';' -e '&' -e '|' || { echo farsken; exit 1; }
+# echo hurra
+# exit
+
+for _qqrc in $1/*; do
+	_qqr2="$2/`basename $_qqrc`"
+	if [ -f "$_qqrc" -a -f "$_qqr2" ]; then
+		if [ "$_qqrc" -ef "$_qqr2" ]; then
+			echo $0: File $_qqrc and $_qqr2 are the same >&2
+		else
+			diff -qb "$_qqrc" "$_qqr2" >/dev/null
+			if [ $? -eq 0 ]; then
+				rm -v "$_qqr2"
+			fi
+		fi
+	fi
+done

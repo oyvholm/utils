@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# $Id: pine-editor,v 1.1 2003/03/29 18:50:44 sunny Exp $
+
+file=$1
+tempf=/tmp/pine-editor.$$.tmp
+
+h2u -l $file >$tempf
+mv $tempf $file
+gvim -f -w /home/sunny/vimlogg $file

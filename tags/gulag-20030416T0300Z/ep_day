@@ -1,0 +1,36 @@
+#!/usr/bin/perl -w
+
+#==============================================================================
+# $Id: ep_day,v 1.2 2002/09/05 15:38:45 sunny Exp $
+# Samler en masse tidspunkter i epoch-format på for eksempel samme dag eller
+# hver time. Forventer antall sekunder siden 19700101T000000Z først på linja.
+#==============================================================================
+
+use strict;
+
+$| = 1;
+
+my $last_date = 0;
+my $Count = 0;
+my $Period = 1;
+
+if (defined($ARGV[0]) && !($ARGV[0] =~ /[^0-9]/)) {
+	$Period = $ARGV[0];
+	shift;
+} else {
+	$Period = 86400;
+}
+
+while (<>) {
+	if (/^(\d+)/) {
+		my $Curr = int($1/$Period);
+		if ($Curr > $last_date) {
+			printf("%u\t%u\n", $last_date*$Period, $Count) if $last_date;
+			$last_date = $Curr;
+			$Count = 0;
+		}
+	} else {
+		warn("Line $.: Invalid line format");
+	}
+	$Count++;
+}
