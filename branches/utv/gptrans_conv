@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # ╔══════════════════════════════════════════════════════════════
-# ║ $Id: gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp $
+# ║ gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp
 # ║ Converts between various GPS formats
 # ║ Character set: UTF-8
 # ║ License: GNU General Public License
@@ -15,7 +15,7 @@ use Time::Local qw { timegm_nocheck };
 
 my $Debug = 0;
 
-my $rcs_str = '$Id: gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp $';
+my $rcs_str = 'gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -127,7 +127,7 @@ while (<>) {
 	} elsif (/^# move$/) {
 		$found_move = 1;
 	} elsif (/^#/) {
-		print unless ($opt_o eq "xgraph");
+		print unless ($opt_o =~ /^(xgraph|gpstrans)$/);
 	} elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
 		# Author’s format, epoch style {{{
 		my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -194,13 +194,13 @@ while (<>) {
 		# @020721221336__________________________________________ {{{
 		my ($Alfa, $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
 		   ($1,    $2+2000, $3,     $4,   $5,    $6,   $7,   $8);
-		print("\n") unless ($opt_o eq "xgraph");
+		print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
 		$found_move = 1;
 		# }}}
 	} elsif (/^xmaplog /) {
-		print("\n") unless ($opt_o eq "xgraph");
+		print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
 	} elsif (/^$/) {
-		print("\n") unless ($opt_o eq "xgraph");
+		print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
 	} else {
 		print("# $_");
 		chomp;
@@ -253,7 +253,7 @@ sub print_entry {
 		$pause_len = $ep_time-$last_time;
 	}
 
-	if ($pause_len && ($opt_o ne "xgraph")) {
+	if ($pause_len && ($opt_o !=~ /^(xgraph|gpstrans)$/)) {
 		printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
 	}
 
@@ -413,5 +413,5 @@ sub D {
 	# }}}
 }
 
-# vim: set fdm=marker syntax=perl fenc=utf-8 :
-# End of file $Id: gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp $
+# vim: set fdm=marker ft=perl fenc=utf-8 :
+# End of file gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp
