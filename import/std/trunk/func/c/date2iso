@@ -1,0 +1,53 @@
+
+/* $Header: /home/sunny/tmp/cvs/std/func/c/date2iso,v 1.1 1999/04/25 23:35:23 sunny Exp $ */
+
+/*
+ * date2iso() - Convert date format from "Mmm DD YYYY" into the format
+ * specified by ISO 8601 and EN 28601, i.e. "YYYY-MM-DD".
+ *
+ * Return value: Character string with proper date format, or NULL
+ * if some error.
+ */
+
+char *date2iso(const char *s)
+{
+	static char buf[50];
+	char datebuf[30], *a[5];
+	char *months[] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	int t, y, m = 0, d;
+
+	if (!s || !strchr(s, ' '))
+		return(NULL);
+
+	strncpy(datebuf, s, 29);
+	a[0] = strtok(datebuf, " ");
+	if (!a[0])
+		return(NULL);
+
+	for (t = 1; t < 3; t++) {
+ 		a[t] = strtok(NULL, " ");
+
+		if (!a[t] && t < 3)
+			return(NULL);
+	}
+
+	y = strtoul(a[2], NULL, 10);
+	d = strtoul(a[1], NULL, 10);
+
+	for (t = 0; t < 12; t++) {
+		if (!strncmp(a[0], months[t], 3)) {
+			m = t+1;
+			break;
+		}
+	}
+
+	if (!y || !m || !d)
+		return(NULL);
+
+	sprintf(buf, "%04u-%02u-%02u", y, m, d);
+
+	return(buf);
+} /* date2iso() */
