@@ -6,7 +6,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $>
+S<$Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -120,14 +120,14 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $';
-my $rcs_id = '$Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $';
-my $rcs_date = '$Date: 2000/03/27 11:53:41 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $';
+my $rcs_id = '$Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $';
+my $rcs_date = '$Date: 2000/04/03 14:11:05 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $ GD';
-my $cvs_id = '$Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $ GD';
-my $cvs_date = '$Date: 2000/03/27 11:53:41 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $ GD';
+my $cvs_id = '$Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $ GD';
+my $cvs_date = '$Date: 2000/04/03 14:11:05 $ GD';
 
 my $this_counter = "";
 
@@ -140,7 +140,7 @@ my $DTD_HTML4STRICT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\"\n\"htt
 
 my $STD_BACKGROUND = "";
 my $STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
-my $STD_DOCALIGN = "center"; # Standard align for dokumentet hvis align ikke er spesifisert
+my $STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
 my $STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
 my $STD_HTMLDTD = $DTD_HTML4LOOSE;
 my $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
@@ -384,7 +384,8 @@ sub get_cgivars {
 		$value =~ s/%(..)/chr(hex($1))/ge;
 		$in{$name} .= "\0" if defined($in{$name});
 		$in{$name} .= $value;
-		# &deb_pr(__LINE__ . ": get_cgivars(): $name = \"$value\"");
+		# Den under her er veldig grei å ha upåvirket av perldeboff(1).
+		&deb_pr (__LINE__ . ": get_cgivars(): $name = \"$value\"");
 	}
 	return %in;
 } # get_cgivars()
@@ -847,17 +848,20 @@ END
 # nf8BVLmUwu8RAAA=
 # ====
 
-=pod
+# FIXME: Mer pod under her.
+
+=head2 &print_header()
 
 Parametere i print_header():
 
-1. Tittelen på dokumentet.
-2. Antall sekunder på hver refresh, 0 disabler refresh.
-3. Style sheet.
-4. Evt. scripts, havner mellom </style> og </head>.
-5. Evt. attributter i <body>, f.eks. " onLoad=\"myfunc()\"". Husk spacen i begynnelsen.
-6. HTML-versjon. F.eks. $DTD_HTML4STRICT. Default er $DTD_HTML4LOOSE.
-7. Språk. Default "no".
+ 1. Tittelen på dokumentet.
+ 2. Antall sekunder på hver refresh, 0 disabler refresh.
+ 3. Style sheet.
+ 4. Evt. scripts, havner mellom </style> og </head>.
+ 5. Evt. attributter i <body>, f.eks. " onLoad=\"myfunc()\"".
+    Husk spacen i begynnelsen.
+ 6. HTML-versjon. F.eks. $DTD_HTML4STRICT. Default er $DTD_HTML4LOOSE.
+ 7. Språk. Default "no".
 
 =cut
 
@@ -1013,4 +1017,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $ ####
