@@ -16,18 +16,10 @@ use strict;
 
 $| = 1;
 
-use Getopt::Std;
-
-our $opt_v = 0;
-
-getopts('v');
-
 while (<>) {
     chomp;
     if (/\b(9\d{8})\b/ || /\b(1\d{9})\b/) {
         print("$1\n");
-    } else {
-        $opt_v && print(STDERR "Linje $.: Ulovlig: \"$_\"\n");
     }
 }
 
