@@ -1,0 +1,4 @@
+#!/bin/sh
+
+xearth -nomarkers -bigstars 50 -shift "-275 -162" -sunpos "20 20" -mag 0.5 -once
+xsnow -nosanta -notrees &>/dev/null &
