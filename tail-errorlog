@@ -1,13 +1,13 @@
 #!/bin/sh
 
 #==========================================================
-# $Id: tail-errorlog,v 1.13 2002/03/08 01:28:48 sunny Exp $
+# $Id: tail-errorlog,v 1.14 2002/05/29 01:58:03 sunny Exp $
 # tail -f på error_log til httpd(8).
 #==========================================================
 
 if [ -e /sunba.mrk ]; then
 	tail -f /var/log/apache/error.log $*
-elif [ -e /grimme.mrk -o -e /recbb.mrk -o -e /toshbb.mrk ]; then
+elif [ -e /grimme.mrk -o -e /recbb.mrk -o -e /toshbb.mrk -o -e /ba0614.mrk ]; then
 	tail -f /var/log/httpd/error_log $*
 elif [ -e /ww.mrk ]; then
 	if [ "$1" = "sunbase" ]; then
