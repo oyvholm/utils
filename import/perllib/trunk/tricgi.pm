@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $>
+S<$Id: tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -107,9 +107,9 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 ###########################################################################
 
 my $Tabs = "";
-my $cvs_date = '$Date: 1999/03/23 18:44:11 $';
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $';
-my $cvs_id = '$Id: tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $';
+my $cvs_date = '$Date: 1999/03/30 14:44:37 $';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $';
+my $cvs_id = '$Id: tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $';
 my $this_counter = "";
 
 my $FALSE = 0;
@@ -829,9 +829,35 @@ sub tab_print {
 
 	foreach (@Txt) {
 		s/^(.*)/${Tabs}$1/gm;
+		s/([\x7f-\xff])/sprintf("&#%u;", ord($1))/ge;
 		print "$_";
 	}
 } # tab_print()
+
+###########################################################################
+
+=head2 &tab_str()
+
+Fungerer på samme måte som I<&tab_print()>, men returnerer en streng med
+innholdet istedenfor å skrive det ut. Mulignes det burde vært implementert
+i I<&tab_print()> på en eller annen måte, men blir ikke det tungvint?
+
+Vi lar det være sånn foreløpig.
+
+FIXME: Legg inn konvertering av tegn > 0x7f til entities her også.
+
+=cut
+
+sub tab_str {
+	my @Txt = @_;
+	my $RetVal = "";
+
+	foreach (@Txt) {
+		s/^(.*)/${Tabs}$1/gm;
+		$RetVal .= "$_";
+	}
+	return $RetVal;
+} # tab_str()
 
 ###########################################################################
 
@@ -848,7 +874,7 @@ fjernes to spacer, hvis man skriver
 	&Tabs(5);
 
 legges 5 TAB'er til. Hvis ingen parametere spesifiseres, brukes 1 som
-default.
+default, altså en TAB legges til.
 
 =cut
 
@@ -881,4 +907,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $ ####
