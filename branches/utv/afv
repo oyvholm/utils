@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.9 2004/04/14 16:30:17 sunny Exp $
+# $Id: afv,v 1.13.2.10 2004/04/15 04:47:18 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 #
 # ©2001–2004 Øyvind A. Holm. Lisens: GNU GPL ♥
@@ -55,6 +55,7 @@ sjekker alle filer hvert femte sekund og kjører også ny glob hver gang
 loopen gjentas.
 
 END
+	exit(0);
 	# }}}
 }
 
@@ -240,4 +241,4 @@ sub my_sleep {
 	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.9 2004/04/14 16:30:17 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.10 2004/04/15 04:47:18 sunny Exp $ ####
