@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.14 2003/04/16 01:27:36 sunny Exp $
+# $Id: afv,v 1.15 2004/04/11 21:25:05 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -35,7 +35,7 @@ LOOP: foreach my $FullCurr (@Files) {
 	my $another_dir = 0;
 	check_stop();
 	next LOOP if (!-f $Curr || -l $Curr);
-	if ($Curr =~ m!(.*)/(.*?)$!) {
+	if ($Curr =~ m#(.*)/(.*?)$#) {
 		$another_dir = 1;
 		unless (chdir($1)) {
 			warn("Klarte ikke chdir(\"$1\"): $!");
@@ -53,7 +53,7 @@ LOOP: foreach my $FullCurr (@Files) {
 	my $currmd5_file = "$afv_dir/$Curr.currmd5";
 	my $start_lock = time;
 
-	until (mkdir("$lock_dir", 0777)) {
+	until (mkdir($lock_dir, 0777)) {
 		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
 		my_sleep(5);
 	}
@@ -61,7 +61,9 @@ LOOP: foreach my $FullCurr (@Files) {
 	if (open(FromFP, "<$Curr")) {
 		if (flock(FromFP, LOCK_EX)) {
 			my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
-			my $to_file = "$dest_dir/$mtime.$Curr";
+			my @TA = gmtime($mtime);
+			my $date_str = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+			my $to_file = "$dest_dir/$date_str.$Curr";
 			if (-e $to_file) {
 				close(FromFP);
 				goto CLEANUP;
@@ -81,7 +83,7 @@ LOOP: foreach my $FullCurr (@Files) {
 			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
 			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
 			if ($curr_md5 ne $last_md5) {
-				print("$mtime.$Curr\n") unless $do_loop;
+				print("$date_str.$Curr\n") unless $do_loop;
 				if (seek(FromFP, 0, 0)) {
 					if (open(ToFP, ">$to_file")) {
 						if (flock(ToFP, LOCK_EX)) {
@@ -126,6 +128,7 @@ if ($do_loop) {
 exit;
 
 sub glob_files {
+	# Returnerer en array med filnavn som samsvarer med parametrene. {{{
 	@Files = ();
 	if (scalar(@ARGV)) {
 		foreach (@ARGV) {
@@ -136,18 +139,26 @@ sub glob_files {
 			push(@Files, glob $_);
 		}
 	}
+	# }}}
 } # glob_files()
 
 sub check_stop {
+	# {{{
 	foreach ("$root_dir/stop", "$dest_dir/stop") {
 		if (-e $_) {
-			print(STDERR "$curr_dir: $_ finnes, avslutter.\n");
-			exit;
+			if (-e "$root_dir/protected") {
+				print(STDERR "$curr_dir: $_ finnes, men katalogen er beskyttet, så vi avslutter ikke.\n");
+			} else {
+				print(STDERR "$curr_dir: $_ finnes, avslutter.\n");
+				exit;
+			}
 		}
 	}
+	# }}}
 } # check_stop()
 
 sub my_sleep {
+	# {{{
 	my $Secs = shift;
 	my $start_time = time;
 	if ($Secs <= 2) {
@@ -159,6 +170,7 @@ sub my_sleep {
 			check_stop();
 		}
 	}
+	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.14 2003/04/16 01:27:36 sunny Exp $ ####
+#### End of file $Id: afv,v 1.15 2004/04/11 21:25:05 sunny Exp $ ####
