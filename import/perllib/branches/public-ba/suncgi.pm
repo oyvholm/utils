@@ -1,12 +1,11 @@
 package suncgi;
 
-#==========================================================
-# $Id: suncgi.pm,v 1.37.2.3 2003/10/13 06:16:05 sunny Exp $
+#=========================================================
+# $Id: suncgi.pm,v 1.37.2.4 2003/10/16 05:07:17 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
-# Tilhører branchen "public-ba" for bruk hos Bergensavisen.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2003 Øyvind A. Holm <sunny@sunbase.org>
-#==========================================================
+#=========================================================
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -36,14 +35,12 @@ require Exporter;
 use Fcntl ':flock';
 use strict;
 
-require 5.003;
-
 $suncgi::Tabs = "";
 $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.37.2.3 2003/10/13 06:16:05 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.37.2.4 2003/10/16 05:07:17 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -75,6 +72,7 @@ END
 #### Subrutiner ####
 
 sub content_type {
+	# {{{
 	my $ContType = shift;
 	my $loc_charset;
 	if (length($suncgi::CharSet)) {
@@ -89,9 +87,11 @@ sub content_type {
 		HTMLwarn("Intern feil: \$ContType ble ikke spesifisert til content_type()");
 	}
 	# print "Content-Type: $ContType\n\n"; # Til ære for slappe servere som ikke har peiling
+	# }}}
 } # content_type()
 
 sub curr_local_time {
+	# {{{
 	my @TA = localtime();
 	# my $GM = mktime(gmtime());
 	# my $LO = localtime();
@@ -101,24 +101,30 @@ sub curr_local_time {
 	my $LocalTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
 	# &deb_pr(__LINE__ . ": curr_local_time(): Returnerer \"$LocalTime\"");
 	return($LocalTime);
+	# }}}
 } # curr_local_time()
 
 sub create_file {
+	# {{{
 	my $file_name = shift;
 	local *LocFP;
 	return if (-e $file_name);
 	open(LocFP, ">$file_name") || HTMLdie("create_file(): $file_name: Klarte ikke å lage fila: $!");
 	close(LocFP);
+	# }}}
 } # create_file()
 
 sub curr_utc_time {
+	# {{{
 	my @TA = gmtime(time);
 	my $UtcTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
 	# &deb_pr(__LINE__ . ": curr_utc_time(): Returnerer \"$UtcTime\"");
 	return($UtcTime);
+	# }}}
 } # curr_utc_time()
 
 sub deb_pr {
+	# {{{
 	return unless $main::Debug;
 	my $Msg = shift;
 	my @call_info = caller;
@@ -161,23 +167,29 @@ END
 	$Fil =~ s#^.*/(.*?)$#$1#;
 	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg\n");
 	close(DebugFP);
+	# }}}
 } # deb_pr()
 
 sub escape_dangerous_chars {
+	# {{{
 	my $string = shift;
 
 	$string =~ s/([;\\<>\*\|`&\$!#\(\)\[\]\{\}'"])/\\$1/g;
 	return $string;
+	# }}}
 } # escape_dangerous_chars()
 
 sub file_mdate {
+	# {{{
 	my($FileName) = @_;
 	my(@TA);
 	my @StatArray = stat($FileName);
 	return($StatArray[9]);
+	# }}}
 } # file_mdate()
 
 sub get_cgivars {
+	# {{{
 	my ($in, %in);
 	my ($name, $value) = ("", "");
 	$in = "";
@@ -242,9 +254,11 @@ sub get_cgivars {
 		deb_pr(__LINE__ . ": get_cgivars(): $name = \"$value\"");
 	}
 	return %in;
+	# }}}
 } # get_cgivars()
 
 sub get_cookie {
+	# {{{
 	my $env_str = defined($ENV{'HTTP_COOKIE'}) ? $ENV{'HTTP_COOKIE'} : "";
 	my ($chip, $val);
 	foreach (split(/; /, $env_str)) {
@@ -262,9 +276,11 @@ sub get_cookie {
 		$suncgi::Cookie{$chip} .= $val;
 		deb_pr("get_cookie(): $chip=$val");
 	}
+	# }}}
 } # get_cookie()
 
 sub set_cookie {
+	# {{{
 	# $expires must be in unix time format, if defined.  If not defined it sets the expiration to December 31, 1999.
 	# If you want no expiration date set, set $expires = -1 (this causes the cookie to be deleted when user closes
 	# his/her browser).
@@ -314,9 +330,11 @@ sub set_cookie {
 		# this must be done *before*	you print any content type headers.
 	}
 	undef %suncgi::Cookie;
+	# }}}
 } # set_cookie()
 
 sub delete_cookie {
+	# {{{
 	# to delete a cookie, simply pass delete_cookie the name of the cookie to delete.
 	# you may pass delete_cookie more than 1 name at a time.
 	my (@to_delete) = @_;
@@ -326,17 +344,21 @@ sub delete_cookie {
 		print "Set-Cookie: $name=; expires=Thu, 01-Jan-1970 00:00:00 GMT;\n";
 		#this also must be done before you print any content type headers.
 	}
+	# }}}
 } # delete_cookie()
 
 sub split_cookie {
+	# {{{
 	# Splits a multi-valued parameter into a list of the constituent parameters
 
 	my ($param) = @_;
 	my (@params) = split ("\1", $param);
 	return (wantarray ? @params : $params[0]);
+	# }}}
 } # split_cookie()
 
 sub get_countervalue {
+	# {{{
 	my $counter_file = shift;
 	my $counter_value = 0;
 	local *TmpFP;
@@ -354,9 +376,11 @@ sub get_countervalue {
 	close(TmpFP);
 	# &deb_pr(__LINE__ . ": get_countervalue(): $counter_file: Fila er lukket, returnerer fra subrutina med \"$counter_value\"");
 	return $counter_value;
+	# }}}
 } # get_countervalue()
 
 sub HTMLdie {
+	# {{{
 	my($Msg,$Title) = @_;
 	my $utc_str = curr_utc_time;
 	my $msg_str = "";
@@ -426,9 +450,11 @@ END
 		close(ErrorFP);
 	}
 	exit;
+	# }}}
 } # HTMLdie()
 
 sub HTMLwarn {
+	# {{{
 	my $Msg = shift;
 	my $utc_str = curr_utc_time();
 	deb_pr("WARN: $Msg");
@@ -447,15 +473,18 @@ sub HTMLwarn {
 	$Msg =~ s/\t/\\t/g;
 	print(ErrorFP "$utc_str WARN $Msg\n");
 	close(ErrorFP);
+	# }}}
 } # HTMLwarn()
 
 # increase_counter() øker kun med 1 hvis IP'en er forskjellig fra forrige gang.
 # Hvis parameter 2 er !0, øker den uanskvett.
 
 sub increase_counter {
+	# {{{
 	my ($counter_file, $ignore_ip) = @_;
 	my $last_ip = "";
-	HTMLwarn("suncgi::increase_counter() er avlegs. inc_counter() svinger.") if $main::Debug;
+	my @call_info = caller;
+	HTMLwarn("suncgi::increase_counter() er avlegs. inc_counter() svinger. Kalt fra $call_info[1]:$call_info[2]") if $main::Debug;
 	$ignore_ip = 0 unless defined($ignore_ip);
 	my $ip_file = "$counter_file.ip";
 	my $user_ip = $ENV{REMOTE_ADDR};
@@ -481,9 +510,11 @@ sub increase_counter {
 	}
 	close(TmpFP);
 	return($counter_value + ($new_ip ? 1 : 0));
+	# }}}
 } # increase_counter()
 
 sub inc_counter {
+	# {{{
 	my ($counter_file, $Value) = @_;
 	my $last_ip = "";
 	$Value = 1 unless defined($Value);
@@ -497,9 +528,11 @@ sub inc_counter {
 	print(TmpFP "$counter_value\n");
 	close(TmpFP);
 	return($counter_value);
+	# }}}
 } # inc_counter()
 
 sub log_access {
+	# {{{
 	my ($Base, $no_counter) = @_;
 	my $log_dir = length(${suncgi::log_dir}) ? ${suncgi::log_dir} : $suncgi::STD_LOGDIR;
 	my $File = "$log_dir/$Base.log";
@@ -515,10 +548,12 @@ sub log_access {
 	$Agent =~ s/\n/\\n/g; # Vet aldri hva som kommer
 	printf(LogFP "%u\t%s\t%s\t%s\t%s\n", time, $ENV{REMOTE_ADDR}, $ENV{REMOTE_HOST}, $ENV{HTTP_REFERER}, $Agent);
 	close(LogFP);
-	$suncgi::this_counter = increase_counter($Countfile) unless $no_counter;
+	$suncgi::this_counter = inc_counter($Countfile, 1) unless $no_counter;
+	# }}}
 } # log_access()
 
 sub print_doc {
+	# {{{
 	my ($file_name, $page_num) = @_;
 	my $in_header = 1;
 	my %doc_val;
@@ -556,9 +591,11 @@ sub print_doc {
 </html>
 END
 	close(FromFP);
+	# }}}
 } # print_doc()
 
 sub p_footer {
+	# {{{
 	my $no_endhtml = shift;
 	defined($no_endhtml) || ($no_endhtml = 0);
 	my $Retval = "";
@@ -612,9 +649,11 @@ END
 </html>
 END
 	return $Retval;
+	# }}}
 } # p_footer()
 
 sub print_footer {
+	# {{{
 	my ($footer_width, $footer_align, $no_vh, $no_end) = @_;
 
 	# &deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
@@ -668,9 +707,11 @@ END
 END
 	}
 	exit; # FIXME: Sikker på det?
+	# }}}
 } # print_footer()
 
 sub print_header {
+	# {{{
 	my ($DocTitle, $RefreshStr, $style_sheet, $head_script, $body_attr, $html_version, $head_lang, $no_body) = @_;
 	# &deb_pr(__LINE__ . ": Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
 	if ($suncgi::header_done) {
@@ -730,9 +771,11 @@ END
 		tab_print("<body$body_attr>\n");
 		Tabs(1);
 	}
+	# }}}
 } # print_header()
 
 sub tab_print {
+	# {{{
 	my @Txt = @_;
 
 	unless($suncgi::header_done) {
@@ -745,9 +788,11 @@ sub tab_print {
 		s/([\x7f-\xff])/sprintf("&#%u;", ord($1))/ge;
 		print "$_";
 	}
+	# }}}
 } # tab_print()
 
 sub tab_str {
+	# {{{
 	my @Txt = @_;
 	my $RetVal = "";
 
@@ -757,9 +802,11 @@ sub tab_str {
 		$RetVal .= "$_";
 	}
 	return $RetVal;
+	# }}}
 } # tab_str()
 
 sub Tabs {
+	# {{{
 	my $Value = shift;
 
 	# FIXME: Finpussing seinere.
@@ -775,9 +822,11 @@ sub Tabs {
 	} else {
 		HTMLwarn("Intern feil: Tabs() ble kalt med \$Value = 0");
 	}
+	# }}}
 } # Tabs()
 
 sub url_encode {
+	# {{{
 	my $String = shift;
 
 	defined($String) || ($String = "");
@@ -785,9 +834,11 @@ sub url_encode {
 	           sprintf ('%%%X', ord($1))/eg;
 
 	return $String;
+	# }}}
 } # url_encode()
 
 sub sec_to_string {
+	# {{{
 	my ($Seconds, $Sep, $Sep2, $Gmt) = @_;
 	defined($Sep)  || ($Sep = "");
 	defined($Sep2) || ($Sep2 = "");
@@ -797,11 +848,14 @@ sub sec_to_string {
 	my @TA = $Gmt ? gmtime($Seconds) : localtime($Seconds);
 	my($DateString) = sprintf("%04u%s%02u%s%02u%s%02u:%02u:%02u%s", $TA[5]+1900, $Sep2, $TA[4]+1, $Sep2, $TA[3], $Sep, $TA[2], $TA[1], $TA[0], $Gmt ? "Z" : "");
 	return($DateString);
+	# }}}
 } # sec_to_string()
 
 1;
 
 __END__
+
+# POD {{{
 
 =head1 NAME
 
@@ -809,7 +863,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.37.2.3 2003/10/13 06:16:05 sunny Exp $>
+S<$Id: suncgi.pm,v 1.37.2.4 2003/10/16 05:07:17 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1205,4 +1259,6 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.37.2.3 2003/10/13 06:16:05 sunny Exp $ ####
+# }}}
+
+#### End of file $Id: suncgi.pm,v 1.37.2.4 2003/10/16 05:07:17 sunny Exp $ ####
