@@ -1,0 +1,100 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $
+# [Description]
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+
+$| = 1;
+
+use Getopt::Std;
+
+our ($opt_o, $opt_t, $opt_y) =
+    (     "",     "",     "");
+getopts('o:t:y:');
+
+my $rcs_id = '$Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $';
+my $rcs_id_strip = $rcs_id;
+$rcs_id_strip =~ s/\$Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $$/$1/;
+
+my $gnuplot_script = join(".", "tmp.stpl", $$, substr(rand(), 2, 5), "plt");
+
+if (-e $gnuplot_script) {
+	die("$gnuplot_script: Strange indeed — file already exists. Spooky.\n");
+}
+
+open(GnupFP, ">$gnuplot_script") || die("$gnuplot_script: Can’t open file for write: $!\n");
+
+
+sub process_file {
+	print(GnupFP <<END);
+#!/usr/bin/gnuplot -persist
+
+# Gnuplot script created by $rcs_id_strip
+
+END
+
+	if (length($opt_y)) {
+		if ($opt_y =~ /^r(.*)/) {
+			# Y range specified {{{
+			my $Range = $1;
+			if ($opt_y =~ /^-yr([\d\-]+:[\d\-]+)$/) {
+				print(GnupFP "set yrange [$1]\n");
+			} else {
+				die("$Range: Invalid Y range specified\n");
+			}
+			# }}}
+		}
+	}
+
+	print(GnupFP <<END);
+set xdata time
+set grid
+set timefmt "%Y-%m-%dT%H:%M:%SZ"
+set format x "%Y-%m-%d"
+END
+
+	if (length($opt_o)) {
+		if ($opt_o =~ /.*\.ps$/i) {
+			print(GnupFP "set terminal postscript\nset output \"$opt_o\"\n");
+		} elsif ($opt_o =~ /.*\.png$/i) {
+			print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
+		} else {
+			die("Unkonwn outfile type, has to be .ps or .png\n");
+		}
+	} else {
+		print(GnupFP "set terminal x11\n");
+	}
+
+	if (length($opt_t)) {
+		print(GnupFP "set title \"$opt_t\"\n");
+	}
+
+	while (<>) {
+		if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d))T(\d\d):(\d\d):(\d\d)\s+(\d+)/
+
+	print(GnupFP <<END);
+plot \\
+"$data_file" using 1:2 title " " with line 7, \\
+"$data_file" using 1:2 smooth bezier title " " with line -1
+
+END
+
+close(GnupFP);
+
+system("gnuplot $gnuplot_script");
+# "data" using 1:2 s bezier w l -1, \
+# "data" using 1:2 s sbezier w l 29
+
+# "data" using 1:2 s acsplines w l 3, \
+# "data" using 1:2 w l 0, \
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $
