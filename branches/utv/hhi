@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp $
+# hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp
 # Html Header Indexer
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -10,8 +10,11 @@
 use strict;
 
 use Getopt::Std;
-our ($opt_a, $opt_l) = (0, 2);
-getopts('al:');
+our ($opt_a, $opt_h, $opt_l) =
+    (     0,      0,      2);
+getopts('ahl:');
+
+my $Debug = 0; # 0 = Standard, 1 = Send debug msgs to stderr
 
 my $last_level = 1;
 my $start_level = 2;
@@ -19,6 +22,26 @@ my @header_num = qw{0};
 my @Data = ();
 my @Toc = ();
 my %name_used = ();
+
+if ($opt_h) {
+	print(<<END);
+
+Syntax: $0 [options] [file [...]]
+
+Parses HTML source and creates section numbers in headers and inserts a
+table of contents in a defined area. Refer to the POD in the Perl file
+for complete info.
+
+Options:
+
+  -a  Include all headers in the table of contents, even those marked
+      with "<!-- nohhitoc -->"
+  -h  This help message
+  -l  Start indexing at this level number. Default: $start_level
+
+END
+	exit(0);
+}
 
 if ($opt_l =~ /^\d+$/) {
 	if ($opt_l < 1) {
@@ -34,7 +57,7 @@ while (<>) {
 	# {{{
 	my $orig_line = $_;
 	if (!/<!-- nohhi -->/i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
-		# {{{
+		# Header found {{{
 		my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
 		if ($header_level >= $start_level) {
 			my $skip_num = 0;
@@ -75,7 +98,7 @@ while (<>) {
 		push(@Data, "$_");
 		# }}}
 	} elsif (/<!-- hhitoc -->/i) {
-		# {{{
+		# Contents area found, skip everything until a "<!-- /hhitoc -->" is found {{{
 		my $Found = 1;
 		my $line_num = $.;
 		push(@Data, "$_");
@@ -95,7 +118,7 @@ while (<>) {
 }
 
 for my $Line (@Data) {
-	# {{{
+	# Send everything to stdout with optional contents inserted {{{
 	if ($Line =~ /^(\s*)(<!-- hhitoc -->)(.*)$/i) {
 		my ($Indent, $HT, $End) = ($1, $2, $3);
 		print("$Line$Indent<ul>\n$Indent<!-- \x7B\x7B\x7B -->\n");
@@ -103,6 +126,7 @@ for my $Line (@Data) {
 		my ($Cnt, $Txt) = (0, "");
 		my $Ex = "\t";
 		for (@Toc) {
+			# {{{
 			if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
 				($Cnt, $Txt) = ($1, $2);
 				my $Diff = $Cnt-$Old;
@@ -122,9 +146,10 @@ for my $Line (@Data) {
 				print("$Indent$Ex<li>$Txt\n");
 				$Old = $Cnt;
 			}
+			# }}}
 		}
 		for (; $Cnt > 1; $Cnt--) {
-			print("Cnt = \"$Cnt\"\n");
+			D("Cnt = \"$Cnt\"\n");
 			print("$Indent$Ex</li>\n");
 			($Cnt == 2) && print("$Indent<!-- \x7D\x7D\x7D -->\n");
 			print("$Indent$Ex</ul>\n");
@@ -133,6 +158,10 @@ for my $Line (@Data) {
 		print("$Line");
 	}
 	# }}}
+}
+
+sub D {
+	print(STDERR @_) if $Debug;
 }
 
 __END__
@@ -147,7 +176,7 @@ hhi - Html Header Indexer
 
 =head1 REVISION
 
-$Id: hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp $
+hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp
 
 =head1 SYNOPSIS
 
@@ -229,4 +258,5 @@ GNU General Public License.
 
 # }}}
 
-# End of file $Id: hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp $
+# vim: ft=perl fdm=marker fdl=0 :
+# End of file hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp
