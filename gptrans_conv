@@ -133,7 +133,10 @@ while (<>) {
     # print_entry()
     # {{{
     my $bck_line = $_;
-    if (/^# Pause: /) {
+    if (/^<\?xml version="1.0" encoding="UTF-8"\?>/i) {
+        read_xmlfile(<>);
+        last;
+    } elsif (/^# Pause: /) {
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
@@ -230,6 +233,33 @@ END
 }
 
 exit(0);
+
+sub read_xmlfile {
+    my $Txt = join("", @_);
+    $Txt =~ s#(<gps\b.*?>.*?</gps>)#print_xml_gps($1)#gse;
+}
+
+sub print_xml_gps {
+    my $Orig = shift;
+    my $Str = $Orig;
+    D("print_xml_gps(\"$Orig\")\n");
+    my ($Year, $Mon, $Day, $Hour, $Min, $Sec, $Dsec);
+    my ($Pos_X, $Pos_Y, $Pos_Z, $Alt);
+    if ($Str =~ m#<date>(\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)\.?(\d*?)Z</date>#) {
+        ($Year, $Mon, $Day, $Hour, $Min, $Sec, $Dsec) =
+        (   $1,   $2,   $3,    $4,   $5,   $6,    $7);
+    }
+    if ($Str =~ m#<pos>(.*?)</pos>#s) {
+        my $Txt = $1;
+        ($Txt =~ m#<x\b.*?>(.*?)</x>#) && ($Pos_X = $1);
+        ($Txt =~ m#<y\b.*?>(.*?)</y>#) && ($Pos_Y = $1);
+        ($Txt =~ m#<z\b.*?>(.*?)</z>#) && ($Pos_Z = $1);
+    }
+    defined($Pos_X) || ($Pos_X = "");
+    defined($Pos_Y) || ($Pos_Y = "");
+    defined($Pos_Z) || ($Pos_Z = "");
+    print_entry($Year, $Mon, $Day, $Hour, $Min, $Sec, $Pos_X, $Pos_Y, $Pos_Z);
+}
 
 sub print_entry {
     # Print a GPS entry with time, latitude, longitude and altitude in 
