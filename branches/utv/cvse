@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.13 2003/06/30 13:03:07 sunny Exp $
+# $Id: cvse,v 1.1.2.14 2003/07/02 10:16:42 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -299,7 +299,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.13 2003/06/30 13:03:07 sunny Exp $
+$Id: cvse,v 1.1.2.14 2003/07/02 10:16:42 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -402,9 +402,9 @@ Due to the format of S<C<cvs log>> output, messages can't contain any lines matc
 If any of these patterns are found, the script will either ignore the line or interpret it as a message separator.
 
 CVS refuses to change the log message of a file that doesn't exist in the current revision.
-When the script notices that a certain file doesn't exist on this branch or in the current revision, it tries to restore an earlier (random) revision with S<C<cvs update>> to get the file in place.
+When the script notices that a certain file doesn't exist on this branch or in the current revision, it tries to restore an earlier revision with S<C<cvs update>> to get the file in place.
 When the file exists, CVS is able to change the log message.
-This results in random revisions of missing files, but everything can be restored to normal with the usual S<C<cvs update -A>> command.
+This results in random revisions of missing files showing up, but everything can be restored to normal with the usual S<C<cvs update -A>> command.
 To avoid messing up source trees with lots of tags and revisions, it's recommended to check out the files in a separate directory where the script can work, or use the C<-i> option which ignores non-existing files.
 If no revision can be restored, a warning is generated and no messages for this file will be changed.
 
@@ -441,4 +441,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.1.2.13 2003/06/30 13:03:07 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.14 2003/07/02 10:16:42 sunny Exp $
