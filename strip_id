@@ -1,0 +1,25 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id$
+# Lager "-kv"-feeling på Id og Date. Subversion gjør visst ikke
+# sånt enda.
+#
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+
+$| = 1;
+
+while (<>) {
+	s/\$(Id|Date): (.*) \$/$2/g;
+	print;
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id$
