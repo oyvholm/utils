@@ -1,12 +1,26 @@
 #!/usr/bin/perl -w
 
 #========================================================
-# $Id: lsreadable,v 1.4 2001/06/05 05:16:32 sunny Exp $
+# $Id: lsreadable,v 1.5 2003/09/26 23:58:02 sunny Exp $
 # Leser filnavn fra stdin eller en fil og skriver ut alle
-# som er lesbar.
+# som er lesbar. Hvis -u spesifiseres, listes alle som
+# IKKE er leselige.
 #========================================================
 
-while (<>) {
-	chomp;
-	-r $_ && print("$_\n");
+my $Unr = 0;
+
+if (defined($ARGV[0])) {
+	($ARGV[0] =~ /^-u$/) && ($Unr = 1, shift);
+}
+
+if ($Unr) {
+	while (<>) {
+		chomp;
+		-r $_ || print("$_\n");
+	}
+} else {
+	while (<>) {
+		chomp;
+		-r $_ && print("$_\n");
+	}
 }
