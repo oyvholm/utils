@@ -1,7 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 #========================================================================
-# $Id: hf,v 1.10.2.2 2002/04/18 14:37:33 sunny Exp $
+# $Id: hf,v 1.10.2.2.2.1 2002/04/18 15:58:38 sunny Exp $
 # Formatterer HTML-source med TAB'er
 #
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -10,16 +10,20 @@
 #========================================================================
 
 use strict;
-require 'getopts.pl';
+use Getopt::Std;
 
-($main::opt_a, $main::opt_h, $main::opt_i, $main::opt_H, $main::opt_s) = (0, 0, 0, 0);
-&Getopts('ahHi:s');
+use vars qw{ $opt_a $opt_h $opt_H $opt_i $opt_s };
+
+($opt_a, $opt_h, $opt_H, $opt_i, $opt_s) = (0, 0, 0, 0, 0);
+getopt('ahH:is');
 
 my $is_pre = 0;
 my $prog_name = $0;
 $prog_name =~ s!.*/(.+?)$!$1!;
 
-print_help() if ($main::opt_h);
+# print("opt_s = \"$opt_s\"\n");
+
+print_help(0) if ($opt_h);
 
 # Gammel parameterparsing
 # begin-base64 664 -
@@ -30,7 +34,7 @@ print_help() if ($main::opt_h);
 $| = 1;
 
 my $Tabs = "";
-my $tab_indent = $main::opt_i;
+my $tab_indent = $opt_i;
 my $orig_line = "";
 my @Elements = (
 	"applet", "blockquote", "body", "caption", "center", "colgroup",
@@ -45,7 +49,7 @@ for (; $tab_indent; $tab_indent--) {
 	$Tabs .= "\t";
 }
 
-my $line_exp = $main::opt_a ? '^\s+(.*)' : '^\t+(.*)';
+my $line_exp = $opt_a ? '^\s+(.*)' : '^\t+(.*)';
 my $header_indent = "";
 
 LINE: while (<>) {
@@ -54,11 +58,11 @@ LINE: while (<>) {
 	my $f = "";
 	my $out_line;
 
-	$main::opt_s && ($Line =~ /^%/) && (print($Line), next LINE);
+	$opt_s && ($Line =~ /^%/) && (print($Line), next LINE);
 	unless($is_pre) {
-		# $Line =~ $main::opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
+		# $Line =~ $opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
 		$Line =~ s/$line_exp/$1/;
-		if ($main::opt_H && $Line =~ /<h([1-6]).*?>/i) {
+		if ($opt_H && $Line =~ /<h([1-6]).*?>/i) {
 			$header_indent = "\t" x ($1-1);
 		}
 		($Line =~ m!</body>!i) && ($header_indent = "");
@@ -91,6 +95,7 @@ LINE: while (<>) {
 #   -s  Split block elements on separate lines (not finished yet)
 
 sub print_help {
+	my $Retval = shift;
 	print <<END;
 
 HTML formatter
@@ -111,7 +116,7 @@ Options:
         www.sunbase.org som er sånn.
 
 END
-	exit(0);
+	exit($Retval);
 } # print_help()
 
-#### End of file $Id: hf,v 1.10.2.2 2002/04/18 14:37:33 sunny Exp $ ####
+#### End of file $Id: hf,v 1.10.2.2.2.1 2002/04/18 15:58:38 sunny Exp $ ####
