@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #====================================================================
-# $Id: access_log2epstat,v 1.3 2002/10/01 12:24:30 sunny Exp $
+# $Id: access_log2epstat,v 1.4 2003/09/27 04:40:06 sunny Exp $
 # Konverterer access_log fra Apache til fil som passer til epstat(1).
 # Langt og trasig navn, men nøye då.
 #====================================================================
@@ -32,10 +32,14 @@ while (<>) {
 			(\d{4}) # År
 			:(\d\d):(\d\d):(\d\d) # Klokka
 			\s+
+			([+\-]\d\d)(\d\d)
 		!x
 		) {
-			my $Mnd = $mnd_hash{$2};
-			my $Secs = timelocal($6, $5, $4, $1, $Mnd, $3);
+			my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
+			   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
+			my $num_mon = $mnd_hash{$Mon};
+			my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mon, $Year);
+			$Secs -= ($zone_hour*3600); # Vi driter i minuttene fir å få opp farta.
 			print("$Secs\n");
 		} else {
 			print(STDERR "Ukjent linje $.\n");
@@ -44,4 +48,4 @@ while (<>) {
 
 __END__
 
-#### End of file $Id: access_log2epstat,v 1.3 2002/10/01 12:24:30 sunny Exp $ ####
+#### End of file $Id: access_log2epstat,v 1.4 2003/09/27 04:40:06 sunny Exp $ ####
