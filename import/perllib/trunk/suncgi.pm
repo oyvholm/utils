@@ -1,7 +1,7 @@
 package suncgi;
 
 #========================================================
-# $Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $
+# $Id: suncgi.pm,v 1.16 2000/11/14 14:33:50 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
 #========================================================
@@ -10,7 +10,7 @@ require Exporter;
 @ISA = qw(Exporter);
 
 @EXPORT = qw{
-	content_type curr_local_time curr_utc_time deb_pr
+	content_type create_file curr_local_time curr_utc_time deb_pr
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn increase_counter log_access print_header tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
@@ -37,7 +37,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $>
+S<$Id: suncgi.pm,v 1.16 2000/11/14 14:33:50 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -118,7 +118,7 @@ Skriver ut en del debuggingsinfo.
 =item I<${main::Utv}>
 
 Beslektet med I<${main::Debug}>, men hvis denne er definert, sitter man lokalt og tester.
-Ikke helt klargjort hvordan disse to skal fungere i forhold til hverandre, men når sida ligger offentlig, skal hverken I<${main::Debug}> eller I<${main::Utv}>
+Eneste forskjellen hovedsaklig er at feilmeldinger går til skjerm i tillegg til errorfila.
 
 =item I<${suncgi::Border}>
 
@@ -141,9 +141,9 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/11/03 21:13:02 $';
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.16 2000/11/14 14:33:50 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.16 2000/11/14 14:33:50 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/11/14 14:33:50 $';
 @suncgi::rcs_array = ();
 
 $suncgi::this_counter = "";
@@ -237,6 +237,22 @@ sub curr_local_time {
 	# &deb_pr(__LINE__ . ": curr_local_time(): Returnerer \"$LocalTime\"");
 	return($LocalTime);
 } # curr_local_time()
+
+###########################################################################
+
+=head2 create_file()
+
+Lager en fil hvis den ikke eksisterer fra før.
+
+=cut
+
+sub create_file {
+	my $file_name = shift;
+	local *LocFP;
+	return if (-e $file_name);
+	open(LocFP, ">$file_name") || HTMLdie("create_file(): $file_name: Klarte ikke å lage fila: $!");
+	close(LocFP);
+} # create_file()
 
 ###########################################################################
 
@@ -464,10 +480,10 @@ i standard ASCII-format.
 
 =cut
 
-# FIXME: Skal my TmpFP brukes?
 sub get_countervalue {
 	my $counter_file = shift;
 	my $counter_value = 0;
+	local *TmpFP;
 	# &deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
 	unless (-e $counter_file) {
 		open(TmpFP, ">$counter_file") || (HTMLwarn("$counter_file i get_countervalue(): Klarte ikke å lage fila: $!"), return(0));
@@ -555,7 +571,7 @@ END
 </html>
 END
 	if (length(${suncgi::error_file})) {
-		system("touch ${suncgi::error_file}") unless (-e ${suncgi::error_file});
+		create_file($suncgi::error_file);
 		open(ErrorFP, "+<${suncgi::error_file}") or exit;
 		flock(ErrorFP, LOCK_EX);
 		seek(ErrorFP, 0, 2) or exit;
@@ -621,8 +637,8 @@ sub increase_counter {
 	my $ip_file = "$counter_file.ip";
 	my $user_ip = $ENV{REMOTE_ADDR};
 	local *TmpFP;
-	system("touch $counter_file") unless (-e $counter_file);
-	system("touch $ip_file") unless (-e $ip_file);
+	create_file($counter_file);
+	create_file($ip_file);
 	open(TmpFP, "+<$ip_file") || (HTMLwarn("$ip_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$last_ip = <TmpFP>;
@@ -663,7 +679,7 @@ sub log_access {
 	my $log_dir = length(${suncgi::log_dir}) ? ${suncgi::log_dir} : $suncgi::STD_LOGDIR;
 	my $File = "$log_dir/$Base.log";
 	my $Countfile = "$log_dir/$Base.count";
-	system("touch $File") unless (-e $File);
+	create_file($File);
 	open(LogFP, "+<$File") || (HTMLwarn("$File: Can't open access log for read/write: $!"), return);
 	flock(LogFP, LOCK_EX);
 	seek(LogFP, 0, 2) || (HTMLwarn("$Countfile: Can't seek to EOF: $!"), close(LogFP), return);
@@ -885,56 +901,6 @@ END
 
 ###########################################################################
 
-# print_header() før henting fra BA-Snakk
-# begin-base64 664 -
-# H4sIALwy3zgCA41Y2W7bSBZ9Nr/imk7cEmBJveTJltXtRUmMOAtsBZkeCBBK
-# YomiSRU1VUV5hMT9t+5v6Mc5t4qUKNkJxghssuru99yFOZ1JEf1KhwudKDvi
-# F6kbzSC4FrHUJBW9Hby/ftXyF5TQTKpZnkVkk4y+/HbxkyGhxnIqskTFbboE
-# gxWaosQYGSyEFnNppVbyOAhO8yUkvMJDYuWcrrovLvPJILGZ7AXBpbRk8jmZ
-# VGSUKAVN/W5me5bv+93Y9txrZ/NekzOz82wE4SbJFc7fLpMshSGXg8uNzLEu
-# UmkgdizjlVIyM1K16ZxPtbNlcDlyrt4Obq4uBj3mDCI4VmT2iERmzWMQ3Had
-# FfuXHy8Gf37qu9jQp8/n11cXFLY6HQSk02G17uJV+2caaKFMYmGYyDqd/oew
-# ByHhzNrFv7u9407n/v6+ff9bO9dxZ3DTuelftNiZVz93sjw3sh3ZKHTe1t29
-# FioukJ4eZ0lFJs0jSYtHsjmN89RYwXFmx2diqVzSnNUsmDLwOoFturVgFjoC
-# dZQEoAtVHh5RhEwggGSSINjrrplO+bZuRWGkHo3FJI11XqgIV+cCzwVytxN0
-# hoUlZ0hhY8gyi0Klls8UTYWOJTWkipGSNHCvCnaTzDKw3Lw5b01zPReWwoOp
-# +wmbRzQH52yZGJL/tVJx3ll+lqRBu3G3iL/dLWT8LU6m3xYqbvIVe4V/4ySL
-# ZLvmxY2camlmsP5MWZHBbZnCG3DMYQDHkIOpPdUmZmAFsAVxIlvyP0Wy7K2J
-# atJVPhrn0cpj0sAIAI+t2cfd67Pr237vCIHSyZKRmabSJ4pZXI4QrjZ90iK1
-# iUmdv0HkIzmXOpVZEu8y7ET+qIzizGu3/i6TcSxNwFWmcgTyTiyFmehkYVux
-# lomLlq67cSn9tS+vrVI19tHVlPeCi6qCG8fHGdXCrV1paesi38nVfa4jA3nV
-# 4xNGhJtVLP/WktJ8PhdGoqNIbSmPEYEICUVlAV8buX/c2lUmb2dScoM401qs
-# HCXqd7u9GKYjw4TA53n39dW/3vePe0jwKo7JiJTDZSXanSZhEXZF80dvCirN
-# ZAUuFYkllT1OSyU5lwXizWQO22MZgX7+CDnmkbMfpAKnWQKUqchb1B8MaN0n
-# PbBdoqB3mThdMkERyzb1cSIzjxM0I/XPClgCGnGzlMoWkn3MuJAcK3cF5X2F
-# Gskuw8iYY+dFuNNAcIwQwfPBF7aspqPWvR2cLDsxh1Ju/VwWkYiBMAfL191y
-# gET5pNHseUlTbiwx6WTuoIoyttwKdIkc6E/vYDgnJzALaZJpArddPjcJYbTN
-# RIQOF99BAMLhc2+TCEJB7npti7v/Xc7dLo/NIyOCWxP+TAobBKYYU33A0ddg
-# b76ixnoCHdHWEMFr1WTxuNPpcFJ2DTyVFY6nWpHgrQL1EdUg2aRT+mN04nSz
-# 6gLZtgOEB+eHk0LrUWEnI4uDRrOkOofwW6tBEHZdKwmri7U9uC7PSrM8ffVG
-# v4N1p1mdDsOyWw1DmuQKWLY4q1hwWOiMD77ORaKOjz/r7GEY9oZqaIc2pGMK
-# KzPYT6+PkWdnjbXnzY1iBRxBWlrebOt8tz59Tv7FTOhbQAD+3GJCX7w9u7nt
-# D6hQmTRmrbOkqoLmUmmcVcalfdoI3SR7aXqYcBVXlWJnqR9ysKc6HYbekOYm
-# X1dRKbWSALSPliL7mkQPLKTb7X+4rKzv7rdaVKegVqsXgCDYS6aAnkciCkbB
-# AOBx74AOIzkeLXRjNLq++tAfjahN4TH9me/T9naG8kJHvPvHlUO2JFTSsC6P
-# o1V7beO2Ajqu4GP1NvTu7TnxjXConNGwooiPt3VuMR1RHSvurayD8q1eS8Ow
-# +R0rEY+h8gZgOhRa4emBeIi4eOx49AvfBt+N0naEjmltrlNQ4qVRJW6npJs+
-# A7vHtUyXhcBV98bduYQ/c4z0O6Sen128e3Pz8fOHS2835/zH2h0qnljwF3WG
-# z+w0LzqJ59p70iJow8543pGIMmN0Ml+9gzC3O68l4CnJrrCT7xgQT/Is16x9
-# S0Kl+2E7z8/2uGeUPxfWA/KDgs554viZ7YcVTymsNzx2VDG1GECYgbx9Ys/A
-# 8BC/MzPHfP/HaTnwvfZNzZKSIZk2SpqKaMvcp9g4qUifdfiA6rF/TuKTAPxY
-# WuB/HZbNdmRXC9kILVbmDheoKwxXNmuU1+vW4bt+UCGb5y2+cdbMruudBMG6
-# 7QabXll2wTIUemJGVSMsb/zRpjUeDsTYNH5tntABuW8PrCtc1EEt1e8x+rEF
-# JrxcYD+TP+HT03+38HoVoy9ineZFJcaKxJvTAF+kbqXBx6tZKQeNF6wIB7wf
-# b9YuXjN59912DZ9BMAE273Xd92dv3Vy6/oPUXe3O2PDCx701QNw3I2+TgBOa
-# YG4ZaU+rARayoNoYr43PUBR2luuanCqqX+T4vTDY0x48ezmS67yTfLHSSTyz
-# NfZDPjyhw48mE2Z2slomaDdnbXqbZ/Nw45AXEG2Wm7oFtZ3nKYuwcou2tu94
-# 4ixRKb6aEKk5unZIM+wk/JxkNj9+1juGSJWbkHeFrt/jGdnoNi6yE+NXiZCL
-# 20xEhuTXdrCTCmO/MPzRHKSYzKixtaV9rUYi9oaX5qWBsCMPGPwZNX3nqVvR
-# cWb8H0pbHtne6gra1fh1Grodh7VyMFZzq5qvNdtK+qr8mQFXNd8eggeo2vl/
-# nf8BVLmUwu8RAAA=
-# ====
-
 # FIXME: Mer pod under her.
 
 =head2 print_header()
@@ -1136,9 +1102,7 @@ sub sec_to_string {
 
 =head1 BUGS
 
-Strukturen er ikke helt klar enda, det blir nok mange forandringer underveis.
-
-Tror ikke tellerfunksjonene er helt i rute.
+print_doc() er ikke ferdig, ellers svinger det visst.
 
 =cut
 
@@ -1146,4 +1110,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.15 2000/11/03 21:13:02 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.16 2000/11/14 14:33:50 sunny Exp $ ####
