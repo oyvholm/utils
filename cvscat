@@ -1,14 +1,19 @@
 #!/bin/bash
 
-# $Id: cvscat,v 1.2 2002/07/15 13:21:51 sunny Exp $
+# $Id: cvscat,v 1.3 2003/12/20 11:09:18 sunny Exp $
 
 if [ $# -le 1 ]; then
 	cat <<END
 
-Syntax: cvscat file revision
+Syntax: cvscat file revision [cvs options]
 
 END
 	exit 1
 fi
 
-cvs -d $(cat CVS/Root) co -p -r $2 $(cat CVS/Repository)/$1
+cvsfile=$1
+shift
+revision=$1
+shift
+
+cvs -d $(cat CVS/Root) co -p -r $revision $* $(cat CVS/Repository)/$cvsfile
