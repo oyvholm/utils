@@ -238,12 +238,21 @@ sub print_entry {
     # {{{
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
     my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
-    $Year  = sprintf("%04u", $Year);
-    $Month = sprintf("%02u", $Month);
-    $Day   = sprintf("%02u", $Day);
-    $Hour  = sprintf("%02u", $Hour);
-    $Min   = sprintf("%02u", $Min);
-    $Sec   = sprintf("%02u", $Sec);
+    if ($opt_o eq "xml") {
+        $Year  = sprintf("%u", $Year);
+        $Month = sprintf("%u", $Month);
+        $Day   = sprintf("%u", $Day);
+        $Hour  = sprintf("%u", $Hour);
+        $Min   = sprintf("%u", $Min);
+        $Sec   = sprintf("%u", $Sec);
+    } else {
+        $Year  = sprintf("%04u", $Year);
+        $Month = sprintf("%02u", $Month);
+        $Day   = sprintf("%02u", $Day);
+        $Hour  = sprintf("%02u", $Hour);
+        $Min   = sprintf("%02u", $Min);
+        $Sec   = sprintf("%02u", $Sec);
+    }
     my $pause_len = 0;
     my $do_print = 1;
     my $Line = "";
