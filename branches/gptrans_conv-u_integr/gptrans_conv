@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # ╔══════════════════════════════════════════════════════════════
-# ║ gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp
+# ║ $Id: gptrans_conv,v 1.10.2.8.2.1 2003/09/20 19:07:13 sunny Exp $
 # ║ Converts between various GPS formats
 # ║ Character set: UTF-8
 # ║ License: GNU General Public License
@@ -15,7 +15,7 @@ use Time::Local qw { timegm_nocheck };
 
 my $Debug = 0;
 
-my $rcs_str = 'gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp';
+my $rcs_str = '$Id: gptrans_conv,v 1.10.2.8.2.1 2003/09/20 19:07:13 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -28,7 +28,11 @@ my $Des = $opt_c ? "," : ".";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $last_time = 0;
-my ($last_lon, $last_lat, $last_alt, $last_line) = (1000, 1000, 100000, ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+my ($last_lon, $last_lat, $last_alt, $last_line) =
+   (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+my ($start_date, $end_date, $found_dup) =
+   (         "",        "",          0);
+my @Dup = ();
 
 if ($opt_h) {
 	# Syntax screen to stdout and exit gracefully {{{
@@ -61,37 +65,13 @@ END
 # FIXME: Fjerner ikke første duplikatentryen.
 # FIXME: Se om det går å få flytta den inn i print_entry() så man slipper å ha to gptrans_conv’er i pipen.
 # FIXME: Legg inn alle formatene.
-if ($opt_u) {
+if (0 && $opt_u) {
 	# Comment out areas without reception {{{
-	my ($start_date, $end_date, $found_dup) = ("", "", 0);
-	my @Dup = ();
 	while (<>) {
 		if (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
 			# {{{
 			my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
 			   (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
-			if (($lat_val eq $last_lat) && ($lon_val eq $last_lon)) {
-				unless ($found_dup) {
-					$start_date = "$Year$Month${Day}T$Hour$Min$Sec";
-					@Dup = ();
-					$found_dup = 1;
-				}
-				push(@Dup, "# $_");
-				$end_date = "$Year$Month${Day}T$Hour$Min$Sec";
-			} else {
-				if ($found_dup) {
-					print("# $start_date-$end_date: CO: Uten mottak \x7B\x7B\x7B\n");
-					for (@Dup) {
-						print($_);
-					}
-					print("# $start_date-$end_date: CO: Uten mottak \x7D\x7D\x7D\n# move\n$_");
-					$found_dup = 0;
-				} else {
-					print($_);
-				}
-			}
-			$last_lat = $lat_val;
-			$last_lon = $lon_val;
 			# }}}
 		} else {
 			if ($found_dup) {
@@ -102,11 +82,11 @@ if ($opt_u) {
 		}
 	}
 	if ($found_dup) {
-		print("# $start_date-$end_date: CO: Uten mottak \x7B\x7B\x7B\n");
+		print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
 		for (@Dup) {
 			print($_);
 		}
-		print("# $start_date-$end_date: CO: Uten mottak \x7D\x7D\x7D\n# move\n");
+		print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n");
 		$found_dup = 0;
 	}
 	exit(0);
@@ -232,11 +212,35 @@ sub print_entry {
 	my $pause_len = 0;
 	my $do_print = 1;
 	my $Line = "";
+	if ($opt_u) {
+		if (($Lat eq $last_lat) && ($Lon eq $last_lon)) {
+			unless ($found_dup) {
+				$start_date = "$Year$Month${Day}T$Hour$Min$Sec";
+				@Dup = ();
+				$found_dup = 1;
+			}
+			push(@Dup, "# $_");
+			$end_date = "$Year$Month${Day}T$Hour$Min$Sec";
+			$do_print = 0;
+		} else {
+			if ($found_dup) {
+				print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
+				for (@Dup) {
+					print($_);
+				}
+				print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n$_");
+				$found_dup = 0;
+			} else {
+				$Line = $_;
+				$do_print = 1;
+			}
+		}
+	}
 	if ($opt_o eq "ps") {
 		$Lon *= 100;
 		$Lat *= 100;
 	}
-	if ($opt_d && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Alt eq $last_alt)) {
+	if ($opt_u && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Alt eq $last_alt)) {
 		if ($in_dupskip) {
 			$do_print = 0;
 		} else {
@@ -415,4 +419,4 @@ sub D {
 }
 
 # vim: set fdm=marker ft=perl fenc=utf-8 :
-# End of file gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp
+# End of file $Id: gptrans_conv,v 1.10.2.8.2.1 2003/09/20 19:07:13 sunny Exp $
