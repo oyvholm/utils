@@ -37,7 +37,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $>
+S<$Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -154,15 +154,15 @@ $Utv = 0 unless defined($Utv);
 $Debug = 0 unless defined($Debug);
 $curr_utc = time;
 
-$rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $';
-$rcs_id = '$Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $';
-$rcs_date = '$Date: 2000/09/07 10:48:20 $';
+$rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $';
+$rcs_id = '$Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $';
+$rcs_date = '$Date: 2000/09/07 11:29:40 $';
 # @rcs_array = ();
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-$cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $ GD';
-$cvs_id = '$Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $ GD';
-$cvs_date = '$Date: 2000/09/07 10:48:20 $ GD';
+$cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $ GD';
+$cvs_id = '$Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $ GD';
+$cvs_date = '$Date: 2000/09/07 11:29:40 $ GD';
 
 $this_counter = "";
 
@@ -967,7 +967,6 @@ sub print_header {
 	print "\n<html lang=\"$head_lang\">\n";
 	Tabs(1);
 	$head_script = "" unless defined($head_script);
-	chomp($head_script);
 	if (defined(@rcs_array)) {
 		foreach(@rcs_array) {
 			tab_print("<!-- $_ -->\n");
@@ -994,8 +993,8 @@ END
 <link rev="made" href="mailto:$WebMaster">
 END
 	# tab_print ("Tabs = Tabs\n");
-	tab_print($style_sheet) if defined($style_sheet);
-	tab_print($head_script) if defined($head_script);
+	tab_print($style_sheet) if length($style_sheet);
+	tab_print($head_script) if length($head_script);
 	Tabs(-1);
 	tab_print("</head>\n");
 	unless ($no_body) {
@@ -1134,4 +1133,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.9 2000/09/07 10:48:20 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $ ####
