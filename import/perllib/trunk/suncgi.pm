@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $
+# $Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -216,7 +216,7 @@ sub get_cgivars {
 		print(ReqFP "$suncgi::curr_utc\t$ENV{REMOTE_ADDR}\t$in\n") || HTMLwarn("$suncgi::request_log_file: Klarte ikke å skrive til loggfila: $!");
 		close(ReqFP);
 	}
-	$BAsnakk::query_string = $in;
+	$suncgi::query_string = $in;
 	foreach (split("[&;]", $in)) {
 		s/\+/ /g;
 		my ($name, $value) = ("", "");
@@ -668,7 +668,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $>
+S<$Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1064,4 +1064,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $ ####
