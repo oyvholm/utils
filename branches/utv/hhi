@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.15 2003/02/14 10:14:51 sunny Exp $
+# $Id: hhi,v 1.1.2.16 2003/02/20 02:38:23 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -16,9 +16,11 @@ my @Toc = ();
 my %name_used = ();
 
 while (<>) {
+	my $orig_line = $_;
 	if (!m#<!-- nohhi -->#i && m#^(.*)<(h)(\d+)(.*?)>(.*)$#i) {
 		my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
 		if ($header_level > 1) {
+			my $skip_num = 0;
 			splice(@header_num, $header_level-1) if ($header_level < $last_level);
 			if ($header_level - $last_level > 1) {
 				warn("$0: Line $.: Header skip ($last_level to $header_level)\n");
@@ -41,8 +43,16 @@ while (<>) {
 				$Rest = $2;
 			}
 			($tall_str .= ".") if ($header_level == 2);
-			$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
-			push(@Toc, "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest") unless (/<!-- nohhitoc -->/i);
+			if ($Rest =~ /<!-- nohhinum -->/i) {
+				$skip_num = 1;
+				$_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
+			} else {
+				$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
+			}
+			unless (/<!-- nohhitoc -->/i) {
+				push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
+				                     : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
+			}
 			$last_level = $header_level;
 		}
 		push(@Data, "$_");
@@ -108,7 +118,7 @@ hhi - Html Header Indexer
 
 =head1 REVISION
 
-$Id: hhi,v 1.1.2.15 2003/02/14 10:14:51 sunny Exp $
+$Id: hhi,v 1.1.2.16 2003/02/20 02:38:23 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -179,4 +189,4 @@ GNU General Public License.
 
 =cut
 
-# End of file $Id: hhi,v 1.1.2.15 2003/02/14 10:14:51 sunny Exp $
+# End of file $Id: hhi,v 1.1.2.16 2003/02/20 02:38:23 sunny Exp $
