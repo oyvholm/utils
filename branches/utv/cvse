@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.15 2004/02/25 21:10:47 sunny Exp $
+# $Id$
 # Edit cvs log messages based on output from “cvs log”
 #
 # Character set used in this file: UTF-8
@@ -306,7 +306,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.15 2004/02/25 21:10:47 sunny Exp $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -447,4 +447,4 @@ cvs(1)
 # }}}
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
-# End of file $Id: cvse,v 1.1.2.15 2004/02/25 21:10:47 sunny Exp $
+# End of file $Id$
