@@ -39,7 +39,7 @@ if ($opt_a) {
     if (open(PipeFP, "svn stat -q |")) {
         my @mod_array = ();
         while (<PipeFP>) {
-            if (/^M......(.*)/) {
+            if (/^[MC]......(.*)/) {
                 push(@mod_array, $1);
             }
         }
