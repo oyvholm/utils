@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $
+# $Id: suncgi.pm,v 1.33.2.5 2001/07/16 09:37:18 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -42,7 +42,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.33.2.5 2001/07/16 09:37:18 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -767,10 +767,13 @@ sub url_encode {
 } # url_encode()
 
 sub sec_to_string {
-	my ($Seconds, $Sep) = @_;
+	my ($Seconds, $Sep, $Sep2) = @_;
+	defined($Sep) || ($Sep = "");
+	defined($Sep2) || ($Sep2 = "");
 	$Sep = "T" unless length($Sep);
+	$Sep2 = "-" unless length($Sep2);
 	my @TA = localtime($Seconds);
-	my($DateString) = sprintf("%04u-%02u-%02u%s%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $Sep, $TA[2], $TA[1], $TA[0]);
+	my($DateString) = sprintf("%04u%s%02u%s%02u%s%02u:%02u:%02u", $TA[5]+1900, $Sep2, $TA[4]+1, $Sep2, $TA[3], $Sep, $TA[2], $TA[1], $TA[0]);
 	return($DateString);
 } # sec_to_string()
 
@@ -784,7 +787,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $>
+S<$Id: suncgi.pm,v 1.33.2.5 2001/07/16 09:37:18 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1180,4 +1183,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.33.2.4 2001/06/11 15:54:06 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.33.2.5 2001/07/16 09:37:18 sunny Exp $ ####
