@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#=================================================
+# $Id: reset,v 1.2 2001/12/02 00:17:48 sunny Exp $
+# Fjerner rot med tekstattributter i tillegg.
+# Pluss at den setter tastaturhastigheta hvis det
+# er nødvendig.
+#=================================================
+
+[ -x /usr/bin/reset ] || { echo $0: reset\(1\) ligger ikke under /usr/bin. Kvifor not? >&2; exit 1; }
+
+/usr/bin/reset
+printf "\x1b[0m"
+[ -x ~/bin/kbd ] && ~/bin/kbd

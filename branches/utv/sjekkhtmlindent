@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# $Id: sjekkhtmlindent,v 1.2 1999/05/12 00:24:23 sunny Exp $
+# Sjekker at innrykkene på et webdokument er OK
+# Trenger sget og hf .
+# Syntax: $0 url
+
+diff -u <(sget $1) <(sget $1|hfa)

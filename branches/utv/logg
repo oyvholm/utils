@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id: logg,v 1.1 2000/05/08 08:57:10 sunny Exp $
+# Setter en entry med klokkeslett inn i dbk. Leser fra stdin.
+
+dbk -t -b -i - $*

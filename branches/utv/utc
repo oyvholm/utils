@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# $Id: utc,v 1.1 1999/02/17 03:25:19 sunny Exp $
+
+date -u +"%Y%m%dT%H%M%SZ"

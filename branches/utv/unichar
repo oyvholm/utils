@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# $Id: unichar,v 1.1 2001/09/01 00:16:17 sunny Exp $
+
+zcat -f /home/sunny/pub/unicode/UNIDATA/UnicodeData.txt* | grep -i "$*"

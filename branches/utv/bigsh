@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# $Id: bigsh,v 1.1 1999/07/03 14:26:56 sunny Exp $
+# Fyrer opp en stor nxterm i X
+
+if [ "x$1" != "x" ]; then
+	nxterm -geometry 165x50+0+0 -title "$*" &
+else
+	nxterm -geometry 165x50+0+0 &
+fi

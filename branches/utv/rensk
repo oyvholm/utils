@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# $Id: rensk,v 1.2 1999/09/06 02:42:16 sunny Exp $
+
+_tmpfile=/tmp/rensk.$RANDOM.tmp
+find . -type d | sort >$_tmpfile
+rmdir -p `cat $_tmpfile` 2>/dev/null
+diff -U 0 $_tmpfile <(find . -type d | sort) | grep '^-\./' | cut -c 2-
+rm $_tmpfile

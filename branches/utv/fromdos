@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+# $Id: fromdos,v 1.1 1999/10/21 21:34:41 sunny Exp $
+# Konverterer fra DOS til UNIX
+
+while (<>) {
+	s/\r//g;
+	print;
+}

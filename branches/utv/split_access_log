@@ -1,0 +1,70 @@
+#!/usr/bin/perl -w
+
+#=====================================================================
+# $Id: split_access_log,v 1.5 2002/01/05 04:00:22 sunny Exp $
+# Splitter opp access_log fra httpd(8) på dato. Legger filene i $Dir .
+# Options:
+#   -z  Pakker filene etter de er laget.
+# (C)opyright 2001-2002 Øyvind A. Holm <sunny@sunbase.org>
+#=====================================================================
+
+# 193.214.57.46 - - [18/Oct/2001:08:26:44 +0200] "POST / HTTP/1.0" 200 5147 "http://www.ba.no/00/07/12/9.html" "Mozilla/4.03 [en] (WinNT; I)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:44 +0200] "POST / HTTP/1.1" 200 15519 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:45 +0200] "GET / HTTP/1.1" 200 5137 "-" "Mozilla/4.0 (compatible; MSIE 5.0; Windows 95; DigExt; SenseWave 1.0; IEwebPlus)"
+# 193.213.227.243 - - [18/Oct/2001:08:26:45 +0200] "GET / HTTP/1.0" 200 14602 "http://www.ba.no/30/96/38/9.html" "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 4.0)"
+# 193.217.216.52 - - [18/Oct/2001:08:26:45 +0200] "POST /tabell.php HTTP/1.1" 200 24122 "http://www.nifs.no/tabell.php" "Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt)"
+# 193.213.227.243 - - [18/Oct/2001:08:26:45 +0200] "GET /images/forside/laptop.jpg HTTP/1.0" 200 5347 "-" "Mozilla/3.01 (compatible;)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:46 +0200] "POST / HTTP/1.1" 200 15461 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt; SenseWave 1.0)"
+# 62.113.158.68 - - [18/Oct/2001:08:26:46 +0200] "POST / HTTP/1.1" 200 17032 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"
+# 62.113.158.67 - - [18/Oct/2001:08:26:46 +0200] "GET / HTTP/1.1" 200 5144 "-" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT)"
+# 62.113.158.68 - - [18/Oct/2001:08:26:49 +0200] "POST / HTTP/1.1" 200 16747 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"
+
+use strict;
+
+$| = 1;
+
+my %Mnd = (
+	'Jan'=>'01', 'Feb'=>'02', 'Mar'=>'03', 'Apr'=>'04', 'May'=>'05', 'Jun'=>'06',
+	'Jul'=>'07', 'Aug'=>'08', 'Sep'=>'09', 'Oct'=>'10', 'Nov'=>'11', 'Dec'=>'12'
+);
+
+my ($Dir, $Fnavn, $Last, $compress_file) = ("out", "", "", 0);
+my @fnavn_array;
+
+defined($ARGV[0]) && ($ARGV[0] =~ /^-z/) && ($compress_file = 1, shift);
+
+-d $Dir || mkdir($Dir, 0777) || die("mkdir(\"$Dir\"): $!");
+
+while (<>) {
+	if (m!^\S+\s+\S+\s+\S+\s+\[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d)!) {
+		$Fnavn = "$Dir/$3-$Mnd{$2}-$1.log";
+		if ($Fnavn ne $Last) {
+			# print("Ny fil: $Fnavn\n");
+			push(@fnavn_array, $Fnavn) if ($compress_file);
+			if (-e $Fnavn) {
+				die("$Fnavn: Fila eksisterte, det vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nEvt. sorter den først, slett $Fnavn og kjør programmet en gang til.");
+			}
+			if (open(ToFP, ">$Fnavn")) {
+				seek(ToFP, 0, 2) || warn("$Fnavn: seek() til slutten: $!");
+			} else {
+				warn("$Fnavn: Skriving: $!");
+			}
+		}
+		print(ToFP $_);
+	} else {
+		warn("Linje $.: Ulovlig format: \"$_\"");
+	}
+	$Last = $Fnavn;
+}
+
+close(ToFP);
+
+foreach (@fnavn_array) {
+	unless (-e "$_.gz") {
+		system("/bin/gzip -v $_");
+	} else {
+		warn("$_.gz: Fila eksisterer allerede, pakker ikke $_ .");
+	}
+}
+
+#### End of file $Id: split_access_log,v 1.5 2002/01/05 04:00:22 sunny Exp $ ####

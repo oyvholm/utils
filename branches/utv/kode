@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# $Id: kode,v 1.1 2000/05/08 08:58:10 sunny Exp $
+# Setter skjermfont til uleselig.
+
+[ "$1" -eq "1" ] && echo -n '[12m'
+[ "$1" -eq "0" ] && echo -n '[11m'

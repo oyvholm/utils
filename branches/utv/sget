@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# $Id: sget,v 1.2 2000/05/19 15:21:34 sunny Exp $
+
+wget -O - -o /dev/null $*

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Stopper httpd(8)
+# $Id: h0,v 1.8 2002/02/19 10:26:24 sunny Exp $
+
+if [ -e /ww.mrk ]; then
+	/etc/rc.d/init.d/apache stop
+elif [ -e /toshbb.mrk ]; then
+	apachectl stop
+elif [ -e /sunba.mrk ]; then
+	/etc/init.d/apache stop
+elif [ -e /recbb.mrk ]; then
+	/var/lib/apache/sbin/apachectl stop
+else
+	echo Ukjent server, prøver standardløsning...
+	if [ -x /etc/rc.d/init.d/httpd ]; then
+		/etc/rc.d/init.d/httpd stop
+	elif [ -x /etc/init.d/apache ]; then
+		/etc/init.d/apache stop
+	fi
+fi

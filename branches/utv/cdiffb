@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id: cdiffb,v 1.1 1999/12/24 12:38:26 sunny Exp $
+# Latskapen lenge leve.
+
+cvs -n diff -ub 2>/dev/null | less -S
