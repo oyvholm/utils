@@ -9,6 +9,8 @@ vimdir=$HOME/src/other/vim
 osvim=$HOME/src/svn/norwegian_vim/branches/utv/msgs/vim
 
 echo -e "======== mincvs_vim \x7B\x7B\x7B"
+unset ingen_patch
+[ "$1" = "-p" ] && { ingen_patch=1; shift; }
 
 for f in $vimdir $vimdir/vim.clean $osvim ; do
     [ -d $f/. ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
@@ -31,12 +33,16 @@ echo -e "======== rsync -av $osvim/ vim \x7D\x7D\x7D"
 
 cd $vimdir/vim || { echo "cd $vimdir/vim: Klarte ikke chdir like før patchinga." >&2; exit 1; }
 errfound=0
-echo -e "======== Filpatching \x7B\x7B\x7B"
-for _vp in $HOME/bin/Patch/vim/*; do
-    echo ======== $_vp ========
-    patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
-done
-echo -e "======== Filpatching \x7D\x7D\x7D"
+if [ -z "$ingen_patch" ]; then
+    echo -e "======== Filpatching \x7B\x7B\x7B"
+    for _vp in $HOME/bin/Patch/vim/*; do
+        echo ======== $_vp ========
+        patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
+    done
+    echo -e "======== Filpatching \x7D\x7D\x7D"
+else
+    echo "======== Dropper patching av filene ========"
+fi
 [ "$errfound" = "1" ] && { exit 1; }
 
 echo -e "======== mincvs_vim \x7D\x7D\x7D"

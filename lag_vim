@@ -19,6 +19,7 @@ Valg (må være spesifisert alfabetisk):
 -f  Fjern lockdir før man peiser videre.
 -h  Skriv denne hjelpen. Må være første parameter.
 -l  Lokal laging, ikke kjør update_vim-clean (CVS-oppdatering)
+-p  Ikke patch filene
 -x  Lag gvim med X og saker. Standard oppførsel er å ikke lage med X, 
     for det er som kjent et delay i begynnelsen hvis det er manko på 
     X-forbindelse, og Vimmene har en tendens til å daue når X stoppes.
@@ -33,13 +34,15 @@ END
 mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
 
 [ "$1" = "-l" ] && { bruk_lokal=1; shift; }
+unset ingen_patch
+[ "$1" = "-p" ] && { ingen_patch=-p; shift; }
 [ "$1" = "-x" ] && { med_x=1; shift; }
 
 if [ "$bruk_lokal" != "1" ]; then
     update_vim-clean
 fi
 
-mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
+mincvs_vim $ingen_patch || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
 
 vimcompdir=$HOME/src/other/vim/vim
 cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; rmdir $lv_lockdir; exit 0; }
