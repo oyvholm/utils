@@ -1,9 +1,9 @@
 
 /*
  * [Beskrivelse]
- * $Id: std.c,v 1.3 1999/04/25 23:39:29 sunny Exp $
+ * $Id: std.c,v 1.4 1999/05/04 11:50:56 sunny Exp $
  *
- * (C)opyleft Oyvind A. Holm <sunny@tritech.no>
+ * (C)opyleft Oyvind A. Holm <sunny@dataguard.no>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ void usage(int);
  * Global variables
  */
 
-static char rcs_id[] = "$Id: std.c,v 1.3 1999/04/25 23:39:29 sunny Exp $";
+static char rcs_id[] = "$Id: std.c,v 1.4 1999/05/04 11:50:56 sunny Exp $";
 char *progname;
 int  debug = 0;
 FILE *stddebug = stderr;
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 				else if (!strcmp(long_options[option_index].name, "license"))
 				{
 					fprintf(stdout,
-						"(C>opyleft %s\n"
+						"(C>opyleft Oyvind A. Holm <sunny@dataguard.no>\n"
 						"\n"
 						"This program is free software; you can redistribute it and/or modify\n"
 						"it under the terms of the GNU General Public License as published by\n"
@@ -107,8 +107,7 @@ int main(int argc, char *argv[])
 						"\n"
 						"You should have received a copy of the GNU General Public License\n"
 						"along with this program; if not, write to the Free Software\n"
-						"Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n",
-						AUTHOR
+						"Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n"
 					);
 					return(EXIT_OK);
 				}
@@ -215,4 +214,4 @@ void usage(int retval)
 	exit(retval);
 } /* usage() */
 
-/***** End of file $Id: std.c,v 1.3 1999/04/25 23:39:29 sunny Exp $ *****/
+/***** End of file $Id: std.c,v 1.4 1999/05/04 11:50:56 sunny Exp $ *****/
