@@ -1,0 +1,5 @@
+#/bin/bash
+
+# $Id: fjerncvs,v 1.1 1999/03/06 07:01:56 sunny Exp $
+
+rm -rfv `find . -type d -name CVS`
