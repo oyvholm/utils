@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id: nfs0,v 1.1 1999/10/13 22:01:34 sunny Exp $
+# Kjører ned nfsd
+
+/etc/rc.d/init.d/nfs stop

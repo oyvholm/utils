@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# $Id: nettradio,v 1.2 2002/05/03 00:35:30 sunny Exp $
+# Spiller av nettradioer -- eller rettere sagt sender en
+# .ogg-strøm som kan lagres og tailes eller trøkkes inn i ogg123.
+
+case "$1" in
+	bbc1q0)
+		radio=http://ogg.bbc.co.uk:8001/radio1_low.ogg
+		;;	
+	bbc1|bbc1-q3)
+		radio=http://ogg.bbc.co.uk:8001/radio1_high.ogg
+		;;
+	bbc6-q0)
+		radio=http://ogg.bbc.co.uk:8001/6music_low.ogg
+		;;
+	bbc6|bbc6-q3)
+		radio=http://ogg.bbc.co.uk:8001/6music_high.ogg
+		;;
+	*)
+		echo "$0: Mangler radionavn" >&2
+		;;
+esac
+
+wget -O - -o /dev/null $radio

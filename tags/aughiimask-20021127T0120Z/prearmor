@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+
+# $Id: prearmor,v 1.1 2000/05/05 11:30:09 sunny Exp $
+# Setter GPG-armor i <p><pre></pre>.
+
+while (<>) {
+	s/^-----BEGIN PGP MESSAGE-----$/<p><pre>\n-----BEGIN PGP MESSAGE-----/;
+	s/^-----END PGP MESSAGE-----$/-----END PGP MESSAGE-----\n<\/pre>/;
+	print;
+}

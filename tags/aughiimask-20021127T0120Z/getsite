@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id: getsite,v 1.1 2002/03/08 00:45:27 sunny Exp $
+# Henter en hel site og kamuflerer seg litt.
+
+wget -mk -U 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)' $*

@@ -1,0 +1,31 @@
+#!/bin/sh
+
+#=======================================================
+# $Id: epstat,v 1.6 2002/09/19 04:53:45 sunny Exp $
+# Lager enkel statistikk over hits osv i en loggfil.
+# Forventer antall sekunder siden 1970 etterfulgt av TAB
+# i begynnelsen av hver linje.
+#=======================================================
+
+tmp_file=/tmp/epstat.$RANDOM.tmp
+wr_hours=1
+
+[ "$1" = "-t" ] && { shift; wr_hours=0; } # -t forhindrer utskrift av timebasis
+
+cut -c 1-10 $* | sort -n | ep -l >$tmp_file
+
+echo
+echo Totalt $(wc -l $tmp_file | rmspcall | cut -d ' ' -f 1) hits.
+
+echo Antall hits pr. døgn:
+echo
+uniq -cw 10 $tmp_file | tr T ' ' | cut -c 1-18 | perl -pe 's/^\s+(\d+)\s+(.*)$/$2\t$1/'
+echo
+
+if [ "$wr_hours" = "1" ]; then
+	echo Antall hits pr. time:
+	echo
+	uniq -cw 13 $tmp_file | tr [T:] ' ' | cut -c 1-21 | perl -pe 's/^\s+(\d+)\s+(.*)$/$2\t$1/'
+fi
+
+rm $tmp_file

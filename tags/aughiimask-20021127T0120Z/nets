@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# $Id: nets,v 1.2 2002/04/10 23:41:30 sunny Exp $
+# Hælvetes føkkings Netscrape kødder seg bestandig, så her gjør vi kort
+# prosess og myrder driten.
+
+if [ -e /sunba.mrk ]; then
+	killall -9 communicator-smotif.real
+else
+	killall -9 netscape-navigator netscape-communicator
+fi

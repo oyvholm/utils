@@ -1,0 +1,16 @@
+#!/usr/bin/perl -w
+
+# $Id: outl,v 1.1 2000/11/16 09:09:03 sunny Exp $
+# Lager en outline over HTML-dokumenter.
+
+use strict;
+
+while(<>) {
+	if (/<h([1-6]).*?>(.*)<\/h[1-6]>/i) {
+		my ($Cnt, $Txt) = ($1, $2);
+		while($Cnt--) {
+			print("\t");
+		}
+		print "$Txt\n";
+	}
+}

@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+# Dobler LF så enkelte ting blir mer oversiktlig
+# $Id: dbllf,v 1.1 1999/05/03 21:09:45 badata Exp $
+
+while (<>) {
+	s/\n/\n\n/g;
+	print;
+}

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# $Id: cdlabel,v 1.2 2002/04/18 16:10:06 sunny Exp $
+# Skriver ut volume label på CDROM'en som står i.
+
+# Først tar vi en fake read for å unngå error
+until head -c 1 /dev/cdrom >/dev/null; do
+	:
+done
+
+head -c 32840 /dev/cdrom | tail -c 32

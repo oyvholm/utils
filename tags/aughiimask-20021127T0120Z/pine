@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# $Id: pine,v 1.4 2002/10/03 14:25:45 sunny Exp $
+# Locking for pine
+
+lockdir=/home/sunny/lock
+[ "$1" = "-f" ] && { shift; rm -rf $lockdir; }
+[ -d $lockdir ] || mkdir $lockdir || { echo "$lockdir: Klarte ikke mkdir" >&2; exit 1; }
+lockname=$lockdir/pine
+until mkdir $lockname 2>/dev/null; do
+	echo "$0: $lockname: Venter på at \"`cat $lockname/info`\" skal slippe locken..." >&2
+	sleep 2
+done
+echo "$(tty) $(date +"%Y-%m-%d %H:%M:%S")" >$lockname/info
+
+if [ -x /usr/local/bin/pine ]; then
+	/usr/local/bin/pine $*
+elif [ -x /usr/bin/pine ]; then
+	/usr/bin/pine $*
+fi
+
+rm $lockname/info
+rmdir $lockname

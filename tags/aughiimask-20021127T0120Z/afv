@@ -1,0 +1,158 @@
+#!/usr/bin/perl -w
+
+#================================================
+# $Id: afv,v 1.13 2001/06/11 15:19:33 sunny Exp $
+# Lagrer alle nye versjoner av en fil.
+# Options: -l5 der 5 er antall sekunder det skal
+#          pauses før den kjører i loop igjen.
+# ©2001 Øyvind A. Holm. License: GNU GPL
+#================================================
+
+use strict;
+use Fcntl ':flock';
+use File::Path;
+
+$| = 1;
+
+defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
+my $Dir = ".AFV";
+my ($root_dir, $dest_dir) = ($ENV{AFVROOT}, "");
+my $curr_dir = "";
+my ($do_loop, $sleep_time, $orig_dir) = (0, 5, `/bin/pwd`);
+chomp($orig_dir);
+
+if (defined($ARGV[0]) && $ARGV[0] =~ /^-l(\d+)/) {
+	$do_loop = 1;
+	$sleep_time = $1;
+	shift;
+}
+
+my @Files = ();
+glob_files();
+
+LOOP: foreach my $FullCurr (@Files) {
+	my $Curr = $FullCurr;
+	my $another_dir = 0;
+	check_stop();
+	next LOOP if (!-f $Curr || -l $Curr);
+	if ($Curr =~ m!(.*)/(.*?)$!) {
+		$another_dir = 1;
+		unless (chdir($1)) {
+			warn("Klarte ikke chdir(\"$1\"): $!");
+			next LOOP;
+		}
+		$Curr = $2;
+	}
+	chomp($curr_dir = `/bin/pwd`);
+	$dest_dir = "$root_dir$curr_dir";
+	-d $dest_dir || mkpath($dest_dir, 1) || die("mkpath($dest_dir): $!");
+	my $afv_dir = "$dest_dir/$Dir";
+	-d $afv_dir || mkpath($afv_dir, 1) || die("mkpath($Dir): $!");
+	my $lock_dir = "$afv_dir/$Curr.lock";
+	my $lastmd5_file = "$afv_dir/$Curr.lastmd5";
+	my $currmd5_file = "$afv_dir/$Curr.currmd5";
+	my $start_lock = time;
+
+	until (mkdir("$lock_dir", 0777)) {
+		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
+		my_sleep(5);
+	}
+
+	if (open(FromFP, "<$Curr")) {
+		if (flock(FromFP, LOCK_EX)) {
+			my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
+			my $to_file = "$dest_dir/$mtime.$Curr";
+			if (-e $to_file) {
+				close(FromFP);
+				goto CLEANUP;
+			}
+			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
+			if (open(Md5FP, "| /usr/bin/md5sum >$currmd5_file")) {
+				while(<FromFP>) {
+					print(Md5FP $_);
+				}
+				close(Md5FP);
+			} else {
+				warn("$Curr: Klarte ikke å åpne md5-pipe: $!");
+				rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+				exit;
+			}
+
+			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
+			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
+			if ($curr_md5 ne $last_md5) {
+				print("$mtime.$Curr\n") unless $do_loop;
+				if (seek(FromFP, 0, 0)) {
+					if (open(ToFP, ">$to_file")) {
+						if (flock(ToFP, LOCK_EX)) {
+							while (<FromFP>) {
+								print(ToFP $_);
+							}
+						} else {
+							warn("$to_file: Klarte ikke flock(): $!");
+						}
+						close(ToFP);
+						unlink("$lastmd5_file");
+						rename("$currmd5_file", "$lastmd5_file") || die(qq{Klarte ikke rename("$currmd5_file", "$lastmd5_file")});
+					} else {
+						warn("$Curr: Klarte ikke å åpne fila for skriving: $!");
+					}
+				} else {
+					warn("$Curr: Klarte ikke å seeke til starten: $!");
+				}
+			}
+		} else {
+			warn("$Curr: Klarte ikke flock(): $!");
+		}
+		close(FromFP);
+	} else {
+		warn("$Curr: Klarte ikke å åpne fila for lesing: $!");
+	}
+
+CLEANUP:
+	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+	if ($another_dir) {
+		chdir($orig_dir) || die("$orig_dir: Klarte ikke chdir() til originalkatalogen: $!");
+	}
+}
+
+if ($do_loop) {
+	check_stop();
+	glob_files();
+	my_sleep($sleep_time);
+	goto LOOP;
+}
+
+exit;
+
+sub glob_files {
+	@Files = ();
+	foreach(@ARGV) {
+		push(@Files, glob $_);
+	}
+} # glob_files()
+
+sub check_stop {
+	foreach ("$root_dir/stop", "$dest_dir/stop") {
+		if (-e $_) {
+			print(STDERR "$curr_dir: $_ finnes, avslutter.\n");
+			exit;
+		}
+	}
+} # check_stop()
+
+sub my_sleep {
+	my $Secs = shift;
+	my $start_time = time;
+	if ($Secs <= 2) {
+		check_stop();
+		sleep($Secs);
+	} else {
+		until(time >= $start_time+$Secs) {
+			sleep(2);
+			check_stop();
+		}
+	}
+} # my_sleep()
+
+#### End of file $Id: afv,v 1.13 2001/06/11 15:19:33 sunny Exp $ ####

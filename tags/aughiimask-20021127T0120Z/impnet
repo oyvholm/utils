@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#==================================================
+# $Id: impnet,v 1.3 2002/05/28 00:20:29 sunny Exp $
+# Legger en website inn i Cvs/imp-net .
+# Syntax: impnet [webnavn]
+#==================================================
+
+impdir=sunny@impnetcvs.sunbase.org:/home/sunny/Cvs/imp-net
+navn=$1
+
+[ "$1" = "" ] && { echo "Syntaks: impnet [modulnavn]"; echo; exit 1; }
+cvs -d $impdir import -d -kb -I \! raw www $1-$(date -u +"%Y%m%dT%H%M%SZ")

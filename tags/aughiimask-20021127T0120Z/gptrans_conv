@@ -1,0 +1,28 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Time::Local qw { timegm_nocheck };
+
+# $Id: gptrans_conv,v 1.2 2002/09/26 08:37:39 sunny Exp $
+
+
+while (<>) {
+	if (m#^T\t(..)/(..)/(....) (..):(..):(..)\t(.+)°(.+)'(.+)"\t(.+)°(.+)'(.+)"#) {
+		# T	09/01/2002 11:51:26	60°23'36.3"	5°19'35.9"
+		my ($Month, $Day, $Year, $Hour, $Min, $Sec, $lon_d, $lon_m, $lon_s, $lat_d, $lat_m, $lat_s) = ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+		my $lon_val = sprintf("%.5f", 1*($lon_d+($lon_m/60)+($lon_s/3600)));
+		my $lat_val = sprintf("%.5f", $lat_d+($lat_m/60)+($lat_s/3600));
+		my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
+		print("$ep_time\t$lat_val\t$lon_val\t?\t?\n");
+		# print("$Year-$Month-$Day $Hour:$Min:$Sec\t$lat_val\t$lon_val\n");
+		# print("$lon_val\t$lat_val\n");
+	} elsif (m#^1 (\S+) (\S+) (\S+) (\S+) (..)/(..)/(....) (..):(..):(..)#) {
+		# 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23
+		my ($lon_val, $lat_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) = ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+		my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
+		print("$ep_time\t$lat_val\t$lon_val\t?\t$Speed\n");
+		# print("$Year-$Month-$Day $Hour:$Min:$Sec\t$lat_val\t$lon_val\n");
+	} else {
+		warn("Linje $.: Ukjent: \"$_\"");
+	}
+}
