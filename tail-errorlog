@@ -1,5 +1,6 @@
 #!/bin/sh
 
-# $Id: tail-errorlog,v 1.3 1999/02/26 10:42:33 sunny Exp $
+# $Id: tail-errorlog,v 1.4 1999/03/09 13:09:31 sunny Exp $
+# Syntax: $0 {k1|k2|k3|...}
 
-tail -f /usr/local/apache/logs/k1_error_log
+tail -f /usr/local/apache/logs/$1_error_log
