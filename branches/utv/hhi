@@ -1,9 +1,10 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.8 2003/02/02 09:55:45 sunny Exp $
+# $Id: hhi,v 1.1.2.9 2003/02/02 10:43:18 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
+# License: GNU GPL
 #===============================================
 
 use strict;
@@ -14,7 +15,7 @@ my @Data = ();
 my @Toc = ();
 
 while (<>) {
-	if (!m#<!-- nohhi --># && m#^(.*)<(h)(\d+)(.*?)>(.*)$#i) {
+	if (!m#<!-- nohhi -->#i && m#^(.*)<(h)(\d+)(.*?)>(.*)$#i) {
 		my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
 		if ($header_level > 1) {
 			splice(@header_num, $header_level-1) if ($header_level < $last_level);
@@ -27,23 +28,12 @@ while (<>) {
 			$header_num[$header_level-2]++;
 			my $tall_str = join(".", @header_num);
 			my $name_str = $tall_str;
-			# print("\$Rest før   = \"$Rest\"\n");
-
-			# Intro</h2>
-			# 1. Intro</h2>
-			# <a name="h-1">1.</a> Intro</h2>
 
 			if ($Rest =~ m#^(<a name="h-.*?">[\d\.]+</a>\s+)(.*?)$#i) {
-				# print("Rest: Fant a name.\n");
 				$Rest = $2;
-				# print("\$Rest etter a name = \"$Rest\"\n");
-			}
-			if ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
-				# print("Rest: Fant desimal først.\n");
+			} elsif ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
 				$Rest = $2;
-				# print("\$Rest etter desimal = \"$Rest\"\n");
 			}
-			# print("\$Rest etter = \"$Rest\"\n");
 			($tall_str .= ".") if ($header_level == 2);
 			$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"h-$name_str\">$tall_str</a> $Rest\n";
 			push(@Toc, "<${H}${header_level}${Elem}><a href=\"#h-$name_str\">$tall_str</a> $Rest") unless (/<!-- nohhitoc -->/i);
@@ -65,11 +55,10 @@ while (<>) {
 	} else {
 		push(@Data, "$_");
 	}
-	# print("$_");
 }
 
 for my $Line (@Data) {
-	if ($Line =~ /^(\s*)(<!-- hhitoc -->(.*)$)/i) {
+	if ($Line =~ /^(\s*)(<!-- hhitoc -->)(.*)$/i) {
 		my ($Indent, $HT, $End) = ($1, $2, $3);
 		print("$Line$Indent<ul>\n");
 		my $Old = 0;
@@ -78,7 +67,6 @@ for my $Line (@Data) {
 			if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
 				($Cnt, $Txt) = ($1, $2);
 				my $Diff = $Cnt-$Old;
-				my $Tab = ""; # ($Cnt > 1) ? "\t" x ($Cnt-1) : "";
 				if ($Old && $Diff > 0) {
 					for (my $T = $Diff; $T; $T--) {
 						print("$Indent<ul>\n");
@@ -88,7 +76,6 @@ for my $Line (@Data) {
 						print("$Indent</ul>\n");
 					}
 				}
-				# print("Diff = \"$Diff\"\n");
 				print("$Indent<li>$Txt</li>\n");
 				$Old = $Cnt;
 			}
@@ -101,4 +88,4 @@ for my $Line (@Data) {
 	}
 }
 
-# End of file $Id: hhi,v 1.1.2.8 2003/02/02 09:55:45 sunny Exp $
+# End of file $Id: hhi,v 1.1.2.9 2003/02/02 10:43:18 sunny Exp $
