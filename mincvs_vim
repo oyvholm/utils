@@ -9,7 +9,7 @@ vimdir=$HOME/src/other/vim
 osvim=$HOME/src/svn/norwegian_vim/branches/utv/msgs/vim
 
 for f in $vimdir $vimdir/vim.clean $osvim ; do
-	[ -d $f/. ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
+    [ -d $f/. ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
 done
 
 cd $osvim || { echo "cd $osvim: Gikk på trynet." >&2; exit 1; }
@@ -26,3 +26,5 @@ echo -e "\x7D\x7D\x7D"
 echo -e "======== rsync -av $osvim/ vim \x7B\x7B\x7B"
 rsync -av $osvim/ vim
 echo -e "\x7D\x7D\x7D"
+
+# vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :
