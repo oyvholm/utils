@@ -1,6 +1,10 @@
 #!/bin/sh
 
-# $Id: cl,v 1.4 2003/08/23 01:32:30 sunny Exp $
+# $Id$
 # Latskap.
 
-cvs log $* | sortcvs
+if [ -d .svn/. ]; then
+	svn log $* | less
+else
+	cvs log $* | sortcvs | less
+fi
