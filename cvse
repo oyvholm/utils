@@ -18,6 +18,13 @@ getopts('d:hisv');
 
 $| = 1;
 
+# When changing the version number, also update the POD.
+our $VERSION = "0.5";
+
+our $rcs_id = '$Id$';
+our $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
 if ($opt_h) {
     print_help(0);
 }
@@ -322,6 +329,7 @@ sub print_help {
     # {{{
     my $Retval = shift;
     print(<<END);
+cvse v$VERSION -- $id_date
 
 Syntax: cvse [options] [logfile [...]]
 
@@ -352,6 +360,8 @@ __END__
 cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
+
+Version: 0.5
 
 $Id$
 
