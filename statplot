@@ -1,6 +1,6 @@
-#!/usr/bin/gnuplot
+#!/usr/bin/gnuplot -persist
 
-# $Id: statplot,v 1.1 2003/09/21 18:24:28 sunny Exp $
+# $Id: statplot,v 1.2 2003/09/24 00:23:00 sunny Exp $
 # Lager fin graf over ting som ligger i filen "data".
 
 # {{{
@@ -367,10 +367,11 @@
 set xdata time
 set timefmt "%Y-%m-%dT%H:%M:%SZ"
 set format x "%Y-%m-%d"
-set terminal postscript
-set output "output.ps"
+# set terminal postscript
+# set output "output.ps"
+set term x11
 plot \
-"data" using 1:2 w l 0, \
+"data" using 1:2 w l 7, \
 "data" using 1:2 s bezier w lp -1
 # "data" using 1:2 s bezier w l -1, \
 # "data" using 1:2 s sbezier w l 29
