@@ -1,15 +1,31 @@
 #!/usr/bin/perl -w
 
-# $Id: center,v 1.1 2002/06/13 11:09:32 sunny Exp $
-# Centers text according to the longest line
+#==================================================
+# $Id: center,v 1.2 2002/06/17 12:28:35 sunny Exp $
+# Centers text
+#==================================================
+
+use strict;
+use Getopt::Std;
+
+our($opt_w) = 0;
+getopt('w:');
 
 my @Lines = <>;
 my $Longest = 0;
 
-for (@Lines) {
-	chomp;
-	s/^\s*(.*?)\s*$/$1/;
-	$Longest = length($_) if (length($_) > $Longest);
+if ($opt_w) {
+	if ($opt_w <= 0) {
+		die("$opt_w: Invalid line length");
+	} else {
+		$Longest = $opt_w;
+	}
+} else {
+	for (@Lines) {
+		chomp;
+		s/^\s*(.*?)\s*$/$1/;
+		$Longest = length($_) if (length($_) > $Longest);
+	}
 }
 
 for my $Curr (@Lines) {
