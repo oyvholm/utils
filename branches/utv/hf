@@ -1,15 +1,15 @@
 #!/usr/bin/perl -w
 
 #========================================================================
-# $Id: hf,v 1.10.2.5 2003/04/29 14:06:06 sunny Exp $
+# $Id: hf,v 1.10.2.6 2003/08/29 17:56:18 sunny Exp $
 # Formatterer HTML-source med TAB’er
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
 # Lisens: GNU GPL
 #
-# Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
-# rett. En eller annen rekursiv sjekk på linjene må kanskje gjøres.
-# Foreløpig får man sette dem på hver sin linje.
+# FIXME: Hvis start+end-elementer står på samme linje, blir ikke
+# innrykket rett. En eller annen rekursiv sjekk på linjene må kanskje
+# gjøres. Foreløpig får man sette dem på hver sin linje.
 #========================================================================
 
 use strict;
@@ -24,13 +24,6 @@ my $prog_name = $0;
 $prog_name =~ s#.*/(.+?)$#$1#;
 
 print_help() if ($main::opt_h);
-
-# CO: Gammel parameterparsing {{{
-# begin-base64 664 -
-# H4sIADaAuTwCA8tMU9BQcQxyD4s2iFWwrVPQj9NNVNHXVKjm4lTJLyiJT1Sw
-# VTC05uIszshMK7HmquXiysTU4YGswwNdBwAguKNaYwAAAA==
-# ====
-# }}}
 
 $| = 1;
 
@@ -54,6 +47,7 @@ my $line_exp = $main::opt_a ? '^\s+(.*)' : '^\t+(.*)';
 my $header_indent = "";
 
 LINE: while (<>) {
+	# {{{
 	my $Line = $_;
 	my $Element = "";
 	my $f = "";
@@ -82,7 +76,7 @@ LINE: while (<>) {
 		print "$out_line\n";
 		for $f (@Elements) {
 			if ($Line =~ m!<($f)([ >])!i) {
-				# Slutt-tag ble funnet {{{
+				# Start-tag ble funnet {{{
 				$Element = $1;
 				$tab_indent++;
 				$Tabs .= "\t";
@@ -95,21 +89,15 @@ LINE: while (<>) {
 	}
 	$is_pre = 1 if ($Line =~ /<(pre|script)\b.*>/i);
 	$is_pre = 0 if ($Line =~ m!</(pre|script)>!i);
+	# }}}
 }
-
-#   -s  Split block elements on separate lines (not finished yet)
 
 sub print_help {
 	# {{{
 	print <<END;
 
 HTML formatter
-
-Syntax: $0 [-a] [-H] [indentval [files ...]]
-
-indentval forskyver HTML’en med antall TAB’er.
-Hvis filnavn skal spesifiseres, bruk 0.
-Eksempel: $prog_name 0 foo.html
+Syntax: $0 [valg] [filer [...]]
 
 Options:
   -a    Fjern space i begynnelsen av linja også før indenting.
@@ -125,4 +113,4 @@ END
 	# }}}
 }
 
-# End of file $Id: hf,v 1.10.2.5 2003/04/29 14:06:06 sunny Exp $
+# End of file $Id: hf,v 1.10.2.6 2003/08/29 17:56:18 sunny Exp $
