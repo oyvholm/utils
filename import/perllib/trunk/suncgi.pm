@@ -8,9 +8,10 @@ require Exporter;
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn increase_counter log_access print_header tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
-	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $Url $Utv $Debug
+	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $Url
+	$css_default
 	$doc_lang $doc_align $doc_width
-	$debug_file $error_file $log_dir
+	$debug_file $error_file $log_dir $Method
 	$DTD_HTML4FRAMESET $DTD_HTML4LOOSE $DTD_HTML4STRICT
 	@rcs_array
 };
@@ -22,14 +23,6 @@ require Exporter;
 
 use Fcntl ':flock';
 use strict;
-no strict 'vars';
-
-use subs qw{
-	content_type curr_local_time curr_utc_time deb_pr
-	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
-	HTMLwarn increase_counter log_access print_doc print_footer
-	print_header tab_print tab_str Tabs url_encode sec_to_string
-};
 
 =head1 NAME
 
@@ -37,7 +30,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $>
+S<$Id: suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -65,23 +58,23 @@ under kjøring:
 
 =over 4
 
-=item I<${main::Url}>
+=item I<${suncgi::Url}>
 
 URL'en til index.cgi.
 Normalt sett blir denne satt til navnet på scriptet, for eksempel "I<index.cgi>" eller lignende.
-Før ble I<${main::Url}> satt til full URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting for eksempel ble kjørt under F<httpsZ<>://>
+Før ble I<${suncgi::Url}> satt til full URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting for eksempel ble kjørt under F<httpsZ<>://>
 
-=item I<${main::WebMaster}>
+=item I<${suncgi::WebMaster}>
 
 Emailadressen til den som eier dokumentet.
 Denne blir ikke satt inn på copyrighter og sånn.
 
-=item I<${main::error_file}>
+=item I<${suncgi::error_file}>
 
 Filnavn på en fil som er skrivbar av den som kjører scriptet (som oftest I<nobody>).
 Alle feilmeldinger og warnings havner her.
 
-=item I<${main::log_dir}>
+=item I<${suncgi::log_dir}>
 
 Navn på directory der logging fra blant annet I<log_access()> havner.
 Brukeren I<nobody> (eller hva nå httpd måtte kjøre under) skal ha skrive/leseaksess der.
@@ -96,39 +89,24 @@ Disse variablene er ikke nødvendige å definere, bare hvis man gidder:
 
 =over 4
 
-=item I<${main::doc_width}>
+=item I<${suncgi::doc_width}>
 
 Bredden på dokumentet i pixels.
-I<$STD_DOCWIDTH> som default.
+I<$suncgi::STD_DOCWIDTH> som default.
 
-=item I<${main::CharSet}>
+=item I<${CharSet}>
 
 Tegnsett som brukes.
-Er I<$STD_CHARSET> som default, "I<ISO-8859-1>".
+Er I<$suncgi::STD_CHARSET> som default, "I<ISO-8859-1>".
 
 =item I<${main::BackGround}>
 
 Bruker denne som default bakgrunn til I<print_background()>.
-Hvis den ikke er definert, brukes I<$STD_BACKGROUND>, en tom greie.
+Hvis den ikke er definert, brukes I<$suncgi::STD_BACKGROUND>, en tom greie.
 
 =item I<${main::Debug}>
 
 Skriver ut en del debuggingsinfo.
-
-=item I<${main::FONTB}>
-=item I<${main::FONTE}>
-
-Disse to definerer fontene som skal brukes.
-I alle områder med tekst legges disse inn, for eksempel:
-
-	$suncgi::tab_print("<h1>${FONTB}Dette er en snadderheader${FONTE}</h1>\n";
-
-Normalt sett er $FONTB og $FONTE satt til disse verdiene sånn omtrent:
-
-	$FONTB = '<font face="arial, helvetica">';
-	$FONTE = '</font>';
-
-Dette er som kjent bare lov i HTML når minst I<$DTD_HTML4LOOSE> brukes.
 
 =item I<${main::Utv}>
 
@@ -149,46 +127,43 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 # use Time::Local; # curr_local_time() sin greie.
 
-$Tabs = "";
-$Utv = 0 unless defined($Utv);
-$Debug = 0 unless defined($Debug);
-$curr_utc = time;
+$suncgi::Tabs = "";
+$main::Utv = 0 unless defined($main::Utv);
+$main::Debug = 0 unless defined($main::Debug);
+$suncgi::curr_utc = time;
 
-$rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $';
-$rcs_id = '$Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $';
-$rcs_date = '$Date: 2000/09/07 11:29:40 $';
-# @rcs_array = ();
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/09/11 12:58:57 $';
+@suncgi::rcs_array = ();
 
-# $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-$cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $ GD';
-$cvs_id = '$Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $ GD';
-$cvs_date = '$Date: 2000/09/07 11:29:40 $ GD';
+$suncgi::this_counter = "";
 
-$this_counter = "";
+$suncgi::DTD_HTML4FRAMESET = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN" "http://www.w3.org/TR/REC-html40/frameset.dtd">\n};
+$suncgi::DTD_HTML4LOOSE = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n};
+$suncgi::DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n};
 
-$DTD_HTML4FRAMESET = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN" "http://www.w3.org/TR/REC-html40/frameset.dtd">\n};
-$DTD_HTML4LOOSE = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n};
-$DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n};
+$suncgi::STD_LANG = "no";
+$suncgi::STD_BACKGROUND = "";
+$suncgi::STD_CHARSET = "ISO-8859-1"; # Hvis $suncgi::CharSet ikke er definert
+$suncgi::STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
+$suncgi::STD_DOCWIDTH = '80%'; # Hvis ikke $suncgi::doc_width er spesifisert
+$suncgi::STD_HTMLDTD = $suncgi::DTD_HTML4LOOSE;
+$suncgi::STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
 
-$STD_LANG = "no";
-$STD_BACKGROUND = "";
-$STD_CHARSET = "ISO-8859-1"; # Hvis $CharSet ikke er definert
-$STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
-$STD_DOCWIDTH = '80%'; # Hvis ikke $doc_width er spesifisert
-$STD_HTMLDTD = $DTD_HTML4LOOSE;
-$STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
+$suncgi::CharSet = $suncgi::STD_CHARSET;
+$suncgi::css_default = "";
+$suncgi::doc_width = $suncgi::STD_DOCWIDTH;
+$suncgi::doc_align = $suncgi::STD_DOCALIGN;
+$suncgi::doc_lang = $suncgi::STD_LANG;
+$suncgi::Border = 0;
+$suncgi::WebMaster = "";
+$suncgi::Url = "";
+$suncgi::Method = "post";
+$suncgi::debug_file = "";
+$suncgi::error_file = "";
 
-$CharSet = $STD_CHARSET;
-$doc_width = $STD_DOCWIDTH;
-$doc_align = $STD_DOCALIGN;
-$doc_lang = $STD_LANG;
-$Border = 0;
-$WebMaster = "";
-$Url = "";
-$debug_file = "";
-$error_file = "";
-
-$Footer = <<END;
+$suncgi::Footer = <<END;
 	</body>
 </html>
 END
@@ -214,11 +189,11 @@ C<application/x-tar> og lignende.
 sub content_type {
 	my $ContType = shift;
 	my $loc_charset;
-	if (length($CharSet)) {
-		$loc_charset = $CharSet;
+	if (length($suncgi::CharSet)) {
+		$loc_charset = $suncgi::CharSet;
 	} else {
-		$loc_charset = $STD_CHARSET;
-		HTMLwarn("content_type(): \$CharSet udefinert. Bruker \"$loc_charset\".");
+		$loc_charset = $suncgi::STD_CHARSET;
+		HTMLwarn("content_type(): \$suncgi::CharSet udefinert. Bruker \"$loc_charset\".");
 	}
 	if (length($ContType)) {
 		print "Content-Type: $ContType; charset=$loc_charset\n\n" ;
@@ -276,7 +251,7 @@ sub curr_utc_time {
 =head2 deb_pr()
 
 En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
-forlanger at ${main::error_file} er definert, det skal være en fil der
+forlanger at ${suncgi::error_file} er definert, det skal være en fil der
 all debuggingsinformasjonen skrives til.
 
 For at debugging skal bli lettere, kan man slenge denne inn på enkelte
@@ -312,13 +287,13 @@ B<FIXME:> Mer pod seinere.
 =cut
 
 sub deb_pr {
-	return unless $Debug;
+	return unless $main::Debug;
 	my $Msg = shift;
 	my $err_msg = "";
-	if (-e $debug_file) {
-		open(DebugFP, "+<$debug_file") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
+	if (-e $suncgi::debug_file) {
+		open(DebugFP, "+<$suncgi::debug_file") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
 	} else {
-		open(DebugFP, ">$debug_file") || ($err_msg = "Klarte ikke å lage debugfila");
+		open(DebugFP, ">$suncgi::debug_file") || ($err_msg = "Klarte ikke å lage debugfila");
 	}
 	unless(length($err_msg)) {
 		flock(DebugFP, LOCK_EX);
@@ -328,9 +303,9 @@ sub deb_pr {
 		print <<END;
 Content-type: text/html
 
-${DTD_HTML4STRICT}
+$suncgi::DTD_HTML4STRICT
 <html>
-	<!-- ${rcs_id} -->
+	<!-- $suncgi::rcs_id -->
 	<head>
 		<title>Intern feil i deb_pr()</title>
 	</head>
@@ -338,9 +313,9 @@ ${DTD_HTML4STRICT}
 		<h1>Intern feil i deb_pr()</h1>
 		<p>${err_msg}: <samp>$!</samp>
 		<p>Litt info:
-		<p>\$Debug = "$Debug"
-		<br>\${main::debug_file} = "${main::debug_file}"
-		<br>\${main::error_file} = "${main::error_file}"
+		<p>\$main::Debug = "$main::Debug"
+		<br>\${suncgi::debug_file} = "${suncgi::debug_file}"
+		<br>\${suncgi::error_file} = "${suncgi::error_file}"
 	</body>
 </html>
 END
@@ -384,7 +359,7 @@ oppdatert da og da".
 sub file_mdate {
 	my($FileName) = @_;
 	my(@TA);
-	@StatArray = stat($FileName);
+	my @StatArray = stat($FileName);
 	return($StatArray[9]);
 } # file_mdate()
 
@@ -413,8 +388,8 @@ B<FIXME:> Denne må utvides litt med flere Content-type'er.
 =cut
 
 sub get_cgivars {
-	local($in, %in);
-	local($name, $value);
+	my ($in, %in);
+	my ($name, $value) = ("", "");
 	$in = "";
 	my $user_method = defined($ENV{REQUEST_METHOD}) ? $ENV{REQUEST_METHOD} : "";
 	# length($user_method) || ($user_method = "");
@@ -455,7 +430,7 @@ sub get_cgivars {
 
 ###########################################################################
 
-=head2 get_counter()
+=head2 get_countervalue()
 
 Skriver ut verdien av en teller, angi filnavn. Fila skal inneholde et tall
 i standard ASCII-format.
@@ -467,7 +442,13 @@ sub get_countervalue {
 	my $counter_file = shift;
 	my $counter_value = 0;
 	# &deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
-	open(TmpFP, "<$counter_file") || (HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
+	unless (-e $counter_file) {
+		open(TmpFP, ">$counter_file") || (HTMLwarn("$counter_file i get_countervalue(): Klarte ikke å lage fila: $!"), return(0));
+		flock(TmpFP, LOCK_EX);
+		print TmpFP "0\n";
+		close(TmpFP);
+	}
+	open(TmpFP, "<$counter_file") || (HTMLwarn("$counter_file i get_countervalue(): Kan ikke åpne fila for lesing: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$counter_value = <TmpFP>;
 	chomp($counter_value);
@@ -486,31 +467,30 @@ E<lt>titleE<gt>E<lt>/titleE<gt> og E<lt>h1E<gt>E<lt>/h1E<gt>, og I<$Msg>
 som blir skrevet ut som beskjed.
 
 Hvis hverken I<${main::Utv}> eller I<${main::Debug}> er sann, skrives meldinga til
-I<${main::error_file}> og en standardmelding blir skrevet ut. Folk får ikke vite
+I<${suncgi::error_file}> og en standardmelding blir skrevet ut. Folk får ikke vite
 mer enn de har godt av.
 
 =cut
 
 sub HTMLdie {
 	my($Msg,$Title) = @_;
-	my $curr_utc = curr_utc_time;
-	my $msg_str;
+	my $utc_str = curr_utc_time;
+	my $msg_str = "";
 
 	# &deb_pr(__LINE__ . ": HDIE: $Msg");
 	$Title || ($Title = "Intern feil");
-	if (!$Debug && !$Utv) {
+	if (!$main::Debug && !$main::Utv) {
 		$msg_str = "<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli fikset snart.";
 	} else {
 		chomp($msg_str = $Msg);
 	}
-	my $CharSet = $STD_CHARSET unless length($CharSet);
 	print <<END;
 Content-type: text/html
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 
 <html lang="no">
-	<!-- $rcs_id -->
+	<!-- $suncgi::rcs_id -->
 	<!-- ${main::rcs_id} -->
 	<head>
 		<title>$Title</title>
@@ -524,18 +504,18 @@ Content-type: text/html
 			h1 { color: red; }
 			-->
 		</style>
-		<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
+		<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
 END
-	print(<<END) if defined($WebMaster);
-		<meta name="author" content="$WebMaster">
+	print(<<END) if defined($suncgi::WebMaster);
+		<meta name="author" content="$suncgi::WebMaster">
 END
 	print <<END;
 		<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
 		<meta name="description" content="CGI error">
-		<meta name="date" content="$curr_utc">
+		<meta name="date" content="$utc_str">
 END
-	print(<<END) if defined($WebMaster);
-		<link rev="made" href="mailto:$WebMaster">
+	print(<<END) if defined($suncgi::WebMaster);
+		<link rev="made" href="mailto:$suncgi::WebMaster">
 END
 	print <<END;
 	</head>
@@ -547,15 +527,15 @@ END
 	</body>
 </html>
 END
-	if (length(${main::error_file})) {
-		system("touch ${main::error_file}") unless (-e ${main::error_file});
-		open(ErrorFP, "+<${main::error_file}") or exit;
+	if (length(${suncgi::error_file})) {
+		system("touch ${suncgi::error_file}") unless (-e ${suncgi::error_file});
+		open(ErrorFP, "+<${suncgi::error_file}") or exit;
 		flock(ErrorFP, LOCK_EX);
 		seek(ErrorFP, 0, 2) or exit;
 		$Msg =~ s/\\/\\\\/g;
 		$Msg =~ s/\n/\\n/g;
 		$Msg =~ s/\t/\\t/g;
-		printf(ErrorFP "%s HDIE %s\n", curr_utc_time, $Msg);
+		printf(ErrorFP "%s HDIE %s\n", $utc_str, $Msg);
 		close(ErrorFP);
 	}
 	exit;
@@ -565,33 +545,33 @@ END
 
 =head2 HTMLwarn()
 
-En lightversjon av I<HTMLdie()>, den skriver kun til I<${main::error_file}>.
+En lightversjon av I<HTMLdie()>, den skriver kun til I<${suncgi::error_file}>.
 Når det oppstår feil, men ikke trenger å rive ned hele systemet.
 Brukes til småting som tellere som ikke virker og sånn.
 
-B<FIXME:> Muligens det burde vært lagt inn at $WebMaster fikk mail hver gang ting går på trynet.
+B<FIXME:> Muligens det burde vært lagt inn at $suncgi::WebMaster fikk mail hver gang ting går på trynet.
 
 =cut
 
 sub HTMLwarn {
-	local($Msg) = shift;
-	my $curr_utc = curr_utc_time;
-
+	my $Msg = shift;
+	my $utc_str = curr_utc_time();
+	defined($Msg) || ($Msg = "");
 	# &deb_pr(__LINE__ . ": WARN: $Msg");
 	# Gjør det så stille og rolig som mulig.
-	if ($Utv || $Debug) {
+	if ($main::Utv || $main::Debug) {
 		print_header("CGI warning");
 		tab_print("<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n");
 	}
-	if (-e ${main::error_file}) {
-		open(ErrorFP, ">>${main::error_file}") or return;
+	if (-e ${suncgi::error_file}) {
+		open(ErrorFP, ">>${suncgi::error_file}") or return;
 	} else {
-		open(ErrorFP, ">${main::error_file}") or return;
+		open(ErrorFP, ">${suncgi::error_file}") or return;
 	}
 	$Msg =~ s/\\/\\\\/g;
 	$Msg =~ s/\n/\\n/g;
 	$Msg =~ s/\t/\\t/g;
-	print(ErrorFP "$curr_utc WARN $Msg\n");
+	print(ErrorFP "$utc_str WARN $Msg\n");
 	close(ErrorFP);
 } # HTMLwarn()
 
@@ -599,15 +579,18 @@ sub HTMLwarn {
 
 =head2 increase_counter()
 
-Øker telleren i en spesifisert fil med en. Fila skal inneholde et tall i
-ASCII-format. I tillegg lages en fil som heter F<{fil}.ip> som inneholder
-IP'en som brukeren er tilkoblet fra. Hvis IP'en er den samme som i fila,
-oppdateres ikke telleren.
+Øker telleren i en spesifisert fil med en.
+Fila skal inneholde et tall i ASCII-format.
+I tillegg lages en fil som heter F<{fil}.ip> som inneholder IP'en som brukeren er tilkoblet fra.
+Hvis IP'en er den samme som i fila, oppdateres ikke telleren.
+Hvis parameter 2 er I<!0>, øker telleren uanskvett.
 
 =cut
 
 sub increase_counter {
-	my $counter_file = shift;
+	my ($counter_file, $ignore_ip) = @_;
+	my $last_ip = "";
+	$ignore_ip = 0 unless defined($ignore_ip);
 	my $ip_file = "$counter_file.ip";
 	my $user_ip = $ENV{REMOTE_ADDR};
 	local *TmpFP;
@@ -618,6 +601,7 @@ sub increase_counter {
 	$last_ip = <TmpFP>;
 	chomp($last_ip);
 	my $new_ip = ($last_ip eq $user_ip) ? 0 : 1;
+	$new_ip = 1 if $ignore_ip;
 	if ($new_ip) {
 		seek(TmpFP, 0, 0) || (HTMLwarn("$ip_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
 		print(TmpFP "$user_ip\n");
@@ -627,7 +611,7 @@ sub increase_counter {
 	my $counter_value = <TmpFP>;
 	if ($new_ip) {
 		seek(TmpFP, 0, 0) || (HTMLwarn("$counter_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
-		printf(TmpFP "%u\n", $counter_value+1) if ($user_ip ne $last_ip);
+		printf(TmpFP "%u\n", $counter_value+1);
 	}
 	close(TmpFP);
 	return($counter_value + ($new_ip ? 1 : 0));
@@ -640,8 +624,8 @@ sub increase_counter {
 Logger aksess til en fil. Filnavnet skal være uten extension, rutina tar seg av det. I tillegg
 øker den en teller i fila I<$Base.count> unntatt hvis parameter 2 != 0.
 
-Forutsetter at I<${main::log_dir}> er definert. Hvis ikke, settes den til
-I<$STD_LOGDIR>.
+Forutsetter at I<${suncgi::log_dir}> er definert. Hvis ikke, settes den til
+I<$suncgi::STD_LOGDIR>.
 
 B<FIXME:> Skriv mer her.
 
@@ -649,18 +633,21 @@ B<FIXME:> Skriv mer her.
 
 sub log_access {
 	my ($Base, $no_counter) = @_;
-	my $log_dir = length(${main::log_dir}) ? ${main::log_dir} : $STD_LOGDIR;
+	my $log_dir = length(${suncgi::log_dir}) ? ${suncgi::log_dir} : $suncgi::STD_LOGDIR;
 	my $File = "$log_dir/$Base.log";
 	my $Countfile = "$log_dir/$Base.count";
 	system("touch $File") unless (-e $File);
 	open(LogFP, "+<$File") || (HTMLwarn("$File: Can't open access log for read/write: $!"), return);
 	flock(LogFP, LOCK_EX);
 	seek(LogFP, 0, 2) || (HTMLwarn("$Countfile: Can't seek to EOF: $!"), close(LogFP), return);
+	foreach my $var_name ('HTTP_USER_AGENT', 'REMOTE_ADDR', 'REMOTE_HOST', 'HTTP_REFERER') {
+		defined($ENV{$var_name}) || ($ENV{$var_name} = "");
+	}
 	my $Agent = $ENV{HTTP_USER_AGENT};
 	$Agent =~ s/\n/\\n/g; # Vet aldri hva som kommer
 	printf(LogFP "%u\t%s\t%s\t%s\t%s\n", time, $ENV{REMOTE_ADDR}, $ENV{REMOTE_HOST}, $ENV{HTTP_REFERER}, $Agent);
 	close(LogFP);
-	$this_counter = increase_counter($Countfile) unless $no_counter;
+	$suncgi::this_counter = increase_counter($Countfile) unless $no_counter;
 } # log_access()
 
 ###########################################################################
@@ -743,6 +730,7 @@ Alt kan legges inn i en fil:
 sub print_doc {
 	my ($file_name, $page_num) = @_;
 	my $in_header = 1;
+	my %doc_val;
 
 	open(FromFP, "<$file_name") || HTMLdie("$file_name: Kan ikke åpne fila for lesing: $!");
 	LINE: while (<FromFP>) {
@@ -760,9 +748,9 @@ sub print_doc {
 	$doc_val{lang} || HTMLwarn("$file_name: Mangler lang");
 	$doc_val{id} || HTMLwarn("$file_name: Mangler id");
 	# $doc_val{} || HTMLwarn("$file_name: Mangler ");
-	if ($Debug) {
+	if ($main::Debug) {
 		print_header("er i print_doc"); # debug
-		while (($act_name,$act_time) = each %doc_val) {
+		while (my ($act_name,$act_time) = each %doc_val) {
 			print("<br>\"$act_name\"\t\"$act_time\"\n");
 		}
 	}
@@ -792,13 +780,13 @@ parameterne:
 
 Bredden på footeren i pixels. Hvis den ikke er definert, brukes
 I<${doc_width}>. Og hvis den heller ikke er definert, brukes
-I<$STD_DOCWIDTH> som default.
+I<$suncgi::STD_DOCWIDTH> som default.
 
 =item I<$footer_align>
 
 Kan være I<left>, I<center> eller I<right>. Brukes av E<lt>tableE<gt>.
-Hvis udefinert, brukes I<$doc_align>. Hvis den ikke er definert,
-brukes I<$STD_DOCALIGN>.
+Hvis udefinert, brukes I<$suncgi::doc_align>. Hvis den ikke er definert,
+brukes I<$suncgi::STD_DOCALIGN>.
 
 =item I<$no_vh>
 
@@ -818,22 +806,22 @@ sub print_footer {
 
 	# &deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
 	unless (length($footer_width)) {
-		$footer_width = length($doc_width) ? $doc_width : $STD_DOCWIDTH;
+		$footer_width = length($suncgi::doc_width) ? $suncgi::doc_width : $suncgi::STD_DOCWIDTH;
 	}
 	unless (length($footer_align)) {
-		$footer_align = length($doc_align) ? $doc_align : $STD_DOCALIGN;
+		$footer_align = length($suncgi::doc_align) ? $suncgi::doc_align : $suncgi::STD_DOCALIGN;
 	}
 	$no_vh = 0 unless length($no_vh);
 	$no_end = 0 unless length($no_end);
 	my $rcs_str = ${main::rcs_date}; # FIXME: Er ikke nødvendigvis denne som skal brukes.
 	$rcs_str =~ s/ /&nbsp;/g;
 	my $vh_str = $no_vh ? "&nbsp;" : "<a href=\"http://validator.w3.org/check/referer;ss\"><img src=\"${main::GrafDir}/vh40.gif\" height=\"31\" width=\"88\" align=\"right\" border=\"0\" alt=\"Valid HTML 4.0!\"></a>";
-	my $count_str = length($this_counter) ? "Du er bes&oslash;kende nummer $this_counter p&aring; denne siden." : "&nbsp;";
+	my $count_str = length($suncgi::this_counter) ? "Du er bes&oslash;kende nummer $suncgi::this_counter p&aring; denne siden." : "&nbsp;";
 
-	# FIXME: Hardkoding av URL her pga av at ${main::Url} har skifta navn.
+	# FIXME: Hardkoding av URL her pga av at ${suncgi::Url} har skifta navn.
 	# FIXME: I resten av HTML'en er det brukt <div align="center">.
 	tab_print(<<END);
-<table width="$footer_width" cellpadding="0" cellspacing="0" border="$Border" align="$footer_align">
+<table width="$footer_width" cellpadding="0" cellspacing="0" border="$suncgi::Border" align="$footer_align">
 	<tr>
 		<td colspan="3">
 			<hr>
@@ -932,65 +920,60 @@ Parametere i print_header():
  4. Evt. scripts, havner mellom </style> og </head>.
  5. Evt. attributter i <body>, f.eks. " onLoad=\"myfunc()\"".
     Husk spacen i begynnelsen.
- 6. HTML-versjon. F.eks. $DTD_HTML4STRICT. Default er $DTD_HTML4LOOSE.
+ 6. HTML-versjon. F.eks. $suncgi::DTD_HTML4STRICT. Default er $suncgi::DTD_HTML4LOOSE.
  7. Språk. Default "no".
  8. no_body. 0 = Skriv <body>, 1 = Ikke skriv.
 
 =cut
 
 sub print_header {
-	local($DocTitle, $Refresh, $style_sheet, $head_script, $body_attr, $html_version, $head_lang, $no_body) = @_;
+	my ($DocTitle, $RefreshStr, $style_sheet, $head_script, $body_attr, $html_version, $head_lang, $no_body) = @_;
 	# &deb_pr(__LINE__ . ": Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
-	if ($header_done) {
-		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \$header_done = $header_done");
-		print("\n<!-- debug: print_header($DocTitle) selv om \$header_done -->\n");
+	if ($suncgi::header_done) {
+		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \$suncgi::header_done = $suncgi::header_done");
+		print("\n<!-- debug: print_header($DocTitle) selv om \$suncgi::header_done -->\n");
 		return;
+	} else {
+		$suncgi::header_done = 1;
 	}
-	$head_lang = $STD_LANG unless defined($head_lang);
-	$html_version = $DTD_HTML4LOOSE unless defined($html_version);
+	$style_sheet = $suncgi::css_default unless defined($style_sheet);
+	$head_lang = $suncgi::STD_LANG unless defined($head_lang);
+	$html_version = $suncgi::DTD_HTML4LOOSE unless defined($html_version);
 	$no_body = 0 unless defined($no_body);
 	$body_attr = "" unless defined($body_attr);
 	my $DocumentTime = curr_utc_time();
-	# $RefreshStr = "" unless defined($RefreshStr);
-	$RefreshStr = (defined($RefreshStr)) ? qq{<meta http-equiv="refresh" content="$Refresh" url="$Url">} : "";
-	# Fjas med $BodyStr
-	# begin-base64 664 -
-	# H4sIAJS7tTkCA62OvQ6CMBSFZ3iKhnSARXYQB1/BlYQUWkoRWyglxgA+u+VH
-	# BBKd3G5yvnvOZ7AU2AXhVGU2xCKJYpRcqRQNx44DWtMwBgC2N8S45zU1kSui
-	# B8ETuOHBzkva5SWhXclpR1nqQJdN3wY8C/y4KAkCYIXq6GYE4VPI9RnrAHzK
-	# gtD6NqOTAY6QUlL/Wv5UvABz/T1jioxhD0hRk7fAjvu24u90q6pddGdZmohC
-	# yMDadm7txp7eXDv8Uv3PYG++ANeynMjJAQAA
-	# ====
+	$RefreshStr = "" unless defined($RefreshStr);
+	$RefreshStr = (length($RefreshStr)) ? qq{<meta http-equiv="refresh" content="$RefreshStr" url="$suncgi::Url">} : "";
 
 	content_type("text/html");
 	print $html_version;
 	print "\n<html lang=\"$head_lang\">\n";
 	Tabs(1);
 	$head_script = "" unless defined($head_script);
-	if (defined(@rcs_array)) {
-		foreach(@rcs_array) {
+	if (defined(@suncgi::rcs_array)) {
+		foreach(@suncgi::rcs_array) {
 			tab_print("<!-- $_ -->\n");
 		}
 	} else {
 		tab_print(<<END);
-<!-- ${main::rcs_id} -->
-<!-- $rcs_id -->
+<!-- $main::rcs_id -->
+<!-- $suncgi::rcs_id -->
 END
 	}
 	tab_print(<<END);
 <head>
 	<title>$DocTitle</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
+	<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
 END
 	Tabs(1);
 	tab_print($RefreshStr) if length($RefreshStr);
-	tab_print <<END;
+	tab_print(<<END);
 <meta name="author" content="&Oslash;yvind A. Holm">
 <meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
 <meta name="date" content="$DocumentTime">
 END
-	tab_print(<<END) if length($WebMaster);
-<link rev="made" href="mailto:$WebMaster">
+	tab_print(<<END) if length($suncgi::WebMaster);
+<link rev="made" href="mailto:$suncgi::WebMaster">
 END
 	# tab_print ("Tabs = Tabs\n");
 	tab_print($style_sheet) if length($style_sheet);
@@ -1001,25 +984,28 @@ END
 		tab_print("<body$body_attr>\n");
 		Tabs(1);
 	}
-	$header_done = 1;
 } # print_header()
-
 
 ###########################################################################
 
 =head2 tab_print()
 
-Skriver ut på samme måte som print, men setter inn I<$Tabs> først på
+Skriver ut på samme måte som print, men setter inn I<$suncgi::Tabs> først på
 hver linje. Det er for å få riktige innrykk. Det forutsetter at
-I<$Tabs> er oppdatert til enhver tid.
+I<$suncgi::Tabs> er oppdatert til enhver tid.
 
 =cut
 
 sub tab_print {
 	my @Txt = @_;
 
+	unless($suncgi::header_done) {
+		print_header("tab_print()-header");
+		print("\n<!-- debug: tab_print() før print_header(). Tar saken i egne hender. -->\n");
+	}
+
 	foreach (@Txt) {
-		s/^(.*)/${Tabs}$1/gm;
+		s/^(.*)/${suncgi::Tabs}$1/gm;
 		s/([\x7f-\xff])/sprintf("&#%u;", ord($1))/ge;
 		print "$_";
 	}
@@ -1035,8 +1021,6 @@ i I<tab_print()> på en eller annen måte, men blir ikke det tungvint?
 
 Vi lar det være sånn foreløpig.
 
-B<FIXME:> Legg inn konvertering av tegn > 0x7f til entities her også.
-
 =cut
 
 sub tab_str {
@@ -1044,7 +1028,8 @@ sub tab_str {
 	my $RetVal = "";
 
 	foreach (@Txt) {
-		s/^(.*)/${Tabs}$1/gm;
+		s/^(.*)/${suncgi::Tabs}$1/gm;
+		s/([\x7f-\xff])/sprintf("&#%u;", ord($1))/ge;
 		$RetVal .= "$_";
 	}
 	return $RetVal;
@@ -1074,12 +1059,12 @@ sub Tabs {
 	# FIXME: Finpussing seinere.
 	if ($Value > 0) {
 		for (1..$Value) {
-			$Tabs =~ s/(.*)/$1\t/;
+			$suncgi::Tabs =~ s/(.*)/$1\t/;
 		}
 	} elsif ($Value < 0) {
 		$Value = 0 - $Value;
 		for (1..$Value) {
-			$Tabs =~ s/^(.*)\t/$1/;
+			$suncgi::Tabs =~ s/^(.*)\t/$1/;
 		}
 	} else {
 		HTMLwarn("Intern feil: Tabs() ble kalt med \$Value = 0");
@@ -1133,4 +1118,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.10 2000/09/07 11:29:40 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $ ####
