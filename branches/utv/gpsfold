@@ -1,12 +1,30 @@
 #!/usr/bin/perl -w
 
-# $Id: gpsfold,v 1.1.2.4 2003/07/11 15:40:57 sunny Exp $
+# $Id: gpsfold,v 1.1.2.5 2003/07/15 12:01:12 sunny Exp $
 # Inserts fold marks in GPS data files before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 
 use strict;
 
+use Getopt::Std;
+our ($opt_h, $opt_m) = (0, 0);
+getopts('hm');
+
 $| = 1;
+
+if ($opt_h) {
+	print(<<END);
+
+Syntax: gpsfold [options]
+
+Options:
+
+-h  Help me, please
+-m  Add a "# move" after the fold.
+
+END
+	exit(0);
+}
 
 my $Title = "";
 my @Data = ();
@@ -39,9 +57,10 @@ while ($Line = <STDIN>) {
 
 push(@Data, "# $start_date-$end_date$colon_str$Title \x7D\x7D\x7D\n");
 unshift(@Data, "# $start_date-$end_date$colon_str$Title \x7B\x7B\x7B\n");
+$opt_m && push(@Data, "# move\n");
 
 for (@Data) {
 	print $_;
 }
 
-# End of file $Id: gpsfold,v 1.1.2.4 2003/07/11 15:40:57 sunny Exp $
+# End of file $Id: gpsfold,v 1.1.2.5 2003/07/15 12:01:12 sunny Exp $
