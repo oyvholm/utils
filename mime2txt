@@ -1,0 +1,13 @@
+#!/usr/bin/perl -w
+
+# $Id: mime2txt,v 1.1 2001/02/07 03:24:18 sunny Exp $
+# Konverterer tekst i MIME-format til vanlig tekst. Vet ikke hvor korrekt
+# den er, men det ser ut til å funke greit.
+
+use strict;
+
+while (<>) {
+	s/=([0-9a-f]{2})/chr(hex($1))/gei;
+	s/=\n//;
+	print;
+}
