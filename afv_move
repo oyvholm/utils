@@ -63,7 +63,7 @@ LOOP: while (<>) {
 		$Path = ".";
 		$File = $_;
 	}
-	if ($opt_m || $File =~ /^(.*?)\b(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)Z\b(.+)/) {
+	if ($opt_m || $File =~ /^(.*?)\b(\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)Z\b(.+)/) {
 		# {{{
 		my ($Pre, $Year, $Mon, $Day, $Hour, $Min, $Sec, $Rest);
 		unless ($opt_m) {
