@@ -1,7 +1,13 @@
 #!/bin/sh
 
-# $Id: remouse,v 1.1 1999/02/11 20:19:06 sunny Exp $
+# $Id: remouse,v 1.2 1999/05/08 20:35:11 sunny Exp $
 
 killall gpm
 sleep 1
-gpm -t ps2
+if [ -e /grimme.mrk ]; then
+	gpm -t bare
+elif [ -e /black.mrk ]; then
+	gpm -t ps2
+else
+	echo $0: Ukjent maskin, kan ikke fyre i gang gpm\(1\) >&2
+fi
