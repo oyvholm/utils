@@ -1,7 +1,20 @@
 #!/bin/sh
 
-# $Id: bigsh,v 1.1 1999/07/03 14:26:56 sunny Exp $
-# Fyrer opp en stor nxterm i X
+# $Id: bigsh,v 1.2 2004/01/21 19:37:06 sunny Exp $
+# Fyrer opp en stor xterm i X
+
+# mlterm -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1
+
+xterm \
+-u8 \
+-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+-bg black \
+-fg white \
+-geometry 131x42+0+0
+
+# xterm -u8 -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -bg black -fg white +rv
+exit
 
 if [ "x$1" != "x" ]; then
 	nxterm -geometry 165x50+0+0 -title "$*" &
