@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# $Id$
+# Syntax: find | filmer
+# Hehe, latterlig enkelt.
+
+find | egrep -i '\.(mpg|mpeg|avi|wmv|mng|mov)' | LC_COLLATE=C sort
