@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $>
+S<$Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -119,19 +119,21 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 =cut
 
 ###########################################################################
-#### Variabler
+#### Variabler og moduler
 ###########################################################################
+
+# use Time::Local; # curr_local_time() sin greie.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $';
-my $rcs_id = '$Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $';
-my $rcs_date = '$Date: 1999/06/30 11:42:17 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $';
+my $rcs_id = '$Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $';
+my $rcs_date = '$Date: 1999/07/03 18:04:27 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $ GD';
-my $cvs_id = '$Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $ GD';
-my $cvs_date = '$Date: 1999/06/30 11:42:17 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $ GD';
+my $cvs_id = '$Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $ GD';
+my $cvs_date = '$Date: 1999/07/03 18:04:27 $ GD';
 
 my $this_counter = "";
 
@@ -180,9 +182,34 @@ sub content_type {
 
 ###########################################################################
 
+=head &curr_local_time()
+
+Returnerer tidspunktet akkurat nå, lokal tid. Formatet er i henhold til S<ISO 8601>, dvs.
+I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>+I<HHMM>
+
+FIXME: Finn en måte å returnere differansen mellom UTC og lokal tid.
+Foreløpig droppes +0200 og sånn. Det liker vi E<ikke>. Ikke baser noen
+programmer på formatet foreløpig.
+
+=cut
+
+sub curr_local_time {
+	&deb_pr(__LINE__ . ": Går inn i curr_local_time()");
+	my @TA = localtime();
+	# my $GM = mktime(gmtime());
+	# my $LO = localtime();
+	# my $utc_diff = ($GM-$LO)/3600;
+
+	# - &deb_pr(__LINE__ . ": curr_local_time(): gmtime = \"$GM\", localtime = \"$LO\"");
+	my $LocalTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+	return($LocalTime);
+} # curr_local_time()
+
+###########################################################################
+
 =head2 &curr_utc_time()
 
-Returnerer tidspunktet akkurat nå, brukes av blant annet
+Returnerer tidspunktet akkurat nå i UTC. Brukes av blant annet
 F<&print_header()> til å sette rett tidspunkt inn i headeren. Formatet på
 datoen er i henhold til S<ISO 8601>, dvs.
 I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
@@ -194,6 +221,56 @@ sub curr_utc_time {
 	my $UtcTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
 	return($UtcTime);
 } # curr_utc_time()
+
+###########################################################################
+
+=head2 &deb_pr()
+
+En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
+forlanger at ${main::$error_file} er definert, det skal være en fil der
+all debuggingsinformasjonen skrives til.
+
+FIXME: Mer pod seinere.
+
+=cut
+
+sub deb_pr {
+	return unless ${main::Debug};
+	my $Msg = shift;
+	my $err_msg = "";
+	if (-e ${main::debug_file}) {
+		$err_msg = "Klarte ikke å åpne debugfila for lesing/skriving" unless open(DebugFP, "+<${main::debug_file}");
+	} else {
+		$err_msg = "Klarte ikke å lage debugfila" unless open(DebugFP, "+>${main::debug_file}");
+	}
+	unless(length($err_msg)) {
+		flock(DebugFP, LOCK_EX);
+		$err_msg = "Kan ikke seek'e til slutten av debugfila" unless seek(DebugFP, 0, 2);
+	}
+	if (length($err_msg)) {
+		print <<END;
+Content-type: text/html
+
+${DTD_HTML4STRICT}
+<html>
+	<!-- ${rcs_id} -->
+	<head>
+		<title>Intern feil i deb_pr()</title>
+	</head>
+	<body>
+		<h1>Intern feil i deb_pr()</h1>
+		<p>${err_msg}: <samp>$!</samp>
+		<p>Litt info:
+		<p>\${main::Debug} = "${main::Debug}"
+		<br>\${main::error_file} = "${main::error_file}"
+	</body>
+</html>
+END
+		exit();
+	}
+	print(DebugFP "$$ $Msg\n");
+	close(DebugFP);
+} # deb_pr()
 
 ###########################################################################
 
@@ -215,6 +292,8 @@ sub escape_dangerous_chars {
 	$string =~ s/([;\\<>\*\|`&\$!#\(\)\[\]\{\}'"])/\\$1/g;
 	return $string;
 } # escape_dangerous_chars()
+
+###########################################################################
 
 =head2 &file_mdate()
 
@@ -282,6 +361,7 @@ sub get_cgivars {
 		$value =~ s/%(..)/chr(hex($1))/ge;
 		$in{$name} .= "\0" if defined($in{$name});
 		$in{$name} .= $value;
+		&deb_pr(__LINE__ . ": get_cgivars(): $name = \"$value\"");
 	}
 	return %in;
 } # get_cgivars()
@@ -327,6 +407,7 @@ sub HTMLdie {
 	my $curr_utc = &curr_utc_time;
 	my $msg_str;
 
+	&deb_pr(__LINE__ . ": HDIE: $Msg");
 	$Title || ($Title = "Intern feil");
 	if (!${main::Debug} && !${main::Utv}) {
 		$msg_str = "<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli fikset snart.";
@@ -399,6 +480,7 @@ sub HTMLwarn {
 	local($Msg) = shift;
 	my $curr_utc = &curr_utc_time;
 
+	&deb_pr(__LINE__ . ": WARN: $Msg");
 	# Gjør det så stille og rolig som mulig.
 	if (${main::Utv} || ${main::Debug}) {
 		&print_header("CGI warning");
@@ -775,6 +857,14 @@ sub print_header {
 	my $DocId_str = length($doc_val{id}) ? <<END : "";
 	<!-- $doc_val{id} -->
 END
+	if ($header_done) {
+		&deb_pr(__LINE__ . ": Yo! print_header() ble kjørt selv om \$header_done = $header_done. \$DocTitle = \"$DocTitle\"");
+		print("\n<!-- debug: print_header(\"$DocTitle\", \"$Refresh\", \"$no_body\", \"$html_version\") selv om \$header_done -->\n");
+		return;
+	} else {
+		$header_done = 1;
+	}
+	&deb_pr(__LINE__ . ": print_header(): $DocTitle");
 	unless (length($user_background)) {
 		$user_background = length(${main::BackGround}) ? ${main::BackGround} : $STD_BACKGROUND;
 	}
@@ -790,18 +880,16 @@ END
 		$BodyStr = "<body>";
 		$BackgroundStr = $STD_BACKGROUND;
 	}
-=pod
-	lkjbhjkbh
-	if (!length($user_background)) {
-		$BackGroundStr = length(if()) {
-			$BackgroundStr = ${main::BackGround};
-			$BodyStr = "<body>";
-		} else {
-			$BackgroundStr = $STD_BACKGROUND;
-			$BodyStr = "<body>";
-		}
-	}
-=cut
+	# FIXME: Blir dette brukt til noe fornuftig en gang i tida?
+	# if (!length($user_background)) {
+		# $BackGroundStr = length(if()) {
+			# $BackgroundStr = ${main::BackGround};
+			# $BodyStr = "<body>";
+		# } else {
+			# $BackgroundStr = $STD_BACKGROUND;
+			# $BodyStr = "<body>";
+		# }
+	# }
 	&content_type("text/html");
 	print length($html_version) ? $html_version : $STD_HTMLDTD;
 	print <<END;
@@ -933,4 +1021,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $ ####
