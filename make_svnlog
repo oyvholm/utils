@@ -5,16 +5,17 @@
 unset LANG
 dest=/home/sunny/src/svn/svnlog/trunk
 
+cd /home/sunny/Svn || { echo "Klarte ikke å gå til ~/Svn . Sikker på at vi er på sunba?" >&2; exit 1; }
+
 for f in *; do
 	echo ========== $f
-	svn log -v --xml $SR/$f >$dest/$f.log
+	svn log -v --xml $SR/$f >$dest/$f.xml
 done
-svn log -v --xml http://svn.sunbase.org/repos/norwegian_vim >$dest/norwegian_vim.log
-svn log -v --xml http://svn.sunbase.org/repos/sandbox >$dest/sandbox.log
-svn log -v --xml http://svn.sunbase.org/repos/svnbook_nb >$dest/svnbook_nb.log
-svn log -v --xml http://svn.sunbase.org/repos/ssark >$dest/ssark.log
-svn log -v --xml http://svn.sunbase.org/repos/shwiki >$dest/shwiki.log
-svn log -v --xml http://svn.sunbase.org/repos/svnutils >$dest/svnutils.log
-svn log -v --xml http://svn.sunbase.org/repos/duppy >$dest/duppy.log
-svn log -v --xml http://svn.sunbase.org/repos/sunny >$dest/pubsunny.log
-
+svn log -v --xml http://svn.sunbase.org/repos/norwegian_vim >$dest/norwegian_vim.xml
+svn log -v --xml http://svn.sunbase.org/repos/sandbox >$dest/sandbox.xml
+svn log -v --xml http://svn.sunbase.org/repos/svnbook_nb >$dest/svnbook_nb.xml
+svn log -v --xml http://svn.sunbase.org/repos/ssark >$dest/ssark.xml
+svn log -v --xml http://svn.sunbase.org/repos/shwiki >$dest/shwiki.xml
+svn log -v --xml http://svn.sunbase.org/repos/svnutils >$dest/svnutils.xml
+svn log -v --xml http://svn.sunbase.org/repos/duppy >$dest/duppy.xml
+svn log -v --xml http://svn.sunbase.org/repos/sunny >$dest/pubsunny.xml
