@@ -1,36 +1,78 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.7 2004/04/11 21:23:22 sunny Exp $
+# $Id: afv,v 1.13.2.8 2004/04/14 15:06:15 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
-# Options: -l5 der 5 er antall sekunder det skal
-#          pauses før den kjører i loop igjen.
-# ©2001–2003 Øyvind A. Holm. License: GNU GPL
+#
+# ©2001–2004 Øyvind A. Holm. Lisens: GNU GPL ♥
 #================================================
+
+# FIXME: Finn en standard Perl-måte for å erstatte kjøring av /bin/pwd .
 
 use strict;
 use Fcntl ':flock';
 use File::Path;
+use Digest::MD5;
+use Getopt::Std;
+
+our ($opt_d, $opt_h, $opt_l) =
+    ("",     0,      ""    );
+getopts('d:hl:');
 
 $| = 1;
 
-defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
+if ($opt_h) {
+	print(<<END);
+
+Syntax: $0 [valg] [fil [flere filer [...]]]
+
+Lagrer flere versjoner av en eller flere filer i katalogen som \$AFVROOT
+er satt til. Hvis ingen filer er spesifisert på kommandolinja, leses
+filnavn fra stdin.
+
+Valg:
+
+-d X  De forskjellige versjonene skal lagres under X. Overstyrer
+      \$AFVROOT .
+-h    Hjelp.
+-l X  Kjør i loop, sjekk filene hvert X. sekund. Eksempel:
+
+      afv -l5 foo.txt bar.pl &
+      find /etc | afv -l 15 &
+
+      for å kjøre den i bakgrunnen. Bruk afvctl(1) for å stoppe afv’er
+      som kjører. Filnavn på filer som lagres blir ikke skrevet ut når
+       "-l"-parameteret brukes.
+
+END
+}
+
+unless (length($opt_d)) {
+	defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
+}
+
 my $Dir = ".AFV";
-my ($root_dir, $dest_dir) = ($ENV{AFVROOT}, "");
+my $root_dir = length($opt_d) ? $opt_d : $ENV{AFVROOT};
+my $dest_dir = "";
 my $curr_dir = "";
-my ($do_loop, $sleep_time, $orig_dir) = (0, 5, `/bin/pwd`);
+my ($do_loop, $sleep_time, $orig_dir) = (0, 5, `/bin/pwd`); # FIXME
 chomp($orig_dir);
 
-if (defined($ARGV[0]) && $ARGV[0] =~ /^-l(\d+)/) {
-	$do_loop = 1;
-	$sleep_time = $1;
-	shift;
+if (length($opt_l)) {
+	if ($opt_l =~ /^\d+$/) {
+		$do_loop = 1;
+		$sleep_time = $opt_l;
+	} else {
+		die("Parameteret til -l må være et tall.\n");
+	}
 }
 
 my @Files = ();
 glob_files();
 
-LOOP: foreach my $FullCurr (@Files) {
+LOOP:
+foreach my $FullCurr (@Files) {
+	# {{{
 	my $Curr = $FullCurr;
 	my $another_dir = 0;
 	check_stop();
@@ -43,7 +85,7 @@ LOOP: foreach my $FullCurr (@Files) {
 		}
 		$Curr = $2;
 	}
-	chomp($curr_dir = `/bin/pwd`);
+	chomp($curr_dir = `/bin/pwd`); # FIXME
 	$dest_dir = "$root_dir$curr_dir";
 	-d $dest_dir || mkpath($dest_dir, 1) || die("mkpath($dest_dir): $!");
 	my $afv_dir = "$dest_dir/$Dir";
@@ -59,7 +101,9 @@ LOOP: foreach my $FullCurr (@Files) {
 	}
 
 	if (open(FromFP, "<$Curr")) {
+		binmode(FromFP);
 		if (flock(FromFP, LOCK_EX)) {
+			# {{{
 			my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
 			my @TA = gmtime($mtime);
 			my $date_str = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
@@ -69,19 +113,22 @@ LOOP: foreach my $FullCurr (@Files) {
 				goto CLEANUP;
 			}
 			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
-			if (open(Md5FP, "| /usr/bin/md5sum >$currmd5_file")) { # FIXME: Legg inn egen MD5-utregning
-				while(<FromFP>) {
-					print(Md5FP $_);
-				}
-				close(Md5FP);
-			} else {
-				warn("$Curr: Klarte ikke å åpne md5-pipe: $!");
-				rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
-				exit;
-			}
 
-			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
-			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
+			my $curr_md5 = Digest::MD5->new->addfile(*FromFP)->hexdigest;
+			open(CurrMD5FP, ">$currmd5_file") || die("$currmd5_file: Klarte ikke å åpne fila for skriving: $!");
+			print(CurrMD5FP "$curr_md5\n") || die("$currmd5_file: Feil under skriving til fila. $!");
+			close(CurrMD5FP);
+			my $last_md5 = "";
+
+			if (-e $lastmd5_file) {
+				if (open(LastMD5FP, "<$lastmd5_file")) {
+					$last_md5 = <LastMD5FP>;
+					$last_md5 =~ s/^([0-9a-fA-F]{32})/\L$1\E/;
+					close(LastMD5FP);
+				} else {
+					warn("$lastmd5_file: Feil under åpning for lesing: $!");
+				}
+			}
 			if ($curr_md5 ne $last_md5) {
 				print("$date_str.$Curr\n") unless $do_loop;
 				if (seek(FromFP, 0, 0)) {
@@ -103,6 +150,7 @@ LOOP: foreach my $FullCurr (@Files) {
 					warn("$Curr: Klarte ikke å seeke til starten: $!");
 				}
 			}
+			# }}}
 		} else {
 			warn("$Curr: Klarte ikke flock(): $!");
 		}
@@ -111,11 +159,12 @@ LOOP: foreach my $FullCurr (@Files) {
 		warn("$Curr: Klarte ikke å åpne fila for lesing: $!");
 	}
 
-CLEANUP:
+	CLEANUP:
 	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
 	if ($another_dir) {
 		chdir($orig_dir) || die("$orig_dir: Klarte ikke chdir() til originalkatalogen: $!");
 	}
+	# }}}
 }
 
 if ($do_loop) {
@@ -144,12 +193,12 @@ sub glob_files {
 
 sub check_stop {
 	# {{{
-	foreach ("$root_dir/stop", "$dest_dir/stop") {
-		if (-e $_) {
-			if (-e "$root_dir/protected") {
-				print(STDERR "$curr_dir: $_ finnes, men katalogen er beskyttet, så vi avslutter ikke.\n");
+	foreach ($root_dir, $dest_dir) {
+		if (-e "$_/stop") {
+			if (-e "$_/protected") {
+				print(STDERR "$curr_dir: $_/stop finnes, men katalogen er beskyttet, så vi avslutter ikke.\n");
 			} else {
-				print(STDERR "$curr_dir: $_ finnes, avslutter.\n");
+				print(STDERR "$curr_dir: $_/stop finnes, avslutter.\n");
 				exit;
 			}
 		}
@@ -173,4 +222,4 @@ sub my_sleep {
 	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.7 2004/04/11 21:23:22 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.8 2004/04/14 15:06:15 sunny Exp $ ####
