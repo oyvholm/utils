@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.13 2003/02/05 10:12:37 sunny Exp $
+# $Id: hhi,v 1.1.2.14 2003/02/13 01:54:27 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -92,4 +92,81 @@ for my $Line (@Data) {
 	}
 }
 
-# End of file $Id: hhi,v 1.1.2.13 2003/02/05 10:12:37 sunny Exp $
+=pod
+
+=head1 NAME
+
+hhi - Html Header Indexer
+
+=head1 REVISION
+
+  $Id: hhi,v 1.1.2.14 2003/02/13 01:54:27 sunny Exp $
+
+=head1 SYNOPSIS
+
+hhi [files [..]]
+
+=head1 DESCRIPTION
+
+The hhi(1) command (re)numbers the headers of HTML source and is able to create a table of contents in a defined area.
+Lines containing C<E<lt>!-- nohhi --E<gt>> will be ignored and lines containg C<E<lt>!-- nohhitoc --E<gt>> will be numbered, but not included in the index.
+An optional table of contents will be included between the lines
+
+  <!-- hhitoc -->
+  <!-- /hhitoc -->
+
+Any text between those two lines will be replaced.
+
+Every header will be have an index number inserted into the beginning of the header title, e.g.:
+
+  <h1>Header of document</h1>
+    <h2>Table of contents</h2> <!-- nohhi -->
+    <!-- hhitoc -->
+    <!-- /hhitoc -->
+    <h2>Subsection #1</h2>
+      <h3>Subsubsection #1.1</h3>
+      <h4>Header not worth mentioning in the index</h4> <!-- nohhitoc -->
+    <h2>Subsection #2</h2>
+    <h2>Section with specified name</h2> <!-- hhiname secname -->
+
+will be changed to
+
+  <h1>Header of document</h1>
+    <h2>Table of contents</h2> <!-- nohhi -->
+    <!-- hhitoc -->
+    <ul>
+    <li><b><a href="#h-1">1.</a></b> Subsection #1
+    <ul>
+    <li><b><a href="#h-1.1">1.1</a></b> Subsubsection #1.1
+    </li>
+    </ul>
+    </li>
+    <li><b><a href="#h-2">2.</a></b> Subsection #2
+    </li>
+    <li><b><a href="#secname">3.</a></b> Section with specified name
+    </li>
+    </ul>
+    <!-- /hhitoc -->
+    <h2><a name="h-1">1.</a> Subsection #1</h2>
+      <h3><a name="h-1.1">1.1</a> Subsubsection #1.1</h3>
+      <h4><a name="h-1.1.1">1.1.1</a> Header not worth mentioning in the index</h4> <!-- nohhitoc -->
+    <h2><a name="h-2">2.</a> Subsection #2</h2>
+    <h2><a name="secname">3.</a> Section with specified name</h2> <!-- hhiname secname -->
+
+=head1 BUGS
+
+No command line options is provided (yet), all info is thought of being contained in the HTML source.
+This is mostly because of maintaining compatibility with older Perl compilers.
+The source is untested on Perl versions prior to 5.6.1, any incompatibilities should be reported to the author.
+
+=head1 AUTHOR
+
+Made by Oyvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
+
+=head1 LICENCE
+
+GNU General Public License.
+
+=cut
+
+# End of file $Id: hhi,v 1.1.2.14 2003/02/13 01:54:27 sunny Exp $
