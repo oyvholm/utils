@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: mklist,v 1.4 1999/05/05 02:45:54 sunny Exp $
+# $Id: mklist,v 1.5 1999/09/29 01:25:52 sunny Exp $
 # Made by Øyvind A. Holm <sunny@dataguard.no>
 
 use Fcntl ':flock';
@@ -12,12 +12,12 @@ my $cvs_comment = "af-$host_name-" . &sec2str($curr_time);
 my $lock_file = "/home/sunny/MKLIST_LOCK";
 my $af_dir = "/home/sunny/etc/af/$host_name";
 my $af_file = "$af_dir/af-$host_name.dat";
-my $find_path = "/"; # Evt. flere separeres med space
+my $find_path = "/home"; # Evt. flere separeres med space
 my $stripgz_prog = "/home/sunny/bin/stripgz";
 my $sort_prog = "/bin/sort -k2";
 my $cvs_prog = "/usr/bin/cvs";
-my $sunny_uid = 502;
-my $sunny_gid = 502;
+my $sunny_uid = 500;
+my $sunny_gid = 500;
 my $cvs_root = "/home/sunny/af-cvsroot";
 # my $repository_name = "aftest-$host_name"; # Sikkert ikke nødvendig.
 my $LogName = "sunny";
@@ -60,4 +60,4 @@ sub sec2str {
 	return($UtcTime);
 } # sec2str()
 
-#### End of file $Id: mklist,v 1.4 1999/05/05 02:45:54 sunny Exp $ ####
+#### End of file $Id: mklist,v 1.5 1999/09/29 01:25:52 sunny Exp $ ####
