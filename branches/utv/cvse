@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.9 2003/06/11 02:48:57 sunny Exp $
+# $Id: cvse,v 1.1.2.10 2003/06/12 01:55:14 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -36,7 +36,6 @@ END
 }
 
 my $Simulate = $opt_s;
-$Simulate = 1;
 my ($curr_rev, $curr_rcs_file, $curr_work_file, $total_ignored) = ("", "", "", "");
 my @Curr = ();
 my %Entry = ();
@@ -129,11 +128,11 @@ exit 0;
 sub change_message {
 	# Changes a log message for a specific revision of a file if it has changed. {{{
 	my ($File, $Rev, $Txt) = @_;
-	$File = escape_filename($File);
+	my $esc_file = escape_filename($File);
 
 	if ($opt_i && !-e $File) {
 		unless (defined($missing_file{$File})) {
-			print("Ignoring non-existing file $File\n");
+			print("Ignoring non-existing file $esc_file\n");
 			$missing_file{$File} = 1;
 			$total_files--;
 			$total_ignored++;
@@ -141,16 +140,16 @@ sub change_message {
 		return;
 	}
 	my $tmp_file = "cvse.$$.$tmp_count.tmp"; $tmp_count++;
-	my $compare_text = get_log_message($File, $Rev);
+	my $compare_text = get_log_message($esc_file, $Rev);
 	if ($Txt ne $compare_text) {
-		print("\nChanging message for $File,v $Rev ...\n");
+		print("\nChanging message for $esc_file rev. $Rev ...\n");
 		if (!defined($missing_file{$File}) && !(-e $File)) {
 			# File does not exist in this revision, change revision to make it appear and make it possible for CVS to update the message {{{
-			print("$File not found, running cvs update with random revisions to try to make it appear...\n");
+			print("$esc_file not found, running cvs update with random revisions to try to make it appear...\n");
 			for my $Curr (@all_revs) {
 				if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
 					my $t_rev = $2;
-					my $ex_str = "cvs$eroot_str upd -r $t_rev $File";
+					my $ex_str = "cvs$eroot_str upd -r $t_rev $esc_file";
 					print("Executing \"$ex_str\"\n");
 					system($ex_str);
 					if (-e $File) {
@@ -160,7 +159,7 @@ sub change_message {
 				}
 			}
 			if (!-e $File && !defined($missing_file{$File})) {
-				warn("$File: File does still not exist, messages for this file will not be changed\n");
+				warn("$esc_file: File does still not exist, messages for this file will not be changed\n");
 				$missing_file{$File} = 1;
 			}
 			# }}}
@@ -176,14 +175,14 @@ sub change_message {
 				}
 			}
 			close(TxtFP) || die("$tmp_file: Error closing file: $!");
-			my $exec_str = "cvs$eroot_str admin -m$Rev:\"`cat $tmp_file`\" $File";
+			my $exec_str = "cvs$eroot_str admin -m$Rev:\"`cat $tmp_file`\" $esc_file";
 			my $Deb = "";
-			$Deb = get_log_message($File, $Rev);
-			print("==== BEFORE: $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
+			$Deb = get_log_message($esc_file, $Rev);
+			print("==== BEFORE: $esc_file $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
 			printf("%s \"%s\"\n", $Simulate ? "Simulating" : "Executing", $exec_str);
 			system($exec_str) unless $Simulate;
-			$Deb = get_log_message($File, $Rev);
-			print("==== AFTER : $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
+			$Deb = get_log_message($esc_file, $Rev);
+			print("==== AFTER : $esc_file $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
 			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!\n");
 			print("\n");
 		} else {
@@ -191,7 +190,7 @@ sub change_message {
 		}
 		$total_changed++;
 	} else {
-		print("Message for $File,v $Rev is unchanged\n") if $opt_v;
+		print("Message for $esc_file rev. $Rev is unchanged\n") if $opt_v;
 		$total_skipped++;
 	}
 	# }}}
@@ -215,8 +214,8 @@ sub get_log_message {
 				}
 			}
 			push(@Arr, $Line) if ($header_done);
-			if ($Line =~ /^----------------------------$/) {
-				$header_done && warn("Found extra header separator in $getl_call, continuing...\n");
+			if (!$header_done && $Line =~ /^----------------------------$/) {
+				$header_done && warn("Found extra header separator in $getl_call, continuing...\n"); # FIXME: Should we die instead?
 				$header_done = 1;
 				$Line = <PipeFP>;
 				if ($Line =~ /^revision (\S+)/) {
@@ -228,6 +227,10 @@ sub get_log_message {
 					die("$getl_call expected \"^revision \", got \"$Line\".\".");
 				}
 				$Line = <PipeFP>;
+				unless ($Line =~ /^date: .*;\s+author: .*;/) {
+					die("Expected \"date: \", got \"$Line\".\n");
+				}
+				$Line = <PipeFP>;
 				unless ($Line =~ /^branches: .+;$/) {
 					push(@Arr, $Line);
 				}
@@ -235,10 +238,9 @@ sub get_log_message {
 		}
 		close(PipeFP);
 		if ($header_done) {
-			print("======= $getl_call returnerer: ===========\n");
-			print(join("", @Arr));
-			print("============\n");
-
+			# print("======= $getl_call returnerer: ===========\n");
+			# print(join("", @Arr));
+			# print("============\n");
 			return(join("", @Arr));
 		} else {
 			warn("Header separator not found, $getl_call returns nothing\n");
@@ -271,7 +273,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.9 2003/06/11 02:48:57 sunny Exp $
+$Id: cvse,v 1.1.2.10 2003/06/12 01:55:14 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -413,4 +415,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.1.2.9 2003/06/11 02:48:57 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.10 2003/06/12 01:55:14 sunny Exp $
