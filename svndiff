@@ -1,6 +1,13 @@
 #!/bin/sh
 
+#=======================================================================
 # $Id$
-# Fyrer opp en vimdiff med $1 og text-basen som ligger i WC-en.
+# Fyrer opp en vimdiff på $* og text-basen som ligger i WC-en.
+# FIXME: Funker bare i current dir.
+#=======================================================================
 
-vimdiff $1 .svn/text-base/$1.svn-base
+for _sd in $*; do
+    vimdiff $_sd .svn/text-base/$_sd.svn-base
+done
+
+# vim: set sw=4 ts=4 sts=4 et :
