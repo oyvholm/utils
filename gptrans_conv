@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.5 2003/06/24 06:38:34 sunny Exp $
+# $Id: gptrans_conv,v 1.6 2003/06/30 11:18:42 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -10,8 +10,11 @@ use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
-our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_s, $opt_t, $opt_x) = (0, 0, 0, 0, 0, 0, 0);
-getopts('cdehstx');
+my $rcs_str = '$Id: gptrans_conv,v 1.6 2003/06/30 11:18:42 sunny Exp $';
+
+our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t) =
+    (     0,      0,      0,      0,     "",      0,      0);
+getopts('cdeho:st');
 
 $| = 1;
 
@@ -21,13 +24,16 @@ if ($opt_h) {
 
 Syntax: gptrans_conv [-hp] [filer [...]]
 
-  -c  Bruk komma istedenfor punktum som desimaltegn
-  -d  Skipp duplikat-koordinater, skriv bare første og siste
-  -e  «epoch»-format på datoen
-  -h  Hjælp mæ
-  -s  Kort («Short») format på datoen
-  -t  Lag skiller mellom tidspunkter med forskjell på mer enn fem minutter
-  -x  Lag output som skal vises i xgraph(1)
+  -c    Bruk komma istedenfor punktum som desimaltegn
+  -d    Skipp duplikat-koordinater, skriv bare første og siste
+  -e    «epoch»-format på datoen
+  -h    Hjælp mæ
+  -o x  Bruk outputformatet x:
+          clean
+          ps (Uferdig)
+          xgraph
+  -s    Kort («Short») format på datoen
+  -t    Lag skiller mellom tidspunkter med forskjell på mer enn fem minutter
 
 END
 	exit(0);
@@ -38,6 +44,11 @@ my $Des = $opt_c ? "," : ".";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $last_time = 0;
 my ($last_lat, $last_lon, $last_alt, $last_line) = (1000, 1000, 100000, ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+
+if ($opt_o eq "ps") {
+	print(ps_header(532, 6034, 533, 6040));
+	print("*u\n");
+}
 
 while (<>) {
 	my $bck_line = $_;
@@ -132,6 +143,14 @@ while (<>) {
 	}
 }
 
+if ($opt_o eq "ps") {
+	print(<<END);
+*U
+%%Trailer
+%%EOF
+END
+}
+
 sub print_entry {
 	# {{{
 	my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lat, $Lon, $Alt) = @_;
@@ -145,6 +164,10 @@ sub print_entry {
 	my $pause_len = 0;
 	my $do_print = 1;
 	my $Line = "";
+	if ($opt_o eq "ps") {
+		$Lat *= 100;
+		$Lon *= 100;
+	}
 	if ($opt_d && ($Lat eq $last_lat) && ($Lon eq $last_lon) && ($Alt eq $last_alt)) {
 		if ($in_dupskip) {
 			$do_print = 0;
@@ -166,19 +189,30 @@ sub print_entry {
 		printf("# Pause: %s\n", Tidsperiode($ep_time-$last_time));
 	}
 
-	if ($do_print && $opt_x) {
-		$pause_len && ($Line = "move ");
-		($Line .= "$Lat $Lon\n");
-	} else {
-		$Lat =~ s/\./$Des/;
-		$Lon =~ s/\./$Des/;
-		# $do_print || print("dropper ");
-		$Line = join("\t",
-			$opt_e ? $ep_time : ($opt_s ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z" : "$Year-$Month-$Day $Hour:$Min:$Sec"),
-			$Lat,
-			$Lon,
-			$Alt,
-			"\n");
+	if ($do_print) {
+		if ($opt_o eq "xgraph") {
+			$pause_len && ($Line = "move ");
+			($Line .= "$Lat $Lon\n");
+		} elsif ($opt_o eq "clean") {
+			$pause_len && ($Line = "\n");
+			($Line .= "$Lat $Lon\n");
+		} elsif ($opt_o eq "ps") {
+			$Line = ($pause_len ? "f\n$Lat $Lon m\n" : "$Lat $Lon l\n");
+		} else {
+			$Lat =~ s/\./$Des/;
+			$Lon =~ s/\./$Des/;
+			# $do_print || print("dropper ");
+			$Line = join("\t",
+				$opt_e ? $ep_time : ($opt_s ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z" : "$Year-$Month-$Day $Hour:$Min:$Sec"),
+				$Lat,
+				$Lon,
+				$Alt,
+				"\n");
+		}
+	}
+
+	if (!$last_time && $opt_o eq "ps") {
+		print("$Lat $Lon m\n");
 	}
 
 	if ($do_print) {
@@ -189,6 +223,16 @@ sub print_entry {
 	$last_lon = $Lon;
 	$last_alt = $Alt;
 	$last_line = $Line;
+	# }}}
+}
+
+sub sec_to_string {
+	# {{{
+	my ($Seconds, $Sep) = @_;
+	defined($Sep) || ($Sep = " ");
+	my @TA = gmtime($Seconds);
+	my($DateString) = sprintf("%04u-%02u-%02u%s%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $Sep, $TA[2], $TA[1], $TA[0]);
+	return($DateString);
 	# }}}
 }
 
@@ -212,4 +256,36 @@ sub Tidsperiode {
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.5 2003/06/24 06:38:34 sunny Exp $
+sub ps_header {
+	# {{{
+	my ($bl_x, $bl_y, $br_x, $br_y) = @_;
+	my $Date = sec_to_string(time);
+	return(<<END);
+%!PS-Adobe-3.0 EPSF-3.0
+%%Creator: $rcs_str
+%%Title:
+%%CreationDate: $Date
+%%BoundingBox: $bl_x $bl_y $br_x $br_y
+%%DocumentData: Clean7Bit
+%%EndComments
+%%BeginProlog
+/bd { bind def } bind def
+/incompound false def
+/m { moveto } bd
+/l { lineto } bd
+/c { curveto } bd
+/F { incompound not {fill} if } bd
+/f { closepath F } bd
+/S { stroke } bd
+/*u { /incompound true def } bd
+/*U { /incompound false def f} bd
+/k { setcmykcolor } bd
+/K { k } bd
+%%EndProlog
+%%BeginSetup
+%%EndSetup
+END
+	# }}}
+}
+
+# End of file $Id: gptrans_conv,v 1.6 2003/06/30 11:18:42 sunny Exp $
