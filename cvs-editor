@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# $Id: cvs-editor,v 1.3 2003/09/25 15:23:08 sunny Exp $
+# $Id: cvs-editor,v 1.4 2003/10/03 16:35:20 sunny Exp $
 
-if [ "`whoami`" = "root" ]; then
+if [ "`whoami`" = "root" -o ! -e /usr/local/bin/gvim ]; then
 	vim -f -c "set textwidth=75 expandtab" $*
 else
 	gvim -f -c "set textwidth=75 expandtab" $*
