@@ -34,71 +34,71 @@ length($opt_d) && ($Dir = $opt_d);
 -d $Dir || mkdir($Dir, 0777) || die("mkdir(\"$Dir\"): $!");
 
 while (<>) {
-	if (m#^(\d{9,10})\b(.*)#) {
-		my ($Secs, $Rest) =
-		   (   $1,    $2);
-		my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
-		$u_year += 1900; # Urgh
-		$u_mon += 1; # Dobbelturgh
-		$Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02uZ%s", $Dir, $u_year, $Name, $u_year, $u_mon, $u_mday, $Ext);
-		print_line($u_year, $Fnavn, $_);
-	} elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d).?(\d\d):?(\d\d):?(\d\d)(Z?)\b(.*)#) {
-		my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Zulu) =
-		   (   $1,     $2,   $3,    $4,   $5,   $6,    $7);
-		$Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02u%s%s", $Dir, $Year, $Name, $Year, $Month, $Day, $Zulu, $Ext);
-		print_line($Year, $Fnavn, $_);
-	} else {
-		my $err_name = length($Fnavn) ? "$Fnavn.ERR" : "$Dir/undef.ERR";
-		warn("Linje $.: Ukjent format, skriver til \"$err_name\".\n");
-		my $op_pref = (-e "$err_name") ? ">>" : ">";
-		if (open(ErrFP, "$op_pref$err_name")) {
-			seek(ErrFP, 0, 2) || die("$err_name: seek() til slutten: $!");
-		} else {
-			die("$err_name: Åpning for skriving: $!");
-		}
-		print(ErrFP $_) || die("Feil under skriving til $err_name: $!");
-		close(ErrFP);
-	}
-	$Last = $Fnavn;
+    if (m#^(\d{9,10})\b(.*)#) {
+        my ($Secs, $Rest) =
+           (   $1,    $2);
+        my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
+        $u_year += 1900; # Urgh
+        $u_mon += 1; # Dobbelturgh
+        $Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02uZ%s", $Dir, $u_year, $Name, $u_year, $u_mon, $u_mday, $Ext);
+        print_line($u_year, $Fnavn, $_);
+    } elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d).?(\d\d):?(\d\d):?(\d\d)(Z?)\b(.*)#) {
+        my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Zulu) =
+           (   $1,     $2,   $3,    $4,   $5,   $6,    $7);
+        $Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02u%s%s", $Dir, $Year, $Name, $Year, $Month, $Day, $Zulu, $Ext);
+        print_line($Year, $Fnavn, $_);
+    } else {
+        my $err_name = length($Fnavn) ? "$Fnavn.ERR" : "$Dir/undef.ERR";
+        warn("Linje $.: Ukjent format, skriver til \"$err_name\".\n");
+        my $op_pref = (-e "$err_name") ? ">>" : ">";
+        if (open(ErrFP, "$op_pref$err_name")) {
+            seek(ErrFP, 0, 2) || die("$err_name: seek() til slutten: $!");
+        } else {
+            die("$err_name: Åpning for skriving: $!");
+        }
+        print(ErrFP $_) || die("Feil under skriving til $err_name: $!");
+        close(ErrFP);
+    }
+    $Last = $Fnavn;
 }
 
 sub print_line {
-	my ($u_year, $Fnavn, $Line) = @_;
-	if ($Fnavn ne $Last) {
-		if ($compress_file && -e $Last) {
-			close(ToFP);
-			unless (-e "$Last.gz") {
-				print(STDERR "Kjører \"/bin/gzip -N $Last &\"\n");
-				system("/bin/gzip -N $Last &");
-			} else {
-				warn("$Last.gz: Fila eksisterer allerede, pakker ikke $Last . Må ordnes manuelt.\n");
-			}
-		}
-		-d "$Dir/$u_year" || mkdir("$Dir/$u_year", 0777) || die("$0: mkdir(\"$Dir/$u_year\"): $!. R.I.P. & sånn.");
-		if (-e $Fnavn) {
-			warn("$Fnavn: Fila finnes fra før, skriver til \"$Fnavn.DUP\".\n");
-			my $op_pref = (-e "$Fnavn.DUP") ? ">>" : ">";
-			if (open(ToFP, "$op_pref$Fnavn.DUP")) {
-				seek(ToFP, 0, 2) || die("$Fnavn.DUP: seek() til slutten: $!");
-			} else {
-				die("$Fnavn.DUP: Åpning for skriving: $!");
-			}
-		} else {
-			print(STDERR "Ny fil: \"$Fnavn\"\n");
-			if (open(ToFP, ">$Fnavn")) {
-				seek(ToFP, 0, 2) || die("$Fnavn: seek() til slutten: $!");
-			} else {
-				die("$Fnavn: Åpning for skriving: $!");
-			}
-		}
-	}
-	print(ToFP $_) || die("Feil under skriving til $Fnavn(.DUP): $!");
+    my ($u_year, $Fnavn, $Line) = @_;
+    if ($Fnavn ne $Last) {
+        if ($compress_file && -e $Last) {
+            close(ToFP);
+            unless (-e "$Last.gz") {
+                print(STDERR "Kjører \"/bin/gzip -N $Last &\"\n");
+                system("/bin/gzip -N $Last &");
+            } else {
+                warn("$Last.gz: Fila eksisterer allerede, pakker ikke $Last . Må ordnes manuelt.\n");
+            }
+        }
+        -d "$Dir/$u_year" || mkdir("$Dir/$u_year", 0777) || die("$0: mkdir(\"$Dir/$u_year\"): $!. R.I.P. & sånn.");
+        if (-e $Fnavn) {
+            warn("$Fnavn: Fila finnes fra før, skriver til \"$Fnavn.DUP\".\n");
+            my $op_pref = (-e "$Fnavn.DUP") ? ">>" : ">";
+            if (open(ToFP, "$op_pref$Fnavn.DUP")) {
+                seek(ToFP, 0, 2) || die("$Fnavn.DUP: seek() til slutten: $!");
+            } else {
+                die("$Fnavn.DUP: Åpning for skriving: $!");
+            }
+        } else {
+            print(STDERR "Ny fil: \"$Fnavn\"\n");
+            if (open(ToFP, ">$Fnavn")) {
+                seek(ToFP, 0, 2) || die("$Fnavn: seek() til slutten: $!");
+            } else {
+                die("$Fnavn: Åpning for skriving: $!");
+            }
+        }
+    }
+    print(ToFP $_) || die("Feil under skriving til $Fnavn(.DUP): $!");
 }
 
 sub usage {
-	my $Retval = shift;
+    my $Retval = shift;
 
-	print(<<END);
+    print(<<END);
 
 Syntax: $0 [valg] [fil [flere filer [...]]]
 
@@ -131,9 +131,10 @@ Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>.
 Lisens: GNU General Public License ♥
 
 END
-	exit($Retval);
+    exit($Retval);
 } # usage()
 
 __END__
 
+# vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :
 # End of file $Id$
