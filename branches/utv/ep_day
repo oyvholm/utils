@@ -1,0 +1,55 @@
+#!/usr/bin/perl -w
+
+#==============================================================================
+# $Id: ep_day,v 1.4 2003/09/27 03:13:44 sunny Exp $
+# Samler en masse tidspunkter i epoch-format på for eksempel samme dag eller
+# hver time. Forventer antall sekunder siden 19700101T000000Z først på linja.
+#==============================================================================
+
+use strict;
+
+$| = 1;
+
+my $Period = 1;
+my %Data = ();
+my $Lowest = 999_999_999_999_999_999; # Hm. Æ sei ikkje meir.
+my $Highest = 0;
+
+if (defined($ARGV[0]) && !($ARGV[0] =~ /[^0-9]/)) {
+	$Period = $ARGV[0];
+	shift;
+} else {
+	$Period = 86400;
+}
+
+while (<>) {
+	if (/^(\d+)/) {
+		my $Curr = int($1/$Period);
+		$Lowest = $Curr if ($Curr < $Lowest);
+		$Highest = $Curr if ($Curr > $Highest);
+		$Data{$Curr}++;
+	} else {
+		warn("Line $.: Invalid line format");
+	}
+}
+
+for (my $Check = $Lowest; $Check < $Highest; $Check++) {
+	defined($Data{$Check}) || ($Data{$Check} = 0);
+}
+
+# @tmp_array-prosjektet er en nødløsning for å få sortert utdataene.
+
+my @tmp_array = ();
+
+while (my ($Num, $Val) = each %Data) {
+	push(@tmp_array, sprintf("%u\t%u\n", ($Num*$Period) + int($Period/2), $Val));
+}
+
+if (open(TmpFP, "| sort -n")) {
+	for (@tmp_array) {
+		print(TmpFP $_);
+	}
+	close(TmpFP);
+} else {
+	die("Klarte ikke å åpne pipe: $!");
+}
