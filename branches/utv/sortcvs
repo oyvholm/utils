@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+
+# $Id: sortcvs,v 1.1.2.1 2002/10/08 11:37:52 sunny Exp $
+# Sorterer output fra "cvs log" i kronologisk rekkefølge.
+# Uferdig.
+
+use strict;
+
+my ($curr_date, $curr_rev) = ("", "");
+my %Entry = ();
+
+while (<>) {
+	if (/^----------------------------$/) {
+		# Ny entry
+		for (@Entry) {
+			print("$_\n");
+		}
+		@Entry = ();
+	}
+	push(@Entry, $_);
+	if (/^date: (\S+ \S+);.*author: .* state: .*/) {
+
+	}
+}
+
+__END__
