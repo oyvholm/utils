@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+# $Id: uj,v 1.1.2.1 2003/01/28 00:41:26 sunny Exp $
+# Gjentar editering av filer som inneholder ulovlig UTF-8
+
+use strict;
+
+my @err_list = @ARGV;
+my @new_list = ();
+
+while (scalar(@err_list)) {
+	if (scalar(@new_list)) {
+		print("Ulovlige sekvenser ute og går. Gjelder ", join(" ", @new_list), "\n");
+		getc(STDIN);
+	}
+	my $Cmd = join(" ", "joe", @err_list);
+	# print("Kjører \"$Cmd\"\n");
+	system("$Cmd");
+	@new_list = ();
+	# print("Starter med ", join(" ", @err_list), "\n");
+	for my $File (@err_list) {
+		my $cmd_iconv = "iconv -f utf8 -t utf8 $File >/dev/null 2>&1";
+		# print("Kjører \"$cmd_iconv\"\n");
+		if (-f $File && system($cmd_iconv)) {
+			# print("FEIL: $File\n");
+			push(@new_list, $File);
+		} else {
+			# print("OK: $File\n");
+		}
+	}
+	@err_list = ();
+	@err_list = @new_list;
+}
+
+#### End of file $Id: uj,v 1.1.2.1 2003/01/28 00:41:26 sunny Exp $ ####
