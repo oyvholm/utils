@@ -35,9 +35,10 @@ for my $Curr (@ARGV) {
     diff_file($Curr);
 }
 
+my @mod_array = ();
+
 if ($opt_a) {
     if (open(PipeFP, "svn stat -q |")) {
-        my @mod_array = ();
         while (<PipeFP>) {
             if (/^[MC]......(.*)/) {
                 push(@mod_array, $1);
@@ -81,7 +82,7 @@ sub diff_file {
 
     # Sleep one second after $Cmd is done to make it easier to interrupt 
     # the thing with CTRL-C if there are many files
-    sleep(1);
+    sleep(1) if (scalar(@mod_array) > 1);
 }
 
 sub D {
