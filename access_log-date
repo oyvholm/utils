@@ -1,0 +1,87 @@
+#!/usr/bin/perl -w
+
+#=====================================================================
+# $Id: access_log-date,v 1.1 2004/03/30 06:53:01 sunny Exp $
+# Leser første og siste datoen i access_log og skifter navn på den til
+# formatet NAVN.ååååmmddTttmmssZ-ååååmmddTttmmssZ.access_log
+#
+# ©opyleft 2001–2004 Øyvind A. Holm <sunny@sunbase.org>
+# Lisens: GNU General Public License ♥
+#=====================================================================
+
+use strict;
+use Time::Local;
+use Getopt::Std;
+
+our ($opt_h, $opt_n, $opt_s) =
+    (     0,     "",      0);
+getopts('hn:s');
+
+$| = 1;
+
+my %Mnd = (
+	'Jan' => 0, 'Feb' => 1, 'Mar' => 2, 'Apr' => 3, 'May' =>  4, 'Jun' =>  5,
+	'Jul' => 6, 'Aug' => 7, 'Sep' => 8, 'Oct' => 9, 'Nov' => 10, 'Dec' => 11
+);
+
+$opt_h && usage(0);
+
+my $Name = length($opt_n) ? "$opt_n." : "";
+my $File;
+
+for $File (@ARGV) {
+	if (-e $File) {
+		my $Head = `head -1 $File`; # Halv-FIXME. Men det funker.
+		my $Tail = `tail -1 $File`;
+		my $Destfil = sprintf("%s%s-%s.access_log", $Name, access_date($Head), access_date($Tail));
+		if (-e $Destfil) {
+			warn("$Destfil finnes allerede, skifter ikke navn på $File\n");
+		} else {
+			printf("%s → %s%s\n", $File, $Destfil, $opt_s ? " (simulerer)" : "");
+			rename($File, $Destfil) || warn("rename($File, $Destfil): $!\n") unless ($opt_s);
+		}
+	} else {
+		warn("$File: Finnes ikke.\n");
+	}
+}
+
+sub access_date {
+	my $Linje = shift;
+	my $Retval = "";
+	if ($Linje =~ m#^\S+\s+\S+\s+\S+\s+\[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)(\d\d)#) { # OBS: Sjekker i̲k̲k̲e̲ minutter i tidssona. Det er for å få opp farta på trålinga.
+		my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
+		   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
+		my $num_mnd = $Mnd{$Mon};
+		my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mnd, $Year);
+		$Secs -= ($zone_hour*3600 + $zone_min*60); # Husk det med manglende minutter.
+		my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
+		$u_year += 1900; # Urgh
+		$Retval = sprintf("%04u%02u%02uT%02u%02u%02uZ", $u_year, $u_mon+1, $u_mday, $u_hour, $u_min, $u_sec);
+	} else {
+		die("Ukjent format: \"$Linje\", avbryter.\n");
+	}
+	return($Retval);
+}
+
+sub usage {
+	my $Retval = shift;
+
+	print(<<END);
+
+Syntax: $0 [valg] navn fil
+
+Leser første og siste datoen i access_log og skifter navn på den til
+formatet NAVN.ååååmmddTttmmssZ-ååååmmddTttmmssZ.access_log
+
+Det er selvfølgelig UTC som brukes. Trenger head(1) og tail(1).
+
+Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>
+Lisens: GNU General Public License ♥
+
+END
+	exit($Retval);
+}
+
+__END__
+
+# End of file $Id: access_log-date,v 1.1 2004/03/30 06:53:01 sunny Exp $
