@@ -3,13 +3,16 @@
 # $Id$
 # Mekker ihop ny, fin Vim.
 
+lv_lockdir=$HOME/.lag_vim.LOCK
+mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
+
 update_vim-clean
 
 echo ======== mincvs_vim
-mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; exit 0; }
+mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
 
 vimcompdir=$HOME/src/other/vim/vim
-cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; exit 0; }
+cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; rmdir $lv_lockdir; exit 0; }
 
 x_flags="--enable-gui=no --without-x"
 vim_size=huge
@@ -42,6 +45,8 @@ else
 	echo Hvis det gikk bra, er det på tide å bli root, og...
 fi
 echo "cd $vimcompdir && rm -rf $vimdir && make install && cp -vp src/vim $vimdir/bin/"
+
+rmdir $lv_lockdir
 
 # echo $installcmd
 # echo -n Trykk Enter for å gjøre det, eller CTRL-C for å feige ut...
