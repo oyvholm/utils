@@ -31,7 +31,7 @@ cd $vimdir/vim || { echo "cd $vimdir/vim: Klarte ikke chdir like før patchinga.
 errfound=0
 echo -e "======== Patcher filer... \x7B\x7B\x7B"
 for _vp in $HOME/bin/Patch/vim/*; do
-    echo ======== Patcher $_vp ========
+    echo ======== $_vp ========
     patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
 done
 echo -e "\x7D\x7D\x7D"
