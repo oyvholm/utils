@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cp1252,v 1.1 2001/08/20 23:28:11 sunny Exp $
-# Konverterer cp1252 til Latin1 og HTML-entities.
+# $Id: cp1252,v 1.2 2003/07/07 03:08:06 sunny Exp $
+# Konverterer cp1252 til UTF-8. Et resultat av latskap.
 
-iconv -f cp1252 -t utf-8 $* | u2h -l
+iconv -f cp1252 -t utf-8 $*
