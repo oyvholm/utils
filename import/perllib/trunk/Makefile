@@ -1,6 +1,6 @@
 
-# Makefile for generering av *.dvi, *.ps og *.html
-# $Header: /home/sunny/tmp/cvs/perllib/Makefile,v 1.1 1999/07/05 13:30:14 sunny Exp $
+# Makefile for generering av *.3, *.dvi, *.ps og *.html
+# $Header: /home/sunny/tmp/cvs/perllib/Makefile,v 1.2 1999/07/05 14:06:14 sunny Exp $
 
 all: tricgi.dvi tricgi.ps tricgi.html
 
@@ -15,7 +15,7 @@ tricgi.3: tricgi.pm
 
 tricgi.html: tricgi.pm
 	pod2html <tricgi.pm >tricgi.html
+	rm -f pod2html-*cache
 
 clean:
-	rm -f tricgi.3 tricgi.html tricgi.dvi tricgi.man tricgi.ps core *~ \
-	pod2html-*cache
+	rm -f tricgi.3 tricgi.html tricgi.dvi tricgi.man tricgi.ps core *~
