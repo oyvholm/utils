@@ -1,18 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
-# $Id: update_vim-clean,v 1.1 2003/07/25 17:57:48 sunny Exp $
-# Oppdaterer ~/src/other/vim/vim.clean på sunba.
+# $Id: update_vim-clean,v 1.2 2004/02/09 03:59:03 sunny Exp $
+# Oppdaterer ~/src/other/vim/vim.clean
 
-if [ ! -e /sunba.mrk ]; then
-	echo Den skal egentlig kjøres på sunba, og det er ikke her vi er.
-	echo Sikker på at du vil fortsette? Trykk ENTER i såfall eller
-	echo -n ta konsekevensene sjøl.
-	read
-fi
+vimclean=$HOME/src/other/vim/vim.clean
 
-cd ~/vim.clean
+[ -d $vimclean ] || { echo "$vimclean: Katalogen finnes ikke. Dauer." >&2; exit 1; }
+
+ping -c1 cvs.vim.sf.net || { echo "Ser ut som Vim-serveren har dematerialisert seg. Ellerno. Avslutter." >&2; exit 1; }
+
+cd $vimclean || { echo "Nåh, klarte ikke \"cd $vimclean\" selv om den visstnok finnes. Skjønner ikke bæret og driter i resten." >&2; exit 1; }
 until cvs upd -d; do
-	echo -n Sleep 20...
+	echo -n sleep 20...
 	sleep 20
 	echo våken.
 done
+
+exit 0
