@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: lag_vim,v 1.4 2004/02/13 18:55:47 sunny Exp $
+# $Id: lag_vim,v 1.5 2004/03/28 07:28:17 sunny Exp $
 # Mekker ihop ny, fin Vim.
 
 update_vim-clean
@@ -11,10 +11,12 @@ mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >
 cd ~/src/other/vim/vim || { echo "cd ~/src/other/vim/vim: Ånn ðe tryn." >&2; exit 1; }
 
 x_flags="--enable-gui=no --without-x"
+vim_size=huge
 
-if [ -e $HOME/.petronas.mrk ]; then
-	echo ======== Man er på petronas. Lag lokal vim.
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk ]; then
+	echo ======== Man er på petronas eller vagabond. Lag lokal vim.
 	vimdir=$HOME/local/prg/vim
+	[ -e $HOME/.vagabond.mrk ] && vim_size=normal
 else
 	vimdir=/usr/local/prg/vim
 	if [ -e /ba0614-woody.mrk ]; then
@@ -23,16 +25,16 @@ else
 	fi
 fi
 
-echo ======== ./configure --prefix=$vimdir --with-features=huge --enable-multibyte $x_flags
-./configure --prefix=$vimdir --with-features=huge --enable-multibyte $x_flags
+echo ======== ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags
+./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags
 
 echo ======== make
 make
 echo
 
-if [ -e $HOME/.petronas.mrk ]; then
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk ]; then
 	# installcmd="rm -rf $vimdir && make install"
-	echo Vi er på petronas, så vi nøyer oss med det.
+	echo Vi er på petronas eller vagabond, så vi nøyer oss med:
 else
 	# installcmd="su -c \"rm -rf $vimdir && make install\""
 	echo Hvis det gikk bra, er det på tide å bli root, og...
