@@ -6,7 +6,7 @@
 #
 # Character set: UTF-8
 # License: GNU General Public License
-# ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2003-2004 Øyvind A. Holm <sunny@sunbase.org>
 #===============================================================
 
 use strict;
@@ -137,6 +137,8 @@ END
 				print(GnupFP "set terminal postscript enhanced color solid 8\nset output \"$opt_o\"\n");
 			} elsif ($opt_o =~ /.*\.png$/i) {
 				print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
+			} elsif ($opt_o =~ /.*\.fig/i) {
+				print(GnupFP "set terminal fig color big metric\nset output \"$opt_o\"\n");
 			} else {
 				die("Unkonwn outfile type, has to be .ps or .png\n");
 			}
