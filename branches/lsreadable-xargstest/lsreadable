@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# $Id: lsreadable,v 1.3 1999/04/06 15:27:26 sunny Exp $
+# $Id: lsreadable,v 1.3.2.1 2001/06/02 15:39:16 sunny Exp $
 
-for f in `find $* -depth -type f 2>/dev/null`; do
-  if [ -r $f ]; then
-    /bin/ls -la --full $f
-  fi
-done
+find -print0 | xargs -0 -i% /bin/bash -c 'if [ -r % ]; then echo %; fi'
