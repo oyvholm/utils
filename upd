@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# $Id: upd,v 1.1 1999/03/29 15:58:37 sunny Exp $
+
+du -kx | sort -n >du
+rm -f du.gz
+cat du
