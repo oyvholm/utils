@@ -3,7 +3,7 @@
 # $Id$
 
 if [ -e /ww.mrk ]; then
-  ntpservs='(gps\.dix\.dk|swisstime\.ee\.ethz\.ch|ntp1-rz\.rrze\.uni-erlangen\.de|hora\.cs\.tu-berlin\.de|svn\.sunbase\.org|194\.248\.216\.3|nett\.ba\.no|194\.248\.216\.20|vagen)'
+  ntpservs='(gps\.dix\.dk|swisstime\.ee\.ethz\.ch|ntp1-rz\.rrze\.uni-erlangen\.de|hora\.cs\.tu-berlin\.de|svn\.sunbase\.org|194\.248\.216\.3|nett\.ba\.no|194\.248\.216\.20|vagen|stein)'
   tethereal -t ad -l -q -f '(not port 80)' | \
   egrep -v \
     -e '194\.248\.216\.3 .*TCP .*ssh' \
