@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # Lagrer alle nye versjoner av en fil.
-# $Id: afv,v 1.1 2001/04/18 00:10:55 sunny Exp $
+# $Id: afv,v 1.2 2001/04/18 00:22:23 sunny Exp $
 
 use strict;
 use Fcntl ':flock';
@@ -36,7 +36,7 @@ LOOP: foreach my $Curr (@Files) {
 				warn("$Curr: Klarte ikke å åpne md5-pipe: $!");
 			}
 			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
-			my $last_md5 = `/bin/cat $lastmd5_file`;
+			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
 			if ($curr_md5 ne $last_md5) {
 				my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
 				print(STDERR "$mtime.$Curr\n");
@@ -71,4 +71,4 @@ LOOP: foreach my $Curr (@Files) {
 	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
 }
 
-#### End of file $Id: afv,v 1.1 2001/04/18 00:10:55 sunny Exp $ ####
+#### End of file $Id: afv,v 1.2 2001/04/18 00:22:23 sunny Exp $ ####
