@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.6 2004/03/28 11:24:08 sunny Exp $
+# $Id: split_access_log,v 1.7 2004/03/30 07:44:27 sunny Exp $
 # Splitter opp access_log fra httpd(8) på dato. Legger delene som
-# $Dir/åååå/åååå-mm-dd[.NAVN].access_log .
+# $Dir/åååå/[NAVN.]åååå-mm-ddZ.access_log .
 #
 # ©opyleft 2001–2004 Øyvind A. Holm <sunny@sunbase.org>
 # Lisens: GNU General Public License ♥
@@ -24,9 +24,9 @@ use strict;
 use Time::Local;
 use Getopt::Std;
 
-our ($opt_h, $opt_n, $opt_z) =
-    (     0,     "",      0);
-getopts('hn:z');
+our ($opt_d, $opt_h, $opt_n, $opt_z) =
+    (    "",      0,     "",      0);
+getopts('d:hn:z');
 
 $| = 1;
 
@@ -40,20 +40,21 @@ my ( $Dir, $Fnavn, $Last, $compress_file) =
 
 $opt_h && usage(0);
 
-my $Name = length($opt_n) ? ".$opt_n" : "";
+my $Name = length($opt_n) ? "$opt_n." : "";
 
+length($opt_d) && ($Dir = $opt_d);
 -d $Dir || mkdir($Dir, 0777) || die("mkdir(\"$Dir\"): $!");
 
 while (<>) {
-	if (m#^\S+\s+\S+\s+\S+\s+\[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)00#) { # OBS: Sjekker i̲k̲k̲e̲ minutter i tidssona. Det er for å få opp farta på trålinga.
-		my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour) =
-		   (  $1,   $2,    $3,    $4,   $5,   $6,         $7);
+	if (m#^\S+.*? \[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)(\d\d)#) {
+		my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
+		   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
 		my $num_mnd = $Mnd{$Mon};
 		my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mnd, $Year);
-		$Secs -= ($zone_hour * 3600); # Husk det med manglende minutter.
+		$Secs -= ($zone_hour*3600 + $zone_min*60);
 		my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
 		$u_year += 1900; # Urgh
-		$Fnavn = sprintf("%s/%04u/%04u-%02u-%02u%s.access_log", $Dir, $u_year, $u_year, $u_mon+1, $u_mday, $Name);
+		$Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02uZ.access_log", $Dir, $u_year, $Name, $u_year, $u_mon+1, $u_mday);
 		if ($Fnavn ne $Last) {
 			if ($compress_file && -e $Last) {
 				print(STDERR "Kjører \"/bin/gzip -N $Last &\"\n");
@@ -68,9 +69,9 @@ while (<>) {
 				die("\n$Fnavn.gz: Det ligger en pakka versjon av fila her fra før.\nDet vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nMulig du må sortere fila. I alle tilfelle må $Fnavn.gz slettes før jeg gjør noe som helst.\nEn annen mulighet er selvfølgelig å bruke et annet navn med \"-n\"-parameteret.\nOg hva mer var det jeg skulle si... Jo, jeg dør visst. Heidå.\n");
 			}
 			if (open(ToFP, ">$Fnavn")) {
-				seek(ToFP, 0, 2) || warn("$Fnavn: seek() til slutten: $!");
+				seek(ToFP, 0, 2) || die("$Fnavn: seek() til slutten: $!");
 			} else {
-				warn("$Fnavn: Åpning for skriving: $!");
+				die("$Fnavn: Åpning for skriving: $!");
 			}
 		}
 		print(ToFP $_) || die("Feil under skriving til $Fnavn: $!");
@@ -90,29 +91,27 @@ sub usage {
 Syntax: $0 [valg] [fil [flere filer [...]]]
 
 Programmet leser access_log fra stdin eller filnavn på kommandolinja og
-splitter dem i deler på formatet $Dir/åååå/åååå-mm-dd[.NAVN].access_log .
+splitter dem i deler på formatet DIR/åååå/[NAVN.]åååå-mm-ddZ.access_log .
 
 Valg:
 
--h    Hjælp mæ.
--n x  Bruk x som valgfritt navn i filnavnet.
--z    Pakk fila etter at den er splitta.
+-d DIR   Plassér filene i DIR . Standard: "$Dir".
+-h       Hjælp mæ.
+-n NAVN  Bruk NAVN som valgfritt navn i filnavnet.
+-z       Pakk filene etterhvert som de er ferdigsplitta.
 
 Den splitter selvfølgelig opp filene på grunnlag av UTC. Folkeaksjonen
 Mot Sommertid slår til igjen. Ikke det med sol, utepils og miniskjørt
 her og der, men den klokkefløttinga er uendelig plagsom og lager i
 tillegg unøyaktighet i loggene.
 
-N̲B̲!̲ For å få opp farta regnes ikke minuttene i tidssona med. Hvis det er
-en merkelig tidssone i området, må det legges inn, ellers blir det feil.
-
 Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>
 Lisens: GNU General Public License ♥
 
 END
 	exit($Retval);
-}
+} # usage()
 
 __END__
 
-# End of file $Id: split_access_log,v 1.6 2004/03/28 11:24:08 sunny Exp $
+# End of file $Id: split_access_log,v 1.7 2004/03/30 07:44:27 sunny Exp $
