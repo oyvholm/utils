@@ -1,0 +1,1 @@
+/home/sunny/src/svn/efn-regnskap/trunk/bin/konv_medlemsliste.pl
