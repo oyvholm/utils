@@ -6,7 +6,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $>
+S<$Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -120,23 +120,23 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $';
-my $rcs_id = '$Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $';
-my $rcs_date = '$Date: 2000/04/03 14:11:05 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $';
+my $rcs_id = '$Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $';
+my $rcs_date = '$Date: 2000/04/14 17:43:30 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $ GD';
-my $cvs_id = '$Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $ GD';
-my $cvs_date = '$Date: 2000/04/03 14:11:05 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $ GD';
+my $cvs_id = '$Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $ GD';
+my $cvs_date = '$Date: 2000/04/14 17:43:30 $ GD';
 
 my $this_counter = "";
 
 my $FALSE = 0;
 my $TRUE = 1;
 
-my $DTD_HTML4FRAMESET = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\n\"http://www.w3.org/TR/REC-html40/frameset.dtd\">\n";
-my $DTD_HTML4LOOSE = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"\n\"http://www.w3.org/TR/REC-html40/loose.dtd\">\n";
-my $DTD_HTML4STRICT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\"\n\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n";
+my $DTD_HTML4FRAMESET = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN" "http://www.w3.org/TR/REC-html40/frameset.dtd">\n};
+my $DTD_HTML4LOOSE = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n};
+my $DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n};
 
 my $STD_BACKGROUND = "";
 my $STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
@@ -262,13 +262,13 @@ sub deb_pr {
 	my $Msg = shift;
 	my $err_msg = "";
 	if (-e ${main::debug_file}) {
-		$err_msg = "Klarte ikke å åpne debugfila for lesing/skriving" unless open(DebugFP, "+<${main::debug_file}");
+		open(DebugFP, "+<${main::debug_file}") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
 	} else {
-		$err_msg = "Klarte ikke å lage debugfila" unless open(DebugFP, "+>${main::debug_file}");
+		open(DebugFP, ">${main::debug_file}") || ($err_msg = "Klarte ikke å lage debugfila");
 	}
 	unless(length($err_msg)) {
 		flock(DebugFP, LOCK_EX);
-		$err_msg = "Kan ikke seek'e til slutten av debugfila" unless seek(DebugFP, 0, 2);
+		seek(DebugFP, 0, 2) || ($err_msg = "Kan ikke seek'e til slutten av debugfila");
 	}
 	if (length($err_msg)) {
 		print <<END;
@@ -285,6 +285,7 @@ ${DTD_HTML4STRICT}
 		<p>${err_msg}: <samp>$!</samp>
 		<p>Litt info:
 		<p>\${main::Debug} = "${main::Debug}"
+		<br>\${main::debug_file} = "${main::debug_file}"
 		<br>\${main::error_file} = "${main::error_file}"
 	</body>
 </html>
@@ -1017,4 +1018,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.4 2000/04/03 14:11:05 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $ ####
