@@ -1,12 +1,32 @@
 package suncgi;
 
+require Exporter;
+@ISA = qw(Exporter);
+
+@EXPORT = qw(content_type curr_local_time curr_utc_time deb_pr
+escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
+HTMLwarn increase_counter log_access print_header tab_print tab_str Tabs
+url_encode print_doc sec_to_string);
+
+@EXPORT_OK = qw(print_footer);
+# %EXPORT_TAGS = tag => [...];  # define names for sets of symbols
+
+use Fcntl ':flock';
+
+use subs qw{
+	content_type curr_local_time curr_utc_time deb_pr
+	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
+	HTMLwarn increase_counter log_access print_doc print_footer
+	print_header tab_print tab_str Tabs url_encode sec_to_string
+};
+
 =head1 NAME
 
 suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $>
+S<$Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -52,7 +72,7 @@ Alle feilmeldinger og warnings havner her.
 
 =item I<${main::log_dir}>
 
-Navn på directory der logging fra blant annet I<&log_access()> havner.
+Navn på directory der logging fra blant annet I<log_access()> havner.
 Brukeren I<nobody> (eller hva nå httpd måtte kjøre under) skal ha skrive/leseaksess der.
 
 =back
@@ -77,7 +97,7 @@ Er I<$STD_CHARSET> som default, "I<ISO-8859-1>".
 
 =item I<${main::BackGround}>
 
-Bruker denne som default bakgrunn til I<&print_background()>.
+Bruker denne som default bakgrunn til I<print_background()>.
 Hvis den ikke er definert, brukes I<$STD_BACKGROUND>, en tom greie.
 
 =item I<${main::Debug}>
@@ -118,32 +138,29 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 # use Time::Local; # curr_local_time() sin greie.
 
-my $Tabs = "";
+$Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $';
-my $rcs_id = '$Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $';
-my $rcs_date = '$Date: 2000/08/19 07:07:41 $';
+$rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $';
+$rcs_id = '$Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $';
+$rcs_date = '$Date: 2000/09/01 10:49:07 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $ GD';
-my $cvs_id = '$Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $ GD';
-my $cvs_date = '$Date: 2000/08/19 07:07:41 $ GD';
+$cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $ GD';
+$cvs_id = '$Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $ GD';
+$cvs_date = '$Date: 2000/09/01 10:49:07 $ GD';
 
-my $this_counter = "";
+$this_counter = "";
 
-my $FALSE = 0;
-my $TRUE = 1;
+$DTD_HTML4FRAMESET = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN" "http://www.w3.org/TR/REC-html40/frameset.dtd">\n};
+$DTD_HTML4LOOSE = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n};
+$DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n};
 
-my $DTD_HTML4FRAMESET = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN" "http://www.w3.org/TR/REC-html40/frameset.dtd">\n};
-my $DTD_HTML4LOOSE = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">\n};
-my $DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n};
-
-my $STD_BACKGROUND = "";
-my $STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
-my $STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
-my $STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
-my $STD_HTMLDTD = $DTD_HTML4LOOSE;
-my $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
+$STD_BACKGROUND = "";
+$STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
+$STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
+$STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
+$STD_HTMLDTD = $DTD_HTML4LOOSE;
+$STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
 
 ###########################################################################
 #### Subrutiner
@@ -155,9 +172,9 @@ my $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kan
 
 ###########################################################################
 
-=head2 &content_type()
+=head2 content_type()
 
-Brukes omtrent bare av F<&print_header()>, men kan kalles
+Brukes omtrent bare av F<print_header()>, men kan kalles
 separat hvis det er speisa content-typer ute og går, som for eksempel
 C<application/x-tar> og lignende.
 
@@ -165,18 +182,24 @@ C<application/x-tar> og lignende.
 
 sub content_type {
 	my $ContType = shift;
-	# my $CharSet = $STD_CHARSET unless length(${main::CharSet});
-	if (length($ContType)) {
-		print "Content-Type: $ContType; charset=$main::CharSet\n\n" ;
+	my $loc_charset;
+	if (length($main::CharSet)) {
+		$loc_charset = $main::CharSet;
 	} else {
-		&HTMLwarn("Intern feil: \$ContType ble ikke spesifisert til &content_type()");
+		$loc_charset = $STD_CHARSET;
+		HTMLwarn("content_type(): \$main::CharSet udefinert. Bruker \"$loc_charset\".");
+	}
+	if (length($ContType)) {
+		print "Content-Type: $ContType; charset=$loc_charset\n\n" ;
+	} else {
+		HTMLwarn("Intern feil: \$ContType ble ikke spesifisert til content_type()");
 	}
 	# print "Content-Type: $ContType\n\n"; # Til ære for slappe servere som ikke har peiling
 } # content_type()
 
 ###########################################################################
 
-=head2 &curr_local_time()
+=head2 curr_local_time()
 
 Returnerer tidspunktet akkurat nå, lokal tid. Formatet er i henhold til S<ISO 8601>, dvs.
 I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>+I<HHMM>
@@ -201,10 +224,10 @@ sub curr_local_time {
 
 ###########################################################################
 
-=head2 &curr_utc_time()
+=head2 curr_utc_time()
 
 Returnerer tidspunktet akkurat nå i UTC. Brukes av blant annet
-F<&print_header()> til å sette rett tidspunkt inn i headeren. Formatet på
+F<print_header()> til å sette rett tidspunkt inn i headeren. Formatet på
 datoen er i henhold til S<ISO 8601>, dvs.
 I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
 
@@ -219,7 +242,7 @@ sub curr_utc_time {
 
 ###########################################################################
 
-=head2 &deb_pr()
+=head2 deb_pr()
 
 En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
 forlanger at ${main::error_file} er definert, det skal være en fil der
@@ -228,7 +251,7 @@ all debuggingsinformasjonen skrives til.
 For at debugging skal bli lettere, kan man slenge denne inn på enkelte
 steder. Eksempel:
 
-	# &deb_pr(__LINE__ . ": sort_dir(): Det er $Elements elementer her.");
+	# deb_pr(__LINE__ . ": sort_dir(): Det er $Elements elementer her.");
 
 Hvis dette formatet brukes (fram til og med __LINE__) kan man filtrere fila
 gjennom denne perlsnutten for å kommentere ut alle debuggingsmeldingene:
@@ -298,12 +321,12 @@ END
 
 ###########################################################################
 
-=head2 &escape_dangeours_chars()
+=head2 escape_dangeours_chars()
 
 Brukes hvis man skal utføre en systemkommando og man får med kommandolinja
 å gjøre. Eksempel:
 
-	$cmd_line = &escape_dangerous_chars("$cmd_line");
+	$cmd_line = escape_dangerous_chars("$cmd_line");
 	system("$cmd_line");
 
 Tegn som kan rote til denne kommandoen får en backslash foran seg.
@@ -319,7 +342,7 @@ sub escape_dangerous_chars {
 
 ###########################################################################
 
-=head2 &file_mdate()
+=head2 file_mdate()
 
 Returnerer tidspunktet fila sist ble modifisert i sekunder siden
 S<1970-01-01 00:00:00 UTC>. Brukes hvis man skal skrive ting som "sist
@@ -336,12 +359,12 @@ sub file_mdate {
 
 ###########################################################################
 
-=head2 &get_cgivars()
+=head2 get_cgivars()
 
 Leser inn alle verdier sendt med GET eller POST requests og returnerer en
 hash med verdiene. Fungerer på denne måten:
 
-	%Opt = &get_cgivars;
+	%Opt = get_cgivars;
 	my $Document = $Opt{doc};
 	my $user_name = $Opt{username};
 
@@ -362,7 +385,7 @@ sub get_cgivars {
 	local($in, %in);
 	local($name, $value);
 
-	my $has_args = ($#ARGV > -1) ? $TRUE : $FALSE;
+	my $has_args = ($#ARGV > -1) ? 1 : 0;
 	if ($has_args) {
 		$in = $ARGV[0];
 	} elsif (($ENV{REQUEST_METHOD} eq 'GET') ||
@@ -370,15 +393,17 @@ sub get_cgivars {
 		$in = $ENV{QUERY_STRING};
 	} elsif ($ENV{REQUEST_METHOD} eq 'POST') {
 		if ($ENV{CONTENT_TYPE} =~ m#^application/x-www-form-urlencoded$#i) {
-			length($ENV{CONTENT_LENGTH}) || &HTMLdie("Ingen Content-Length vedlagt POST-forespørselen.");
+			length($ENV{CONTENT_LENGTH}) || HTMLdie("Ingen Content-Length vedlagt POST-forespørselen.");
 			read(STDIN, $in, $ENV{CONTENT_LENGTH});
 		} else {
-			&HTMLdie("Usupportert Content-Type: \"$ENV{CONTENT_TYPE}\"") if length($ENV{CONTENT_TYPE});
+			HTMLdie("Usupportert Content-Type: \"$ENV{CONTENT_TYPE}\"") if length($ENV{CONTENT_TYPE});
 			exit;
 		}
 	} else {
-		&HTMLdie("Programmet ble kalt med ukjent REQUEST_METHOD: \"$ENV{REQUEST_METHOD}\"") if length($ENV{REQUEST_METHOD});
-		exit;
+		if (length($ENV{REQUEST_METHOD})) {
+			HTMLdie("Programmet ble kalt med ukjent REQUEST_METHOD: \"$ENV{REQUEST_METHOD}\"");
+			exit;
+		}
 	}
 	foreach (split("[&;]", $in)) {
 		s/\+/ /g;
@@ -395,7 +420,7 @@ sub get_cgivars {
 
 ###########################################################################
 
-=head2 &get_counter()
+=head2 get_counter()
 
 Skriver ut verdien av en teller, angi filnavn. Fila skal inneholde et tall
 i standard ASCII-format.
@@ -407,7 +432,7 @@ sub get_countervalue {
 	my $counter_file = shift;
 	my $counter_value = 0;
 	# &deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
-	open(TmpFP, "<$counter_file") || (&HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
+	open(TmpFP, "<$counter_file") || (HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$counter_value = <TmpFP>;
 	chomp($counter_value);
@@ -418,7 +443,7 @@ sub get_countervalue {
 
 ###########################################################################
 
-=head2 &HTMLdie()
+=head2 HTMLdie()
 
 Tilsvarer F<die()> i standard Perl, men sender HTML-output så man ikke får
 Internal Server Error. Funksjonen tar to parametere, I<$Msg> som havner i
@@ -433,7 +458,7 @@ mer enn de har godt av.
 
 sub HTMLdie {
 	my($Msg,$Title) = @_;
-	my $curr_utc = &curr_utc_time;
+	my $curr_utc = curr_utc_time;
 	my $msg_str;
 
 	# &deb_pr(__LINE__ . ": HDIE: $Msg");
@@ -487,7 +512,7 @@ END
 		$Msg =~ s/\\/\\\\/g;
 		$Msg =~ s/\n/\\n/g;
 		$Msg =~ s/\t/\\t/g;
-		printf(ErrorFP "%s HDIE %s\n", &curr_utc_time, $Msg);
+		printf(ErrorFP "%s HDIE %s\n", curr_utc_time, $Msg);
 		close(ErrorFP);
 	}
 	exit;
@@ -495,9 +520,9 @@ END
 
 ###########################################################################
 
-=head2 &HTMLwarn()
+=head2 HTMLwarn()
 
-En lightversjon av I<&HTMLdie()>, den skriver kun til
+En lightversjon av I<HTMLdie()>, den skriver kun til
 I<${main::error_file}>. Når det oppstår feil, men ikke trenger å rive ned
 hele systemet. Brukes til småting som tellere som ikke virker og sånn.
 
@@ -508,13 +533,13 @@ hver gang ting går på trynet.
 
 sub HTMLwarn {
 	local($Msg) = shift;
-	my $curr_utc = &curr_utc_time;
+	my $curr_utc = curr_utc_time;
 
 	# &deb_pr(__LINE__ . ": WARN: $Msg");
 	# Gjør det så stille og rolig som mulig.
 	if (${main::Utv} || ${main::Debug}) {
-		&print_header("CGI warning");
-		&tab_print("<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n");
+		print_header("CGI warning");
+		tab_print("<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n");
 	}
 	if (-e ${main::error_file}) {
 		open(ErrorFP, ">>${main::error_file}") or return;
@@ -530,7 +555,7 @@ sub HTMLwarn {
 
 ###########################################################################
 
-=head2 &increase_counter()
+=head2 increase_counter()
 
 Øker telleren i en spesifisert fil med en. Fila skal inneholde et tall i
 ASCII-format. I tillegg lages en fil som heter F<{fil}.ip> som inneholder
@@ -539,27 +564,27 @@ oppdateres ikke telleren.
 
 =cut
 
-# FIXME: my TmpFP?
 sub increase_counter {
 	my $counter_file = shift;
 	my $ip_file = "$counter_file.ip";
 	my $user_ip = $ENV{REMOTE_ADDR};
+	local *TmpFP;
 	system("touch $counter_file") unless (-e $counter_file);
 	system("touch $ip_file") unless (-e $ip_file);
-	open(TmpFP, "+<$ip_file") || (&HTMLwarn("$ip_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
+	open(TmpFP, "+<$ip_file") || (HTMLwarn("$ip_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$last_ip = <TmpFP>;
 	chomp($last_ip);
-	my $new_ip = ($last_ip eq $user_ip) ? $FALSE : $TRUE;
+	my $new_ip = ($last_ip eq $user_ip) ? 0 : 1;
 	if ($new_ip) {
-		seek(TmpFP, 0, 0) || (&HTMLwarn("$ip_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
+		seek(TmpFP, 0, 0) || (HTMLwarn("$ip_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
 		print(TmpFP "$user_ip\n");
 	}
-	open(TmpFP, "+<$counter_file") || (&HTMLwarn("$counter_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
+	open(TmpFP, "+<$counter_file") || (HTMLwarn("$counter_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	my $counter_value = <TmpFP>;
 	if ($new_ip) {
-		seek(TmpFP, 0, 0) || (&HTMLwarn("$counter_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
+		seek(TmpFP, 0, 0) || (HTMLwarn("$counter_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
 		printf(TmpFP "%u\n", $counter_value+1) if ($user_ip ne $last_ip);
 	}
 	close(TmpFP);
@@ -568,7 +593,7 @@ sub increase_counter {
 
 ###########################################################################
 
-=head2 &log_access()
+=head2 log_access()
 
 Logger aksess til en fil. Filnavnet skal være uten extension, rutina tar seg av det. I tillegg
 øker den en teller i fila I<$Base.count> unntatt hvis parameter 2 != 0.
@@ -586,24 +611,24 @@ sub log_access {
 	my $File = "$log_dir/$Base.log";
 	my $Countfile = "$log_dir/$Base.count";
 	system("touch $File") unless (-e $File);
-	open(LogFP, "+<$File") || (&HTMLwarn("$File: Can't open access log for read/write: $!"), return);
+	open(LogFP, "+<$File") || (HTMLwarn("$File: Can't open access log for read/write: $!"), return);
 	flock(LogFP, LOCK_EX);
-	seek(LogFP, 0, 2) || (&HTMLwarn("$Countfile: Can't seek to EOF: $!"), close(LogFP), return);
+	seek(LogFP, 0, 2) || (HTMLwarn("$Countfile: Can't seek to EOF: $!"), close(LogFP), return);
 	my $Agent = $ENV{HTTP_USER_AGENT};
 	$Agent =~ s/\n/\\n/g; # Vet aldri hva som kommer
 	printf(LogFP "%u\t%s\t%s\t%s\t%s\n", time, $ENV{REMOTE_ADDR}, $ENV{REMOTE_HOST}, $ENV{HTTP_REFERER}, $Agent);
 	close(LogFP);
-	$this_counter = &increase_counter($Countfile) unless $no_counter;
+	$this_counter = increase_counter($Countfile) unless $no_counter;
 } # log_access()
 
 ###########################################################################
 
-=head2 &print_doc()
+=head2 print_doc()
 
 Leser inn et dokument og konverterer det til HTML. Dette blir en av de
 mest sentrale rutinene i en hjemmeside, i og med at det skal ta seg av
 HTML-output'en. Istedenfor å fylle opp scriptene med HTML-koder, gjøres et
-kall til F<&print_doc()> som skriver ut sidene og genererer HTML.
+kall til F<print_doc()> som skriver ut sidene og genererer HTML.
 
 Formatet på fila består av to deler: Header og HTML. De første linjene
 består av ting som tittel, keywords, html-versjon, evt. refresh og så
@@ -645,7 +670,7 @@ Fil som skal skrives ut. Denne har som standard extension F<*.shtml> .
 Denne brukes hvis det er en "kjede" med dokumenter, og det skal lages en
 "framover" og "bakover"-button.
 
-Alt F<&print_footer()> gjør, er å lete opp plassen i fila som ting skal
+Alt F<print_footer()> gjør, er å lete opp plassen i fila som ting skal
 skrives ut fra. Grunnen til dette er at et dokument kan inneholde flere
 dokumenter som separeres med E<lt>=pageE<gt>.
 
@@ -675,9 +700,9 @@ Alt kan legges inn i en fil:
 
 sub print_doc {
 	my ($file_name, $page_num) = @_;
-	my $in_header = $TRUE;
+	my $in_header = 1;
 
-	open(FromFP, "<$file_name") || &HTMLdie("$file_name: Kan ikke åpne fila for lesing: $!");
+	open(FromFP, "<$file_name") || HTMLdie("$file_name: Kan ikke åpne fila for lesing: $!");
 	LINE: while (<FromFP>) {
 		chomp;
 		next LINE if /^#\s/;
@@ -685,25 +710,25 @@ sub print_doc {
 		if (/^(\S+)\s+(.*)$/) {
 			$doc_val{$1} = $2;
 		} else {
-			&HTMLwarn("$file_name: Ugyldig headerinfo i linje $.: \"$_\"");
+			HTMLwarn("$file_name: Ugyldig headerinfo i linje $.: \"$_\"");
 		}
 	}
-	$doc_val{title} || &HTMLwarn("$file_name: Mangler title");
-	$doc_val{owner} || &HTMLwarn("$file_name: Mangler owner");
-	$doc_val{lang} || &HTMLwarn("$file_name: Mangler lang");
-	$doc_val{id} || &HTMLwarn("$file_name: Mangler id");
-	# $doc_val{} || &HTMLwarn("$file_name: Mangler ");
+	$doc_val{title} || HTMLwarn("$file_name: Mangler title");
+	$doc_val{owner} || HTMLwarn("$file_name: Mangler owner");
+	$doc_val{lang} || HTMLwarn("$file_name: Mangler lang");
+	$doc_val{id} || HTMLwarn("$file_name: Mangler id");
+	# $doc_val{} || HTMLwarn("$file_name: Mangler ");
 	if (${main::Debug}) {
-		&print_header("er i print_doc"); # debug
+		print_header("er i print_doc"); # debug
 		while (($act_name,$act_time) = each %doc_val) {
 			print("<br>\"$act_name\"\t\"$act_time\"\n");
 		}
 	}
 	# my ($DocTitle, $html_version, $Language, $user_background, $Refresh, $no_body, $Description, $Keywords, @StyleSheet) = @_;
-	&print_header($doc_val{title}, "", $doc_val{lang}, $doc_val{background}, $doc_val{refresh}, $doc_val{no_body}, $doc_val{description}, $doc_val{keywords});
+	print_header($doc_val{title}, "", $doc_val{lang}, $doc_val{background}, $doc_val{refresh}, $doc_val{no_body}, $doc_val{description}, $doc_val{keywords});
 	while (<FromFP>) {
 		chomp;
-		&tab_print("$_\n");
+		tab_print("$_\n");
 	}
 	print <<END;
 	</body>
@@ -714,7 +739,7 @@ END
 
 ###########################################################################
 
-=head2 &print_footer()
+=head2 print_footer()
 
 Skriver ut en footer med en E<lt>hrE<gt> først. Funksjonen tar disse
 parameterne:
@@ -735,12 +760,12 @@ brukes I<$STD_DOCALIGN>.
 
 =item I<$no_vh>
 
-I<$FALSE> eller udefinert: Skriver I<Valid HTML>-logoen nederst i høyre
-hjørne. I<$TRUE>: Dropper den.
+I<0> eller udefinert: Skriver I<Valid HTML>-logoen nederst i høyre
+hjørne. I<1>: Dropper den.
 
 =item I<$no_end>
 
-Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten hvis I<$TRUE>.
+Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten hvis I<1>.
 
 =back
 
@@ -756,8 +781,8 @@ sub print_footer {
 	unless (length($footer_align)) {
 		$footer_align = length(${main::doc_align}) ? ${main::doc_align} : $STD_DOCALIGN;
 	}
-	$no_vh = $FALSE unless length($no_vh);
-	$no_end = $FALSE unless length($no_end);
+	$no_vh = 0 unless length($no_vh);
+	$no_end = 0 unless length($no_end);
 	my $rcs_str = ${main::rcs_date}; # FIXME: Er ikke nødvendigvis denne som skal brukes.
 	$rcs_str =~ s/ /&nbsp;/g;
 	my $vh_str = $no_vh ? "&nbsp;" : "<a href=\"http://validator.w3.org/check/referer;ss\"><img src=\"${main::GrafDir}/vh40.gif\" height=\"31\" width=\"88\" align=\"right\" border=\"0\" alt=\"Valid HTML 4.0!\"></a>";
@@ -765,7 +790,7 @@ sub print_footer {
 
 	# FIXME: Hardkoding av URL her pga av at ${main::Url} har skifta navn.
 	# FIXME: I resten av HTML'en er det brukt <div align="center">.
-	&tab_print(<<END);
+	tab_print(<<END);
 <table width="$footer_width" cellpadding="0" cellspacing="0" border="${main::Border}" align="$footer_align">
 	<tr>
 		<td colspan="3">
@@ -777,7 +802,7 @@ sub print_footer {
 			<table cellpadding="0" cellspacing="0" border="${main::Border}">
 				<tr>
 					<td align="center">
-						${main::FONTB}<small>$rcs_str</small>${main::FONTE}
+						<small>$rcs_str</small>
 					</td>
 				</tr>
 			</table>
@@ -792,8 +817,8 @@ sub print_footer {
 </table>
 END
 	unless ($no_end) {
-		&Tabs(-2);
-		&tab_print(<<END);
+		Tabs(-2);
+		tab_print(<<END);
 	</body>
 </html>
 END
@@ -855,7 +880,7 @@ END
 
 # FIXME: Mer pod under her.
 
-=head2 &print_header()
+=head2 print_header()
 
 Parametere i print_header():
 
@@ -873,15 +898,15 @@ Parametere i print_header():
 sub print_header {
 	local($DocTitle, $Refresh, $style_sheet, $head_script, $body_attr, $html_version, $doc_lang) = @_;
 	# &deb_pr(__LINE__ . ": Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
-	if (${main::header_done}) {
-		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \${main::header_done} = ${main::header_done}");
-		print("\n<!-- debug: print_header($DocTitle) selv om \${main::header_done} -->\n");
+	if ($header_done) {
+		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \$header_done = $header_done");
+		print("\n<!-- debug: print_header($DocTitle) selv om \$header_done -->\n");
 		return;
 	}
 	$doc_lang = "no" unless length($doc_lang);
 	$html_version = $DTD_HTML4LOOSE unless length($html_version);
-	&content_type("text/html");
-	my $DocumentTime = &curr_utc_time();
+	content_type("text/html");
+	my $DocumentTime = curr_utc_time();
 	$RefreshStr = (length($Refresh)) ? qq{<meta http-equiv="refresh" content="$Refresh" url="${main::Url}">} : "";
 	if (length(${main::user_background})) {
 		if (${main::user_background} =~ /\.(jpg|jpeg|png|gif)$/i) {
@@ -897,11 +922,19 @@ sub print_header {
 	}
 	print $html_version;
 	print "\n<html lang=\"$doc_lang\">\n";
-	&Tabs(1);
+	Tabs(1);
 	chomp($head_script);
-	&tab_print(<<END_PHH);
+	if (scalar(@main::rcs_array)) {
+		foreach(@main::rcs_array) {
+			tab_print("<!-- $_ -->\n");
+		}
+	} else {
+		tab_print(<<END);
 <!-- ${main::rcs_id} -->
 <!-- $rcs_id -->
+END
+	}
+	tab_print(<<END);
 <head>
 	<title>$DocTitle</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
@@ -910,24 +943,24 @@ sub print_header {
 	<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
 	<meta name="date" content="$DocumentTime">
 	<link rev="made" href="mailto:${main::WebMaster}">
-END_PHH
-	&Tabs(1);
+END
+	Tabs(1);
 	# print ("Tabs = $Tabs\n");
-	&tab_print(<<END);
+	tab_print(<<END);
 $style_sheet
 $head_script
 END
-	&Tabs(-1);
+	Tabs(-1);
 	# chomp($head_script);
-	&tab_print($BodyStr);
-	&Tabs(1);
-	${main::header_done} = ${main::TRUE};
+	tab_print($BodyStr);
+	Tabs(1);
+	$header_done = 1;
 } # print_header()
 
 
 ###########################################################################
 
-=head2 &tab_print()
+=head2 tab_print()
 
 Skriver ut på samme måte som print, men setter inn I<$Tabs> først på
 hver linje. Det er for å få riktige innrykk. Det forutsetter at
@@ -949,11 +982,11 @@ sub tab_print {
 
 ###########################################################################
 
-=head2 &tab_str()
+=head2 tab_str()
 
-Fungerer på samme måte som I<&tab_print()>, men returnerer en streng med
+Fungerer på samme måte som I<tab_print()>, men returnerer en streng med
 innholdet istedenfor å skrive det ut. Mulignes det burde vært implementert
-i I<&tab_print()> på en eller annen måte, men blir ikke det tungvint?
+i I<tab_print()> på en eller annen måte, men blir ikke det tungvint?
 
 Vi lar det være sånn foreløpig.
 
@@ -974,17 +1007,17 @@ sub tab_str {
 
 ###########################################################################
 
-=head2 &Tabs()
+=head2 Tabs()
 
 Øker/minsker verdien av I<${suncgi::Tabs}>.
 Den kan ta ett parameter, en verdi som er negativ eller positiv alt ettersom man skal fjerne eller legge til TAB'er.
 Hvis man skriver
 
-	&Tabs(-2);
+	Tabs(-2);
 
 fjernes to spacer, hvis man skriver
 
-	&Tabs(5);
+	Tabs(5);
 
 legges 5 TAB'er til. Hvis ingen parametere spesifiseres, brukes 1 som default, altså en TAB legges til.
 
@@ -1004,13 +1037,13 @@ sub Tabs {
 			$Tabs =~ s/^(.*)\t/$1/;
 		}
 	} else {
-		&HTMLwarn("Intern feil: Tabs() ble kalt med \$Value = 0");
+		HTMLwarn("Intern feil: Tabs() ble kalt med \$Value = 0");
 	}
 } # Tabs()
 
 ###########################################################################
 
-=head2 &url_encode()
+=head2 url_encode()
 
 Konverterer en streng til format for bruk i URL'er.
 
@@ -1027,6 +1060,22 @@ sub url_encode {
 
 ###########################################################################
 
+=head2 sec_to_string()
+
+Konverterer til leselig datoformat.
+
+=cut
+
+sub sec_to_string {
+	my ($Seconds, $Sep) = @_;
+	$Sep = "T" unless length($Sep);
+	my @TA = localtime($Seconds);
+	my($DateString) = sprintf("%04u-%02u-%02u%s%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $Sep, $TA[2], $TA[1], $TA[0]);
+	return($DateString);
+} # sec_to_string()
+
+###########################################################################
+
 =head1 BUGS
 
 Strukturen er ikke helt klar enda, det blir nok mange forandringer underveis.
@@ -1039,4 +1088,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.7 2000/08/19 07:07:41 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.8 2000/09/01 10:49:07 sunny Exp $ ####
