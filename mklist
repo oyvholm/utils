@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Made by Øyvind A. Solheim <sunny@sunbase.com> 1997-11-18 07:36:26+02:00.
+
+_currtime=`utc`
+_lockfile=~sunny/MKLIST_LOCK
+
+if [ `whoami` != root ]; then
+  echo $0: has to be root. >&2
+  exit 1
+fi
+
+if [ -e $_lockfile ]; then
+  echo "$0: $_lockfile: lock file" >&2
+  exit 1
+fi
+
+utc >$_lockfile
+
+_afdir=~sunny/etc/af/`date -u +"%Y"`
+_lastfile=$_afdir/last
+_tmplastfile=$_afdir/tmp.lastfile.tmp
+_findpath="/ /ba"
+
+# Hvis -f spesifiseres som $1, fortsetter diffinga som før, men det blir
+# i tillegg tatt en find.
+
+if [ "$1" = "-f" ]; then
+  _optf=1
+fi
+
+if [ ! -d $_afdir ]; then
+  echo $0: $_afdir: directory not found. guess I have to create it, then.
+  mkdir -p $_afdir
+  if [ ! -d $_afdir ]; then
+    echo $0: $_afdir: unable to create directory >&2
+    rm -f $_lockfile
+    exit 1
+  fi
+fi
+
+# Hvis $_lastfile eksisterer, skal det lages en diff mot den. Hvis den
+# mangler, lages en helt ny greie.
+
+if [ "$_optf" = "1" ]; then
+  if [ ! -e $_lastfile ]; then
+    echo $0: $_lastfile: file not found, cannot use -f option
+    rm -f $_lockfile
+    exit 1
+  fi
+  mv $_lastfile $_tmplastfile
+fi
+
+if [ ! -e $_lastfile ]; then
+  if [ "$_optf" != "1" ]; then
+    gzip -rq $_afdir
+  fi
+  (
+    echo $_currtime; 
+    find $_findpath -xdev -type f -printf "%TY%Tm%TdT%TH%TM%TS %p\n" | /usr/local/bin/strip_gz | sort -k 2
+  ) >$_afdir/af.$_currtime.find
+  cp -p $_afdir/af.$_currtime.find $_lastfile
+  if [ "$_optf" = "1" ]; then
+    mv $_tmplastfile $_lastfile
+    echo $0: `utc`: spawning \"$0\"...
+    $0
+    echo $0: `utc`: ...ok. have a rather nice day.
+    rm -f $_lockfile
+    exit 1
+  fi
+else
+  (
+    echo $_currtime;
+    find $_findpath -xdev -type f -printf "%TY%Tm%TdT%TH%TM%TS %p\n" | /usr/local/bin/strip_gz | sort -k 2
+  ) >$_afdir/tmp.tmp
+  diff -U 0 $_afdir/last $_afdir/tmp.tmp >$_afdir/af.$_currtime.diff
+  mv $_afdir/tmp.tmp $_afdir/last
+fi
+gzip $_afdir/af.$_currtime.diff
+rm -f $_lockfile
