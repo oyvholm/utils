@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.25 2000/12/14 18:38:09 sunny Exp $
+# $Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -14,7 +14,7 @@ require Exporter;
 	%Opt
 	content_type create_file curr_local_time curr_utc_time deb_pr
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
-	HTMLwarn increase_counter log_access print_header tab_print tab_str
+	HTMLwarn increase_counter log_access print_header p_footer tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
 	$has_args $query_string
 	$log_requests $ignore_double_ip
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.25 2000/12/14 18:38:09 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -433,18 +433,69 @@ END
 	close(FromFP);
 } # print_doc()
 
+sub p_footer {
+	my $Retval = "";
+	my ($validator_str, $array_str) = ("&nbsp;", "");
+	if ($main::Utv) {
+		my $query_enc = url_encode($suncgi::query_string);
+		my $url_enc = url_encode($suncgi::Url);
+		# FIXME: Hardkoding av URL
+		$validator_str = <<END;
+					<a href="http://jigsaw.w3.org/css-validator/validator?uri=$url_enc%3F$query_enc"><img border="0" src="images/vcss.png" alt="[CSS-validator]" height="31" width="88"></a>
+					<a href="http://validator.w3.org/check?uri=$url_enc%3F$query_enc;ss=1;outline=1"><img border="0" src="images/valid-html401.png" alt="[HTML-validator]" height="31" width="88"></a>
+END
+		$array_str .= <<END . join("\n$suncgi::Tabs<br>", @main::rcs_array) . <<END;
+			<tr>
+				<td colspan="2" align="center">
+					<table cellpadding="10" cellspacing="0" border="5">
+						<tr>
+							<td width="100%">
+END
+
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+END
+	}
+
+	$Retval = <<END;
+		<table width="$suncgi::doc_width" cellpadding="0" cellspacing="0" border="$suncgi::Border">
+			<tr>
+				<td colspan="2">
+					<hr>
+				</td>
+			</tr>
+			<tr>
+				<td align="left">
+					<small>&lt;<code><a href="mailto:$suncgi::WebMaster">$suncgi::WebMaster</a></code>&gt;
+					<br>&#169; &#216;yvind A. Holm</small>
+				</td>
+				<td align="right">
+$validator_str
+				</td>
+			</tr>
+$array_str
+		</table>
+	</body>
+</html>
+END
+} # p_footer()
+
 sub print_footer {
 	my ($footer_width, $footer_align, $no_vh, $no_end) = @_;
 
 	# &deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
+	defined($footer_width) || ($footer_width = "");
 	unless (length($footer_width)) {
 		$footer_width = length($suncgi::doc_width) ? $suncgi::doc_width : $suncgi::STD_DOCWIDTH;
 	}
 	unless (length($footer_align)) {
 		$footer_align = length($suncgi::doc_align) ? $suncgi::doc_align : $suncgi::STD_DOCALIGN;
 	}
-	$no_vh = 0 unless length($no_vh);
-	$no_end = 0 unless length($no_end);
+	$no_vh = 0 unless defined($no_vh);
+	$no_end = 0 unless defined($no_end);
 	my $rcs_str = ${main::rcs_date}; # FIXME: Er ikke nødvendigvis denne som skal brukes.
 	$rcs_str =~ s/ /&nbsp;/g;
 	my $vh_str = $no_vh ? "&nbsp;" : "<a href=\"http://validator.w3.org/check/referer;ss\"><img src=\"${main::GrafDir}/vh40.gif\" height=\"31\" width=\"88\" align=\"right\" border=\"0\" alt=\"Valid HTML 4.0!\"></a>";
@@ -592,6 +643,7 @@ sub Tabs {
 sub url_encode {
 	my $String = shift;
 
+	defined($String) || ($String = "");
 	$String =~ s/([\x00-\x20"#%&\.\/;<>?{}|\\\\^~`\[\]\x7F-\xFF])/
 	           sprintf ('%%%X', ord($1))/eg;
 
@@ -616,7 +668,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.25 2000/12/14 18:38:09 sunny Exp $>
+S<$Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -916,6 +968,11 @@ Alt kan legges inn i en fil:
 	<=page contact>
 	<p>Kontaktpreik osv
 
+=head2 p_footer()
+
+Returnerer footer i HTML.
+Brukes mest til debugging for å få validatorknapp og liste over moduler som brukes.
+
 =head2 print_footer()
 
 Skriver ut en footer med en E<lt>hrE<gt> først. Funksjonen tar disse
@@ -1007,4 +1064,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.25 2000/12/14 18:38:09 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.26 2001/01/04 16:05:00 sunny Exp $ ####
