@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# $Id: logging,v 1.1.2.1 2003/03/06 02:15:40 sunny Exp $
+
+# FIXME: Den locken virker ikke, det allokeres en ny tty.
+
+lockname=$HOME/lock/`tty`
+echo lockname = "$lockname"
+
+until mkdir -p $lockname 2>/dev/null; do
+	echo $0: $lockname: Venter på lock... >&2
+	sleep 5
+done
+
+script $HOME/.scriptlogger/`u`.$$.scrlog
+date -Iseconds
+stty -a
