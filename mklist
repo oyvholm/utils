@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: mklist,v 1.2 1999/02/26 10:34:14 sunny Exp $
+# $Id: mklist,v 1.3 1999/04/30 02:39:05 sunny Exp $
 # Made by Øyvind A. Holm <sunny@tritech.no>
 
 use Fcntl ':flock';
@@ -16,7 +16,7 @@ my $sort_prog = "/bin/sort -k2";
 my $cvs_prog = "/usr/bin/cvs";
 my $sunny_uid = 502;
 my $sunny_gid = 502;
-my $cvs_root = "/home/sunny/cvsroot";
+my $cvs_root = "/home/sunny/af-cvsroot";
 # my $repository_name = "aftest-black"; # Sikkert ikke nødvendig.
 my $LogName = "sunny";
 
@@ -27,6 +27,8 @@ die(sprintf("$0: Unknown find(1) version: \"%s\"\n", `find --version`)) unless (
 
 # FIXME: Skal flock() brukes? Kommer seinere.
 die("$0: Lock file $lock_file exists\n") if (-e $lock_file);
+
+die("$0: $cvs_root: Directory not found. Run \"cvs -d $cvs_root init\"\n") unless (-d $cvs_root);
 
 open(LockFP, ">$lock_file") || die("$0: $lock_file: Can't open lock file: $!\n");
 flock(LockFP, LOCK_EX);
@@ -56,4 +58,4 @@ sub sec2str {
 	return($UtcTime);
 } # sec2str()
 
-#### End of file $Id: mklist,v 1.2 1999/02/26 10:34:14 sunny Exp $ ####
+#### End of file $Id: mklist,v 1.3 1999/04/30 02:39:05 sunny Exp $ ####
