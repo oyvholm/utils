@@ -9,7 +9,6 @@
 # ╚═════════════════════════════════════════════════════════════════════
 
 use strict;
-use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
