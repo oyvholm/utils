@@ -8,7 +8,7 @@
 use strict;
 require 'getopts.pl';
 
-my $map_file = "/home/sunny/src/cvs/ibm2ent/cp865.txt";
+my $map_file = "/home/sunny/src/svn/div/trunk/ibm2ent/cp865.txt";
 my %Table;
 
 $| = 1;
