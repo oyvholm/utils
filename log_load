@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# $Id: log_load,v 1.1 2003/10/01 21:12:50 sunny Exp $
+# Logger maskinload til ~/log/load.log
+
+logdir=$HOME/log
+
+[ -d $logdir ] || mkdir -p logdir || { echo "mkdir $logdir: På trynet" >&2, exit 1; }
+
+lockname=$logdir/load.log.LOCK
+
+until mkdir $lockname 2>/dev/null; do
+	echo $0: $lockname: Lockdir finnes, avbryter. >&2
+	exit 1
+done
+
+(echo -n "`$HOME/bin/u` "; cat /proc/loadavg) >>$logdir/load.log
+
+rmdir $lockname
