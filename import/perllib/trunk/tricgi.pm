@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $>
+S<$Id: tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -128,9 +128,9 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 ###########################################################################
 
 my $Tabs = "";
-my $cvs_date = '$Date: 1999/04/28 11:30:34 $';
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $';
-my $cvs_id = '$Id: tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $';
+my $rcs_date = '$Date: 1999/04/28 17:14:03 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $';
+my $rcs_id = '$Id: tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $';
 my $this_counter = "";
 
 my $FALSE = 0;
@@ -339,8 +339,8 @@ Content-type: text/html
 "http://www.w3.org/TR/REC-html40/strict.dtd">
 
 <html lang="no">
-	<!-- $cvs_id -->
-	<!-- ${main::cvs_id} -->
+	<!-- $rcs_id -->
+	<!-- ${main::rcs_id} -->
 	<head>
 		<title>$Title</title>
 		<style type="text/css">
@@ -643,8 +643,8 @@ sub print_footer {
 	}
 	$no_vh = $FALSE unless length($no_vh);
 	$no_end = $FALSE unless length($no_end);
-	my $cvs_str = ${main::cvs_date}; # FIXME: Er ikke nødvendigvis denne som skal brukes.
-	$cvs_str =~ s/ /&nbsp;/g;
+	my $rcs_str = ${main::rcs_date}; # FIXME: Er ikke nødvendigvis denne som skal brukes.
+	$rcs_str =~ s/ /&nbsp;/g;
 	my $vh_str = $no_vh ? "&nbsp;" : "<a href=\"http://validator.w3.org/check/referer;ss\"><img src=\"${main::GrafDir}/vh40.gif\" height=\"31\" width=\"88\" align=\"right\" border=\"0\" alt=\"Valid HTML 4.0!\"></a>";
 	my $count_str = length($this_counter) ? "Du er bes&oslash;kende nummer $this_counter p&aring; denne siden." : "&nbsp;";
 
@@ -667,7 +667,7 @@ sub print_footer {
 				</tr>
 				<tr>
 					<td align="center">
-						${main::FONTB}<small>$cvs_str</small>${main::FONTE}
+						${main::FONTB}<small>$rcs_str</small>${main::FONTE}
 					</td>
 				</tr>
 			</table>
@@ -805,8 +805,8 @@ END
 	print <<END;
 
 $html_str
-$DocId_str	<!-- ${main::cvs_id} -->
-	<!-- $cvs_id -->
+$DocId_str	<!-- ${main::rcs_id} -->
+	<!-- $rcs_id -->
 END
 	&Tabs(2); # html og head
 
@@ -931,4 +931,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.7 1999/04/28 17:14:03 sunny Exp $ ####
