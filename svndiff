@@ -14,9 +14,9 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_a, $opt_c, $opt_h) =
-    (     0,     "",      0);
-getopts('ac:h') || die("Option error. Use -h for help.\n");
+our ($opt_a, $opt_c, $opt_h, $opt_p) =
+    (     0,     "",      0,     "");
+getopts('ac:hp:') || die("Option error. Use -h for help.\n");
 
 # Change this to the default diff command to use
 my $Cmd = "vimdiff";
@@ -29,6 +29,7 @@ $progname =~ s#^(.*)/(.+?)$#$2#;
 $opt_h && usage(0);
 
 length($opt_c) && ($Cmd = $opt_c);
+length($opt_p) && ($Cmd .= " $opt_p");
 
 for my $Curr (@ARGV) {
     D("ARG = \"$Curr\"\n");
@@ -104,6 +105,7 @@ Options:
       subdirectories. Needs the svn command-line client.
 -c x  Use x as the diff command. Default: "$Cmd".
 -h    Show this help.
+-p x  Use x as parameters to the diff program.
 
 END
     exit($Retval);
