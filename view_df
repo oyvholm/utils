@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: view_df,v 1.4 2003/09/30 10:31:59 sunny Exp $
+# $Id: view_df,v 1.5 2003/10/02 00:53:19 sunny Exp $
 
 lfile=$HOME/log/df.log
 
@@ -18,4 +18,5 @@ else
 fi
 
 cd ~/log
+df -h $1 | grep $1 >~/log/data.title
 statplot
