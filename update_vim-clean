@@ -5,7 +5,7 @@
 
 vimclean=$HOME/src/other/vim/vim.clean
 
-[ -e /carmbb.mrk ] && { echo "Man er på carmbb, og her er det som kjent dårlig med nettkontakt. Synd, egentlig." >&2; exit 1; }
+# [ -e /carmbb.mrk ] && { echo "Man er på carmbb, og her er det som kjent dårlig med nettkontakt. Synd, egentlig." >&2; exit 1; }
 
 [ -d $vimclean ] || { echo "$vimclean: Katalogen finnes ikke. Dauer." >&2; exit 1; }
 
