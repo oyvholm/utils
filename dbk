@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+# Ny versjon av DBK-systemet.
+# $Id: dbk,v 1.1 1999/04/26 10:51:53 sunny Exp $
+
+$Debug = 1;
+
+print("\$#ARGV = $#ARGV\n") if $Debug;
+
+$curr_time = time;
+$dbk_dir = "$ENV{HOME}/dbk";
+$dbk_ext = ".dbk";
+
+($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime($curr_time);
+
+$Year += 1900;
+$Mon += 1;
+
+print("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, Wday = $Wday, Yday = $Yday, is_dst = $is_dst\n");
+
+$Year = $ARGV[2] if $#ARGV >= 2;
+$Mon = sprintf("%02u", $ARGV[1]) if $#ARGV >= 1;
+$Day = sprintf("%02u", $ARGV[0]) if $#ARGV >= 0;
+
+$Year += 1900 if ($Year < 100);
+$Mon =~ s/^(\d)$/0$1/; # To siffer i måneden
+$Day =~ s/^(\d)$/0$1/; # To siffer i datoen
+
+die("$0: $Day: Feil format på datoen\n") unless ($Day =~ /^\d\d$/);
+die("$0: $Mon: Feil format på måneden\n") unless ($Mon =~ /^\d\d$/);
+die("$0: $Year: Feil format på året\n") unless ($Year =~ /^\d\d\d\d$/);
+
+print("Etter ARGV: $Year-$Mon-$Day\n") if $Debug;
+print("dbk_dir = $dbk_dir\n") if $Debug;
+
+# Sjekk at alle directories er på plass
+
+$year_dir = "$dbk_dir/$Year";
+$dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
+unless (-d $dbk_dir) {
+	mkdir($dbk_dir, 0770) || die("$0: $dbk_dir: Kan ikke lage directoryen: $!\n");
+}
+unless (-d $year_dir) {
+	mkdir($year_dir, 0770) || die("$0: $year_dir: Kan ikke lage directoryen: $!\n");
+}
+
+print("\$dbk_file = $dbk_file\n") if $Debug;
+
+#### End of file $Id: dbk,v 1.1 1999/04/26 10:51:53 sunny Exp $ ####
