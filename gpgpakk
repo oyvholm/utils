@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# $Id: gpgpakk,v 1.1 2000/03/02 11:30:25 sunny Exp $
+
+guid=$1
+[ -z $guid ] && guid=sunny256
+gpg -r $guid -z9 -a -e
