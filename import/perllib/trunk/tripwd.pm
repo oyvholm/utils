@@ -6,7 +6,7 @@ tripwd - Passordrutiner
 
 =head1 REVISION
 
-S<$Id: tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $>
+S<$Id: tripwd.pm,v 1.4 1999/06/30 11:42:17 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -18,15 +18,10 @@ Inneholder diverse passordrutiner.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999 TriTech A/S E<lt>F<http://www.tritech.no>E<gt>
+(C)opyright 1999 Øyvind A. Holm E<lt>F<sunny@tritech.no>E<gt>
 
-Dette programmet er eiendom tilhørende TriTech A/S og skal
-I<IKKE UNDER NOEN OMSTENDIGHETER> kopieres videre til personer
-utenfor firmaet.
-
-This program is property of TriTech A/S and shall
-I<NOT UNDER ANY CIRCUMSTANCES> be copied to any person outside
-the company.
+Denne modulen er eiendom tilhørende Øyvind A. Holm. Dispensasjon for bruk
+er gitt til Tritech A/S E<lt>F<http://www.tritech.no>E<gt> inntil videre.
 
 =cut
 
@@ -36,9 +31,9 @@ require 5.003;
 #### Variabler
 ###########################################################################
 
-my $rcs_date = '$Date: 1999/04/29 11:59:09 $';
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $';
-my $rcs_id = '$Id: tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $';
+my $rcs_date = '$Date: 1999/06/30 11:42:17 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tripwd.pm,v 1.4 1999/06/30 11:42:17 sunny Exp $';
+my $rcs_id = '$Id: tripwd.pm,v 1.4 1999/06/30 11:42:17 sunny Exp $';
 
 my $FALSE = 0;
 my $TRUE = 1;
@@ -111,4 +106,4 @@ Rimelig spinkel foreløpig. Det kommer seg vel.
 
 1;
 
-#### End of file $Id: tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $ ####
+#### End of file $Id: tripwd.pm,v 1.4 1999/06/30 11:42:17 sunny Exp $ ####

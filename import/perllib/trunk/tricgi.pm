@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $>
+S<$Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -19,15 +19,10 @@ HTML-rutiner som brukes hele tiden.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999 TriTech A/S E<lt>F<http://www.tritech.no>E<gt>
+(C)opyright 1999 Øyvind A. Holm E<lt>F<sunny@tritech.no>E<gt>
 
-Dette programmet er eiendom tilhørende TriTech A/S og skal
-I<IKKE UNDER NOEN OMSTENDIGHETER> kopieres videre til personer
-utenfor firmaet.
-
-This program is property of TriTech A/S and shall
-I<NOT UNDER ANY CIRCUMSTANCES> be copied to any person outside
-the company.
+Denne modulen er eiendom tilhørende Øyvind A. Holm. Dispensasjon for bruk
+er gitt til Tritech A/S E<lt>F<http://www.tritech.no>E<gt> inntil videre.
 
 =cut
 
@@ -129,14 +124,14 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $';
-my $rcs_id = '$Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $';
-my $rcs_date = '$Date: 1999/04/30 13:13:42 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $';
+my $rcs_id = '$Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $';
+my $rcs_date = '$Date: 1999/06/30 11:42:17 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $ GD';
-my $cvs_id = '$Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $ GD';
-my $cvs_date = '$Date: 1999/04/30 13:13:42 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $ GD';
+my $cvs_id = '$Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $ GD';
+my $cvs_date = '$Date: 1999/06/30 11:42:17 $ GD';
 
 my $this_counter = "";
 
@@ -938,4 +933,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.10 1999/06/30 11:42:17 sunny Exp $ ####
