@@ -4,34 +4,36 @@
 # Kopierer CVSROOT fram og tilbake
 
 if [ ! -e /sunba.mrk ]; then
-	echo "Hva pokkern er det du roter med? Du vet godt at dette scriptet bare skal" >&2
-	echo "kjøres på sunba. Fjott." >&2
-	exit 1
+  echo "Hva pokkern er det du roter med? Du vet godt at dette scriptet bare skal" >&2
+  echo "kjøres på sunba. Fjott." >&2
+  exit 1
 fi
 
 if [ "$1" = "carmbb" -a "$2" = "sunba" ]; then
-	echo Kopierer CVSROOT fra carmbb til sunba. Simulerer først...
-	rsync -avnP --delete carmbb:/home/sunny/Cvs /home/sunny
-	rsync -avnP --delete carmbb:/home/sunny/Svn /home/sunny
-	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
-	read
-	ssh sunny@carmbb "echo \"\$(u) $*\" >>/home/sunny/Cvs/CARMBB_TIL_SUNBA"
-	rsync -avP --delete carmbb:/home/sunny/Cvs /home/sunny
-	rsync -avP --delete carmbb:/home/sunny/Svn /home/sunny
+  echo Kopierer CVSROOT fra carmbb til sunba. Simulerer først...
+  rsync -avnP --delete carmbb:/home/sunny/Cvs /home/sunny
+  rsync -avnP --delete carmbb:/home/sunny/Svn /home/sunny
+  echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
+  read
+  ssh sunny@carmbb "echo \"\$(u) $*\" >>/home/sunny/Cvs/CARMBB_TIL_SUNBA"
+  rsync -avP --delete carmbb:/home/sunny/Cvs /home/sunny
+  rsync -avP --delete carmbb:/home/sunny/Svn /home/sunny
 elif [ "$1" = "sunba" -a "$2" = "carmbb" ]; then
-	echo Kopierer CVSROOT fra sunba til carmbb. Simulerer først...
-	rsync -avnzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
-	rsync -avnP --delete /home/sunny/Cvs carmbb:/home/sunny
-	rsync -avnP --delete /home/sunny/Svn carmbb:/home/sunny
-	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
-	read
-	rsync -avzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
-	echo "$(u) $*" >>/home/sunny/Cvs/SUNBA_TIL_CARMBB
-	rsync -avzP --delete /home/sunny/Cvs carmbb:/home/sunny
-	rsync -avzP --delete /home/sunny/Svn carmbb:/home/sunny
+  echo Kopierer CVSROOT fra sunba til carmbb. Simulerer først...
+  rsync -avnzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
+  rsync -avnP --delete /home/sunny/Cvs carmbb:/home/sunny
+  rsync -avnP --delete /home/sunny/Svn carmbb:/home/sunny
+  echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
+  read
+  rsync -avzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
+  echo "$(u) $*" >>/home/sunny/Cvs/SUNBA_TIL_CARMBB
+  rsync -avzP --delete /home/sunny/Cvs carmbb:/home/sunny
+  rsync -avzP --delete /home/sunny/Svn carmbb:/home/sunny
 else
-	echo "Ukjente maskiner: \"$1\" \"$2\"" >&2
-	exit 1
+  echo "Ukjente maskiner: \"$1\" \"$2\"" >&2
+  exit 1
 fi
 
 exit 0
+
+# vim: set ts=2 sw=2 sts=2 expandtab fenc=utf8 :
