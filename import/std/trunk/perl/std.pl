@@ -17,6 +17,15 @@ use Getopt::Std;
 our ($opt_h) = (0);
 getopts('h') || die("Option error. Use -h for help.\n");
 
+my $VERSION = "0.0";
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
 $opt_h && usage(0);
 
 
@@ -25,8 +34,9 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
     print(<<END);
+$progname v$VERSION -- $id_date
 
-Usage:
+Usage: $progname
 
 END
     exit($Retval);
