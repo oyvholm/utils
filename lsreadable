@@ -1,0 +1,7 @@
+#!/db1/sunny256/bin/bash
+
+for f in `find $* -depth -type f 2>/dev/null`; do
+  if [ -r $f ]; then
+    ls -la --full $f
+  fi
+done
