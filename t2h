@@ -1,12 +1,12 @@
 #!/usr/bin/perl -w
 
-# $Id: t2h,v 1.1 2002/04/30 19:31:45 sunny Exp $
+# $Id: t2h,v 1.2 2002/05/08 11:20:34 sunny Exp $
 
 use strict;
 
 while (<>) {
 	s/&/&amp;/g;
 	s/</&lt;/g;
-	s/>/&gt/g;
+	s/>/&gt;/g;
 	print;
 }
