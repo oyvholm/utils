@@ -1,15 +1,29 @@
 #!/usr/bin/perl
 
-# Kommenterer ut linjer. Dødsavansert.
-# $Id: commout,v 1.4 1999/07/05 15:00:51 sunny Exp $
+# Kommenterer ut stdin.
+# $Id: commout,v 1.5 2000/03/18 02:50:05 sunny Exp $
 
 if ($#ARGV > -1) {
-	$comm_pattern = $ARGV[0];
+	if ($ARGV[0] =~ /^html$/i) {
+		$is_html = 1;
+	} else {
+		$comm_pattern = $ARGV[0];
+	}
 } else {
 	$comm_pattern = '#';
 }
 
+length($ARGV[1]) && ($spc_str = " ");
+
+$is_html && print("<!--$spc_str" . $ARGV[1] . "\n");
 while (<STDIN>) {
-	s/^(\t*)/$1$comm_pattern /;
+	$is_html || s/^(\t*)/$1$comm_pattern /;
 	print;
+	$Bck = $_;
 }
+
+$Bck =~ /\n$/ || print(" "); # Hvis stdin ikke slutta med newline, skrives en space.
+
+$is_html && print("-->\n");
+
+#### End of file $Id: commout,v 1.5 2000/03/18 02:50:05 sunny Exp $ ####
