@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: mincvs_vim,v 1.4 2004/04/11 00:13:53 sunny Exp $
+# $Id$
 
 vimdir=$HOME/src/other/vim
 vimlinks=$HOME/vim

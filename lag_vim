@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: lag_vim,v 1.5 2004/03/28 07:28:17 sunny Exp $
+# $Id$
 # Mekker ihop ny, fin Vim.
 
 update_vim-clean
