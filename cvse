@@ -14,7 +14,7 @@ use strict;
 use Getopt::Std;
 our ($opt_d, $opt_h, $opt_i, $opt_s, $opt_v) =
     (    "",      0,      0,      0,      0);
-getopts('d:hisv');
+getopts('d:hisv') || die("Option error. Use -h for help.\n");
 
 $| = 1;
 
