@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# $Id: pynt,v 1.4 2002/12/01 21:05:56 sunny Exp $
+# $Id: pynt,v 1.5 2002/12/02 09:38:22 sunny Exp $
 
 killall xplanetbg
-xplanetbg -projection ortho-xplanet -latitude 60.39494 -longitude 5.33016 -label &
+xplanetbg -projection ortho-xplanet -latitude 60.39494 -longitude 5.33016 &
 
 # Låst posisjon med Norge lurt plassert
 # xearth -nomarkers -bigstars 50 -shift "-275 -162" -sunpos "20 20" -mag 0.5 -once
