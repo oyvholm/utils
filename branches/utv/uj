@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: uj,v 1.1.2.3 2003/02/02 16:25:15 sunny Exp $
+# $Id: uj,v 1.1.2.4 2003/04/28 16:46:16 sunny Exp $
 # Gjentar editering av filer som inneholder ulovlig UTF-8
 
 use strict;
@@ -8,13 +8,21 @@ use strict;
 my @err_list = @ARGV;
 my @new_list = ();
 my $error_found = 0;
+my $Editor = "";
+
+if (defined($ENV{EDITOR})) {
+	$Editor = $ENV{EDITOR};
+} else {
+	warn("\$EDITOR er ikke definert, setter den til \"joe\"\n");
+	$Editor = "joe";
+}
 
 while (scalar(@err_list)) {
 	if (scalar(@new_list)) {
 		print("Ulovlige sekvenser ute og går. Gjelder ", join(" ", @new_list), "\nTrykk ENTER eller CTRL-C...");
 		getc(STDIN);
 	}
-	my $Cmd = join(" ", "joe", @err_list);
+	my $Cmd = join(" ", $Editor, @err_list);
 	# print("Kjører \"$Cmd\"\n");
 	system("$Cmd");
 	@new_list = ();
@@ -32,6 +40,7 @@ while (scalar(@err_list)) {
 }
 
 sub file_legal {
+	# {{{
 	my $File = shift;
 
 	# print("file_legal(\"$File\")\n");
@@ -52,9 +61,11 @@ sub file_legal {
 	my $Retval = !$error_found;
 	$error_found = 0;
 	return($Retval);
+	# }}}
 } # file_legal()
 
 sub decode_char {
+	# {{{
 	my $Msg = shift;
 	my $Val = "";
 	if ($Msg =~ /^([\xC0-\xDF])([\x80-\xBF])/) {
@@ -108,8 +119,9 @@ sub decode_char {
 	}
 	# print("error_found satt til \"$error_found\" i decode_char()\n");
 	# return ($error_found);
+	# }}}
 } # decode_char()
 
 __END__
 
-#### End of file $Id: uj,v 1.1.2.3 2003/02/02 16:25:15 sunny Exp $ ####
+# End of file $Id: uj,v 1.1.2.4 2003/04/28 16:46:16 sunny Exp $
