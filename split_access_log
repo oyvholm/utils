@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.8 2004/04/06 07:03:07 sunny Exp $
+# $Id: split_access_log,v 1.9 2004/04/07 03:42:53 sunny Exp $
 # Splitter opp access_log fra httpd(8) på dato. Legger delene som
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] .
 #
@@ -48,31 +48,46 @@ while (<>) {
 		$Fnavn = sprintf("%s/%04u/%s%04u-%02u-%02uZ%s", $Dir, $u_year, $Name, $u_year, $u_mon, $u_mday, $Ext);
 		if ($Fnavn ne $Last) {
 			if ($compress_file && -e $Last) {
-				print(STDERR "Kjører \"/bin/gzip -N $Last &\"\n");
-				system("/bin/gzip -N $Last &");
+				close(ToFP);
+				unless (-e "$Last.gz") {
+					print(STDERR "Kjører \"/bin/gzip -N $Last &\"\n");
+					system("/bin/gzip -N $Last &");
+				} else {
+					warn("$Last.gz: Fila eksisterer allerede, pakker ikke $Last . Må ordnes manuelt.\n");
+				}
 			}
-			print(STDERR "Ny fil: \"$Fnavn\"\n");
 			-d "$Dir/$u_year" || mkdir("$Dir/$u_year", 0777) || die("$0: mkdir(\"$Dir/$u_year\"): $!. R.I.P. & sånn.");
 			if (-e $Fnavn) {
-				die("\n$Fnavn: Fila finnes fra før.\nDet vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nMulig du må sortere fila. I alle tilfelle må $Fnavn slettes før jeg gjør noe som helst.\nEn annen mulighet er selvfølgelig å bruke \"-n\"- eller \"-e\"-parameteret.\nOg hva mer var det jeg skulle si... Jo, jeg dør visst. Heidå.\n");
-			}
-			if (-e "$Fnavn.gz") {
-				die("\n$Fnavn.gz: Det ligger en pakka versjon av fila her fra før.\nDet vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nMulig du må sortere fila. I alle tilfelle må $Fnavn.gz slettes før jeg gjør noe som helst.\nEn annen mulighet er selvfølgelig å bruke \"-n\"- eller \"-e\"-parameteret.\nOg hva mer var det jeg skulle si... Jo, jeg dør visst. Heidå.\n");
-			}
-			if (open(ToFP, ">$Fnavn")) {
-				seek(ToFP, 0, 2) || die("$Fnavn: seek() til slutten: $!");
+				warn("$Fnavn: Fila finnes fra før, skriver til \"$Fnavn.DUP\".\n");
+				my $op_pref = (-e "$Fnavn.DUP") ? ">>" : ">";
+				if (open(ToFP, "$op_pref$Fnavn.DUP")) {
+					seek(ToFP, 0, 2) || die("$Fnavn.DUP: seek() til slutten: $!");
+				} else {
+					die("$Fnavn.DUP: Åpning for skriving: $!");
+				}
 			} else {
-				die("$Fnavn: Åpning for skriving: $!");
+				print(STDERR "Ny fil: \"$Fnavn\"\n");
+				if (open(ToFP, ">$Fnavn")) {
+					seek(ToFP, 0, 2) || die("$Fnavn: seek() til slutten: $!");
+				} else {
+					die("$Fnavn: Åpning for skriving: $!");
+				}
 			}
 		}
-		print(ToFP $_) || die("Feil under skriving til $Fnavn: $!");
+		print(ToFP $_) || die("Feil under skriving til $Fnavn(.DUP): $!");
 	} else {
-		warn("Linje $.: Ukjent format: \"$_\"");
+		warn("Linje $.: Ukjent format, skriver til \"$Fnavn.ERR\".\n");
+		my $op_pref = (-e "$Fnavn.ERR") ? ">>" : ">";
+		if (open(ErrFP, "$op_pref$Fnavn.ERR")) {
+			seek(ErrFP, 0, 2) || die("$Fnavn.ERR: seek() til slutten: $!");
+		} else {
+			die("$Fnavn.ERR: Åpning for skriving: $!");
+		}
+		print(ErrFP $_) || die("Feil under skriving til $Fnavn.ERR: $!");
+		close(ErrFP);
 	}
 	$Last = $Fnavn;
 }
-
-close(ToFP);
 
 sub usage {
 	my $Retval = shift;
@@ -109,4 +124,4 @@ END
 
 __END__
 
-# End of file $Id: split_access_log,v 1.8 2004/04/06 07:03:07 sunny Exp $
+# End of file $Id: split_access_log,v 1.9 2004/04/07 03:42:53 sunny Exp $
