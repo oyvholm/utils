@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# $Id$
+# Forandrer eierskap te han sunny og setter sticky bit på katalogene så han
+# (jeg) fortsetter å eie dem. Beregnet på .svn-kataloger først og fremst.
+
+chown -Rc sunny.sunny $*
+find $* -type d | xargs chmod -c +s
