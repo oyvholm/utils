@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# $Id: afvctl,v 1.4 2001/06/13 22:19:58 sunny Exp $
+# Starter/stopper/viser status for alle afv'er
+
+currstop=$AFVROOT$(/bin/pwd)/stop
+
+case "$1" in
+	start)
+		echo -n Starter afv...
+		rm -f $currstop
+		retval=$?
+	;;
+	stop)
+		echo -n Stopper afv...
+		touch $currstop
+		sleep 5
+		rm $currstop
+		retval=$?
+	;;
+	startall)
+		echo -n Starter alle afv...
+		rm -f $AFVROOT/stop
+		retval=$?
+	;;
+	stopall)
+		echo -n Stopper afv...
+		touch $AFVROOT/stop
+		sleep 5
+		rm $AFVROOT/stop
+		retval=$?
+	;;
+	stat*)
+		ps auxw | grep afv | grep -v -e 'afvctl stat' -e 'grep afv' -e 'grep -v -e '
+		retval=$?
+		exit $retval;
+	;;
+	*)
+		echo
+		echo Syntax: $0 start\|stop\|status
+		echo
+		exit 1
+	;;
+esac
+
+if [ $retval = 0 ]; then
+	echo OK
+else
+	echo FEIL \($retval\)
+fi
+
+exit $retval
