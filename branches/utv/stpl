@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.1.2.8 2003/10/19 01:05:20 sunny Exp $
+# $Id: stpl,v 1.1.2.9 2003/10/20 04:08:41 sunny Exp $
 # Plot out data with gnuplot based on data type
 #
 # Character set: UTF-8
@@ -17,9 +17,9 @@ use Getopt::Std;
 
 our ($opt_h, $opt_k, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
     (     0,      0,     "",     "",     "",     "",     "");
-getopts('hko:s:t:y:');
+getopts('hko:s:t:x:y:');
 
-my $rcs_id = '$Id: stpl,v 1.1.2.8 2003/10/19 01:05:20 sunny Exp $';
+my $rcs_id = '$Id: stpl,v 1.1.2.9 2003/10/20 04:08:41 sunny Exp $';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
@@ -87,10 +87,10 @@ END
 			if ($opt_x =~ /^r(.*)/) {
 				# X range specified {{{
 				my $Range = $1;
-				if ($opt_x =~ /^r([\d\-]+:[\d\-]+)$/) {
+				if ($opt_x =~ /^r(.+:.+)$/) {
 					print(GnupFP "set xrange [$1]\n");
 				} else {
-					warn("\"$Range\": Invalid X range specified, ignoring it\n");
+ 					die("\"$Range\": Invalid X range specified\n");
 				}
 				# }}}
 			}
@@ -99,7 +99,7 @@ END
 			if ($opt_y =~ /^r(.*)/) {
 				# Y range specified {{{
 				my $Range = $1;
-				if ($opt_y =~ /^r([\d\-]+:[\d\-]+)$/) {
+				if ($opt_y =~ /^r(.+:.+)$/) {
 					print(GnupFP "set yrange [$1]\n");
 				} else {
 					die("\"$Range\": Invalid Y range specified\n");
@@ -143,10 +143,11 @@ END
 			print(GnupFP "set title \"$opt_t\"\n");
 		}
 
-		while (<>) {
-			if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d)T(\d\d):(\d\d):(\d\d)\s+(\d+)/) {
-			}
-		}
+		# For framtidig bruk.
+		# while (<>) {
+			# if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d)T(\d\d):(\d\d):(\d\d)\s+(\d+)/) {
+			# }
+		# }
 
 		print(GnupFP <<END);
 plot \\
@@ -176,4 +177,4 @@ END
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.1.2.8 2003/10/19 01:05:20 sunny Exp $
+# End of file $Id: stpl,v 1.1.2.9 2003/10/20 04:08:41 sunny Exp $
