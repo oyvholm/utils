@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Formatterer HTML-source med TAB’er
+# Formatterer HTML-source med mellomrom eller tabulator.
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
 # Lisens: GNU GPL
@@ -15,9 +15,11 @@
 use strict;
 use Getopt::Std;
 
-our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i, $opt_s, $opt_w) =
-    (     0,      0,      0,      0,      0,      0,      0);
-getopts('aEhHi:sw');
+my $STD_SPACE = 2;
+
+our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i,     $opt_n, $opt_s, $opt_t, $opt_w) =
+    (     0,      0,      0,      0,      0, $STD_SPACE,      0,      0,      0);
+getopts('aEhHi:n:stw');
 
 my $is_pre = 0;
 my $prog_name = $0;
@@ -28,6 +30,8 @@ print_help() if ($main::opt_h);
 $| = 1;
 
 my $Tabs = "";
+my $Spaces = " " x $opt_n;
+$opt_t || ($opt_a = 1);
 my $tab_indent = $main::opt_i;
 my $orig_line = "";
 my @Elements = (
@@ -48,6 +52,7 @@ my $header_indent = "";
 
 LINE: while (<>) {
     # {{{
+    chomp;
     my $Line = $_;
     my $Element = "";
     my $f = "";
@@ -75,7 +80,9 @@ LINE: while (<>) {
         }
         $out_line = "$header_indent$Tabs$Line";
         $opt_w && $out_line =~ s/[ \t]+$//g; # Fjern alle whitespace på slutten
-        print($out_line);
+        $opt_t || ($out_line =~ s/\t/$Spaces/g); # Hvis -t i̲k̲k̲e̲ er spesifisert, vil vi ikke ha TAB’er og de skal dermed erstattes med space.
+        $out_line =~ s/^[ \t]+$//; # Linjer som bare har whitespace tømmer vi. Det er mest sannsynlig et resultat av indentinga.
+        print("$out_line\n");
         unless ($opt_E) {
             for $f (@Elements) {
                 if ($Line =~ m!<($f)([ >])!i) {
@@ -89,7 +96,7 @@ LINE: while (<>) {
             }
         }
     } else {
-        print;
+        print("$_\n");
     }
     $is_pre = 1 if ($Line =~ /<(pre|script|style|rdf:RDF)\b.*>/i);
     $is_pre = 0 if ($Line =~ m!</(pre|script|style|rdf:RDF)>!i);
@@ -104,14 +111,19 @@ HTML formatter
 Syntax: $0 [valg] [filer [...]]
 
 Options:
-  -a    Fjern space i begynnelsen av linja også før indenting.
+  -a    Fjern space i begynnelsen av linja også før indenting. Funker 
+        bare sammen med «-t»-parameteret. Utenom det er den bestandig 
+        på, det vil si at alle spacer skvises.
   -h    Vis denne hjelpen
   -H    Legg til en TAB for hver <h1>, <h2>, <h3> osv for å lettere se 
         strukturen i dokumentet.
   -i n  Start med n TAB’er som indent
+  -n x  Bruk x spacer som indent. Standard verdi er $STD_SPACE. 
+        Ignoreres hvis «-t»-parameteret brukes.
   -w    Fjern whitespace på slutten av linjene
   -s    Dropp linjer som her en % i starten. Det er datafilene på 
         www.sunbase.org som er sånn.
+  -t    Sett inn TAB istedenfor space, akkurat som i gamle dager.
 
 END
     exit(0);
