@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: oggname,v 1.2 2004/03/22 16:12:37 sunny Exp $
+# $Id$
 # Skifter navn på musikkfiler til sånn som jeg liker det:
 # Bandnavn_-_Platetittel_-_Sangnummer_-_Sangtittel.ext
 

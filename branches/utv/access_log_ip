@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=========================================================
-# $Id: access_log_ip,v 1.3 2001/11/07 07:30:08 sunny Exp $
+# $Id$
 # Lister ut unike IP'er i access_log
 #=========================================================
 
@@ -62,4 +62,4 @@ sub ipname {
 # 62.113.158.67 - - [18/Oct/2001:08:26:46 +0200] "GET / HTTP/1.1" 200 5144 "-" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT)"
 # 62.113.158.68 - - [18/Oct/2001:08:26:49 +0200] "POST / HTTP/1.1" 200 16747 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"
 
-#### End of file $Id: access_log_ip,v 1.3 2001/11/07 07:30:08 sunny Exp $ ####
+#### End of file $Id$ ####

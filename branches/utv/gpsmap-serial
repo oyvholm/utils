@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gpsmap-serial,v 1.1.2.2 2003/01/06 15:18:38 sunny Exp $
+# $Id$
 # Skriver ut seriellformatet fra Garmin-GPS'en på leselig format.
 
 use strict;

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: bigsh,v 1.9 2004/03/22 15:09:13 sunny Exp $
+# $Id$
 # Fyrer opp en stor xterm i X
 
 smallfont=1

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: getpic,v 1.2 1999/09/06 02:52:10 sunny Exp $
+# $Id$
 # (C)opyleft 1998 Oyvind A. Solheim <sunny@pils.kvarteret.uib.no>
 # License: GNU GPL
 
@@ -77,4 +77,4 @@ sub Utc {
 	return $UtcTime;
 }
 
-#### End of file $Id: getpic,v 1.2 1999/09/06 02:52:10 sunny Exp $ ####
+#### End of file $Id$ ####

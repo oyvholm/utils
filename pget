@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Henter en webside. Kort og grei.
-# $Id: pget,v 1.3 2002/05/03 00:36:15 sunny Exp $
+# $Id$
 
 url=$1
 shift

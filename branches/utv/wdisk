@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: wdisk,v 1.1 2000/11/07 13:28:06 sunny Exp $
+# $Id$
 # Overwrites fre space on a disk.
 # Should be run as root to overwrite super-user reserved space.
 

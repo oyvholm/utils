@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: ep_day,v 1.5 2004/02/14 20:42:52 sunny Exp $
+# $Id$
 # Samler en masse tidspunkter i epoch-format på for eksempel samme dag eller
 # hver time. Forventer antall sekunder siden 19700101T000000Z først på linja.
 #==============================================================================
@@ -90,4 +90,4 @@ END
 	# }}}
 }
 
-# End of file $Id: ep_day,v 1.5 2004/02/14 20:42:52 sunny Exp $
+# End of file $Id$

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: pine,v 1.8 2004/03/30 06:26:05 sunny Exp $
+# $Id$
 # Locking for pine
 
 lockdir=$HOME/lock

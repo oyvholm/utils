@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cdlabel,v 1.4 2003/09/12 18:52:23 sunny Exp $
+# $Id$
 # Skriver ut volume label på CDROM’en som står i.
 
 device=/dev/cdrom

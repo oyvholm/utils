@@ -1,5 +1,5 @@
 
-# $Id: latin1-mode,v 1.1 2004/01/21 19:45:17 sunny Exp $
+# $Id$
 
 encoding iso-8859-1 utf-8
 echo "Skifta til ISO-8859-1."

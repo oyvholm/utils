@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: rensk,v 1.2 1999/09/06 02:42:16 sunny Exp $
+# $Id$
 
 _tmpfile=/tmp/rensk.$RANDOM.tmp
 find . -type d | sort >$_tmpfile

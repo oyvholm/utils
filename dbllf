@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #==================================================
-# $Id: dbllf,v 1.2 2004/04/19 12:55:08 sunny Exp $
+# $Id$
 # Dobler LF så enkelte ting blir mer oversiktlig
 #==================================================
 
@@ -16,4 +16,4 @@ while (<>) {
 
 __END__
 
-# End of file $Id: dbllf,v 1.2 2004/04/19 12:55:08 sunny Exp $
+# End of file $Id$

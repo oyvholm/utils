@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: dumptrack,v 1.5 2003/07/22 01:24:54 sunny Exp $
+# $Id$
 # Dumper rådata fra GPS’en.
 
 dir=/home/sunny/src/dbk/gps/tracks/raw/`date +%Y/%m`

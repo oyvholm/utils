@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: mkFiles,v 1.1.2.1 2004/01/07 04:02:26 sunny Exp $
+# $Id$
 # Lager Files.md5 i current dir.
 
 lockname=mkFiles.lock

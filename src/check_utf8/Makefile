@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-# $Id: Makefile,v 1.1 2003/08/02 19:36:58 sunny Exp $
+# $Id$
 
 CC = gcc
 EXEC = check_utf8

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: sommer,v 1.1 1999/03/24 17:56:16 sunny Exp $
+# $Id$
 # Syntax: $0 år måned dag time min sek
 # Finner ut om datoen (norsk tid) er sommertid.
 # Returnerer 0 hvis vintertid, 1 hvis sommertid.
@@ -27,4 +27,4 @@ printf("%04u-%02u-%02u %02u:%02u:%02u : %stid (GMT+%02u00)\n", $Year, $Mon, $Day
 
 exit $Sommer;
 
-#### End of file $Id: sommer,v 1.1 1999/03/24 17:56:16 sunny Exp $ ####
+#### End of file $Id$ ####

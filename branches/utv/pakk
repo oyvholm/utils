@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: pakk,v 1.2 1999/06/30 13:49:18 sunny Exp $
+# $Id$
 
 if [ "x$1" = "x" ]; then
 	PACKNAME='-'

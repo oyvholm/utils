@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: rmspc,v 1.1 1999/04/28 14:31:00 sunny Exp $
+# $Id$
 # Latskapen lenge leve.
 
 rmspcbak $*

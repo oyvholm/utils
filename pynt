@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: pynt,v 1.6 2002/12/10 15:33:55 sunny Exp $
+# $Id$
 
 killall xplanetbg
 xplanetbg -projection ortho-xplanet -latitude 60.39494 -longitude 5.33016 $* &

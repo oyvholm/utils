@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Konverterer mellom 8-bits og entities i pod
-# $Id: perlentity,v 1.1 1999/05/28 18:06:56 sunny Exp $
+# $Id$
 
 print(STDERR "\n$0 er ikke ferdig enda.\n\n");
 exit;

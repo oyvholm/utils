@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: todos,v 1.1 1999/10/21 21:32:09 sunny Exp $
+# $Id$
 # Konverterer fra UNIX til DOS
 
 while (<>) {

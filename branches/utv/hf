@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #========================================================================
-# $Id: hf,v 1.10.2.8 2004/02/10 16:11:53 sunny Exp $
+# $Id$
 # Formatterer HTML-source med TAB’er
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
@@ -112,4 +112,4 @@ END
 	# }}}
 }
 
-# End of file $Id: hf,v 1.10.2.8 2004/02/10 16:11:53 sunny Exp $
+# End of file $Id$

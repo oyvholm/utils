@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: outl,v 1.1 2000/11/16 09:09:03 sunny Exp $
+# $Id$
 # Lager en outline over HTML-dokumenter.
 
 use strict;

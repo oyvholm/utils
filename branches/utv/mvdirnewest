@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: mvdirnewest,v 1.4.2.2 2004/04/19 13:11:13 sunny Exp $
+# $Id$
 #
 # Syntax: $0 directory|fil [...]
 # Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.
@@ -130,4 +130,4 @@ sub date2str {
 	return(sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]));
 } # date2str()
 
-# End of file $Id: mvdirnewest,v 1.4.2.2 2004/04/19 13:11:13 sunny Exp $
+# End of file $Id$

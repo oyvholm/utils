@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #==============================================================================
-# $Id: u2h,v 1.8 2003/10/04 18:08:54 sunny Exp $
+# $Id$
 # Converts from UTF-8 charset to HTML numeric entities (&#x263A; and &#9786;).
 #
 # Options:

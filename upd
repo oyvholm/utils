@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: upd,v 1.8 2003/03/01 09:33:42 sunny Exp $
+# $Id$
 # Lister ut alle directoryene og sorterer dem etter størrelse
 
 DUFILE=du.dat

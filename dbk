@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: dbk,v 1.17 2004/03/18 17:20:21 sunny Exp $
+# $Id$
 # Ny versjon av DBK-systemet.
 #
 # GPL-lisens. Åff cåårs.
@@ -338,4 +338,4 @@ sub widechar {
 
 __END__
 
-#### End of file $Id: dbk,v 1.17 2004/03/18 17:20:21 sunny Exp $ ####
+#### End of file $Id$ ####

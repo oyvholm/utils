@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: extract_mail,v 1.1.2.2 2002/03/16 20:34:38 sunny Exp $
+# $Id$
 # Extracts messages from a mailbox into separate files
 # ©opyleft 2002 Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -112,4 +112,4 @@ sub D {
 	print(STDERR @_);
 }
 
-#### End of file $Id: extract_mail,v 1.1.2.2 2002/03/16 20:34:38 sunny Exp $ ####
+#### End of file $Id$ ####

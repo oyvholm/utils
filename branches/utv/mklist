@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: mklist,v 1.5 1999/09/29 01:25:52 sunny Exp $
+# $Id$
 # Made by Øyvind A. Holm <sunny@dataguard.no>
 
 use Fcntl ':flock';
@@ -60,4 +60,4 @@ sub sec2str {
 	return($UtcTime);
 } # sec2str()
 
-#### End of file $Id: mklist,v 1.5 1999/09/29 01:25:52 sunny Exp $ ####
+#### End of file $Id$ ####

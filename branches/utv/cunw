@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cunw,v 1.8 2001/04/24 14:27:56 sunny Exp $
+# $Id$
 # Lister ut alle filer som ikke er registrert i CVS (Cvs-UNWanted)
 
 # BUGS: Avhengig av utskriftsformatet til cvs(1)

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: log_load,v 1.5 2004/03/28 06:47:11 sunny Exp $
+# $Id$
 # Logger maskinload til ~/log/load/ÅÅÅÅ/ÅÅÅÅ-MM-DD.load.log
 
 logdir=$HOME/log

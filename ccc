@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: ccc,v 1.2 1999/04/06 14:45:55 sunny Exp $
+# $Id$
 # Mer oversiktlig cvs stat
 
 open(FP, "cvs -n stat 2>/dev/null |");
@@ -28,4 +28,4 @@ while (<FP>) {
 	}
 }
 
-#### End of file $Id: ccc,v 1.2 1999/04/06 14:45:55 sunny Exp $ ####
+#### End of file $Id$ ####

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #========================================================
-# $Id: lsreadable,v 1.6 2004/03/23 22:35:27 sunny Exp $
+# $Id$
 # Leser filnavn fra stdin eller en fil og skriver ut alle
 # som er lesbar. Hvis -u spesifiseres, listes alle som
 # IKKE er leselige. Hvis -w skrives, listes alle

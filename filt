@@ -1,6 +1,6 @@
 #/bin/bash
 
-# $Id: filt,v 1.1 2003/07/08 00:06:14 sunny Exp $
+# $Id$
 
 cat $2 | $1 >filt.tmp
 mv filt.tmp $2

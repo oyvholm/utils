@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: uj,v 1.1.2.4 2003/04/28 16:46:16 sunny Exp $
+# $Id$
 # Gjentar editering av filer som inneholder ulovlig UTF-8
 
 use strict;
@@ -124,4 +124,4 @@ sub decode_char {
 
 __END__
 
-# End of file $Id: uj,v 1.1.2.4 2003/04/28 16:46:16 sunny Exp $
+# End of file $Id$

@@ -1,13 +1,13 @@
 
 /*
- * $Id: kbd.c,v 1.1 2001/10/12 23:01:49 sunny Exp $
+ * $Id$
  * Setuid program som setter til min type tastaturhastighet.
  * Store ting.
  */
 
 #include <stdlib.h>
 
-static char rcs_id[] = "$Id: kbd.c,v 1.1 2001/10/12 23:01:49 sunny Exp $";
+static char rcs_id[] = "$Id$";
 
 int main(void) {
 	setenv("IFS", "", 1);

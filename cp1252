@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cp1252,v 1.2 2003/07/07 03:08:06 sunny Exp $
+# $Id$
 # Konverterer cp1252 til UTF-8. Et resultat av latskap.
 
 iconv -f cp1252 -t utf-8 $*

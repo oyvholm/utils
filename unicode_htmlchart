@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: unicode_htmlchart,v 1.2 2003/10/08 15:08:10 sunny Exp $
+# $Id$
 # Skriv ut en dunge med Unicode-entities. For browsertest.
 
 use strict;

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: cvsvimdiff,v 1.1 2003/04/24 19:09:03 sunny Exp $
+# $Id$
 
 # Må gjøre det på den krøkkete måten her pga at vimdiff ikke klarer å
 # lese fifo’en i enkelte situasjoner av en eller annen grunn.

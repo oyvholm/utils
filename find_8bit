@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: find_8bit,v 1.1 2001/12/09 18:37:25 sunny Exp $
+# $Id$
 # Lister ut linjer med 8-bits tegn
 
 while (<>) {

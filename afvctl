@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: afvctl,v 1.5 2004/04/14 16:33:30 sunny Exp $
+# $Id$
 # Starter/stopper/viser status for alle afv’er
 # FIXME: Dette skulle egentlig vært integrert i afv(1).
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: afv_move,v 1.6.2.1 2004/04/15 13:33:03 sunny Exp $
+# $Id$
 # Reads file names from stdin or files and places them into a
 # directory structure based on a date in the file name or the
 # modifcation time.
@@ -26,7 +26,7 @@ getopts('cd:hlLmo:iOsSv') || die("Option error. Use -h for help.\n");
 
 $| = 1;
 
-my $rcs_id = '$Id: afv_move,v 1.6.2.1 2004/04/15 13:33:03 sunny Exp $';
+my $rcs_id = '$Id$';
 my $DEFAULT_DIR = "%Y/%m/%d";
 
 $opt_h && usage(0);
@@ -258,4 +258,4 @@ END
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: afv_move,v 1.6.2.1 2004/04/15 13:33:03 sunny Exp $
+# End of file $Id$

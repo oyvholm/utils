@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: kode,v 1.1 2000/05/08 08:58:10 sunny Exp $
+# $Id$
 # Setter skjermfont til uleselig.
 
 [ "$1" -eq "1" ] && echo -n '[12m'

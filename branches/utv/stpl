@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.1.2.11 2004/03/15 08:05:31 sunny Exp $
+# $Id$
 # Plot out data with gnuplot based on data type
 #
 # Character set: UTF-8
@@ -19,7 +19,7 @@ our ($opt_h, $opt_k, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
     (     0,      0,     "",     "",     "",     "",     "",     "");
 getopts('hkl:o:s:t:x:y:');
 
-my $rcs_id = '$Id: stpl,v 1.1.2.11 2004/03/15 08:05:31 sunny Exp $';
+my $rcs_id = '$Id$';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
@@ -188,4 +188,4 @@ END
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.1.2.11 2004/03/15 08:05:31 sunny Exp $
+# End of file $Id$

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.11 2004/04/07 15:06:50 sunny Exp $
+# $Id$
 # Splitter opp access_log fra httpd(8) på dato. Legger delene som
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] .
 #
@@ -127,4 +127,4 @@ END
 
 __END__
 
-# End of file $Id: split_access_log,v 1.11 2004/04/07 15:06:50 sunny Exp $
+# End of file $Id$

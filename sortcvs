@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: sortcvs,v 1.2 2002/10/10 06:43:54 sunny Exp $
+# $Id$
 # Sorts the output from "cvs log" into chronological order.
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 #==============================================================================

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_log,v 1.1 2004/04/12 07:38:33 sunny Exp $
+# $Id$
 # Splitter opp filer med filer som begynner med sekunder sia 1970 eller
 # en dato på ISO 8601-format. Legger delene som
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] . Bruker bare verdier med 9 eller
@@ -136,4 +136,4 @@ END
 
 __END__
 
-# End of file $Id: split_log,v 1.1 2004/04/12 07:38:33 sunny Exp $
+# End of file $Id$

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #==================================================
-# $Id: impnet,v 1.4 2003/04/29 14:00:02 sunny Exp $
+# $Id$
 # Legger en website inn i Cvs/imp-net .
 # Syntax: impnet [webnavn] [dato]
 #==================================================

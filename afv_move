@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: afv_move,v 1.6 2004/04/15 07:48:13 sunny Exp $
+# $Id$
 # Reads file names from stdin or files and places them into a
 # directory structure based on a date in the file name or the
 # modifcation time.
@@ -170,4 +170,4 @@ LOOP: while (<>) {
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: afv_move,v 1.6 2004/04/15 07:48:13 sunny Exp $
+# End of file $Id$

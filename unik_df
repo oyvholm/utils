@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: unik_df,v 1.1 2003/09/30 05:00:28 sunny Exp $
+# $Id$
 # Filtrerer bort duplikater i ~/log/df.log .
 # Character set: UTF-8
 # License: GNU General Public License
@@ -27,4 +27,4 @@ while (<>) {
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: unik_df,v 1.1 2003/09/30 05:00:28 sunny Exp $
+# End of file $Id$

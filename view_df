@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: view_df,v 1.7 2003/10/07 23:34:34 sunny Exp $
+# $Id$
 
 lfile=$HOME/log/df.log
 

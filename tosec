@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===========================================================================
-# $Id: tosec,v 1.2 2001/09/25 05:51:25 sunny Exp $
+# $Id$
 # Mottar datoer på kommandolinja og konverterer dem til sekunder siden 1970.
 # Format: ååååmmddTttmmss med valgfri Z på slutten for GMT
 #===========================================================================

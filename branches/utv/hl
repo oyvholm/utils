@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: hl,v 1.1 2000/05/08 08:58:10 sunny Exp $
+# $Id$
 # Som logg(1), men setter fonten til uleselig til ære for andre folk
 # i nærheten.
 

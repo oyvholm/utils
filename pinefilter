@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # ╔══════════════════════════════════════════════════════════════
-# ║ $Id: pinefilter,v 1.6 2004/01/24 04:57:54 sunny Exp $
+# ║ $Id$
 # ║ pine(1) har ikke helt støtte for UTF-8 enda, så meldingene
 # ║ filteres gjennom dette scriptet før visning.
 # ╚══════════════════════════════════════════════════════════════

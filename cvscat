@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: cvscat,v 1.3 2003/12/20 11:09:18 sunny Exp $
+# $Id$
 
 if [ $# -le 1 ]; then
 	cat <<END

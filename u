@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: u,v 1.2 2003/06/30 11:02:09 sunny Exp $
+# $Id$
 
 if [ "$1" = "-L" ]; then
 	date -u +"%Y-%m-%d %H:%M:%SZ" | tr -d '\n'

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: log_df,v 1.8 2004/03/28 06:47:11 sunny Exp $
+# $Id$
 
 logdir=$HOME/log
 

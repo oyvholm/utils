@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: tab,v 1.1 1999/02/10 02:15:56 sunny Exp $
+# $Id$
 
 $Tabs = $ARGV[0] ? $ARGV[0] : 1;
 
@@ -10,4 +10,4 @@ while (<STDIN>) {
 	print "$_";
 }
 
-#### End of file $Id: tab,v 1.1 1999/02/10 02:15:56 sunny Exp $ ####
+#### End of file $Id$ ####

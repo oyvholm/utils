@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: gpgpakk,v 1.4 2002/02/12 03:57:25 sunny Exp $
+# $Id$
 
 guid=$1
 [ -z "$guid" ] && guid="-r sunny@sunbase.org"

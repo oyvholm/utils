@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: icat,v 1.1 1999/04/23 22:02:15 sunny Exp $
+# $Id$
 # Konverterer fra IBMPC-tegnsett til latin1.
 # Trenger programmene ibm2ent og entity.
 

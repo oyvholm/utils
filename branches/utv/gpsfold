@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gpsfold,v 1.1.2.6 2003/07/17 19:10:08 sunny Exp $
+# $Id$
 # Inserts fold marks in GPS data files before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 
@@ -63,4 +63,4 @@ for (@Data) {
 	print $_;
 }
 
-# End of file $Id: gpsfold,v 1.1.2.6 2003/07/17 19:10:08 sunny Exp $
+# End of file $Id$

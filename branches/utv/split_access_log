@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.5 2002/01/05 04:00:22 sunny Exp $
+# $Id$
 # Splitter opp access_log fra httpd(8) på dato. Legger filene i $Dir .
 # Options:
 #   -z  Pakker filene etter de er laget.
@@ -67,4 +67,4 @@ foreach (@fnavn_array) {
 	}
 }
 
-#### End of file $Id: split_access_log,v 1.5 2002/01/05 04:00:22 sunny Exp $ ####
+#### End of file $Id$ ####

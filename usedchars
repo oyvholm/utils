@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: usedchars,v 1.1 2001/10/16 01:15:00 sunny Exp $
+# $Id$
 # Lister ut tegn som er brukt i en fil. Bruker HTML-entities
 # for enkelhets skyld. Kjør gjennom "h2u -l" eller recode(1).
 

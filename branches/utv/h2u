@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #==============================================================================
-# $Id: h2u,v 1.2.2.4 2002/11/20 00:51:06 sunny Exp $
+# $Id$
 # Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to UTF-8.
 #
 # Options:

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: myf,v 1.2 1999/06/01 15:12:20 sunny Exp $
+# $Id$
 # Nå er jeg lei av mankoen på skikkelig datoformat.
 
 find $* -printf "%TY-%Tm-%Td %TH:%TM:%TS\t%6s\t%U.%G\t%p\n"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #===================================================
-# $Id: wdiff,v 1.2 2001/11/28 08:47:34 sunny Exp $
+# $Id$
 # diff beregnet for tekst som wrapper i hytt og pine
 #===================================================
 

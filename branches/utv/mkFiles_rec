@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: mkFiles_rec,v 1.1.2.1 2003/10/07 04:59:28 sunny Exp $
+# $Id$
 # Recursive mkFiles
 
 if [ "$1" = "-c" ]; then

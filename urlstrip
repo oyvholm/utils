@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: urlstrip,v 1.1 2002/10/01 12:36:53 sunny Exp $
+# $Id$
 # Plukker ut urler fra en fil til bruk for sjekking av linker med wget --spider
 #==============================================================================
 

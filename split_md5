@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: split_md5,v 1.1 2001/11/28 09:10:24 sunny Exp $
+# $Id$
 # Setter inn punktumer i MD5'er, gjør det mer leselig.
 
 use strict;

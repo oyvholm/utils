@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: rmheadtail,v 1.2 2003/10/30 16:55:39 sunny Exp $
+# $Id$
 # Removes first and last line from stdin or specified files
 #
 # Character set: UTF-8
@@ -26,4 +26,4 @@ if (scalar(@Data) > 2) {
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: rmheadtail,v 1.2 2003/10/30 16:55:39 sunny Exp $
+# End of file $Id$

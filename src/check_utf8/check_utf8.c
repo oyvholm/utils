@@ -1,6 +1,6 @@
 
 /*
- * $Id: check_utf8.c,v 1.2 2003/08/02 23:45:21 sunny Exp $
+ * $Id$
  * Small tool to figure whenever a tty runs in UTF-8 mode or not.
  * Writes a UTF-8 multibyte sequence and then checks how far the
  * cursor has been moved.
@@ -21,7 +21,7 @@
 #include <fcntl.h>
 #include <termios.h>
 
-static char rcs_id[] = "$Id: check_utf8.c,v 1.2 2003/08/02 23:45:21 sunny Exp $";
+static char rcs_id[] = "$Id$";
 
 struct termios  saved_attributes;
 int             saved_fl;

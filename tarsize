@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: tarsize,v 1.1 1999/04/21 13:06:44 sunny Exp $
+# $Id$
 # Viser størrelsen på en tar-fil av en directory.
 
 if [ $# -eq 0 ]; then

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: ww-backup,v 1.1 2001/02/26 19:42:12 sunny Exp $
+# $Id$
 # Tar backup av greier fra ww-maskinen. Lager fil i current dir.
 
 [ -e /sunba.mrk ] || { echo $0: Skal kjøres på sunba. >&2; exit 1; }

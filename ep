@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #==========================================================================
-# $Id: ep,v 1.5 2004/04/11 20:40:03 sunny Exp $
+# $Id$
 #
 # Konverterer tekststrenger som ser ut som antall sekunder siden
 # 1970-01-01 00:00:00 GMT om til leselig datoformat. Konverterer alle tall
@@ -64,4 +64,4 @@ if ($opt_l) {
 	}
 }
 
-# End of file $Id: ep,v 1.5 2004/04/11 20:40:03 sunny Exp $
+# End of file $Id$

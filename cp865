@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cp865,v 1.2 2003/09/30 00:15:39 sunny Exp $
+# $Id$
 # Konverterer cp865 til UTF-8. Latskap.
 
 iconv -f cp865 -t utf-8 $*

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: pri,v 1.4 2004/01/11 17:30:33 sunny Exp $
+# $Id$
 
 pri_dir=~sunny/etc
 

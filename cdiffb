@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cdiffb,v 1.2 2003/06/30 12:11:47 sunny Exp $
+# $Id$
 # Latskapen lenge leve.
 
 cvs -n diff -ub $* 2>/dev/null | less -S

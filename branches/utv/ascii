@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Avansert esse
-# $Id: ascii,v 1.1 1999/05/19 03:49:44 sunny Exp $
+# $Id$
 
 for (32..255) {
 	printf("%03u 0x%02x %c\n", $_, $_, $_);

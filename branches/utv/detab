@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: detab,v 1.2 1999/02/14 00:53:50 sunny Exp $
+# $Id$
 # Fjerner x antall TAB'er i begynnelsen av her linje.
 
 $Tabs = $ARGV[0] ? $ARGV[0] : 1;
@@ -13,4 +13,4 @@ while (<STDIN>) {
 	print "$Linje";
 }
 
-#### End of file $Id: detab,v 1.2 1999/02/14 00:53:50 sunny Exp $ ####
+#### End of file $Id$ ####

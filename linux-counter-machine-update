@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 $VERSION = "0.17";
-$CVS_VERSION = '$Revision: 1.17 $ $Date: 2001/08/31 23:00:55 $ $Author: hta $';
+$CVS_VERSION = '$Revision: 1.17 $ $Date$ $Author: hta $';
 
 #
 # Get a machine's critical features, And mail them to the Linux Counter
