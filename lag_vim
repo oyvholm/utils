@@ -19,8 +19,8 @@ if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk ]; then
 	[ -e $HOME/.vagabond.mrk ] && vim_size=normal
 else
 	vimdir=/usr/local/prg/vim
-	if [ -e /ba0614-woody.mrk ]; then
-		echo ======== Er på ba0614, lag feita Vim med X og gode greia
+	if [ -e /ba0614-woody.mrk -o -e /carmbb.mrk ]; then
+		echo ======== Er på ba0614 eller carmbb, lag feita Vim med X og gode greia
 		x_flags="--with-x --enable-gui=gtk"
 	fi
 fi
