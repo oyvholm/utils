@@ -1,10 +1,10 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $
+# $Id: suncgi.pm,v 1.38 2002/10/10 09:06:34 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
-# (C)opyright 1999-2001 Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyright 1999-2002 Øyvind A. Holm <sunny@sunbase.org>
 #=========================================================
 
 require Exporter;
@@ -41,7 +41,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38 2002/10/10 09:06:34 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -119,7 +119,8 @@ sub curr_utc_time {
 sub deb_pr {
 	return unless $main::Debug;
 	my $Msg = shift;
-	chomp($Msg);
+	my @call_info = caller;
+	$Msg =~ s/^(.*?)\s+$/$1/;
 	my $err_msg = "";
 	if (-e $suncgi::debug_file) {
 		open(DebugFP, "+<$suncgi::debug_file") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
@@ -152,7 +153,11 @@ $suncgi::DTD_HTML4STRICT
 END
 		exit();
 	}
-	print(DebugFP "$$ $Msg\n");
+	my $deb_time = time;
+	my $Fil = $call_info[1];
+	$Fil =~ s#\\#/#g;
+	$Fil =~ s#^.*/(.*?)$#$1#;
+	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg\n");
 	close(DebugFP);
 } # deb_pr()
 
@@ -777,7 +782,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38 2002/10/10 09:06:34 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -790,7 +795,7 @@ Inneholder generelle HTML-rutiner som brukes hele tiden.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999-2001 Øyvind A. Holm E<lt>F<sunny@sunbase.org>E<gt>
+(C)opyright 1999-2002 Øyvind A. Holm E<lt>F<sunny@sunbase.org>E<gt>
 
 =head1 VARIABLER
 
@@ -1173,4 +1178,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38 2002/10/10 09:06:34 sunny Exp $ ####
