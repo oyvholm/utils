@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# $Id: mk_local_links,v 1.1 2004/02/16 18:25:56 sunny Exp $
+# Lager symlinker i /usr/local/man/* og /usr/local/bin/ til greier i
+# /usr/local/prg/
+
+[ "`whoami`" = "root" ] || { echo "$0: Må være root med masse muskler og greier. Prøv igjen som det, du din veike laban." >&2; exit 1; }
+[ -d /usr/local/prg ] || { echo "$0: /usr/local/prg finnes ikke, så det er ikke så mye å gjøre her." >&2; exit 1; }
+
+# /usr/local/man/*/
+for f in `seq 1 9`; do
+	currmandir=/usr/local/man/man$f
+	echo "======== $currmandir ========"
+	[ -d $currmandir ] || mkdir $currmandir || { echo "$0: mkdir $currmandir: Gikk på trynet, kreperer." >&2; exit 1; }
+	cd $currmandir || { echo "$0: cd $currmandir: Klarte ikke å gå dit. Ytterst merkelig. Kreperer for sikkerhets skyld." >&2; exit 1; }
+	find ../../prg -type f | grep /man/ | grep "\\.$f\$" | xargs -i% ln -svf % .
+done
+
+# /usr/local/bin/
+cd /usr/local/bin || { echo "$0: cd /usr/local/bin: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
+ln -svf ../prg/*/bin/* .
+echo "======== Leiter etter daue linker... ========"
+cd /usr/local || { echo "$0: cd /usr/local: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
+find -type l | xargs file | grep "broken symbolic"
