@@ -1,0 +1,17 @@
+$Id$
+
+Index: src/edit.c
+===================================================================
+RCS file: /cvsroot/vim/vim/src/edit.c,v
+retrieving revision 1.116
+diff -u -r1.116 edit.c
+--- src/edit.c	30 May 2004 21:41:27 -0000	1.116
++++ src/edit.c	15 Sep 2004 22:02:54 -0000
+@@ -4550,6 +4550,7 @@
+ 	textwidth = W_WIDTH(curwin) - 1;
+ 	if (textwidth > 79)
+ 	    textwidth = 79;
++	textwidth = 72; /* Added by sunny@sunbase.org -- always use 72 if not defined. */
+     }
+     return textwidth;
+ }
