@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: tail-errorlog,v 1.6 1999/06/28 15:21:40 sunny Exp $
+# $Id: tail-errorlog,v 1.7 1999/11/04 22:30:57 sunny Exp $
 # tail -f på error_log til httpd(8).
 #
 # Syntax hvis man er på black:
@@ -11,12 +11,16 @@
 #
 # ...ellers fixer den det meste. :)
 
+HNAME=`hostname -f`
+
 if [ -e /black.mrk ]; then
 	tail -f /usr/local/apache/logs/$1_error_log
 elif [ -e /brown.mrk ]; then
 	tail -f /usr/local/apache/logs/$1_err_log
 elif [ -e /grimme.mrk ]; then
 	tail -f /var/log/httpd/error_log
+elif [ "$HNAME" = "www.ba.no" ]; then
+	tail -f /home/httpd/logs/error_log
 else
 	echo $0: Ukjent maskin, kan ikke skrive ut error_log >&2
 	exit 1
