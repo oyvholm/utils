@@ -15,9 +15,9 @@ $| = 1;
 
 use Getopt::Std;
 
-our ($opt_h, $opt_k, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
-    (     0,      0,     "",     "",     "",     "",     "",     "");
-getopts('hkl:o:s:t:x:y:');
+our ($opt_f, $opt_h, $opt_k, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
+    (    "",      0,      0,     "",     "",     "",     "",     "",     "");
+getopts('f:hkl:o:s:t:x:y:');
 
 my $rcs_id = '$Id$';
 my $rcs_id_strip = $rcs_id;
@@ -25,6 +25,8 @@ $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
 $opt_h && usage(0);
 
+our $STD_TIMEFMT = "%Y-%m-%dT%H:%M:%SZ";
+our $time_fmt = length($opt_f) ? $opt_f : $STD_TIMEFMT;
 my $gnuplot_script = join(".", "tmp.stpl", $$, substr(rand(), 2, 5), "plt");
 
 if (-e $gnuplot_script) {
@@ -113,7 +115,7 @@ END
 set encoding iso_8859_1
 set xdata time
 set grid
-set timefmt "%Y-%m-%dT%H:%M:%SZ"
+set timefmt "$time_fmt"
 set format x "%Y-%m-%d"
 END
 
