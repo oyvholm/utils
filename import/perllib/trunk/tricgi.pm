@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $>
+S<$Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -128,12 +128,16 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 ###########################################################################
 
 my $Tabs = "";
-my $rcs_date = '$Date: 1999/04/29 11:57:44 $';
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $';
-my $rcs_id = '$Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $';
-my $cvs_date = '$Date: 1999/04/29 11:57:44 $ GD';
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $ GD';
-my $cvs_id = '$Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $ GD';
+
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $';
+my $rcs_id = '$Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $';
+my $rcs_date = '$Date: 1999/04/30 13:13:42 $';
+
+# $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $ GD';
+my $cvs_id = '$Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $ GD';
+my $cvs_date = '$Date: 1999/04/30 13:13:42 $ GD';
+
 my $this_counter = "";
 
 my $FALSE = 0;
@@ -934,4 +938,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.8 1999/04/29 11:57:44 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.9 1999/04/30 13:13:42 sunny Exp $ ####
