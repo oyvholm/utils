@@ -1,15 +1,28 @@
 #!/usr/bin/perl -w
 
 #==================================================
-# $Id: center,v 1.2 2002/06/17 12:28:35 sunny Exp $
+# $Id: center,v 1.3 2004/02/14 20:23:56 sunny Exp $
 # Centers text
 #==================================================
 
 use strict;
 use Getopt::Std;
 
-our($opt_w) = 0;
-getopt('w:');
+our ($opt_w, $opt_h) =
+    (    "",      0);
+getopts('hw:');
+
+if ($opt_h) {
+	print(<<END);
+
+Syntax: $0 [-w width] [file [files ...]]
+
+Centers text from stdin or files. If no width is specified, the longest
+line will be used.
+
+END
+	exit 0;
+}
 
 my @Lines = <>;
 my $Longest = 0;
