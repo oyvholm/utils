@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.14 2003/02/13 01:54:27 sunny Exp $
+# $Id: hhi,v 1.1.2.15 2003/02/14 10:14:51 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -13,6 +13,7 @@ my $last_level = 1;
 my @header_num = qw{0};
 my @Data = ();
 my @Toc = ();
+my %name_used = ();
 
 while (<>) {
 	if (!m#<!-- nohhi -->#i && m#^(.*)<(h)(\d+)(.*?)>(.*)$#i) {
@@ -28,6 +29,11 @@ while (<>) {
 			$header_num[$header_level-2]++;
 			my $tall_str = join(".", @header_num);
 			my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i) ? $1 : "h-$tall_str";
+
+			if (defined($name_used{$name_str})) {
+				warn("$0: Line $.: \"$name_str\": Section name already used\n");
+			}
+			$name_used{$name_str} = 1;
 
 			if ($Rest =~ m#^(<a name=".*?">[\d\.]+</a>\s+)(.*?)$#i) {
 				$Rest = $2;
@@ -92,6 +98,8 @@ for my $Line (@Data) {
 	}
 }
 
+__END__
+
 =pod
 
 =head1 NAME
@@ -100,7 +108,7 @@ hhi - Html Header Indexer
 
 =head1 REVISION
 
-  $Id: hhi,v 1.1.2.14 2003/02/13 01:54:27 sunny Exp $
+$Id: hhi,v 1.1.2.15 2003/02/14 10:14:51 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -125,7 +133,7 @@ Every header will be have an index number inserted into the beginning of the hea
     <!-- /hhitoc -->
     <h2>Subsection #1</h2>
       <h3>Subsubsection #1.1</h3>
-      <h4>Header not worth mentioning in the index</h4> <!-- nohhitoc -->
+      <h4>Header excluded from the index</h4> <!-- nohhitoc -->
     <h2>Subsection #2</h2>
     <h2>Section with specified name</h2> <!-- hhiname secname -->
 
@@ -149,9 +157,11 @@ will be changed to
     <!-- /hhitoc -->
     <h2><a name="h-1">1.</a> Subsection #1</h2>
       <h3><a name="h-1.1">1.1</a> Subsubsection #1.1</h3>
-      <h4><a name="h-1.1.1">1.1.1</a> Header not worth mentioning in the index</h4> <!-- nohhitoc -->
+      <h4><a name="h-1.1.1">1.1.1</a> Header excluded from the index</h4> <!-- nohhitoc -->
     <h2><a name="h-2">2.</a> Subsection #2</h2>
     <h2><a name="secname">3.</a> Section with specified name</h2> <!-- hhiname secname -->
+
+To avoid creation of names like I<1.2..4>, header levels should not be skipped, do not let a E<lt>h4E<gt> follow a E<lt>h2E<gt> without a E<lt>h3E<gt> in between.
 
 =head1 BUGS
 
@@ -169,4 +179,4 @@ GNU General Public License.
 
 =cut
 
-# End of file $Id: hhi,v 1.1.2.14 2003/02/13 01:54:27 sunny Exp $
+# End of file $Id: hhi,v 1.1.2.15 2003/02/14 10:14:51 sunny Exp $
