@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.9 2003/07/15 12:05:26 sunny Exp $
+# $Id: gptrans_conv,v 1.10 2003/07/20 02:03:17 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -10,7 +10,7 @@ use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
-my $rcs_str = '$Id: gptrans_conv,v 1.9 2003/07/15 12:05:26 sunny Exp $';
+my $rcs_str = '$Id: gptrans_conv,v 1.10 2003/07/20 02:03:17 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -41,6 +41,7 @@ END
 	# }}}
 }
 
+my $PAUSE_LIMIT = 2*60; # Antall sekunder mellom to punkter det må til før en move legges inn.
 my $Des = $opt_c ? "," : ".";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
@@ -49,6 +50,7 @@ my ($last_lat, $last_lon, $last_alt, $last_line) = (1000, 1000, 100000, ""); # V
 
 # Kunne vært et eget script på grunn av at det gjør sine helt egne greier, men like greit å samle det på en plass.
 # FIXME: Fjerner ikke første duplikatentryen.
+# FIXME: Se om det går å få flytta den inn i print_entry() så man slipper å ha to gptrans_conv’er i pipen
 if ($opt_u) {
 	# {{{
 	my ($start_date, $end_date, $found_dup) = ("", "", 0);
@@ -232,12 +234,12 @@ sub print_entry {
 			$in_dupskip = 0;
 	}
 
-	if ($opt_t && $ep_time-$last_time > 300 && $last_time) {
+	if ($opt_t && $ep_time-$last_time > $PAUSE_LIMIT && $last_time) {
 		$pause_len = $ep_time-$last_time;
 	}
 
 	if ($pause_len) {
-		printf("# Pause: %s\n", Tidsperiode($ep_time-$last_time));
+		printf("# Pause: %s\n# move\n", Tidsperiode($ep_time-$last_time));
 	}
 
 	if ($do_print) {
@@ -343,4 +345,4 @@ END
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.9 2003/07/15 12:05:26 sunny Exp $
+# End of file $Id: gptrans_conv,v 1.10 2003/07/20 02:03:17 sunny Exp $
