@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: std.pl,v 1.5 2004/01/27 12:44:25 sunny Exp $
+# $Id$
 # [Description]
 #
 # Character set: UTF-8
@@ -18,4 +18,4 @@ $| = 1;
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: std.pl,v 1.5 2004/01/27 12:44:25 sunny Exp $
+# End of file $Id$
