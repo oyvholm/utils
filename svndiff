@@ -37,12 +37,16 @@ for my $Curr (@ARGV) {
 
 if ($opt_a) {
     if (open(PipeFP, "svn stat -q |")) {
+        my @mod_array = ();
         while (<PipeFP>) {
             if (/^M......(.*)/) {
-                diff_file($1);
+                push(@mod_array, $1);
             }
         }
         close(PipeFP);
+        for (sort @mod_array) {
+            diff_file($_);
+        }
     } else {
         warn("$progname: Error opening \"svn stat -q\" pipe");
     }
