@@ -18,5 +18,10 @@ until cvs upd -dC; do
 	echo våken.
 done
 
-patch -p0 <$HOME/bin/vim.patch || { echo "Feil under patchinga. Avbryter." >&2; exit 1; }
+errfound=0
+for _vp in $HOME/bin/Patch/vim/*; do
+	echo ======== Patcher $_vp ========
+	patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
+done
+[ "$errfound" = "1" ] && { exit 1; }
 exit 0
