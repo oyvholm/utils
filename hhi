@@ -56,7 +56,7 @@ if ($opt_l =~ /^\d+$/) {
 while (<>) {
     # {{{
     my $orig_line = $_;
-    if (!/<!-- nohhi -->/i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
+    if (!/ nohhi /i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
         # Header found {{{
         my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
         if ($header_level >= $start_level) {
