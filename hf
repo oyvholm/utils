@@ -15,9 +15,9 @@
 use strict;
 use Getopt::Std;
 
-our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i, $opt_s) =
-    (     0,      0,      0,      0,      0,      0);
-getopts('aEhHi:s');
+our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i, $opt_s, $opt_w) =
+    (     0,      0,      0,      0,      0,      0,      0);
+getopts('aEhHi:sw');
 
 my $is_pre = 0;
 my $prog_name = $0;
@@ -74,8 +74,8 @@ LINE: while (<>) {
 			}
 		}
 		$out_line = "$header_indent$Tabs$Line";
-		$out_line =~ s/\s+$//g; # Fjern alle whitespace på slutten
-		print "$out_line\n";
+		$opt_w && $out_line =~ s/[ \t]+$//g; # Fjern alle whitespace på slutten
+		print($out_line);
 		unless ($opt_E) {
 			for $f (@Elements) {
 				if ($Line =~ m!<($f)([ >])!i) {
@@ -109,6 +109,7 @@ Options:
   -H    Legg til en TAB for hver <h1>, <h2>, <h3> osv for å lettere se
         strukturen i dokumentet.
   -i n  Start med n TAB’er som indent
+  -w    Fjern whitespace på slutten av linjene
   -s    Dropp linjer som her en % i starten. Det er datafilene på
         www.sunbase.org som er sånn.
 
