@@ -17,6 +17,15 @@ use Getopt::Std;
 our ($opt_h) = (0);
 getopts('h') || die("Option error. Use -h for help.\n");
 
+my @Keywords = (
+                "Id",
+                "Author", "LastChangedBy",
+                "Date", "LastChangedDate",
+                "LastChangedRevision", "Revision", "Rev",
+                "URL", "HeadURL"
+               );
+my $Keyw = join('|', @Keywords); # Used in regexps
+
 $opt_h && usage(0);
 
 for (@ARGV) {
@@ -24,7 +33,8 @@ for (@ARGV) {
     my $File = $_;
     if (open(FromFP, "<$File")) {
         while (<FromFP>) {
-            s/(\$[A-Za-z]+: .*? \$)/push(@Out, "     $1\n")/ge;
+            s/(\$($Keyw)\$)/push(@Out, "     $1\n")/ge;
+            s/(\$($Keyw): .*? \$)/push(@Out, "     $1\n")/ge;
         }
         if (scalar(@Out)) {
             print("\n$File:\n");
