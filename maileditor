@@ -5,4 +5,4 @@
 file=$1
 
 [ -z "$LC_CTYPE" ] && { export LC_CTYPE=en_GB.utf8; }
-vim -X -f -c "set textwidth=72 syntax=mail expandtab" -w /home/sunny/vimlogg $file
+vim -X -f -c "set textwidth=72 syntax=mail expandtab formatoptions+=w" -w /home/sunny/vimlogg $file
