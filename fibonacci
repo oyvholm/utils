@@ -1,0 +1,18 @@
+#!/usr/bin/perl -w
+
+# $Id: fibonacci,v 1.2 2004/03/11 00:26:34 sunny Exp $
+# Skriver ut Fibonacci-rekka.
+
+use strict;
+use bigint;
+
+my $Curr = 1;
+my $Prev = 1;
+my $Sum = 0;
+
+for (;;) {
+	$Sum = $Curr+$Prev;
+	print("$Curr\n");
+	$Curr = $Prev;
+	$Prev = $Sum;
+}
