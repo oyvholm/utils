@@ -30,8 +30,8 @@ elif [ "$1" = "sunba" -a "$2" = "carmbb" ]; then
 	# bra å ha de katalogene foran, men vi får se hva som gjøres.
 	# rsync -avnP --delete --exclude='*Svn/repos/many*' --exclude='*Svn/repos/irssi*' --exclude='*Svn/repos/duppy*' --exclude='*Svn/repos/sunny*' nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
 	echo "$(u) $*" >>/home/sunny/Cvs/SUNBA_TIL_CARMBB
-	rsync -avP --delete /home/sunny/Cvs carmbb:/home/sunny
-	rsync -avP --delete /home/sunny/Svn carmbb:/home/sunny
+	rsync -avzP --delete /home/sunny/Cvs carmbb:/home/sunny
+	rsync -avzP --delete /home/sunny/Svn carmbb:/home/sunny
 else
 	echo "Ukjente maskiner: \"$1\" \"$2\"" >&2
 	exit 1
