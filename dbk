@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: dbk,v 1.15 2003/07/11 17:08:34 sunny Exp $
+# $Id: dbk,v 1.16 2003/07/16 00:14:20 sunny Exp $
 # Ny versjon av DBK-systemet.
 #
 # GPL-lisens. Åff cåårs.
-# (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
+# Ɔ⃝opyleft Øyvind A. Holm <sunny@sunbase.org>
 #================================================
 
 use strict;
@@ -26,10 +26,7 @@ my $dbk_lockext = ".lock";
 my $dir_mode = 0770;
 
 my $curr_time = time;
-my $opt_t = 0; # Legger til klokkeslettet på en egen linje
-my $opt_h = 0; # Skriver ut hjelpen
 my $time_not_found = 0;
-my $convert_from_latin1 = 0; # Settes til 1 hvis ulovlig UTF-8 er funnet
 my @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 use Getopt::Std;
@@ -37,7 +34,7 @@ use Getopt::Std;
 our ($opt_b, $opt_f, $opt_h, $opt_i, $opt_t, $opt_z) = (0, 0, 0, "", 0, 0);
 getopts('bfhi:tz');
 
-&print_help(0) if $opt_h;
+print_help(0) if $opt_h;
 
 D("$0: \$opt_t = $opt_t\n");
 
@@ -51,15 +48,6 @@ D("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Yday,
 # Parameterparsing og initialisering av datovariabler {{{
 my $arg_count;
 my $time_str = ""; # Strengen som det vil bli leita etter og som blir satt inn.
-
-# CO: Begynnelse på parameterparsing med parse_args() {{{
-# begin-base64 664 -
-# H4sIAKCL/DgCA1MrSCwqTo1PLEov1nBwDHIP07Tm4iouTVJAiCtUc3HmVio4
-# OILYtgoO8dZgvkpKfFp+aV4KUMgAKMLFmZZflJqYnKEBVqgJ0pWZpqChH6db
-# oqIP5nKCRIACMSkxKVZQIZWSzNzU+OKSIqAxKiCTaxVSc4pBGkFGAlEtV62C
-# MpJrNDS5AP7tzhO0AAAA
-# ====
-# }}}
 
 foreach (@ARGV) {
 	/^\d\d:/ && (splice(@ARGV, $arg_count, 1), $time_str = $_, $opt_t = 1);
@@ -98,8 +86,7 @@ D("\$dbk_dir = $dbk_dir\n");
 D("\$opt_i = \"$opt_i\"\n");
 # }}}
 
-# Sjekk at alle directories er på plass {{{
-
+# Sjekk at alle katalogene er på plass {{{
 my $year_dir = "$dbk_dir/$Year";
 my $dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
 my $lock_dir = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
@@ -115,7 +102,7 @@ unless (-d $year_dir) {
 D("\$dbk_file = $dbk_file\n");
 
 if ($opt_f) {
-	rmdir($lock_dir) || warn("$lock_dir: Kan ikke fjerne gammel lockdir med makt: $!\n");
+	rmdir($lock_dir) || warn("$0: $lock_dir: Kan ikke fjerne gammel lockdir med makt: $!\n");
 }
 # }}}
 
@@ -131,11 +118,7 @@ until (mkdir($lock_dir, 0777)) {
 $print_ok && print("OK\n");
 # }}}
 
-# open(LockFP, ">$lock_dir") || die("$lock_dir: Klarte ikke å lage lockfil");
-# flock(LockFP, LOCK_EX);
-# print(LockFP "$curr_time $$\n");
-
-open(CheckFP, ">$year_dir/.check") || warn("$year_dir/.check: Klarte ikke å lage fila: $!. Nøye då.");
+open(CheckFP, ">$year_dir/.check") || die("$0: $year_dir/.check: Klarte ikke å lage fila: $!\n");
 close(CheckFP);
 
 unless (-f $dbk_file) {
@@ -157,16 +140,15 @@ if ($opt_t) {
 	}
 	open(dbkFP, "+<$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for lesing+skriving+flock: $!\n");
 	flock(dbkFP, LOCK_EX) || die("$0: $dbk_file: Klarte ikke flock(): $!\n");
-	my $which_line = &find_line($time_str);
+	my $which_line = find_line($time_str);
 	if ($time_not_found) {
-		seek(dbkFP, 0, 2) || die("$dbk_file: Klarte ikke å seeke til slutten for å legge til LF: $!\n");
-		print(dbkFP "\n");
+		seek(dbkFP, 0, 2) || die("$0: $dbk_file: Klarte ikke å seeke til slutten for å legge til LF: $!\n");
+		print(dbkFP "\n") || warn("$0: $dbk_file: Feil under skriving til fila: $!\n");
 		$which_line++;
 	}
-	length($opt_i) ? &insert_file($opt_i, $which_line) : &insert_time($time_str, $which_line);
+	length($opt_i) ? insert_file($opt_i, $which_line) : insert_time($time_str, $which_line);
 	close(dbkFP);
 	$which_line++;
-	# $which_line++ if $time_not_found;
 	system("$Editor +$which_line $dbk_file") unless (length($opt_i) || length($opt_b));
 	$min_size = 49;
 	# }}}
@@ -176,7 +158,7 @@ if ($opt_t) {
 
 unless ($opt_b) {
 	system("$Viewer $dbk_file");
-	# system("clear");
+	system("clear");
 }
 
 my @stat_info = stat($dbk_file);
@@ -205,7 +187,7 @@ sub find_line {
 		}
 	}
 	$time_not_found = 1;
-	return($.+1);
+	return($. + 1);
 	# }}}
 } # find_line()
 
@@ -215,10 +197,10 @@ sub insert_time {
 	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_time(): $!\n");
 	my @Linjer = <dbkFP>;
 	splice(@Linjer, $line_num-1, 0, sprintf("<p><b>$time_str</b> -\n%s", $time_not_found ? "" : "\n"));
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_time(): $!\n");
-	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+	seek(dbkFP, 0, 0) || die("$0: $dbk_file: Klarte ikke å seeke til starten i insert_time(): $!\n");
+	truncate(dbkFP, 0) || die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
 	foreach (@Linjer) {
-		print(dbkFP $_);
+		print(dbkFP $_) || warn("$0: $dbk_file: Å neiiii, katastrofe! Feil under skriving til fila: $!\n");
 	}
 	# }}}
 } # insert_time()
@@ -228,19 +210,14 @@ sub is_utf8 {
 	my $Str = shift;
 	my $Retval = 1;
 	# Henta fra "find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny" og modifisert litt.
-	# FIXME: Godtar overlange sekvenser.
-	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
-	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
-	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
-	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//ge;
-	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xC0-\xDF][\x80-\xBF])//ge;
-	D("Str = \"$Str\"\n");
+	# FIXME: Klager ikke på overlange sekvenser og tegn i UTF-16-surrogatområdet
+	$Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+	$Str =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+	$Str =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+	$Str =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
+	$Str =~ s/([\xC0-\xDF][\x80-\xBF])//g;
 	$Retval = 0 if ($Str =~ /[\x80-\xFD]/);
+	D("is_utf8() returnerer $Retval.\n");
 	return $Retval;
 	# }}}
 } # is_utf8()
@@ -249,24 +226,36 @@ sub insert_file {
 	# {{{
 	my ($file_name, $line_num) = @_;
 	local *LocFP;
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_file(): $!\n");
+	seek(dbkFP, 0, 0) || die("$0: $dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_file(): $!\n");
 	my @Linjer = <dbkFP>;
 	my @InsLinj = "<p><b>$time_str</b> -\n";
-	open(LocFP, "<$file_name") || die("$file_name: Kan ikke åpne fila for lesing: $!\n");
+	open(LocFP, "<$file_name") || die("$0: $file_name: Kan ikke åpne fila for lesing: $!\n");
 	push(@InsLinj, <LocFP>);
-	push(@InsLinj, "\n") unless $time_not_found; # Denne likte jeg egentlig fantastisk dårlig, men hvem bruker vel å ha to LF'er på slutten av fila?
+	push(@InsLinj, "\n") unless $time_not_found; # Denne likte jeg egentlig fantastisk dårlig, men hvem bruker vel å ha to LF’er på slutten av fila?
+	for (@InsLinj) {
+		D("\$_ = \"$_\"\n");
+		if (!is_utf8($_)) {
+			warn("$0: Ugyldig UTF-8 funnet, behandler teksten som ISO-8859-1.\n");
+			my @Ny = ();
+			for my $Curr (@InsLinj) {
+				D("FØR  : \$Curr = \"$Curr\"\n");
+				$Curr =~ s/([\x80-\xFF])/widechar(ord($1))/ge;
+				D("ETTER: \$Curr = \"$Curr\"\n");
+				push(@Ny, $Curr);
+			}
+			@InsLinj = @Ny;
+			last;
+		}
+	}
 	splice(@Linjer, $line_num-1, 0, @InsLinj);
 	close(LocFP);
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_file(): $!\n");
-	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+	seek(dbkFP, 0, 0) || die("$0: $dbk_file: Klarte ikke å seeke til starten i insert_file(): $!\n");
+	truncate(dbkFP, 0) || die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
 	D("scalar(\@Linjer): \"" . scalar(@Linjer) . "\".\n");
 	foreach my $Curr (@Linjer) {
-		D("Curr = \"$Curr\"\n");
-		is_utf8($Curr) || ($convert_from_latin1 = 1);
-		$convert_from_latin1 && ($Curr =~ s/([\x80-\xFF])/html_to_utf8(ord($1))/ge);
-		$Curr =~ s/&#(\d{1,10});/html_to_utf8($1)/ge;
-		$Curr =~ s/&#x([0-9a-f]{1,8});/html_to_utf8(hex($1))/gei;
-		print(dbkFP $Curr);
+		$Curr =~ s/&#(\d{1,10});/widechar($1)/ge;
+		$Curr =~ s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
+		print(dbkFP $Curr) || warn("$0: $dbk_file: Knallkrise. Feil under skriving til fila: $!\n");
 	}
 	# }}}
 } # insert_file()
@@ -303,9 +292,9 @@ END
 	# }}}
 } # print_help()
 
-sub html_to_utf8 {
-	# Konverterer en streng med numeriske HTML-entities til UTF-8 {{{
-	# Henta fra "h2u,v 1.5 2002/11/20 00:09:40 sunny", da het den widechar() .
+sub widechar {
+	# Konverterer en tegnverdi til UTF-8 {{{
+	# Henta fra "h2u,v 1.5 2002/11/20 00:09:40 sunny".
 	my $Val = shift;
 	my $allow_invalid = 0;
 
@@ -342,11 +331,11 @@ sub html_to_utf8 {
 		                               0x80 | (($Val >>  6) & 0x3F),
 		                               0x80 | ( $Val        & 0x3F));
 	} else {
-		return html_to_utf8(0xFFFD);
+		return widechar(0xFFFD);
 	}
 	# }}}
-} # html_to_utf8()
+} # widechar()
 
 __END__
 
-#### End of file $Id: dbk,v 1.15 2003/07/11 17:08:34 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.16 2003/07/16 00:14:20 sunny Exp $ ####
