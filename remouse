@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# $Id: remouse,v 1.2 1999/05/08 20:35:11 sunny Exp $
+# $Id: remouse,v 1.3 1999/11/08 01:01:09 sunny Exp $
 
 killall gpm
 sleep 1
 if [ -e /grimme.mrk ]; then
-	gpm -t bare
+	gpm -t MouseMan
 elif [ -e /black.mrk ]; then
 	gpm -t ps2
 else
