@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.10.2.1 2003/07/22 00:49:42 sunny Exp $
+# $Id: gptrans_conv,v 1.10.2.2 2003/07/22 21:49:47 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -10,7 +10,7 @@ use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
-my $rcs_str = '$Id: gptrans_conv,v 1.10.2.1 2003/07/22 00:49:42 sunny Exp $';
+my $rcs_str = '$Id: gptrans_conv,v 1.10.2.2 2003/07/22 21:49:47 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -30,6 +30,7 @@ Syntax: gptrans_conv [options] [filer [...]]
   -h    Hjælp mæ
   -o x  Bruk outputformatet x:
           clean
+          gpstrans (Uferdig)
           ps (Uferdig)
           xgraph
   -s    Kort («Short») format på datoen
@@ -101,7 +102,9 @@ if ($opt_u) {
 	# }}}
 }
 
-if ($opt_o eq "ps") {
+if ($opt_o eq "gpstrans") {
+	print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
+} elsif ($opt_o eq "ps") {
 	print(ps_header(532, 6034, 533, 6040));
 	print("*u\n");
 }
@@ -247,6 +250,9 @@ sub print_entry {
 		if ($opt_o eq "xgraph") {
 			$pause_len && ($Line = "move ");
 			($Line .= "$Lat $Lon\n");
+		} elsif($opt_o eq "gpstrans") {
+			# my ($gpt_lon, $gpt_lat) = (sprintf(), sprintf());
+			# $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lon\t$gpt_lat\n";
 		} elsif ($opt_o eq "clean") {
 			$pause_len && ($Line = "\n");
 			($Line .= "$Lat $Lon\n");
@@ -347,4 +353,11 @@ END
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.10.2.1 2003/07/22 00:49:42 sunny Exp $
+# ddd_to_dms() — konverterer koordinater til D°M'S" til ære for import av gpstrans-formatet inn i GPSman.
+# begin-base64 644 -
+# H4sIAOamHT8CA7MtyE/h4jLWM1WwVTA+tMHYQN3AQM9AiYvLNrm0hIuruDRJ
+# ISUlJb4kPz4lt1ihmoszt1JBJSwxB6i8OCMzrcQaIuKRX1oEFMrMK9EAyWpa
+# QxTp2kKkoKp8M/OQFCloKZgZIFRClASnJgOVcNVyAQAeuwUomQAAAA==
+# ====
+
+# End of file $Id: gptrans_conv,v 1.10.2.2 2003/07/22 21:49:47 sunny Exp $
