@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: afv,v 1.5 2001/05/11 12:04:45 sunny Exp $
+# $Id: afv,v 1.6 2001/05/11 13:06:59 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -61,7 +61,7 @@ LOOP: foreach my $Curr (@Files) {
 			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
 			if ($curr_md5 ne $last_md5) {
 				my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
-				print("$mtime.$Curr\n");
+				print("$mtime.$Curr\n") unless $do_loop;
 				if (seek(FromFP, 0, 0)) {
 					my $to_file = ">$dest_dir/$mtime.$Curr";
 					if (open(ToFP, "$to_file")) {
@@ -111,10 +111,10 @@ sub create_dir {
 sub check_stop {
 	foreach ("$root_dir/stop", "$dest_dir/stop") {
 		if (-e $_) {
-			print(STDERR "$_ eksisterer, avslutter.\n");
+			print(STDERR "$curr_dir: $_ finnes, avslutter.\n");
 			exit;
 		}
 	}
 } # check_stop()
 
-#### End of file $Id: afv,v 1.5 2001/05/11 12:04:45 sunny Exp $ ####
+#### End of file $Id: afv,v 1.6 2001/05/11 13:06:59 sunny Exp $ ####
