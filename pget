@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Henter en webside. Kort og grei.
+# $Id: pget,v 1.1 1999/07/15 17:32:29 sunny Exp $
+
+url=$1
+shift
+
+echo wget -m -k -l 1 $* $url
