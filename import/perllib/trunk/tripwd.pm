@@ -6,7 +6,7 @@ tripwd - Passordrutiner
 
 =head1 REVISION
 
-S<$Id: tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $>
+S<$Id: tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -36,9 +36,9 @@ require 5.003;
 #### Variabler
 ###########################################################################
 
-my $cvs_date = '$Date: 1999/04/09 14:52:02 $';
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $';
-my $cvs_id = '$Id: tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $';
+my $rcs_date = '$Date: 1999/04/29 11:59:09 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $';
+my $rcs_id = '$Id: tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $';
 
 my $FALSE = 0;
 my $TRUE = 1;
@@ -111,4 +111,4 @@ Rimelig spinkel foreløpig. Det kommer seg vel.
 
 1;
 
-#### End of file $Id: tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $ ####
+#### End of file $Id: tripwd.pm,v 1.3 1999/04/29 11:59:09 sunny Exp $ ####
