@@ -8,7 +8,8 @@ update_vim-clean
 echo ======== mincvs_vim
 mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; exit 0; }
 
-cd ~/src/other/vim/vim || { echo "cd ~/src/other/vim/vim: Ånn ðe tryn." >&2; exit 0; }
+vimcompdir=$HOME/src/other/vim/vim
+cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; exit 0; }
 
 x_flags="--enable-gui=no --without-x"
 vim_size=huge
@@ -40,7 +41,7 @@ else
 	# installcmd="su -c \"rm -rf $vimdir && make install\""
 	echo Hvis det gikk bra, er det på tide å bli root, og...
 fi
-echo "cd ~/src/other/vim/vim && rm -rf $vimdir && make install"
+echo "cd $vimcompdir && rm -rf $vimdir && make install && cp -vp src/vim $vimdir/bin/"
 
 # echo $installcmd
 # echo -n Trykk Enter for å gjøre det, eller CTRL-C for å feige ut...
