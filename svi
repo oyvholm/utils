@@ -2,4 +2,4 @@
 
 # $Id$
 
-svn info $* | grep "^URL: " | perl -pe 's#^(.*?)(/(?:trunk|branches|tags|hooks).*)#* $2#';
+svn info $* | grep "^URL: " | perl -pe 's#^(.*?)(/(?:trunk|branches|tags|hooks).*)#* $2/#';
