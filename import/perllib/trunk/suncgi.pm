@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $
+# $Id: suncgi.pm,v 1.28 2001/01/18 11:50:27 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.28 2001/01/18 11:50:27 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -434,6 +434,8 @@ END
 } # print_doc()
 
 sub p_footer {
+	my $no_endhtml = shift;
+	defined($no_endhtml) || ($no_endhtml = 0);
 	my $Retval = "";
 	my ($validator_str, $array_str) = ("&nbsp;", "");
 	if ($main::Utv) {
@@ -441,6 +443,7 @@ sub p_footer {
 		my $url_enc = url_encode($suncgi::Url);
 		# FIXME: Hardkoding av URL
 		$validator_str = <<END;
+					<a href="$suncgi::Url?$suncgi::query_string">URL</a>&nbsp;
 					<a href="http://jigsaw.w3.org/css-validator/validator?uri=$url_enc%3F$query_enc"><img border="0" src="images/vcss.png" alt="[CSS-validator]" height="31" width="88"></a>
 					<a href="http://validator.w3.org/check?uri=$url_enc%3F$query_enc;ss=1;outline=1"><img border="0" src="images/valid-html401.png" alt="[HTML-validator]" height="31" width="88"></a>
 END
@@ -472,15 +475,18 @@ END
 					<small>&lt;<code><a href="mailto:$suncgi::WebMaster">$suncgi::WebMaster</a></code>&gt;
 					<br>&#169; &#216;yvind A. Holm</small>
 				</td>
-				<td align="right">
+				<td align="right" valign="middle">
 $validator_str
 				</td>
 			</tr>
 $array_str
 		</table>
+END
+	$Retval .= <<END unless ($no_endhtml);
 	</body>
 </html>
 END
+	return $Retval;
 } # p_footer()
 
 sub print_footer {
@@ -668,7 +674,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $>
+S<$Id: suncgi.pm,v 1.28 2001/01/18 11:50:27 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1064,4 +1070,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.27 2001/01/09 09:30:14 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.28 2001/01/18 11:50:27 sunny Exp $ ####
