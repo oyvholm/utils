@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: bigsh,v 1.3 2004/01/24 08:33:41 sunny Exp $
+# $Id: bigsh,v 1.4 2004/01/30 14:26:07 sunny Exp $
 # Fyrer opp en stor xterm i X
 
 # mlterm -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1
@@ -12,14 +12,14 @@ if [ -e /carmbb.mrk ]; then
 	-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
 	-bg black \
 	-fg white \
-	-geometry 131x42+0+0
+	-geometry 131x42+0+0 $*
 else
 	xterm \
 	-u8 \
 	-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
 	-bg black \
 	-fg white \
-	-geometry 140x48+0-8
+	-geometry 140x48+0-8 $*
 fi
 
 exit
