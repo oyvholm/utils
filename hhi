@@ -24,7 +24,7 @@ my @Toc = ();
 my %name_used = ();
 
 if ($opt_h) {
-	print(<<END);
+    print(<<END);
 
 Syntax: $0 [options] [file [...]]
 
@@ -40,128 +40,128 @@ Options:
   -l  Start indexing at this level number. Default: $start_level
 
 END
-	exit(0);
+    exit(0);
 }
 
 if ($opt_l =~ /^\d+$/) {
-	if ($opt_l < 1) {
-		die("$0: Number passed to -l has to be bigger than zero\n");
-	} else {
-		$start_level = $opt_l;
-	}
+    if ($opt_l < 1) {
+        die("$0: Number passed to -l has to be bigger than zero\n");
+    } else {
+        $start_level = $opt_l;
+    }
 } else {
-	die("$0: -l wants a number\n")
+    die("$0: -l wants a number\n")
 }
 
 while (<>) {
-	# {{{
-	my $orig_line = $_;
-	if (!/<!-- nohhi -->/i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
-		# Header found {{{
-		my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
-		if ($header_level >= $start_level) {
-			my $skip_num = 0;
-			splice(@header_num, $header_level-1) if ($header_level < $last_level);
-			if ($header_level - $last_level > 1) {
-				warn("$0: Line $.: Header skip ($last_level to $header_level)\n");
-				for (my $Tmp = 0; $Tmp < $header_level-2; $Tmp++) {
-					defined($header_num[$Tmp]) || ($header_num[$Tmp] = "");
-				}
-			}
-			$header_num[$header_level-2]++;
-			my $tall_str = join(".", @header_num);
-			my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i) ? $1 : "h-$tall_str";
+    # {{{
+    my $orig_line = $_;
+    if (!/<!-- nohhi -->/i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
+        # Header found {{{
+        my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
+        if ($header_level >= $start_level) {
+            my $skip_num = 0;
+            splice(@header_num, $header_level-1) if ($header_level < $last_level);
+            if ($header_level - $last_level > 1) {
+                warn("$0: Line $.: Header skip ($last_level to $header_level)\n");
+                for (my $Tmp = 0; $Tmp < $header_level-2; $Tmp++) {
+                    defined($header_num[$Tmp]) || ($header_num[$Tmp] = "");
+                }
+            }
+            $header_num[$header_level-2]++;
+            my $tall_str = join(".", @header_num);
+            my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i) ? $1 : "h-$tall_str";
 
-			if (defined($name_used{$name_str})) {
-				warn("$0: Line $.: \"$name_str\": Section name already used\n");
-			}
-			$name_used{$name_str} = 1;
+            if (defined($name_used{$name_str})) {
+                warn("$0: Line $.: \"$name_str\": Section name already used\n");
+            }
+            $name_used{$name_str} = 1;
 
-			if ($Rest =~ m#^(<a name=".*?">[\d\.]+</a>\s+)(.*?)$#i) {
-				$Rest = $2;
-			} elsif ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
-				$Rest = $2;
-			}
-			($tall_str .= ".") if ($header_level == 2);
-			if ($Rest =~ /<!-- nohhinum -->/i) {
-				$skip_num = 1;
-				$_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
-			} else {
-				$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
-			}
-			if (!/<!-- nohhitoc -->/i || $opt_a) {
-				push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
-				                     : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
-			}
-			$last_level = $header_level;
-		}
-		push(@Data, "$_");
-		# }}}
-	} elsif (/<!-- hhitoc -->/i) {
-		# Contents area found, skip everything until a "<!-- /hhitoc -->" is found {{{
-		my $Found = 1;
-		my $line_num = $.;
-		push(@Data, "$_");
-		while (<>) {
-			if (m#<!-- /hhitoc -->#i) {
-				push(@Data, "$_");
-				$Found = 0;
-				last;
-			}
-		}
-		$Found && die("$0: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
-		# }}}
-	} else {
-		push(@Data, "$_");
-	}
-	# }}}
+            if ($Rest =~ m#^(<a name=".*?">[\d\.]+</a>\s+)(.*?)$#i) {
+                $Rest = $2;
+            } elsif ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
+                $Rest = $2;
+            }
+            ($tall_str .= ".") if ($header_level == 2);
+            if ($Rest =~ /<!-- nohhinum -->/i) {
+                $skip_num = 1;
+                $_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
+            } else {
+                $_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
+            }
+            if (!/<!-- nohhitoc -->/i || $opt_a) {
+                push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
+                                     : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
+            }
+            $last_level = $header_level;
+        }
+        push(@Data, "$_");
+        # }}}
+    } elsif (/<!-- hhitoc -->/i) {
+        # Contents area found, skip everything until a "<!-- /hhitoc -->" is found {{{
+        my $Found = 1;
+        my $line_num = $.;
+        push(@Data, "$_");
+        while (<>) {
+            if (m#<!-- /hhitoc -->#i) {
+                push(@Data, "$_");
+                $Found = 0;
+                last;
+            }
+        }
+        $Found && die("$0: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
+        # }}}
+    } else {
+        push(@Data, "$_");
+    }
+    # }}}
 }
 
 for my $Line (@Data) {
-	# Send everything to stdout with optional contents inserted {{{
-	if ($Line =~ /^(\s*)(<!-- hhitoc -->)(.*)$/i) {
-		my ($Indent, $HT, $End) = ($1, $2, $3);
-		print("$Line$Indent<ul>\n$Indent<!-- \x7B\x7B\x7B -->\n");
-		my $Old = 0;
-		my ($Cnt, $Txt) = (0, "");
-		my $Ex = "\t";
-		for (@Toc) {
-			# {{{
-			if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
-				($Cnt, $Txt) = ($1, $2);
-				my $Diff = $Cnt-$Old;
-				$Ex = ""; # "\t" x $Cnt; # FIXME: Temporary disabled until it works
-				if ($Old && $Diff > 0) {
-					for (my $T = $Diff; $T; $T--) {
-						print("$Indent$Ex<ul>\n");
-					}
-				} elsif ($Old && $Diff < 0) {
-					print("$Indent$Ex</li>\n");
-					for (my $T = $Diff; $T; $T++) {
-						print("$Indent$Ex</ul>\n$Indent$Ex</li>\n");
-					}
-				} elsif ($Old) {
-					print("$Indent$Ex</li>\n");
-				}
-				print("$Indent$Ex<li>$Txt\n");
-				$Old = $Cnt;
-			}
-			# }}}
-		}
-		for (; $Cnt > 1; $Cnt--) {
-			D("Cnt = \"$Cnt\"\n");
-			print("$Indent$Ex</li>\n");
-			($Cnt == 2) && print("$Indent<!-- \x7D\x7D\x7D -->\n");
-			print("$Indent$Ex</ul>\n");
-		}
-	} else {
-		print("$Line");
-	}
-	# }}}
+    # Send everything to stdout with optional contents inserted {{{
+    if ($Line =~ /^(\s*)(<!-- hhitoc -->)(.*)$/i) {
+        my ($Indent, $HT, $End) = ($1, $2, $3);
+        print("$Line$Indent<ul>\n$Indent<!-- \x7B\x7B\x7B -->\n");
+        my $Old = 0;
+        my ($Cnt, $Txt) = (0, "");
+        my $Ex = "\t";
+        for (@Toc) {
+            # {{{
+            if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
+                ($Cnt, $Txt) = ($1, $2);
+                my $Diff = $Cnt-$Old;
+                $Ex = ""; # "\t" x $Cnt; # FIXME: Temporary disabled until it works
+                if ($Old && $Diff > 0) {
+                    for (my $T = $Diff; $T; $T--) {
+                        print("$Indent$Ex<ul>\n");
+                    }
+                } elsif ($Old && $Diff < 0) {
+                    print("$Indent$Ex</li>\n");
+                    for (my $T = $Diff; $T; $T++) {
+                        print("$Indent$Ex</ul>\n$Indent$Ex</li>\n");
+                    }
+                } elsif ($Old) {
+                    print("$Indent$Ex</li>\n");
+                }
+                print("$Indent$Ex<li>$Txt\n");
+                $Old = $Cnt;
+            }
+            # }}}
+        }
+        for (; $Cnt > 1; $Cnt--) {
+            D("Cnt = \"$Cnt\"\n");
+            print("$Indent$Ex</li>\n");
+            ($Cnt == 2) && print("$Indent<!-- \x7D\x7D\x7D -->\n");
+            print("$Indent$Ex</ul>\n");
+        }
+    } else {
+        print("$Line");
+    }
+    # }}}
 }
 
 sub D {
-	print(STDERR @_) if $Debug;
+    print(STDERR @_) if $Debug;
 }
 
 __END__
@@ -258,5 +258,5 @@ GNU General Public License.
 
 # }}}
 
-# vim: ft=perl fdm=marker fdl=0 :
+# vim: ft=perl fdm=marker fdl=0 ts=4 sw=4 sts=4 et fenc=UTF-8 fo+=w :
 # End of file $Id$
