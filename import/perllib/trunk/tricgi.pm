@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $>
+S<$Id: tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -126,14 +126,14 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $';
-my $rcs_id = '$Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $';
-my $rcs_date = '$Date: 1999/07/03 18:04:27 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $';
+my $rcs_id = '$Id: tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $';
+my $rcs_date = '$Date: 1999/07/05 13:33:59 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $ GD';
-my $cvs_id = '$Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $ GD';
-my $cvs_date = '$Date: 1999/07/03 18:04:27 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $ GD';
+my $cvs_id = '$Id: tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $ GD';
+my $cvs_date = '$Date: 1999/07/05 13:33:59 $ GD';
 
 my $this_counter = "";
 
@@ -182,19 +182,18 @@ sub content_type {
 
 ###########################################################################
 
-=head &curr_local_time()
+=head2 &curr_local_time()
 
 Returnerer tidspunktet akkurat nå, lokal tid. Formatet er i henhold til S<ISO 8601>, dvs.
 I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>+I<HHMM>
 
-FIXME: Finn en måte å returnere differansen mellom UTC og lokal tid.
-Foreløpig droppes +0200 og sånn. Det liker vi E<ikke>. Ikke baser noen
+B<FIXME:> Finn en måte å returnere differansen mellom UTC og lokal tid.
+Foreløpig droppes +0200 og sånn. Det liker vi I<ikke>. Ikke baser noen
 programmer på formatet foreløpig.
 
 =cut
 
 sub curr_local_time {
-	&deb_pr(__LINE__ . ": Går inn i curr_local_time()");
 	my @TA = localtime();
 	# my $GM = mktime(gmtime());
 	# my $LO = localtime();
@@ -202,6 +201,7 @@ sub curr_local_time {
 
 	# - &deb_pr(__LINE__ . ": curr_local_time(): gmtime = \"$GM\", localtime = \"$LO\"");
 	my $LocalTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+	&deb_pr(__LINE__ . ": curr_local_time(): Returnerer \"$LocalTime\"");
 	return($LocalTime);
 } # curr_local_time()
 
@@ -219,6 +219,7 @@ I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
 sub curr_utc_time {
 	my @TA = gmtime(time);
 	my $UtcTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+	&deb_pr(__LINE__ . ": curr_utc_time(): Returnerer \"$UtcTime\"");
 	return($UtcTime);
 } # curr_utc_time()
 
@@ -230,7 +231,35 @@ En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
 forlanger at ${main::$error_file} er definert, det skal være en fil der
 all debuggingsinformasjonen skrives til.
 
-FIXME: Mer pod seinere.
+For at debugging skal bli lettere, kan man slenge denne inn på enkelte
+steder. Eksempel:
+
+	&deb_pr(__LINE__ . ": sort_dir(): Det er $Elements elementer her.");
+
+Hvis dette formatet brukes (fram til og med __LINE__) kan man filtrere fila
+gjennom denne perlsnutten for å kommentere ut alle debuggingsmeldingene:
+
+	#!/usr/bin/perl
+
+	while (<>) {
+		s/(&deb_pr\(__LINE__)/# $1/g;
+		print;
+	}
+
+For å ta bort utkommenteringen, filtrer fila gjennom dette scriptet:
+
+	#!/usr/bin/perl
+
+	while (<>) {
+		s/# (&deb_pr\(__LINE__)/$1/g;
+		print;
+	}
+
+Dette er bare nødvendig hvis det ligger strødd med debuggingsmeldinger på
+steder som bør gå raskest mulig. Rutina sjekker verdien av
+I<${main::Debug}>, hvis den er 0, returnerer den med en gang.
+
+B<FIXME:> Mer pod seinere.
 
 =cut
 
@@ -330,7 +359,7 @@ entities. Eksempel:
 
 	index.cgi?doc=login;username=suttleif;pwd=hemmelig
 
-FIXME: Denne må utvides litt med flere Content-type'er.
+B<FIXME:> Denne må utvides litt med flere Content-type'er.
 
 =cut
 
@@ -379,11 +408,13 @@ i standard ASCII-format.
 sub get_countervalue {
 	my $counter_file = shift;
 	my $counter_value = 0;
+	&deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
 	open(TmpFP, "<$counter_file") || (&HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$counter_value = <TmpFP>;
 	chomp($counter_value);
 	close(TmpFP);
+	&deb_pr(__LINE__ . ": get_countervalue(): $counter_file: Fila er lukket, returnerer fra subrutina med \"$counter_value\"");
 	return $counter_value;
 } # get_countervalue()
 
@@ -471,7 +502,7 @@ En lightversjon av I<&HTMLdie()>, den skriver kun til
 I<${main::error_file}>. Når det oppstår feil, men ikke trenger å rive ned
 hele systemet. Brukes til småting som tellere som ikke virker og sånn.
 
-FIXME: Muligens det burde vært lagt inn at ${main::WebMaster} fikk mail om
+B<FIXME:> Muligens det burde vært lagt inn at ${main::WebMaster} fikk mail om
 hver gang ting går på trynet.
 
 =cut
@@ -546,7 +577,7 @@ Logger aksess til en fil. Filnavnet skal være uten extension, rutina tar seg av 
 Forutsetter at I<${main::log_dir}> er definert. Hvis ikke, settes den til
 I<$STD_LOGDIR>.
 
-FIXME: Skriv mer her.
+B<FIXME:> Skriv mer her.
 
 =cut
 
@@ -621,7 +652,7 @@ dokumenter som separeres med E<lt>=pageE<gt>.
 
 =back
 
-FIXME: Skriver mer på denne seinere. Og gjør greia ferdig. Support for
+B<FIXME:> Skriver mer på denne seinere. Og gjør greia ferdig. Support for
 <=page> må legges inn.
 
 Alt kan legges inn i en fil:
@@ -719,6 +750,7 @@ Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten hvis I<$TRUE>.
 sub print_footer {
 	my ($footer_width, $footer_align, $no_vh, $no_end) = @_;
 
+	&deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
 	unless (length($footer_width)) {
 		$footer_width = length(${main::doc_width}) ? ${main::doc_width} : $STD_DOCWIDTH;
 	}
@@ -772,7 +804,7 @@ END
 </html>
 END
 	}
-	exit;
+	exit; # FIXME: Sikker på det?
 } # print_footer()
 
 ###########################################################################
@@ -829,9 +861,9 @@ Keywords i E<lt>metaE<gt>. Skal være kommaseparert og med etities.
 
 =item I<@StyleSheet>
 
-Array med alt som skal inn style sheets. FIXME: Stygg sak dette her at den
-må være på slutten av parametrene, skulle vært en bedre måte så den kan
-bli sendt som ETT parameter, men det ser vi på seinere. Er vel ikke så
+Array med alt som skal inn style sheets. B<FIXME:> Stygg sak dette her at
+den må være på slutten av parametrene, skulle vært en bedre måte så den
+kan bli sendt som ETT parameter, men det ser vi på seinere. Er vel ikke så
 nøye enda. Eventuelt slenger vi koden inn som en streng og ikke som en
 array.
 
@@ -839,7 +871,7 @@ BTW blir vel ikke parameterne brukt så mye til hverdags, hvis
 F<&print_doc()> blir ferdig rimelig fort. Der skal som kjent alt
 spesifiseres.
 
-FIXME: Det hadde gjort seg med tidligere HTML-versjoner også.
+B<FIXME:> Det hadde gjort seg med tidligere HTML-versjoner også.
 
 =back
 
@@ -934,7 +966,7 @@ Skriver ut på samme måte som print, men setter inn I<$Tabs> først på
 hver linje. Det er for å få riktige innrykk. Det forutsetter at
 I<$Tabs> er oppdatert til enhver tid.
 
-FIXME: Legg inn konvertering av tegn > 0x7f til entities.
+B<FIXME:> Legg inn konvertering av tegn > 0x7f til entities.
 
 =cut
 
@@ -958,7 +990,7 @@ i I<&tab_print()> på en eller annen måte, men blir ikke det tungvint?
 
 Vi lar det være sånn foreløpig.
 
-FIXME: Legg inn konvertering av tegn > 0x7f til entities her også.
+B<FIXME:> Legg inn konvertering av tegn > 0x7f til entities her også.
 
 =cut
 
@@ -1010,6 +1042,8 @@ sub Tabs {
 	}
 } # Tabs()
 
+###########################################################################
+
 =head1 BUGS
 
 Strukturen er ikke helt klar enda, det blir nok mange forandringer
@@ -1021,4 +1055,6 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.11 1999/07/03 18:04:27 sunny Exp $ ####
+__END__
+
+#### End of file $Id: tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $ ####
