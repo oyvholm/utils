@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.7 2003/07/07 10:51:58 sunny Exp $
+# $Id: gptrans_conv,v 1.8 2003/07/14 03:43:50 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -10,7 +10,7 @@ use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
-my $rcs_str = '$Id: gptrans_conv,v 1.7 2003/07/07 10:51:58 sunny Exp $';
+my $rcs_str = '$Id: gptrans_conv,v 1.8 2003/07/14 03:43:50 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t) =
     (     0,      0,      0,      0,     "",      0,      0);
@@ -42,6 +42,7 @@ END
 
 my $Des = $opt_c ? "," : ".";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
+my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $last_time = 0;
 my ($last_lat, $last_lon, $last_alt, $last_line) = (1000, 1000, 100000, ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
 
@@ -53,14 +54,16 @@ if ($opt_o eq "ps") {
 while (<>) {
 	my $bck_line = $_;
 	if (/^# Pause: /) {
+	} elsif (/^# move$/) {
+		$found_move = 1;
 	} elsif (/^#/) {
 		print;
 	} elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
 		# Mitt format, ep-stil {{{
 		my ($ep_time, $lat_val, $lon_val, $Alt) = ($1, $2, $3, $4, $5, $6, $7, $8, $9);
 		my ($Sec, $Min, $Hour, $Day, $Month, $Year, $Wday, $Yday) = gmtime($ep_time);
-		$Month++; # Urgh
-		$Year += 1900; # Urgh II
+		$Month++; # Urgh Ⅰ
+		$Year += 1900; # Urgh Ⅱ
 		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lat_val, $lon_val, "?");
 		# }}}
 	} elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
@@ -98,7 +101,7 @@ while (<>) {
 			(\d\d\d) # Grader
 			(\d\d) # Gradminutt
 			(\d\d\d) # Desimaler gradminutt
-			(....) # Accurancy
+			(....) # Nøyaktighet
 			(......) # Høyde
 			(...............)
 			# }}}
@@ -211,6 +214,10 @@ sub print_entry {
 	}
 
 	if ($do_print) {
+		if ($found_move) {
+			(!$pause_len && ($opt_o eq "xgraph")) && ($Line = "move $Line");
+			$found_move = 0;
+		}
 		print($Line);
 	}
 	$last_time = $ep_time;
@@ -283,4 +290,4 @@ END
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.7 2003/07/07 10:51:58 sunny Exp $
+# End of file $Id: gptrans_conv,v 1.8 2003/07/14 03:43:50 sunny Exp $
