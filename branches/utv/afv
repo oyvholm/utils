@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.8 2004/04/14 15:06:15 sunny Exp $
+# $Id: afv,v 1.13.2.9 2004/04/14 16:30:17 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 #
 # ©2001–2004 Øyvind A. Holm. Lisens: GNU GPL ♥
@@ -22,6 +22,7 @@ getopts('d:hl:');
 $| = 1;
 
 if ($opt_h) {
+	# Skriv ut hjelpen {{{
 	print(<<END);
 
 Syntax: $0 [valg] [fil [flere filer [...]]]
@@ -37,14 +38,24 @@ Valg:
 -h    Hjelp.
 -l X  Kjør i loop, sjekk filene hvert X. sekund. Eksempel:
 
-      afv -l5 foo.txt bar.pl &
-      find /etc | afv -l 15 &
+        afv -l5 foo.txt bar.pl &
+        find /etc | afv -l 15 &
 
       for å kjøre den i bakgrunnen. Bruk afvctl(1) for å stoppe afv’er
       som kjører. Filnavn på filer som lagres blir ikke skrevet ut når
-       "-l"-parameteret brukes.
+      "-l"-parameteret brukes.
+
+Som filnavn kan jokertegn (wildcards) også brukes. Hvis disse escapes,
+brukes den innebygde glob’en og nye filer blir lagt til når den går i
+loop. Eksempel:
+
+  afv -l5 '*' &
+
+sjekker alle filer hvert femte sekund og kjører også ny glob hver gang
+loopen gjentas.
 
 END
+	# }}}
 }
 
 unless (length($opt_d)) {
@@ -96,7 +107,7 @@ foreach my $FullCurr (@Files) {
 	my $start_lock = time;
 
 	until (mkdir($lock_dir, 0777)) {
-		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
+		warn(sec_to_string(time) . ": $lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
 		my_sleep(5);
 	}
 
@@ -105,8 +116,7 @@ foreach my $FullCurr (@Files) {
 		if (flock(FromFP, LOCK_EX)) {
 			# {{{
 			my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
-			my @TA = gmtime($mtime);
-			my $date_str = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+			my $date_str = sec_to_string($mtime);
 			my $to_file = "$dest_dir/$date_str.$Curr";
 			if (-e $to_file) {
 				close(FromFP);
@@ -176,6 +186,14 @@ if ($do_loop) {
 
 exit;
 
+sub sec_to_string {
+	# Konverter antall sekunder sia 1970-01-01 00:00:00 GMT til ååååmmddTttmmssZ {{{
+	my @TA = gmtime(shift);
+	my $Retval = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+	return($Retval);
+	# }}}
+} # sec_to_string()
+
 sub glob_files {
 	# Returnerer en array med filnavn som samsvarer med parametrene. {{{
 	@Files = ();
@@ -192,7 +210,7 @@ sub glob_files {
 } # glob_files()
 
 sub check_stop {
-	# {{{
+	# Sjekk om stop-fila finnes og i så fall avbrytes alt. {{{
 	foreach ($root_dir, $dest_dir) {
 		if (-e "$_/stop") {
 			if (-e "$_/protected") {
@@ -222,4 +240,4 @@ sub my_sleep {
 	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.8 2004/04/14 15:06:15 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.9 2004/04/14 16:30:17 sunny Exp $ ####
