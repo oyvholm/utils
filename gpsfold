@@ -1,0 +1,39 @@
+#!/usr/bin/perl -w
+
+# $Id: gpsfold,v 1.1 2003/07/10 16:32:52 sunny Exp $
+# Inserts fold marks in HTML source before and after stdin.
+# Select text in visual line mode and filter the block through this script.
+
+use strict;
+
+$| = 1;
+
+my $Line = <STDIN>;
+my ($Indent, $Title) = ("", "");
+my @Data = ();
+
+defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
+$Line =~ /^(\s+)/ && ($Indent = $1);
+my ($start_date, $end_date) = ("", "");
+if ($Line =~ /(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(Z?)/) {
+	$start_date = "$1$2${3}T$4$5$6$7";
+} elsif ($Line =~ /(\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ?)/) {
+	$start_date = $1;
+}
+push(@Data, $Line);
+
+while (<STDIN>) {
+	push(@Data, $_);
+	if (/(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(Z?)/) {
+		$end_date = "$1$2${3}T$4$5$6$7";
+	} elsif (/(\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ?)/) {
+		$end_date = $1;
+	}
+}
+
+push(@Data, "$Indent# \x7D\x7D\x7D\n");
+unshift(@Data, "$Indent# $start_date-$end_date: $Title\x7B\x7B\x7B\n$Line");
+
+for (@Data) {
+	print $_;
+}
