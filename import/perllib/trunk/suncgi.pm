@@ -1,10 +1,10 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.39 2003/03/04 22:13:36 sunny Exp $
+# $Id: suncgi.pm,v 1.40 2003/10/13 06:18:43 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
-# (C)opyright 1999-2002 Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyright 1999-2003 Øyvind A. Holm <sunny@sunbase.org>
 #=========================================================
 
 require Exporter;
@@ -42,7 +42,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.39 2003/03/04 22:13:36 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.40 2003/10/13 06:18:43 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -195,7 +195,7 @@ sub get_cgivars {
 	         ($user_method =~ /^head$/i)) {
 		$in = $ENV{QUERY_STRING};
 	} elsif ($user_method =~ /^post$/i) {
-		if ($ENV{CONTENT_TYPE} =~ m#^application/x-www-form-urlencoded$#i) {
+		if ($ENV{CONTENT_TYPE} =~ m#^(application/x-www-form-urlencoded|text/xml)$#i) {
 			length($ENV{CONTENT_LENGTH}) || HTMLdie("Ingen Content-Length vedlagt POST-forespørselen.");
 			my $Len = $ENV{CONTENT_LENGTH};
 			read(STDIN, $in, $Len) || HTMLwarn("get_cgivars(): Feil under read() fra STDIN: $!");
@@ -808,7 +808,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.39 2003/03/04 22:13:36 sunny Exp $>
+S<$Id: suncgi.pm,v 1.40 2003/10/13 06:18:43 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -821,7 +821,7 @@ Inneholder generelle HTML-rutiner som brukes hele tiden.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999-2002 Øyvind A. Holm E<lt>F<sunny@sunbase.org>E<gt>
+(C)opyright 1999-2003 Øyvind A. Holm E<lt>F<sunny@sunbase.org>E<gt>
 
 =head1 VARIABLER
 
@@ -1204,4 +1204,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.39 2003/03/04 22:13:36 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.40 2003/10/13 06:18:43 sunny Exp $ ####
