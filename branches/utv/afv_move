@@ -1,86 +1,52 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: afv_move,v 1.6 2004/04/15 07:48:13 sunny Exp $
+# $Id: afv_move,v 1.6.2.1 2004/04/15 13:33:03 sunny Exp $
 # Reads file names from stdin or files and places them into a
 # directory structure based on a date in the file name or the
 # modifcation time.
 #
 # Character set: UTF-8
-# License: GNU General Public License
+# License: GNU General Public License ♥
 # ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
 #===============================================================
 
 use strict;
 use File::Copy;
 use File::Path;
+use Digest::MD5;
 use Getopt::Std;
-our ($opt_c, $opt_d, $opt_h, $opt_l, $opt_L, $opt_m, $opt_o, $opt_s, $opt_S, $opt_v) =
-    (0,      "",     0,      0,      0,      0,      0,      0,      0,      0     );
-getopts('cd:hlLmosSv');
+
+our $Debug = 0;
+
+our ($opt_c, $opt_d, $opt_h, $opt_l, $opt_L, $opt_m, $opt_o, $opt_O, $opt_s, $opt_S, $opt_v) =
+    (0,      "",     0,      0,      0,      0,      "",     0,      0,      0,      0     );
+
+getopts('cd:hlLmo:iOsSv') || die("Option error. Use -h for help.\n");
 
 $| = 1;
 
+my $rcs_id = '$Id: afv_move,v 1.6.2.1 2004/04/15 13:33:03 sunny Exp $';
 my $DEFAULT_DIR = "%Y/%m/%d";
+
+$opt_h && usage(0);
+
 my $skip_dirs = $opt_s ? 1 : 0;
 my $skip_files = ($opt_s | $opt_S) ? 1 : 0;
 
-if ($opt_h) {
-	print(<<END);
+if ($opt_o =~ /[^b]/) {
+	die("Uknown value in -o option. Use -h for help.\n");
+}
+my $replace_if_bigger = ($opt_o =~ /b/) ? 1 : 0;
 
-Syntax: $0 [options] [file_with_filenames [...]]
+D(<<END);
 
-The program reads file names from stdin or from the files on the command
-line and moves or copies the files into a directory structure defined by
-the user. It can also create soft or hard links if the file system
-allows it. The file name has to contain a date on the format
-
-  yyyymmddThhmmssZ
-
-which is the date specified in UTC.
-
-Options:
-
--c    Copy files instead of move
--d X  Place files under directory X
-      Use the following modifiers for subtree layout:
-
-      %Y  Year with four digits
-      %m  Month (00..12)
-      %d  Day of month (00..31)
-      %H  Hour (00..23)
-      %M  Minutes (00..59)
-      %S  Seconds (00..61)
-      %%  Regular percent sign
-
-      If the -d option is not specified, "$DEFAULT_DIR" will be used.
-
--h    Help me, please.
--l    Create symlinks instead of moving or copying files. The file names
-      in the input has to contain an absolute path to prevent creating
-      dead links. File names not starting with "/" will be ignored.
--L    Create hard links to the files instead of copying or moving.
--m    Use the file modification time instead of date found in the file
-      name. All files will be affected, not only those with a date in
-      the file name.
--o    Overwrite existing files
--s    Simulate, don't really move files
--S    Semisimulate. Don’t touch the files, only create the directory
-      structure. Useful for running tests with big amounts of data.
--v    Verbose execution
-
-Note: Files on the command line will not be moved themselves, but shall
-contain file names of the relevant files to be moved.
-
-Examples:
-
-ls | afv_move -v
-find /var/tmp/afvroot | afv_move -vl -d newdir/%Y-%m-%d/%H
-afv_move -vL /tmp/filenames.txt -d %Y/%Y-%m-%d
+replace_if_bigger = "$replace_if_bigger"
+skip_files = "$skip_files"
+skip_dirs = "$skip_dirs"
+opt_o = "$opt_o"
 
 END
-	exit(0);
-}
 
 my $simul_str = $skip_files ? " (simulating)" : "";
 
@@ -118,7 +84,7 @@ LOOP: while (<>) {
 				if ($opt_m) {
 					my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat($From);
 					my @TA = gmtime($mtime);
-					($Year,       $Mon,     $Day,   $Hour,  $Min,     $Sec) =
+					($Year,       $Mon,     $Day,   $Hour,  $Min,   $Sec) =
 					($TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
 					$Year = sprintf("%04u", $Year);
 					$Mon  = sprintf("%02u", $Mon);
@@ -127,6 +93,7 @@ LOOP: while (<>) {
 					$Min  = sprintf("%02u", $Min);
 					$Sec  = sprintf("%02u", $Sec);
 				}
+
 				my $Dir = length($opt_d) ? $opt_d : $DEFAULT_DIR;
 				$Dir =~ s/%Y/$Year/g;
 				$Dir =~ s/%m/$Mon/g;
@@ -136,27 +103,47 @@ LOOP: while (<>) {
 				$Dir =~ s/%S/$Sec/g;
 				$Dir =~ s/%%/%/g;
 
-				if (!$opt_o && -e "$Dir/$File") {
-					warn("$Dir/$File: File already exists, will not overwrite\n");
-				} else {
+				my $Dest = "$Dir/$File";
+				my $write_ok = 1;
+
+				if (!$opt_O && -e $Dest) {
+					if (length($opt_o)) {
+						D("!\$opt_O && -e \$Dest\n");
+						my ($f_dev, $f_ino, $f_mode, $f_nlink, $f_uid, $f_gid, $f_rdev, $f_size, $f_atime, $f_mtime, $f_ctime, $f_blksize, $f_blocks) = stat($From);
+						my ($d_dev, $d_ino, $d_mode, $d_nlink, $d_uid, $d_gid, $d_rdev, $d_size, $d_atime, $d_mtime, $d_ctime, $d_blksize, $d_blocks) = stat($Dest);
+						D("f_size = \"$f_size\" , d_size = \"$d_size\" , replace_if_bigger = $replace_if_bigger\n");
+						if ($replace_if_bigger && ($f_size <= $d_size)) {
+							warn("\"$From\" is not bigger than \"$Dest\", will not overwrite\n");
+							# unlink($From) || warn("$From: Can’t delete file: $!\n");
+							next LOOP;
+						}
+					} else {
+						$write_ok = 0;
+					}
+				}
+
+				if ($write_ok) { # FIXME
+					D("Inside \$write_ok\n");
 					$skip_dirs || -d $Dir || mkpath($Dir, $opt_v ? 1 : 0, 0777) || die("mkpath(\"$Dir\", 0, 0777): $!");
 					if ($opt_c) {
-						$opt_v && print("Copying \"$From\" to \"$Dir/$File\"$simul_str...");
-						$skip_files || copy($From, "$Dir/$File") || die("\ncopy(\"$From\", \"$Dir/$File\"): $!");
+						$opt_v && print("Copying \"$From\" to \"$Dest\"$simul_str...");
+						$skip_files || copy($From, $Dest) || die("\ncopy(\"$From\", \"$Dest\"): $!");
 						$opt_v && print("OK\n");
 					} elsif ($opt_L) {
-						$opt_v && print("Linking \"$From\" to \"$Dir/$File\"$simul_str...");
-						$skip_files || link($From, "$Dir/$File") || die("\nlink(\"$From\", \"$Dir/$File\"): $!");
+						$opt_v && print("Linking \"$From\" to \"$Dest\"$simul_str...");
+						$skip_files || link($From, $Dest) || die("\nlink(\"$From\", \"$Dest\"): $!");
 						$opt_v && print("OK\n");
 					} elsif ($opt_l) {
-						$opt_v && print("Symlinking \"$Path/$File\" to \"$Dir/$File\"$simul_str...");
-						$skip_files || symlink($From, "$Dir/$File") || die("\nsymlink(\"$From\", \"$Dir/$File\"): $!");
+						$opt_v && print("Symlinking \"$From\" to \"$Dest\"$simul_str...");
+						$skip_files || symlink($From, $Dest) || die("\nsymlink(\"$From\", \"$Dest\"): $!");
 						$opt_v && print("OK\n");
 					} else {
-						$opt_v && print("Moving \"$From\" to \"$Dir/$File\"$simul_str...");
-						$skip_files || move($From, "$Dir/$File") || die("\nmove(\"$From\", \"$Dir/$File\"): $!");
+						$opt_v && print("Moving \"$From\" to \"$Dest\"$simul_str...");
+						$skip_files || move($From, $Dest) || die("\nmove(\"$From\", \"$Dest\"): $!");
 						$opt_v && print("OK\n");
 					}
+				} else {
+					warn("$Dest: File already exists, will not overwrite\n");
 				}
 			} else {
 				warn("Ignoring non-regular file $From\n");
@@ -167,7 +154,108 @@ LOOP: while (<>) {
 	}
 }
 
+sub D {
+	chomp(my $Txt = shift);
+	my @call_info = caller;
+	$Debug && print(STDERR "DEBUG $call_info[2]: $Txt\n");
+}
+
+sub md5sum {
+	my $File = shift;
+	open(FILE, $File) || die("$File: $!");
+	binmode(FILE);
+
+	return (Digest::MD5->new->addfile(*FILE)->hexdigest, " $File\n");
+} # md5sum()
+
+sub usage {
+	# {{{
+	my $Retval = shift;
+
+	print(<<END);
+
+Syntax: $0 [options] [file_with_filenames [...]]
+
+The program reads file names from stdin or from the files on the command
+line and moves or copies the files into a directory structure defined by
+the user. It can also create soft or hard links if the file system
+allows it. The file name has to contain a date on the format
+
+  yyyymmddThhmmssZ
+
+which is the date specified in UTC.
+
+Options:
+
+-c    Copy files instead of move
+-d X  Place files under directory X
+      Use the following modifiers for subtree layout:
+
+        %Y  Year with four digits
+        %m  Month (00..12)
+        %d  Day of month (00..31)
+        %H  Hour (00..23)
+        %M  Minutes (00..59)
+        %S  Seconds (00..61)
+        %%  Regular percent sign
+
+      If the -d option is not specified, "$DEFAULT_DIR" will be used.
+
+-h    Help me, please.
+-l    Create symlinks instead of moving or copying files. The file names
+      in the input has to contain an absolute path to prevent creating
+      dead links. File names not starting with "/" will be ignored.
+-L    Create hard links to the files instead of copying or moving.
+-m    Use the file modification time instead of date found in the file
+      name. All files will be affected, not only those with a date in
+      the file name.
+-o X  Overwrite file if certain conditions is met:
+
+        i  File has identical data
+        b  New file is bigger
+        s  New file is smaller
+        o  New file is older
+        n  New file is newer
+
+      Examples:
+
+        -o bn
+          File is bigger or newer
+        -o i
+          File is identical
+        -osi
+          File is smaller or identical
+
+      (This is a TODO, only the 'b' option is implemented.)
+
+-O    Always overwrite.
+-s    Simulate, don't really move or copy files.
+-S    Semisimulate. Don’t touch the files, only create the directory
+      structure. Useful for running tests with big amounts of data.
+-v    Verbose execution
+
+These options are likely to change at the moment.
+
+Note: Files on the command line will not be moved themselves, but shall
+contain file names of the relevant files to be moved.
+
+Examples:
+
+  ls | afv_move -v
+  find /var/tmp/afvroot | afv_move -vl -d newdir/%Y-%m-%d/%H
+  afv_move -vL /tmp/filenames.txt -d %Y/%Y-%m-%d
+
+Made by Øyvind A. Holm <sunny\@sunbase.org>
+License: GNU General Public License ♥
+
+$rcs_id
+
+END
+	exit($Retval);
+	# }}}
+} # usage()
+
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: afv_move,v 1.6 2004/04/15 07:48:13 sunny Exp $
+# End of file $Id: afv_move,v 1.6.2.1 2004/04/15 13:33:03 sunny Exp $
