@@ -3,6 +3,8 @@
 # $Id$
 # Indent-Vim, viser indent i form av folder.
 
-ivimdir=$1
+ivimnavn=-
 
-vim -c "set sw=1 fdm=indent" -
+[ "$1" != "" ] && { ivimnavn=$*; }
+
+vim -c "set sw=1 fdm=indent" $ivimnavn
