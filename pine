@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# $Id: pine,v 1.1 2002/03/16 20:50:43 sunny Exp $
+# $Id: pine,v 1.2 2002/04/10 12:15:24 sunny Exp $
 # Locking for pine
 
 lockdir=/home/sunny/lock
-[ -d $lockdir ] || mkdir $lockdir || { echo "$lockdir: Klarte ikke mkdir" >&2, exit 1; }
+[ -d $lockdir ] || mkdir $lockdir || { echo "$lockdir: Klarte ikke mkdir" >&2; exit 1; }
 lockname=$lockdir/pine
 until mkdir $lockname 2>/dev/null; do
 	echo "$0: $lockname: Venter på at \"`cat $lockname/info`\" skal slippe locken..." >&2
