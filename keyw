@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #=======================================================================
-# $URL$
 # $Id$
 # Setter properties på tekstfiler sånn som jeg vil ha det.
 # Hvis -u spesifiseres som første parameter, settes ikke svn:eol-style.
@@ -12,7 +11,7 @@ if [ "$1" != "-u" ]; then
 else
     shift
 fi
-svn propset svn:keywords "Id URL" $*
+svn propset svn:keywords Id $*
 svn propdel cvs2svn:cvs-rev $*
 svn proplist -v $*
 
