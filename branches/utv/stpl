@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $
+# $Id: stpl,v 1.1.2.2 2003/10/08 03:01:20 sunny Exp $
 # [Description]
 # Character set: UTF-8
 # License: GNU General Public License
@@ -18,9 +18,9 @@ our ($opt_o, $opt_t, $opt_y) =
     (     "",     "",     "");
 getopts('o:t:y:');
 
-my $rcs_id = '$Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $';
+my $rcs_id = '$Id: stpl,v 1.1.2.2 2003/10/08 03:01:20 sunny Exp $';
 my $rcs_id_strip = $rcs_id;
-$rcs_id_strip =~ s/\$Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $$/$1/;
+$rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
 my $gnuplot_script = join(".", "tmp.stpl", $$, substr(rand(), 2, 5), "plt");
 
@@ -28,13 +28,29 @@ if (-e $gnuplot_script) {
 	die("$gnuplot_script: Strange indeed — file already exists. Spooky.\n");
 }
 
-open(GnupFP, ">$gnuplot_script") || die("$gnuplot_script: Can’t open file for write: $!\n");
+my $data_file = "";
 
+if (defined($ARGV[0])) {
+	$data_file = $ARGV[0];
+} else {
+	die("$0: Missing file name\n");
+}
+
+process_file($data_file);
+
+exit(0);
 
 sub process_file {
+	# {{{
+	my $data_file = shift;
+	unless (-r $data_file) {
+		die("$0: $data_file: File is unreadable or dosn’t exist.\n");
+	}
+	open(GnupFP, ">$gnuplot_script") || die("$gnuplot_script: Can’t open file for write: $!\n");
 	print(GnupFP <<END);
 #!/usr/bin/gnuplot -persist
 
+# \$\x49d\$
 # Gnuplot script created by $rcs_id_strip
 
 END
@@ -43,10 +59,10 @@ END
 		if ($opt_y =~ /^r(.*)/) {
 			# Y range specified {{{
 			my $Range = $1;
-			if ($opt_y =~ /^-yr([\d\-]+:[\d\-]+)$/) {
+			if ($opt_y =~ /^r([\d\-]+:[\d\-]+)$/) {
 				print(GnupFP "set yrange [$1]\n");
 			} else {
-				die("$Range: Invalid Y range specified\n");
+				die("\"$Range\": Invalid Y range specified\n");
 			}
 			# }}}
 		}
@@ -76,7 +92,9 @@ END
 	}
 
 	while (<>) {
-		if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d))T(\d\d):(\d\d):(\d\d)\s+(\d+)/
+		if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d)T(\d\d):(\d\d):(\d\d)\s+(\d+)/) {
+		}
+	}
 
 	print(GnupFP <<END);
 plot \\
@@ -85,16 +103,13 @@ plot \\
 
 END
 
-close(GnupFP);
+	close(GnupFP);
 
-system("gnuplot $gnuplot_script");
-# "data" using 1:2 s bezier w l -1, \
-# "data" using 1:2 s sbezier w l 29
-
-# "data" using 1:2 s acsplines w l 3, \
-# "data" using 1:2 w l 0, \
+	system("gnuplot -persist $gnuplot_script");
+	# }}}
+}
 
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.1.2.1 2003/10/01 19:41:31 sunny Exp $
+# End of file $Id: stpl,v 1.1.2.2 2003/10/08 03:01:20 sunny Exp $
