@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.12 2003/06/27 05:03:17 sunny Exp $
+# $Id: cvse,v 1.1.2.13 2003/06/30 13:03:07 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -10,7 +10,7 @@
 use strict;
 
 use Getopt::Std;
-our ($opt_d, $opt_h, $opt_s, $opt_i, $opt_v) = ("", 0, 0, 0, 0);
+our ($opt_d, $opt_h, $opt_i, $opt_s, $opt_v) = ("", 0, 0, 0, 0);
 getopts('d:hisv');
 
 $| = 1;
@@ -38,6 +38,8 @@ END
 }
 
 my $Simulate = $opt_s;
+my $has_diff = 0;
+($has_diff = 1) if (`diff --version` =~ /diff/);
 my ($curr_rev, $curr_rcs_file, $curr_work_file, $total_ignored) = ("", "", "", "");
 my @Curr = ();
 my %Entry = ();
@@ -157,7 +159,7 @@ sub change_message {
 					print("Executing \"$ex_str\"\n");
 					system($ex_str);
 					if (-e $File) {
-						print("File exists with (old) revision $t_rev, CVS is now able to change log message.\n");
+						print("File exists with (old) revision $t_rev, CVS is now able to change the log message.\n");
 						last;
 					}
 				}
@@ -182,22 +184,30 @@ sub change_message {
 			my $exec_str = "cvs$eroot_str admin -m$Rev:\"`cat $tmp_file`\" $esc_file";
 			my $Deb = "";
 			$Deb = get_log_message($esc_file, $Rev);
-			if (open(DiffFP, ">BEFORE.cvse")) {
-				print(DiffFP $Deb);
-				close(DiffFP);
+			if ($has_diff) {
+				if (open(DiffFP, ">BEFORE.cvse")) {
+					print(DiffFP $Deb);
+					close(DiffFP);
+				}
+			} else {
+				print("==== BEFORE: $esc_file $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n");
 			}
-			# print("==== BEFORE: $esc_file $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n");
 			printf("%s \"%s\"\n", $Simulate ? "Simulating" : "Executing", $exec_str);
 			system($exec_str) unless $Simulate;
 			$Deb = get_log_message($esc_file, $Rev);
 			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!\n");
-			if (open(DiffFP, ">AFTER.cvse")) {
-				print(DiffFP $Deb);
-				close(DiffFP);
+			if ($has_diff) {
+				if (open(DiffFP, ">AFTER.cvse")) {
+					print(DiffFP $Deb);
+					close(DiffFP);
+				}
+				print(join("", "==== Log diff for $File,v $Rev \x7B\x7B\x7B ====\n", `diff -u BEFORE.cvse AFTER.cvse`, "==== \x7D\x7D\x7D ====\n"));
+				for ($tmp_file, "BEFORE.cvse", "AFTER.cvse") {
+					unlink($_) || warn("$_: Cannot remove file: $!\n");
+				}
+			} else {
+				print("==== AFTER : $esc_file $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
 			}
-			print(join("", "==== Log diff for $File,v $Rev \x7B\x7B\x7B ====\n", `diff -u BEFORE.cvse AFTER.cvse`, "==== \x7D\x7D\x7D ====\n"));
-			unlink($tmp_file, "BEFORE.cvse", "AFTER.cvse") || warn("$tmp_file: Cannot remove file: $!\n");
-			# print("==== AFTER : $esc_file $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
 			print("\n");
 		} else {
 			warn("Cannot open temporary file \"$tmp_file\", log messages not changed: $!\n");
@@ -289,7 +299,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.12 2003/06/27 05:03:17 sunny Exp $
+$Id: cvse,v 1.1.2.13 2003/06/30 13:03:07 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -431,4 +441,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.1.2.12 2003/06/27 05:03:17 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.13 2003/06/30 13:03:07 sunny Exp $
