@@ -1,13 +1,14 @@
 #!/usr/bin/perl
 
 #=============================================================================
-# $Id: u2h,v 1.5 2002/03/30 23:11:50 sunny Exp $
+# $Id: u2h,v 1.6 2002/11/05 20:58:09 sunny Exp $
 # Converts from UTF-8 charset to HTML numeric entities (&#x263A; and &#9786;).
 #
 # Options:
 #   -a  convert Ampersand into entity
 #   -d  use Decimal values
-#   -l  also convert Latin-1 characters.
+#   -l  convert U+0080 through U+00FF to Latin-1 instead of entities
+#   -s  also convert Standard ascii U+0020 through U+007F
 #
 # Created by &#xD8;yvind A. Holm <sunny@sunbase.org>. License: GNU GPL.
 #=============================================================================
@@ -15,13 +16,14 @@
 use strict;
 require 'getopts.pl'; # FIXME: Generates a warning when command line option is used and -w is specified in the shebang.
 
-($main::opt_a, $main::opt_d, $main::opt_l) = (0, 0, 0);
-&Getopts('adl');
+($main::opt_a, $main::opt_d, $main::opt_l, $main::ops_s) = (0, 0, 0, 0);
+&Getopts('adls');
 
 my $amp_ent = $main::opt_d ? "&#38;" : "&#x26;";
 
 while (<>) {
 	$main::opt_a && s/&/$amp_ent/g;
+	$main::opt_s && s/([\x20-\x7F])/decode_char($1)/ge;
 	s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
 	s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
 	s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
@@ -35,7 +37,9 @@ while (<>) {
 sub decode_char {
 	my $Msg = shift;
 	my $Retval = "";
-	if ($Msg =~ /^([\xC0-\xDF])([\x80-\xBF])/) {
+	if ($Msg =~ /^([\x20-\x7F])$/) {
+		$Retval = sprintf("&#%u;", ord($1));
+	} elsif ($Msg =~ /^([\xC0-\xDF])([\x80-\xBF])/) {
 		my $Val = ((ord($1) & 0x1F) << 6) | (ord($2) & 0x3F);
 		$Retval = ($main::opt_l && ($Val <= 0xFF)) ? chr($Val) : sprintf("&#%u;", $Val);
 	} elsif ($Msg =~ /^([\xE0-\xEF])([\x80-\xBF])([\x80-\xBF])/) {
