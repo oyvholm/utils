@@ -51,6 +51,7 @@ Syntax: gptrans_conv [options] [files [...]]
           svg (Unfinished)
           xgraph
           xml
+          ygraph
   -s    Short date format
   -t    Create breaks in track between points with a difference more 
         than $PAUSE_LIMIT seconds
@@ -154,7 +155,7 @@ while (<>) {
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
-        print unless ($opt_o =~ /^(xgraph|gpstrans|svg|xml)$/);
+        print unless ($opt_o =~ /^(xgraph|gpstrans|svg|xml|ygraph)$/);
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
         # Author’s format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -314,7 +315,7 @@ sub print_entry {
         $pause_len = $ep_time-$last_time;
     }
 
-    if ($pause_len && ($opt_o !~ /^(xgraph|gpstrans|xml|svg)$/)) {
+    if ($pause_len && ($opt_o !~ /^(xgraph|gpstrans|xml|svg|ygraph)$/)) {
         printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
     }
 
@@ -355,6 +356,8 @@ END
                              "</pos> ",
                          "</gps>\n"
                     );
+        } elsif ($opt_o eq "ygraph") {
+            $Line = "$Lon $Lat\n\n";
         } else {
             # Default format used by the author. Yes, the Universe 
             # evolves around him. ☺
