@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.12 2003/02/05 05:25:51 sunny Exp $
+# $Id: hhi,v 1.1.2.13 2003/02/05 10:12:37 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -36,7 +36,7 @@ while (<>) {
 			}
 			($tall_str .= ".") if ($header_level == 2);
 			$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
-			push(@Toc, "<${H}${header_level}${Elem}><a href=\"#$name_str\">$tall_str</a> $Rest") unless (/<!-- nohhitoc -->/i);
+			push(@Toc, "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest") unless (/<!-- nohhitoc -->/i);
 			$last_level = $header_level;
 		}
 		push(@Data, "$_");
@@ -92,4 +92,4 @@ for my $Line (@Data) {
 	}
 }
 
-# End of file $Id: hhi,v 1.1.2.12 2003/02/05 05:25:51 sunny Exp $
+# End of file $Id: hhi,v 1.1.2.13 2003/02/05 10:12:37 sunny Exp $
