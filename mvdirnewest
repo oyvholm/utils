@@ -1,11 +1,11 @@
 #!/usr/bin/perl
 
-# $Id: mvdirnewest,v 1.1 1999/02/14 01:35:12 sunny Exp $
+# $Id: mvdirnewest,v 1.2 1999/05/05 02:35:04 sunny Exp $
 # Syntax: $0 directory
 # Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.
 # Brukes til å lage orden i gamle versjoner av ting som ligger slengende rundt.
 #
-# (C)opyleft 1999 Øyvind A. Holm <sunny@tritech.no>
+# (C)opyleft 1999 Øyvind A. Holm <sunny@dataguard.no>
 
 my $RetVal;
 
@@ -75,4 +75,4 @@ sub date2str {
 	return(sprintf("%04u%02u%02uT%02u%02u%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]));
 } # date2str()
 
-#### End of file $Id: mvdirnewest,v 1.1 1999/02/14 01:35:12 sunny Exp $ ####
+#### End of file $Id: mvdirnewest,v 1.2 1999/05/05 02:35:04 sunny Exp $ ####
