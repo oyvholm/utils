@@ -1,8 +1,12 @@
 #!/bin/sh
 
-# $Id: view_df,v 1.1 2003/09/30 05:00:28 sunny Exp $
+# $Id: view_df,v 1.2 2003/09/30 06:37:45 sunny Exp $
 
-deep ~/log/df.log | grep $* | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df | ep >~/log/data
+if [ "$2" != "" ]; then
+	deep ~/log/df.log | grep $1 | tail -$2 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df | ep >~/log/data
+else
+	deep ~/log/df.log | grep $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df | ep >~/log/data
+fi
+
 cd ~/log
 statplot
-# deep df.log | grep hda2 | tail -100 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | ep >data ; statplot
