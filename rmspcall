@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# $Id: rmspcall,v 1.1 1999/02/26 15:34:03 sunny Exp $
+# $Id: rmspcall,v 1.2 1999/03/23 13:16:32 sunny Exp $
 
-rmspcforan
-rmspcbak
+rmspcforan | rmspcbak
