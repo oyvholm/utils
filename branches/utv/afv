@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.10 2004/04/15 04:47:18 sunny Exp $
+# $Id: afv,v 1.13.2.11 2004/04/15 13:53:43 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 #
 # ©2001–2004 Øyvind A. Holm. Lisens: GNU GPL ♥
@@ -14,6 +14,8 @@ use Fcntl ':flock';
 use File::Path;
 use Digest::MD5;
 use Getopt::Std;
+
+our $Debug = 0;
 
 our ($opt_d, $opt_h, $opt_l) =
     ("",     0,      ""    );
@@ -111,7 +113,7 @@ foreach my $FullCurr (@Files) {
 		warn(sec_to_string(time) . ": $lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
 		my_sleep(5);
 	}
-
+	D(sprintf("Årntli og offisiell MD5: %s\n", `md5sum $Curr`));
 	if (open(FromFP, "<$Curr")) {
 		binmode(FromFP);
 		if (flock(FromFP, LOCK_EX)) {
@@ -126,6 +128,7 @@ foreach my $FullCurr (@Files) {
 			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
 
 			my $curr_md5 = Digest::MD5->new->addfile(*FromFP)->hexdigest;
+			D("curr_md5 = $curr_md5");
 			open(CurrMD5FP, ">$currmd5_file") || die("$currmd5_file: Klarte ikke å åpne fila for skriving: $!");
 			print(CurrMD5FP "$curr_md5\n") || die("$currmd5_file: Feil under skriving til fila. $!");
 			close(CurrMD5FP);
@@ -133,13 +136,15 @@ foreach my $FullCurr (@Files) {
 
 			if (-e $lastmd5_file) {
 				if (open(LastMD5FP, "<$lastmd5_file")) {
-					$last_md5 = <LastMD5FP>;
+					chomp($last_md5 = <LastMD5FP>);
 					$last_md5 =~ s/^([0-9a-fA-F]{32})/\L$1\E/;
 					close(LastMD5FP);
 				} else {
 					warn("$lastmd5_file: Feil under åpning for lesing: $!");
 				}
 			}
+
+			D("last_md5 = \"$last_md5\", curr_md5 = \"$curr_md5\"");
 			if ($curr_md5 ne $last_md5) {
 				print("$date_str.$Curr\n") unless $do_loop;
 				if (seek(FromFP, 0, 0)) {
@@ -186,6 +191,12 @@ if ($do_loop) {
 }
 
 exit;
+
+sub D {
+	chomp(my $Txt = shift);
+	my @call_info = caller;
+	$Debug && print(STDERR "DEBUG $call_info[2]: $Txt\n");
+}
 
 sub sec_to_string {
 	# Konverter antall sekunder sia 1970-01-01 00:00:00 GMT til ååååmmddTttmmssZ {{{
@@ -241,4 +252,4 @@ sub my_sleep {
 	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.10 2004/04/15 04:47:18 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.11 2004/04/15 13:53:43 sunny Exp $ ####
