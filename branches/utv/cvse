@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.10 2003/06/12 01:55:14 sunny Exp $
+# $Id: cvse,v 1.1.2.11 2003/06/27 03:41:20 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -16,6 +16,7 @@ getopts('d:hisv');
 $| = 1;
 
 if ($opt_h) {
+	# {{{
 	print(<<END);
 
 Syntax: cvse [options] [logfile [...]]
@@ -33,6 +34,7 @@ Options:
 
 END
 	exit 0;
+	# }}}
 }
 
 my $Simulate = $opt_s;
@@ -87,6 +89,7 @@ while (<>) {
 			push(@all_revs, $l_name);
 		}
 		for (@all_revs) {
+			# Scan through all revisions {{{
 			my $Curr = $_;
 			my ($a_file, $a_rev) = ("", "");
 			if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
@@ -97,6 +100,7 @@ while (<>) {
 			} else {
 				warn("Wrong revision format \"$Curr\", skipping revision\n");
 			}
+			# }}}
 		}
 		($curr_rev, $Rev) = ("", "");
 		%Entry = ();
@@ -253,12 +257,14 @@ sub get_log_message {
 }
 
 sub escape_filename {
+	# Kludge for handling file names with spaces and characters that trigger shell functions {{{
 	my $Name = shift;
 	# $Name =~ s/\\/\\\\/g;
 	# $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
 	$Name =~ s/'/\\'/g;
-	$Name = "'$Name'"; # FIXME: Any cleaner way of dealing with potential weird characters in file names under UNIX?
+	$Name = "'$Name'"; # FIXME: Any cleaner way of dealing with potential weird characters in file names under UNIX? Does it work in windowsworld?
 	return($Name);
+	# }}}
 }
 
 __END__
@@ -273,7 +279,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.10 2003/06/12 01:55:14 sunny Exp $
+$Id: cvse,v 1.1.2.11 2003/06/27 03:41:20 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -415,4 +421,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.1.2.10 2003/06/12 01:55:14 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.11 2003/06/27 03:41:20 sunny Exp $
