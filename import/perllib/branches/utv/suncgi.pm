@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -45,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -549,11 +549,8 @@ sub HTMLerror {
 	# }}}
 } # HTMLerror()
 
-# increase_counter() øker kun med 1 hvis IP’en er forskjellig fra forrige gang.
-# Hvis parameter 2 er !0, øker den uanskvett.
-
 sub increase_counter {
-	# {{{
+	# Øker kun med 1 hvis IP’en er forskjellig fra forrige gang. Hvis parameter 2 er !0, øker den uanskvett. {{{
 	my ($counter_file, $ignore_ip) = @_;
 	my $last_ip = "";
 	my @call_info = caller;
@@ -982,12 +979,22 @@ sub h_print {
 			$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
 			$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
 			$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
+		} else {
+			HTMLwarn("h_print(): Ukjent CharSet: \"$suncgi::CharSet\"");
 		}
 	} elsif ($from_charset =~ /^ISO-8859-1$/i) {
 		if ($suncgi::CharSet =~ /^UTF-8$/) {
+			$Txt =~ s/([\xA0-\xFF])/widechar($1, $no_entities)/ge;
+		} elsif ($suncgi::CharSet =~ /^ISO-8859-1$/) {
+			# NOP, bare for å kunne sjekke om det er ulovlige ting på gang.
+			unless ($no_entities) {
+				$Txt =~ s/([\xA0-\xFF])/sprintf("&#%u;", ord($1))/;
+			}
+		} else {
+			HTMLwarn("Ukjent tegnsett: \"$suncgi::CharSet\"");
 		}
 	} else {
-		HTMLwarn("h_print(): Ukjent tegnsett: \"$suncgi::CharSet\"");
+		HTMLwarn("h_print(): Ukjent tegnsett: \"$from_charset\"");
 	}
 	print($Txt);
 	# }}}
@@ -1059,11 +1066,19 @@ sub utf8_to_entity {
 	# return("-") if ($Val eq 0x2010); # Vetta fan hvorfor den mangler i masse fonter, så man får seife litt. Den er egentlig ufattelig stygg den der, men hva i helsike skal man gjøre? FIXME: Er det verdt bråket? ☠!!!
 	deb_pr("utf8_to_entity(): \$Val = \"$Val\" før retval");
 	my $Retval = $use_latin1
-	             ? ( ($Val <= 0xFF) ? chr($Val) )
-	             : ( sprintf("&#%u;", $Val) );
-	chr($Val) : $Val <= 0xFF
-		) ? chr($Val) : sprintf("&#%u;"), $Val
-	);
+		? (
+			($Val <= 0xFF)
+			? chr($Val)
+			: sprintf("&#%u;", $Val)
+		) : (
+			sprintf("&#%u;", $Val)
+		);
+	# CO: Skrot {{{
+	# begin-base64 644 -
+	# H4sIAM0oTEACA+NMzijSUAlLzNFUsFIA0Qo2tgoGFW5uXJycmgr2CsjSxQVF
+	# mXklaRpKasqqpdZKmjpgDVycmtZcAIilvwRHAAAA
+	# ====
+	# }}}
 	deb_pr("utf8_to_entity() returnerer \"$Retval\"");
 	return($Retval);
 	# }}}
@@ -1137,7 +1152,7 @@ suncgi — HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1510,4 +1525,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $ ####
