@@ -1,18 +1,19 @@
 #!/usr/bin/perl
 
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.7 2000/03/27 11:54:35 sunny Exp $
+# $Id: dbk,v 1.8 2000/03/29 14:40:10 sunny Exp $
 #
 # (C)opyleft Øyvind A. Holm <sunny256@mail.com>
 # GNU-lisens.
 
 use Time::Local;
+use Fcntl ':flock';
 
 $Debug = 0;
 
 print("\$#ARGV = $#ARGV\n") if $Debug;
 
-$Editor = "joe +9999";
+$Editor = "joe";
 $dbk_dir = "$ENV{HOME}/dbk";
 $Viewer = "lynx -homepage=file://$dbk_dir";
 $dbk_ext = ".html";
@@ -21,6 +22,7 @@ $dir_mode = 0770;
 $curr_time = time;
 $opt_t = 0; # Legger til klokkeslettet på en egen linje
 $opt_h = 0; # Skriver ut hjelpen
+$time_not_found = 0;
 @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 require 'getopts.pl';
@@ -97,12 +99,25 @@ unless (-f $dbk_file) {
 
 if ($opt_t) {
 	$utc_str = sprintf("%s%02u00", $utc_diff < 0 ? "-" : "+", $utc_diff);
-	$time_str = "$Hour:$Min:$Sec$utc_str" unless length($time_str);
-	open(FP, ">>$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for append: $!\n");
-	print(FP "\n<p><b>$time_str</b> -\n") || die("$0: $dbk_file: Klarte ikke å skrive til fila: $!\n");
-	close(FP);
-	system("$Editor $dbk_file");
-	$min_size = 52;
+	if (length($time_str)) {
+		$time_str .= $utc_str;
+	} else {
+		$time_str = "$Hour:$Min:$Sec$utc_str";
+	}
+	open(dbkFP, "+<$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for lesing+skriving+flock: $!\n");
+	flock(dbkFP, LOCK_EX) || die("$0: $dbk_file: Klarte ikke flock(): $!\n");
+	$which_line = &find_line($time_str);
+	if ($time_not_found) {
+		seek(dbkFP, 0, 2) || die("$dbk_file: Klarte ikke å seeke til slutten for å legge til LF: $!\n");
+		print(dbkFP "\n");
+		$which_line++;
+	}
+	&insert_time($time_str, $which_line);
+	close(dbkFP);
+	$which_line++;
+	# $which_line++ if $time_not_found;
+	system("$Editor +$which_line $dbk_file");
+	$min_size = 51;
 } else {
 	$min_size = 25;
 }
@@ -113,11 +128,39 @@ $file_size = $stat_info[7];
 if ($file_size < $min_size) {
 	print("Ingenting ble skrevet, så jeg sletter driten.\n");
 	unlink($dbk_file) || die("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
+	rmdir($year_dir);
 }
 
 exit(0);
 
 #### SUBRUTINER ####
+
+sub find_line {
+	my $srch_time = shift;
+	my $last_line = 0;
+	my $Found = 0;
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila: $!\n");
+	while (<dbkFP>) {
+		if (/^<p><b>(\d\d:\d\d:\d\d)/i || /^<p><b>(\d\d:\d\d)/i) {
+			my $found_time = $1;
+			return($.) if ($srch_time lt $found_time);
+		}
+	}
+	$time_not_found = 1;
+	return($.+1);
+} # find_line()
+
+sub insert_time {
+	my ($time_str, $line_num) = @_;
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_line(): $!\n");
+	my @Linjer = <dbkFP>;
+	splice(@Linjer, $line_num-1, 0, sprintf("<p><b>$time_str</b> -\n%s", $time_not_found ? "" : "\n"));
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_time(): $!\n");
+	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+	foreach(@Linjer) {
+		print(dbkFP $_);
+	}
+} # insert_time()
 
 sub print_help {
 	my $Retval = shift;
@@ -131,12 +174,12 @@ Disse valgene (options) kan brukes:
 -t  Legg til klokkeslett i fila og gå inn i editoren
 
 Klokkeslettet kan spesifiseres hvor som helst, men må starte med formatet
-"HH:" der HH er to siffer. Det virker bare med -t.
+"HH:" der HH er to siffer.
 
 END
 	exit($Retval);
-}
+} # print_help()
 
 __END__
 
-#### End of file $Id: dbk,v 1.7 2000/03/27 11:54:35 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.8 2000/03/29 14:40:10 sunny Exp $ ####
