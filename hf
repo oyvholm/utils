@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #========================================================================
-# $Id: hf,v 1.17 2004/02/28 08:19:59 sunny Exp $
+# hf,v 1.17 2004/02/28 08:19:59 sunny Exp
 # Formatterer HTML-source med TAB’er
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
@@ -15,8 +15,9 @@
 use strict;
 use Getopt::Std;
 
-our ($opt_a, $opt_h, $opt_i, $opt_H, $opt_s) = (0, 0, 0, 0);
-getopts('ahHi:s');
+our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i, $opt_s) = 
+    (     0,      0,      0,      0,      0,      0);
+getopts('aiEhHi:s');
 
 my $is_pre = 0;
 my $prog_name = $0;
@@ -60,27 +61,31 @@ LINE: while (<>) {
 			$header_indent = "\t" x ($1-1);
 		}
 		($Line =~ m!</body>!i) && ($header_indent = "");
-		for $f (@Elements) {
-			if ($Line =~ m!</($f)([ >])!i) {
-				# Slutt-tag ble funnet {{{
-				$Element = $1;
-				$tab_indent--;
-				$Tabs =~ s/\t$//;
-				# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
-				# }}}
+		unless ($opt_E) {
+			for $f (@Elements) {
+				if ($Line =~ m!</($f)([ >])!i) {
+					# Slutt-tag ble funnet {{{
+					$Element = $1;
+					$tab_indent--;
+					$Tabs =~ s/\t$//;
+					# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+					# }}}
+				}
 			}
 		}
 		$out_line = "$header_indent$Tabs$Line";
 		$out_line =~ s/\s+$//g; # Fjern alle whitespace på slutten
 		print "$out_line\n";
-		for $f (@Elements) {
-			if ($Line =~ m!<($f)([ >])!i) {
-				# Start-tag ble funnet {{{
-				$Element = $1;
-				$tab_indent++;
-				$Tabs .= "\t";
-				# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
-				# }}}
+		unless ($opt_E) {
+			for $f (@Elements) {
+				if ($Line =~ m!<($f)([ >])!i) {
+					# Start-tag ble funnet {{{
+					$Element = $1;
+					$tab_indent++;
+					$Tabs .= "\t";
+					# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+					# }}}
+				}
 			}
 		}
 	} else {
@@ -112,4 +117,4 @@ END
 	# }}}
 }
 
-# End of file $Id: hf,v 1.17 2004/02/28 08:19:59 sunny Exp $
+# End of file hf,v 1.17 2004/02/28 08:19:59 sunny Exp
