@@ -19,7 +19,25 @@ getopts('h') || die("Option error. Use -h for help.\n");
 
 $opt_h && usage(0);
 
+my $Last = <>;
+$Last =~ s/\s+$//;
+my $Curr = "";
 
+while (<>) {
+	chomp;
+	s/\s+$//;
+	$Curr = $_;
+	# print("Curr = \"$Curr\"\n");
+	if ($Curr =~ />$/) {
+		# Found > at end of line or it isn’t quoted, no space at EOL
+		print("$Curr\n");
+	} else {
+		print("$Last \n");
+	}
+	$Last = $Curr;
+}
+
+print("$Last\n");
 
 sub usage {
 	# Send the help message to stdout {{{
