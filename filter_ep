@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: filter_ep,v 1.1 2003/09/27 05:42:40 sunny Exp $
+# $Id: filter_ep,v 1.2 2003/09/28 23:56:03 sunny Exp $
 # Slipper bare ting som ser ut som en gyldig ep igjennom.
 # For å ta så mye drit som mulig, slipper den bare gjennom
 # 9-sifrede nummer som begynner på 9, og 10-sifrede nummer som
-# begynner på 1.
+# begynner på 1. -v skriver ut ulovlige linjer.
 #
 # Character set: UTF-8
 # License: GNU General Public License
@@ -16,16 +16,22 @@ use strict;
 
 $| = 1;
 
+use Getopt::Std;
+
+our $opt_v = 0;
+
+getopts('v');
+
 while (<>) {
 	chomp;
 	if (/^(9\d{8})$/ || /^(1\d{9})$/) {
 		print("$_\n");
 	} else {
-		print(STDERR "Linje $.: Ulovlig: \"$_\"\n");
+		$opt_v && print(STDERR "Linje $.: Ulovlig: \"$_\"\n");
 	}
 }
 
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: filter_ep,v 1.1 2003/09/27 05:42:40 sunny Exp $
+# End of file $Id: filter_ep,v 1.2 2003/09/28 23:56:03 sunny Exp $
