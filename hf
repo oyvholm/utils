@@ -31,74 +31,74 @@ my $Tabs = "";
 my $tab_indent = $main::opt_i;
 my $orig_line = "";
 my @Elements = (
-	"applet", "blockquote", "body", "caption", "center", "colgroup",
-	"div", "dl", "form", "frameset", "head", "html", "ol", "map",
-	"noframes", "noscript", "select", "table", "td",
-	"th", "tr", "ul"
+    "applet", "blockquote", "body", "caption", "center", "colgroup",
+    "div", "dl", "form", "frameset", "head", "html", "ol", "map",
+    "noframes", "noscript", "select", "table", "td",
+    "th", "tr", "ul"
 );
 
 $tab_indent = 0 if ($tab_indent <= 0);
 
 for (; $tab_indent; $tab_indent--) {
-	$Tabs .= "\t";
+    $Tabs .= "\t";
 }
 
 my $line_exp = $main::opt_a ? '^\s+(.*)' : '^\t+(.*)';
 my $header_indent = "";
 
 LINE: while (<>) {
-	# {{{
-	my $Line = $_;
-	my $Element = "";
-	my $f = "";
-	my $out_line;
+    # {{{
+    my $Line = $_;
+    my $Element = "";
+    my $f = "";
+    my $out_line;
 
-	$main::opt_s && ($Line =~ /^%/) && (print($Line), next LINE); # Ignorer linjer som begynner med % hvis -s er spesifisert
-	unless ($is_pre) {
-		# $Line =~ $main::opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
-		$Line =~ s/$line_exp/$1/;
-		if ($main::opt_H && $Line =~ /<h([1-6]).*?>/i) {
-			$header_indent = "\t" x ($1-1);
-		}
-		($Line =~ m!</body>!i) && ($header_indent = "");
-		unless ($opt_E) {
-			for $f (@Elements) {
-				if ($Line =~ m!</($f)([ >])!i) {
-					# Slutt-tag ble funnet {{{
-					$Element = $1;
-					$tab_indent--;
-					$Tabs =~ s/\t$//;
-					# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
-					# }}}
-				}
-			}
-		}
-		$out_line = "$header_indent$Tabs$Line";
-		$opt_w && $out_line =~ s/[ \t]+$//g; # Fjern alle whitespace på slutten
-		print($out_line);
-		unless ($opt_E) {
-			for $f (@Elements) {
-				if ($Line =~ m!<($f)([ >])!i) {
-					# Start-tag ble funnet {{{
-					$Element = $1;
-					$tab_indent++;
-					$Tabs .= "\t";
-					# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
-					# }}}
-				}
-			}
-		}
-	} else {
-		print;
-	}
-	$is_pre = 1 if ($Line =~ /<(pre|script|style|rdf:RDF)\b.*>/i);
-	$is_pre = 0 if ($Line =~ m!</(pre|script|style|rdf:RDF)>!i);
-	# }}}
+    $main::opt_s && ($Line =~ /^%/) && (print($Line), next LINE); # Ignorer linjer som begynner med % hvis -s er spesifisert
+    unless ($is_pre) {
+        # $Line =~ $main::opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
+        $Line =~ s/$line_exp/$1/;
+        if ($main::opt_H && $Line =~ /<h([1-6]).*?>/i) {
+            $header_indent = "\t" x ($1-1);
+        }
+        ($Line =~ m!</body>!i) && ($header_indent = "");
+        unless ($opt_E) {
+            for $f (@Elements) {
+                if ($Line =~ m!</($f)([ >])!i) {
+                    # Slutt-tag ble funnet {{{
+                    $Element = $1;
+                    $tab_indent--;
+                    $Tabs =~ s/\t$//;
+                    # $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+                    # }}}
+                }
+            }
+        }
+        $out_line = "$header_indent$Tabs$Line";
+        $opt_w && $out_line =~ s/[ \t]+$//g; # Fjern alle whitespace på slutten
+        print($out_line);
+        unless ($opt_E) {
+            for $f (@Elements) {
+                if ($Line =~ m!<($f)([ >])!i) {
+                    # Start-tag ble funnet {{{
+                    $Element = $1;
+                    $tab_indent++;
+                    $Tabs .= "\t";
+                    # $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+                    # }}}
+                }
+            }
+        }
+    } else {
+        print;
+    }
+    $is_pre = 1 if ($Line =~ /<(pre|script|style|rdf:RDF)\b.*>/i);
+    $is_pre = 0 if ($Line =~ m!</(pre|script|style|rdf:RDF)>!i);
+    # }}}
 }
 
 sub print_help {
-	# {{{
-	print <<END;
+    # {{{
+    print <<END;
 
 HTML formatter
 Syntax: $0 [valg] [filer [...]]
@@ -114,8 +114,10 @@ Options:
         www.sunbase.org som er sånn.
 
 END
-	exit(0);
-	# }}}
+    exit(0);
+    # }}}
 }
+
+vim: set ft=perl sw=4 ts=4 sts=4 expandtab fenc=utf8 :
 
 # End of file $Id$
