@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
-#================================================
+#=======================================================================
 # $Id$
 # Lagrer alle nye versjoner av en fil.
 #
 # ©2001–2004 Øyvind A. Holm. Lisens: GNU GPL ♥
-#================================================
+#=======================================================================
 
 # FIXME: Finn en standard Perl-måte for å erstatte kjøring av /bin/pwd .
 
@@ -29,13 +29,13 @@ if ($opt_h) {
 
 Syntax: $0 [valg] [fil [flere filer [...]]]
 
-Lagrer flere versjoner av en eller flere filer i katalogen som \$AFVROOT
-er satt til. Hvis ingen filer er spesifisert på kommandolinja, leses
+Lagrer flere versjoner av en eller flere filer i katalogen som \$AFVROOT 
+er satt til. Hvis ingen filer er spesifisert på kommandolinja, leses 
 filnavn fra stdin.
 
 Valg:
 
--d X  De forskjellige versjonene skal lagres under X. Overstyrer
+-d X  De forskjellige versjonene skal lagres under X. Overstyrer 
       \$AFVROOT .
 -h    Hjelp.
 -l X  Kjør i loop, sjekk filene hvert X. sekund. Eksempel:
@@ -43,18 +43,18 @@ Valg:
         afv -l5 foo.txt bar.pl &
         find /etc | afv -l 15 &
 
-      for å kjøre den i bakgrunnen. Bruk afvctl(1) for å stoppe afv’er
-      som kjører. Filnavn på filer som lagres blir ikke skrevet ut når
+      for å kjøre den i bakgrunnen. Bruk afvctl(1) for å stoppe afv’er 
+      som kjører. Filnavn på filer som lagres blir ikke skrevet ut når 
       "-l"-parameteret brukes.
 -s    Stopp afv-looper som kjører i denne katalogen.
 
-Som filnavn kan jokertegn (wildcards) også brukes. Hvis disse escapes,
-brukes den innebygde glob’en og nye filer blir lagt til når den går i
+Som filnavn kan jokertegn (wildcards) også brukes. Hvis disse escapes, 
+brukes den innebygde glob’en og nye filer blir lagt til når den går i 
 loop. Eksempel:
 
   afv -l5 '*' &
 
-sjekker alle filer hvert femte sekund og kjører også ny glob hver gang
+sjekker alle filer hvert femte sekund og kjører også ny glob hver gang 
 loopen gjentas.
 
 END
@@ -219,7 +219,9 @@ sub D {
 }
 
 sub sec_to_string {
-    # Konverter antall sekunder sia 1970-01-01 00:00:00 GMT til ååååmmddTttmmssZ {{{
+    # Konverter antall sekunder sia 1970-01-01 00:00:00 GMT til 
+    # ååååmmddTttmmssZ
+    # {{{
     my @TA = gmtime(shift);
     my $Retval = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
     return($Retval);
