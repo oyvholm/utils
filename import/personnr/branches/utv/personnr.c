@@ -1,7 +1,7 @@
 
 /*
  * Skriver ut alle gyldige norske personnummer på angitte datoer
- * $Id: personnr.c,v 1.3.2.6 2004/02/05 02:51:48 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.7 2004/02/09 06:09:27 sunny Exp $
  *
  * Oppbygningen av personnummeret 020656-45850: {{{
  *
@@ -54,8 +54,8 @@
  * Programlisens: GNU General Public License. Ingen over, ingen ved siden.
  */
 
-#define VERSION   "1.11"
-#define RCS_DATE  "$Date: 2004/02/05 02:51:48 $"
+#define VERSION   "1.12"
+#define RCS_DATE  "$Date: 2004/02/09 06:09:27 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,7 +66,7 @@
 #define EXIT_OK    0
 #define EXIT_ERROR 1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.6 2004/02/05 02:51:48 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.7 2004/02/09 06:09:27 sunny Exp $";
 
 char *persnr(char *);
 int persnr_date(char *);
@@ -222,7 +222,7 @@ void usage(int retval)
 	int charnum; /* Cosmetic thing */
 
 	putchar('\n');
-	charnum = printf("%s ver. %s (%s) -- (C)opyleft by sunny", progname, VERSION, RCS_DATE);
+	charnum = printf("%s ver. %s (%s) — (C)opyleft Øyvind A. Holm <sunny@sunbase.org>", progname, VERSION, RCS_DATE);
 	putchar('\n');
 
 	for (; charnum; charnum--)
@@ -234,7 +234,8 @@ void usage(int retval)
 		"enn 20xx skal brukes, brukes formatet ddmmåååå.\n\n"
 		"Hvis ingen datoer skrives på kommandolinja, leser programmet datoer fra\n"
 		"standard input.\n\n"
-		"Programlisens: GNU General Public License, se fila COPYING for detaljer.\n"
+		"Programlisens: GNU General Public License, se fila COPYING for detaljer\n"
+		"eller les lisensen på <http://www.gnu.org/copyleft/gpl.html>.\n\n"
 		, progname
 	);
 	exit(retval);
@@ -242,4 +243,4 @@ void usage(int retval)
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.6 2004/02/05 02:51:48 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.7 2004/02/09 06:09:27 sunny Exp $ */
