@@ -1,0 +1,58 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+while (<>) {
+	s/\s//g;
+	if (/^
+(.) # @
+(..) # År
+(..) # Måned
+(..) # Dag
+(..) # Timer
+(..) # Minutter
+(..) # Sekunder
+(.) # N|S
+(..) # Grad
+(..) # Gradminutt
+(...) # Gradminuttdesimaler
+(.) # E|W
+(...) # Grader
+(..) # Gradminutt
+(...) # Desimaler gradminutt
+(....) # Accurancy
+(.....................)
+		
+		/x) {
+			my ($Alfa, 
+			$Year, $Month, $Day, $Hour, $Min, $Sec, 
+			$NS, $Y_deg, $Y_degmin, $Y_mindec,
+			$EW, $X_deg, $X_degmin, $X_mindec,
+			$Accur,
+			$Rest) =
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17);
+			print(<<END);
+20$Year-$Month-$Day $Hour:$Min:$Sec $NS$Y_deg°$Y_degmin.$Y_mindec'/$EW$X_deg°$X_degmin.$X_mindec'
+Accur: $Accur
+$Rest
+
+END
+=pod
+@
+02
+07
+21
+22
+13
+35
+N6048263
+E00701290
+S015-00001E4859N1673U0000
+@020721221336N6048353E00701826S015-00001E4859N1673U0000
+.......................................................
+=cut		
+		
+	} else {
+		# warn("Linje $.: Ukjent.\n");
+	}
+}
