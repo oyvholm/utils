@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.6 2003/05/25 19:44:41 sunny Exp $
+# $Id: cvse,v 1.1.2.7 2003/06/02 05:36:16 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -10,7 +10,7 @@
 use strict;
 
 use Getopt::Std;
-our ($opt_d, $opt_h, $opt_s, $opt_i) = ("", 0, 0, 0);
+our ($opt_d, $opt_h, $opt_s, $opt_i, $opt_v) = ("", 0, 0, 0, 0);
 getopts('d:hisv');
 
 $| = 1;
@@ -29,6 +29,7 @@ Options:
       Avoids update to random revisions.
 -s    Simulate only.
       Normal execution except the messages are not changed.
+-v    Verbose execution, print some extra progress messages.
 
 END
 	exit 0;
@@ -39,7 +40,7 @@ my ($curr_rev, $curr_rcs_file, $curr_work_file, $total_ignored) = ("", "", "", "
 my @Curr = ();
 my %Entry = ();
 my ($Rev, $Line) = ("", "");
-my ($header_done, $tmp_count) = (0, 0);
+my ($header_done, $subheader_done, $tmp_count) = (0, 0, 0);
 my %Text = ();
 my %missing_file = ();
 my ($start_utc, $total_skipped, $total_changed, $total_files) = (time, 0, 0, 0);
@@ -66,9 +67,10 @@ while (<>) {
 		}
 		$Line = <>;
 		unless ($Line =~ /^date: \S+\s+\S+ .*/) {
-			die("Expected \"date: \", got \"$Line\".\". Aborting.");
+			warn("Expected \"date: \", got \"$Line\".\".");
 		}
-		if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
+		$Line = <>;
+		unless ($Line =~ /^branches: .*;$/) {
 			push(@Curr, $Line);
 		}
 		$Rev = "$curr_work_file,v.$curr_rev";
@@ -107,9 +109,7 @@ while (<>) {
 	} else {
 		# Regular log message {{{
 		if (length($Rev)) {
-			if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
-				push(@Curr, $_);
-			}
+			push(@Curr, $_);
 		}
 		# }}}
 	}
@@ -141,8 +141,6 @@ sub change_message {
 	my $compare_text = get_log_message($File, $Rev);
 	if ($Txt ne $compare_text) {
 		print("\nChanging message for $File,v $Rev ...\n");
-		print("==== Original text in $File $Rev \x7B\x7B\x7B ====\n$compare_text==== \x7D\x7D\x7D ====\n");
-		# print("==== New text for $File $Rev \x7B\x7B\x7B ====\n$Txt==== \x7D\x7D\x7D ====\n");
 		if (!defined($missing_file{$File}) && !(-e $File)) {
 			# File does not exist in this revision, change revision to make it appear and make it possible for CVS to update the message {{{
 			print("$File not found, running cvs update with random revisions to try to make it appear...\n");
@@ -178,11 +176,11 @@ sub change_message {
 			my $exec_str = "cvs$eroot_str admin -m$Rev:\"`cat $tmp_file`\" $File";
 			my $Deb = "";
 			$Deb = get_log_message($File, $Rev);
-			print("==== BEFORE: $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n");
+			print("==== BEFORE: $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
 			printf("%s \"%s\"\n", $Simulate ? "Simulating" : "Executing", $exec_str);
 			system($exec_str) unless $Simulate;
 			$Deb = get_log_message($File, $Rev);
-			print("==== AFTER : $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n");
+			print("==== AFTER : $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
 			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!\n");
 			print("\n");
 		} else {
@@ -190,7 +188,7 @@ sub change_message {
 		}
 		$total_changed++;
 	} else {
-		print("Message for $File,v $Rev is unchanged\n");
+		print("Message for $File,v $Rev is unchanged\n") if $opt_v;
 		$total_skipped++;
 	}
 	# }}}
@@ -207,7 +205,8 @@ sub get_log_message {
 		while (my $Line = <PipeFP>) {
 			if ($Line =~ /^=============================================================================$/) {
 				if (!$header_done) {
-					warn("Log terminator line not found, $getl_call returns nothing\n");
+					# No /^----------------------------$/ found
+					die("Header terminator line not found in $getl_call, incompatible version of CVS?");
 				} else {
 					last;
 				}
@@ -218,13 +217,17 @@ sub get_log_message {
 				}
 			}
 			if ($Line =~ /^----------------------------$/) {
+				$header_done = 1;
 				$Line = <PipeFP>;
 				if ($Line =~ /^revision (\S+)/) {
+					my $check_rev = $1;
+					unless ($check_rev eq $Rev) {
+						die("cvs log returned wrong revision \"$check_rev\", expected \"$Rev\"");
+					}
 				} else {
-					warn("$getl_call expected \"revision \", got \"$Line\".\". Ignoring.\n");
+					die("$getl_call expected \"revision \", got \"$Line\".\".");
 				}
 				$header_done && warn("Found extra header separator in $getl_call, continuing...\n");
-				$header_done = 1;
 			}
 		}
 		close(PipeFP);
@@ -252,7 +255,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.6 2003/05/25 19:44:41 sunny Exp $
+$Id: cvse,v 1.1.2.7 2003/06/02 05:36:16 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -310,6 +313,11 @@ Print a brief help summary.
 
 Simulate only.
 Normal execution except the messages are not changed.
+
+=item B<-v>
+
+Verbose execution.
+Print some extra progress messages.
 
 =back
 
@@ -389,4 +397,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.1.2.6 2003/05/25 19:44:41 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.7 2003/06/02 05:36:16 sunny Exp $
