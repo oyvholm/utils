@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # ╔══════════════════════════════════════════════════════════════
-# ║ gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp
+# ║ $Id: gptrans_conv,v 1.10.2.9 2003/09/20 18:47:41 sunny Exp $
 # ║ Converts between various GPS formats
 # ║ Character set: UTF-8
 # ║ License: GNU General Public License
@@ -15,7 +15,7 @@ use Time::Local qw { timegm_nocheck };
 
 my $Debug = 0;
 
-my $rcs_str = 'gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp';
+my $rcs_str = '$Id: gptrans_conv,v 1.10.2.9 2003/09/20 18:47:41 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -415,4 +415,4 @@ sub D {
 }
 
 # vim: set fdm=marker ft=perl fenc=utf-8 :
-# End of file gptrans_conv,v 1.10.2.6 2003/08/25 17:40:48 sunny Exp
+# End of file $Id: gptrans_conv,v 1.10.2.9 2003/09/20 18:47:41 sunny Exp $
