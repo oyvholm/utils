@@ -1,0 +1,22 @@
+#!/usr/bin/perl -w
+
+# $Id: htmlfold,v 1.2 2003/05/12 22:37:21 sunny Exp $
+# Inserts fold marks in HTML source before and after stdin.
+# Select text in visual line mode and filter the block through this script.
+
+use strict;
+
+$| = 1;
+
+my $Line = <STDIN>;
+my ($Indent, $Title) = ("", "");
+
+defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
+$Line =~ /^(\s+)/ && ($Indent = $1);
+print("$Indent<!-- $Title\x7B\x7B\x7B -->\n$Line");
+
+while (<STDIN>) {
+	print($_);
+}
+
+print("$Indent<!-- \x7D\x7D\x7D -->\n");
