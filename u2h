@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #==============================================================================
-# $Id: u2h,v 1.7 2002/11/20 00:48:10 sunny Exp $
+# $Id: u2h,v 1.8 2003/10/04 18:08:54 sunny Exp $
 # Converts from UTF-8 charset to HTML numeric entities (&#x263A; and &#9786;).
 #
 # Options:
@@ -11,11 +11,13 @@
 #   -l  convert U+0080 through U+00FF to Latin-1 instead of entities
 #   -s  also convert Standard ascii U+0020 through U+007F
 #
-# Created by &#xD8;yvind A. Holm <sunny@sunbase.org>. License: GNU GPL.
+# Created by Øyvind A. Holm <sunny@sunbase.org>. License: GNU GPL.
 #==============================================================================
 
 use strict;
 require 'getopts.pl'; # FIXME: Generates a warning when command line option is used and -w is specified in the shebang.
+
+$| = 1;
 
 ($main::opt_a, $main::opt_d, $main::opt_i, $main::opt_l, $main::opt_s) = (0, 0, 0, 0, 0);
 &Getopts('adils');
