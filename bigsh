@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-# $Id: bigsh,v 1.6 2004/02/09 07:54:06 sunny Exp $
+# $Id: bigsh,v 1.7 2004/02/13 02:20:57 sunny Exp $
 # Fyrer opp en stor xterm i X
 
 smallfont=0
@@ -29,6 +29,7 @@ if [ "$smallfont" = "1" ]; then
 	-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
 	-bg black \
 	-fg white \
+	-bc \
 	-geometry $geom $*
 else
 	xterm \
@@ -36,6 +37,7 @@ else
 	-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
 	-bg black \
 	-fg white \
+	-bc \
 	-geometry $geom $*
 fi
 
