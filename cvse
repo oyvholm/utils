@@ -1,13 +1,13 @@
 #!/usr/bin/perl -w
 
-#=====================================================
+#=======================================================================
 # $Id$
 # Edit cvs log messages based on output from “cvs log”
 #
 # Character set used in this file: UTF-8
 # Made by Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License
-#=====================================================
+# License: GNU General Public License. See end of file for legal stuff.
+#=======================================================================
 
 use strict;
 
@@ -280,13 +280,13 @@ Syntax: cvse [options] [logfile [...]]
 
 Options:
 
--d x  Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the
-      C<CVSE_ROOT> environment variable.
+-d x  Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> 
+      or the C<CVSE_ROOT> environment variable.
 -h    Print this help message.
--i    Ignore files which doesn't exist in this revision.
-      Avoids update to random revisions.
--s    Simulate only.
-      Normal execution except the messages are not changed.
+-i    Ignore files which doesn't exist in this revision. Avoids update 
+      to random revisions.
+-s    Simulate only. Normal execution except the messages are not 
+      changed.
 -v    Verbose execution, print some extra progress messages.
 
 END
@@ -314,27 +314,33 @@ cvse [options] [logfile [...]]
 
 =head1 DESCRIPTION
 
-B<cvse> is a Perl script which changes CVS log messages for one or many files based on the output from a regular S<C<cvs log>> command.
-This makes it easy to edit lots of messages and then run the script once which changes all the modified messages.
+B<cvse> is a Perl script which changes CVS log messages for one or many 
+files based on the output from a regular S<C<cvs log>> command.
+This makes it easy to edit lots of messages and then run the script once 
+which changes all the modified messages.
 
 An easy way to do this can be:
 
 =over 4
 
-=item 1. Go to the directory where your source files are, or check out a new revision into an empty directory.
+=item 1. Go to the directory where your source files are, or check out a 
+new revision into an empty directory.
 
 =item 2. Run C<cvs log E<gt>logfile.txt>
 
-=item 3. Edit F<logfile.txt> (or whatever you call it) with your favourite text editor.
+=item 3. Edit F<logfile.txt> (or whatever you call it) with your 
+favourite text editor.
 
 =item 4. Run C<cvse logfile.txt>
 
 =back
 
-All the messages you modified will now be changed by CVS using the S<C<cvs admin>> command.
+All the messages you modified will now be changed by CVS using the 
+S<C<cvs admin>> command.
 Unchanged messages will not be updated.
 
-Another, faster way is to just read the output into your editor, edit it and filter the file through cvse.
+Another, faster way is to just read the output into your editor, edit it 
+and filter the file through cvse.
 An example on how to do this in the vi(1) editor:
 
   :r !cvs log myfile.c
@@ -349,7 +355,8 @@ Done!
 
 =item B<-d x>
 
-Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the C<CVSE_ROOT> environment variable.
+Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the 
+C<CVSE_ROOT> environment variable.
 
 =item B<-i>
 
@@ -379,8 +386,11 @@ Print some extra progress messages.
 =item CVSE_ROOT
 
 Specifies which CVSROOT to use during the message update.
-Can be used to force direct access to the repository directories to speed up things a lot if the current access method is client/server based.
-As an example, if you have local access to the repository and your current CVSROOT is
+Can be used to force direct access to the repository directories to 
+speed up things a lot if the current access method is client/server 
+based.
+As an example, if you have local access to the repository and your 
+current CVSROOT is
 
   CVSROOT=user@cvs.example.com:/my/repository
 
@@ -389,7 +399,8 @@ you can set
   CVSE_ROOT=/my/repository
 
 to force CVS to work directly against the directory.
-This will improve the working speed dramatically because the client doesn't have to connect to the CVS server for every operation.
+This will improve the working speed dramatically because the client 
+doesn't have to connect to the CVS server for every operation.
 
 The C<-d> option will override this variable.
 
@@ -399,23 +410,35 @@ The C<-d> option will override this variable.
 
 Not really bugs, but:
 
-Due to the format of S<C<cvs log>> output, messages can't contain any lines matching these patterns:
+Due to the format of S<C<cvs log>> output, messages can't contain any 
+lines matching these patterns:
 
   /^----------------------------$/
   /^=============================================================================$/
   /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/
   /^branches: .+;$/
 
-If any of these patterns are found, the script will either ignore the line or interpret it as a message separator.
+If any of these patterns are found, the script will either ignore the 
+line or interpret it as a message separator.
 
-CVS refuses to change the log message of a file that doesn't exist in the current revision.
-When the script notices that a certain file doesn't exist on this branch or in the current revision, it tries to restore an earlier revision with S<C<cvs update>> to get the file in place.
+CVS refuses to change the log message of a file that doesn't exist in 
+the current revision.
+When the script notices that a certain file doesn't exist on this branch 
+or in the current revision, it tries to restore an earlier revision with 
+S<C<cvs update>> to get the file in place.
 When the file exists, CVS is able to change the log message.
-This results in random revisions of missing files showing up, but everything can be restored to normal with the usual S<C<cvs update -A>> command.
-To avoid messing up source trees with lots of tags and revisions, it's recommended to check out the files in a separate directory where the script can work, or use the C<-i> option which ignores non-existing files.
-If no revision can be restored, a warning is generated and no messages for this file will be changed.
+This results in random revisions of missing files showing up, but 
+everything can be restored to normal with the usual S<C<cvs update -A>> 
+command.
+To avoid messing up source trees with lots of tags and revisions, it's 
+recommended to check out the files in a separate directory where the 
+script can work, or use the C<-i> option which ignores non-existing 
+files.
+If no revision can be restored, a warning is generated and no messages 
+for this file will be changed.
 
-This only applies to files that I<does not exist>, revisions of existing files is untouched.
+This only applies to files that I<does not exist>, revisions of existing 
+files is untouched.
 
 Please send any bug reports or suggestions to the mail address below.
 
@@ -425,7 +448,8 @@ Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
 
 =head1 DOWNLOAD
 
-The newest version of the script can be found at L<http://www.sunbase.org/src/cvse/>
+The newest version of the script can be found at 
+L<http://www.sunbase.org/src/cvse/>
 
 =head1 COPYRIGHT
 
@@ -434,9 +458,19 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-GNU General Public License.
-The greatest of them all.
-Thanks, RMS.
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
 
