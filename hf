@@ -5,7 +5,7 @@
 # Formatterer HTML-source med mellomrom eller tabulator.
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
-# Lisens: GNU GPL
+# Lisens: GNU General Public License
 #
 # FIXME: Hvis start+end-elementer står på samme linje, blir ikke 
 # innrykket rett. En eller annen rekursiv sjekk på linjene må kanskje 
@@ -35,10 +35,9 @@ $opt_t || ($opt_a = 1);
 my $tab_indent = $main::opt_i;
 my $orig_line = "";
 my @Elements = (
-    "applet", "blockquote", "body", "caption", "center", "colgroup",
-    "div", "dl", "form", "frameset", "head", "html", "ol", "map",
-    "noframes", "noscript", "select", "table", "td",
-    "th", "tr", "ul"
+    "applet", "blockquote", "body", "caption", "center", "colgroup", 
+    "div", "dl", "form", "frameset", "head", "html", "ol", "map", 
+    "noframes", "noscript", "select", "table", "td", "th", "tr", "ul"
 );
 
 $tab_indent = 0 if ($tab_indent <= 0);
@@ -58,7 +57,9 @@ LINE: while (<>) {
     my $f = "";
     my $out_line;
 
-    $main::opt_s && ($Line =~ /^%/) && (print($Line), next LINE); # Ignorer linjer som begynner med % hvis -s er spesifisert
+    # Ignorer linjer som begynner med % hvis -s er spesifisert
+    $main::opt_s && ($Line =~ /^%/) && (print($Line), next LINE);
+
     unless ($is_pre) {
         # $Line =~ $main::opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
         $Line =~ s/$line_exp/$1/;
@@ -79,9 +80,18 @@ LINE: while (<>) {
             }
         }
         $out_line = "$header_indent$Tabs$Line";
-        $opt_w && $out_line =~ s/[ \t]+$//g; # Fjern alle whitespace på slutten
-        $opt_t || ($out_line =~ s/\t/$Spaces/g); # Hvis -t i̲k̲k̲e̲ er spesifisert, vil vi ikke ha TAB’er og de skal dermed erstattes med space.
-        $out_line =~ s/^[ \t]+$//; # Linjer som bare har whitespace tømmer vi. Det er mest sannsynlig et resultat av indentinga.
+
+        # Fjern alle whitespace på slutten
+        $opt_w && $out_line =~ s/[ \t]+$//g;
+
+        # Hvis -t i̲k̲k̲e̲ er spesifisert, vil vi ikke ha TAB’er og de skal 
+        # dermed erstattes med space.
+        $opt_t || ($out_line =~ s/\t/$Spaces/g);
+
+        # Linjer som bare har whitespace tømmer vi. Det er mest 
+        # sannsynlig et resultat av indentinga.
+        $out_line =~ s/^[ \t]+$//;
+
         print("$out_line\n");
         unless ($opt_E) {
             for $f (@Elements) {
@@ -131,5 +141,4 @@ END
 }
 
 # vim: set ft=perl sw=4 ts=4 sts=4 expandtab fenc=utf8 :
-
 # End of file $Id$
