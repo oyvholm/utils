@@ -42,7 +42,13 @@ length($opt_d) && ($Dir = $opt_d);
 -d $Dir || mkdir($Dir, 0777) || die("mkdir(\"$Dir\"): $!");
 
 while (<>) {
-    if (m#^\S+.*? \[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d) ([+\-]\d\d)(\d\d)#) {
+    if (m#^
+        \S+.*? \x20
+        \[(\d\d)/(...)/(\d{4}):(\d\d):(\d\d):(\d\d)
+        \x20
+        ([+\-]\d\d)(\d\d)
+        #x
+    ) {
         my ($Day, $Mon, $Year, $Hour, $Min, $Sec) =
            (  $1,   $2,    $3,    $4,   $5,   $6);
         my ($zone_hour, $zone_min) =
