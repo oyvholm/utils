@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: hf,v 1.6 1999/03/24 17:51:23 sunny Exp $
+# $Id: hf,v 1.7 1999/05/07 20:24:44 sunny Exp $
 # Formatterer HTML-source med TAB'er
 
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -8,6 +8,10 @@
 # Foreløpig får man sette dem på hver sin linje.
 
 use strict;
+# require 'getopts.pl';
+# &Getopts('hs');
+
+# &print_help() if ($opt_h);
 
 $| = 1;
 
@@ -26,7 +30,8 @@ while (<>) {
 	my $Element = "";
 	my $f = "";
 
-	$Line =~ s/^\t+(.*)/$1/; # Hiv alle TAB'er i begynnelsen til helsike, spacer rører vi ikke.
+	# $Line =~ $opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
+	$Line =~ s/^\t+(.*)/$1/;
 	for $f (@Elements) {
 		if ($Line =~ m!</($f)([ >])!i) { # Hvis end-tag ble funnet...
 			$Element = $1;
@@ -48,4 +53,18 @@ while (<>) {
 	}
 }
 
-#### End of file $Id: hf,v 1.6 1999/03/24 17:51:23 sunny Exp $ ####
+sub print_help {
+	print <<END;
+
+Syntax: $0 [options] [files ...]
+
+HTML source indenter
+
+Options:
+  -h  Print this help screen
+  -s  Split block elements on separate lines (not finished yet)
+
+END
+} # print_help()
+
+#### End of file $Id: hf,v 1.7 1999/05/07 20:24:44 sunny Exp $ ####
