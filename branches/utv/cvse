@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.7 2003/06/02 05:36:16 sunny Exp $
+# $Id: cvse,v 1.1.2.8 2003/06/02 22:40:19 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -24,7 +24,7 @@ Options:
 
 -d x  Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the
       C<CVSE_ROOT> environment variable.
--h    This help message.
+-h    Print this help message.
 -i    Ignore files which doesn't exist in this revision.
       Avoids update to random revisions.
 -s    Simulate only.
@@ -211,12 +211,9 @@ sub get_log_message {
 					last;
 				}
 			}
-			if ($header_done) {
-				if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
-					push(@Arr, $Line);
-				}
-			}
+			push(@Arr, $Line) if ($header_done);
 			if ($Line =~ /^----------------------------$/) {
+				$header_done && warn("Found extra header separator in $getl_call, continuing...\n");
 				$header_done = 1;
 				$Line = <PipeFP>;
 				if ($Line =~ /^revision (\S+)/) {
@@ -225,9 +222,12 @@ sub get_log_message {
 						die("cvs log returned wrong revision \"$check_rev\", expected \"$Rev\"");
 					}
 				} else {
-					die("$getl_call expected \"revision \", got \"$Line\".\".");
+					die("$getl_call expected \"^revision \", got \"$Line\".\".");
 				}
-				$header_done && warn("Found extra header separator in $getl_call, continuing...\n");
+				$Line = <PipeFP>;
+				unless ($Line =~ /^branches: .+;$/) {
+					push(@Arr, $Line);
+				}
 			}
 		}
 		close(PipeFP);
@@ -255,7 +255,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.7 2003/06/02 05:36:16 sunny Exp $
+$Id: cvse,v 1.1.2.8 2003/06/02 22:40:19 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -397,4 +397,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.1.2.7 2003/06/02 05:36:16 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.8 2003/06/02 22:40:19 sunny Exp $
