@@ -1,6 +1,6 @@
 
 # Makefile for std.c
-# $Id: Makefile,v 1.3 1999/04/25 23:33:29 sunny Exp $
+# $Id: Makefile,v 1.4 1999/04/26 09:28:50 sunny Exp $
 
 OBJS = std.o getopt.o
 CC = gcc
@@ -19,4 +19,4 @@ getopt.o: getopt.h Makefile tailor.h
 	$(CC) $(CCFLAGS) getopt.c
 
 clean:
-	rm -f $(EXEC) $(OBJS) core core.$(EXEC) *~
+	rm -f $(EXEC) $(OBJS) *~ core core.$(EXEC)
