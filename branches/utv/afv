@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.5 2003/04/18 11:03:04 sunny Exp $
+# $Id: afv,v 1.13.2.6 2003/05/29 13:14:06 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -126,6 +126,7 @@ if ($do_loop) {
 exit;
 
 sub glob_files {
+	# Returnerer en array med filnavn som samsvarer med parametrene. {{{
 	@Files = ();
 	if (scalar(@ARGV)) {
 		foreach (@ARGV) {
@@ -136,18 +137,26 @@ sub glob_files {
 			push(@Files, glob $_);
 		}
 	}
+	# }}}
 } # glob_files()
 
 sub check_stop {
+	# {{{
 	foreach ("$root_dir/stop", "$dest_dir/stop") {
 		if (-e $_) {
-			print(STDERR "$curr_dir: $_ finnes, avslutter.\n");
-			exit;
+			if (-e "$root_dir/protected") {
+				print(STDERR "$curr_dir: $_ finnes, men katalogen er beskyttet, så vi avslutter ikke.\n");
+			} else {
+				print(STDERR "$curr_dir: $_ finnes, avslutter.\n");
+				exit;
+			}
 		}
 	}
+	# }}}
 } # check_stop()
 
 sub my_sleep {
+	# {{{
 	my $Secs = shift;
 	my $start_time = time;
 	if ($Secs <= 2) {
@@ -159,6 +168,7 @@ sub my_sleep {
 			check_stop();
 		}
 	}
+	# }}}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.5 2003/04/18 11:03:04 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.6 2003/05/29 13:14:06 sunny Exp $ ####
