@@ -1,13 +1,27 @@
 #!/usr/bin/perl
 
-# $Id: ep,v 1.1 1999/02/13 22:58:55 sunny Exp $
+# $Id: ep,v 1.2 1999/09/14 23:17:51 sunny Exp $
+#
 # Konverterer tekststrenger som ser ut som antall sekunder siden
 # 1970-01-01 00:00:00 GMT om til leselig datoformat. Konverterer alle tall
 # som har 9 siffer. Med andre ord funker det greit fra og med
-# 1973-03-03 10:46:40 GMT til 2001-09-09 03:46:39 GMT.
+# 1973-03-03 09:46:40 GMT til 2001-09-09 01:46:39 GMT.
+
+# Syntax: ep [-l] [fil ...]
+# Hvis "-l" spesifiseres, konverteres ting om til lokal tid istedenfor GMT.
 
 $| = 1;
-while (<>) {
-	s/(^|\D)(\d{9})(\D|$)/@TA = localtime($2),sprintf("%s%04u-%02u-%02uT%02u:%02u:%02u%s", $1, $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0], $3)/ge;
-	print $_;
+
+($ARGV[0] =~ /^-l$/) && ($use_local = 1, shift);
+
+if ($use_local) {
+	while (<>) {
+		s/(^|\D)(\d{9})(\D|$)/@TA = localtime($2),sprintf("%s%04u-%02u-%02uT%02u:%02u:%02u%s", $1, $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0], $3)/ge;
+		print $_;
+	}
+} else {
+	while (<>) {
+		s/(^|\D)(\d{9})(\D|$)/@TA = gmtime($2),sprintf("%s%04u-%02u-%02uT%02u:%02u:%02u%s", $1, $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0], $3)/ge;
+		print $_;
+	}
 }
