@@ -1,8 +1,10 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.14 2003/07/02 10:16:42 sunny Exp $
+# $Id: cvse,v 1.1.2.15 2004/02/25 21:10:47 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
+#
+# Character set used in this file: UTF-8
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
 #=====================================================
@@ -16,25 +18,7 @@ getopts('d:hisv');
 $| = 1;
 
 if ($opt_h) {
-	# {{{
-	print(<<END);
-
-Syntax: cvse [options] [logfile [...]]
-
-Options:
-
--d x  Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the
-      C<CVSE_ROOT> environment variable.
--h    Print this help message.
--i    Ignore files which doesn't exist in this revision.
-      Avoids update to random revisions.
--s    Simulate only.
-      Normal execution except the messages are not changed.
--v    Verbose execution, print some extra progress messages.
-
-END
-	exit 0;
-	# }}}
+	print_help(0);
 }
 
 my $Simulate = $opt_s;
@@ -67,7 +51,7 @@ while (<>) {
 		if ($Line =~ /^revision ([\d\.]+)/) {
 			$curr_rev = $1;
 		} else {
-			die("Line $.: Expected \"revision \", got \"$Line\".\". Aborting.\n");
+			die("Line $.: Expected \"revision \", got \"$Line\".\". Aborting.");
 		}
 		$Line = <>;
 		unless ($Line =~ /^date: \S+\s+\S+ .*/) {
@@ -195,22 +179,22 @@ sub change_message {
 			printf("%s \"%s\"\n", $Simulate ? "Simulating" : "Executing", $exec_str);
 			system($exec_str) unless $Simulate;
 			$Deb = get_log_message($esc_file, $Rev);
-			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!\n");
+			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!");
 			if ($has_diff) {
 				if (open(DiffFP, ">AFTER.cvse")) {
 					print(DiffFP $Deb);
 					close(DiffFP);
 				}
 				print(join("", "==== Log diff for $File,v $Rev \x7B\x7B\x7B ====\n", `diff -u BEFORE.cvse AFTER.cvse`, "==== \x7D\x7D\x7D ====\n"));
-				for ($tmp_file, "BEFORE.cvse", "AFTER.cvse") {
-					unlink($_) || warn("$_: Cannot remove file: $!\n");
+				for ("BEFORE.cvse", "AFTER.cvse") {
+					unlink($_) || warn("$_: Cannot remove file: $!");
 				}
 			} else {
 				print("==== AFTER : $esc_file $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
 			}
 			print("\n");
 		} else {
-			warn("Cannot open temporary file \"$tmp_file\", log messages not changed: $!\n");
+			warn("Cannot open temporary file \"$tmp_file\", log messages not changed: $!");
 		}
 		$total_changed++;
 	} else {
@@ -262,7 +246,7 @@ sub get_log_message {
 		}
 		close(PipeFP);
 		if ($header_done) {
-			# print("======= $getl_call returnerer: ===========\n");
+			# print("======= $getl_call returns: ===========\n");
 			# print(join("", @Arr));
 			# print("============\n");
 			return(join("", @Arr));
@@ -282,8 +266,31 @@ sub escape_filename {
 	# $Name =~ s/\\/\\\\/g;
 	# $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
 	$Name =~ s/'/\\'/g;
-	$Name = "'$Name'"; # FIXME: Any cleaner way of dealing with potential weird characters in file names under UNIX? Does it work in windowsworld?
+	$Name = "'$Name'";
 	return($Name);
+	# }}}
+}
+
+sub print_help {
+	# Send the help message to stdout {{{
+	my $Retval = shift;
+	print(<<END);
+
+Syntax: cvse [options] [logfile [...]]
+
+Options:
+
+-d x  Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the
+      C<CVSE_ROOT> environment variable.
+-h    Print this help message.
+-i    Ignore files which doesn't exist in this revision.
+      Avoids update to random revisions.
+-s    Simulate only.
+      Normal execution except the messages are not changed.
+-v    Verbose execution, print some extra progress messages.
+
+END
+	exit($Retval);
 	# }}}
 }
 
@@ -299,7 +306,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.14 2003/07/02 10:16:42 sunny Exp $
+$Id: cvse,v 1.1.2.15 2004/02/25 21:10:47 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -414,7 +421,7 @@ Please send any bug reports or suggestions to the mail address below.
 
 =head1 AUTHOR
 
-Made by E<216>yvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
 
 =head1 DOWNLOAD
 
@@ -422,7 +429,7 @@ The newest version of the script can be found at L<http://www.sunbase.org/src/cv
 
 =head1 COPYRIGHT
 
-Copyright E<169> 2003 Free Software Foundation, Inc.
+Copyright © 2003–2004 Free Software Foundation, Inc.
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
@@ -440,5 +447,4 @@ cvs(1)
 # }}}
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
-
-# End of file $Id: cvse,v 1.1.2.14 2003/07/02 10:16:42 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.15 2004/02/25 21:10:47 sunny Exp $
