@@ -1,10 +1,21 @@
 #!/bin/bash
 
-# $Id: mincvs_vim,v 1.3 2004/02/09 04:05:38 sunny Exp $
+# $Id: mincvs_vim,v 1.4 2004/04/11 00:13:53 sunny Exp $
 
 vimdir=$HOME/src/other/vim
 vimlinks=$HOME/vim
 osvim=$HOME/src/cvs/norwegian_vim/msgs/vim
+
+for f in $vimdir $vimdir/vim.clean $vimdir/vim $osvim ; do
+	[ -d $f ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
+done
+
+if [ ! -d $vimlinks ]; then
+	echo ======== $0: $vimlinks: Finnes ikke fra før, lager vimlinker...
+	mkdir $vimlinks || { echo "$0: mkdir $vimlinks: Det gikk rimelig dårlig. Avslutter." >&2; exit 1; }
+	cd $vimlinks || { echo "$0: cd $vimlinks: Klarte ikke å gå dit. Avslutter." >&2; exit 1; }
+	ln -sv $vimdir/vim/runtime/lang $vimdir/vim/src/po $vimdir/vim/runtime/tutor . || { echo "$0: Feil under symlinking. Avslutter." >&2; exit 1; }
+fi
 
 cd $osvim || { echo "cd $osvim: Gikk på trynet." >&2; exit 1; }
 echo "======== cd $osvim; cvs -q upd -dA -r official_vim"
