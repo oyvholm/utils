@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $
+# $Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -566,7 +566,7 @@ sub print_header {
 	defined($style_sheet) || ($style_sheet = "");
 	defined($head_script) || ($head_script = "");
 	defined($body_attr) || ($body_attr = "");
-	defined($html_version) || ($html_version = "");
+	defined($html_version) || ($html_version = $Suncgi::DTD_HTML4LOOSE);
 	defined($head_lang) || ($head_lang = "");
 	defined($no_body) || ($no_body = 0);
 	$style_sheet = $suncgi::css_default unless length($style_sheet);
@@ -685,7 +685,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $>
+S<$Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1081,4 +1081,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $ ####
