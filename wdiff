@@ -1,11 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
+#===================================================
+# $Id: wdiff,v 1.2 2001/11/28 08:47:34 sunny Exp $
 # diff beregnet for tekst som wrapper i hytt og pine
-# $Id: wdiff,v 1.1 1999/05/20 03:29:07 sunny Exp $
+#===================================================
 
 if [ "x$3" = "x" ]; then
 	diff -u <(fmt -1 $1 | rmspcall) <(fmt -1 $2 | rmspcall)
 else
 	diff -U$3 <(fmt -1 $1 | rmspcall) <(fmt -1 $2 | rmspcall)
 fi
-
