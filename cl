@@ -1,6 +1,10 @@
 #!/bin/sh
 
-# $Id: cl,v 1.1 2002/10/22 12:13:59 sunny Exp $
+# $Id: cl,v 1.2 2003/08/03 00:21:15 sunny Exp $
 # Latskap.
 
-cvs log $* | sortcvs
+if [ "$HAS_UTF8" = "1" ]; then
+	cvs log $* | sortcvs
+else
+	cvs log $* | sortcvs | u2h -l
+fi
