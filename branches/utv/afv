@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.3 2003/03/15 09:01:36 sunny Exp $
+# $Id: afv,v 1.13.2.4 2003/03/19 22:06:07 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
-#          pauses før den kjører i loop igjen.
-# ©2001 Øyvind A. Holm. License: GNU GPL
+#          pauses fÃ¸r den kjÃ¸rer i loop igjen.
+# Â©2001â€“2003 Ã˜yvind A. Holm. License: GNU GPL
 #================================================
 
 use strict;
@@ -54,7 +54,7 @@ LOOP: foreach my $FullCurr (@Files) {
 	my $start_lock = time;
 
 	until (mkdir("$lock_dir", 0777)) {
-		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
+		warn("$lock_dir: Venter pÃ¥ lockdir, " . (time-$start_lock) . " sekunder");
 		my_sleep(5);
 	}
 
@@ -66,19 +66,19 @@ LOOP: foreach my $FullCurr (@Files) {
 				close(FromFP);
 				goto CLEANUP;
 			}
-			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
-			if (open(Md5FP, "| /usr/bin/md5sum >$currmd5_file")) {
+			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke Ã¥ seeke til starten: $!");
+			if (open(Md5FP, "| /usr/bin/md5sum >$currmd5_file")) { # FIXME: Legg inn egen MD5-utregning
 				while(<FromFP>) {
 					print(Md5FP $_);
 				}
 				close(Md5FP);
 			} else {
-				warn("$Curr: Klarte ikke å åpne md5-pipe: $!");
-				rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+				warn("$Curr: Klarte ikke Ã¥ Ã¥pne md5-pipe: $!");
+				rmdir($lock_dir) || warn("$lock_dir: Klarte ikke Ã¥ fjerne lockdir: $!");
 				exit;
 			}
 
-			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
+			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For Ã¥ fÃ¥ lock mÃ¥ egne MD5-rutiner legges inn.
 			my $last_md5 = `/bin/cat $lastmd5_file 2>/dev/null`;
 			if ($curr_md5 ne $last_md5) {
 				print("$mtime.$Curr\n") unless $do_loop;
@@ -95,10 +95,10 @@ LOOP: foreach my $FullCurr (@Files) {
 						unlink("$lastmd5_file");
 						rename("$currmd5_file", "$lastmd5_file") || die(qq{Klarte ikke rename("$currmd5_file", "$lastmd5_file")});
 					} else {
-						warn("$Curr: Klarte ikke å åpne fila for skriving: $!");
+						warn("$Curr: Klarte ikke Ã¥ Ã¥pne fila for skriving: $!");
 					}
 				} else {
-					warn("$Curr: Klarte ikke å seeke til starten: $!");
+					warn("$Curr: Klarte ikke Ã¥ seeke til starten: $!");
 				}
 			}
 		} else {
@@ -106,11 +106,11 @@ LOOP: foreach my $FullCurr (@Files) {
 		}
 		close(FromFP);
 	} else {
-		warn("$Curr: Klarte ikke å åpne fila for lesing: $!");
+		warn("$Curr: Klarte ikke Ã¥ Ã¥pne fila for lesing: $!");
 	}
 
 CLEANUP:
-	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke Ã¥ fjerne lockdir: $!");
 	if ($another_dir) {
 		chdir($orig_dir) || die("$orig_dir: Klarte ikke chdir() til originalkatalogen: $!");
 	}
@@ -127,8 +127,14 @@ exit;
 
 sub glob_files {
 	@Files = ();
-	foreach(@ARGV) {
-		push(@Files, glob $_);
+	if (scalar(@ARGV)) {
+		foreach (@ARGV) {
+			push(@Files, glob $_);
+		}
+	} else {
+		while(<>) {
+			push(@Files, glob $_);
+		}
 	}
 } # glob_files()
 
@@ -148,11 +154,11 @@ sub my_sleep {
 		check_stop();
 		sleep($Secs);
 	} else {
-		until(time >= $start_time+$Secs) {
+		until (time >= $start_time+$Secs) {
 			sleep(2);
 			check_stop();
 		}
 	}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.3 2003/03/15 09:01:36 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.4 2003/03/19 22:06:07 sunny Exp $ ####
