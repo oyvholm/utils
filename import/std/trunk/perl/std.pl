@@ -10,10 +10,10 @@
 #=======================================================================
 
 use strict;
+use Getopt::Std;
 
 $| = 1;
 
-use Getopt::Std;
 our ($opt_h) =
     (     0);
 getopts('h') || die("Option error. Use -h for help.\n");
