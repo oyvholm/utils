@@ -4,9 +4,10 @@
 
 # [ -e /ba0614-woody.mrk ] || { echo "For enkelhets skyld kjøres den bare fra ba0614." >&2; exit 1; }
 
-cd ~/src/cvs/ba/txt
-cvs upd -A timeliste.txt
+cd ~/src/svn/ba/trunk/txt || { echo "cd ~/src/svn/ba/trunk/txt: Gikk på trynet" >&2; exit 1; }
+svn up timeliste.txt
 vim timeliste.txt
 echo -n Enter for checkin, CTRL-C for å drite i det...
 read
-cvs ci -m "Lagt inn med ~/bin/bajobb-scriptet." timeliste.txt
+svn ci -m "Lagt inn med ~/bin/bajobb-scriptet." timeliste.txt
+svn up
