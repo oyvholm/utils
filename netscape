@@ -2,13 +2,13 @@
 
 #====================================================
 # Latskapen lenge leve.
-# $Id: netscape,v 1.4 2001/09/16 17:11:09 sunny Exp $
+# $Id: netscape,v 1.5 2001/10/27 15:43:50 sunny Exp $
 #====================================================
 
 cd
 if [ -e /sunba.mrk ]; then
-	/usr/X11R6/bin/netscape &
+	/usr/X11R6/bin/netscape $* &
 else
-	netscape-navigator &>/dev/null &
+	netscape-navigator $* &>/dev/null &
 fi
 cd -
