@@ -4,18 +4,18 @@
 # $Id$
 
 if [ -e /nett.mrk -o -e /sunba.mrk ]; then
-	/etc/init.d/apache start
+    /etc/init.d/apache start
 elif [ -e /nett2.mrk -o -e /carmbb.mrk ]; then
-	/usr/local/bin/apachectl start
+    /usr/local/bin/apachectl start
 elif [ -e /toshbb.mrk ]; then
-	apachectl start
+    apachectl start
 elif [ -e /recbb.mrk ]; then
-	/var/lib/apache/sbin/apachectl start
+    /var/lib/apache/sbin/apachectl start
 else
-	echo Ukjent server, prøver standardløsning...
-	if [ -x /etc/rc.d/init.d/httpd ]; then
-		/etc/rc.d/init.d/httpd start
-	elif [ -x /etc/init.d/apache ]; then
-		/etc/init.d/apache start
-	fi
+    echo Ukjent server, prøver standardløsning...
+    if [ -x /etc/rc.d/init.d/httpd ]; then
+        /etc/rc.d/init.d/httpd start
+    elif [ -x /etc/init.d/apache ]; then
+        /etc/init.d/apache start
+    fi
 fi
