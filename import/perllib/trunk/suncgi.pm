@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $
+# $Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -23,7 +23,6 @@ require Exporter;
 	$doc_lang $doc_align $doc_width
 	$debug_file $error_file $log_dir $Method $request_log_file
 	$DTD_HTML4FRAMESET $DTD_HTML4LOOSE $DTD_HTML4STRICT
-	@rcs_array
 };
 
 @EXPORT_OK = qw{
@@ -36,19 +35,13 @@ use strict;
 
 require 5.003;
 
-# use Time::Local; # curr_local_time() sin greie.
-
 $suncgi::Tabs = "";
-$main::Utv = 0 unless defined($main::Utv);
-$main::Debug = 0 unless defined($main::Debug);
 $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/11/21 17:32:41 $';
-@suncgi::rcs_array = ($suncgi::rcs_id);
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $';
+push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
 
@@ -62,7 +55,6 @@ $suncgi::STD_CHARSET = "ISO-8859-1"; # Hvis $suncgi::CharSet ikke er definert
 $suncgi::STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
 $suncgi::STD_DOCWIDTH = '80%'; # Hvis ikke $suncgi::doc_width er spesifisert
 $suncgi::STD_HTMLDTD = $suncgi::DTD_HTML4LOOSE;
-$suncgi::STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
 
 $suncgi::CharSet = $suncgi::STD_CHARSET;
 $suncgi::css_default = "";
@@ -70,12 +62,7 @@ $suncgi::doc_width = $suncgi::STD_DOCWIDTH;
 $suncgi::doc_align = $suncgi::STD_DOCALIGN;
 $suncgi::doc_lang = $suncgi::STD_LANG;
 $suncgi::Border = 0;
-$suncgi::WebMaster = "";
-$suncgi::Url = "";
 $suncgi::Method = "post";
-$suncgi::debug_file = "";
-$suncgi::error_file = "";
-$suncgi::request_log_file = "";
 
 $suncgi::Footer = <<END;
 	</body>
@@ -186,6 +173,7 @@ sub get_cgivars {
 	my ($in, %in);
 	my ($name, $value) = ("", "");
 	$in = "";
+	# FIXME: Noe byr meg imot her...
 	foreach my $var_name ('HTTP_USER_AGENT', 'REMOTE_ADDR', 'REMOTE_HOST', 'HTTP_REFERER', 'CONTENT_TYPE', 'CONTENT_LENGTH', 'QUERY_STRING') {
 		defined($ENV{$var_name}) || ($ENV{$var_name} = "");
 	}
@@ -281,7 +269,7 @@ Content-type: text/html
 
 <html lang="no">
 	<!-- $suncgi::rcs_id -->
-	<!-- ${main::rcs_id} -->
+	<!-- $main::rcs_id -->
 	<head>
 		<title>$Title</title>
 		<style type="text/css">
@@ -337,12 +325,11 @@ END
 sub HTMLwarn {
 	my $Msg = shift;
 	my $utc_str = curr_utc_time();
-	defined($Msg) || ($Msg = "");
 	deb_pr("WARN: $Msg");
 	# Gjør det så stille og rolig som mulig.
 	if ($main::Utv || $main::Debug) {
 		print_header("CGI warning");
-		tab_print("<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n");
+		tab_print("<p><b>HTMLwarn(): $Msg</b>\n");
 	}
 	if (-e ${suncgi::error_file}) {
 		open(ErrorFP, ">>${suncgi::error_file}") or return;
@@ -525,15 +512,10 @@ sub print_header {
 	print "\n<html lang=\"$head_lang\">\n";
 	Tabs(1);
 	$head_script = "" unless defined($head_script);
-	if (defined(@suncgi::rcs_array)) {
-		foreach(@suncgi::rcs_array) {
+	if (defined(@main::rcs_array)) {
+		foreach(@main::rcs_array) {
 			tab_print("<!-- $_ -->\n");
 		}
-	} else {
-		tab_print(<<END);
-<!-- $main::rcs_id -->
-<!-- $suncgi::rcs_id -->
-END
 	}
 	tab_print(<<END);
 <head>
@@ -633,11 +615,11 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $>
+S<$Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $>
 
 =head1 SYNOPSIS
 
-require suncgi;
+use suncgi;
 
 =head1 DESCRIPTION
 
@@ -942,15 +924,16 @@ parameterne:
 
 =item I<$footer_width>
 
-Bredden på footeren i pixels. Hvis den ikke er definert, brukes
-I<${doc_width}>. Og hvis den heller ikke er definert, brukes
-I<$suncgi::STD_DOCWIDTH> som default.
+Bredden på footeren i pixels.
+Hvis den ikke er definert, brukes I<${doc_width}>.
+Og hvis den heller ikke er definert, brukes I<$suncgi::STD_DOCWIDTH> som default.
 
 =item I<$footer_align>
 
-Kan være I<left>, I<center> eller I<right>. Brukes av E<lt>tableE<gt>.
-Hvis udefinert, brukes I<$suncgi::doc_align>. Hvis den ikke er definert,
-brukes I<$suncgi::STD_DOCALIGN>.
+Kan være I<left>, I<center> eller I<right>.
+Brukes av E<lt>tableE<gt>.
+Hvis udefinert, brukes I<$suncgi::doc_align>.
+Hvis den ikke er definert, brukes I<$suncgi::STD_DOCALIGN>.
 
 =item I<$no_vh>
 
@@ -973,21 +956,21 @@ Parametere i print_header():
  4. Evt. scripts, havner mellom </style> og </head>.
  5. Evt. attributter i <body>, f.eks. " onLoad=\"myfunc()\"".
     Husk spacen i begynnelsen.
- 6. HTML-versjon. F.eks. $suncgi::DTD_HTML4STRICT. Default er $suncgi::DTD_HTML4LOOSE.
+ 6. HTML-versjon. F.eks. $suncgi::DTD_HTML4STRICT.
+    Default er $suncgi::DTD_HTML4LOOSE.
  7. Språk. Default "no".
  8. no_body. 0 = Skriv <body>, 1 = Ikke skriv.
 
 =head2 tab_print()
 
-Skriver ut på samme måte som print, men setter inn I<$suncgi::Tabs> først på
-hver linje. Det er for å få riktige innrykk. Det forutsetter at
-I<$suncgi::Tabs> er oppdatert til enhver tid.
+Skriver ut på samme måte som print, men setter inn I<$suncgi::Tabs> først på hver linje.
+Det er for å få riktige innrykk.
+Det forutsetter at I<$suncgi::Tabs> er oppdatert til enhver tid.
 
 =head2 tab_str()
 
-Fungerer på samme måte som I<tab_print()>, men returnerer en streng med
-innholdet istedenfor å skrive det ut. Muligens det burde vært implementert
-i I<tab_print()> på en eller annen måte, men blir ikke det tungvint?
+Fungerer på samme måte som I<tab_print()>, men returnerer en streng med innholdet istedenfor å skrive det ut.
+Muligens det burde vært implementert i I<tab_print()> på en eller annen måte, men blir ikke det tungvint?
 
 Vi lar det være sånn foreløpig.
 
@@ -1003,7 +986,8 @@ fjernes to spacer, hvis man skriver
 
 	Tabs(5);
 
-legges 5 TAB'er til. Hvis ingen parametere spesifiseres, brukes 1 som default, altså en TAB legges til.
+legges 5 TAB'er til.
+Hvis ingen parametere spesifiseres, brukes 1 som default, altså en TAB legges til.
 
 =head2 url_encode()
 
@@ -1017,6 +1001,9 @@ Konverterer til leselig datoformat.
 
 print_doc() er ikke ferdig, ellers svinger det visst.
 
+pod'en er muligens litt ute av sync med Tingenes Tilstand.
+Men det er vel sånt som forventes.
+
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $ ####
