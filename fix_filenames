@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# $Id: fix_filenames,v 1.1 2003/10/10 02:19:38 sunny Exp $
+# Fjerner spacer og konverterer ASCII-apostrofer til ’
+# Jokertegn må escapes, f.eks. '*' eller \*
+
+rename -v 's/ /_/g' $*
+rename -v "s/'/’/g" $*
