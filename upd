@@ -1,7 +1,9 @@
 #!/bin/sh
 
-# $Id: upd,v 1.1 1999/03/29 15:58:37 sunny Exp $
+# $Id: upd,v 1.2 1999/03/29 16:01:22 sunny Exp $
 
-du -kx | sort -n >du
-rm -f du.gz
-cat du
+DUFILE=du.dat
+
+du -kx | sort -n >$DUFILE
+rm -f $DUFILE.gz
+cat $DUFILE
