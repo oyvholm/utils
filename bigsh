@@ -1,15 +1,19 @@
 #!/bin/sh
 
-# $Id: bigsh,v 1.5 2004/02/06 15:03:35 sunny Exp $
+# $Id: bigsh,v 1.6 2004/02/09 07:54:06 sunny Exp $
 # Fyrer opp en stor xterm i X
 
-# mlterm -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1
-
 smallfont=0
-[ "$1" = "--small" -o -e /carmbb.mrk ] && { smallfont=1; shift; }
+[ -e /carmbb.mrk ] && { smallfont=1; }
+[ "$1" = "--small" ] && { smallfont=1; shift; }
+[ "$1" = "--big" ] && { smallfont=0; shift; }
 
 if [ -e /carmbb.mrk ]; then
-	geom=131x40+0+0
+	if [ "$smallfont" = "1" ]; then
+		geom=131x40+0+0
+	else
+		geom=87x29+0+0
+	fi
 else
 	if [ "$smallfont" = "1" ]; then
 		geom=210x67+0-1
@@ -36,9 +40,3 @@ else
 fi
 
 exit
-
-if [ "x$1" != "x" ]; then
-	nxterm -geometry 165x50+0+0 -title "$*" &
-else
-	nxterm -geometry 165x50+0+0 &
-fi
