@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.6 2003/06/30 11:18:42 sunny Exp $
+# $Id: gptrans_conv,v 1.7 2003/07/07 10:51:58 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -10,7 +10,7 @@ use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
-my $rcs_str = '$Id: gptrans_conv,v 1.6 2003/06/30 11:18:42 sunny Exp $';
+my $rcs_str = '$Id: gptrans_conv,v 1.7 2003/07/07 10:51:58 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t) =
     (     0,      0,      0,      0,     "",      0,      0);
@@ -22,7 +22,7 @@ if ($opt_h) {
 	# {{{
 	print(<<END);
 
-Syntax: gptrans_conv [-hp] [filer [...]]
+Syntax: gptrans_conv [options] [filer [...]]
 
   -c    Bruk komma istedenfor punktum som desimaltegn
   -d    Skipp duplikat-koordinater, skriv bare første og siste
@@ -83,7 +83,7 @@ while (<>) {
 	} elsif (/^
 		# @020721221336N6048353E00701826S015-00001E4859N1673U0000 {{{
 			# Regexp {{{
-			(.) # @
+			(@) # @
 			(\d\d) # År
 			(\d\d) # Måned
 			(\d\d) # Dag
@@ -116,12 +116,7 @@ while (<>) {
 		my $tmp_y = sprintf("%.5f", $Y_deg + $Y_degmin/60 + $Y_mindec/60000);
 		$tmp_x =~ s/\./$Des/;
 		$tmp_y =~ s/\./$Des/;
-		print(join("\t",
-			$opt_e ? $ep_time : ($opt_s ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z" : "$Year-$Month-$Day $Hour:$Min:$Sec"),
-			$tmp_x,
-			$tmp_y,
-			$Alt,
-			"\n"));
+		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $tmp_x, $tmp_y, $Alt);
 		# }}}
 	} elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
 		# @020721221336__________________________________________ {{{
@@ -129,13 +124,13 @@ while (<>) {
 		$Year, $Month, $Day, $Hour, $Min, $Sec,
 		$Rest) =
 		($1, $2+2000, $3, $4, $5, $6, $7, $8);
-		print("\n");
+		print("\n") unless ($opt_o eq "xgraph");
 		# print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, "?", "?", "?");
 		# }}}
 	} elsif (/^xmaplog /) {
-		print("\n");
+		print("\n") unless ($opt_o eq "xgraph");
 	} elsif (/^$/) {
-		print("\n");
+		print("\n") unless ($opt_o eq "xgraph");
 	} else {
 		print("# $_");
 		chomp;
@@ -288,4 +283,4 @@ END
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.6 2003/06/30 11:18:42 sunny Exp $
+# End of file $Id: gptrans_conv,v 1.7 2003/07/07 10:51:58 sunny Exp $
