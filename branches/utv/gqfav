@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# $Id: gqfav,v 1.1.2.2 2002/04/10 23:50:02 sunny Exp $
+# Favorittgreie i gqview
+# Må fikses litt på.
+
 cp -p $* /home/sunny/s/fav
 chmod +w /home/sunny/s/fav/$(basename $1)
 echo -ne \\a
