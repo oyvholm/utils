@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# $Id: bajobb,v 1.1 2003/10/23 15:47:40 sunny Exp $
+
+[ -e /ba0614-woody.mrk ] || { echo "For enkelhets skyld kjøres den bare fra ba0614." >&2; exit 1; }
+
+cd ~/src/cvs/ba/txt
+vim timeliste.txt
+echo -n Enter for checkin, CTRL-C for å drite i det...
+read
+cvs ci -m "Lagt inn med ~/bin/bajobb-scriptet" timeliste.txt
