@@ -206,11 +206,14 @@ sub insert_time {
 } # insert_time()
 
 sub is_utf8 {
-    # Sjekker om en tekst inneholder ulovlige UTF-8-sekvenser og returnerer i så fall 0 {{{
+    # Sjekker om en tekst inneholder ulovlige UTF-8-sekvenser og 
+    # returnerer i så fall 0
+    # {{{
     my $Str = shift;
     my $Retval = 1;
-    # Henta fra "find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny" og modifisert litt.
-    # FIXME: Klager ikke på overlange sekvenser og tegn i UTF-16-surrogatområdet
+    # Henta fra "find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny" og 
+    # modifisert litt. FIXME: Klager ikke på overlange sekvenser og tegn 
+    # i UTF-16-surrogatområdet
     $Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
     $Str =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
     $Str =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
@@ -279,13 +282,13 @@ Disse valgene (options) kan brukes:
 -b    - Batch mode, ikke start editor eller viewer.
 -f    - Force, start dbk selv om lockdir eksisterer.
 -h    - Skriv denne hjelpen
--i x  - Sett inn filen x istedenfor å bruke tastatur.
-        Forventer -t eller klokkeslett.
+-i x  - Sett inn filen x istedenfor å bruke tastatur. Forventer -t eller 
+        klokkeslett.
 -t    - Legg til klokkeslettet akkurat nå i fila og gå inn i editoren
 -z    - Legg til tidssone til klokkeslett
 
-Klokkeslettet kan spesifiseres hvor som helst, men må starte med formatet
-"HH:" der HH er to siffer.
+Klokkeslettet kan spesifiseres hvor som helst, men må starte med 
+formatet "HH:" der HH er to siffer.
 
 END
     exit($Retval);
