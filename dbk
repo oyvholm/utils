@@ -1,10 +1,12 @@
 #!/usr/bin/perl
 
+#================================================
+# $Id: dbk,v 1.14 2002/02/24 16:42:19 sunny Exp $
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.13 2002/02/22 01:39:47 sunny Exp $
 #
+# GPL-lisens. Åff cåårs.
 # (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
-# GNU-lisens.
+#================================================
 
 use Time::Local;
 use Fcntl ':flock';
@@ -91,7 +93,7 @@ print("\$opt_i = \"$opt_i\"\n") if $Debug;;
 
 $year_dir = "$dbk_dir/$Year";
 $dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
-$lock_file = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
+$lock_dir = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
 
 umask(0);
 unless (-d $dbk_dir) {
@@ -104,20 +106,20 @@ unless (-d $year_dir) {
 print("\$dbk_file = $dbk_file\n") if $Debug;
 
 if ($opt_f) {
-	rmdir($lock_file) || warn("$lock_file: Kan ikke fjerne gammel lockdir med makt: $!\n");
+	rmdir($lock_dir) || warn("$lock_dir: Kan ikke fjerne gammel lockdir med makt: $!\n");
 }
 
 my $print_ok = 0;
 
-until (mkdir($lock_file, 0777)) {
-	$print_ok || print(STDERR "Venter på at lockdir $lock_file skal forsvinne..");
+until (mkdir($lock_dir, 0777)) {
+	$print_ok || print(STDERR "Venter på at lockdir $lock_dir skal forsvinne..");
 	print(".");
-	# sleep(2);
+	sleep(1);
 	$print_ok = 1;
 }
 $print_ok &&print("OK\n");
 
-# open(LockFP, ">$lock_file") || die("$lock_file: Klarte ikke å lage lockfil");
+# open(LockFP, ">$lock_dir") || die("$lock_dir: Klarte ikke å lage lockfil");
 # flock(LockFP, LOCK_EX);
 # print(LockFP "$curr_time $$\n");
 
@@ -169,7 +171,7 @@ if ($file_size < $min_size) {
 	rmdir($year_dir);
 }
 
-rmdir($lock_file) || die("$0: $lock_file: Klarte ikke å slette lockdir: $!\n");
+rmdir($lock_dir) || die("$0: $lock_dir: Klarte ikke å slette lockdir: $!\n");
 exit(0);
 
 #### SUBRUTINER ####
@@ -244,4 +246,4 @@ END
 
 __END__
 
-#### End of file $Id: dbk,v 1.13 2002/02/22 01:39:47 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.14 2002/02/24 16:42:19 sunny Exp $ ####
