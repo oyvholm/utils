@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #================================================
-# $Id: afv,v 1.13.2.1 2003/03/02 05:45:15 sunny Exp $
+# $Id: afv,v 1.13.2.2 2003/03/02 05:54:50 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -119,8 +119,15 @@ if ($do_loop) {
 exit;
 sub glob_files {
 	@Files = ();
-	foreach(@ARGV) {
-		push(@Files, glob $_);
+	if (scalar(@ARGV)) {
+		foreach(@ARGV) {
+			push(@Files, glob $_);
+			}
+		}
+	else {
+		while(<>) {
+			push(@Files, glob $_);
+			}
 		}
 	} # glob_files()
 sub check_stop {
@@ -145,4 +152,4 @@ sub my_sleep {
 			}
 		}
 	} # my_sleep()
-#### End of file $Id: afv,v 1.13.2.1 2003/03/02 05:45:15 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.2 2003/03/02 05:54:50 sunny Exp $ ####
