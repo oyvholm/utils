@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: dbk,v 1.16 2003/07/16 00:14:20 sunny Exp $
+# $Id: dbk,v 1.17 2004/03/18 17:20:21 sunny Exp $
 # Ny versjon av DBK-systemet.
 #
 # GPL-lisens. Åff cåårs.
@@ -110,7 +110,7 @@ if ($opt_f) {
 my $print_ok = 0;
 
 until (mkdir($lock_dir, 0777)) {
-	$print_ok || print(STDERR "Venter på at lockdir $lock_dir skal forsvinne..");
+	$print_ok || print(STDERR "Venter på at lockdir $lock_dir skal forsvinne ($!)..");
 	print(".");
 	sleep(1);
 	$print_ok = 1;
@@ -338,4 +338,4 @@ sub widechar {
 
 __END__
 
-#### End of file $Id: dbk,v 1.16 2003/07/16 00:14:20 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.17 2004/03/18 17:20:21 sunny Exp $ ####
