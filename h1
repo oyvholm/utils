@@ -3,9 +3,9 @@
 # Fyrer i gang httpd(8)
 # $Id$
 
-if [ -e /nett.mrk -o -e /sunba.mrk -o -e /carmbb.mrk ]; then
+if [ -e /nett.mrk -o -e /sunba.mrk ]; then
 	/etc/init.d/apache start
-elif [ -e /nett2.mrk ]; then
+elif [ -e /nett2.mrk -o -e /carmbb.mrk ]; then
 	/usr/local/bin/apachectl start
 elif [ -e /toshbb.mrk ]; then
 	apachectl start
