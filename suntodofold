@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: suntodofold,v 1.1 2003/08/01 23:02:44 sunny Exp $
+# $Id: suntodofold,v 1.2 2003/08/02 18:36:08 sunny Exp $
 # Inserts fold marks in TODO files before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 
@@ -17,7 +17,7 @@ chomp($Line);
 print("$Line \x7B\x7B\x7B\n");
 
 while (<STDIN>) {
-	print($_);
+	print("\t$_");
 }
 
 print("$Indent\x7D\x7D\x7D\n");
