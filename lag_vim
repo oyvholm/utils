@@ -6,9 +6,9 @@
 update_vim-clean
 
 echo ======== mincvs_vim
-mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; exit 1; }
+mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; exit 0; }
 
-cd ~/src/other/vim/vim || { echo "cd ~/src/other/vim/vim: Ånn ðe tryn." >&2; exit 1; }
+cd ~/src/other/vim/vim || { echo "cd ~/src/other/vim/vim: Ånn ðe tryn." >&2; exit 0; }
 
 x_flags="--enable-gui=no --without-x"
 vim_size=huge
