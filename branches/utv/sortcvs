@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: sortcvs,v 1.1.2.3 2002/10/10 05:21:01 sunny Exp $
-# Sorts the output from "cvs log" into chronological kronologisk order.
+# $Id: sortcvs,v 1.1.2.4 2002/10/10 06:28:12 sunny Exp $
+# Sorts the output from "cvs log" into chronological order.
+# Made by Oyvind A. Holm <sunny@sunbase.org>
 #==============================================================================
 
 use strict;
@@ -15,53 +16,42 @@ my $Line = "";
 
 while (<>) {
 	$Line = $_;
-	# chomp($Line);
 	if ($Line =~ /^----------------------------$/) {
-		D("Fant minuslinje.\n");
-		# printf("Rev er %sdefinert.\n", (defined($Rev) ? "" : "ikke "));
-		D("scalar(\@Curr) = ", scalar(@Curr), "\n");
-		for (@Curr) {
-			D("innh: $_\n");
-		}
 		if (length($Rev) && scalar(@Curr)) {
 			$Entry{$Rev} = join("", @Curr);
-			D("\$Entry{$Rev} settes.\n");
 		}
 		@Curr = ();
 		push(@Curr, $Line);
 		$Line = <>;
-		D("Leste \"$Line\".\n");
 		if ($Line =~ /^revision (\S+)/) {
 			$curr_rev = $1;
-			D("Setter \$curr_rev til \"$curr_rev\"\n");
 		} else {
 			warn("Expected \"revision: \", got \"$Line\".\"");
 		}
 		push(@Curr, $Line);
 		$Line = <>;
-		D("Leste \"$Line\".\n");
-		# if ($Line =~ /^date: (\S+ \S+);.*author: .* state: .*/)
 		if ($Line =~ /^date: (\S+\s+\S+) .*/) {
 			$curr_date = $1;
-			D("Setter \$curr_date til \"$curr_date\".\n");
 		} else {
 			warn("Expected \"date: \", got \"$Line\".\"");
 		}
 		push(@Curr, $Line);
-
-		$Rev = unpack("H*", "$curr_date$curr_rev");
-		D("\$Rev er satt til \"$Rev\".\n");
+		# $Rev = unpack("H*", "$curr_date$curr_rev");
+		$Rev = "$curr_date$curr_rev";
 	} elsif ($Line =~ /^=============================================================================$/) {
-		D("Fant \"===\"-linje, slutt på loggen for den fila.\n");
+		if (length($Rev) && scalar(@Curr)) {
+			$Entry{$Rev} = join("", @Curr);
+		}
 		my @Arr = ();
 		while (my ($l_name, $l_val) = each %Entry) {
 			push(@Arr, $l_name);
 		}
 		for (sort @Arr) {
-			D("Skriver ut verdien av Entry{$_}\n");
 			print($Entry{$_});
 		}
 		($curr_date, $curr_rev, $Rev) = ("", "", "");
+		%Entry = ();
+		@Curr = ();
 		print("$Line");
 	} else {
 		if (length($Rev)) {
@@ -70,10 +60,6 @@ while (<>) {
 			print("$Line");
 		}
 	}
-}
-
-sub D {
-	# print(STDERR @_);
 }
 
 __END__
