@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.1 2003/11/28 12:08:34 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.2 2003/11/28 12:20:20 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2003 Øyvind A. Holm <sunny@sunbase.org>
@@ -10,11 +10,12 @@ package suncgi;
 require Exporter;
 @ISA = qw(Exporter);
 
+# @EXPORT {{{
 @EXPORT = qw{
 	%Opt %Cookie
 	@cookies_done
 	get_cookie set_cookie delete_cookie split_cookie
-	content_type create_file curr_local_time curr_utc_time deb_pr
+	content_type create_file curr_local_time curr_utc_time D deb_pr
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn inc_counter increase_counter log_access print_header p_footer tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
@@ -26,6 +27,7 @@ require Exporter;
 	$debug_file $error_file $log_dir $Method $request_log_file $emptyrequest_log_file
 	$DTD_HTML4FRAMESET $DTD_HTML4LOOSE $DTD_HTML4STRICT
 };
+# }}}
 
 @EXPORT_OK = qw{
 	print_footer
@@ -40,7 +42,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.1 2003/11/28 12:08:34 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.2 2003/11/28 12:20:20 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -123,6 +125,53 @@ sub curr_utc_time {
 	# }}}
 } # curr_utc_time()
 
+sub D {
+	# {{{
+	return unless $main::Debug;
+	my $Msg = shift;
+	my @call_info = caller;
+	$Msg =~ s/^(.*?)\s+$/$1/;
+	my $err_msg = "";
+	if (-e $suncgi::debug_file) {
+		open(DebugFP, "+<$suncgi::debug_file") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
+	} else {
+		open(DebugFP, ">$suncgi::debug_file") || ($err_msg = "Klarte ikke å lage debugfila");
+	}
+	unless(length($err_msg)) {
+		flock(DebugFP, LOCK_EX);
+		seek(DebugFP, 0, 2) || ($err_msg = "Kan ikke seek'e til slutten av debugfila");
+	}
+	if (length($err_msg)) {
+		print <<END;
+Content-type: text/html
+
+$suncgi::DTD_HTML4STRICT
+<html>
+	<!-- $suncgi::rcs_id -->
+	<head>
+		<title>Intern feil i D()</title>
+	</head>
+	<body>
+		<h1>Intern feil i D()</h1>
+		<p>${err_msg}: <samp>$!</samp>
+		<p>Litt info:
+		<p>\$main::Debug = "$main::Debug"
+		<br>\${suncgi::debug_file} = "${suncgi::debug_file}"
+		<br>\${suncgi::error_file} = "${suncgi::error_file}"
+	</body>
+</html>
+END
+		exit();
+	}
+	my $deb_time = time;
+	my $Fil = $call_info[1];
+	$Fil =~ s#\\#/#g;
+	$Fil =~ s#^.*/(.*?)$#$1#;
+	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg\n");
+	close(DebugFP);
+	# }}}
+} # D()
+
 sub deb_pr {
 	# {{{
 	return unless $main::Debug;
@@ -165,7 +214,7 @@ END
 	my $Fil = $call_info[1];
 	$Fil =~ s#\\#/#g;
 	$Fil =~ s#^.*/(.*?)$#$1#;
-	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg\n");
+	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg (FIXME: Brukte deb_pr(), den er avlegs)\n");
 	close(DebugFP);
 	# }}}
 } # deb_pr()
@@ -863,7 +912,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.1 2003/11/28 12:08:34 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.2 2003/11/28 12:20:20 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -976,7 +1025,7 @@ F<print_header()> til å sette rett tidspunkt inn i headeren. Formatet på
 datoen er i henhold til S<ISO 8601>, dvs.
 I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
 
-=head2 deb_pr()
+=head2 D()
 
 En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
 forlanger at ${suncgi::error_file} er definert, det skal være en fil der
@@ -1011,6 +1060,10 @@ steder som bør gå raskest mulig. Rutina sjekker verdien av
 I<${main::Debug}>, hvis den er 0, returnerer den med en gang.
 
 B<FIXME:> Mer pod seinere.
+
+=head2 deb_pr()
+
+Samme som D(), men skal skiftes ut etterhvert. Det var det den het før.
 
 =head2 escape_dangeours_chars()
 
@@ -1261,4 +1314,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.1 2003/11/28 12:08:34 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.2 2003/11/28 12:20:20 sunny Exp $ ####
