@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #========================================================================
-# $Id: hf,v 1.12 2002/04/18 15:28:33 sunny Exp $
+# $Id: hf,v 1.13 2002/11/27 00:01:30 sunny Exp $
 # Formatterer HTML-source med TAB'er
 #
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -84,7 +84,7 @@ LINE: while (<>) {
 	} else {
 		print;
 	}
-	$is_pre = 1 if ($Line =~ /<pre>/i);
+	$is_pre = 1 if ($Line =~ /<pre\b.*>/i);
 	$is_pre = 0 if ($Line =~ m!</pre>!i);
 }
 
@@ -114,4 +114,4 @@ END
 	exit(0);
 } # print_help()
 
-#### End of file $Id: hf,v 1.12 2002/04/18 15:28:33 sunny Exp $ ####
+#### End of file $Id: hf,v 1.13 2002/11/27 00:01:30 sunny Exp $ ####
