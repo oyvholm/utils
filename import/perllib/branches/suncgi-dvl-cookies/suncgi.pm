@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $
+# $Id: suncgi.pm,v 1.33.2.1 2001/05/22 15:18:55 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -41,7 +41,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.33.2.1 2001/05/22 15:18:55 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -238,12 +238,14 @@ sub get_cgivars {
 } # get_cgivars()
 
 sub get_cookie {
+	my $env_str = defined($ENV{'HTTP_COOKIE'}) ? $ENV{'HTTP_COOKIE'} : "";
 	my ($chip, $val);
-		foreach (split(/; /, $ENV{'HTTP_COOKIE'})) {
+	foreach (split(/; /, $env_str)) {
 		# split cookie at each ; (cookie format is name=value; name=value; etc...)
 		# Convert plus to space (in case of encoding (not necessary, but recommended)
 		s/\+/ /g;
 		# Split into key and value.
+		my ($chip, $val) = ("", "");
 		($chip, $val) = split(/=/,$_,2); # splits on the first =.
 		# Convert %XX from hex numbers to alphanumeric
 		$chip =~ s/%([A-Fa-f0-9]{2})/pack("c",hex($1))/ge;
@@ -251,6 +253,7 @@ sub get_cookie {
 		# Associate key and value
 		$suncgi::Cookie{$chip} .= "\1" if (defined($suncgi::Cookie{$chip})); # \1 is the multiple separator
 		$suncgi::Cookie{$chip} .= $val;
+		deb_pr("get_cookie(): $chip=$val");
 	}
 } # get_cookie()
 
@@ -276,12 +279,17 @@ sub set_cookie {
 	if (!defined $domain) { $domain = $ENV{'SERVER_NAME'}; } #set domain of cookie.  Default is current host.
 	if (!defined $path) { $path = "/"; } #set default path = "/"
 	# if (!defined $secure) { $secure = "0"; }
-	foreach my $key (keys %suncgi::Cookie) {
-		$suncgi::Cookie{$key} =~ s/ /+/g; #convert plus to space.
-		print "Set-Cookie: $key\=$suncgi::Cookie{$key}; $expires path\=$path; domain\=$domain; $secure[$sec]\n";
+	while (my ($Key, $Value) = each %suncgi::Cookie) {
+	# foreach my $key (keys %suncgi::Cookie) {
+		$Value =~ s/ /+/g; #convert plus to space.
+		my $cookie_str = "Set-Cookie: $Key\=$Value; $expires path\=$path; domain\=$domain; $secure[$sec]\n";
+		deb_pr($cookie_str);
+		print($cookie_str);
+		# undef $suncgi::Cookie{key};
 		#print cookie to browser,
 		#this must be done *before*	you print any content type headers.
 	}
+	undef %suncgi::Cookie;
 } # set_cookie()
 
 sub delete_cookie {
@@ -291,7 +299,7 @@ sub delete_cookie {
 	my ($name);
 	foreach $name (@to_delete) {
 		undef $suncgi::Cookie{$name}; #undefines cookie so if you call set_cookie, it doesn't reset the cookie.
-		print "Set-Cookie: $name=deleted; expires=Thu, 01-Jan-1970 00:00:00 GMT;\n";
+		print "Set-Cookie: $name=; expires=Thu, 01-Jan-1970 00:00:00 GMT;\n";
 		#this also must be done before you print any content type headers.
 	}
 } # delete_cookie()
@@ -753,7 +761,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $>
+S<$Id: suncgi.pm,v 1.33.2.1 2001/05/22 15:18:55 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1149,4 +1157,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.33 2001/05/02 04:58:20 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.33.2.1 2001/05/22 15:18:55 sunny Exp $ ####
