@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# $Id: upd,v 1.4 1999/05/09 00:51:34 sunny Exp $
+# $Id: upd,v 1.5 2000/04/18 17:22:45 sunny Exp $
 # Lister ut alle directoryene og sorterer dem etter størrelse
 
 DUFILE=du.dat
 
-du -Skx | sort -n >$DUFILE
+du -kx | sort -n >$DUFILE
 chmod 600 $DUFILE
 chown sunny.sunny $DUFILE
 rm -f $DUFILE.gz
