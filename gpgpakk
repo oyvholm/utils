@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# $Id: gpgpakk,v 1.3 2000/05/05 11:24:23 sunny Exp $
+# $Id: gpgpakk,v 1.4 2002/02/12 03:57:25 sunny Exp $
 
 guid=$1
-[ -z "$guid" ] && guid="-r sunny256"
+[ -z "$guid" ] && guid="-r sunny@sunbase.org"
 gpg $guid -z9 -a --comment "" -e
