@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.29 2001/03/19 17:02:42 sunny Exp $
+# $Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.29 2001/03/19 17:02:42 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -560,15 +560,21 @@ sub print_header {
 	} else {
 		$suncgi::header_done = 1;
 	}
-	defined($DocTitle) || ($DocTitle = "[NO TITLE]"); # FIXME: Midlertidig
-	$style_sheet = $suncgi::css_default unless defined($style_sheet);
-	$head_lang = $suncgi::STD_LANG unless defined($head_lang);
+	# FIXME: Kanskje dette kan gjøres via referanser istedenfor.
+	defined($DocTitle) || ($DocTitle = ""); # FIXME: Midlertidig
+	defined($RefreshStr) || ($RefreshStr = "");
+	defined($style_sheet) || ($style_sheet = "");
+	defined($head_script) || ($head_script = "");
+	defined($body_attr) || ($body_attr = "");
+	defined($html_version) || ($html_version = "");
+	defined($head_lang) || ($head_lang = "");
+	defined($no_body) || ($no_body = 0);
+	$style_sheet = $suncgi::css_default unless length($style_sheet);
+	$head_lang = $suncgi::STD_LANG unless length($head_lang);
 	$html_version = $suncgi::DTD_HTML4LOOSE unless defined($html_version);
-	$no_body = 0 unless defined($no_body);
-	$body_attr = "" unless defined($body_attr);
+	$no_body = 0 unless length($no_body);
 	my $DocumentTime = curr_utc_time();
-	$RefreshStr = "" unless defined($RefreshStr);
-	$RefreshStr = (length($RefreshStr)) ? qq{<meta http-equiv="refresh" content="$RefreshStr" url="$suncgi::Url">} : "";
+	length($RefreshStr) && ($RefreshStr = qq{<meta http-equiv="refresh" content="$RefreshStr" url="$suncgi::Url">});
 
 	content_type("text/html");
 	print $html_version;
@@ -679,7 +685,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.29 2001/03/19 17:02:42 sunny Exp $>
+S<$Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1075,4 +1081,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.29 2001/03/19 17:02:42 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.30 2001/04/16 19:38:00 sunny Exp $ ####
