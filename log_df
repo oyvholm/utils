@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# $Id: log_df,v 1.1 2003/09/30 00:24:43 sunny Exp $
+
+logdir=$HOME/log
+
+[ -d $logdir ] || mkdir -p logdir || { echo "mkdir $logdir: På trynet" >&2, exit 1; }
+
+lockname=$logdir/df.log.LOCK
+
+until mkdir $lockname 2>/dev/null; do
+	echo $0: $lockname: Lockdir finnes, avbryter >&2
+	exit 1
+done
+
+df | grep hd | perl -pe 'my $a = `u`; s/^/$a /;' >>$logdir/df.log
+
+rmdir $lockname
