@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+# $Id: ccc,v 1.1 1999/04/06 14:36:58 sunny Exp $
+# Mer oversiktlig cvs stat
+
+open(FP, "cvs -n stat 2>/dev/null |");
+
+while (<FP>) {
+	chomp;
+	if (/^\?/) {
+		print "$_\n";
+	} else {
+		if (/^File: /) {
+			$FileLine = $_;
+		}
+		if (/^\s+Repository/) {
+			$RepLine = $_;
+		}
+		if (/^\s+Working/) {
+			$WorkLine = $_;
+			unless ($FileLine =~ /Up-to-date$/) {
+				print "----\n$FileLine\n$WorkLine\n$RepLine\n";
+				$FileLine = "";
+			}
+		}
+	}
+}
+
+#### End of file $Id: ccc,v 1.1 1999/04/06 14:36:58 sunny Exp $ ####
