@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # Creates a .tar.gz file of current directory
-# $Id: mkt,v 1.6 2000/10/26 14:06:03 sunny Exp $
-# (C)opyleft 1999 sunny@pils.kvarteret.uib.no
+# $Id: mkt,v 1.7 2001/03/06 12:21:07 sunny Exp $
+# (C)opyleft 1999-2001 sunny256@mail.com
 # License: GNU GPL
+
+# FIXME: Finn ut av -r kombinert med -n
 
 if [ "x$1" = "x--help" -o "x$1" = "x-h" ]; then
 	cat <<END
@@ -17,7 +19,10 @@ Options:
 
 -g, --gpg     Use gpg instead of gzip
 -h, --help    Print this help message
+-n, --nocomp  No compression, leave as .tar
 -r, --remove  Remove directory after packing
+
+Options has to be specified in alphabethical order at the moment.
 
 END
 	exit 1
@@ -30,6 +35,13 @@ if [ "x$1" = "x--gpg" -o "x$1" = "x-g" ]; then
 else
 	_packcmd="gzip -vN"
 	_packext=".gz"
+fi
+
+if [ "x$1" = "x--nocomp" -o "x$1" = "x-n" ]; then
+	_no_compress=1
+	shift
+else
+	_no_compress=0
 fi
 
 if [ "x$1" = "x--remove" -o "x$1" = "x-r" ]; then
@@ -72,6 +84,11 @@ fi
 
 cd .. || { echo "$0: Cannot \"cd ..\"" >&2; exit 1; }
 tar cf $_prefix.tar $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\" in parent dir" >&2; exit 1; }
+
+if [ "$_no_compress" -eq "1" ]; then
+	exit 1;
+fi
+
 $_packcmd $_prefix.tar || { echo "$0: Error running \"$_packcmd $_prefix.tar\" in parent dir" >&2; exit 1; }
 
 if [ "$_packext" = ".gpg" ]; then
@@ -84,4 +101,4 @@ if [ "$_can_erase" -eq "1" ]; then
 	rm -rf $_prefix || { echo "$0: $_prefix: Can't remove directory" >&2; exit 1; }
 fi
 
-#### End of file $Id: mkt,v 1.6 2000/10/26 14:06:03 sunny Exp $ ####
+#### End of file $Id: mkt,v 1.7 2001/03/06 12:21:07 sunny Exp $ ####
