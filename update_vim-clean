@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# $Id: update_vim-clean,v 1.1 2003/07/25 17:57:48 sunny Exp $
+# Oppdaterer ~/src/other/vim/vim.clean på sunba.
+
+if [ ! -e /sunba.mrk ]; then
+	echo Den skal egentlig kjøres på sunba, og det er ikke her vi er.
+	echo Sikker på at du vil fortsette? Trykk ENTER i såfall eller
+	echo -n ta konsekevensene sjøl.
+	read
+fi
+
+cd ~/vim.clean
+until cvs upd -d; do
+	echo -n Sleep 20...
+	sleep 20
+	echo våken.
+done
