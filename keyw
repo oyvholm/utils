@@ -3,3 +3,4 @@
 # $Id$
 
 svn propset svn:keywords "Id Date" $*
+svn propdel cvs2svn:cvs-rev $*
