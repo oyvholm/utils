@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $
+# $Id: suncgi.pm,v 1.21 2000/11/27 02:56:38 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -18,7 +18,7 @@ require Exporter;
 	Tabs url_encode print_doc sec_to_string
 	$query_string
 	$log_requests $ignore_double_ip
-	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $Url
+	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $base_url $Url
 	$css_default
 	$doc_lang $doc_align $doc_width
 	$debug_file $error_file $log_dir $Method $request_log_file
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.21 2000/11/27 02:56:38 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -615,7 +615,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $>
+S<$Id: suncgi.pm,v 1.21 2000/11/27 02:56:38 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1006,4 +1006,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.20 2000/11/24 12:13:30 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.21 2000/11/27 02:56:38 sunny Exp $ ####
