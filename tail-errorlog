@@ -6,8 +6,10 @@
 #==========================================================
 
 prefix=`date -u +"%Y/*%Y-%m-%dZ.error_log"`
-if [ -e /sunba.mrk -o -e /carmbb.mrk -o -e /svdbb.mrk ]; then
+if [ -e /sunba.mrk -o -e /svdbb.mrk ]; then
 	tail -f /var/log/apache/error.log $*
+elif [ -e /carmbb.mrk ]; then
+	tail -f /var/log/apache2/$prefix $*
 elif [ -e /grimme.mrk -o -e /recbb.mrk -o -e /toshbb.mrk -o -e /ba0614.mrk ]; then
 	tail -f /var/log/httpd/error_log $*
 elif [ -e /nett.mrk ]; then
