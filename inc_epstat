@@ -1,12 +1,26 @@
 #!/usr/bin/perl -w
 
-# $Id: inc_epstat,v 1.3 2003/09/22 05:05:41 sunny Exp $
+# $Id: inc_epstat,v 1.4 2003/09/28 23:45:41 sunny Exp $
 # Filter for å gjøre epstat-format brukbart i gnuplot.
+# -f skriver telleren foran istedenfor etter.
 
+use Getopt::Std;
+
+our ($opt_f) = (0);
 my $Count = 0;
 
-while (<>) {
-	$Count++;
-	s/^(.+)/$1\t$Count/;
-	print;
+getopts('f');
+
+if ($opt_f) { # For å få opp farta
+	while (<>) {
+		$Count++;
+		s/^(.+)/$Count\t$1/;
+		print;
+	}
+} else {
+	while (<>) {
+		$Count++;
+		s/^(.+)/$1\t$Count/;
+		print;
+	}
 }
