@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -45,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -220,7 +220,7 @@ END
 		exit();
 	}
 	print(DebugFP $warn_str);
-	print("$warn_str<br>\n");
+	# print("$warn_str<br>\n");
 	close(DebugFP);
 	# }}}
 } # deb_pr()
@@ -1152,7 +1152,7 @@ suncgi — HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1525,4 +1525,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.9 2004/03/09 02:09:19 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $ ####
