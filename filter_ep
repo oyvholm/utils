@@ -1,16 +1,16 @@
 #!/usr/bin/perl -w
 
-#===============================================================
+#=======================================================================
 # $Id$
-# Slipper bare ting som ser ut som en gyldig ep igjennom.
-# For å ta så mye drit som mulig, slipper den bare gjennom
-# 9-sifrede nummer som begynner på 9, og 10-sifrede nummer som
+# Slipper bare ting som ser ut som en gyldig ep igjennom. 
+# For å ta så mye drit som mulig, slipper den bare gjennom 
+# 9-sifrede nummer som begynner på 9, og 10-sifrede nummer som 
 # begynner på 1. -v skriver ut ulovlige linjer.
 #
 # Character set: UTF-8
 # License: GNU General Public License
 # ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
-#===============================================================
+#=======================================================================
 
 use strict;
 
@@ -23,12 +23,12 @@ our $opt_v = 0;
 getopts('v');
 
 while (<>) {
-	chomp;
-	if (/^(9\d{8})$/ || /^(1\d{9})$/) {
-		print("$_\n");
-	} else {
-		$opt_v && print(STDERR "Linje $.: Ulovlig: \"$_\"\n");
-	}
+    chomp;
+    if (/^(9\d{8})$/ || /^(1\d{9})$/) {
+        print("$_\n");
+    } else {
+        $opt_v && print(STDERR "Linje $.: Ulovlig: \"$_\"\n");
+    }
 }
 
 __END__
