@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: hf,v 1.5 1999/03/05 08:46:28 sunny Exp $
+# $Id: hf,v 1.6 1999/03/24 17:51:23 sunny Exp $
 # Formatterer HTML-source med TAB'er
 
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -15,10 +15,10 @@ my $Tabs = "";
 my $tab_indent = 0;
 my $orig_line = "";
 my @Elements = (
-
-	"applet", "blockquote", "body", "center", "div", "dl", "form",
-	"frameset", "head", "html", "ol", "map", "noframes", "script",
-	"style", "table", "td", "th", "tr", "ul"
+	"applet", "blockquote", "body", "caption", "center", "colgroup",
+	"div", "dl", "form", "frameset", "head", "html", "ol", "map",
+	"noframes", "noscript", "select", "script", "style", "table", "td",
+	"th", "tr", "ul"
 );
 
 while (<>) {
@@ -48,4 +48,4 @@ while (<>) {
 	}
 }
 
-#### End of file $Id: hf,v 1.5 1999/03/05 08:46:28 sunny Exp $ ####
+#### End of file $Id: hf,v 1.6 1999/03/24 17:51:23 sunny Exp $ ####
