@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# $Id$
-# svn diff som driter i whitespace.
-
-svn diff --diff-cmd diff -x -ub $*
