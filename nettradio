@@ -1,10 +1,13 @@
 #!/bin/sh
 
-# $Id: nettradio,v 1.3 2003/03/15 03:50:25 sunny Exp $
-# Spiller av nettradioer -- eller rettere sagt sender en
-# .ogg-strøm som kan lagres og tailes eller trøkkes inn i ogg123.
+# $Id: nettradio,v 1.4 2004/04/19 13:02:31 sunny Exp $
+# Spiller av nettradioer â€” eller rettere sagt sender en
+# .ogg-strÃ¸m som kan lagres og tailes eller trÃ¸kkes inn i ogg123.
 
 case "$1" in
+	p1|p1hi)
+		radio=http://radio.hiof.no/nrk-p1-172.ogg
+		;;
 	p2)
 		radio=http://radio.hiof.no:8000/nrk-p2-128
 		mpg321 -q $radio --wav - - | oggenc -Q -q-1 -
@@ -19,7 +22,7 @@ case "$1" in
 		;;
 	bbc1q0)
 		radio=http://ogg.bbc.co.uk:8001/radio1_low.ogg
-		;;	
+		;;
 	bbc1|bbc1-q3)
 		radio=http://ogg.bbc.co.uk:8001/radio1_high.ogg
 		;;
