@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: lag_vim,v 1.2 2004/02/09 04:02:32 sunny Exp $
+# $Id: lag_vim,v 1.3 2004/02/13 17:24:06 sunny Exp $
 # Mekker ihop ny, fin Vim.
 
 update_vim-clean
@@ -10,16 +10,20 @@ mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >
 
 cd ~/src/other/vim/vim || { echo "cd ~/src/other/vim/vim: Ånn ðe tryn." >&2; exit 1; }
 
+x_flags="--enable-gui=no --without-x"
+
 if [ -e $HOME/.petronas.mrk ]; then
 	echo ======== Man er på petronas. Lag lokal vim.
 	vimdir=$HOME/local/prg/vim
-	echo ======== ./configure --prefix=$vimdir --with-features=huge --enable-multibyte
-	./configure --prefix=$vimdir --with-features=huge --enable-multibyte
 else
 	vimdir=/usr/local/prg/vim
-	echo ======== ./configure --prefix=$vimdir --with-features=huge --with-x --enable-gui=gtk --enable-multibyte
-	./configure --prefix=$vimdir --with-features=huge --with-x --enable-gui=gtk --enable-multibyte
+	if [ -e /ba0614-woody.mrk ]; then
+		echo ======== Er på ba0614, lag feita Vim med X og gode greia
+		x_flags="--with-x --enable-gui=gtk"
+	fi
 fi
+echo ======== ./configure --prefix=$vimdir --with-features=huge --enable-multibyte $x_flags
+./configure --prefix=$vimdir --with-features=huge --enable-multibyte $x_flags
 
 echo ======== make
 make
@@ -28,6 +32,6 @@ echo
 if [ -e $HOME/.petronas.mrk ]; then
 	echo Vi er på petronas, så vi nøyer oss med det.
 else
-	echo Hvis det gikk bra, er det på tide å bli root.
-	echo Ordnes seinere.
+	echo Hvis det gikk bra, er det på tide å bli root, og...
 fi
+echo "rm -rf $vimdir && make install"
