@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: log_df,v 1.1 2003/09/30 00:24:43 sunny Exp $
+# $Id: log_df,v 1.2 2003/09/30 02:32:36 sunny Exp $
 
 logdir=$HOME/log
 
@@ -8,11 +8,12 @@ logdir=$HOME/log
 
 lockname=$logdir/df.log.LOCK
 
-until mkdir $lockname 2>/dev/null; do
-	echo $0: $lockname: Lockdir finnes, avbryter >&2
+[ -r $logdir/.disks ] || { echo "$logdir/.disks finnes ikke, avbryter." >&2; exit 1; }
+until mkdir -p $lockname 2>/dev/null; do
+	echo $0: $lockname: Lockdir finnes, avbryter. >&2
 	exit 1
 done
 
-df | grep hd | perl -pe 'my $a = `u`; s/^/$a /;' >>$logdir/df.log
+df `cat $logdir/.disks` | grep / | perl -pe 'my $a = `u`; s/^/$a /;' >>$logdir/df.log
 
 rmdir $lockname
