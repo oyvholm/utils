@@ -61,6 +61,10 @@ Options:
   -h         Send this help to stdout
   -k         Keep temp file after plotting
   -lp        Use linespoints instead of lines
+  -o x       Use x as output format. Can be one of these:
+               fig  (XFig)
+               png  (.png)
+               ps   (Postscript)
   -sampN     set samples N
   -t"X"      Use title X
   -xrXX:YY   Use X range XX:YY
