@@ -1,17 +1,41 @@
 #!/usr/bin/perl -w
 
+#===============================================
+# $Id: afv,v 1.3 2001/05/04 13:00:40 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
-# $Id: afv,v 1.2 2001/04/18 00:22:23 sunny Exp $
+# Options: -l5 der 5 er antall sekunder det skal
+# pauses før den kjører i loop igjen.
+# ©2001 Øyvind A. Holm. License: GNU GPL
+#===============================================
 
 use strict;
 use Fcntl ':flock';
 
+$| = 1;
+
 my $Dir = ".AFV";
 -d $Dir || mkdir($Dir, 0777) || die("$Dir: Klarte ikke mkdir(): $!");
 -d "$Dir/$Dir" || mkdir("$Dir/$Dir", 0777) || die("$Dir/$Dir: Klarte ikke mkdir(): $!");
+
+my ($do_loop, $sleep_time, $curr_dir) = (0, 5, `/bin/pwd`);
+chomp($curr_dir);
+
+if ($ARGV[0] =~ /^-l(\d+)/) {
+	$do_loop = 1;
+	$sleep_time = $1;
+	shift;
+}
+
 my @Files = @ARGV;
 
+AGAIN:
+print(STDERR "afv: Kjører i $curr_dir...") if ($do_loop);
+
 LOOP: foreach my $Curr (@Files) {
+	if (-e "$Dir/stop") {
+		print(STDERR "$Dir/stop eksisterer, avslutter.\n");
+		exit;
+	}
 	next LOOP unless -f $Curr;
 	my $lock_time = 0;
 	my $lock_dir = "$Dir/$Dir/$Curr.lock";
@@ -71,4 +95,11 @@ LOOP: foreach my $Curr (@Files) {
 	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
 }
 
-#### End of file $Id: afv,v 1.2 2001/04/18 00:22:23 sunny Exp $ ####
+if ($do_loop) {
+	print(STDERR "OK\nafv: Sleep $sleep_time...");
+	sleep($sleep_time);
+	print(STDERR "OK\n");
+	goto AGAIN;
+}
+
+#### End of file $Id: afv,v 1.3 2001/05/04 13:00:40 sunny Exp $ ####
