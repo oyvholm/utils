@@ -1,32 +1,32 @@
 
 /*
- * Skriver ut alle gyldige norske personnummer på angitte datoer
- * $Id: personnr.c,v 1.3.2.5 2003/09/12 03:17:15 sunny Exp $
+ * Skriver ut alle gyldige norske personnummer pÃ¥ angitte datoer
+ * $Id: personnr.c,v 1.3.2.6 2004/02/05 02:51:48 sunny Exp $
  *
  * Oppbygningen av personnummeret 020656-45850: {{{
  *
- * 020656 = Fødselsdato (ddmmåå)
- *    458 = Fødselsnummer.
- *          Den første registrerte gutten den dagen fikk fødselsnummeret 499.
- *          Den neste fikk 497. Den første registrerte jenta fikk 498, den
+ * 020656 = FÃ¸dselsdato (ddmmÃ¥Ã¥)
+ *    458 = FÃ¸dselsnummer.
+ *          Den fÃ¸rste registrerte gutten den dagen fikk fÃ¸dselsnummeret 499.
+ *          Den neste fikk 497. Den fÃ¸rste registrerte jenta fikk 498, den
  *          neste 496 osv.
- *          Oddetall = hankjønn, like tall = hunkjønn.
- *          For personer født i forrige eller neste århundre (18xx/20xx)
+ *          Oddetall = hankjÃ¸nn, like tall = hunkjÃ¸nn.
+ *          For personer fÃ¸dt i forrige eller neste Ã¥rhundre (18xx/20xx)
  *          brukes tall fra 999/998 ned til 500/501.
  *     50 = Kontrollsiffer som er regnet ut etter en spesiell formel. Enhver
- *          som kjenner denne formelen har mulighet for å kontrollere om det
- *          personnummeret som oppgis er beregnet på den riktige måten. Det
- *          vil bare være de registere som har tilgang til folkeregisteret
+ *          som kjenner denne formelen har mulighet for Ã¥ kontrollere om det
+ *          personnummeret som oppgis er beregnet pÃ¥ den riktige mÃ¥ten. Det
+ *          vil bare vÃ¦re de registere som har tilgang til folkeregisteret
  *          som vil kunne sjekke om personnummeret er det som er det riktige.
  *
- * Formel for å regne ut kontrollsiffer:
+ * Formel for Ã¥ regne ut kontrollsiffer:
  *
- * Utgangspunktet er to faste rekker med multiplikatorer. Den første rekken
- * blir brukt til å regne ut første kontrollsiffer, og den andre rekken til
+ * Utgangspunktet er to faste rekker med multiplikatorer. Den fÃ¸rste rekken
+ * blir brukt til Ã¥ regne ut fÃ¸rste kontrollsiffer, og den andre rekken til
  * det andre kontrollsifferet.
  *
  * +-------------------------+
- * | fødselsdato f.num ktr   |
+ * | fÃ¸dselsdato f.num ktr   |
  * | -----------|-----|---   |
  * | a b c d e f g h i j k   |
  * | 3 7 6 1 8 9 4 5 2 - - x |
@@ -42,20 +42,20 @@
  * Dersom j eller k = 10 er personnummeret ugyldig.
  * Dersom j eller k = 11 er j eller k = 0.
  *
- * Det betyr at det for en fødselsdato ikke finnes mer enn litt over 200
- * mulige personnummer for hvert kjønn.
+ * Det betyr at det for en fÃ¸dselsdato ikke finnes mer enn litt over 200
+ * mulige personnummer for hvert kjÃ¸nn.
  * }}}
  *
- * Laget av Øyvind A. Holm <sunny@sunbase.org>.
+ * Laget av Ã˜yvind A. Holm <sunny@sunbase.org>.
  *
- * Takk til Markus B. Krüger <markusk@pvv.org> for patch som bruker modulus
- * og dermed gjorde bruk av frac() overflødig.
+ * Takk til Markus B. KrÃ¼ger <markusk@pvv.org> for patch som bruker modulus
+ * og dermed gjorde bruk av frac() overflÃ¸dig.
  *
  * Programlisens: GNU General Public License. Ingen over, ingen ved siden.
  */
 
 #define VERSION   "1.11"
-#define RCS_DATE  "$Date: 2003/09/12 03:17:15 $"
+#define RCS_DATE  "$Date: 2004/02/05 02:51:48 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,7 +66,7 @@
 #define EXIT_OK    0
 #define EXIT_ERROR 1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.5 2003/09/12 03:17:15 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.6 2004/02/05 02:51:48 sunny Exp $";
 
 char *persnr(char *);
 int persnr_date(char *);
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	int retval = 0,
 	    i = 0;
 
-	(void)rcs_id; /* Unngå klaging fra kompilatorer */
+	(void)rcs_id; /* UnngÃ¥ klaging fra kompilatorer */
 	progname = argv[0];
 	if (argc > 1 && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h") || !strcmp(argv[1], "?") || !strcmp(argv[1], "-?")))
 		usage(0);
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
 char *persnr(char *orgbuf)
 {
-	/* Mottar peker til en buffer med plass til minst 12 tegn der de første 10 er fylt ut. Returnerer komplett nummer. {{{ */
+	/* Mottar peker til en buffer med plass til minst 12 tegn der de fÃ¸rste 10 er fylt ut. Returnerer komplett nummer. {{{ */
 	int x, y, j, k;
 	static char buf[12];
 
@@ -151,21 +151,21 @@ int persnr_date(char *birth_str)
 
 	sprintf(birthdate, "%.15s", birth_str);
 
-	if ((strlen(birthdate) != 6) && (strlen(birthdate) != 8)) { /* Sjekk at lengden på datoen er seks eller åtte tegn */
-		fprintf(stderr, "%s: \"%s\": Feil format på datoen. Formatet skal være ddmmåå eller ddmmåååå.\n", progname, birthdate);
+	if ((strlen(birthdate) != 6) && (strlen(birthdate) != 8)) { /* Sjekk at lengden pÃ¥ datoen er seks eller Ã¥tte tegn */
+		fprintf(stderr, "%s: \"%s\": Feil format pÃ¥ datoen. Formatet skal vÃ¦re ddmmÃ¥Ã¥ eller ddmmÃ¥Ã¥Ã¥Ã¥.\n", progname, birthdate);
 		retval = EXIT_ERROR;
 		goto endfunc;
 	}
 
-	strcpy(century, "20"); /* Default århundre er 20xx */
+	strcpy(century, "20"); /* Default Ã¥rhundre er 20xx */
 
 	/*
 	 * Her kommer det en sjekk som finner ut om det er spesifisert et
-	 * annet århundre, f.eks. 24091971, dvs. to ekstra siffer i året.
+	 * annet Ã¥rhundre, f.eks. 24091971, dvs. to ekstra siffer i Ã¥ret.
 	 */
 
 	if (strlen(birthdate) == 8) {
-		strncpy(century, birthdate + 4, 2); /* Nytt århundre på gang */
+		strncpy(century, birthdate + 4, 2); /* Nytt Ã¥rhundre pÃ¥ gang */
 		curr_century = (atoi(century) % 2) ? 0 : 1;
 
 		strcpy(tmpbuf, birthdate);
@@ -178,7 +178,7 @@ int persnr_date(char *birth_str)
 		birthdate[7]);
 	}
 
-	startnum = curr_century ? 999 : 499; /* Hvilket århundre skal brukes? */
+	startnum = curr_century ? 999 : 499; /* Hvilket Ã¥rhundre skal brukes? */
 
 	sprintf(iso_date, "%2.2s%c%c-%c%c-%c%c",
 		century,
@@ -228,11 +228,11 @@ void usage(int retval)
 	for (; charnum; charnum--)
 		putchar('-');
 	printf(
-		"\nBruk: %s [fødselsdato [...]]\n\n"
+		"\nBruk: %s [fÃ¸dselsdato [...]]\n\n"
 		"Skriver ut alle gyldige norske personnummer for en eller flere datoer.\n"
-		"Fødselsdatoen spesifiseres på formatet ddmmåå. Hvis et annet århundre\n"
-		"enn 20xx skal brukes, brukes formatet ddmmåååå.\n\n"
-		"Hvis ingen datoer skrives på kommandolinja, leser programmet datoer fra\n"
+		"FÃ¸dselsdatoen spesifiseres pÃ¥ formatet ddmmÃ¥Ã¥. Hvis et annet Ã¥rhundre\n"
+		"enn 20xx skal brukes, brukes formatet ddmmÃ¥Ã¥Ã¥Ã¥.\n\n"
+		"Hvis ingen datoer skrives pÃ¥ kommandolinja, leser programmet datoer fra\n"
 		"standard input.\n\n"
 		"Programlisens: GNU General Public License, se fila COPYING for detaljer.\n"
 		, progname
@@ -242,4 +242,4 @@ void usage(int retval)
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.5 2003/09/12 03:17:15 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.6 2004/02/05 02:51:48 sunny Exp $ */
