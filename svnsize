@@ -7,8 +7,8 @@ export TZ=UTC0
 fil=$1
 
 for f in `svnrevs -r1:HEAD $fil | tr -d ,`; do
-	# echo f = "$f"
-	date=`svn log -$f $fil | head -2 | tail -1 | cut -d '|' -f 3 | cut -c 2-20`
-	size=`svn ls -v -$f $fil | tr -s ' ' | rmspcall | cut -d ' ' -f 3`
-	echo "$date $size"
+    # echo f = "$f"
+    date=`svn log -$f $fil | head -2 | tail -1 | cut -d '|' -f 3 | cut -c 2-20`
+    size=`svn ls -v -$f $fil | tr -s ' ' | rmspcall | cut -d ' ' -f 3`
+    echo "$date $size"
 done
