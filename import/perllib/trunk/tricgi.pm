@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.2 1999/03/16 19:51:33 sunny Exp $>
+S<$Id: tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -35,6 +35,8 @@ require 5.003;
 
 =head1 VARIABLER
 
+=head2 Nødvendige variabler
+
 Når man bruker dette biblioteket, er det en del variabler som må defineres
 under kjøring:
 
@@ -43,23 +45,58 @@ under kjøring:
 =item I<${main::Url}>
 
 URL'en til index.cgi. Normalt sett blir denne satt til navnet på scriptet,
-for eksempel "I<index.cgi>" eller lignende. Før ble I<${main::Url}> satt til full
-URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting for
-eksempel ble kjørt under F<httpsZ<>://>
+for eksempel "I<index.cgi>" eller lignende. Før ble I<${main::Url}> satt
+til full URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting
+for eksempel ble kjørt under F<httpsZ<>://>
 
-=item I<${main::doc_width}>
-
-Bredden på dokumentet i pixels. 500 som default.
-
-=item I<$WebMaster>
+=item I<${main::WebMaster}>
 
 Emailadressen til den som eier dokumentet. Denne blir ikke satt inn på
 copyrighter og sånn, der er det F<tritech@tritech.no> som hersker.
 
 =item I<${main::error_file}>
 
-Filnavn som er skrivbar av den som kjører scriptet (som oftest I<nobody>).
-Alle feilmeldinger og warnings havner her.
+Filnavn på en fil som er skrivbar av den som kjører scriptet (som oftest
+I<nobody>). Alle feilmeldinger og warnings havner her.
+
+=back
+
+NB: Disse må ikke være I<my>'et, de må være globale så de kan bli brukt av
+alle modulene.
+
+=head2 Valgfrie variabler
+
+Disse variablene er ikke nødvendige å definere, bare hvis man gidder:
+
+=over 4
+
+=item I<${main::doc_width}>
+
+Bredden på dokumentet i pixels. I<$STD_DOCWIDTH> som default.
+
+=item I<${main::CharSet}>
+
+Tegnsett som brukes. Er I<$STD_CHARSET> som default, "I<ISO-8859-1>".
+
+=item I<${main::BackGround}>
+
+Bruker denne som default bakgrunn til I<&print_background()>. Hvis den
+ikke er definert, brukes I<$STD_BACKGROUND>, en tom greie.
+
+=item I<${main::Debug}>
+
+Skriver ut en del debuggingsinfo.
+
+=item I<${main::Utv}>
+
+Beslektet med I<${main::Debug}>, men hvis denne er definert, sitter man
+lokalt og tester. Ikke helt klargjort hvordan disse to skal fungere i
+forhold til hverandre, men når sida ligger offentlig, skal hverken
+I<${main::Debug}> eller I<${main::Utv}>
+
+=item I<${main::Border}>
+
+Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 =back
 
@@ -69,16 +106,24 @@ Alle feilmeldinger og warnings havner her.
 #### Variabler
 ###########################################################################
 
-$cvs_id = '$Id: tricgi.pm,v 1.2 1999/03/16 19:51:33 sunny Exp $';
-$cvs_date = '$Date: 1999/03/16 19:51:33 $';
-# $tricgi::sendmail_prog = "/bin/mail"; # Brukes til å sende meldinger til $WebMaster om ting som ikke fungerer som det skal.
+my $cvs_id = '$Id: tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $';
+my $cvs_date = '$Date: 1999/03/19 14:31:16 $';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $';
+my $Tabs = "";
+my $this_counter = "";
+
+my $FALSE = 0;
+my $TRUE = 1;
 
 my $DTD_HTML4FRAMESET = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\n\"http://www.w3.org/TR/REC-html40/frameset.dtd\">\n";
 my $DTD_HTML4LOOSE = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\"\n\"http://www.w3.org/TR/REC-html40/loose.dtd\">\n";
 my $DTD_HTML4STRICT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\"\n\"http://www.w3.org/TR/REC-html40/strict.dtd\">\n";
-my $STD_CHARSET = "ISO-8859-1";
-my $FALSE = 0;
-my $TRUE = 1;
+
+my $STD_BACKGROUND = "";
+my $STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
+my $STD_DOCALIGN = "center"; # Standard align for dokumentet hvis align ikke er spesifisert
+my $STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
+my $STD_LOGDIR = "."; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
 
 ###########################################################################
 #### Subrutiner
@@ -100,8 +145,12 @@ C<application/x-tar> og lignende.
 
 sub content_type {
 	my $ContType = shift;
-	my $CharSet = $STD_CHARSET unless length($CharSet);
-	print "Content-Type: $ContType; charset=$CharSet\n\n" if length($ContType);
+	my $CharSet = $STD_CHARSET unless length(${main::CharSet});
+	if (length($ContType)) {
+		print "Content-Type: $ContType; charset=$CharSet\n\n" ;
+	} else {
+		&HTMLwarn("Intern feil: \$ContType ble ikke spesifisert til &content_type()");
+	}
 	# print "Content-Type: $ContType\n\n"; # Til ære for slappe servere som ikke har peiling
 } # content_type()
 
@@ -121,6 +170,34 @@ sub curr_utc_time {
 	my $UtcTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
 	return($UtcTime);
 } # curr_utc_time()
+
+###########################################################################
+
+=head2 &escape_dangeours_chars()
+
+FIXME: Skriv her
+
+=cut
+
+sub escape_dangerous_chars {
+	my $string = shift;
+
+	$string =~ s/([;<>\*\|`&\$!#\(\)\[\]\{\}:'"])/\\$1/g;
+	return $string;
+} # escape_dangerous_chars()
+
+=head2 &file_mdate()
+
+FIXME: Skriv her
+
+=cut
+
+sub file_mdate {
+	my($FileName) = @_;
+	my(@TA);
+	@StatArray = stat($FileName);
+	return($StatArray[9]);
+} # file_mdate()
 
 ###########################################################################
 
@@ -177,6 +254,27 @@ sub get_cgivars {
 
 ###########################################################################
 
+=head2 &get_counter()
+
+Skriver ut verdien av en teller, angi filnavn.
+
+FIXME: Skriv mer her
+
+=cut
+
+# FIXME: Skal my TmpFP brukes?
+sub get_countervalue {
+	my $counter_file = shift;
+	my $counter_value = 0;
+	open(TmpFP, "<$counter_file") || (&HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
+	flock(TmpFP, LOCK_EX);
+	$counter_value = <TmpFP>;
+	close(TmpFP);
+	return $counter_value;
+} # get_countervalue()
+
+###########################################################################
+
 =head2 &HTMLdie()
 
 Tilsvarer F<die()> i standard Perl, men sender HTML-output så man ikke får
@@ -184,7 +282,7 @@ Internal Server Error. Funksjonen tar to parametere, I<$Msg> som havner i
 E<lt>titleE<gt>E<lt>/titleE<gt> og E<lt>h1E<gt>E<lt>/h1E<gt>, og I<$Msg>
 som blir skrevet ut som beskjed.
 
-Hvis hverken I<$Utv> eller I<$Debug> er sann, skrives meldinga til
+Hvis hverken I<${main::$Utv}> eller I<${main::Debug}> er sann, skrives meldinga til
 I<${main::error_file}> og en standardmelding blir skrevet ut. Folk får ikke vite
 mer enn de har godt av.
 
@@ -196,7 +294,7 @@ sub HTMLdie {
 	my $msg_str;
 
 	$Title || ($Title = "Intern feil");
-	if (!$Debug && !$Utv) {
+	if (!${main::Debug} && !${main::Utv}) {
 		$msg_str = <<END;
 			<p>En intern feil har oppstått. Feilen er loggført, og vil bli
 			fikset snart.
@@ -213,7 +311,7 @@ Content-type: text/html
 
 <html lang="no">
 	<!-- $cvs_id -->
-	<!-- $main::cvs_id -->
+	<!-- ${main::cvs_id} -->
 	<head>
 		<title>$Title</title>
 		<style type="text/css">
@@ -239,12 +337,14 @@ Content-type: text/html
 	</body>
 </html>
 END
-	touch(${main::error_file}) unless (-e ${main::error_file});
-	open(ErrorFP, "+<${main::error_file}") or exit;
-	flock(ErrorFP, LOCK_EX);
-	seek(ErrorFP, 0, 2) or exit;
-	printf(ErrorFP "%s HDIE %s\n", &curr_utc_time, $Msg);
-	close(ErrorFP);
+	if (length(${main::error_file})) {
+		system("touch ${main::error_file}") unless (-e ${main::error_file});
+		open(ErrorFP, "+<${main::error_file}") or exit;
+		flock(ErrorFP, LOCK_EX);
+		seek(ErrorFP, 0, 2) or exit;
+		printf(ErrorFP "%s HDIE %s\n", &curr_utc_time, $Msg);
+		close(ErrorFP);
+	}
 	exit;
 } # HTMLdie()
 
@@ -263,7 +363,7 @@ sub HTMLwarn {
 	my $curr_utc = &curr_utc_time;
 
 	# Gjør det så stille og rolig som mulig.
-	if ($Utv || $Debug) {
+	if (${main::Utv} || ${main::Debug}) {
 		&print_header("CGI warning");
 		print "\n\t\t<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n";
 	}
@@ -275,6 +375,73 @@ sub HTMLwarn {
 	print(ErrorFP "$curr_utc WARN $Msg\n");
 	close(ErrorFP);
 } # HTMLwarn()
+
+###########################################################################
+
+=head2 &increase_counter()
+
+Øker telleren i en spesifisert fil med en.
+
+FIXME: Skriv mer her.
+
+=cut
+
+# FIXME: my TmpFP?
+sub increase_counter {
+	my $counter_file = shift;
+	my $ip_file = "$counter_file.ip";
+	my $user_ip = $ENV{REMOTE_ADDR};
+	system("touch $counter_file") unless (-e $counter_file);
+	system("touch $ip_file") unless (-e $ip_file);
+	open(TmpFP, "+<$ip_file") || (&HTMLwarn("$ip_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
+	flock(TmpFP, LOCK_EX);
+	$last_ip = <TmpFP>;
+	chomp($last_ip);
+	my $new_ip = ($last_ip eq $user_ip) ? $FALSE : $TRUE;
+	if ($new_ip) {
+		seek(TmpFP, 0, 0) || (&HTMLwarn("$ip_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
+		print(TmpFP "$user_ip\n");
+	}
+	open(TmpFP, "+<$counter_file") || (&HTMLwarn("$counter_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
+	flock(TmpFP, LOCK_EX);
+	my $counter_value = <TmpFP>;
+	if ($new_ip) {
+		seek(TmpFP, 0, 0) || (&HTMLwarn("$counter_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
+		printf(TmpFP "%u\n", $counter_value+1) if ($user_ip ne $last_ip);
+	}
+	close(TmpFP);
+	return($counter_value + ($new_ip ? 1 : 0));
+} # increase_counter()
+
+###########################################################################
+
+=head2 &log_access()
+
+Logger aksess til en fil. Filnavnet skal være uten extension. I tillegg
+øker den en teller i fila I<$Base.count> unntatt hvis I<$no_count != 0>.
+
+Forutsetter at I<${main::log_dir}> er definert. Hvis ikke, settes den til
+I<$STD_LOGDIR>, "I<.>".
+
+FIXME: Skriv mer her.
+
+=cut
+
+sub log_access {
+	my ($Base, $no_counter) = @_;
+	my $log_dir = length(${main::log_dir}) ? ${main::log_dir} : $STD_LOGDIR;
+	my $File = "$log_dir/$Base.log";
+	my $Countfile = "$log_dir/$Base.count";
+	system("touch $File") unless (-e $File);
+	open(LogFP, "+<$File") || (&HTMLwarn("$File: Can't open access log for read/write: $!"), return);
+	flock(LogFP, LOCK_EX);
+	seek(LogFP, 0, 2) || (&HTMLwarn("$Countfile: Can't seek to EOF: $!"), close(LogFP), return);
+	my $Agent = $ENV{HTTP_USER_AGENT};
+	$Agent =~ s/\n/\\n/g; # Vet aldri hva som kommer
+	printf(LogFP "%u\t%s\t%s\t%s\t%s\n", time, $ENV{REMOTE_ADDR}, $ENV{REMOTE_HOST}, $ENV{HTTP_REFERER}, $Agent);
+	close(LogFP);
+	$this_counter = &increase_counter($Countfile) unless $no_counter;
+} # log_access()
 
 ###########################################################################
 
@@ -331,9 +498,18 @@ dokumenter som separeres med E<lt>=pageE<gt>.
 
 =back
 
-FIXME: Skriver mer på denne seinere. Og gjør greia ferdig.
+FIXME: Skriver mer på denne seinere. Og gjør greia ferdig. Support for
+<=page> må legges inn.
 
-print_doc() skal scanne fram til
+Alt kan legges inn i en fil:
+
+	title Eksempel på datafil
+	lang no
+	ext html
+	cvsroot :pserver:bruker@host.no:/cvsroot
+	ftp ftp://black.tritech.no
+
+	<=page index>
 
 =cut
 
@@ -357,7 +533,7 @@ sub print_doc {
 	$doc_val{lang} || &HTMLwarn("$file_name: Mangler lang");
 	$doc_val{id} || &HTMLwarn("$file_name: Mangler id");
 	# $doc_val{} || &HTMLwarn("$file_name: Mangler ");
-	if ($Debug) {
+	if (${main::Debug}) {
 		&print_header("er i print_doc"); # debug
 		while (($act_name,$act_time) = each %doc_val) {
 			print "<br>\"$act_name\"\t\"$act_time\"\n";
@@ -387,20 +563,24 @@ parameterne:
 
 =item I<$footer_width>
 
-Bredden på footeren i pixels. Er I<${main::doc_width}> som default.
+Bredden på footeren i pixels. Hvis den ikke er definert, brukes
+I<${main::doc_width}>. Og hvis den heller ikke er definert, brukes
+I<$STD_DOCWIDTH> som default.
 
 =item I<$footer_align>
 
 Kan være I<left>, I<center> eller I<right>. Brukes av E<lt>tableE<gt>.
-Standard er "center".
+Hvis udefinert, brukes I<${main::doc_align}>. Hvis den ikke er definert,
+brukes I<$STD_DOCALIGN>.
 
 =item I<$no_vh>
 
-Tar ikke med I<Valid HTML>-logoen nederst i høyre hjørne.
+I<$FALSE> eller udefinert: Skriver I<Valid HTML>-logoen nederst i høyre
+hjørne. I<$TRUE>: Dropper den.
 
 =item I<$no_end>
 
-Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten.
+Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten hvis I<$TRUE>.
 
 =back
 
@@ -409,17 +589,22 @@ Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten.
 sub print_footer {
 	my ($footer_width, $footer_align, $no_vh, $no_end) = @_;
 
-	$footer_width = ${main::doc_width} unless length($footer_width);
-	$footer_align = "center" unless length($footer_align);
+	unless (length($footer_width)) {
+		$footer_width = length(${main::doc_width}) ? ${main::doc_width} : $STD_DOCWIDTH;
+	}
+	unless (length($footer_align)) {
+		$footer_align = length(${main::doc_align}) ? ${main::doc_align} : $STD_DOCALIGN;
+	}
 	$no_vh = $FALSE unless length($no_vh);
 	$no_end = $FALSE unless length($no_end);
-	my $cvs_str = $tricgi::cvs_date;
+	my $cvs_str = ${main::cvs_date}; # FIXME: Er ikke nødvendigvis denne som skal brukes.
 	$cvs_str =~ s/ /&nbsp;/g;
-	my $vh_str = $no_vh ? "&nbsp;" : "<a href=\"http://validator.w3.org/check/referer;ss\"><img src=\"$GrafDir/vh40.gif\" height=\"31\" width=\"88\" align=\"right\" border=\"0\" alt=\"Valid HTML 4.0!\"></a>";
+	my $vh_str = $no_vh ? "&nbsp;" : "<a href=\"http://validator.w3.org/check/referer;ss\"><img src=\"${main::GrafDir}/vh40.gif\" height=\"31\" width=\"88\" align=\"right\" border=\"0\" alt=\"Valid HTML 4.0!\"></a>";
+	my $count_str = length($this_counter) ? "Du er bes&oslash;kende nummer $this_counter p&aring; denne siden." : "&nbsp;";
 
 	# FIXME: Hardkoding av URL her pga av at ${main::Url} har skifta navn.
 	# FIXME: I resten av HTML'en er det brukt <div align="center">.
-	print(<<END);
+	print <<END;
 		<table width="$footer_width" cellpadding="0" cellspacing="0" border="$Border" align="$footer_align">
 			<tr>
 				<td colspan="3">
@@ -431,18 +616,18 @@ sub print_footer {
 					<table cellpadding="0" cellspacing="0" border="$Border">
 						<tr>
 							<td align="center">
-								${FONTB}<small>&copy;&nbsp;<a href="http://www.tritech.no" target="_top">TriTech&nbsp;AS</a>&nbsp;&lt;<code><a href="http://www.tritech.no/index.cgi?doc=kontakt">tritech\@tritech.no</a></code>&gt;</small>${FONTE}
+								${main::FONTB}<small>&copy;&nbsp;<a href="http://www.tritech.no" target="_top">TriTech&nbsp;AS</a>&nbsp;&lt;<code><a href="http://www.tritech.no/index.cgi?doc=kontakt">tritech\@tritech.no</a></code>&gt;</small>${main::FONTE}
 							</td>
 						</tr>
 						<tr>
 							<td align="center">
-								${FONTB}<small>$cvs_str</small>${FONTE}
+								${main::FONTB}<small>$cvs_str</small>${main::FONTE}
 							</td>
 						</tr>
 					</table>
 				</td>
 				<td width="100%" align="center">
-					&nbsp;
+					$count_str
 				</td>
 				<td align="right">
 					$vh_str
@@ -509,12 +694,13 @@ Keywords i E<lt>metaE<gt>. Skal være kommaseparert og med etities.
 
 =item I<@StyleSheet>
 
-Array med alt som skal inn style sheets.
-FIXME: Stygg sak dette her at den må være på slutten av parametrene,
-skulle vært en bedre måte så den kan bli sendt som ETT parameter, men det
-ser vi på seinere. Er vel ikke så nøye enda.
+Array med alt som skal inn style sheets. FIXME: Stygg sak dette her at den
+må være på slutten av parametrene, skulle vært en bedre måte så den kan
+bli sendt som ETT parameter, men det ser vi på seinere. Er vel ikke så
+nøye enda. Eventuelt slenger vi koden inn som en streng og ikke som en
+array.
 
-BTW blir vel ikke paramterne brukt så mye til hverdags, hvis
+BTW blir vel ikke parameterne brukt så mye til hverdags, hvis
 F<&print_doc()> blir ferdig rimelig fort. Der skal som kjent alt
 spesifiseres.
 
@@ -530,10 +716,13 @@ sub print_header {
 	my $RefreshStr = $Refresh ? "<meta http-equiv=\"refresh\" content=\"$Refresh\" url=\"${main::Url}\">\n\t\t" : "";
 	my $KeywStr = length($Keywords) ? "<meta name=\"keywords\" content=\"$Keywords\">\n\t\t" : "";
 	my $CharSet = $STD_CHARSET unless length($CharSet);
+	my $html_str = sprintf("<html%s>", length($Language) ? " lang=\"$Language\"" : "");
 	my $DocId_str = length($doc_val{id}) ? <<END : "";
 	<!-- $doc_val{id} -->
 END
-
+	unless (length($user_background)) {
+		$user_background = length(${main::BackGround}) ? ${main::BackGround} : $STD_BACKGROUND;
+	}
 	if (length($user_background)) {
 		if ($user_background =~ /\.(jpg|jpeg|gif|png)$/i) {
 			$BodyStr = "<body background=\"$user_background\">";
@@ -543,20 +732,28 @@ END
 			$BodyStr = "<body bgcolor=\"$BackgroundStr\">";
 		}
 	} else {
-		$BackgroundStr = "";
 		$BodyStr = "<body>";
+		$BackgroundStr = $STD_BACKGROUND;
 	}
-
+=pod
+	lkjbhjkbh
+	if (!length($user_background)) {
+		$BackGroundStr = length(if()) {
+			$BackgroundStr = ${main::BackGround};
+			$BodyStr = "<body>";
+		} else {
+			$BackgroundStr = $STD_BACKGROUND;
+			$BodyStr = "<body>";
+		}
+	}
+=cut
 	&content_type("text/html");
-	if (!length($html_version)) {
-		print $DTD_HTML4LOOSE;
-	} else {
-		print $html_version;
-	}
+	print length($html_version) ? $html_version : $DTD_HTML4LOOSE;
 	print <<END;
-<html lang="$Language">
+
+$html_str
 $DocId_str	<!-- $cvs_id -->
-	<!-- $main::cvs_id -->
+	<!-- ${main::cvs_id} -->
 END
 	&Tabs(2); # html og head
 
@@ -604,9 +801,9 @@ sub tab_print {
 
 =head2 &Tabs()
 
-Øker/minsker verdien av I<$Tabs> som er en lokal variabel i I<$tricgi::>.
-Den kan ta ett parameter, en verdi som er negativ eller positiv alt
-ettersom man skal fjerne eller legge til TAB'er. Hvis man skriver
+Øker/minsker verdien av I<${tricgi::Tabs}>. Den kan ta ett parameter, en
+verdi som er negativ eller positiv alt ettersom man skal fjerne eller
+legge til TAB'er. Hvis man skriver
 
 	&Tabs(-2);
 
@@ -642,8 +839,10 @@ sub Tabs {
 Strukturen er ikke helt klar enda, det blir nok mange forandringer
 underveis.
 
+Tror ikke tellerfunksjonene er helt i rute.
+
 =cut
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.2 1999/03/16 19:51:33 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $ ####
