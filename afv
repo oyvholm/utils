@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.12 2001/06/05 03:11:09 sunny Exp $
+# $Id: afv,v 1.13 2001/06/11 15:19:33 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -16,14 +16,10 @@ $| = 1;
 
 defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
 my $Dir = ".AFV";
-my $root_dir = $ENV{AFVROOT};
-my ($do_loop, $sleep_time, $curr_dir) = (0, 5, `/bin/pwd`);
-chomp($curr_dir);
-
-my $dest_dir = "$root_dir$curr_dir";
--d $dest_dir || mkpath($dest_dir, 1) || die("mkpath($dest_dir): $!");
-my $afv_dir = "$dest_dir/$Dir";
--d $afv_dir || mkpath($afv_dir, 1) || die("mkpath($Dir): $!");
+my ($root_dir, $dest_dir) = ($ENV{AFVROOT}, "");
+my $curr_dir = "";
+my ($do_loop, $sleep_time, $orig_dir) = (0, 5, `/bin/pwd`);
+chomp($orig_dir);
 
 if (defined($ARGV[0]) && $ARGV[0] =~ /^-l(\d+)/) {
 	$do_loop = 1;
@@ -34,10 +30,24 @@ if (defined($ARGV[0]) && $ARGV[0] =~ /^-l(\d+)/) {
 my @Files = ();
 glob_files();
 
-LOOP: foreach my $Curr (@Files) {
+LOOP: foreach my $FullCurr (@Files) {
+	my $Curr = $FullCurr;
+	my $another_dir = 0;
 	check_stop();
 	next LOOP if (!-f $Curr || -l $Curr);
-	my $lock_time = 0;
+	if ($Curr =~ m!(.*)/(.*?)$!) {
+		$another_dir = 1;
+		unless (chdir($1)) {
+			warn("Klarte ikke chdir(\"$1\"): $!");
+			next LOOP;
+		}
+		$Curr = $2;
+	}
+	chomp($curr_dir = `/bin/pwd`);
+	$dest_dir = "$root_dir$curr_dir";
+	-d $dest_dir || mkpath($dest_dir, 1) || die("mkpath($dest_dir): $!");
+	my $afv_dir = "$dest_dir/$Dir";
+	-d $afv_dir || mkpath($afv_dir, 1) || die("mkpath($Dir): $!");
 	my $lock_dir = "$afv_dir/$Curr.lock";
 	my $lastmd5_file = "$afv_dir/$Curr.lastmd5";
 	my $currmd5_file = "$afv_dir/$Curr.currmd5";
@@ -46,7 +56,7 @@ LOOP: foreach my $Curr (@Files) {
 	until (mkdir("$lock_dir", 0777)) {
 		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
 		my_sleep(5);
-	};
+	}
 
 	if (open(FromFP, "<$Curr")) {
 		if (flock(FromFP, LOCK_EX)) {
@@ -54,8 +64,7 @@ LOOP: foreach my $Curr (@Files) {
 			my $to_file = "$dest_dir/$mtime.$Curr";
 			if (-e $to_file) {
 				close(FromFP);
-				rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
-				next LOOP;
+				goto CLEANUP;
 			}
 			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
 			if (open(Md5FP, "| /usr/bin/md5sum >$currmd5_file")) {
@@ -100,7 +109,11 @@ LOOP: foreach my $Curr (@Files) {
 		warn("$Curr: Klarte ikke å åpne fila for lesing: $!");
 	}
 
+CLEANUP:
 	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+	if ($another_dir) {
+		chdir($orig_dir) || die("$orig_dir: Klarte ikke chdir() til originalkatalogen: $!");
+	}
 }
 
 if ($do_loop) {
@@ -142,4 +155,4 @@ sub my_sleep {
 	}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.12 2001/06/05 03:11:09 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13 2001/06/11 15:19:33 sunny Exp $ ####
