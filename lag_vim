@@ -16,9 +16,9 @@ mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter.
 [ "$1" = "-x" ] && { med_x=1; }
 
 if [ "$bruk_lokal" != "1" ]; then
-	echo -e "======== update_vim-clean \x7B\x7B\x7B"
-	update_vim-clean
-	echo -e "\x7D\x7D\x7D"
+    echo -e "======== update_vim-clean \x7B\x7B\x7B"
+    update_vim-clean
+    echo -e "\x7D\x7D\x7D"
 fi
 
 echo -e "======== mincvs_vim \x7B\x7B\x7B"
@@ -32,15 +32,15 @@ x_flags="--enable-gui=no --without-x"
 vim_size=huge
 
 if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
-	echo ======== Man er på petronas, vagabond eller solsje. Lag lokal vim.
-	vimdir=$HOME/local/prg/vim
-	[ -e $HOME/.vagabond.mrk ] && vim_size=normal
+    echo ======== Man er på petronas, vagabond eller solsje. Lag lokal vim.
+    vimdir=$HOME/local/prg/vim
+    [ -e $HOME/.vagabond.mrk ] && vim_size=normal
 else
-	vimdir=/usr/local/prg/vim
-	if [ "$med_x" = "1" ]; then
-		echo ======== Fikk beskjed om å lage Vim med X og gode greia
-		x_flags="--with-x --enable-gui=gtk"
-	fi
+    vimdir=/usr/local/prg/vim
+    if [ "$med_x" = "1" ]; then
+        echo ======== Fikk beskjed om å lage Vim med X og gode greia
+        x_flags="--with-x --enable-gui=gtk"
+    fi
 fi
 
 echo -e "======== ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags \x7B\x7B\x7B"
@@ -53,14 +53,14 @@ make
 echo -e "\x7D\x7D\x7D"
 
 if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
-	# installcmd="rm -rf $vimdir && make install"
-	echo Vi er på petronas, vagabond eller solsje, så vi nøyer oss med:
+    # installcmd="rm -rf $vimdir && make install"
+    echo Vi er på petronas, vagabond eller solsje, så vi nøyer oss med:
 else
-	# installcmd="su -c \"rm -rf $vimdir && make install\""
-	echo Hvis det gikk bra, er det på tide å bli root, og...
+    # installcmd="su -c \"rm -rf $vimdir && make install\""
+    echo Hvis det gikk bra, er det på tide å bli root, og...
 fi
 echo "cd $vimcompdir && rm -rf $vimdir && make install && cp -vp src/vim $vimdir/bin/"
 
 rmdir $lv_lockdir
 
-# vim: set ts=4 sw=4 sts=4 fenc=utf8 :
+# vim: set ts=4 sw=4 sts=4 et fenc=utf8 :
