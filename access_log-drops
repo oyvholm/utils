@@ -15,8 +15,9 @@ use Time::Local;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_h) = (0);
-getopts('h') || die("Option error. Use -h for help.\n");
+our ($opt_h, $opt_l) =
+    (     0,      1);
+getopts('hl:') || die("Option error. Use -h for help.\n");
 
 my $VERSION = "0.0";
 
@@ -66,11 +67,14 @@ while (<>) {
         my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mon, $Year);
         $Secs -= ($zone_hour*3600); # Vi driter i minuttene for å få opp farta.
         my $Pause = $Secs - $last_sec;
-        $num_mon++; # Å inn i svarteste hælvete hvor jeg hater det inkonsekvente pisset der!!!!!!!!!!!!!!!!
-        $last_sec && printf("%04u-%02u-%02uT%02u:%02u:%02uZ %4u %s\n",
-                            $Year, $num_mon, $Day, $Hour, $Min, $Sec,
-                            $Pause, sec_to_hms($Pause)
-                     );
+        if ($last_sec && ($Pause >= $opt_l)) {
+            $num_mon++; # Å inn i svarteste hælvete hvor jeg hater det inkonsekvente pisset der!!!!!!!!!!!!!!!!
+            printf(
+                "%04u-%02u-%02uT%02u:%02u:%02uZ %4u %s\n",
+                $Year, $num_mon, $Day, $Hour, $Min, $Sec,
+                $Pause, sec_to_hms($Pause)
+            );
+        }
         $last_sec = $Secs;
     } else {
         print(STDERR "Ukjent linje $.\n");
@@ -104,6 +108,13 @@ sub usage {
 $progname v$VERSION -- $id_date
 
 Usage: $progname [options] [file [...]]
+
+Scans Apache access logs and prints out time periods with no connections.
+
+Options:
+
+-h    Print this help.
+-l x  Show only pauses longer than x seconds.
 
 END
     exit($Retval);
@@ -139,6 +150,10 @@ access_log-drops [options] [file [...]]
 =item B<-h>
 
 Print a brief help summary.
+
+=item B<-l> x
+
+Only list pauses longer than I<x> seconds.
 
 =back
 
