@@ -26,6 +26,7 @@ my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før e
 my $Des = $opt_c ? "," : ".";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
+my $first_time = 0;
 my $last_time = 0;
 my ($last_lon, $last_lat, $last_alt, $last_line) =
    (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
@@ -321,6 +322,9 @@ sub print_entry {
 
     if ($do_print) {
         # Valid data was found, send to stdout {{{
+        unless ($first_time) {
+            $first_time = $ep_time;
+        }
         if ($opt_o eq "xgraph") {
             $pause_len && ($Line = "move ");
             ($Line .= "$Lon $Lat\n");
@@ -357,7 +361,8 @@ END
                          "</gps>\n"
                     );
         } elsif ($opt_o eq "ygraph") {
-            $Line = "$Lon $Lat\n\n";
+            my $Time = ($ep_time - $first_time) * 1;
+            $Line = "\"Time = $Time.0\n$Lon $Lat\n\n";
         } else {
             # Default format used by the author. Yes, the Universe 
             # evolves around him. ☺
