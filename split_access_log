@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.4 2002/01/05 03:58:11 sunny Exp $
+# $Id: split_access_log,v 1.5 2002/01/05 04:00:22 sunny Exp $
 # Splitter opp access_log fra httpd(8) på dato. Legger filene i $Dir .
 # Options:
 #   -z  Pakker filene etter de er laget.
@@ -39,7 +39,7 @@ while (<>) {
 	if (m!^\S+\s+\S+\s+\S+\s+\[(\d\d)/(...)/(\d\d\d\d):(\d\d):(\d\d):(\d\d)!) {
 		$Fnavn = "$Dir/$3-$Mnd{$2}-$1.log";
 		if ($Fnavn ne $Last) {
-			print("Ny fil: $Fnavn\n");
+			# print("Ny fil: $Fnavn\n");
 			push(@fnavn_array, $Fnavn) if ($compress_file);
 			if (-e $Fnavn) {
 				die("$Fnavn: Fila eksisterte, det vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nEvt. sorter den først, slett $Fnavn og kjør programmet en gang til.");
@@ -67,4 +67,4 @@ foreach (@fnavn_array) {
 	}
 }
 
-#### End of file $Id: split_access_log,v 1.4 2002/01/05 03:58:11 sunny Exp $ ####
+#### End of file $Id: split_access_log,v 1.5 2002/01/05 04:00:22 sunny Exp $ ####
