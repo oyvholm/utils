@@ -1,7 +1,7 @@
 
 /*
  * Skriver ut alle gyldige norske personnummer på angitte datoer
- * $Id: personnr.c,v 1.3.2.4 2003/08/29 01:05:11 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.5 2003/09/12 03:17:15 sunny Exp $
  *
  * Oppbygningen av personnummeret 020656-45850: {{{
  *
@@ -11,7 +11,7 @@
  *          Den neste fikk 497. Den første registrerte jenta fikk 498, den
  *          neste 496 osv.
  *          Oddetall = hankjønn, like tall = hunkjønn.
- *          For personer født i forrige eller neste århundre (18XX/20XX)
+ *          For personer født i forrige eller neste århundre (18xx/20xx)
  *          brukes tall fra 999/998 ned til 500/501.
  *     50 = Kontrollsiffer som er regnet ut etter en spesiell formel. Enhver
  *          som kjenner denne formelen har mulighet for å kontrollere om det
@@ -34,19 +34,9 @@
  * +-------------------------+
  *
  * x = a*3 + b*7 + c*6 + d*1 + e*8 + f*9 + g*4 + h*5 +i*2
-#ifdef USE_FRAC
- * j = 11 [1 - frac(x/11)]
-#else
  * j = 11 - x % 11
-#endif
  * y = a*5 + b*4 + c*3 + d*2 + e*7 + f*6 + g*5 + h*4 + i*3 + j*2
-#ifdef USE_FRAC
- * k = 11 [1 - frac(y/11)]
- *
- * j og k avrundes etter vanlige avrundingsregler.
-#else
  * k = 11 - y % 11
-#endif
  *
  * Dersom j eller k <= 9 er j eller k riktige kontrollsiffer.
  * Dersom j eller k = 10 er personnummeret ugyldig.
@@ -54,36 +44,29 @@
  *
  * Det betyr at det for en fødselsdato ikke finnes mer enn litt over 200
  * mulige personnummer for hvert kjønn.
- *
-#ifdef USE_FRAC
- * "Frac" er desimaltallene ved resultatet av divisjonen med 11 som skal
- * trekkes fra 1. Eksempel: frac(126/11) = frac(11.45) = 0.45.
- * Det er ikke nødvendig å bruke mer enn to desimaler ved denne utregningen.
- *
-#endif
- *
  * }}}
  *
- * (C)opyleft by sunny
- * License: GNU General Public License
+ * Laget av Øyvind A. Holm <sunny@sunbase.org>.
+ *
+ * Takk til Markus B. Krüger <markusk@pvv.org> for patch som bruker modulus
+ * og dermed gjorde bruk av frac() overflødig.
+ *
+ * Programlisens: GNU General Public License. Ingen over, ingen ved siden.
  */
 
 #define VERSION   "1.11"
-#define RCS_DATE  "$Date: 2003/08/29 01:05:11 $"
+#define RCS_DATE  "$Date: 2003/09/12 03:17:15 $"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define c2i(c)  ((c) - '0')  /* (char)tall --> (int)tall */
-#ifdef USE_FRAC
-#define frac(a) (((int)((a) * 100) % 100) / (float)100)  /* Returnerer 2 desimaler */
-#endif
 
 #define EXIT_OK    0
 #define EXIT_ERROR 1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.4 2003/08/29 01:05:11 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.5 2003/09/12 03:17:15 sunny Exp $";
 
 char *persnr(char *);
 int persnr_date(char *);
@@ -122,13 +105,8 @@ int main(int argc, char *argv[])
 
 char *persnr(char *orgbuf)
 {
-	/* Mottar peker til en buffer med plass til minst 12 tegn med utfylt personnr uten kontrollsiffer. Returnerer komplett nummer. {{{ */
-#ifdef USE_FRAC
-	int x, y;
-	float j, k;
-#else
+	/* Mottar peker til en buffer med plass til minst 12 tegn der de første 10 er fylt ut. Returnerer komplett nummer. {{{ */
 	int x, y, j, k;
-#endif
 	static char buf[12];
 
 	strcpy(buf, orgbuf);
@@ -136,28 +114,11 @@ char *persnr(char *orgbuf)
 	x = c2i(buf[0])*3 + c2i(buf[1])*7 + c2i(buf[2])*6 + c2i(buf[3])*1 + \
 	    c2i(buf[4])*8 + c2i(buf[5])*9 + c2i(buf[6])*4 + c2i(buf[7])*5 + \
 	    c2i(buf[8])*2;
-
-#ifdef USE_FRAC
-	j = 11 * (1 - frac((float)x / 11));
-	if (frac(j) >= 0.5)
-		j++;
-	j = (int)j;
-#else
 	j = 11 - x % 11;
-#endif
-
 	y = c2i(buf[0])*5 + c2i(buf[1])*4 + c2i(buf[2])*3 + c2i(buf[3])*2 + \
 	    c2i(buf[4])*7 + c2i(buf[5])*6 + c2i(buf[6])*5 + c2i(buf[7])*4 + \
 	    c2i(buf[8])*3 + j*2;
-
-#ifdef USE_FRAC
-	k = 11 * (1 - frac((float)y / 11));
-	if (frac(k) >= 0.5)
-		k++;
-	k = (int)k;
-#else
 	k = 11 - y % 11;
-#endif
 
 	if (j == 10 || k == 10) { /* Hvis j eller k == 10 er nummeret falskt */
 		strcpy(buf, ""); /* Returnerer tom streng hvis ulovlig */
@@ -196,7 +157,7 @@ int persnr_date(char *birth_str)
 		goto endfunc;
 	}
 
-	strcpy(century, "20"); /* Default århundre er 20XX */
+	strcpy(century, "20"); /* Default århundre er 20xx */
 
 	/*
 	 * Her kommer det en sjekk som finner ut om det er spesifisert et
@@ -270,21 +231,15 @@ void usage(int retval)
 		"\nBruk: %s [fødselsdato [...]]\n\n"
 		"Skriver ut alle gyldige norske personnummer for en eller flere datoer.\n"
 		"Fødselsdatoen spesifiseres på formatet ddmmåå. Hvis et annet århundre\n"
-		"enn 20XX skal brukes, brukes formatet ddmmåååå.\n\n"
+		"enn 20xx skal brukes, brukes formatet ddmmåååå.\n\n"
 		"Hvis ingen datoer skrives på kommandolinja, leser programmet datoer fra\n"
 		"standard input.\n\n"
 		"Programlisens: GNU General Public License, se fila COPYING for detaljer.\n"
-		"Kompileringsvalg: %cUSE_FRAC\n\n"
-	, progname,
-#if USE_FRAC
-	'+'
-#else
-	'-'
-#endif
+		, progname
 	);
 	exit(retval);
 	/* }}} */
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.4 2003/08/29 01:05:11 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.5 2003/09/12 03:17:15 sunny Exp $ */
