@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id: sortcvs,v 1.1.2.5 2003/12/14 14:32:58 sunny Exp $
+# $Id: sortcvs,v 1.1.2.6 2004/03/14 22:16:19 sunny Exp $
 # Sorts the output from "cvs log" into chronological order.
-# Made by ؀yvind A. Holm <sunny@sunbase.org>
+# Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
 #==============================================================================
 
@@ -15,7 +15,7 @@ our ($opt_a, $opt_h) =
 
 getopts('ah');
 
-$opt_h && print_help();
+$opt_h && print_help(0);
 
 my ($curr_date, $curr_rev) = ("", "");
 my @Curr = ();
@@ -72,8 +72,9 @@ while (<>) {
 }
 
 sub print_help {
+	my $Retval = shift;
 	print("No help yet.\n");
-	exit(0);
+	exit($Retval);
 }
 
 __END__
