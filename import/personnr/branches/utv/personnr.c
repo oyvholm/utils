@@ -1,23 +1,27 @@
 
 /*
  * Skriver ut alle gyldige norske personnummer på angitte datoer
- * $Id: personnr.c,v 1.3.2.7 2004/02/09 06:09:27 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.8 2004/02/28 02:34:14 sunny Exp $
  *
- * Oppbygningen av personnummeret 020656-45850: {{{
+ * Tegnsett brukt i denne fila: UTF-8
+ *
+ * Oppbygningen av det feminine personnummeret 020656-45850: {{{
  *
  * 020656 = Fødselsdato (ddmmåå)
- *    458 = Fødselsnummer.
- *          Den første registrerte gutten den dagen fikk fødselsnummeret 499.
- *          Den neste fikk 497. Den første registrerte jenta fikk 498, den
- *          neste 496 osv.
- *          Oddetall = hankjønn, like tall = hunkjønn.
- *          For personer født i forrige eller neste århundre (18xx/20xx)
- *          brukes tall fra 999/998 ned til 500/501.
+ *
+ *    458 = Fødselsnummer. Den første registrerte gutten den dagen fikk
+ *          fødselsnummeret 499. Den neste fikk 497. Den første registrerte
+ *          jenta fikk 498, den neste 496 osv. Oddetall = hankjønn, like
+ *          tall = hunkjønn.
+ *
+ *          For personer født på 1800- eller 2000-tallet brukes tall fra
+ *          999/998 ned til 501/500. Personer som er født på 1900-tallet har
+ *          personnummer i området 499/498 til 001/000.
+ *
  *     50 = Kontrollsiffer som er regnet ut etter en spesiell formel. Enhver
  *          som kjenner denne formelen har mulighet for å kontrollere om det
- *          personnummeret som oppgis er beregnet på den riktige måten. Det
- *          vil bare være de registere som har tilgang til folkeregisteret
- *          som vil kunne sjekke om personnummeret er det som er det riktige.
+ *          personnummeret som oppgis er beregnet på den riktige måten og
+ *          dermed er gyldig.
  *
  * Formel for å regne ut kontrollsiffer:
  *
@@ -40,7 +44,7 @@
  *
  * Dersom j eller k <= 9 er j eller k riktige kontrollsiffer.
  * Dersom j eller k = 10 er personnummeret ugyldig.
- * Dersom j eller k = 11 er j eller k = 0.
+ * Dersom j eller k = 11 settes j eller k til 0.
  *
  * Det betyr at det for en fødselsdato ikke finnes mer enn litt over 200
  * mulige personnummer for hvert kjønn.
@@ -55,21 +59,26 @@
  */
 
 #define VERSION   "1.12"
-#define RCS_DATE  "$Date: 2004/02/09 06:09:27 $"
+#define RCS_DATE  "$Date: 2004/02/28 02:34:14 $"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-#define c2i(c)  ((c) - '0')  /* (char)tall --> (int)tall */
+#define c2i(c)             ((c) - '0')  /* (char)tall --> (int)tall */
+#define in_range(a, b, c)  ((((a) >= (b)) && ((a) <= (c))) ? 1 : 0)
 
-#define EXIT_OK    0
-#define EXIT_ERROR 1
+#define EXIT_OK     0
+#define EXIT_ERROR  1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.7 2004/02/09 06:09:27 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.8 2004/02/28 02:34:14 sunny Exp $";
 
+int lovlig_personnr(char *);
 char *persnr(char *);
 int persnr_date(char *);
+int persnr_ok(char *);
+int process_personnr(char *);
 void usage(int);
 
 char *progname = NULL;
@@ -77,31 +86,68 @@ char *progname = NULL;
 int main(int argc, char *argv[])
 {
 	/* {{{ */
-	int retval = 0,
+	int retval = EXIT_OK,
 	    i = 0;
 
 	(void)rcs_id; /* Unngå klaging fra kompilatorer */
 	progname = argv[0];
 	if (argc > 1 && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h") || !strcmp(argv[1], "?") || !strcmp(argv[1], "-?")))
-		usage(0);
+		usage(EXIT_OK);
 
 	if (argc > 1) {
 		for (i = 1; i < argc; i++) {
-			retval |= persnr_date(argv[i]);
+			char *p = argv[i];
+			retval |= process_personnr(p);
 		}
 	} else {
-		char buf[20];
-		while (fgets(buf, 15, stdin), !feof(stdin)) {
+		char buf[15];
+		while (fgets(buf, 12, stdin), !feof(stdin)) {
 			char *p = strstr(buf, "\n");
 			if (p)
 				*p = '\0';
-			retval |= persnr_date(buf);
+			retval |= process_personnr(buf);
 		}
 	}
+
+	if (retval != EXIT_OK)
+		fprintf(stderr, "\nSkriv \"%s -h\" for hjelp.\n\n", progname);
 
 	return(retval);
 	/* }}} */
 } /* main() */
+
+int lovlig_personnr(char *pers_str)
+{
+	/* Sjekker at personnummeret eller datoen inneholder lovlige tegn og verdier {{{ */
+	int retval = 1, i;
+	char *p, buf[3];
+
+	for (p = pers_str; *p; p++) {
+		if (!isdigit(*p)) {
+			fprintf(stderr, "%s: %s: Ugyldig siffer: '%c'\n", progname, pers_str, p[0]);
+			retval = 0;
+		}
+	}
+
+	strncpy(buf, pers_str, 2);
+	buf[2] = '\0';
+	i = atoi(buf);
+	if (!in_range(i, 1, 31)) {
+		fprintf(stderr, "%s: %s: Ulovlig dato: \"%s\"\n", progname, pers_str, buf);
+		retval = 0;
+	}
+
+	strncpy(buf, pers_str+2, 2);
+	buf[2] = '\0';
+	i = atoi(buf);
+	if (!in_range(i, 1, 12)) {
+		fprintf(stderr, "%s: %s: Ulovlig måned: \"%s\"\n", progname, pers_str, buf);
+		retval = 0;
+	}
+
+	return(retval);
+	/* }}} */
+} /* lovlig_personnr() */
 
 char *persnr(char *orgbuf)
 {
@@ -109,7 +155,7 @@ char *persnr(char *orgbuf)
 	int x, y, j, k;
 	static char buf[12];
 
-	strcpy(buf, orgbuf);
+	strncpy(buf, orgbuf, 11);
 
 	x = c2i(buf[0])*3 + c2i(buf[1])*7 + c2i(buf[2])*6 + c2i(buf[3])*1 + \
 	    c2i(buf[4])*8 + c2i(buf[5])*9 + c2i(buf[6])*4 + c2i(buf[7])*5 + \
@@ -138,26 +184,26 @@ endfunc:
 ;
 	return(buf);
 	/* }}} */
-} /* persnr */
+} /* persnr() */
 
 int persnr_date(char *birth_str)
 {
 	/* Sender alle gyldige personnr for en viss dato til stdout {{{ */
 	register int i; /* Tellevariabel */
 	int retval = EXIT_OK,
-		startnum = 999; /* Avhengig av curr_century */
+		startnum; /* Avhengig av curr_century */
 	char buf[12], birthdate[20], tmpbuf[12], century[3], iso_date[12];
 	char curr_century = 1; /* 0 = 499 og nedover, 1 = 999 og nedover */
 
-	sprintf(birthdate, "%.15s", birth_str);
-
-	if ((strlen(birthdate) != 6) && (strlen(birthdate) != 8)) { /* Sjekk at lengden på datoen er seks eller åtte tegn */
-		fprintf(stderr, "%s: \"%s\": Feil format på datoen. Formatet skal være ddmmåå eller ddmmåååå.\n", progname, birthdate);
-		retval = EXIT_ERROR;
+	if ((strlen(birth_str) != 6) && (strlen(birth_str) != 8)) {
+		fprintf(stderr, "%s: \"%s\": Feil format på datoen. Formatet skal være ddmmåå eller ddmmåååå.\n", progname, birth_str);
+		retval |= EXIT_ERROR;
 		goto endfunc;
 	}
 
-	strcpy(century, "20"); /* Default århundre er 20xx */
+	sprintf(birthdate, "%.8s", birth_str);
+
+	strcpy(century, "20"); /* Standard århundre er 20xx */
 
 	/*
 	 * Her kommer det en sjekk som finner ut om det er spesifisert et
@@ -165,17 +211,18 @@ int persnr_date(char *birth_str)
 	 */
 
 	if (strlen(birthdate) == 8) {
-		strncpy(century, birthdate + 4, 2); /* Nytt århundre på gang */
+		strncpy(century, birthdate + 4, 2); /* Muligens annet århundre på gang */
 		curr_century = (atoi(century) % 2) ? 0 : 1;
 
-		strcpy(tmpbuf, birthdate);
+		strncpy(tmpbuf, birthdate, 11);
 		sprintf(birthdate, "%c%c%c%c%c%c",
-		birthdate[0],
-		birthdate[1],
-		birthdate[2],
-		birthdate[3],
-		birthdate[6],
-		birthdate[7]);
+			birthdate[0],
+			birthdate[1],
+			birthdate[2],
+			birthdate[3],
+			birthdate[6],
+			birthdate[7]
+		);
 	}
 
 	startnum = curr_century ? 999 : 499; /* Hvilket århundre skal brukes? */
@@ -187,13 +234,14 @@ int persnr_date(char *birth_str)
 		birthdate[2],
 		birthdate[3],
 		birthdate[0],
-		birthdate[1]);
+		birthdate[1]
+	);
 
 	fprintf(stdout, "\nListe over alle gyldige norske personnummer for %s:\n\n", iso_date);
 	fprintf(stdout, "Gutter:\n\n");
 	for (i = startnum; i >= (startnum-499); i -= 2) {
 		sprintf(buf, "%s%3.3d\n", birthdate, i);
-		strcpy(tmpbuf, persnr(buf));
+		strncpy(tmpbuf, persnr(buf), 11);
 		if (!strlen(tmpbuf))
 			continue;
 		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
@@ -202,7 +250,7 @@ int persnr_date(char *birth_str)
 	fprintf(stdout, "\nJenter:\n\n");
 	for (i = (startnum-1); i >= (startnum-499); i -= 2) {
 		sprintf(buf, "%s%3.3d\n", birthdate, i);
-		strcpy(tmpbuf, persnr(buf));
+		strncpy(tmpbuf, persnr(buf), 11);
 		if (!strlen(tmpbuf))
 			continue;
 		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
@@ -216,31 +264,77 @@ endfunc:
 	/* }}} */
 } /* persnr_date() */
 
+int persnr_ok(char *pers_str)
+{
+	/* Mottar et komplett personnummer (11 siffer) og returnerer 1 hvis det er rett eller 0 hvis det er feil {{{ */
+	int retval;
+	char tmpbuf[13];
+
+	strncpy(tmpbuf, persnr(pers_str), 12);
+	retval = strcmp(tmpbuf, pers_str) ? 0 : 1;
+	return(retval);
+	/* }}} */
+} /* persnr_ok() */
+
+int process_personnr(char *buf)
+{
+	/* Utfør det som skal gjøres på datoen eller personnummeret. Returnerer EXIT_OK eller EXIT_ERROR. {{{ */
+	int retval = EXIT_OK;
+
+	if ((strlen(buf) == 6) || (strlen(buf) == 8)) {
+		if (lovlig_personnr(buf))
+			retval |= persnr_date(buf);
+		else
+			retval |= EXIT_ERROR;
+	} else if ((strlen(buf) == 11)) {
+		if (lovlig_personnr(buf))
+			printf("%s er %sgyldig\n", buf, persnr_ok(buf) ? "" : "IKKE ");
+		else
+			retval |= EXIT_ERROR;
+	} else {
+		fprintf(stderr, "%s: \"%s\": Er hverken personnummer eller dato\n", progname, buf);
+		retval |= EXIT_ERROR;
+	}
+	return(retval);
+	/* }}} */
+} /* process_personnr() */
+
 void usage(int retval)
 {
 	/* Send hjelpen til stdout {{{ */
-	int charnum; /* Cosmetic thing */
+	int charnum; /* Pynteting. */
 
 	putchar('\n');
-	charnum = printf("%s ver. %s (%s) — (C)opyleft Øyvind A. Holm <sunny@sunbase.org>", progname, VERSION, RCS_DATE);
+	charnum = printf("%s ver. %s (%s) -- (C)opyleft Øyvind A. Holm <sunny@sunbase.org>", progname, VERSION, RCS_DATE);
 	putchar('\n');
 
 	for (; charnum; charnum--)
-		putchar('-');
+		putchar('-'); /* Tar ikke UTF-8 så voldsomt godt, men vi overlever det. */
+
 	printf(
-		"\nBruk: %s [fødselsdato [...]]\n\n"
-		"Skriver ut alle gyldige norske personnummer for en eller flere datoer.\n"
-		"Fødselsdatoen spesifiseres på formatet ddmmåå. Hvis et annet århundre\n"
-		"enn 20xx skal brukes, brukes formatet ddmmåååå.\n\n"
-		"Hvis ingen datoer skrives på kommandolinja, leser programmet datoer fra\n"
-		"standard input.\n\n"
+		"\n"
+		"Bruk: %s [personnummer|fødselsdato [...]]\n"
+		"\n"
+		"Programmet kan sjekke om et eller flere norske personnumre er gyldig i\n"
+		"henhold til kontrollsummen som er lagret i de to siste sifrene av et\n"
+		"11-sifret personnummer.\n"
+		"\n"
+		"Alle personnumrene på en eller flere angitte datoer kan også skrives ut.\n"
+		"Fødselsdatoen må være på formatet ddmmåå eller ddmmåååå. Hvis datoen skrives\n"
+		"med ddmmåå-formatet, brukes 20xx som århundre.\n"
+		"\n"
+		"Hvis ingen personnumre eller datoer skrives på kommandolinja, leser\n"
+		"programmet fra standard input.\n"
+		"\n"
 		"Programlisens: GNU General Public License, se fila COPYING for detaljer\n"
-		"eller les lisensen på <http://www.gnu.org/copyleft/gpl.html>.\n\n"
+		"eller les lisensen på <http://www.gnu.org/copyleft/gpl.html>.\n"
+		"\n"
 		, progname
 	);
+
 	exit(retval);
 	/* }}} */
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.7 2004/02/09 06:09:27 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.8 2004/02/28 02:34:14 sunny Exp $ */
