@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.6 2002/11/26 23:48:01 sunny Exp $
+# $Id: hhi,v 1.1.2.7 2002/12/03 05:45:22 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 #===============================================
@@ -18,12 +18,11 @@ while (<>) {
 		if ($header_level > 1) {
 			splice(@header_num, $header_level-1) if ($header_level < $last_level);
 			$header_num[$header_level-2]++;
-			my $tall_str = scalar(@header_num) ? join(".", @header_num) : "";
-			my $file_id = scalar(@header_num) ? join("_", "s", @header_num) : "";
-			$Rest =~ s/^([\d\s\.]+)(.*)/$2/;
-			($tall_str .= ".") if ($header_level == 2);
-			$Pref =~ s#^(.*?)(<a name=.*?</a>)(.*)$#$1$3#;
-			$_ = "${Pref}<a name=\"$file_id\"></a><${H}${header_level}${Elem}>$tall_str $Rest";
+			my $tall_str = join(".", @header_num);
+			my $name_str = $tall_str;
+			$Rest =~ s#^(<a name="h-.*?">|)([\d\s\.]+)(</a>|)(.*)#$2#;
+			# ($tall_str .= ".") if ($header_level == 2);
+			$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"h-$name_str\">$tall_str</a> $Rest";
 			$last_level = $header_level;
 		}
 	}
