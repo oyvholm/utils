@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.6 2000/03/27 00:41:13 sunny Exp $
+# $Id: dbk,v 1.7 2000/03/27 11:54:35 sunny Exp $
 #
 # (C)opyleft Øyvind A. Holm <sunny256@mail.com>
 # GNU-lisens.
@@ -40,8 +40,8 @@ print("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Y
 my $arg_count;
 
 foreach(@ARGV) {
-	/^\d\d:/ && (splice(@ARGV, $arg_count, 1), $time_str = $_);
-	$arg_count ++;
+	/^\d\d:/ && (splice(@ARGV, $arg_count, 1), $time_str = $_, $opt_t = 1);
+	$arg_count++;
 }
 
 $Year = $ARGV[2] if $#ARGV >= 2;
@@ -139,4 +139,4 @@ END
 
 __END__
 
-#### End of file $Id: dbk,v 1.6 2000/03/27 00:41:13 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.7 2000/03/27 11:54:35 sunny Exp $ ####
