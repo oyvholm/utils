@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# $Id: view_df,v 1.6 2003/10/03 00:26:38 sunny Exp $
+
+lfile=$HOME/log/df.log
+
+if [ "$1" = "-a" ]; then
+	for f in `cat ~/log/.disks`; do
+		view_df $f $2
+	done
+	exit 0
+fi
+
+if [ "$2" != "" ]; then
+	grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df | tail -$2 >~/log/data
+else
+	grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | unik_df >~/log/data
+fi
+
+cd ~/log
+df -h $1 | grep $1 >~/log/data.title
+statplot
