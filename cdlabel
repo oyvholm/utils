@@ -1,11 +1,22 @@
 #!/bin/sh
 
-# $Id: cdlabel,v 1.3 2002/12/02 09:37:50 sunny Exp $
-# Skriver ut volume label på CDROM'en som står i.
+# $Id: cdlabel,v 1.4 2003/09/12 18:52:23 sunny Exp $
+# Skriver ut volume label pÃ¥ CDROMâ€™en som stÃ¥r i.
 
-# Først tar vi en fake read for å unngå error
-until head -c 1 /dev/cdrom >/dev/null; do
+device=/dev/cdrom
+
+if [ "$1" != "" ]; then
+	device=$1
+fi
+
+if [ ! -r $device ]; then
+	echo "$0: $device: Not readable" >&2
+	exit 1
+fi
+
+# FÃ¸rst tar vi en fake read for Ã¥ unngÃ¥ error
+until head -c 1 $device >/dev/null; do
 	:
 done
 
-head -c 32840 /dev/cdrom | tail -c 32 | rmspcbak
+head -c 32840 $device | tail -c 32 | rmspcbak
