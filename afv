@@ -24,8 +24,8 @@ getopts('d:hl:s') || die("Ukjent valg, \"afv -h\" for hjelp\n");
 $| = 1;
 
 if ($opt_h) {
-	# Skriv ut hjelpen {{{
-	print(<<END);
+    # Skriv ut hjelpen {{{
+    print(<<END);
 
 Syntax: $0 [valg] [fil [flere filer [...]]]
 
@@ -58,12 +58,12 @@ sjekker alle filer hvert femte sekund og kjører også ny glob hver gang
 loopen gjentas.
 
 END
-	exit(0);
-	# }}}
+    exit(0);
+    # }}}
 }
 
 unless (length($opt_d)) {
-	defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
+    defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
 }
 
 my $Dir = ".AFV";
@@ -74,31 +74,31 @@ my ($do_loop, $sleep_time, $orig_dir) = (0, 5, `/bin/pwd`); # FIXME
 chomp($orig_dir);
 
 if ($opt_s) {
-	chomp($curr_dir = `/bin/pwd`);
-	$dest_dir = "$root_dir$curr_dir";
-	if (-d "$dest_dir/.") {
-		print("Stopper afv’er i $curr_dir...");
-		if (open(StopFP, ">$dest_dir/stop")) {
-			close(StopFP);
-			sleep(5);
-			unlink("$dest_dir/stop") || die("$dest_dir/stop: Klarte ikke å slette fila: $!");
-			print("OK\n");
-			exit(0);
-		} else {
-			die("$root_dir/stop: Klarte ikke å lage fila: $!");
-		}
-	} else {
-		die("$root_dir: Finner ikke katalogen.");
-	}
+    chomp($curr_dir = `/bin/pwd`);
+    $dest_dir = "$root_dir$curr_dir";
+    if (-d "$dest_dir/.") {
+        print("Stopper afv’er i $curr_dir...");
+        if (open(StopFP, ">$dest_dir/stop")) {
+            close(StopFP);
+            sleep(5);
+            unlink("$dest_dir/stop") || die("$dest_dir/stop: Klarte ikke å slette fila: $!");
+            print("OK\n");
+            exit(0);
+        } else {
+            die("$root_dir/stop: Klarte ikke å lage fila: $!");
+        }
+    } else {
+        die("$root_dir: Finner ikke katalogen.");
+    }
 }
 
 if (length($opt_l)) {
-	if ($opt_l =~ /^\d+$/) {
-		$do_loop = 1;
-		$sleep_time = $opt_l;
-	} else {
-		die("Parameteret til -l må være et tall.\n");
-	}
+    if ($opt_l =~ /^\d+$/) {
+        $do_loop = 1;
+        $sleep_time = $opt_l;
+    } else {
+        die("Parameteret til -l må være et tall.\n");
+    }
 }
 
 my @Files = ();
@@ -106,170 +106,171 @@ glob_files();
 
 LOOP:
 foreach my $FullCurr (@Files) {
-	# {{{
-	my $Curr = $FullCurr;
-	my $another_dir = 0;
-	check_stop();
-	next LOOP if (!-f $Curr || -l $Curr);
-	if ($Curr =~ m#(.*)/(.*?)$#) {
-		$another_dir = 1;
-		unless (chdir($1)) {
-			warn("Klarte ikke chdir(\"$1\"): $!");
-			next LOOP;
-		}
-		$Curr = $2;
-	}
-	chomp($curr_dir = `/bin/pwd`); # FIXME
-	$dest_dir = "$root_dir$curr_dir";
-	-d $dest_dir || mkpath($dest_dir, 1) || die("mkpath($dest_dir): $!");
-	my $afv_dir = "$dest_dir/$Dir";
-	-d $afv_dir || mkpath($afv_dir, 1) || die("mkpath($Dir): $!");
-	my $lock_dir = "$afv_dir/$Curr.lock";
-	my $lastmd5_file = "$afv_dir/$Curr.lastmd5";
-	my $currmd5_file = "$afv_dir/$Curr.currmd5";
-	my $start_lock = time;
+    # {{{
+    my $Curr = $FullCurr;
+    my $another_dir = 0;
+    check_stop();
+    next LOOP if (!-f $Curr || -l $Curr);
+    if ($Curr =~ m#(.*)/(.*?)$#) {
+        $another_dir = 1;
+        unless (chdir($1)) {
+            warn("Klarte ikke chdir(\"$1\"): $!");
+            next LOOP;
+        }
+        $Curr = $2;
+    }
+    chomp($curr_dir = `/bin/pwd`); # FIXME
+    $dest_dir = "$root_dir$curr_dir";
+    -d $dest_dir || mkpath($dest_dir, 1) || die("mkpath($dest_dir): $!");
+    my $afv_dir = "$dest_dir/$Dir";
+    -d $afv_dir || mkpath($afv_dir, 1) || die("mkpath($Dir): $!");
+    my $lock_dir = "$afv_dir/$Curr.lock";
+    my $lastmd5_file = "$afv_dir/$Curr.lastmd5";
+    my $currmd5_file = "$afv_dir/$Curr.currmd5";
+    my $start_lock = time;
 
-	until (mkdir($lock_dir, 0777)) {
-		warn(sec_to_string(time) . ": $lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
-		my_sleep(5);
-	}
-	D(sprintf("Årntli og offisiell MD5: %s\n", `md5sum $Curr`));
-	if (open(FromFP, "<$Curr")) {
-		binmode(FromFP);
-		if (flock(FromFP, LOCK_EX)) {
-			# {{{
-			my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
-			my $date_str = sec_to_string($mtime);
-			my $to_file = "$dest_dir/$date_str.$Curr";
-			if (-e $to_file) {
-				close(FromFP);
-				goto CLEANUP;
-			}
-			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
+    until (mkdir($lock_dir, 0777)) {
+        warn(sec_to_string(time) . ": $lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
+        my_sleep(5);
+    }
+    D(sprintf("Årntli og offisiell MD5: %s\n", `md5sum $Curr`));
+    if (open(FromFP, "<$Curr")) {
+        binmode(FromFP);
+        if (flock(FromFP, LOCK_EX)) {
+            # {{{
+            my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
+            my $date_str = sec_to_string($mtime);
+            my $to_file = "$dest_dir/$date_str.$Curr";
+            if (-e $to_file) {
+                close(FromFP);
+                goto CLEANUP;
+            }
+            seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
 
-			my $curr_md5 = Digest::MD5->new->addfile(*FromFP)->hexdigest;
-			D("curr_md5 = $curr_md5");
-			open(CurrMD5FP, ">$currmd5_file") || die("$currmd5_file: Klarte ikke å åpne fila for skriving: $!");
-			print(CurrMD5FP "$curr_md5\n") || die("$currmd5_file: Feil under skriving til fila. $!");
-			close(CurrMD5FP);
-			my $last_md5 = "";
+            my $curr_md5 = Digest::MD5->new->addfile(*FromFP)->hexdigest;
+            D("curr_md5 = $curr_md5");
+            open(CurrMD5FP, ">$currmd5_file") || die("$currmd5_file: Klarte ikke å åpne fila for skriving: $!");
+            print(CurrMD5FP "$curr_md5\n") || die("$currmd5_file: Feil under skriving til fila. $!");
+            close(CurrMD5FP);
+            my $last_md5 = "";
 
-			if (-e $lastmd5_file) {
-				if (open(LastMD5FP, "<$lastmd5_file")) {
-					chomp($last_md5 = <LastMD5FP>);
-					$last_md5 =~ s/^([0-9a-fA-F]{32})/\L$1\E/;
-					close(LastMD5FP);
-				} else {
-					warn("$lastmd5_file: Feil under åpning for lesing: $!");
-				}
-			}
+            if (-e $lastmd5_file) {
+                if (open(LastMD5FP, "<$lastmd5_file")) {
+                    chomp($last_md5 = <LastMD5FP>);
+                    $last_md5 =~ s/^([0-9a-fA-F]{32})/\L$1\E/;
+                    close(LastMD5FP);
+                } else {
+                    warn("$lastmd5_file: Feil under åpning for lesing: $!");
+                }
+            }
 
-			D("last_md5 = \"$last_md5\", curr_md5 = \"$curr_md5\"");
-			if ($curr_md5 ne $last_md5) {
-				print("$date_str.$Curr\n") unless $do_loop;
-				if (seek(FromFP, 0, 0)) {
-					if (open(ToFP, ">$to_file")) {
-						if (flock(ToFP, LOCK_EX)) {
-							while (<FromFP>) {
-								print(ToFP $_);
-							}
-						} else {
-							warn("$to_file: Klarte ikke flock(): $!");
-						}
-						close(ToFP);
-						unlink("$lastmd5_file");
-						rename("$currmd5_file", "$lastmd5_file") || die(qq{Klarte ikke rename("$currmd5_file", "$lastmd5_file")});
-					} else {
-						warn("$Curr: Klarte ikke å åpne fila for skriving: $!");
-					}
-				} else {
-					warn("$Curr: Klarte ikke å seeke til starten: $!");
-				}
-			}
-			# }}}
-		} else {
-			warn("$Curr: Klarte ikke flock(): $!");
-		}
-		close(FromFP);
-	} else {
-		warn("$Curr: Klarte ikke å åpne fila for lesing: $!");
-	}
+            D("last_md5 = \"$last_md5\", curr_md5 = \"$curr_md5\"");
+            if ($curr_md5 ne $last_md5) {
+                print("$date_str.$Curr\n") unless $do_loop;
+                if (seek(FromFP, 0, 0)) {
+                    if (open(ToFP, ">$to_file")) {
+                        if (flock(ToFP, LOCK_EX)) {
+                            while (<FromFP>) {
+                                print(ToFP $_);
+                            }
+                        } else {
+                            warn("$to_file: Klarte ikke flock(): $!");
+                        }
+                        close(ToFP);
+                        unlink("$lastmd5_file");
+                        rename("$currmd5_file", "$lastmd5_file") || die(qq{Klarte ikke rename("$currmd5_file", "$lastmd5_file")});
+                    } else {
+                        warn("$Curr: Klarte ikke å åpne fila for skriving: $!");
+                    }
+                } else {
+                    warn("$Curr: Klarte ikke å seeke til starten: $!");
+                }
+            }
+            # }}}
+        } else {
+            warn("$Curr: Klarte ikke flock(): $!");
+        }
+        close(FromFP);
+    } else {
+        warn("$Curr: Klarte ikke å åpne fila for lesing: $!");
+    }
 
-	CLEANUP:
-	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
-	if ($another_dir) {
-		chdir($orig_dir) || die("$orig_dir: Klarte ikke chdir() til originalkatalogen: $!");
-	}
-	# }}}
+    CLEANUP:
+    rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+    if ($another_dir) {
+        chdir($orig_dir) || die("$orig_dir: Klarte ikke chdir() til originalkatalogen: $!");
+    }
+    # }}}
 }
 
 if ($do_loop) {
-	check_stop();
-	glob_files();
-	my_sleep($sleep_time);
-	goto LOOP;
+    check_stop();
+    glob_files();
+    my_sleep($sleep_time);
+    goto LOOP;
 }
 
 exit;
 
 sub D {
-	chomp(my $Txt = shift);
-	my @call_info = caller;
-	$Debug && print(STDERR "DEBUG $call_info[2]: $Txt\n");
+    chomp(my $Txt = shift);
+    my @call_info = caller;
+    $Debug && print(STDERR "DEBUG $call_info[2]: $Txt\n");
 }
 
 sub sec_to_string {
-	# Konverter antall sekunder sia 1970-01-01 00:00:00 GMT til ååååmmddTttmmssZ {{{
-	my @TA = gmtime(shift);
-	my $Retval = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
-	return($Retval);
-	# }}}
+    # Konverter antall sekunder sia 1970-01-01 00:00:00 GMT til ååååmmddTttmmssZ {{{
+    my @TA = gmtime(shift);
+    my $Retval = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+    return($Retval);
+    # }}}
 } # sec_to_string()
 
 sub glob_files {
-	# Returnerer en array med filnavn som samsvarer med parametrene. {{{
-	@Files = ();
-	if (scalar(@ARGV)) {
-		foreach (@ARGV) {
-			push(@Files, glob $_);
-		}
-	} else {
-		while(<>) {
-			push(@Files, glob $_);
-		}
-	}
-	# }}}
+    # Returnerer en array med filnavn som samsvarer med parametrene. {{{
+    @Files = ();
+    if (scalar(@ARGV)) {
+        foreach (@ARGV) {
+            push(@Files, glob $_);
+        }
+    } else {
+        while(<>) {
+            push(@Files, glob $_);
+        }
+    }
+    # }}}
 } # glob_files()
 
 sub check_stop {
-	# Sjekk om stop-fila finnes og i så fall avbrytes alt. {{{
-	foreach ($root_dir, $dest_dir) {
-		if (-e "$_/stop") {
-			if (-e "$_/protected") {
-				print(STDERR "$curr_dir: $_/stop finnes, men katalogen er beskyttet, så vi avslutter ikke.\n");
-			} else {
-				print(STDERR "$curr_dir: $_/stop finnes, avslutter.\n");
-				exit;
-			}
-		}
-	}
-	# }}}
+    # Sjekk om stop-fila finnes og i så fall avbrytes alt. {{{
+    foreach ($root_dir, $dest_dir) {
+        if (-e "$_/stop") {
+            if (-e "$_/protected") {
+                print(STDERR "$curr_dir: $_/stop finnes, men katalogen er beskyttet, så vi avslutter ikke.\n");
+            } else {
+                print(STDERR "$curr_dir: $_/stop finnes, avslutter.\n");
+                exit;
+            }
+        }
+    }
+    # }}}
 } # check_stop()
 
 sub my_sleep {
-	# {{{
-	my $Secs = shift;
-	my $start_time = time;
-	if ($Secs <= 2) {
-		check_stop();
-		sleep($Secs);
-	} else {
-		until (time >= $start_time+$Secs) {
-			sleep(2);
-			check_stop();
-		}
-	}
-	# }}}
+    # {{{
+    my $Secs = shift;
+    my $start_time = time;
+    if ($Secs <= 2) {
+        check_stop();
+        sleep($Secs);
+    } else {
+        until (time >= $start_time+$Secs) {
+            sleep(2);
+            check_stop();
+        }
+    }
+    # }}}
 } # my_sleep()
 
+# vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :
 #### End of file $Id$ ####
