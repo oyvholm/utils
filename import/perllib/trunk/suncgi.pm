@@ -1,7 +1,7 @@
 package suncgi;
 
 #========================================================
-# $Id: suncgi.pm,v 1.17 2000/11/16 14:25:59 sunny Exp $
+# $Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -16,6 +16,7 @@ require Exporter;
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn increase_counter log_access print_header tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
+	$query_string
 	$log_requests $ignore_double_ip
 	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $Url
 	$css_default
@@ -44,9 +45,9 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.17 2000/11/16 14:25:59 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.17 2000/11/16 14:25:59 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/11/16 14:25:59 $';
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/11/21 10:53:59 $';
 @suncgi::rcs_array = ();
 
 $suncgi::this_counter = "";
@@ -130,6 +131,7 @@ sub curr_utc_time {
 sub deb_pr {
 	return unless $main::Debug;
 	my $Msg = shift;
+	chomp($Msg);
 	my $err_msg = "";
 	if (-e $suncgi::debug_file) {
 		open(DebugFP, "+<$suncgi::debug_file") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
@@ -194,13 +196,14 @@ sub get_cgivars {
 	my $has_args = ($#ARGV > -1) ? 1 : 0;
 	if ($has_args) {
 		$in = $ARGV[0];
-	} elsif (($user_method eq 'GET') ||
-	         ($user_method eq 'HEAD')) {
+	} elsif (($user_method =~ /^get$/i) ||
+	         ($user_method =~ /^head$/i)) {
 		$in = $ENV{QUERY_STRING};
-	} elsif ($user_method eq 'POST') {
+	} elsif ($user_method =~ /^post$/i) {
 		if ($ENV{CONTENT_TYPE} =~ m#^application/x-www-form-urlencoded$#i) {
 			length($ENV{CONTENT_LENGTH}) || HTMLdie("Ingen Content-Length vedlagt POST-forespørselen.");
-			read(STDIN, $in, $ENV{CONTENT_LENGTH});
+			my $Len = $ENV{CONTENT_LENGTH};
+			read(STDIN, $in, $Len) || HTMLwarn("get_cgivars(): Feil under read() fra STDIN: $!");
 		} else {
 			HTMLdie("Usupportert Content-Type: \"$ENV{CONTENT_TYPE}\"") if length($ENV{CONTENT_TYPE});
 			exit;
@@ -224,6 +227,7 @@ sub get_cgivars {
 		print(ReqFP "$suncgi::curr_utc\t$ENV{REMOTE_ADDR}\t$in\n") || HTMLwarn("$suncgi::request_log_file: Klarte ikke å skrive til loggfila: $!");
 		close(ReqFP);
 	}
+	$BAsnakk::query_string = $in;
 	foreach (split("[&;]", $in)) {
 		s/\+/ /g;
 		my ($name, $value) = ("", "");
@@ -233,7 +237,7 @@ sub get_cgivars {
 		$in{$name} .= "\0" if defined($in{$name});
 		$in{$name} .= $value;
 		# Den under her er veldig grei å ha upåvirket av perldeboff(1).
-		&deb_pr (__LINE__ . ": get_cgivars(): $name = \"$value\"");
+		deb_pr(__LINE__ . ": get_cgivars(): $name = \"$value\"");
 	}
 	return %in;
 } # get_cgivars()
@@ -263,7 +267,7 @@ sub HTMLdie {
 	my $utc_str = curr_utc_time;
 	my $msg_str = "";
 
-	# &deb_pr(__LINE__ . ": HDIE: $Msg");
+	deb_pr("HDIE: $Msg");
 	$Title || ($Title = "Intern feil");
 	if (!$main::Debug && !$main::Utv) {
 		$msg_str = "<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli fikset snart.";
@@ -314,7 +318,10 @@ END
 </html>
 END
 	if (length(${suncgi::error_file})) {
-		create_file($suncgi::error_file);
+		unless (-e $suncgi::error_file) {
+			open(ErrorFP, ">$suncgi::error_file");
+			close(ErrorFP);
+		}
 		open(ErrorFP, "+<${suncgi::error_file}") or exit;
 		flock(ErrorFP, LOCK_EX);
 		seek(ErrorFP, 0, 2) or exit;
@@ -331,7 +338,7 @@ sub HTMLwarn {
 	my $Msg = shift;
 	my $utc_str = curr_utc_time();
 	defined($Msg) || ($Msg = "");
-	# &deb_pr(__LINE__ . ": WARN: $Msg");
+	deb_pr("WARN: $Msg");
 	# Gjør det så stille og rolig som mulig.
 	if ($main::Utv || $main::Debug) {
 		print_header("CGI warning");
@@ -626,7 +633,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.17 2000/11/16 14:25:59 sunny Exp $>
+S<$Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1012,4 +1019,4 @@ print_doc() er ikke ferdig, ellers svinger det visst.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.17 2000/11/16 14:25:59 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $ ####
