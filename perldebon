@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Fjerner utkommenteringa på debuggingsmeldinger i Perl
+# Fjerner utkommenteringa pÃ¥ debuggingsmeldinger i Perl
 # $Id$
 
 while (<>) {

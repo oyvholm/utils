@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # $Id$
-# Som logg(1), men setter fonten til uleselig til ære for andre folk
-# i nærheten.
+# Som logg(1), men setter fonten til uleselig til Ã¦re for andre folk
+# i nÃ¦rheten.
 
 kode 1
 logg $*

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # $Id$
-# Made by Øyvind A. Holm <sunny@dataguard.no>
+# Made by Ã˜yvind A. Holm <sunny@dataguard.no>
 
 use Fcntl ':flock';
 
@@ -19,7 +19,7 @@ my $cvs_prog = "/usr/bin/cvs";
 my $sunny_uid = 500;
 my $sunny_gid = 500;
 my $cvs_root = "/home/sunny/af-cvsroot";
-# my $repository_name = "aftest-$host_name"; # Sikkert ikke nødvendig.
+# my $repository_name = "aftest-$host_name"; # Sikkert ikke nÃ¸dvendig.
 my $LogName = "sunny";
 
 # print "EUID = \"$>\"\n";
@@ -51,7 +51,7 @@ system("$cvs_prog -Q -d $cvs_root commit -m \"$cvs_comment\"");
 close(LockFP);
 unlink($lock_file) or die("$0: $lock_file: Can't unlink lock file: $!\n");
 
-# print "Like før slutten\n";
+# print "Like fÃ¸r slutten\n";
 exit;
 
 sub sec2str {

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # $Id$
-# Converts gg컈m'ss.sss" to gg컈m.mmmmm'
+# Converts gg째mm'ss.sss" to gg째mm.mmmmm'
 
 use strict;
 
@@ -10,7 +10,7 @@ if ($#ARGV < 2) {
 
 Syntax: $0 degrees minutes secons
 
-Converts gg컈m'ss.sss" to gg컈m.mmmmm'
+Converts gg째mm'ss.sss" to gg째mm.mmmmm'
 Decimal values can be used.
 
 END
@@ -19,6 +19,6 @@ END
 my ($Deg, $Min, $Sec) = @ARGV;
 my $new_min = $Min+($Sec/60);
 
-print("$Deg�$new_min'\n");
+print("$Deg째$new_min'\n");
 
 __END__

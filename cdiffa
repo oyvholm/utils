@@ -1,6 +1,6 @@
 #!/bin/sh
 
 # $Id$
-# cvs diff som behandler alle binærfiler som tekst.
+# cvs diff som behandler alle binÃ¦rfiler som tekst.
 
 cvs -n diff -ua $* 2>/dev/null | less -S

@@ -1,6 +1,6 @@
 #!/bin/sh
 
 # $Id$
-# Nå er jeg lei av mankoen på skikkelig datoformat.
+# NÃ¥ er jeg lei av mankoen pÃ¥ skikkelig datoformat.
 
 find $* -printf "%TY-%Tm-%Td %TH:%TM:%TS\t%6s\t%U.%G\t%p\n"

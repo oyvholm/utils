@@ -2,7 +2,7 @@
 
 # $Id$
 # Konverterer tekst i MIME-format til vanlig tekst. Vet ikke hvor korrekt
-# den er, men det ser ut til å funke greit.
+# den er, men det ser ut til Ã¥ funke greit.
 
 use strict;
 

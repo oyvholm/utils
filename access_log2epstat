@@ -3,7 +3,7 @@
 #====================================================================
 # $Id$
 # Konverterer access_log fra Apache til fil som passer til epstat(1).
-# Langt og trasig navn, men nøye då.
+# Langt og trasig navn, men nÃ¸ye dÃ¥.
 #====================================================================
 
 use strict;
@@ -29,7 +29,7 @@ while (<>) {
 			/
 			(\S+) # Mnd
 			/
-			(\d{4}) # År
+			(\d{4}) # Ã…r
 			:(\d\d):(\d\d):(\d\d) # Klokka
 			\s+
 			([+\-]\d\d)(\d\d)
@@ -39,7 +39,7 @@ while (<>) {
 			   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
 			my $num_mon = $mnd_hash{$Mon};
 			my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mon, $Year);
-			$Secs -= ($zone_hour*3600); # Vi driter i minuttene fir å få opp farta.
+			$Secs -= ($zone_hour*3600); # Vi driter i minuttene fir Ã¥ fÃ¥ opp farta.
 			print("$Secs\n");
 		} else {
 			print(STDERR "Ukjent linje $.\n");

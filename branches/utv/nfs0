@@ -1,6 +1,6 @@
 #!/bin/sh
 
 # $Id$
-# Kjører ned nfsd
+# KjÃ¸rer ned nfsd
 
 /etc/rc.d/init.d/nfs stop

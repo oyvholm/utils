@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Dobler LF så enkelte ting blir mer oversiktlig
+# Dobler LF sÃ¥ enkelte ting blir mer oversiktlig
 # $Id$
 
 while (<>) {

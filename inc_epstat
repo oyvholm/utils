@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # $Id$
-# Filter for å gjøre epstat-format brukbart i gnuplot.
+# Filter for Ã¥ gjÃ¸re epstat-format brukbart i gnuplot.
 # -f skriver telleren foran istedenfor etter.
 
 use Getopt::Std;
@@ -11,7 +11,7 @@ my $Count = 0;
 
 getopts('f');
 
-if ($opt_f) { # For å få opp farta
+if ($opt_f) { # For Ã¥ fÃ¥ opp farta
 	while (<>) {
 		s/^(.+)/$Count\t$1/;
 		print;

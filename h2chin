@@ -9,13 +9,13 @@ my %Uh;
 
 $| = 1;
 
-open(FromFP, "</tmp/Unihan-def.txt") || die("Klarte ikke å åpne unihan for lesing: $!");
+open(FromFP, "</tmp/Unihan-def.txt") || die("Klarte ikke Ã¥ Ã¥pne unihan for lesing: $!");
 while(<FromFP>) {
 	if (/^U\+(....)\s+kDefinition\s+(.*)/) {
 		$Uh{$1} = $2;
 		# print (STDERR "$1\n");
 	} else {
-		# print(STDERR "Bomma på $_\n");
+		# print(STDERR "Bomma pÃ¥ $_\n");
 	}
 }
 

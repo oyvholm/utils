@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # $Id$
-# Sjekker at innrykkene på et webdokument er OK
+# Sjekker at innrykkene pÃ¥ et webdokument er OK
 # Trenger sget og hfa .
 # Syntax: $0 url
 

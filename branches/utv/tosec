@@ -2,8 +2,8 @@
 
 #===========================================================================
 # $Id$
-# Mottar datoer på kommandolinja og konverterer dem til sekunder siden 1970.
-# Format: ååååmmddTttmmss med valgfri Z på slutten for GMT
+# Mottar datoer pÃ¥ kommandolinja og konverterer dem til sekunder siden 1970.
+# Format: Ã¥Ã¥Ã¥Ã¥mmddTttmmss med valgfri Z pÃ¥ slutten for GMT
 #===========================================================================
 
 use strict;

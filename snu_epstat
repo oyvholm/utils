@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # $Id$
-# Snur outputen fra epstat,v 1.3 og tidlligere og plasserer datoen først.
+# Snur outputen fra epstat,v 1.3 og tidlligere og plasserer datoen fÃ¸rst.
 
 use strict;
 

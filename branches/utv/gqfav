@@ -2,7 +2,7 @@
 
 # $Id$
 # Favorittgreie i gqview
-# Må fikses litt på.
+# MÃ¥ fikses litt pÃ¥.
 
 cp -p $* /home/sunny/s/fav
 chmod +w /home/sunny/s/fav/$(basename $1)

@@ -2,9 +2,9 @@
 
 #==================================================
 # $Id$
-# Bestemmer hvilken ssh som skal kjøres med CVS.
-# Beregnet for bruk på ww først og fremst.
-# Ihvertfall foreløpig.
+# Bestemmer hvilken ssh som skal kjÃ¸res med CVS.
+# Beregnet for bruk pÃ¥ ww fÃ¸rst og fremst.
+# Ihvertfall forelÃ¸pig.
 #==================================================
 
 # cmd=ssh

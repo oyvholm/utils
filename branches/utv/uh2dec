@@ -2,7 +2,7 @@
 
 # $Id$
 # Konverterer fra hex-entities til desimal.
-# Til ære for teite Netscape som ikke takler hex.
+# Til Ã¦re for teite Netscape som ikke takler hex.
 
 use strict;
 

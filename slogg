@@ -2,8 +2,8 @@
 
 # $Id$
 # Setter en entry med klokkeslett inn i dbk. Leser fra stdin.
-# Funker på samme måte som logg, men legger inn PATH.
-# Kan kjøres av root.
+# Funker pÃ¥ samme mÃ¥te som logg, men legger inn PATH.
+# Kan kjÃ¸res av root.
 
 PATH=/home/badata/Stable/bin:$PATH
 HOME=/home/sunny

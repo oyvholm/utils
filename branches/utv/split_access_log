@@ -2,10 +2,10 @@
 
 #=====================================================================
 # $Id$
-# Splitter opp access_log fra httpd(8) på dato. Legger filene i $Dir .
+# Splitter opp access_log fra httpd(8) pÃ¥ dato. Legger filene i $Dir .
 # Options:
 #   -z  Pakker filene etter de er laget.
-# (C)opyright 2001-2002 Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyright 2001-2002 Ã˜yvind A. Holm <sunny@sunbase.org>
 #=====================================================================
 
 # 193.214.57.46 - - [18/Oct/2001:08:26:44 +0200] "POST / HTTP/1.0" 200 5147 "http://www.ba.no/00/07/12/9.html" "Mozilla/4.03 [en] (WinNT; I)"
@@ -42,7 +42,7 @@ while (<>) {
 			# print("Ny fil: $Fnavn\n");
 			push(@fnavn_array, $Fnavn) if ($compress_file);
 			if (-e $Fnavn) {
-				die("$Fnavn: Fila eksisterte, det vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjørt.\nEvt. sorter den først, slett $Fnavn og kjør programmet en gang til.");
+				die("$Fnavn: Fila eksisterte, det vil si at loggfila ikke er kronologisk eller at denne datoen allerede er kjÃ¸rt.\nEvt. sorter den fÃ¸rst, slett $Fnavn og kjÃ¸r programmet en gang til.");
 			}
 			if (open(ToFP, ">$Fnavn")) {
 				seek(ToFP, 0, 2) || warn("$Fnavn: seek() til slutten: $!");

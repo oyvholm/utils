@@ -2,7 +2,7 @@
 
 # $Id$
 # Lister ut tegn som er brukt i en fil. Bruker HTML-entities
-# for enkelhets skyld. Kjør gjennom "h2u -l" eller recode(1).
+# for enkelhets skyld. KjÃ¸r gjennom "h2u -l" eller recode(1).
 
 use strict;
 

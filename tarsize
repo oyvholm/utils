@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # $Id$
-# Viser størrelsen på en tar-fil av en directory.
+# Viser stÃ¸rrelsen pÃ¥ en tar-fil av en directory.
 
 if [ $# -eq 0 ]; then
 	DIR="."

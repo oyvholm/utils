@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # $Id$
-# Lister ut alle directoryene og sorterer dem etter størrelse
+# Lister ut alle directoryene og sorterer dem etter stÃ¸rrelse
 
 DUFILE=du.dat
 

@@ -4,7 +4,7 @@
 # $Id$
 # Fjerner rot med tekstattributter i tillegg.
 # Pluss at den setter tastaturhastigheta hvis det
-# er nødvendig.
+# er nÃ¸dvendig.
 #=================================================
 
 [ -x /usr/bin/reset ] || { echo $0: reset\(1\) ligger ikke under /usr/bin. Kvifor not? >&2; exit 1; }

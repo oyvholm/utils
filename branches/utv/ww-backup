@@ -3,7 +3,7 @@
 # $Id$
 # Tar backup av greier fra ww-maskinen. Lager fil i current dir.
 
-[ -e /sunba.mrk ] || { echo $0: Skal kjøres på sunba. >&2; exit 1; }
+[ -e /sunba.mrk ] || { echo $0: Skal kjÃ¸res pÃ¥ sunba. >&2; exit 1; }
 
 [ -z $1 ] && { echo Syntax: $0 cvsroot\|sunny\|badata >&2; exit 1; }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # $Id$
-# Syntax: $0 år måned dag time min sek
+# Syntax: $0 Ã¥r mÃ¥ned dag time min sek
 # Finner ut om datoen (norsk tid) er sommertid.
 # Returnerer 0 hvis vintertid, 1 hvis sommertid.
 
@@ -9,7 +9,7 @@ use Time::Local;
 
 my ($Year, $Mon, $Day, $Hour, $Min, $Sec) = @ARGV;
 
-$Year += 1900 if ($Year < 100); # Heia år 2000
+$Year += 1900 if ($Year < 100); # Heia Ã¥r 2000
 my $GM = timegm($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
 my $LO = timelocal($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
 

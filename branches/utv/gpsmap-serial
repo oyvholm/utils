@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # $Id$
-# Skriver ut seriellformatet fra Garmin-GPS'en på leselig format.
+# Skriver ut seriellformatet fra Garmin-GPS'en pÃ¥ leselig format.
 
 use strict;
 
@@ -11,8 +11,8 @@ while (<>) {
 	s/\s//g;
 	if (/^
 (.) # @
-(..) # År
-(..) # Måned
+(..) # Ã…r
+(..) # MÃ¥ned
 (..) # Dag
 (..) # Timer
 (..) # Minutter
@@ -26,7 +26,7 @@ while (<>) {
 (..) # Gradminutt
 (...) # Desimaler gradminutt
 (....) # Accurancy
-(......) # Høyde
+(......) # HÃ¸yde
 (...............)
 
 		/x) {
@@ -38,7 +38,7 @@ while (<>) {
 			$Rest) =
 			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18);
 			print(<<END);
-20$Year-$Month-$Day $Hour:$Min:$Sec $NS$Y_deg°$Y_degmin.$Y_mindec'/$EW$X_deg°$X_degmin.$X_mindec'
+20$Year-$Month-$Day $Hour:$Min:$Sec $NS$Y_degÂ°$Y_degmin.$Y_mindec'/$EW$X_degÂ°$X_degmin.$X_mindec'
 Accur: $Accur
 Alt: $Alt
 $Rest

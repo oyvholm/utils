@@ -5,7 +5,7 @@
 
 lockname=mkFiles.lock
 until mkdir $lockname 2>/dev/null; do
-	echo $0: $lockname: Venter på lock... >&2
+	echo $0: $lockname: Venter pÃ¥ lock... >&2
 	sleep 5
 done
 

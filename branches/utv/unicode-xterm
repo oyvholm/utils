@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # $Id$
-# Midlertidig på sunba
+# Midlertidig pÃ¥ sunba
 
-[ -e /sunba.mrk ] || { echo $0: Funker bare på sunba. Midlertidig greie.; exit 1; }
+[ -e /sunba.mrk ] || { echo $0: Funker bare pÃ¥ sunba. Midlertidig greie.; exit 1; }
 
 pushd /home/sunny/local/lib/X11/fonts/
 xset fp rehash
