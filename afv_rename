@@ -1,0 +1,41 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id: afv_rename,v 1.1 2004/04/11 22:34:40 sunny Exp $
+# Leser filnavn fra stdin og skifter navn på dem fra gammelt
+# afv-format (epoch) til ååååmmddTttmmssZ .
+#
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+
+$| = 1;
+
+while (<>) {
+	if (/^(.*\/)(\d{9,10})(\..*)$/) {
+		my ($First, $Num, $Rest) =
+		   (    $1,   $2,    $3);
+		my @TA = gmtime($Num);
+		my $Date = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+		my $Dest = "$First$Date: 2004/04/11 22:34:40 $Rest";
+		unless (-e $Dest) {
+			if (rename("$First$Num$Rest", $Dest)) {
+				print("$First$Num$Rest → $First$Date: 2004/04/11 22:34:40 $Rest\n");
+			}
+			else {
+				warn("rename(\"$First$Num$Rest\", \"$First$Date: 2004/04/11 22:34:40 $Rest\"): $!\n");
+			}
+		}
+		else {
+			warn("$Dest: File exists.\n");
+		}
+	}
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id: afv_rename,v 1.1 2004/04/11 22:34:40 sunny Exp $
