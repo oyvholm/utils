@@ -1,0 +1,19 @@
+#!/usr/bin/perl -w
+
+# $Id: htmlfold,v 1.1 2003/05/05 09:30:17 sunny Exp $
+# Legger inn vim-foldmerker foran og etter stdin. Brukes til å lage
+# folder i HTML.
+
+use strict;
+
+my $Linje = <>;
+my $Indent = "";
+
+$Linje =~ /^(\s+)/ && ($Indent = $1);
+print("$Indent<!-- \x7B\x7B\x7B -->\n$Linje");
+
+while (<>) {
+	print($_);
+}
+
+print("$Indent<!-- \x7D\x7D\x7D -->\n");
