@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.1 1999/03/16 00:13:05 sunny Exp $>
+S<$Id: tricgi.pm,v 1.2 1999/03/16 19:51:33 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -56,6 +56,11 @@ Bredden på dokumentet i pixels. 500 som default.
 Emailadressen til den som eier dokumentet. Denne blir ikke satt inn på
 copyrighter og sånn, der er det F<tritech@tritech.no> som hersker.
 
+=item I<${main::error_file}>
+
+Filnavn som er skrivbar av den som kjører scriptet (som oftest I<nobody>).
+Alle feilmeldinger og warnings havner her.
+
 =back
 
 =cut
@@ -64,8 +69,8 @@ copyrighter og sånn, der er det F<tritech@tritech.no> som hersker.
 #### Variabler
 ###########################################################################
 
-$cvs_id = '$Id: tricgi.pm,v 1.1 1999/03/16 00:13:05 sunny Exp $';
-$cvs_date = '$Date: 1999/03/16 00:13:05 $';
+$cvs_id = '$Id: tricgi.pm,v 1.2 1999/03/16 19:51:33 sunny Exp $';
+$cvs_date = '$Date: 1999/03/16 19:51:33 $';
 # $tricgi::sendmail_prog = "/bin/mail"; # Brukes til å sende meldinger til $WebMaster om ting som ikke fungerer som det skal.
 
 my $DTD_HTML4FRAMESET = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\n\"http://www.w3.org/TR/REC-html40/frameset.dtd\">\n";
@@ -180,7 +185,7 @@ E<lt>titleE<gt>E<lt>/titleE<gt> og E<lt>h1E<gt>E<lt>/h1E<gt>, og I<$Msg>
 som blir skrevet ut som beskjed.
 
 Hvis hverken I<$Utv> eller I<$Debug> er sann, skrives meldinga til
-I<$error_file> og en standardmelding blir skrevet ut. Folk får ikke vite
+I<${main::error_file}> og en standardmelding blir skrevet ut. Folk får ikke vite
 mer enn de har godt av.
 
 =cut
@@ -234,8 +239,8 @@ Content-type: text/html
 	</body>
 </html>
 END
-	touch($error_file) unless (-e $error_file);
-	open(ErrorFP, "+<$error_file") or exit;
+	touch(${main::error_file}) unless (-e ${main::error_file});
+	open(ErrorFP, "+<${main::error_file}") or exit;
 	flock(ErrorFP, LOCK_EX);
 	seek(ErrorFP, 0, 2) or exit;
 	printf(ErrorFP "%s HDIE %s\n", &curr_utc_time, $Msg);
@@ -247,7 +252,7 @@ END
 
 =head2 &HTMLwarn()
 
-En lightversjon av I<&HTMLdie()>, den skriver kun til I<$error_file>. Når
+En lightversjon av I<&HTMLdie()>, den skriver kun til I<${main::error_file}>. Når
 det oppstår feil men man ikke trenger å stoppe hele systemet. Brukes til
 småting som tellere som ikke virker og sånn.
 
@@ -262,10 +267,10 @@ sub HTMLwarn {
 		&print_header("CGI warning");
 		print "\n\t\t<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n";
 	}
-	if (-e $error_file) {
-		open(ErrorFP, ">>$error_file") or return;
+	if (-e ${main::error_file}) {
+		open(ErrorFP, ">>${main::error_file}") or return;
 	} else {
-		open(ErrorFP, ">$error_file") or return;
+		open(ErrorFP, ">${main::error_file}") or return;
 	}
 	print(ErrorFP "$curr_utc WARN $Msg\n");
 	close(ErrorFP);
@@ -328,11 +333,47 @@ dokumenter som separeres med E<lt>=pageE<gt>.
 
 FIXME: Skriver mer på denne seinere. Og gjør greia ferdig.
 
+print_doc() skal scanne fram til
+
 =cut
 
 sub print_doc {
 	my ($file_name, $page_num) = @_;
+	my $in_header = $TRUE;
 
+	open(FromFP, "<$file_name") || &HTMLdie("$file_name: Kan ikke åpne fila for lesing: $!");
+	LINE: while (<FromFP>) {
+		chomp;
+		next LINE if /^#\s/;
+		last unless length;
+		if (/^(\S+)\s+(.*)$/) {
+			$doc_val{$1} = $2;
+		} else {
+			&HTMLwarn("$file_name: Ugyldig headerinfo i linje $.: \"$_\"");
+		}
+	}
+	$doc_val{title} || &HTMLwarn("$file_name: Mangler title");
+	$doc_val{owner} || &HTMLwarn("$file_name: Mangler owner");
+	$doc_val{lang} || &HTMLwarn("$file_name: Mangler lang");
+	$doc_val{id} || &HTMLwarn("$file_name: Mangler id");
+	# $doc_val{} || &HTMLwarn("$file_name: Mangler ");
+	if ($Debug) {
+		&print_header("er i print_doc"); # debug
+		while (($act_name,$act_time) = each %doc_val) {
+			print "<br>\"$act_name\"\t\"$act_time\"\n";
+		}
+	}
+	# my ($DocTitle, $html_version, $Language, $user_background, $Refresh, $no_body, $Description, $Keywords, @StyleSheet) = @_;
+	&print_header($doc_val{title}, "", $doc_val{lang}, $doc_val{background}, $doc_val{refresh}, $doc_val{no_body}, $doc_val{description}, $doc_val{keywords});
+	while (<FromFP>) {
+		chomp;
+		print("\t\t$_\n");
+	}
+	print <<END;
+	</body>
+</html>
+END
+	close(FromFP);
 } # print_doc()
 
 ###########################################################################
@@ -489,6 +530,9 @@ sub print_header {
 	my $RefreshStr = $Refresh ? "<meta http-equiv=\"refresh\" content=\"$Refresh\" url=\"${main::Url}\">\n\t\t" : "";
 	my $KeywStr = length($Keywords) ? "<meta name=\"keywords\" content=\"$Keywords\">\n\t\t" : "";
 	my $CharSet = $STD_CHARSET unless length($CharSet);
+	my $DocId_str = length($doc_val{id}) ? <<END : "";
+	<!-- $doc_val{id} -->
+END
 
 	if (length($user_background)) {
 		if ($user_background =~ /\.(jpg|jpeg|gif|png)$/i) {
@@ -511,7 +555,7 @@ sub print_header {
 	}
 	print <<END;
 <html lang="$Language">
-	<!-- $cvs_id -->
+$DocId_str	<!-- $cvs_id -->
 	<!-- $main::cvs_id -->
 END
 	&Tabs(2); # html og head
@@ -602,4 +646,4 @@ underveis.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.1 1999/03/16 00:13:05 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.2 1999/03/16 19:51:33 sunny Exp $ ####
