@@ -1,3 +1,4 @@
 #!/bin/sh
+# $Id: tail-errorlog,v 1.2 1999/02/04 17:06:26 sunny Exp $
 
-tail -f /usr/local/apache-ssl/logs/k9_error_log
+tail -f /usr/local/apache-ssl/logs/k1_error_log
