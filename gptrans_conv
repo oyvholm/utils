@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.10 2003/07/20 02:03:17 sunny Exp $
+# $Id: gptrans_conv,v 1.11 2003/08/03 02:35:51 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -10,7 +10,9 @@ use utf8;
 use Getopt::Std;
 use Time::Local qw { timegm_nocheck };
 
-my $rcs_str = '$Id: gptrans_conv,v 1.10 2003/07/20 02:03:17 sunny Exp $';
+my $Debug = 0;
+
+my $rcs_str = '$Id: gptrans_conv,v 1.11 2003/08/03 02:35:51 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -30,6 +32,7 @@ Syntax: gptrans_conv [options] [filer [...]]
   -h    Hjælp mæ
   -o x  Bruk outputformatet x:
           clean
+          gpstrans (Uferdig)
           ps (Uferdig)
           xgraph
   -s    Kort («Short») format på datoen
@@ -50,9 +53,10 @@ my ($last_lat, $last_lon, $last_alt, $last_line) = (1000, 1000, 100000, ""); # V
 
 # Kunne vært et eget script på grunn av at det gjør sine helt egne greier, men like greit å samle det på en plass.
 # FIXME: Fjerner ikke første duplikatentryen.
-# FIXME: Se om det går å få flytta den inn i print_entry() så man slipper å ha to gptrans_conv’er i pipen
+# FIXME: Se om det går å få flytta den inn i print_entry() så man slipper å ha to gptrans_conv’er i pipen.
+# FIXME: Legg inn alle formatene.
 if ($opt_u) {
-	# {{{
+	# Kommenterer ut områder uten GPS-mottak. {{{
 	my ($start_date, $end_date, $found_dup) = ("", "", 0);
 	my @Dup = ();
 	while (<>) {
@@ -100,7 +104,9 @@ if ($opt_u) {
 	# }}}
 }
 
-if ($opt_o eq "ps") {
+if ($opt_o eq "gpstrans") {
+	print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
+} elsif ($opt_o eq "ps") {
 	print(ps_header(532, 6034, 533, 6040));
 	print("*u\n");
 }
@@ -208,12 +214,12 @@ sub print_entry {
 	# {{{
 	my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lat, $Lon, $Alt) = @_;
 	my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
-	$Year = sprintf("%04u", $Year);
+	$Year  = sprintf("%04u", $Year);
 	$Month = sprintf("%02u", $Month);
-	$Day = sprintf("%02u", $Day);
-	$Hour = sprintf("%02u", $Hour);
-	$Min = sprintf("%02u", $Min);
-	$Sec = sprintf("%02u", $Sec);
+	$Day   = sprintf("%02u", $Day);
+	$Hour  = sprintf("%02u", $Hour);
+	$Min   = sprintf("%02u", $Min);
+	$Sec   = sprintf("%02u", $Sec);
 	my $pause_len = 0;
 	my $do_print = 1;
 	my $Line = "";
@@ -246,6 +252,9 @@ sub print_entry {
 		if ($opt_o eq "xgraph") {
 			$pause_len && ($Line = "move ");
 			($Line .= "$Lat $Lon\n");
+		} elsif($opt_o eq "gpstrans") {
+			my ($gpt_lon, $gpt_lat) = (ddd_to_dms($Lon), ddd_to_dms($Lat));
+			$Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lon\t$gpt_lat\n";
 		} elsif ($opt_o eq "clean") {
 			$pause_len && ($Line = "\n");
 			($Line .= "$Lat $Lon\n");
@@ -260,7 +269,8 @@ sub print_entry {
 				$Lat,
 				$Lon,
 				$Alt,
-				"\n");
+				"\n"
+			);
 		}
 	}
 
@@ -276,9 +286,9 @@ sub print_entry {
 		print($Line);
 	}
 	$last_time = $ep_time;
-	$last_lat = $Lat;
-	$last_lon = $Lon;
-	$last_alt = $Alt;
+	$last_lat  = $Lat;
+	$last_lon  = $Lon;
+	$last_alt  = $Alt;
 	$last_line = $Line;
 	# }}}
 }
@@ -294,7 +304,7 @@ sub sec_to_string {
 }
 
 sub Tidsperiode {
-	# {{{
+	# Konverterer antall sekunder til mer leselig format. {{{
 	my $secs = shift;
 	my ($Day, $Hour, $Min, $Sec) = (0, 0, 0, 0);
 
@@ -314,7 +324,7 @@ sub Tidsperiode {
 }
 
 sub ps_header {
-	# {{{
+	# Skriver ut en Postscript-header. {{{
 	my ($bl_x, $bl_y, $br_x, $br_y) = @_;
 	my $Date = sec_to_string(time);
 	return(<<END);
@@ -345,4 +355,48 @@ END
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.10 2003/07/20 02:03:17 sunny Exp $
+sub ddd_to_dms {
+	# Konverterer koordinater til D°M'S.S" til ære for import av gpstrans-formatet inn i GPSman. {{{
+	# Basert på toDMS() henta fra gpstrans-0.39 for å få det helt kompatibelt.
+	my $ddd = shift;
+	my $Neg = 0;
+	$Neg = 0;
+	my ($Deg, $Min, $Sec) = (0, 0, 0);
+	my $Retval = "";
+
+	if ($ddd < 0.0) {
+		$ddd = 0 - $ddd;
+		$Neg = 1;
+	}
+	$Deg = int($ddd);
+	$ddd = ($ddd - $Deg) * 60.0;
+	$Min = int($ddd);
+	$Sec = ($ddd - $Min) * 60.0;
+
+	if ($Sec > 59.5) {
+		$Sec = 0.0;
+		$Min += 1.0;
+	}
+	if ($Min > 59.5) {
+		$Min = 0.0;
+		$Deg += 1.0;
+	}
+	if ($Neg) {
+		$Deg = 0 - $Deg;
+	}
+	D("Neg = $Neg , D = $Deg , M = $Min , S = $Sec\n");
+	$Retval = sprintf("%s%.0f\xB0%02.0f'%04.1f\"", $Neg ? "-" : "", $Deg, $Min, $Sec);
+	return $Retval;
+	# }}}
+}
+
+sub D {
+	# Skriver ut debuggingsmeldinger hvis $Debug . {{{
+	my $Txt = shift;
+	$Debug && print(STDERR $Txt);
+	# }}}
+}
+
+# vim: fdm=marker syntax=perl fenc=utf-8 :
+
+# End of file $Id: gptrans_conv,v 1.11 2003/08/03 02:35:51 sunny Exp $
