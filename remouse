@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# $Id: remouse,v 1.1 1999/02/11 20:19:06 sunny Exp $
+
+killall gpm
+sleep 1
+gpm -t ps2
