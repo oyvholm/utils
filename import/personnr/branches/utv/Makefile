@@ -1,9 +1,9 @@
 
 # Makefile for personnr.c
-# $Id: Makefile,v 1.2 1999/04/25 03:30:53 sunny Exp $
+# $Id: Makefile,v 1.2.2.1 2003/05/24 04:27:28 sunny Exp $
 
 CC = gcc
-CFLAGS = -O2 -g -ansi -pedantic
+CFLAGS = -O2 -g -ansi -pedantic -DNO_FRAC=1
 EXEC = personnr
 
 $(EXEC): personnr.c Makefile

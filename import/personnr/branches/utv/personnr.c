@@ -1,7 +1,7 @@
 
 /*
  * Skriver ut alle gyldige norske personnummer på en gitt dato
- * $Id: personnr.c,v 1.3 1999/05/21 12:17:21 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.1 2003/05/24 04:27:28 sunny Exp $
  *
  * Bare for å ha sagt det: Jeg tar ikke ansvar for hva folk måtte finne på
  * med dette programmet, lagde det bare på gøy.
@@ -37,11 +37,21 @@
  * ---------------------------
  *
  * x = a*3 + b*7 + c*6 + d*1 + e*8 + f*9 + g*4 + h*5 +i*2
+#ifndef NO_FRAC
  * j = 11 [1 - frac(x/11)]
+#else
+ * j = 11 - x % 11
+#endif
  * y = a*5 + b*4 + c*3 + d*2 + e*7 + f*6 + g*5 + h*4 + i*3 + j*2
+#ifndef NO_FRAC
  * k = 11 [1 - frac(y/11)]
+#else
+ * k = 11 - y % 11
+#endif
  *
+#ifndef NO_FRAC
  * j og k avrundes etter vanlige avrundingsregler.
+#endif
  * Dersom j eller k <= 9 er j eller k riktige kontrollsiffer.
  * Dersom j eller k = 10 er personnummeret ugyldig.
  * Dersom j eller k = 11 er j eller k = 0.
@@ -49,28 +59,32 @@
  * Det betyr at det for en fødselsdato ikke finnes mer enn noe over 200
  * mulige personnummer for hvert kjønn.
  *
+#ifndef NO_FRAC
  * "Frac" er desimaltallene ved resultatet av divisjonen med 11 som skal
  * trekkes fra 1. Eksempel: frac(126/11) = frac(11.45) = 0.45.
  * Det er ikke nødvendig å bruke mer enn to desimaler ved denne utregningen.
  *
+#endif
  * (C)opyleft by sunny
  * License: GNU GPL
  */
 
-#define VERSION      "1.10"
-#define RELEASE_DATE "1999-05-21"
+#define VERSION      "1.10a"
+#define RELEASE_DATE "$Date: 2003/05/24 04:27:28 $"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define c2i(c)  ((c) - '0')  /* (char)tall --> (int)tall */
+#ifndef NO_FRAC
 #define frac(a) (((int)((a) * 100) % 100) / (float)100)  /* Returnerer 2 desimaler */
+#endif
 
 #define EXIT_OK    0
 #define EXIT_ERROR 1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3 1999/05/21 12:17:21 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.1 2003/05/24 04:27:28 sunny Exp $";
 
 char *persnr(char *);
 
@@ -172,8 +186,12 @@ endfunc:
 
 char *persnr(char *orgbuf)
 {
+#ifndef NO_FRAC
 	int x, y;
 	float j, k;
+#else
+	int x, y, j, k;
+#endif
 	static char buf[12];
 
 	strcpy(buf, orgbuf);
@@ -181,19 +199,27 @@ char *persnr(char *orgbuf)
 	x = c2i(buf[0])*3 + c2i(buf[1])*7 + c2i(buf[2])*6 + c2i(buf[3])*1 + \
 	c2i(buf[4])*8 + c2i(buf[5])*9 + c2i(buf[6])*4 + c2i(buf[7])*5 + c2i(buf[8])*2;
 
+#ifndef NO_FRAC
 	j = 11 * (1 - frac((float)x / 11));
 	if (frac(j) >= 0.5)
 		j++;
 	j = (int)j;
+#else
+	j = 11 - x % 11;
+#endif
 
 	y = c2i(buf[0])*5 + c2i(buf[1])*4 + c2i(buf[2])*3 + c2i(buf[3])*2 + \
 	c2i(buf[4])*7 + c2i(buf[5])*6 + c2i(buf[6])*5 + c2i(buf[7])*4 + \
 	c2i(buf[8])*3 + j*2;
 
+#ifndef NO_FRAC
 	k = 11 * (1 - frac((float)y / 11));
 	if (frac(k) >= 0.5)
 		k++;
 	k = (int)k;
+#else
+	k = 11 - y % 11;
+#endif
 
 	if (j == 10 || k == 10) { /* Hvis j eller k == 10 er nummeret falskt */
 		strcpy(buf, ""); /* Returnerer tom streng hvis ulovlig */
@@ -214,4 +240,4 @@ endfunc:
 	return(buf);
 } /* persnr() */
 
-/**** End of file $Id: personnr.c,v 1.3 1999/05/21 12:17:21 sunny Exp $ ****/
+/**** End of file $Id: personnr.c,v 1.3.2.1 2003/05/24 04:27:28 sunny Exp $ ****/
