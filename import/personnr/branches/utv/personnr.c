@@ -1,10 +1,7 @@
 
 /*
- * Skriver ut alle gyldige norske personnummer på en gitt dato
- * $Id: personnr.c,v 1.3.2.2 2003/08/23 19:20:20 sunny Exp $
- *
- * Bare for å ha sagt det: Jeg tar ikke ansvar for hva folk måtte finne på
- * med dette programmet, lagde det bare på gøy.
+ * Skriver ut alle gyldige norske personnummer på angitte datoer
+ * $Id: personnr.c,v 1.3.2.3 2003/08/23 22:07:06 sunny Exp $
  *
  * Oppbygningen av personnummeret 020656-45850: {{{
  *
@@ -55,13 +52,14 @@
  * Dersom j eller k = 10 er personnummeret ugyldig.
  * Dersom j eller k = 11 er j eller k = 0.
  *
- * Det betyr at det for en fødselsdato ikke finnes mer enn noe over 200
+ * Det betyr at det for en fødselsdato ikke finnes mer enn litt over 200
  * mulige personnummer for hvert kjønn.
-#ifdef USE_FRAC
  *
+#ifdef USE_FRAC
  * "Frac" er desimaltallene ved resultatet av divisjonen med 11 som skal
  * trekkes fra 1. Eksempel: frac(126/11) = frac(11.45) = 0.45.
  * Det er ikke nødvendig å bruke mer enn to desimaler ved denne utregningen.
+ *
 #endif
  *
  * }}}
@@ -70,8 +68,8 @@
  * License: GNU General Public License
  */
 
-#define VERSION      "1.10.1"
-#define RELEASE_DATE "$Date: 2003/08/23 19:20:20 $"
+#define VERSION   "1.11"
+#define RCS_DATE  "$Date: 2003/08/23 22:07:06 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,9 +83,10 @@
 #define EXIT_OK    0
 #define EXIT_ERROR 1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.2 2003/08/23 19:20:20 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.3 2003/08/23 22:07:06 sunny Exp $";
 
 char *persnr(char *);
+int persnr_date(char *);
 void usage(int);
 
 char *progname = NULL;
@@ -95,85 +94,31 @@ char *progname = NULL;
 int main(int argc, char *argv[])
 {
 	/* {{{ */
-	register int i; /* Tellevariabel */
-	int retval = EXIT_OK,
-		startnum = 499; /* Avhengig av next_century */
-	char buf[12], birthdate[20], tmpbuf[12], century[3], iso_date[12];
-	char next_century = 0; /* 0 = 499 og nedover, 1 = 999 og nedover */
+	int retval = 0,
+	    i = 0;
 
 	(void)rcs_id; /* Unngå klaging fra kompilatorer */
 	progname = argv[0];
-	if (argc != 2 || (!strcmp(argv[1], "--help") || !strcmp(argv[1], "?") || !strcmp(argv[1], "-?")))
+	if (argc > 1 && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h") || !strcmp(argv[1], "?") || !strcmp(argv[1], "-?")))
 		usage(0);
 
-	fprintf(stderr, "\n--- Program for generering av norske personnummer ---\n\n");
-
-	sprintf(birthdate, "%.15s", argv[1]);
-
-	if ((strlen(birthdate) != 6) && (strlen(birthdate) != 8)) { /* Sjekk at lengden på datoen er seks eller åtte tegn */
-		fprintf(stderr, "%s: Feil format på datoen. Formatet skal være ddmmåå eller ddmmåååå.", progname);
-		retval = EXIT_ERROR;
-		goto endfunc;
+	if (argc > 1) {
+		for (i = 1; i < argc; i++) {
+			retval |= persnr_date(argv[i]);
+		}
+	} else {
+		char buf[20];
+		while (fgets(buf, 15, stdin), !feof(stdin)) {
+			char *p = strstr(buf, "\n");
+			if (p)
+				*p = '\0';
+			retval |= persnr_date(buf);
+		}
 	}
 
-	strcpy(century, "19"); /* Default århundre er 1900 */
-
-	/*
-	 * Her kommer det en sjekk som finner ut om det er spesifisert et
-	 * annet århundre, f.eks. 17081889, dvs. to ekstra siffer i året.
-	 */
-
-	if (strlen(birthdate) == 8) {
-		strncpy(century, birthdate + 4, 2); /* Nytt århundre på gang */
-		next_century = (atoi(century) % 2) ? 0 : 1;
-
-		strcpy(tmpbuf, birthdate);
-		sprintf(birthdate, "%c%c%c%c%c%c",
-		birthdate[0],
-		birthdate[1],
-		birthdate[2],
-		birthdate[3],
-		birthdate[6],
-		birthdate[7]);
-	}
-
-	startnum = next_century ? 999 : 499; /* Hvilket århundre skal brukes? */
-
-	sprintf(iso_date, "%2.2s%c%c-%c%c-%c%c",
-		century,
-		birthdate[4],
-		birthdate[5],
-		birthdate[2],
-		birthdate[3],
-		birthdate[0],
-		birthdate[1]);
-
-	fprintf(stdout, "Liste over alle gyldige norske personnummer for %s:\n\n", iso_date);
-	fprintf(stdout, "Gutter:\n\n");
-	for (i = startnum; i >= (startnum-499); i -= 2) {
-		sprintf(buf, "%s%3.3d\n", birthdate, i);
-		strcpy(tmpbuf, persnr(buf));
-		if (!strlen(tmpbuf))
-			continue;
-		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
-	}
-
-	fprintf(stdout, "\nJenter:\n\n");
-	for (i = (startnum-1); i >= (startnum-499); i -= 2) {
-		sprintf(buf, "%s%3.3d\n", birthdate, i);
-		strcpy(tmpbuf, persnr(buf));
-		if (!strlen(tmpbuf))
-			continue;
-		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
-	}
-
-	fprintf(stdout, "\n--- Utlisting slutt ---\n");
-
-endfunc:
-;
 	return(retval);
 	/* }}} */
-}
+} /* main() */
 
 char *persnr(char *orgbuf)
 {
@@ -232,26 +177,107 @@ endfunc:
 ;
 	return(buf);
 	/* }}} */
-}
+} /* persnr */
 
-void usage(int retval) {
+int persnr_date(char *birth_str)
+{
+	/* Sender alle gyldige personnr for en viss dato til stdout {{{ */
+	register int i; /* Tellevariabel */
+	int retval = EXIT_OK,
+		startnum = 999; /* Avhengig av curr_century */
+	char buf[12], birthdate[20], tmpbuf[12], century[3], iso_date[12];
+	char curr_century = 1; /* 0 = 499 og nedover, 1 = 999 og nedover */
+
+	sprintf(birthdate, "%.15s", birth_str);
+
+	if ((strlen(birthdate) != 6) && (strlen(birthdate) != 8)) { /* Sjekk at lengden på datoen er seks eller åtte tegn */
+		fprintf(stderr, "%s: \"%s\": Feil format på datoen. Formatet skal være ddmmåå eller ddmmåååå.\n", progname, birthdate);
+		retval = EXIT_ERROR;
+		goto endfunc;
+	}
+
+	strcpy(century, "20"); /* Default århundre er 20XX */
+
+	/*
+	 * Her kommer det en sjekk som finner ut om det er spesifisert et
+	 * annet århundre, f.eks. 24091971, dvs. to ekstra siffer i året.
+	 */
+
+	if (strlen(birthdate) == 8) {
+		strncpy(century, birthdate + 4, 2); /* Nytt århundre på gang */
+		curr_century = (atoi(century) % 2) ? 0 : 1;
+
+		strcpy(tmpbuf, birthdate);
+		sprintf(birthdate, "%c%c%c%c%c%c",
+		birthdate[0],
+		birthdate[1],
+		birthdate[2],
+		birthdate[3],
+		birthdate[6],
+		birthdate[7]);
+	}
+
+	startnum = curr_century ? 999 : 499; /* Hvilket århundre skal brukes? */
+
+	sprintf(iso_date, "%2.2s%c%c-%c%c-%c%c",
+		century,
+		birthdate[4],
+		birthdate[5],
+		birthdate[2],
+		birthdate[3],
+		birthdate[0],
+		birthdate[1]);
+
+	fprintf(stdout, "\nListe over alle gyldige norske personnummer for %s:\n\n", iso_date);
+	fprintf(stdout, "Gutter:\n\n");
+	for (i = startnum; i >= (startnum-499); i -= 2) {
+		sprintf(buf, "%s%3.3d\n", birthdate, i);
+		strcpy(tmpbuf, persnr(buf));
+		if (!strlen(tmpbuf))
+			continue;
+		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
+	}
+
+	fprintf(stdout, "\nJenter:\n\n");
+	for (i = (startnum-1); i >= (startnum-499); i -= 2) {
+		sprintf(buf, "%s%3.3d\n", birthdate, i);
+		strcpy(tmpbuf, persnr(buf));
+		if (!strlen(tmpbuf))
+			continue;
+		fprintf(stdout, "%6.6s-%5.5s\n", tmpbuf, tmpbuf + 6);
+	}
+
+	fprintf(stdout, "\n--- Utlisting for %s slutt ---\n", iso_date);
+
+endfunc:
+;
+	return(retval);
+	/* }}} */
+} /* persnr_date() */
+
+void usage(int retval)
+{
 	/* Send hjelpen til stdout {{{ */
 	int charnum; /* Cosmetic thing */
 
 	putchar('\n');
-	charnum = printf("%s ver. %s (%s) -- (C)opyleft by sunny", progname, VERSION, RELEASE_DATE);
+	charnum = printf("%s ver. %s (%s) -- (C)opyleft by sunny", progname, VERSION, RCS_DATE);
 	putchar('\n');
 
 	for (; charnum; charnum--)
 		putchar('-');
-	printf("\nBruk: %s fødselsdato\n\n", progname);
-	printf("Skriver ut alle gyldige norske personnummer for en gitt dato.\n");
-	printf("Fødselsdatoen spesifiseres på formatet ddmmåå. Hvis et annet århundre enn\n");
-	printf("1900 skal brukes, brukes formatet ddmmåååå.\n\n");
-	printf("Programlisens: GNU General Public License, se fila COPYING for detaljer.\n\n");
+	printf(
+		"\nBruk: %s [fødselsdato [...]]\n\n"
+		"Skriver ut alle gyldige norske personnummer for en eller flere datoer.\n"
+		"Fødselsdatoen spesifiseres på formatet ddmmåå. Hvis et annet århundre\n"
+		"enn 20XX skal brukes, brukes formatet ddmmåååå.\n\n"
+		"Hvis ingen datoer skrives på kommandolinja, leser programmet datoer fra\n"
+		"standard input.\n\n"
+		"Programlisens: GNU General Public License, se fila COPYING for detaljer.\n\n"
+	, progname);
 	exit(retval);
 	/* }}} */
-}
+} /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.2 2003/08/23 19:20:20 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.3 2003/08/23 22:07:06 sunny Exp $ */
