@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.12 2004/03/23 11:26:55 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -45,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.12 2004/03/23 11:26:55 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -56,7 +56,7 @@ $suncgi::DTD_HTML4STRICT = qq{<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
 
 $suncgi::STD_LANG = "no";
 $suncgi::STD_BACKGROUND = "";
-$suncgi::STD_CHARSET = "ISO-8859-1"; # Hvis $suncgi::CharSet ikke er definert. Latin1 foreløpig, men bare vent. Snart kommer UTF-8 og tar deg, og DA.... Say no more. Vi må bare vente litt.
+$suncgi::STD_CHARSET = "ISO-8859-1"; # Hvis $suncgi::CharSet ikke er definert. Latin1 foreløpig, men bare vent. Snart kommer UTF-8 og tar deg, og d̲a̲... Say no more. Vi må bare vente litt til h_print() er lagt inn diverse steder.
 $suncgi::STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
 $suncgi::STD_DOCWIDTH = '95%'; # Hvis ikke $suncgi::doc_width er spesifisert
 $suncgi::STD_HTMLDTD = $suncgi::DTD_HTML4LOOSE;
@@ -824,8 +824,8 @@ sub print_header {
 	<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
 END
 	Tabs(1);
-	utf8_print($RefreshStr) if length($RefreshStr);
-	utf8_print(<<END);
+	h_print($RefreshStr) if length($RefreshStr);
+	h_print(<<END);
 <meta name="author" content="&#216;yvind A. Holm">
 <meta name="copyright" content="&#169; &#216;yvind A. Holm">
 <meta name="date" content="$DocumentTime">
@@ -834,13 +834,13 @@ END
 <link rev="made" href="mailto:$suncgi::WebMaster">
 END
 	# tab_print ("Tabs = Tabs\n");
-	utf8_print($style_sheet) if length($style_sheet);
-	utf8_print($head_script) if length($head_script);
-	utf8_print("<!-- \x7D\x7D\x7D -->\n");
+	h_print($style_sheet) if length($style_sheet);
+	h_print($head_script) if length($head_script);
+	h_print("<!-- \x7D\x7D\x7D -->\n");
 	Tabs(-1);
 	print("</head>\n");
 	unless ($no_body) {
-		utf8_print("<body$body_attr>\n");
+		h_print("<body$body_attr>\n");
 		Tabs(1);
 	}
 	# }}}
@@ -947,10 +947,12 @@ sub utf8_print {
 
 sub h_print {
 	# Det er håp om at dette skal bli den standardiserte utskriftsrutina for HTML. {{{
-	# Forhåpentligvis skroting av ting som tab_print(), utf8_print() og
-	# standard print() osv. $from_charset kan spesifiseres hvis det er noe
-	# annet enn UTF-8 som skal skrives ut. $use_entities settes til !0 hvis
-	# 8-bits tegn IKKE skal konverteres til numeriske entities.
+	# Forhåpentligvis medfører den skroting av ting som tab_print(),
+	# utf8_print() og standard print() osv. $from_charset kan spesifiseres hvis
+	# det er noe annet enn UTF-8 som skal skrives ut. Der er det bare
+	# ISO-8859-1 som støttes, noe annet gidder jeg ikke å surre med.
+	# $use_entities settes til !0 hvis 8-bits tegn IKKE skal konverteres til
+	# numeriske entities.
 
 	my ($Txt, $from_charset, $no_entities) = @_;
 	deb_pr(join("|", "Går inn i h_print(", @_, ")"));
@@ -958,11 +960,6 @@ sub h_print {
 	defined($no_entities) || ($no_entities = 0);
 	length($from_charset) || ($from_charset = "UTF-8");
 	length($no_entities) || ($no_entities = 0);
-
-	# from = utf8 && to = utf8
-	# from = utf8 && to = latin1
-	# from = latin1 && to = utf8
-	# from = latin && to = latin1
 
 	unless ($suncgi::header_done) {
 		HTMLwarn("h_print() uten at print_header() er kjørt.");
@@ -1077,12 +1074,6 @@ sub utf8_to_entity {
 		) : (
 			sprintf("&#%u;", $Val)
 		);
-	# CO: Skrot {{{
-	# begin-base64 644 -
-	# H4sIAM0oTEACA+NMzijSUAlLzNFUsFIA0Qo2tgoGFW5uXJycmgr2CsjSxQVF
-	# mXklaRpKasqqpdZKmjpgDVycmtZcAIilvwRHAAAA
-	# ====
-	# }}}
 	deb_pr("utf8_to_entity() returnerer \"$Retval\"");
 	return($Retval);
 	# }}}
@@ -1156,7 +1147,7 @@ suncgi — HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.12 2004/03/23 11:26:55 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1529,4 +1520,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.12 2004/03/23 11:26:55 sunny Exp $ ####
