@@ -5,11 +5,19 @@
 if [ -e /ww.mrk ]; then
   tethereal -t ad -l -q -f '(not port 80)' | \
   egrep -v \
-    -e '194.248.216.3 .*TCP .*ssh' \
+    -e '194\.248\.216\.3 .*TCP .*ssh' \
     -e 'Intel_22:.*Ethernet II' \
     -e 'Cisco_[1-9].* -> ' \
-    -e '(radio1.hiof.no|nett.ba.no) -> (radio1.hiof.no|nett.ba.no)' \
-    -e '(ns.online.no|nett.ba.no) -> (ns.online.no|nett.ba.no)'
+    -e '(radio1\.hiof\.no|nett\.ba\.no) -> (radio1\.hiof\.no|nett\.ba\.no)' \
+    -e '(ns\.online\.no|nett\.ba\.no) -> (ns\.online\.no|nett\.ba\.no)'
+elif [ -e /nett2.mrk ]; then
+  tethereal -t ad -l -q -f '' | \
+  egrep -v \
+    -e '194\.248\.216\.3 .*TCP .*ssh' \
+    -e 'Intel_22:.*Ethernet II' \
+    -e 'Cisco_[1-9].* -> ' \
+    -e '(ns\.online\.no|194\.248\.216\.20|nett2\.ba\.no) -> (ns\.online\.no|194\.248\.216\.20|nett2\.ba\.no)' \
+    -e ' HTTP Continuation'
 fi
 
 # vim: set ts=2 sw=2 sts=2 et :
