@@ -1,9 +1,9 @@
 
 /*
  * [Beskrivelse]
- * $Id: std.c,v 1.4 1999/05/04 11:50:56 sunny Exp $
+ * $Id: std.c,v 1.5 2002/09/01 00:37:38 sunny Exp $
  *
- * (C)opyleft Oyvind A. Holm <sunny@dataguard.no>
+ * (C)opyleft Oyvind A. Holm <sunny@sunbase.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ void usage(int);
  * Global variables
  */
 
-static char rcs_id[] = "$Id: std.c,v 1.4 1999/05/04 11:50:56 sunny Exp $";
+static char rcs_id[] = "$Id: std.c,v 1.5 2002/09/01 00:37:38 sunny Exp $";
 char *progname;
 int  debug = 0;
 FILE *stddebug = stderr;
@@ -51,7 +51,7 @@ FILE *stddebug = stderr;
 int main(int argc, char *argv[])
 {
 	int c,
-		retval = EXIT_OK;
+	    retval = EXIT_OK;
 
 	progname = argv[0];
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 		 */
 
 		c = getopt_long (argc, argv, "hV",
-			long_options, &option_index);
+		    long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 				else if (!strcmp(long_options[option_index].name, "license"))
 				{
 					fprintf(stdout,
-						"(C>opyleft Oyvind A. Holm <sunny@dataguard.no>\n"
+						"(C>opyleft Oyvind A. Holm <sunny@sunbase.org>\n"
 						"\n"
 						"This program is free software; you can redistribute it and/or modify\n"
 						"it under the terms of the GNU General Public License as published by\n"
@@ -214,4 +214,4 @@ void usage(int retval)
 	exit(retval);
 } /* usage() */
 
-/***** End of file $Id: std.c,v 1.4 1999/05/04 11:50:56 sunny Exp $ *****/
+/***** End of file $Id: std.c,v 1.5 2002/09/01 00:37:38 sunny Exp $ *****/
