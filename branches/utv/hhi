@@ -1,30 +1,104 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.7 2002/12/03 05:45:22 sunny Exp $
+# $Id: hhi,v 1.1.2.8 2003/02/02 09:55:45 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 #===============================================
 
 use strict;
 
-my $last_level = 0;
+my $last_level = 1;
 my @header_num = qw{0};
+my @Data = ();
+my @Toc = ();
 
 while (<>) {
-	chomp();
-	if (!m#<!-- nohhi --># && m#^(.*)<(h)(\d+)(.*?)>(.*)#i) {
+	if (!m#<!-- nohhi --># && m#^(.*)<(h)(\d+)(.*?)>(.*)$#i) {
 		my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
 		if ($header_level > 1) {
 			splice(@header_num, $header_level-1) if ($header_level < $last_level);
+			if ($header_level - $last_level > 1) {
+				warn("$0: Line $.: Header skip ($last_level to $header_level)\n");
+				for (my $Tmp = 0; $Tmp < $header_level-2; $Tmp++) {
+					defined($header_num[$Tmp]) || ($header_num[$Tmp] = "");
+				}
+			}
 			$header_num[$header_level-2]++;
 			my $tall_str = join(".", @header_num);
 			my $name_str = $tall_str;
-			$Rest =~ s#^(<a name="h-.*?">|)([\d\s\.]+)(</a>|)(.*)#$2#;
-			# ($tall_str .= ".") if ($header_level == 2);
-			$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"h-$name_str\">$tall_str</a> $Rest";
+			# print("\$Rest før   = \"$Rest\"\n");
+
+			# Intro</h2>
+			# 1. Intro</h2>
+			# <a name="h-1">1.</a> Intro</h2>
+
+			if ($Rest =~ m#^(<a name="h-.*?">[\d\.]+</a>\s+)(.*?)$#i) {
+				# print("Rest: Fant a name.\n");
+				$Rest = $2;
+				# print("\$Rest etter a name = \"$Rest\"\n");
+			}
+			if ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
+				# print("Rest: Fant desimal først.\n");
+				$Rest = $2;
+				# print("\$Rest etter desimal = \"$Rest\"\n");
+			}
+			# print("\$Rest etter = \"$Rest\"\n");
+			($tall_str .= ".") if ($header_level == 2);
+			$_ = "${Pref}<${H}${header_level}${Elem}><a name=\"h-$name_str\">$tall_str</a> $Rest\n";
+			push(@Toc, "<${H}${header_level}${Elem}><a href=\"#h-$name_str\">$tall_str</a> $Rest") unless (/<!-- nohhitoc -->/i);
 			$last_level = $header_level;
 		}
+		push(@Data, "$_");
+	} elsif (/<!-- hhitoc -->/i) {
+		my $Found = 1;
+		my $line_num = $.;
+		push(@Data, "$_");
+		while (<>) {
+			if (m#<!-- /hhitoc -->#i) {
+				push(@Data, "$_");
+				$Found = 0;
+				last;
+			}
+		}
+		$Found && die("$0: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
+	} else {
+		push(@Data, "$_");
 	}
-	print("$_\n");
+	# print("$_");
 }
+
+for my $Line (@Data) {
+	if ($Line =~ /^(\s*)(<!-- hhitoc -->(.*)$)/i) {
+		my ($Indent, $HT, $End) = ($1, $2, $3);
+		print("$Line$Indent<ul>\n");
+		my $Old = 0;
+		my ($Cnt, $Txt) = (0, "");
+		for (@Toc) {
+			if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
+				($Cnt, $Txt) = ($1, $2);
+				my $Diff = $Cnt-$Old;
+				my $Tab = ""; # ($Cnt > 1) ? "\t" x ($Cnt-1) : "";
+				if ($Old && $Diff > 0) {
+					for (my $T = $Diff; $T; $T--) {
+						print("$Indent<ul>\n");
+					}
+				} elsif ($Old && $Diff < 0) {
+					for (my $T = $Diff; $T; $T++) {
+						print("$Indent</ul>\n");
+					}
+				}
+				# print("Diff = \"$Diff\"\n");
+				print("$Indent<li>$Txt</li>\n");
+				$Old = $Cnt;
+			}
+		}
+		for (; $Cnt > 1; $Cnt--) {
+			print("$Indent</ul>\n");
+		}
+	} else {
+		print("$Line");
+	}
+}
+
+# End of file $Id: hhi,v 1.1.2.8 2003/02/02 09:55:45 sunny Exp $
