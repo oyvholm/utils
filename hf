@@ -1,16 +1,16 @@
 #!/usr/bin/perl -w
 
-#========================================================================
+#=======================================================================
 # $Id$
 # Formatterer HTML-source med TAB’er
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
 # Lisens: GNU GPL
 #
-# FIXME: Hvis start+end-elementer står på samme linje, blir ikke
-# innrykket rett. En eller annen rekursiv sjekk på linjene må kanskje
+# FIXME: Hvis start+end-elementer står på samme linje, blir ikke 
+# innrykket rett. En eller annen rekursiv sjekk på linjene må kanskje 
 # gjøres. Foreløpig får man sette dem på hver sin linje.
-#========================================================================
+#=======================================================================
 
 use strict;
 use Getopt::Std;
@@ -106,11 +106,11 @@ Syntax: $0 [valg] [filer [...]]
 Options:
   -a    Fjern space i begynnelsen av linja også før indenting.
   -h    Vis denne hjelpen
-  -H    Legg til en TAB for hver <h1>, <h2>, <h3> osv for å lettere se
+  -H    Legg til en TAB for hver <h1>, <h2>, <h3> osv for å lettere se 
         strukturen i dokumentet.
   -i n  Start med n TAB’er som indent
   -w    Fjern whitespace på slutten av linjene
-  -s    Dropp linjer som her en % i starten. Det er datafilene på
+  -s    Dropp linjer som her en % i starten. Det er datafilene på 
         www.sunbase.org som er sånn.
 
 END
@@ -118,6 +118,6 @@ END
     # }}}
 }
 
-vim: set ft=perl sw=4 ts=4 sts=4 expandtab fenc=utf8 :
+# vim: set ft=perl sw=4 ts=4 sts=4 expandtab fenc=utf8 :
 
 # End of file $Id$
