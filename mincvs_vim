@@ -6,11 +6,11 @@ vimdir=$HOME/src/other/vim
 vimlinks=$HOME/vim
 osvim=$HOME/src/cvs/norwegian_vim/msgs/vim
 
-for f in $vimdir $vimdir/vim.clean $vimdir/vim $osvim ; do
-	[ -d $f ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
+for f in $vimdir $vimdir/vim.clean $osvim ; do
+	[ -d $f/. ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
 done
 
-if [ ! -d $vimlinks ]; then
+if [ ! -d $vimlinks/. ]; then
 	echo ======== $0: $vimlinks: Finnes ikke fra før, lager vimlinker...
 	mkdir $vimlinks || { echo "$0: mkdir $vimlinks: Det gikk rimelig dårlig. Avslutter." >&2; exit 1; }
 	cd $vimlinks || { echo "$0: cd $vimlinks: Klarte ikke å gå dit. Avslutter." >&2; exit 1; }
@@ -21,7 +21,7 @@ cd $osvim || { echo "cd $osvim: Gikk på trynet." >&2; exit 1; }
 echo "======== cd $osvim; cvs -q upd -dA -r official_vim"
 cvs -q upd -dA -r official_vim
 cd $vimdir || { echo "cd $vimdir: Gikk på trynet." >&2; exit 1; }
-[ -d vim ] || mkdir vim || { echo "mkdir vim: Gikk te hælvete." >&2; exit 1; }
+[ -d vim/. ] || mkdir vim || { echo "mkdir vim: Gikk te hælvete." >&2; exit 1; }
 echo "======== cd $vimdir; rsync -av --delete vim.clean/ vim"
 rsync -av --delete vim.clean/ vim
 
