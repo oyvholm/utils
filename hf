@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: hf,v 1.9 2000/04/10 11:17:52 sunny Exp $
+# $Id: hf,v 1.10 2002/02/14 17:30:02 sunny Exp $
 # Formatterer HTML-source med TAB'er
 
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -12,13 +12,18 @@ use strict;
 # &Getopts('hs');
 
 my $is_pre = 0;
-my $opt_a = 0;
+my ($opt_a, $opt_H) = (0, 0);
 my $prog_name = $0;
 $prog_name =~ s!.*/(.+?)$!$1!;
 
 &print_help() if ($ARGV[0] =~ /^(--help|-h)$/);
 if ($ARGV[0] =~ /^-a$/) {
 	$opt_a = 1;
+	shift;
+}
+
+if ($ARGV[0] =~ /^-H$/) {
+	$opt_H = 1;
 	shift;
 }
 
@@ -41,6 +46,7 @@ for (; $tab_indent; $tab_indent--) {
 }
 
 my $line_exp = $opt_a ? '^\s+(.*)' : '^\t+(.*)';
+my $header_indent = "";
 
 while (<>) {
 	my $Line = $_;
@@ -51,6 +57,9 @@ while (<>) {
 	unless($is_pre) {
 		# $Line =~ $opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
 		$Line =~ s/$line_exp/$1/;
+		if ($opt_H && $Line =~ /<h([1-6]).*?>/i) {
+			$header_indent = "\t" x $1;
+		}
 		for $f (@Elements) {
 			if ($Line =~ m!</($f)([ >])!i) { # Hvis end-tag ble funnet...
 				$Element = $1;
@@ -59,7 +68,7 @@ while (<>) {
 				# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
 			}
 		}
-		$out_line = "$Tabs$Line";
+		$out_line = "$header_indent$Tabs$Line";
 		$out_line =~ s/\s+$//g; # Fjern alle whitespace på slutten
 		print "$out_line\n";
 		for $f (@Elements) {
@@ -97,4 +106,4 @@ END
 	exit(0);
 } # print_help()
 
-#### End of file $Id: hf,v 1.9 2000/04/10 11:17:52 sunny Exp $ ####
+#### End of file $Id: hf,v 1.10 2002/02/14 17:30:02 sunny Exp $ ####
