@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: hf,v 1.8 2000/03/27 00:18:31 sunny Exp $
+# $Id: hf,v 1.9 2000/04/10 11:17:52 sunny Exp $
 # Formatterer HTML-source med TAB'er
 
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -11,7 +11,16 @@ use strict;
 # require 'getopts.pl';
 # &Getopts('hs');
 
+my $is_pre = 0;
+my $opt_a = 0;
+my $prog_name = $0;
+$prog_name =~ s!.*/(.+?)$!$1!;
+
 &print_help() if ($ARGV[0] =~ /^(--help|-h)$/);
+if ($ARGV[0] =~ /^-a$/) {
+	$opt_a = 1;
+	shift;
+}
 
 $| = 1;
 
@@ -25,9 +34,13 @@ my @Elements = (
 	"th", "tr", "ul"
 );
 
+$tab_indent = 0 if ($tab_indent <= 0);
+
 for (; $tab_indent; $tab_indent--) {
 	$Tabs .= "\t";
 }
+
+my $line_exp = $opt_a ? '^\s+(.*)' : '^\t+(.*)';
 
 while (<>) {
 	my $Line = $_;
@@ -35,27 +48,33 @@ while (<>) {
 	my $f = "";
 	my $out_line;
 
-	# $Line =~ $opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
-	$Line =~ s/^\t+(.*)/$1/;
-	for $f (@Elements) {
-		if ($Line =~ m!</($f)([ >])!i) { # Hvis end-tag ble funnet...
-			$Element = $1;
-			$tab_indent--;
-			$Tabs =~ s/\t$//;
-			# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+	unless($is_pre) {
+		# $Line =~ $opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
+		$Line =~ s/$line_exp/$1/;
+		for $f (@Elements) {
+			if ($Line =~ m!</($f)([ >])!i) { # Hvis end-tag ble funnet...
+				$Element = $1;
+				$tab_indent--;
+				$Tabs =~ s/\t$//;
+				# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+			}
 		}
-	}
-	$out_line = "$Tabs$Line";
-	$out_line =~ s/\s+$//g; # Fjern alle whitespace på slutten
-	print "$out_line\n";
-	for $f (@Elements) {
-		if ($Line =~ m!<($f)([ >])!i) { # Hvis begin-tag ble funnet...
-			$Element = $1;
-			$tab_indent++;
-			$Tabs .= "\t";
-			# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+		$out_line = "$Tabs$Line";
+		$out_line =~ s/\s+$//g; # Fjern alle whitespace på slutten
+		print "$out_line\n";
+		for $f (@Elements) {
+			if ($Line =~ m!<($f)([ >])!i) { # Hvis begin-tag ble funnet...
+				$Element = $1;
+				$tab_indent++;
+				$Tabs .= "\t";
+				# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+			}
 		}
+	} else {
+		print;
 	}
+	$is_pre = 1 if ($Line =~ /<pre>/i);
+	$is_pre = 0 if ($Line =~ m!</pre>!i);
 }
 
 #   -s  Split block elements on separate lines (not finished yet)
@@ -63,14 +82,19 @@ while (<>) {
 sub print_help {
 	print <<END;
 
-Syntax: $0 [indentval [files ...]]
-
 HTML formatter
 
-indentval er startantall TAB'er. Hvis filnavn skal spesifiseres, bruk 0.
+Syntax: $0 [-a] [indentval [files ...]]
+
+indentval forskyver HTML'en med antall TAB'er.
+Hvis filnavn skal spesifiseres, bruk 0.
+Eksempel: $prog_name 0 foo.html
+
+Options:
+  -a  Fjern space i begynnelsen av linja også før indenting.
 
 END
 	exit(0);
 } # print_help()
 
-#### End of file $Id: hf,v 1.8 2000/03/27 00:18:31 sunny Exp $ ####
+#### End of file $Id: hf,v 1.9 2000/04/10 11:17:52 sunny Exp $ ####
