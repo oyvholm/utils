@@ -65,6 +65,7 @@ Options:
                fig  (XFig)
                png  (.png)
                ps   (Postscript)
+               svg  (Scalable Vector Graphics)
   -sampN     set samples N
   -t"X"      Use title X
   -xrXX:YY   Use X range XX:YY
@@ -143,6 +144,8 @@ END
 				print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
 			} elsif ($opt_o =~ /.*\.fig/i) {
 				print(GnupFP "set terminal fig color big metric\nset output \"$opt_o\"\n");
+			} elsif ($opt_o =~ /.*\.svg/i) {
+				print(GnupFP "set terminal svg\nset output \"$opt_o\"\n");
 			} else {
 				die("Unkonwn outfile type, has to be .ps or .png\n");
 			}
@@ -185,6 +188,9 @@ END
 		}
 		if ($opt_o =~ /^.*\.ps$/i) {
 			system("gv $opt_o");
+		}
+		if ($opt_o =~ /^.*\.svg$/i) {
+			system("inkscape $opt_o");
 		}
 		# }}}
 	} else {
