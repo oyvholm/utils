@@ -1,0 +1,80 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id$
+# Extracts the last checkin from RCS files.
+# Reads file names of the ,v files from stdin and stores the
+# extracted data under Extracted/ with the same file structure
+# it’s found. Example:
+#   find -name '*,v' -type f | rcs-extract
+#
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+use File::Path;
+
+$| = 1;
+
+my $Pref = ".Extracted/";
+
+while (<>) {
+	chomp;
+	my $File = $_;
+	my $end_found = 0;
+	print("Opening $File...");
+	if (open(FromFP, "<$File")) {
+		binmode(FromFP);
+		my $Dir = "";
+		my $dest_dir = "$Pref";
+		if ($File =~ m/^(.*)\//) {
+			$Dir = $1;
+			$dest_dir = "$Pref$Dir";
+			D("[\$dest_dir = \"$dest_dir\"]");
+			# -d $dest_dir || mkpath($dest_dir, 1) || warn("$dest_dir: Couldn’t create path: $!\n");
+		}
+		mkpath($dest_dir, 1);
+		while (<>) {
+			last if /^text$/;
+		}
+		$Pref =~ s#//#/#g;
+		my $to_file = "$Pref$File";
+		$to_file =~ s/^(.*),v$/$1/;
+		if (-e $to_file) {
+			my $Rand = ".rand.$$." . substr(random(), 0, 5);
+			warn("$to_file: File already exists, adding random extension: $Rand");
+			$to_file .= $Rand;
+		}
+		if (open(ToFP, ">$to_file")) {
+			binmode(ToFP);
+			my $Line = "";
+			while (<FromFP>) {
+				if (s/([^@])(@)([^@])/$1$3/g) {
+					print(STDERR "[Found end]");
+					$end_found = 1;
+				}
+				s/@@/@/g;
+				$end_found && s/^\@$//;
+				print(ToFP $_);
+				$end_found && last;
+			}
+			close(ToFP);
+			close(FromFP);
+		} else {
+			warn("$to_file: Unable to open file for write: $!");
+		}
+	} else {
+		warn("$File: Unable to open file for read: $!\n");
+	}
+}
+
+sub D {
+	print(STDERR @_);
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id$
