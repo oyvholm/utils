@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.8 2000/03/29 14:40:10 sunny Exp $
+# $Id: dbk,v 1.9 2000/04/10 11:32:04 sunny Exp $
 #
 # (C)opyleft Øyvind A. Holm <sunny256@mail.com>
 # GNU-lisens.
@@ -117,11 +117,12 @@ if ($opt_t) {
 	$which_line++;
 	# $which_line++ if $time_not_found;
 	system("$Editor +$which_line $dbk_file");
-	$min_size = 51;
+	$min_size = 49;
 } else {
 	$min_size = 25;
 }
 system("$Viewer $dbk_file");
+system("clear");
 
 @stat_info = stat($dbk_file);
 $file_size = $stat_info[7];
@@ -182,4 +183,4 @@ END
 
 __END__
 
-#### End of file $Id: dbk,v 1.8 2000/03/29 14:40:10 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.9 2000/04/10 11:32:04 sunny Exp $ ####
