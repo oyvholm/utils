@@ -14,6 +14,7 @@ my $is_pre  = 0;
 my $is_re   = 0;
 my $prog_name = "commout";
 my $spc_str = "";
+my $Kommentar = "";
 
 if ($#ARGV > -1) {
     $_ = $ARGV[0];
@@ -27,11 +28,11 @@ if ($#ARGV > -1) {
     $comm_pattern = '#';
 }
 
-defined($ARGV[1]) && ($spc_str = " ");
+defined($ARGV[1]) && ($spc_str = " ", $Kommentar = $ARGV[1]);
 
-$is_html && print("<!--$spc_str" . $ARGV[1] . " \x7B\x7B\x7B\n") ||
+$is_html && print("<!--$spc_str" . $Kommentar . " \x7B\x7B\x7B\n") ||
 $is_pre && printf("%s<pre>\n", $is_re ? "" : "<p>") ||
-$is_c && printf("/*$spc_str" . $ARGV[1] . "\n");
+$is_c && printf("/*$spc_str" . $Kommentar . "\n");
 
 my $Bck = "";
 while (<STDIN>) {
