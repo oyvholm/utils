@@ -14,8 +14,8 @@ cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; exit 0; }
 x_flags="--enable-gui=no --without-x"
 vim_size=huge
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk ]; then
-	echo ======== Man er på petronas eller vagabond. Lag lokal vim.
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o $HOME/.solsje.mrk ]; then
+	echo ======== Man er på petronas, vagabond eller solsje. Lag lokal vim.
 	vimdir=$HOME/local/prg/vim
 	[ -e $HOME/.vagabond.mrk ] && vim_size=normal
 else
@@ -34,9 +34,9 @@ echo ======== make
 make
 echo
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk ]; then
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o $HOME/.solsje.mrk ]; then
 	# installcmd="rm -rf $vimdir && make install"
-	echo Vi er på petronas eller vagabond, så vi nøyer oss med:
+	echo Vi er på petronas, vagabond eller solsje, så vi nøyer oss med:
 else
 	# installcmd="su -c \"rm -rf $vimdir && make install\""
 	echo Hvis det gikk bra, er det på tide å bli root, og...
