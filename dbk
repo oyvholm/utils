@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.9 2000/04/10 11:32:04 sunny Exp $
+# $Id: dbk,v 1.10 2000/04/22 15:55:38 sunny Exp $
 #
 # (C)opyleft Øyvind A. Holm <sunny256@mail.com>
 # GNU-lisens.
@@ -26,7 +26,7 @@ $time_not_found = 0;
 @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 require 'getopts.pl';
-&Getopts('ht');
+&Getopts('bhi:t');
 
 &print_help(0) if $opt_h;
 
@@ -40,6 +40,14 @@ $Mon += 1;
 print("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst\n") if $Debug;
 
 my $arg_count;
+
+# Begynnelse på parameterparsing.
+# begin-base64 664 -
+# H4sIAKCL/DgCA1MrSCwqTo1PLEov1nBwDHIP07Tm4iouTVJAiCtUc3HmVio4
+# OILYtgoO8dZgvkpKfFp+aV4KUMgAKMLFmZZflJqYnKEBVqgJ0pWZpqChH6db
+# oqIP5nKCRIACMSkxKVZQIZWSzNzU+OKSIqAxKiCTaxVSc4pBGkFGAlEtV62C
+# MpJrNDS5AP7tzhO0AAAA
+# ====
 
 foreach(@ARGV) {
 	/^\d\d:/ && (splice(@ARGV, $arg_count, 1), $time_str = $_, $opt_t = 1);
@@ -75,6 +83,7 @@ $utc_diff = ($time_utc-$time_sec)/3600;
 
 print("Etter ARGV: $Year-$Mon-$Day\n") if $Debug;
 print("\$dbk_dir = $dbk_dir\n") if $Debug;
+print("\$opt_i = \"$opt_i\"\n") if $Debug;;
 
 # Sjekk at alle directories er på plass
 
@@ -112,17 +121,20 @@ if ($opt_t) {
 		print(dbkFP "\n");
 		$which_line++;
 	}
-	&insert_time($time_str, $which_line);
+	length($opt_i) ? &insert_file($opt_i, $which_line) : &insert_time($time_str, $which_line);
 	close(dbkFP);
 	$which_line++;
 	# $which_line++ if $time_not_found;
-	system("$Editor +$which_line $dbk_file");
+	system("$Editor +$which_line $dbk_file") unless (length($opt_i) || length($opt_b));
 	$min_size = 49;
 } else {
 	$min_size = 25;
 }
-system("$Viewer $dbk_file");
-system("clear");
+
+unless ($opt_b) {
+	system("$Viewer $dbk_file");
+	system("clear");
+}
 
 @stat_info = stat($dbk_file);
 $file_size = $stat_info[7];
@@ -153,7 +165,7 @@ sub find_line {
 
 sub insert_time {
 	my ($time_str, $line_num) = @_;
-	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_line(): $!\n");
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_time(): $!\n");
 	my @Linjer = <dbkFP>;
 	splice(@Linjer, $line_num-1, 0, sprintf("<p><b>$time_str</b> -\n%s", $time_not_found ? "" : "\n"));
 	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_time(): $!\n");
@@ -163,6 +175,24 @@ sub insert_time {
 	}
 } # insert_time()
 
+sub insert_file {
+	my ($file_name, $line_num) = @_;
+	local *LocFP;
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_file(): $!\n");
+	my @Linjer = <dbkFP>;
+	my @InsLinj = "<p><b>$time_str</b> -\n";
+	open(LocFP, "<$file_name") || die("$file_name: Kan ikke åpne fila for lesing: $!\n");
+	push(@InsLinj, <LocFP>);
+	push(@InsLinj, "\n") unless $time_not_found; # Denne likte jeg egentlig fantastisk dårlig, men hvem bruker vel å ha to LF'er på slutten av fila?
+	splice(@Linjer, $line_num-1, 0, @InsLinj);
+	close(LocFP);
+	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å seeke til starten i insert_file(): $!\n");
+	truncate(dbkFP, 0) || die("$dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+	foreach(@Linjer) {
+		print(dbkFP $_);
+	}
+} # insert_file()
+
 sub print_help {
 	my $Retval = shift;
 	print <<END;
@@ -171,8 +201,11 @@ Syntax: $0 [valg] [dag [måned [år]]] [HH:MM]
 
 Disse valgene (options) kan brukes:
 
--h  Skriv denne hjelpen
--t  Legg til klokkeslett i fila og gå inn i editoren
+-b      Batch mode, ikke start editor eller viewer.
+-h      Skriv denne hjelpen
+-i x  - Sett inn filen x istedenfor å bruke tastatur.
+        Forventer -t eller klokkeslett.
+-t      Legg til klokkeslettet akkurat i fila og går inn i editoren
 
 Klokkeslettet kan spesifiseres hvor som helst, men må starte med formatet
 "HH:" der HH er to siffer.
@@ -183,4 +216,4 @@ END
 
 __END__
 
-#### End of file $Id: dbk,v 1.9 2000/04/10 11:32:04 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.10 2000/04/22 15:55:38 sunny Exp $ ####
