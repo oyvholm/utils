@@ -1,0 +1,32 @@
+#!/usr/bin/perl -w
+
+# $Id: cvslog_to_utf8,v 1.1.2.1 2003/03/11 15:01:13 sunny Exp $
+# Converts log messages in RCS files to UTF-8
+
+use strict;
+
+my @Data = ();
+my $Inside = 0;
+
+while (<>) {
+	if (/^\@([^\@].*)$/) {
+		D("Fant enslig \@: \"$_\".\n");
+		$Inside = !$Inside;
+		if ($Inside) {
+			push(@Data, $1);
+		} else {
+			for my $Curr (@Data) {
+				print("Curr \"$Curr\"\n");
+			}
+			@Data = ();
+		}
+	} else {
+		push(@Data, $_) if $Inside;
+	}
+}
+
+sub D {
+	print(STDOUT "deb: $_");
+}
+
+__END__
