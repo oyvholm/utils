@@ -1,5 +1,11 @@
-#!/bin/bash
-# $Id: rm_backup,v 1.1 1999/02/09 16:16:27 sunny Exp $
+#!/bin/sh
+
+# $Id: rm_backup,v 1.2 1999/04/23 12:55:48 sunny Exp $
+
+find -name '*~' -type f -exec rm -v {} \;
+exit
+
+## Gammel måte har vi her:
 
 _fjernes=`find . -type f | grep '~$'`
 
@@ -8,3 +14,6 @@ if [ ! "$_fjernes" = "" ]; then
 else
   echo `basename $0`: Ingen backupfiler ble funnet >&2
 fi
+
+
+#### End of file $Id: rm_backup,v 1.2 1999/04/23 12:55:48 sunny Exp $ ####
