@@ -11,12 +11,30 @@
 use strict;
 use Getopt::Std;
 
-our ($opt_u, $opt_w) =
-    (     0,      0);
+our ($opt_h, $opt_u, $opt_w) =
+    (     0,      0,      0);
 
 $| = 1;
 
-getopts('uw');
+getopts('huw') || die("Option error, -h for help\n");
+
+if ($opt_h) {
+	print(<<END);
+
+Syntax: $0 [options]
+
+Reads filenames or directory names from stdin and prints name of every
+file that is readable. This behaviour can be modified by the following
+options:
+
+-u  Print file names of files which is NOT readable.
+-w  Check for write permissions instead of read permissions.
+
+NOTE: Options may change in the future.
+
+END
+	exit(0);
+}
 
 # Gjøres på amøbemåte for å få opp farta.
 
