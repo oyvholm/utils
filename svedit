@@ -3,4 +3,4 @@
 # $Id$
 # Enkel sak for å redigere loggkommentaren i svn.
 
-svn pe svn:log -r$1 --revprop $2
+svn pe svn:log -r$1 --revprop $*
