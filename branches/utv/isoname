@@ -1,0 +1,40 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $Device = "/dev/cdrom";
+# !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ
+my $Legal = "!\"#\$&'()*+,-./0123456789:;=?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ";
+
+defined($ARGV[0]) && ($Device = $ARGV[0]);
+
+my $vol_name = iso_name($Device);
+$vol_name =~ s/([\x00-\x20<>\/\x7F-\x9F])/sprintf("%%%02X", ord($1))/ge;
+if (-e $vol_name) {
+	die("$vol_name finnes allerede."); # FIXME.
+}
+
+print("Volume: \"$vol_name\"\n");
+
+system("mount /cdrom");
+
+open(ToFP, ">$vol_name") || die("$vol_name: Can't create file: $!");
+open(PipeFP, "find /cdrom -type f | sort |") || die("Åpning av pipe: $!");
+while (<PipeFP>) {
+	s!^/cdrom(.*)!$1!;
+	print(ToFP $_);
+}
+close(ToFP);
+close(PipeFP);
+
+system("umount /cdrom");
+
+sub iso_name {
+	my $Device = shift;
+	my $Volname = "";
+	open(DevFP, "<$Device") || die("$Device: Can't open device for read: $!");
+	seek(DevFP, 32808, 0) || die("$Device: Can't seek: $!");
+	my $bytes_read = read(DevFP, $Volname, 32);
+	($bytes_read == 32) || warn("$Device: Only read $bytes_read byte(s) from device.");
+	return $Volname;
+} # iso_name()
