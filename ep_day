@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+# $Id: ep_day,v 1.1 2002/09/04 23:19:16 sunny Exp $
+
+use strict;
+
+my $last_date = 0;
+my $Count = 0;
+my $Period = 1;
+
+if (defined($ARGV[0]) && !($ARGV[0] =~ /[^0-9]/)) {
+	$Period = $ARGV[0] * 86400;
+	shift;
+} else {
+	$Period = 86400;
+}
+
+while (<>) {
+	if (/^(\d+)/) {
+		my $Curr = int($1/$Period);
+		if ($Curr > $last_date) {
+			printf("%u\t%u\n", $last_date*$Period, $Count);
+			$last_date = $Curr;
+			$Count = 0;
+		}
+	} else {
+		warn("Line $.: Invalid line format");
+	}
+	$Count++;
+}
