@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #========================================================================
-# $Id: mk_local_links,v 1.5 2004/04/13 12:06:56 sunny Exp $
+# $Id$
 # Lager symlinker i $prefix/man/man?/ og $prefix/{bin,sbin}/ til greier i
 # $prefix/prg/*/
 #========================================================================
@@ -38,3 +38,5 @@ echo
 echo "======== Leiter etter daue linker... ========"
 cd $prefix || { echo "$0: cd $prefix: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
 find -type l | xargs file | grep "broken symbolic"
+
+rm -fv sbin/\*
