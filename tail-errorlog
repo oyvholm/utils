@@ -1,15 +1,20 @@
 #!/bin/sh
 
-# $Id: tail-errorlog,v 1.5 1999/05/09 04:37:00 sunny Exp $
+# $Id: tail-errorlog,v 1.6 1999/06/28 15:21:40 sunny Exp $
 # tail -f på error_log til httpd(8).
 #
 # Syntax hvis man er på black:
 # $0 {k1|k2|k3|...}
 #
+# Syntax hvis man er på brown:
+# $0 {00k|01k|02k|...|20k}
+#
 # ...ellers fixer den det meste. :)
 
 if [ -e /black.mrk ]; then
 	tail -f /usr/local/apache/logs/$1_error_log
+elif [ -e /brown.mrk ]; then
+	tail -f /usr/local/apache/logs/$1_err_log
 elif [ -e /grimme.mrk ]; then
 	tail -f /var/log/httpd/error_log
 else
