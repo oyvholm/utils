@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Stopper httpd(8)
-# $Id: h0,v 1.6 2001/11/04 19:30:24 sunny Exp $
+# $Id: h0,v 1.7 2002/02/14 17:27:43 sunny Exp $
 
 if [ -e /ww.mrk ]; then
 	/etc/rc.d/init.d/apache stop
@@ -9,6 +9,8 @@ elif [ -e /toshbb.mrk ]; then
 	apachectl stop
 elif [ -e /sunba.mrk ]; then
 	/etc/init.d/apache stop
+elif [ -e /recbb.mrk ]; then
+	/var/lib/apache/sbin/apachectl stop
 else
 	echo Ukjent server, prøver standardløsning...
 	/etc/rc.d/init.d/httpd stop

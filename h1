@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Fyrer i gang httpd(8)
-# $Id: h1,v 1.6 2001/11/04 19:30:25 sunny Exp $
+# $Id: h1,v 1.7 2002/02/14 17:27:43 sunny Exp $
 
 if [ -e /ww.mrk ]; then
 	/etc/rc.d/init.d/apache start
@@ -9,6 +9,8 @@ elif [ -e /toshbb.mrk ]; then
 	apachectl start
 elif [ -e /sunba.mrk ]; then
 	/etc/init.d/apache start
+elif [ -e /recbb.mrk ]; then
+	/var/lib/apache/sbin/apachectl start
 else
 	echo Ukjent server, prøver standardløsning...
 	/etc/rc.d/init.d/httpd start
