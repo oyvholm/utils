@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: pri,v 1.3 2003/07/30 13:38:15 sunny Exp $
+# $Id: pri,v 1.4 2004/01/11 17:30:33 sunny Exp $
 
 pri_dir=~sunny/etc
 
@@ -15,4 +15,12 @@ fi
 
 # $EDITOR $pri_dir/pri.txt
 
-gvim ~/p/plan/todo.txt
+cd ~/p/plan
+cvs -q upd -d
+echo -n Trykk ENTER...
+read
+vim todo.txt
+echo -n Trykk ENTER for cvs checkin, cller CTRL-C for å drite i det...
+read
+cvs ci -m "Lagt inn med pri-scriptet" todo.txt
+cd -
