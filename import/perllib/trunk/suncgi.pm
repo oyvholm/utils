@@ -31,7 +31,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $>
+S<$Id: suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -133,11 +133,11 @@ $main::Utv = 0 unless defined($main::Utv);
 $main::Debug = 0 unless defined($main::Debug);
 $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
-$suncgi::ignore_double_ip = 1; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
+$suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/10/13 16:15:56 $';
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/10/15 10:09:34 $';
 @suncgi::rcs_array = ();
 
 $suncgi::this_counter = "";
@@ -1140,4 +1140,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.14 2000/10/15 10:09:34 sunny Exp $ ####
