@@ -1,25 +1,38 @@
 #!/bin/sh
 
-# $Id: bigsh,v 1.4 2004/01/30 14:26:07 sunny Exp $
+# $Id: bigsh,v 1.5 2004/02/06 15:03:35 sunny Exp $
 # Fyrer opp en stor xterm i X
 
 # mlterm -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1
 
+smallfont=0
+[ "$1" = "--small" -o -e /carmbb.mrk ] && { smallfont=1; shift; }
+
 if [ -e /carmbb.mrk ]; then
+	geom=131x40+0+0
+else
+	if [ "$smallfont" = "1" ]; then
+		geom=210x67+0-1
+	else
+		geom=140x48+0-8
+	fi
+fi
+
+if [ "$smallfont" = "1" ]; then
 	xterm \
 	-u8 \
 	-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
 	-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
 	-bg black \
 	-fg white \
-	-geometry 131x42+0+0 $*
+	-geometry $geom $*
 else
 	xterm \
 	-u8 \
 	-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
 	-bg black \
 	-fg white \
-	-geometry 140x48+0-8 $*
+	-geometry $geom $*
 fi
 
 exit
