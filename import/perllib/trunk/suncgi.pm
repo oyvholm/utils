@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $
+# $Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -53,7 +53,7 @@ $suncgi::STD_LANG = "no";
 $suncgi::STD_BACKGROUND = "";
 $suncgi::STD_CHARSET = "ISO-8859-1"; # Hvis $suncgi::CharSet ikke er definert
 $suncgi::STD_DOCALIGN = "left"; # Standard align for dokumentet hvis align ikke er spesifisert
-$suncgi::STD_DOCWIDTH = '80%'; # Hvis ikke $suncgi::doc_width er spesifisert
+$suncgi::STD_DOCWIDTH = '95%'; # Hvis ikke $suncgi::doc_width er spesifisert
 $suncgi::STD_HTMLDTD = $suncgi::DTD_HTML4LOOSE;
 
 $suncgi::CharSet = $suncgi::STD_CHARSET;
@@ -685,7 +685,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $>
+S<$Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1081,4 +1081,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.31 2001/04/23 09:16:26 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.32 2001/04/28 15:04:47 sunny Exp $ ####
