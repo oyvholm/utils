@@ -20,12 +20,12 @@ if [ "$1" = "carmbb" -a "$2" = "sunba" ]; then
 	rsync -avP --delete carmbb:/home/sunny/Svn /home/sunny
 elif [ "$1" = "sunba" -a "$2" = "carmbb" ]; then
 	echo Kopierer CVSROOT fra sunba til carmbb. Simulerer først...
-	rsync -avnzP --delete nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
+	rsync -avnzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
 	rsync -avnP --delete /home/sunny/Cvs carmbb:/home/sunny
 	rsync -avnP --delete /home/sunny/Svn carmbb:/home/sunny
 	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
 	read
-	rsync -avzP --delete nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
+	rsync -avzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
 	echo "$(u) $*" >>/home/sunny/Cvs/SUNBA_TIL_CARMBB
 	rsync -avzP --delete /home/sunny/Cvs carmbb:/home/sunny
 	rsync -avzP --delete /home/sunny/Svn carmbb:/home/sunny
