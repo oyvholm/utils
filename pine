@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# $Id: pine,v 1.6 2003/08/03 07:27:45 sunny Exp $
+# $Id: pine,v 1.7 2004/01/19 22:39:06 sunny Exp $
 # Locking for pine
 
-lockdir=/home/sunny/lock
+lockdir=$HOME/lock
 [ "$1" = "-f" ] && { shift; rm -rf $lockdir; }
 [ -d $lockdir ] || mkdir $lockdir || { echo "$lockdir: Klarte ikke mkdir" >&2; exit 1; }
 lockname=$lockdir/pine
