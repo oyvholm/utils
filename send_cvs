@@ -25,7 +25,7 @@ elif [ "$1" = "sunba" -a "$2" = "carmbb" ]; then
 	rsync -avnP --delete /home/sunny/Svn carmbb:/home/sunny
 	echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
 	read
-	rsync -avP --delete nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
+	rsync -avP --delete --exclude='*many*' --exclude='*irssi*' nett2:/var/Svn/repos/* /home/sunny/Svn/.svn.sunbase.org/
 	echo "$(u) $*" >>/home/sunny/Cvs/SUNBA_TIL_CARMBB
 	rsync -avP --delete /home/sunny/Cvs carmbb:/home/sunny
 	rsync -avP --delete /home/sunny/Svn carmbb:/home/sunny
