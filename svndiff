@@ -58,6 +58,10 @@ sub diff_file {
         D("CMD: $Cmd $File2 $File1\n");
         system("$Cmd $File2 $File1");
     }
+
+    # Sleep one second after $Cmd is done to make it easier to interrupt 
+    # the thing with CTRL-C if there are many files
+    sleep(1);
 }
 
 sub D {
