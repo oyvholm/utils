@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.1.2.8 2003/06/02 22:40:19 sunny Exp $
+# $Id: cvse,v 1.1.2.9 2003/06/11 02:48:57 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -36,6 +36,7 @@ END
 }
 
 my $Simulate = $opt_s;
+$Simulate = 1;
 my ($curr_rev, $curr_rcs_file, $curr_work_file, $total_ignored) = ("", "", "", "");
 my @Curr = ();
 my %Entry = ();
@@ -128,6 +129,8 @@ exit 0;
 sub change_message {
 	# Changes a log message for a specific revision of a file if it has changed. {{{
 	my ($File, $Rev, $Txt) = @_;
+	$File = escape_filename($File);
+
 	if ($opt_i && !-e $File) {
 		unless (defined($missing_file{$File})) {
 			print("Ignoring non-existing file $File\n");
@@ -232,6 +235,10 @@ sub get_log_message {
 		}
 		close(PipeFP);
 		if ($header_done) {
+			print("======= $getl_call returnerer: ===========\n");
+			print(join("", @Arr));
+			print("============\n");
+
 			return(join("", @Arr));
 		} else {
 			warn("Header separator not found, $getl_call returns nothing\n");
@@ -241,6 +248,15 @@ sub get_log_message {
 		die("Can't open cvs pipe: $!");
 	}
 	# }}}
+}
+
+sub escape_filename {
+	my $Name = shift;
+	# $Name =~ s/\\/\\\\/g;
+	# $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
+	$Name =~ s/'/\\'/g;
+	$Name = "'$Name'"; # FIXME: Any cleaner way of dealing with potential weird characters in file names under UNIX?
+	return($Name);
 }
 
 __END__
@@ -255,7 +271,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.8 2003/06/02 22:40:19 sunny Exp $
+$Id: cvse,v 1.1.2.9 2003/06/11 02:48:57 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -397,4 +413,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.1.2.8 2003/06/02 22:40:19 sunny Exp $
+# End of file $Id: cvse,v 1.1.2.9 2003/06/11 02:48:57 sunny Exp $
