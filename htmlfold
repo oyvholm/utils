@@ -1,18 +1,21 @@
 #!/usr/bin/perl -w
 
-# $Id: htmlfold,v 1.1 2003/05/05 09:30:17 sunny Exp $
-# Legger inn vim-foldmerker foran og etter stdin. Brukes til å lage
-# folder i HTML.
+# $Id: htmlfold,v 1.2 2003/05/12 22:37:21 sunny Exp $
+# Inserts fold marks in HTML source before and after stdin.
+# Select text in visual line mode and filter the block through this script.
 
 use strict;
 
-my $Linje = <>;
-my $Indent = "";
+$| = 1;
 
-$Linje =~ /^(\s+)/ && ($Indent = $1);
-print("$Indent<!-- \x7B\x7B\x7B -->\n$Linje");
+my $Line = <STDIN>;
+my ($Indent, $Title) = ("", "");
 
-while (<>) {
+defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
+$Line =~ /^(\s+)/ && ($Indent = $1);
+print("$Indent<!-- $Title\x7B\x7B\x7B -->\n$Line");
+
+while (<STDIN>) {
 	print($_);
 }
 
