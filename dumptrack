@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gpstrans -p/dev/modem -dt -m >`u`.track.mayko
