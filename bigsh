@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: bigsh,v 1.7 2004/02/13 02:20:57 sunny Exp $
+# $Id: bigsh,v 1.8 2004/03/22 15:02:04 sunny Exp $
 # Fyrer opp en stor xterm i X
 
 smallfont=0
@@ -16,7 +16,7 @@ if [ -e /carmbb.mrk ]; then
 	fi
 else
 	if [ "$smallfont" = "1" ]; then
-		geom=210x67+0-1
+		geom=211x67+0+0
 	else
 		geom=140x48+0-8
 	fi
