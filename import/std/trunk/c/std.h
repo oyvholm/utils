@@ -1,10 +1,12 @@
+
 /*
- * - Main header file
+
+   NB! Husk å forandre navn på rcs_id_std_h til det den skal være.
+
+ * Main header file
+ * $Id: std.h,v 1.2 1999/04/25 23:30:17 sunny Exp $
  *
- * History:
- *
- *
- * (C)opyleft 1998 Øyvind A. Solheim <sunny@sunbase.com>
+ * (C)opyleft 1998 Oyvind A. Holm <sunny@tritech.no>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +30,7 @@
  * Defines
  */
 
-#define VERSION       "0.00"
-#define RELEASE_DATE  "1998-00-00"
-#define AUTHOR        "Oyvind A. Solheim <sunny@sunbase.com>"
+#define AUTHOR "Oyvind A. Holm <sunny@tritech.no>"
 
 #define FALSE  0
 #define TRUE   1
@@ -57,14 +57,6 @@
 #else               /* ifdef C_ASSERT      */
 #  define NDEBUG  1
 #endif              /* ifdef C_ASSERT else */
-
-#ifdef C_SKIP_PGPKEY /* If C_SKIP_PGPKEY is defined, the --pgpkey option is disabled. */
-#  ifdef C_PGPKEY
-#    undef C_PGPKEY
-#  endif
-#else
-#  define C_PGPKEY  1
-#endif
 
 #ifdef C_SKIP_LICENSE /* If C_SKIP_LICENSE, the --license option is disabled. */
 #  ifdef C_LICENSE
@@ -93,22 +85,24 @@
  * Typedefs
  */
 
+typedef unsigned char bool;
+
 /*
  * Function prototypes
  */
 
-extern void  print_version(void);
-extern char  *date2iso(const char *);
-extern void  usage(int);
+extern void print_version(void);
+extern void usage(int);
 
 /*
  * Global variables
  */
 
-extern char  *progname;
-extern int   debug;
-extern FILE  *stddebug;
+static char rcs_id_std_h[] = "$Id: std.h,v 1.2 1999/04/25 23:30:17 sunny Exp $";
+extern char *progname;
+extern int  debug;
+extern FILE *stddebug;
 
 #endif /* ifndef _STD_H */
 
-/***** End of file *****/
+/***** End of file $Id: std.h,v 1.2 1999/04/25 23:30:17 sunny Exp $ *****/

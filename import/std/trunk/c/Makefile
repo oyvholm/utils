@@ -1,8 +1,11 @@
 
+# Makefile for std.c
+# $Id: Makefile,v 1.2 1999/04/25 23:30:17 sunny Exp $
+
 OBJS = std.o getopt.o
 CC = gcc
 LD = gcc
-CCFLAGS = -Wall -O2 -c -g -ansi -pedantic
+CCFLAGS = -Wall -no-unused -O2 -c -g -ansi -pedantic
 LDFLAGS = -Wall
 EXEC = std
 
@@ -16,4 +19,4 @@ getopt.o: getopt.h Makefile
 	$(CC) $(CCFLAGS) getopt.c
 
 clean:
-	rm -f $(EXEC) $(OBJS) core *~
+	rm -f $(EXEC) $(OBJS) core core.$(EXEC) *~
