@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Kommenterer ut stdin.
-# $Id: commout,v 1.6 2000/03/19 23:29:57 sunny Exp $
+# $Id: commout,v 1.7 2000/05/02 01:40:22 sunny Exp $
 
 $prog_name = "commout";
 
@@ -10,6 +10,7 @@ if ($#ARGV > -1) {
 	/^--h/ && &print_help(0) ||
 	/^html$/i && ($is_html = 1) ||
 	/^pre$/i && ($is_pre = 1) ||
+	/^re$/i && ($is_re = 1, $is_pre = 1) ||
 	($comm_pattern = $ARGV[0]);
 } else {
 	$comm_pattern = '#';
@@ -18,7 +19,7 @@ if ($#ARGV > -1) {
 length($ARGV[1]) && ($spc_str = " ");
 
 $is_html && print("<!--$spc_str" . $ARGV[1] . "\n") ||
-$is_pre && print("<p><pre>\n");
+$is_pre && printf("%s<pre>\n", $is_re ? "" : "<p>");
 
 while (<STDIN>) {
 	($is_html || $is_pre) || s/^(\t*)/$1$comm_pattern /;
@@ -46,7 +47,10 @@ $prog_name html ["Overskrift"]
   HTML-source.
 
 $prog_name pre
-  Også til html, men <pre> brukes istedenfor.
+  Også til html, men <p><pre> brukes istedenfor.
+
+$prog_name re
+  Som "pre", men uten <p> i begynnelsen.
 
 $prog_name [andre_ting]
   Setter [andre_ting] foran hver linje.
@@ -55,4 +59,4 @@ END
 	exit($Retval);
 } # print_help()
 
-#### End of file $Id: commout,v 1.6 2000/03/19 23:29:57 sunny Exp $ ####
+#### End of file $Id: commout,v 1.7 2000/05/02 01:40:22 sunny Exp $ ####
