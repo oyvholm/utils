@@ -19,7 +19,7 @@ for f in `seq 1 9`; do
 	echo "==== $currmandir ===="
 	[ -d $currmandir ] || mkdir $currmandir || { echo "$0: mkdir $currmandir: Gikk på trynet, kreperer." >&2; exit 1; }
 	cd $currmandir || { echo "$0: cd $currmandir: Klarte ikke å gå dit. Ytterst merkelig. Kreperer for sikkerhets skyld." >&2; exit 1; }
-	find ../../prg -type f | grep /man/ | egrep "\\.$f.?\$" | sort | xargs -i% ln -svf % .
+	find ../../prg/*/. -type f | grep /man/ | egrep "\\.$f.?\$" | sort | xargs -i% ln -svf % .
 done
 
 # $prefix/bin/
