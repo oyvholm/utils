@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # $Id$
-# Inserts fold marks in perl source before and after stdin.
+# Inserts “CUT” marks with Vim fold before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 
 use strict;
@@ -9,14 +9,14 @@ use strict;
 $| = 1;
 
 my $Line = <STDIN>;
-my ($Indent, $Title) = ("", "");
+my ($Indent, $Title) = ("", "CUT");
 
-defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
+defined($ARGV[0]) && ($Title = join(" ", @ARGV));
 $Line =~ /^(\s+)/ && ($Indent = $1);
-print("$Indent$Title\x7B\x7B\x7B\n$Line");
+print("======== $Title \x7B\x7B\x7B ========\n$Line");
 
 while (<STDIN>) {
 	print($_);
 }
 
-print("$Indent\x7D\x7D\x7D\n");
+print("======== \x7D\x7D\x7D $Title ========\n");
