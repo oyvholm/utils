@@ -5,8 +5,8 @@
 # [Description]
 #
 # Character set: UTF-8
-# License: GNU General Public License
-# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License, see end of file for legal stuff.
+# ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
 #=======================================================================
 
 use strict;
@@ -22,15 +22,15 @@ $opt_h && usage(0);
 
 
 sub usage {
-	# Send the help message to stdout {{{
-	my $Retval = shift;
-	print(<<END);
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+    print(<<END);
 
 Usage:
 
 END
-	exit($Retval);
-	# }}}
+    exit($Retval);
+    # }}}
 }
 
 __END__
@@ -92,7 +92,7 @@ See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along 
 with this program; if not, write to the Free Software Foundation, Inc., 
-675 Mass Ave, Cambridge, MA 02139, USA.
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
 
@@ -100,5 +100,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 # }}}
 
-# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
 # End of file $Id$
