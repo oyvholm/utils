@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.2 2003/10/20 04:10:07 sunny Exp $
+# $Id: stpl,v 1.3 2003/12/20 10:59:56 sunny Exp $
 # Plot out data with gnuplot based on data type
 #
 # Character set: UTF-8
@@ -15,11 +15,11 @@ $| = 1;
 
 use Getopt::Std;
 
-our ($opt_h, $opt_k, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
-    (     0,      0,     "",     "",     "",     "",     "");
-getopts('hko:s:t:x:y:');
+our ($opt_h, $opt_k, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
+    (     0,      0,     "",     "",     "",     "",     "",     "");
+getopts('hkl:o:s:t:x:y:');
 
-my $rcs_id = '$Id: stpl,v 1.2 2003/10/20 04:10:07 sunny Exp $';
+my $rcs_id = '$Id: stpl,v 1.3 2003/12/20 10:59:56 sunny Exp $';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
@@ -56,6 +56,7 @@ Options:
 
   -h         Send this help to stdout
   -k         Keep temp file after plotting
+  -lp        Use linespoints instead of lines
   -sampN     set samples N
   -t"X"      Use title X
   -xrXX:YY   Use X range XX:YY
@@ -143,6 +144,14 @@ END
 			print(GnupFP "set title \"$opt_t\"\n");
 		}
 
+		my $line_type = "line 1";
+
+		if (length($opt_l)) {
+			if ($opt_l eq "p") {
+				$line_type = "linespoints";
+			}
+		}
+
 		# For framtidig bruk.
 		# while (<>) {
 			# if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d)T(\d\d):(\d\d):(\d\d)\s+(\d+)/) {
@@ -151,7 +160,7 @@ END
 
 		print(GnupFP <<END);
 plot \\
-"$data_file" using 1:2 title " " with line 1, \\
+"$data_file" using 1:2 title " " with $line_type, \\
 "$data_file" using 1:2 smooth bezier title " " with line -1
 
 END
@@ -177,4 +186,4 @@ END
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.2 2003/10/20 04:10:07 sunny Exp $
+# End of file $Id: stpl,v 1.3 2003/12/20 10:59:56 sunny Exp $
