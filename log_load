@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# $Id: log_load,v 1.2 2003/10/03 00:28:13 sunny Exp $
+# $Id: log_load,v 1.3 2003/10/05 07:20:21 sunny Exp $
 # Logger maskinload til ~/log/load.log
 
 logdir=$HOME/log
 
 [ -d $logdir ] || mkdir -p logdir || { echo "mkdir $logdir: På trynet" >&2, exit 1; }
 
-lockname=$logdir/load.log.LOCK
+lockname=$logdir/.load.log.swp
 
 until mkdir $lockname 2>/dev/null; do
 	echo $0: $lockname: Lockdir finnes, avbryter. >&2
