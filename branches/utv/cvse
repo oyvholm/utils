@@ -1,13 +1,16 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: cvse,v 1.1.2.2 2003/05/23 00:03:44 sunny Exp $
+# $Id: cvse,v 1.1.2.3 2003/05/23 19:05:27 sunny Exp $
 # Edit cvs log messages via output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
 #================================================
 
 use strict;
+use Fcntl ':flock';
+
+$| = 1;
 
 my ($curr_rev, $curr_rcs_file, $curr_work_file) = ("", "", "");
 my @Curr = ();
@@ -15,6 +18,15 @@ my %Entry = ();
 my ($Rev, $Line) = ("", "");
 my ($header_done, $tmp_count) = (0, 0);
 my %Text = ();
+my %missing_written = ();
+my ($start_utc, $total_skipped, $total_changed, $total_files) = (time, 0, 0);
+my @all_revs = ();
+my $eroot_str = "";
+
+defined($ENV{CVSE_ROOT}) && ($eroot_str = " -d $ENV{CVSE_ROOT}");
+
+open(MissFP, ">cvse.missing") || die("cvse.missing: Can't open file for write: $!\n");
+flock(MissFP, LOCK_EX);
 
 while (<>) {
 	$Line = $_;
@@ -47,15 +59,15 @@ while (<>) {
 		$Rev = "$curr_work_file,v.$curr_rev";
 		# }}}
 	} elsif ($Line =~ /^=============================================================================$/) {
-		# List finished for this file {{{
+		# List finished for this file, change the modified messages {{{
 		if (length($Rev) && scalar(@Curr)) {
 			$Entry{$Rev} = join("", @Curr);
 		}
-		my @Arr = ();
+		@all_revs = ();
 		while (my ($l_name, $l_val) = each %Entry) {
-			push(@Arr, $l_name);
+			push(@all_revs, $l_name);
 		}
-		for (@Arr) {
+		for (@all_revs) {
 			my $Curr = $_;
 			my ($a_file, $a_rev) = ("", "");
 			if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
@@ -67,6 +79,7 @@ while (<>) {
 				warn("Wrong revision format \"$Curr\", skipping revision\n");
 			}
 		}
+		$total_files++;
 		($curr_rev, $Rev) = ("", "");
 		%Entry = ();
 		@Curr = ();
@@ -88,18 +101,42 @@ while (<>) {
 	}
 }
 
+printf("\n$total_files file(s) with $total_changed revision(s) changed and $total_skipped revision(s) skipped in %u second(s).\n", time-$start_utc);
+
 sub change_message {
-	# Changes a log message for a specific revision of a file. Checks if the message is changed. {{{
+	# Changes a log message for a specific revision of a file if it has changed. {{{
 	my ($File, $Rev, $Txt) = @_;
-	# print("change_message(\"$File\", \"$Rev\", ...);...");
+	# print("change_message(\"$File\", \"$Rev\", \"$Txt\");...");
 	my $rand_nr = substr(rand(), 2, 6);
 	D("rand_nr = \"$rand_nr\"\n");
 	my $tmp_file = "tmp.cvse.$$.$rand_nr.tmp";
 	my $compare_text = get_log_message($File, $Rev);
-	D("==== Compare text for $File $Rev {{{ ====\n$compare_text\n==== }}} ====\n");
-	D("==== Melding for $File $Rev: {{{ ====\n$Txt\n==== }}} ====\n");
 	if ($Txt ne $compare_text) {
-		print("Changing message for $File,v $Rev ...");
+		print("Changing message for $File,v $Rev ...\n");
+		print("==== Original text in $File $Rev {{{ ====\n$compare_text==== }}} ====\n");
+		print("==== New text for $File $Rev {{{ ====\n$Txt==== }}} ====\n");
+		unless (-e $File) {
+			# File does not exist in this revision, change revision to make it appear and make it possible for CVS to update the message {{{
+			print("$File not found, running cvs update to try to make it appear...\n");
+			for my $Curr (@all_revs) {
+				if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
+					my $ex_str = "cvs$eroot_str upd -r $2 $File";
+					print("Executing \"$ex_str\"...\n");
+					system($ex_str);
+					if (-e $File) {
+						print("File exists with (old) revision, is now able to change log message.\n");
+						last;
+					}
+				}
+			}
+			if (!-e $File && !defined($missing_written{$File})) {
+				warn("$File: File does still not exist, skipping but writing to \"cvse.missing\"\n");
+				print(MissFP "$File\n");
+				$missing_written{$File} = 1;
+			}
+			# printf("Array = %s\n", join(", ", @all_revs));
+			# }}}
+		}
 		my @Arr = split(/\n/, $Txt);
 		if (open(TxtFP, ">$tmp_file")) {
 			for (@Arr) {
@@ -111,19 +148,26 @@ sub change_message {
 				}
 			}
 			close(TxtFP) || die("$tmp_file: Error closing file: $!");
-			my $exec_str = "cvs admin -m$Rev:\"`cat $tmp_file`\" $File";
+			my $exec_str = "cvs$eroot_str admin -m$Rev:\"`cat $tmp_file`\" $File";
 			# D("==== Melding for $File $Rev: {{{ ====\n" . `cat $tmp_file` . "==== }}} ====\n");
 			print(" \"$exec_str\" ...\n");
+			my $Deb = "";
+			$Deb = get_log_message($File, $Rev);
+			print("==== BEFORE: $File $Rev {{{ ====\n$Deb==== }}} ====\n");
 			system($exec_str);
+			$Deb = get_log_message($File, $Rev);
+			print("==== AFTER : $File $Rev {{{ ====\n$Deb==== }}} ====\n");
 			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!\n");
 			print(" ... DONE\n");
 		} else {
 			warn("Cannot open temporary file \"$tmp_file\", log messages not changed: $!\n");
 		}
+		$total_changed++;
 	} else {
 		print("Message for $File,v $Rev is unchanged, skipping...\n");
+		$total_skipped++;
 	}
-	# print("change_message_FERDIG\n");
+	# print("change_message_DONE\n");
 	# }}}
 }
 
@@ -135,7 +179,7 @@ sub get_log_message {
 	my $getl_call = "get_log_message(\"$File\", \"$Rev\")";
 
 	# print("$getl_call...");
-	if (open(PipeFP, "cvs log -r$Rev $File |")) {
+	if (open(PipeFP, "cvs$eroot_str log -r$Rev $File |")) {
 		while (my $Line = <PipeFP>) {
 			if ($Line =~ /^=============================================================================$/) {
 				if (!$header_done) {
@@ -161,7 +205,7 @@ sub get_log_message {
 		}
 		close(PipeFP);
 		if ($header_done) {
-			# print("get_log_message_FERDIG\n");
+			# print("get_log_message_DONE\n");
 			return(join("", @Arr));
 		} else {
 			warn("Header separator not found, $getl_call returns nothing\n");
@@ -176,6 +220,10 @@ sub D {
 	# print(STDERR @_);
 }
 
+__END__
+
+# POD {{{
+
 =pod
 
 =head1 NAME
@@ -184,13 +232,17 @@ cvse - CVSEdit - edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.1.2.2 2003/05/23 00:03:44 sunny Exp $
+$Id: cvse,v 1.1.2.3 2003/05/23 19:05:27 sunny Exp $
 
 =head1 SYNOPSIS
 
 cvse [logfile [...]]
 
 =head1 DESCRIPTION
+
+=head1 ENVIRONMENT VARIABLES
+
+CVSE_ROOT
 
 =head1 BUGS
 
@@ -201,7 +253,12 @@ Made by Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
 =head1 LICENCE
 
 GNU General Public License.
+The greatest of them all.
 
-# End of file $Id: cvse,v 1.1.2.2 2003/05/23 00:03:44 sunny Exp $
+=cut
 
-__END__
+# }}}
+
+# vim600: set fdm=marker fdc=3 fenc=utf8 :
+
+# End of file $Id: cvse,v 1.1.2.3 2003/05/23 19:05:27 sunny Exp $
