@@ -66,6 +66,7 @@ while (<>) {
         my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mon, $Year);
         $Secs -= ($zone_hour*3600); # Vi driter i minuttene for å få opp farta.
         my $Pause = $Secs - $last_sec;
+        $num_mon++; # Å inn i svarteste hælvete hvor jeg hater det inkonsekvente pisset der!!!!!!!!!!!!!!!!
         $last_sec && printf("%04u-%02u-%02uT%02u:%02u:%02uZ %4u %s\n",
                             $Year, $num_mon, $Day, $Hour, $Min, $Sec,
                             $Pause, sec_to_hms($Pause)
