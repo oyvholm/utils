@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #==============================================================================
-# $Id: rmdup,v 1.2 2002/10/04 08:46:52 sunny Exp $
+# $Id: rmdup,v 1.3 2004/04/11 06:03:31 sunny Exp $
 # Compares the files in directory $1 with existing files in directory $2
 # and removes the duplicates in directory $2.
 #==============================================================================
@@ -39,9 +39,11 @@ for _qqrc in $1/*; do
 		if [ "$_qqrc" -ef "$_qqr2" ]; then
 			echo $0: File $_qqrc and $_qqr2 are the same >&2
 		else
-			diff -qb "$_qqrc" "$_qqr2" >/dev/null
+			diff -q "$_qqrc" "$_qqr2" >/dev/null
 			if [ $? -eq 0 ]; then
 				rm -v "$_qqr2"
+			else
+				echo $_qqrc og $_qqr2 are not equal
 			fi
 		fi
 	fi
