@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# $Id: cvs-editor,v 1.1 2003/05/23 01:55:03 sunny Exp $
+
+gvim -f -c "set textwidth=77 expandtab" $*
