@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cdiff,v 1.1 1999/04/23 11:49:22 sunny Exp $
+# $Id: cdiff,v 1.2 1999/04/30 01:55:47 sunny Exp $
 # Latskapen lenge leve.
 
-cvs diff -u | less -S
+cvs -n diff -u | less -S
