@@ -15,9 +15,9 @@
 use strict;
 use Getopt::Std;
 
-our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i, $opt_s) = 
+our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i, $opt_s) =
     (     0,      0,      0,      0,      0,      0);
-getopts('aiEhHi:s');
+getopts('aEhHi:s');
 
 my $is_pre = 0;
 my $prog_name = $0;
