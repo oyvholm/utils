@@ -1,4 +1,5 @@
 /* Getopt for GNU.
+   $Id$
    NOTE: getopt is now part of the C library, so if you don't know what
    "Keep this file name-space clean" means, talk to roland@gnu.ai.mit.edu
    before changing it!
@@ -77,6 +78,9 @@
    they can distinguish the relative order of options and other arguments.  */
 
 #include "getopt.h"
+
+/* Added by sunny@sunbase.org */
+static char svn_id[] = "$Id$";
 
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
