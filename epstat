@@ -1,17 +1,23 @@
 #!/bin/sh
 
-# $Id: epstat,v 1.1 2001/02/23 10:34:55 sunny Exp $
+# $Id: epstat,v 1.2 2001/02/25 20:04:36 sunny Exp $
 # Lager enkel statistikk over hits osv i en loggfil.
 # Forventer antall sekunder siden 1970 i begynnelsen av hver linje.
 
+tmp_file=/tmp/epstat.$RANDOM.tmp
+
+sort -n $* | ep -l >$tmp_file
+
 echo Antall hits pr. døgn:
 echo
-sort -n $* | ep -l | uniq -cw 10 | tr T ' ' | cut -c 1-18
+uniq -cw 10 $tmp_file | tr T ' ' | cut -c 1-18
 echo
 
 echo Antall hits pr. time:
 echo
-sort -n $* | ep -l | uniq -cw 13 | tr [T:] ' ' | cut -c 1-21
+uniq -cw 13 $tmp_file | tr [T:] ' ' | cut -c 1-21
 
 echo
-echo Totalt $(wc -l $* | rmspcall | cut -d ' ' -f 1) hits.
+echo Totalt $(wc -l $tmp_file | rmspcall | cut -d ' ' -f 1) hits.
+
+rm $tmp_file
