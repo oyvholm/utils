@@ -5,18 +5,25 @@
 # Select text in visual line mode and filter the block through this script.
 
 use strict;
+use Getopt::Std;
+our ($opt_c, $opt_h) =
+    (     0,      0);
+getopts('ch');
 
 $| = 1;
 
 my $Line = <STDIN>;
-my ($Indent, $Title) = ("", "");
+my ($Indent, $Title) =
+   (     "",     "");
 
 defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
 $Line =~ /^(\s+)/ && ($Indent = $1);
-print("$Indent<!-- $Title\x7B\x7B\x7B -->\n$Line");
+my $c_S = $opt_c ? "" : " -->";
+my $c_E = $opt_c ? "" : "<!-- ";
+print("$Indent<!-- $Title\x7B\x7B\x7B$c_S\n$Line");
 
 while (<STDIN>) {
 	print($_);
 }
 
-print("$Indent<!-- \x7D\x7D\x7D -->\n");
+print("$Indent$c_E\x7D\x7D\x7D -->\n");
