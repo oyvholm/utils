@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+# $Id: access_log2epstat,v 1.1 2001/09/19 11:57:34 sunny Exp $
+# Konverterer access_log fra Apache til fil som passer til epstat(1).
+# Langt og trasig navn, men nøye då.
+
+use strict;
+use Time::Local;
+
+# 194.248.216.3 - - [13/Aug/2001:16:04:37 +0200] "GET 
+
+while (<>) {
+	if (m!
+			\S+    # IP
+			\s+
+			-
+			\s+
+			-
+			\s+
+			\[
+			(\d+) # Dato
+			/
+			(\d+) # Mnd
+			/
+			(\d{4}) # År
+			:(\d\d):(\d\d):(\d\d) # Klokka
+			\s+
+		!x
+		) {
+			my $Secs = timelocal($6, $5, $4, $1, $2-1, $3);
+			print("$Secs\n");
+		} else {
+			print(STDERR "Ukjent linje $.\n");
+		}
+}
