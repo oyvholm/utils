@@ -1,9 +1,16 @@
 #!/usr/bin/perl -w
 
-# $Id: commify,v 1.1 2002/06/25 14:50:33 sunny Exp $
+# $Id: commify,v 1.2 2003/10/12 20:36:57 sunny Exp $
 # Setter inn punktumer i nummer.
 
 use strict;
+use Getopt::Std;
+
+our $opt_s;
+
+getopts('s:');
+
+defined($opt_s) || ($opt_s = ".");
 
 while (<>) {
 	s/(\d{3,})/commify($1)/ge;
@@ -12,6 +19,6 @@ while (<>) {
 
 sub commify {
 	my $Str = reverse $_[0];
-	$Str =~ s/(\d\d\d)(?=\d)(?!\d*\,)/$1\./g;
+	$Str =~ s/(\d\d\d)(?=\d)(?!\d*\,)/$1$opt_s/g;
 	return scalar reverse $Str;
 } # commify()
