@@ -1,30 +1,32 @@
 #!/bin/sh
 
-# $Id: afvctl,v 1.4 2001/06/13 22:19:58 sunny Exp $
-# Starter/stopper/viser status for alle afv'er
+# $Id: afvctl,v 1.4.2.1 2003/05/29 13:02:26 sunny Exp $
+# Starter/stopper/viser status for alle afv’er
 
-currstop=$AFVROOT$(/bin/pwd)/stop
+afvdir=$AFVROOT$(/bin/pwd)
+currstop=$afvdir/stop
+dontstop=$afvdir/protected
 
 case "$1" in
 	start)
-		echo -n Starter afv...
+		echo -n Starter afv …
 		rm -f $currstop
 		retval=$?
 	;;
 	stop)
-		echo -n Stopper afv...
+		echo -n Stopper afv …
 		touch $currstop
 		sleep 5
 		rm $currstop
 		retval=$?
 	;;
 	startall)
-		echo -n Starter alle afv...
+		echo -n Starter alle afv’er …
 		rm -f $AFVROOT/stop
 		retval=$?
 	;;
 	stopall)
-		echo -n Stopper afv...
+		echo -n Stopper alle afv’er …
 		touch $AFVROOT/stop
 		sleep 5
 		rm $AFVROOT/stop
@@ -35,9 +37,13 @@ case "$1" in
 		retval=$?
 		exit $retval;
 	;;
+	protect*)
+		touch $dontstop
+		echo Katalogen `/bin/pwd` er nå beskyttet mot «afvctl stop*».
+	;;
 	*)
 		echo
-		echo Syntax: $0 start\|stop\|status
+		echo Syntax: $0 start\|stop\|stat
 		echo
 		exit 1
 	;;
