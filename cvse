@@ -497,5 +497,6 @@ cvs(1)
 
 # }}}
 
-# vim600: set fdm=marker fdc=3 ts=4 sw=4 sts=4 et fenc=utf8 :
+# vim: set fdm=marker ts=4 sw=4 sts=4 et :
+# vim: set fo+=2w fo-=n fenc=utf8 :
 # End of file $Id$
