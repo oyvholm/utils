@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# $Id: tail-errorlog,v 1.10 2001/05/06 13:38:32 sunny Exp $
+# $Id: tail-errorlog,v 1.11 2001/08/10 12:56:46 sunny Exp $
 #
 # tail -f på error_log til httpd(8).
 
-if [ -e /grimme.mrk -o -e /recbb.mrk ]; then
+if [ -e /grimme.mrk -o -e /recbb.mrk -o -e /toshbb.mrk ]; then
 	tail -f /var/log/httpd/error_log $*
 elif [ -e /ww.mrk ]; then
 	tail -f /home/httpd/logs/error_log $*
