@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: afv,v 1.13.2.4 2003/03/19 22:06:07 sunny Exp $
+# $Id: afv,v 1.13.2.5 2003/04/18 11:03:04 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -35,7 +35,7 @@ LOOP: foreach my $FullCurr (@Files) {
 	my $another_dir = 0;
 	check_stop();
 	next LOOP if (!-f $Curr || -l $Curr);
-	if ($Curr =~ m!(.*)/(.*?)$!) {
+	if ($Curr =~ m#(.*)/(.*?)$#) {
 		$another_dir = 1;
 		unless (chdir($1)) {
 			warn("Klarte ikke chdir(\"$1\"): $!");
@@ -161,4 +161,4 @@ sub my_sleep {
 	}
 } # my_sleep()
 
-#### End of file $Id: afv,v 1.13.2.4 2003/03/19 22:06:07 sunny Exp $ ####
+#### End of file $Id: afv,v 1.13.2.5 2003/04/18 11:03:04 sunny Exp $ ####
