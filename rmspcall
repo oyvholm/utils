@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id: rmspcall,v 1.1 1999/02/26 15:34:03 sunny Exp $
+
+rmspcforan
+rmspcbak
