@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.22 2000/11/27 18:31:58 sunny Exp $
+# $Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
@@ -40,7 +40,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.22 2000/11/27 18:31:58 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -202,6 +202,7 @@ sub get_cgivars {
 			exit;
 		}
 	}
+	defined($suncgi::request_log_file) || ($suncgi::request_log_file = "");
 	if (length($suncgi::request_log_file) && $suncgi::log_requests && length($in)) {
 		local *ReqFP;
 		my $loc_in = $in;
@@ -529,7 +530,7 @@ END
 <meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
 <meta name="date" content="$DocumentTime">
 END
-	tab_print(<<END) if length($suncgi::WebMaster);
+	tab_print(<<END) if defined($suncgi::WebMaster);
 <link rev="made" href="mailto:$suncgi::WebMaster">
 END
 	# tab_print ("Tabs = Tabs\n");
@@ -615,7 +616,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.22 2000/11/27 18:31:58 sunny Exp $>
+S<$Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1006,4 +1007,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.22 2000/11/27 18:31:58 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.23 2000/11/27 23:04:16 sunny Exp $ ####
