@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: pine,v 1.5 2003/06/06 05:52:56 sunny Exp $
+# $Id: pine,v 1.6 2003/08/03 07:27:45 sunny Exp $
 # Locking for pine
 
 lockdir=/home/sunny/lock
@@ -12,6 +12,8 @@ until mkdir $lockname 2>/dev/null; do
 	sleep 2
 done
 echo "$(tty) $(date +"%Y-%m-%d %H:%M:%S")" >$lockname/info
+
+. ~/.bashrc
 
 if [ -x /usr/local/bin/pine ]; then
 	/usr/local/bin/pine $*
