@@ -98,7 +98,9 @@ while (<>) {
         push(@Data, "$_");
         # }}}
     } elsif (/<!-- hhitoc -->/i) {
-        # Contents area found, skip everything until a "<!-- /hhitoc -->" is found {{{
+        # Contents area found, skip everything until a "<!-- /hhitoc 
+        # -->" is found
+        # {{{
         my $Found = 1;
         my $line_num = $.;
         push(@Data, "$_");
