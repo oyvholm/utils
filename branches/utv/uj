@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: uj,v 1.1.2.2 2003/01/28 01:33:18 sunny Exp $
+# $Id: uj,v 1.1.2.3 2003/02/02 16:25:15 sunny Exp $
 # Gjentar editering av filer som inneholder ulovlig UTF-8
 
 use strict;
@@ -20,8 +20,6 @@ while (scalar(@err_list)) {
 	@new_list = ();
 	# print("Starter med ", join(" ", @err_list), "\n");
 	for my $File (@err_list) {
-		my $cmd_iconv = "iconv -f utf8 -t utf8 $File >/dev/null 2>&1";
-		# print("Kjører \"$cmd_iconv\"\n");
 		if (file_legal($File)) {
 			# print("OK: $File\n");
 		} else {
@@ -114,4 +112,4 @@ sub decode_char {
 
 __END__
 
-#### End of file $Id: uj,v 1.1.2.2 2003/01/28 01:33:18 sunny Exp $ ####
+#### End of file $Id: uj,v 1.1.2.3 2003/02/02 16:25:15 sunny Exp $ ####
