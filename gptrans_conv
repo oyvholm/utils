@@ -266,6 +266,7 @@ sub print_entry {
     # various formats
     # {{{
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
+    D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
     $Year  = sprintf("%04u", $Year);
     $Month = sprintf("%02u", $Month);
@@ -385,6 +386,7 @@ sub sec_to_readable {
     # Convert seconds since 1970 to human-readable format (d:hh:mm:ss)
     # {{{
     my $secs = shift;
+    D("sec_to_readable(\"$secs\")\n");
     my ($Day, $Hour, $Min, $Sec) =
        (   0,     0,    0,    0);
 
