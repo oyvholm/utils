@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # PRE-REVPROP-CHANGE HOOK
+# $Id$
 #
 # The pre-revprop-change hook is invoked before a revision property
 # is modified.  Subversion runs this hook by invoking a program
