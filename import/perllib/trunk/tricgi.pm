@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $>
+S<$Id: tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -106,10 +106,10 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 #### Variabler
 ###########################################################################
 
-my $cvs_id = '$Id: tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $';
-my $cvs_date = '$Date: 1999/03/19 14:31:16 $';
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $';
 my $Tabs = "";
+my $cvs_date = '$Date: 1999/03/23 18:44:11 $';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $';
+my $cvs_id = '$Id: tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $';
 my $this_counter = "";
 
 my $FALSE = 0;
@@ -123,6 +123,7 @@ my $STD_BACKGROUND = "";
 my $STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
 my $STD_DOCALIGN = "center"; # Standard align for dokumentet hvis align ikke er spesifisert
 my $STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
+my $STD_HTMLDTD = $DTD_HTML4LOOSE;
 my $STD_LOGDIR = "."; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
 
 ###########################################################################
@@ -175,20 +176,28 @@ sub curr_utc_time {
 
 =head2 &escape_dangeours_chars()
 
-FIXME: Skriv her
+Brukes hvis man skal utføre en systemkommando og man får med kommandolinja
+å gjøre. Eksempel:
+
+	$cmd_line = &escape_dangerous_chars("$cmd_line");
+	system("$cmd_line");
+
+Tegn som kan rote til denne kommandoen får en backslash foran seg.
 
 =cut
 
 sub escape_dangerous_chars {
 	my $string = shift;
 
-	$string =~ s/([;<>\*\|`&\$!#\(\)\[\]\{\}:'"])/\\$1/g;
+	$string =~ s/([;\\<>\*\|`&\$!#\(\)\[\]\{\}'"])/\\$1/g;
 	return $string;
 } # escape_dangerous_chars()
 
 =head2 &file_mdate()
 
-FIXME: Skriv her
+Returnerer tidspunktet fila sist ble modifisert i sekunder siden
+S<1970-01-01 00:00:00 UTC>. Brukes hvis man skal skrive ting som "sist
+oppdatert da og da".
 
 =cut
 
@@ -218,6 +227,8 @@ skilletegn i GET/POST, scripts bør sende 'I<;>' så det ikke blir kluss med
 entities. Eksempel:
 
 	index.cgi?doc=login;username=suttleif;pwd=hemmelig
+
+FIXME: Denne må utvides litt med flere Content-type'er.
 
 =cut
 
@@ -256,9 +267,8 @@ sub get_cgivars {
 
 =head2 &get_counter()
 
-Skriver ut verdien av en teller, angi filnavn.
-
-FIXME: Skriv mer her
+Skriver ut verdien av en teller, angi filnavn. Fila skal inneholde et tall
+i standard ASCII-format.
 
 =cut
 
@@ -269,6 +279,7 @@ sub get_countervalue {
 	open(TmpFP, "<$counter_file") || (&HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$counter_value = <TmpFP>;
+	chomp($counter_value);
 	close(TmpFP);
 	return $counter_value;
 } # get_countervalue()
@@ -296,7 +307,7 @@ sub HTMLdie {
 	$Title || ($Title = "Intern feil");
 	if (!${main::Debug} && !${main::Utv}) {
 		$msg_str = <<END;
-			<p>En intern feil har oppstått. Feilen er loggført, og vil bli
+			<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli
 			fikset snart.
 END
 	} else {
@@ -352,9 +363,12 @@ END
 
 =head2 &HTMLwarn()
 
-En lightversjon av I<&HTMLdie()>, den skriver kun til I<${main::error_file}>. Når
-det oppstår feil men man ikke trenger å stoppe hele systemet. Brukes til
-småting som tellere som ikke virker og sånn.
+En lightversjon av I<&HTMLdie()>, den skriver kun til
+I<${main::error_file}>. Når det oppstår feil, men ikke trenger å rive ned
+hele systemet. Brukes til småting som tellere som ikke virker og sånn.
+
+FIXME: Muligens det burde vært lagt inn at ${main::WebMaster} fikk mail om
+hver gang ting går på trynet.
 
 =cut
 
@@ -365,7 +379,7 @@ sub HTMLwarn {
 	# Gjør det så stille og rolig som mulig.
 	if (${main::Utv} || ${main::Debug}) {
 		&print_header("CGI warning");
-		print "\n\t\t<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n";
+		&tab_print("<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n");
 	}
 	if (-e ${main::error_file}) {
 		open(ErrorFP, ">>${main::error_file}") or return;
@@ -380,9 +394,10 @@ sub HTMLwarn {
 
 =head2 &increase_counter()
 
-Øker telleren i en spesifisert fil med en.
-
-FIXME: Skriv mer her.
+Øker telleren i en spesifisert fil med en. Fila skal inneholde et tall i
+ASCII-format. I tillegg lages en fil som heter F<{fil}.ip> som inneholder
+IP'en som brukeren er tilkoblet fra. Hvis IP'en er den samme som i fila,
+oppdateres ikke telleren.
 
 =cut
 
@@ -417,11 +432,11 @@ sub increase_counter {
 
 =head2 &log_access()
 
-Logger aksess til en fil. Filnavnet skal være uten extension. I tillegg
-øker den en teller i fila I<$Base.count> unntatt hvis I<$no_count != 0>.
+Logger aksess til en fil. Filnavnet skal være uten extension, rutina tar seg av det. I tillegg
+øker den en teller i fila I<$Base.count> unntatt hvis parameter 2 != 0.
 
 Forutsetter at I<${main::log_dir}> er definert. Hvis ikke, settes den til
-I<$STD_LOGDIR>, "I<.>".
+I<$STD_LOGDIR>.
 
 FIXME: Skriv mer her.
 
@@ -510,6 +525,13 @@ Alt kan legges inn i en fil:
 	ftp ftp://black.tritech.no
 
 	<=page index>
+	<p>Bla bla bla
+
+	<=page support>
+	<p>Supportpreik
+
+	<=page contact>
+	<p>Kontaktpreik osv
 
 =cut
 
@@ -536,14 +558,14 @@ sub print_doc {
 	if (${main::Debug}) {
 		&print_header("er i print_doc"); # debug
 		while (($act_name,$act_time) = each %doc_val) {
-			print "<br>\"$act_name\"\t\"$act_time\"\n";
+			print("<br>\"$act_name\"\t\"$act_time\"\n");
 		}
 	}
 	# my ($DocTitle, $html_version, $Language, $user_background, $Refresh, $no_body, $Description, $Keywords, @StyleSheet) = @_;
 	&print_header($doc_val{title}, "", $doc_val{lang}, $doc_val{background}, $doc_val{refresh}, $doc_val{no_body}, $doc_val{description}, $doc_val{keywords});
 	while (<FromFP>) {
 		chomp;
-		print("\t\t$_\n");
+		&tab_print("$_\n");
 	}
 	print <<END;
 	</body>
@@ -604,39 +626,44 @@ sub print_footer {
 
 	# FIXME: Hardkoding av URL her pga av at ${main::Url} har skifta navn.
 	# FIXME: I resten av HTML'en er det brukt <div align="center">.
-	print <<END;
-		<table width="$footer_width" cellpadding="0" cellspacing="0" border="$Border" align="$footer_align">
-			<tr>
-				<td colspan="3">
-					<hr>
-				</td>
-			</tr>
-			<tr>
-				<td align="center">
-					<table cellpadding="0" cellspacing="0" border="$Border">
-						<tr>
-							<td align="center">
-								${main::FONTB}<small>&copy;&nbsp;<a href="http://www.tritech.no" target="_top">TriTech&nbsp;AS</a>&nbsp;&lt;<code><a href="http://www.tritech.no/index.cgi?doc=kontakt">tritech\@tritech.no</a></code>&gt;</small>${main::FONTE}
-							</td>
-						</tr>
-						<tr>
-							<td align="center">
-								${main::FONTB}<small>$cvs_str</small>${main::FONTE}
-							</td>
-						</tr>
-					</table>
-				</td>
-				<td width="100%" align="center">
-					$count_str
-				</td>
-				<td align="right">
-					$vh_str
-				</td>
-			</tr>
-		</table>
+	&tab_print(<<END);
+<table width="$footer_width" cellpadding="0" cellspacing="0" border="${main::Border}" align="$footer_align">
+	<tr>
+		<td colspan="3">
+			<hr>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<table cellpadding="0" cellspacing="0" border="${main::Border}">
+				<tr>
+					<td align="center">
+						${main::FONTB}<small>&copy;&nbsp;<a href="http://www.tritech.no" target="_top">TriTech&nbsp;AS</a>&nbsp;&lt;<code><a href="http://www.tritech.no/index.cgi?doc=kontakt">tritech\@tritech.no</a></code>&gt;</small>${main::FONTE}
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						${main::FONTB}<small>$cvs_str</small>${main::FONTE}
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td width="100%" align="center">
+			$count_str
+		</td>
+		<td align="right">
+			$vh_str
+		</td>
+	</tr>
+</table>
+END
+	unless ($no_end) {
+		&Tabs(-2);
+		&tab_print(<<END);
 	</body>
 </html>
 END
+	}
 	exit;
 } # print_footer()
 
@@ -704,6 +731,8 @@ BTW blir vel ikke parameterne brukt så mye til hverdags, hvis
 F<&print_doc()> blir ferdig rimelig fort. Der skal som kjent alt
 spesifiseres.
 
+FIXME: Det hadde gjort seg med tidligere HTML-versjoner også.
+
 =back
 
 =cut
@@ -748,12 +777,12 @@ END
 	}
 =cut
 	&content_type("text/html");
-	print length($html_version) ? $html_version : $DTD_HTML4LOOSE;
+	print length($html_version) ? $html_version : $STD_HTMLDTD;
 	print <<END;
 
 $html_str
-$DocId_str	<!-- $cvs_id -->
-	<!-- ${main::cvs_id} -->
+$DocId_str	<!-- ${main::cvs_id} -->
+	<!-- $cvs_id -->
 END
 	&Tabs(2); # html og head
 
@@ -777,7 +806,10 @@ END
 	print "\t\t</style>\n" if scalar @StyleSheet;
 	&Tabs(-2); # style og head
 	print("$Tabs</head>\n");
-	print("$Tabs$BodyStr\n") unless $no_body;
+	unless ($no_body) {
+		print("$Tabs$BodyStr\n")
+		&Tabs(1);
+	}
 } # print_header()
 
 ###########################################################################
@@ -788,13 +820,17 @@ Skriver ut på samme måte som print, men setter inn I<$Tabs> først på
 hver linje. Det er for å få riktige innrykk. Det forutsetter at
 I<$Tabs> er oppdatert til enhver tid.
 
+FIXME: Legg inn konvertering av tegn > 0x7f til entities.
+
 =cut
 
 sub tab_print {
-	my $Txt = shift;
+	my @Txt = @_;
 
-	$Txt =~ s/^(.*)/$Tabs$1/gm;
-	print "$Txt";
+	foreach (@Txt) {
+		s/^(.*)/${Tabs}$1/gm;
+		print "$_";
+	}
 } # tab_print()
 
 ###########################################################################
@@ -845,4 +881,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.3 1999/03/19 14:31:16 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.4 1999/03/23 18:44:11 sunny Exp $ ####
