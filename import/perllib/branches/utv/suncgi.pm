@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -20,6 +20,8 @@ require Exporter;
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn inc_counter increase_counter log_access print_header p_footer tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
+	utf8_print utf8_to_entity
+
 	$has_args $query_string
 	$log_requests $ignore_double_ip
 	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $base_url $Url
@@ -43,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -215,7 +217,7 @@ END
 	my $Fil = $call_info[1];
 	$Fil =~ s#\\#/#g;
 	$Fil =~ s#^.*/(.*?)$#$1#;
-	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg (FIXME: Brukte deb_pr(), den er avlegs)\n");
+	# print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg (FIXME: Brukte deb_pr(), den er avlegs)\n");
 	close(DebugFP);
 	# }}}
 } # deb_pr()
@@ -808,8 +810,8 @@ END
 	Tabs(1);
 	tab_print($RefreshStr) if length($RefreshStr);
 	tab_print(<<END);
-<meta name="author" content="&Oslash;yvind A. Holm">
-<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
+<meta name="author" content="&#216;yvind A. Holm">
+<meta name="copyright" content="&#169; &#216;yvind A. Holm">
 <meta name="date" content="$DocumentTime">
 END
 	tab_print(<<END) if defined($suncgi::WebMaster);
@@ -839,7 +841,8 @@ sub tab_print {
 
 	foreach (@Txt) {
 		s/^(.*)/${suncgi::Tabs}$1/gm;
-		s/([\x7f-\xff])/sprintf("&#%u;", ord($1))/ge;
+		# Det jøkke sæ med denslags konvertering i disse nesten-UTF-8-tider.
+		# s/([\x7f-\xff])/sprintf("&#%u;", ord($1))/ge;
 		print "$_";
 	}
 	# }}}
@@ -905,6 +908,88 @@ sub sec_to_string {
 	# }}}
 } # sec_to_string()
 
+sub utf8_print {
+	# Konverterer en UTF-8-streng til 7-bits HTML og sender den til stdout. FIXME: Overlange sekvenser godtas. {{{
+	# Halv-FIXME: Ikke helt oppdatert i henhold til RFC 3629, godtar 6-byters sekvenser. Men det er jo sikkert greit nok foreløpig.
+	# Forøvrig er jeg ikke så forbanna glad i den RFC’en.
+	# Henta fra SunbaseCGI.pm,v 1.14 2004/01/29 04:40:33
+	my $Txt = shift;
+	$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+	$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+	$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+	$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+	$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1)/ge;
+	print($Txt);
+	# }}}
+} # utf8_print()
+
+sub utf8_to_entity {
+	# Konverterer et tegn i UTF-8 til en numerisk HTML-entitet. Brukes av utf8_print() {{{
+	# utf8_to_entity() er henta fra «u2h,v 1.7 2002/11/20 00:48:10 sunny»
+	# Da het den decode_char()
+	# Og så ble den henta derfra (SunbaseCGI.pm,v 1.14 2004/01/29 04:40:33) og hit.
+
+	my $Msg = shift;
+	my ($allow_invalid, $use_latin1, $use_decimal) = (0, 0, 1);
+	my $Val = "";
+
+	if ($Msg =~ /^([\x20-\x7F])$/) {
+		$Val = ord($1);
+	} elsif ($Msg =~ /^([\xC0-\xDF])([\x80-\xBF])/) {
+		if (!$allow_invalid && $Msg =~ /^[\xC0-\xC1]/) {
+			$Val = 0xFFFD;
+		} else {
+			$Val = ((ord($1) & 0x1F) << 6) | (ord($2) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xE0-\xEF])([\x80-\xBF])([\x80-\xBF])/) {
+		if (!$allow_invalid && $Msg =~ /^\xE0[\x80-\x9F]/) {
+			$Val = 0xFFFD;
+		} else {
+			$Val = ((ord($1) & 0x0F) << 12) |
+			       ((ord($2) & 0x3F) <<  6) |
+			       ( ord($3) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xF0-\xF7])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
+		if (!$allow_invalid && $Msg =~ /^\xF0[\x80-\x8F]/) {
+			$Val = 0xFFFD;
+		} else {
+			$Val = ((ord($1) & 0x07) << 18) |
+			       ((ord($2) & 0x3F) << 12) |
+			       ((ord($3) & 0x3F) <<  6) |
+			       ( ord($4) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xF8-\xFB])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
+		if (!$allow_invalid && $Msg =~ /^\xF8[\x80-\x87]/) {
+			$Val = 0xFFFD;
+		} else {
+			$Val = ((ord($1) & 0x03) << 24) |
+			       ((ord($2) & 0x3F) << 18) |
+			       ((ord($3) & 0x3F) << 12) |
+			       ((ord($4) & 0x3F) <<  6) |
+			       ( ord($5) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xFC-\xFD])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
+		if (!$allow_invalid && $Msg =~ /^\xFC[\x80-\x83]/) {
+			$Val = 0xFFFD;
+		} else {
+			$Val = ((ord($1) & 0x01) << 30) |
+			       ((ord($2) & 0x3F) << 24) |
+			       ((ord($3) & 0x3F) << 18) |
+			       ((ord($4) & 0x3F) << 12) |
+			       ((ord($5) & 0x3F) <<  6) |
+			       ( ord($6) & 0x3F);
+		}
+	}
+	unless ($allow_invalid) {
+		if (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
+			$Val = 0xFFFD;
+		}
+	}
+	return("-") if ($Val eq 0x2010); # Vetta fan hvorfor den mangler i masse fonter, så man får seife litt. Den er egentlig ufattelig stygg den der, men hva i helsike skal man gjøre? FIXME: Er det verdt bråket? ☠!!!
+	return ($use_latin1 && ($Val <= 0xFF)) ? chr($Val) : sprintf(($use_decimal ? "&#%u;" : "&#x%X;"), $Val);
+	# }}}
+} # utf8_to_entity()
+
 1;
 
 __END__
@@ -917,7 +1002,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1321,4 +1406,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.4 2004/02/10 06:03:31 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $ ####
