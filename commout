@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 
 # Kommenterer ut linjer. Dødsavansert.
-# $Id: commout,v 1.2 1999/05/07 00:44:52 sunny Exp $
+# $Id: commout,v 1.3 1999/05/11 16:07:58 sunny Exp $
 
 while (<>) {
-	print "# $_";
+	s/^(\t*)/$1# /;
+	print;
 }
