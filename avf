@@ -1,0 +1,73 @@
+#!/usr/bin/perl -w
+
+# Lagrer alle nye versjoner av en fil.
+# $Id: avf,v 1.1 2001/04/03 03:26:12 sunny Exp $
+
+use strict;
+use Fcntl ':flock';
+
+my $Dir = ".AVF";
+-d $Dir || mkdir($Dir, 0777) || die("$Dir: Klarte ikke mkdir(): $!");
+-d "$Dir/$Dir" || mkdir("$Dir/$Dir", 0777) || die("$Dir/$Dir: Klarte ikke mkdir(): $!");
+my @Files = @ARGV;
+
+foreach my $Curr (@Files) {
+	my $lock_time = 0;
+	my $lock_dir = "$Dir/$Dir/$Curr.lock";
+	my $lastmd5_file = "$Dir/$Dir/$Curr.lastmd5";
+	my $currmd5_file = "$Dir/$Dir/$Curr.currmd5";
+	my $start_lock = time;
+
+	until (mkdir("$lock_dir", 0777)) {
+		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
+		sleep 5;
+	};
+
+	if (open(FromFP, "<$Curr")) {
+		if (flock(FromFP, LOCK_EX)) {
+			seek(FromFP, 0, 0) || die("$Curr: Klarte ikke å seeke til starten: $!");
+			if (open(Md5FP, "| /usr/bin/md5sum >$currmd5_file")) {
+				while(<FromFP>) {
+					print(Md5FP $_);
+				}
+				close(Md5FP);
+			} else {
+				warn("$Curr: Klarte ikke å åpne md5-pipe: $!");
+			}
+			my $curr_md5 = `/bin/cat $currmd5_file`; # FIXME: For å få lock må egne MD5-rutiner legges inn.
+			my $last_md5 = `/bin/cat $lastmd5_file`;
+			if ($curr_md5 ne $last_md5) {
+				my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, $mtime, $ctime, $blksize, $blocks) = stat(FromFP);
+				print(STDERR "$Curr: mtime = $mtime\n");
+				if (seek(FromFP, 0, 0)) {
+					my $to_file = ">$Dir/$mtime.$Curr";
+					if (open(ToFP, "$to_file")) {
+						if (flock(ToFP, LOCK_EX)) {
+							while (<FromFP>) {
+								print(ToFP $_);
+							}
+						} else {
+							warn("$to_file: Klarte ikke flock(): $!");
+						}
+						close(ToFP);
+						unlink("$lastmd5_file");
+						rename("$currmd5_file", "$lastmd5_file") || die(qq{Klarte ikke rename("$currmd5_file", "$lastmd5_file")});
+					} else {
+						warn("$Curr: Klarte ikke å åpne fila for skriving: $!");
+					}
+				} else {
+					warn("$Curr: Klarte ikke å seeke til starten: $!");
+				}
+			}
+		} else {
+			warn("$Curr: Klarte ikke flock(): $!");
+		}
+		close(FromFP);
+	} else {
+		warn("$Curr: Klarte ikke å åpne fila for lesing: $!");
+	}
+
+	rmdir($lock_dir) || warn("$lock_dir: Klarte ikke å fjerne lockdir: $!");
+}
+
+#### End of file $Id: avf,v 1.1 2001/04/03 03:26:12 sunny Exp $ ####
