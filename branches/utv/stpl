@@ -1,12 +1,12 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.1.2.10 2003/12/20 10:58:25 sunny Exp $
+# $Id: stpl,v 1.1.2.11 2004/03/15 08:05:31 sunny Exp $
 # Plot out data with gnuplot based on data type
 #
 # Character set: UTF-8
 # License: GNU General Public License
-# ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2003-2004 Øyvind A. Holm <sunny@sunbase.org>
 #===============================================================
 
 use strict;
@@ -19,7 +19,7 @@ our ($opt_h, $opt_k, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
     (     0,      0,     "",     "",     "",     "",     "",     "");
 getopts('hkl:o:s:t:x:y:');
 
-my $rcs_id = '$Id: stpl,v 1.1.2.10 2003/12/20 10:58:25 sunny Exp $';
+my $rcs_id = '$Id: stpl,v 1.1.2.11 2004/03/15 08:05:31 sunny Exp $';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
@@ -133,6 +133,8 @@ END
 				print(GnupFP "set terminal postscript enhanced color solid 8\nset output \"$opt_o\"\n");
 			} elsif ($opt_o =~ /.*\.png$/i) {
 				print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
+			} elsif ($opt_o =~ /.*\.fig/i) {
+				print(GnupFP "set terminal fig color big metric\nset output \"$opt_o\"\n");
 			} else {
 				die("Unkonwn outfile type, has to be .ps or .png\n");
 			}
@@ -186,4 +188,4 @@ END
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.1.2.10 2003/12/20 10:58:25 sunny Exp $
+# End of file $Id: stpl,v 1.1.2.11 2004/03/15 08:05:31 sunny Exp $
