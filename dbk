@@ -1,7 +1,10 @@
 #!/usr/bin/perl
 
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.4 1999/05/05 00:39:46 sunny Exp $
+# $Id: dbk,v 1.5 2000/03/20 12:10:52 sunny Exp $
+#
+# (C)opyleft Øyvind A. Holm <sunny256@mail.com>
+# GNU-lisens.
 
 use Time::Local;
 
@@ -9,23 +12,21 @@ $Debug = 0;
 
 print("\$#ARGV = $#ARGV\n") if $Debug;
 
-$Editor = "joe -wordwrap +9999";
-$Editor_t = "joe -wordwrap +9999";
-$Viewer = "lynx";
+$Editor = "joe +9999";
 $dbk_dir = "$ENV{HOME}/dbk";
+$Viewer = "lynx -homepage=file://$dbk_dir";
 $dbk_ext = ".html";
 $dir_mode = 0770;
 
 $curr_time = time;
 $opt_t = 0; # Legger til klokkeslettet på en egen linje
 $opt_h = 0; # Skriver ut hjelpen
-$opt_v = 0; # Viser dokumentet i lynx(1) eller hva man nå måtte bruke
 @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 require 'getopts.pl';
-&Getopts('htv');
+&Getopts('ht');
 
-&print_help if $opt_h;
+&print_help(0) if $opt_h;
 
 print("$0: \$opt_t = $opt_t\n") if $Debug;
 
@@ -40,7 +41,13 @@ $Year = $ARGV[2] if $#ARGV >= 2;
 $Mon = sprintf("%02u", $ARGV[1]) if $#ARGV >= 1;
 $Day = sprintf("%02u", $ARGV[0]) if $#ARGV >= 0;
 
-$Year += 1900 if ($Year < 100); # Heia år 2000, vi gleder oss.
+# Når vi nærmer oss 2030 begynner dette å bli en fixme. :)
+if ($Year < 30) {
+	$Year += 2000;
+} elsif ($Year < 100) {
+	$Year += 1900;
+}
+
 $Mon =~ s/^(\d)$/0$1/;
 $Day =~ s/^(\d)$/0$1/;
 $Hour =~ s/^(\d)$/0$1/;
@@ -84,22 +91,20 @@ unless (-f $dbk_file) {
 if ($opt_t) {
 	$utc_str = sprintf("%s%02u00", $utc_diff < 0 ? "-" : "+", $utc_diff);
 	open(FP, ">>$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for append: $!\n");
-	print(FP "\n<p><b>$Hour:$Min:$Sec$utc_str</b> - ") || die("$0: $dbk_file: Klarte ikke å skrive til fila: $!\n");
+	print(FP "\n<p><b>$Hour:$Min:$Sec$utc_str</b> -\n") || die("$0: $dbk_file: Klarte ikke å skrive til fila: $!\n");
 	close(FP);
-	system("$Editor_t $dbk_file");
-	$min_size = 50;
-} else {
 	system("$Editor $dbk_file");
+	$min_size = 52;
+} else {
 	$min_size = 25;
 }
+system("$Viewer $dbk_file");
 
 @stat_info = stat($dbk_file);
 $file_size = $stat_info[7];
 if ($file_size < $min_size) {
 	print("Ingenting ble skrevet, så jeg sletter driten.\n");
 	unlink($dbk_file) || die("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
-} else {
-	system("$Viewer $dbk_file") if $opt_v;
 }
 
 exit(0);
@@ -107,6 +112,7 @@ exit(0);
 #### SUBRUTINER ####
 
 sub print_help {
+	my $Retval = shift;
 	print <<END;
 
 Syntax: $0 [valg] [dag [måned [år]]]
@@ -114,13 +120,12 @@ Syntax: $0 [valg] [dag [måned [år]]]
 Disse valgene (options) kan brukes:
 
 -h  Skriv denne hjelpen
--t  Legg til klokkeslett i fila
--v  Vis dokumentet i en browser etter editering
+-t  Legg til klokkeslett i fila og gå inn i editoren
 
 END
-	exit(0);
+	exit($Retval);
 }
 
 __END__
 
-#### End of file $Id: dbk,v 1.4 1999/05/05 00:39:46 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.5 2000/03/20 12:10:52 sunny Exp $ ####
