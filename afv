@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: afv,v 1.4 2001/05/10 10:29:53 sunny Exp $
+# $Id: afv,v 1.5 2001/05/11 12:04:45 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -103,7 +103,8 @@ sub create_dir {
 	my ($Dir, $Msg) = @_;
 	unless (-d $Dir) {
 		print($Msg);
-		mkdir($Dir, 0777) || die("...Klarte ikke mkdir(): $!");
+		system("/bin/mkdir -p $Dir >/dev/null 2>&1"); # FIXME: Hack
+		# mkdir($Dir, 0777) || die("...Klarte ikke mkdir(): $!");
 	}
 } # create_dir()
 
@@ -116,4 +117,4 @@ sub check_stop {
 	}
 } # check_stop()
 
-#### End of file $Id: afv,v 1.4 2001/05/10 10:29:53 sunny Exp $ ####
+#### End of file $Id: afv,v 1.5 2001/05/11 12:04:45 sunny Exp $ ####
