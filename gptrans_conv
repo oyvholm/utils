@@ -47,6 +47,7 @@ Syntax: gptrans_conv [options] [files [...]]
           gpstrans
           ps (Unfinished)
           xgraph
+          xml
   -s    Short date format
   -t    Create breaks in track between points with a difference more 
         than $PAUSE_LIMIT seconds
@@ -121,6 +122,11 @@ if ($opt_o eq "gpstrans") {
 } elsif ($opt_o eq "ps") {
     print(ps_header(532, 6034, 533, 6040));
     print("*u\n");
+} elsif ($opt_o eq "xml") {
+    print(<<END);
+<?xml version="1.0" encoding="utf-8"?>
+<gpslog>
+END
 }
 
 while (<>) {
@@ -132,7 +138,7 @@ while (<>) {
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
-        print unless ($opt_o =~ /^(xgraph|gpstrans)$/);
+        print unless ($opt_o =~ /^(xgraph|gpstrans|xml)$/);
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
         # Author’s format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -203,9 +209,9 @@ while (<>) {
         $found_move = 1;
         # }}}
     } elsif (/^xmaplog /) {
-        print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
+        print("\n") unless ($opt_o =~ /^(xgraph|gpstrans|xml)$/);
     } elsif (/^$/) {
-        print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
+        print("\n") unless ($opt_o =~ /^(xgraph|gpstrans|xml)$/);
     } else {
         print("# $_");
         chomp;
@@ -220,6 +226,8 @@ if ($opt_o eq "ps") {
 %%Trailer
 %%EOF
 END
+} elsif ($opt_o eq "xml") {
+  print("</gpslog>\n");
 }
 
 exit(0);
@@ -260,7 +268,7 @@ sub print_entry {
         $pause_len = $ep_time-$last_time;
     }
 
-    if ($pause_len && ($opt_o !~ /^(xgraph|gpstrans)$/)) {
+    if ($pause_len && ($opt_o !~ /^(xgraph|gpstrans|xml)$/)) {
         printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
     }
 
@@ -277,6 +285,24 @@ sub print_entry {
             ($Line .= "$Lon $Lat\n");
         } elsif ($opt_o eq "ps") {
             $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
+        } elsif ($opt_o eq "xml") {
+            $Line = <<END;
+  <entry>
+    <pos>
+      <x>$Lon</x>
+      <y>$Lat</y>
+      <z>$Alt</z>
+    </pos>
+    <date>
+      <year>$Year</year>
+      <mon>$Month</mon>
+      <day>$Day</day>
+      <hour>$Hour</hour>
+      <min>$Min</min>
+      <sec>$Sec</sec>
+    </date>
+  </entry>
+END
         } else {
             # Default format used by the author. Yes, the Universe 
             # evolves around him. ☺
