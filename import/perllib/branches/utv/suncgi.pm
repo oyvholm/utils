@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -20,7 +20,7 @@ require Exporter;
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn HTMLerror inc_counter increase_counter log_access print_header p_footer tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
-	utf8_print utf8_to_entity conv_print widechar
+	h_print utf8_print utf8_to_entity conv_print widechar
 
 	$has_args $query_string
 	$log_requests $ignore_double_ip
@@ -45,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -181,6 +181,11 @@ sub deb_pr {
 	my $Msg = shift;
 	my @call_info = caller;
 	$Msg =~ s/^(.*?)\s+$/$1/;
+	my $deb_time = curr_utc_time();
+	my $Fil = $call_info[1];
+	$Fil =~ s#\\#/#g;
+	$Fil =~ s#^.*/(.*?)$#$1#;
+	my $warn_str = "$deb_time $$ $Fil:$call_info[2] $Msg\n";
 	my $err_msg = "";
 	if (-e $suncgi::debug_file) {
 		open(DebugFP, "+<$suncgi::debug_file") || ($err_msg = "Klarte ikke å åpne debugfila for lesing/skriving");
@@ -208,16 +213,14 @@ $suncgi::DTD_HTML4STRICT
 		<p>\$main::Debug = "$main::Debug"
 		<br>\${suncgi::debug_file} = "${suncgi::debug_file}"
 		<br>\${suncgi::error_file} = "${suncgi::error_file}"
+		<br>\$warn_str = "$warn_str"
 	</body>
 </html>
 END
 		exit();
 	}
-	my $deb_time = time;
-	my $Fil = $call_info[1];
-	$Fil =~ s#\\#/#g;
-	$Fil =~ s#^.*/(.*?)$#$1#;
-	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg\n");
+	print(DebugFP $warn_str);
+	print("$warn_str<br>\n");
 	close(DebugFP);
 	# }}}
 } # deb_pr()
@@ -511,21 +514,28 @@ sub HTMLwarn {
 	# {{{
 	my $Msg = shift;
 	my $utc_str = curr_utc_time();
-	deb_pr("WARN: $Msg");
+	my @call_info = caller;
+
+	my $Fil = $call_info[1];
+	$Fil =~ s#\\#/#g;
+	$Fil =~ s#^.*/(.*?)$#$1#;
+	$Msg =~ s/\\/\\\\/g;
+	$Msg =~ s/\n/\\n/g;
+	$Msg =~ s/\t/\\t/g;
+	my $warn_str = "$utc_str $Fil:$call_info[2] WARN $Msg\n";
+
+	deb_pr($warn_str);
 	# Gjør det så stille og rolig som mulig.
 	if ($main::Utv || $main::Debug) {
 		print_header("CGI warning");
-		tab_print("<p><b>HTMLwarn(): $Msg</b>\n");
+		tab_print("<p><b>HTMLwarn(): $warn_str</b>\n");
 	}
 	if (-e ${suncgi::error_file}) {
 		open(ErrorFP, ">>${suncgi::error_file}") or return;
 	} else {
 		open(ErrorFP, ">${suncgi::error_file}") or return;
 	}
-	$Msg =~ s/\\/\\\\/g;
-	$Msg =~ s/\n/\\n/g;
-	$Msg =~ s/\t/\\t/g;
-	print(ErrorFP "$utc_str WARN $Msg\n");
+	print(ErrorFP $warn_str);
 	close(ErrorFP);
 	# }}}
 } # HTMLwarn()
@@ -810,7 +820,7 @@ sub print_header {
 			tab_print("<!-- $_ -->\n");
 		}
 	}
-	utf8_print(<<END);
+	h_print(<<END);
 <head>
 	<!-- \x7B\x7B\x7B -->
 	<title>$DocTitle</title>
@@ -946,6 +956,7 @@ sub h_print {
 	# 8-bits tegn IKKE skal konverteres til numeriske entities.
 
 	my ($Txt, $from_charset, $no_entities) = @_;
+	deb_pr(join("|", "Går inn i h_print(", @_, ")"));
 	defined($from_charset) || ($from_charset = "UTF-8");
 	defined($no_entities) || ($no_entities = 0);
 	length($from_charset) || ($from_charset = "UTF-8");
@@ -958,14 +969,19 @@ sub h_print {
 
 	if ($from_charset =~ /^UTF-8$/i) {
 		if ($suncgi::CharSet =~ /^UTF-8$/i) {
-			unless ($no_entities) {
-				$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-				$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-				$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-				$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-				$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1)/ge;
-			}
+			# unless ($no_entities) {
+			$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
+			$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
+			$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
+			$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
+			$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
+			# }
 		} elsif ($suncgi::CharSet =~ /^ISO-8859-1$/i) {
+			$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
+			$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
+			$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
+			$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
+			$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
 		}
 	} elsif ($from_charset =~ /^ISO-8859-1$/i) {
 		if ($suncgi::CharSet =~ /^UTF-8$/) {
@@ -975,16 +991,17 @@ sub h_print {
 	}
 	print($Txt);
 	# }}}
-}
+} # h_print()
 
 sub utf8_to_entity {
-	# Konverterer et tegn i UTF-8 til en numerisk HTML-entitet. Brukes av utf8_print() {{{
+	# Konverterer en UTF-8-sekvens til en numerisk HTML-entitet eller ISO-8859-1. Brukes av utf8_print() og h_print() {{{
 	# utf8_to_entity() er henta fra «u2h,v 1.7 2002/11/20 00:48:10 sunny»
 	# Da het den decode_char()
 	# Og så ble den henta derfra (SunbaseCGI.pm,v 1.14 2004/01/29 04:40:33) og hit.
 
-	my $Msg = shift;
-	my ($allow_invalid, $use_latin1, $use_decimal) = (0, 0, 1);
+	my ($Msg, $use_latin1) = @_;
+	my ($allow_invalid, $use_decimal) =
+	   (             0,            1);
 	my $Val = "";
 
 	if ($Msg =~ /^([\x20-\x7F])$/) {
@@ -1039,8 +1056,16 @@ sub utf8_to_entity {
 			$Val = 0xFFFD;
 		}
 	}
-	return("-") if ($Val eq 0x2010); # Vetta fan hvorfor den mangler i masse fonter, så man får seife litt. Den er egentlig ufattelig stygg den der, men hva i helsike skal man gjøre? FIXME: Er det verdt bråket? ☠!!!
-	return ($use_latin1 && ($Val <= 0xFF)) ? chr($Val) : sprintf(($use_decimal ? "&#%u;" : "&#x%X;"), $Val);
+	# return("-") if ($Val eq 0x2010); # Vetta fan hvorfor den mangler i masse fonter, så man får seife litt. Den er egentlig ufattelig stygg den der, men hva i helsike skal man gjøre? FIXME: Er det verdt bråket? ☠!!!
+	deb_pr("utf8_to_entity(): \$Val = \"$Val\" før retval");
+	my $Retval = $use_latin1
+	             ? ( ($Val <= 0xFF) ? chr($Val) )
+	             : ( sprintf("&#%u;", $Val) );
+	chr($Val) : $Val <= 0xFF
+		) ? chr($Val) : sprintf("&#%u;"), $Val
+	);
+	deb_pr("utf8_to_entity() returnerer \"$Retval\"");
+	return($Retval);
 	# }}}
 } # utf8_to_entity()
 
@@ -1058,9 +1083,10 @@ sub conv_print {
 } # conv_print()
 
 sub widechar {
-	# Konverterer en numerisk tegnverdi til en UTF-8-sekvens {{{
-	# Henta fra "h2u,v 1.5 2002/11/20 00:09:40" og forandra $opt_i til $allow_illegal
-	my ($Val, $allow_illegal) = shift;
+	# Konverterer en numerisk tegnverdi til en UTF-8-sekvens. Forsåvidt det motsatte av utf8_to_entity(). {{{
+	# Henta fra "h2u,v 1.5 2002/11/20 00:09:40" og forandra litt på.
+	my ($Val, $no_entities) = @_;
+	my $allow_illegal = 0;
 	if ($Val < 0x80) {
 		return sprintf("%c", $Val);
 	} elsif ($Val < 0x800) {
@@ -1111,7 +1137,7 @@ suncgi — HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1484,4 +1510,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.8 2004/02/27 06:39:13 sunny Exp $ ####
