@@ -30,7 +30,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $>
+S<$Id: suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -132,9 +132,9 @@ $main::Utv = 0 unless defined($main::Utv);
 $main::Debug = 0 unless defined($main::Debug);
 $suncgi::curr_utc = time;
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/09/11 12:58:57 $';
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/09/26 15:07:06 $';
 @suncgi::rcs_array = ();
 
 $suncgi::this_counter = "";
@@ -417,6 +417,7 @@ sub get_cgivars {
 	}
 	foreach (split("[&;]", $in)) {
 		s/\+/ /g;
+		my ($name, $value) = ("", "");
 		($name, $value) = split('=', $_, 2);
 		$name =~ s/%(..)/chr(hex($1))/ge;
 		$value =~ s/%(..)/chr(hex($1))/ge;
@@ -829,7 +830,7 @@ sub print_footer {
 	</tr>
 	<tr>
 		<td align="center">
-			<table cellpadding="0" cellspacing="0" border="${suncgi::Border}">
+			<table cellpadding="0" cellspacing="0" border="$suncgi::Border">
 				<tr>
 					<td align="center">
 						<small>$rcs_str</small>
@@ -936,6 +937,7 @@ sub print_header {
 	} else {
 		$suncgi::header_done = 1;
 	}
+	defined($DocTitle) || ($DocTitle = "[NO TITLE]"); # FIXME: Midlertidig
 	$style_sheet = $suncgi::css_default unless defined($style_sheet);
 	$head_lang = $suncgi::STD_LANG unless defined($head_lang);
 	$html_version = $suncgi::DTD_HTML4LOOSE unless defined($html_version);
@@ -1118,4 +1120,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.11 2000/09/11 12:58:57 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $ ####
