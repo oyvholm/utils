@@ -17,8 +17,10 @@ use Getopt::Std;
 
 my $STD_SPACE = 2;
 
-our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i,     $opt_n, $opt_s, $opt_t, $opt_w) =
-    (     0,      0,      0,      0,      0, $STD_SPACE,      0,      0,      0);
+our ($opt_a, $opt_E, $opt_h, $opt_H, $opt_i, $opt_s, $opt_t, $opt_w) =
+    (     0,      0,      0,      0,      0,      0,      0,      0);
+our $opt_n = $STD_SPACE;
+
 getopts('aEhHi:n:stw');
 
 my $is_pre = 0;
@@ -36,9 +38,10 @@ my $tab_indent = $main::opt_i;
 my $orig_line = "";
 my @Elements = (
     "applet", "blockquote", "body", "caption", "center", "colgroup", 
-    "div", "dl", "form", "frameset", "head", "html", "ol", "map", 
-    "noframes", "noscript", "select", "table", "td", "th", "tr", "ul"
+    "div", "dl", "form", "frameset", "html", "ol", "map", "noframes", 
+    "noscript", "select", "table", "td", "th", "tr", "ul"
 );
+my $pre_exp="head|pre|script|rdf:RDF";
 
 $tab_indent = 0 if ($tab_indent <= 0);
 
@@ -108,8 +111,8 @@ LINE: while (<>) {
     } else {
         print("$_\n");
     }
-    $is_pre = 1 if ($Line =~ /<(pre|script|style|rdf:RDF)\b.*>/i);
-    $is_pre = 0 if ($Line =~ m!</(pre|script|style|rdf:RDF)>!i);
+    $is_pre = 1 if ($Line =~ /<($pre_exp)\b.*>/i);
+    $is_pre = 0 if ($Line =~ m!</($pre_exp)>!i);
     # }}}
 }
 
@@ -140,5 +143,5 @@ END
     # }}}
 }
 
-# vim: set ft=perl sw=4 ts=4 sts=4 expandtab fenc=utf8 :
+# vim: set ft=perl sw=4 ts=4 sts=4 et fenc=utf8 :
 # End of file $Id$
