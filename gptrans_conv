@@ -292,7 +292,7 @@ sub print_entry {
                              "<pos>",
                                  "<x>$Lon</x>",
                                  "<y>$Lat</y>",
-                                 "<z>$Alt</z>",
+                                 ($Alt eq "?") ? "" : "<z>$Alt</z>",
                              "</pos>",
                          "</gps>\n"
                     );
