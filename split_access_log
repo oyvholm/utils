@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.9 2004/04/07 03:42:53 sunny Exp $
+# $Id: split_access_log,v 1.10 2004/04/07 14:57:09 sunny Exp $
 # Splitter opp access_log fra httpd(8) på dato. Legger delene som
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] .
 #
@@ -40,6 +40,7 @@ while (<>) {
 		my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
 		   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
 		my $num_mnd = $Mnd{$Mon};
+		defined($num_mnd) || goto UNKNOWN_LINE_FORMAT;
 		my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mnd, $Year);
 		$Secs -= ($zone_hour*3600 + $zone_min*60);
 		my ($u_sec, $u_min, $u_hour, $u_mday, $u_mon, $u_year, $u_wday, $u_yday) = gmtime($Secs);
@@ -76,6 +77,7 @@ while (<>) {
 		}
 		print(ToFP $_) || die("Feil under skriving til $Fnavn(.DUP): $!");
 	} else {
+		UNKNOWN_LINE_FORMAT:
 		warn("Linje $.: Ukjent format, skriver til \"$Fnavn.ERR\".\n");
 		my $op_pref = (-e "$Fnavn.ERR") ? ">>" : ">";
 		if (open(ErrFP, "$op_pref$Fnavn.ERR")) {
@@ -124,4 +126,4 @@ END
 
 __END__
 
-# End of file $Id: split_access_log,v 1.9 2004/04/07 03:42:53 sunny Exp $
+# End of file $Id: split_access_log,v 1.10 2004/04/07 14:57:09 sunny Exp $
