@@ -1,9 +1,19 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-# Kommenterer ut stdin.
+#=======================================================================
 # $Id$
+# Kommenterer ut stdin.
+#=======================================================================
 
-$prog_name = "commout";
+use strict;
+
+my $comm_pattern = "";
+my $is_c    = 0;
+my $is_html = 0;
+my $is_pre  = 0;
+my $is_re   = 0;
+my $prog_name = "commout";
+my $spc_str = "";
 
 if ($#ARGV > -1) {
     $_ = $ARGV[0];
@@ -17,20 +27,22 @@ if ($#ARGV > -1) {
     $comm_pattern = '#';
 }
 
-length($ARGV[1]) && ($spc_str = " ");
+defined($ARGV[1]) && ($spc_str = " ");
 
 $is_html && print("<!--$spc_str" . $ARGV[1] . " \x7B\x7B\x7B\n") ||
 $is_pre && printf("%s<pre>\n", $is_re ? "" : "<p>") ||
 $is_c && printf("/*$spc_str" . $ARGV[1] . "\n");
 
+my $Bck = "";
 while (<STDIN>) {
-    ($is_html || $is_pre || $is_c) || s/^(\t*)/$1$comm_pattern /;
+    ($is_html || $is_pre || $is_c) || s/^([\t ]*)/$1$comm_pattern /;
     print;
     $Bck = $_;
 }
 
 if ($is_html || $is_c) {
-    $Bck =~ /\n$/ || print(" "); # Hvis stdin ikke slutta med newline, skrives en space.
+    # Hvis stdin ikke slutta med newline, skrives en space.
+    $Bck =~ /\n$/ || print(" ");
 }
 
 $is_html && print("\x7D\x7D\x7D -->\n") ||
@@ -66,4 +78,4 @@ END
 } # print_help()
 
 # vim: set ts=4 sw=4 sts=4 et fenc=utf8 fo+=w2 :
-#### End of file $Id$ ####
+# $Id$
