@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -18,9 +18,9 @@ require Exporter;
 	get_cookie set_cookie delete_cookie split_cookie
 	content_type create_file curr_local_time curr_utc_time D deb_pr
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
-	HTMLwarn inc_counter increase_counter log_access print_header p_footer tab_print tab_str
+	HTMLwarn HTMLerror inc_counter increase_counter log_access print_header p_footer tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
-	utf8_print utf8_to_entity
+	utf8_print utf8_to_entity conv_print
 
 	$has_args $query_string
 	$log_requests $ignore_double_ip
@@ -45,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -102,9 +102,9 @@ sub curr_local_time {
 	# my $LO = localtime();
 	# my $utc_diff = ($GM-$LO)/3600;
 
-	# - # &deb_pr(__LINE__ . ": curr_local_time(): gmtime = \"$GM\", localtime = \"$LO\"");
+	# - # &deb_pr("curr_local_time(): gmtime = \"$GM\", localtime = \"$LO\"");
 	my $LocalTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
-	# &deb_pr(__LINE__ . ": curr_local_time(): Returnerer \"$LocalTime\"");
+	# &deb_pr("curr_local_time(): Returnerer \"$LocalTime\"");
 	return($LocalTime);
 	# }}}
 } # curr_local_time()
@@ -123,7 +123,7 @@ sub curr_utc_time {
 	# {{{
 	my @TA = gmtime(time);
 	my $UtcTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
-	# &deb_pr(__LINE__ . ": curr_utc_time(): Returnerer \"$UtcTime\"");
+	# &deb_pr("curr_utc_time(): Returnerer \"$UtcTime\"");
 	return($UtcTime);
 	# }}}
 } # curr_utc_time()
@@ -217,7 +217,7 @@ END
 	my $Fil = $call_info[1];
 	$Fil =~ s#\\#/#g;
 	$Fil =~ s#^.*/(.*?)$#$1#;
-	# print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg (FIXME: Brukte deb_pr(), den er avlegs)\n");
+	print(DebugFP "$deb_time $Fil:$call_info[2] $$ $Msg\n");
 	close(DebugFP);
 	# }}}
 } # deb_pr()
@@ -303,7 +303,7 @@ sub get_cgivars {
 		$in{$name} .= "\0" if defined($in{$name});
 		$in{$name} .= $value;
 		# Den under her er veldig grei å ha upåvirket av perldeboff(1).
-		deb_pr(__LINE__ . ": get_cgivars(): $name = \"$value\"");
+		deb_pr("get_cgivars(): $name = \"$value\"");
 	}
 	return %in;
 	# }}}
@@ -414,7 +414,7 @@ sub get_countervalue {
 	my $counter_file = shift;
 	my $counter_value = 0;
 	local *TmpFP;
-	# &deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
+	# &deb_pr("get_countervalue(): Åpner $counter_file for lesing+flock");
 	unless (-e $counter_file) {
 		open(TmpFP, ">$counter_file") || (HTMLwarn("$counter_file i get_countervalue(): Klarte ikke å lage fila: $!"), return(0));
 		flock(TmpFP, LOCK_EX);
@@ -426,7 +426,7 @@ sub get_countervalue {
 	$counter_value = <TmpFP>;
 	chomp($counter_value);
 	close(TmpFP);
-	# &deb_pr(__LINE__ . ": get_countervalue(): $counter_file: Fila er lukket, returnerer fra subrutina med \"$counter_value\"");
+	# &deb_pr("get_countervalue(): $counter_file: Fila er lukket, returnerer fra subrutina med \"$counter_value\"");
 	return $counter_value;
 	# }}}
 } # get_countervalue()
@@ -529,6 +529,15 @@ sub HTMLwarn {
 	close(ErrorFP);
 	# }}}
 } # HTMLwarn()
+
+sub HTMLerror {
+	# Skriver en melding til brukeren, er ment som en mer anonym HTMLdie(). Får se om det er en god ting å ha. {{{
+	my $Txt = shift;
+	print_header("Feil");
+	print($Txt);
+	exit;
+	# }}}
+} # HTMLerror()
 
 # increase_counter() øker kun med 1 hvis IP’en er forskjellig fra forrige gang.
 # Hvis parameter 2 er !0, øker den uanskvett.
@@ -710,7 +719,7 @@ sub print_footer {
 	# {{{
 	my ($footer_width, $footer_align, $no_vh, $no_end) = @_;
 
-	# &deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
+	# &deb_pr("Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
 	defined($footer_width) || ($footer_width = "");
 	unless (length($footer_width)) {
 		$footer_width = length($suncgi::doc_width) ? $suncgi::doc_width : $suncgi::STD_DOCWIDTH;
@@ -767,7 +776,7 @@ END
 sub print_header {
 	# {{{
 	my ($DocTitle, $RefreshStr, $style_sheet, $head_script, $body_attr, $html_version, $head_lang, $no_body) = @_;
-	# &deb_pr(__LINE__ . ": Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
+	# &deb_pr("Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
 	if ($suncgi::header_done) {
 		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \$suncgi::header_done = $suncgi::header_done");
 		print("\n<!-- debug: print_header($DocTitle) selv om \$suncgi::header_done -->\n");
@@ -990,6 +999,19 @@ sub utf8_to_entity {
 	# }}}
 } # utf8_to_entity()
 
+sub conv_print {
+	# Skriver ut strenger som er i andre tegnsett enn UTF-8 og konverterer dem til numeriske HTML-entities. {{{
+	my ($from_charset, $Txt) = @_;
+
+	if ($from_charset =~ /(latin1|iso-8859-1>)/i) {
+		$Txt =~ s/([\xA0-\xFF])/sprintf("&#%u;", ord($1))/ge;
+	} else {
+		html_warn("conv_print(): Ukjent tegnsett: \"$from_charset\"");
+	}
+	print($Txt);
+	# }}}
+}
+
 1;
 
 __END__
@@ -998,11 +1020,11 @@ __END__
 
 =head1 NAME
 
-suncgi - HTML-rutiner for bruk i index.cgi
+suncgi — HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1093,9 +1115,7 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>’es.
 
 =head2 content_type()
 
-Brukes omtrent bare av F<print_header()>, men kan kalles
-separat hvis det er speisa content-typer ute og går, som for eksempel
-C<application/x-tar> og lignende.
+Brukes omtrent bare av F<print_header()>, men kan kalles separat hvis det er speisa content-typer ute og går, som for eksempel C<application/x-tar> og lignende.
 
 =head2 curr_local_time()
 
@@ -1112,44 +1132,19 @@ Lager en fil hvis den ikke eksisterer fra før.
 
 =head2 curr_utc_time()
 
-Returnerer tidspunktet akkurat nå i UTC. Brukes av blant annet
-F<print_header()> til å sette rett tidspunkt inn i headeren. Formatet på
-datoen er i henhold til S<ISO 8601>, dvs.
-I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
+Returnerer tidspunktet akkurat nå i UTC.
+Brukes av blant annet F<print_header()> til å sette rett tidspunkt inn i headeren.
+Formatet på datoen er i henhold til S<ISO 8601>, dvs. I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
 
 =head2 D()
 
-En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
-forlanger at ${suncgi::error_file} er definert, det skal være en fil der
-all debuggingsinformasjonen skrives til.
+En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0.
+Den forlanger at ${suncgi::error_file} er definert, det skal være en fil der all debuggingsinformasjonen skrives til.
 
-For at debugging skal bli lettere, kan man slenge denne inn på enkelte
-steder. Eksempel:
+For at debugging skal bli lettere, kan man slenge denne inn på enkelte steder.
+Eksempel:
 
-	# deb_pr(__LINE__ . ": sort_dir(): Det er $Elements elementer her.");
-
-Hvis dette formatet brukes (fram til og med __LINE__) kan man filtrere fila
-gjennom denne perlsnutten for å kommentere ut alle debuggingsmeldingene:
-
-	#!/usr/bin/perl
-
-	while (<>) {
-		s/(&deb_pr\(__LINE__)/# $1/g;
-		print;
-	}
-
-For å ta bort utkommenteringen, filtrer fila gjennom dette scriptet:
-
-	#!/usr/bin/perl
-
-	while (<>) {
-		s/# (&deb_pr\(__LINE__)/$1/g;
-		print;
-	}
-
-Dette er bare nødvendig hvis det ligger strødd med debuggingsmeldinger på
-steder som bør gå raskest mulig. Rutina sjekker verdien av
-I<${main::Debug}>, hvis den er 0, returnerer den med en gang.
+	# deb_pr("sort_dir(): Det er $Elements elementer her.");
 
 B<FIXME:> Mer pod seinere.
 
@@ -1159,8 +1154,8 @@ Samme som D(), men skal skiftes ut etterhvert. Det var det den het før.
 
 =head2 escape_dangeours_chars()
 
-Brukes hvis man skal utføre en systemkommando og man får med kommandolinja
-å gjøre. Eksempel:
+Brukes hvis man skal utføre en systemkommando og man får med kommandolinja å gjøre.
+Eksempel:
 
 	$cmd_line = escape_dangerous_chars("$cmd_line");
 	system("$cmd_line");
@@ -1169,9 +1164,8 @@ Tegn som kan rote til denne kommandoen får en backslash foran seg.
 
 =head2 file_mdate()
 
-Returnerer tidspunktet fila sist ble modifisert i sekunder siden
-S<1970-01-01 00:00:00 UTC>. Brukes hvis man skal skrive ting som "sist
-oppdatert da og da".
+Returnerer tidspunktet fila sist ble modifisert i sekunder siden S<1970-01-01 00:00:00 UTC>.
+Brukes hvis man skal skrive ting som «sist oppdatert da og da».
 
 =head2 get_cgivars()
 
@@ -1182,12 +1176,10 @@ hash med verdiene. Fungerer på denne måten:
 	my $Document = $Opt{doc};
 	my $user_name = $Opt{username};
 
-Alle verdiene ligger nå i de respektive variablene og kan (mis)brukes Vilt
-& UhemmetZ<>(tm).
+Alle verdiene ligger nå i de respektive variablene og kan (mis)brukes Vilt & Uhemmet™.
 
-Funksjonen leser både 'I<&>' (ampersand) og 'I<;>' (semikolon) som
-skilletegn i GET/POST, scripts bør sende 'I<;>' så det ikke blir kluss med
-entities. Eksempel:
+Funksjonen leser både 'I<&>' (ampersand) og 'I<;>' (semikolon) som skilletegn i GET/POST, scripts bør sende 'I<;>' så det ikke blir kluss med entities.
+Eksempel:
 
 	index.cgi?doc=login;username=suttleif;pwd=hemmelig
 
@@ -1195,19 +1187,16 @@ B<FIXME:> Denne må utvides litt med flere Content-type’er.
 
 =head2 get_countervalue()
 
-Skriver ut verdien av en teller, angi filnavn. Fila skal inneholde et tall
-i standard ASCII-format.
+Skriver ut verdien av en teller, angi filnavn.
+Fila skal inneholde et tall i standard ASCII-format.
 
 =head2 HTMLdie()
 
-Tilsvarer F<die()> i standard Perl, men sender HTML-output så man ikke får
-Internal Server Error. Funksjonen tar to parametere, I<$Msg> som havner i
-E<lt>titleE<gt>E<lt>/titleE<gt> og E<lt>h1E<gt>E<lt>/h1E<gt>, og I<$Msg>
-som blir skrevet ut som beskjed.
+Tilsvarer F<die()> i standard Perl, men sender HTML-output så man ikke får Internal Server Error.
+Funksjonen tar to parametere, I<$Msg> som havner i E<lt>titleE<gt>E<lt>/titleE<gt> og E<lt>h1E<gt>E<lt>/h1E<gt>, og I<$Msg> som blir skrevet ut som beskjed.
 
-Hvis hverken I<${main::Utv}> eller I<${main::Debug}> er sann, skrives meldinga til
-I<${suncgi::error_file}> og en standardmelding blir skrevet ut. Folk får ikke vite
-mer enn de har godt av.
+Hvis hverken I<${main::Utv}> eller I<${main::Debug}> er sann, skrives meldinga til I<${suncgi::error_file}> og en standardmelding blir skrevet ut.
+Folk får ikke vite mer enn de har godt av.
 
 =head2 HTMLwarn()
 
@@ -1227,25 +1216,27 @@ Hvis parameter 2 er I<!0>, øker telleren uanskvett.
 
 =head2 log_access()
 
-Logger aksess til en fil. Filnavnet skal være uten extension, rutina tar seg av det. I tillegg
-øker den en teller i fila I<$Base.count> unntatt hvis parameter 2 != 0.
+Logger aksess til en fil. Filnavnet skal være uten extension, rutina tar seg av det.
+I tillegg øker den en teller i fila I<$Base.count> unntatt hvis parameter 2 != 0.
 
 Forutsetter at I<${suncgi::log_dir}> er definert. Hvis ikke, settes den til
 I<$suncgi::STD_LOGDIR>.
 
 B<FIXME:> Skriv mer her.
 
+Med nærmere ettertanke — hvorfor det, egentlig?
+Bruker jo aldri den POD’en likevel.
+
 =head2 print_doc()
 
-Leser inn et dokument og konverterer det til HTML. Dette blir en av de
-mest sentrale rutinene i en hjemmeside, i og med at det skal ta seg av
-HTML-output’en. Istedenfor å fylle opp scriptene med HTML-koder, gjøres et
-kall til F<print_doc()> som skriver ut sidene og genererer HTML.
+Leser inn et dokument og konverterer det til HTML.
+Dette blir en av de mest sentrale rutinene i en hjemmeside, i og med at det skal ta seg av HTML-output’en.
+Istedenfor å fylle opp scriptene med HTML-koder, gjøres et kall til F<print_doc()> som skriver ut sidene og genererer HTML.
 
-Formatet på fila består av to deler: Header og HTML. De første linjene
-består av ting som tittel, keywords, html-versjon, evt. refresh og så
-videre. Her har vi et eksempel på en fil (Ingen space i begynnelsen på
-hver linje, det er til ære for F<pod> at det er sånn):
+Formatet på fila består av to deler:
+Header og HTML.
+De første linjene består av ting som tittel, keywords, html-versjon, evt. refresh og så videre.
+Her har vi et eksempel på en fil (Ingen space i begynnelsen på hver linje, det er til ære for F<pod> at det er sånn):
 
  title Velkommen til snaddersida
  keywords snadder, stilig, kanontøfft, extremt, tjobing
@@ -1406,4 +1397,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.5 2004/02/13 20:45:22 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $ ####
