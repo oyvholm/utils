@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #==================================================
-# $Id: cvsssh,v 1.5 2003/07/25 03:29:22 sunny Exp $
+# $Id: cvsssh,v 1.6 2003/08/06 04:01:14 sunny Exp $
 # Bestemmer hvilken ssh som skal kjøres med CVS.
 # Beregnet for bruk på ww først og fremst.
 # Ihvertfall foreløpig.
@@ -14,6 +14,10 @@
 
 # /bin/pwd | grep -e ^/home/sunny/p/dbk >/dev/null && cmd=sunbassh
 
-cmd=sunbassh
+if [ -e /sunba.mrk ]; then
+	cmd=ssh
+else
+	cmd=sunbassh
+fi
 
 $cmd $*
