@@ -8,6 +8,15 @@
 
 use strict;
 
+$| = 1;
+
+use Getopt::Std;
+our ($opt_h) =
+    (0);
+getopts('h') || die("Option error. Use -h for help.\n");
+
+$opt_h && usage(0);
+
 my $Print = 1;
 
 while (<>) {
@@ -18,6 +27,21 @@ while (<>) {
         $Print = 0;
     }
     $Print && print;
+}
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+    print(<<END);
+
+Usage: strip_msgstr [options] [file [...]]
+
+Strips translations from po files so potential nasty things can be 
+found.
+
+END
+    exit($Retval);
+    # }}}
 }
 
 # vim: set ts=4 sw=4 sts=4 et :
