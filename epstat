@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# $Id: epstat,v 1.1 2001/02/23 10:34:55 sunny Exp $
+# Lager enkel statistikk over hits osv i en loggfil.
+# Forventer antall sekunder siden 1970 i begynnelsen av hver linje.
+
+echo Antall hits pr. døgn:
+echo
+sort -n $* | ep -l | uniq -cw 10 | tr T ' ' | cut -c 1-18
+echo
+
+echo Antall hits pr. time:
+echo
+sort -n $* | ep -l | uniq -cw 13 | tr [T:] ' ' | cut -c 1-21
+
+echo
+echo Totalt $(wc -l $* | rmspcall | cut -d ' ' -f 1) hits.
