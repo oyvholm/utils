@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 
-# $Id: pakkut,v 1.1 1999/04/19 19:35:51 sunny Exp $
+# $Id: pakkut,v 1.2 2000/03/01 15:43:11 sunny Exp $
 
 open(PipeFP, "| uudecode | gzip -d") or die("$0: Can't open pipe: $!\n");
 while (<>) {
-	s/^\s+(.*)/$1/g;
+	s/[#%]//g;
+	s/^\s+(.*)/$1/;
 	print PipeFP $_;
 }
