@@ -286,14 +286,14 @@ sub print_entry {
         } elsif ($opt_o eq "ps") {
             $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
         } elsif ($opt_o eq "xml") {
-            $Line = join(" ",
-                         "<gps>",
-                             "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>",
-                             "<pos>",
-                                 "<x>$Lon</x>",
-                                 "<y>$Lat</y>",
-                                 ($Alt eq "?") ? "" : "<z>$Alt</z>",
-                             "</pos>",
+            $Line = join("",
+                         "<gps> ",
+                             "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date> ",
+                             "<pos> ",
+                                 (length($Lon)) ? "<x>$Lon</x> " : "",
+                                 (length($Lat)) ? "<y>$Lat</y> " : "",
+                                 ($Alt eq "?") ? "" : "<z>$Alt</z> ",
+                             "</pos> ",
                          "</gps>\n"
                     );
         } else {
