@@ -14,7 +14,8 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_h) = (0);
+our ($opt_h) =
+    (     0);
 getopts('h') || die("Option error. Use -h for help.\n");
 
 my $VERSION = "0.0";
@@ -28,15 +29,22 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 $opt_h && usage(0);
 
-
+while (<>) {
+    print;
+}
 
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
     print(<<END);
+
 $progname v$VERSION -- $id_date
 
-Usage: $progname
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+-h  Show this help.
 
 END
     exit($Retval);
