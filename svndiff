@@ -51,8 +51,13 @@ sub diff_file {
     (-e $File1) || ( warn("$File1: File not found\n"), return);
     (-e $File2) || ( warn("$File2: File not found, is not under version control\n"), return);
 
-    D("CMD: $Cmd $File1 $File2\n");
-    system("$Cmd $File1 $File2");
+    if ($Cmd eq "vimdiff") {
+        D("CMD: $Cmd $File1 $File2\n");
+        system("$Cmd $File1 $File2");
+    } else {
+        D("CMD: $Cmd $File2 $File1\n");
+        system("$Cmd $File2 $File1");
+    }
 }
 
 sub D {
