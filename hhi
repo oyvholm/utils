@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
-#===============================================
+#=======================================================================
 # $Id$
 # Html Header Indexer
 # Made by Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU GPL
-#===============================================
+# License: GNU General Public License, see end of file for legal stuff.
+#=======================================================================
 
 use strict;
 
@@ -28,13 +28,13 @@ if ($opt_h) {
 
 Syntax: $0 [options] [file [...]]
 
-Parses HTML source and creates section numbers in headers and inserts a
-table of contents in a defined area. Refer to the POD in the Perl file
-for complete info.
+Parses HTML source and creates section numbers in headers and inserts a 
+table of contents in a defined area. Refer to the POD at the end of the 
+Perl file for complete info.
 
 Options:
 
-  -a  Include all headers in the table of contents, even those marked
+  -a  Include all headers in the table of contents, even those marked 
       with "<!-- nohhitoc -->"
   -h  This help message
   -l  Start indexing at this level number. Default: $start_level
@@ -184,8 +184,11 @@ hhi [options] [files [..]]
 
 =head1 DESCRIPTION
 
-The hhi(1) command (re)numbers the headers of HTML source and is able to create a table of contents in a defined area.
-Lines containing C<E<lt>!-- nohhi --E<gt>> will be ignored and lines containg C<E<lt>!-- nohhitoc --E<gt>> will be numbered, but not included in the index.
+The hhi(1) command (re)numbers the headers of HTML source and is able to 
+create a table of contents in a defined area.
+Lines containing C<E<lt>!-- nohhi --E<gt>> will be ignored and lines 
+containg C<E<lt>!-- nohhitoc --E<gt>> will be numbered, but not included 
+in the index.
 An optional table of contents will be included between the lines
 
   <!-- hhitoc -->
@@ -193,7 +196,8 @@ An optional table of contents will be included between the lines
 
 Any text between those two lines will be replaced.
 
-Every header will be have an index number inserted into the beginning of the header title, e.g.:
+Every header will be have an index number inserted into the beginning of 
+the header title, e.g.:
 
   <h1>Header of document</h1>
     <h2>Table of contents</h2> <!-- nohhi -->
@@ -229,7 +233,9 @@ will be changed to
     <h2><a name="h-2">2.</a> Subsection #2</h2>
     <h2><a name="secname">3.</a> Section with specified name</h2> <!-- hhiname secname -->
 
-To avoid creation of names like I<1.2..4>, header levels should not be skipped, do not let a E<lt>h4E<gt> follow a E<lt>h2E<gt> without a E<lt>h3E<gt> in between.
+To avoid creation of names like I<1.2..4>, header levels should not be 
+skipped, do not let a E<lt>h4E<gt> follow a E<lt>h2E<gt> without a 
+E<lt>h3E<gt> in between.
 
 =head1 OPTIONS
 
@@ -237,7 +243,8 @@ To avoid creation of names like I<1.2..4>, header levels should not be skipped, 
 
 =item B<-a>
 
-Include all headers in the contents, even those marked with S<E<lt>!-- nohhitoc --E<gt>>.
+Include all headers in the contents, even those marked with S<E<lt>!-- 
+nohhitoc --E<gt>>.
 
 =item B<-l x>
 
@@ -248,15 +255,25 @@ Default value is 2, leaving E<lt>h1E<gt> headers untouched.
 
 =head1 AUTHOR
 
-Made by E<216>yvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
+Copyleft 2002E<8211> E<216>yvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
 
-=head1 LICENCE
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
 
-GNU General Public License.
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =cut
 
 # }}}
 
-# vim: ft=perl fdm=marker fdl=0 ts=4 sw=4 sts=4 et fenc=UTF-8 fo+=w :
+# vim: ft=perl fdm=marker fdl=0 ts=4 sw=4 sts=4 et fenc=UTF-8 fo+=w2 :
 # End of file $Id$
