@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.10 2004/04/07 14:57:09 sunny Exp $
+# $Id: split_access_log,v 1.11 2004/04/07 15:06:50 sunny Exp $
 # Splitter opp access_log fra httpd(8) på dato. Legger delene som
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] .
 #
@@ -78,14 +78,15 @@ while (<>) {
 		print(ToFP $_) || die("Feil under skriving til $Fnavn(.DUP): $!");
 	} else {
 		UNKNOWN_LINE_FORMAT:
-		warn("Linje $.: Ukjent format, skriver til \"$Fnavn.ERR\".\n");
-		my $op_pref = (-e "$Fnavn.ERR") ? ">>" : ">";
-		if (open(ErrFP, "$op_pref$Fnavn.ERR")) {
-			seek(ErrFP, 0, 2) || die("$Fnavn.ERR: seek() til slutten: $!");
+		my $err_name = length($Fnavn) ? "$Fnavn.ERR" : "$Dir/undef.ERR";
+		warn("Linje $.: Ukjent format, skriver til \"$err_name\".\n");
+		my $op_pref = (-e "$err_name") ? ">>" : ">";
+		if (open(ErrFP, "$op_pref$err_name")) {
+			seek(ErrFP, 0, 2) || die("$err_name: seek() til slutten: $!");
 		} else {
-			die("$Fnavn.ERR: Åpning for skriving: $!");
+			die("$err_name: Åpning for skriving: $!");
 		}
-		print(ErrFP $_) || die("Feil under skriving til $Fnavn.ERR: $!");
+		print(ErrFP $_) || die("Feil under skriving til $err_name: $!");
 		close(ErrFP);
 	}
 	$Last = $Fnavn;
@@ -126,4 +127,4 @@ END
 
 __END__
 
-# End of file $Id: split_access_log,v 1.10 2004/04/07 14:57:09 sunny Exp $
+# End of file $Id: split_access_log,v 1.11 2004/04/07 15:06:50 sunny Exp $
