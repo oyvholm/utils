@@ -1,12 +1,12 @@
-$Id: TODO,v 1.3 2003/06/30 10:56:54 sunny Exp $
+$Id: TODO,v 1.4 2003/08/11 16:47:16 sunny Exp $
 
 dbk:
   - Legg inn en kontroll av HTML-koden etter at ting er lagret.
 
 mklist:
-  - Mulighet for å velge melding via et -m-parameter eller noe sånt.
+  - Mulighet for Ã¥ velge melding via et -m-parameter eller noe sÃ¥nt.
 
-Eksempel på oversikt over revisjonstre:
+Eksempel pÃ¥ oversikt over revisjonstre:
 
 ultrafix.c
 1.1 ---+ utv
