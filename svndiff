@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Fyrer opp en vimdiff med $1 og text-basen som ligger i WC-en.
+
+vimdiff $1 .svn/text-base/$1.svn-base
