@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #==================================================
-# $Id: cvsssh,v 1.2 2002/04/28 22:50:42 sunny Exp $
+# $Id: cvsssh,v 1.3 2002/10/01 12:28:10 sunny Exp $
 # Bestemmer hvilken ssh som skal kjøres med CVS.
 # Beregnet for bruk på ww først og fremst.
 # Ihvertfall foreløpig.
@@ -9,9 +9,9 @@
 
 cmd=ssh
 
-/bin/pwd | grep -e ^/home/badata/src/cvs -e ^/home/sunny/dbk -e /home/badata/Stable >/dev/null && cmd=sunbassh
-/bin/pwd | grep -e ^/home/badata/Stable/net >/dev/null && cmd=ssh
+# /bin/pwd | grep -e ^/home/badata/src/cvs -e ^/home/sunny/dbk -e /home/badata/Stable >/dev/null && cmd=sunbassh
+# /bin/pwd | grep -e ^/home/badata/Stable/net >/dev/null && cmd=ssh
 
-cmd=ssh
+/bin/pwd | grep -e ^/home/sunny/dbk >/dev/null && cmd=sunbassh
 
 $cmd $*
