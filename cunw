@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# $Id: cunw,v 1.5 1999/06/28 14:54:33 sunny Exp $
+# $Id: cunw,v 1.6 2000/11/16 09:03:33 sunny Exp $
 # Lister ut alle filer som ikke er registrert i CVS (Cvs-UNWanted)
 
 # BUGS: Avhengig av utskriftsformatet til cvs(1)
 
 (cvs -n stat `find . -type d | grep -v 'CVS$'` >/dev/null) 2>&1 | grep -v -e '^cvs status: Examining ' -e '^cvs server: Examining '
-(cvs -n stat `find . -type f | grep -v -e 'CVS/Entries$' -e 'CVS/Repository$' -e 'CVS/Root$' ` >/dev/null) 2>&1
+(cvs -n stat `find . -type f | grep -v -e 'CVS/Entries$' -e 'CVS/Repository$' -e 'CVS/Root$' -e 'CVS/Tag$' ` >/dev/null) 2>&1
