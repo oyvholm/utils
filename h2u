@@ -1,19 +1,24 @@
 #!/usr/bin/perl -w
 
 #=============================================================================
-# $Id: h2u,v 1.2 2001/08/10 13:06:55 sunny Exp $
+# $Id: h2u,v 1.3 2002/03/16 20:44:53 sunny Exp $
 # Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to UTF-8.
-# If "-l" is specified as first parameter, also convert latin-1 characters.
-# Created by &#xD8;yvind A. Holm <sunny256@mail.com>. License: GNU GPL.
+#
+# Options:
+#   -l  also convert Latin-1 characters.
+#
+# Created by &#xD8;yvind A. Holm <sunny@sunbase.org>. License: GNU GPL.
 #=============================================================================
 
 use strict;
+require 'getopts.pl';
 
-my $conv_latin = 0;
-defined($ARGV[0]) && ($ARGV[0] =~ /^-l$/) && ($conv_latin = 1, shift);
+$main::opt_l = 0;
+
+&Getopts('l');
 
 while (<>) {
-	$conv_latin && s/([\x80-\xFF])/widechar(ord($1))/ge;
+	$main::opt_l && s/([\x80-\xFF])/widechar(ord($1))/ge;
 	s/&#(\d{1,10});/widechar($1)/ge;
 	s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
 	print;
