@@ -1,38 +1,21 @@
 #!/bin/bash
 
 # $Id$
+# Oppdaterer de norske språkfilene i Vim-sourcen.
 
 vimdir=$HOME/src/other/vim
-vimlinks=$HOME/vim
-osvim=$HOME/src/cvs/norwegian_vim/msgs/vim
+osvim=$HOME/src/svn/norwegian_vim/branches/utv/msgs/vim
 
 for f in $vimdir $vimdir/vim.clean $osvim ; do
 	[ -d $f/. ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
 done
 
-if [ ! -d $vimlinks/. ]; then
-	echo ======== $0: $vimlinks: Finnes ikke fra før, lager vimlinker...
-	mkdir $vimlinks || { echo "$0: mkdir $vimlinks: Det gikk rimelig dårlig. Avslutter." >&2; exit 1; }
-	cd $vimlinks || { echo "$0: cd $vimlinks: Klarte ikke å gå dit. Avslutter." >&2; exit 1; }
-	ln -sv $vimdir/vim/runtime/lang $vimdir/vim/src/po $vimdir/vim/runtime/tutor . || { echo "$0: Feil under symlinking. Avslutter." >&2; exit 1; }
-fi
-
 cd $osvim || { echo "cd $osvim: Gikk på trynet." >&2; exit 1; }
-echo "======== cd $osvim; cvs -q upd -dA -r official_vim"
-cvs -q upd -dA -r official_vim
+echo "======== cd $osvim; svn up"
+svn up
 cd $vimdir || { echo "cd $vimdir: Gikk på trynet." >&2; exit 1; }
-[ -d vim/. ] || mkdir vim || { echo "mkdir vim: Gikk te hælvete." >&2; exit 1; }
+[ -d vim/. ] || mkdir vim || { echo "mkdir vim gikk te hælvete." >&2; exit 1; }
 echo "======== cd $vimdir; rsync -av --delete vim.clean/ vim"
 rsync -av --delete vim.clean/ vim
 
-for f in runtime/lang runtime/tutor src/po; do
-	echo "======== Ordner $f"
-	if [ ! -e $f/CVS_orig ]; then
-		mv -v vim/$f/CVS vim/$f/CVS_orig
-	fi
-	cp -av $osvim/$f/CVS vim/$f
-done
-
-cd $vimlinks || { echo "cd $vimlinks: Gikk på trynet."; exit 1; }
-echo "======== cd $vimlinks; cvs -q upd -dA -r utv [a-z]*"
-cvs -q upd -dA -r utv [a-z]*
+rsync -av $osvim/ vim
