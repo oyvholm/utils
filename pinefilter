@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# $Id: pinefilter,v 1.1 2003/03/15 16:35:17 sunny Exp $
+# $Id: pinefilter,v 1.2 2003/05/29 12:59:13 sunny Exp $
 
 charset=$1
 
-iconv -f $charset -t utf-8 | u2h -l
+# iconv -f $charset -t utf-8 | u2h -l
+iconv -f $charset -t utf-8
