@@ -1,6 +1,8 @@
 #!/bin/sh
 
 # $Id$
+# Setter properties på tekstfiler sånn som jeg vil ha det.
 
 svn propset svn:keywords "Id Date" $*
+svn propset svn:eol-style native $*
 svn propdel cvs2svn:cvs-rev $*
