@@ -1,18 +1,21 @@
 #!/usr/bin/perl
 
-# $Id: mvdirnewest,v 1.2 1999/05/05 02:35:04 sunny Exp $
+# $Id: mvdirnewest,v 1.3 2000/03/20 12:46:46 sunny Exp $
+#
 # Syntax: $0 directory
 # Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.
 # Brukes til å lage orden i gamle versjoner av ting som ligger slengende rundt.
 #
-# (C)opyleft 1999 Øyvind A. Holm <sunny@dataguard.no>
+# (C)opyleft 1999-2000 Øyvind A. Holm <sunny256@mail.com>
 
 my $RetVal;
+$prog_name = $0;
+$prog_name =~ s!.*/(.+?)$!$1!;
 
 if ($#ARGV == -1) {
 	print <<END;
 
-Syntax: $0 directory [directory [...]]
+Syntax: $prog_name directory [directory [...]]
 
 The program scans the underlying tree structure and renames the directory
 to the date of the newest file.
@@ -20,7 +23,7 @@ END
 	exit 1;
 }
 
-die("$0: Unknown version of find(1) or program not found\n") unless (`find --version` =~ /GNU find/);
+die("$prog_name: Unknown version of find(1) or program not found\n") unless (`find --version` =~ /GNU find/);
 
 foreach (@ARGV) {
 	$RetVal ||= &process_dir($_);
@@ -30,9 +33,13 @@ exit $RetVal;
 
 sub process_dir {
 	my $dir_name = shift;
+	unless (-e $dir_name) {
+		warn("$prog_name: $dir_name: Directory not found\n");
+		return;
+	}
 	unless (-d $dir_name) {
-		warn("$0: $dir_name: Directory not found\n");
-		return 1;
+		warn("$prog_name: $dir_name: Not a directory\n");
+		return;
 	}
 	my $newest_date = 0;
 	my $newest_file = "";
@@ -40,16 +47,16 @@ sub process_dir {
 	# FIXME: Dette med find er midlertidig (og kommer sikkert til å forbli her :)
 	my @Files = `find $dir_name -type f`;
 	unless (scalar @Files) {
-		warn("$0: $dir_name: No files found in directory\n");
-		return 1;
+		warn("$prog_name: $dir_name: No files found in directory\n");
+		return;
 	}
 	foreach (@Files) {
 		chomp;
 		my $file_name = $_;
 		my @stat_array;
 		unless (@stat_array = stat($file_name)) {
-			warn("$0: $file_name: Can't stat file: $!\n");
-			return 1;
+			warn("$prog_name: $file_name: Can't stat file: $!\n");
+			return;
 		}
 		my $file_date = $stat_array[9];
 		if ($file_date > $newest_date) {
@@ -61,11 +68,12 @@ sub process_dir {
 	}
 	$new_name = sprintf("%s.%s", &date2str($newest_date), $dir_name);
 	if (-e $new_name) {
-		warn("$0: $new_name: Directory entry already exists, skipping directory $dir_name\n");
-		return 1;
+		warn("$prog_name: $new_name: Directory entry already exists, skipping directory $dir_name\n");
+		return;
 	} else {
 		# printf("Skulle til å rename(%s, %s)\n", $dir_name, $new_name);
 		rename($dir_name, $new_name) || warn("$dir_name: Can't rename directory to $new_name: $!\n");
+		print("$prog_name: $dir_name --> $new_name\n");
 	}
 	return 0;
 } # process_dir()
@@ -75,4 +83,4 @@ sub date2str {
 	return(sprintf("%04u%02u%02uT%02u%02u%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]));
 } # date2str()
 
-#### End of file $Id: mvdirnewest,v 1.2 1999/05/05 02:35:04 sunny Exp $ ####
+#### End of file $Id: mvdirnewest,v 1.3 2000/03/20 12:46:46 sunny Exp $ ####
