@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# $Id$
+
+for f in $*; do
+    echo Pakker $f...
+
+    dir=$f
+    targz=$f.pakka.tar.gz
+
+    echo dir = $dir
+    echo targz = $targz
+
+    if [ -e $targz ]; then
+        echo "$targz finnes allerede" >&2
+        exit 1
+    fi
+
+    if [ ! -d $dir ]; then
+        echo "$dir: Er ikke en dir" >&2
+        exit 1
+    fi
+
+    echo $dir | grep -q / && { echo "$dir: Forbudt med slasher i filnavnet" >&2; exit 1; }
+
+    echo ======= tar czf $targz --remove-files $dir
+    tar czf $targz --remove-files $dir
+    ls -la $targz
+    echo ======= Rensk
+    (cd $dir && find -type d -print0 -depth | xargs -0 rmdir )
+    echo ======= rmdir $dir
+    rmdir $dir
+done
