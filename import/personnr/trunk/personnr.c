@@ -1,7 +1,7 @@
 
 /*
  * Skriver ut alle gyldige norske personnummer på en gitt dato
- * $Id: personnr.c,v 1.2 1999/04/25 03:33:43 sunny Exp $
+ * $Id: personnr.c,v 1.3 1999/05/21 12:17:21 sunny Exp $
  *
  * Bare for å ha sagt det: Jeg tar ikke ansvar for hva folk måtte finne på
  * med dette programmet, lagde det bare på gøy.
@@ -45,6 +45,7 @@
  * Dersom j eller k <= 9 er j eller k riktige kontrollsiffer.
  * Dersom j eller k = 10 er personnummeret ugyldig.
  * Dersom j eller k = 11 er j eller k = 0.
+ *
  * Det betyr at det for en fødselsdato ikke finnes mer enn noe over 200
  * mulige personnummer for hvert kjønn.
  *
@@ -56,7 +57,8 @@
  * License: GNU GPL
  */
 
-#define VERSION "1.10"
+#define VERSION      "1.10"
+#define RELEASE_DATE "1999-05-21"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,7 +70,7 @@
 #define EXIT_OK    0
 #define EXIT_ERROR 1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.2 1999/04/25 03:33:43 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3 1999/05/21 12:17:21 sunny Exp $";
 
 char *persnr(char *);
 
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
 		int charnum; /* Cosmetic thing... */
 
 		putchar('\n');
-		charnum = printf("%s ver. %s - (C)opyleft by sunny", progname, VERSION);
+		charnum = printf("%s ver. %s (%s) - (C)opyleft by sunny", progname, VERSION, RELEASE_DATE);
 		putchar('\n');
 
 		for (; charnum; charnum--)
@@ -94,6 +96,7 @@ int main(int argc, char *argv[])
 		printf("Skriver ut alle gyldige norske personnummer for en gitt dato.\n");
 		printf("Fødselsdatoen spesifiseres på formatet ddmmåå. Hvis et annet århundre enn\n");
 		printf("1900 skal brukes, brukes formatet ddmmåååå.\n\n");
+		printf("Programlisens: GNU GPL, se fila COPYING for detaljer.\n\n");
 		if (argc != 2)
 			retval = EXIT_ERROR;
 		goto endfunc;
@@ -211,4 +214,4 @@ endfunc:
 	return(buf);
 } /* persnr() */
 
-/**** End of file $Id: personnr.c,v 1.2 1999/04/25 03:33:43 sunny Exp $ ****/
+/**** End of file $Id: personnr.c,v 1.3 1999/05/21 12:17:21 sunny Exp $ ****/
