@@ -1,26 +1,69 @@
 #!/usr/bin/perl -w
 
-# $Id: sortcvs,v 1.1.2.1 2002/10/08 11:37:52 sunny Exp $
+# $Id: sortcvs,v 1.1.2.2 2002/10/09 00:53:49 sunny Exp $
 # Sorterer output fra "cvs log" i kronologisk rekkefølge.
 # Uferdig.
 
 use strict;
 
 my ($curr_date, $curr_rev) = ("", "");
+my @Curr = ();
 my %Entry = ();
+my $Rev = "";
+my $Line = "";
 
-while (<>) {
-	if (/^----------------------------$/) {
-		# Ny entry
-		for (@Entry) {
-			print("$_\n");
+while ($Line = <>) {
+	# chomp($Line);
+	if ($Line =~ /^----------------------------$/) {
+		D("Fant minuslinje.\n");
+		# printf("Rev er %sdefinert.\n", (defined($Rev) ? "" : "ikke "));
+		D("scalar(\@Curr) = ", scalar(@Curr), "\n");
+		for (@Curr) {
+			D("innh: $_\n");
 		}
-		@Entry = ();
-	}
-	push(@Entry, $_);
-	if (/^date: (\S+ \S+);.*author: .* state: .*/) {
+		if (length($Rev) && scalar(@Curr)) {
+			$Entry{$Rev} = join("", @Curr);
+			D("\$Entry{$Rev} settes.\n");
+		}
+		@Curr = ();
+		push(@Curr, $Line);
+		$Line = <>;
+		D("Leste \"$Line\".\n");
+		if ($Line =~ /^revision (\S+)/) {
+			$curr_rev = $1;
+			D("Setter \$curr_rev til \"$curr_rev\"\n");
+		} else {
+			warn("Expected \"revision: \", got \"$Line\".\"");
+		}
+		push(@Curr, $Line);
+		$Line = <>;
+		D("Leste \"$Line\".\n");
+		# if ($Line =~ /^date: (\S+ \S+);.*author: .* state: .*/)
+		if ($Line =~ /^date: (\S+\s+\S+) .*/) {
+			$curr_date = $1;
+			D("Setter \$curr_date til \"$curr_date\".\n");
+		} else {
+			warn("Expected \"date: \", got \"$Line\".\"");
+		}
+		push(@Curr, $Line);
 
+		$Rev = "$curr_date$curr_rev";
+		D("\$Rev er satt til \"$Rev\".\n");
+	} else {
+		if (length($Rev)) {
+			push(@Curr, $_);
+		} else {
+			print("$Line");
+		}
 	}
+}
+
+for (my ($l_name, $l_val) = each %Entry) {
+	D("$l_name\n");
+}
+
+sub D {
+	print(STDERR @_);
 }
 
 __END__
