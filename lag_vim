@@ -40,7 +40,7 @@ else
 	# installcmd="su -c \"rm -rf $vimdir && make install\""
 	echo Hvis det gikk bra, er det på tide å bli root, og...
 fi
-echo "rm -rf $vimdir && make install"
+echo "cd ~/src/other/vim/vim && rm -rf $vimdir && make install"
 
 # echo $installcmd
 # echo -n Trykk Enter for å gjøre det, eller CTRL-C for å feige ut...
