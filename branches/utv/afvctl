@@ -1,11 +1,13 @@
 #!/bin/sh
 
-# $Id: afvctl,v 1.4.2.1 2003/05/29 13:02:26 sunny Exp $
+# $Id: afvctl,v 1.4.2.2 2004/04/14 15:36:49 sunny Exp $
 # Starter/stopper/viser status for alle afv’er
+# FIXME: Dette skulle egentlig vært integrert i afv(1).
 
 afvdir=$AFVROOT$(/bin/pwd)
 currstop=$afvdir/stop
 dontstop=$afvdir/protected
+retval=0
 
 case "$1" in
 	start)
@@ -38,18 +40,28 @@ case "$1" in
 		exit $retval;
 	;;
 	protect*)
-		touch $dontstop
-		echo Katalogen `/bin/pwd` er nå beskyttet mot «afvctl stop*».
+		[ -d $afvdir ] || mkdir -p $afvdir || { echo "$0: mkdir $afvdir: Gikk visst dårlig."; }
+		touch $dontstop || [ -e $dontstop ] || { echo "$0: $dontstop: Fila ble visst ikke opprettet. Hm. Muskelmanko?." >&2; retval=1; }
+		echo Katalogen `/bin/pwd` er nå beskyttet mot «afvctl stop*»...
+	;;
+	unprotect*)
+		if [ -e $dontstop ]; then
+			rm $dontstop || { echo "$0: $dontstop: Klarte ikke å slette fila, katalogen er fortsatt beskyttet." >&2; exit 1; }
+			echo Fjernet stoppbeskyttelsen.
+		else
+			echo Katalogen er jo egentlig ikke beskyttet, da...
+			exit 0;
+		fi
 	;;
 	*)
 		echo
-		echo Syntax: $0 start\|stop\|stat
+		echo Syntax: $0 start\|stop\|stat\|protect\|unprotect
 		echo
 		exit 1
 	;;
 esac
 
-if [ $retval = 0 ]; then
+if [ "$retval" = "0" ]; then
 	echo OK
 else
 	echo FEIL \($retval\)
