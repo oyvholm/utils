@@ -1,7 +1,7 @@
 
 /*
  * Skriver ut alle gyldige norske personnummer på angitte datoer
- * $Id: personnr.c,v 1.3.2.3 2003/08/23 22:07:06 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.4 2003/08/29 01:05:11 sunny Exp $
  *
  * Oppbygningen av personnummeret 020656-45850: {{{
  *
@@ -69,7 +69,7 @@
  */
 
 #define VERSION   "1.11"
-#define RCS_DATE  "$Date: 2003/08/23 22:07:06 $"
+#define RCS_DATE  "$Date: 2003/08/29 01:05:11 $"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,7 +83,7 @@
 #define EXIT_OK    0
 #define EXIT_ERROR 1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.3 2003/08/23 22:07:06 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.4 2003/08/29 01:05:11 sunny Exp $";
 
 char *persnr(char *);
 int persnr_date(char *);
@@ -273,11 +273,18 @@ void usage(int retval)
 		"enn 20XX skal brukes, brukes formatet ddmmåååå.\n\n"
 		"Hvis ingen datoer skrives på kommandolinja, leser programmet datoer fra\n"
 		"standard input.\n\n"
-		"Programlisens: GNU General Public License, se fila COPYING for detaljer.\n\n"
-	, progname);
+		"Programlisens: GNU General Public License, se fila COPYING for detaljer.\n"
+		"Kompileringsvalg: %cUSE_FRAC\n\n"
+	, progname,
+#if USE_FRAC
+	'+'
+#else
+	'-'
+#endif
+	);
 	exit(retval);
 	/* }}} */
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.3 2003/08/23 22:07:06 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.4 2003/08/29 01:05:11 sunny Exp $ */
