@@ -1,8 +1,14 @@
 #!/bin/sh
 
 # Latskapen lenge leve.
-# $Id: netscape,v 1.1 1999/07/05 16:18:09 sunny Exp $
+# $Id: netscape,v 1.2 1999/08/20 04:45:18 sunny Exp $
+
+HNAME=`hostname -f`
 
 cd
-netscape-navigator &>/dev/null &
+if [ "$HNAME" = "war.jgaa.com" ]; then
+	/home/usr/X11R6/bin/netscape &
+else
+	netscape-navigator &>/dev/null &
+fi
 cd -
