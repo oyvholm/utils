@@ -1,44 +1,56 @@
 #!/usr/bin/perl -w
 
-#==============================================================================
-# $Id: cvse,v 1.1 2003/05/22 15:15:04 sunny Exp $
-# Sorts the output from "cvs log" into chronological order.
-# Made by Oyvind A. Holm <sunny@sunbase.org>
-#==============================================================================
+#================================================
+# $Id: cvse,v 1.1.2.1 2003/05/22 23:42:32 sunny Exp $
+# Edit cvs log messages via output from “cvs log”
+# Made by Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU GPL
+#================================================
 
 use strict;
 
-my ($curr_date, $curr_rev) = ("", "");
+my ($curr_date, $curr_rev, $curr_rcs_file, $curr_work_file) = ("", "", "", "");
 my @Curr = ();
 my %Entry = ();
-my $Rev = "";
-my $Line = "";
+my ($Rev, $Line) = ("", "");
+my ($header_done, $tmp_count) = (0, 0);
+my %Text = ();
 
 while (<>) {
 	$Line = $_;
 	if ($Line =~ /^----------------------------$/) {
+		# New revision {{{
+		$header_done = 1;
 		if (length($Rev) && scalar(@Curr)) {
 			$Entry{$Rev} = join("", @Curr);
 		}
 		@Curr = ();
-		push(@Curr, $Line);
+		# push(@Curr, $Line);
 		$Line = <>;
 		if ($Line =~ /^revision (\S+)/) {
 			$curr_rev = $1;
 		} else {
-			warn("Expected \"revision: \", got \"$Line\".\"");
+			die("Line $.: Expected \"revision \", got \"$Line\".\". Aborting.\n");
 		}
-		push(@Curr, $Line);
+		# push(@Curr, $Line);
 		$Line = <>;
 		if ($Line =~ /^date: (\S+\s+\S+) .*/) {
 			$curr_date = $1;
 		} else {
 			warn("Expected \"date: \", got \"$Line\".\"");
 		}
-		push(@Curr, $Line);
+		if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
+			push(@Curr, $Line);
+		} else {
+			# NOP
+			D("Found \"^date: \" or \"^branches: \", skipping.\n");
+		}
+		# push(@Curr, $Line);
 		# $Rev = unpack("H*", "$curr_date$curr_rev");
-		$Rev = "$curr_date$curr_rev";
+		$Rev = "$curr_work_file,v.$curr_rev";
+		# }}}
 	} elsif ($Line =~ /^=============================================================================$/) {
+		# List finished for this file {{{
 		if (length($Rev) && scalar(@Curr)) {
 			$Entry{$Rev} = join("", @Curr);
 		}
@@ -46,20 +58,155 @@ while (<>) {
 		while (my ($l_name, $l_val) = each %Entry) {
 			push(@Arr, $l_name);
 		}
-		for (sort @Arr) {
-			print($Entry{$_});
+		for (@Arr) {
+			my $Curr = $_;
+			my ($a_file, $a_rev) = ("", "");
+			if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
+				($a_file, $a_rev) = ($1, $2);
+				if (length($a_file) && length($a_rev)) {
+					change_message($a_file, $a_rev, $Entry{$Curr});
+				}
+			} else {
+				warn("Wrong revision format \"$Curr\", skipping revision\n");
+			}
 		}
 		($curr_date, $curr_rev, $Rev) = ("", "", "");
 		%Entry = ();
 		@Curr = ();
-		print("$Line");
+		# print("$Line");
+		# }}}
+	} elsif (!$header_done && $Line =~ /^RCS file: (.*)/) {
+		$curr_rcs_file = $1;
+	} elsif (!$header_done && $Line =~ /^Working file: (.*)/) {
+		$curr_work_file = $1;
 	} else {
+		# Regular log message {{{
 		if (length($Rev)) {
-			push(@Curr, $_);
+			if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
+				push(@Curr, $_);
+			}
 		} else {
-			print("$Line");
+			# warn("\$Rev was empty with \$Line = \"$\"\n");
 		}
+		$header_done = 0;
+		# }}}
 	}
 }
+
+sub change_message {
+	# Changes a log message for a specific revision of a file. Checks if the message is changed. {{{
+	my ($File, $Rev, $Txt) = @_;
+	# print("change_message(\"$File\", \"$Rev\", ...);...");
+	my $rand_nr = substr(rand(), 2, 6);
+	D("rand_nr = \"$rand_nr\"\n");
+	my $tmp_file = "tmp.cvse.$$.$rand_nr.tmp";
+	my $compare_text = get_log_message($File, $Rev);
+	D("==== Compare text for $File $Rev {{{ ====\n$compare_text\n==== }}} ====\n");
+	D("==== Melding for $File $Rev: {{{ ====\n$Txt\n==== }}} ====\n");
+	if ($Txt ne $compare_text) {
+		print("Changing message for $File,v $Rev ...");
+		my @Arr = split(/\n/, $Txt);
+		if (open(TxtFP, ">$tmp_file")) {
+			for (@Arr) {
+				my $Line = $_;
+				if (/^date: .*/ || /^branches: .*/) {
+					# NOP
+				} else {
+					print(TxtFP "$Line\n");
+				}
+			}
+			close(TxtFP) || die("$tmp_file: Error closing file: $!");
+			my $exec_str = "cvs admin -m$Rev:\"`cat $tmp_file`\" $File";
+			# D("==== Melding for $File $Rev: {{{ ====\n" . `cat $tmp_file` . "==== }}} ====\n");
+			print(" \"$exec_str\" ...\n");
+			system($exec_str);
+			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!\n");
+			print(" ... DONE\n");
+		} else {
+			warn("Cannot open temporary file \"$tmp_file\", log messages not changed: $!\n");
+		}
+	} else {
+		print("Message for $File,v $Rev is unchanged, skipping...\n");
+	}
+	# print("change_message_FERDIG\n");
+	# }}}
+}
+
+sub get_log_message {
+	# Returns the cvs log message for the specified revision of a file. Used by change_message(). {{{
+	my ($File, $Rev) = @_;
+	my $header_done = 0;
+	my @Arr = ();
+	my $getl_call = "get_log_message(\"$File\", \"$Rev\")";
+
+	# print("$getl_call...");
+	if (open(PipeFP, "cvs log -r$Rev $File |")) {
+		while (my $Line = <PipeFP>) {
+			if ($Line =~ /^=============================================================================$/) {
+				if (!$header_done) {
+					warn("Log terminator line not found, $getl_call returns nothing\n");
+				} else {
+					last;
+				}
+			}
+			if ($header_done) {
+				if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
+					push(@Arr, $Line);
+				}
+			}
+			if ($Line =~ /^----------------------------$/) {
+				$Line = <PipeFP>;
+				if ($Line =~ /^revision (\S+)/) {
+				} else {
+					warn("$getl_call expected \"revision \", got \"$Line\".\". Ignoring.\n");
+				}
+				$header_done && warn("Found extra header separator in $getl_call, continuing...\n");
+				$header_done = 1;
+			}
+		}
+		close(PipeFP);
+		if ($header_done) {
+			# print("get_log_message_FERDIG\n");
+			return(join("", @Arr));
+		} else {
+			warn("Header separator not found, $getl_call returns nothing\n");
+		}
+	} else {
+		die("Can't open cvs pipe: $!");
+	}
+	# }}}
+}
+
+sub D {
+	# print(STDERR @_);
+}
+
+=pod
+
+=head1 NAME
+
+cvse - CVSEdit - edit CVS log messages
+
+=head1 REVISION
+
+$Id: cvse,v 1.1.2.1 2003/05/22 23:42:32 sunny Exp $
+
+=head1 SYNOPSIS
+
+cvse [logfile [...]]
+
+=head1 DESCRIPTION
+
+=head1 BUGS
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
+
+=head1 LICENCE
+
+GNU General Public License.
+
+# End of file $Id: cvse,v 1.1.2.1 2003/05/22 23:42:32 sunny Exp $
 
 __END__
