@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+# $Id: hf,v 1.1 1999/03/03 17:25:34 sunny Exp $
+
+use strict;
+
+$| = 1;
+
+my $Tabs = "";
+my $tab_indent = 0;
+my $orig_line = "";
+my @Elements = ("form","div","table","tr","td","ul","ol","dl","style","head");
+
+while (<>) {
+	my $Line = $_;
+	my $Element = "";
+	my $f = "";
+
+	$Line =~ s/^\t+(.*)/$1/; # Hiv alle TAB'er i begynnelsen til helsike, spacer rører vi ikke.
+	for $f (@Elements) {
+		if ($Line =~ m!</($f)([ >])!i) { # Hvis end-tag ble funnet...
+			$Element = $1;
+			$tab_indent--;
+			$Tabs =~ s/\t$//;
+			# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+		}
+	}
+	print "$Tabs$Line";
+	for $f (@Elements) {
+		if ($Line =~ m!<($f)([ >])!i) { # Hvis begin-tag ble funnet...
+			$Element = $1;
+			$tab_indent++;
+			$Tabs .= "\t";
+			# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
+		}
+	}
+}
+
+#les_linje;
+#stripp tab i begynnelsen
+#skriv tab
+#skriv linje
+
+#### End of file $Id: hf,v 1.1 1999/03/03 17:25:34 sunny Exp $ ####
