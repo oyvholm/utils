@@ -23,10 +23,11 @@ my $rcs_id = '$Id$';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
-$opt_h && usage(0);
-
 our $STD_TIMEFMT = "%Y-%m-%dT%H:%M:%SZ";
 our $time_fmt = length($opt_f) ? $opt_f : $STD_TIMEFMT;
+
+$opt_h && usage(0);
+
 my $gnuplot_script = join(".", "tmp.stpl", $$, substr(rand(), 2, 5), "plt");
 
 if (-e $gnuplot_script) {
@@ -56,6 +57,7 @@ Syntax:
 
 Options:
 
+  -f x       Use x as date format. Default: "$STD_TIMEFMT"
   -h         Send this help to stdout
   -k         Keep temp file after plotting
   -lp        Use linespoints instead of lines
