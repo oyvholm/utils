@@ -1,8 +1,11 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.1 2001/11/05 14:17:11 sunny Exp $
+# $Id: split_access_log,v 1.2 2002/01/04 12:54:31 sunny Exp $
 # Splitter opp access_log fra httpd(8) på dato. Legger filene i $Dir .
+# Options:
+#   -z  Pakker filene etter de er laget.
+# (C)opyright 2001-2002 Øyvind A. Holm <sunny@sunbase.org>
 #=====================================================================
 
 # 193.214.57.46 - - [18/Oct/2001:08:26:44 +0200] "POST / HTTP/1.0" 200 5147 "http://www.ba.no/00/07/12/9.html" "Mozilla/4.03 [en] (WinNT; I)"
@@ -21,7 +24,10 @@ my %Mnd = (
 	'Jul'=>'07', 'Aug'=>'08', 'Sep'=>'09', 'Oct'=>'10', 'Nov'=>'11', 'Dec'=>'12'
 );
 
-my ($Dir, $Fnavn, $Last) = ("out", "", "");
+my ($Dir, $Fnavn, $Last, $compress_file) = ("out", "", "", 0);
+my @fnavn_array;
+
+defined($ARGV[0]) && ($ARGV[0] =~ /^-z/) && ($compress_file = 1, shift);
 
 -d $Dir || mkdir($Dir, 0777) || die("mkdir(\"$Dir\"): $!");
 
@@ -30,6 +36,7 @@ while (<>) {
 		$Fnavn = "$Dir/$3-$Mnd{$2}-$1.log";
 		if ($Fnavn ne $Last) {
 			print("Ny fil: $Fnavn\n");
+			push(@fnavn_array, $Fnavn) if ($compress_file);
 			unless (-e $Fnavn) {
 				open(ToFP, ">$Fnavn") || warn("$Fnavn: Lager+skriving: $!");
 			}
@@ -45,3 +52,13 @@ while (<>) {
 	}
 	$Last = $Fnavn;
 }
+
+foreach (@fnavn_array) {
+	unless (-e "$_.gz") {
+		system("/bin/gzip -v $_");
+	} else {
+		warn("$_.gz: Fila eksisterer allerede, pakker ikke $_ .");
+	}
+}
+
+#### End of file $Id: split_access_log,v 1.2 2002/01/04 12:54:31 sunny Exp $ ####
