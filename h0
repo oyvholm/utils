@@ -1,5 +1,10 @@
 #!/bin/sh
 
-# $Id: h0,v 1.1 1999/04/19 20:02:57 sunny Exp $
+# Stopper httpd(8)
+# $Id: h0,v 1.2 1999/06/28 15:22:13 sunny Exp $
 
-/etc/rc.d/init.d/httpd stop
+if [ -e /brown.mrk ]; then
+	/etc/rc.d/init.d/apachectl stop
+else
+	/etc/rc.d/init.d/httpd stop
+fi
