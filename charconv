@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: charconv,v 1.1 2000/12/07 00:40:43 sunny Exp $
+# $Id: charconv,v 1.2 2000/12/08 12:21:03 sunny Exp $
 # Konverterer fra cp865 til Unicode. Alternativ konverteringsfil
 # spesifiseres med "-i"-parameteret, ellers brukes default filnavn.
 # -p skriver ut en enkel HTML-header og -slutt.
@@ -11,13 +11,13 @@ require 'getopts.pl';
 my $map_file = "/home/sunny/src/cvs/ibm2ent/cp865.txt";
 my %Table;
 
-Getopts('hi:p');
+Getopts('hi:pP');
 defined($main::opt_i) && ($map_file = $main::opt_i);
 
 open(MapFP, "<$map_file") || die("$map_file: Can't open map file: $!");
 
 while (<MapFP>) {
-	/^#/ && next;
+	(/^#/ || /^\s*$/) && next;
 	if (/^0x(..)\s+0x(....)/) {
 		my ($Cp, $Uni, $Name) = (hex($1), hex($2));
 		if ($Cp != $Uni) {
@@ -28,16 +28,18 @@ while (<MapFP>) {
 	}
 }
 
-print("<html><head></head><body><pre>\n") if $main::opt_p;
+$main::opt_P && print("<html><head></head><body><pre>\n") ||
+$main::opt_p && print("<pre>\n");
 
 while(<>) {
-	s/&/&amp;/g;
-	s/</&lt;/g;
-	s/>/&gt;/g;
+	s/&/&#38;/g;
+	s/</&#60;/g;
+	s/>/&#62;/g;
 	s/([\x80-\xff])/$Table{$1}/g;
 	print;
 }
 
-print("</pre></body></html>\n") if $main::opt_p;
+$main::opt_P && print("</pre></body></html>\n") ||
+$main::opt_p && print("</pre>\n");
 
-#### End of file $Id: charconv,v 1.1 2000/12/07 00:40:43 sunny Exp $ ####
+#### End of file $Id: charconv,v 1.2 2000/12/08 12:21:03 sunny Exp $ ####
