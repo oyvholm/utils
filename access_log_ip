@@ -1,10 +1,14 @@
 #!/usr/bin/perl -w
 
-# $Id: access_log_ip,v 1.1 2001/11/05 14:39:17 sunny Exp $
+#=========================================================
+# $Id: access_log_ip,v 1.2 2001/11/07 07:23:01 sunny Exp $
 # Lister ut unike IP'er i access_log
+#=========================================================
 
 use strict;
 use Socket;
+
+$| = 1;
 
 my %user_ip;
 my $total_hits = 0;
@@ -30,6 +34,12 @@ foreach(@ip_array) {
 	print("$_\n");
 }
 
+if (scalar(@ip_array) == 1) {
+	printf("\nTotalt 1 unik IP og 1 treff.\n");
+} else {
+	printf("\nTotalt %u unike IP'er og $total_hits treff.\n", scalar(@ip_array));
+}
+
 sub ipname {
 	my $i_addr = inet_aton(shift);
 	my $Retval = gethostbyaddr($i_addr, AF_INET);
@@ -48,4 +58,4 @@ sub ipname {
 # 62.113.158.67 - - [18/Oct/2001:08:26:46 +0200] "GET / HTTP/1.1" 200 5144 "-" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT)"
 # 62.113.158.68 - - [18/Oct/2001:08:26:49 +0200] "POST / HTTP/1.1" 200 16747 "http://basnakk.ba.no/" "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"
 
-#### End of file $Id: access_log_ip,v 1.1 2001/11/05 14:39:17 sunny Exp $ ####
+#### End of file $Id: access_log_ip,v 1.2 2001/11/07 07:23:01 sunny Exp $ ####
