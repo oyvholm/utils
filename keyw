@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# $Id$
+
+svn propset svn:keywords "Id Date" $*
