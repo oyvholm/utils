@@ -3,7 +3,7 @@
  * Kontrollerer om norske personnumre er gyldige og kan også skrive ut alle
  * gyldige norske personnumre på angitte datoer.
  *
- * $Id: personnr.c,v 1.3.2.11 2004/03/03 02:47:21 sunny Exp $
+ * $Id: personnr.c,v 1.3.2.12 2004/03/03 09:27:08 sunny Exp $
  *
  * Tegnsett brukt i denne fila: UTF-8
  *
@@ -61,20 +61,20 @@
  */
 
 #define VERSION   "1.12"
-#define RCS_DATE  "$Date: 2004/03/03 02:47:21 $"
+#define RCS_DATE  "$Date: 2004/03/03 09:27:08 $"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#define c2i(c)             ((c) - '0')  /* (char)tall --> (int)tall */
+#define c2i(c)             (int)((c) - '0')  /* (char)tall --> (int)tall */
 #define in_range(a, b, c)  ((((a) >= (b)) && ((a) <= (c))) ? 1 : 0)
 
 #define EXIT_OK     0
 #define EXIT_ERROR  1
 
-static char rcs_id[] = "$Id: personnr.c,v 1.3.2.11 2004/03/03 02:47:21 sunny Exp $";
+static char rcs_id[] = "$Id: personnr.c,v 1.3.2.12 2004/03/03 09:27:08 sunny Exp $";
 
 int lovlig_personnr(char *);
 char *persnr(char *);
@@ -124,27 +124,29 @@ int lovlig_personnr(char *pers_str)
 	int retval = 1, i;
 	char *p, buf[3];
 
-	for (p = pers_str; *p; p++) {
+	for (p = pers_str; *p && retval; p++) {
 		if (!isdigit(*p)) {
-			fprintf(stderr, "%s: %s: Ugyldig siffer: '%c'\n", progname, pers_str, p[0]);
+			fprintf(stderr, "%s: %s: Kan kun inneholde siffer\n", progname, pers_str);
 			retval = 0;
 		}
 	}
 
-	strncpy(buf, pers_str, 2);
-	buf[2] = '\0';
-	i = atoi(buf);
-	if (!in_range(i, 1, 31)) {
-		fprintf(stderr, "%s: %s: Ulovlig dato: \"%s\"\n", progname, pers_str, buf);
-		retval = 0;
-	}
+	if (retval) {
+		strncpy(buf, pers_str, 2);
+		buf[2] = '\0';
+		i = atoi(buf);
+		if (!in_range(i, 1, 31)) {
+			fprintf(stderr, "%s: %s: Ulovlig dato: \"%s\"\n", progname, pers_str, buf);
+			retval = 0;
+		}
 
-	strncpy(buf, pers_str+2, 2);
-	buf[2] = '\0';
-	i = atoi(buf);
-	if (!in_range(i, 1, 12)) {
-		fprintf(stderr, "%s: %s: Ulovlig måned: \"%s\"\n", progname, pers_str, buf);
-		retval = 0;
+		strncpy(buf, pers_str+2, 2);
+		buf[2] = '\0';
+		i = atoi(buf);
+		if (!in_range(i, 1, 12)) {
+			fprintf(stderr, "%s: %s: Ulovlig måned: \"%s\"\n", progname, pers_str, buf);
+			retval = 0;
+		}
 	}
 
 	return(retval);
@@ -319,6 +321,9 @@ void usage(int retval)
 		"Alle personnumrene på en eller flere angitte datoer kan også skrives ut.\n"
 		"Fødselsdatoen må være på formatet ddmmåå eller ddmmåååå. Hvis datoen skrives\n"
 		"med ddmmåå-formatet, brukes 20xx som århundre.\n"
+		, VERSION, RCS_DATE, progname
+	); /* Må splittes på grunn av potensielt hjernedøde kompilatorer som ikke liker strenger over 509 bytes. */
+	printf(
 		"\n"
 		"Hvis ingen personnumre eller datoer skrives på kommandolinja, leser\n"
 		"programmet fra standard input.\n"
@@ -329,7 +334,6 @@ void usage(int retval)
 		"Nyeste versjon av programmet kan hentes fra\n"
 		"<http://www.sunbase.org/src/personnr>.\n"
 		"\n"
-		, VERSION, RCS_DATE, progname
 	);
 
 	exit(retval);
@@ -337,4 +341,4 @@ void usage(int retval)
 } /* usage() */
 
 /* vim600: set fdm=marker fdl=0 ts=4 sw=4 : */
-/* End of file $Id: personnr.c,v 1.3.2.11 2004/03/03 02:47:21 sunny Exp $ */
+/* End of file $Id: personnr.c,v 1.3.2.12 2004/03/03 09:27:08 sunny Exp $ */
