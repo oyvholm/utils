@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id: stpl,v 1.1.2.3 2003/10/08 15:06:40 sunny Exp $
-# [Description]
+# $Id: stpl,v 1.1.2.4 2003/10/12 13:22:22 sunny Exp $
+# Plot out data with gnuplot based on data type
+#
 # Character set: UTF-8
 # License: GNU General Public License
 # ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
@@ -14,11 +15,11 @@ $| = 1;
 
 use Getopt::Std;
 
-our ($opt_k, $opt_o, $opt_t, $opt_x, $opt_y) =
-    (    "",     "",     "",     "",     "");
+our ($opt_h, $opt_k, $opt_o, $opt_t, $opt_x, $opt_y) =
+    (     0,      0,     "",     "",     "",     "");
 getopts('ko:t:y:');
 
-my $rcs_id = '$Id: stpl,v 1.1.2.3 2003/10/08 15:06:40 sunny Exp $';
+my $rcs_id = '$Id: stpl,v 1.1.2.4 2003/10/12 13:22:22 sunny Exp $';
 my $rcs_id_strip = $rcs_id;
 $rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
@@ -50,7 +51,9 @@ Syntax:
 
 Options:
 
+  -h         Send this help to stdout
   -k         Keep temp file after plotting
+  -t"X"      Use title X
   -xrXX:YY   Use X range XX:YY
   -yrXX:YY   Use Y range XX:YY
 
@@ -66,7 +69,7 @@ sub process_file {
 		die("$0: $data_file: File is unreadable or doesn’t exist.\n");
 		return undef;
 	}
-	if(open(GnupFP, ">$gnuplot_script")) {
+	if (open(GnupFP, ">$gnuplot_script")) {
 		# {{{
 		print(GnupFP <<END);
 #!/usr/bin/gnuplot -persist
@@ -110,7 +113,7 @@ END
 
 		if (length($opt_o)) {
 			if ($opt_o =~ /.*\.ps$/i) {
-				print(GnupFP "set terminal postscript\nset output \"$opt_o\"\n");
+				print(GnupFP "set terminal postscript enhanced color solid\nset output \"$opt_o\"\n");
 			} elsif ($opt_o =~ /.*\.png$/i) {
 				print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
 			} else {
@@ -131,7 +134,7 @@ END
 
 		print(GnupFP <<END);
 plot \\
-"$data_file" using 1:2 title " " with line 7, \\
+"$data_file" using 1:2 title " " with line 1, \\
 "$data_file" using 1:2 smooth bezier title " " with line -1
 
 END
@@ -144,6 +147,9 @@ END
 		} else {
 			unlink($gnuplot_script) || warn("$gnuplot_script: Unable to delete temporary file: $!\n");
 		}
+		if ($opt_o =~ /^.*\.ps$/i) {
+			system("gv $opt_o");
+		}
 		# }}}
 	} else {
 		warn("$gnuplot_script: Can’t open file for write: $!\n");
@@ -154,4 +160,4 @@ END
 __END__
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id: stpl,v 1.1.2.3 2003/10/08 15:06:40 sunny Exp $
+# End of file $Id: stpl,v 1.1.2.4 2003/10/12 13:22:22 sunny Exp $
