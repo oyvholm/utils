@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
-# $Id: sortcvs,v 1.1.2.2 2002/10/09 00:53:49 sunny Exp $
-# Sorterer output fra "cvs log" i kronologisk rekkefølge.
-# Uferdig.
+#==============================================================================
+# $Id: sortcvs,v 1.1.2.3 2002/10/10 05:21:01 sunny Exp $
+# Sorts the output from "cvs log" into chronological kronologisk order.
+#==============================================================================
 
 use strict;
 
@@ -12,7 +13,8 @@ my %Entry = ();
 my $Rev = "";
 my $Line = "";
 
-while ($Line = <>) {
+while (<>) {
+	$Line = $_;
 	# chomp($Line);
 	if ($Line =~ /^----------------------------$/) {
 		D("Fant minuslinje.\n");
@@ -47,8 +49,20 @@ while ($Line = <>) {
 		}
 		push(@Curr, $Line);
 
-		$Rev = "$curr_date$curr_rev";
+		$Rev = unpack("H*", "$curr_date$curr_rev");
 		D("\$Rev er satt til \"$Rev\".\n");
+	} elsif ($Line =~ /^=============================================================================$/) {
+		D("Fant \"===\"-linje, slutt på loggen for den fila.\n");
+		my @Arr = ();
+		while (my ($l_name, $l_val) = each %Entry) {
+			push(@Arr, $l_name);
+		}
+		for (sort @Arr) {
+			D("Skriver ut verdien av Entry{$_}\n");
+			print($Entry{$_});
+		}
+		($curr_date, $curr_rev, $Rev) = ("", "", "");
+		print("$Line");
 	} else {
 		if (length($Rev)) {
 			push(@Curr, $_);
@@ -58,12 +72,8 @@ while ($Line = <>) {
 	}
 }
 
-for (my ($l_name, $l_val) = each %Entry) {
-	D("$l_name\n");
-}
-
 sub D {
-	print(STDERR @_);
+	# print(STDERR @_);
 }
 
 __END__
