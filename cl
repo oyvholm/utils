@@ -5,6 +5,8 @@
 
 if [ -d .svn/. ]; then
 	svn log -v $* | less
-else
+elif [ -d CVS/. ]; then
 	cvs log $* | sortcvs | less
+else
+	svn log -v $* | less
 fi
