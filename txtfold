@@ -13,10 +13,10 @@ my ($Indent, $Title) = ("", "");
 
 defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
 $Line =~ /^(\s+)/ && ($Indent = $1);
-print("$Indent# $Title\x7B\x7B\x7B\n$Line");
+print("$Indent$Title\x7B\x7B\x7B\n$Line");
 
 while (<STDIN>) {
 	print($_);
 }
 
-print("$Indent# \x7D\x7D\x7D\n");
+print("$Indent\x7D\x7D\x7D\n");
