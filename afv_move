@@ -17,11 +17,11 @@ use Getopt::Std;
 
 $| = 1;
 
-our ($opt_c, $opt_d, $opt_h, $opt_l, $opt_L, $opt_m, $opt_o, $opt_s) =
+our ($opt_c, $opt_d, $opt_h, $opt_l, $opt_L, $opt_m, $opt_o, $opt_q) =
     (     0,     "",      0,      0,      0,      0,      0,      0);
-our ($opt_S, $opt_v) =
-    (     0,      0);
-getopts('cd:hlLmosSv') || die("Option error. Use -h for help.\n");
+our ($opt_s, $opt_S, $opt_v) =
+    (     0,      0,      0);
+getopts('cd:hlLmoqsSv') || die("Option error. Use -h for help.\n");
 
 my $VERSION = "0.5";
 
@@ -98,7 +98,7 @@ LOOP: while (<>) {
 				$Dir =~ s/%%/%/g;
 
 				if (!$opt_o && -e "$Dir/$File") {
-					warn("$Dir/$File: File already exists, will not overwrite\n");
+					$opt_q || warn("$Dir/$File: File already exists, will not overwrite\n");
 				} else {
 					# {{{
 					$skip_dirs ||
@@ -143,7 +143,7 @@ LOOP: while (<>) {
 				}
 				# }}}
 			} else {
-				warn("Ignoring non-regular file $From\n");
+				$opt_q || warn("Ignoring non-regular file $From\n");
 			}
 		} else {
 			warn("$From: File not found\n");
@@ -195,6 +195,7 @@ Options:
       name. All files will be affected, not only those with a date in 
       the file name.
 -o    Overwrite existing files
+-q    Be quiet, suppress non-critical messages.
 -s    Simulate, don't really move files
 -S    Semisimulate. Don’t touch the files, only create the directory 
       structure. Useful for running tests with big amounts of data.
