@@ -6,7 +6,7 @@ tricgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $>
+S<$Id: tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -59,6 +59,12 @@ copyrighter og sånn, der er det F<tritech@tritech.no> som hersker.
 Filnavn på en fil som er skrivbar av den som kjører scriptet (som oftest
 I<nobody>). Alle feilmeldinger og warnings havner her.
 
+=item I<${main::log_dir}>
+
+Navn på directory der logging fra blant annet I<&log_access()> havner.
+Brukeren I<nobody> (eller hva nå httpd måtte kjøre under) skal ha
+skrive/leseaksess der.
+
 =back
 
 NB: Disse må ikke være I<my>'et, de må være globale så de kan bli brukt av
@@ -87,6 +93,21 @@ ikke er definert, brukes I<$STD_BACKGROUND>, en tom greie.
 
 Skriver ut en del debuggingsinfo.
 
+=item I<${main::FONTB}>
+=item I<${main::FONTE}>
+
+Disse to definerer fontene som skal brukes. I alle områder med tekst
+legges disse inn, for eksempel:
+
+	$tricgi::tab_print("<h1>${FONTB}Dette er en snadderheader${FONTE}</h1>\n";
+
+Normalt sett er $FONTB og $FONTE satt til disse verdiene sånn omtrent:
+
+	$FONTB = '<font face="arial, helvetica">';
+	$FONTE = '</font>';
+
+Dette er som kjent bare lov i HTML når minst I<$DTD_HTML4LOOSE> brukes.
+
 =item I<${main::Utv}>
 
 Beslektet med I<${main::Debug}>, men hvis denne er definert, sitter man
@@ -107,9 +128,9 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 ###########################################################################
 
 my $Tabs = "";
-my $cvs_date = '$Date: 1999/03/30 14:44:37 $';
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $';
-my $cvs_id = '$Id: tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $';
+my $cvs_date = '$Date: 1999/04/28 11:30:34 $';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $';
+my $cvs_id = '$Id: tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $';
 my $this_counter = "";
 
 my $FALSE = 0;
@@ -124,7 +145,7 @@ my $STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
 my $STD_DOCALIGN = "center"; # Standard align for dokumentet hvis align ikke er spesifisert
 my $STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
 my $STD_HTMLDTD = $DTD_HTML4LOOSE;
-my $STD_LOGDIR = "."; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
+my $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
 
 ###########################################################################
 #### Subrutiner
@@ -306,12 +327,9 @@ sub HTMLdie {
 
 	$Title || ($Title = "Intern feil");
 	if (!${main::Debug} && !${main::Utv}) {
-		$msg_str = <<END;
-			<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli
-			fikset snart.
-END
+		$msg_str = "<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli fikset snart.";
 	} else {
-		$msg_str = $Msg;
+		chomp($msg_str = $Msg);
 	}
 	my $CharSet = $STD_CHARSET unless length($CharSet);
 	print <<END;
@@ -353,6 +371,9 @@ END
 		open(ErrorFP, "+<${main::error_file}") or exit;
 		flock(ErrorFP, LOCK_EX);
 		seek(ErrorFP, 0, 2) or exit;
+		$Msg =~ s/\\/\\\\/g;
+		$Msg =~ s/\n/\\n/g;
+		$Msg =~ s/\t/\\t/g;
 		printf(ErrorFP "%s HDIE %s\n", &curr_utc_time, $Msg);
 		close(ErrorFP);
 	}
@@ -386,6 +407,9 @@ sub HTMLwarn {
 	} else {
 		open(ErrorFP, ">${main::error_file}") or return;
 	}
+	$Msg =~ s/\\/\\\\/g;
+	$Msg =~ s/\n/\\n/g;
+	$Msg =~ s/\t/\\t/g;
 	print(ErrorFP "$curr_utc WARN $Msg\n");
 	close(ErrorFP);
 } # HTMLwarn()
@@ -907,4 +931,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 1;
 
-#### End of file $Id: tricgi.pm,v 1.5 1999/03/30 14:44:37 sunny Exp $ ####
+#### End of file $Id: tricgi.pm,v 1.6 1999/04/28 11:30:34 sunny Exp $ ####
