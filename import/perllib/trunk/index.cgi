@@ -1,22 +1,22 @@
 #!/usr/bin/perl
 
-# $Id: index.cgi,v 1.1 1999/04/08 14:59:25 sunny Exp $
-# Test-index.cgi som ikke skal brukes til noe annet enn testing av tricgi.pm
+# $Id: index.cgi,v 1.2 2000/09/01 10:38:33 sunny Exp $
+# Test-index.cgi som ikke skal brukes til noe annet enn testing av suncgi.pm
 
-require tricgi;
+use suncgi;
 
 $WebMaster="jeg\@er.snill.edu";
-$cvs_id = '$Id: index.cgi,v 1.1 1999/04/08 14:59:25 sunny Exp $';
+$rcs_id = '$Id: index.cgi,v 1.2 2000/09/01 10:38:33 sunny Exp $';
 $counter_file = "counter.txt";
 $error_file = "errorfile.txt";
 $Url = "index.cgi";
 
-%Opt = &tricgi::get_cgivars();
-&tricgi::print_doc("test.shtml");
-printf "get_countervalue(\"$counter_file\") før increase: %s\n", &tricgi::get_countervalue($counter_file);
-&tricgi::increase_counter("counter.txt");
-printf "get_countervalue(\"$counter_file\") etter increase: %s\n", &tricgi::get_countervalue($counter_file);
-&tricgi::tab_print(<<END);
+%Opt = get_cgivars();
+print_doc("test.shtml");
+printf "get_countervalue(\"$counter_file\") før increase: %s\n", get_countervalue($counter_file);
+increase_counter("counter.txt");
+printf "get_countervalue(\"$counter_file\") etter increase: %s\n", get_countervalue($counter_file);
+tab_print(<<END);
 Hei og hå. her har vi æøåÆØÅ og ¢©@¹@£¡££$£¡ masse drit kort sagt.
 127: 
 128: €
@@ -28,13 +28,13 @@ exit;
 
 ##############################
 
-&tricgi::print_header("Yess man");
+print_header("Yess man");
 
-print "print her, og $Tabs = $tricgi::Tabs\n";
-&tricgi::tab_print("Heia\n");
-&tricgi::Tabs(2);
-print "print her, og $Tabs = $tricgi::Tabs\n";
-&tricgi::tab_print("Heia\n");
+print "print her, og $Tabs = $suncgi::Tabs\n";
+tab_print("Heia\n");
+Tabs(2);
+print "print her, og $Tabs = $suncgi::Tabs\n";
+tab_print("Heia\n");
 print "local Tabs = $Tabs\n";
 
-#### End of file $Id: index.cgi,v 1.1 1999/04/08 14:59:25 sunny Exp $ ####
+#### End of file $Id: index.cgi,v 1.2 2000/09/01 10:38:33 sunny Exp $ ####
