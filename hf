@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: hf,v 1.7 1999/05/07 20:24:44 sunny Exp $
+# $Id: hf,v 1.8 2000/03/27 00:18:31 sunny Exp $
 # Formatterer HTML-source med TAB'er
 
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
@@ -11,12 +11,12 @@ use strict;
 # require 'getopts.pl';
 # &Getopts('hs');
 
-# &print_help() if ($opt_h);
+&print_help() if ($ARGV[0] =~ /^(--help|-h)$/);
 
 $| = 1;
 
 my $Tabs = "";
-my $tab_indent = 0;
+my $tab_indent = $ARGV[0] >= 0 ? shift : 0;
 my $orig_line = "";
 my @Elements = (
 	"applet", "blockquote", "body", "caption", "center", "colgroup",
@@ -25,10 +25,15 @@ my @Elements = (
 	"th", "tr", "ul"
 );
 
+for (; $tab_indent; $tab_indent--) {
+	$Tabs .= "\t";
+}
+
 while (<>) {
 	my $Line = $_;
 	my $Element = "";
 	my $f = "";
+	my $out_line;
 
 	# $Line =~ $opt_s ? s/^\s+(.*?)\s+$/$1/ : s/^\t+(.*)/$1/;
 	$Line =~ s/^\t+(.*)/$1/;
@@ -40,8 +45,8 @@ while (<>) {
 			# $Line =~ s/($Element)/sprintf("\n%s%s", $Tabs, $1)/gei;
 		}
 	}
-	my $out_line = sprintf("%s%s", $Tabs, $Line);
-	$out_line =~ s/\s*$//g; # Fjern alle whitespace på slutten
+	$out_line = "$Tabs$Line";
+	$out_line =~ s/\s+$//g; # Fjern alle whitespace på slutten
 	print "$out_line\n";
 	for $f (@Elements) {
 		if ($Line =~ m!<($f)([ >])!i) { # Hvis begin-tag ble funnet...
@@ -53,18 +58,19 @@ while (<>) {
 	}
 }
 
+#   -s  Split block elements on separate lines (not finished yet)
+
 sub print_help {
 	print <<END;
 
-Syntax: $0 [options] [files ...]
+Syntax: $0 [indentval [files ...]]
 
-HTML source indenter
+HTML formatter
 
-Options:
-  -h  Print this help screen
-  -s  Split block elements on separate lines (not finished yet)
+indentval er startantall TAB'er. Hvis filnavn skal spesifiseres, bruk 0.
 
 END
+	exit(0);
 } # print_help()
 
-#### End of file $Id: hf,v 1.7 1999/05/07 20:24:44 sunny Exp $ ####
+#### End of file $Id: hf,v 1.8 2000/03/27 00:18:31 sunny Exp $ ####
