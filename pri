@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: pri,v 1.2 1999/05/05 02:49:45 sunny Exp $
+# $Id: pri,v 1.3 2003/07/30 13:38:15 sunny Exp $
 
 pri_dir=~sunny/etc
 
@@ -13,4 +13,6 @@ if [ ! -d $pri_dir ]; then
 	exit 1
 fi
 
-$EDITOR $pri_dir/pri.txt
+# $EDITOR $pri_dir/pri.txt
+
+gvim ~/p/plan/todo.txt
