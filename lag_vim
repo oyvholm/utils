@@ -72,10 +72,8 @@ make
 echo -e "======== make \x7D\x7D\x7D"
 
 if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
-    # installcmd="rm -rf $vimdir && make install"
     echo Vi er på petronas, vagabond eller solsje, så vi nøyer oss med:
 else
-    # installcmd="su -c \"rm -rf $vimdir && make install\""
     echo Hvis det gikk bra, er det på tide å bli root, og...
 fi
 echo "cd $vimcompdir && rm -rf $vimdir && make install && cp -vp src/vim $vimdir/bin/"
