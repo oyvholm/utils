@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id: split_access_log,v 1.2 2002/01/04 12:54:31 sunny Exp $
+# $Id: split_access_log,v 1.3 2002/01/04 14:55:48 sunny Exp $
 # Splitter opp access_log fra httpd(8) på dato. Legger filene i $Dir .
 # Options:
 #   -z  Pakker filene etter de er laget.
@@ -37,13 +37,13 @@ while (<>) {
 		if ($Fnavn ne $Last) {
 			print("Ny fil: $Fnavn\n");
 			push(@fnavn_array, $Fnavn) if ($compress_file);
-			unless (-e $Fnavn) {
-				open(ToFP, ">$Fnavn") || warn("$Fnavn: Lager+skriving: $!");
+			if (-e $Fnavn) {
+				die("$Fnavn: Fila eksisterte, det vil si at loggfila ikke er kronologisk. Sorter den først, slett $Fnavn og kjør programmet en gang til.");
 			}
-			if (open(ToFP, "+<$Fnavn")) {
+			if (open(ToFP, ">$Fnavn")) {
 				seek(ToFP, 0, 2) || warn("$Fnavn: seek() til slutten: $!");
 			} else {
-				warn("$Fnavn: Lesing+skriving: $!");
+				warn("$Fnavn: Skriving: $!");
 			}
 		}
 		print(ToFP $_);
@@ -61,4 +61,4 @@ foreach (@fnavn_array) {
 	}
 }
 
-#### End of file $Id: split_access_log,v 1.2 2002/01/04 12:54:31 sunny Exp $ ####
+#### End of file $Id: split_access_log,v 1.3 2002/01/04 14:55:48 sunny Exp $ ####
