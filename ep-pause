@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Finner drops (ikke sukkertøy, men pauser) i Apache-logger.
+# Finner pauser mellom datoer på epoch-format.
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
@@ -30,48 +30,16 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 $opt_h && usage(0);
 
-# 194.248.216.3 - - [13/Aug/2001:16:04:37 +0200] "GET
-
-my %mnd_hash = (
-    'Jan'=>0, 'Feb'=>1, 'Mar'=>2, 'Apr'=>3, 'May'=>4,  'Jun'=>5,
-    'Jul'=>6, 'Aug'=>7, 'Sep'=>8, 'Oct'=>9, 'Nov'=>10, 'Dec'=>11
-);
-
 my $last_sec = 0;
 
 while (<>) {
-    if (
-        # access_log-regexp {{{
-        m!
-        \S+ # IP
-        \s+
-        \S+
-        \s+
-        \S+
-        \s+
-        \[
-        (\d+) # Dato
-        /
-        (\S+) # Mnd
-        /
-        (\d{4}) # År
-        :(\d\d):(\d\d):(\d\d) # Klokka
-        \s+
-        ([+\-]\d\d)(\d\d)
-        !x
-        # }}}
-    ) {
-        my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
-           (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
-        my $num_mon = $mnd_hash{$Mon};
-        my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mon, $Year);
-        $Secs -= ($zone_hour*3600); # Vi driter i minuttene for å få opp farta.
+    if (/^.*?(\d+).*?$/) {
+        my $Secs = $1;
         my $Pause = $Secs - $last_sec;
         if ($last_sec && ($Pause >= $opt_l)) {
-            $num_mon++; # Å inn i svarteste hælvete hvor jeg hater det inkonsekvente pisset der!!!!!!!!!!!!!!!!
             printf(
-                "%04u-%02u-%02uT%02u:%02u:%02uZ %4u %s\n",
-                $Year, $num_mon, $Day, $Hour, $Min, $Sec,
+                "%u-%u\t%u\t%s\n",
+                $last_sec, $Secs,
                 $Pause, sec_to_hms($Pause)
             );
         }
@@ -129,7 +97,7 @@ __END__
 
 =head1 NAME
 
-access_log-drops — find pauses in Apache logs
+ep-pause — find pauses in Apache logs
 
 =head1 REVISION
 
@@ -137,7 +105,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-access_log-drops [options] [file [...]]
+ep-pause [options] [file [...]]
 
 =head1 DESCRIPTION
 
