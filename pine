@@ -3,9 +3,9 @@
 # $Id$
 # Locking for pine
 
-lockdir=$HOME/lock
+lockdir=$HOME/.lock
 [ "$1" = "-f" ] && { shift; rm -rf $lockdir; }
-[ -d $lockdir ] || mkdir $lockdir || { echo "$lockdir: Klarte ikke mkdir" >&2; exit 1; }
+[ -d $lockdir/. ] || mkdir $lockdir || { echo "$lockdir: Klarte ikke mkdir" >&2; exit 1; }
 lockname=$lockdir/pine
 until mkdir $lockname 2>/dev/null; do
 	echo "$0: $lockname: Venter på at \"`cat $lockname/info`\" skal slippe locken..." >&2
