@@ -1,31 +1,31 @@
 
 /*
- * personnr.c - Skriver ut alle gyldige personnummer p† en gitt dato
+ * personnr.c - Skriver ut alle gyldige personnummer på en gitt dato
  *
  * Oppbygningen av personnummeret 020656-45850:
  *
- * 020656 = F›dselsdato (ddmm††)
- *    458 = F›dselsnummer.
- *          Den f›rste registrerte gutten den dagen fikk f›dselsnummeret 499.
- *          Den neste fikk 497. Den f›rste registrerte jenta fikk 498, den
+ * 020656 = Fødselsdato (ddmmåå)
+ *    458 = Fødselsnummer.
+ *          Den første registrerte gutten den dagen fikk fødselsnummeret 499.
+ *          Den neste fikk 497. Den første registrerte jenta fikk 498, den
  *          neste 496 osv.
- *          Oddetall = hankj›nn, like tall = hunkj›nn.
- *          For personer f›dt i forrige eller neste †rhundre (18XX/20XX)
+ *          Oddetall = hankjønn, like tall = hunkjønn.
+ *          For personer født i forrige eller neste århundre (18XX/20XX)
  *          brukes tall fra 999/998 ned til 500/501.
  *     50 = Kontrollsiffer som er regnet ut etter en spesiell formel. Enhver
- *          som kjenner denne formelen har mulighet for † kontrollere om det
- *          personnummeret som oppgis er beregnet p† den riktige m†ten. Det
- *          vil bare v‘re de registere som har tilgang til folkeregisteret
+ *          som kjenner denne formelen har mulighet for å kontrollere om det
+ *          personnummeret som oppgis er beregnet på den riktige måten. Det
+ *          vil bare være de registere som har tilgang til folkeregisteret
  *          som vil kunne sjekke om personnummeret er det som er det riktige.
  *
- * Formel for † regne ut kontrollsiffer:
+ * Formel for å regne ut kontrollsiffer:
  *
- * Utgangspunktet er to faste rekker med multiplikatorer. Den f›rste rekken
- * blir brukt til † regne ut f›rste kontrollsiffer, og den andre rekken til
+ * Utgangspunktet er to faste rekker med multiplikatorer. Den første rekken
+ * blir brukt til å regne ut første kontrollsiffer, og den andre rekken til
  * det andre kontrollsifferet.
  *
  * ---------------------------
- * | f›dselsdato f.num ktr   |
+ * | fødselsdato f.num ktr   |
  * | -----------|-----|---   |
  * | a b c d e f g h i j k   |
  * | 3 7 6 1 8 9 4 5 2 - - x |
@@ -41,35 +41,63 @@
  * Dersom j eller k <= 9 er j eller k riktige kontrollsiffer.
  * Dersom j eller k = 10 er personnummeret ugyldig.
  * Dersom j eller k = 11 er j eller k = 0.
- * Det betyr at det for en f›dselsdato ikke finnes mer enn noe over 200
- * mulige personnummer for hvert kj›nn.
+ * Det betyr at det for en fødselsdato ikke finnes mer enn noe over 200
+ * mulige personnummer for hvert kjønn.
  *
  * "Frac" er desimaltallene ved resultatet av divisjonen med 11 som skal
  * trekkes fra 1. Eksempel: frac(126/11) = frac(11.45) = 0.45.
- * Det er ikke n›dvendig † bruke mer enn to desimaler ved denne utregningen.
+ * Det er ikke nødvendig å bruke mer enn to desimaler ved denne utregningen.
  *
  * Liste over endringer:
  *
  * 04-Oct-1993 ver. 1.00
- *   Denne sourcen er egentlig basert p† ALLPERS.C (CRC32/16: 1974871C-378E,
+ *   Denne sourcen er egentlig basert på ALLPERS.C (CRC32/16: 1974871C-378E,
  *   Date: 1991-12-08 18:17:40, Size: 7766), men ville ha support for flere
- *   †rhundrer. Dette kan man si er en endelig versjon, derfor kalte jeg hele
+ *   århundrer. Dette kan man si er en endelig versjon, derfor kalte jeg hele
  *   saken for PERSONNR.C, ALLPERS passa ikke helt.
- *   I ALLPERS.C hadde jeg lagt inn en enkel kryptering  for † forhindre at
+ *   I ALLPERS.C hadde jeg lagt inn en enkel kryptering  for å forhindre at
  *   folk patcha bort at programmet var gitt til dem. Den har jeg forbedra
- *   en del s† mye som jeg gidder.
+ *   en del så mye som jeg gidder.
  *
- * Programmet er laget av yvind Solheim (Sunny)
+ * 1996/07/20 ver. 1.10
+ *   - Porta saken til Linux.
+ *   - Gjorde om en del #if'er til #ifdef'er.
+ *   - Fjerna fcloseall(), den lagde bare bråk og gjorde ingenting fornuftig
+ *     anyway.
+ *
+ * 1996/07/30 ver. 1.10
+ *   - Små pynteting på layouten.
+ *
+ * Programmet er laget av Øyvind Solheim (Sunny)
  * Programmert i Turbo C++ ver. 1.00.
+ * Under Linux er gcc 2.7.0 brukt.
  *
  */
+
+#define REV_DATE	"1996/07/30"   /* Last revision date */
+#define VERSION		"1.10"
 
 #define ENGLISH		1
 #define NORWEGIAN	2
 
-#define C_LANG		NORWEGIAN
-#define C_SECURITY      1  /* Patchebeskyttelse. 0 = Ingen beskyttelse, 1 = Vanlig beskyttelse, 2 = Finn kode. */
-#define C_DEBUG		0
+#define C_LANG		NORWEGIAN /* Eneste som supporteres. */
+
+/*
+ * Disse kompileringsdirektivene er definert:
+ *
+ * C_SECURITY      1  /* Patchebeskyttelse. !defined = Ingen beskyttelse,
+ *                                                 1 = Vanlig beskyttelse,
+ *                                                 2 = Finn kode.
+ * C_DEBUG
+ *
+ * LINUX eller DOS, alt ettersom hva det kompileres under.
+ *
+ */
+ 
+#ifdef C_STD
+#  undef C_DEBUG
+#  undef C_SECURITY
+#endif /* ifdef C_STD */ 
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -79,11 +107,17 @@
 #define c2i(c)		((c) - '0') /* (char)tall --> (int)tall */
 #define frac(a)		(((int)((a) * 100) % 100) / (float)100) /* Returnerer 2 desimaler */
 
-#define REV_DATE	"04-Oct-1993"   /* Last revision date */
-#define VERSION		"1.00"
-#define MINPARAM	1               /* Kan spesifisere ett parameter */
+#ifdef LINUX
+#  define OS_NAME	"Linux"
+#endif
 
-#define OS_NAME		"DOS"           /* Name of operating system */
+#ifdef DOS
+#  define OS_NAME	"DOS"
+#endif
+
+#ifndef OS_NAME
+#  error No operating system specified
+#endif
 
 #define EXIT_OK		0
 #define EXIT_ERROR	1
@@ -91,22 +125,19 @@
 #define OK		0
 #define ERROR		1
 
-
-#if C_SECURITY
-#define check_secur()	{if (security != 0x6793) exit(EXIT_OK);}
+#ifdef C_SECURITY
+#  define check_secur()	{if (security != 0x6793) exit(EXIT_OK);}
 #else
-#define check_secur()	{}
+#  define check_secur()	{}
 #endif
-
 
 /*
  * ENGLISH
  */
 
 #if C_LANG == ENGLISH
-#error English language not supported
+#  error English language not supported
 #endif /* if C_LANG == ENGLISH */
-
 
 /*
  * NORWEGIAN
@@ -114,46 +145,44 @@
 
 #if C_LANG == NORWEGIAN
 
-char	PROG_NAME[]		= "PERSONNR";
-char	AUTHOR[]		= "SunWare (yvind Solheim (\"Sunny\"))";
+char	PROG_NAME[]		= "personnr";
+char	AUTHOR[]		= "Oyvind Solheim (sunny@online.no)";
 
 char	MSG_LANGUAGE[]		= "Norsk";
 
 char	MSG_SYN_VER[]		= "\n%s ver. %s (%s) for %s\n";
 char	MSG_SYN_MADEBY[]	= "Laget av %s %s";
-char	MSG_SYN_USAGE[]		= "\nBruk: %s [f›dselsdato]\n\n";
-char	MSG_SYN_TXT[]		= "F›dselsdatoen spesifiseres p† formatet ddmm††. Hvis et annet †rhundre enn\n"\
-				  "1900 skal brukes, brukes formatet ddmm††††.\n";
+char	MSG_SYN_USAGE[]		= "\nBruk: %s fødselsdato\n\n";
+char	MSG_SYN_TXT[]		= "Fødselsdatoen spesifiseres på formatet ddmmåå. Hvis et annet århundre enn\n"\
+				  "1900 skal brukes, brukes formatet ddmmåååå.\n\n";
 
-#if C_DEBUG
+#  ifdef C_DEBUG
 char	MSG_SYN_DEBUGVER[]	= "\nDebug version, C_DEBUG = %d\n\n";
-#endif /* if C_DEBUG */
+#  endif /* ifdef C_DEBUG */
 
-char	MSG_STARTHEADER[]	= "*** Program for generering av norske personnummer ***";
-char	MSG_ASK_BIRTHDATE[]	= "F›dselsdato (ddmm†† eller ddmm††††): ";
+char	MSG_STARTHEADER[]	= "--- Program for generering av norske personnummer ---";
 char	MSG_HEADER[]		= "Liste over alle gyldige norske personnummer for %c%c/%c%c %2.2s%c%c:\n\n";
-char	MSG_MALE[]		= "Hankj›nn:";
-char	MSG_FEMALE[]		= "Hunkj›nn:";
-char	MSG_END_OF_LIST[]	= "*** Slutt p† utlisting ***";
+char	MSG_MALE[]		= "Gutter:";
+char	MSG_FEMALE[]		= "Jenter:";
+char	MSG_END_OF_LIST[]	= "--- Utlisting slutt ---";
 
-char	MSG_ERROR[]		= "%s FEIL: ";
+char	MSG_ERROR[]		= "%s: ";
 
 char	ERR_TOO_MANY_PARAMS[]	= "For mange parametere. Skriv %s ? for hjelp.";
-char	ERR_INVALID_PARAMLEN[]	= "Feil format p† datoen. Formatet skal v‘re ddmm†† eller ddmm††††.";
+char	ERR_INVALID_PARAMLEN[]	= "Feil format på datoen. Formatet skal være ddmmåå eller ddmmåååå.";
 
 #endif /* if C_LANG == NORWEGIAN */
 
-#if C_SECURITY
-char    s[102], ss[11]; /* ss brukes ikke, den er bare her for at det ikke skal k›ddes med s. */
+#ifdef C_SECURITY
+char    s[102], ss[11]; /* ss brukes ikke, den er bare her for at det ikke skal køddes med s. */
 int	security = 0x6553;
-#endif /* if C_SECURITY */
+#endif /* ifdef C_SECURITY */
 
 char	*myname = NULL;
 
 char	*persnr(char *);
 char	*crdate(void);
 void	display_error(char *, ...);
-
 
 int	main(int argc, char *argv[])
 {
@@ -164,16 +193,16 @@ int	main(int argc, char *argv[])
 	char		buf[12], birthdate[20], tmpbuf[12], century[3];
 	char		next_century = 0; /* 0 = 499 og nedover, 1 = 999 og nedover */
 
-#if C_SECURITY
+#ifdef C_SECURITY
 
 	/*
-	 * Det som kommer her er det lagt inn beskyttelse p† s† det er
-	 * vanskelig † patche det bort. Dette programmet skal ikke kopieres
-	 * vilt og uhemmet, s† hvis noen f†r en kopi, skal det skrives her
-	 * hvem som f†r den, og datoen. N†r det er skrevet, skal alle
-	 * linjene sorteres s† de kommer hulter til bulter. De hexadesimale
+	 * Det som kommer her er det lagt inn beskyttelse på så det er
+	 * vanskelig å patche det bort. Dette programmet skal ikke kopieres
+	 * vilt og uhemmet, så hvis noen får en kopi, skal det skrives her
+	 * hvem som får den, og datoen. Når det er skrevet, skal alle
+	 * linjene sorteres så de kommer hulter til bulter. De hexadesimale
 	 * tallene er valgt helt tilfeldig og skal forhindre at man bruker
-	 * f.eks. STRINGS for † lete etter tekst.
+	 * f.eks. STRINGS for å lete etter tekst.
 	 */
 
         /* 102 */
@@ -373,22 +402,29 @@ int	main(int argc, char *argv[])
         /* 108 */ ss[8] = /*y*/ '\xAE';
         /* 123 */ ss[1] = /*z*/ '\xCF';
         /* 194 */ ss[8] = /*|*/ '\xC7';
-        /* 169 */ ss[7] = /*†*/ '\xB0';
-        /* 158 */ ss[6] = /**/ '\xAB';
-        /* 171 */ ss[5] = /*‘*/ '\xCB';
-        /* 157 */ ss[7] = /*’*/ '\x1A';
-        /* 170 */ ss[8] = /*›*/ '\xDA';
-        /* 156 */ ss[4] = /**/ '\x03';
+        /* 169 */ ss[7] = /*å*/ '\xB0';
+        /* 158 */ ss[6] = /*Å*/ '\xAB';
+        /* 171 */ ss[5] = /*æ*/ '\xCB';
+        /* 157 */ ss[7] = /*Æ*/ '\x1A';
+        /* 170 */ ss[8] = /*ø*/ '\xDA';
+        /* 156 */ ss[4] = /*Ø*/ '\x03';
 
-#endif /* if C_SECURITY */
+#endif /* ifdef C_SECURITY */
 
+#ifdef DOS
 	p = strrchr(argv[0], '\\');
 	myname = (!p ? argv[0] : ++p);
 	p = strrchr(myname, '.');
 	if (p)
 		*p = '\0';
+#else /* Linux */
+	p = strrchr(argv[0], '/');
+	myname = (!p ? argv[0] : ++p);
+	if (p)
+		*p = '\0';
+#endif
 
-	if (!strcmp(argv[1], "?") || !strcmp(argv[1], "/?") || !strcmp(argv[1], "-?"))
+	if (argc == 1 || (!strcmp(argv[1], "--help") || !strcmp(argv[1], "?") || !strcmp(argv[1], "/?") || !strcmp(argv[1], "-?")))
 	{
 		int	charnum; /* Cosmetic thing... */
 
@@ -396,13 +432,13 @@ int	main(int argc, char *argv[])
 		charnum = fprintf(stderr, MSG_SYN_MADEBY, AUTHOR, crdate());
 		fputc('\n', stderr);
 
-#if C_SECURITY
+#ifdef C_SECURITY
 
 	/*
-	 * Den som kommer n† ligger to steder i programmet.
+	 * Den som kommer nå ligger to steder i programmet.
 	 */
 
-	for (i = 0; s[i] && (2+2==4) && (100/5==20) && 1; i++) /* Bare for † forvirre */
+	for (i = 0; s[i] && (2+2==4) && (100/5==20) && 1; i++) /* Bare for å forvirre */
 	{
 		security ^= ~(s[i]*1969);
 		fputc(s[i], stderr);
@@ -410,57 +446,57 @@ int	main(int argc, char *argv[])
 
 	fputc('\n', stderr);
 
-#if C_SECURITY == 2
+#  if C_SECURITY == 2
 
 	/*
 	 * Hvis C_SECURITY er satt til 2, skrives verdien ut av security, og
-	 * programmet stopper. Det er bare for † f† greie p† hva koden er.
-	 * C_SECURITY skal ellers BESTANDIG v‘re 1.
+	 * programmet stopper. Det er bare for å få greie på hva koden er.
+	 * C_SECURITY skal ellers BESTANDIG være 1.
 	 */
 
 	fprintf(stderr, "\n%04X\n", security);
 	exit(EXIT_ERROR);
 
-#endif /* if C_SECURITY == 2 */
-#endif /* if C_SECURITY */
+#  endif /* if C_SECURITY == 2 */
+#endif /* ifdef C_SECURITY */
 
 		for (; charnum; charnum--)
 			fputc('-', stderr);
 		fprintf(stderr, MSG_SYN_USAGE, myname);
 		fprintf(stderr, MSG_SYN_TXT);
-#if C_DEBUG
+#ifdef C_DEBUG
 		fprintf(stderr, MSG_SYN_DEBUGVER, C_DEBUG);
-#ifdef __STDC__
+#  ifdef __STDC__
 		fprintf(stderr, "__STDC__ = %d\n\n", __STDC__);
-#endif /* ifdef __STDC__ */
-#endif C_DEBUG /* if C_DEBUG */
+#  endif /* ifdef __STDC__ */
+#endif C_DEBUG /* ifdef C_DEBUG */
 		retval = EXIT_ERROR;
 		goto endfunc;
 	}
 
-#if C_SECURITY
+#ifdef C_SECURITY
 	/*
-	 * Den som kommer n† ligger to steder i programmet.
+	 * Den som kommer nå ligger to steder i programmet.
 	 */
 
-	for (i = 0; s[i] && (2+2==4) && (100/5==20) && 1; i++) /* Bare for † forvirre */
+	for (i = 0; s[i] && (2+2==4) && (100/5==20) && 1; i++) /* Bare for å forvirre */
 	{
 		security ^= ~(s[i]*1969);
 	}
 
-#if C_SECURITY == 2
+#  if C_SECURITY == 2
 
 	/*
 	 * Hvis C_SECURITY er satt til 2, skrives verdien ut av security, og
-	 * programmet stopper. Det er bare for † f† greie p† hva koden er.
-	 * C_SECURITY skal ellers BESTANDIG v‘re 1.
+	 * programmet stopper. Det er bare for å få greie på hva koden er.
+	 * C_SECURITY skal ellers BESTANDIG være 1.
 	 */
 
 	fprintf(stderr, "\n%04X\n", security);
 	exit(EXIT_ERROR);
 
-#endif /* if C_SECURITY == 2 */
-#endif /* if C_SECURITY */
+#  endif /* if C_SECURITY == 2 */
+#endif /* ifdef C_SECURITY */
 
 	if (argc > 2)
 		display_error(ERR_TOO_MANY_PARAMS, myname);
@@ -468,29 +504,21 @@ int	main(int argc, char *argv[])
 	check_secur();
 	fprintf(stderr, "\n%s\n\n", MSG_STARTHEADER);
 
-	if (argc == 1)
-	{
-		fprintf(stderr, MSG_ASK_BIRTHDATE);
-		scanf("%15s", birthdate);
-		check_secur();
-		fputc('\n', stderr);
-	}
-	else
-		sprintf(birthdate, "%.15s", argv[1]);
+	sprintf(birthdate, "%.15s", argv[1]);
 
-	if ((strlen(birthdate) != 6) && (strlen(birthdate) != 8)) /* Sjekk at lengden p† datoen er seks eller †tte tegn */
+	if ((strlen(birthdate) != 6) && (strlen(birthdate) != 8)) /* Sjekk at lengden på datoen er seks eller åtte tegn */
 		display_error(ERR_INVALID_PARAMLEN);
 
-	strcpy(century, "19"); /* Default †rhundre er 1900 */
+	strcpy(century, "19"); /* Default århundre er 1900 */
 
 	/*
 	 * Her kommer det en sjekk som finner ut om det er spesifisert et
-	 * annet †rhundre, f.eks. 17081889, dvs. to ekstra siffer i †ret.
+	 * annet århundre, f.eks. 17081889, dvs. to ekstra siffer i året.
 	 */
 
 	if (strlen(birthdate) == 8)
 	{
-		strncpy(century, birthdate + 4, 2); /* Nytt †rhundre p† gang */
+		strncpy(century, birthdate + 4, 2); /* Nytt århundre på gang */
 		next_century = (atoi(century) % 2) ? 0 : 1;
 
 		strcpy(tmpbuf, birthdate);
@@ -503,7 +531,7 @@ int	main(int argc, char *argv[])
 		  birthdate[7]);
 	}
 
-	startnum = next_century ? 999 : 499; /* Hvilket †rhundre skal brukes? */
+	startnum = next_century ? 999 : 499; /* Hvilket århundre skal brukes? */
 
 	fprintf(stdout, MSG_HEADER,
 	  birthdate[0],
@@ -538,7 +566,6 @@ int	main(int argc, char *argv[])
 
 endfunc:
 ;
-	fcloseall();
 	return(retval);
 } /* main() */
 
@@ -555,7 +582,7 @@ char	*persnr(char *orgbuf)
 	    c2i(buf[4])*8 + c2i(buf[5])*9 + c2i(buf[6])*4 + c2i(buf[7])*5 + c2i(buf[8])*2;
 
 	j = 11 * (1 - frac((float)x / 11));
-	if (frac(j) >= 0.5) /* Avrunding til n‘rmeste ener */
+	if (frac(j) >= 0.5) /* Avrunding til nærmeste ener */
 		j++;
 	j = (int)j; /* Stryk alle desimalene */
 
@@ -566,7 +593,7 @@ char	*persnr(char *orgbuf)
 	    c2i(buf[8])*3 + j*2;
 
 	k = 11 * (1 - frac((float)y / 11));
-	if (frac(k) >= 0.5) /* Avrunding til n‘rmeste ener */
+	if (frac(k) >= 0.5) /* Avrunding til nærmeste ener */
 		k++;
 	k = (int)k; /* Bort med alle desimalene */
 
@@ -653,7 +680,6 @@ void	display_error(char *p, ...)
 	va_end(argptr);
 	fprintf(stderr, "\n");
 
-	fcloseall();
 	exit(EXIT_ERROR);
 } /* display_error() */
 
