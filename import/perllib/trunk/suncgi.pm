@@ -1,11 +1,11 @@
 package suncgi;
 
-#========================================================
-# $Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $
+#=========================================================
+# $Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2000 Øyvind A. Holm <sunny256@mail.com>
-#========================================================
+#=========================================================
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -45,10 +45,10 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/11/21 10:53:59 $';
-@suncgi::rcs_array = ();
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/11/21 17:32:41 $';
+@suncgi::rcs_array = ($suncgi::rcs_id);
 
 $suncgi::this_counter = "";
 
@@ -633,7 +633,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $>
+S<$Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1019,4 +1019,4 @@ print_doc() er ikke ferdig, ellers svinger det visst.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.18 2000/11/21 10:53:59 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.19 2000/11/21 17:32:41 sunny Exp $ ####
