@@ -1,6 +1,11 @@
 #!/usr/bin/perl -w
 
+# $Id: gpsmap-serial,v 1.1.2.2 2003/01/06 15:18:38 sunny Exp $
+# Skriver ut seriellformatet fra Garmin-GPS'en på leselig format.
+
 use strict;
+
+$| = 1;
 
 while (<>) {
 	s/\s//g;
@@ -21,19 +26,21 @@ while (<>) {
 (..) # Gradminutt
 (...) # Desimaler gradminutt
 (....) # Accurancy
-(.....................)
-		
+(......) # Høyde
+(...............)
+
 		/x) {
-			my ($Alfa, 
-			$Year, $Month, $Day, $Hour, $Min, $Sec, 
+			my ($Alfa,
+			$Year, $Month, $Day, $Hour, $Min, $Sec,
 			$NS, $Y_deg, $Y_degmin, $Y_mindec,
 			$EW, $X_deg, $X_degmin, $X_mindec,
-			$Accur,
+			$Accur, $Alt,
 			$Rest) =
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17);
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18);
 			print(<<END);
 20$Year-$Month-$Day $Hour:$Min:$Sec $NS$Y_deg°$Y_degmin.$Y_mindec'/$EW$X_deg°$X_degmin.$X_mindec'
 Accur: $Accur
+Alt: $Alt
 $Rest
 
 END
@@ -50,8 +57,8 @@ E00701290
 S015-00001E4859N1673U0000
 @020721221336N6048353E00701826S015-00001E4859N1673U0000
 .......................................................
-=cut		
-		
+=cut
+
 	} else {
 		# warn("Linje $.: Ukjent.\n");
 	}
