@@ -6,7 +6,7 @@ tripwd - Passordrutiner
 
 =head1 REVISION
 
-S<$Id: tripwd.pm,v 1.1 1999/04/08 14:58:56 sunny Exp $>
+S<$Id: tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -36,16 +36,16 @@ require 5.003;
 #### Variabler
 ###########################################################################
 
-my $cvs_date = '$Date: 1999/04/08 14:58:56 $';
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tripwd.pm,v 1.1 1999/04/08 14:58:56 sunny Exp $';
-my $cvs_id = '$Id: tripwd.pm,v 1.1 1999/04/08 14:58:56 sunny Exp $';
+my $cvs_date = '$Date: 1999/04/09 14:52:02 $';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $';
+my $cvs_id = '$Id: tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $';
 
 my $FALSE = 0;
 my $TRUE = 1;
 
 # $EXIT_OK = 0;
 # $EXIT_ERROR = 1;
-$EXIT_CORRECT_PWD = 2364; # FIXME: Funker det sånn?
+$EXIT_CORRECT_PWD = 2364; # FIXME: Funker det sånn? Tror det bør være tilfeldige verdier med i bildet her.
 $EXIT_WRONG_PWD = 6452;
 $EXIT_UNKNOWN_USER = 3623;
 
@@ -58,6 +58,8 @@ $EXIT_UNKNOWN_USER = 3623;
 =cut
 
 =head2 &correct_pwd()
+
+Sjekker at brukerpassordet i /etc/passwd er rett.
 
 Tar to parametere: brukernavn og passord. Returnerer disse verdiene:
 
@@ -81,6 +83,9 @@ FIXME: Lurer litt på disse returverdiene. Er det ikke bedre hvis den
 returnerer 0 hvis passordet er rett? Kanskje en F<&wrong_password()> hadde
 vært på sin plass. Sånn som det er nå, er returverdiene rimelig
 tilfeldige. Jaja. Vi bruker denne foreløpig. Den funker.
+
+Mulig det skal defineres et parameter seinere som bestemmer hvordan
+passordet skal sjekkes.
 
 =cut
 
@@ -106,4 +111,4 @@ Rimelig spinkel foreløpig. Det kommer seg vel.
 
 1;
 
-#### End of file $Id: tripwd.pm,v 1.1 1999/04/08 14:58:56 sunny Exp $ ####
+#### End of file $Id: tripwd.pm,v 1.2 1999/04/09 14:52:02 sunny Exp $ ####
