@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -20,7 +20,7 @@ require Exporter;
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn HTMLerror inc_counter increase_counter log_access print_header p_footer tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
-	utf8_print utf8_to_entity conv_print
+	utf8_print utf8_to_entity conv_print widechar
 
 	$has_args $query_string
 	$log_requests $ignore_double_ip
@@ -45,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -810,15 +810,15 @@ sub print_header {
 			tab_print("<!-- $_ -->\n");
 		}
 	}
-	tab_print(<<END);
+	utf8_print(<<END);
 <head>
 	<!-- \x7B\x7B\x7B -->
 	<title>$DocTitle</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=$suncgi::CharSet">
 END
 	Tabs(1);
-	tab_print($RefreshStr) if length($RefreshStr);
-	tab_print(<<END);
+	utf8_print($RefreshStr) if length($RefreshStr);
+	utf8_print(<<END);
 <meta name="author" content="&#216;yvind A. Holm">
 <meta name="copyright" content="&#169; &#216;yvind A. Holm">
 <meta name="date" content="$DocumentTime">
@@ -827,13 +827,13 @@ END
 <link rev="made" href="mailto:$suncgi::WebMaster">
 END
 	# tab_print ("Tabs = Tabs\n");
-	tab_print($style_sheet) if length($style_sheet);
-	tab_print($head_script) if length($head_script);
-	tab_print("<!-- \x7D\x7D\x7D -->\n");
+	utf8_print($style_sheet) if length($style_sheet);
+	utf8_print($head_script) if length($head_script);
+	utf8_print("<!-- \x7D\x7D\x7D -->\n");
 	Tabs(-1);
-	tab_print("</head>\n");
+	print("</head>\n");
 	unless ($no_body) {
-		tab_print("<body$body_attr>\n");
+		utf8_print("<body$body_attr>\n");
 		Tabs(1);
 	}
 	# }}}
@@ -923,14 +923,59 @@ sub utf8_print {
 	# Forøvrig er jeg ikke så forbanna glad i den RFC’en.
 	# Henta fra SunbaseCGI.pm,v 1.14 2004/01/29 04:40:33
 	my $Txt = shift;
-	$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-	$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-	$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-	$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
-	$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1)/ge;
+	if ($suncgi::CharSet =~ /^UTF-8$/i) {
+		$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+		$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+		$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+		$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+		$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1)/ge;
+	} elsif ($sungi::CharSet =~ /^ISO-8859-1$/i) {
+		# NOP, bare sunn paranoia
+	} else {
+		HTMLwarn("utf8_print(): Ukjent tegnsett: \"$suncgi::CharSet\"");
+	}
 	print($Txt);
 	# }}}
 } # utf8_print()
+
+sub h_print {
+	# Det er håp om at dette skal bli den standardiserte utskriftsrutina for HTML. {{{
+	# Forhåpentligvis skroting av ting som tab_print(), utf8_print() og
+	# standard print() osv. $from_charset kan spesifiseres hvis det er noe
+	# annet enn UTF-8 som skal skrives ut. $use_entities settes til !0 hvis
+	# 8-bits tegn IKKE skal konverteres til numeriske entities.
+
+	my ($Txt, $from_charset, $no_entities) = @_;
+	defined($from_charset) || ($from_charset = "UTF-8");
+	defined($no_entities) || ($no_entities = 0);
+	length($from_charset) || ($from_charset = "UTF-8");
+	length($no_entities) || ($no_entities = 0);
+
+	# from = utf8 && to = utf8
+	# from = utf8 && to = latin1
+	# from = latin1 && to = utf8
+	# from = latin && to = latin1
+
+	if ($from_charset =~ /^UTF-8$/i) {
+		if ($suncgi::CharSet =~ /^UTF-8$/i) {
+			unless ($no_entities) {
+				$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1)/ge;
+			}
+		} elsif ($suncgi::CharSet =~ /^ISO-8859-1$/i) {
+		}
+	} elsif ($from_charset =~ /^ISO-8859-1$/i) {
+		if ($suncgi::CharSet =~ /^UTF-8$/) {
+		}
+	} else {
+		HTMLwarn("h_print(): Ukjent tegnsett: \"$suncgi::CharSet\"");
+	}
+	print($Txt);
+	# }}}
+}
 
 sub utf8_to_entity {
 	# Konverterer et tegn i UTF-8 til en numerisk HTML-entitet. Brukes av utf8_print() {{{
@@ -1006,11 +1051,53 @@ sub conv_print {
 	if ($from_charset =~ /(latin1|iso-8859-1>)/i) {
 		$Txt =~ s/([\xA0-\xFF])/sprintf("&#%u;", ord($1))/ge;
 	} else {
-		html_warn("conv_print(): Ukjent tegnsett: \"$from_charset\"");
+		HTMLwarn("conv_print(): Ukjent tegnsett: \"$from_charset\"");
 	}
 	print($Txt);
 	# }}}
-}
+} # conv_print()
+
+sub widechar {
+	# Konverterer en numerisk tegnverdi til en UTF-8-sekvens {{{
+	# Henta fra "h2u,v 1.5 2002/11/20 00:09:40" og forandra $opt_i til $allow_illegal
+	my ($Val, $allow_illegal) = shift;
+	if ($Val < 0x80) {
+		return sprintf("%c", $Val);
+	} elsif ($Val < 0x800) {
+		return sprintf("%c%c", 0xC0 | ($Val >> 6),
+		                       0x80 | ($Val & 0x3F));
+	} elsif ($Val < 0x10000) {
+		unless ($allow_illegal) {
+			if  (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
+				$Val = 0xFFFD;
+			}
+		}
+		return sprintf("%c%c%c", 0xE0 |  ($Val >> 12),
+		                         0x80 | (($Val >>  6) & 0x3F),
+		                         0x80 |  ($Val        & 0x3F));
+	} elsif ($Val < 0x200000) {
+		return sprintf("%c%c%c%c", 0xF0 |  ($Val >> 18),
+		                           0x80 | (($Val >> 12) & 0x3F),
+		                           0x80 | (($Val >>  6) & 0x3F),
+		                           0x80 |  ($Val        & 0x3F));
+	} elsif ($Val < 0x4000000) {
+		return sprintf("%c%c%c%c%c", 0xF8 |  ($Val >> 24),
+		                             0x80 | (($Val >> 18) & 0x3F),
+		                             0x80 | (($Val >> 12) & 0x3F),
+		                             0x80 | (($Val >>  6) & 0x3F),
+		                             0x80 | ( $Val        & 0x3F));
+	} elsif ($Val < 0x80000000) {
+		return sprintf("%c%c%c%c%c%c", 0xFC |  ($Val >> 30),
+		                               0x80 | (($Val >> 24) & 0x3F),
+		                               0x80 | (($Val >> 18) & 0x3F),
+		                               0x80 | (($Val >> 12) & 0x3F),
+		                               0x80 | (($Val >>  6) & 0x3F),
+		                               0x80 | ( $Val        & 0x3F));
+	} else {
+		return widechar(0xFFFD);
+	}
+	# }}}
+} # widechar()
 
 1;
 
@@ -1024,7 +1111,7 @@ suncgi — HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1397,4 +1484,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.6 2004/02/19 05:01:40 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.7 2004/02/24 15:15:55 sunny Exp $ ####
