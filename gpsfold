@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gpsfold,v 1.2 2003/07/15 12:02:03 sunny Exp $
+# $Id: gpsfold,v 1.3 2003/08/30 05:12:14 sunny Exp $
 # Inserts fold marks in GPS data files before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 
@@ -38,17 +38,17 @@ my ($start_date, $end_date) = ("", "");
 while ($Line = <STDIN>) {
 	push(@Data, $Line);
 	unless (length($start_date)) {
-		if ($Line =~ /^(?:# )?(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(Z?)/) {
+		if ($Line =~ /^(?:# )?(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(Z?)\t/) {
 			$start_date = "$1$2${3}T$4$5$6$7";
-		} elsif ($Line =~ /^(?:# )?(\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ?)/) {
+		} elsif ($Line =~ /^(?:# )?(\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ?)\t/) {
 			$start_date = $1;
 		} elsif ($Line =~ /^(?:# )?1 (\S+) (\S+) (\S+) (\S+) (\d\d)\/(\d\d)\/(\d\d\d\d) (\d\d):(\d\d):(\d\d)/) {
 			$start_date = "$7$5${6}T$8$9$10";
 		}
 	}
-	if ($Line =~ /^(?:# )?(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(Z?)/) {
+	if ($Line =~ /^(?:# )?(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)(Z?)\t/) {
 		$end_date = "$1$2${3}T$4$5$6$7";
-	} elsif ($Line =~ /^(?:# )?(\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ?)/) {
+	} elsif ($Line =~ /^(?:# )?(\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ?)\t/) {
 		$end_date = $1;
 	} elsif ($Line =~ /^(?:# )?1 (\S+) (\S+) (\S+) (\S+) (\d\d)\/(\d\d)\/(\d\d\d\d) (\d\d):(\d\d):(\d\d)/) {
 		$end_date = "$7$5${6}T$8$9$10";
@@ -63,4 +63,4 @@ for (@Data) {
 	print $_;
 }
 
-# End of file $Id: gpsfold,v 1.2 2003/07/15 12:02:03 sunny Exp $
+# End of file $Id: gpsfold,v 1.3 2003/08/30 05:12:14 sunny Exp $
