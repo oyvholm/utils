@@ -1,7 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=============================================================================
-# $Id: u2h,v 1.4 2002/03/16 20:44:23 sunny Exp $
+# $Id: u2h,v 1.5 2002/03/30 23:11:50 sunny Exp $
 # Converts from UTF-8 charset to HTML numeric entities (&#x263A; and &#9786;).
 #
 # Options:
@@ -13,7 +13,7 @@
 #=============================================================================
 
 use strict;
-require 'getopts.pl';
+require 'getopts.pl'; # FIXME: Generates a warning when command line option is used and -w is specified in the shebang.
 
 ($main::opt_a, $main::opt_d, $main::opt_l) = (0, 0, 0);
 &Getopts('adl');
