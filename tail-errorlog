@@ -1,6 +1,18 @@
 #!/bin/sh
 
-# $Id: tail-errorlog,v 1.4 1999/03/09 13:09:31 sunny Exp $
-# Syntax: $0 {k1|k2|k3|...}
+# $Id: tail-errorlog,v 1.5 1999/05/09 04:37:00 sunny Exp $
+# tail -f på error_log til httpd(8).
+#
+# Syntax hvis man er på black:
+# $0 {k1|k2|k3|...}
+#
+# ...ellers fixer den det meste. :)
 
-tail -f /usr/local/apache/logs/$1_error_log
+if [ -e /black.mrk ]; then
+	tail -f /usr/local/apache/logs/$1_error_log
+elif [ -e /grimme.mrk ]; then
+	tail -f /var/log/httpd/error_log
+else
+	echo $0: Ukjent maskin, kan ikke skrive ut error_log >&2
+	exit 1
+fi
