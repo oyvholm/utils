@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.2 2003/05/24 07:43:28 sunny Exp $
+# $Id: cvse,v 1.3 2003/05/25 20:03:59 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -9,20 +9,45 @@
 
 use strict;
 
+use Getopt::Std;
+our ($opt_d, $opt_h, $opt_s, $opt_i) = ("", 0, 0, 0);
+getopts('d:hisv');
+
 $| = 1;
 
-my ($curr_rev, $curr_rcs_file, $curr_work_file) = ("", "", "");
+if ($opt_h) {
+	print(<<END);
+
+Syntax: cvse [options] [logfile [...]]
+
+Options:
+
+-d x  Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the
+      C<CVSE_ROOT> environment variable.
+-h    This help message.
+-i    Ignore files which doesn't exist in this revision.
+      Avoids update to random revisions.
+-s    Simulate only.
+      Normal execution except the messages are not changed.
+
+END
+	exit 0;
+}
+
+my $Simulate = $opt_s;
+my ($curr_rev, $curr_rcs_file, $curr_work_file, $total_ignored) = ("", "", "", "");
 my @Curr = ();
 my %Entry = ();
 my ($Rev, $Line) = ("", "");
 my ($header_done, $tmp_count) = (0, 0);
 my %Text = ();
 my %missing_file = ();
-my ($start_utc, $total_skipped, $total_changed, $total_files) = (time, 0, 0);
+my ($start_utc, $total_skipped, $total_changed, $total_files) = (time, 0, 0, 0);
 my @all_revs = ();
 my $eroot_str = "";
 
 defined($ENV{CVSE_ROOT}) && ($eroot_str = " -d $ENV{CVSE_ROOT}");
+length($opt_d) && ($eroot_str = " -d $opt_d");
 
 while (<>) {
 	$Line = $_;
@@ -34,14 +59,14 @@ while (<>) {
 		}
 		@Curr = ();
 		$Line = <>;
-		if ($Line =~ /^revision (\S+)/) {
+		if ($Line =~ /^revision ([\d\.]+)/) {
 			$curr_rev = $1;
 		} else {
 			die("Line $.: Expected \"revision \", got \"$Line\".\". Aborting.\n");
 		}
 		$Line = <>;
-		unless ($Line =~ /^date: (\S+\s+\S+) .*/) {
-			warn("Expected \"date: \", got \"$Line\".\"");
+		unless ($Line =~ /^date: \S+\s+\S+ .*/) {
+			die("Expected \"date: \", got \"$Line\".\". Aborting.");
 		}
 		if (!($Line =~ /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/) && !($Line =~ /^branches: .+;$/)) {
 			push(@Curr, $Line);
@@ -50,6 +75,8 @@ while (<>) {
 		# }}}
 	} elsif ($Line =~ /^=============================================================================$/) {
 		# List finished for this file, change the modified messages {{{
+		$header_done = 0;
+		$total_files++;
 		if (length($Rev) && scalar(@Curr)) {
 			$Entry{$Rev} = join("", @Curr);
 		}
@@ -69,7 +96,6 @@ while (<>) {
 				warn("Wrong revision format \"$Curr\", skipping revision\n");
 			}
 		}
-		$total_files++;
 		($curr_rev, $Rev) = ("", "");
 		%Entry = ();
 		@Curr = ();
@@ -85,14 +111,14 @@ while (<>) {
 				push(@Curr, $_);
 			}
 		}
-		$header_done = 0;
 		# }}}
 	}
 }
 
 my $Seconds = time-$start_utc;
-printf("\n%u file%s processed. %u revision%s changed, %u revision%s skipped. %u second%s used.\n",
+printf("\n%u file%s processed%s. %u revision%s changed, %u revision%s skipped. %u second%s used.\n",
        $total_files,   $total_files   == 1 ? "" : "s",
+	   $opt_i ? (", $total_ignored ignored") : "",
        $total_changed, $total_changed == 1 ? "" : "s",
        $total_skipped, $total_skipped == 1 ? "" : "s",
        $Seconds,       $Seconds       == 1 ? "" : "s");
@@ -102,11 +128,20 @@ exit 0;
 sub change_message {
 	# Changes a log message for a specific revision of a file if it has changed. {{{
 	my ($File, $Rev, $Txt) = @_;
+	if ($opt_i && !-e $File) {
+		unless (defined($missing_file{$File})) {
+			print("Ignoring non-existing file $File\n");
+			$missing_file{$File} = 1;
+			$total_files--;
+			$total_ignored++;
+		}
+		return;
+	}
 	my $tmp_file = "cvse.$$.$tmp_count.tmp"; $tmp_count++;
 	my $compare_text = get_log_message($File, $Rev);
 	if ($Txt ne $compare_text) {
-		print("Changing message for $File,v $Rev ...\n");
-		# print("==== Original text in $File $Rev \x7B\x7B\x7B ====\n$compare_text==== \x7D\x7D\x7D ====\n");
+		print("\nChanging message for $File,v $Rev ...\n");
+		print("==== Original text in $File $Rev \x7B\x7B\x7B ====\n$compare_text==== \x7D\x7D\x7D ====\n");
 		# print("==== New text for $File $Rev \x7B\x7B\x7B ====\n$Txt==== \x7D\x7D\x7D ====\n");
 		if (!defined($missing_file{$File}) && !(-e $File)) {
 			# File does not exist in this revision, change revision to make it appear and make it possible for CVS to update the message {{{
@@ -115,7 +150,7 @@ sub change_message {
 				if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
 					my $t_rev = $2;
 					my $ex_str = "cvs$eroot_str upd -r $t_rev $File";
-					print("Executing \"$ex_str\"...\n");
+					print("Executing \"$ex_str\"\n");
 					system($ex_str);
 					if (-e $File) {
 						print("File exists with (old) revision $t_rev, CVS is now able to change log message.\n");
@@ -141,21 +176,21 @@ sub change_message {
 			}
 			close(TxtFP) || die("$tmp_file: Error closing file: $!");
 			my $exec_str = "cvs$eroot_str admin -m$Rev:\"`cat $tmp_file`\" $File";
-			print(" \"$exec_str\" ...\n");
 			my $Deb = "";
 			$Deb = get_log_message($File, $Rev);
 			print("==== BEFORE: $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n");
-			system($exec_str);
+			printf("%s \"%s\"\n", $Simulate ? "Simulating" : "Executing", $exec_str);
+			system($exec_str) unless $Simulate;
 			$Deb = get_log_message($File, $Rev);
 			print("==== AFTER : $File $Rev \x7B\x7B\x7B ====\n$Deb==== \x7D\x7D\x7D ====\n");
 			unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!\n");
-			print(" ... DONE\n");
+			print("\n");
 		} else {
 			warn("Cannot open temporary file \"$tmp_file\", log messages not changed: $!\n");
 		}
 		$total_changed++;
 	} else {
-		print("Message for $File,v $Rev is unchanged, skipping...\n");
+		print("Message for $File,v $Rev is unchanged\n");
 		$total_skipped++;
 	}
 	# }}}
@@ -197,6 +232,7 @@ sub get_log_message {
 			return(join("", @Arr));
 		} else {
 			warn("Header separator not found, $getl_call returns nothing\n");
+			return("");
 		}
 	} else {
 		die("Can't open cvs pipe: $!");
@@ -216,15 +252,15 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.2 2003/05/24 07:43:28 sunny Exp $
+$Id: cvse,v 1.3 2003/05/25 20:03:59 sunny Exp $
 
 =head1 SYNOPSIS
 
-cvse [logfile [...]]
+cvse [options] [logfile [...]]
 
 =head1 DESCRIPTION
 
-F<cvse> is a Perl script which changes CVS log messages for one or many files based on the output from a regular S<C<cvs log>> command.
+B<cvse> is a Perl script which changes CVS log messages for one or many files based on the output from a regular S<C<cvs log>> command.
 This makes it easy to edit lots of messages and then run the script once which changes all the modified messages.
 
 An easy way to do this can be:
@@ -253,6 +289,30 @@ An example on how to do this in the vi(1) editor:
 
 Done!
 
+=head1 OPTIONS
+
+=over 4
+
+=item B<-d x>
+
+Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the C<CVSE_ROOT> environment variable.
+
+=item B<-i>
+
+Ignore files which doesn't exist in this revision.
+Avoids update to random revisions.
+
+=item B<-h>
+
+Print a brief help summary.
+
+=item B<-s>
+
+Simulate only.
+Normal execution except the messages are not changed.
+
+=back
+
 =head1 ENVIRONMENT
 
 =over 4
@@ -272,9 +332,13 @@ you can set
 to force CVS to work directly against the directory.
 This will improve the working speed dramatically because the client doesn't have to connect to the CVS server for every operation.
 
+The C<-d> option will override this variable.
+
 =back
 
 =head1 BUGS
+
+Not really bugs, but:
 
 Due to the format of S<C<cvs log>> output, messages can't contain any lines matching these patterns:
 
@@ -289,7 +353,7 @@ CVS refuses to change the log message of a file that doesn't exist in the curren
 When the script notices that a certain file doesn't exist on this branch or in the current revision, it tries to restore an earlier (random) revision with S<C<cvs update>> to get the file in place.
 When the file exists, CVS is able to change the log message.
 This results in random revisions of missing files, but everything can be restored to normal with the usual S<C<cvs update -A>> command.
-To avoid messing up source trees with lots of tags and revisions, it's recommended to check out the files in a separate directory where the script can work.
+To avoid messing up source trees with lots of tags and revisions, it's recommended to check out the files in a separate directory where the script can work, or use the C<-i> option which ignores non-existing files.
 If no revision can be restored, a warning is generated and no messages for this file will be changed.
 
 This only applies to files that I<does not exist>, revisions of existing files is untouched.
@@ -325,4 +389,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.2 2003/05/24 07:43:28 sunny Exp $
+# End of file $Id: cvse,v 1.3 2003/05/25 20:03:59 sunny Exp $
