@@ -13,7 +13,7 @@ lv_lockdir=$HOME/.lag_vim.LOCK
 mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
 
 [ "$1" = "-l" ] && { bruk_lokal=1; shift; }
-[ "$1" = "-x" ] && { med_x=1; }
+[ "$1" = "-x" ] && { med_x=1; shift; }
 
 if [ "$bruk_lokal" != "1" ]; then
     echo -e "======== update_vim-clean \x7B\x7B\x7B"
