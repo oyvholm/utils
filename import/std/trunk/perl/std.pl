@@ -5,8 +5,8 @@
 # [Description]
 #
 # Character set: UTF-8
-# License: GNU General Public License, see end of file for legal stuff.
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License, see end of file for legal stuff.
 #=======================================================================
 
 use strict;
