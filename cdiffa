@@ -1,6 +1,27 @@
 #!/bin/sh
 
+#=======================================================================
 # $Id$
-# cvs diff som behandler alle binærfiler som tekst.
+# Latskapen lenge leve. Funker på samme måten som cdiff, men behandler 
+# alle binærfiler som tekst.
+#
+# FIXME: Teoretisk sett skal det fungere, men på grunn av at Subversion 
+# foreløpig ikke vil diffe binære filer, må det gjøres på løkmåte. Det 
+# kommer etterhvert.
+#=======================================================================
 
-cvs -n diff -ua $* 2>/dev/null | less -S
+if [ -d .svn/. ]; then
+	if [ "$1" = "-s" ]; then
+		shift
+		svn diff --diff-cmd diff -x -ua $* 2>/dev/null | grep -v '^\? ' | egrep '^[+\-]' | less -S
+	else
+		svn diff --diff-cmd diff -x -ua $* 2>/dev/null | grep -v '^\? ' | less -S
+	fi
+else
+	if [ "$1" = "-s" ]; then
+		shift
+		cvs -n diff -ua $* 2>/dev/null | grep -v '^\? ' | egrep '^[+\-]' | less -S
+	else
+		cvs -n diff -ua $* 2>/dev/null | grep -v '^\? ' | less -S
+	fi
+fi
