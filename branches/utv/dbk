@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #================================================
-# $Id: dbk,v 1.14.2.4 2003/07/11 12:29:03 sunny Exp $
+# $Id: dbk,v 1.14.2.5 2003/07/13 12:40:54 sunny Exp $
 # Ny versjon av DBK-systemet.
 #
 # GPL-lisens. Åff cåårs.
@@ -230,15 +230,15 @@ sub is_utf8 {
 	# Henta fra "find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny" og modifisert litt.
 	# FIXME: Godtar overlange sekvenser.
 	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	$Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
 	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	$Str =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
 	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//ge;
+	$Str =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
 	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//ge;
+	$Str =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
 	D("Str = \"$Str\"\n");
-	$Str =~ s/([\xC0-\xDF][\x80-\xBF])//ge;
+	$Str =~ s/([\xC0-\xDF][\x80-\xBF])//g;
 	D("Str = \"$Str\"\n");
 	$Retval = 0 if ($Str =~ /[\x80-\xFD]/);
 	return $Retval;
@@ -349,4 +349,4 @@ sub html_to_utf8 {
 
 __END__
 
-#### End of file $Id: dbk,v 1.14.2.4 2003/07/11 12:29:03 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.14.2.5 2003/07/13 12:40:54 sunny Exp $ ####
