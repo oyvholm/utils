@@ -4,7 +4,7 @@
    NB! Husk å forandre navn på rcs_id_std_h til det den skal være.
 
  * Main header file
- * $Id: std.h,v 1.4 2002/09/01 00:37:38 sunny Exp $
+ * $Id$
  *
  * (C)opyleft 1998 Oyvind A. Holm <sunny@sunbase.org>
  *
@@ -96,11 +96,11 @@ extern void usage(int);
  * Global variables
  */
 
-static char rcs_id_std_h[] = "$Id: std.h,v 1.4 2002/09/01 00:37:38 sunny Exp $";
+static char rcs_id_std_h[] = "$Id$";
 extern char *progname;
 extern int  debug;
 extern FILE *stddebug;
 
 #endif /* ifndef _STD_H */
 
-/***** End of file $Id: std.h,v 1.4 2002/09/01 00:37:38 sunny Exp $ *****/
+/***** End of file $Id$ *****/

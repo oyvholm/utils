@@ -1,6 +1,6 @@
 
 # Makefile for std.c
-# $Id: Makefile,v 1.6 2002/09/01 00:35:58 sunny Exp $
+# $Id$
 
 OBJS = std.o getopt.o
 CC = gcc

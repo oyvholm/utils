@@ -1,7 +1,7 @@
 
 /*
  * [Beskrivelse]
- * $Id: std.c,v 1.5 2002/09/01 00:37:38 sunny Exp $
+ * $Id$
  *
  * (C)opyleft Oyvind A. Holm <sunny@sunbase.org>
  *
@@ -39,7 +39,7 @@ void usage(int);
  * Global variables
  */
 
-static char rcs_id[] = "$Id: std.c,v 1.5 2002/09/01 00:37:38 sunny Exp $";
+static char rcs_id[] = "$Id$";
 char *progname;
 int  debug = 0;
 FILE *stddebug = stderr;
@@ -214,4 +214,4 @@ void usage(int retval)
 	exit(retval);
 } /* usage() */
 
-/***** End of file $Id: std.c,v 1.5 2002/09/01 00:37:38 sunny Exp $ *****/
+/***** End of file $Id$ *****/
