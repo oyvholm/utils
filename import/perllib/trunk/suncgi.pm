@@ -6,7 +6,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $>
+S<$Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -120,14 +120,14 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $';
-my $rcs_id = '$Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $';
-my $rcs_date = '$Date: 2000/03/24 15:02:42 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $';
+my $rcs_id = '$Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $';
+my $rcs_date = '$Date: 2000/03/27 11:53:41 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $ GD';
-my $cvs_id = '$Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $ GD';
-my $cvs_date = '$Date: 2000/03/24 15:02:42 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $ GD';
+my $cvs_id = '$Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $ GD';
+my $cvs_date = '$Date: 2000/03/27 11:53:41 $ GD';
 
 my $this_counter = "";
 
@@ -797,154 +797,124 @@ END
 
 ###########################################################################
 
-=head2 &print_header()
+# print_header() før henting fra BA-Snakk
+# begin-base64 664 -
+# H4sIALwy3zgCA41Y2W7bSBZ9Nr/imk7cEmBJveTJltXtRUmMOAtsBZkeCBBK
+# YomiSRU1VUV5hMT9t+5v6Mc5t4qUKNkJxghssuru99yFOZ1JEf1KhwudKDvi
+# F6kbzSC4FrHUJBW9Hby/ftXyF5TQTKpZnkVkk4y+/HbxkyGhxnIqskTFbboE
+# gxWaosQYGSyEFnNppVbyOAhO8yUkvMJDYuWcrrovLvPJILGZ7AXBpbRk8jmZ
+# VGSUKAVN/W5me5bv+93Y9txrZ/NekzOz82wE4SbJFc7fLpMshSGXg8uNzLEu
+# UmkgdizjlVIyM1K16ZxPtbNlcDlyrt4Obq4uBj3mDCI4VmT2iERmzWMQ3Had
+# FfuXHy8Gf37qu9jQp8/n11cXFLY6HQSk02G17uJV+2caaKFMYmGYyDqd/oew
+# ByHhzNrFv7u9407n/v6+ff9bO9dxZ3DTuelftNiZVz93sjw3sh3ZKHTe1t29
+# FioukJ4eZ0lFJs0jSYtHsjmN89RYwXFmx2diqVzSnNUsmDLwOoFturVgFjoC
+# dZQEoAtVHh5RhEwggGSSINjrrplO+bZuRWGkHo3FJI11XqgIV+cCzwVytxN0
+# hoUlZ0hhY8gyi0Klls8UTYWOJTWkipGSNHCvCnaTzDKw3Lw5b01zPReWwoOp
+# +wmbRzQH52yZGJL/tVJx3ll+lqRBu3G3iL/dLWT8LU6m3xYqbvIVe4V/4ySL
+# ZLvmxY2camlmsP5MWZHBbZnCG3DMYQDHkIOpPdUmZmAFsAVxIlvyP0Wy7K2J
+# atJVPhrn0cpj0sAIAI+t2cfd67Pr237vCIHSyZKRmabSJ4pZXI4QrjZ90iK1
+# iUmdv0HkIzmXOpVZEu8y7ET+qIzizGu3/i6TcSxNwFWmcgTyTiyFmehkYVux
+# lomLlq67cSn9tS+vrVI19tHVlPeCi6qCG8fHGdXCrV1paesi38nVfa4jA3nV
+# 4xNGhJtVLP/WktJ8PhdGoqNIbSmPEYEICUVlAV8buX/c2lUmb2dScoM401qs
+# HCXqd7u9GKYjw4TA53n39dW/3vePe0jwKo7JiJTDZSXanSZhEXZF80dvCirN
+# ZAUuFYkllT1OSyU5lwXizWQO22MZgX7+CDnmkbMfpAKnWQKUqchb1B8MaN0n
+# PbBdoqB3mThdMkERyzb1cSIzjxM0I/XPClgCGnGzlMoWkn3MuJAcK3cF5X2F
+# Gskuw8iYY+dFuNNAcIwQwfPBF7aspqPWvR2cLDsxh1Ju/VwWkYiBMAfL191y
+# gET5pNHseUlTbiwx6WTuoIoyttwKdIkc6E/vYDgnJzALaZJpArddPjcJYbTN
+# RIQOF99BAMLhc2+TCEJB7npti7v/Xc7dLo/NIyOCWxP+TAobBKYYU33A0ddg
+# b76ixnoCHdHWEMFr1WTxuNPpcFJ2DTyVFY6nWpHgrQL1EdUg2aRT+mN04nSz
+# 6gLZtgOEB+eHk0LrUWEnI4uDRrOkOofwW6tBEHZdKwmri7U9uC7PSrM8ffVG
+# v4N1p1mdDsOyWw1DmuQKWLY4q1hwWOiMD77ORaKOjz/r7GEY9oZqaIc2pGMK
+# KzPYT6+PkWdnjbXnzY1iBRxBWlrebOt8tz59Tv7FTOhbQAD+3GJCX7w9u7nt
+# D6hQmTRmrbOkqoLmUmmcVcalfdoI3SR7aXqYcBVXlWJnqR9ysKc6HYbekOYm
+# X1dRKbWSALSPliL7mkQPLKTb7X+4rKzv7rdaVKegVqsXgCDYS6aAnkciCkbB
+# AOBx74AOIzkeLXRjNLq++tAfjahN4TH9me/T9naG8kJHvPvHlUO2JFTSsC6P
+# o1V7beO2Ajqu4GP1NvTu7TnxjXConNGwooiPt3VuMR1RHSvurayD8q1eS8Ow
+# +R0rEY+h8gZgOhRa4emBeIi4eOx49AvfBt+N0naEjmltrlNQ4qVRJW6npJs+
+# A7vHtUyXhcBV98bduYQ/c4z0O6Sen128e3Pz8fOHS2835/zH2h0qnljwF3WG
+# z+w0LzqJ59p70iJow8543pGIMmN0Ml+9gzC3O68l4CnJrrCT7xgQT/Is16x9
+# S0Kl+2E7z8/2uGeUPxfWA/KDgs554viZ7YcVTymsNzx2VDG1GECYgbx9Ys/A
+# 8BC/MzPHfP/HaTnwvfZNzZKSIZk2SpqKaMvcp9g4qUifdfiA6rF/TuKTAPxY
+# WuB/HZbNdmRXC9kILVbmDheoKwxXNmuU1+vW4bt+UCGb5y2+cdbMruudBMG6
+# 7QabXll2wTIUemJGVSMsb/zRpjUeDsTYNH5tntABuW8PrCtc1EEt1e8x+rEF
+# JrxcYD+TP+HT03+38HoVoy9ineZFJcaKxJvTAF+kbqXBx6tZKQeNF6wIB7wf
+# b9YuXjN59912DZ9BMAE273Xd92dv3Vy6/oPUXe3O2PDCx701QNw3I2+TgBOa
+# YG4ZaU+rARayoNoYr43PUBR2luuanCqqX+T4vTDY0x48ezmS67yTfLHSSTyz
+# NfZDPjyhw48mE2Z2slomaDdnbXqbZ/Nw45AXEG2Wm7oFtZ3nKYuwcou2tu94
+# 4ixRKb6aEKk5unZIM+wk/JxkNj9+1juGSJWbkHeFrt/jGdnoNi6yE+NXiZCL
+# 20xEhuTXdrCTCmO/MPzRHKSYzKixtaV9rUYi9oaX5qWBsCMPGPwZNX3nqVvR
+# cWb8H0pbHtne6gra1fh1Grodh7VyMFZzq5qvNdtK+qr8mQFXNd8eggeo2vl/
+# nf8BVLmUwu8RAAA=
+# ====
 
-Lager en HTML4-header i henhold til W3C's anbefaling. Den tar disse
-parameterne:
+=pod
 
-=over 4
+Parametere i print_header():
 
-=item I<$DocTitle>
-
-Det som skal inn i E<lt>titleE<gt>E<lt>/titleE<gt>
-
-=item I<$html_version>
-
-Hvilken DTD som skal brukes i begynnelsen. Bruker I<$DTD_HTML4STRICT> som
-default, altså
-
-S<E<lt>!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-S<"httpZ<>://www.w3.org/TR/REC-html40/loose.dtd"E<gt>>
-
-=item I<$Language>
-
-Landskode på to bokstaver som havner i E<lt>html langE<gt>. Standardverdi
-er "no", det vil si
-
-	<html lang="no">
-
-=item I<$user_background>
-
-Bakgrunn som skal brukes. Det er i utgangspunktet en farge (engelsk
-fargenavn eller RGB-format "#ffffff"), men hvis extension er lik
-.(jpg|jpeg|gif|png) er det et bilde.
-
-=item I<$Refresh>
-
-Antall sekunder mellom hver refresh. Standard I<meta http-equiv> refresh.
-
-=item I<$no_body>
-
-Hvis denne er !I<$FALSE>, skrives ikke E<lt>bodyE<gt> ut. Praktisk hvis
-det er merkelig E<lt>bodyE<gt> som skal brukes, eller hvis det skal legges
-inn noen javascript-greier der.
-
-=item I<$Description>
-
-Det som skal stå i beskrivelsen i E<lt>metaE<gt>-bestyret.
-
-=item I<$Keywords>
-
-Keywords i E<lt>metaE<gt>. Skal være kommaseparert og med etities.
-
-=item I<@StyleSheet>
-
-Array med alt som skal inn style sheets. B<FIXME:> Stygg sak dette her at
-den må være på slutten av parametrene, skulle vært en bedre måte så den
-kan bli sendt som ETT parameter, men det ser vi på seinere. Er vel ikke så
-nøye enda. Eventuelt slenger vi koden inn som en streng og ikke som en
-array.
-
-BTW blir vel ikke parameterne brukt så mye til hverdags, hvis
-F<&print_doc()> blir ferdig rimelig fort. Der skal som kjent alt
-spesifiseres.
-
-B<FIXME:> Det hadde gjort seg med tidligere HTML-versjoner også.
-
-=back
+1. Tittelen på dokumentet.
+2. Antall sekunder på hver refresh, 0 disabler refresh.
+3. Style sheet.
+4. Evt. scripts, havner mellom </style> og </head>.
+5. Evt. attributter i <body>, f.eks. " onLoad=\"myfunc()\"". Husk spacen i begynnelsen.
+6. HTML-versjon. F.eks. $DTD_HTML4STRICT. Default er $DTD_HTML4LOOSE.
+7. Språk. Default "no".
 
 =cut
 
 sub print_header {
-	my ($DocTitle, $html_version, $Language, $user_background, $Refresh, $no_body, $Description, $Keywords, @StyleSheet) = @_;
-	my $DocumentTime = &curr_utc_time();
-	my $BodyStr = "<body>";
-	my $BackgroundStr;
-	my $RefreshStr = $Refresh ? "<meta http-equiv=\"refresh\" content=\"$Refresh\" url=\"${main::Url}\">\n\t\t" : "";
-	my $KeywStr = length($Keywords) ? "<meta name=\"keywords\" content=\"$Keywords\">\n\t\t" : "";
-	my $CharSet = $STD_CHARSET unless length($CharSet);
-	my $html_str = sprintf("<html%s>", length($Language) ? " lang=\"$Language\"" : "");
-	my $DocId_str = length($doc_val{id}) ? <<END : "";
-	<!-- $doc_val{id} -->
-END
-	if ($header_done) {
-		# &deb_pr(__LINE__ . ": Yo! print_header() ble kjørt selv om \$header_done = $header_done. \$DocTitle = \"$DocTitle\"");
-		print("\n<!-- debug: print_header(\"$DocTitle\", \"$Refresh\", \"$no_body\", \"$html_version\") selv om \$header_done -->\n");
+	local($DocTitle, $Refresh, $style_sheet, $head_script, $body_attr, $html_version, $doc_lang) = @_;
+	# &deb_pr(__LINE__ . ": Går inn i print_header(), \$DocTitle=\"$DocTitle\"");
+	if (${main::header_done}) {
+		# &deb_pr(__LINE__ . "Yo! print_header() ble kjørt selv om \${main::header_done} = ${main::header_done}");
+		print("\n<!-- debug: print_header($DocTitle) selv om \${main::header_done} -->\n");
 		return;
-	} else {
-		$header_done = 1;
 	}
-	# &deb_pr(__LINE__ . ": print_header(): $DocTitle");
-	unless (length($user_background)) {
-		$user_background = length(${main::BackGround}) ? ${main::BackGround} : $STD_BACKGROUND;
-	}
-	if (length($user_background)) {
-		if ($user_background =~ /\.(jpg|jpeg|gif|png)$/i) {
-			$BodyStr = "<body background=\"$user_background\">";
-			$BackgroundStr = "";
+	$doc_lang = "no" unless length($doc_lang);
+	$html_version = $DTD_HTML4LOOSE unless length($html_version);
+	&content_type("text/html");
+	my $DocumentTime = &curr_utc_time();
+	$RefreshStr = (length($Refresh)) ? qq{<meta http-equiv="refresh" content="$Refresh" url="${main::Url}">} : "";
+	if (length(${main::user_background})) {
+		if (${main::user_background} =~ /\.(jpg|jpeg|png|gif)$/i) {
+			$BodyStr = "\t</head>\n\t<body background=\"${main::user_background}\"$body_attr>\n";
+			$BackgroundStr = "white";
 		} else {
-			$BackgroundStr = $user_background;
-			$BodyStr = "<body bgcolor=\"$BackgroundStr\">";
+			$BackgroundStr = ${main::user_background};
+			$BodyStr = qq{</head>\n<body bgcolor="$BackgroundStr"$body_attr>\n};
 		}
 	} else {
-		$BodyStr = "<body>";
-		$BackgroundStr = $STD_BACKGROUND;
+		$BackgroundStr = "white";
+		$BodyStr = qq{</head>\n<body bgcolor="$BackgroundStr"$body_attr>\n};
 	}
-	# FIXME: Blir dette brukt til noe fornuftig en gang i tida?
-	# if (!length($user_background)) {
-		# $BackGroundStr = length(if()) {
-			# $BackgroundStr = ${main::BackGround};
-			# $BodyStr = "<body>";
-		# } else {
-			# $BackgroundStr = $STD_BACKGROUND;
-			# $BodyStr = "<body>";
-		# }
-	# }
-	&content_type("text/html");
-	print length($html_version) ? $html_version : $STD_HTMLDTD;
-	print <<END;
-
-$html_str
-$DocId_str	<!-- ${main::rcs_id} -->
-	<!-- $rcs_id -->
-END
-	&Tabs(2); # html og head
-
-	# FIXME: Midlertidig here'ing, det kan gjøres mye gøyere. Tar ikke hensyn til $Tabs heller, men det kommer.
-	print <<END;
-	<head>
-		<title>$DocTitle</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
-		$RefreshStr<meta name="author" content="${main::WebMaster}">
-		$KeywStr<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
-		<meta name="description" content="$Description">
-		<meta name="date" content="$DocumentTime">
-		<link rev="made" href="mailto:${main::WebMaster}">
-END
-
-	print "\t\t<style type=\"text/css\">\n" if scalar @StyleSheet;
+	print $html_version;
+	print "\n<html lang=\"$doc_lang\">\n";
 	&Tabs(1);
-	foreach (@StyleSheet) {
-		printf("%s%s\n", $Tabs, $_);
-	}
-	print "\t\t</style>\n" if scalar @StyleSheet;
-	&Tabs(-2); # style og head
-	print("$Tabs</head>\n");
-	unless ($no_body) {
-		print("$Tabs$BodyStr\n")
-		&Tabs(1);
-	}
+	chomp($head_script);
+	&tab_print(<<END_PHH);
+<!-- ${main::rcs_id} -->
+<!-- $rcs_id -->
+<head>
+	<title>$DocTitle</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
+	$RefreshStr
+	<meta name="author" content="&Oslash;yvind A. Holm">
+	<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
+	<meta name="date" content="$DocumentTime">
+	<link rev="made" href="mailto:${main::WebMaster}">
+END_PHH
+	&Tabs(1);
+	# print ("Tabs = $Tabs\n");
+	&tab_print(<<END);
+$style_sheet
+$head_script
+END
+	&Tabs(-1);
+	# chomp($head_script);
+	&tab_print($BodyStr);
+	&Tabs(1);
+	${main::header_done} = ${main::TRUE};
 } # print_header()
+
 
 ###########################################################################
 
@@ -1043,4 +1013,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.3 2000/03/27 11:53:41 sunny Exp $ ####
