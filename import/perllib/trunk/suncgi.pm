@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.36 2001/10/09 05:18:05 sunny Exp $
+# $Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999-2001 Øyvind A. Holm <sunny@sunbase.org>
@@ -15,7 +15,7 @@ require Exporter;
 	get_cookie set_cookie delete_cookie split_cookie
 	content_type create_file curr_local_time curr_utc_time deb_pr
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
-	HTMLwarn increase_counter log_access print_header p_footer tab_print tab_str
+	HTMLwarn inc_counter increase_counter log_access print_header p_footer tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
 	$has_args $query_string
 	$log_requests $ignore_double_ip
@@ -41,7 +41,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.36 2001/10/09 05:18:05 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -417,9 +417,13 @@ sub HTMLwarn {
 	close(ErrorFP);
 } # HTMLwarn()
 
+# increase_counter() øker kun med 1 hvis IP'en er forskjellig fra forrige gang.
+# Hvis parameter 2 er !0, øker den uanskvett.
+
 sub increase_counter {
 	my ($counter_file, $ignore_ip) = @_;
 	my $last_ip = "";
+	HTMLwarn("suncgi::increase_counter() er avlegs. inc_counter() svinger.") if $main::Debug;
 	$ignore_ip = 0 unless defined($ignore_ip);
 	my $ip_file = "$counter_file.ip";
 	my $user_ip = $ENV{REMOTE_ADDR};
@@ -446,6 +450,22 @@ sub increase_counter {
 	close(TmpFP);
 	return($counter_value + ($new_ip ? 1 : 0));
 } # increase_counter()
+
+sub inc_counter {
+	my ($counter_file, $Value) = @_;
+	my $last_ip = "";
+	$Value = 1 unless defined($Value);
+	local *TmpFP;
+	create_file($counter_file);
+	open(TmpFP, "+<$counter_file") || (HTMLwarn("$counter_file i inc_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
+	flock(TmpFP, LOCK_EX);
+	my $counter_value = <TmpFP>;
+	seek(TmpFP, 0, 0) || (HTMLwarn("$counter_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
+	$counter_value += $Value;
+	print(TmpFP "$counter_value\n");
+	close(TmpFP);
+	return($counter_value);
+} # inc_counter()
 
 sub log_access {
 	my ($Base, $no_counter) = @_;
@@ -757,7 +777,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.36 2001/10/09 05:18:05 sunny Exp $>
+S<$Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1153,4 +1173,4 @@ Men det er vel sånt som forventes.
 
 =cut
 
-#### End of file $Id: suncgi.pm,v 1.36 2001/10/09 05:18:05 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.37 2001/10/27 02:33:48 sunny Exp $ ####
