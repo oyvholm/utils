@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.21 2003/12/16 02:40:38 sunny Exp $
+# $Id$
 # Html Header Indexer
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -176,7 +176,7 @@ hhi - Html Header Indexer
 
 =head1 REVISION
 
-$Id: hhi,v 1.1.2.21 2003/12/16 02:40:38 sunny Exp $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -259,4 +259,4 @@ GNU General Public License.
 # }}}
 
 # vim: ft=perl fdm=marker fdl=0 :
-# End of file $Id: hhi,v 1.1.2.21 2003/12/16 02:40:38 sunny Exp $
+# End of file $Id$

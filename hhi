@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.5 2003/02/14 13:01:05 sunny Exp $
+# $Id$
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -108,7 +108,7 @@ hhi - Html Header Indexer
 
 =head1 REVISION
 
-$Id: hhi,v 1.5 2003/02/14 13:01:05 sunny Exp $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -179,4 +179,4 @@ GNU General Public License.
 
 =cut
 
-# End of file $Id: hhi,v 1.5 2003/02/14 13:01:05 sunny Exp $
+# End of file $Id$
