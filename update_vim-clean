@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# $Id: update_vim-clean,v 1.2 2004/02/09 03:59:03 sunny Exp $
+# $Id: update_vim-clean,v 1.3 2004/02/10 17:24:43 sunny Exp $
 # Oppdaterer ~/src/other/vim/vim.clean
 
 vimclean=$HOME/src/other/vim/vim.clean
 
-[ -d $vimclean ] || { echo "$vimclean: Katalogen finnes ikke. Dauer." >&2; exit 1; }
+[ -e /carmbb.mrk ] && { echo "Man er på carmbb, og her er det som kjent dårlig med nettkontakt. Synd, egentlig." >&2; exit 1; }
 
-ping -c1 cvs.vim.sf.net || { echo "Ser ut som Vim-serveren har dematerialisert seg. Ellerno. Avslutter." >&2; exit 1; }
+[ -d $vimclean ] || { echo "$vimclean: Katalogen finnes ikke. Dauer." >&2; exit 1; }
 
 cd $vimclean || { echo "Nåh, klarte ikke \"cd $vimclean\" selv om den visstnok finnes. Skjønner ikke bæret og driter i resten." >&2; exit 1; }
 until cvs upd -d; do
