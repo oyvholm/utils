@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# $Id: cvscat,v 1.1 2002/05/30 21:19:49 sunny Exp $
+
+cvs -d $(cat CVS/Root) co -p -r $2 $(cat CVS/Repository)/$1
