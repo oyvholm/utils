@@ -6,7 +6,7 @@ RCS file: /cvsroot/vim/vim/src/edit.c,v
 retrieving revision 1.116
 diff -u -r1.116 edit.c
 --- src/edit.c	30 May 2004 21:41:27 -0000	1.116
-+++ src/edit.c	15 Sep 2004 22:02:54 -0000
++++ src/edit.c	1 Oct 2004 16:57:27 -0000
 @@ -4550,6 +4550,7 @@
  	textwidth = W_WIDTH(curwin) - 1;
  	if (textwidth > 79)
@@ -15,3 +15,27 @@ diff -u -r1.116 edit.c
      }
      return textwidth;
  }
+Index: src/ex_cmds.c
+===================================================================
+RCS file: /cvsroot/vim/vim/src/ex_cmds.c,v
+retrieving revision 1.130
+diff -u -r1.130 ex_cmds.c
+--- src/ex_cmds.c	7 Jul 2004 02:37:52 -0000	1.130
++++ src/ex_cmds.c	1 Oct 2004 16:57:28 -0000
+@@ -164,14 +164,14 @@
+ 	/*
+ 	 * if 'textwidth' set, use it
+ 	 * else if 'wrapmargin' set, use it
+-	 * if invalid value, use 80
++	 * if invalid value, use 72
+ 	 */
+ 	if (width <= 0)
+ 	    width = curbuf->b_p_tw;
+ 	if (width == 0 && curbuf->b_p_wm > 0)
+ 	    width = W_WIDTH(curwin) - curbuf->b_p_wm;
+ 	if (width <= 0)
+-	    width = 80;
++	    width = 72; /* Changed from 80 to 72 by sunny@sunbase.org */
+     }
+ 
+     if (u_save((linenr_T)(eap->line1 - 1), (linenr_T)(eap->line2 + 1)) == FAIL)
