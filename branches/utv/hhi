@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.18 2003/06/05 15:01:03 sunny Exp $
+# $Id: hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp $
 # Html Header Indexer
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU GPL
@@ -31,8 +31,10 @@ if ($opt_l =~ /^\d+$/) {
 }
 
 while (<>) {
+	# {{{
 	my $orig_line = $_;
 	if (!/<!-- nohhi -->/i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
+		# {{{
 		my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
 		if ($header_level >= $start_level) {
 			my $skip_num = 0;
@@ -71,7 +73,9 @@ while (<>) {
 			$last_level = $header_level;
 		}
 		push(@Data, "$_");
+		# }}}
 	} elsif (/<!-- hhitoc -->/i) {
+		# {{{
 		my $Found = 1;
 		my $line_num = $.;
 		push(@Data, "$_");
@@ -83,15 +87,18 @@ while (<>) {
 			}
 		}
 		$Found && die("$0: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
+		# }}}
 	} else {
 		push(@Data, "$_");
 	}
+	# }}}
 }
 
 for my $Line (@Data) {
+	# {{{
 	if ($Line =~ /^(\s*)(<!-- hhitoc -->)(.*)$/i) {
 		my ($Indent, $HT, $End) = ($1, $2, $3);
-		print("$Line$Indent<ul>\n");
+		print("$Line$Indent<ul>\n$Indent<!-- \x7B\x7B\x7B -->\n");
 		my $Old = 0;
 		my ($Cnt, $Txt) = (0, "");
 		my $Ex = "\t";
@@ -99,7 +106,7 @@ for my $Line (@Data) {
 			if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
 				($Cnt, $Txt) = ($1, $2);
 				my $Diff = $Cnt-$Old;
-				$Ex = "\t" x $Cnt;
+				$Ex = ""; # "\t" x $Cnt; # FIXME: Temporary disabled until it works
 				if ($Old && $Diff > 0) {
 					for (my $T = $Diff; $T; $T--) {
 						print("$Indent$Ex<ul>\n");
@@ -117,12 +124,15 @@ for my $Line (@Data) {
 			}
 		}
 		for (; $Cnt > 1; $Cnt--) {
+			print("Cnt = \"$Cnt\"\n");
 			print("$Indent$Ex</li>\n");
+			($Cnt == 2) && print("$Indent<!-- \x7D\x7D\x7D -->\n");
 			print("$Indent$Ex</ul>\n");
 		}
 	} else {
 		print("$Line");
 	}
+	# }}}
 }
 
 __END__
@@ -137,7 +147,7 @@ hhi - Html Header Indexer
 
 =head1 REVISION
 
-$Id: hhi,v 1.1.2.18 2003/06/05 15:01:03 sunny Exp $
+$Id: hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -207,12 +217,6 @@ Default value is 2, leaving E<lt>h1E<gt> headers untouched.
 
 =back
 
-=head1 BUGS
-
-No command line options is provided (yet), all info is thought of being contained in the HTML source.
-This is mostly because of maintaining compatibility with older Perl compilers.
-The source is untested on Perl versions prior to 5.6.1, any incompatibilities should be reported to the author.
-
 =head1 AUTHOR
 
 Made by E<216>yvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
@@ -225,4 +229,4 @@ GNU General Public License.
 
 # }}}
 
-# End of file $Id: hhi,v 1.1.2.18 2003/06/05 15:01:03 sunny Exp $
+# End of file $Id: hhi,v 1.1.2.19 2003/06/30 12:15:13 sunny Exp $
