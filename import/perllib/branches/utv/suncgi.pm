@@ -1,7 +1,7 @@
 package suncgi;
 
 #=========================================================
-# $Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $
+# $Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $
 # Standardrutiner for cgi-bin-programmering.
 # Dokumentasjon ligger som pod på slutten av fila.
 # (C)opyright 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
@@ -45,7 +45,7 @@ $suncgi::curr_utc = time;
 $suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
 $suncgi::ignore_double_ip = 0; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $';
 push(@main::rcs_array, $suncgi::rcs_id);
 
 $suncgi::this_counter = "";
@@ -936,7 +936,7 @@ sub utf8_print {
 		$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
 		$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
 		$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1)/ge;
-	} elsif ($sungi::CharSet =~ /^ISO-8859-1$/i) {
+	} elsif ($suncgi::CharSet =~ /^ISO-8859-1$/i) {
 		# NOP, bare sunn paranoia
 	} else {
 		HTMLwarn("utf8_print(): Ukjent tegnsett: \"$suncgi::CharSet\"");
@@ -964,31 +964,35 @@ sub h_print {
 	# from = latin1 && to = utf8
 	# from = latin && to = latin1
 
+	unless ($suncgi::header_done) {
+		HTMLwarn("h_print() uten at print_header() er kjørt.");
+		print_header("");
+	}
 	if ($from_charset =~ /^UTF-8$/i) {
 		if ($suncgi::CharSet =~ /^UTF-8$/i) {
-			# unless ($no_entities) {
-			$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
-			$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
-			$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
-			$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
-			$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1, 0, $no_entities)/ge;
-			# }
+			unless ($no_entities) {
+				$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1)/ge;
+				$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1)/ge;
+			}
 		} elsif ($suncgi::CharSet =~ /^ISO-8859-1$/i) {
-			$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
-			$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
-			$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
-			$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
-			$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1, 1, $no_entities)/ge;
+			$Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, $no_entities)/ge;
+			$Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, $no_entities)/ge;
+			$Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, $no_entities)/ge;
+			$Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/utf8_to_entity($1, $no_entities)/ge;
+			$Txt =~ s/([\xC0-\xDF][\x80-\xBF])/utf8_to_entity($1, $no_entities)/ge;
 		} else {
 			HTMLwarn("h_print(): Ukjent CharSet: \"$suncgi::CharSet\"");
 		}
 	} elsif ($from_charset =~ /^ISO-8859-1$/i) {
 		if ($suncgi::CharSet =~ /^UTF-8$/) {
-			$Txt =~ s/([\xA0-\xFF])/widechar($1, $no_entities)/ge;
+			$Txt =~ s/([\xA0-\xFF])/widechar(ord($1), $no_entities)/ge;
 		} elsif ($suncgi::CharSet =~ /^ISO-8859-1$/) {
 			# NOP, bare for å kunne sjekke om det er ulovlige ting på gang.
 			unless ($no_entities) {
-				$Txt =~ s/([\xA0-\xFF])/sprintf("&#%u;", ord($1))/;
+				$Txt =~ s/([\xA0-\xFF])/sprintf("&#%u;", ord($1))/ge;
 			}
 		} else {
 			HTMLwarn("Ukjent tegnsett: \"$suncgi::CharSet\"");
@@ -1103,9 +1107,9 @@ sub widechar {
 	my ($Val, $no_entities) = @_;
 	my $allow_illegal = 0;
 	if ($Val < 0x80) {
-		return sprintf("%c", $Val);
+		return sprintf($no_entities ? "%c" : "&#%u;", $Val);
 	} elsif ($Val < 0x800) {
-		return sprintf("%c%c", 0xC0 | ($Val >> 6),
+		return sprintf($no_entities ? "%c%c" : "&#%u;", 0xC0 | ($Val >> 6),
 		                       0x80 | ($Val & 0x3F));
 	} elsif ($Val < 0x10000) {
 		unless ($allow_illegal) {
@@ -1113,22 +1117,22 @@ sub widechar {
 				$Val = 0xFFFD;
 			}
 		}
-		return sprintf("%c%c%c", 0xE0 |  ($Val >> 12),
+		return sprintf($no_entities ? "%c%c%c" : "&#%u;", 0xE0 |  ($Val >> 12),
 		                         0x80 | (($Val >>  6) & 0x3F),
 		                         0x80 |  ($Val        & 0x3F));
 	} elsif ($Val < 0x200000) {
-		return sprintf("%c%c%c%c", 0xF0 |  ($Val >> 18),
+		return sprintf($no_entities ? "%c%c%c%c" : "&#%u;", 0xF0 |  ($Val >> 18),
 		                           0x80 | (($Val >> 12) & 0x3F),
 		                           0x80 | (($Val >>  6) & 0x3F),
 		                           0x80 |  ($Val        & 0x3F));
 	} elsif ($Val < 0x4000000) {
-		return sprintf("%c%c%c%c%c", 0xF8 |  ($Val >> 24),
+		return sprintf($no_entities ? "%c%c%c%c%c" : "&#%u;", 0xF8 |  ($Val >> 24),
 		                             0x80 | (($Val >> 18) & 0x3F),
 		                             0x80 | (($Val >> 12) & 0x3F),
 		                             0x80 | (($Val >>  6) & 0x3F),
 		                             0x80 | ( $Val        & 0x3F));
 	} elsif ($Val < 0x80000000) {
-		return sprintf("%c%c%c%c%c%c", 0xFC |  ($Val >> 30),
+		return sprintf($no_entities ? "%c%c%c%c%c%c" : "&#%u;", 0xFC |  ($Val >> 30),
 		                               0x80 | (($Val >> 24) & 0x3F),
 		                               0x80 | (($Val >> 18) & 0x3F),
 		                               0x80 | (($Val >> 12) & 0x3F),
@@ -1152,7 +1156,7 @@ suncgi — HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $>
+S<$Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -1525,4 +1529,4 @@ Men det er vel sånt som forventes.
 
 # }}}
 
-#### End of file $Id: suncgi.pm,v 1.38.2.10 2004/03/20 06:40:36 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.38.2.11 2004/03/23 10:17:29 sunny Exp $ ####
