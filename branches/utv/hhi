@@ -1,7 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 #===============================================
-# $Id: hhi,v 1.1.2.4 2002/04/15 04:01:16 sunny Exp $
+# $Id: hhi,v 1.1.2.5 2002/10/01 15:31:01 sunny Exp $
 # Html Header Indexer
 # Made by Oyvind A. Holm <sunny@sunbase.org>
 #===============================================
@@ -13,7 +13,7 @@ my @header_num = qw{0};
 
 while (<>) {
 	chomp();
-	if (m!^(.*)<(h)(\d+)(.*?)>(.*)!i) {
+	if (!m#<!-- nohhi --># && m#^(.*)<(h)(\d+)(.*?)>(.*)#i) {
 		my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
 		if ($header_level > 1) {
 			splice(@header_num, $header_level-1) if ($header_level < $last_level);
