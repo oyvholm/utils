@@ -1,10 +1,12 @@
 #!/bin/sh
 
 # Stopper httpd(8)
-# $Id: h0,v 1.12 2003/10/04 15:52:34 sunny Exp $
+# $Id$
 
-if [ -e /nett.mrk -o -e /sunba.mrk -o -e /carmbb.mrk -o -e /nett2.mrk ]; then
+if [ -e /nett.mrk -o -e /sunba.mrk -o -e /carmbb.mrk ]; then
 	/etc/init.d/apache stop
+elif [ -e /nett2.mrk ]; then
+	/usr/local/bin/apachectl stop
 elif [ -e /toshbb.mrk ]; then
 	apachectl stop
 elif [ -e /recbb.mrk ]; then
