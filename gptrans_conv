@@ -296,7 +296,6 @@ sub print_entry {
                              "</pos>",
                          "</gps>\n"
                     );
-END
         } else {
             # Default format used by the author. Yes, the Universe 
             # evolves around him. ☺
