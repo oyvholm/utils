@@ -8,10 +8,11 @@ require Exporter;
 	escape_dangerous_chars file_mdate get_cgivars get_countervalue HTMLdie
 	HTMLwarn increase_counter log_access print_header tab_print tab_str
 	Tabs url_encode print_doc sec_to_string
+	$log_requests $ignore_double_ip
 	$curr_utc $CharSet $Tabs $Border $Footer $WebMaster $Url
 	$css_default
 	$doc_lang $doc_align $doc_width
-	$debug_file $error_file $log_dir $Method
+	$debug_file $error_file $log_dir $Method $request_log_file
 	$DTD_HTML4FRAMESET $DTD_HTML4LOOSE $DTD_HTML4STRICT
 	@rcs_array
 };
@@ -30,7 +31,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $>
+S<$Id: suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -131,10 +132,12 @@ $suncgi::Tabs = "";
 $main::Utv = 0 unless defined($main::Utv);
 $main::Debug = 0 unless defined($main::Debug);
 $suncgi::curr_utc = time;
+$suncgi::log_requests = 0; # 1 = Logg alle POST og GET, 0 = Drit i det
+$suncgi::ignore_double_ip = 1; # 1 = Skipper flere etterfølgende besøk fra samme IP, 0 = Nøye då
 
-$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $';
-$suncgi::rcs_id = '$Id: suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $';
-$suncgi::rcs_date = '$Date: 2000/09/26 15:07:06 $';
+$suncgi::rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $';
+$suncgi::rcs_id = '$Id: suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $';
+$suncgi::rcs_date = '$Date: 2000/10/13 16:15:56 $';
 @suncgi::rcs_array = ();
 
 $suncgi::this_counter = "";
@@ -162,6 +165,7 @@ $suncgi::Url = "";
 $suncgi::Method = "post";
 $suncgi::debug_file = "";
 $suncgi::error_file = "";
+$suncgi::request_log_file = "";
 
 $suncgi::Footer = <<END;
 	</body>
@@ -415,6 +419,22 @@ sub get_cgivars {
 			exit;
 		}
 	}
+	if (length($suncgi::request_log_file) && $suncgi::log_requests && length($in)) {
+		local *ReqFP;
+		my $loc_in = $in;
+		foreach my $var_name ('HTTP_USER_AGENT', 'REMOTE_ADDR', 'REMOTE_HOST', 'HTTP_REFERER') {
+			defined($ENV{$var_name}) || ($ENV{$var_name} = "");
+		}
+		if (-e $suncgi::request_log_file) {
+			open(ReqFP, "+<$suncgi::request_log_file") || HTMLdie("$suncgi::request_log_file: Klarte ikke å åpne loggfila for r+w: $!");
+		} else {
+			open(ReqFP, ">$suncgi::request_log_file") || HTMLdie("$suncgi::request_log_file: Klarte ikke å lage loggfila: $!");
+		}
+		flock(ReqFP, LOCK_EX);
+		seek(ReqFP, 0, 2) || HTMLdie("$suncgi::request_log_file: KLarte ikke å seeke til slutten: $!");
+		print(ReqFP "$suncgi::curr_utc\t$ENV{REMOTE_ADDR}\t$in\n") || HTMLwarn("$suncgi::request_log_file: Klarte ikke å skrive til loggfila: $!");
+		close(ReqFP);
+	}
 	foreach (split("[&;]", $in)) {
 		s/\+/ /g;
 		my ($name, $value) = ("", "");
@@ -602,7 +622,7 @@ sub increase_counter {
 	$last_ip = <TmpFP>;
 	chomp($last_ip);
 	my $new_ip = ($last_ip eq $user_ip) ? 0 : 1;
-	$new_ip = 1 if $ignore_ip;
+	$new_ip = 1 if ($ignore_ip || $suncgi::ignore_double_ip);
 	if ($new_ip) {
 		seek(TmpFP, 0, 0) || (HTMLwarn("$ip_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
 		print(TmpFP "$user_ip\n");
@@ -1120,4 +1140,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.12 2000/09/26 15:07:06 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.13 2000/10/13 16:15:56 sunny Exp $ ####
