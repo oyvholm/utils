@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: hf,v 1.1 1999/03/03 17:25:34 sunny Exp $
+# $Id: hf,v 1.2 1999/03/03 17:34:11 sunny Exp $
 
 use strict;
 
@@ -9,7 +9,7 @@ $| = 1;
 my $Tabs = "";
 my $tab_indent = 0;
 my $orig_line = "";
-my @Elements = ("form","div","table","tr","td","ul","ol","dl","style","head");
+my @Elements = ("applet", "body", "div", "dl", "form", "head", "html", "ol", "script", "style", "table", "td", "tr", "ul");
 
 while (<>) {
 	my $Line = $_;
@@ -41,4 +41,4 @@ while (<>) {
 #skriv tab
 #skriv linje
 
-#### End of file $Id: hf,v 1.1 1999/03/03 17:25:34 sunny Exp $ ####
+#### End of file $Id: hf,v 1.2 1999/03/03 17:34:11 sunny Exp $ ####
