@@ -1,26 +1,47 @@
 #!/usr/bin/perl -w
 
 #========================================================
-# $Id: lsreadable,v 1.5 2003/09/26 23:58:02 sunny Exp $
+# $Id: lsreadable,v 1.6 2004/03/23 22:35:27 sunny Exp $
 # Leser filnavn fra stdin eller en fil og skriver ut alle
 # som er lesbar. Hvis -u spesifiseres, listes alle som
-# IKKE er leselige.
+# IKKE er leselige. Hvis -w skrives, listes alle
+# skrivelige/uskrivelige ting ut istedenfor.
 #========================================================
 
-my $Unr = 0;
+use strict;
+use Getopt::Std;
 
-if (defined($ARGV[0])) {
-	($ARGV[0] =~ /^-u$/) && ($Unr = 1, shift);
-}
+our ($opt_u, $opt_w) =
+    (     0,      0);
 
-if ($Unr) {
-	while (<>) {
-		chomp;
-		-r $_ || print("$_\n");
+$| = 1;
+
+getopts('uw');
+
+# Gjøres på amøbemåte for å få opp farta.
+
+if ($opt_u) {
+	if ($opt_w) {
+		while (<>) {
+			chomp;
+			-w $_ || print("$_\n");
+		}
+	} else {
+		while (<>) {
+			chomp;
+			-r $_ || print("$_\n");
+		}
 	}
 } else {
-	while (<>) {
-		chomp;
-		-r $_ && print("$_\n");
+	if ($opt_w) {
+		while (<>) {
+			chomp;
+			-w $_ && print("$_\n");
+		}
+	} else {
+		while (<>) {
+			chomp;
+			-r $_ && print("$_\n");
+		}
 	}
 }
