@@ -14,11 +14,13 @@ mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter.
 
 [ "$1" = "-x" ] && { med_x=1; }
 
-echo ======== update_vim-clean
+echo -e "======== update_vim-clean \x7B\x7B\x7B"
 update_vim-clean
+echo -e "\x7D\x7D\x7D"
 
-echo ======== mincvs_vim
+echo -e "======== mincvs_vim \x7B\x7B\x7B"
 mincvs_vim || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
+echo -e "\x7D\x7D\x7D"
 
 vimcompdir=$HOME/src/other/vim/vim
 cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; rmdir $lv_lockdir; exit 0; }
@@ -38,13 +40,14 @@ else
 	fi
 fi
 
-echo ======== ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags
+echo -e "======== ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags \x7B\x7B\x7B"
 CFLAGS=-g
 ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags
+echo -e "\x7D\x7D\x7D"
 
-echo ======== make
+echo -e "======== make \x7B\x7B\x7B"
 make
-echo
+echo -e "\x7D\x7D\x7D"
 
 if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
 	# installcmd="rm -rf $vimdir && make install"

@@ -1,7 +1,9 @@
 #!/bin/bash
 
+#=======================================================================
 # $Id$
 # Oppdaterer de norske språkfilene i Vim-sourcen.
+#=======================================================================
 
 vimdir=$HOME/src/other/vim
 osvim=$HOME/src/svn/norwegian_vim/branches/utv/msgs/vim
@@ -11,11 +13,16 @@ for f in $vimdir $vimdir/vim.clean $osvim ; do
 done
 
 cd $osvim || { echo "cd $osvim: Gikk på trynet." >&2; exit 1; }
-echo "======== cd $osvim; svn up"
+echo -e "======== cd $osvim; svn up \x7B\x7B\x7B"
 svn up
+echo -e "\x7D\x7D\x7D"
+
 cd $vimdir || { echo "cd $vimdir: Gikk på trynet." >&2; exit 1; }
 [ -d vim/. ] || mkdir vim || { echo "mkdir vim gikk te hælvete." >&2; exit 1; }
-echo "======== cd $vimdir; rsync -av --delete vim.clean/ vim"
+echo -e "======== cd $vimdir; rsync -av --delete vim.clean/ vim \x7B\x7B\x7B"
 rsync -av --delete vim.clean/ vim
+echo -e "\x7D\x7D\x7D"
 
+echo -e "======== rsync -av $osvim/ vim \x7B\x7B\x7B"
 rsync -av $osvim/ vim
+echo -e "\x7D\x7D\x7D"
