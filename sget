@@ -1,5 +1,5 @@
 #!/bin/sh
 
-# $Id: sget,v 1.1 1999/03/24 17:59:04 sunny Exp $
+# $Id: sget,v 1.2 2000/05/19 15:21:34 sunny Exp $
 
-wget -O - -o /dev/null $1
+wget -O - -o /dev/null $*
