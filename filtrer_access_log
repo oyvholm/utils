@@ -3,4 +3,4 @@
 # $Id$
 # Filtrerer bort hits som jeg og søkemotorer har laget på sunbase.org .
 
-egrep -v -e '^194\.248\.216\.(3|19|20) ' -e '^18\.29\.1\.50 ' -e '^80\.203\.225\.187 - - ' -e '(BravoBrian|NPBot|Scooter/3\.2|Googlebot|WISEnutbot|Netcraft Web Server Survey|slurp@inktomi\.com|girafabot|TurnitinBot|SurveyBot)' $*
+egrep -v -e '^194\.248\.216\.(3|19|20) ' -e '^18\.29\.1\.50 ' -e '^80\.203\.225\.187 - - ' -e '(BravoBrian|NPBot|Scooter/3\.2|Googlebot|ia_archiver|WISEnutbot|search.msn.com/msnbot.htm|Netcraft Web Server Survey|slurp@inktomi\.com|girafabot|TurnitinBot|SurveyBot)' $*
