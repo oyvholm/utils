@@ -1,27 +1,18 @@
 #!/bin/bash
 
-# $Id: mincvs_vim,v 1.2 2004/02/07 03:17:12 sunny Exp $
-
-# /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim
-# /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim/runtime
-# /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim/runtime/lang
-# /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim/runtime/tutor
-# /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim/src
-# /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim/src/po
+# $Id: mincvs_vim,v 1.3 2004/02/09 04:05:38 sunny Exp $
 
 vimdir=$HOME/src/other/vim
 vimlinks=$HOME/vim
-osvim=$HOME/os-vim
+osvim=$HOME/src/cvs/norwegian_vim/msgs/vim
 
-cd $osvim || { echo "cd $osvim: Gikk på trynet."; exit 1; }
+cd $osvim || { echo "cd $osvim: Gikk på trynet." >&2; exit 1; }
 echo "======== cd $osvim; cvs -q upd -dA -r official_vim"
 cvs -q upd -dA -r official_vim
-cd $vimdir || { echo "cd $vimdir: Gikk på trynet."; exit 1; }
+cd $vimdir || { echo "cd $vimdir: Gikk på trynet." >&2; exit 1; }
+[ -d vim ] || mkdir vim || { echo "mkdir vim: Gikk te hælvete." >&2; exit 1; }
 echo "======== cd $vimdir; rsync -av --delete vim.clean/ vim"
 rsync -av --delete vim.clean/ vim
-echo -n Trøkk Enter...
-read
-echo Takk.
 
 for f in runtime/lang runtime/tutor src/po; do
 	echo "======== Ordner $f"
@@ -34,10 +25,3 @@ done
 cd $vimlinks || { echo "cd $vimlinks: Gikk på trynet."; exit 1; }
 echo "======== cd $vimlinks; cvs -q upd -dA -r utv [a-z]*"
 cvs -q upd -dA -r utv [a-z]*
-
-# begin-base64 644 -
-# H4sIAEqAPj8CA62OSwqFMAxF511FN6BZhEsQnEotpRZsUtKPuHvtxPdAEQcO
-# 780l5/gimyKL88AZk/MGFoUWuqG/LUdiZ4UOslESZjouMSNuEFmDLrE90qSi
-# aYltzUyUIOQJkHg11ikc69dXOCH8xS3lRHxZn+33dg/Af78KCHTufvE7o1uE
-# 2AEUVdpNvwEAAA==
-# ====
