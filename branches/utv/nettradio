@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# $Id: nettradio,v 1.1.2.1 2002/04/18 16:06:43 sunny Exp $
-# Spiller av nettradioer -- eller rettere sagt sender en
-# .ogg-strøm som kan lagres og tailes eller trøkkes inn i ogg123.
-
-wget -O - -o /dev/null http://ogg.bbc.co.uk:8001/6music.ogg
