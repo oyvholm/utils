@@ -1,22 +1,22 @@
 #!/bin/sh
 
-# $Id: oggname,v 1.1 2003/03/06 18:52:47 sunny Exp $
-# Skifter navn på musikkfiler til sånn som jeg liker det:
+# $Id: oggname,v 1.2 2004/03/22 16:12:37 sunny Exp $
+# Skifter navn pÃ¥ musikkfiler til sÃ¥nn som jeg liker det:
 # Bandnavn_-_Platetittel_-_Sangnummer_-_Sangtittel.ext
 
 patt='*.flac *.mp3 *.ogg'
 echo ==== Space til understrek
 rename -v 's/ /_/g' $patt | perl -pe 's/ renamed as /\n/'
-echo ==== Alle bokstaver til små
+echo ==== Alle bokstaver til smÃ¥
 rename -v 'y/[A-Z]/[a-z]/' $patt | perl -pe 's/ renamed as /\n/'
 echo ==== Forbokstaver i bandnavn til stor
 rename -v 's/^(.*?)_([a-z])(.*?)_-_/$1_\U$2\E$3_-_/g' $patt | perl -pe 's/ renamed as /\n/'
-echo ==== Første bokstav i filnavnet til stor
+echo ==== FÃ¸rste bokstav i filnavnet til stor
 rename -v 's/^([a-z])/\U$1\E/' $patt | perl -pe 's/ renamed as /\n/'
-echo ==== Første bokstaven i sangtittelen til stor
+echo ==== FÃ¸rste bokstaven i sangtittelen til stor
 # rename -v 's/^(.*)_-_([a-z])(.*?)$/$1_-_\U$2\E$3/' $patt | perl -pe 's/ renamed as /\n/'
 rename -v 's/_-_([a-z])/_-_\U$1\E/g' $patt | perl -pe 's/ renamed as /\n/'
-echo ==== «I» til stor bokstav
+echo ==== Â«IÂ» til stor bokstav
 rename -v 's/_i_/_I_/g' $patt
 echo === Apostrofer til U+2019
 rename -v "s/'/â€™/g" $patt
