@@ -327,8 +327,8 @@ Syntax: cvse [options] [logfile [...]]
 
 Options:
 
--d x  Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> 
-      or the C<CVSE_ROOT> environment variable.
+-d x  Use x as CVSROOT instead of the cvsroot specified in CVS/Root or 
+      the CVSE_ROOT environment variable.
 -h    Print this help message.
 -i    Ignore files which doesn't exist in this revision. Avoids update 
       to random revisions.
