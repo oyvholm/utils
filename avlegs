@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# $Id: avlegs,v 1.1 2004/03/01 12:02:51 sunny Exp $
+# Extrem latskap. Brukes for å spare diskplass og få oversikt over uryddige
+# greier.
+
+cvs -q upd -dAP -D "1972-01-01"
