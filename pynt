@@ -1,4 +1,6 @@
 #!/bin/sh
 
+# $Id: pynt,v 1.2 1999/03/09 18:04:32 sunny Exp $
+
 xearth -nomarkers -bigstars 50 -shift "-275 -162" -sunpos "20 20" -mag 0.5 -once
 xsnow -nosanta -notrees &>/dev/null &
