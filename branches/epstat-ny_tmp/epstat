@@ -1,13 +1,13 @@
 #!/bin/sh
 
 #=======================================================
-# $Id: epstat,v 1.5 2002/01/08 16:49:28 sunny Exp $
+# $Id: epstat,v 1.5.4.1 2002/04/18 14:44:03 sunny Exp $
 # Lager enkel statistikk over hits osv i en loggfil.
 # Forventer antall sekunder siden 1970 etterfulgt av TAB
 # i begynnelsen av hver linje.
 #=======================================================
 
-tmp_file=/tmp/epstat.$RANDOM.tmp
+tmp_file=/mnt/logs/tmp/epstat.$RANDOM.tmp
 
 cut -c 1-10 $* | sort -n | ep -l >$tmp_file
 
