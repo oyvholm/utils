@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: mincvs_vim,v 1.1 2004/02/06 14:14:00 sunny Exp $
+# $Id: mincvs_vim,v 1.2 2004/02/07 03:17:12 sunny Exp $
 
 # /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim
 # /home/sunny/src/cvs.sunbase.org/cvsroot/pub/norwegian_vim/msgs/vim/runtime
@@ -13,22 +13,26 @@ vimdir=$HOME/src/other/vim
 vimlinks=$HOME/vim
 osvim=$HOME/os-vim
 
-cd $osvim || { echo "cd $osvim: På trynet."; exit 1; }
+cd $osvim || { echo "cd $osvim: Gikk på trynet."; exit 1; }
+echo "======== cd $osvim; cvs -q upd -dA -r official_vim"
 cvs -q upd -dA -r official_vim
-cd $vimdir || { echo "cd $vimdir: På trynet."; exit 1; }
+cd $vimdir || { echo "cd $vimdir: Gikk på trynet."; exit 1; }
+echo "======== cd $vimdir; rsync -av --delete vim.clean/ vim"
 rsync -av --delete vim.clean/ vim
 echo -n Trøkk Enter...
 read
 echo Takk.
 
 for f in runtime/lang runtime/tutor src/po; do
+	echo "======== Ordner $f"
 	if [ ! -e $f/CVS_orig ]; then
 		mv -v vim/$f/CVS vim/$f/CVS_orig
 	fi
-	cp -av /home/sunny/src/cvs/norwegian_vim/msgs/vim/$f/CVS vim/$f
+	cp -av $osvim/$f/CVS vim/$f
 done
 
-cd $vimlinks || { echo "cd $vimlinks: På trynet."; exit 1; }
+cd $vimlinks || { echo "cd $vimlinks: Gikk på trynet."; exit 1; }
+echo "======== cd $vimlinks; cvs -q upd -dA -r utv [a-z]*"
 cvs -q upd -dA -r utv [a-z]*
 
 # begin-base64 644 -
