@@ -1,28 +1,25 @@
-package tricgi;
+package suncgi;
 
 =head1 NAME
 
-tricgi - HTML-rutiner for bruk i index.cgi
+suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.1 2000/03/24 11:18:10 sunny Exp $>
+S<$Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $>
 
 =head1 SYNOPSIS
 
-require tricgi;
+require suncgi;
 
 =head1 DESCRIPTION
 
-Inneholder en del rutiner som brukes av F<index.cgi>. Inneholder generelle
-HTML-rutiner som brukes hele tiden.
+Inneholder en del rutiner som brukes av F<index.cgi>.
+Inneholder generelle HTML-rutiner som brukes hele tiden.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999 Øyvind A. Holm E<lt>F<sunny@tritech.no>E<gt>
-
-Denne modulen er eiendom tilhørende Øyvind A. Holm. Dispensasjon for bruk
-er gitt til Tritech A/S E<lt>F<http://www.tritech.no>E<gt> inntil videre.
+(C)opyright 1999-2000 Øyvind A. Holm E<lt>F<sunny256@mail.com>E<gt>
 
 =cut
 
@@ -39,31 +36,28 @@ under kjøring:
 
 =item I<${main::Url}>
 
-URL'en til index.cgi. Normalt sett blir denne satt til navnet på scriptet,
-for eksempel "I<index.cgi>" eller lignende. Før ble I<${main::Url}> satt
-til full URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting
-for eksempel ble kjørt under F<httpsZ<>://>
+URL'en til index.cgi.
+Normalt sett blir denne satt til navnet på scriptet, for eksempel "I<index.cgi>" eller lignende.
+Før ble I<${main::Url}> satt til full URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting for eksempel ble kjørt under F<httpsZ<>://>
 
 =item I<${main::WebMaster}>
 
-Emailadressen til den som eier dokumentet. Denne blir ikke satt inn på
-copyrighter og sånn, der er det F<tritech@tritech.no> som hersker.
+Emailadressen til den som eier dokumentet.
+Denne blir ikke satt inn på copyrighter og sånn.
 
 =item I<${main::error_file}>
 
-Filnavn på en fil som er skrivbar av den som kjører scriptet (som oftest
-I<nobody>). Alle feilmeldinger og warnings havner her.
+Filnavn på en fil som er skrivbar av den som kjører scriptet (som oftest I<nobody>).
+Alle feilmeldinger og warnings havner her.
 
 =item I<${main::log_dir}>
 
 Navn på directory der logging fra blant annet I<&log_access()> havner.
-Brukeren I<nobody> (eller hva nå httpd måtte kjøre under) skal ha
-skrive/leseaksess der.
+Brukeren I<nobody> (eller hva nå httpd måtte kjøre under) skal ha skrive/leseaksess der.
 
 =back
 
-NB: Disse må ikke være I<my>'et, de må være globale så de kan bli brukt av
-alle modulene.
+NB: Disse må ikke være I<my>'et, de må være globale så de kan bli brukt av alle modulene.
 
 =head2 Valgfrie variabler
 
@@ -73,16 +67,18 @@ Disse variablene er ikke nødvendige å definere, bare hvis man gidder:
 
 =item I<${main::doc_width}>
 
-Bredden på dokumentet i pixels. I<$STD_DOCWIDTH> som default.
+Bredden på dokumentet i pixels.
+I<$STD_DOCWIDTH> som default.
 
 =item I<${main::CharSet}>
 
-Tegnsett som brukes. Er I<$STD_CHARSET> som default, "I<ISO-8859-1>".
+Tegnsett som brukes.
+Er I<$STD_CHARSET> som default, "I<ISO-8859-1>".
 
 =item I<${main::BackGround}>
 
-Bruker denne som default bakgrunn til I<&print_background()>. Hvis den
-ikke er definert, brukes I<$STD_BACKGROUND>, en tom greie.
+Bruker denne som default bakgrunn til I<&print_background()>.
+Hvis den ikke er definert, brukes I<$STD_BACKGROUND>, en tom greie.
 
 =item I<${main::Debug}>
 
@@ -91,10 +87,10 @@ Skriver ut en del debuggingsinfo.
 =item I<${main::FONTB}>
 =item I<${main::FONTE}>
 
-Disse to definerer fontene som skal brukes. I alle områder med tekst
-legges disse inn, for eksempel:
+Disse to definerer fontene som skal brukes.
+I alle områder med tekst legges disse inn, for eksempel:
 
-	$tricgi::tab_print("<h1>${FONTB}Dette er en snadderheader${FONTE}</h1>\n";
+	$suncgi::tab_print("<h1>${FONTB}Dette er en snadderheader${FONTE}</h1>\n";
 
 Normalt sett er $FONTB og $FONTE satt til disse verdiene sånn omtrent:
 
@@ -105,10 +101,8 @@ Dette er som kjent bare lov i HTML når minst I<$DTD_HTML4LOOSE> brukes.
 
 =item I<${main::Utv}>
 
-Beslektet med I<${main::Debug}>, men hvis denne er definert, sitter man
-lokalt og tester. Ikke helt klargjort hvordan disse to skal fungere i
-forhold til hverandre, men når sida ligger offentlig, skal hverken
-I<${main::Debug}> eller I<${main::Utv}>
+Beslektet med I<${main::Debug}>, men hvis denne er definert, sitter man lokalt og tester.
+Ikke helt klargjort hvordan disse to skal fungere i forhold til hverandre, men når sida ligger offentlig, skal hverken I<${main::Debug}> eller I<${main::Utv}>
 
 =item I<${main::Border}>
 
@@ -126,14 +120,14 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.1 2000/03/24 11:18:10 sunny Exp $';
-my $rcs_id = '$Id: suncgi.pm,v 1.1 2000/03/24 11:18:10 sunny Exp $';
-my $rcs_date = '$Date: 2000/03/24 11:18:10 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $';
+my $rcs_id = '$Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $';
+my $rcs_date = '$Date: 2000/03/24 15:02:42 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.1 2000/03/24 11:18:10 sunny Exp $ GD';
-my $cvs_id = '$Id: suncgi.pm,v 1.1 2000/03/24 11:18:10 sunny Exp $ GD';
-my $cvs_date = '$Date: 2000/03/24 11:18:10 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $ GD';
+my $cvs_id = '$Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $ GD';
+my $cvs_date = '$Date: 2000/03/24 15:02:42 $ GD';
 
 my $this_counter = "";
 
@@ -199,9 +193,9 @@ sub curr_local_time {
 	# my $LO = localtime();
 	# my $utc_diff = ($GM-$LO)/3600;
 
-	# - &deb_pr(__LINE__ . ": curr_local_time(): gmtime = \"$GM\", localtime = \"$LO\"");
+	# - # &deb_pr(__LINE__ . ": curr_local_time(): gmtime = \"$GM\", localtime = \"$LO\"");
 	my $LocalTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
-	&deb_pr(__LINE__ . ": curr_local_time(): Returnerer \"$LocalTime\"");
+	# &deb_pr(__LINE__ . ": curr_local_time(): Returnerer \"$LocalTime\"");
 	return($LocalTime);
 } # curr_local_time()
 
@@ -219,7 +213,7 @@ I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
 sub curr_utc_time {
 	my @TA = gmtime(time);
 	my $UtcTime = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
-	&deb_pr(__LINE__ . ": curr_utc_time(): Returnerer \"$UtcTime\"");
+	# &deb_pr(__LINE__ . ": curr_utc_time(): Returnerer \"$UtcTime\"");
 	return($UtcTime);
 } # curr_utc_time()
 
@@ -228,13 +222,13 @@ sub curr_utc_time {
 =head2 &deb_pr()
 
 En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
-forlanger at ${main::$error_file} er definert, det skal være en fil der
+forlanger at ${main::error_file} er definert, det skal være en fil der
 all debuggingsinformasjonen skrives til.
 
 For at debugging skal bli lettere, kan man slenge denne inn på enkelte
 steder. Eksempel:
 
-	&deb_pr(__LINE__ . ": sort_dir(): Det er $Elements elementer her.");
+	# &deb_pr(__LINE__ . ": sort_dir(): Det er $Elements elementer her.");
 
 Hvis dette formatet brukes (fram til og med __LINE__) kan man filtrere fila
 gjennom denne perlsnutten for å kommentere ut alle debuggingsmeldingene:
@@ -390,7 +384,7 @@ sub get_cgivars {
 		$value =~ s/%(..)/chr(hex($1))/ge;
 		$in{$name} .= "\0" if defined($in{$name});
 		$in{$name} .= $value;
-		&deb_pr(__LINE__ . ": get_cgivars(): $name = \"$value\"");
+		# &deb_pr(__LINE__ . ": get_cgivars(): $name = \"$value\"");
 	}
 	return %in;
 } # get_cgivars()
@@ -408,13 +402,13 @@ i standard ASCII-format.
 sub get_countervalue {
 	my $counter_file = shift;
 	my $counter_value = 0;
-	&deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
+	# &deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
 	open(TmpFP, "<$counter_file") || (&HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$counter_value = <TmpFP>;
 	chomp($counter_value);
 	close(TmpFP);
-	&deb_pr(__LINE__ . ": get_countervalue(): $counter_file: Fila er lukket, returnerer fra subrutina med \"$counter_value\"");
+	# &deb_pr(__LINE__ . ": get_countervalue(): $counter_file: Fila er lukket, returnerer fra subrutina med \"$counter_value\"");
 	return $counter_value;
 } # get_countervalue()
 
@@ -427,7 +421,7 @@ Internal Server Error. Funksjonen tar to parametere, I<$Msg> som havner i
 E<lt>titleE<gt>E<lt>/titleE<gt> og E<lt>h1E<gt>E<lt>/h1E<gt>, og I<$Msg>
 som blir skrevet ut som beskjed.
 
-Hvis hverken I<${main::$Utv}> eller I<${main::Debug}> er sann, skrives meldinga til
+Hvis hverken I<${main::Utv}> eller I<${main::Debug}> er sann, skrives meldinga til
 I<${main::error_file}> og en standardmelding blir skrevet ut. Folk får ikke vite
 mer enn de har godt av.
 
@@ -438,7 +432,7 @@ sub HTMLdie {
 	my $curr_utc = &curr_utc_time;
 	my $msg_str;
 
-	&deb_pr(__LINE__ . ": HDIE: $Msg");
+	# &deb_pr(__LINE__ . ": HDIE: $Msg");
 	$Title || ($Title = "Intern feil");
 	if (!${main::Debug} && !${main::Utv}) {
 		$msg_str = "<p>En intern feil har oppst&aring;tt. Feilen er loggf&oslash;rt, og vil bli fikset snart.";
@@ -449,8 +443,7 @@ sub HTMLdie {
 	print <<END;
 Content-type: text/html
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
-"http://www.w3.org/TR/REC-html40/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 
 <html lang="no">
 	<!-- $rcs_id -->
@@ -466,11 +459,11 @@ Content-type: text/html
 			h1 { color: red; }
 		</style>
 		<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
-		<meta name="author" content="tritech\@tritech.no">
-		<meta name="copyright" content="&copy; Tritech A/S http://www.tritech.no">
+		<meta name="author" content="${main::WebMaster}">
+		<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
 		<meta name="description" content="CGI error">
 		<meta name="date" content="$curr_utc">
-		<link rev="made" href="mailto:tritech\@tritech.no">
+		<link rev="made" href="mailto:${main::WebMaster}">
 	</head>
 	<body>
 		<h1>$Title</h1>
@@ -511,7 +504,7 @@ sub HTMLwarn {
 	local($Msg) = shift;
 	my $curr_utc = &curr_utc_time;
 
-	&deb_pr(__LINE__ . ": WARN: $Msg");
+	# &deb_pr(__LINE__ . ": WARN: $Msg");
 	# Gjør det så stille og rolig som mulig.
 	if (${main::Utv} || ${main::Debug}) {
 		&print_header("CGI warning");
@@ -661,7 +654,7 @@ Alt kan legges inn i en fil:
 	lang no
 	ext html
 	cvsroot :pserver:bruker@host.no:/cvsroot
-	ftp ftp://black.tritech.no
+	ftp ftp://black.host.no
 
 	<=page index>
 	<p>Bla bla bla
@@ -750,7 +743,7 @@ Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten hvis I<$TRUE>.
 sub print_footer {
 	my ($footer_width, $footer_align, $no_vh, $no_end) = @_;
 
-	&deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
+	# &deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
 	unless (length($footer_width)) {
 		$footer_width = length(${main::doc_width}) ? ${main::doc_width} : $STD_DOCWIDTH;
 	}
@@ -776,11 +769,6 @@ sub print_footer {
 	<tr>
 		<td align="center">
 			<table cellpadding="0" cellspacing="0" border="${main::Border}">
-				<tr>
-					<td align="center">
-						${main::FONTB}<small>&copy;&nbsp;<a href="http://www.tritech.no" target="_top">TriTech&nbsp;AS</a>&nbsp;&lt;<code><a href="http://www.tritech.no/index.cgi?doc=kontakt">tritech\@tritech.no</a></code>&gt;</small>${main::FONTE}
-					</td>
-				</tr>
 				<tr>
 					<td align="center">
 						${main::FONTB}<small>$rcs_str</small>${main::FONTE}
@@ -890,13 +878,13 @@ sub print_header {
 	<!-- $doc_val{id} -->
 END
 	if ($header_done) {
-		&deb_pr(__LINE__ . ": Yo! print_header() ble kjørt selv om \$header_done = $header_done. \$DocTitle = \"$DocTitle\"");
+		# &deb_pr(__LINE__ . ": Yo! print_header() ble kjørt selv om \$header_done = $header_done. \$DocTitle = \"$DocTitle\"");
 		print("\n<!-- debug: print_header(\"$DocTitle\", \"$Refresh\", \"$no_body\", \"$html_version\") selv om \$header_done -->\n");
 		return;
 	} else {
 		$header_done = 1;
 	}
-	&deb_pr(__LINE__ . ": print_header(): $DocTitle");
+	# &deb_pr(__LINE__ . ": print_header(): $DocTitle");
 	unless (length($user_background)) {
 		$user_background = length(${main::BackGround}) ? ${main::BackGround} : $STD_BACKGROUND;
 	}
@@ -937,8 +925,8 @@ END
 	<head>
 		<title>$DocTitle</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
-		$RefreshStr<meta name="author" content="tritech\@tritech.no">
-		$KeywStr<meta name="copyright" content="&copy; TriTech A/S &lt;http://www.tritech.no&gt;">
+		$RefreshStr<meta name="author" content="${main::WebMaster}">
+		$KeywStr<meta name="copyright" content="&copy; &Oslash;yvind A. Holm">
 		<meta name="description" content="$Description">
 		<meta name="date" content="$DocumentTime">
 		<link rev="made" href="mailto:${main::WebMaster}">
@@ -1009,9 +997,9 @@ sub tab_str {
 
 =head2 &Tabs()
 
-Øker/minsker verdien av I<${tricgi::Tabs}>. Den kan ta ett parameter, en
-verdi som er negativ eller positiv alt ettersom man skal fjerne eller
-legge til TAB'er. Hvis man skriver
+Øker/minsker verdien av I<${suncgi::Tabs}>.
+Den kan ta ett parameter, en verdi som er negativ eller positiv alt ettersom man skal fjerne eller legge til TAB'er.
+Hvis man skriver
 
 	&Tabs(-2);
 
@@ -1019,8 +1007,7 @@ fjernes to spacer, hvis man skriver
 
 	&Tabs(5);
 
-legges 5 TAB'er til. Hvis ingen parametere spesifiseres, brukes 1 som
-default, altså en TAB legges til.
+legges 5 TAB'er til. Hvis ingen parametere spesifiseres, brukes 1 som default, altså en TAB legges til.
 
 =cut
 
@@ -1046,8 +1033,7 @@ sub Tabs {
 
 =head1 BUGS
 
-Strukturen er ikke helt klar enda, det blir nok mange forandringer
-underveis.
+Strukturen er ikke helt klar enda, det blir nok mange forandringer underveis.
 
 Tror ikke tellerfunksjonene er helt i rute.
 
@@ -1057,4 +1043,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.1 2000/03/24 11:18:10 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.2 2000/03/24 15:02:42 sunny Exp $ ####
