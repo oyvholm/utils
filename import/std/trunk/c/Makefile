@@ -1,11 +1,11 @@
 
 # Makefile for std.c
-# $Id: Makefile,v 1.5 1999/05/04 11:50:15 sunny Exp $
+# $Id: Makefile,v 1.6 2002/09/01 00:35:58 sunny Exp $
 
 OBJS = std.o getopt.o
 CC = gcc
 LD = gcc
-CCFLAGS = -Wall -O2 -c -g -ansi -pedantic -Wno-unused
+CCFLAGS = -Wall -O2 -c -g -ansi -Wno-unused
 LDFLAGS = -Wall
 EXEC = std
 
