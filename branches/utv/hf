@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #========================================================================
-# $Id: hf,v 1.10.2.7 2004/01/07 02:51:27 sunny Exp $
+# $Id: hf,v 1.10.2.8 2004/02/10 16:11:53 sunny Exp $
 # Formatterer HTML-source med TAB’er
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
@@ -32,7 +32,7 @@ my $orig_line = "";
 my @Elements = (
 	"applet", "blockquote", "body", "caption", "center", "colgroup",
 	"div", "dl", "form", "frameset", "head", "html", "ol", "map",
-	"noframes", "noscript", "select", "style", "table", "td",
+	"noframes", "noscript", "select", "table", "td",
 	"th", "tr", "ul"
 );
 
@@ -86,8 +86,8 @@ LINE: while (<>) {
 	} else {
 		print;
 	}
-	$is_pre = 1 if ($Line =~ /<(pre|script)\b.*>/i);
-	$is_pre = 0 if ($Line =~ m!</(pre|script)>!i);
+	$is_pre = 1 if ($Line =~ /<(pre|script|style)\b.*>/i);
+	$is_pre = 0 if ($Line =~ m!</(pre|script|style)>!i);
 	# }}}
 }
 
@@ -112,4 +112,4 @@ END
 	# }}}
 }
 
-# End of file $Id: hf,v 1.10.2.7 2004/01/07 02:51:27 sunny Exp $
+# End of file $Id: hf,v 1.10.2.8 2004/02/10 16:11:53 sunny Exp $
