@@ -1,11 +1,13 @@
 #!/usr/bin/perl
 
-# $Id: hf,v 1.10.2.1 2002/04/18 14:29:21 sunny Exp $
+#========================================================================
+# $Id: hf,v 1.10.2.2 2002/04/18 14:37:33 sunny Exp $
 # Formatterer HTML-source med TAB'er
-
+#
 # Bugs: Hvis start+end-elementer står på samme linje, blir ikke innrykket
 # rett. En eller annen rekursiv sjekk på linjene må kanskje gjøres.
 # Foreløpig får man sette dem på hver sin linje.
+#========================================================================
 
 use strict;
 require 'getopts.pl';
@@ -59,6 +61,7 @@ LINE: while (<>) {
 		if ($main::opt_H && $Line =~ /<h([1-6]).*?>/i) {
 			$header_indent = "\t" x ($1-1);
 		}
+		($Line =~ m!</body>!i) && ($header_indent = "");
 		for $f (@Elements) {
 			if ($Line =~ m!</($f)([ >])!i) { # Hvis end-tag ble funnet...
 				$Element = $1;
@@ -92,7 +95,7 @@ sub print_help {
 
 HTML formatter
 
-Syntax: $0 [-a] [indentval [files ...]]
+Syntax: $0 [-a] [-H] [indentval [files ...]]
 
 indentval forskyver HTML'en med antall TAB'er.
 Hvis filnavn skal spesifiseres, bruk 0.
@@ -111,4 +114,4 @@ END
 	exit(0);
 } # print_help()
 
-#### End of file $Id: hf,v 1.10.2.1 2002/04/18 14:29:21 sunny Exp $ ####
+#### End of file $Id: hf,v 1.10.2.2 2002/04/18 14:37:33 sunny Exp $ ####
