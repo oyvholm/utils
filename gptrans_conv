@@ -1,12 +1,12 @@
 #!/usr/bin/perl -w
 
-# ╔══════════════════════════════════════════════════════════════
+# ╔═════════════════════════════════════════════════════════════════════
 # ║ $Id$
 # ║ Converts between various GPS formats
 # ║ Character set: UTF-8
 # ║ License: GNU General Public License
 # ║ Made by Øyvind A. Holm — sunny@sunbase.org
-# ╚══════════════════════════════════════════════════════════════
+# ╚═════════════════════════════════════════════════════════════════════
 
 use strict;
 use utf8;
@@ -48,19 +48,21 @@ Syntax: gptrans_conv [options] [files [...]]
           ps (Unfinished)
           xgraph
   -s    Short date format
-  -t    Create breaks in track between points with a difference
-        more than $PAUSE_LIMIT seconds
-  -u    Comment out following data with identical position values,
-        only print first entry
+  -t    Create breaks in track between points with a difference more 
+        than $PAUSE_LIMIT seconds
+  -u    Comment out following data with identical position values, only 
+        print first entry
 
 END
     exit(0);
     # }}}
 }
 
-# Kunne vært et eget script på grunn av at det gjør sine helt egne greier, men like greit å samle det på en plass.
+# Kunne vært et eget script på grunn av at det gjør sine helt egne 
+# greier, men like greit å samle det på en plass.
 # FIXME: Fjerner ikke første duplikatentryen.
-# FIXME: Se om det går å få flytta den inn i print_entry() så man slipper å ha to gptrans_conv’er i pipen.
+# FIXME: Se om det går å få flytta den inn i print_entry() så man 
+# slipper å ha to gptrans_conv’er i pipen.
 # FIXME: Legg inn alle formatene.
 if ($opt_u) {
     # Comment out areas without reception {{{
@@ -122,7 +124,9 @@ if ($opt_o eq "gpstrans") {
 }
 
 while (<>) {
-    # Scan through stdin or specified files and send every GPS entry to print_entry() {{{
+    # Scan through stdin or specified files and send every GPS entry to 
+    # print_entry()
+    # {{{
     my $bck_line = $_;
     if (/^# Pause: /) {
     } elsif (/^# move$/) {
@@ -221,7 +225,9 @@ END
 exit(0);
 
 sub print_entry {
-    # Print a GPS entry with time, latitude, longitude and altitude in various formats {{{
+    # Print a GPS entry with time, latitude, longitude and altitude in 
+    # various formats
+    # {{{
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
     my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
     $Year  = sprintf("%04u", $Year);
@@ -272,11 +278,15 @@ sub print_entry {
         } elsif ($opt_o eq "ps") {
             $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
         } else {
-            # Default format used by the author. Yes, the Universe evolves around him. ☺ {{{
-            # Seriously, up to "gptrans_conv,v 1.11 2003/08/03 02:35:51 sunny" the script was only
-            # used by myself, and I found this format was the easiest to live with — Perl scripts and
-            # shell utilities made conversion pretty painless. If GPX or something other useful is
-            # implemented, that will be the default.
+            # Default format used by the author. Yes, the Universe 
+            # evolves around him. ☺
+            # Seriously, up to "gptrans_conv,v 1.11 2003/08/03 02:35:51 
+            # sunny" the script was only used by myself, and I found 
+            # this format was the easiest to live with — Perl scripts 
+            # and shell utilities made conversion pretty painless. If 
+            # GPX or something other useful is implemented, that will be 
+            # the default.
+            # {{{
             $Lon =~ s/\./$Des/;
             $Lat =~ s/\./$Des/;
             # $do_print || print("skipping ");
@@ -312,7 +322,9 @@ sub print_entry {
 }
 
 sub sec_to_string {
-    # Convert seconds since 1970 to "yyyy-mm-dd hh:mm:ss" with optional separator {{{
+    # Convert seconds since 1970 to "yyyy-mm-dd hh:mm:ss" with optional 
+    # separator
+    # {{{
     my ($Seconds, $Sep) = @_;
     defined($Sep) || ($Sep = " ");
     my @TA = gmtime($Seconds);
@@ -322,7 +334,8 @@ sub sec_to_string {
 }
 
 sub sec_to_readable {
-    # Convert seconds since 1970 to human-readable format (d:hh:mm:ss) {{{
+    # Convert seconds since 1970 to human-readable format (d:hh:mm:ss)
+    # {{{
     my $secs = shift;
     my ($Day, $Hour, $Min, $Sec) =
        (   0,     0,    0,    0);
@@ -375,8 +388,10 @@ END
 }
 
 sub ddd_to_dms {
-    # Convert floating-point degrees into D°M'S.S" (ISO-8859-1). Necessary for import into GPSman. {{{
-    # Based on toDMS() from gpstrans-0.39 to ensure compatibility.
+    # Convert floating-point degrees into D°M'S.S" (ISO-8859-1). 
+    # Necessary for import into GPSman. Based on toDMS() from 
+    # gpstrans-0.39 to ensure compatibility.
+    # {{{
     my $ddd = shift;
     my $Neg = 0;
     my ($Hour, $Min, $Sec) =
