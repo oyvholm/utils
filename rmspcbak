@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+# $Id: rmspcbak,v 1.1 1999/02/10 03:36:52 sunny Exp $
+
+while (<>) {
+	s/\s*$//g;
+	print "$_\n";
+}
