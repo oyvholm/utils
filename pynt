@@ -1,12 +1,13 @@
 #!/bin/sh
 
-# $Id: pynt,v 1.3 1999/03/23 13:16:59 sunny Exp $
+# $Id: pynt,v 1.4 2002/12/01 21:05:56 sunny Exp $
 
-killall xearth xsnow
+killall xplanetbg
+xplanetbg -projection ortho-xplanet -latitude 60.39494 -longitude 5.33016 -label &
 
 # Låst posisjon med Norge lurt plassert
 # xearth -nomarkers -bigstars 50 -shift "-275 -162" -sunpos "20 20" -mag 0.5 -once
-(xearth -bigstars 50 -shift "-275 -162" -mag 0.5 &) || (echo $0: Kunne ikke starte xearth) >&2
+# (xearth -bigstars 50 -shift "-275 -162" -mag 0.5 &) || (echo $0: Kunne ikke starte xearth) >&2
 
 # xsnow -nosanta -notrees &>/dev/null &
-(xsnow &>/dev/null &) || (echo $0: Kunne ikke starte xsnow >&2)
+# (xsnow &>/dev/null &) || (echo $0: Kunne ikke starte xsnow >&2)
