@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id: pine,v 1.7 2004/01/19 22:39:06 sunny Exp $
+# $Id: pine,v 1.8 2004/03/30 06:26:05 sunny Exp $
 # Locking for pine
 
 lockdir=$HOME/lock
@@ -13,7 +13,7 @@ until mkdir $lockname 2>/dev/null; do
 done
 echo "$(tty) $(date +"%Y-%m-%d %H:%M:%S")" >$lockname/info
 
-. ~/.bashrc
+unset LC_CTYPE
 
 if [ -x /usr/local/bin/pine ]; then
 	/usr/local/bin/pine $*
