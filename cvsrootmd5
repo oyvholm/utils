@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cvsrootmd5,v 1.1 2001/05/07 01:11:10 sunny Exp $
+# $Id: cvsrootmd5,v 1.2 2001/05/07 11:25:00 sunny Exp $
 # Lagrer md5sum o.l. av cvsroot. Paranoia.
 
 cfil=/home/sunny/src/cvs/p/cvsroot.md5
@@ -12,9 +12,12 @@ echo >>$cfil
 find -printf "%TY-%Tm-%Td %TH:%TM:%TS %8s %p\n" | sort -k4 >>$cfil
 echo >>$cfil
 find -type f -print0 | sort -z | xargs -0 md5sum >>$cfil
-echo '$Id: cvsrootmd5,v 1.1 2001/05/07 01:11:10 sunny Exp $' >$cfil.tmp
-gpg --clearsign <$cfil >>$cfil.tmp || { echo $0: Feil under signering >&2; exit 1; }
+echo "\$Id\$" >$cfil.tmp
+gpg --clearsign <$cfil >>$cfil.tmp || { echo $0: Feil under signering >&2; rm -f $cfil.tmp; exit 1; }
 mv $cfil.tmp $cfil
-cd /home/sunny/src/cvs/p
+popd >/dev/null
+echo Trykk ENTER for cvs commit cvsroot.md5, eller CTRL-C for avbrudd.
+read
+pushd /home/sunny/src/cvs/p >/dev/null
 cvs ci -m "$datestr" cvsroot.md5
 popd >/dev/null
