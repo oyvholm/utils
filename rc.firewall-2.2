@@ -1,5 +1,6 @@
 #!/bin/sh
 #
+# $Id$
 # rc.firewall-2.2
 #
 #     - Initial SIMPLE IP Masquerade test for 2.1.x and 2.2.x kernels
@@ -18,6 +19,10 @@ FWVER="1.22"
 # 1.20 - Updated the script to use environment vars
 # 1.01 - Original version
 
+if [ ! -e "/sunba.mrk" ]; then
+	echo "$0: Skal bare kjøres på sunba." >&2
+	exit 1
+fi
 
 echo -e "\n\nLoading simple rc.firewall-2.2 : version $FWVER..\n"
 
