@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: logging,v 1.1.2.1 2003/03/06 02:15:40 sunny Exp $
+# $Id: logging,v 1.1.2.2 2003/03/06 13:28:07 sunny Exp $
 
 # FIXME: Den locken virker ikke, det allokeres en ny tty.
 
@@ -12,6 +12,6 @@ until mkdir -p $lockname 2>/dev/null; do
 	sleep 5
 done
 
-script $HOME/.scriptlogger/`u`.$$.scrlog
+script -f $HOME/.scriptlogger/`u`.$$.scrlog
 date -Iseconds
 stty -a
