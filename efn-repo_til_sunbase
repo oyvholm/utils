@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# $Id$
+# Midlertidig greie som kopierer efn.no-repoen til svn.sunbase.org .
+
+[ -e /sunba.mrk ] || { echo "Må være på sunba." >&2; exit 1; }
+gzip -v /home/sunny/Svn/efn.no/hooks/pre-revprop-change
+rsync -avP --delete /home/sunny/Svn/efn.no/ www-data@nett2:/var/Svn/big-repos/efnweb/
+gunzip -v /home/sunny/Svn/efn.no/hooks/pre-revprop-change.gz
