@@ -1,4 +1,6 @@
-#!/db1/sunny256/bin/bash
+#!/bin/bash
+
+# $Id: lsreadable,v 1.2 1999/02/23 15:49:28 sunny Exp $
 
 for f in `find $* -depth -type f 2>/dev/null`; do
   if [ -r $f ]; then
