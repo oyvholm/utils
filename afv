@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================
-# $Id: afv,v 1.7 2001/05/26 09:49:48 sunny Exp $
+# $Id: afv,v 1.8 2001/05/27 03:26:08 sunny Exp $
 # Lagrer alle nye versjoner av en fil.
 # Options: -l5 der 5 er antall sekunder det skal
 #          pauses før den kjører i loop igjen.
@@ -41,8 +41,7 @@ LOOP: foreach my $Curr (@Files) {
 
 	until (mkdir("$lock_dir", 0777)) {
 		warn("$lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
-		check_stop();
-		sleep 5;
+		my_sleep(5);
 	};
 
 	if (open(FromFP, "<$Curr")) {
@@ -96,7 +95,7 @@ LOOP: foreach my $Curr (@Files) {
 
 if ($do_loop) {
 	check_stop();
-	sleep($sleep_time);
+	my_sleep($sleep_time);
 	goto LOOP;
 }
 
@@ -106,6 +105,9 @@ sub create_dir {
 		print($Msg);
 		system("/bin/mkdir -p $Dir >/dev/null 2>&1"); # FIXME: Hack
 		# mkdir($Dir, 0777) || die("...Klarte ikke mkdir(): $!");
+		unless (-d $Dir) {
+			die("...Klarte ikke mkdir(\"$Dir\"): $!");
+		}
 	}
 } # create_dir()
 
@@ -118,4 +120,20 @@ sub check_stop {
 	}
 } # check_stop()
 
-#### End of file $Id: afv,v 1.7 2001/05/26 09:49:48 sunny Exp $ ####
+sub my_sleep {
+	my $Secs = shift;
+	my $start_time = time;
+	print("start = $start_time\n");
+	if ($Secs <= 2) {
+		check_stop();
+		sleep($Secs);
+	} else {
+		until(time >= $start_time+$Secs) {
+			print(time . "\n");
+			sleep(5);
+			check_stop();
+		}
+	}
+} # my_sleep()
+
+#### End of file $Id: afv,v 1.8 2001/05/27 03:26:08 sunny Exp $ ####
