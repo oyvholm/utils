@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 
 # Ny versjon av DBK-systemet.
-# $Id: dbk,v 1.12 2000/10/26 14:01:36 sunny Exp $
+# $Id: dbk,v 1.13 2002/02/22 01:39:47 sunny Exp $
 #
-# (C)opyleft Øyvind A. Holm <sunny256@mail.com>
+# (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
 # GNU-lisens.
 
 use Time::Local;
@@ -104,21 +104,22 @@ unless (-d $year_dir) {
 print("\$dbk_file = $dbk_file\n") if $Debug;
 
 if ($opt_f) {
-	unlink($lock_file) || die("$lock_file: Kan ikke fjerne gammel lockfil med makt: $!\n");
+	rmdir($lock_file) || warn("$lock_file: Kan ikke fjerne gammel lockdir med makt: $!\n");
 }
 
-if (-e $lock_file) {
-	print(STDERR "Venter på at lockfila $lock_file skal forsvinne..");
-	while(-e $lock_file) {
-		print(".");
-		sleep(2);
-	}
-	print("OK\n");
-}
+my $print_ok = 0;
 
-open(LockFP, ">$lock_file") || die("$lock_file: Klarte ikke å lage lockfil");
-flock(LockFP, LOCK_EX);
-print(LockFP "$curr_time $$\n");
+until (mkdir($lock_file, 0777)) {
+	$print_ok || print(STDERR "Venter på at lockdir $lock_file skal forsvinne..");
+	print(".");
+	# sleep(2);
+	$print_ok = 1;
+}
+$print_ok &&print("OK\n");
+
+# open(LockFP, ">$lock_file") || die("$lock_file: Klarte ikke å lage lockfil");
+# flock(LockFP, LOCK_EX);
+# print(LockFP "$curr_time $$\n");
 
 open(CheckFP, ">$year_dir/.check") || warn("$year_dir/.check: Klarte ikke å lage fila: $!. Nøye då.");
 close(CheckFP);
@@ -168,7 +169,7 @@ if ($file_size < $min_size) {
 	rmdir($year_dir);
 }
 
-unlink($lock_file) || die("$0: $lock_file: Klarte ikke å slette lockfila: $!\n");
+rmdir($lock_file) || die("$0: $lock_file: Klarte ikke å slette lockdir: $!\n");
 exit(0);
 
 #### SUBRUTINER ####
@@ -227,7 +228,7 @@ Syntax: $0 [valg] [dag [måned [år]]] [HH:MM]
 Disse valgene (options) kan brukes:
 
 -b    - Batch mode, ikke start editor eller viewer.
--f    - Force, start dbk selv om lockfil eksisterer.
+-f    - Force, start dbk selv om lockdir eksisterer.
 -h    - Skriv denne hjelpen
 -i x  - Sett inn filen x istedenfor å bruke tastatur.
         Forventer -t eller klokkeslett.
@@ -243,4 +244,4 @@ END
 
 __END__
 
-#### End of file $Id: dbk,v 1.12 2000/10/26 14:01:36 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.13 2002/02/22 01:39:47 sunny Exp $ ####
