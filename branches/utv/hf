@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #========================================================================
-# $Id: hf,v 1.10.2.6 2003/08/29 17:56:18 sunny Exp $
+# $Id: hf,v 1.10.2.7 2004/01/07 02:51:27 sunny Exp $
 # Formatterer HTML-source med TAB’er
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
@@ -13,7 +13,6 @@
 #========================================================================
 
 use strict;
-use utf8;
 use Getopt::Std;
 
 our ($opt_a, $opt_h, $opt_i, $opt_H, $opt_s) = (0, 0, 0, 0);
@@ -113,4 +112,4 @@ END
 	# }}}
 }
 
-# End of file $Id: hf,v 1.10.2.6 2003/08/29 17:56:18 sunny Exp $
+# End of file $Id: hf,v 1.10.2.7 2004/01/07 02:51:27 sunny Exp $
