@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# $Id: pine-editor,v 1.1 2003/03/29 18:50:44 sunny Exp $
+# $Id: pine-editor,v 1.2 2003/05/17 00:49:21 sunny Exp $
 
 file=$1
 tempf=/tmp/pine-editor.$$.tmp
 
 h2u -l $file >$tempf
 mv $tempf $file
-gvim -f -w /home/sunny/vimlogg $file
+gvim -f -c "set textwidth=72 syntax=mail expandtab" -w /home/sunny/vimlogg $file
