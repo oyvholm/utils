@@ -286,22 +286,23 @@ sub print_entry {
         } elsif ($opt_o eq "ps") {
             $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
         } elsif ($opt_o eq "xml") {
-            $Line = <<END;
-  <entry>
-    <pos>
-      <x>$Lon</x>
-      <y>$Lat</y>
-      <z>$Alt</z>
-    </pos>
-    <date>
-      <year>$Year</year>
-      <mon>$Month</mon>
-      <day>$Day</day>
-      <hour>$Hour</hour>
-      <min>$Min</min>
-      <sec>$Sec</sec>
-    </date>
-  </entry>
+            $Line = join(" ",
+                         "<gps>",
+                             "<date>",
+                                 "<y>$Year</y>",
+                                 "<mo>$Month</mo>",
+                                 "<d>$Day</d>",
+                                 "<h>$Hour</h>",
+                                 "<mi>$Min</mi>",
+                                 "<s>$Sec</s>",
+                             "</date>",
+                             "<pos>",
+                                 "<x>$Lon</x>",
+                                 "<y>$Lat</y>",
+                                 "<z>$Alt</z>",
+                             "</pos>",
+                         "</gps>\n"
+                    );
 END
         } else {
             # Default format used by the author. Yes, the Universe 
