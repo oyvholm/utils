@@ -1,9 +1,13 @@
 #!/bin/sh
 
-# $Id: rm_backup,v 1.5 2003/12/30 11:30:15 sunny Exp $
+# $Id: rm_backup,v 1.6 2004/03/18 11:38:19 sunny Exp $
 # Fjerner backupfiler i current dir og subdirs.
 
 echo "rm_backup: Fjerner alle med tilde på slutten..."
 find . -type f -name '*~' -print0 | xargs -0 rm -v
+echo ====================================
+echo "rm_backup: Fjerner alle med teit .bak på slutten..."
+find . -type f -name '*.bak' -print0 | xargs -0 rm -v
+echo ====================================
 echo "rm_backup: Fjerner alle som begynner med \".#\" (CVS-backuper)..."
 find . -type f -name '.#*' -print0 | xargs -0 rm -v
