@@ -2,13 +2,33 @@
 
 #=======================================================================
 # $Id$
-# Mekker ihop ny, fin Vim. Hvis -x spesifiseres som første parameter, 
-# lages gvim også med X og saker. Standard oppførsel er å ikke lage med 
-# X, for det er som kjent et delay i begynnelsen hvis det er manko på 
-# X-forbindelse, og Vimmene har en tendens til å daue når X stoppes.
+# Mekker ihop ny, fin Vim.
 #=======================================================================
 
 lv_lockdir=$HOME/.lag_vim.LOCK
+
+function usage() {
+    cat <<END
+
+Syntax: lag_vim [valg]
+
+Mekker ihop ny, fin Vim.
+
+Valg (må være spesifisert alfabetisk):
+
+-f  Fjern lockdir før man peiser videre.
+-h  Skriv denne hjelpen. Må være første parameter.
+-l  Lokal laging, ikke kjør update_vim-clean (CVS-oppdatering)
+-x  Lag gvim med X og saker. Standard oppførsel er å ikke lage med X, 
+    for det er som kjent et delay i begynnelsen hvis det er manko på 
+    X-forbindelse, og Vimmene har en tendens til å daue når X stoppes.
+
+END
+    exit 0
+}
+
+[ "$1" = "-h" ] && { usage; }
+
 [ "$1" = "-f" ] && { rmdir $lv_lockdir 2>/dev/null; shift; }
 mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
 
