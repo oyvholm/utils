@@ -1,6 +1,1 @@
-#!/bin/sh
-
-# $Id$
-# Stripper bort .svn-kataloger fra stdin.
-
-cat $* | egrep -v '/\.svn(/|$)'
+nosvn
