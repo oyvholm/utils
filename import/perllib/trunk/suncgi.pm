@@ -6,7 +6,7 @@ suncgi - HTML-rutiner for bruk i index.cgi
 
 =head1 REVISION
 
-S<$Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $>
+S<$Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $>
 
 =head1 SYNOPSIS
 
@@ -120,14 +120,14 @@ Brukes mest til debugging. Setter I<border> i alle E<lt>tableE<gt>'es.
 
 my $Tabs = "";
 
-my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $';
-my $rcs_id = '$Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $';
-my $rcs_date = '$Date: 2000/04/14 17:43:30 $';
+my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $';
+my $rcs_id = '$Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $';
+my $rcs_date = '$Date: 2000/08/17 19:21:03 $';
 
 # $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
-my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $ GD';
-my $cvs_id = '$Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $ GD';
-my $cvs_date = '$Date: 2000/04/14 17:43:30 $ GD';
+my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $ GD';
+my $cvs_id = '$Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $ GD';
+my $cvs_date = '$Date: 2000/08/17 19:21:03 $ GD';
 
 my $this_counter = "";
 
@@ -453,12 +453,14 @@ Content-type: text/html
 	<head>
 		<title>$Title</title>
 		<style type="text/css">
-			body { background: white; color: black; }
+			<!--
+			body { background: white; color: black; font-family: sans-serif; }
 			a:link { color: blue; }
 			a:visited { color: maroon; }
 			a:active { color: fuchsia; }
 			b.krise { color: red; }
 			h1 { color: red; }
+			-->
 		</style>
 		<meta http-equiv="Content-Type" content="text/html; charset=$CharSet">
 		<meta name="author" content="${main::WebMaster}">
@@ -1018,4 +1020,4 @@ Tror ikke tellerfunksjonene er helt i rute.
 
 __END__
 
-#### End of file $Id: suncgi.pm,v 1.5 2000/04/14 17:43:30 sunny Exp $ ####
+#### End of file $Id: suncgi.pm,v 1.6 2000/08/17 19:21:03 sunny Exp $ ####
