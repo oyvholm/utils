@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 #==========================================================
-# $Id: tail-errorlog,v 1.18 2004/01/20 05:03:39 sunny Exp $
+# $Id: tail-errorlog,v 1.19 2004/02/10 19:03:35 sunny Exp $
 # tail -f på error_log til httpd(8).
 #==========================================================
 
@@ -18,9 +18,14 @@ elif [ -e /nett.mrk ]; then
 		shift
 	fi
 elif [ -e /nett2.mrk ]; then
-	tail -f /var/log/apache/error.log
+	tail -f \
+	/home/badata/wrt/sunbase/musthave.sunbase.org/log/httpd/error_log \
+	/home/badata/wrt/sunbase/snadder.sunbase.org/log/httpd/error_log \
+	/home/badata/wrt/sunbase/tmp.sunbase.org/log/httpd/error_log \
+	/var/log/apache/nett2.ba.no/error_log \
+	/var/log/apache/nett2.ba.no/error_log $*
 elif [ -e $HOME/.petronas.mrk ]; then
-	tail -f /usr/local/apache/logs/error_log
+	tail -f /usr/local/apache/logs/error_log $*
 else
 	echo $0: Ukjent maskin, kan ikke skrive ut error_log >&2
 	exit 1
