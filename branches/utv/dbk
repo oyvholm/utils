@@ -1,42 +1,45 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 #================================================
-# $Id: dbk,v 1.14 2002/02/24 16:42:19 sunny Exp $
+# $Id: dbk,v 1.14.2.1 2003/07/09 13:29:17 sunny Exp $
 # Ny versjon av DBK-systemet.
 #
 # GPL-lisens. Åff cåårs.
 # (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
 #================================================
 
+use strict;
 use Time::Local;
 use Fcntl ':flock';
 
-$Debug = 0;
+my $Debug = 0;
 $| = 1;
 
 print("\$#ARGV = $#ARGV\n") if $Debug;
 
-$Editor = "joe";
-$dbk_dir = "$ENV{HOME}/dbk";
-$Viewer = "lynx -homepage=file://$dbk_dir";
-$dbk_ext = ".html";
-$dbk_lockext = ".lock";
-$dir_mode = 0770;
+my $Editor = "joe";
+my $dbk_dir = "$ENV{HOME}/dbk";
+my $Viewer = "lynx -homepage=file://$dbk_dir";
+my $dbk_ext = ".html";
+my $dbk_lockext = ".lock";
+my $dir_mode = 0770;
 
-$curr_time = time;
-$opt_t = 0; # Legger til klokkeslettet på en egen linje
-$opt_h = 0; # Skriver ut hjelpen
-$time_not_found = 0;
-@day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
+my $curr_time = time;
+my $opt_t = 0; # Legger til klokkeslettet på en egen linje
+my $opt_h = 0; # Skriver ut hjelpen
+my $time_not_found = 0;
+my @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
-require 'getopts.pl';
-&Getopts('bfhi:tz');
+use Getopt::Std;
+
+our ($opt_b, $opt_f, $opt_h, $opt_i, $opt_t, $opt_z) = (0, 0, 0, "", 0, 0);
+getopts('bfhi:tz');
 
 &print_help(0) if $opt_h;
 
 print("$0: \$opt_t = $opt_t\n") if $Debug;
 
-($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime($curr_time);
+my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime($curr_time);
 
 $Year += 1900;
 $Mon += 1;
@@ -44,14 +47,16 @@ $Mon += 1;
 print("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst\n") if $Debug;
 
 my $arg_count;
+my $time_str = ""; # Strengen som det vil bli leita etter og som blir satt inn.
 
-# Begynnelse på parameterparsing.
+# CO: Begynnelse på parameterparsing. {{{
 # begin-base64 664 -
 # H4sIAKCL/DgCA1MrSCwqTo1PLEov1nBwDHIP07Tm4iouTVJAiCtUc3HmVio4
 # OILYtgoO8dZgvkpKfFp+aV4KUMgAKMLFmZZflJqYnKEBVqgJ0pWZpqChH6db
 # oqIP5nKCRIACMSkxKVZQIZWSzNzU+OKSIqAxKiCTaxVSc4pBGkFGAlEtV62C
 # MpJrNDS5AP7tzhO0AAAA
 # ====
+# }}}
 
 foreach(@ARGV) {
 	/^\d\d:/ && (splice(@ARGV, $arg_count, 1), $time_str = $_, $opt_t = 1);
@@ -79,11 +84,11 @@ die("$0: $Day: Feil format på datoen\n") unless ($Day =~ /^\d\d$/);
 die("$0: $Mon: Feil format på måneden\n") unless ($Mon =~ /^\d\d$/);
 die("$0: $Year: Feil format på året\n") unless ($Year =~ /^\d\d\d\d$/);
 
-$time_utc = timegm($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
-$time_sec = timelocal($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
-@time_arr = localtime($time_sec);
-$week_day = $time_arr[6];
-$utc_diff = ($time_utc-$time_sec)/3600;
+my $time_utc = timegm($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
+my $time_sec = timelocal($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
+my @time_arr = localtime($time_sec);
+my $week_day = $time_arr[6];
+my $utc_diff = ($time_utc-$time_sec)/3600;
 
 print("Etter ARGV: $Year-$Mon-$Day\n") if $Debug;
 print("\$dbk_dir = $dbk_dir\n") if $Debug;
@@ -91,9 +96,9 @@ print("\$opt_i = \"$opt_i\"\n") if $Debug;;
 
 # Sjekk at alle directories er på plass
 
-$year_dir = "$dbk_dir/$Year";
-$dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
-$lock_dir = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
+my $year_dir = "$dbk_dir/$Year";
+my $dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
+my $lock_dir = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
 
 umask(0);
 unless (-d $dbk_dir) {
@@ -132,8 +137,11 @@ unless (-f $dbk_file) {
 	close(FP);
 }
 
+my $min_size = 0; # Minimum size of file to prevent deletion
+
 if ($opt_t) {
-	$utc_str = sprintf("%s%02u00", $utc_diff < 0 ? "-" : "+", $utc_diff);
+	# {{{
+	my $utc_str = sprintf("%s%02u00", $utc_diff < 0 ? "-" : "+", $utc_diff);
 	$utc_str = "" unless $opt_z;
 	if (length($time_str)) {
 		$time_str .= $utc_str;
@@ -142,7 +150,7 @@ if ($opt_t) {
 	}
 	open(dbkFP, "+<$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for lesing+skriving+flock: $!\n");
 	flock(dbkFP, LOCK_EX) || die("$0: $dbk_file: Klarte ikke flock(): $!\n");
-	$which_line = &find_line($time_str);
+	my $which_line = &find_line($time_str);
 	if ($time_not_found) {
 		seek(dbkFP, 0, 2) || die("$dbk_file: Klarte ikke å seeke til slutten for å legge til LF: $!\n");
 		print(dbkFP "\n");
@@ -154,6 +162,7 @@ if ($opt_t) {
 	# $which_line++ if $time_not_found;
 	system("$Editor +$which_line $dbk_file") unless (length($opt_i) || length($opt_b));
 	$min_size = 49;
+	# }}}
 } else {
 	$min_size = 25;
 }
@@ -163,8 +172,8 @@ unless ($opt_b) {
 	system("clear");
 }
 
-@stat_info = stat($dbk_file);
-$file_size = $stat_info[7];
+my @stat_info = stat($dbk_file);
+my $file_size = $stat_info[7];
 if ($file_size < $min_size) {
 	print("Ingenting ble skrevet, så jeg sletter driten.\n");
 	unlink($dbk_file) || warn("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
@@ -177,6 +186,7 @@ exit(0);
 #### SUBRUTINER ####
 
 sub find_line {
+	# {{{
 	my $srch_time = shift;
 	my $last_line = 0;
 	my $Found = 0;
@@ -189,9 +199,11 @@ sub find_line {
 	}
 	$time_not_found = 1;
 	return($.+1);
+	# }}}
 } # find_line()
 
 sub insert_time {
+	# {{{
 	my ($time_str, $line_num) = @_;
 	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_time(): $!\n");
 	my @Linjer = <dbkFP>;
@@ -201,9 +213,11 @@ sub insert_time {
 	foreach(@Linjer) {
 		print(dbkFP $_);
 	}
+	# }}}
 } # insert_time()
 
 sub insert_file {
+	# {{{
 	my ($file_name, $line_num) = @_;
 	local *LocFP;
 	seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_file(): $!\n");
@@ -219,9 +233,11 @@ sub insert_file {
 	foreach(@Linjer) {
 		print(dbkFP $_);
 	}
+	# }}}
 } # insert_file()
 
 sub print_help {
+	# {{{
 	my $Retval = shift;
 	print <<END;
 
@@ -242,8 +258,9 @@ Klokkeslettet kan spesifiseres hvor som helst, men må starte med formatet
 
 END
 	exit($Retval);
+	# }}}
 } # print_help()
 
 __END__
 
-#### End of file $Id: dbk,v 1.14 2002/02/24 16:42:19 sunny Exp $ ####
+#### End of file $Id: dbk,v 1.14.2.1 2003/07/09 13:29:17 sunny Exp $ ####
