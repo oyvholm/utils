@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+# Kommenterer ut linjer.
+# $Id: commout,v 1.1 1999/05/07 00:42:17 sunny Exp $
+
+while (<>) {
+	s/^(.*)$/# $1/g;
+	print "$_";
+}
