@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=====================================================
-# $Id: cvse,v 1.3 2003/05/25 20:03:59 sunny Exp $
+# $Id: cvse,v 1.4 2003/06/06 04:05:49 sunny Exp $
 # Edit cvs log messages based on output from “cvs log”
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License
@@ -141,8 +141,6 @@ sub change_message {
 	my $compare_text = get_log_message($File, $Rev);
 	if ($Txt ne $compare_text) {
 		print("\nChanging message for $File,v $Rev ...\n");
-		print("==== Original text in $File $Rev \x7B\x7B\x7B ====\n$compare_text==== \x7D\x7D\x7D ====\n");
-		# print("==== New text for $File $Rev \x7B\x7B\x7B ====\n$Txt==== \x7D\x7D\x7D ====\n");
 		if (!defined($missing_file{$File}) && !(-e $File)) {
 			# File does not exist in this revision, change revision to make it appear and make it possible for CVS to update the message {{{
 			print("$File not found, running cvs update with random revisions to try to make it appear...\n");
@@ -252,7 +250,7 @@ cvse -- CVSEdit -- edit CVS log messages
 
 =head1 REVISION
 
-$Id: cvse,v 1.3 2003/05/25 20:03:59 sunny Exp $
+$Id: cvse,v 1.4 2003/06/06 04:05:49 sunny Exp $
 
 =head1 SYNOPSIS
 
@@ -389,4 +387,4 @@ cvs(1)
 
 # vim600: set fdm=marker fdc=3 fenc=utf8 :
 
-# End of file $Id: cvse,v 1.3 2003/05/25 20:03:59 sunny Exp $
+# End of file $Id: cvse,v 1.4 2003/06/06 04:05:49 sunny Exp $
