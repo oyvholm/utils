@@ -27,4 +27,15 @@ echo -e "======== rsync -av $osvim/ vim \x7B\x7B\x7B"
 rsync -av $osvim/ vim
 echo -e "\x7D\x7D\x7D"
 
+cd $vimdir/vim || { echo "cd $vimdir/vim: Klarte ikke chdir like før patchinga." >&2; exit 1; }
+errfound=0
+echo -e "======== Patcher filer... \x7B\x7B\x7B"
+for _vp in $HOME/bin/Patch/vim/*; do
+    echo ======== Patcher $_vp ========
+    patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
+done
+echo -e "\x7D\x7D\x7D"
+[ "$errfound" = "1" ] && { exit 1; }
+exit 0
+
 # vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :

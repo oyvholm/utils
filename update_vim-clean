@@ -18,12 +18,4 @@ until cvs upd -dC; do
     echo våken.
 done
 
-errfound=0
-for _vp in $HOME/bin/Patch/vim/*; do
-    echo ======== Patcher $_vp ========
-    patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
-done
-[ "$errfound" = "1" ] && { exit 1; }
-exit 0
-
 # vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :
