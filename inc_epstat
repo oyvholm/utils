@@ -1,0 +1,11 @@
+#!/usr/bin/perl -w
+
+# $Id: inc_epstat,v 1.1 2002/06/18 03:19:12 sunny Exp $
+# Filter for å gjøre epstat-format brukbart i gnuplot.
+my $Count = 0;
+
+while (<>) {
+	$Count++;
+	s/^(\d+)/$1\t$Count/;
+	print;
+}
