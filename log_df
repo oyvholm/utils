@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# $Id: log_df,v 1.5 2003/10/03 05:47:13 sunny Exp $
+# $Id: log_df,v 1.6 2003/10/05 07:19:06 sunny Exp $
 
 logdir=$HOME/log
 
 [ -d $logdir ] || mkdir -p logdir || { echo "mkdir $logdir: På trynet" >&2, exit 1; }
 
-lockname=$logdir/df.log.LOCK
+lockname=$logdir/.df.log.swp
 
 [ -r $logdir/.disks ] || { echo "$logdir/.disks finnes ikke, avbryter." >&2; exit 1; }
 until mkdir $lockname 2>/dev/null; do
