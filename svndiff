@@ -14,9 +14,9 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_c, $opt_h) =
-    (    "",      0);
-getopts('c:h') || die("Option error. Use -h for help.\n");
+our ($opt_a, $opt_c, $opt_h) =
+    (     0,     "",      0);
+getopts('ac:h') || die("Option error. Use -h for help.\n");
 
 # Change this to the default diff command to use
 my $Cmd = "vimdiff";
@@ -33,6 +33,19 @@ length($opt_c) && ($Cmd = $opt_c);
 for my $Curr (@ARGV) {
     D("ARG = \"$Curr\"\n");
     diff_file($Curr);
+}
+
+if ($opt_a) {
+    if (open(PipeFP, "svn stat -q |")) {
+        while (<PipeFP>) {
+            if (/^M......(.*)/) {
+                diff_file($1);
+            }
+        }
+        close(PipeFP);
+    } else {
+        warn("$progname: Error opening \"svn stat -q\" pipe");
+    }
 }
 
 sub diff_file {
@@ -82,6 +95,8 @@ Usage: $progname [options] file
 
 Options:
 
+-a    Run $progname on every modified file in current directory and all 
+      subdirectories. Needs the svn command-line client.
 -c x  Use x as the diff command. Default: "$Cmd".
 -h    Show this help.
 
