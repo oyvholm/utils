@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# $Id: bigsh,v 1.8 2004/03/22 15:02:04 sunny Exp $
+# $Id: bigsh,v 1.9 2004/03/22 15:09:13 sunny Exp $
 # Fyrer opp en stor xterm i X
 
-smallfont=0
+smallfont=1
 [ -e /carmbb.mrk ] && { smallfont=1; }
 [ "$1" = "--small" ] && { smallfont=1; shift; }
 [ "$1" = "--big" ] && { smallfont=0; shift; }
