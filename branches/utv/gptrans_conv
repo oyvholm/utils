@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gptrans_conv,v 1.10.2.3 2003/07/27 23:31:45 sunny Exp $
+# $Id: gptrans_conv,v 1.10.2.4 2003/08/03 02:34:44 sunny Exp $
 # Konverterer mellom diverse GPS-formater
 # Laget av Øyvind A. Holm — sunny@sunbase.org
 # Lisens: GNU GPL
@@ -12,7 +12,7 @@ use Time::Local qw { timegm_nocheck };
 
 my $Debug = 0;
 
-my $rcs_str = '$Id: gptrans_conv,v 1.10.2.3 2003/07/27 23:31:45 sunny Exp $';
+my $rcs_str = '$Id: gptrans_conv,v 1.10.2.4 2003/08/03 02:34:44 sunny Exp $';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",      0,      0,      0);
@@ -387,66 +387,8 @@ sub ddd_to_dms {
 	D("Neg = $Neg , D = $Deg , M = $Min , S = $Sec\n");
 	$Retval = sprintf("%s%.0f\xB0%02.0f'%04.1f\"", $Neg ? "-" : "", $Deg, $Min, $Sec);
 	return $Retval;
-	# CO: Gammel greie som jeg brukte. hadde bråk med 60 sekunder i f.eks. 3.4 . Lar den ligge her til jeg har CVS’et greiene. {{{
-	# begin-base64 644 -
-	# H4sIAOffID8CA21SzU7CQBA+w1NMVo2tgVJiJEjDxXjQgzGRyKkJaditLrRb
-	# szsl+ia+AD6DnvsmPon702pBjvPNfN9889PJ3+B4nmQwBfXMU4y6HYM8MNxY
-	# kJCo66CbopQa4AI9Q/B1pSX2py6n42uPGIQhMgkGm1jtWBC/UbnjoiUCZzAK
-	# 20qeLRjU6I6eTuzK1dm0+pSAshRLgAnExJYQV9SpR2v1Ox+FYVu8FJTV/MPs
-	# wdRx9v0cpLghZ2xp9vkidd/UIyfBMCU9aBnwIziCx3WZIeSMAhNAmeJ5kvV0
-	# bAIE3WHDlUJQ1VY4KK+2sKk+JAvg+/2rvTTTcFAr79nUqX9ro5QusFjQXHm+
-	# nsDq6NJmlJqZICSZNfK0KiQGzVL+fsPePX69Cs3VTo2LWP+LHm3OrVlRrEFl
-	# HJmd8nZ23x+PLy77Q1glwb4R+1MgGZZSMOncuE6/53DJ5jmj7g+OaD/6vAIA
-	# AA==
-	# ====
-	# }}}
 	# }}}
 }
-
-=pod
-
-toDMS() henta fra gpstrans-0.39 . Brukes i ddd_to_dms(). {{{
-
-/****************************************************************************/
-/* Convert degrees to dd mm'ss.s" (DMS-Format)                              */
-/****************************************************************************/
-char *
-toDMS (double a)
-{
-  short neg = 0;
-  double d, m, s;
-  static char dms[20];
-
-  if (a < 0.0)
-    {
-      a = -a;
-      neg = 1;
-    }
-  d = (double) ((int) a);
-  a = (a - d) * 60.0;
-  m = (double) ((int) a);
-  s = (a - m) * 60.0;
-
-  if (s > 59.5)
-    {
-      s = 0.0;
-      m += 1.0;
-    }
-  if (m > 59.5)
-    {
-      m = 0.0;
-      d += 1.0;
-    }
-  if (neg)
-    d = -d;
-
-  sprintf (dms, "%.0f°%02.0f'%04.1f\"", d, m, s);
-  return dms;
-}
-
-}}}
-
-=cut
 
 sub D {
 	# Skriver ut debuggingsmeldinger hvis $Debug . {{{
@@ -455,4 +397,6 @@ sub D {
 	# }}}
 }
 
-# End of file $Id: gptrans_conv,v 1.10.2.3 2003/07/27 23:31:45 sunny Exp $
+# vim: fdm=marker syntax=perl fenc=utf-8 :
+
+# End of file $Id: gptrans_conv,v 1.10.2.4 2003/08/03 02:34:44 sunny Exp $
