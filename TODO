@@ -1,0 +1,7 @@
+$Id: TODO,v 1.1 2000/02/08 02:12:50 sunny Exp $
+
+mklist:
+  - Mulighet for å velge melding via et -m-parameter eller noe sånt.
+
+mvdirnewest:
+  - verbose-parameter.
