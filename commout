@@ -1,9 +1,15 @@
 #!/usr/bin/perl
 
 # Kommenterer ut linjer. Dødsavansert.
-# $Id: commout,v 1.3 1999/05/11 16:07:58 sunny Exp $
+# $Id: commout,v 1.4 1999/07/05 15:00:51 sunny Exp $
 
-while (<>) {
-	s/^(\t*)/$1# /;
+if ($#ARGV > -1) {
+	$comm_pattern = $ARGV[0];
+} else {
+	$comm_pattern = '#';
+}
+
+while (<STDIN>) {
+	s/^(\t*)/$1$comm_pattern /;
 	print;
 }
