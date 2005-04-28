@@ -13,15 +13,18 @@
 use strict;
 use File::Copy;
 use File::Path;
+use Digest::MD5;
 use Getopt::Std;
 
 $| = 1;
 
-our ($opt_c, $opt_d, $opt_h, $opt_l, $opt_L, $opt_m, $opt_o, $opt_q) =
-    (     0,     "",      0,      0,      0,      0,      0,      0);
-our ($opt_s, $opt_S, $opt_v) =
-    (     0,      0,      0);
-getopts('cd:hlLmoqsSv') || die("Option error. Use -h for help.\n");
+our $Debug = 0;
+
+our ($opt_c, $opt_d, $opt_h, $opt_l, $opt_L, $opt_m, $opt_o, $opt_O) =
+    (     0,     "",      0,      0,      0,      0,     "",      0);
+our ($opt_q, $opt_s, $opt_S, $opt_v) =
+    (     0,      0,      0,      0);
+getopts('cd:hlLmo:OqsSv') || die("Option error. Use -h for help.\n");
 
 my $VERSION = "0.5";
 
@@ -35,6 +38,20 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 my $DEFAULT_DIR = "%Y/%m/%d";
 my $skip_dirs = $opt_s ? 1 : 0;
 my $skip_files = ($opt_s | $opt_S) ? 1 : 0;
+
+if ($opt_o =~ /[^b]/) {
+    die("Uknown value in -o option. Use -h for help.\n");
+}
+my $replace_if_bigger = ($opt_o =~ /b/) ? 1 : 0;
+
+D(<<END);
+
+replace_if_bigger = "$replace_if_bigger"
+skip_files = "$skip_files"
+skip_dirs = "$skip_dirs"
+opt_o = "$opt_o"
+
+END
 
 my $simul_str = $skip_files ? " (simulating)" : "";
 
@@ -99,11 +116,32 @@ LOOP: while (<>) {
                 $Dir =~ s/%%/%/g;
 
                 my $Dest = "$Dir/$File";
+                my $write_ok = 1;
 
-                if (!$opt_o && -e $Dest) {
-                    $opt_q || warn("$Dest: File already exists, will not overwrite\n");
-                } else {
-                    # {{{
+                if (!$opt_O && -e $Dest) {
+                    if (length($opt_o)) {
+                        D("!\$opt_O && -e \$Dest\n");
+                        my ($f_dev, $f_ino, $f_mode, $f_nlink, $f_uid,
+                            $f_gid, $f_rdev, $f_size, $f_atime, $f_mtime,
+                            $f_ctime, $f_blksize, $f_blocks) = stat($From);
+                        my ($d_dev, $d_ino, $d_mode, $d_nlink, $d_uid,
+                            $d_gid, $d_rdev, $d_size, $d_atime, $d_mtime,
+                            $d_ctime, $d_blksize, $d_blocks) = stat($Dest);
+                        D("f_size = \"$f_size\", d_size = \"$d_size\", " .
+                          "replace_if_bigger = $replace_if_bigger\n");
+                        if ($replace_if_bigger && ($f_size <= $d_size)) {
+                            warn("\"$From\" is not bigger than \"$Dest\", " .
+                                 "will not overwrite\n");
+                            # unlink($From) || warn("$From: Can’t delete file: $!\n");
+                            next LOOP;
+                        }
+                    } else {
+                        $write_ok = 0;
+                    }
+                }
+
+                if ($write_ok) { # FIXME
+                    D("Inside \$write_ok\n");
                     $skip_dirs ||
                         -d $Dir ||
                             mkpath($Dir, $opt_v ? 1 : 0, 0777) ||
@@ -143,6 +181,8 @@ LOOP: while (<>) {
                         $opt_v && print("OK\n");
                     }
                     # }}}
+                } else {
+                    $opt_q || warn("$Dest: File already exists, will not overwrite\n");
                 }
                 # }}}
             } else {
@@ -154,6 +194,20 @@ LOOP: while (<>) {
         # }}}
     }
 }
+
+sub D {
+    chomp(my $Txt = shift);
+    my @call_info = caller;
+    $Debug && print(STDERR "DEBUG $call_info[2]: $Txt\n");
+} # D()
+
+sub md5sum {
+    my $File = shift;
+    open(FILE, $File) || die("$File: $!");
+    binmode(FILE);
+
+    return (Digest::MD5->new->addfile(*FILE)->hexdigest, " $File\n");
+} # md5sum()
 
 sub usage {
     # Send the help message to stdout {{{
@@ -198,7 +252,26 @@ Options:
 -m    Use the file modification time instead of date found in the file 
       name. All files will be affected, not only those with a date in 
       the file name.
--o    Overwrite existing files
+-o X  Overwrite file if certain conditions is met:
+
+        i  File has identical data
+        b  New file is bigger
+        s  New file is smaller
+        o  New file is older
+        n  New file is newer
+
+      Examples:
+
+        -o bn
+          File is bigger or newer
+        -o i
+          File is identical
+        -osi
+          File is smaller or identical
+
+      (This is a TODO, only the 'b' option is implemented.)
+
+-O    Always overwrite.
 -q    Be quiet, suppress non-critical messages.
 -s    Simulate, don't really move or copy files.
 -S    Semisimulate. Don’t touch the files, only create the directory 
