@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Henter en hel site og kamuflerer seg litt.
+
+wget -m -U 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)' $*

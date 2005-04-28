@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Oppdaterer ~/src/other/vim/vim.clean
+#=======================================================================
+
+vimclean=$HOME/src/other/vim/vim.clean
+
+# [ -e /carmbb.mrk ] && { echo "Man er på carmbb, og her er det som kjent dårlig med nettkontakt. Synd, egentlig." >&2; exit 1; }
+
+echo -e "======== update_vim-clean \x7B\x7B\x7B"
+
+[ -d $vimclean ] || { echo "$vimclean: Katalogen finnes ikke. Dauer." >&2; exit 1; }
+
+cd $vimclean || { echo "Nåh, klarte ikke \"cd $vimclean\" selv om den visstnok finnes. Skjønner ikke bæret og driter i resten." >&2; exit 1; }
+until cvs upd -dAPC; do
+    echo -n sleep 20...
+    sleep 20
+    echo våken.
+done
+
+echo -e "======== update_vim-clean \x7D\x7D\x7D"
+
+# vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :

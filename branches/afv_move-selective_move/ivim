@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# $Id$
+# Indent-Vim, viser indent i form av folder.
+
+ivimnavn=-
+
+[ "$1" != "" ] && { ivimnavn=$*; }
+
+vim -c "set sw=1 fdm=indent" $ivimnavn

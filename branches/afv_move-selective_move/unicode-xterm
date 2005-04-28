@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# $Id$
+# Midlertidig på sunba
+
+[ -e /sunba.mrk ] || { echo $0: Funker bare på sunba. Midlertidig greie.; exit 1; }
+
+pushd /home/sunny/local/lib/X11/fonts/
+xset fp rehash
+xset +fp ~/local/lib/X11/fonts
+popd
+xterm -u8 -fn 10x20 &
+# xterm -u8 -fn '-misc-fixed-medium-r-semicondensed--13-120-75-75-c-60-iso10646-1'
+# xterm -u8 -fn '-Misc-Fixed-Medium-R-Normal--20-200-75-75-C-100-ISO10646-1'

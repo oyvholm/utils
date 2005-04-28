@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#==================================================
+# $Id$
+# Legger en website inn i Cvs/imp-net .
+# Syntax: impnet [webnavn] [dato]
+#==================================================
+
+impdir=sunny@impnetcvs.sunbase.org:/home/sunny/Cvs/imp-net
+
+if [ "$1" = "" ]; then
+	cat <<END
+
+Syntax: impnet webnavn [dato]
+
+END
+	exit 1
+fi
+navn=$1
+
+if [ "$2" != "" ]; then
+	# Dato er spesifisert
+	dato=$2
+else
+	# Vi bruker datoen akkurat nå
+	dato=$(date -u +"%Y%m%dT%H%M%SZ")
+fi
+
+cvs -d $impdir import -d -kb -I \! raw www $1-$dato

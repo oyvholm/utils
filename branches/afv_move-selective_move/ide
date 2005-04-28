@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# $Id$
+
+cd $HOME/src/svn/div/trunk/txt || { echo "cd $HOME/src/svn/div/trunk/txt: På trynet." >&2; exit 1; }
+svn up ide.txt || { echo "svn update-feil" >&2; exit 1; }
+$EDITOR ide.txt
+svn ci ide.txt

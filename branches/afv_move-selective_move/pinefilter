@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# ╔══════════════════════════════════════════════════════════════
+# ║ $Id$
+# ║ pine(1) har ikke helt støtte for UTF-8 enda, så meldingene
+# ║ filteres gjennom dette scriptet før visning.
+# ╚══════════════════════════════════════════════════════════════
+
+if [ "$1" = "" ]; then
+	charset=ISO-8859-1
+else
+	charset=$1
+fi
+
+recode $charset..utf-8

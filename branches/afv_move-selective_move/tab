@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+# $Id$
+
+$Tabs = $ARGV[0] ? $ARGV[0] : 1;
+
+while (<STDIN>) {
+	for (1..$Tabs) {
+		print "\t";
+	}
+	print "$_";
+}
+
+#### End of file $Id$ ####

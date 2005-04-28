@@ -1,0 +1,65 @@
+#!/usr/bin/perl -w
+
+#==============================================================================
+# $Id$
+# Sorts the output from "cvs log" into chronological order.
+# Made by Oyvind A. Holm <sunny@sunbase.org>
+#==============================================================================
+
+use strict;
+
+my ($curr_date, $curr_rev) = ("", "");
+my @Curr = ();
+my %Entry = ();
+my $Rev = "";
+my $Line = "";
+
+while (<>) {
+	$Line = $_;
+	if ($Line =~ /^----------------------------$/) {
+		if (length($Rev) && scalar(@Curr)) {
+			$Entry{$Rev} = join("", @Curr);
+		}
+		@Curr = ();
+		push(@Curr, $Line);
+		$Line = <>;
+		if ($Line =~ /^revision (\S+)/) {
+			$curr_rev = $1;
+		} else {
+			warn("Expected \"revision: \", got \"$Line\".\"");
+		}
+		push(@Curr, $Line);
+		$Line = <>;
+		if ($Line =~ /^date: (\S+\s+\S+) .*/) {
+			$curr_date = $1;
+		} else {
+			warn("Expected \"date: \", got \"$Line\".\"");
+		}
+		push(@Curr, $Line);
+		# $Rev = unpack("H*", "$curr_date$curr_rev");
+		$Rev = "$curr_date$curr_rev";
+	} elsif ($Line =~ /^=============================================================================$/) {
+		if (length($Rev) && scalar(@Curr)) {
+			$Entry{$Rev} = join("", @Curr);
+		}
+		my @Arr = ();
+		while (my ($l_name, $l_val) = each %Entry) {
+			push(@Arr, $l_name);
+		}
+		for (sort @Arr) {
+			print($Entry{$_});
+		}
+		($curr_date, $curr_rev, $Rev) = ("", "", "");
+		%Entry = ();
+		@Curr = ();
+		print("$Line");
+	} else {
+		if (length($Rev)) {
+			push(@Curr, $_);
+		} else {
+			print("$Line");
+		}
+	}
+}
+
+__END__

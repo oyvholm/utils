@@ -1,0 +1,542 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Edit cvs log messages based on output from “cvs log”
+#
+# Character set used in this file: UTF-8
+# Made by Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License. See end of file for legal stuff.
+#=======================================================================
+
+use strict;
+
+use Getopt::Std;
+our ($opt_d, $opt_h, $opt_i, $opt_s, $opt_v) =
+    (    "",      0,      0,      0,      0);
+getopts('d:hisv') || die("Option error. Use -h for help.\n");
+
+$| = 1;
+
+# When changing the version number, also update the POD.
+our $VERSION = "0.5";
+
+our $rcs_id = '$Id$';
+our $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+if ($opt_h) {
+    print_help(0);
+}
+
+my $Simulate = $opt_s;
+my $has_diff = 0;
+($has_diff = 1) if (`diff --version` =~ /diff/);
+my ($curr_rev, $curr_rcs_file, $curr_work_file, $total_ignored) =
+   (       "",             "",              "",             "");
+my @Curr = ();
+my %Entry = ();
+my ($Rev, $Line) =
+   (  "",    "");
+my ($header_done, $subheader_done, $tmp_count) =
+   (           0,               0,          0);
+my %Text = ();
+my %missing_file = ();
+my ($start_utc, $total_skipped, $total_changed, $total_files) =
+   (      time,              0,              0,            0);
+my @all_revs = ();
+my $eroot_str = "";
+
+defined($ENV{CVSE_ROOT}) && ($eroot_str = " -d $ENV{CVSE_ROOT}");
+length($opt_d) && ($eroot_str = " -d $opt_d");
+
+while (<>) {
+    $Line = $_;
+    if ($Line =~ /^-{28}$/) {
+        # New revision {{{
+        $header_done = 1;
+        if (length($Rev) && scalar(@Curr)) {
+            $Entry{$Rev} = join("", @Curr);
+        }
+        @Curr = ();
+        $Line = <>;
+        if ($Line =~ /^revision ([\d\.]+)/) {
+            $curr_rev = $1;
+        } else {
+            die("Line $.: Expected \"revision \", " .
+                "got \"$Line\".\". Aborting.");
+        }
+        $Line = <>;
+        unless ($Line =~ /^date: \S+\s+\S+ .*/) {
+            warn("Expected \"date: \", got \"$Line\".\".");
+        }
+        $Line = <>;
+        unless ($Line =~ /^branches: .*;$/) {
+            push(@Curr, $Line);
+        }
+        $Rev = "$curr_work_file,v.$curr_rev";
+        # }}}
+    } elsif ($Line =~ /^={77}$/) {
+        # List finished for this file, change the modified messages {{{
+        $header_done = 0;
+        $total_files++;
+        if (length($Rev) && scalar(@Curr)) {
+            $Entry{$Rev} = join("", @Curr);
+        }
+        @all_revs = ();
+        while (my ($l_name, $l_val) = each %Entry) {
+            push(@all_revs, $l_name);
+        }
+        for (@all_revs) {
+            # Scan through all revisions {{{
+            my $Curr = $_;
+            my ($a_file, $a_rev) =
+               (     "",     "");
+            if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
+                ($a_file, $a_rev) =
+                (     $1,     $2);
+                if (length($a_file) && length($a_rev)) {
+                    change_message($a_file, $a_rev, $Entry{$Curr});
+                }
+            } else {
+                warn("Wrong revision format \"$Curr\", " .
+                     "skipping revision\n");
+            }
+            # }}}
+        }
+        ($curr_rev, $Rev) =
+        (       "",   "");
+        %Entry = ();
+        @Curr = ();
+        # }}}
+    } elsif (!$header_done && $Line =~ /^RCS file: (.*)/) {
+        $curr_rcs_file = $1;
+    } elsif (!$header_done && $Line =~ /^Working file: (.*)/) {
+        $curr_work_file = $1;
+    } else {
+        # Regular log message {{{
+        if (length($Rev)) {
+            push(@Curr, $_);
+        }
+        # }}}
+    }
+}
+
+my $Seconds = time-$start_utc;
+printf("\n%u file%s processed%s. %u revision%s changed, " .
+       "%u revision%s skipped. %u second%s used.\n",
+       $total_files,   $total_files   == 1 ? "" : "s",
+       $opt_i ? (", $total_ignored ignored") : "",
+       $total_changed, $total_changed == 1 ? "" : "s",
+       $total_skipped, $total_skipped == 1 ? "" : "s",
+       $Seconds,       $Seconds       == 1 ? "" : "s");
+
+exit 0;
+
+sub change_message {
+    # Changes a log message for a specific revision of a file if it has 
+    # changed.
+    # {{{
+
+    my ($File, $Rev, $Txt) = @_;
+    my $esc_file = escape_filename($File);
+
+    if ($opt_i && !-e $File) {
+        unless (defined($missing_file{$File})) {
+            print("Ignoring non-existing file $esc_file\n");
+            $missing_file{$File} = 1;
+            $total_files--;
+            $total_ignored++;
+        }
+        return;
+    }
+    my $tmp_file = "cvse.$$.$tmp_count.tmp"; $tmp_count++;
+    my $compare_text = get_log_message($esc_file, $Rev);
+    if ($Txt ne $compare_text) {
+        print("\nChanging message for $esc_file rev. $Rev ...\n");
+
+        if (!defined($missing_file{$File}) && !(-e $File)) {
+            # File does not exist in this revision, change revision to 
+            # make it appear and make it possible for CVS to update the 
+            # message
+            # {{{
+
+            print("$esc_file not found, running cvs update with random " .
+                  "revisions to try to make it appear...\n");
+            for my $Curr (@all_revs) {
+                if ($Curr =~ /^(.+),v\.([\d\.]+?)$/) {
+                    my $t_rev = $2;
+                    my $ex_str = "cvs$eroot_str upd -r $t_rev $esc_file";
+                    print("Executing \"$ex_str\"\n");
+                    system($ex_str);
+                    if (-e $File) {
+                        print("File exists with (old) revision $t_rev, " .
+                              "CVS is now able to change the log message.\n");
+                        last;
+                    }
+                }
+            }
+            if (!-e $File && !defined($missing_file{$File})) {
+                warn("$esc_file: File does still not exist, messages for " .
+                     "this file will not be changed\n");
+                $missing_file{$File} = 1;
+            }
+            # }}}
+        }
+        my @Arr = split(/\n/, $Txt);
+        if (open(TxtFP, ">$tmp_file")) {
+            for (@Arr) {
+                my $Line = $_;
+                if (/^date: .*/ || /^branches: .*/) {
+                    # NOP
+                } else {
+                    print(TxtFP "$Line\n");
+                }
+            }
+            close(TxtFP) || die("$tmp_file: Error closing file: $!");
+            my $exec_str = "cvs$eroot_str admin " .
+                           "-m$Rev:\"`cat $tmp_file`\" $esc_file";
+            my $Deb = "";
+            $Deb = get_log_message($esc_file, $Rev);
+            if ($has_diff) {
+                if (open(DiffFP, ">BEFORE.cvse")) {
+                    print(DiffFP $Deb);
+                    close(DiffFP);
+                }
+            } else {
+                print("==== BEFORE: $esc_file $Rev \x7B\x7B\x7B ====\n" .
+                      "$Deb==== \x7D\x7D\x7D ====\n");
+            }
+            printf("%s \"%s\"\n", $Simulate ? "Simulating"
+                                            : "Executing", $exec_str);
+            system($exec_str) unless $Simulate;
+            $Deb = get_log_message($esc_file, $Rev);
+            unlink($tmp_file) || warn("$tmp_file: Cannot remove file: $!");
+            if ($has_diff) {
+                if (open(DiffFP, ">AFTER.cvse")) {
+                    print(DiffFP $Deb);
+                    close(DiffFP);
+                }
+                print(join("",
+                        "==== Log diff for $File,v $Rev \x7B\x7B\x7B ====\n",
+                        `diff -u BEFORE.cvse AFTER.cvse`,
+                        "==== \x7D\x7D\x7D ====\n"
+                    )
+                );
+                for ("BEFORE.cvse", "AFTER.cvse") {
+                    unlink($_) || warn("$_: Cannot remove file: $!");
+                }
+            } else {
+                print("==== AFTER : $esc_file $Rev \x7B\x7B\x7B ====\n" .
+                      "$Deb==== \x7D\x7D\x7D ====\n") if $opt_v;
+            }
+            print("\n");
+        } else {
+            warn("Cannot open temporary file \"$tmp_file\", " .
+                 "log messages not changed: $!");
+        }
+        $total_changed++;
+    } else {
+        print("Message for $esc_file rev. $Rev is unchanged\n") if $opt_v;
+        $total_skipped++;
+    }
+    # }}}
+}
+
+sub get_log_message {
+    # Returns the cvs log message for the specified revision of a file. 
+    # Used by change_message().
+    # {{{
+
+    my ($File, $Rev) = @_;
+    my $header_done = 0;
+    my @Arr = ();
+    my $getl_call = "get_log_message(\"$File\", \"$Rev\")";
+
+    if (open(PipeFP, "cvs$eroot_str log -r$Rev $File |")) {
+        while (my $Line = <PipeFP>) {
+            if ($Line =~ /^={77}$/) {
+                if (!$header_done) {
+                    # No /^----------------------------$/ found
+                    die("Header terminator line not found in $getl_call, " .
+                        "incompatible version of CVS?");
+                } else {
+                    last;
+                }
+            }
+            push(@Arr, $Line) if ($header_done);
+            if (!$header_done && $Line =~ /^-{28}$/) {
+                if ($header_done) {
+                    # FIXME: Should we die instead?
+                    warn("Found extra header separator in $getl_call, " .
+                         "continuing...\n");
+                }
+                $header_done = 1;
+                $Line = <PipeFP>;
+                if ($Line =~ /^revision (\S+)/) {
+                    my $chk_rev = $1;
+                    unless ($chk_rev eq $Rev) {
+                        die("cvs log returned wrong revision \"$chk_rev\", " .
+                            "expected \"$Rev\"");
+                    }
+                } else {
+                    die("$getl_call expected \"^revision \", " .
+                        "got \"$Line\".\".");
+                }
+                $Line = <PipeFP>;
+                unless ($Line =~ /^date: .*;\s+author: .*;/) {
+                    die("Expected \"date: \", got \"$Line\".\n");
+                }
+                $Line = <PipeFP>;
+                unless ($Line =~ /^branches: .+;$/) {
+                    push(@Arr, $Line);
+                }
+            }
+        }
+        close(PipeFP);
+        if ($header_done) {
+            # print("======= $getl_call returns: ===========\n");
+            # print(join("", @Arr));
+            # print("============\n");
+            return(join("", @Arr));
+        } else {
+            warn("Header separator not found, " .
+                 "$getl_call returns nothing\n");
+            return("");
+        }
+    } else {
+        die("Can't open cvs pipe: $!");
+    }
+    # }}}
+}
+
+sub escape_filename {
+    # Kludge for handling file names with spaces and characters that 
+    # trigger shell functions
+    # {{{
+
+    my $Name = shift;
+    # $Name =~ s/\\/\\\\/g;
+    # $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
+    $Name =~ s/'/\\'/g;
+    $Name = "'$Name'";
+    return($Name);
+    # }}}
+}
+
+sub print_help {
+    # Send the help message to stdout
+    # {{{
+    my $Retval = shift;
+    print(<<END);
+cvse v$VERSION -- $id_date
+
+Syntax: cvse [options] [logfile [...]]
+
+Options:
+
+-d x  Use x as CVSROOT instead of the cvsroot specified in CVS/Root or 
+      the CVSE_ROOT environment variable.
+-h    Print this help message.
+-i    Ignore files which doesn't exist in this revision. Avoids update 
+      to random revisions.
+-s    Simulate only. Normal execution except the messages are not 
+      changed.
+-v    Verbose execution, print some extra progress messages.
+
+END
+    exit($Retval);
+    # }}}
+}
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+cvse -- CVSEdit -- edit CVS log messages
+
+=head1 REVISION
+
+Version: 0.5
+
+$Id$
+
+=head1 SYNOPSIS
+
+cvse [options] [logfile [...]]
+
+=head1 DESCRIPTION
+
+B<cvse> is a Perl script which changes CVS log messages for one or many 
+files based on the output from a regular S<C<cvs log>> command.
+This makes it easy to edit lots of messages and then run the script once 
+which changes all the modified messages.
+
+An easy way to do this can be:
+
+=over 4
+
+=item 1. Go to the directory where your source files are, or check out a 
+new revision into an empty directory.
+
+=item 2. Run C<cvs log E<gt>logfile.txt>
+
+=item 3. Edit F<logfile.txt> (or whatever you call it) with your 
+favourite text editor.
+
+=item 4. Run C<cvse logfile.txt>
+
+=back
+
+All the messages you modified will now be changed by CVS using the 
+S<C<cvs admin>> command.
+Unchanged messages will not be updated.
+
+Another, faster way is to just read the output into your editor, edit it 
+and filter the file through cvse.
+An example on how to do this in the vi(1) editor:
+
+  :r !cvs log myfile.c
+  [make changes]
+  :%!cvse
+
+Done!
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-d x>
+
+Use x as CVSROOT instead of the cvsroot specified in F<CVS/Root> or the 
+C<CVSE_ROOT> environment variable.
+
+=item B<-i>
+
+Ignore files which doesn't exist in this revision.
+Avoids update to random revisions.
+
+=item B<-h>
+
+Print a brief help summary.
+
+=item B<-s>
+
+Simulate only.
+Normal execution except the messages are not changed.
+
+=item B<-v>
+
+Verbose execution.
+Print some extra progress messages.
+
+=back
+
+=head1 ENVIRONMENT
+
+=over 4
+
+=item CVSE_ROOT
+
+Specifies which CVSROOT to use during the message update.
+Can be used to force direct access to the repository directories to 
+speed up things a lot if the current access method is client/server 
+based.
+As an example, if you have local access to the repository and your 
+current CVSROOT is
+
+  CVSROOT=user@cvs.example.com:/my/repository
+
+you can set
+
+  CVSE_ROOT=/my/repository
+
+to force CVS to work directly against the directory.
+This will improve the working speed dramatically because the client 
+doesn't have to connect to the CVS server for every operation.
+
+The C<-d> option will override this variable.
+
+=back
+
+=head1 BUGS
+
+Not really bugs, but:
+
+Due to the format of S<C<cvs log>> output, messages can't contain any 
+lines matching these patterns:
+
+  /^-{28}$/
+  /^={77}$/
+  /^date: \d\d\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d;\s+author: .*/
+  /^branches: .+;$/
+
+If any of these patterns are found, the script will either ignore the 
+line or interpret it as a message separator.
+
+CVS refuses to change the log message of a file that doesn't exist in 
+the current revision.
+When the script notices that a certain file doesn't exist on this branch 
+or in the current revision, it tries to restore an earlier revision with 
+S<C<cvs update>> to get the file in place.
+When the file exists, CVS is able to change the log message.
+This results in random revisions of missing files showing up, but 
+everything can be restored to normal with the usual S<C<cvs update -A>> 
+command.
+To avoid messing up source trees with lots of tags and revisions, it's 
+recommended to check out the files in a separate directory where the 
+script can work, or use the C<-i> option which ignores non-existing 
+files.
+If no revision can be restored, a warning is generated and no messages 
+for this file will be changed.
+
+This only applies to files that I<does not exist>, revisions of existing 
+files is untouched.
+
+Please send any bug reports or suggestions to the mail address below.
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+
+=head1 DOWNLOAD
+
+The newest version of the script can be found at 
+L<http://www.sunbase.org/src/cvse/>
+
+=head1 COPYRIGHT
+
+Copyright © 2003–2004 Free Software Foundation, Inc.
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+cvs(1)
+
+=cut
+
+# }}}
+
+# vim: set fdm=marker ts=4 sw=4 sts=4 et :
+# vim: set fo+=2w fo-=n fenc=utf8 :
+# End of file $Id$
