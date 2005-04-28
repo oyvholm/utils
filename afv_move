@@ -88,6 +88,7 @@ LOOP: while (<>) {
                     $Min  = sprintf("%02u", $Min);
                     $Sec  = sprintf("%02u", $Sec);
                 }
+
                 my $Dir = length($opt_d) ? $opt_d : $DEFAULT_DIR;
                 $Dir =~ s/%Y/$Year/g;
                 $Dir =~ s/%m/$Mon/g;
@@ -97,8 +98,10 @@ LOOP: while (<>) {
                 $Dir =~ s/%S/$Sec/g;
                 $Dir =~ s/%%/%/g;
 
-                if (!$opt_o && -e "$Dir/$File") {
-                    $opt_q || warn("$Dir/$File: File already exists, will not overwrite\n");
+                my $Dest = "$Dir/$File";
+
+                if (!$opt_o && -e $Dest) {
+                    $opt_q || warn("$Dest: File already exists, will not overwrite\n");
                 } else {
                     # {{{
                     $skip_dirs ||
@@ -108,35 +111,35 @@ LOOP: while (<>) {
                     if ($opt_c) {
                         $opt_v &&
                             print("Copying \"$From\" to " .
-                                  "\"$Dir/$File\"$simul_str...");
+                                  "\"$Dest\"$simul_str...");
                         $skip_files ||
-                            copy($From, "$Dir/$File") ||
-                                die("\ncopy(\"$From\", \"$Dir/$File\"): $!");
+                            copy($From, $Dest) ||
+                                die("\ncopy(\"$From\", \"$Dest\"): $!");
                         $opt_v && print("OK\n");
                     } elsif ($opt_L) {
                         $opt_v &&
                             print("Linking \"$From\" to " .
-                                  "\"$Dir/$File\"$simul_str...");
+                                  "\"$Dest\"$simul_str...");
                         $skip_files ||
-                            link($From, "$Dir/$File") ||
-                                die("\nlink(\"$From\", \"$Dir/$File\"): $!");
+                            link($From, $Dest) ||
+                                die("\nlink(\"$From\", \"$Dest\"): $!");
                         $opt_v && print("OK\n");
                     } elsif ($opt_l) {
                         $opt_v &&
-                            print("Symlinking \"$Path/$File\" to " .
-                                  "\"$Dir/$File\"$simul_str...");
+                            print("Symlinking \"$From\" to " .
+                                  "\"$Dest\"$simul_str...");
                         $skip_files ||
-                            symlink($From, "$Dir/$File") ||
+                            symlink($From, $Dest) ||
                                 die("\nsymlink(\"$From\", " .
-                                    "\"$Dir/$File\"): $!");
+                                    "\"$Dest\"): $!");
                         $opt_v && print("OK\n");
                     } else {
                         $opt_v &&
                             print("Moving \"$From\" to " .
-                                  "\"$Dir/$File\"$simul_str...");
+                                  "\"$Dest\"$simul_str...");
                         $skip_files ||
-                            move($From, "$Dir/$File") ||
-                                die("\nmove(\"$From\", \"$Dir/$File\"): $!");
+                            move($From, $Dest) ||
+                                die("\nmove(\"$From\", \"$Dest\"): $!");
                         $opt_v && print("OK\n");
                     }
                     # }}}
@@ -155,6 +158,7 @@ LOOP: while (<>) {
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
+
     print(<<END);
 
 $progname v$VERSION -- $id_date
@@ -176,13 +180,13 @@ Options:
 -d X  Place files under directory X
       Use the following modifiers for subtree layout:
 
-      %Y  Year with four digits
-      %m  Month (00..12)
-      %d  Day of month (00..31)
-      %H  Hour (00..23)
-      %M  Minutes (00..59)
-      %S  Seconds (00..61)
-      %%  Regular percent sign
+        %Y  Year with four digits
+        %m  Month (00..12)
+        %d  Day of month (00..31)
+        %H  Hour (00..23)
+        %M  Minutes (00..59)
+        %S  Seconds (00..61)
+        %%  Regular percent sign
 
       If the -d option is not specified, "$DEFAULT_DIR" will be used.
 
@@ -196,24 +200,29 @@ Options:
       the file name.
 -o    Overwrite existing files
 -q    Be quiet, suppress non-critical messages.
--s    Simulate, don't really move files
+-s    Simulate, don't really move or copy files.
 -S    Semisimulate. Don’t touch the files, only create the directory 
       structure. Useful for running tests with big amounts of data.
 -v    Verbose execution
+
+These options are likely to change at the moment.
 
 Note: Files on the command line will not be moved themselves, but shall 
 contain file names of the relevant files to be moved.
 
 Examples:
 
-ls | afv_move -v
-find /var/tmp/afvroot | afv_move -vl -d newdir/%Y-%m-%d/%H
-afv_move -vL /tmp/filenames.txt -d %Y/%Y-%m-%d
+  ls | afv_move -v
+  find /var/tmp/afvroot | afv_move -vl -d newdir/%Y-%m-%d/%H
+  afv_move -vL /tmp/filenames.txt -d %Y/%Y-%m-%d
+
+Made by Øyvind A. Holm <sunny\@sunbase.org>
+License: GNU General Public License ♥
 
 END
     exit($Retval);
     # }}}
-}
+} # usage()
 
 __END__
 
