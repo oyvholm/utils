@@ -1,0 +1,29 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Slipper bare ting som ser ut som en gyldig ep igjennom. For å ta så 
+# mye drit som mulig, slipper den bare gjennom 9-sifrede nummer som 
+# begynner på 9, og 10-sifrede nummer som begynner på 1. -v skriver ut 
+# ulovlige linjer.
+#
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2003–2004 Øyvind A. Holm <sunny@sunbase.org>
+#=======================================================================
+
+use strict;
+
+$| = 1;
+
+while (<>) {
+    chomp;
+    if (/\b(9\d{8})\b/ || /\b(1\d{9})\b/) {
+        print("$1\n");
+    }
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id$

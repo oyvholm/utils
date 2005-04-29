@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Konverterer cp1252 til UTF-8. Et resultat av latskap.
+
+iconv -f cp1252 -t utf-8 $*

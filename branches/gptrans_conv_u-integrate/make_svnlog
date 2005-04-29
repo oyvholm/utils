@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# $Id$
+
+unset LANG
+dest=/home/sunny/src/svn/svnlog/trunk
+lockd=$HOME/.make_svnlog.LOCK
+
+mkdir $lockd || { echo "$lockf: Klarte ikke å lage lockdir." >&2; exit 1; }
+cd /home/sunny/src/svn/svnlog/trunk/ || { echo "Klarte ikke cd /home/sunny/src/svn/svnlog/trunk/ ." >&2; rmdir $lockd; exit 1; }
+echo "Kjører svn status på filene..."
+svn st
+echo -n "Press ENTER..."
+read
+cd /home/sunny/Svn/ || { echo "Klarte ikke å gå til ~/Svn . Sikker på at vi er på sunba?" >&2; rmdir $lockd; exit 1; }
+
+for f in *; do
+	echo ========== $f
+	svn log -v --xml $SR/$f >$dest/$f.xml
+done
+svn log -v --xml http://svn.sunbase.org/repos/norwegian_vim >$dest/norwegian_vim.xml
+svn log -v --xml http://svn.sunbase.org/repos/sandbox >$dest/sandbox.xml
+svn log -v --xml http://svn.sunbase.org/repos/svnbook_nb >$dest/svnbook_nb.xml
+svn log -v --xml http://svn.sunbase.org/repos/ssark >$dest/ssark.xml
+svn log -v --xml http://svn.sunbase.org/repos/shwiki >$dest/shwiki.xml
+svn log -v --xml http://svn.sunbase.org/repos/svnutils >$dest/svnutils.xml
+svn log -v --xml http://svn.sunbase.org/repos/duppy >$dest/duppy.xml
+svn log -v --xml http://svn.sunbase.org/repos/sunny >$dest/pubsunny.xml
+
+rmdir $lockd

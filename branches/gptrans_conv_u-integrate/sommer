@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+
+# $Id$
+# Syntax: $0 år måned dag time min sek
+# Finner ut om datoen (norsk tid) er sommertid.
+# Returnerer 0 hvis vintertid, 1 hvis sommertid.
+
+use Time::Local;
+
+my ($Year, $Mon, $Day, $Hour, $Min, $Sec) = @ARGV;
+
+$Year += 1900 if ($Year < 100); # Heia år 2000
+my $GM = timegm($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
+my $LO = timelocal($Sec, $Min, $Hour, $Day, $Mon-1, $Year);
+
+my $Diff = ($GM-$LO)/3600;
+$GM =~ s/(^|\D)(\d{9})(\D|$)/@TA = localtime($2),sprintf("%s%04u-%02u-%02uT%02u:%02u:%02u%s", $1, $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0], $3)/ge;
+$LO =~ s/(^|\D)(\d{9})(\D|$)/@TA = localtime($2),sprintf("%s%04u-%02u-%02uT%02u:%02u:%02u%s", $1, $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0], $3)/ge;
+
+# print "GM = $GM\n";
+# print "LO = $LO\n";
+# print "\n";
+
+my $Sommer = ($Diff == 2) ? 1 : 0;
+
+printf("%04u-%02u-%02u %02u:%02u:%02u : %stid (GMT+%02u00)\n", $Year, $Mon, $Day, $Hour, $Min, $Sec, $Sommer ? "sommer" : "vinter", $Diff);
+
+exit $Sommer;
+
+#### End of file $Id$ ####

@@ -1,0 +1,21 @@
+#!/usr/bin/perl -w
+
+#===========================================================================
+# $Id$
+# Mottar datoer på kommandolinja og konverterer dem til sekunder siden 1970.
+# Format: ååååmmddTttmmss med valgfri Z på slutten for GMT
+#===========================================================================
+
+use strict;
+use Time::Local;
+
+foreach(@ARGV) {
+	if (/((?:19|20)\d\d)([01]\d)([0-3]\d)T([0-2]\d)([0-5]\d)([0-6]\d)(Z?)/) {
+		if ($7 eq "Z") {
+			print(timegm($6, $5, $4, $3, $2-1, $1));
+		} else {
+			print(timelocal($6, $5, $4, $3, $2-1, $1));
+		}
+	}
+	print("\n");
+}

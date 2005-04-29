@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# $Id$
+#
+# Konverterer alle *.mp3-filene til ogg og legger dem i en egen "ogg"-katalog.
+# Hvis -r spesifiseres som første parameter, slettes mp3-filene etterhvert som
+# konverteringa skrider frem. Hvis filnavn ikke blir skrevet etter kvaliteten,
+# konverteres alle *.mp3-filene i katalogen scriptet kjøres i.
+#
+# Laget av Øyvind A. Holm <sunny@sunbase.org>
+
+remove_files=0
+
+[ "$1" = "-r" ] && { remove_files=1; shift; }
+[ "$1" = "" ] && { echo "Syntax: $0 [-r] kvalitet_(-1_til_10) [filer]" >&2; exit 1; }
+
+# (mpg321 --version | grep -i "mpg321" >/dev/null 2>&1) || { echo "Trenger mpg321(1) for å kjøre" >&2; exit 1; }
+# (oggenc --version | grep -i "oggenc" >/dev/null 2>&1) || { echo "Trenger oggenc(1) for å kjøre" >&2; exit 1; }
+# (sed --version    | grep -i "sed" >/dev/null 2>&1)    || { echo "Trenger sed(1) for å kjøre" >&2; exit 1; }
+
+KVAL=$1; shift;
+
+if [ "$1" = "" ]; then
+	exp="*.[mM][pP]3"
+else
+	exp="$*"
+fi
+
+[ -d "ogg" ] || mkdir ogg || { echo "Klarte ikke mkdir ogg" >&2; exit 1; }
+
+for f in $exp; do
+	if [ -r "$f" ]; then
+		echo "======== Konverterer \"$f\"..."
+		mpg321 --wav - "$f" | oggenc -q$KVAL -c "encoding=$(oggenc --version 2>&1) -q$KVAL" -c "sourcemedia=MP3" -o "$(echo "ogg/$f"|sed s/\\.mp3$//i).ogg" -
+		[ "$remove_files" = "1" ] && rm -v "$f"
+	else
+		echo "$f: Klarte ikke å åpne fila for lesing." >&2
+	fi
+	echo
+done

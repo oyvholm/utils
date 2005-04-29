@@ -1,0 +1,22 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Inserts “CUT” marks with Vim fold before and after stdin.
+# Select text in visual line mode and filter the block through this script.
+
+use strict;
+
+$| = 1;
+
+my $Line = <STDIN>;
+my ($Indent, $Title) = ("", "CUT");
+
+defined($ARGV[0]) && ($Title = join(" ", @ARGV));
+$Line =~ /^(\s+)/ && ($Indent = $1);
+print("======== $Title \x7B\x7B\x7B ========\n$Line");
+
+while (<STDIN>) {
+	print($_);
+}
+
+print("======== \x7D\x7D\x7D $Title ========\n");
