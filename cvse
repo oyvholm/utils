@@ -217,7 +217,8 @@ sub change_message {
                     print(DiffFP $Deb);
                     close(DiffFP);
                 }
-                print(join("",
+                print(
+                    join("",
                         "==== Log diff for $File,v $Rev \x7B\x7B\x7B ====\n",
                         `diff -u BEFORE.cvse AFTER.cvse`,
                         "==== \x7D\x7D\x7D ====\n"
@@ -274,9 +275,9 @@ sub get_log_message {
                 $header_done = 1;
                 $Line = <PipeFP>;
                 if ($Line =~ /^revision (\S+)/) {
-                    my $chk_rev = $1;
-                    unless ($chk_rev eq $Rev) {
-                        die("cvs log returned wrong revision \"$chk_rev\", " .
+                    my $check_rev = $1;
+                    unless ($check_rev eq $Rev) {
+                        die("cvs log returned wrong revision \"$check_rev\", " .
                             "expected \"$Rev\"");
                     }
                 } else {
