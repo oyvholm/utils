@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# $Id$
+
+if [ -e /carmbb.mrk ]; then
+	# [ "`whoami`" = "root" ] || { echo $0: Må være root. >&2; exit 1; }
+	if [ "$1" = "-h" ]; then
+		# Sett hardwareklokka etter systemklokka
+		su root -c "/etc/init.d/hwclock.sh stop"
+	else
+		# Sett systemklokka etter hardwareklokka
+		su root -c "/etc/init.d/hwclockfirst.sh start"
+	fi
+	# getdate -set 3 300 ntp.lth.se
+	# setclock
+else
+	echo $0: Er beregnet for carmbb. >&2
+	exit 1
+fi

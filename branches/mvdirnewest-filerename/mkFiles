@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# $Id$
+# Lager Files.md5 i current dir.
+
+lockname=mkFiles.lock
+until mkdir $lockname 2>/dev/null; do
+	echo $0: $lockname: Venter på lock... >&2
+	sleep 5
+done
+
+find -type f -print0 | sort -z | xargs -0 md5sum | grep -v '  \./Files\.md5' >Files.md5
+
+rmdir $lockname

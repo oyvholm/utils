@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# $Id$
+# Terminal Identification ’ for å identifisere skjermhøyde etc ved
+# logging.
+
+date -Iseconds
+stty -a

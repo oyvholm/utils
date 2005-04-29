@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Midlertidig iom at ikke parameterparsing i h2u ikke funker foreløpig.
+
+echo "$*" | h2u -l

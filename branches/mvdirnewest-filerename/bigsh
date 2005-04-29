@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# $Id$
+# Fyrer opp en stor xterm i X
+
+smallfont=1
+[ -e /carmbb.mrk ] && { smallfont=1; }
+[ "$1" = "--small" ] && { smallfont=1; shift; }
+[ "$1" = "--big" ] && { smallfont=0; shift; }
+
+if [ -e /carmbb.mrk ]; then
+	if [ "$smallfont" = "1" ]; then
+		geom=131x40+0+0
+	else
+		geom=87x29+0+0
+	fi
+else
+	if [ "$smallfont" = "1" ]; then
+		geom=211x67+0+0
+	else
+		geom=140x48+0-8
+	fi
+fi
+
+if [ "$smallfont" = "1" ]; then
+	xterm \
+	-u8 \
+	-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+	-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+	-bg black \
+	-fg white \
+	-bc \
+	-geometry $geom $*
+else
+	xterm \
+	-u8 \
+	-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
+	-bg black \
+	-fg white \
+	-bc \
+	-geometry $geom $*
+fi
+
+exit

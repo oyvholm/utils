@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# $Id$
+# Hælvetes føkkings Netscrape kødder seg bestandig, så her gjør vi kort
+# prosess og myrder driten.
+
+killall -9 netscape-navigator netscape-communicator communicator-smotif.real navigator-smotif.real mozilla-bin

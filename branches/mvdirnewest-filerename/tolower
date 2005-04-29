@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Konverterer stdin til lower case
+
+tr A-Z a-z

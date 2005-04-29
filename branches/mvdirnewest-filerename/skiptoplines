@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id$
+# Skips the first N lines from stdin or specified file(s).
+#
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+
+$| = 1;
+
+use Getopt::Std;
+
+our ($opt_l) = (0);
+getopts('l:');
+
+unless ($opt_l) {
+	usage(1);
+}
+
+for (my $Count = $opt_l; $Count; $Count--) {
+	<>;
+}
+
+while (<>) {
+	print;
+}
+
+sub usage {
+	my $Retval = shift;
+	print <<END;
+
+Syntax: $0 -l lines
+
+END
+	exit($Retval);
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id$

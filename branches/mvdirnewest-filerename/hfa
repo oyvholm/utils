@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Samme som hf, men fjerner alle spacene i begynnelsen og slutten først
+
+hf -a $*

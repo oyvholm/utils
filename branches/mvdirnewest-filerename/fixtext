@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Enkel konvertering av tekst til entities og denslags.
+
+use strict;
+
+$_ = join("", <>);
+s/'/&#x2019;/g;
+s/"(.*?)"/&#x201C;$1&#x201D;/gs;
+s/ -- / &#x2014; /g;
+print;

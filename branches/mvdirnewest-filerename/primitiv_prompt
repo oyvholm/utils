@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Primitiv prompt for screenlogger osv.
+
+export PS1='$(date +"%Y-%m-%d %T") \u@\h:\w$ '

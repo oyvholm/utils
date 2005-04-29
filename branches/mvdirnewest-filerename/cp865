@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Konverterer cp865 til UTF-8. Latskap.
+
+iconv -f cp865 -t utf-8 $*

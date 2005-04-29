@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+# $Id$
+# Mer oversiktlig cvs stat
+
+open(FP, "cvs -n stat 2>/dev/null |");
+
+while (<FP>) {
+	chomp;
+	if (/^\?/) {
+		print "$_\n";
+	} else {
+		if (/^File: /) {
+			$FileLine = $_;
+		}
+		if (/^\s+Working/) {
+			$WorkLine = $_;
+		}
+		if (/^\s+Repository/) {
+			$RepLine = $_;
+			unless ($FileLine =~ /Up-to-date$/) {
+				print "----\n$FileLine\n$WorkLine\n$RepLine\n";
+				$FileLine = "";
+				$RepLine = "";
+				$WorkLine = "";
+			}
+		}
+	}
+}
+
+#### End of file $Id$ ####
