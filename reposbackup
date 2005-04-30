@@ -4,14 +4,15 @@
 # Tar full (hikk) backup av svn-repositoryene og legger dem på cindy.
 
 lockdir=/var/lock/reposbackup.LOCK
+backdir=/home/sunny/cindy-sunny/m/backup/svn-backup
 
 if [ ! -e /sunba.mrk ]; then
 	echo "Kjør den på sunba, for svarte! SUNBA! Kjønnar, kjætting?" >&2
 	exit 1
 fi
 
-if [ ! -d $HOME/cindy-sunny/svn-backup/. ]; then
-	echo "Finner ikke $HOME/cindy-sunny/svn-backup/ , må ha en plass å legge schiten." >&2
+if [ ! -d $backdir/. ]; then
+	echo "Finner ikke $backdir/ , må ha en plass å legge schiten." >&2
 	exit 1
 fi
 
@@ -24,7 +25,7 @@ done
 
 for f in *; do
 	echo ======= $f
-	svnadmin dump --incremental $f | gpg -e -r sunny@sunbase >~/cindy-sunny/svn-backup/`u`.$f.dump.gpg
+	svnadmin dump --incremental $f | gpg -e -r sunny@sunbase >$backdir/`u`.$f.dump.gpg
 done
 
 rmdir $lockdir || { echo "Øh.... Klarte ikke rmdir $lockdir" >&2; }
