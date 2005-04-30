@@ -24,8 +24,10 @@ until mkdir $lockdir 2>/dev/null; do
 done
 
 for f in *; do
-    echo ======= $f
-    svnadmin dump --incremental $f | gpg -e -r sunny@sunbase >$backdir/`u`.$f.dump.gpg
+    if [ -d $f ]; then
+        echo ======= $f
+        svnadmin dump --incremental $f | gpg -e -r sunny@sunbase >$backdir/`u`.$f.dump.gpg
+    fi
 done
 
 rmdir $lockdir || { echo "Øh.... Klarte ikke rmdir $lockdir" >&2; }
