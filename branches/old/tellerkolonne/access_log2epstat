@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 #====================================================================
-# $Id: access_log2epstat,v 1.2.4.1 2002/07/15 13:29:29 sunny Exp $
+# $Id$
 # Konverterer access_log fra Apache til fil som passer til epstat(1).
-# Langt og trasig navn, men nøye då.
+# Langt og trasig navn, men nÃ¸ye dÃ¥.
 #====================================================================
 
 use strict;
@@ -22,22 +22,26 @@ while (<>) {
 	if (m!
 			\S+ # IP
 			\s+
-			-
+			\S+
 			\s+
-			-
+			\S+
 			\s+
 			\[
 			(\d+) # Dato
 			/
 			(\S+) # Mnd
 			/
-			(\d{4}) # År
+			(\d{4}) # Ã…r
 			:(\d\d):(\d\d):(\d\d) # Klokka
 			\s+
+			([+\-]\d\d)(\d\d)
 		!x
 		) {
-			my $Mnd = $mnd_hash{$2};
-			my $Secs = timelocal($6, $5, $4, $1, $Mnd, $3);
+			my ($Day, $Mon, $Year, $Hour, $Min, $Sec, $zone_hour, $zone_min) =
+			   (  $1,   $2,    $3,    $4,   $5,   $6,         $7,        $8);
+			my $num_mon = $mnd_hash{$Mon};
+			my $Secs = timegm($Sec, $Min, $Hour, $Day, $num_mon, $Year);
+			$Secs -= ($zone_hour*3600); # Vi driter i minuttene fir Ã¥ fÃ¥ opp farta.
 			$Count++;
 			print("$Secs\t$Count\n");
 		} else {
@@ -47,4 +51,4 @@ while (<>) {
 
 __END__
 
-#### End of file $Id: access_log2epstat,v 1.2.4.1 2002/07/15 13:29:29 sunny Exp $ ####
+#### End of file $Id$ ####
