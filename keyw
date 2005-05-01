@@ -7,12 +7,17 @@
 #=======================================================================
 
 if [ "$1" != "-u" ]; then
-    svn propset svn:eol-style native $*
+    for _k in $*; do
+        [ -f $_k ] && svn propset svn:eol-style native $_k
+    done
 else
     shift
 fi
-svn propset svn:keywords Id $*
-svn propdel cvs2svn:cvs-rev $*
-svn proplist -v $*
+
+for _k in $*; do
+    [ -f $_k ] && svn propset svn:keywords Id $_k
+    svn propdel cvs2svn:cvs-rev $_k
+    svn proplist -v $_k
+done
 
 # vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :
