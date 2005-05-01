@@ -1,12 +1,12 @@
 #!/usr/bin/perl
 
-# $Id: mvdirnewest,v 1.4.4.1 2002/04/18 14:42:03 sunny Exp $
+# $Id$
 #
 # Syntax: $0 directory
-# Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.
-# Brukes til å lage orden i gamle versjoner av ting som ligger slengende rundt.
+# Forandrer navnet pÃ¥ directoryen til den nyeste fila i trestrukturen under.
+# Brukes til Ã¥ lage orden i gamle versjoner av ting som ligger slengende rundt.
 #
-# (C)opyleft 1999-2000 Øyvind A. Holm <sunny256@mail.com>
+# (C)opyleft 1999-2000 Ã˜yvind A. Holm <sunny256@mail.com>
 
 my $RetVal;
 $prog_name = $0;
@@ -44,7 +44,7 @@ sub process_dir {
 	my $newest_date = 99999999999;
 	my $newest_file = "";
 
-	# FIXME: Dette med find er midlertidig (og kommer sikkert til å forbli her :)
+	# FIXME: Dette med find er midlertidig (og kommer sikkert til Ã¥ forbli her :)
 	my @Files = `find $dir_name -type f`;
 	unless (scalar @Files) {
 		warn("$prog_name: $dir_name: No files found in directory\n");
@@ -71,7 +71,7 @@ sub process_dir {
 		warn("$prog_name: $new_name: Directory entry already exists, skipping directory $dir_name\n");
 		return;
 	} else {
-		# printf("Skulle til å rename(%s, %s)\n", $dir_name, $new_name);
+		# printf("Skulle til Ã¥ rename(%s, %s)\n", $dir_name, $new_name);
 		rename($dir_name, $new_name) || warn("$dir_name: Can't rename directory to $new_name: $!\n");
 		print("$prog_name: $dir_name --> $new_name\n");
 	}
@@ -85,4 +85,4 @@ sub date2str {
 	return(sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]));
 } # date2str()
 
-#### End of file $Id: mvdirnewest,v 1.4.4.1 2002/04/18 14:42:03 sunny Exp $ ####
+#### End of file $Id$ ####
