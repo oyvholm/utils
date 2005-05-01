@@ -30,6 +30,9 @@ my $first_time = 0;
 my $last_time = 0;
 my ($last_lon, $last_lat, $last_alt, $last_line) =
    (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+my ($start_date, $end_date, $found_dup) =
+   (         "",        "",          0);
+my @Dup = ();
 
 # To avoid printing out extra "/> at the start of svg output:
 my $svg_start_thing = "";
@@ -70,37 +73,13 @@ END
 # FIXME: Se om det går å få flytta den inn i print_entry() så man 
 # slipper å ha to gptrans_conv’er i pipen.
 # FIXME: Legg inn alle formatene.
-if ($opt_u) {
+if (0 && $opt_u) {
     # Comment out areas without reception {{{
-    my ($start_date, $end_date, $found_dup) = ("", "", 0);
-    my @Dup = ();
     while (<>) {
         if (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
             # {{{
             my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
                (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
-            if (($lat_val eq $last_lat) && ($lon_val eq $last_lon)) {
-                unless ($found_dup) {
-                    $start_date = "$Year$Month${Day}T$Hour$Min$Sec";
-                    @Dup = ();
-                    $found_dup = 1;
-                }
-                push(@Dup, "# $_");
-                $end_date = "$Year$Month${Day}T$Hour$Min$Sec";
-            } else {
-                if ($found_dup) {
-                    print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
-                    for (@Dup) {
-                        print($_);
-                    }
-                    print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n$_");
-                    $found_dup = 0;
-                } else {
-                    print($_);
-                }
-            }
-            $last_lat = $lat_val;
-            $last_lon = $lon_val;
             # }}}
         } else {
             if ($found_dup) {
@@ -301,11 +280,37 @@ sub print_entry {
     my $pause_len = 0;
     my $do_print = 1;
     my $Line = "";
+    if ($opt_u) {
+        if (($Lat eq $last_lat) && ($Lon eq $last_lon)) {
+            unless ($found_dup) {
+                $start_date = "$Year$Month${Day}T$Hour$Min$Sec";
+                @Dup = ();
+                $found_dup = 1;
+            }
+            push(@Dup, "# $_");
+            $end_date = "$Year$Month${Day}T$Hour$Min$Sec";
+            $do_print = 0;
+        } else {
+            if ($found_dup) {
+                print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
+                for (@Dup) {
+                    print($_);
+                }
+                print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n$_");
+                $found_dup = 0;
+            } else {
+                $Line = $_;
+                $do_print = 1;
+            }
+        }
+    }
     if ($opt_o eq "ps") {
         $Lon *= 100;
         $Lat *= 100;
     }
-    if ($opt_d && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Alt eq $last_alt)) {
+    # FIXME: $opt_d ble bytta ut med $opt_u i r583. Lurer på hva det 
+    # gikk i der.
+    if ($opt_u && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Alt eq $last_alt)) {
         if ($in_dupskip) {
             $do_print = 0;
         } else {
@@ -328,9 +333,6 @@ sub print_entry {
 
     if ($do_print) {
         # Valid data was found, send to stdout {{{
-        unless ($first_time) {
-            $first_time = $ep_time;
-        }
         if ($opt_o eq "xgraph") {
             $pause_len && ($Line = "move ");
             ($Line .= "$Lon $Lat\n");
