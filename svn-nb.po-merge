@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Merger meldinger fra /trunk/subversion/po/nb.po til branchene 1.1.x og 
+# 1.2.x i Subversion. Kjøres fra /branches/1.x.x-katalogen. Omtrent en 
+# copy+paste fra http://wiki.sunbase.org/index.php/Subversion .
+#=======================================================================
+
+svn up
+export HEADREV=`svnversion .|tr -d M`
+./autogen.sh && ./configure --prefix=/usr/local/varprg/subversion-1.1.x.r$HEADREV --enable-maintainer-mode --disable-shared --with-ssl && make locale-gnu-po-update PO=nb
+cd subversion/po
+cp -p nb.po .etter1_make
+rm `ls | grep -v -e '^nb.po$' -e 'subversion.pot'`
+svn up -r$HEADREV
+svn cat http://svn.collab.net/repos/svn/trunk/subversion/po/nb.po | po-merge.py nb.po
+cp -p nb.po .etter2_po-merge
+cd ../..
+make locale-gnu-po-update PO=nb
+cd subversion/po
+rm `ls | grep -v -e '^nb.po$' -e 'subversion.pot'`
+cp -p nb.po .etter3_make
+svn up -r$HEADREV
+msgfmt -cv nb.po
