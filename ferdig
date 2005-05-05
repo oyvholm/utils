@@ -3,6 +3,6 @@
 # $Id$
 
 while :; do
-    echo -ne \\a
+    echo -ne \\a.
     sleep 1
 done
