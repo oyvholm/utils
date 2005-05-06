@@ -10,9 +10,9 @@
 use strict;
 
 use Getopt::Std;
-our ($opt_a, $opt_h, $opt_l) =
-    (     0,      0,      2);
-getopts('ahl:');
+our ($opt_a, $opt_h, $opt_l, $opt_n) =
+    (     0,      0,      2,      0);
+getopts('ahl:n');
 
 my $Debug = 0; # 0 = Standard, 1 = Send debug msgs to stderr
 
@@ -38,6 +38,7 @@ Options:
       with "<!-- nohhitoc -->"
   -h  This help message
   -l  Start indexing at this level number. Default: $start_level
+  -n  Don't number headers
 
 END
     exit(0);
@@ -83,7 +84,7 @@ while (<>) {
                 $Rest = $2;
             }
             ($tall_str .= ".") if ($header_level == 2);
-            if ($Rest =~ /<!-- nohhinum -->/i) {
+            if ($opt_n || $Rest =~ /<!-- nohhinum -->/i) {
                 $skip_num = 1;
                 $_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
             } else {
@@ -252,6 +253,10 @@ nohhitoc --E<gt>>.
 
 Start indexing at level x.
 Default value is 2, leaving E<lt>h1E<gt> headers untouched.
+
+==item B<-n>
+
+Don’t insert section numbers into headers.
 
 =back
 
