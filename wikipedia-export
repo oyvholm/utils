@@ -3,4 +3,9 @@
 # $Id$
 # Eksporterer alle versjonene av en wikipedia-artikkel fra den norske. I XML.
 
-wget -O "$1.xml" http://no.wikipedia.org/wiki/Spesial:Export?action=submit\&pages=$1
+if [ "$2" = "" ]; then
+    echo Syntax: $0 språk artikkelnavn
+    exit 1
+fi
+
+wget -O "$1.$2.xml" http://$1.wikipedia.org/wiki/Special:Export?action=submit\&pages=$2
