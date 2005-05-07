@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# $Id$
+
+cat $* | rmspc | tr '\n' ' ' | xmllint --format -
