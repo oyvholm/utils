@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# $Id$
+# Eksporterer alle versjonene av en wikipedia-artikkel fra den norske. I XML.
+
+wget -O "$1.xml" http://no.wikipedia.org/wiki/Spesial:Export?action=submit\&pages=$1
