@@ -5,6 +5,8 @@
 # Oppdaterer de norske språkfilene i Vim-sourcen.
 #=======================================================================
 
+[ "$1" = "-7" ] && { vim7=7; shift; }
+
 vimdir=$HOME/src/other/vim
 osvim=$HOME/src/svn/norwegian_vim/branches/utv/msgs/vim
 
@@ -22,20 +24,20 @@ svn up
 echo -e "======== cd $osvim; svn up \x7D\x7D\x7D"
 
 cd $vimdir || { echo "cd $vimdir: Gikk på trynet." >&2; exit 1; }
-[ -d vim/. ] || mkdir vim || { echo "mkdir vim gikk te hælvete." >&2; exit 1; }
-echo -e "======== cd $vimdir; rsync -av --delete vim.clean/ vim \x7B\x7B\x7B"
-rsync -av --delete vim.clean/ vim
-echo -e "======== cd $vimdir; rsync -av --delete vim.clean/ vim \x7D\x7D\x7D"
+[ -d vim$vim7/. ] || mkdir vim$vim7 || { echo "mkdir vim$vim7 gikk te hælvete." >&2; exit 1; }
+echo -e "======== cd $vimdir; rsync -av --delete vim$vim7.clean/ vim$vim7 \x7B\x7B\x7B"
+rsync -av --delete vim$vim7.clean/ vim$vim7
+echo -e "======== cd $vimdir; rsync -av --delete vim$vim7.clean/ vim$vim7 \x7D\x7D\x7D"
 
-echo -e "======== rsync -av $osvim/ vim \x7B\x7B\x7B"
-rsync -av $osvim/ vim
-echo -e "======== rsync -av $osvim/ vim \x7D\x7D\x7D"
+echo -e "======== rsync -av $osvim/ vim$vim7 \x7B\x7B\x7B"
+rsync -av $osvim/ vim$vim7
+echo -e "======== rsync -av $osvim/ vim$vim7 \x7D\x7D\x7D"
 
-cd $vimdir/vim || { echo "cd $vimdir/vim: Klarte ikke chdir like før patchinga." >&2; exit 1; }
+cd $vimdir/vim$vim7 || { echo "cd $vimdir/vim$vim7: Klarte ikke chdir like før patchinga." >&2; exit 1; }
 errfound=0
 if [ -z "$ingen_patch" ]; then
     echo -e "======== Filpatching \x7B\x7B\x7B"
-    for _vp in $HOME/bin/Patch/vim/*; do
+    for _vp in $HOME/bin/Patch/vim$vim7/*; do
         echo ======== $_vp ========
         patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
     done

@@ -5,7 +5,9 @@
 # Oppdaterer ~/src/other/vim/vim.clean
 #=======================================================================
 
-vimclean=$HOME/src/other/vim/vim.clean
+[ "$1" = "-7" ] && { vim7=7; shift; }
+
+vimclean=$HOME/src/other/vim/vim$vim7.clean
 
 # [ -e /carmbb.mrk ] && { echo "Man er på carmbb, og her er det som kjent dårlig med nettkontakt. Synd, egentlig." >&2; exit 1; }
 

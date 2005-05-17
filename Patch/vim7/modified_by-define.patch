@@ -1,0 +1,18 @@
+$Id$
+
+Index: src/feature.h
+===================================================================
+RCS file: /cvsroot/vim/vim7/src/feature.h,v
+retrieving revision 1.13
+diff -u -r1.13 feature.h
+--- src/feature.h	7 Mar 2005 23:09:50 -0000	1.13
++++ src/feature.h	17 May 2005 04:59:31 -0000
+@@ -935,7 +935,7 @@
+  *			a modifed version of Vim.
+  *			Also from the "--with-modified-by" configure argument.
+  */
+-/* #define MODIFIED_BY "John Doe" */
++#define MODIFIED_BY "Øyvind A. Holm <sunny@sunbase.org>"
+ 
+ /*
+  * Machine dependent:
