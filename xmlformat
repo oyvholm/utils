@@ -2,4 +2,4 @@
 
 # $Id$
 
-cat $* | rmspc | tr '\n' ' ' | xmllint --format -
+cat $* | rmspcall | tr '\n' ' ' | xmllint --format --encode UTF-8 -
