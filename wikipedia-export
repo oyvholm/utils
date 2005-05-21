@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Exports all versions of a Wikipedia article as XML.
+# Exports a Wikipedia article as XML.
 #
 # Newest version available from 
 # http://svn.sunbase.org/repos/utils/trunk/wikipedia-export
