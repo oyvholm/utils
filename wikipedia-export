@@ -1,10 +1,18 @@
 #!/bin/bash
 
+#=======================================================================
 # $Id$
-# Eksporterer alle versjonene av en wikipedia-artikkel fra den norske. I XML.
+# Exports all versions of a Wikipedia article as XML.
+#
+# Newest version available from 
+# http://svn.sunbase.org/repos/utils/trunk/wikipedia-export
+#
+# This complicated piece of software is licensed under the GNU General 
+# Public License. Made by Øyvind A. Holm <sunny@sunbase.org>.
+#=======================================================================
 
 if [ "$2" = "" ]; then
-    echo Syntax: $0 språk artikkelnavn
+    echo Syntax: $0 language_prefix \'article_name\'
     exit 1
 fi
 
