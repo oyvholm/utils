@@ -83,7 +83,7 @@ for my $Curr (@ARGV) {
           <table width="100%" cellpadding="2" cellspacing="0" border="0">
             <tr>
               <td class="image" colspan="2">
-                <img src="120x160/$Curr" width="160" height="120" alt="$Curr" />
+                <img src="160x120/$Curr" width="160" height="120" alt="$Curr" />
               </td>
             </tr>
             <tr>
@@ -93,7 +93,7 @@ for my $Curr (@ARGV) {
               </td>
               <td class="text">
                 [<a href="800x600/$Curr">800x600</a>]<br />
-                [<a href="120x160/$Curr">120x160</a>]
+                [<a href="160x120/$Curr">160x120</a>]
               </td>
             </tr>
           </table>
