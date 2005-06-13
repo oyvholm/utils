@@ -10,13 +10,12 @@
 #=======================================================================
 
 use strict;
-use Getopt::Std;
+use Getopt::Long;
 
 $| = 1;
 
-our ($opt_h) =
-    (     0);
-getopts('h') || die("Option error. Use -h for help.\n");
+our ($opt_help) =
+    (        0);
 
 my $VERSION = "0.0";
 
@@ -27,7 +26,12 @@ my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
-$opt_h && usage(0);
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "help|h"       => \$opt_help
+) || die("$progname: Option error. Use -h for help.\n");
+
+$opt_help && usage(0);
 
 while (<>) {
     print;
@@ -44,7 +48,7 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
--h  Show this help.
+-h, --help  Show this help.
 
 END
     exit($Retval);
@@ -77,7 +81,7 @@ $Id$
 
 =over 4
 
-=item B<-h>
+=item B<-h>, B<--help>
 
 Print a brief help summary.
 
