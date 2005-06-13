@@ -53,7 +53,7 @@ print(<<END);
       td.text { text-align: center; vertical-align: top; font-size: 80%; }
       td.lefticon { text-align: center; vertical-align: middle; font-size: 80%; }
       td.righticon { text-align: center; vertical-align: middle; font-size: 80%; }
-      td.footer { text-align: center; vertical-align: top; font-size: 100%; }
+      td.footer { text-align: center; vertical-align: top; width: 100%; font-size: 100%; }
       -->
     </style>
     <meta name="author"
@@ -114,7 +114,7 @@ print(<<END);
               <td class="lefticon">
                 <a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10.png" alt="Valid XHTML 1.0" width="88" height="31" style="border: 0;" /></a>
               </td>
-              <td class="footer" colspan="2" width="100%">
+              <td class="footer" colspan="2">
                 ©2005 Øyvind A. Holm &lt;sunny\@sunbase.org&gt;<br />
                 Licensed under the <a href="LICENSE.txt">GNU Free Documentation License</a>.
               </td>
