@@ -7,13 +7,21 @@
 
 [ "$1" = "-7" ] && { vim7=7; shift; }
 
-vimclean=$HOME/src/other/vim/vim$vim7.clean
+progname=update_vim-clean
+vimbase=$HOME/src/other/vim
+vimclean=$vimbase/vim$vim7.clean
 
 # [ -e /carmbb.mrk ] && { echo "Man er på carmbb, og her er det som kjent dårlig med nettkontakt. Synd, egentlig." >&2; exit 1; }
 
 echo -e "======== update_vim-clean \x7B\x7B\x7B"
 
-[ -d $vimclean ] || { echo "$vimclean: Katalogen finnes ikke. Dauer." >&2; exit 1; }
+if [ ! -d $vimclean ]; then
+    echo -n "$progname: $vimclean: Katalogen finnes ikke. Trykk ENTER for å prøve å sette det opp..." >&2
+    read
+    mkdir -p $vimbase || { echo "$progname: mkdir $vimbase: Gikk på ræva, avbryter." >&2; exit 1; }
+    cd $vimbase || { echo "$progname: cd $vimbase: Gikk ikke." >&2; exit 1; }
+    cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/vim co -P -d vim.clean vim || { echo "$progname: Feil under cvs checkout" >&2; exit 1; }
+fi
 
 cd $vimclean || { echo "Nåh, klarte ikke \"cd $vimclean\" selv om den visstnok finnes. Skjønner ikke bæret og driter i resten." >&2; exit 1; }
 until cvs upd -dAPC; do
