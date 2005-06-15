@@ -51,8 +51,8 @@ cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; rmdir $lv_lockdir
 x_flags="--enable-gui=no --without-x"
 vim_size=huge
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
-    echo ======== Man er på petronas, vagabond eller solsje. Lag lokal vim.
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk -o -e $HOME/.devslx.mrk ]; then
+    echo ======== Man er på petronas, vagabond, solsje eller developer.skolelinux.no . Lag lokal vim.
     vimdir=$HOME/local/prg/vim$vim7
     [ -e $HOME/.vagabond.mrk ] && vim_size=normal
 else
@@ -82,8 +82,8 @@ echo -e "======== make \x7B\x7B\x7B"
 make
 echo -e "======== make \x7D\x7D\x7D"
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
-    echo Vi er på petronas, vagabond eller solsje, så vi nøyer oss med:
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk -o -e $HOME/.devslx.mrk ]; then
+    echo Vi er på petronas, vagabond, solsje eller developer.skolelinux.no, så vi nøyer oss med:
 else
     if [ -e /nett.mrk -a -z "$ingen_patch" ]; then
         echo Er på nett.ba.no og lager patcha versjon, så vi driter i root og...
