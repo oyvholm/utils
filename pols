@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Shows translation status of every .po file in subtree.
+#=======================================================================
+
+for f in `find -name '*.po' -type f`; do
+    echo $f: `msgfmt -cv $f 2>&1`
+done
