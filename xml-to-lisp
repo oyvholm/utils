@@ -1,5 +1,12 @@
 #! /usr/local/bin/perl
 
+#=======================================================================
+# $Id$
+# Converts an XML file to Lisp.
+# Created by Gene Michael Stover (gene at acm.org)
+# Tweaks by Øyvind A. Holm <sunny@sunbase.org>.
+#=======================================================================
+
 $| = 1;
 
 use strict;
