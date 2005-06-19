@@ -10,7 +10,7 @@ my $indent = 0;
 
 sub print_indent () {
     foreach my $i (1 .. $indent) {
-	print " ";
+    print " ";
     }
 }
 
@@ -28,11 +28,11 @@ sub cb_start {
     print "((";
     print $element;
     foreach my $i (0 .. $#attrval) {
-	if ($i % 2 == 0) {
-	    print " (", $attrval[$i];
-	} else {
-	    print ' . "', $attrval[$i], '")';
-	}
+    if ($i % 2 == 0) {
+        print " (", $attrval[$i];
+    } else {
+        print ' . "', $attrval[$i], '")';
+    }
     }
     print ")";
     $indent += 2;
@@ -50,9 +50,9 @@ sub cb_char {
     my $str = shift;
     chomp $str;
     if (length $str > 0) {
-	print " \"";
-	print $str;
-	print '"';
+    print " \"";
+    print $str;
+    print '"';
     }
 }
 
@@ -61,8 +61,8 @@ sub cb_char {
 ###
 
 my $xml = new XML::Parser (Handlers => {Start => \&cb_start,
-					End   => \&cb_end,
-					Char  => \&cb_char});
+                    End   => \&cb_end,
+                    Char  => \&cb_char});
 if ($xml->parse (join "", <>)) {
 } else {
     print "error: XML parsefile failed\n";
