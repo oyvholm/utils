@@ -9,6 +9,7 @@ use strict;
 
 my $comm_pattern = "";
 my $is_c    = 0;
+my $is_l    = 0;
 my $is_html = 0;
 my $is_pre  = 0;
 my $is_re   = 0;
@@ -23,9 +24,18 @@ if ($#ARGV > -1) {
     /^pre$/i && ($is_pre = 1) ||
     /^re$/i && ($is_re = 1, $is_pre = 1) ||
     /^c$/i && ($is_c = 1) ||
+    /^l$/i && ($is_l = 1) ||
     ($comm_pattern = $ARGV[0]);
 } else {
     $comm_pattern = '#';
+}
+
+if ($is_l) {
+    while (<STDIN>) {
+        chomp;
+        print("<l>$_</l>\n");
+    }
+    exit 0;
 }
 
 defined($ARGV[1]) && ($spc_str = " ", $Kommentar = $ARGV[1]);
