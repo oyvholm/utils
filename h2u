@@ -16,6 +16,8 @@ require 'getopts.pl'; # FIXME: Generates a warning when command line option is u
 
 ($main::opt_i, $main::opt_l) = (0, 0);
 
+$| = 1;
+
 &Getopts('il');
 
 while (<>) {
