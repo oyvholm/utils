@@ -5,5 +5,5 @@
 if [ -d .svn ]; then
     svn info $* | egrep "^(Nettadresse|URL): " | perl -pe 's#^(.*?)(/(?:trunk|branches|tags|hooks/(trunk|branches|tags)).*)#* $2/#';
 elif [ -d CVS ]; then
-    echo "* `/bin/pwd`"
+    echo "* `/bin/pwd`/"
 fi
