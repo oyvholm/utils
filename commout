@@ -31,9 +31,10 @@ if ($#ARGV > -1) {
 }
 
 if ($is_l) {
+    my $Element = defined($ARGV[1]) ? $ARGV[1] : "l";
     while (<STDIN>) {
         chomp;
-        print("<l>$_</l>\n");
+        print("<$Element>$_</$Element>\n");
     }
     exit 0;
 }
