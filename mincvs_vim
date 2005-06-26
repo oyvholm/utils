@@ -8,7 +8,7 @@
 [ "$1" = "-7" ] && { vim7=7; shift; }
 
 vimdir=$HOME/src/other/vim
-baseosvim=$HOME/src/svn/norwegian_vim/branches/utv
+baseosvim=$HOME/src/svn/norwegian_vim/trunk
 osvim=$baseosvim/msgs/vim
 
 echo -e "======== mincvs_vim \x7B\x7B\x7B"
