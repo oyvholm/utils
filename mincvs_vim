@@ -10,7 +10,7 @@ vimver=6
 
 vimdir=$HOME/src/other/vim
 baseosvim=$HOME/src/svn/norwegian_vim/trunk
-osvim=$baseosvim/msgs/vim$vimver/vim
+osvim=$baseosvim/msgs/vim$vimver
 
 echo -e "======== mincvs_vim \x7B\x7B\x7B"
 unset ingen_patch
