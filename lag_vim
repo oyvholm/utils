@@ -55,7 +55,6 @@ vim_size=huge
 if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk -o -e $HOME/.devslx.mrk ]; then
     echo ======== Man er på petronas, vagabond, solsje eller developer.skolelinux.no . Lag lokal vim.
     vimdir=$HOME/local/prg/vim$vimver
-    [ -e $HOME/.vagabond.mrk ] && vim_size=normal
 else
     vimdir=/usr/local/prg/vim$vimver
     if [ "$med_x" = "1" ]; then
