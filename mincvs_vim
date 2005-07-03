@@ -13,6 +13,22 @@ basesvn=$HOME/src/svn
 baseosvim=$basesvn/norwegian_vim/trunk
 osvim=$baseosvim/msgs/vim$vimver
 
+if [ "$1" = "-h" ]; then
+    cat <<END
+
+Syntax: $0 [valg]
+
+Oppdaterer ting i $baseosvim/vim* ved å hente ting fra norwegian_vim og 
+eventuelt patche.
+
+-7  Oppdaterer vim7-sausen
+-h  Skriv denne hjelpen
+-p  Ikke patch filene
+
+END
+    exit 0
+fi
+
 echo -e "======== mincvs_vim \x7B\x7B\x7B"
 unset ingen_patch
 [ "$1" = "-p" ] && { ingen_patch=1; shift; }
