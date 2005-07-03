@@ -1,7 +1,12 @@
 $Id$
 
---- src/orig.ops.c	2004-12-20 06:16:13.000000000 +0100
-+++ src/ops.c	2005-02-07 11:39:45.000000000 +0100
+Index: src/ops.c
+===================================================================
+RCS file: /cvsroot/vim/vim/src/ops.c,v
+retrieving revision 1.109
+diff -u -r1.109 ops.c
+--- src/ops.c	13 Dec 2004 06:34:59 -0000	1.109
++++ src/ops.c	3 Jul 2005 11:39:35 -0000
 @@ -6026,12 +6026,13 @@
  	    col_print(buf2, (int)STRLEN(p), linetabsize(p));
  
