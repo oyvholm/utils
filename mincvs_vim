@@ -9,7 +9,8 @@ vimver=6
 [ "$1" = "-7" ] && { vimver=7; shift; }
 
 vimdir=$HOME/src/other/vim
-baseosvim=$HOME/src/svn/norwegian_vim/trunk
+basesvn=$HOME/src/svn
+baseosvim=$basesvn/norwegian_vim/trunk
 osvim=$baseosvim/msgs/vim$vimver
 
 echo -e "======== mincvs_vim \x7B\x7B\x7B"
@@ -18,9 +19,8 @@ unset ingen_patch
 
 if [ ! -d $osvim ]; then
     echo "$0: $osvim: Katalogen finnes ikke, prøver å lage den..." >&2
-    mkdir -p $baseosvim || { echo "$0: mkdir $baseosvim: Neivel."; exit 1; }
-    cd $baseosvim || { echo "$0: cd $baseosvim: Det gikk så dårlig som bare det. Mystisk." >&2; exit 1; }
-    svn co http://svn.sunbase.org/repos/norwegian_vim/trunk/msgs || { echo "$0: Feil under checkout av den norske Vimmen." >&2; exit 1; }
+    cd $basesvn || { echo "$0: cd $basesvn: Det gikk så dårlig som bare det. Mystisk." >&2; exit 1; }
+    svn update || { echo "$0: Feil under update av den norske Vimmen." >&2; exit 1; }
     echo "$0: Det gikk visst bra." >&2
 fi
 
