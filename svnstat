@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# $Id$
+
+if [ ! -e svnstat.dat ]; then
+    echo svnstat.dat not found, running svn log...
+    svn log --xml $1 >svnstat.dat
+else
+    echo svnstat.dat exists, skipping svn log.
+fi
+
+LC_ALL=C LC_CTYPE=C grep '<date>' svnstat.dat | cut -c7-25,33 >svnstat.tmp
+deep svnstat.tmp | ep_day -w 1 | ep >week.dat
+stpl week.dat
