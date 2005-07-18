@@ -6,7 +6,7 @@
 if [ -e /nett.mrk -o -e /sunba.mrk ]; then
     /etc/init.d/apache start
 elif [ -e /carmbb.mrk ]; then
-    /usr/sbin/apache2ctl start
+    /usr/local/bin/apachectl start
 elif [ -e /nett2.mrk ]; then
     /usr/local/bin/apachectl start
 elif [ -e /toshbb.mrk ]; then
