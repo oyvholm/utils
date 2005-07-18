@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Exports a Wikipedia article as XML.
+#
+# Newest version available from 
+# http://svn.sunbase.org/repos/utils/trunk/wikipedia-export
+#
+# This complicated piece of software is licensed under the GNU General 
+# Public License. Made by Øyvind A. Holm <sunny@sunbase.org>.
+#=======================================================================
+
+curonly='&curonly=true'
+[ "$1" = "-a" ] && { unset curonly; shift; }
+
+if [ "$2" = "" ]; then
+    echo Syntax: $0 [-a] language_prefix \'article_name\'
+    echo
+    echo If -a is specified as the first parameter, all revisions are downloaded.
+    exit 1
+fi
+
+wget -O "$1.$2.xml" http://$1.wikipedia.org/wiki/Special:Export?action=submit$curonly\&pages=$2
