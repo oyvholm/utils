@@ -3,6 +3,14 @@
 # $Id$
 # Fyrer opp en stor xterm i X
 
+# Det ender som oftest i
+#
+# --small:
+# xterm -u8 -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -bg black -fg white -bc -geometry 211x67+0+0
+#
+# --big:
+# xterm -u8 -fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 -bg black -fg white -bc -geometry 140x48+0-8
+
 smallfont=1
 [ -e /carmbb.mrk ] && { smallfont=1; }
 [ "$1" = "--small" ] && { smallfont=1; shift; }

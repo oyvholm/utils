@@ -1,0 +1,48 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# I’m getting spoiled by having a text-base around when working in 
+# Subversion, CVS doesn’t have that. So if I’ve edited a file without 
+# making a copy of the original, a new version of the file has to be 
+# checked out manually. This script automates that task.
+#=======================================================================
+
+fname=$1
+fbck=$fname.bck
+ftmp=$fname.tmp
+
+if [ "$fname" = "" ]; then
+    echo "Syntax: $0 filename" >&2
+    exit 1
+fi
+
+if [ -e $fbck ]; then
+    echo -n "$0: $fbck: File already exists. Press Enter to remove it, Ctrl-C to abort..." >&2
+    read
+    rm -v $fbck || { echo "$0: $fbck: Cannot remove file" >&2; exit 1; }
+fi
+
+if [ -e $ftmp ]; then
+    echo "$0: $ftmp: Temporary file already exists" >&2
+    exit 1
+fi
+
+if [ ! -f $fname ]; then
+    echo "$0: $fname: Not a regular file" >&2
+    exit 1
+fi
+
+mv -v $fname $ftmp || { echo "$0: mv $fname $ftmp: Error when renaming to tempfile" >&2; exit 1; }
+cvs update $fname
+
+if [ ! -e $fname ]; then
+    echo "$0: $fname: Yikes! Couldn’t check out original file, moving tempfile back" >&2
+    mv -v $ftmp $fname || { echo "$0: mv $ftmp $fname: Shit! Unable to rename tempfile to workfile" >&2; }
+    exit 1
+fi
+
+mv -v $fname $fbck || { echo "$0: mv $fname $fbck: Couldn’t rename to backup file" >&2; exit 1; }
+mv -v $ftmp $fname || { echo "$0: mv $ftmp $fname: Couldn’t rename tempfile to workfile" >&2; exit 1; }
+
+ls -la $fname $fbck

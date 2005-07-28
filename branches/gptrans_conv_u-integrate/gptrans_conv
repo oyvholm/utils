@@ -16,14 +16,15 @@ my $Debug = 0;
 
 my $rcs_str = '$Id$';
 
-our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
-    (     0,      0,      0,      0,     "",      0,      0,      0);
-getopts('cdeho:stu');
+our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_n, $opt_o, $opt_s, $opt_t, $opt_u) =
+    (     0,      0,      0,      0,     "",     "",      0,      0,      0);
+getopts('cdehn:o:stu');
 
 $| = 1;
 
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
 my $Des = $opt_c ? "," : ".";
+my $Udef = "?";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
@@ -48,6 +49,7 @@ Syntax: gptrans_conv [options] [files [...]]
   -d    Skip duplicated coordinates, only print first and last
   -e    Use seconds since 1970-01-01 00:00:00 GMT as date format
   -h    Help me ...---...
+  -n x  Use x as undefined value (Default: "$Udef")
   -o x  Use output format x:
           clean
           gpstrans
@@ -66,6 +68,8 @@ END
     exit(0);
     # }}}
 }
+
+length($opt_n) && ($Udef = $opt_n);
 
 # Kunne vært et eget script på grunn av at det gjør sine helt egne 
 # greier, men like greit å samle det på en plass.
@@ -137,7 +141,7 @@ while (<>) {
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
-        print unless ($opt_o =~ /^(xgraph|gpstrans|svg|xml|ygraph)$/);
+        print unless ($opt_o =~ /^(clean|xgraph|gpstrans|svg|xml|ygraph)$/);
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
         # Author’s format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -151,7 +155,7 @@ while (<>) {
         # Author’s format, human-readable date format {{{
         my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
            (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
         # }}}
     } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
         # T 09/01/2002 11:51:26 60°23'36.3" 5°19'35.9" {{{
@@ -159,13 +163,13 @@ while (<>) {
            (    $1,   $2,    $3,    $4,   $5,   $6,     $7,     $8,     $9,    $10,    $11,    $12);
         my $lat_val = sprintf("%.5f", 1*($lat_d+($lat_m/60)+($lat_s/3600)));
         my $lon_val = sprintf("%.5f", $lon_d+($lon_m/60)+($lon_s/3600));
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
         # }}}
     } elsif (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
         # 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23 {{{
         my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
            (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
         # }}}
     } elsif (/^
         # @020721221336N6048353E00701826S015-00001E4859N1673U0000 {{{
@@ -177,17 +181,18 @@ while (<>) {
             (\d\d) # Hours
             (\d\d) # Minutes
             (\d\d) # Seconds
-            (.) # N|S
-            (..) # Latitude degree
-            (..) # Latitude minute
+            ([NS]) # N|S
+            (\d\d) # Latitude degree
+            (\d\d) # Latitude minute
             (\d\d\d) # Latitude minute decimals
-            (.) # E|W
+            ([EW]) # E|W
             (\d\d\d) # Longitude degree
             (\d\d) # Longitude minute
             (\d\d\d) # Longitude minute degree
             (....) # Accurancy
             (......) # Altitude
             (...............)
+            $
             # }}}
             /x) {
         my ($Alfa,   $Year, $Month, $Day, $Hour, $Min, $Sec, $NS, $Y_deg, $Y_degmin, $Y_mindec, $EW, $X_deg, $X_degmin, $X_mindec, $Accur, $Alt, $Rest) =
@@ -204,13 +209,13 @@ while (<>) {
         # @020721221336__________________________________________ {{{
         my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
            (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
-        print("\n") unless ($opt_o =~ /^(xgraph|gpstrans|xml)$/);
+        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
         $found_move = 1;
         # }}}
     } elsif (/^xmaplog /) {
-        print("\n") unless ($opt_o =~ /^(xgraph|gpstrans|xml)$/);
+        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
     } elsif (/^$/) {
-        print("\n") unless ($opt_o =~ /^(xgraph|gpstrans|xml)$/);
+        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
     } else {
         print("# $_");
         chomp;
@@ -327,7 +332,7 @@ sub print_entry {
         $pause_len = $ep_time-$last_time;
     }
 
-    if ($pause_len && ($opt_o !~ /^(xgraph|gpstrans|xml|svg|ygraph)$/)) {
+    if ($pause_len && ($opt_o !~ /^(clean|xgraph|gpstrans|xml|svg|ygraph)$/)) {
         printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
     }
 
@@ -341,7 +346,7 @@ sub print_entry {
             $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
         } elsif ($opt_o eq "clean") {
             $pause_len && ($Line = "\n");
-            ($Line .= "$Lon $Lat\n");
+            ($Line .= "$Lon\t$Lat\t$Alt\n");
         } elsif ($opt_o eq "ps") {
             $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
         } elsif ($opt_o eq "svg") {
@@ -364,7 +369,7 @@ END
                              "<pos> ",
                                  (length($Lon)) ? "<x>$Lon</x> " : "",
                                  (length($Lat)) ? "<y>$Lat</y> " : "",
-                                 ($Alt eq "?") ? "" : "<z>$Alt</z> ",
+                                 ($Alt eq $Udef) ? "" : "<z>$Alt</z> ",
                              "</pos> ",
                          "</gps>\n"
                     );

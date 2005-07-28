@@ -1,14 +1,20 @@
 #!/bin/bash
 
+#=======================================================================
 # $Id$
-# Lager Files.md5 i current dir.
+# Creates Files.md5 and Files.sha1 in current directory.
+#=======================================================================
 
 lockname=mkFiles.lock
 until mkdir $lockname 2>/dev/null; do
-	echo $0: $lockname: Venter på lock... >&2
+	echo $0: $lockname: Waiting for lock... >&2
 	sleep 5
 done
 
-find -type f -print0 | sort -z | xargs -0 md5sum | grep -v '  \./Files\.md5' >Files.md5
+echo Creating MD5...
+find -type f -print0 | sort -z | xargs -0 md5sum | grep -v -e '  \./Files\.md5' -e '  \./Files.sha1' >Files.md5
+echo Creating SHA1...
+find -type f -print0 | sort -z | xargs -0 sha1sum | grep -v '  \./Files\.sha1' >Files.sha1
+echo Done.
 
 rmdir $lockname

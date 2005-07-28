@@ -6,7 +6,7 @@
 if [ -e /nett.mrk -o -e /sunba.mrk ]; then
     /etc/init.d/apache stop
 elif [ -e /carmbb.mrk ]; then
-    /usr/sbin/apache2ctl stop
+    /usr/local/bin/apachectl stop
     while [ -e /var/run/apache2.pid ]; do :; done
 elif [ -e /nett2.mrk ]; then
     /usr/local/bin/apachectl stop

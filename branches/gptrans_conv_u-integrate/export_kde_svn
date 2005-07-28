@@ -1,0 +1,65 @@
+#!/bin/bash
+
+#svn://anonsvn.kde.org/home/kde/tags/KDE/3.4.1/kde-i18n
+
+VersionKDE="3.4.1"
+VersionArts="1.4.1"
+VersionKdevelop="3.2.1"
+
+URL_KDE="svn://anonsvn.kde.org/home/kde/tags/KDE/$VersionKDE"
+URL_ARTS="svn://anonsvn.kde.org/home/kde/tags/arts/$VersionArts"
+
+
+KDEPackages="kdeaccessibility kdeaddons kdeadmin kdeartwork kdebase kdebindings kdeedu kdegames kdegraphics kdelibs kdemultimedia kdenetwork kdepim kdesdk kdetoys kdeutils kdewebdev"
+
+KDELangPacks="nb sv"
+
+
+for Package in $KDEPackages
+do
+	echo "Downloading $Package version $VersionKDE from the server"
+	svn export $URL_KDE/$Package $Package-$VersionKDE
+
+	echo "Preparing for compilation..."
+	cd $Package-$VersionKDE
+	make -f admin/Makefile.common cvs
+	cd ..
+
+	echo "Making the tarball.."
+	tar cjf $Package-$VersionKDE.tar.bz2 $Package-$VersionKDE
+	rm -rf $Package-$VersionKDE
+	echo "##########################################################################"
+done
+
+#Arts
+	echo "Downloading arts version $VersionArts from the server"
+	svn export svn://anonsvn.kde.org/home/kde/tags/arts/$VersionArts arts-$VersionArts
+
+	echo "Preparing for compilation..."
+	cd arts-$VersionArts
+	make -f admin/Makefile.common cvs
+	cd ..
+
+	echo "Making the tarball.."
+	tar cjf arts-$VersionArts.tar.bz2 arts-$VersionArts
+	rm -rf arts-$VersionArts
+	echo "##########################################################################"
+
+#kdevelop
+	echo "Downloading kdevelop version $VersionKDE from the server"
+	svn export $URL_KDE/kdevelop kdevelop-$VersionKdevelop
+
+	echo "Preparing for compilation..."
+	cd kdevelop-$VersionKdevelop
+	echo "make -f admin/Makefile.common cvs"
+	cd ..
+
+	echo "Making the tarball.."
+	tar cjf kdevelop-$VersionKdevelop.tar.bz2 kdevelop-$VersionKdevelop
+	rm -rf kdevelop-$VersionKdevelop
+	echo "##########################################################################"
+
+# Finish
+
+
+echo "Finished"

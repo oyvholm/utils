@@ -5,8 +5,6 @@
 # Mekker ihop ny, fin Vim.
 #=======================================================================
 
-lv_lockdir=$HOME/.lag_vim.LOCK
-
 function usage() {
     cat <<END
 
@@ -16,6 +14,7 @@ Mekker ihop ny, fin Vim.
 
 Valg (må være spesifisert alfabetisk):
 
+-7  Lag vim7. OBS, er alpha, sier de.
 -f  Fjern lockdir før man peiser videre.
 -h  Skriv denne hjelpen. Må være første parameter.
 -l  Lokal laging, ikke kjør update_vim-clean (CVS-oppdatering)
@@ -30,6 +29,9 @@ END
 
 [ "$1" = "-h" ] && { usage; }
 
+vimver=6
+[ "$1" = "-7" ] && { vimver=7; vimveropt=-7; shift; }
+lv_lockdir=$HOME/.lag_vim$vimver.LOCK
 [ "$1" = "-f" ] && { rmdir $lv_lockdir 2>/dev/null; shift; }
 mkdir $lv_lockdir || { echo "lag_vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
 
@@ -39,35 +41,34 @@ unset ingen_patch
 [ "$1" = "-x" ] && { med_x=1; shift; }
 
 if [ "$bruk_lokal" != "1" ]; then
-    update_vim-clean
+    update_vim-clean $vimveropt
 fi
 
-mincvs_vim $ingen_patch || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
+mincvs_vim $vimveropt $ingen_patch || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
 
-vimcompdir=$HOME/src/other/vim/vim
+vimcompdir=$HOME/src/other/vim/vim$vimver
 cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; rmdir $lv_lockdir; exit 0; }
 
 x_flags="--enable-gui=no --without-x"
 vim_size=huge
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
-    echo ======== Man er på petronas, vagabond eller solsje. Lag lokal vim.
-    vimdir=$HOME/local/prg/vim
-    [ -e $HOME/.vagabond.mrk ] && vim_size=normal
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk -o -e $HOME/.devslx.mrk ]; then
+    echo ======== Man er på petronas, vagabond, solsje eller developer.skolelinux.no . Lag lokal vim.
+    vimdir=$HOME/local/prg/vim$vimver
 else
-    vimdir=/usr/local/prg/vim
+    vimdir=/usr/local/prg/vim$vimver
     if [ "$med_x" = "1" ]; then
-        echo ======== Fikk beskjed om å lage Vim med X og gode greia
+        echo ======== Fikk beskjed om å lage Vim$vimver med X og gode greia
         x_flags="--with-x --enable-gui=gtk"
     fi
 fi
 
 if [ -e /nett.mrk ]; then
     if [ -z "$ingen_patch" ]; then
-        vimdir=$HOME/local/prg/vim
+        vimdir=$HOME/local/prg/vim$vimver
         echo ======== Er på nett.ba.no og det lages patcha versjon. Ting plasseres under $vimdir .
     else
-        vimdir=/usr/local/prg/vim
+        vimdir=/usr/local/prg/vim$vimver
         echo ======== Er på nett.ba.no og det lages IKKE patcha versjon. Ting plasseres under $vimdir .
     fi
 fi
@@ -81,8 +82,8 @@ echo -e "======== make \x7B\x7B\x7B"
 make
 echo -e "======== make \x7D\x7D\x7D"
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk ]; then
-    echo Vi er på petronas, vagabond eller solsje, så vi nøyer oss med:
+if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk -o -e $HOME/.devslx.mrk ]; then
+    echo Vi er på petronas, vagabond, solsje eller developer.skolelinux.no, så vi nøyer oss med:
 else
     if [ -e /nett.mrk -a -z "$ingen_patch" ]; then
         echo Er på nett.ba.no og lager patcha versjon, så vi driter i root og...
