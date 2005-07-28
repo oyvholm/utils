@@ -202,17 +202,18 @@ while (<>) {
             (\d\d) # Hours
             (\d\d) # Minutes
             (\d\d) # Seconds
-            (.) # N|S
-            (..) # Latitude degree
-            (..) # Latitude minute
+            ([NS]) # N|S
+            (\d\d) # Latitude degree
+            (\d\d) # Latitude minute
             (\d\d\d) # Latitude minute decimals
-            (.) # E|W
+            ([EW]) # E|W
             (\d\d\d) # Longitude degree
             (\d\d) # Longitude minute
             (\d\d\d) # Longitude minute degree
             (....) # Accurancy
             (......) # Altitude
             (...............)
+            $
             # }}}
             /x) {
         my ($Alfa,   $Year, $Month, $Day, $Hour, $Min, $Sec, $NS, $Y_deg, $Y_degmin, $Y_mindec, $EW, $X_deg, $X_degmin, $X_mindec, $Accur, $Alt, $Rest) =
