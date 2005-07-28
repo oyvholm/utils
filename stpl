@@ -147,7 +147,7 @@ END
 			} elsif ($opt_o =~ /.*\.svg/i) {
 				print(GnupFP "set terminal svg\nset output \"$opt_o\"\n");
 			} else {
-				die("Unkonwn outfile type, has to be .ps or .png\n");
+				die("Unkonwn outfile type, has to be .ps, .png, .fig or .svg\n");
 			}
 		} else {
 			print(GnupFP "set terminal x11\n");
