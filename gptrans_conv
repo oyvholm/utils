@@ -16,14 +16,15 @@ my $Debug = 0;
 
 my $rcs_str = '$Id$';
 
-our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
-    (     0,      0,      0,      0,     "",      0,      0,      0);
-getopts('cdeho:stu');
+our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_n, $opt_o, $opt_s, $opt_t, $opt_u) =
+    (     0,      0,      0,      0,     "",     "",      0,      0,      0);
+getopts('cdehn:o:stu');
 
 $| = 1;
 
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
 my $Des = $opt_c ? "," : ".";
+my $Udef = "?";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
@@ -45,6 +46,7 @@ Syntax: gptrans_conv [options] [files [...]]
   -d    Skip duplicated coordinates, only print first and last
   -e    Use seconds since 1970-01-01 00:00:00 GMT as date format
   -h    Help me ...---...
+  -n x  Use x as undefined value (Default: "$Udef")
   -o x  Use output format x:
           clean
           gpstrans
@@ -63,6 +65,8 @@ END
     exit(0);
     # }}}
 }
+
+length($opt_n) && ($Udef = $opt_n);
 
 # Kunne vært et eget script på grunn av at det gjør sine helt egne 
 # greier, men like greit å samle det på en plass.
@@ -172,7 +176,7 @@ while (<>) {
         # Author’s format, human-readable date format {{{
         my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
            (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
         # }}}
     } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
         # T 09/01/2002 11:51:26 60°23'36.3" 5°19'35.9" {{{
@@ -180,13 +184,13 @@ while (<>) {
            (    $1,   $2,    $3,    $4,   $5,   $6,     $7,     $8,     $9,    $10,    $11,    $12);
         my $lat_val = sprintf("%.5f", 1*($lat_d+($lat_m/60)+($lat_s/3600)));
         my $lon_val = sprintf("%.5f", $lon_d+($lon_m/60)+($lon_s/3600));
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
         # }}}
     } elsif (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
         # 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23 {{{
         my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
            (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
         # }}}
     } elsif (/^
         # @020721221336N6048353E00701826S015-00001E4859N1673U0000 {{{
@@ -362,7 +366,7 @@ END
                              "<pos> ",
                                  (length($Lon)) ? "<x>$Lon</x> " : "",
                                  (length($Lat)) ? "<y>$Lat</y> " : "",
-                                 ($Alt eq "?") ? "" : "<z>$Alt</z> ",
+                                 ($Alt eq $Udef) ? "" : "<z>$Alt</z> ",
                              "</pos> ",
                          "</gps>\n"
                     );
