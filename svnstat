@@ -51,7 +51,7 @@ if (-e $dat_file) {
     system("svn log --xml $args >$dat_file");
 }
 
-system("LC_ALL=C LC_CTYPE=C grep '<date>' svnstat.dat | cut -c7-25,33 >$tmp_file");
+system("LC_ALL=C LC_CTYPE=C grep '<date>' svnstat.dat | cut -c7-25,33 | sort >$tmp_file");
 system("deep $tmp_file | ep_day -w 1 | ep >$week_file");
 system("stpl $week_file");
 
