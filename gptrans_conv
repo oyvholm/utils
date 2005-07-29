@@ -158,7 +158,7 @@ while (<>) {
     # print_entry()
     # {{{
     my $bck_line = $_;
-    if (/^<\?xml version="1.0" encoding="UTF-8"\?>/i) {
+    if (/^<\?xml\b/) {
         read_xmlfile(<>);
         last;
     } elsif (/^# Pause: /) {
@@ -266,7 +266,53 @@ exit(0);
 
 sub read_xmlfile {
     my $Txt = join("", @_);
+    # FIXME: The sequential stuff here is probably bad, but easy.
+    $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
     $Txt =~ s#(<gps\b.*?>.*?</gps>)#print_xml_gps($1)#gse;
+}
+
+sub print_gpx {
+    # {{{
+    my $Orig = shift;
+    my $Str = $Orig;
+    D("print_xml_gps(\"$Orig\")\n");
+    my ($Year,  $Mon,  $Day, $Hour,  $Min,  $Sec, $Dsec) =
+       ($Udef, $Udef, $Udef, $Udef, $Udef, $Udef, $Udef);
+    my ($Pos_X, $Pos_Y, $Pos_Z,  $Alt) =
+       ( $Udef,  $Udef,  $Udef, $Udef);
+    $Str =~
+    s{
+        <trk\b(.*?)>(.*?)</trk>
+    }
+    {
+        my $el_trk = $2;
+        $el_trk =~
+        s{
+            <trkseg\b(.*?)>(.*?)</trkseg>
+        }
+        {
+            my $el_trkseg = $2;
+            $el_trkseg =~
+            s{
+                <trkpt\b(.*?)>(.*?)</trkpt>
+            }
+            {
+                my ($attr_trkpt, $el_trkpt) =
+                   (         $1,        $2);
+                ($attr_trkpt =~ /\blon="(.*?)"/) && ($Pos_Y = $1);
+                ($attr_trkpt =~ /\blat="(.*?)"/) && ($Pos_X = $1);
+                ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Pos_Z = $1);
+                if ($Str =~ m#<time>(\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)\.?(\d*?)Z</time>#) {
+                    ($Year, $Mon, $Day, $Hour, $Min, $Sec, $Dsec) =
+                    (   $1,   $2,   $3,    $4,   $5,   $6,    $7);
+                }
+                print_entry($Year, $Mon, $Day, $Hour, $Min, $Sec, $Pos_X, $Pos_Y, $Pos_Z);
+            }gsex;
+            $found_move = 1;
+        }gsex;
+        $found_move = 1;
+    }gsex;
+    # }}}
 }
 
 sub print_xml_gps {
@@ -412,6 +458,7 @@ END
     if ($do_print) {
         if ($found_move) {
             (!$pause_len && ($opt_o eq "xgraph")) && ($Line = "move $Line");
+            ($opt_o eq "clean") && (print("\n"));
             $found_move = 0;
         }
         print($Line);
