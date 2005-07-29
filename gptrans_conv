@@ -18,7 +18,9 @@ my $rcs_str = '$Id$';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_n, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",     "",      0,      0,      0);
-getopts('cdehn:o:stu');
+our ($opt_y) =
+    (     0);
+getopts('cdehn:o:stuy');
 
 $| = 1;
 
@@ -60,6 +62,7 @@ Syntax: gptrans_conv [options] [files [...]]
         than $PAUSE_LIMIT seconds
   -u    Comment out following data with identical position values, only 
         print first entry
+  -y    Double Y scale to get it right in gnuplot.
 
 END
     exit(0);
@@ -335,6 +338,9 @@ sub print_entry {
         # Valid data was found, send to stdout {{{
         unless ($first_time) {
             $first_time = $ep_time;
+        }
+        if ($opt_y) {
+            $Lat *= 2;
         }
         if ($opt_o eq "xgraph") {
             $pause_len && ($Line = "move ");
