@@ -159,7 +159,9 @@ while (<>) {
     # {{{
     my $bck_line = $_;
     if (/^<\?xml\b/) {
-        read_xmlfile(<>);
+        my $xml_data = $_;
+        $xml_data .= join("", <>);
+        read_xmlfile($xml_data);
         last;
     } elsif (/^# Pause: /) {
     } elsif (/^# move$/) {
