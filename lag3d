@@ -34,6 +34,7 @@ GetOptions(
 $opt_help && usage(0);
 
 my $Count = 1;
+my $Buf = "";
 
 while (<>) {
     my $Curr = $_;
@@ -43,8 +44,8 @@ while (<>) {
 
 sub pr_num {
     my $Num = shift;
-    print("$Num\t");
-    ($Count++ % 3) || print("\n");
+    $Buf .= ("$Num\t");
+    ($Count++ % 3) || print("$Buf\n", $Buf = "");
     return("");
 }
 
