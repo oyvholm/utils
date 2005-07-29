@@ -52,6 +52,7 @@ Syntax: gptrans_conv [options] [files [...]]
   -o x  Use output format x:
           clean
           gpstrans
+          gpx (Not complete)
           ps (Unfinished)
           svg (Unfinished)
           xgraph
@@ -132,6 +133,13 @@ if ($opt_u) {
 # Print possible header {{{
 if ($opt_o eq "gpstrans") {
     print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
+} elsif ($opt_o eq "gpx") {
+    print(<<END);
+<?xml version="1.0" standalone="no"?>
+<gpx>
+  <trk>
+    <trkseg>
+END
 } elsif ($opt_o eq "ps") {
     print(ps_header(532, 6034, 533, 6040));
     print("*u\n");
@@ -167,7 +175,7 @@ while (<>) {
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
-        print unless ($opt_o =~ /^(clean|xgraph|gpstrans|svg|xml|ygraph)$/);
+        print unless ($opt_o =~ /^(clean|xgraph|gpstrans|gpx|svg|xml|ygraph)$/);
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
         # Author’s format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -235,13 +243,13 @@ while (<>) {
         # @020721221336__________________________________________ {{{
         my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
            (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
-        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
+        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
         $found_move = 1;
         # }}}
     } elsif (/^xmaplog /) {
-        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
+        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
     } elsif (/^$/) {
-        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
+        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
     } else {
         print("# $_");
         chomp;
@@ -251,7 +259,13 @@ while (<>) {
 }
 
 # Print possible footer {{{
-if ($opt_o eq "ps") {
+if ($opt_o eq "gpx") {
+    print(<<END);
+    </trkseg>
+  </trk>
+</gpx>
+END
+} elsif ($opt_o eq "ps") {
     print(<<END);
 *U
 %%Trailer
@@ -378,7 +392,7 @@ sub print_entry {
         $pause_len = $ep_time-$last_time;
     }
 
-    if ($pause_len && ($opt_o !~ /^(clean|xgraph|gpstrans|xml|svg|ygraph)$/)) {
+    if ($pause_len && ($opt_o !~ /^(clean|xgraph|gpstrans|gpx|xml|svg|ygraph)$/)) {
         printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
     }
 
@@ -396,6 +410,13 @@ sub print_entry {
         } elsif($opt_o eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) = (ddd_to_dms($Lat), ddd_to_dms($Lon));
             $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
+        } elsif($opt_o eq "gpx") {
+            $Line = join("",
+                            "      <trkpt lat=\"$Lat\" lon=\"$Lon\"> ",
+                            ($Alt eq $Udef) ? "" : "<ele>$Alt</ele> ",
+                            "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time> ",
+                            "</trkpt>\n"
+                    );
         } elsif ($opt_o eq "clean") {
             $pause_len && ($Line = "\n");
             ($Line .= "$Lon\t$Lat\t$Alt\n");
@@ -461,6 +482,9 @@ END
         if ($found_move) {
             (!$pause_len && ($opt_o eq "xgraph")) && ($Line = "move $Line");
             ($opt_o eq "clean") && (print("\n"));
+            if ($opt_o eq "gpx") {
+                print("    </trkseg>\n    <trkseg>\n");
+            }
             $found_move = 0;
         }
         print($Line);
