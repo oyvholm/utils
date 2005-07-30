@@ -251,9 +251,11 @@ while (<>) {
     } elsif (/^$/) {
         print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
     } else {
-        print("# $_");
-        chomp;
-        warn("Line $.: Unknown: \"$_\"\n");
+        unless ($opt_o =~ /^(clean|xgraph|gpstrans|gpx|xml)$/) {
+            print("# $_");
+            chomp;
+            warn("Line $.: Unknown: \"$_\"\n");
+        }
     }
     # }}}
 }
