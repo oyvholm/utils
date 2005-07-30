@@ -38,6 +38,7 @@ my $dat_file = "svnstat.dat";
 my $tmp_file = "svnstat.tmp";
 my $week_file = "svnstat-week.dat";
 my $count_file = "svnstat-count.dat";
+my $time_file = "svnstat-time.dat";
 
 my $args = "";
 
@@ -57,6 +58,8 @@ system("deep $tmp_file | ep_day -w 1 | ep >$week_file");
 system("stpl $week_file");
 system("ep $tmp_file | inc_epstat >$count_file");
 system("stpl $count_file");
+system("deep $tmp_file | ep-pause -s >$time_file");
+system("stpl $time_file");
 
 # unlink($tmp_file);
 # unlink($week_file);
