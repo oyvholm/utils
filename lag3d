@@ -14,8 +14,8 @@ use Getopt::Long;
 
 $| = 1;
 
-our ($opt_help) =
-    (        0);
+our ($opt_help, $opt_two) =
+    (        0,        0);
 
 my $VERSION = "0.0";
 
@@ -28,13 +28,15 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "help|h"       => \$opt_help
+    "help|h"       => \$opt_help,
+    "2"            => \$opt_two
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $opt_help && usage(0);
 
 my $Count = 1;
 my $Buf = "";
+my $per_line = $opt_two ? 2 : 3;
 
 while (<>) {
     my $Curr = $_;
@@ -45,7 +47,7 @@ while (<>) {
 sub pr_num {
     my $Num = shift;
     $Buf .= ("$Num\t");
-    ($Count++ % 3) || print("$Buf\n", $Buf = "");
+    ($Count++ % $per_line) || print("$Buf\n", $Buf = "");
     return("");
 }
 
@@ -61,6 +63,7 @@ Usage: $progname [options] [file [files [...]]]
 Options:
 
 -h, --help  Show this help.
+-2          Generate two columns instead of three.
 
 END
     exit($Retval);
@@ -96,6 +99,10 @@ $Id$
 =item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<-2>
+
+Generate two columns instead of three.
 
 =back
 
