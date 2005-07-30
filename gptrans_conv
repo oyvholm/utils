@@ -18,15 +18,16 @@ my $rcs_str = '$Id$';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_n, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",     "",      0,      0,      0);
-our ($opt_y) =
-    (     0);
-getopts('cdehn:o:stuy');
+our ($opt_w, $opt_y) =
+    (     0,      0);
+getopts('cdehn:o:stuyw');
 
 $| = 1;
 
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
 my $Des = $opt_c ? "," : ".";
 my $Udef = "?";
+my $Spc = $opt_w ? "" : " ";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
@@ -63,6 +64,7 @@ Syntax: gptrans_conv [options] [files [...]]
         than $PAUSE_LIMIT seconds
   -u    Comment out following data with identical position values, only 
         print first entry
+  -w    Strip all unnecessary whitespace
   -y    Double Y scale to get it right in gnuplot.
 
 END
@@ -71,7 +73,6 @@ END
 }
 
 length($opt_n) && ($Udef = $opt_n);
-
 # Kunne vært et eget script på grunn av at det gjør sine helt egne 
 # greier, men like greit å samle det på en plass.
 # FIXME: Fjerner ikke første duplikatentryen.
@@ -137,8 +138,8 @@ if ($opt_o eq "gpstrans") {
     print(<<END);
 <?xml version="1.0" standalone="no"?>
 <gpx>
-  <trk>
-    <trkseg>
+$Spc$Spc<trk>
+$Spc$Spc$Spc$Spc<trkseg>
 END
 } elsif ($opt_o eq "ps") {
     print(ps_header(532, 6034, 533, 6040));
@@ -152,11 +153,11 @@ END
     print(<<END);
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+$Spc$Spc"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg height="1000" width="1000" viewBox="23 70 2 2"
-  xmlns="http://www.w3.org/2000/svg" version="1.1">
-  <title></title>
-  <desc></desc>
+$Spc${Spc}xmlns="http://www.w3.org/2000/svg" version="1.1">
+$Spc$Spc<title></title>
+$Spc$Spc<desc></desc>
 END
 }
 # }}}
@@ -263,8 +264,8 @@ while (<>) {
 # Print possible footer {{{
 if ($opt_o eq "gpx") {
     print(<<END);
-    </trkseg>
-  </trk>
+$Spc$Spc$Spc$Spc</trkseg>
+$Spc$Spc</trk>
 </gpx>
 END
 } elsif ($opt_o eq "ps") {
@@ -414,9 +415,9 @@ sub print_entry {
             $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
         } elsif($opt_o eq "gpx") {
             $Line = join("",
-                            "      <trkpt lat=\"$Lat\" lon=\"$Lon\"> ",
-                            ($Alt eq $Udef) ? "" : "<ele>$Alt</ele> ",
-                            "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time> ",
+                            "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Lat\" lon=\"$Lon\">$Spc",
+                            ($Alt eq $Udef) ? "" : "<ele>$Alt</ele>$Spc",
+                            "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc",
                             "</trkpt>\n"
                     );
         } elsif ($opt_o eq "clean") {
@@ -439,12 +440,12 @@ END
             );
         } elsif ($opt_o eq "xml") {
             $Line = join("",
-                         "<gps> ",
-                             "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date> ",
+                         "<gps>$Spc;",
+                             "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc",
                              "<pos> ",
-                                 (length($Lon)) ? "<x>$Lon</x> " : "",
-                                 (length($Lat)) ? "<y>$Lat</y> " : "",
-                                 ($Alt eq $Udef) ? "" : "<z>$Alt</z> ",
+                                 (length($Lon)) ? "<x>$Lon</x>$Spc" : "",
+                                 (length($Lat)) ? "<y>$Lat</y>$Spc" : "",
+                                 ($Alt eq $Udef) ? "" : "<z>$Alt</z>$Spc",
                              "</pos> ",
                          "</gps>\n"
                     );
@@ -485,7 +486,7 @@ END
             (!$pause_len && ($opt_o eq "xgraph")) && ($Line = "move $Line");
             ($opt_o eq "clean") && (print("\n"));
             if ($opt_o eq "gpx") {
-                print("    </trkseg>\n    <trkseg>\n");
+                print("$Spc$Spc$Spc$Spc</trkseg>\n$Spc$Spc$Spc$Spc<trkseg>\n");
             }
             $found_move = 0;
         }
