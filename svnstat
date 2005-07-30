@@ -36,7 +36,8 @@ $opt_help && usage(0);
 
 my $dat_file = "svnstat.dat";
 my $tmp_file = "svnstat.tmp";
-my $week_file = "week.dat";
+my $week_file = "svnstat-week.dat";
+my $count_file = "svnstat-count.dat";
 
 my $args = "";
 
@@ -54,9 +55,11 @@ if (-e $dat_file) {
 system("LC_ALL=C LC_CTYPE=C grep '<date>' svnstat.dat | cut -c7-25,33 | sort >$tmp_file");
 system("deep $tmp_file | ep_day -w 1 | ep >$week_file");
 system("stpl $week_file");
+system("ep $tmp_file | inc_epstat >$count_file");
+system("stpl $count_file");
 
-unlink($tmp_file);
-unlink($week_file);
+# unlink($tmp_file);
+# unlink($week_file);
 
 sub usage {
     # Send the help message to stdout {{{
