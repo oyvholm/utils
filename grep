@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# grep suger ganske kraftig i UTF-8-localer, så man får prøve en omvei. 
+# Det kommer garantert til å føkke opp et eller annet, men får prøve.
+#=======================================================================
+
+LC_ALL=C /bin/grep $*
