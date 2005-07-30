@@ -57,11 +57,11 @@ if (-e $dat_file) {
 system("LC_ALL=C LC_CTYPE=C grep '<date>' $dat_file | cut -c7-25,33 | sort >$tmp_file");
 system("deep $tmp_file >$ep_file");
 system("ep_day -w 1 $ep_file | ep >$week_file");
-system("stpl $week_file");
+system("stpl -t \"Commits per week\" $week_file");
 system("inc_epstat $tmp_file >$count_file");
-system("stpl $count_file");
+system("stpl -t \"Incrementally number of revisions\" $count_file");
 system("ep-pause -s $ep_file >$time_file");
-system("stpl $time_file");
+system("stpl -t \"Number of seconds between commits\" $time_file");
 
 # unlink($tmp_file);
 # unlink($week_file);
