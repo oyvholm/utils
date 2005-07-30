@@ -15,9 +15,9 @@ use Time::Local;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_h, $opt_l) =
-    (     0,      1);
-getopts('hl:') || die("Option error. Use -h for help.\n");
+our ($opt_h, $opt_l, $opt_s) =
+    (     0,      1,      0);
+getopts('hl:s') || die("Option error. Use -h for help.\n");
 
 my $VERSION = "0.0";
 
@@ -31,17 +31,26 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 $opt_h && usage(0);
 
 my $last_sec = 0;
+my $d_sep = "-";
+my $dt_sep = "T";
+my $t_sep = ":";
 
 while (<>) {
     if (/^.*?(\d+).*?$/) {
         my $Secs = $1;
         my $Pause = $Secs - $last_sec;
         if ($last_sec && ($Pause >= $opt_l)) {
-            printf(
-                "%u-%u\t%u\t%s\n",
-                $last_sec, $Secs,
-                $Pause, sec_to_hms($Pause)
-            );
+            if ($opt_s) {
+                my @TA = gmtime($last_sec);
+                printf("%04u$d_sep%02u$d_sep%02u$dt_sep%02u$t_sep%02u$t_sep%02uZ\t$Pause\n",
+                $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+            } else {
+                printf(
+                    "%u-%u\t%u\t%s\n",
+                    $last_sec, $Secs,
+                    $Pause, sec_to_hms($Pause)
+                );
+            }
         }
         $last_sec = $Secs;
     } else {
