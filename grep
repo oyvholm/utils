@@ -6,4 +6,4 @@
 # Det kommer garantert til å føkke opp et eller annet, men får prøve.
 #=======================================================================
 
-LC_ALL=C /bin/grep $*
+LC_ALL=C /bin/grep "$@"
