@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id: std.pl 88 2005-06-13 17:48:04Z sunny $
+# $Id$
 # [Description]
 #
 # Character set: UTF-8
@@ -22,7 +22,7 @@ my $VERSION = "0.0";
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
 
-my $rcs_id = '$Id: std.pl 88 2005-06-13 17:48:04Z sunny $';
+my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
@@ -67,7 +67,7 @@ __END__
 
 =head1 REVISION
 
-$Id: std.pl 88 2005-06-13 17:48:04Z sunny $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -123,4 +123,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id: std.pl 88 2005-06-13 17:48:04Z sunny $
+# End of file $Id$
