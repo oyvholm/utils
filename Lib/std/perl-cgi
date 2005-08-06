@@ -2,7 +2,7 @@
 
 #=========================================================
 # Standardoppsett til index.cgi
-# $Id: std.cgi,v 1.2 2001/09/23 23:33:17 sunny Exp $
+# $Id$
 # (C)opyright 2001 Øyvind A. Holm <sunny@sunbase.org>
 #=========================================================
 
@@ -38,7 +38,7 @@ $log_requests = 1;
 $WebMaster = 'sunny@sunbase.org';
 $doc_width = '95%';
 
-$main::rcs_id = '$Id: std.cgi,v 1.2 2001/09/23 23:33:17 sunny Exp $';
+$main::rcs_id = '$Id$';
 unshift(@main::rcs_array, $main::rcs_id);
 
 $css_default = <<END;
@@ -61,4 +61,4 @@ print_header("Det virket visst.");
 
 tab_print("<h1>Vi er oppe og går</h1>\n");
 
-#### End of file $Id: std.cgi,v 1.2 2001/09/23 23:33:17 sunny Exp $ ####
+#### End of file $Id$ ####

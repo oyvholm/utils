@@ -1,5 +1,5 @@
 
-% $Id: article.tex,v 1.4 1999/09/16 14:19:43 sunny Exp $
+% $Id$
 
 \documentclass[a4paper]{article}
 \usepackage[latin1]{inputenc}
@@ -30,9 +30,9 @@ Teksten kommer her.
 \vfill
 \hrule
 \vskip 1pt
-\noindent {\scriptsize \verb|$Id: article.tex,v 1.4 1999/09/16 14:19:43 sunny Exp $|}
+\noindent {\scriptsize \verb|$Id$|}
 \label{VeryLast}
 
 \end{document}
 
-% End of file $Id: article.tex,v 1.4 1999/09/16 14:19:43 sunny Exp $
+% End of file $Id$
