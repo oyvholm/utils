@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Send file templates to stdout
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
@@ -26,6 +26,14 @@ my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
+my $Type = "";
+
+if (defined($ARGV[0])) {
+    $Type = $ARGV[0];
+} else {
+    usage(1);
+}
+
 Getopt::Long::Configure("bundling");
 GetOptions(
     "help|h"       => \$opt_help
@@ -33,9 +41,20 @@ GetOptions(
 
 $opt_help && usage(0);
 
-while (<>) {
-    print;
+my $dat_file = $0;
+
+$dat_file =~ s/^(.+\/)(.+?)$/$1/;
+$dat_file .= "Lib/std/$Type";
+
+if (open(FromFP, "<$dat_file")) {
+    while (<>) {
+        print($_);
+    }
+    close(FromFP);
+} else {
+    die("$progname: $dat_file: Cannot read file: $!\n");
 }
+
 
 sub usage {
     # Send the help message to stdout {{{
@@ -44,7 +63,9 @@ sub usage {
 
 $progname v$VERSION -- $id_date
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] type
+
+Send a template of a special file type to stdout.
 
 Options:
 
