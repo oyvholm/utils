@@ -2,9 +2,9 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
 
 <article lang="en">
-  <!-- $Id$ -->
   <articleinfo>
     <title>Articletitle</title>
+    <releaseinfo>$Id$</releaseinfo>
     <author>
       <firstname>Øyvind</firstname>
       <othername>A.</othername>
