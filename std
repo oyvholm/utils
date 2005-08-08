@@ -47,7 +47,7 @@ $dat_file =~ s/^(.+\/)(.+?)$/$1/;
 $dat_file .= "Lib/std/$Type";
 
 if (open(FromFP, "<$dat_file")) {
-    while (<>) {
+    while (<FromFP>) {
         print($_);
     }
     close(FromFP);
