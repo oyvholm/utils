@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
 
-<book lang="en">
+<article lang="en">
   <!-- $Id$ -->
-  <bookinfo>
-    <title>Booktitle</title>
+  <articleinfo>
+    <title>Articletitle</title>
     <author>
       <firstname>Øyvind</firstname>
       <othername>A.</othername>
@@ -15,11 +15,11 @@
       <year>2005</year>
       <holder>Øyvind A. Holm</holder>
     </copyright>
-  </bookinfo>
+  </articleinfo>
 
-  <chapter><title>Chaptertitle</title>
+  <section><title>Sectiontitle</title>
 
     <para></para>
 
-  </chapter>
-</book>
+  </section>
+</article>
