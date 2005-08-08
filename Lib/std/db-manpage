@@ -2,7 +2,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "/usr/share/xml/docbook/schema/dtd/4/docbookx.dtd">
 
 <refentry id="ls">
-  <!-- $Id: manpage.xml 1022 2005-08-05 20:31:50Z sunny $ -->
+  <!-- $Id$ -->
   <refmeta>
     <refentrytitle>ls</refentrytitle>
     <manvolnum>1</manvolnum>
