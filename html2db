@@ -14,7 +14,7 @@ use Getopt::Long;
 
 $| = 1;
 
-our $Debug = 1;
+our $Debug = 0;
 
 our ($opt_help) =
     (        0);
@@ -45,6 +45,12 @@ $Data = conv_elem("ul", "itemizedlist", $Data);
 $Data = conv_elem("ol", "orderedlist", $Data);
 $Data = conv_elem("li", "listitem", $Data);
 $Data = conv_elem("pre", "screen", $Data, 1);
+$Data = conv_h(6, $Data);
+$Data = conv_h(5, $Data);
+$Data = conv_h(4, $Data);
+$Data = conv_h(3, $Data);
+$Data = conv_h(2, $Data);
+$Data = conv_h(1, $Data);
 
 print($Data);
 
@@ -63,8 +69,40 @@ sub conv_elem {
            (     $1,   $2,       $3);
         D("Er i regexp");
         $Attrib =~ s/^\s*(.*?)\s*$/$1/s;
-        length($Attrib) && ($Attrib = " $Warn $Attrib");
+        length($Attrib) && ($Attrib = " $Attrib", $chk_str = $Warn);
         "$chk_str<$To$Attrib>$Txt</$To>";
+    }gsex;
+    return($Str);
+    # }}}
+}
+
+sub conv_h {
+    # {{{
+    my ($Level, $Str) = @_;
+    my $end_head = "";
+
+    for (my $Tmp = $Level; $Tmp >= 1; $Tmp--) {
+        $end_head .= $Tmp;
+    }
+    my $reg_str = <<END;
+        <(h$Level)\\b(.*?)>
+        (.*?)
+        </h$Level\\b(.*?)>
+        (.*?)
+        <(h[$end_head])\\b(.*?)>
+END
+    D("reg_str = \x7B\x7B\x7B\n$reg_str\n\x7D\x7D\x7D");
+    $Str =~
+    s{
+        $reg_str
+    }
+    {
+        my ($Elem1, $Attrib, $Header, $SubAttr1, $Txt, $Elem2, $SubAttr2) =
+           (     $1,     $2,      $3,        $4,   $5,     $6,        $7);
+        D("conv_h(): Er i regexp");
+        $Attrib =~ s/^\s*(.*?)\s*$/$1/s;
+        length($Attrib) && ($Attrib = " $Warn $Attrib");
+        "<sect$Level$Attrib><title>$Header</title>\n$Txt\n</sect$Level>\n<$Elem2$SubAttr2>";
     }gsex;
     return($Str);
     # }}}
@@ -78,6 +116,12 @@ sub usage {
 $progname v$VERSION -- $id_date
 
 Usage: $progname [options] [file [files [...]]]
+
+Experimental script for converting XHTML to DocBook.
+
+To get all the headers converted, the files have to be filtered through 
+the script several times. And there will probably be some <hX> headers 
+which needs manual conversion. The curse of <h?> elements.
 
 Options:
 
