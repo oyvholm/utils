@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Simple HTML to DocBook conversion utility.
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
@@ -20,6 +20,7 @@ our ($opt_help) =
     (        0);
 
 my $VERSION = "0.0";
+my $Warn = "<!-- \@html2db -->";
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -35,8 +36,38 @@ GetOptions(
 
 $opt_help && usage(0);
 
-while (<>) {
-    print;
+my $Orig = join("", <>);
+my $Data = $Orig;
+
+$Data = conv_elem("em", "emphasis", $Data);
+$Data = conv_elem("p", "para", $Data);
+$Data = conv_elem("ul", "itemizedlist", $Data);
+$Data = conv_elem("ol", "orderedlist", $Data);
+$Data = conv_elem("li", "listitem", $Data);
+$Data = conv_elem("pre", "screen", $Data, 1);
+
+print($Data);
+
+sub conv_elem {
+    # {{{
+    my ($From, $To, $Str, $Check) = @_;
+    defined($Check) || ($Check = 0);
+    my $chk_str = $Check ? "$Warn" : "";
+
+    $Str =~
+    s{
+        <$From\b(.*?)>(.*?)</$From\b(.*?)>
+    }
+    {
+        my ($Attrib, $Txt, $SubAttr) =
+           (     $1,   $2,       $3);
+        D("Er i regexp");
+        $Attrib =~ s/^\s*(.*?)\s*$/$1/s;
+        length($Attrib) && ($Attrib = " $Warn $Attrib");
+        "$chk_str<$To$Attrib>$Txt</$To>";
+    }gsex;
+    return($Str);
+    # }}}
 }
 
 sub usage {
