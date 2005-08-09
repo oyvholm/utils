@@ -43,7 +43,7 @@ $Data = conv_elem("em", "emphasis", $Data);
 $Data = conv_elem("p", "para", $Data);
 $Data = conv_elem("ul", "itemizedlist", $Data);
 $Data = conv_elem("ol", "orderedlist", $Data);
-$Data = conv_elem("li", "listitem", $Data);
+$Data = conv_elem("li", "listitem", $Data, 0, 1);
 $Data = conv_elem("pre", "screen", $Data, 1);
 $Data = conv_h(6, $Data);
 $Data = conv_h(5, $Data);
@@ -56,9 +56,16 @@ print($Data);
 
 sub conv_elem {
     # {{{
-    my ($From, $To, $Str, $Check) = @_;
+    my ($From, $To, $Str, $Check, $InsPara) = @_;
     defined($Check) || ($Check = 0);
+    defined($InsPara) || ($InsPara = 0);
     my $chk_str = $Check ? "$Warn" : "";
+    my ($Par1, $Par2) =
+       (   "",    "");
+    if ($InsPara) {
+        $Par1 = "<para>";
+        $Par2 = "</para>";
+    }
 
     $Str =~
     s{
@@ -70,7 +77,7 @@ sub conv_elem {
         D("Er i regexp");
         $Attrib =~ s/^\s*(.*?)\s*$/$1/s;
         length($Attrib) && ($Attrib = " $Attrib", $chk_str = $Warn);
-        "$chk_str<$To$Attrib>$Txt</$To>";
+        "$chk_str<$To$Attrib>$Par1$Txt$Par2</$To>";
     }gsex;
     return($Str);
     # }}}
