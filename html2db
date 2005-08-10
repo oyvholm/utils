@@ -38,6 +38,13 @@ $opt_help && usage(0);
 
 my $Orig = join("", <>);
 my $Data = $Orig;
+my $H1_kludge = "<h1>This is just a placeholder by html2db. It should not be here.</h1>";
+
+if ($Data =~ m#</body\b#s) {
+    $Data =~ s#</body\b(.*?)$#$H1_kludge</body$1#s;
+} else {
+    $Data .= $H1_kludge;
+}
 
 $Data = conv_elem("em", "emphasis", $Data);
 $Data = conv_elem("p", "para", $Data);
@@ -51,6 +58,10 @@ $Data = conv_h(4, $Data);
 $Data = conv_h(3, $Data);
 $Data = conv_h(2, $Data);
 $Data = conv_h(1, $Data);
+
+D("\$Data before cleanup \x7B\x7B\x7B\n$Data\n\x7D\x7D\x7D");
+
+$Data =~ s/$H1_kludge//;
 
 print($Data);
 
