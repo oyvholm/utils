@@ -7,6 +7,11 @@ if [ "$1" = "-e" ]; then
 	# Bruk epoch-format på datoen (Antall sekunder sia 1970-01-01 00:00:00 GMT)
 	shift
 	find $* -printf "%T@\t%6s\t%U.%G\t%p\n"
+elif [ "$1" = "-d" ]; then
+    # Skriv bare ut fildatoene. Lages til ære for manyfiles(1) når jeg 
+    # skal sjekke ting.
+	shift
+	TZ=UTC find $* -printf "%TY-%Tm-%TdT%TH:%TM:%TSZ\n"
 else
 	find $* -printf "%TY-%Tm-%Td %TH:%TM:%TS\t%6s\t%U.%G\t%p\n"
 fi
