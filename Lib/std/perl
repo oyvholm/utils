@@ -14,7 +14,7 @@ use Getopt::Long;
 
 $| = 1;
 
-our $Debug = 1;
+our $Debug = 0;
 
 our ($opt_help) =
     (        0);
