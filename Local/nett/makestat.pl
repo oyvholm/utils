@@ -1,1 +1,1 @@
-/home/badata/Stable/basnakk/bin/makestat.pl
+/var/www/ba/trunk/basnakk/bin/makestat.pl
