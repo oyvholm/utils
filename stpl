@@ -15,9 +15,9 @@ $| = 1;
 
 use Getopt::Std;
 
-our ($opt_f, $opt_h, $opt_k, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
-    (    "",      0,      0,     "",     "",     "",     "",     "",     "");
-getopts('f:hkl:o:s:t:x:y:');
+our ($opt_f, $opt_h, $opt_k, $opt_L, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
+    (    "",      0,      0,      0,     "",     "",     "",     "",     "",     "");
+getopts('f:hkLl:o:s:t:x:y:');
 
 my $rcs_id = '$Id$';
 my $rcs_id_strip = $rcs_id;
@@ -60,6 +60,7 @@ Options:
   -f x       Use x as date format. Default: "$STD_TIMEFMT"
   -h         Send this help to stdout
   -k         Keep temp file after plotting
+  -L         Draw a line from startpoint to endpoint when it’s done
   -lp        Use linespoints instead of lines
   -o x       Use x as output format. Can be one of these:
                fig  (XFig)
@@ -171,14 +172,25 @@ END
 			# }
 		# }
 
+        my $line_file = "$data_file.line.tmp";
+        my $line_str = "";
+
+        if ($opt_L) {
+            # FIXME
+            system("head -1 $data_file >$line_file");
+            system("tail -1 $data_file >>$line_file");
+            $line_str = qq{, \\\n"$line_file" using 1:2 title " " with line 3\n};
+        }
+
 		print(GnupFP <<END);
 plot \\
 "$data_file" using 1:2 title " " with $line_type, \\
-"$data_file" using 1:2 smooth bezier title " " with line -1
+"$data_file" using 1:2 smooth bezier title " " with line -1$line_str
 
 END
 
 		close(GnupFP);
+        $opt_L && unlink($line_str);
 
 		system("gnuplot -persist $gnuplot_script");
 		if ($opt_k) {
