@@ -16,10 +16,8 @@ $| = 1;
 
 our $Debug = 0;
 
-our ($opt_help) =
-    (        0);
-
-my $VERSION = "0.0";
+our ($opt_help, $opt_xml) =
+    (        0,        0);
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -30,7 +28,8 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "help|h"       => \$opt_help
+    "help|h" => \$opt_help,
+    "xml|x"  => \$opt_xml
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $opt_help && usage(0);
@@ -42,17 +41,38 @@ while (<>) {
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
-    print(<<END);
+    my ($xml_start, $xml_end)  =
+       (        "",       "");
 
-$progname v$VERSION -- $id_date
+    if ($opt_xml) {
+        $xml_start = <<END;
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
+<article>
+  <screen>
+END
+        $xml_end = <<END;
+</screen>
+</article>
+END
+    }
+    my $Txt = <<END;
+$rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
 Options:
 
--h, --help  Show this help.
-
+  -h, --help
+      Show this help.
+  -x, --xml
+      Create XML output
 END
+    printf("%s%s%s",
+        $xml_start,
+        $opt_xml ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
     exit($Retval);
     # }}}
 }
@@ -65,10 +85,30 @@ sub D {
     my $File = $call_info[1];
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    if ($opt_xml) {
+        printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
+            txt_to_xml($$),
+            txt_to_xml($File),
+            txt_to_xml($call_info[2]),
+            txt_to_xml($Txt)
+        );
+    } else {
+        print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    }
     return("");
     # }}}
 } # D()
+
+sub txt_to_xml {
+    # Return a XML-safe version of a string {{{
+    my $Txt = shift;
+
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+} # txt_to_xml()
 
 __END__
 
@@ -99,6 +139,10 @@ $Id$
 =item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<-x>, B<--xml>
+
+Create XML output.
 
 =back
 
