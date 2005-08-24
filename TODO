@@ -1,7 +1,7 @@
 $Id$
 
 dbk:
-  - Legg inn en kontroll av HTML-koden etter at ting er lagret. Ja.
+  - Legg inn en kontroll av XML-koden etter at ting er lagret.
 
 mklist:
   - Mulighet for å velge melding via et -m-parameter eller noe sånt.
