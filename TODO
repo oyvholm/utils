@@ -4,7 +4,7 @@ dbk:
   - Legg inn en kontroll av XML-koden etter at ting er lagret.
 
 mklist:
-  - Mulighet for å velge melding via et -m-parameter eller noe sånt.
+  - Mulighet for å velge melding via et "-m"-parameter eller noe sånt.
 
 Eksempel på oversikt over revisjonstre:
 
