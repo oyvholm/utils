@@ -3,7 +3,7 @@
 #=========================================================
 # Standardoppsett til index.cgi
 # $Id$
-# (C)opyright 2005- Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyright 2005- Ã˜yvind A. Holm <sunny@sunbase.org>
 #=========================================================
 
 require 5.003;
@@ -59,6 +59,6 @@ $Opt = get_cgivars();
 
 print_header("Det virket visst.");
 
-tab_print("<h1>Vi er oppe og går</h1>\n");
+tab_print("<h1>Vi er oppe og gÃ¥r</h1>\n");
 
 #### End of file $Id$ ####
