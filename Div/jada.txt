@@ -2,3 +2,4 @@ $Id$
 
 Testings fra svn.
 Fan.
+Enda en fra svn.
