@@ -36,29 +36,38 @@ GetOptions(
 
 $opt_help && usage(0);
 
-my $Host = "193.212.1.10";
+my $Host = "194.248.216.19";
 my $log_dir = "$ENV{HOME}/log/pingstat";
 my $log_file = "$log_dir/pingstat.log";
-my $CMD_PING = "/bin/ping -c 1 $Host"; # FIXME, use some Perl module later.
+my $CMD_PING = "/bin/ping -c 1 $Host";
 
 (-d $log_dir) || mkpath($log_dir) || die("$progname: $log_dir: Cannot create directory: $!\n");
 
-if (open(LogFP, ">>", $log_file)) {
-    flock(LogFP, LOCK_EX) || die("$progname: $log_file: Cannot lock file: $!\n");
-} else {
-    die("$progname: $log_file: Cannot create or append to file: $!\n");
-}
-
 while (1) {
+    my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
+        gmtime(time);
+    my $Date = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                       $Year + 1900, $Mon + 1, $Day, $Hour, $Min, $Sec);
+    $Year += 1900; # Weird piece of shit
+    $Mon += 1;     # Urgh
     if (open(PipeFP, "$CMD_PING |")) {
         my $Data = join("", <PipeFP>);
         close(PipeFP);
         $Data =~ s/\n/\t/gs;
-        print(LogFP "$Data\n");
+        if (open(LogFP, ">>", $log_file)) {
+            if (flock(LogFP, LOCK_EX)) {
+                print(LogFP "$Date\t$Data\n");
+                close(LogFP);
+            } else {
+                warn("$progname: $log_file: Cannot lock file: $!\n");
+            }
+        } else {
+            warn("$progname: $log_file: Cannot create or append to file: $!\n");
+        }
     } else {
         warn("$progname: \"$CMD_PING\": Could not open pipe: $!\n");
     }
-    sleep(2);
+    sleep(5);
 }
 
 sub usage {
