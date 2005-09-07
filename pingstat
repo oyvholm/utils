@@ -40,12 +40,16 @@ my $Host = "194.248.216.19";
 my $log_dir = "$ENV{HOME}/log/pingstat";
 my $log_file = "$log_dir/pingstat.log";
 my $CMD_PING = "/bin/ping -c 1 $Host";
+my $Delay = 30;
 
 (-d $log_dir) || mkpath($log_dir) || die("$progname: $log_dir: Cannot create directory: $!\n");
 
+my $last_time = 0;
+
 while (1) {
+    my $curr_time = time;
     my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
-        gmtime(time);
+        gmtime($curr_time);
     my $Date = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
                        $Year + 1900, $Mon + 1, $Day, $Hour, $Min, $Sec);
     $Year += 1900; # Weird piece of shit
@@ -67,7 +71,9 @@ while (1) {
     } else {
         warn("$progname: \"$CMD_PING\": Could not open pipe: $!\n");
     }
-    sleep(5);
+    while (time < ($curr_time + $Delay)) {
+        # NOP
+    }
 }
 
 sub usage {
