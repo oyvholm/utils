@@ -1,0 +1,108 @@
+#! /bin/bash
+# mwpurgecache - invalidate mediawiki cache
+
+set -e
+
+PROG=$(basename $0)
+VER=0.1
+
+function version() {
+ echo "$PROG $VER - invalidate mediawiki cache
+Copyright (c) 2005 Claudio Jolowicz <claudio@jolowicz.com>
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved. This programs comes with
+ABSOLUTELY NO WARRANTEE.
+"
+}
+
+function usage() {
+ version
+ echo "Syntax: $PROG [options] [--] [pages]
+
+Options:
+
+ -H, --host          host name           (default: localhost)
+ -w, --wiki WIKI     server path to wiki (default: /wiki/)
+ -u, --user USER     username for HTTP authentication
+ -p, --passwd PASS   password for HTTP authentication
+ -d, --dryrun        show commands without executing them
+ -q, --quiet         quiet (no output)
+ -v, --verbose       be verbose (print server response)
+ -h, --help          display this message
+ -V, --version       display version information
+
+Options and arguments must be separated by whitespace.  WIKI must
+match wgArticlePath, such that \$wgArticlePath = \"WIKI/\$1\". WIKI
+must not contain regex special characters.
+
+This script requests all wiki pages listed on the command line by
+HTTP, prefixed by the wiki path, appending \`?action=purge' to the
+URL. If no pages are specified, it retrieves the list of all pages
+from Special:Allpages.
+
+Examples:
+
+ \$ $PROG Main_page Help:Contents
+ \$ $PROG -H wiki.my.org -w /mediawiki -u joe -p banana
+ \$ $PROG -H wiki.my.org --dryrun | wc -l
+"
+}
+
+## The '-e#' is a noop option to avoid `Unsupported scheme' errors.
+user='-e#'
+passwd='-e#'
+run=
+verbose=-nv
+quiet='-e#'
+
+opt_host=http://localhost
+opt_wiki=/wiki/
+opt_user=
+opt_passwd=
+opt_dryrun=false
+opt_quiet=false
+opt_verbose=false
+while [ "$1" ]
+do
+ case "$1" in
+   -H|--host) opt_host="$2"; shift;;
+   -w|--wiki) opt_wiki="$2"; shift;;
+   -u|--user) opt_user="$2"; shift;;
+   -p|--passwd) opt_passwd="$2"; shift;;
+   -d|--dryrun) opt_dryrun=true;;
+   -q|--quiet) opt_quiet=true;;
+   -v|--verbose) opt_verbose=true;;
+   -h|--help) usage; exit 0;;
+   -V|--version) version; exit 0;;
+   --) shift; break;;
+   -*) usage 2>&1; exit 1;;
+   *) break;;
+ esac
+ shift
+done
+opt_host=${opt_host%/}
+opt_wiki=/${opt_wiki#/}
+opt_wiki=${opt_wiki%/}/
+[ x"$opt_user" = x"" ] || user="--http-user=${opt_user}"
+[ x"$opt_passwd" = x"" ] || passwd="--http-passwd=${opt_passwd}"
+$opt_dryrun && run=echo
+$opt_verbose && verbose="--server-response"
+$opt_quiet && quiet="-q"
+(
+ if [ $# -eq 0 ]; then
+   wget -qO- "$user" "$passwd" "${opt_host}${opt_wiki}Special:Allpages" |
+   sed -re '/start content/,/end content/p' -e 's/href="([^"]+)"/\nGREPME:\1\n/g' |
+   sed -nre 's/^GREPME:(.*)$/\1/p' |
+   grep "^${opt_wiki}"
+ else
+   for page; do echo "${opt_wiki}${page}"; done
+ fi
+) |
+while read page
+do
+ $run wget -O/dev/null "$user" "$passwd" "$quiet" "$verbose" "${opt_host}${page}?action=purge"
+done
+
+exit 0
