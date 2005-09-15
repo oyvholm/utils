@@ -17,8 +17,9 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
-    'help' => 0,
-    'xml'  => 0
+    'debug' => 0,
+    'help'  => 0,
+    'xml'   => 0
 );
 
 our $progname = $0;
@@ -30,10 +31,12 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "debug"  => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "xml|x"  => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
+$Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 
 while (<>) {
@@ -69,6 +72,8 @@ Options:
     Show this help.
   -x, --xml
     Create XML output.
+  --debug
+    Print debugging messages.
 END
     printf("%s%s%s",
         $xml_start,
@@ -145,6 +150,10 @@ Print a brief help summary.
 =item B<-x>, B<--xml>
 
 Create XML output.
+
+=item B<--debug>
+
+Print debugging messages.
 
 =back
 
