@@ -440,7 +440,7 @@ END
             );
         } elsif ($opt_o eq "xml") {
             $Line = join("",
-                         "<gps>$Spc;",
+                         "<gps>$Spc",
                              "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc",
                              "<pos> ",
                                  (length($Lon)) ? "<x>$Lon</x>$Spc" : "",
