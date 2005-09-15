@@ -3,6 +3,6 @@
 # $Id$
 
 while (<>) {
-	s/^[ \t]*//g;
+	s/^[ \t\r]*//g;
 	print;
 }
