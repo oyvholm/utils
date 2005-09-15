@@ -64,9 +64,9 @@ Usage: $progname [options] [file [files [...]]]
 Options:
 
   -h, --help
-      Show this help.
+    Show this help.
   -x, --xml
-      Create XML output
+    Create XML output.
 END
     printf("%s%s%s",
         $xml_start,
