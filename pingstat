@@ -39,12 +39,15 @@ $opt_help && usage(0);
 my $Host = "194.248.216.19";
 my $log_dir = "$ENV{HOME}/log/pingstat";
 my $log_file = "$log_dir/pingstat.log";
+my $lock_dir = "/var/lock/pingstat.LOCK";
 my $CMD_PING = "/bin/ping -c 1 $Host";
 my $Delay = 30;
 
 (-d $log_dir) || mkpath($log_dir) || die("$progname: $log_dir: Cannot create directory: $!\n");
 
 my $last_time = 0;
+
+mkdir($lock_dir) || die("$lock_dir: Lockdir already exists.\n");
 
 while (1) {
     my $curr_time = time;
