@@ -6,6 +6,20 @@
 #=======================================================================
 
 vimver=6
+
+if [ "$1" = "-h" ]; then
+    echo
+    echo "Syntax: $0 [valg]"
+    echo
+    echo "Oppdaterer Vim-CVS’en."
+    echo
+    echo "Valg:"
+    echo "  -7   Oppdater filene for vim7"
+    echo "  -h   Hjælp mæ."
+    echo
+    exit 0
+fi
+
 [ "$1" = "-7" ] && { vimver=7; shift; }
 
 progname=update_vim-clean
