@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# $Id$
+# Forandrer rettigheter og greier så et depot virker med svn+ssh://. 
+# Beregna for bruk på developer.skolelinux.no .
+
+if [ ! -d db -o ! -d hooks ]; then
+    echo "$0: `/bin/pwd` ser ikke ut som et depot."
+    exit 1;
+else
+    chgrp -R src .
+    find -type d | xargs chmod g+w
+    find -type d | xargs chmod +s
+    chmod g+w db/write-lock
+fi
