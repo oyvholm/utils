@@ -1,15 +1,27 @@
 #!/bin/bash
 
+#=======================================================================
 # $Id$
-# Forandrer rettigheter og greier så et depot virker med svn+ssh://. 
-# Beregna for bruk på developer.skolelinux.no .
+# Forandrer rettigheter og greier så et FSFS-depot i Subversion virker 
+# med svn+ssh:// med flere brukere hvis rettighetene er rota til. 
+# Beregna for bruk på developer.skolelinux.no . Kjøres flere ganger 
+# etter hverandre til den slutter å klage.
+#=======================================================================
 
-if [ ! -d db -o ! -d hooks ]; then
-    echo "$0: `/bin/pwd` ser ikke ut som et depot."
-    exit 1;
-else
-    chgrp -R src .
-    find -type d | xargs chmod g+w
-    find -type d | xargs chmod +s
-    chmod g+w db/write-lock
+if [ ! -d db/revs -o ! -d db/revprops -o ! -d hooks ]; then
+    echo -n "$0: `/bin/pwd` ser ikke ut som et depot. Skriv «joda» hvis det er det likevel: " >&2
+    read svar
+    if [ "$svar" != "joda" ]; then
+        echo Tenkte meg det, ja. Avslutter. >&2
+        exit 1;
+    else
+        echo OK, vi satser på at du vet hva du gjør. >&2
+    fi
 fi
+
+chgrp -R src .
+find -type d | xargs chmod 2775
+find -type f | grep -v /hooks/ | xargs chmod 0664
+chmod 0444 format
+find hooks -name '*.tmpl' -type f | xargs -r chmod 0664
+find hooks -perm +1 -type f | xargs -r chmod 0774
