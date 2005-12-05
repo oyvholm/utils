@@ -19,6 +19,7 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'force' => 0,
     'help'  => 0,
     'xml'   => 0
 );
@@ -32,9 +33,10 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "debug"  => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "xml|x"  => \$Opt{'xml'}
+    "debug"   => \$Opt{'debug'},
+    "force|f" => \$Opt{'force'},
+    "help|h"  => \$Opt{'help'},
+    "xml|x"   => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -46,6 +48,7 @@ my $ep_file = "svnstat.ep.tmp";
 my $week_file = "svnstat.week.dat";
 my $count_file = "svnstat.count.dat";
 my $time_file = "svnstat.time.dat";
+my $create_log = 1;
 
 my $args = "";
 
@@ -54,9 +57,16 @@ if (scalar(@ARGV)) {
 }
 
 if (-e $dat_file) {
-    print("svnstat.dat exists, skipping svn log.\n");
-} else {
-    print("svnstat.dat not found, running svn log...\n");
+    if ($Opt{'force'}) {
+        print("svnstat.dat exists, but --force was specified.\n");
+    } else {
+        print("svnstat.dat exists, skipping svn log.\n");
+        $create_log = 0;
+    }
+}
+
+if ($create_log) {
+    print("Running svn log...\n");
     system("svn log --xml $args >$dat_file");
 }
 
@@ -99,6 +109,8 @@ Options:
 
   -h, --help
     Show this help.
+  -f, --force
+    Force execution of “svn log”.
   -x, --xml
     Create XML output.
   --debug
@@ -171,6 +183,10 @@ Generate statistics for Subversion commits.
 =head1 OPTIONS
 
 =over 4
+
+=item B<-f>, B<--force>
+
+Force “svn log” to run even if F<svnstat.dat> exists.
 
 =item B<-h>, B<--help>
 
