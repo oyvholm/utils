@@ -58,9 +58,9 @@ if (scalar(@ARGV)) {
 
 if (-e $dat_file) {
     if ($Opt{'force'}) {
-        print("svnstat.dat exists, but --force was specified.\n");
+        print("$dat_file exists, but --force was specified.\n");
     } else {
-        print("svnstat.dat exists, skipping svn log.\n");
+        print("$dat_file exists, skipping svn log.\n");
         $create_log = 0;
     }
 }
