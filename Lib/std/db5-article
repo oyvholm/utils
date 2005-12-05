@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
+<article lang="en">
+  <articleinfo>
+    <title>Articletitle</title>
+    <releaseinfo>$Id$</releaseinfo>
+    <author>
+      <firstname>Øyvind</firstname>
+      <othername>A.</othername>
+      <surname>Holm</surname>
+      <email>sunny@sunbase.org</email>
+    </author>
+    <copyright>
+      <year>2005</year>
+      <holder>Øyvind A. Holm</holder>
+    </copyright>
+  </articleinfo>
+
+  <section> <title>Sectiontitle</title>
+
+    <para></para>
+
+  </section>
+</article>
