@@ -93,7 +93,7 @@ END
     my $Txt = <<END;
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] [file_or_url [...]]
 
 Options:
 
@@ -154,7 +154,7 @@ __END__
 
 =head1 NAME
 
-
+svnstat
 
 =head1 REVISION
 
@@ -162,11 +162,11 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+svnstat [options] [file_or_url [...]]
 
 =head1 DESCRIPTION
 
-
+Generate statistics for Subversion commits.
 
 =head1 OPTIONS
 
@@ -185,10 +185,6 @@ Create XML output.
 Print debugging messages.
 
 =back
-
-=head1 BUGS
-
-
 
 =head1 AUTHOR
 
