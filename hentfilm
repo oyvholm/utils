@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # wget -bx `sget "$@" | urlstrip | egrep -i '\.(mpg|mpeg|avi|wmv|mng|mov)'`
-wget -l 1 -Hxr -A '*.mpg,*.mpeg,*.avi,*.wmv,*.mng,*.mov' "$@"
+wget -l 1 -Hxr -A '*.mpg,*.mpeg,*.avi,*.wmv,*.mng,*.mov,*.asx' "$@"
