@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # wget -bx `sget "$@" | urlstrip | egrep -i '\.(mpg|mpeg|avi|wmv|mng|mov)'`
-wget -l 1 -Hxr -A '*.mpg,*.mpeg,*.avi,*.wmv,*.mng,*.mov,*.asx' "$@"
+wget -l 1 -Hxr -A '*.mpg,*.mpeg,*.avi,*.wmv,*.mng,*.mov,*.asx' -U 'Mozilla/4.78 [en] (X11; U; Linux 2.4.9-31 i686)' "$@"
