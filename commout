@@ -82,6 +82,9 @@ $prog_name re
 $prog_name c
   C-kode. Setter inn /* */ .
 
+$prog_name l [tag]
+  XML-elementer. Setter inn <l> hvis ingenting skrives som parametere.
+
 $prog_name [andre_ting]
   Setter [andre_ting] foran hver linje.
 
