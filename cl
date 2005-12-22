@@ -2,10 +2,22 @@
 
 #=======================================================================
 # $Id$
-# Latskap. Lister ut loggen for Subversion eller CVS. Hvis "-s" 
-# spesifiseres som første parameter, er det det samme som 
-# --stop-on-copy.
+# Latskap. Lister ut loggen for Subversion, Svk eller CVS.
+#
+# Valg (Må spesifiseres alfabetisk):
+#
+# -k
+#   Bruk svk istedenfor svn.
+# -s
+#   Bruk --stop-on-copy.
 #=======================================================================
+
+if [ "$1" = "-k" ]; then
+    CMD_SVN=svk
+    shift
+else
+    CMD_SVN=svn
+fi
 
 if [ "$1" = "-s" ]; then
     stoponcopy=' --stop-on-copy'
@@ -13,9 +25,9 @@ if [ "$1" = "-s" ]; then
 fi
 
 if [ -d .svn/. ]; then
-    svn log$stoponcopy -v $* | less
+    $CMD_SVN log$stoponcopy -v $* | less
 elif [ -d CVS/. ]; then
     cvs log$stoponcopy $* | sortcvs | less
 else
-    svn log$stoponcopy -v $* | less
+    $CMD_SVN log$stoponcopy -v $* | less
 fi
