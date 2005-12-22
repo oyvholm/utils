@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Latskap. Lister ut loggen for Subversion, Svk eller CVS.
+# Latskap. Lister ut loggen for Subversion, SVK eller CVS.
 #
 # Valg (Må spesifiseres alfabetisk):
 #
