@@ -13,21 +13,35 @@
 #=======================================================================
 
 if [ "$1" = "-k" ]; then
-    CMD_SVN=svk
+    use_svk=1
     shift
 else
-    CMD_SVN=svn
+    use_svk=0
 fi
 
 if [ "$1" = "-s" ]; then
+    use_stop=1
     stoponcopy=' --stop-on-copy'
+    svk_cross=''
     shift
+else
+    use_stop=0
+    stoponcopy=''
+    svk_cross=' --cross'
 fi
 
 if [ -d .svn/. ]; then
-    $CMD_SVN log$stoponcopy -v $* | less
+    if [ "$use_svk" = "1" ]; then
+        svk log$svk_cross -v $* | less
+    else
+        svn log$stoponcopy -v $* | less
+    fi
 elif [ -d CVS/. ]; then
     cvs log$stoponcopy $* | sortcvs | less
 else
-    $CMD_SVN log$stoponcopy -v $* | less
+    if [ "$use_svk" = "1" ]; then
+        svk log$svk_cross -v $* | less
+    else
+        svn log$stoponcopy -v $* | less
+    fi
 fi
