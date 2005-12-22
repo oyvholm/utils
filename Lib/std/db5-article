@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
-<article lang="en">
-  <articleinfo>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+  <info>
     <title>Articletitle</title>
     <releaseinfo>$Id$</releaseinfo>
     <author>
-      <firstname>Øyvind</firstname>
-      <othername>A.</othername>
-      <surname>Holm</surname>
+      <personname>
+        <firstname>Øyvind</firstname>
+        <othername>A.</othername>
+        <surname>Holm</surname>
+      </personname>
       <email>sunny@sunbase.org</email>
     </author>
     <copyright>
       <year>2005</year>
       <holder>Øyvind A. Holm</holder>
     </copyright>
-  </articleinfo>
+  </info>
 
   <section> <title>Sectiontitle</title>
 
