@@ -7,9 +7,9 @@
 # ut.
 #=======================================================================
 
-fil=$1
-
-if [ -f $fil -o -e $fil ]; then
-    zcat -f $fil >gfuck.tmp
-    mv -v gfuck.tmp $fil
-fi
+for fil in "$@"; do
+    if [ -f "$fil" -o -e "$fil" ]; then
+        zcat -f "$fil" >gfuck.tmp || { echo "gfuck: gfuck.tmp: Feil under skriving til fila" >&2; exit 1; }
+        mv -v gfuck.tmp "$fil" || { echo "gfuck: gfuck.tmp: Klarte ikke å rename den til $fil" >&2; exit 1; }
+    fi
+done
