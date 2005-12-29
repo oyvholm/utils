@@ -1,9 +1,16 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
+#=======================================================================
 # $Id$
 # Mer oversiktlig cvs stat
+#=======================================================================
 
-open(FP, "cvs -n stat 2>/dev/null |");
+use strict;
+
+my ($FileLine, $WorkLine, $RepLine) =
+   (       "",        "",       "");
+
+open(FP, "cvs -n stat 2>/dev/null |") || die("Cannot open cvs pipe");
 
 while (<FP>) {
     chomp;
