@@ -3,7 +3,7 @@
 #=========================================================
 # Standardoppsett til index.cgi
 # $Id$
-# (C)opyright 2005- Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyright 2006- Øyvind A. Holm <sunny@sunbase.org>
 #=========================================================
 
 require 5.003;
