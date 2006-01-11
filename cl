@@ -32,16 +32,16 @@ fi
 
 if [ -d .svn/. ]; then
     if [ "$use_svk" = "1" ]; then
-        svk log$svk_cross -v $* | less
+        svk log$svk_cross -v "$@" | less
     else
-        svn log$stoponcopy -v $* | less
+        svn log$stoponcopy -v "$@" | less
     fi
 elif [ -d CVS/. ]; then
-    cvs log$stoponcopy $* | sortcvs | less
+    cvs log$stoponcopy "$@" | sortcvs | less
 else
     if [ "$use_svk" = "1" ]; then
-        svk log$svk_cross -v $* | less
+        svk log$svk_cross -v "$@" | less
     else
-        svn log$stoponcopy -v $* | less
+        svn log$stoponcopy -v "$@" | less
     fi
 fi
