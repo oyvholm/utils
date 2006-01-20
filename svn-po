@@ -31,6 +31,11 @@ if [ "$1" = "trunkmerge" ]; then
     svn up -r$HEADREV
     echo ======== msgfmt
     msgfmt -cv nb.po
+elif [ "$1" = "update" ]; then
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local/varprg/subversion-trunk.rXXXXX \
+      --enable-maintainer-mode --disable-shared --with-ssl && \
+    make locale-gnu-po-update PO=nb
 else
     cat <<END
 
@@ -40,6 +45,8 @@ Commands:
 
   trunkmerge
     Merge all new messages from trunk to the current branch.
+  update
+    Update subversion/po/nb.po .
 
 END
 fi
