@@ -33,7 +33,7 @@ if [ "$1" = "trunkmerge" ]; then
     msgfmt -cv nb.po
 elif [ "$1" = "update" ]; then
     ./autogen.sh && \
-    ./configure --prefix=/usr/local/varprg/subversion-trunk.rXXXXX \
+    ./configure --prefix=/usr/local/varprg/subversion-trunk.r`svnversion .|tr -d M` \
       --enable-maintainer-mode --disable-shared --with-ssl && \
     make locale-gnu-po-update PO=nb
 else
