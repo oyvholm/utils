@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Mer latskap. Rensker bort externals-kataloger i outputen. 
+# 2006-versjonen av ccc(1). :-D
+#=======================================================================
+
+svn stat --ignore-externals "$@" | grep -v ^X
