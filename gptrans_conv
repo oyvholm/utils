@@ -318,8 +318,8 @@ sub print_gpx {
             {
                 my ($attr_trkpt, $el_trkpt) =
                    (         $1,        $2);
-                ($attr_trkpt =~ /\blon="(.*?)"/) && ($Pos_Y = $1);
-                ($attr_trkpt =~ /\blat="(.*?)"/) && ($Pos_X = $1);
+                ($attr_trkpt =~ /\blon="(.*?)"/) && ($Pos_X = $1);
+                ($attr_trkpt =~ /\blat="(.*?)"/) && ($Pos_Y = $1);
                 ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Pos_Z = $1);
                 if ($Str =~ m#<time>(\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)\.?(\d*?)Z</time>#) {
                     ($Year, $Mon, $Day, $Hour, $Min, $Sec, $Dsec) =
