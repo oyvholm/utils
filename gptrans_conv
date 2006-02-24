@@ -18,9 +18,9 @@ my $rcs_str = '$Id$';
 
 our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_n, $opt_o, $opt_s, $opt_t, $opt_u) =
     (     0,      0,      0,      0,     "",     "",      0,      0,      0);
-our ($opt_w, $opt_y) =
-    (     0,      0);
-getopts('cdehn:o:stuyw');
+our ($opt_v, $opt_w, $opt_y) =
+    (     0,      0,      0);
+getopts('cdehn:o:stuvyw');
 
 $| = 1;
 
@@ -64,6 +64,7 @@ Syntax: gptrans_conv [options] [files [...]]
         than $PAUSE_LIMIT seconds
   -u    Comment out following data with identical position values, only 
         print first entry
+  -v    Verbose, warn about unknown lines
   -w    Strip all unnecessary whitespace
   -y    Double Y scale to get it right in gnuplot.
 
@@ -255,7 +256,7 @@ while (<>) {
         unless ($opt_o =~ /^(clean|xgraph|gpstrans|gpx|xml)$/) {
             print("# $_");
             chomp;
-            warn("Line $.: Unknown: \"$_\"\n");
+            $opt_v && warn("Line $.: Unknown: \"$_\"\n");
         }
     }
     # }}}
