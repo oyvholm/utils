@@ -421,6 +421,7 @@ sub print_entry {
     # {{{
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
     my $print_time = ($Year =~ /^\d+$/) ? 1 : 0;
+    my $print_alt = ($Alt =~ /^\d+$/) ? 1 : 0;
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
     if ($print_time) {
@@ -489,7 +490,9 @@ sub print_entry {
         } elsif($Opt{'output-format'} eq "gpx") {
             $Line = join("",
                             "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Lat\" lon=\"$Lon\">$Spc",
-                            ($Alt eq $Udef) ? "" : "<ele>$Alt</ele>$Spc",
+                            $print_alt
+                                ? "<ele>$Alt</ele>$Spc"
+                                : "",
                             $print_time
                                 ? "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc"
                                 : "",
@@ -497,7 +500,7 @@ sub print_entry {
                     );
         } elsif ($Opt{'output-format'} eq "clean") {
             $pause_len && ($Line = "\n");
-            ($Line .= "$Lon\t$Lat\t$Alt\n");
+            ($Line .= "$Lon\t$Lat" . ($print_alt ? "\t$Alt" : "") . "\n");
         } elsif ($Opt{'output-format'} eq "ps") {
             $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
         } elsif ($Opt{'output-format'} eq "svg") {
@@ -522,7 +525,7 @@ END
                              "<pos> ",
                                  (length($Lon)) ? "<x>$Lon</x>$Spc" : "",
                                  (length($Lat)) ? "<y>$Lat</y>$Spc" : "",
-                                 ($Alt eq $Udef) ? "" : "<z>$Alt</z>$Spc",
+                                 ($print_alt)   ? "<z>$Alt</z>$Spc" : "",
                              "</pos> ",
                          "</gps>\n"
                     );
@@ -552,7 +555,7 @@ END
                     : "",
                 $Lon, # X-axis
                 $Lat, # Y-axis
-                $Alt, # Altitude
+                $print_alt ? $Alt : "", # Altitude
                 "\n"
             );
             # }}}
