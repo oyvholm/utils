@@ -518,15 +518,15 @@ END
             );
         } elsif ($Opt{'output-format'} eq "xml") {
             $Line = join("",
-                         "<gps>$Spc",
+                         "$Spc$Spc<gps>$Spc",
                              $print_time
                                 ? "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc"
                                 : "",
-                             "<pos> ",
+                             "<pos>$Spc",
                                  (length($Lon)) ? "<x>$Lon</x>$Spc" : "",
                                  (length($Lat)) ? "<y>$Lat</y>$Spc" : "",
                                  ($print_alt)   ? "<z>$Alt</z>$Spc" : "",
-                             "</pos> ",
+                             "</pos>$Spc",
                          "</gps>\n"
                     );
         } elsif ($Opt{'output-format'} eq "ygraph") {
