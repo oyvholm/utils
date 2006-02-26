@@ -420,14 +420,26 @@ sub print_entry {
     # various formats
     # {{{
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
+    my $print_time = ($Year =~ /^\d+$/) ? 1 : 0;
     D("print_entry(\"" . join("\", \"", @_) . "\");");
-    my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
-    $Year  = sprintf("%04u", $Year);
-    $Month = sprintf("%02u", $Month);
-    $Day   = sprintf("%02u", $Day);
-    $Hour  = sprintf("%02u", $Hour);
-    $Min   = sprintf("%02u", $Min);
-    $Sec   = sprintf("%02u", $Sec);
+    my $ep_time;
+    if ($print_time) {
+        $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month - 1, $Year);
+        $Year  = sprintf("%04u", $Year);
+        $Month = sprintf("%02u", $Month);
+        $Day   = sprintf("%02u", $Day);
+        $Hour  = sprintf("%02u", $Hour);
+        $Min   = sprintf("%02u", $Min);
+        $Sec   = sprintf("%02u", $Sec);
+    } else {
+        $ep_time = 0;
+        $Year    = 0;
+        $Month   = 0;
+        $Day     = 0;
+        $Hour    = 0;
+        $Min     = 0;
+        $Sec     = 0;
+    }
     my $pause_len = 0;
     my $do_print = 1;
     my $Line = "";
@@ -469,12 +481,18 @@ sub print_entry {
             ($Line .= "$Lon $Lat\n");
         } elsif($Opt{'output-format'} eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) = (ddd_to_dms($Lat), ddd_to_dms($Lon));
-            $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
+            if ($print_time) {
+                $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
+            } else {
+                $Line = "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
+            }
         } elsif($Opt{'output-format'} eq "gpx") {
             $Line = join("",
                             "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Lat\" lon=\"$Lon\">$Spc",
                             ($Alt eq $Udef) ? "" : "<ele>$Alt</ele>$Spc",
-                            "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc",
+                            $print_time
+                                ? "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc"
+                                : "",
                             "</trkpt>\n"
                     );
         } elsif ($Opt{'output-format'} eq "clean") {
@@ -498,7 +516,9 @@ END
         } elsif ($Opt{'output-format'} eq "xml") {
             $Line = join("",
                          "<gps>$Spc",
-                             "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc",
+                             $print_time
+                                ? "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc"
+                                : "",
                              "<pos> ",
                                  (length($Lon)) ? "<x>$Lon</x>$Spc" : "",
                                  (length($Lat)) ? "<y>$Lat</y>$Spc" : "",
@@ -507,7 +527,7 @@ END
                          "</gps>\n"
                     );
         } elsif ($Opt{'output-format'} eq "ygraph") {
-            my $Time = ($ep_time - $first_time) * 1;
+            my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
             $Line = "\"Time = $Time.0\n$Lon $Lat\n\n";
         } else {
             # Default format used by the author. Yes, the Universe 
@@ -523,7 +543,13 @@ END
             $Lat =~ s/\./$Des/;
             # $do_print || print("skipping ");
             $Line = join("\t",
-                $Opt{'epoch'} ? $ep_time : ($Opt{'short-date'} ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z" : "$Year-$Month-$Day $Hour:$Min:$Sec"),
+                $print_time
+                    ? $Opt{'epoch'}
+                        ? $ep_time
+                        : $Opt{'short-date'}
+                            ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z"
+                            : "$Year-$Month-$Day $Hour:$Min:$Sec"
+                    : "",
                 $Lon, # X-axis
                 $Lat, # Y-axis
                 $Alt, # Altitude
