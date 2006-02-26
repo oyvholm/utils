@@ -238,6 +238,8 @@ while (<>) {
            (      $21,            $22);
         my ($Legcourse) =
            (       $23);
+        ($NS eq "S") && ($Y_deg = 0-$Y_deg);
+        ($WE eq "W") && ($X_deg = 0-$X_deg);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $X_deg, $Y_deg, $Alt);
         # }}}
     } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
@@ -286,6 +288,8 @@ while (<>) {
         my $tmp_y = sprintf("%.5f", $Y_deg + $Y_degmin/60 + $Y_mindec/60000);
         $tmp_x =~ s/\./$Des/;
         $tmp_y =~ s/\./$Des/;
+        ($NS eq "S") && ($tmp_y = 0-$tmp_y);
+        ($EW eq "W") && ($tmp_x = 0-$tmp_x);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $tmp_x, $tmp_y, $Alt);
         # }}}
     } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
