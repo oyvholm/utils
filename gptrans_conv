@@ -195,7 +195,7 @@ while (<>) {
            (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
         # }}}
-    } elsif (
+    } elsif (/^Trackpoint\t/) {
         # Trackpoint\tN60.41630 E5.31675\t09.02.2006 20:24:37 (UTC)\t13.6 m\t\t93.9 m\t00:00:06\t56 kph\t123° true {{{
         #
         # Trackpoint\t
@@ -207,37 +207,42 @@ while (<>) {
         # 00:00:06\t
         # 56 kph\t
         # 123° true
-        m{
-            # Regexp {{{
-            ^Trackpoint \t # Marker
-            (N|S) ([\d\.]+?) \s (W|E) ([\d\.]+?) \t # Position (1-4)
-            (\d+?) \. (\d+?) \. (\d+?) \s
-            (\d+?) : (\d+?) : (\d+?) \s \( (.+?) \) \t # Time (5-11)
-            ([\-\d\.]*?) \s? (.*?) \t # Altitude (12-13)
-            ([\-\d\.]*?) \s? (.*?) \t # Depth (14-15)
-            ([\d\.\-]*?) \s? (.*?) \t # Leg length (16-17)
-            (\d\d) : (\d\d) : (\d\d) \t # Leg time (18-20)
-            ([\-\d\.]+?) \s (.*?) \t # Leg speed (21-22)
-            (.*?) # Leg Course (23)
-            # }}}
-        }x
-    ) {
-        my ($NS, $Y_deg, $WE, $X_deg) =
-           ( $1,     $2,  $3,     $4); # Position
-        my ($Day, $Month, $Year, $Hour, $Min, $Sec, $TZone) =
-           (  $5,     $6,    $7,    $8,   $9,  $10,    $11); # Time
-        my ($Alt, $Alt_unit) =
-           ( $12,       $13); # Altitude
-        my ($Depth, $Depth_unit) =
-           (   $14,         $15); # Depth
-        my ($Leglength, $Leglength_unit) =
-           (        $16,            $17);
-        my ($Legtime_hour, $Legtime_min, $Legtime_sec) =
-           (          $18,          $19,          $20);
-        my ($Legspeed, $Legspeed_unit) =
-           (      $21,            $22);
-        my ($Legcourse) =
-           (       $23);
+        my $Orig = $_;
+        $Orig =~ s/[\r\n]+$//;
+        my ($Marker_f, $Position_f, $Time_f, $Alt_f, $Depth_f,
+            $Leglength_f, $Legtime_f, $Legspeed_f, $Legcourse_f) =
+               split(/\t/, $Orig .
+                           # Nødløsning for å unngå at variabler blir 
+                           # udefinert.
+                           "\t\t\t\t\t\t\t\t\t\t"
+               );
+        D(<<END);
+Position_f="$Position_f" \x7B\x7B\x7B
+Time_f="$Time_f"
+Alt_f="$Alt_f"
+Depth_f="$Depth_f"
+Leglength_f="$Leglength_f"
+Legtime_f="$Legtime_f"
+Legspeed_f="$Legspeed_f"
+Legcourse_f="$Legcourse_f" \x7D\x7D\x7D
+END
+        my ($NS, $Y_deg, $WE, $X_deg, # Position
+            $Day, $Month, $Year, $Hour, $Min, $Sec, $TZone, # Time
+            $Alt, $Alt_unit, # Altitude
+            $Depth, $Depth_unit, # Depth
+            $Leglength, $Leglength_unit, # Leg length
+            $Legtime_hour, $Legtime_min, $Legtime_sec, # Leg time
+            $Legspeed, $Legspeed_unit, # Leg speed
+            $Legcourse # Leg course
+        ) = ("", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+             "", "", "", "", "", "", "", "");
+        ($Position_f =~ /^(N|S)([\d\.]+) (W|E)([\d\.]+)/) &&
+            ($NS = $1, $Y_deg = $2, $WE = $3, $X_deg = $4);
+        ($Time_f =~ /^(\d+)\.(\d+)\.(\d+) (\d+):(\d+):(\d+) \((.+?)\)/) &&
+            ($Day = $1, $Month = $2, $Year = $3, $Hour = $4, $Min = $5, $Sec = $6);
+        ($Alt_f =~ /^([\d+\.]+) (.*?)/) &&
+            ($Alt = $1, $Alt_unit = $2);
+        D("Alt = \"$Alt\"");
         ($NS eq "S") && ($Y_deg = 0-$Y_deg);
         ($WE eq "W") && ($X_deg = 0-$X_deg);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $X_deg, $Y_deg, $Alt);
