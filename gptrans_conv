@@ -25,6 +25,7 @@ our %Opt = (
     'epoch'            => 0,
     'help'             => 0,
     'output-format'    => "",
+    'require'          => "",
     'short-date'       => 0,
     'skip-dups'        => 0,
     'strip-whitespace' => 0,
@@ -49,6 +50,7 @@ GetOptions(
     "epoch|e"            => \$Opt{'epoch'},
     "help|h"             => \$Opt{'help'},
     "output-format|o=s"  => \$Opt{'output-format'},
+    "require|r=s"        => \$Opt{'require'},
     "short-date|s"       => \$Opt{'short-date'},
     "skip-dups|d"        => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
@@ -68,6 +70,11 @@ my $first_time = 0;
 my $last_time = 0;
 my ($last_lon, $last_lat, $last_alt, $last_line) =
    (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+
+my %Req = (
+    'altitude' => ($Opt{'require'} =~ /a/) ? 1 : 0,
+    'time' => ($Opt{'require'} =~ /t/) ? 1 : 0
+);
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
@@ -433,6 +440,7 @@ sub print_entry {
         $Min   = sprintf("%02u", $Min);
         $Sec   = sprintf("%02u", $Sec);
     } else {
+        $Req{'time'} && return;
         $ep_time = 0;
         $Year    = 0;
         $Month   = 0;
@@ -443,6 +451,7 @@ sub print_entry {
     }
     my $pause_len = 0;
     my $do_print = 1;
+    ($Req{'altitude'} && !$print_alt) && return;
     my $Line = "";
     if ($Opt{'output-format'} eq "ps") {
         $Lon *= 100;
@@ -737,6 +746,13 @@ Options:
       xgraph
       xml
       ygraph
+  -r x, --require x
+    Specify requirements for trackpoints to be written. x is a string 
+    with the following flags:
+      a
+        Print only waypoints which have an altitude.
+      t
+        Print only waypoints which have a timestamp.
   -s, --short-date
     Use short date format.
   -t, --create-breaks
@@ -869,6 +885,41 @@ Use output format x:
 =item xml
 
 =item ygraph
+
+=back
+
+=back
+
+Z<>
+
+=item B<-r x>, B<--require x>
+
+Specify requirements for trackpoints to be written. x is a string with 
+the following flags:
+
+=over 4
+
+=over 4
+
+=item a
+
+=over 4
+
+=item Print only waypoints which have an altitude.
+
+=back
+
+=back
+
+=over 4
+
+=item t
+
+=over 4
+
+=item Print only waypoints which have a timestamp.
+
+=back
 
 =back
 
