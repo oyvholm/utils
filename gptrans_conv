@@ -390,6 +390,7 @@ sub print_gpx {
                     (   $1,   $2,   $3,    $4,   $5,   $6,    $7);
                 }
                 print_entry($Year, $Mon, $Day, $Hour, $Min, $Sec, $Pos_X, $Pos_Y, $Pos_Z);
+                "";
             }gsex;
             $found_move = 1;
         }gsex;
