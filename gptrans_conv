@@ -19,18 +19,18 @@ our $Debug = 0;
 
 our %Opt = (
     'comment-out-dups' => 0,
-    'create-breaks' => 0,
-    'debug' => 0,
-    'double-y-scale' => 0,
-    'epoch' => 0,
-    'help'  => 0,
-    'output-format' => "",
-    'short-date' => 0,
-    'skip-dups' => 0,
+    'create-breaks'    => 0,
+    'debug'            => 0,
+    'double-y-scale'   => 0,
+    'epoch'            => 0,
+    'help'             => 0,
+    'output-format'    => "",
+    'short-date'       => 0,
+    'skip-dups'        => 0,
     'strip-whitespace' => 0,
-    'undefined' => "",
-    'use-comma' => 0,
-    'xml'   => 0
+    'undefined'        => "",
+    'use-comma'        => 0,
+    'xml'              => 0
 );
 
 our $progname = $0;
@@ -43,19 +43,19 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 Getopt::Long::Configure("bundling");
 GetOptions(
     "comment-out-dups|u" => \$Opt{'comment-out-dups'},
-    "create-breaks|t" => \$Opt{'create-breaks'},
-    "debug"  => \$Opt{'debug'},
-    "double-y-scale|y" => \$Opt{'double-y-scale'},
-    "epoch|e" => \$Opt{'epoch'},
-    "help|h" => \$Opt{'help'},
-    "output-format|o=s" => \$Opt{'output-format'},
-    "short-date|s" => \$Opt{'short-date'},
-    "skip-dups|d" => \$Opt{'skip-dups'},
+    "create-breaks|t"    => \$Opt{'create-breaks'},
+    "debug"              => \$Opt{'debug'},
+    "double-y-scale|y"   => \$Opt{'double-y-scale'},
+    "epoch|e"            => \$Opt{'epoch'},
+    "help|h"             => \$Opt{'help'},
+    "output-format|o=s"  => \$Opt{'output-format'},
+    "short-date|s"       => \$Opt{'short-date'},
+    "skip-dups|d"        => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
-    "undefined|n=s" => \$Opt{'undefined'},
-    "use-comma|c" => \$Opt{'use-comma'},
-    "verbose|v" => \$Opt{'verbose'},
-    "xml|x"  => \$Opt{'xml'}
+    "undefined|n=s"      => \$Opt{'undefined'},
+    "use-comma|c"        => \$Opt{'use-comma'},
+    "verbose|v"          => \$Opt{'verbose'},
+    "xml|x"              => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
