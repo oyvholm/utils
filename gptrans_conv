@@ -24,11 +24,11 @@ our %Opt = (
     'double-y-scale' => 0,
     'epoch' => 0,
     'help'  => 0,
-    'output-format' => 0,
+    'output-format' => "",
     'short-date' => 0,
     'skip-dups' => 0,
     'strip-whitespace' => 0,
-    'undefined' => 0,
+    'undefined' => "",
     'use-comma' => 0,
     'xml'   => 0
 );
