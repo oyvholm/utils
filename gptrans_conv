@@ -18,6 +18,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+    # Initial values for command line arguments {{{
     'comment-out-dups' => 0,
     'create-breaks'    => 0,
     'debug'            => 0,
@@ -32,6 +33,7 @@ our %Opt = (
     'undefined'        => "",
     'use-comma'        => 0,
     'xml'              => 0
+    # }}}
 );
 
 our $progname = $0;
@@ -43,6 +45,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    # Command line options {{{
     "comment-out-dups|u" => \$Opt{'comment-out-dups'},
     "create-breaks|t"    => \$Opt{'create-breaks'},
     "debug"              => \$Opt{'debug'},
@@ -58,6 +61,7 @@ GetOptions(
     "use-comma|c"        => \$Opt{'use-comma'},
     "verbose|v"          => \$Opt{'verbose'},
     "xml|x"              => \$Opt{'xml'}
+    # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
@@ -348,10 +352,12 @@ END
 exit(0);
 
 sub read_xmlfile {
+    # {{{
     my $Txt = join("", @_);
     # FIXME: The sequential stuff here is probably bad, but easy.
     $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
     $Txt =~ s#(<gps\b.*?>.*?</gps>)#print_xml_gps($1)#gse;
+    # }}}
 }
 
 sub print_gpx {
