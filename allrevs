@@ -19,5 +19,5 @@ fi
 
 for f in `svnrevs -r1:HEAD "$1" | tr -d ,`; do
     echo ========= $f =======
-    svn export -$f "$1" "$2/$1.$f"
+    svn export -$f "$1" "$2/`echo $1 | tr / _`.$f"
 done
