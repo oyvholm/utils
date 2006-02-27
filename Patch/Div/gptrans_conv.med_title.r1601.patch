@@ -1,0 +1,12 @@
+Index: gptrans_conv
+===================================================================
+--- gptrans_conv	(revision 1601)
++++ gptrans_conv	(working copy)
+@@ -140,6 +140,7 @@
+ <?xml version="1.0" standalone="no"?>
+ <gpx>
+ $Spc$Spc<trk>
++$Spc$Spc$Spc$Spc<title>TRACKLOG</title>
+ $Spc$Spc$Spc$Spc<trkseg>
+ END
+ } elsif ($opt_o eq "ps") {
