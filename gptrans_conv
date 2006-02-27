@@ -722,6 +722,8 @@ END
     my $Txt = <<END;
 $rcs_id
 
+Converts between various GPS formats.
+
 Usage: $progname [options] [file [files [...]]]
        $progname -u [file [files [...]]]
 
@@ -764,7 +766,7 @@ Options:
     print first entry.
   -v, --verbose
     Verbose, warn about unknown lines.
-  -w, strip-whitespace
+  -w, --strip-whitespace
     Strip all unnecessary whitespace.
   -x, --xml
     Create XML output.
@@ -946,7 +948,7 @@ first entry.
 
 Verbose, warn about unknown lines.
 
-=item B<-w>, B<strip-whitespace>
+=item B<-w>, B<--strip-whitespace>
 
 Strip all unnecessary whitespace.
 
