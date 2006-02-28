@@ -12,6 +12,8 @@
 use strict;
 use Getopt::Long;
 use Time::Local qw { timegm_nocheck };
+use XML::Simple;
+use Data::Dumper;
 
 $| = 1;
 
@@ -353,10 +355,34 @@ exit(0);
 
 sub read_xmlfile {
     # {{{
-    my $Txt = join("", @_);
+    D("Inn i read_xmlfile()");
+    my $Txt = XMLin(@_);
+    D("Etter XMLin()");
+    # print(Dumper($Txt->{trk}->{trkseg}->{trkpt}->[0]->{time}));
+    D(Dumper($Txt));
+    D("Etter Dumper");
+    my $Loop = 1;
+    for (my $a = 0; $Loop; $a++) {
+        D("a = $a");
+        my $Date = $Txt->{trk}->{trkseg}->{trkpt}->[$a]->{time} || "";
+        my $Lat = $Txt->{trk}->{trkseg}->{trkpt}->[$a]->{lat} || "";
+        my $Lon = $Txt->{trk}->{trkseg}->{trkpt}->[$a]->{lon} || "";
+        my $Alt = $Txt->{trk}->{trkseg}->{trkpt}->[$a]->{ele} || "";
+        my ($Year, $Mon, $Day, $Hour, $Min, $Sec, $Dsec) = ("", "", "", "", "", "", "");
+        if ($Date =~ m#(\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)\.?(\d*?)Z#) {
+            ($Year, $Mon, $Day, $Hour, $Min, $Sec, $Dsec) =
+            (   $1,   $2,   $3,    $4,   $5,   $6,    $7);
+        }
+        if (length($Lat)) {
+            print_entry($Year, $Mon, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt);
+        } else {
+            # $Loop = 0;
+        }
+        # print($Txt->{trk}->{trkseg}->{trkpt}->{time}->[$a]);
+    }
     # FIXME: The sequential stuff here is probably bad, but easy.
-    $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
-    $Txt =~ s#(<gps\b.*?>.*?</gps>)#print_xml_gps($1)#gse;
+    # $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
+    # $Txt =~ s#(<gps\b.*?>.*?</gps>)#print_xml_gps($1)#gse;
     # }}}
 }
 
