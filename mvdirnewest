@@ -1,32 +1,43 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
+#=======================================================================
 # $Id$
 #
 # Syntax: $0 directory
 # Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.
 # Brukes til å lage orden i gamle versjoner av ting som ligger slengende rundt.
 #
-# (C)opyleft 1999-2000 Øyvind A. Holm <sunny256@mail.com>
+# (C)opyleft 1999–2006 Øyvind A. Holm <sunny@sunbase.org>
+# Lisens: GNU General Public License ♥
+#=======================================================================
 
-my $RetVal;
-$prog_name = $0;
-$prog_name =~ s!.*/(.+?)$!$1!;
+use strict;
+use Getopt::Std;
 
-if ($#ARGV == -1) {
+our ($opt_f, $opt_h) =
+    (     0,      0);
+getopts('fh');
+
+my $RetVal = 0;
+my $prog_name = $0;
+$prog_name =~ s#.*/(.+?)$#$1#;
+
+if ($opt_h) {
 	print <<END;
 
 Syntax: $prog_name directory [directory [...]]
 
 The program scans the underlying tree structure and renames the directory
 to the date of the newest file.
+
 END
-	exit 1;
+	exit(0);
 }
 
 die("$prog_name: Unknown version of find(1) or program not found\n") unless (`find --version` =~ /GNU find/);
 
 foreach (@ARGV) {
-	$RetVal ||= &process_dir($_);
+	$RetVal ||= process_dir($_);
 }
 
 exit $RetVal;
@@ -55,7 +66,7 @@ sub process_dir {
 		my $file_name = $_;
 		my @stat_array;
 		unless (@stat_array = stat($file_name)) {
-			warn("$prog_name: $file_name: Can't stat file: $!\n");
+			warn("$prog_name: $file_name: Can’t stat file: $!\n");
 			return;
 		}
 		my $file_date = $stat_array[9];
@@ -63,23 +74,22 @@ sub process_dir {
 			$newest_date = $file_date;
 			$newest_file = $file_name;
 		}
-		# printf("$file_name: %s\n", &date2str($file_date));
-		my $new_name = &date2str($file_date);
+		# printf("$file_name: %s\n", date2str($file_date));
 	}
-	$new_name = sprintf("%s.%s", &date2str($newest_date), $dir_name);
+	my $new_name = sprintf("%s.%s", date2str($newest_date), $dir_name);
 	if (-e $new_name) {
-		warn("$prog_name: $new_name: Directory entry already exists, skipping directory $dir_name\n");
+		warn("$prog_name: $new_name: Directory entry already exists, skipping directory $dir_name");
 		return;
 	} else {
 		# printf("Skulle til å rename(%s, %s)\n", $dir_name, $new_name);
-		rename($dir_name, $new_name) || warn("$dir_name: Can't rename directory to $new_name: $!\n");
-		print("$prog_name: $dir_name --> $new_name\n");
+		rename($dir_name, $new_name) || warn("$dir_name: Can’t rename directory to $new_name: $!");
+		print("$prog_name: $dir_name → $new_name\n");
 	}
-	return 0;
+	return(0);
 } # process_dir()
 
 sub date2str {
-	@TA = gmtime(shift);
+	my @TA = gmtime(shift);
 	return(sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]));
 } # date2str()
 

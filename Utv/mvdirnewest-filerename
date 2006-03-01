@@ -1,15 +1,15 @@
 #!/usr/bin/perl -w
 
-#==============================================================================
+#=======================================================================
 # $Id$
 #
 # Syntax: $0 directory|fil [...]
 # Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.
 # Brukes til å lage orden i gamle versjoner av ting som ligger slengende rundt.
 #
-# (C)opyleft 1999–2004 Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyleft 1999–2006 Øyvind A. Holm <sunny@sunbase.org>
 # Lisens: GNU General Public License ♥
-#==============================================================================
+#=======================================================================
 
 use strict;
 use Getopt::Std;
@@ -20,7 +20,7 @@ getopts('fh');
 
 die("Uferdig.");
 
-my $RetVal;
+my $RetVal = 0;
 my $prog_name = $0;
 $prog_name =~ s#.*/(.+?)$#$1#;
 
