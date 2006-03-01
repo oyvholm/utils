@@ -1,0 +1,5 @@
+#/bin/bash
+
+# $Id$
+
+rm -rfv `find . -type d -name CVS`

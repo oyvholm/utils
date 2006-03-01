@@ -1,0 +1,419 @@
+#!/usr/bin/perl -w
+
+# ╔══════════════════════════════════════════════════════════════
+# ║ $Id$
+# ║ Converts between various GPS formats
+# ║ Character set: UTF-8
+# ║ License: GNU General Public License
+# ║ Made by Øyvind A. Holm — sunny@sunbase.org
+# ╚══════════════════════════════════════════════════════════════
+
+use strict;
+use utf8;
+use Getopt::Std;
+use Time::Local qw { timegm_nocheck };
+
+my $Debug = 0;
+
+my $rcs_str = '$Id$';
+
+our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_o, $opt_s, $opt_t, $opt_u) =
+    (     0,      0,      0,      0,     "",      0,      0,      0);
+getopts('cdeho:stu');
+
+$| = 1;
+
+my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
+my $Des = $opt_c ? "," : ".";
+my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
+my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
+my $last_time = 0;
+my ($last_lon, $last_lat, $last_alt, $last_line) =
+   (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+
+if ($opt_h) {
+	# Syntax screen to stdout and exit gracefully {{{
+	print(<<END);
+
+Syntax: gptrans_conv [options] [files [...]]
+        gptrans_conv -u [files [...]]
+
+  -c    Use comma instead of period as decimal point (For Gnumeric etc)
+  -d    Skip duplicated coordinates, only print first and last
+  -e    Use seconds since 1970-01-01 00:00:00 GMT as date format
+  -h    Help me ...---...
+  -o x  Use output format x:
+          clean
+          gpstrans
+          ps (Unfinished)
+          xgraph
+  -s    Short date format
+  -t    Create breaks in track between points with a difference
+        more than $PAUSE_LIMIT seconds
+  -u    Comment out following data with identical position values,
+        only print first entry
+
+END
+	exit(0);
+	# }}}
+}
+
+# Kunne vært et eget script på grunn av at det gjør sine helt egne greier, men like greit å samle det på en plass.
+# FIXME: Fjerner ikke første duplikatentryen.
+# FIXME: Se om det går å få flytta den inn i print_entry() så man slipper å ha to gptrans_conv’er i pipen.
+# FIXME: Legg inn alle formatene.
+if ($opt_u) {
+	# Comment out areas without reception {{{
+	my ($start_date, $end_date, $found_dup) = ("", "", 0);
+	my @Dup = ();
+	while (<>) {
+		if (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
+			# {{{
+			my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
+			   (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
+			if (($lat_val eq $last_lat) && ($lon_val eq $last_lon)) {
+				unless ($found_dup) {
+					$start_date = "$Year$Month${Day}T$Hour$Min$Sec";
+					@Dup = ();
+					$found_dup = 1;
+				}
+				push(@Dup, "# $_");
+				$end_date = "$Year$Month${Day}T$Hour$Min$Sec";
+			} else {
+				if ($found_dup) {
+					print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
+					for (@Dup) {
+						print($_);
+					}
+					print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n$_");
+					$found_dup = 0;
+				} else {
+					print($_);
+				}
+			}
+			$last_lat = $lat_val;
+			$last_lon = $lon_val;
+			# }}}
+		} else {
+			if ($found_dup) {
+				push(@Dup, $_);
+			} else {
+				print($_);
+			}
+		}
+	}
+	if ($found_dup) {
+		print("# $start_date-$end_date: CO: No signal \x7B\x7B\x7B\n");
+		for (@Dup) {
+			print($_);
+		}
+		print("# $start_date-$end_date: CO: No signal \x7D\x7D\x7D\n# move\n");
+		$found_dup = 0;
+	}
+	exit(0);
+	# }}}
+}
+
+if ($opt_o eq "gpstrans") {
+	print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
+} elsif ($opt_o eq "ps") {
+	print(ps_header(532, 6034, 533, 6040));
+	print("*u\n");
+}
+
+while (<>) {
+	# Scan through stdin or specified files and send every GPS entry to print_entry() {{{
+	my $bck_line = $_;
+	if (/^# Pause: /) {
+	} elsif (/^# move$/) {
+		$found_move = 1;
+	} elsif (/^#/) {
+		print unless ($opt_o =~ /^(xgraph|gpstrans)$/);
+	} elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
+		# Author’s format, epoch style {{{
+		my ($ep_time, $lon_val, $lat_val, $Alt) =
+		   (      $1,       $2,       $3,   $4);
+		my ($Sec, $Min, $Hour, $Day, $Month, $Year, $Wday, $Yday) = gmtime($ep_time);
+		$Month++; # Urgh Ⅰ
+		$Year += 1900; # Urgh Ⅱ
+		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt);
+		# }}}
+	} elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
+		# Author’s format, human-readable date format {{{
+		my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
+		   (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
+		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+		# }}}
+	} elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
+		# T	09/01/2002 11:51:26	60°23'36.3"	5°19'35.9" {{{
+		my ($Month, $Day, $Year, $Hour, $Min, $Sec, $lat_d, $lat_m, $lat_s, $lon_d, $lon_m, $lon_s) =
+		   (    $1,   $2,    $3,    $4,   $5,   $6,     $7,     $8,     $9,    $10,    $11,    $12);
+		my $lat_val = sprintf("%.5f", 1*($lat_d+($lat_m/60)+($lat_s/3600)));
+		my $lon_val = sprintf("%.5f", $lon_d+($lon_m/60)+($lon_s/3600));
+		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+		# }}}
+	} elsif (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
+		# 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23 {{{
+		my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
+		   (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
+		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, "?");
+		# }}}
+	} elsif (/^
+		# @020721221336N6048353E00701826S015-00001E4859N1673U0000 {{{
+			# Regexp {{{
+			(@) # @
+			(\d\d) # Year
+			(\d\d) # Month
+			(\d\d) # Day
+			(\d\d) # Hours
+			(\d\d) # Minutes
+			(\d\d) # Seconds
+			(.) # N|S
+			(..) # Latitude degree
+			(..) # Latitude minute
+			(\d\d\d) # Latitude minute decimals
+			(.) # E|W
+			(\d\d\d) # Longitude degree
+			(\d\d) # Longitude minute
+			(\d\d\d) # Longitude minute degree
+			(....) # Accurancy
+			(......) # Altitude
+			(...............)
+			# }}}
+			/x) {
+		my ($Alfa,   $Year, $Month, $Day, $Hour, $Min, $Sec, $NS, $Y_deg, $Y_degmin, $Y_mindec, $EW, $X_deg, $X_degmin, $X_mindec, $Accur, $Alt, $Rest) =
+		   (   $1, $2+2000,     $3,   $4,    $5,   $6,   $7,  $8,     $9,       $10,       $11, $12,    $13,       $14,       $15,    $16,  $17,   $18);
+		my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
+		$last_time = $ep_time;
+		my $tmp_x = sprintf("%.5f", $X_deg + $X_degmin/60 + $X_mindec/60000);
+		my $tmp_y = sprintf("%.5f", $Y_deg + $Y_degmin/60 + $Y_mindec/60000);
+		$tmp_x =~ s/\./$Des/;
+		$tmp_y =~ s/\./$Des/;
+		print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $tmp_x, $tmp_y, $Alt);
+		# }}}
+	} elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
+		# @020721221336__________________________________________ {{{
+		my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
+		   (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
+		print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
+		$found_move = 1;
+		# }}}
+	} elsif (/^xmaplog /) {
+		print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
+	} elsif (/^$/) {
+		print("\n") unless ($opt_o =~ /^(xgraph|gpstrans)$/);
+	} else {
+		print("# $_");
+		chomp;
+		warn("Line $.: Unknown: \"$_\"\n");
+	}
+	# }}}
+}
+
+if ($opt_o eq "ps") {
+	print(<<END);
+*U
+%%Trailer
+%%EOF
+END
+}
+
+exit(0);
+
+sub print_entry {
+	# Print a GPS entry with time, latitude, longitude and altitude in various formats {{{
+	my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
+	my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
+	$Year  = sprintf("%04u", $Year);
+	$Month = sprintf("%02u", $Month);
+	$Day   = sprintf("%02u", $Day);
+	$Hour  = sprintf("%02u", $Hour);
+	$Min   = sprintf("%02u", $Min);
+	$Sec   = sprintf("%02u", $Sec);
+	my $pause_len = 0;
+	my $do_print = 1;
+	my $Line = "";
+	if ($opt_o eq "ps") {
+		$Lon *= 100;
+		$Lat *= 100;
+	}
+	if ($opt_d && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Alt eq $last_alt)) {
+		if ($in_dupskip) {
+			$do_print = 0;
+		} else {
+			$do_print = 1;
+		}
+		$in_dupskip = 1;
+	} else {
+			$do_print = 1;
+			$in_dupskip && print($last_line);
+			$in_dupskip = 0;
+	}
+
+	if ($opt_t && $ep_time-$last_time > $PAUSE_LIMIT && $last_time) {
+		$pause_len = $ep_time-$last_time;
+	}
+
+	if ($pause_len && ($opt_o !~ /^(xgraph|gpstrans)$/)) {
+		printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
+	}
+
+	if ($do_print) {
+		# Valid data was found, send to stdout {{{
+		if ($opt_o eq "xgraph") {
+			$pause_len && ($Line = "move ");
+			($Line .= "$Lon $Lat\n");
+		} elsif($opt_o eq "gpstrans") {
+			my ($gpt_lat, $gpt_lon) = (ddd_to_dms($Lat), ddd_to_dms($Lon));
+			$Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
+		} elsif ($opt_o eq "clean") {
+			$pause_len && ($Line = "\n");
+			($Line .= "$Lon $Lat\n");
+		} elsif ($opt_o eq "ps") {
+			$Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
+		} else {
+			# Default format used by the author. Yes, the Universe evolves around him. ☺ {{{
+			# Seriously, up to "gptrans_conv,v 1.11 2003/08/03 02:35:51 sunny" the script was only
+			# used by myself, and I found this format was the easiest to live with — Perl scripts and
+			# shell utilities made conversion pretty painless. If GPX or something other useful is
+			# implemented, that will be the default.
+			$Lon =~ s/\./$Des/;
+			$Lat =~ s/\./$Des/;
+			# $do_print || print("skipping ");
+			$Line = join("\t",
+				$opt_e ? $ep_time : ($opt_s ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z" : "$Year-$Month-$Day $Hour:$Min:$Sec"),
+				$Lon, # X-axis
+				$Lat, # Y-axis
+				$Alt, # Altitude
+				"\n"
+			);
+			# }}}
+		}
+		# }}}
+	}
+
+	if (!$last_time && $opt_o eq "ps") {
+		print("$Lon $Lat m\n");
+	}
+
+	if ($do_print) {
+		if ($found_move) {
+			(!$pause_len && ($opt_o eq "xgraph")) && ($Line = "move $Line");
+			$found_move = 0;
+		}
+		print($Line);
+	}
+	$last_time = $ep_time;
+	$last_lon  = $Lon;
+	$last_lat  = $Lat;
+	$last_alt  = $Alt;
+	$last_line = $Line;
+	# }}}
+}
+
+sub sec_to_string {
+	# Convert seconds since 1970 to "yyyy-mm-dd hh:mm:ss" with optional separator {{{
+	my ($Seconds, $Sep) = @_;
+	defined($Sep) || ($Sep = " ");
+	my @TA = gmtime($Seconds);
+	my($DateString) = sprintf("%04u-%02u-%02u%s%02u:%02u:%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $Sep, $TA[2], $TA[1], $TA[0]);
+	return($DateString);
+	# }}}
+}
+
+sub sec_to_readable {
+	# Convert seconds since 1970 to human-readable format (d:hh:mm:ss) {{{
+	my $secs = shift;
+	my ($Day, $Hour, $Min, $Sec) =
+	   (   0,     0,    0,    0);
+
+	$Day = int($secs/86400);
+	$secs -= $Day * 86400;
+
+	$Hour = int($secs/3600);
+	$secs -= $Hour * 3600;
+
+	$Min = int($secs/60);
+	$secs -= $Min * 60;
+
+	$Sec = $secs;
+
+	return(sprintf("%u:%02u:%02u:%02u", $Day, $Hour, $Min, $Sec));
+	# }}}
+}
+
+sub ps_header {
+	# Send a Postscript header to stdout {{{
+	my ($bl_x, $bl_y, $br_x, $br_y) = @_;
+	my $Date = sec_to_string(time);
+	return(<<END);
+%!PS-Adobe-3.0 EPSF-3.0
+%%Creator: $rcs_str
+%%Title:
+%%CreationDate: $Date
+%%BoundingBox: $bl_x $bl_y $br_x $br_y
+%%DocumentData: Clean7Bit
+%%EndComments
+%%BeginProlog
+/bd { bind def } bind def
+/incompound false def
+/m { moveto } bd
+/l { lineto } bd
+/c { curveto } bd
+/F { incompound not {fill} if } bd
+/f { closepath F } bd
+/S { stroke } bd
+/*u { /incompound true def } bd
+/*U { /incompound false def f} bd
+/k { setcmykcolor } bd
+/K { k } bd
+%%EndProlog
+%%BeginSetup
+%%EndSetup
+END
+	# }}}
+}
+
+sub ddd_to_dms {
+	# Convert floating-point degrees into D°M'S.S" (ISO-8859-1). Necessary for import into GPSman. {{{
+	# Based on toDMS() from gpstrans-0.39 to ensure compatibility.
+	my $ddd = shift;
+	my $Neg = 0;
+	my ($Hour, $Min, $Sec) =
+	   (    0,    0,    0);
+	my $Retval = "";
+
+	if ($ddd < 0.0) {
+		$ddd = 0 - $ddd;
+		$Neg = 1;
+	}
+	$Hour = int($ddd);
+	$ddd = ($ddd - $Hour) * 60.0;
+	$Min = int($ddd);
+	$Sec = ($ddd - $Min) * 60.0;
+
+	if ($Sec > 59.5) {
+		$Sec = 0.0;
+		$Min += 1.0;
+	}
+	if ($Min > 59.5) {
+		$Min = 0.0;
+		$Hour += 1.0;
+	}
+	if ($Neg) {
+		$Hour = 0 - $Hour;
+	}
+	D("Neg = $Neg , D = $Hour , M = $Min , S = $Sec\n");
+	$Retval = sprintf("%s%.0f\xB0%02.0f'%04.1f\"", $Neg ? "-" : "", $Hour, $Min, $Sec);
+	return $Retval;
+	# }}}
+}
+
+sub D {
+	# Send debug messages to stderr if $Debug {{{
+	$Debug && print(STDERR @_);
+	# }}}
+}
+
+# vim: set fdm=marker ft=perl fenc=utf-8 :
+# End of file $Id$

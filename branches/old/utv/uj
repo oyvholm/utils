@@ -1,0 +1,127 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Gjentar editering av filer som inneholder ulovlig UTF-8
+
+use strict;
+
+my @err_list = @ARGV;
+my @new_list = ();
+my $error_found = 0;
+my $Editor = "";
+
+if (defined($ENV{EDITOR})) {
+	$Editor = $ENV{EDITOR};
+} else {
+	warn("\$EDITOR er ikke definert, setter den til \"joe\"\n");
+	$Editor = "joe";
+}
+
+while (scalar(@err_list)) {
+	if (scalar(@new_list)) {
+		print("Ulovlige sekvenser ute og går. Gjelder ", join(" ", @new_list), "\nTrykk ENTER eller CTRL-C...");
+		getc(STDIN);
+	}
+	my $Cmd = join(" ", $Editor, @err_list);
+	# print("Kjører \"$Cmd\"\n");
+	system("$Cmd");
+	@new_list = ();
+	# print("Starter med ", join(" ", @err_list), "\n");
+	for my $File (@err_list) {
+		if (file_legal($File)) {
+			# print("OK: $File\n");
+		} else {
+			# print("FEIL: $File\n");
+			push(@new_list, $File);
+		}
+	}
+	@err_list = ();
+	@err_list = @new_list;
+}
+
+sub file_legal {
+	# {{{
+	my $File = shift;
+
+	# print("file_legal(\"$File\")\n");
+	$error_found = 0;
+	if (open(FP, $File)) {
+		while (!$error_found && ($_ = <FP>)) {
+			s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+			s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+			s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+			s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+			s/([\xC0-\xDF][\x80-\xBF])/decode_char($1)/ge;
+			/[\x80-\xFD]/ && ($error_found = 1);
+		}
+		close(FP);
+	} else {
+		warn("$File: $!\n");
+	}
+	my $Retval = !$error_found;
+	$error_found = 0;
+	return($Retval);
+	# }}}
+} # file_legal()
+
+sub decode_char {
+	# {{{
+	my $Msg = shift;
+	my $Val = "";
+	if ($Msg =~ /^([\xC0-\xDF])([\x80-\xBF])/) {
+		if ($Msg =~ /^[\xC0-\xC1]/) {
+			$error_found = 1;
+		} else {
+			$Val = ((ord($1) & 0x1F) << 6) | (ord($2) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xE0-\xEF])([\x80-\xBF])([\x80-\xBF])/) {
+		if ($Msg =~ /^\xE0[\x80-\x9F]/) {
+			$error_found = 1;
+		} else {
+			$Val = ((ord($1) & 0x0F) << 12) |
+			       ((ord($2) & 0x3F) <<  6) |
+			       ( ord($3) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xF0-\xF7])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
+		if ($Msg =~ /^\xF0[\x80-\x8F]/) {
+			$error_found = 1;
+		} else {
+			$Val = ((ord($1) & 0x07) << 18) |
+			       ((ord($2) & 0x3F) << 12) |
+			       ((ord($3) & 0x3F) <<  6) |
+			       ( ord($4) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xF8-\xFB])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
+		if ($Msg =~ /^\xF8[\x80-\x87]/) {
+			$error_found = 1;
+		} else {
+			$Val = ((ord($1) & 0x03) << 24) |
+			       ((ord($2) & 0x3F) << 18) |
+			       ((ord($3) & 0x3F) << 12) |
+			       ((ord($4) & 0x3F) <<  6) |
+			       ( ord($5) & 0x3F);
+		}
+	} elsif ($Msg =~ /^([\xFC-\xFD])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
+		if ($Msg =~ /^\xFC[\x80-\x83]/) {
+			$error_found = 1;
+		} else {
+			$Val = ((ord($1) & 0x01) << 30) |
+			       ((ord($2) & 0x3F) << 24) |
+			       ((ord($3) & 0x3F) << 18) |
+			       ((ord($4) & 0x3F) << 12) |
+			       ((ord($5) & 0x3F) <<  6) |
+			       ( ord($6) & 0x3F);
+		}
+	}
+	# printf("Val = 0x%X\n", $Val);
+	if (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
+		$error_found = 1;
+	}
+	# print("error_found satt til \"$error_found\" i decode_char()\n");
+	# return ($error_found);
+	# }}}
+} # decode_char()
+
+__END__
+
+# End of file $Id$

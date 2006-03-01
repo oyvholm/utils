@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Versjon av myf(1) som lister ut tidspunktet sist aksessert istedenfor modifisert.
+
+find $* -printf "%AY-%Am-%Ad %AH:%AM:%AS\t%6s\t%U.%G\t%p\n"

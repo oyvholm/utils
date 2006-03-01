@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+# $Id$
+# Konverterer fra DOS til UNIX
+
+while (<>) {
+	s/\r//g;
+	print;
+}

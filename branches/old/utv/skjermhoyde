@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+# $Id$
+# Brukes til å se hvor mange tegn det er på skjermen. Kanonavansert.
+
+for (my $a = 200; $a > 1; $a--) {
+	print("$a\n");
+}
