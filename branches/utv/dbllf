@@ -1,9 +1,0 @@
-#!/usr/bin/perl
-
-# Dobler LF så enkelte ting blir mer oversiktlig
-# $Id$
-
-while (<>) {
-	s/\n/\n\n/g;
-	print;
-}
