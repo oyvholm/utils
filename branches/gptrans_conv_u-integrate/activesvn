@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# $Id$
-
-svn log -v --xml $* | LC_ALL=C LC_CTYPE=C grep 'path>' | perl -pe 's/^.*?>(.*?)<.*$/$1/;' | sort | uniq -c | sort -rn

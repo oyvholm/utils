@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# $Id$
-
-kbdrate -r 30 -d 250

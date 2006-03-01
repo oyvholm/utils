@@ -1,6 +1,0 @@
-
-# $Id$
-
-encoding iso-8859-1 utf-8
-echo "Skifta til ISO-8859-1."
-sleep 2

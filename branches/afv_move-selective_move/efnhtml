@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id$
-# Filter for HTML levert til www.efn.no .
-
-u2h -d $* | hhi | hfa

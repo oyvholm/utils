@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# $Id$
-# Finner nynett på BA-nettverket.
-
-nmap -p 22 32.10.69.* | grep -A0 -B2 open

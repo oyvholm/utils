@@ -1,6 +1,0 @@
-#/bin/bash
-
-# $Id$
-
-cat $2 | $1 >filt.tmp
-mv filt.tmp $2

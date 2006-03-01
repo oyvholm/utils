@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# $Id$
-
-zcat -f /home/sunny/pub/unicode/UNIDATA/UnicodeData.txt* | egrep -i $*

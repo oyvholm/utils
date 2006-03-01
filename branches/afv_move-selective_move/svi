@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# $Id$
-
-svn info $* | egrep "^(Nettadresse|URL): " | perl -pe 's#^(.*?)(/(?:trunk|branches|tags|hooks/(trunk|branches|tags)).*)#* $2/#';
