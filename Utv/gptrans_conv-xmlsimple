@@ -532,11 +532,11 @@ sub print_entry {
         } elsif($Opt{'output-format'} eq "gpx") {
             $Line = join("",
                             "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Lat\" lon=\"$Lon\">$Spc",
-                            $print_alt
-                                ? "<ele>$Alt</ele>$Spc"
-                                : "",
                             $print_time
                                 ? "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc"
+                                : "",
+                            $print_alt
+                                ? "<ele>$Alt</ele>$Spc"
                                 : "",
                             "</trkpt>\n"
                     );
