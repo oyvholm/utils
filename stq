@@ -6,4 +6,4 @@
 # 2006-versjonen av ccc(1). :-D
 #=======================================================================
 
-svn stat --ignore-externals "$@" | grep -v ^X
+svn stat -q --ignore-externals "$@" | grep -v ^X
