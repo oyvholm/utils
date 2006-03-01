@@ -1,32 +1,73 @@
 #!/usr/bin/perl -w
 
-# ╔═════════════════════════════════════════════════════════════════════
-# ║ $Id$
-# ║ Converts between various GPS formats
-# ║ Character set: UTF-8
-# ║ License: GNU General Public License
-# ║ Made by Øyvind A. Holm — sunny@sunbase.org
-# ╚═════════════════════════════════════════════════════════════════════
+#=======================================================================
+# $Id$
+# Converts between various GPS formats
+#
+# Character set: UTF-8
+# ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License, see end of file for legal stuff.
+#=======================================================================
 
 use strict;
-use Getopt::Std;
+use Getopt::Long;
 use Time::Local qw { timegm_nocheck };
-
-my $Debug = 0;
-
-my $rcs_str = '$Id$';
-
-our ($opt_c, $opt_d, $opt_e, $opt_h, $opt_n, $opt_o, $opt_s, $opt_t, $opt_u) =
-    (     0,      0,      0,      0,     "",     "",      0,      0,      0);
-our ($opt_y) =
-    (     0);
-getopts('cdehn:o:stuy');
 
 $| = 1;
 
+our $Debug = 0;
+
+our %Opt = (
+    # Initial values for command line arguments {{{
+    'comment-out-dups' => 0,
+    'create-breaks'    => 0,
+    'debug'            => 0,
+    'double-y-scale'   => 0,
+    'epoch'            => 0,
+    'help'             => 0,
+    'output-format'    => "",
+    'require'          => "",
+    'short-date'       => 0,
+    'skip-dups'        => 0,
+    'strip-whitespace' => 0,
+    'undefined'        => "",
+    'use-comma'        => 0,
+    'xml'              => 0
+    # }}}
+);
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    # Command line options {{{
+    "comment-out-dups|u" => \$Opt{'comment-out-dups'},
+    "create-breaks|t"    => \$Opt{'create-breaks'},
+    "debug"              => \$Opt{'debug'},
+    "double-y-scale|y"   => \$Opt{'double-y-scale'},
+    "epoch|e"            => \$Opt{'epoch'},
+    "help|h"             => \$Opt{'help'},
+    "output-format|o=s"  => \$Opt{'output-format'},
+    "require|r=s"        => \$Opt{'require'},
+    "short-date|s"       => \$Opt{'short-date'},
+    "skip-dups|d"        => \$Opt{'skip-dups'},
+    "strip-whitespace|w" => \$Opt{'strip-whitespace'},
+    "undefined|n=s"      => \$Opt{'undefined'},
+    "use-comma|c"        => \$Opt{'use-comma'},
+    "verbose|v"          => \$Opt{'verbose'},
+    "xml|x"              => \$Opt{'xml'}
+    # }}}
+) || die("$progname: Option error. Use -h for help.\n");
+
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
-my $Des = $opt_c ? "," : ".";
+my $Des = $Opt{'use-comma'} ? "," : ".";
 my $Udef = "?";
+my $Spc = $Opt{'strip-whitespace'} ? "" : " ";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
@@ -37,50 +78,25 @@ my ($start_date, $end_date, $found_dup) =
    (         "",        "",          0);
 my @Dup = ();
 
+my %Req = (
+    'altitude' => ($Opt{'require'} =~ /a/) ? 1 : 0,
+    'time' => ($Opt{'require'} =~ /t/) ? 1 : 0
+);
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+
 # To avoid printing out extra "/> at the start of svg output:
 my $svg_start_thing = "";
 
-if ($opt_h) {
-    # Syntax screen to stdout and exit gracefully {{{
-    print(<<END);
-
-Syntax: gptrans_conv [options] [files [...]]
-        gptrans_conv -u [files [...]]
-
-  -c    Use comma instead of period as decimal point (For Gnumeric etc)
-  -d    Skip duplicated coordinates, only print first and last
-  -e    Use seconds since 1970-01-01 00:00:00 GMT as date format
-  -h    Help me ...---...
-  -n x  Use x as undefined value (Default: "$Udef")
-  -o x  Use output format x:
-          clean
-          gpstrans
-          ps (Unfinished)
-          svg (Unfinished)
-          xgraph
-          xml
-          ygraph
-  -s    Short date format
-  -t    Create breaks in track between points with a difference more 
-        than $PAUSE_LIMIT seconds
-  -u    Comment out following data with identical position values, only 
-        print first entry
-  -y    Double Y scale to get it right in gnuplot.
-
-END
-    exit(0);
-    # }}}
-}
-
-length($opt_n) && ($Udef = $opt_n);
-
+length($Opt{'undefined'}) && ($Udef = $Opt{'undefined'});
 # Kunne vært et eget script på grunn av at det gjør sine helt egne 
 # greier, men like greit å samle det på en plass.
 # FIXME: Fjerner ikke første duplikatentryen.
 # FIXME: Se om det går å få flytta den inn i print_entry() så man 
 # slipper å ha to gptrans_conv’er i pipen.
 # FIXME: Legg inn alle formatene.
-if (0 && $opt_u) {
+if (0 && $Opt{'comment-out-dups'}) {
     # Comment out areas without reception {{{
     while (<>) {
         if (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
@@ -109,25 +125,32 @@ if (0 && $opt_u) {
 }
 
 # Print possible header {{{
-if ($opt_o eq "gpstrans") {
+if ($Opt{'output-format'} eq "gpstrans") {
     print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
-} elsif ($opt_o eq "ps") {
+} elsif ($Opt{'output-format'} eq "gpx") {
+    print(<<END);
+<?xml version="1.0" standalone="no"?>
+<gpx>
+$Spc$Spc<trk>
+$Spc$Spc$Spc$Spc<trkseg>
+END
+} elsif ($Opt{'output-format'} eq "ps") {
     print(ps_header(532, 6034, 533, 6040));
     print("*u\n");
-} elsif ($opt_o eq "xml") {
+} elsif ($Opt{'output-format'} eq "xml") {
     print(<<END);
 <?xml version="1.0" encoding="UTF-8"?>
 <gpslog>
 END
-} elsif ($opt_o eq "svg") {
+} elsif ($Opt{'output-format'} eq "svg") {
     print(<<END);
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+$Spc$Spc"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg height="1000" width="1000" viewBox="23 70 2 2"
-  xmlns="http://www.w3.org/2000/svg" version="1.1">
-  <title></title>
-  <desc></desc>
+$Spc${Spc}xmlns="http://www.w3.org/2000/svg" version="1.1">
+$Spc$Spc<title></title>
+$Spc$Spc<desc></desc>
 END
 }
 # }}}
@@ -146,7 +169,7 @@ while (<>) {
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
-        print unless ($opt_o =~ /^(clean|xgraph|gpstrans|svg|xml|ygraph)$/);
+        print unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|svg|xml|ygraph)$/);
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
         # Author’s format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -161,6 +184,58 @@ while (<>) {
         my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
            (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
+        # }}}
+    } elsif (/^Trackpoint\t/) {
+        # Trackpoint\tN60.41630 E5.31675\t09.02.2006 20:24:37 (UTC)\t13.6 m\t\t93.9 m\t00:00:06\t56 kph\t123° true {{{
+        #
+        # Trackpoint\t
+        # N60.41630 E5.31675\t
+        # 09.02.2006 20:24:37 (UTC)\t
+        # 13.6 m\t
+        # \t
+        # 93.9 m\t
+        # 00:00:06\t
+        # 56 kph\t
+        # 123° true
+        my $Orig = $_;
+        $Orig =~ s/[\r\n]+$//;
+        my ($Marker_f, $Position_f, $Time_f, $Alt_f, $Depth_f,
+            $Leglength_f, $Legtime_f, $Legspeed_f, $Legcourse_f) =
+               split(/\t/, $Orig .
+                           # Nødløsning for å unngå at variabler blir 
+                           # udefinert.
+                           "\t\t\t\t\t\t\t\t\t\t"
+               );
+        D(<<END);
+Position_f="$Position_f" \x7B\x7B\x7B
+Time_f="$Time_f"
+Alt_f="$Alt_f"
+Depth_f="$Depth_f"
+Leglength_f="$Leglength_f"
+Legtime_f="$Legtime_f"
+Legspeed_f="$Legspeed_f"
+Legcourse_f="$Legcourse_f" \x7D\x7D\x7D
+END
+        my ($NS, $Y_deg, $WE, $X_deg, # Position
+            $Day, $Month, $Year, $Hour, $Min, $Sec, $TZone, # Time
+            $Alt, $Alt_unit, # Altitude
+            $Depth, $Depth_unit, # Depth
+            $Leglength, $Leglength_unit, # Leg length
+            $Legtime_hour, $Legtime_min, $Legtime_sec, # Leg time
+            $Legspeed, $Legspeed_unit, # Leg speed
+            $Legcourse # Leg course
+        ) = ("", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+             "", "", "", "", "", "", "", "");
+        ($Position_f =~ /^(N|S)([\d\.]+) (W|E)([\d\.]+)/) &&
+            ($NS = $1, $Y_deg = $2, $WE = $3, $X_deg = $4);
+        ($Time_f =~ /^(\d+)\.(\d+)\.(\d+) (\d+):(\d+):(\d+) \((.+?)\)/) &&
+            ($Day = $1, $Month = $2, $Year = $3, $Hour = $4, $Min = $5, $Sec = $6);
+        ($Alt_f =~ /^([\d+\.]+) (.*?)/) &&
+            ($Alt = $1, $Alt_unit = $2);
+        D("Alt = \"$Alt\"");
+        ($NS eq "S") && ($Y_deg = 0-$Y_deg);
+        ($WE eq "W") && ($X_deg = 0-$X_deg);
+        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $X_deg, $Y_deg, $Alt);
         # }}}
     } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
         # T 09/01/2002 11:51:26 60°23'36.3" 5°19'35.9" {{{
@@ -208,37 +283,47 @@ while (<>) {
         my $tmp_y = sprintf("%.5f", $Y_deg + $Y_degmin/60 + $Y_mindec/60000);
         $tmp_x =~ s/\./$Des/;
         $tmp_y =~ s/\./$Des/;
+        ($NS eq "S") && ($tmp_y = 0-$tmp_y);
+        ($EW eq "W") && ($tmp_x = 0-$tmp_x);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $tmp_x, $tmp_y, $Alt);
         # }}}
     } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
         # @020721221336__________________________________________ {{{
         my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
            (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
-        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
+        print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
         $found_move = 1;
         # }}}
     } elsif (/^xmaplog /) {
-        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
+        print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
     } elsif (/^$/) {
-        print("\n") unless ($opt_o =~ /^(clean|xgraph|gpstrans|xml)$/);
+        print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
     } else {
-        print("# $_");
-        chomp;
-        warn("Line $.: Unknown: \"$_\"\n");
+        unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/) {
+            print("# $_");
+            chomp;
+            $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
+        }
     }
     # }}}
 }
 
 # Print possible footer {{{
-if ($opt_o eq "ps") {
+if ($Opt{'output-format'} eq "gpx") {
+    print(<<END);
+$Spc$Spc$Spc$Spc</trkseg>
+$Spc$Spc</trk>
+</gpx>
+END
+} elsif ($Opt{'output-format'} eq "ps") {
     print(<<END);
 *U
 %%Trailer
 %%EOF
 END
-} elsif ($opt_o eq "svg") {
+} elsif ($Opt{'output-format'} eq "svg") {
     print("\"/>\n</svg>\n");
-} elsif ($opt_o eq "xml") {
+} elsif ($Opt{'output-format'} eq "xml") {
   print("</gpslog>\n");
 }
 # }}}
@@ -246,10 +331,12 @@ END
 exit(0);
 
 sub read_xmlfile {
+    # {{{
     my $Txt = join("", @_);
     # FIXME: The sequential stuff here is probably bad, but easy.
     $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
     $Txt =~ s#(<gps\b.*?>.*?</gps>)#print_xml_gps($1)#gse;
+    # }}}
 }
 
 sub print_gpx {
@@ -280,14 +367,15 @@ sub print_gpx {
             {
                 my ($attr_trkpt, $el_trkpt) =
                    (         $1,        $2);
-                ($attr_trkpt =~ /\blon="(.*?)"/) && ($Pos_Y = $1);
-                ($attr_trkpt =~ /\blat="(.*?)"/) && ($Pos_X = $1);
+                ($attr_trkpt =~ /\blon="(.*?)"/) && ($Pos_X = $1);
+                ($attr_trkpt =~ /\blat="(.*?)"/) && ($Pos_Y = $1);
                 ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Pos_Z = $1);
                 if ($Str =~ m#<time>(\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)\.?(\d*?)Z</time>#) {
                     ($Year, $Mon, $Day, $Hour, $Min, $Sec, $Dsec) =
                     (   $1,   $2,   $3,    $4,   $5,   $6,    $7);
                 }
                 print_entry($Year, $Mon, $Day, $Hour, $Min, $Sec, $Pos_X, $Pos_Y, $Pos_Z);
+                "";
             }gsex;
             $found_move = 1;
         }gsex;
@@ -325,18 +413,33 @@ sub print_entry {
     # various formats
     # {{{
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
+    my $print_time = ($Year =~ /^\d+$/) ? 1 : 0;
+    my $print_alt = ($Alt =~ /^\d+$/) ? 1 : 0;
     D("print_entry(\"" . join("\", \"", @_) . "\");");
-    my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
-    $Year  = sprintf("%04u", $Year);
-    $Month = sprintf("%02u", $Month);
-    $Day   = sprintf("%02u", $Day);
-    $Hour  = sprintf("%02u", $Hour);
-    $Min   = sprintf("%02u", $Min);
-    $Sec   = sprintf("%02u", $Sec);
+    my $ep_time;
+    if ($print_time) {
+        $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month - 1, $Year);
+        $Year  = sprintf("%04u", $Year);
+        $Month = sprintf("%02u", $Month);
+        $Day   = sprintf("%02u", $Day);
+        $Hour  = sprintf("%02u", $Hour);
+        $Min   = sprintf("%02u", $Min);
+        $Sec   = sprintf("%02u", $Sec);
+    } else {
+        $Req{'time'} && return;
+        $ep_time = 0;
+        $Year    = 0;
+        $Month   = 0;
+        $Day     = 0;
+        $Hour    = 0;
+        $Min     = 0;
+        $Sec     = 0;
+    }
     my $pause_len = 0;
     my $do_print = 1;
+    ($Req{'altitude'} && !$print_alt) && return;
     my $Line = "";
-    if ($opt_u) {
+    if ($Opt{'comment-out-dups'}) {
         if (($Lat eq $last_lat) && ($Lon eq $last_lon)) {
             unless ($found_dup) {
                 $start_date = "$Year$Month${Day}T$Hour$Min$Sec";
@@ -360,13 +463,13 @@ sub print_entry {
             }
         }
     }
-    if ($opt_o eq "ps") {
+    if ($Opt{'output-format'} eq "ps") {
         $Lon *= 100;
         $Lat *= 100;
     }
-    # FIXME: $opt_d ble bytta ut med $opt_u i r583. Lurer på hva det 
-    # gikk i der.
-    if ($opt_u && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Alt eq $last_alt)) {
+    # FIXME: $Opt{'skip_dups'} ble bytta ut med $Opt{'comment-out-dups'} 
+    # i r583. Lurer på hva det gikk i der.
+    if ($Opt{'skip-dups'} && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Alt eq $last_alt)) {
         if ($in_dupskip) {
             $do_print = 0;
         } else {
@@ -379,31 +482,46 @@ sub print_entry {
             $in_dupskip = 0;
     }
 
-    if ($opt_t && $ep_time-$last_time > $PAUSE_LIMIT && $last_time) {
+    if ($Opt{'create-breaks'} && $ep_time-$last_time > $PAUSE_LIMIT && $last_time) {
         $pause_len = $ep_time-$last_time;
     }
 
-    if ($pause_len && ($opt_o !~ /^(clean|xgraph|gpstrans|xml|svg|ygraph)$/)) {
+    if ($pause_len && ($Opt{'output-format'} !~ /^(clean|xgraph|gpstrans|gpx|xml|svg|ygraph)$/)) {
         printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
     }
 
     if ($do_print) {
         # Valid data was found, send to stdout {{{
-        if ($opt_y) {
+        if ($Opt{'double-y-scale'}) {
             $Lat *= 2;
         }
-        if ($opt_o eq "xgraph") {
+        if ($Opt{'output-format'} eq "xgraph") {
             $pause_len && ($Line = "move ");
             ($Line .= "$Lon $Lat\n");
-        } elsif($opt_o eq "gpstrans") {
+        } elsif($Opt{'output-format'} eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) = (ddd_to_dms($Lat), ddd_to_dms($Lon));
-            $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
-        } elsif ($opt_o eq "clean") {
+            if ($print_time) {
+                $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
+            } else {
+                $Line = "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
+            }
+        } elsif($Opt{'output-format'} eq "gpx") {
+            $Line = join("",
+                            "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Lat\" lon=\"$Lon\">$Spc",
+                            $print_alt
+                                ? "<ele>$Alt</ele>$Spc"
+                                : "",
+                            $print_time
+                                ? "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc"
+                                : "",
+                            "</trkpt>\n"
+                    );
+        } elsif ($Opt{'output-format'} eq "clean") {
             $pause_len && ($Line = "\n");
-            ($Line .= "$Lon\t$Lat\t$Alt\n");
-        } elsif ($opt_o eq "ps") {
+            ($Line .= "$Lon\t$Lat" . ($print_alt ? "\t$Alt" : "") . "\n");
+        } elsif ($Opt{'output-format'} eq "ps") {
             $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
-        } elsif ($opt_o eq "svg") {
+        } elsif ($Opt{'output-format'} eq "svg") {
             $Line .= (
                 ($last_lon == 1000) || $pause_len
                     ? <<END
@@ -416,19 +534,21 @@ M $Lon $Lat
 END
                     : "L $Lon $Lat\n"
             );
-        } elsif ($opt_o eq "xml") {
+        } elsif ($Opt{'output-format'} eq "xml") {
             $Line = join("",
-                         "<gps> ",
-                             "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date> ",
-                             "<pos> ",
-                                 (length($Lon)) ? "<x>$Lon</x> " : "",
-                                 (length($Lat)) ? "<y>$Lat</y> " : "",
-                                 ($Alt eq $Udef) ? "" : "<z>$Alt</z> ",
-                             "</pos> ",
+                         "$Spc$Spc<gps>$Spc",
+                             $print_time
+                                ? "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc"
+                                : "",
+                             "<pos>$Spc",
+                                 (length($Lon)) ? "<x>$Lon</x>$Spc" : "",
+                                 (length($Lat)) ? "<y>$Lat</y>$Spc" : "",
+                                 ($print_alt)   ? "<z>$Alt</z>$Spc" : "",
+                             "</pos>$Spc",
                          "</gps>\n"
                     );
-        } elsif ($opt_o eq "ygraph") {
-            my $Time = ($ep_time - $first_time) * 1;
+        } elsif ($Opt{'output-format'} eq "ygraph") {
+            my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
             $Line = "\"Time = $Time.0\n$Lon $Lat\n\n";
         } else {
             # Default format used by the author. Yes, the Universe 
@@ -444,10 +564,16 @@ END
             $Lat =~ s/\./$Des/;
             # $do_print || print("skipping ");
             $Line = join("\t",
-                $opt_e ? $ep_time : ($opt_s ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z" : "$Year-$Month-$Day $Hour:$Min:$Sec"),
+                $print_time
+                    ? $Opt{'epoch'}
+                        ? $ep_time
+                        : $Opt{'short-date'}
+                            ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z"
+                            : "$Year-$Month-$Day $Hour:$Min:$Sec"
+                    : "",
                 $Lon, # X-axis
                 $Lat, # Y-axis
-                $Alt, # Altitude
+                $print_alt ? $Alt : "", # Altitude
                 "\n"
             );
             # }}}
@@ -455,14 +581,17 @@ END
         # }}}
     }
 
-    if (!$last_time && $opt_o eq "ps") {
+    if (!$last_time && $Opt{'output-format'} eq "ps") {
         print("$Lon $Lat m\n");
     }
 
     if ($do_print) {
         if ($found_move) {
-            (!$pause_len && ($opt_o eq "xgraph")) && ($Line = "move $Line");
-            ($opt_o eq "clean") && (print("\n"));
+            (!$pause_len && ($Opt{'output-format'} eq "xgraph")) && ($Line = "move $Line");
+            ($Opt{'output-format'} eq "clean") && (print("\n"));
+            if ($Opt{'output-format'} eq "gpx") {
+                print("$Spc$Spc$Spc$Spc</trkseg>\n$Spc$Spc$Spc$Spc<trkseg>\n");
+            }
             $found_move = 0;
         }
         print($Line);
@@ -517,7 +646,7 @@ sub ps_header {
     my $Date = sec_to_string(time);
     return(<<END);
 %!PS-Adobe-3.0 EPSF-3.0
-%%Creator: $rcs_str
+%%Creator: $rcs_id
 %%Title:
 %%CreationDate: $Date
 %%BoundingBox: $bl_x $bl_y $br_x $br_y
@@ -580,11 +709,315 @@ sub ddd_to_dms {
     # }}}
 }
 
-sub D {
-    # Send debug messages to stderr if $Debug {{{
-    $Debug && print(STDERR @_);
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+    my ($xml_start, $xml_end)  =
+       (        "",       "");
+
+    if ($Opt{'xml'}) {
+        $xml_start = <<END;
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
+<article>
+  <screen>
+END
+        $xml_end = <<END;
+</screen>
+</article>
+END
+    }
+    my $Txt = <<END;
+$rcs_id
+
+Converts between various GPS formats.
+
+Usage: $progname [options] [file [files [...]]]
+       $progname -u [file [files [...]]]
+
+Options:
+
+  -c, --comment-out-dups
+    Use comma instead of period as decimal point (For Gnumeric etc).
+  -d, --skip-dups
+    Skip duplicated coordinates, only print first and last.
+  -e, --epoch
+    Use seconds since 1970-01-01 00:00:00 GMT as date format.
+  -h, --help
+    Show this help.
+  -n x, --undefined x
+    Use x as undefined value. Default: "$Udef".
+  -o x, --output-format x
+    Use output format x:
+      clean
+      gpstrans
+      gpx (Not complete)
+      ps (Unfinished)
+      svg (Unfinished)
+      xgraph
+      xml
+      ygraph
+  -r x, --require x
+    Specify requirements for trackpoints to be written. x is a string 
+    with the following flags:
+      a
+        Print only waypoints which have an altitude.
+      t
+        Print only waypoints which have a timestamp.
+  -s, --short-date
+    Use short date format.
+  -t, --create-breaks
+    Create breaks in track between points with a difference more than 
+    $PAUSE_LIMIT seconds.
+  -u, --comment-out-dups
+    Comment out following data with identical position values, only 
+    print first entry.
+  -v, --verbose
+    Verbose, warn about unknown lines.
+  -w, --strip-whitespace
+    Strip all unnecessary whitespace.
+  -x, --xml
+    Create XML output.
+  -y, --double-y-scale
+    Double Y scale to get it right in gnuplot.
+  --debug
+    Print debugging messages.
+END
+    printf("%s%s%s",
+        $xml_start,
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
+    exit($Retval);
     # }}}
 }
 
-# vim: set ft=perl ts=4 sw=4 sts=4 et fo+=w fenc=utf-8 :
+sub D {
+    # {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    if ($Opt{'xml'}) {
+        printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
+            txt_to_xml($$),
+            txt_to_xml($File),
+            txt_to_xml($call_info[2]),
+            txt_to_xml($Txt)
+        );
+    } else {
+        print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    }
+    return("");
+    # }}}
+} # D()
+
+sub txt_to_xml {
+    # Return a XML-safe version of a string {{{
+    my $Txt = shift;
+
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+} # txt_to_xml()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+gptrans_conv
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+B<gptrans_conv> [OPTION]... [FILE]...
+
+B<gptrans_conv> -u [OPTION]... [FILE]...
+
+=head1 DESCRIPTION
+
+Converts between various GPS formats.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-c>, B<--comment-out-dups>
+
+Use comma instead of period as decimal point (For Gnumeric etc).
+
+=item B<-d>, B<--skip-dups>
+
+Skip duplicated coordinates, only print first and last.
+
+=item B<-e>, B<--epoch>
+
+Use seconds since 1970-01-01 00:00:00 GMT as date format.
+
+=item B<-h>, B<--help>
+
+Show this help.
+
+=item B<-n x>, B<--undefined x>
+
+Use x as undefined value.
+
+=item B<-o x>, B<--output-format x>
+
+Use output format x:
+
+=over 4
+
+=over 4
+
+=item clean
+
+=item gpstrans
+
+=item gpx (Not complete)
+
+=item ps (Unfinished)
+
+=item svg (Unfinished)
+
+=item xgraph
+
+=item xml
+
+=item ygraph
+
+=back
+
+=back
+
+Z<>
+
+=item B<-r x>, B<--require x>
+
+Specify requirements for trackpoints to be written. x is a string with 
+the following flags:
+
+=over 4
+
+=over 4
+
+=item a
+
+=over 4
+
+=item Print only waypoints which have an altitude.
+
+=back
+
+=back
+
+=over 4
+
+=item t
+
+=over 4
+
+=item Print only waypoints which have a timestamp.
+
+=back
+
+=back
+
+=back
+
+Z<>
+
+=item B<-s>, B<--short-date>
+
+Use short date format.
+
+=item B<-t>, B<--create-breaks>
+
+Create breaks in track between points with a difference more than the 
+number of seconds specified by the C<$PAUSE_LIMIT> variable.
+
+=item B<-u>, B<--comment-out-dups>
+
+Comment out following data with identical position values, only print 
+first entry.
+
+=item B<-v>, B<--verbose>
+
+Verbose, warn about unknown lines.
+
+=item B<-w>, B<--strip-whitespace>
+
+Strip all unnecessary whitespace.
+
+=item B<-x>, B<--xml>
+
+Create XML output.
+
+=item B<-y>, B<--double-y-scale>
+
+Double Y scale to get it right in gnuplot.
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-x>, B<--xml>
+
+Create XML output.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+Pretty incomplete in some areas. Some of the source formats are 
+undocumented and thus incomplete. Some functionality is not working 
+properly, for example the Postscript output.
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
 # End of file $Id$
