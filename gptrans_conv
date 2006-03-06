@@ -79,6 +79,7 @@ my %Req = (
     'altitude' => ($Opt{'require'} =~ /a/) ? 1 : 0,
     'time' => ($Opt{'require'} =~ /t/) ? 1 : 0
 );
+$Opt{'require'} =~ /[^at]/ && die("$0: Unknown flag in --require (-r) value\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
