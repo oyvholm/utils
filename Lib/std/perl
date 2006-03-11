@@ -19,6 +19,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'version' => 0,
     'xml' => 0
 );
 
@@ -33,14 +34,21 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
 while (<>) {
     print;
+}
+
+sub print_version {
+    xml_print("$rcs_id\n");
+    exit(0);
 }
 
 sub xml_print {
@@ -83,6 +91,8 @@ Options:
 
   -h, --help
     Show this help.
+  --version
+    Print version information.
   -x, --xml
     Create XML output.
   --debug
@@ -154,6 +164,10 @@ $Id$
 =item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<--version>
+
+Print version information.
 
 =item B<-x>, B<--xml>
 
