@@ -43,9 +43,9 @@ while (<>) {
     print;
 }
 
-sub usage {
-    # Send the help message to stdout {{{
-    my $Retval = shift;
+sub xml_print {
+    # Print out some text, using DocBook if --xml is specified {{{
+    my $Txt = shift;
     my ($xml_start, $xml_end) =
        (        "",       "");
 
@@ -61,7 +61,20 @@ END
 </article>
 END
     }
-    my $Txt = <<END;
+
+    printf("%s%s%s",
+        $xml_start,
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
+    # }}}
+}
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    xml_print(<<END);
 $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
@@ -75,11 +88,6 @@ Options:
   --debug
     Print debugging messages.
 END
-    printf("%s%s%s",
-        $xml_start,
-        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
     exit($Retval);
     # }}}
 }
