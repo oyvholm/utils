@@ -3,12 +3,12 @@
 #=======================================================================
 # $Id$
 #
-# Syntax: $0 directory
+# Syntax: mvdirnewest directory
 # Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.
 # Brukes til å lage orden i gamle versjoner av ting som ligger slengende rundt.
 #
 # Character set: UTF-8
-# ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
+# (C)opyleft 1999– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License, see end of file for legal stuff.
 #=======================================================================
 
