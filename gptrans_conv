@@ -20,19 +20,20 @@ our $Debug = 0;
 our %Opt = (
     # Initial values for command line arguments {{{
     'comment-out-dups' => 0,
-    'create-breaks'    => 0,
-    'debug'            => 0,
-    'double-y-scale'   => 0,
-    'epoch'            => 0,
-    'help'             => 0,
-    'output-format'    => "",
-    'require'          => "",
-    'short-date'       => 0,
-    'skip-dups'        => 0,
+    'create-breaks' => 0,
+    'debug' => 0,
+    'double-y-scale' => 0,
+    'epoch' => 0,
+    'help' => 0,
+    'output-format' => "",
+    'require' => "",
+    'short-date' => 0,
+    'skip-dups' => 0,
     'strip-whitespace' => 0,
-    'undefined'        => "",
-    'use-comma'        => 0,
-    'xml'              => 0
+    'undefined' => "",
+    'use-comma' => 0,
+    'version' => 0,
+    'xml' => 0
     # }}}
 );
 
@@ -47,20 +48,21 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     # Command line options {{{
     "comment-out-dups|u" => \$Opt{'comment-out-dups'},
-    "create-breaks|t"    => \$Opt{'create-breaks'},
-    "debug"              => \$Opt{'debug'},
-    "double-y-scale|y"   => \$Opt{'double-y-scale'},
-    "epoch|e"            => \$Opt{'epoch'},
-    "help|h"             => \$Opt{'help'},
-    "output-format|o=s"  => \$Opt{'output-format'},
-    "require|r=s"        => \$Opt{'require'},
-    "short-date|s"       => \$Opt{'short-date'},
-    "skip-dups|d"        => \$Opt{'skip-dups'},
+    "create-breaks|t" => \$Opt{'create-breaks'},
+    "debug" => \$Opt{'debug'},
+    "double-y-scale|y" => \$Opt{'double-y-scale'},
+    "epoch|e" => \$Opt{'epoch'},
+    "help|h" => \$Opt{'help'},
+    "output-format|o=s" => \$Opt{'output-format'},
+    "require|r=s" => \$Opt{'require'},
+    "short-date|s" => \$Opt{'short-date'},
+    "skip-dups|d" => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
-    "undefined|n=s"      => \$Opt{'undefined'},
-    "use-comma|c"        => \$Opt{'use-comma'},
-    "verbose|v"          => \$Opt{'verbose'},
-    "xml|x"              => \$Opt{'xml'}
+    "undefined|n=s" => \$Opt{'undefined'},
+    "use-comma|c" => \$Opt{'use-comma'},
+    "verbose|v" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'}
     # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -83,6 +85,7 @@ $Opt{'require'} =~ /[^at]/ && die("$0: Unknown flag in --require (-r) value\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
 # To avoid printing out extra "/> at the start of svg output:
 my $svg_start_thing = "";
@@ -708,10 +711,15 @@ sub ddd_to_dms {
     # }}}
 }
 
-sub usage {
-    # Send the help message to stdout {{{
-    my $Retval = shift;
-    my ($xml_start, $xml_end)  =
+sub print_version {
+    xml_print("$rcs_id\n");
+    exit(0);
+}
+
+sub xml_print {
+    # Print out some text, using DocBook if --xml is specified {{{
+    my $Txt = shift;
+    my ($xml_start, $xml_end) =
        (        "",       "");
 
     if ($Opt{'xml'}) {
@@ -726,7 +734,20 @@ END
 </article>
 END
     }
-    my $Txt = <<END;
+
+    printf("%s%s%s",
+        $xml_start,
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
+    # }}}
+}
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    xml_print(<<END);
 $rcs_id
 
 Converts between various GPS formats.
@@ -773,6 +794,8 @@ Options:
     print first entry.
   -v, --verbose
     Verbose, warn about unknown lines.
+  --version
+    Print version information.
   -w, --strip-whitespace
     Strip all unnecessary whitespace.
   -x, --xml
@@ -782,11 +805,6 @@ Options:
   --debug
     Print debugging messages.
 END
-    printf("%s%s%s",
-        $xml_start,
-        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
     exit($Retval);
     # }}}
 }
@@ -970,6 +988,10 @@ Double Y scale to get it right in gnuplot.
 =item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<--version>
+
+Print version information.
 
 =item B<-x>, B<--xml>
 
