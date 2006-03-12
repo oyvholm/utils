@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id: bash 1522 2006-01-06 17:46:05Z sunny $
+# Skriver ut dato og klokkeslett, brukes for det meste for å sjekke 
+# synkroniseringa mellom maskiner.
+#=======================================================================
+
+while :; do
+    echo -n `date | tr '\n' '\r'`
+done
