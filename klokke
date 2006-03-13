@@ -2,7 +2,8 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Skriver ut dato og klokkeslett, brukes for det meste for å sjekke 
+# synkroniseringa mellom maskiner.
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
@@ -11,6 +12,7 @@
 
 use strict;
 use Getopt::Long;
+use Time::HiRes qw{ gettimeofday usleep };
 
 $| = 1;
 
@@ -42,8 +44,13 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+my ($Date, $Sec, $Fract);
+
+while (1) {
+    ($Sec, $Fract) = gettimeofday();
+    my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = gmtime($Sec);
+    printf("%02u:%02u:%02u\r", $Hour, $Min, $Sec);
+    usleep(1);
 }
 
 sub print_version {
