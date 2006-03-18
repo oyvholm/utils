@@ -260,6 +260,8 @@ END
         D("Alt = \"$Alt\"");
         ($NS eq "S") && ($Y_deg = 0-$Y_deg);
         ($WE eq "W") && ($X_deg = 0-$X_deg);
+        # MapSource in win xp writes YYYY, but YY in win98se.
+        ($Year =~ /\d/ && $Year < 1900) && ($Year += 2000);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $X_deg, $Y_deg, $Alt);
         # }}}
     } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
