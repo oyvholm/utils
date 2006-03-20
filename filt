@@ -2,5 +2,9 @@
 
 # $Id$
 
-cat $2 | $1 >filt.tmp
-mv filt.tmp $2
+cmd=$1
+shift
+for ff in "$@"; do
+    cat "$ff" | $cmd >filt.tmp
+    mv -v filt.tmp "$ff"
+done
