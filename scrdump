@@ -5,4 +5,4 @@
 # Skjermdump i X.
 #=======================================================================
 
-import -w root ~sunny/screendumps/`~/bin/u`.ba0614-screendump.png
+import -w root ~sunny/screendumps/$(~/bin/u).$(hostname)-screendump.png
