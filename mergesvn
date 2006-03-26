@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Merges new changes into a file version controlled in Subversion.
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
@@ -38,13 +38,53 @@ GetOptions(
     "xml|x" => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
+my $CMD_SVN = "svn";
+my $CMD_SVNVERSION = "svnversion";
+
+my $PROP_LASTMERGE = "lastmerge";
+my $PROP_MASTERFILE = "masterfile";
+
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+for (@ARGV) {
+    # {{{
+    my $File = $_;
+    my $last_merge = `svn propget $PROP_LASTMERGE $File`;
+    $last_merge =~ s/[^\d]//g;
+    my $master_file = `svn propget $PROP_MASTERFILE $File`;
+    $master_file =~ s/[\n]//g;
+    if (!length($last_merge) || !length($master_file)) {
+        warn("$File: Missing '$PROP_LASTMERGE' and/or '$PROP_MASTERFILE' properties, file skipped\n");
+    } else {
+        mysyst("$CMD_SVN update $File");
+        my $curr_rev = `$CMD_SVN log -rHEAD:1 --limit 1 --xml $master_file`;
+        $curr_rev =~ s/^.*<logentry.+?revision="(\d+)".*?>.*/$1/s;
+        mysyst("$CMD_SVN merge -r$last_merge:$curr_rev $master_file $File");
+        mysyst("$CMD_SVN propset $PROP_LASTMERGE $curr_rev $File");
+    }
+    # }}}
 }
+
+sub mysyst {
+    # {{{
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    D("$system_txt");
+    deb_wait();
+    print("@_\n");
+    system(@_);
+    # }}}
+} # mysyst()
+
+sub deb_wait {
+    # {{{
+    $Debug || return;
+    print("debug: Press ENTER...");
+    <STDIN>;
+    # }}}
+} # deb_wait()
 
 sub print_version {
     xml_print("$rcs_id\n");
@@ -85,7 +125,10 @@ sub usage {
     xml_print(<<END);
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Merge changes between Subversion controlled files. Files without the 
+"$PROP_LASTMERGE" and "$PROP_MASTERFILE" properties will be ignored.
+
+Usage: $progname [options] file [files [...]]
 
 Options:
 
@@ -143,7 +186,7 @@ __END__
 
 =head1 NAME
 
-
+mergesvn
 
 =head1 REVISION
 
@@ -151,11 +194,24 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+mergesvn [options] file [files [...]]
 
 =head1 DESCRIPTION
 
+Merges new revision changes into a file from a master file.
+Needs to have the following properties to work:
 
+=over 4
+
+=item B<masterfile>
+
+Path or URL to the file changes should be merged from.
+
+=item B<lastmerge>
+
+Last revision the file were synced.
+
+=back
 
 =head1 OPTIONS
 
