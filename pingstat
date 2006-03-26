@@ -18,8 +18,12 @@ $| = 1;
 
 our $Debug = 0;
 
-our ($opt_help, $opt_xml) =
-    (        0,        0);
+our %Opt = (
+    'debug' => 0,
+    'help' => 0,
+    'version' => 0,
+    'xml' => 0
+);
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -30,11 +34,15 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "help|h" => \$opt_help,
-    "xml|x"  => \$opt_xml
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$opt_help && usage(0);
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
 my $Host = "194.248.216.19";
 my $log_dir = "$ENV{HOME}/log/pingstat";
@@ -79,13 +87,18 @@ while (1) {
     }
 }
 
-sub usage {
-    # Send the help message to stdout {{{
-    my $Retval = shift;
-    my ($xml_start, $xml_end)  =
+sub print_version {
+    xml_print("$rcs_id\n");
+    exit(0);
+}
+
+sub xml_print {
+    # Print out some text, using DocBook if --xml is specified {{{
+    my $Txt = shift;
+    my ($xml_start, $xml_end) =
        (        "",       "");
 
-    if ($opt_xml) {
+    if ($Opt{'xml'}) {
         $xml_start = <<END;
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
@@ -97,7 +110,20 @@ END
 </article>
 END
     }
-    my $Txt = <<END;
+
+    printf("%s%s%s",
+        $xml_start,
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
+    # }}}
+}
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    xml_print(<<END);
 $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
@@ -105,15 +131,14 @@ Usage: $progname [options] [file [files [...]]]
 Options:
 
   -h, --help
-      Show this help.
+    Show this help.
+  --version
+    Print version information.
   -x, --xml
-      Create XML output (Unfinished)
+    Create XML output (Unfinished)
+  --debug
+    Print debugging messages.
 END
-    printf("%s%s%s",
-        $xml_start,
-        $opt_xml ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
     exit($Retval);
     # }}}
 }
@@ -126,7 +151,7 @@ sub D {
     my $File = $call_info[1];
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
-    if ($opt_xml) {
+    if ($Opt{'xml'}) {
         printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
             txt_to_xml($$),
             txt_to_xml($File),
@@ -181,10 +206,18 @@ $Id$
 
 Print a brief help summary.
 
+=item B<--version>
+
+Print version information.
+
 =item B<-x>, B<--xml>
 
 Create XML output.
 (Unfinished)
+
+=item B<--debug>
+
+Print debugging messages.
 
 =back
 
