@@ -79,6 +79,8 @@ my $last_time = 0;
 my ($last_lon, $last_lat, $last_alt, $last_line) =
    (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
 
+my %Poscount = ();
+
 my %Req = (
     'altitude' => ($Opt{'require'} =~ /a/) ? 1 : 0,
     'time' => ($Opt{'require'} =~ /t/) ? 1 : 0
@@ -196,7 +198,7 @@ while (<>) {
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
-        print unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|svg|xml|ygraph)$/);
+        print unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|poscount|svg|xml|ygraph)$/);
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
         # Author’s format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -328,7 +330,7 @@ END
     } elsif (/^$/) {
         print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
     } else {
-        unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/) {
+        unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|poscount|xml)$/) {
             print("# $_");
             chomp;
             $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
@@ -344,6 +346,10 @@ $Spc$Spc$Spc$Spc</trkseg>
 $Spc$Spc</trk>
 </gpx>
 END
+} elsif ($Opt{'output-format'} eq "poscount") {
+    while (my ($l_name, $l_val) = each %Poscount) {
+        $l_name =~ /^(.+?),(.+?)$/ && print("$1\t$2\t$l_val\n");
+    }
 } elsif ($Opt{'output-format'} eq "ps") {
     print(<<END);
 *U
@@ -470,6 +476,16 @@ sub print_entry {
     my $print_alt = ($Alt =~ /^\d+$/) ? 1 : 0;
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
+    if ($Opt{'output-format'} eq "poscount") {
+        my ($Lat_str, $Lon_str) =
+           (      "",       "");
+        $Lon =~ /^(\d+\.\d\d)/ && ($Lon_str = $1);
+        $Lat =~ /^(\d+\.\d\d)/ && ($Lat_str = $1);
+        my $Name = "${Lon_str},${Lat_str}";
+        defined($Poscount{$Name}) || ($Poscount{$Name} = 0);
+        $Poscount{$Name}++;
+        return;
+    }
     if ($print_time) {
         $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month - 1, $Year);
         $Year  = sprintf("%04u", $Year);
@@ -800,6 +816,7 @@ Options:
       clean
       gpstrans
       gpx (Not complete)
+      poscount (Experimental)
       ps (Unfinished)
       svg (Unfinished)
       xgraph
@@ -931,6 +948,11 @@ Use output format x:
 =item gpstrans
 
 =item gpx (Not complete)
+
+=item poscount (Experimental)
+
+Creates a 3D plot where areas with many trackpoints are higher than 
+areas with less track points.
 
 =item ps (Unfinished)
 
