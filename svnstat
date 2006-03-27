@@ -20,8 +20,9 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'force' => 0,
-    'help'  => 0,
-    'xml'   => 0
+    'help' => 0,
+    'version' => 0,
+    'xml' => 0
 );
 
 our $progname = $0;
@@ -33,14 +34,16 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "debug"   => \$Opt{'debug'},
+    "debug" => \$Opt{'debug'},
     "force|f" => \$Opt{'force'},
-    "help|h"  => \$Opt{'help'},
-    "xml|x"   => \$Opt{'xml'}
+    "help|h" => \$Opt{'help'},
+    "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
 my $dat_file = "svnstat.dat";
 my $tmp_file = "svnstat.tmp";
@@ -82,10 +85,15 @@ system("stpl -t \"Number of seconds between commits\" $time_file");
 # unlink($tmp_file);
 # unlink($week_file);
 
-sub usage {
-    # Send the help message to stdout {{{
-    my $Retval = shift;
-    my ($xml_start, $xml_end)  =
+sub print_version {
+    xml_print("$rcs_id\n");
+    exit(0);
+}
+
+sub xml_print {
+    # Print out some text, using DocBook if --xml is specified {{{
+    my $Txt = shift;
+    my ($xml_start, $xml_end) =
        (        "",       "");
 
     if ($Opt{'xml'}) {
@@ -100,7 +108,20 @@ END
 </article>
 END
     }
-    my $Txt = <<END;
+
+    printf("%s%s%s",
+        $xml_start,
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
+    # }}}
+}
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    xml_print(<<END);
 $rcs_id
 
 Usage: $progname [options] [file_or_url [...]]
@@ -111,16 +132,13 @@ Options:
     Show this help.
   -f, --force
     Force execution of “svn log”.
+  --version
+    Print version information.
   -x, --xml
     Create XML output.
   --debug
     Print debugging messages.
 END
-    printf("%s%s%s",
-        $xml_start,
-        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
     exit($Retval);
     # }}}
 }
@@ -191,6 +209,10 @@ Force “svn log” to run even if F<svnstat.dat> exists.
 =item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<--version>
+
+Print version information.
 
 =item B<-x>, B<--xml>
 
