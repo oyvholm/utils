@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Stores the file date in a special svn property.
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
@@ -38,13 +38,47 @@ GetOptions(
     "xml|x" => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
+my $PROP_NAME = "filedate";
+my $CMD_SVN = "svn";
+
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+for my $File (@ARGV) {
+    # {{{
+    my @stat_array = stat($File);
+    if (scalar(@stat_array)) {
+        my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, 
+            $mtime, $ctime, $blksize, $blocks) = @stat_array;
+        my @TA = gmtime($mtime);
+        my $date_str = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+            $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+        mysyst($CMD_SVN, "propset", $PROP_NAME, $date_str, $File);
+    } else {
+        warn("$progname: $File: Unable to stat() file\n");
+    }
+    # }}}
 }
+
+sub mysyst {
+    # {{{
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    D("$system_txt");
+    deb_wait();
+    print("@_\n");
+    system(@_);
+    # }}}
+} # mysyst()
+
+sub deb_wait {
+    # {{{
+    $Debug || return;
+    print("debug: Press ENTER...");
+    <STDIN>;
+    # }}}
+} # deb_wait()
 
 sub print_version {
     # Print program version {{{
@@ -86,6 +120,9 @@ sub usage {
 
     xml_print(<<END);
 $rcs_id
+
+Define a "$PROP_NAME" property containing the timestamp of a 
+file/symlink/directory on Subversion-controlled files.
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -145,7 +182,7 @@ __END__
 
 =head1 NAME
 
-
+svnfiledate
 
 =head1 REVISION
 
@@ -153,11 +190,12 @@ $Id$
 
 =head1 SYNOPSIS
 
- [options] [file [files [...]]]
+svnfiledate [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-
+Define a "$PROP_NAME" property containing the timestamp of a 
+file/symlink/directory on Subversion-controlled files.
 
 =head1 OPTIONS
 
@@ -183,7 +221,8 @@ Print debugging messages.
 
 =head1 BUGS
 
-
+It’s non-standard. The Subversion client doesn’t have anything like this 
+yet, so it will probably change in the future.
 
 =head1 AUTHOR
 
