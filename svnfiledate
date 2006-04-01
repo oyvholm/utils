@@ -49,7 +49,7 @@ $Opt{'version'} && print_version();
 
 for my $File (@ARGV) {
     # {{{
-    my @stat_array = stat($File);
+    my @stat_array = lstat($File);
     if (scalar(@stat_array)) {
         if (-d $File && !$Opt{'directories'}) {
             warn("$progname: $File: Ignoring directory\n");
@@ -62,7 +62,7 @@ for my $File (@ARGV) {
             mysyst($CMD_SVN, "propset", $PROP_NAME, $date_str, $File);
         }
     } else {
-        warn("$progname: $File: Unable to stat() file\n");
+        warn("$progname: $File: Unable to lstat() file\n");
     }
     # }}}
 }
