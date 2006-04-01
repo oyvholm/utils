@@ -21,7 +21,7 @@ my %mnd_str = (
 while (<>) {
 	s/
 		(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+
-		(Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+
+		(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+
 		(\d+)\s+
 		(\d\d:\d\d:\d\d)\s+
 		(\d\d\d\d)
