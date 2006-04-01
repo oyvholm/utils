@@ -18,6 +18,7 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'directories' => 0,
     'help' => 0,
     'version' => 0,
     'xml' => 0
@@ -33,6 +34,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
+    "directories|d" => \$Opt{'directories'},
     "help|h" => \$Opt{'help'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'}
@@ -49,12 +51,16 @@ for my $File (@ARGV) {
     # {{{
     my @stat_array = stat($File);
     if (scalar(@stat_array)) {
-        my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, $atime, 
-            $mtime, $ctime, $blksize, $blocks) = @stat_array;
-        my @TA = gmtime($mtime);
-        my $date_str = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
-            $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
-        mysyst($CMD_SVN, "propset", $PROP_NAME, $date_str, $File);
+        if (-d $File && !$Opt{'directories'}) {
+            warn("$progname: $File: Ignoring directory\n");
+        } else {
+            my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size, 
+                $atime, $mtime, $ctime, $blksize, $blocks) = @stat_array;
+            my @TA = gmtime($mtime);
+            my $date_str = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+            mysyst($CMD_SVN, "propset", $PROP_NAME, $date_str, $File);
+        }
     } else {
         warn("$progname: $File: Unable to stat() file\n");
     }
@@ -128,6 +134,9 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -d, --directories
+    Also set the property on directories, default action is to ignore 
+    those.
   -h, --help
     Show this help.
   --version
@@ -200,6 +209,10 @@ file/symlink/directory on Subversion-controlled files.
 =head1 OPTIONS
 
 =over 4
+
+=item B<-d>, B<--directories>
+
+Also set the property on directories, default action is to ignore those.
 
 =item B<-h>, B<--help>
 
