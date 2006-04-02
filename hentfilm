@@ -5,6 +5,7 @@
 # wget -bx `sget "$@" | urlstrip | egrep -i '\.(mpg|mpeg|avi|wmv|mng|mov)'`
 if [ "$1" = "-b" ]; then
     patt='*.png,*.jpg'
+    shift
 else
     patt='*.mpg,*.mpeg,*.avi,*.wmv,*.mng,*.mov,*.asx'
 fi
