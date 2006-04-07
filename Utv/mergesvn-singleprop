@@ -1,0 +1,294 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Merges new changes into a file version controlled by Subversion.
+#
+# Character set: UTF-8
+# ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License, see end of file for legal stuff.
+#=======================================================================
+
+use strict;
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+    'debug' => 0,
+    'help' => 0,
+    'version' => 0,
+    'xml' => 0
+);
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'}
+) || die("$progname: Option error. Use -h for help.\n");
+
+my $CMD_SVN = "svn";
+my $CMD_SVNVERSION = "svnversion";
+
+my $PROP_NAME = "mergesvn";
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
+
+my @new_prop = ();
+
+for (@ARGV) {
+    # {{{
+    my $File = $_;
+    my $prop_val = `svn propget $PROP_NAME $File`;
+    my @Props = split(/\n/, $prop_val);
+    D("Props = (\"" . join("\", \"", @Props) . "\")");
+    for my $Curr (@Props) {
+        if ($Curr =~ /^(\d+) (.+)$/) {
+            my ($last_merge, $master_file) =
+               (         $1,           $2);
+            # $master_file =~ s/[\n]//g;
+            my $safe_File = escape_filename($File);
+            my $safe_master_file = escape_filename($master_file);
+            mysyst($CMD_SVN, "update", $safe_File);
+            my $curr_rev = `$CMD_SVN log -rHEAD:1 --limit 1 --xml $safe_master_file`;
+            $curr_rev =~ s/^.*<logentry.+?revision="(\d+)".*?>.*/$1/s;
+            mysyst($CMD_SVN, "merge", "-r$last_merge:$curr_rev", $safe_master_file, $safe_File);
+            push(@new_prop, "$curr_rev $master_file");
+        } else {
+            warn("$File: \"$Curr\": Invalid property line\n");
+        }
+    }
+    mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop));
+    # }}}
+}
+
+sub mysyst {
+    # {{{
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    D("$system_txt");
+    deb_wait();
+    print("@_\n");
+    system(@_);
+    # }}}
+} # mysyst()
+
+sub escape_filename {
+    # Kludge for handling file names with spaces and characters that 
+    # trigger shell functions
+    # {{{
+    my $Name = shift;
+    # $Name =~ s/\\/\\\\/g;
+    # $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
+    $Name =~ s/'/\\'/g;
+    $Name = "'$Name'";
+    return($Name);
+    # }}}
+} # escape_filename()
+
+sub deb_wait {
+    # {{{
+    $Debug || return;
+    print("debug: Press ENTER...");
+    <STDIN>;
+    # }}}
+} # deb_wait()
+
+sub print_version {
+    xml_print("$rcs_id\n");
+    exit(0);
+}
+
+sub xml_print {
+    # Print out some text, using DocBook if --xml is specified {{{
+    my $Txt = shift;
+    my ($xml_start, $xml_end) =
+       (        "",       "");
+
+    if ($Opt{'xml'}) {
+        $xml_start = <<END;
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
+<article>
+  <screen>
+END
+        $xml_end = <<END;
+</screen>
+</article>
+END
+    }
+
+    printf("%s%s%s",
+        $xml_start,
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
+    # }}}
+}
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    xml_print(<<END);
+$rcs_id
+
+Merge changes between Subversion controlled files. Files without the 
+"mergesvn" property will be ignored.
+
+Usage: $progname [options] file [files [...]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+  -x, --xml
+    Create XML output.
+  --debug
+    Print debugging messages.
+END
+    exit($Retval);
+    # }}}
+}
+
+sub D {
+    # {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    if ($Opt{'xml'}) {
+        printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
+            txt_to_xml($$),
+            txt_to_xml($File),
+            txt_to_xml($call_info[2]),
+            txt_to_xml($Txt)
+        );
+    } else {
+        print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    }
+    return("");
+    # }}}
+} # D()
+
+sub txt_to_xml {
+    # Return a XML-safe version of a string {{{
+    my $Txt = shift;
+
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+} # txt_to_xml()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+mergesvn
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+mergesvn [options] file [files [...]]
+
+=head1 DESCRIPTION
+
+Merges new revision changes into a file from a master file.
+Needs to have the following property set to work:
+
+=over 4
+
+=item B<mergesvn>
+
+=back
+
+Which contains one line for every place to merge from.
+The line consists of two elements, the revision in the master file the 
+last merge was done, and path or URL to the master file.
+These two fields is separated by exactly one space (U+0020).
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<--version>
+
+Print version information.
+
+=item B<-x>, B<--xml>
+
+Create XML output.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$
