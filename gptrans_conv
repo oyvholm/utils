@@ -507,6 +507,7 @@ sub print_entry {
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
     my $print_time = ($Year =~ /^\d+$/) ? 1 : 0;
     my $print_alt = ($Alt =~ /^\d+$/) ? 1 : 0;
+    my $Line = "";
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
 
@@ -601,7 +602,6 @@ sub print_entry {
         }
     }
 
-    my $Line = "";
     if ($Opt{'output-format'} eq "ps") {
         $Lon *= 100;
         $Lat *= 100;
@@ -637,17 +637,17 @@ sub print_entry {
             $Lat *= 2;
         }
         if ($Opt{'output-format'} eq "xgraph") {
-            $pause_len && ($Line = "move ");
+            $pause_len && ($Line .= "move ");
             ($Line .= "$Lon $Lat\n");
         } elsif($Opt{'output-format'} eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) = (ddd_to_dms($Lat), ddd_to_dms($Lon));
             if ($print_time) {
-                $Line = "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
+                $Line .= "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
             } else {
-                $Line = "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
+                $Line .= "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
             }
         } elsif($Opt{'output-format'} eq "gpx") {
-            $Line = join("",
+            $Line .= join("",
                             "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Lat\" lon=\"$Lon\">$Spc",
                             $print_time
                                 ? "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc"
@@ -658,10 +658,10 @@ sub print_entry {
                             "</trkpt>\n"
                     );
         } elsif ($Opt{'output-format'} eq "clean") {
-            $pause_len && ($Line = "\n");
+            $pause_len && ($Line .= "\n");
             ($Line .= "$Lon\t$Lat" . ($print_alt ? "\t$Alt" : "") . "\n");
         } elsif ($Opt{'output-format'} eq "ps") {
-            $Line = ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
+            $Line .= ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
         } elsif ($Opt{'output-format'} eq "svg") {
             $Line .= (
                 ($last_lon == 1000) || $pause_len
@@ -676,7 +676,7 @@ END
                     : "L $Lon $Lat\n"
             );
         } elsif ($Opt{'output-format'} eq "xml") {
-            $Line = join("",
+            $Line .= join("",
                          "$Spc$Spc<gps>$Spc",
                              $print_time
                                 ? "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc"
@@ -690,13 +690,13 @@ END
                     );
         } elsif ($Opt{'output-format'} eq "ygraph") {
             my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
-            $Line = "\"Time = $Time.0\n$Lon $Lat\n\n";
+            $Line .= "\"Time = $Time.0\n$Lon $Lat\n\n";
         } elsif ($Opt{'output-format'} eq "csv") {
             # {{{
             $Lon =~ s/\./$Des/;
             $Lat =~ s/\./$Des/;
             # $do_print || print("skipping ");
-            $Line = join("\t",
+            $Line .= join("\t",
                 $print_time
                     ? $Opt{'epoch'}
                         ? $ep_time
@@ -711,7 +711,7 @@ END
             );
             # }}}
         } else {
-            $Line = $data_line;
+            $Line .= $data_line;
         }
         # }}}
     }
@@ -722,7 +722,7 @@ END
 
     if ($do_print) {
         if ($found_move) {
-            (!$pause_len && ($Opt{'output-format'} eq "xgraph")) && ($Line = "move $Line");
+            (!$pause_len && ($Opt{'output-format'} eq "xgraph")) && ($Line .= "move $Line");
             ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
             if ($Opt{'output-format'} eq "gpx") {
                 $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n$Spc$Spc$Spc$Spc<trkseg>\n";
@@ -735,7 +735,7 @@ END
     $last_lon  = $Lon;
     $last_lat  = $Lat;
     $last_alt  = $Alt;
-    $last_line = $Line;
+    $last_line = $data_line;
     $svg_start_thing = "\"/>\n";
     # }}}
 }
