@@ -199,168 +199,182 @@ print_header();
 my @first_lines;
 my $xml_data;
 my $data_line = "";
+my $curr_file = "";
 
-while (<>) {
+my $from_stdin = scalar(@ARGV) ? 0 : 1;
+
+$from_stdin && push(@ARGV, "-");
+
+for $curr_file (@ARGV) {
     # Scan through stdin or specified files and send every GPS entry to 
     # print_entry()
     # {{{
-    $data_line = $_;
-    if ($Opt{'save-to-file'} ne "\n") {
-        push(@first_lines, $_);
-        $_ =~ s/^# ?//; # Also read commented-out lines.
-    }
-    $xml_data = "";
-    if (/^<\?xml\b/) {
-        $xml_data = $_;
-        $xml_data .= join("", <>);
-        if (!length($Opt{'output-format'})) {
-            $Opt{'output-format'} = "gpx";
-            print_header();
+    D("Opening \"$curr_file\" for read");
+    if (open(CurrFP, "<$curr_file")) {
+        # {{{
+        while (<CurrFP>) {
+            $data_line = $_;
+            if ($Opt{'save-to-file'} ne "\n") {
+                push(@first_lines, $_);
+                $_ =~ s/^# ?//; # Also read commented-out lines.
+            }
+            $xml_data = "";
+            if (/^<\?xml\b/) {
+                $xml_data = $_;
+                $xml_data .= join("", <CurrFP>);
+                if (!length($Opt{'output-format'})) {
+                    $Opt{'output-format'} = "gpx";
+                    print_header();
+                }
+                read_xmlfile($xml_data);
+                last;
+            } elsif (/^# Pause: /) {
+                $Opt{'print-comments'} && print;
+            } elsif (/^# move$/) {
+                $found_move = 1;
+            } elsif (/^#/) {
+                $Opt{'print-comments'} && print;
+            } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
+                # CSV format, epoch style {{{
+                my ($ep_time, $lon_val, $lat_val, $Alt) =
+                   (      $1,       $2,       $3,   $4);
+                my ($Sec, $Min, $Hour, $Day, $Month, $Year, $Wday, $Yday) = gmtime($ep_time);
+                $Month++; # Urgh Ⅰ
+                $Year += 1900; # Urgh Ⅱ
+                print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt);
+                # }}}
+            } elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
+                # CSV format, human-readable date format {{{
+                my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
+                   (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
+                print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
+                # }}}
+            } elsif (/^Trackpoint\t/) {
+                # Trackpoint\tN60.41630 E5.31675\t09.02.2006 20:24:37 (UTC)\t13.6 m\t\t93.9 m\t00:00:06\t56 kph\t123° true {{{
+                #
+                # Trackpoint\t
+                # N60.41630 E5.31675\t
+                # 09.02.2006 20:24:37 (UTC)\t
+                # 13.6 m\t
+                # \t
+                # 93.9 m\t
+                # 00:00:06\t
+                # 56 kph\t
+                # 123° true
+                my $Orig = $_;
+                $Orig =~ s/[\r\n]+$//;
+                my ($Marker_f, $Position_f, $Time_f, $Alt_f, $Depth_f,
+                    $Leglength_f, $Legtime_f, $Legspeed_f, $Legcourse_f) =
+                       split(/\t/, $Orig .
+                                   # Nødløsning for å unngå at variabler blir 
+                                   # udefinert.
+                                   "\t\t\t\t\t\t\t\t\t\t"
+                       );
+                D(join("",
+                    "Position_f=\"$Position_f\" \x7B\x7B\x7B\n",
+                    "Time_f=\"$Time_f\"\n",
+                    "Alt_f=\"$Alt_f\"\n",
+                    "Depth_f=\"$Depth_f\"\n",
+                    "Leglength_f=\"$Leglength_f\"\n",
+                    "Legtime_f=\"$Legtime_f\"\n",
+                    "Legspeed_f=\"$Legspeed_f\"\n",
+                    "Legcourse_f=\"$Legcourse_f\" \x7D\x7D\x7D\n",
+                ));
+                my ($NS, $Y_deg, $WE, $X_deg, # Position
+                    $Day, $Month, $Year, $Hour, $Min, $Sec, $TZone, # Time
+                    $Alt, $Alt_unit, # Altitude
+                    $Depth, $Depth_unit, # Depth
+                    $Leglength, $Leglength_unit, # Leg length
+                    $Legtime_hour, $Legtime_min, $Legtime_sec, # Leg time
+                    $Legspeed, $Legspeed_unit, # Leg speed
+                    $Legcourse # Leg course
+                ) = ("", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                     "", "", "", "", "", "", "", "");
+                ($Position_f =~ /^(N|S)([\d\.]+) (W|E)([\d\.]+)/) &&
+                    ($NS = $1, $Y_deg = $2, $WE = $3, $X_deg = $4);
+                ($Time_f =~ /^(\d+)\.(\d+)\.(\d+) (\d+):(\d+):(\d+) \((.+?)\)/) &&
+                    ($Day = $1, $Month = $2, $Year = $3, $Hour = $4, $Min = $5, $Sec = $6);
+                ($Alt_f =~ /^([\d+\.]+) (.*?)/) &&
+                    ($Alt = $1, $Alt_unit = $2);
+                D("Alt = \"$Alt\"");
+                ($NS eq "S") && ($Y_deg = 0-$Y_deg);
+                ($WE eq "W") && ($X_deg = 0-$X_deg);
+                # MapSource in win xp writes YYYY, but YY in win98se.
+                ($Year =~ /\d/ && $Year < 1900) && ($Year += 2000);
+                print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $X_deg, $Y_deg, $Alt);
+                # }}}
+            } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
+                # T 09/01/2002 11:51:26 60°23'36.3" 5°19'35.9" {{{
+                my ($Month, $Day, $Year, $Hour, $Min, $Sec, $lat_d, $lat_m, $lat_s, $lon_d, $lon_m, $lon_s) =
+                   (    $1,   $2,    $3,    $4,   $5,   $6,     $7,     $8,     $9,    $10,    $11,    $12);
+                my $lat_val = sprintf("%.5f", 1*($lat_d+($lat_m/60)+($lat_s/3600)));
+                my $lon_val = sprintf("%.5f", $lon_d+($lon_m/60)+($lon_s/3600));
+                print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
+                # }}}
+            } elsif (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
+                # 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23 {{{
+                my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
+                   (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
+                print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
+                # }}}
+            } elsif (/^
+                # @020721221336N6048353E00701826S015-00001E4859N1673U0000 {{{
+                    # Regexp {{{
+                    (@) # @
+                    (\d\d) # Year
+                    (\d\d) # Month
+                    (\d\d) # Day
+                    (\d\d) # Hours
+                    (\d\d) # Minutes
+                    (\d\d) # Seconds
+                    ([NS]) # N|S
+                    (\d\d) # Latitude degree
+                    (\d\d) # Latitude minute
+                    (\d\d\d) # Latitude minute decimals
+                    ([EW]) # E|W
+                    (\d\d\d) # Longitude degree
+                    (\d\d) # Longitude minute
+                    (\d\d\d) # Longitude minute degree
+                    (....) # Accurancy
+                    (......) # Altitude
+                    (...............)
+                    $
+                    # }}}
+                    /x) {
+                my ($Alfa,   $Year, $Month, $Day, $Hour, $Min, $Sec, $NS, $Y_deg, $Y_degmin, $Y_mindec, $EW, $X_deg, $X_degmin, $X_mindec, $Accur, $Alt, $Rest) =
+                   (   $1, $2+2000,     $3,   $4,    $5,   $6,   $7,  $8,     $9,       $10,       $11, $12,    $13,       $14,       $15,    $16,  $17,   $18);
+                my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
+                $last_time = $ep_time;
+                my $tmp_x = sprintf("%.5f", $X_deg + $X_degmin/60 + $X_mindec/60000);
+                my $tmp_y = sprintf("%.5f", $Y_deg + $Y_degmin/60 + $Y_mindec/60000);
+                $tmp_x =~ s/\./$Des/;
+                $tmp_y =~ s/\./$Des/;
+                ($NS eq "S") && ($tmp_y = 0-$tmp_y);
+                ($EW eq "W") && ($tmp_x = 0-$tmp_x);
+                print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $tmp_x, $tmp_y, $Alt);
+                # }}}
+            } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
+                # @020721221336__________________________________________ {{{
+                my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
+                   (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
+                $Opt{'output-format'} eq "csv" && print("\n");
+                $found_move = 1;
+                # }}}
+            } elsif (/^xmaplog /) {
+                ($Opt{'output-format'} eq "csv") && ($Opt{'save-to-file'} eq "\n") && print("\n");
+            } elsif (/^$/) {
+                ($Opt{'output-format'} eq "csv") && ($Opt{'save-to-file'} eq "\n") && print("\n");
+            } else {
+                if ($Opt{'print-comments'}) {
+                    print("# $_");
+                    chomp;
+                    $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
+                }
+                }
         }
-        read_xmlfile($xml_data);
-        last;
-    } elsif (/^# Pause: /) {
-        $Opt{'print-comments'} && print;
-    } elsif (/^# move$/) {
-        $found_move = 1;
-    } elsif (/^#/) {
-        $Opt{'print-comments'} && print;
-    } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
-        # CSV format, epoch style {{{
-        my ($ep_time, $lon_val, $lat_val, $Alt) =
-           (      $1,       $2,       $3,   $4);
-        my ($Sec, $Min, $Hour, $Day, $Month, $Year, $Wday, $Yday) = gmtime($ep_time);
-        $Month++; # Urgh Ⅰ
-        $Year += 1900; # Urgh Ⅱ
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt);
         # }}}
-    } elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
-        # CSV format, human-readable date format {{{
-        my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
-           (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
-        # }}}
-    } elsif (/^Trackpoint\t/) {
-        # Trackpoint\tN60.41630 E5.31675\t09.02.2006 20:24:37 (UTC)\t13.6 m\t\t93.9 m\t00:00:06\t56 kph\t123° true {{{
-        #
-        # Trackpoint\t
-        # N60.41630 E5.31675\t
-        # 09.02.2006 20:24:37 (UTC)\t
-        # 13.6 m\t
-        # \t
-        # 93.9 m\t
-        # 00:00:06\t
-        # 56 kph\t
-        # 123° true
-        my $Orig = $_;
-        $Orig =~ s/[\r\n]+$//;
-        my ($Marker_f, $Position_f, $Time_f, $Alt_f, $Depth_f,
-            $Leglength_f, $Legtime_f, $Legspeed_f, $Legcourse_f) =
-               split(/\t/, $Orig .
-                           # Nødløsning for å unngå at variabler blir 
-                           # udefinert.
-                           "\t\t\t\t\t\t\t\t\t\t"
-               );
-        D(join("",
-            "Position_f=\"$Position_f\" \x7B\x7B\x7B\n",
-            "Time_f=\"$Time_f\"\n",
-            "Alt_f=\"$Alt_f\"\n",
-            "Depth_f=\"$Depth_f\"\n",
-            "Leglength_f=\"$Leglength_f\"\n",
-            "Legtime_f=\"$Legtime_f\"\n",
-            "Legspeed_f=\"$Legspeed_f\"\n",
-            "Legcourse_f=\"$Legcourse_f\" \x7D\x7D\x7D\n",
-        ));
-        my ($NS, $Y_deg, $WE, $X_deg, # Position
-            $Day, $Month, $Year, $Hour, $Min, $Sec, $TZone, # Time
-            $Alt, $Alt_unit, # Altitude
-            $Depth, $Depth_unit, # Depth
-            $Leglength, $Leglength_unit, # Leg length
-            $Legtime_hour, $Legtime_min, $Legtime_sec, # Leg time
-            $Legspeed, $Legspeed_unit, # Leg speed
-            $Legcourse # Leg course
-        ) = ("", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-             "", "", "", "", "", "", "", "");
-        ($Position_f =~ /^(N|S)([\d\.]+) (W|E)([\d\.]+)/) &&
-            ($NS = $1, $Y_deg = $2, $WE = $3, $X_deg = $4);
-        ($Time_f =~ /^(\d+)\.(\d+)\.(\d+) (\d+):(\d+):(\d+) \((.+?)\)/) &&
-            ($Day = $1, $Month = $2, $Year = $3, $Hour = $4, $Min = $5, $Sec = $6);
-        ($Alt_f =~ /^([\d+\.]+) (.*?)/) &&
-            ($Alt = $1, $Alt_unit = $2);
-        D("Alt = \"$Alt\"");
-        ($NS eq "S") && ($Y_deg = 0-$Y_deg);
-        ($WE eq "W") && ($X_deg = 0-$X_deg);
-        # MapSource in win xp writes YYYY, but YY in win98se.
-        ($Year =~ /\d/ && $Year < 1900) && ($Year += 2000);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $X_deg, $Y_deg, $Alt);
-        # }}}
-    } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
-        # T 09/01/2002 11:51:26 60°23'36.3" 5°19'35.9" {{{
-        my ($Month, $Day, $Year, $Hour, $Min, $Sec, $lat_d, $lat_m, $lat_s, $lon_d, $lon_m, $lon_s) =
-           (    $1,   $2,    $3,    $4,   $5,   $6,     $7,     $8,     $9,    $10,    $11,    $12);
-        my $lat_val = sprintf("%.5f", 1*($lat_d+($lat_m/60)+($lat_s/3600)));
-        my $lon_val = sprintf("%.5f", $lon_d+($lon_m/60)+($lon_s/3600));
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
-        # }}}
-    } elsif (m#^1 (\S+) (\S+) (\S+) (\S+) (\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)#) {
-        # 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23 {{{
-        my ($lat_val, $lon_val, $Speed, $Unkn, $Month, $Day, $Year, $Hour, $Min, $Sec) =
-           (      $1,       $2,     $3,    $4,     $5,   $6,    $7,    $8,   $9,  $10);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
-        # }}}
-    } elsif (/^
-        # @020721221336N6048353E00701826S015-00001E4859N1673U0000 {{{
-            # Regexp {{{
-            (@) # @
-            (\d\d) # Year
-            (\d\d) # Month
-            (\d\d) # Day
-            (\d\d) # Hours
-            (\d\d) # Minutes
-            (\d\d) # Seconds
-            ([NS]) # N|S
-            (\d\d) # Latitude degree
-            (\d\d) # Latitude minute
-            (\d\d\d) # Latitude minute decimals
-            ([EW]) # E|W
-            (\d\d\d) # Longitude degree
-            (\d\d) # Longitude minute
-            (\d\d\d) # Longitude minute degree
-            (....) # Accurancy
-            (......) # Altitude
-            (...............)
-            $
-            # }}}
-            /x) {
-        my ($Alfa,   $Year, $Month, $Day, $Hour, $Min, $Sec, $NS, $Y_deg, $Y_degmin, $Y_mindec, $EW, $X_deg, $X_degmin, $X_mindec, $Accur, $Alt, $Rest) =
-           (   $1, $2+2000,     $3,   $4,    $5,   $6,   $7,  $8,     $9,       $10,       $11, $12,    $13,       $14,       $15,    $16,  $17,   $18);
-        my $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month-1, $Year);
-        $last_time = $ep_time;
-        my $tmp_x = sprintf("%.5f", $X_deg + $X_degmin/60 + $X_mindec/60000);
-        my $tmp_y = sprintf("%.5f", $Y_deg + $Y_degmin/60 + $Y_mindec/60000);
-        $tmp_x =~ s/\./$Des/;
-        $tmp_y =~ s/\./$Des/;
-        ($NS eq "S") && ($tmp_y = 0-$tmp_y);
-        ($EW eq "W") && ($tmp_x = 0-$tmp_x);
-        print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $tmp_x, $tmp_y, $Alt);
-        # }}}
-    } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
-        # @020721221336__________________________________________ {{{
-        my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
-           (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
-        $Opt{'output-format'} eq "csv" && print("\n");
-        $found_move = 1;
-        # }}}
-    } elsif (/^xmaplog /) {
-        ($Opt{'output-format'} eq "csv") && ($Opt{'save-to-file'} eq "\n") && print("\n");
-    } elsif (/^$/) {
-        ($Opt{'output-format'} eq "csv") && ($Opt{'save-to-file'} eq "\n") && print("\n");
     } else {
-        if ($Opt{'print-comments'}) {
-            print("# $_");
-            chomp;
-            $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
-        }
+        warn("$progname: $curr_file: Cannot open file for read: $!\n");
     }
     # }}}
 }
@@ -580,7 +594,7 @@ sub print_entry {
             }
         }
         if (open(ToFP, ">", $file_name)) {
-            print(ToFP @first_lines, (length($xml_data) ? $xml_data : <>)) ||
+            print(ToFP ($from_stdin ? @first_lines : ()), (length($xml_data) ? $xml_data : <>)) ||
                 die("$progname: $file_name: Cannot write to file: $!\n");
             close(ToFP);
             print("$progname: Saved unconverted data to \"$file_name\"\n");
