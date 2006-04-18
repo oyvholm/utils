@@ -502,8 +502,10 @@ sub print_entry {
                 die("$progname: $base_name: File already exists, and ran " .
                     "out of attempts to create unique file name\n");
             }
-            warn("$progname: $base_name: File already exists, using " .
-                 "unique name \"$file_name\" instead\n");
+            if ($Opt{'verbose'}) {
+                warn("$progname: $base_name: File already exists, using " .
+                     "unique name \"$file_name\" instead\n");
+            }
         }
         if (open(ToFP, ">", $file_name)) {
             print(ToFP @first_lines, (length($xml_data) ? $xml_data : <>)) ||
