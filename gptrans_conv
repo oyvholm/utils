@@ -492,6 +492,7 @@ sub print_entry {
     }
 
     if ($Opt{'save-to-file'} ne "\n") {
+        # {{{
         my $base_name = "$Year$Month${Day}T$Hour$Min${Sec}Z$Opt{'save-to-file'}";
         my $file_name = $base_name;
         if (-e $file_name) {
@@ -516,6 +517,7 @@ sub print_entry {
         } else {
             die("$progname: $file_name: Cannot create file: $!\n");
         }
+        # }}}
     }
 
     my $pause_len = 0;
