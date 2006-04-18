@@ -25,7 +25,7 @@ our %Opt = (
     'double-y-scale' => 0,
     'epoch' => 0,
     'help' => 0,
-    'output-format' => "",
+    'output-format' => "csv",
     'print-comments' => 0,
     'require' => "",
     'short-date' => 0,
@@ -323,13 +323,13 @@ END
         # @020721221336__________________________________________ {{{
         my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
            (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
-        print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
+        $Opt{'output-format'} eq "csv" && print("\n");
         $found_move = 1;
         # }}}
     } elsif (/^xmaplog /) {
-        print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
+        $Opt{'output-format'} eq "csv" && print("\n");
     } elsif (/^$/) {
-        print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
+        $Opt{'output-format'} eq "csv" && print("\n");
     } else {
         if ($Opt{'print-comments'}) {
             print("# $_");
@@ -506,7 +506,7 @@ sub print_entry {
         $pause_len = $ep_time-$last_time;
     }
 
-    if ($pause_len && ($Opt{'output-format'} !~ /^(clean|xgraph|gpstrans|gpx|xml|svg|ygraph)$/)) {
+    if ($pause_len && ($Opt{'output-format'} eq "csv")) {
         printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
     }
 
@@ -573,7 +573,7 @@ END
         } elsif ($Opt{'output-format'} eq "ygraph") {
             my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
             $Line = "\"Time = $Time.0\n$Lon $Lat\n\n";
-        } else {
+        } elsif ($Opt{'output-format'} eq "csv") {
             # Default format used by the author. Yes, the Universe 
             # evolves around him. ☺
             # Seriously, up to "gptrans_conv,v 1.11 2003/08/03 02:35:51 
@@ -600,6 +600,8 @@ END
                 "\n"
             );
             # }}}
+        } else {
+            die("$progname: \"$Opt{'output-format'}\": Unknown output format\n");
         }
         # }}}
     }
@@ -794,6 +796,7 @@ Options:
   -o x, --output-format x
     Use output format x:
       clean
+      csv (default)
       gpstrans
       gpx (Not complete)
       poscount (Experimental)
@@ -929,6 +932,8 @@ Use output format x:
 =over 4
 
 =item clean
+
+=item csv (default)
 
 =item gpstrans
 
