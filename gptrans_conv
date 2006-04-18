@@ -25,6 +25,7 @@ our %Opt = (
     'debug' => 0,
     'double-y-scale' => 0,
     'epoch' => 0,
+    'fix' => 0,
     'help' => 0,
     'inside' => 0,
     'near' => "",
@@ -61,6 +62,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "double-y-scale|y" => \$Opt{'double-y-scale'},
     "epoch|e" => \$Opt{'epoch'},
+    "fix" => \$Opt{'fix'},
     "help|h" => \$Opt{'help'},
     "inside" => \$Opt{'inside'},
     "near" => \$Opt{'near'},
@@ -543,6 +545,10 @@ sub print_entry {
                     sec_to_readable($last_time-$ep_time),
                     sec_to_string($ep_time, "T")
                 ));
+                # FIXME: Make --fix work with gpx and xml.
+                if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^(gpx|xml)$/)) {
+                    ($Line .= "# error ");
+                }
             }
         }
     } else {
@@ -911,6 +917,10 @@ Options:
     Skip duplicated coordinates, only print first and last.
   -e, --epoch
     Use seconds since 1970-01-01 00:00:00 GMT as date format.
+  --fix
+    Comment out entries which is obviously wrong. Use together with 
+    --chronology to fix those kind of errors. Does not work with GPX or 
+    XML output yet.
   -h, --help
     Show this help.
   --inside
@@ -1062,6 +1072,12 @@ Skip duplicated coordinates, only print first and last.
 =item B<-e>, B<--epoch>
 
 Use seconds since 1970-01-01 00:00:00 GMT as date format.
+
+item B<--fix>
+
+Comment out entries which is obviously wrong. Use together with 
+--chronology to fix those kind of errors. Does not work with GPX or XML 
+output yet.
 
 =item B<-h>, B<--help>
 
