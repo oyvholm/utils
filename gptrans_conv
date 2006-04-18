@@ -464,6 +464,7 @@ sub print_xml_gps {
 }
 
 sub print_header {
+    # {{{
     if ($Opt{'output-format'} eq "gpstrans") {
         print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
     } elsif ($Opt{'output-format'} eq "gpx") {
@@ -492,6 +493,7 @@ $Spc$Spc<title></title>
 $Spc$Spc<desc></desc>
 END
     }
+    # }}}
 }
 
 sub print_entry {
@@ -503,6 +505,7 @@ sub print_entry {
     my $print_alt = ($Alt =~ /^\d+$/) ? 1 : 0;
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
+
     if ($Opt{'output-format'} eq "poscount") {
         my ($Lat_str, $Lon_str) =
            (      "",       "");
@@ -513,6 +516,7 @@ sub print_entry {
         $Poscount{$Name}++;
         return;
     }
+
     if ($print_time) {
         $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month - 1, $Year);
         $Year  = sprintf("%04u", $Year);
