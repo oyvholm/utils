@@ -331,7 +331,7 @@ END
     } elsif (/^$/) {
         print("\n") unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|xml)$/);
     } else {
-        unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|poscount|xml)$/) {
+        if ($Opt{'print-comments'}) {
             print("# $_");
             chomp;
             $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
