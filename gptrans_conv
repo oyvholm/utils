@@ -103,11 +103,11 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-if ($Opt{'pos1'} =~ /^([\d\.]+),([\d\.]+)$/) {
+if ($Opt{'pos1'} =~ /^([\-\+\d\.]+),([\-\+\d\.]+)$/) {
     $lat1 = $1;
     $lon1 = $2;
 }
-if ($Opt{'pos2'} =~ /^([\d\.]+),([\d\.]+)$/) {
+if ($Opt{'pos2'} =~ /^([\-\+\d\.]+),([\-\+\d\.]+)$/) {
     $lat2 = $1;
     $lon2 = $2;
 }
