@@ -26,6 +26,7 @@ our %Opt = (
     'epoch' => 0,
     'help' => 0,
     'inside' => 0,
+    'near' => "",
     'output-format' => "",
     'outside' => 0,
     'pos1' => "",
@@ -60,6 +61,7 @@ GetOptions(
     "epoch|e" => \$Opt{'epoch'},
     "help|h" => \$Opt{'help'},
     "inside" => \$Opt{'inside'},
+    "near" => \$Opt{'near'},
     "output-format|o=s" => \$Opt{'output-format'},
     "outside" => \$Opt{'outside'},
     "pos1=s" => \$Opt{'pos1'},
@@ -506,6 +508,11 @@ sub print_entry {
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
 
+    if ($Opt{'near'}) {
+        list_nearest_waypoints($Lat, $Lon);
+        exit(0);
+    }
+
     if ($Opt{'output-format'} eq "poscount") {
         my ($Lat_str, $Lon_str) =
            (      "",       "");
@@ -720,6 +727,14 @@ END
     # }}}
 }
 
+sub list_nearest_waypoints {
+    # {{{
+    my ($Lat, $Lon, $Count) = @_;
+    # FIXME: Incredible unfinished and kludgy.
+    system("gpsbabel -i gpx -f /home/sunny/gps/waypoints.gpx -x radius,lat=$Lat,lon=$Lon,distance=1000 -o gpx -F -");
+    # }}}
+}
+
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-dd hh:mm:ss" with optional 
     # separator
@@ -887,6 +902,9 @@ Options:
     --pos2.
   -n x, --undefined x
     Use x as undefined value. Default: "$Udef".
+  --near
+    List nearest waypoints from first trackpoint. Unfinished and 
+    experimental, needs gpsbabel.
   -o x, --output-format x
     Use output format x:
       clean
@@ -1033,6 +1051,11 @@ Show this help.
 
 Print only trackpoints inside a rectangle specified by --pos1 and 
 --pos2.
+
+=item B<--near>
+
+List nearest waypoints from first trackpoint. Unfinished and 
+experimental, needs gpsbabel(1).
 
 =item B<-n x>, B<--undefined x>
 
@@ -1211,6 +1234,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
+
+gpsbabel(1)
 
 =cut
 
