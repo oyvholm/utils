@@ -25,7 +25,7 @@ our %Opt = (
     'double-y-scale' => 0,
     'epoch' => 0,
     'help' => 0,
-    'output-format' => "csv",
+    'output-format' => "",
     'print-comments' => 0,
     'require' => "",
     'save-to-file' => "\n", # \n =  undefined, it’s banned in filenames anyway.
@@ -210,7 +210,7 @@ while (<>) {
     } elsif (/^#/) {
         $Opt{'print-comments'} && print;
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
-        # Author’s format, epoch style {{{
+        # CSV format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
            (      $1,       $2,       $3,   $4);
         my ($Sec, $Min, $Hour, $Day, $Month, $Year, $Wday, $Yday) = gmtime($ep_time);
@@ -219,7 +219,7 @@ while (<>) {
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt);
         # }}}
     } elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
-        # Author’s format, human-readable date format {{{
+        # CSV format, human-readable date format {{{
         my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
            (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
         print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Udef);
@@ -613,14 +613,6 @@ END
             my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
             $Line = "\"Time = $Time.0\n$Lon $Lat\n\n";
         } elsif ($Opt{'output-format'} eq "csv") {
-            # Default format used by the author. Yes, the Universe 
-            # evolves around him. ☺
-            # Seriously, up to "gptrans_conv,v 1.11 2003/08/03 02:35:51 
-            # sunny" (r561) the script was only used by myself, and I 
-            # found this format was the easiest to live with — Perl 
-            # scripts and shell utilities made conversion pretty 
-            # painless. If GPX or something other useful is implemented, 
-            # that will be the default.
             # {{{
             $Lon =~ s/\./$Des/;
             $Lat =~ s/\./$Des/;
@@ -836,7 +828,7 @@ Options:
   -o x, --output-format x
     Use output format x:
       clean
-      csv (default)
+      csv
       gpstrans
       gpx (Not complete)
       poscount (Experimental)
@@ -982,7 +974,7 @@ Use output format x:
 
 =item clean
 
-=item csv (default)
+=item csv
 
 =item gpstrans
 
