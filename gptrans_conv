@@ -155,44 +155,17 @@ if ($Opt{'comment-out-dups'}) {
     # }}}
 }
 
-# Print possible header {{{
-if ($Opt{'output-format'} eq "gpstrans") {
-    print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
-} elsif ($Opt{'output-format'} eq "gpx") {
-    print(<<END);
-<?xml version="1.0" standalone="no"?>
-<gpx>
-$Spc$Spc<trk>
-$Spc$Spc$Spc$Spc<trkseg>
-END
-} elsif ($Opt{'output-format'} eq "ps") {
-    print(ps_header(532, 6034, 533, 6040));
-    print("*u\n");
-} elsif ($Opt{'output-format'} eq "xml") {
-    print(<<END);
-<?xml version="1.0" encoding="UTF-8"?>
-<gpslog>
-END
-} elsif ($Opt{'output-format'} eq "svg") {
-    print(<<END);
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-$Spc$Spc"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="1000" width="1000" viewBox="23 70 2 2"
-$Spc${Spc}xmlns="http://www.w3.org/2000/svg" version="1.1">
-$Spc$Spc<title></title>
-$Spc$Spc<desc></desc>
-END
-}
-# }}}
+print_header();
 
 my @first_lines;
 my $xml_data;
+my $data_line = "";
 
 while (<>) {
     # Scan through stdin or specified files and send every GPS entry to 
     # print_entry()
     # {{{
+    $data_line = $_;
     if ($Opt{'save-to-file'} ne "\n") {
         push(@first_lines, $_);
         $_ =~ s/^# ?//; # Also read commented-out lines.
@@ -201,6 +174,10 @@ while (<>) {
     if (/^<\?xml\b/) {
         $xml_data = $_;
         $xml_data .= join("", <>);
+        if (!length($Opt{'output-format'})) {
+            $Opt{'output-format'} = "gpx";
+            print_header();
+        }
         read_xmlfile($xml_data);
         last;
     } elsif (/^# Pause: /) {
@@ -453,6 +430,37 @@ sub print_xml_gps {
     # }}}
 }
 
+sub print_header {
+    if ($Opt{'output-format'} eq "gpstrans") {
+        print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
+    } elsif ($Opt{'output-format'} eq "gpx") {
+        print(<<END);
+<?xml version="1.0" standalone="no"?>
+<gpx>
+$Spc$Spc<trk>
+$Spc$Spc$Spc$Spc<trkseg>
+END
+    } elsif ($Opt{'output-format'} eq "ps") {
+        print(ps_header(532, 6034, 533, 6040));
+        print("*u\n");
+    } elsif ($Opt{'output-format'} eq "xml") {
+        print(<<END);
+<?xml version="1.0" encoding="UTF-8"?>
+<gpslog>
+END
+    } elsif ($Opt{'output-format'} eq "svg") {
+        print(<<END);
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+$Spc$Spc"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg height="1000" width="1000" viewBox="23 70 2 2"
+$Spc${Spc}xmlns="http://www.w3.org/2000/svg" version="1.1">
+$Spc$Spc<title></title>
+$Spc$Spc<desc></desc>
+END
+    }
+}
+
 sub print_entry {
     # Print a GPS entry with time, latitude, longitude and altitude in 
     # various formats
@@ -632,7 +640,7 @@ END
             );
             # }}}
         } else {
-            die("$progname: \"$Opt{'output-format'}\": Unknown output format\n");
+            $Line = $data_line;
         }
         # }}}
     }
