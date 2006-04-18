@@ -26,6 +26,7 @@ our %Opt = (
     'epoch' => 0,
     'help' => 0,
     'output-format' => "",
+    'print-comments' => 0,
     'require' => "",
     'short-date' => 0,
     'skip-dups' => 0,
@@ -53,6 +54,7 @@ GetOptions(
     "double-y-scale|y" => \$Opt{'double-y-scale'},
     "epoch|e" => \$Opt{'epoch'},
     "help|h" => \$Opt{'help'},
+    "print-comments|C" => \$Opt{'print-comments'},
     "output-format|o=s" => \$Opt{'output-format'},
     "require|r=s" => \$Opt{'require'},
     "short-date|s" => \$Opt{'short-date'},
@@ -193,10 +195,11 @@ while (<>) {
         read_xmlfile($xml_data);
         last;
     } elsif (/^# Pause: /) {
+        $Opt{'print-comments'} && print;
     } elsif (/^# move$/) {
         $found_move = 1;
     } elsif (/^#/) {
-        print unless ($Opt{'output-format'} =~ /^(clean|xgraph|gpstrans|gpx|poscount|svg|xml|ygraph)$/);
+        $Opt{'print-comments'} && print;
     } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
         # Author’s format, epoch style {{{
         my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -777,6 +780,9 @@ Options:
 
   -c, --comment-out-dups
     Use comma instead of period as decimal point (For Gnumeric etc).
+  -C, --print-comments
+    Print existing comment lines (starting with "#") and prefix unknown 
+    lines with "# ".
   -d, --skip-dups
     Skip duplicated coordinates, only print first and last.
   -e, --epoch
@@ -892,6 +898,11 @@ Converts between various GPS formats.
 =item B<-c>, B<--comment-out-dups>
 
 Use comma instead of period as decimal point (For Gnumeric etc).
+
+=item B<-C>, B<--print-comments>
+
+Print existing comment lines (starting with "#") and prefix unknown 
+lines with "# ".
 
 =item B<-d>, B<--skip-dups>
 
