@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# $Id$
+
+# Oppdatert til r988 i svk-repoen.
+locals="utils/trunk dbk/trunk conf/trunk/home conf/trunk/carmbb-sarge2 conf/trunk/div"
+
+if [ ! -e /carmbb.mrk ]; then
+    echo "Skal kjøres på carmbb, vettu." >&2
+    exit 1
+fi
+
+for f in $locals; do
+    echo ======== svk push //local/$f ========
+    svk push //local/$f
+done
+
+echo ======== svk sync -a ========
+echo svk sync -a
+
+for f in $locals; do
+    echo ======== svk pull //local/$f ========
+    svk pull //local/$f
+done
