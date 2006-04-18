@@ -261,16 +261,16 @@ while (<>) {
                            # udefinert.
                            "\t\t\t\t\t\t\t\t\t\t"
                );
-        D(<<END);
-Position_f="$Position_f" \x7B\x7B\x7B
-Time_f="$Time_f"
-Alt_f="$Alt_f"
-Depth_f="$Depth_f"
-Leglength_f="$Leglength_f"
-Legtime_f="$Legtime_f"
-Legspeed_f="$Legspeed_f"
-Legcourse_f="$Legcourse_f" \x7D\x7D\x7D
-END
+        D(join("",
+            "Position_f=\"$Position_f\" \x7B\x7B\x7B\n",
+            "Time_f=\"$Time_f\"\n",
+            "Alt_f=\"$Alt_f\"\n",
+            "Depth_f=\"$Depth_f\"\n",
+            "Leglength_f=\"$Leglength_f\"\n",
+            "Legtime_f=\"$Legtime_f\"\n",
+            "Legspeed_f=\"$Legspeed_f\"\n",
+            "Legcourse_f=\"$Legcourse_f\" \x7D\x7D\x7D\n",
+        ));
         my ($NS, $Y_deg, $WE, $X_deg, # Position
             $Day, $Month, $Year, $Hour, $Min, $Sec, $TZone, # Time
             $Alt, $Alt_unit, # Altitude
@@ -367,21 +367,21 @@ END
 
 # Print possible footer {{{
 if ($Opt{'output-format'} eq "gpx") {
-    print(<<END);
-$Spc$Spc$Spc$Spc</trkseg>
-$Spc$Spc</trk>
-</gpx>
-END
+    print(join("",
+        "$Spc$Spc$Spc$Spc</trkseg>\n",
+        "$Spc$Spc</trk>\n",
+        "</gpx>\n",
+    ));
 } elsif ($Opt{'output-format'} eq "poscount") {
     while (my ($l_name, $l_val) = each %Poscount) {
         $l_name =~ /^(.+?),(.+?)$/ && print("$1\t$2\t$l_val\n");
     }
 } elsif ($Opt{'output-format'} eq "ps") {
-    print(<<END);
-*U
-%%Trailer
-%%EOF
-END
+    print(join("",
+        "*U\n",
+        "%%Trailer\n",
+        "%%EOF\n",
+    ));
 } elsif ($Opt{'output-format'} eq "svg") {
     print("\"/>\n</svg>\n");
 } elsif ($Opt{'output-format'} eq "xml") {
@@ -474,30 +474,30 @@ sub print_header {
     if ($Opt{'output-format'} eq "gpstrans") {
         print("Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
     } elsif ($Opt{'output-format'} eq "gpx") {
-        print(<<END);
-<?xml version="1.0" standalone="no"?>
-<gpx>
-$Spc$Spc<trk>
-$Spc$Spc$Spc$Spc<trkseg>
-END
+        print(join("",
+            "<?xml version=\"1.0\" standalone=\"no\"?>\n",
+            "<gpx>\n",
+            "$Spc$Spc<trk>\n",
+            "$Spc$Spc$Spc$Spc<trkseg>\n",
+        ));
     } elsif ($Opt{'output-format'} eq "ps") {
         print(ps_header(532, 6034, 533, 6040));
         print("*u\n");
     } elsif ($Opt{'output-format'} eq "xml") {
-        print(<<END);
-<?xml version="1.0" encoding="UTF-8"?>
-<gpslog>
-END
+        print(join("",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+            "<gpslog>\n",
+        ));
     } elsif ($Opt{'output-format'} eq "svg") {
-        print(<<END);
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-$Spc$Spc"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="1000" width="1000" viewBox="23 70 2 2"
-$Spc${Spc}xmlns="http://www.w3.org/2000/svg" version="1.1">
-$Spc$Spc<title></title>
-$Spc$Spc<desc></desc>
-END
+        print(join("",
+            "<?xml version=\"1.0\" standalone=\"no\"?>\n",
+            "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n",
+            "$Spc$Spc\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n",
+            "<svg height=\"1000\" width=\"1000\" viewBox=\"23 70 2 2\"\n",
+            "$Spc${Spc}xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n",
+            "$Spc$Spc<title></title>\n",
+            "$Spc$Spc<desc></desc>\n",
+        ));
     }
     # }}}
 }
@@ -671,14 +671,14 @@ sub print_entry {
         } elsif ($Opt{'output-format'} eq "svg") {
             $Line .= (
                 ($last_lon == 1000) || $pause_len
-                    ? <<END
-$svg_start_thing<path
-  stroke="blue"
-  stroke-width="0.001"
-  fill="none"
-  d="
-M $Lon $Lat
-END
+                    ? join("",
+                        "$svg_start_thing<path\n",
+                        "  stroke=\"blue\"\n",
+                        "  stroke-width=\"0.001\"\n",
+                        "  fill=\"none\"\n",
+                        "  d=\"\n",
+                        "M $Lon $Lat\n",
+                    )
                     : "L $Lon $Lat\n"
             );
         } elsif ($Opt{'output-format'} eq "xml") {
@@ -793,31 +793,31 @@ sub ps_header {
     # Send a Postscript header to stdout {{{
     my ($bl_x, $bl_y, $br_x, $br_y) = @_;
     my $Date = sec_to_string(time);
-    return(<<END);
-%!PS-Adobe-3.0 EPSF-3.0
-%%Creator: $rcs_id
-%%Title:
-%%CreationDate: $Date
-%%BoundingBox: $bl_x $bl_y $br_x $br_y
-%%DocumentData: Clean7Bit
-%%EndComments
-%%BeginProlog
-/bd { bind def } bind def
-/incompound false def
-/m { moveto } bd
-/l { lineto } bd
-/c { curveto } bd
-/F { incompound not {fill} if } bd
-/f { closepath F } bd
-/S { stroke } bd
-/*u { /incompound true def } bd
-/*U { /incompound false def f} bd
-/k { setcmykcolor } bd
-/K { k } bd
-%%EndProlog
-%%BeginSetup
-%%EndSetup
-END
+    return(join("",
+        "%!PS-Adobe-3.0 EPSF-3.0\n",
+        "%%Creator: $rcs_id\n",
+        "%%Title:\n",
+        "%%CreationDate: $Date\n",
+        "%%BoundingBox: $bl_x $bl_y $br_x $br_y\n",
+        "%%DocumentData: Clean7Bit\n",
+        "%%EndComments\n",
+        "%%BeginProlog\n",
+        "/bd { bind def } bind def\n",
+        "/incompound false def\n",
+        "/m { moveto } bd\n",
+        "/l { lineto } bd\n",
+        "/c { curveto } bd\n",
+        "/F { incompound not {fill} if } bd\n",
+        "/f { closepath F } bd\n",
+        "/S { stroke } bd\n",
+        "/*u { /incompound true def } bd\n",
+        "/*U { /incompound false def f} bd\n",
+        "/k { setcmykcolor } bd\n",
+        "/K { k } bd\n",
+        "%%EndProlog\n",
+        "%%BeginSetup\n",
+        "%%EndSetup\n",
+    ));
     # }}}
 }
 
@@ -870,16 +870,16 @@ sub xml_print {
        (        "",       "");
 
     if ($Opt{'xml'}) {
-        $xml_start = <<END;
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
-<article>
-  <screen>
-END
-        $xml_end = <<END;
-</screen>
-</article>
-END
+        $xml_start = join("",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+            "<!DOCTYPE article PUBLIC \"-//OASIS//DTD DocBook XML V4//EN\" \"http://docbook.org/xml/4.3/docbookx.dtd\">\n",
+            "<article>\n",
+            "  <screen>\n",
+        );
+        $xml_end = join("",
+            "</screen>\n",
+            "</article>\n",
+        );
     }
 
     printf("%s%s%s",
