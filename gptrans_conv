@@ -336,9 +336,9 @@ END
         $found_move = 1;
         # }}}
     } elsif (/^xmaplog /) {
-        $Opt{'output-format'} eq "csv" && print("\n");
+        ($Opt{'output-format'} eq "csv") && ($Opt{'save-to-file'} eq "\n") && print("\n");
     } elsif (/^$/) {
-        $Opt{'output-format'} eq "csv" && print("\n");
+        ($Opt{'output-format'} eq "csv") && ($Opt{'save-to-file'} eq "\n") && print("\n");
     } else {
         if ($Opt{'print-comments'}) {
             print("# $_");
