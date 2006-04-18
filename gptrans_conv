@@ -28,6 +28,7 @@ our %Opt = (
     'output-format' => "csv",
     'print-comments' => 0,
     'require' => "",
+    'save-to-file' => "\n", # \n =  undefined, it’s banned in filenames anyway.
     'short-date' => 0,
     'skip-dups' => 0,
     'strip-whitespace' => 0,
@@ -57,6 +58,7 @@ GetOptions(
     "print-comments|C" => \$Opt{'print-comments'},
     "output-format|o=s" => \$Opt{'output-format'},
     "require|r=s" => \$Opt{'require'},
+    "save-to-file|S=s" => \$Opt{'save-to-file'},
     "short-date|s" => \$Opt{'short-date'},
     "skip-dups|d" => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
@@ -184,13 +186,20 @@ END
 }
 # }}}
 
+my @first_lines;
+my $xml_data;
+
 while (<>) {
     # Scan through stdin or specified files and send every GPS entry to 
     # print_entry()
     # {{{
-    my $bck_line = $_;
+    if ($Opt{'save-to-file'} ne "\n") {
+        push(@first_lines, $_);
+        $_ =~ s/^# ?//; # Also read commented-out lines.
+    }
+    $xml_data = "";
     if (/^<\?xml\b/) {
-        my $xml_data = $_;
+        $xml_data = $_;
         $xml_data .= join("", <>);
         read_xmlfile($xml_data);
         last;
@@ -481,6 +490,32 @@ sub print_entry {
         $Min     = 0;
         $Sec     = 0;
     }
+
+    if ($Opt{'save-to-file'} ne "\n") {
+        my $base_name = "$Year$Month${Day}T$Hour$Min${Sec}Z$Opt{'save-to-file'}";
+        my $file_name = $base_name;
+        if (-e $file_name) {
+            for (my $a = 1; (-e $file_name) && ($a < 1000); $a++) {
+                $file_name = "$base_name.dup_$a";
+            }
+            if (-e $file_name) {
+                die("$progname: $base_name: File already exists, and ran " .
+                    "out of attempts to create unique file name\n");
+            }
+            warn("$progname: $base_name: File already exists, using " .
+                 "unique name \"$file_name\" instead\n");
+        }
+        if (open(ToFP, ">", $file_name)) {
+            print(ToFP @first_lines, (length($xml_data) ? $xml_data : <>)) ||
+                die("$progname: $file_name: Cannot write to file: $!\n");
+            close(ToFP);
+            print("$progname: Saved unconverted data to \"$file_name\"\n");
+            exit 0;
+        } else {
+            die("$progname: $file_name: Cannot create file: $!\n");
+        }
+    }
+
     my $pause_len = 0;
     my $do_print = 1;
     ($Req{'altitude'} && !$print_alt) && return;
@@ -776,6 +811,7 @@ $rcs_id
 Converts between various GPS formats.
 
 Usage: $progname [options] [file [files [...]]]
+       $progname -S [file [files [...]]]
        $progname -u [file [files [...]]]
 
 Options:
@@ -814,6 +850,13 @@ Options:
         Print only waypoints which have a timestamp.
   -s, --short-date
     Use short date format.
+  -S x, --save-to-file x
+    Save the unconverted data to a file with a filename starting with 
+    the timestamp of the first trackpoint. The parameter string x is 
+    added at the end of the filename. For the time being this option 
+    will ignore all other options. Note: If several files are specified 
+    on the command line, all data will be saved into only one file. This 
+    behaviour may change in the future.
   -t, --create-breaks
     Create breaks in track between points with a difference more than 
     $PAUSE_LIMIT seconds.
@@ -887,6 +930,8 @@ $Id$
 =head1 SYNOPSIS
 
 B<gptrans_conv> [OPTION]... [FILE]...
+
+B<gptrans_conv> -S [OPTION]... [FILE]...
 
 B<gptrans_conv> -u [OPTION]... [FILE]...
 
@@ -998,6 +1043,16 @@ Z<>
 =item B<-s>, B<--short-date>
 
 Use short date format.
+
+=item B<-S x>, B<--save-to-file x>
+
+Save the unconverted data to a file with a filename starting with the 
+timestamp of the first trackpoint. The parameter string x is added at 
+the end of the filename. For the time being this option will ignore all 
+other options.
+
+Note: If several files are specified on the command line, all data will 
+be saved into only one file. This behaviour may change in the future.
 
 =item B<-t>, B<--create-breaks>
 
