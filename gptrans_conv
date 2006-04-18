@@ -132,6 +132,8 @@ if ($Opt{'inside'} && $Opt{'outside'}) {
     die("$progname: Cannot mix the --inside and --outside options\n");
 }
 
+my $waypoint_file = "/home/sunny/gps/waypoints.gpx";
+
 # To avoid printing out extra "/> at the start of svg output:
 my $svg_start_thing = "";
 
@@ -528,8 +530,7 @@ sub print_entry {
     my $ep_time;
 
     if ($Opt{'near'}) {
-        list_nearest_waypoints($Lat, $Lon);
-        exit(0);
+        $Line .= sprintf("%s ", list_nearest_waypoints($Lat, $Lon));
     }
 
     if ($Opt{'output-format'} eq "poscount") {
@@ -764,7 +765,19 @@ sub list_nearest_waypoints {
     # {{{
     my ($Lat, $Lon, $Count) = @_;
     # FIXME: Incredible unfinished and kludgy.
-    system("gpsbabel -i gpx -f /home/sunny/gps/waypoints.gpx -x radius,lat=$Lat,lon=$Lon,distance=1000 -o gpx -F -");
+    if (open(WaypFP, "gpsbabel -i gpx -f $waypoint_file -x radius,lat=$Lat,lon=$Lon,distance=1000 -o gpx -F - |")) {
+        my $Str = join("", <WaypFP>);
+        $Str =~ s{
+            ^.*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*?
+             .*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*?
+             .*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*$
+        }{
+            "($1, $2, $3)";
+        }sex;
+        return($Str);
+    } else {
+        die("$progname: Cannot open gpsbabel pipe: $!\n");
+    }
     # }}}
 }
 
@@ -943,8 +956,8 @@ Options:
   -n x, --undefined x
     Use x as undefined value. Default: "$Udef".
   --near
-    List nearest waypoints from first trackpoint. Unfinished and 
-    experimental, needs gpsbabel.
+    Add names of the three closest waypoints to the trackpoint. 
+    Unfinished and experimental, needs gpsbabel.
   -o x, --output-format x
     Use output format x:
       clean
@@ -1104,8 +1117,8 @@ Print only trackpoints inside a rectangle specified by --pos1 and
 
 =item B<--near>
 
-List nearest waypoints from first trackpoint. Unfinished and 
-experimental, needs gpsbabel(1).
+Add names of the three closest waypoints to the trackpoint. Unfinished 
+and experimental, needs gpsbabel.
 
 =item B<-n x>, B<--undefined x>
 
