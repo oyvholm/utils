@@ -25,7 +25,11 @@ our %Opt = (
     'double-y-scale' => 0,
     'epoch' => 0,
     'help' => 0,
+    'inside' => 0,
     'output-format' => "",
+    'outside' => 0,
+    'pos1' => "",
+    'pos2' => "",
     'print-comments' => 0,
     'require' => "",
     'save-to-file' => "\n", # \n =  undefined, it’s banned in filenames anyway.
@@ -55,7 +59,11 @@ GetOptions(
     "double-y-scale|y" => \$Opt{'double-y-scale'},
     "epoch|e" => \$Opt{'epoch'},
     "help|h" => \$Opt{'help'},
+    "inside" => \$Opt{'inside'},
     "output-format|o=s" => \$Opt{'output-format'},
+    "outside" => \$Opt{'outside'},
+    "pos1=s" => \$Opt{'pos1'},
+    "pos2=s" => \$Opt{'pos2'},
     "print-comments|C" => \$Opt{'print-comments'},
     "require|r=s" => \$Opt{'require'},
     "save-to-file|S=s" => \$Opt{'save-to-file'},
@@ -80,6 +88,8 @@ my $first_time = 0;
 my $last_time = 0;
 my ($last_lon, $last_lat, $last_alt, $last_line) =
    (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+my ($lat1, $lon1, $lat2, $lon2) =
+   (-1000, -1000,  1000,  1000);
 
 my %Poscount = ();
 
@@ -92,6 +102,29 @@ $Opt{'require'} =~ /[^at]/ && die("$0: Unknown flag in --require (-r) value\n");
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
+
+if ($Opt{'pos1'} =~ /^([\d\.]+),([\d\.]+)$/) {
+    $lat1 = $1;
+    $lon1 = $2;
+}
+if ($Opt{'pos2'} =~ /^([\d\.]+),([\d\.]+)$/) {
+    $lat2 = $1;
+    $lon2 = $2;
+}
+if ($lat1 > $lat2) {
+    my $Tmp = $lat1;
+    $lat1 = $lat2;
+    $lat2 = $Tmp;
+}
+if ($lon1 > $lon2) {
+    my $Tmp = $lon1;
+    $lon1 = $lon2;
+    $lon2 = $Tmp;
+}
+
+if ($Opt{'inside'} && $Opt{'outside'}) {
+    die("$progname: Cannot mix the --inside and --outside options\n");
+}
 
 # To avoid printing out extra "/> at the start of svg output:
 my $svg_start_thing = "";
@@ -531,6 +564,20 @@ sub print_entry {
     my $pause_len = 0;
     my $do_print = 1;
     ($Req{'altitude'} && !$print_alt) && return;
+
+    if ($Opt{'inside'} || $Opt{'outside'}) {
+        if (
+            ($Lat < $lat1) ||
+            ($Lat > $lat2) ||
+            ($Lon < $lon1) ||
+            ($Lon > $lon2)
+        ) {
+            $Opt{'inside'} && return;
+        } else {
+            $Opt{'outside'} && return;
+        }
+    }
+
     my $Line = "";
     if ($Opt{'output-format'} eq "ps") {
         $Lon *= 100;
@@ -831,6 +878,9 @@ Options:
     Use seconds since 1970-01-01 00:00:00 GMT as date format.
   -h, --help
     Show this help.
+  --inside
+    Print only trackpoints inside a rectangle specified by --pos1 and 
+    --pos2.
   -n x, --undefined x
     Use x as undefined value. Default: "$Udef".
   -o x, --output-format x
@@ -845,6 +895,13 @@ Options:
       xgraph
       xml
       ygraph
+  --outside
+    Print only trackpoints outside a rectangle specified by --pos1 and 
+    --pos2.
+  --pos1 x, --pos2 x
+    Specifies one corner where x is in "lat,lon" format (decimal 
+    degrees, negative for west or south) of area rectangle used by the 
+    --inside and --outside options.
   -r x, --require x
     Specify requirements for trackpoints to be written. x is a string 
     with the following flags:
@@ -968,6 +1025,11 @@ Use seconds since 1970-01-01 00:00:00 GMT as date format.
 
 Show this help.
 
+=item B<--inside>
+
+Print only trackpoints inside a rectangle specified by --pos1 and 
+--pos2.
+
 =item B<-n x>, B<--undefined x>
 
 Use x as undefined value.
@@ -1008,6 +1070,17 @@ areas with less track points.
 =back
 
 Z<>
+
+=item B<--outside>
+
+Print only trackpoints outside a rectangle specified by --pos1 and 
+--pos2.
+
+=item B<--pos1 x>, B<--pos2 x>
+
+Specifies corners of an area rectangle used by the --inside and 
+--outside options. The x value is in "lat,lon" format (decimal degrees, 
+negative for west or south) .
 
 =item B<-r x>, B<--require x>
 
