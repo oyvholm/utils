@@ -615,7 +615,7 @@ sub print_entry {
         $in_dupskip = 1;
     } else {
             $do_print = 1;
-            $in_dupskip && print($last_line);
+            $in_dupskip && ($Line .= $last_line);
             $in_dupskip = 0;
     }
 
@@ -624,7 +624,8 @@ sub print_entry {
     }
 
     if ($pause_len && ($Opt{'output-format'} eq "csv")) {
-        printf("# Pause: %s\n# move\n", sec_to_readable($ep_time-$last_time));
+        $Line .= sprintf("# Pause: %s\n# move\n",
+                         sec_to_readable($ep_time-$last_time));
     }
 
     if ($do_print) {
@@ -716,15 +717,15 @@ END
     }
 
     if (!$last_time && $Opt{'output-format'} eq "ps") {
-        print("$Lon $Lat m\n");
+        $Line .= "$Lon $Lat m\n";
     }
 
     if ($do_print) {
         if ($found_move) {
             (!$pause_len && ($Opt{'output-format'} eq "xgraph")) && ($Line = "move $Line");
-            ($Opt{'output-format'} eq "clean") && (print("\n"));
+            ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
             if ($Opt{'output-format'} eq "gpx") {
-                print("$Spc$Spc$Spc$Spc</trkseg>\n$Spc$Spc$Spc$Spc<trkseg>\n");
+                $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n$Spc$Spc$Spc$Spc<trkseg>\n";
             }
             $found_move = 0;
         }
