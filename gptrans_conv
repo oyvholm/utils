@@ -19,6 +19,7 @@ our $Debug = 0;
 
 our %Opt = (
     # Initial values for command line arguments {{{
+    'chronology' => 0,
     'comment-out-dups' => 0,
     'create-breaks' => 0,
     'debug' => 0,
@@ -54,6 +55,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 Getopt::Long::Configure("bundling");
 GetOptions(
     # Command line options {{{
+    "chronology" => \$Opt{'chronology'},
     "comment-out-dups|u" => \$Opt{'comment-out-dups'},
     "create-breaks|t" => \$Opt{'create-breaks'},
     "debug" => \$Opt{'debug'},
@@ -532,6 +534,16 @@ sub print_entry {
         $Hour  = sprintf("%02u", $Hour);
         $Min   = sprintf("%02u", $Min);
         $Sec   = sprintf("%02u", $Sec);
+        if ($Opt{'chronology'}) {
+            if ($last_time > $ep_time) {
+                warn(sprintf(
+                    "%s: \"%sZ\": Next date is %s in the past (%sZ)\n",
+                    $progname, sec_to_string($last_time, "T"),
+                    sec_to_readable($last_time-$ep_time),
+                    sec_to_string($ep_time, "T")
+                ));
+            }
+        }
     } else {
         $Req{'time'} && return;
         $ep_time = 0;
@@ -891,6 +903,9 @@ Options:
   -C, --print-comments
     Print existing comment lines (starting with "#") and prefix unknown 
     lines with "# ".
+  --chronology
+    Check for broken chronology, warn about entries with an old 
+    timestamp.
   -d, --skip-dups
     Skip duplicated coordinates, only print first and last.
   -e, --epoch
@@ -1034,6 +1049,10 @@ Use comma instead of period as decimal point (For Gnumeric etc).
 
 Print existing comment lines (starting with "#") and prefix unknown 
 lines with "# ".
+
+=item B<--chronology>
+
+Check for broken chronology, warn about entries with an old timestamp.
 
 =item B<-d>, B<--skip-dups>
 
