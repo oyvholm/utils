@@ -61,6 +61,10 @@ for (@Files) {
     # {{{
     my $File = $_;
     my $prop_val = `svn propget $PROP_NAME $File`;
+    if (!length($prop_val)) {
+        warn("$progname: $File: \"mergesvn\" property not found, skipping file\n");
+        next LOOP;
+    }
     my @new_prop = ();
     my @Props = split(/\n/, $prop_val);
     D("Props = (\"" . join("\", \"", @Props) . "\")");
