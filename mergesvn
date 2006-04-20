@@ -47,14 +47,13 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-my @new_prop = ();
-
 scalar(@ARGV) || die("$progname: No files specified. Use -h for help.\n");
 
 for (@ARGV) {
     # {{{
     my $File = $_;
     my $prop_val = `svn propget $PROP_NAME $File`;
+    my @new_prop = ();
     my @Props = split(/\n/, $prop_val);
     D("Props = (\"" . join("\", \"", @Props) . "\")");
     for my $Curr (@Props) {
