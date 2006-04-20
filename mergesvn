@@ -47,10 +47,17 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-scalar(@ARGV) || die("$progname: No files specified. Use -h for help.\n");
+my @Files = @ARGV;
+
+if (!scalar(@Files)) {
+    while (<STDIN>) {
+        chomp;
+        push(@Files, $_);
+    }
+}
 
 LOOP:
-for (@ARGV) {
+for (@Files) {
     # {{{
     my $File = $_;
     my $prop_val = `svn propget $PROP_NAME $File`;
@@ -153,9 +160,10 @@ sub usage {
 $rcs_id
 
 Merge changes between Subversion controlled files. Files without the 
-"mergesvn" property will be ignored.
+"mergesvn" property will be ignored. If no filenames are specified on 
+the command line, it reads filenames from stdin.
 
-Usage: $progname [options] file [files [...]]
+Usage: $progname [options] [file [files [...]]]
 
 Options:
 
@@ -221,11 +229,15 @@ $Id$
 
 =head1 SYNOPSIS
 
-mergesvn [options] file [files [...]]
+mergesvn [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Merges new revision changes into a file from a master file.
+Merge changes between Subversion controlled files.
+Files without the "mergesvn" property will be ignored.
+If no filenames are specified on the command line, it reads filenames 
+from stdin.
+
 Needs to have the following property set to work:
 
 =over 4
