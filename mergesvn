@@ -49,6 +49,7 @@ $Opt{'version'} && print_version();
 
 scalar(@ARGV) || die("$progname: No files specified. Use -h for help.\n");
 
+LOOP:
 for (@ARGV) {
     # {{{
     my $File = $_;
@@ -65,10 +66,15 @@ for (@ARGV) {
             mysyst($CMD_SVN, "update", $File);
             my $curr_rev = `$CMD_SVN log -rHEAD:1 --limit 1 --xml $safe_master_file`; # FIXME
             $curr_rev =~ s/^.*<logentry.+?revision="(\d+)".*?>.*/$1/s;
+            if ($curr_rev !~ /^\d+$/) {
+                warn("$progname: $master_file: Unable to get newest revision\n");
+                next LOOP;
+            }
             mysyst($CMD_SVN, "merge", "-r$last_merge:$curr_rev", $master_file, $File);
             push(@new_prop, "$curr_rev $master_file");
         } else {
             warn("$File: \"$Curr\": Invalid property line\n");
+            next LOOP;
         }
     }
     mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
