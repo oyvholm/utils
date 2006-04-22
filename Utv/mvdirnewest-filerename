@@ -47,10 +47,9 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-die("Uferdig.");
+die("Uferdig.\n");
 
 my $RetVal = 0;
-
 
 die("$progname: Unknown version of find(1) or program not found\n") unless (`find --version` =~ /GNU find/);
 
@@ -192,7 +191,7 @@ to the date of the newest file.
 
 Options:
 
-  -f, --rename-file
+  -f, --file-rename
     Allow files to be renamed.
   -h, --help
     Show this help.
