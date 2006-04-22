@@ -42,7 +42,6 @@ our %Opt = (
     'undefined' => "",
     'use-comma' => 0,
     'version' => 0,
-    'xml' => 0
     # }}}
 );
 
@@ -80,7 +79,6 @@ GetOptions(
     "use-comma|c" => \$Opt{'use-comma'},
     "verbose|v" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
-    "xml|x" => \$Opt{'xml'}
     # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -887,43 +885,18 @@ sub ddd_to_dms {
 
 sub print_version {
     # Print program version {{{
-    xml_print("$rcs_id\n");
+    print("$rcs_id\n");
     exit(0);
     # }}}
 } # print_version()
 
-sub xml_print {
-    # Print out some text, using DocBook if --xml is specified {{{
-    my $Txt = shift;
-    my ($xml_start, $xml_end) =
-       (        "",       "");
-
-    if ($Opt{'xml'}) {
-        $xml_start = join("",
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
-            "<!DOCTYPE article PUBLIC \"-//OASIS//DTD DocBook XML V4//EN\" \"http://docbook.org/xml/4.3/docbookx.dtd\">\n",
-            "<article>\n",
-            "  <screen>\n",
-        );
-        $xml_end = join("",
-            "</screen>\n",
-            "</article>\n",
-        );
-    }
-
-    printf("%s%s%s",
-        $xml_start,
-        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
-    # }}}
-} # xml_print()
 
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
-    xml_print(<<END);
+    print(<<END);
+
 $rcs_id
 
 Converts between various GPS formats.
@@ -1007,12 +980,11 @@ Options:
     Print version information.
   -w, --strip-whitespace
     Strip all unnecessary whitespace.
-  -x, --xml
-    Create XML output.
   -y, --double-y-scale
     Double Y scale to get it right in gnuplot.
   --debug
     Print debugging messages.
+
 END
     exit($Retval);
     # }}}
@@ -1026,30 +998,10 @@ sub D {
     my $File = $call_info[1];
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
-    if ($Opt{'xml'}) {
-        printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
-            txt_to_xml($$),
-            txt_to_xml($File),
-            txt_to_xml($call_info[2]),
-            txt_to_xml($Txt)
-        );
-    } else {
-        print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    }
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
     return("");
     # }}}
 } # D()
-
-sub txt_to_xml {
-    # Return a XML-safe version of a string {{{
-    my $Txt = shift;
-
-    $Txt =~ s/&/&amp;/gs;
-    $Txt =~ s/</&lt;/gs;
-    $Txt =~ s/>/&gt;/gs;
-    return($Txt);
-    # }}}
-} # txt_to_xml()
 
 __END__
 
@@ -1256,10 +1208,6 @@ Print a brief help summary.
 =item B<--version>
 
 Print version information.
-
-=item B<-x>, B<--xml>
-
-Create XML output.
 
 =item B<--debug>
 
