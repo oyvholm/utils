@@ -108,9 +108,11 @@ sub date2str {
 } # date2str()
 
 sub print_version {
+    # Print program version {{{
     xml_print("$rcs_id\n");
     exit(0);
-}
+    # }}}
+} # print_version()
 
 sub xml_print {
     # Print out some text, using DocBook if --xml is specified {{{
@@ -137,7 +139,7 @@ END
         $xml_end
     );
     # }}}
-}
+} # xml_print()
 
 sub usage {
     # Send the help message to stdout {{{
@@ -164,10 +166,10 @@ Options:
 END
     exit($Retval);
     # }}}
-}
+} # usage()
 
 sub D {
-    # {{{
+    # Print a debugging message {{{
     $Debug || return;
     my @call_info = caller;
     chomp(my $Txt = shift);
@@ -246,7 +248,7 @@ Print debugging messages.
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
