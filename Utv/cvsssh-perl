@@ -18,9 +18,9 @@ our $Debug = 1;
 
 our %Opt = (
     'debug' => 0,
-    'help'  => 0,
-    'tty'   => 0,
-    'xml'   => 0
+    'help' => 0,
+    'tty' => 0,
+    'version' => 0,
 );
 
 our $progname = $0;
@@ -32,14 +32,15 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "debug"  => \$Opt{'debug'},
+    "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "tty|t"  => \$Opt{'tty'},
-    "xml|x"  => \$Opt{'xml'}
+    "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
 if (defined($ARGV[0])) {
     my $Host = $ARGV[0];
@@ -56,25 +57,19 @@ if (defined($ARGV[0])) {
     usage(1);
 }
 
+sub print_version {
+    # Print program version {{{
+    print("$rcs_id\n");
+    exit(0);
+    # }}}
+} # print_version()
+
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
-    my ($xml_start, $xml_end)  =
-       (        "",       "");
 
-    if ($Opt{'xml'}) {
-        $xml_start = <<END;
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
-<article>
-  <screen>
-END
-        $xml_end = <<END;
-</screen>
-</article>
-END
-    }
-    my $Txt = <<END;
+    print(<<END);
+
 $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
@@ -83,52 +78,28 @@ Options:
 
   -h, --help
     Show this help.
-  -x, --xml
-    Create XML output.
+  --version
+    Print version information.
   --debug
     Print debugging messages.
+
 END
-    printf("%s%s%s",
-        $xml_start,
-        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
     exit($Retval);
     # }}}
-}
+} # usage()
 
 sub D {
-    # {{{
+    # Print a debugging message {{{
     $Debug || return;
     my @call_info = caller;
     chomp(my $Txt = shift);
     my $File = $call_info[1];
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
-    if ($Opt{'xml'}) {
-        printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
-            txt_to_xml($$),
-            txt_to_xml($File),
-            txt_to_xml($call_info[2]),
-            txt_to_xml($Txt)
-        );
-    } else {
-        print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    }
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
     return("");
     # }}}
 } # D()
-
-sub txt_to_xml {
-    # Return a XML-safe version of a string {{{
-    my $Txt = shift;
-
-    $Txt =~ s/&/&amp;/gs;
-    $Txt =~ s/</&lt;/gs;
-    $Txt =~ s/>/&gt;/gs;
-    return($Txt);
-    # }}}
-} # txt_to_xml()
 
 sub mysyst {
     # {{{
@@ -164,7 +135,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+ [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
@@ -178,9 +149,9 @@ $Id$
 
 Print a brief help summary.
 
-=item B<-x>, B<--xml>
+=item B<--version>
 
-Create XML output.
+Print version information.
 
 =item B<--debug>
 
@@ -194,7 +165,7 @@ Print debugging messages.
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
