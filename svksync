@@ -16,7 +16,7 @@ for f in $locals; do
 done
 
 echo ======== svk sync -a ========
-echo svk sync -a
+svk sync -a
 
 for f in $locals; do
     echo ======== svk pull //local/$f ========
