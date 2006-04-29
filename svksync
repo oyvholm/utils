@@ -3,7 +3,8 @@
 # $Id$
 
 # Oppdatert til r988 i svk-repoen.
-locals="utils/trunk dbk/trunk conf/trunk/home conf/trunk/carmbb-sarge2 conf/trunk/div"
+# locals="utils/trunk dbk/trunk conf/trunk/home conf/trunk/carmbb-sarge2 conf/trunk/div"
+locals="utils/trunk dbk/trunk"
 
 if [ ! -e /carmbb.mrk ]; then
     echo "Skal kjøres på carmbb, vettu." >&2
