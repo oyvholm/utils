@@ -371,7 +371,7 @@ for $curr_file (@ARGV) {
                     chomp;
                     $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
                 }
-                }
+            }
         }
         # }}}
     } else {
