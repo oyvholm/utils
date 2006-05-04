@@ -82,9 +82,9 @@ for my $File (@ARGV) {
         my $compr_zip = file_size("$tmp_prefix.zip");
         unlink("$tmp_prefix.zip");
 
-        my $ratio_gzip = 100 - ($compr_gzip/$orig_size) * 100;
-        my $ratio_bzip = 100 - ($compr_bzip/$orig_size) * 100;
-        my $ratio_zip = 100 - ($compr_zip/$orig_size) * 100;
+        my $ratio_gzip = ($compr_gzip/$orig_size) * 100;
+        my $ratio_bzip = ($compr_bzip/$orig_size) * 100;
+        my $ratio_zip = ($compr_zip/$orig_size) * 100;
 
         print(DatFP "$Comp\t$ratio_gzip\t$ratio_bzip\t$ratio_zip\n");
     }
