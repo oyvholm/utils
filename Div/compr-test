@@ -20,6 +20,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'verbose' => 0,
     'version' => 0,
 );
 
@@ -37,6 +38,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "verbose|v" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -65,12 +67,15 @@ for my $File (@ARGV) {
     for my $Comp (1..9) {
         my $tmp_prefix = "$File.$Comp.tmp";
 
+        $Opt{'verbose'} && print("gzip -$Comp\n");
         system("gzip -$Comp <$File >$tmp_prefix.gz");
         my $compr_gzip = file_size("$tmp_prefix.gz");
         unlink("$tmp_prefix.gz");
+        $Opt{'verbose'} && print("bzip2 -$Comp\n");
         system("bzip2 -$Comp <$File >$tmp_prefix.bz2");
         my $compr_bzip = file_size("$tmp_prefix.bz2");
         unlink("$tmp_prefix.bz2");
+        $Opt{'verbose'} && print("zip -$Comp\n");
         system("zip -$Comp - - 2>/dev/null <$File >$tmp_prefix.zip");
         my $compr_zip = file_size("$tmp_prefix.zip");
         unlink("$tmp_prefix.zip");
@@ -147,6 +152,8 @@ Options:
 
   -h, --help
     Show this help.
+  -v, --verbose
+    Verbose operation.
   --version
     Print version information.
   --debug
