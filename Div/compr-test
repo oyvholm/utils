@@ -19,6 +19,7 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'full-scale' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -37,6 +38,7 @@ $rcs_clean =~ s/\s+$//g;
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
+    "full-scale|f" => \$Opt{'full-scale'},
     "help|h" => \$Opt{'help'},
     "verbose|v" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -49,7 +51,7 @@ $Opt{'version'} && print_version();
 LOOP:
 for my $File (@ARGV) {
     my $orig_size = file_size($File);
-    my $yrange = "[0:100]";
+    my $yrange = $Opt{'full-scale'} ? "[0:100]" : "[:]";
 
     unless (length($orig_size)) {
         warn("$progname: $File: Unable to stat() file\n");
@@ -85,14 +87,6 @@ for my $File (@ARGV) {
         my $ratio_zip = 100 - ($compr_zip/$orig_size) * 100;
 
         print(DatFP "$Comp\t$ratio_gzip\t$ratio_bzip\t$ratio_zip\n");
-        if (
-            !in_range($ratio_gzip, 0, 100) || 
-            !in_range($ratio_bzip, 0, 100) || 
-            !in_range($ratio_zip, 0, 100)
-        ) {
-            $yrange = "[:]";
-            D("yrange = $yrange");
-        }
     }
     close(DatFP);
     my $gnuplot_file = "$File.gnuplot";
@@ -120,14 +114,6 @@ sub file_size {
     return(defined($size) ? $size : "");
 }
 
-sub in_range {
-    my ($Val, $Min, $Max) = @_;
-    D("in_range(\"$Val\", \"$Min\", \"$Max\")");
-    my $Retval = ((($Val >= $Min) && ($Val <= $Max)) ? 1 : 0);
-    D("in_range() returns \"$Retval\"");
-    return($Retval);
-}
-
 sub print_version {
     # Print program version {{{
     print("$rcs_id\n");
@@ -150,6 +136,8 @@ Quick & Dirty™. Needs gnuplot(1).
 
 Options:
 
+  -f, --full-scale
+    Use Y range 0–100.
   -h, --help
     Show this help.
   -v, --verbose
