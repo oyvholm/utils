@@ -12,6 +12,7 @@
 
 use strict;
 use Getopt::Long;
+use Time::HiRes qw{ gettimeofday };
 
 $| = 1;
 
@@ -21,6 +22,7 @@ our %Opt = (
     'debug' => 0,
     'full-scale' => 0,
     'help' => 0,
+    'time' => 0,
     'verbose' => 0,
     'version' => 0,
 );
@@ -40,6 +42,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "full-scale|f" => \$Opt{'full-scale'},
     "help|h" => \$Opt{'help'},
+    "time|t" => \$Opt{'time'},
     "verbose|v" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -66,25 +69,50 @@ for my $File (@ARGV) {
         next LOOP;
     }
 
+    if ($Opt{'time'}) {
+        system("cat $File >/dev/null");
+    }
     for my $Comp (1..9) {
         my $tmp_prefix = "$File.$Comp.tmp";
 
         $Opt{'verbose'} && print("gzip -$Comp\n");
+        my $gzip_start = gettimeofday;
         system("gzip -$Comp <$File >$tmp_prefix.gz");
+        my $gzip_end = gettimeofday;
+        my $gzip_time = $gzip_end-$gzip_start;
         my $compr_gzip = file_size("$tmp_prefix.gz");
         unlink("$tmp_prefix.gz");
+
         $Opt{'verbose'} && print("bzip2 -$Comp\n");
+        my $bzip_start = gettimeofday;
         system("bzip2 -$Comp <$File >$tmp_prefix.bz2");
+        my $bzip_end = gettimeofday;
+        my $bzip_time = $bzip_end-$bzip_start;
         my $compr_bzip = file_size("$tmp_prefix.bz2");
         unlink("$tmp_prefix.bz2");
+
         $Opt{'verbose'} && print("zip -$Comp\n");
+        my $zip_start = gettimeofday;
         system("zip -$Comp - - 2>/dev/null <$File >$tmp_prefix.zip");
+        my $zip_end = gettimeofday;
+        my $zip_time = $zip_end-$zip_start;
         my $compr_zip = file_size("$tmp_prefix.zip");
         unlink("$tmp_prefix.zip");
 
-        my $ratio_gzip = ($compr_gzip/$orig_size) * 100;
-        my $ratio_bzip = ($compr_bzip/$orig_size) * 100;
-        my $ratio_zip = ($compr_zip/$orig_size) * 100;
+        my ($ratio_gzip, $ratio_bzip, $ratio_zip);
+
+        if ($Opt{'time'}) {
+            # $ratio_gzip = $gzip_time / ($compr_gzip/$orig_size);
+            # $ratio_bzip =  $bzip_time / ($compr_bzip/$orig_size);
+            # $ratio_zip  =  $zip_time / ($compr_zip/$orig_size);
+            $ratio_gzip = $gzip_time;
+            $ratio_bzip = $bzip_time;
+            $ratio_zip = $zip_time;
+        } else {
+            $ratio_gzip = ($compr_gzip/$orig_size) * 100;
+            $ratio_bzip = ($compr_bzip/$orig_size) * 100;
+            $ratio_zip = ($compr_zip/$orig_size) * 100;
+        }
 
         print(DatFP "$Comp\t$ratio_gzip\t$ratio_bzip\t$ratio_zip\n");
     }
@@ -140,6 +168,8 @@ Options:
     Use Y range 0–100.
   -h, --help
     Show this help.
+  -t, --time
+    Show number of microseconds used instead of size.
   -v, --verbose
     Verbose operation.
   --version
