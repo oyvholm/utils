@@ -891,7 +891,6 @@ sub print_version {
     # }}}
 } # print_version()
 
-
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
