@@ -87,6 +87,7 @@ GetOptions(
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
 my $Des = $Opt{'use-comma'} ? "," : ".";
 my $Udef = "?";
+my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
 my $Spc = $Opt{'strip-whitespace'} ? "" : " ";
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
@@ -109,11 +110,11 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-if ($Opt{'pos1'} =~ /^([\-\+\d\.]+),([\-\+\d\.]+)$/) {
+if ($Opt{'pos1'} =~ /^($DIGIT+),($DIGIT+)$/) {
     $lat1 = $1;
     $lon1 = $2;
 }
-if ($Opt{'pos2'} =~ /^([\-\+\d\.]+),([\-\+\d\.]+)$/) {
+if ($Opt{'pos2'} =~ /^($DIGIT+),($DIGIT+)$/) {
     $lat2 = $1;
     $lon2 = $2;
 }
@@ -236,7 +237,7 @@ for $curr_file (@ARGV) {
                 $found_move = 1;
             } elsif (/^#/) {
                 $Opt{'print-comments'} && print;
-            } elsif (m#^(\d+)\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
+            } elsif (m#^(\d+)\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
                 # CSV format, epoch style {{{
                 my ($ep_time, $lon_val, $lat_val, $Alt) =
                    (      $1,       $2,       $3,   $4);
@@ -245,7 +246,7 @@ for $curr_file (@ARGV) {
                 $Year += 1900; # Urgh Ⅱ
                 print_entry($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt);
                 # }}}
-            } elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t([0-9\.\-,?]+)\t([0-9\.\-,?]+)\t([+\-\d?])#) {
+            } elsif (m#^(\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?(\d\d)Z?\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
                 # CSV format, human-readable date format {{{
                 my ($Year, $Month, $Day, $Hour, $Min, $Sec, $lon_val, $lat_val, $Alt) =
                    (   $1,     $2,   $3,    $4,   $5,   $6,       $7,       $8,   $9);
@@ -372,7 +373,7 @@ for $curr_file (@ARGV) {
                     chomp;
                     $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
                 }
-                }
+            }
         }
         # }}}
     } else {
@@ -548,7 +549,7 @@ sub print_entry {
     # {{{
     my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lon, $Lat, $Alt) = @_;
     my $print_time = ($Year =~ /^\d+$/) ? 1 : 0;
-    my $print_alt = ($Alt =~ /^\d+$/) ? 1 : 0;
+    my $print_alt = ($Alt =~ /^$DIGIT+$/) ? 1 : 0;
     my $Line = "";
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
