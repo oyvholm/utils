@@ -538,25 +538,24 @@ sub print_entry {
     # various formats
     # {{{
     my %Dat = @_;
-    my ($Year, $Month, $Day, $Hour, $Min, $Sec, $Lat, $Lon, $Ele) =
-       ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
-        $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'},
-        $Dat{'lat'}, $Dat{'lon'}, $Dat{'ele'});
-    my $print_time = ($Year =~ /^\d+$/) ? 1 : 0;
-    my $print_ele = ($Ele =~ /^$DIGIT+$/) ? 1 : 0;
+    if (!defined($Dat{'lat'}) || !defined($Dat{'lon'})) {
+        return;
+    }
+    my $print_time = defined($Dat{'year'}) ? 1 : 0;
+    my $print_ele = defined($Dat{'ele'}) ? 1 : 0;
     my $Line = "";
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
 
     if ($Opt{'near'}) {
-        $Line .= sprintf("%s ", list_nearest_waypoints($Lat, $Lon));
+        $Line .= sprintf("%s ", list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}));
     }
 
     if ($Opt{'output-format'} eq "poscount") {
         my ($Lat_str, $Lon_str) =
            (      "",       "");
-        $Lon =~ /^(\d+\.\d\d)/ && ($Lon_str = $1);
-        $Lat =~ /^(\d+\.\d\d)/ && ($Lat_str = $1);
+        $Dat{'lon'} =~ /^(\d+\.\d\d)/ && ($Lon_str = $1);
+        $Dat{'lat'} =~ /^(\d+\.\d\d)/ && ($Lat_str = $1);
         my $Name = "${Lon_str},${Lat_str}";
         defined($Poscount{$Name}) || ($Poscount{$Name} = 0);
         $Poscount{$Name}++;
@@ -564,13 +563,13 @@ sub print_entry {
     }
 
     if ($print_time) {
-        $ep_time = timegm_nocheck($Sec, $Min, $Hour, $Day, $Month - 1, $Year);
-        $Year  = sprintf("%04u", $Year);
-        $Month = sprintf("%02u", $Month);
-        $Day   = sprintf("%02u", $Day);
-        $Hour  = sprintf("%02u", $Hour);
-        $Min   = sprintf("%02u", $Min);
-        $Sec   = sprintf("%02u", $Sec);
+        $ep_time = timegm_nocheck($Dat{'sec'}, $Dat{'min'}, $Dat{'hour'}, $Dat{'day'}, $Dat{'month'} - 1, $Dat{'year'});
+        $Dat{'year'}  = sprintf("%04u", $Dat{'year'});
+        $Dat{'month'} = sprintf("%02u", $Dat{'month'});
+        $Dat{'day'}   = sprintf("%02u", $Dat{'day'});
+        $Dat{'hour'}  = sprintf("%02u", $Dat{'hour'});
+        $Dat{'min'}   = sprintf("%02u", $Dat{'min'});
+        $Dat{'sec'}   = sprintf("%02u", $Dat{'sec'});
         if ($Opt{'chronology'}) {
             if ($last_time > $ep_time) {
                 warn(sprintf(
@@ -588,17 +587,17 @@ sub print_entry {
     } else {
         $Req{'time'} && return;
         $ep_time = 0;
-        $Year    = 0;
-        $Month   = 0;
-        $Day     = 0;
-        $Hour    = 0;
-        $Min     = 0;
-        $Sec     = 0;
+        $Dat{'year'} = 0;
+        $Dat{'month'} = 0;
+        $Dat{'day'} = 0;
+        $Dat{'hour'} = 0;
+        $Dat{'min'} = 0;
+        $Dat{'sec'} = 0;
     }
 
     if ($Opt{'save-to-file'} ne "\n") {
         # {{{
-        my $base_name = "$Year$Month${Day}T$Hour$Min${Sec}Z$Opt{'save-to-file'}";
+        my $base_name = "$Dat{'year'}$Dat{'month'}$Dat{'day'}T$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z$Opt{'save-to-file'}";
         my $file_name = $base_name;
         if (-e $file_name) {
             for (my $a = 1; (-e $file_name) && ($a < 1000); $a++) {
@@ -631,10 +630,10 @@ sub print_entry {
 
     if ($Opt{'inside'} || $Opt{'outside'}) {
         if (
-            ($Lat < $lat1) ||
-            ($Lat > $lat2) ||
-            ($Lon < $lon1) ||
-            ($Lon > $lon2)
+            ($Dat{'lat'} < $lat1) ||
+            ($Dat{'lat'} > $lat2) ||
+            ($Dat{'lon'} < $lon1) ||
+            ($Dat{'lon'} > $lon2)
         ) {
             $Opt{'inside'} && return;
         } else {
@@ -643,10 +642,10 @@ sub print_entry {
     }
 
     if ($Opt{'output-format'} eq "ps") {
-        $Lon *= 100;
-        $Lat *= 100;
+        $Dat{'lon'} *= 100;
+        $Dat{'lat'} *= 100;
     }
-    if ($Opt{'skip-dups'} && ($Lon eq $last_lon) && ($Lat eq $last_lat) && ($Ele eq $last_ele)) {
+    if ($Opt{'skip-dups'} && ($Dat{'lon'} eq $last_lon) && ($Dat{'lat'} eq $last_lat) && ($Dat{'ele'} eq $last_ele)) {
         if ($in_dupskip) {
             $do_print = 0;
         } else {
@@ -674,34 +673,34 @@ sub print_entry {
             $first_time = $ep_time;
         }
         if ($Opt{'double-y-scale'}) {
-            $Lat *= 2;
+            $Dat{'lat'} *= 2;
         }
         if ($Opt{'output-format'} eq "xgraph") {
             $pause_len && ($Line .= "move ");
-            ($Line .= "$Lon $Lat\n");
+            ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
         } elsif($Opt{'output-format'} eq "gpstrans") {
-            my ($gpt_lat, $gpt_lon) = (ddd_to_dms($Lat), ddd_to_dms($Lon));
+            my ($gpt_lat, $gpt_lon) = (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
             if ($print_time) {
-                $Line .= "T\t$Month/$Day/$Year $Hour:$Min:$Sec\t$gpt_lat\t$gpt_lon\n";
+                $Line .= "T\t$Dat{'month'}/$Dat{'day'}/$Dat{'year'} $Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}\t$gpt_lat\t$gpt_lon\n";
             } else {
                 $Line .= "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
             }
         } elsif($Opt{'output-format'} eq "gpx") {
             $Line .= join("",
-                            "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Lat\" lon=\"$Lon\">$Spc",
+                            "$Spc$Spc$Spc$Spc$Spc$Spc<trkpt lat=\"$Dat{'lat'}\" lon=\"$Dat{'lon'}\">$Spc",
                             $print_time
-                                ? "<time>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</time>$Spc"
+                                ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</time>$Spc"
                                 : "",
                             $print_ele
-                                ? "<ele>$Ele</ele>$Spc"
+                                ? "<ele>$Dat{'ele'}</ele>$Spc"
                                 : "",
                             "</trkpt>\n"
                     );
         } elsif ($Opt{'output-format'} eq "clean") {
             $pause_len && ($Line .= "\n");
-            ($Line .= "$Lon\t$Lat" . ($print_ele ? "\t$Ele" : "") . "\n");
+            ($Line .= "$Dat{'lon'}\t$Dat{'lat'}" . ($print_ele ? "\t$Dat{'ele'}" : "") . "\n");
         } elsif ($Opt{'output-format'} eq "ps") {
-            $Line .= ($pause_len ? "f\n$Lon $Lat m\n" : "$Lon $Lat l\n");
+            $Line .= ($pause_len ? "f\n$Dat{'lon'} $Dat{'lat'} m\n" : "$Dat{'lon'} $Dat{'lat'} l\n");
         } elsif ($Opt{'output-format'} eq "svg") {
             $Line .= (
                 ($last_lon == 1000) || $pause_len
@@ -711,42 +710,42 @@ sub print_entry {
                         "  stroke-width=\"0.001\"\n",
                         "  fill=\"none\"\n",
                         "  d=\"\n",
-                        "M $Lon $Lat\n",
+                        "M $Dat{'lon'} $Dat{'lat'}\n",
                     )
-                    : "L $Lon $Lat\n"
+                    : "L $Dat{'lon'} $Dat{'lat'}\n"
             );
         } elsif ($Opt{'output-format'} eq "xml") {
             $Line .= join("",
                          "$Spc$Spc<gps>$Spc",
                              $print_time
-                                ? "<date>$Year-$Month-${Day}T$Hour:$Min:${Sec}Z</date>$Spc"
+                                ? "<date>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</date>$Spc"
                                 : "",
                              "<pos>$Spc",
-                                 (length($Lon)) ? "<x>$Lon</x>$Spc" : "",
-                                 (length($Lat)) ? "<y>$Lat</y>$Spc" : "",
-                                 ($print_ele)   ? "<z>$Ele</z>$Spc" : "",
+                                 (length($Dat{'lon'})) ? "<x>$Dat{'lon'}</x>$Spc" : "",
+                                 (length($Dat{'lat'})) ? "<y>$Dat{'lat'}</y>$Spc" : "",
+                                 ($print_ele)   ? "<z>$Dat{'ele'}</z>$Spc" : "",
                              "</pos>$Spc",
                          "</gps>\n"
                     );
         } elsif ($Opt{'output-format'} eq "ygraph") {
             my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
-            $Line .= "\"Time = $Time.0\n$Lon $Lat\n\n";
+            $Line .= "\"Time = $Time.0\n$Dat{'lon'} $Dat{'lat'}\n\n";
         } elsif ($Opt{'output-format'} eq "csv") {
             # {{{
-            $Lon =~ s/\./$Des/;
-            $Lat =~ s/\./$Des/;
+            $Dat{'lon'} =~ s/\./$Des/;
+            $Dat{'lat'} =~ s/\./$Des/;
             # $do_print || print("skipping ");
             $Line .= join("\t",
                 $print_time
                     ? $Opt{'epoch'}
                         ? $ep_time
                         : $Opt{'short-date'}
-                            ? "${Year}${Month}${Day}T${Hour}${Min}${Sec}Z"
-                            : "$Year-$Month-$Day $Hour:$Min:$Sec"
+                            ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
+                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'} $Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}"
                     : "",
-                $Lon, # X-axis
-                $Lat, # Y-axis
-                $print_ele ? $Ele : "", # Elevation
+                $Dat{'lon'}, # X-axis
+                $Dat{'lat'}, # Y-axis
+                $print_ele ? $Dat{'ele'} : "", # Elevation
                 "\n"
             );
             # }}}
@@ -757,7 +756,7 @@ sub print_entry {
     }
 
     if (!$last_time && $Opt{'output-format'} eq "ps") {
-        $Line .= "$Lon $Lat m\n";
+        $Line .= "$Dat{'lon'} $Dat{'lat'} m\n";
     }
 
     if ($do_print) {
@@ -772,9 +771,9 @@ sub print_entry {
         print($Line);
     }
     $last_time = $ep_time;
-    $last_lon  = $Lon;
-    $last_lat  = $Lat;
-    $last_ele  = $Ele;
+    $last_lon  = $Dat{'lon'};
+    $last_lat  = $Dat{'lat'};
+    $last_ele  = $Dat{'ele'};
     $last_line = $data_line;
     $svg_start_thing = "\"/>\n";
     # }}}
