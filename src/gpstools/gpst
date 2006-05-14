@@ -390,8 +390,8 @@ for $curr_file (@ARGV) {
                 if ($Opt{'print-comments'}) {
                     print("# $_");
                     chomp;
-                    $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
                 }
+                $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
             }
         }
         # }}}
