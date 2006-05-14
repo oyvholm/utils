@@ -750,7 +750,7 @@ sub print_entry {
             );
             # }}}
         } else {
-            $Line .= $data_line;
+            die("$progname: \"$Opt{'output-format'}\": Unknown output format\n");
         }
         # }}}
     }
