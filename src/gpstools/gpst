@@ -552,11 +552,11 @@ sub print_entry {
     # various formats
     # {{{
     my %Dat = @_;
-    if (!defined($Dat{'lat'}) || !defined($Dat{'lon'})) {
+    if (!length($Dat{'lat'}) || !length($Dat{'lon'})) {
         return;
     }
-    my $print_time = defined($Dat{'year'}) ? 1 : 0;
-    my $print_ele = defined($Dat{'ele'}) ? 1 : 0;
+    my $print_time = length($Dat{'year'}) ? 1 : 0;
+    my $print_ele = length($Dat{'ele'}) ? 1 : 0;
     my $Line = "";
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
