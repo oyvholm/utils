@@ -217,6 +217,14 @@ for $curr_file (@ARGV) {
         # {{{
         while (<CurrFP>) {
             $data_line = $_;
+            %Dat = (
+                'year' => '', 'month' => '', 'day' => '',
+                'hour' => '', 'min' => '', 'sec' => '',
+                'lat' => '', 'lon' => '',
+                'ele' => '',
+                'desc' => '',
+            );
+
             if ($Opt{'save-to-file'} ne "\n") {
                 push(@first_lines, $_);
                 $_ =~ s/^# ?//; # Also read commented-out lines.
