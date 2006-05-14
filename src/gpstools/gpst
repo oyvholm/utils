@@ -308,7 +308,7 @@ for $curr_file (@ARGV) {
                 ($NS eq "S") && ($Dat{'lat'} = 0-$Dat{'lat'});
                 ($WE eq "W") && ($Dat{'lon'} = 0-$Dat{'lon'});
                 # MapSource in win xp writes YYYY, but YY in win98se.
-                ($Dat{'year'} =~ /\d/ && $Dat{'year'} < 1900) && ($Dat{'year'} += 2000);
+                (defined($Dat{'year'}) && $Dat{'year'} =~ /\d/ && $Dat{'year'} < 1900) && ($Dat{'year'} += 2000);
                 print_entry(%Dat);
                 # }}}
             } elsif (m#^T\t(\d\d)/(\d\d)/(\d\d\d\d) (\d\d):(\d\d):(\d\d)\t(.+)\xB0(.+)'(.+)"\t(.+)\xB0(.+)'(.+)"#) {
