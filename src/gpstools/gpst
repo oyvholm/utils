@@ -822,7 +822,7 @@ sub print_entry {
                              "<pos>$Spc",
                                  (length($Dat{'lon'})) ? "<x>$Dat{'lon'}</x>$Spc" : "",
                                  (length($Dat{'lat'})) ? "<y>$Dat{'lat'}</y>$Spc" : "",
-                                 ($print_ele)   ? "<z>$Dat{'ele'}</z>$Spc" : "",
+                                 ($print_ele) ? "<z>$Dat{'ele'}</z>$Spc" : "",
                              "</pos>$Spc",
                          "</gps>\n"
                     );
