@@ -29,7 +29,7 @@ our %Opt = (
     'help' => 0,
     'inside' => 0,
     'near' => "",
-    'output-format' => "",
+    'output-format' => "gpsml",
     'outside' => 0,
     'pos1' => "",
     'pos2' => "",
@@ -197,7 +197,7 @@ if ($Opt{'comment-out-dups'}) {
     # }}}
 }
 
-print_header(*STDOUT);
+$Opt{'save-to-file'} eq "\n" && print_header(*STDOUT);
 
 my @first_lines;
 my $xml_data;
@@ -223,6 +223,8 @@ for $curr_file (@ARGV) {
                 'lat' => '', 'lon' => '',
                 'ele' => '',
                 'desc' => '',
+                'error' => 0,
+                'type' => 'tp',
             );
 
             if ($Opt{'save-to-file'} ne "\n") {
@@ -230,7 +232,35 @@ for $curr_file (@ARGV) {
                 $_ =~ s/^# ?//; # Also read commented-out lines.
             }
             $xml_data = "";
-            if (/^<\?xml\b/) {
+            if (m#^<(e?tp)\b.*?>(.*?)</(e?tp)>$#) {
+                # gpsml — The main storage format {{{
+                my ($Elem, $Data) =
+                   (   $1,    $2);
+                $Elem eq "etp" && ($Dat{'error'} = 1);
+                my $Time = "";
+                $Data =~ m#<time>(.*?)</time># && ($Time = $1);
+                $Time =~ s{
+                    (\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?([\d\.]+?)Z
+                } {
+                    ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                     $Dat{'hour'},   $Dat{'min'}, $Dat{'sec'}) =
+                    (          $1,            $2,          $3,
+                               $4,            $5,          $6);
+                    "";
+                }ex;
+                $Data =~ m#<lat>($DIGIT*?)</lat># && ($Dat{'lat'} = $1);
+                $Data =~ m#<lon>($DIGIT*?)</lon># && ($Dat{'lon'} = $1);
+                $Data =~ m#<ele>($DIGIT*?)</ele># && ($Dat{'ele'} = $1);
+                $Data =~ m#<desc>(.*?)</desc># && ($Dat{'desc'} = xml_to_txt($1));
+                print_entry(%Dat);
+                # }}}
+            } elsif (m#^<break\b.*?/>#) {
+                $found_move = 1;
+            } elsif (m#^<(desc|title|pause)\b.*?>(.*?)</(desc|title|pause)>#) {
+                $Dat{'type'} = $1;
+                $Dat{$1} = xml_to_txt($2);
+                print_entry(%Dat);
+            } elsif (/^<gpx\b/) {
                 $xml_data = $_;
                 $xml_data .= join("", <CurrFP>);
                 if (!length($Opt{'output-format'})) {
@@ -489,7 +519,13 @@ sub print_xml_gps {
 sub print_header {
     # {{{
     local *OutFP = shift;
-    if ($Opt{'output-format'} eq "gpstrans") {
+    if ($Opt{'output-format'} eq "gpsml") {
+        print(OutFP join("",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+            "<gpsml>\n",
+            "<track>\n",
+        ));
+    } elsif ($Opt{'output-format'} eq "gpstrans") {
         print(OutFP "Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84\n");
     } elsif ($Opt{'output-format'} eq "gpx") {
         print(OutFP join("",
@@ -523,7 +559,12 @@ sub print_header {
 sub print_footer {
     # Print footer {{{
     local *OutFP = shift;
-    if ($Opt{'output-format'} eq "gpx") {
+    if ($Opt{'output-format'} eq "gpsml") {
+        print(OutFP join("",
+            "</track>\n",
+            "</gpsml>\n",
+        ));
+    } elsif ($Opt{'output-format'} eq "gpx") {
         print(OutFP join("",
             "$Spc$Spc$Spc$Spc</trkseg>\n",
             "$Spc$Spc</trk>\n",
@@ -552,11 +593,9 @@ sub print_entry {
     # various formats
     # {{{
     my %Dat = @_;
-    if (!length($Dat{'lat'}) || !length($Dat{'lon'})) {
-        return;
-    }
     my $print_time = length($Dat{'year'}) ? 1 : 0;
     my $print_ele = length($Dat{'ele'}) ? 1 : 0;
+    my $print_desc = length($Dat{'desc'}) ? 1 : 0;
     my $Line = "";
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
@@ -627,10 +666,20 @@ sub print_entry {
             }
         }
         if (open(ToFP, ">", $file_name)) {
+            print_header(*ToFP);
             print(ToFP ($from_stdin ? @first_lines : ()), (length($xml_data) ? $xml_data : <>)) ||
                 die("$progname: $file_name: Cannot write to file: $!\n");
+            print_footer(*ToFP);
             close(ToFP);
-            print("$progname: Saved unconverted data to \"$file_name\"\n");
+            if ($Opt{'output-format'} eq "gpsml") {
+                printf("<include>%s</include>\n",
+                       txt_to_xml($file_name));
+            } elsif ($Opt{'output-format'} eq "gpx") {
+                printf("<!-- Saved unconverted data to \"%s\" -->\n",
+                       txt_to_xml($file_name));
+            } else {
+                print("$progname: Saved unconverted data to \"$file_name\"\n");
+            }
             exit 0;
         } else {
             die("$progname: $file_name: Cannot create file: $!\n");
@@ -674,11 +723,17 @@ sub print_entry {
 
     if ($Opt{'create-breaks'} && $ep_time-$last_time > $PAUSE_LIMIT && $last_time) {
         $pause_len = $ep_time-$last_time;
+        D("pause_len set to '$pause_len'");
     }
 
-    if ($pause_len && ($Opt{'output-format'} eq "csv")) {
-        $Line .= sprintf("# Pause: %s\n# move\n",
-                         sec_to_readable($ep_time-$last_time));
+    if ($pause_len) {
+        if ($Opt{'output-format'} eq "gpsml") {
+            $Line .= sprintf("<pause>%s</pause>\n",
+                             sec_to_readable($ep_time-$last_time));
+        } elsif ($Opt{'output-format'} eq "csv") {
+            $Line .= sprintf("# Pause: %s\n# move\n",
+                             sec_to_readable($ep_time-$last_time));
+        }
     }
 
     if ($do_print) {
@@ -689,7 +744,37 @@ sub print_entry {
         if ($Opt{'double-y-scale'}) {
             $Dat{'lat'} *= 2;
         }
-        if ($Opt{'output-format'} eq "xgraph") {
+        if ($Opt{'output-format'} eq "gpsml") {
+            if ($Dat{'type'} eq "tp") {
+                my $Elem = $Dat{'error'} ? "etp" : "tp";
+                $Line .= join("",
+                    "<$Elem> ",
+                        $print_time
+                            ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</time> "
+                            : "",
+                        (length($Dat{'lat'}))
+                            ? "<lat>" . $Dat{'lat'}*1.0 . "</lat> "
+                            : "",
+                        (length($Dat{'lon'}))
+                            ? "<lon>" . $Dat{'lon'}*1.0 . "</lon> "
+                            : "",
+                        ($print_ele)
+                            ? "<ele>" . $Dat{'ele'}*1.0 . "</ele> "
+                            : "",
+                        ($print_desc)
+                            ? sprintf("<desc>%s</desc> ",
+                                      txt_to_xml($Dat{'desc'}))
+                            : "",
+                     "</$Elem>\n"
+                );
+            } elsif ($Dat{'type'} =~ /^(pause|desc|title)$/) {
+                $Line .= sprintf("<%s>%s</%s>\n",
+                                 $1,
+                                 txt_to_xml($Dat{$1}),
+                                 $1);
+            }
+        } elsif ($Opt{'output-format'} eq "xgraph") {
             $pause_len && ($Line .= "move ");
             ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
         } elsif($Opt{'output-format'} eq "gpstrans") {
@@ -775,6 +860,9 @@ sub print_entry {
 
     if ($do_print) {
         if ($found_move) {
+            if ($Opt{'output-format'} eq "gpsml") {
+                $Line = "<break/>\n$Line";
+            }
             (!$pause_len && ($Opt{'output-format'} eq "xgraph")) && ($Line .= "move $Line");
             ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
             if ($Opt{'output-format'} eq "gpx") {
@@ -917,6 +1005,26 @@ sub ddd_to_dms {
     # }}}
 }
 
+sub txt_to_xml {
+    # Convert plain text to XML {{{
+    my $Txt = shift;
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+}
+
+sub xml_to_txt {
+    # Convert XML data to plain text {{{
+    my $Txt = shift;
+    $Txt =~ s/&lt;/</gs;
+    $Txt =~ s/&gt;/>/gs;
+    $Txt =~ s/&amp;/&/gs;
+    return($Txt);
+    # }}}
+}
+
 sub print_version {
     # Print program version {{{
     print("$rcs_id\n");
@@ -970,6 +1078,7 @@ Options:
     Use output format x:
       clean
       csv
+      gpsml (Default)
       gpstrans
       gpx (Not complete)
       poscount (Experimental)
@@ -1122,6 +1231,13 @@ Use output format x:
 =item clean
 
 =item csv
+
+=item gpsml (Default)
+
+This is the format which is meant to be used when storing the track 
+logs.
+It is line-based XML which makes it easy to edit and grep. Probably not 
+finished yet.
 
 =item gpstrans
 
