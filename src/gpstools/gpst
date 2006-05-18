@@ -398,7 +398,7 @@ for $curr_file (@ARGV) {
                     $lon_degmin, $lon_mindec);
                 ($Dat{'year'}, $Dat{'month'}, $Dat{'day'}, $Dat{'hour'}, 
                 $Dat{'min'}, $Dat{'sec'}, $NS, $lat_deg, 
-                $lat_degmin, $lat_degmin, $EW, 
+                $lat_degmin, $lat_mindec, $EW, 
                 $lon_deg, $lon_degmin, $lon_mindec, 
                 $Dat{'accur'}, $Dat{'ele'}, $Dat{'unknown'}) =
                 ($2+2000, $3, $4, $5, $6, $7, $8, $9, $10, $11, 
@@ -411,6 +411,8 @@ for $curr_file (@ARGV) {
                 $tmp_lat =~ s/\./$Des/;
                 ($NS eq "S") && ($tmp_lat = 0-$tmp_lat);
                 ($EW eq "W") && ($tmp_lon = 0-$tmp_lon);
+                $Dat{'lat'} = $tmp_lat;
+                $Dat{'lon'} = $tmp_lon;
                 print_entry(%Dat);
                 # }}}
             } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
