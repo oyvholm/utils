@@ -394,23 +394,23 @@ for $curr_file (@ARGV) {
                     $
                     # }}}
                     /x) {
-                my ($NS, $EW, $Y_deg, $Y_degmin, $Y_mindec, $X_deg, 
-                    $X_degmin, $X_mindec);
+                my ($NS, $EW, $lat_deg, $lat_degmin, $lat_mindec, $lon_deg, 
+                    $lon_degmin, $lon_mindec);
                 ($Dat{'year'}, $Dat{'month'}, $Dat{'day'}, $Dat{'hour'}, 
-                $Dat{'min'}, $Dat{'sec'}, $NS, $Y_deg, 
-                $Y_degmin, $Y_degmin, $EW, 
-                $X_deg, $X_degmin, $X_mindec, 
+                $Dat{'min'}, $Dat{'sec'}, $NS, $lat_deg, 
+                $lat_degmin, $lat_degmin, $EW, 
+                $lon_deg, $lon_degmin, $lon_mindec, 
                 $Dat{'accur'}, $Dat{'ele'}, $Dat{'unknown'}) =
                 ($2+2000, $3, $4, $5, $6, $7, $8, $9, $10, $11, 
                  $12, $13, $14, $15, $16, $17, $18);
                 my $ep_time = timegm_nocheck($Dat{'sec'}, $Dat{'min'}, $Dat{'hour'}, $Dat{'day'}, $Dat{'month'}-1, $Dat{'year'});
                 $last_time = $ep_time;
-                my $tmp_x = sprintf("%.5f", $X_deg + $X_degmin/60 + $X_mindec/60000);
-                my $tmp_y = sprintf("%.5f", $Y_deg + $Y_degmin/60 + $Y_mindec/60000);
-                $tmp_x =~ s/\./$Des/;
-                $tmp_y =~ s/\./$Des/;
-                ($NS eq "S") && ($tmp_y = 0-$tmp_y);
-                ($EW eq "W") && ($tmp_x = 0-$tmp_x);
+                my $tmp_lon = sprintf("%.5f", $lon_deg + $lon_degmin/60 + $lon_mindec/60000);
+                my $tmp_lat = sprintf("%.5f", $lat_deg + $lat_degmin/60 + $lat_mindec/60000);
+                $tmp_lon =~ s/\./$Des/;
+                $tmp_lat =~ s/\./$Des/;
+                ($NS eq "S") && ($tmp_lat = 0-$tmp_lat);
+                ($EW eq "W") && ($tmp_lon = 0-$tmp_lon);
                 print_entry(%Dat);
                 # }}}
             } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(__________________________________________)/) {
@@ -842,8 +842,8 @@ sub print_entry {
                             ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
                             : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'} $Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}"
                     : "",
-                $Dat{'lon'}, # X-axis
-                $Dat{'lat'}, # Y-axis
+                $Dat{'lon'},
+                $Dat{'lat'},
                 $print_ele ? $Dat{'ele'} : "", # Elevation
                 "\n"
             );
@@ -938,14 +938,14 @@ sub sec_to_readable {
 
 sub ps_header {
     # Send a Postscript header to stdout {{{
-    my ($bl_x, $bl_y, $br_x, $br_y) = @_;
+    my ($bl_lon, $bl_lat, $br_lon, $br_lat) = @_;
     my $Date = sec_to_string(time);
     return(join("",
         "%!PS-Adobe-3.0 EPSF-3.0\n",
         "%%Creator: $rcs_id\n",
         "%%Title:\n",
         "%%CreationDate: $Date\n",
-        "%%BoundingBox: $bl_x $bl_y $br_x $br_y\n",
+        "%%BoundingBox: $bl_lon $bl_lat $br_lon $br_lat\n",
         "%%DocumentData: Clean7Bit\n",
         "%%EndComments\n",
         "%%BeginProlog\n",
@@ -1123,7 +1123,7 @@ Options:
   -w, --strip-whitespace
     Strip all unnecessary whitespace.
   -y, --double-y-scale
-    Double Y scale to get it right in gnuplot.
+    Double Y scale (latitude) to get it right in gnuplot.
   --debug
     Print debugging messages.
 
@@ -1348,7 +1348,7 @@ Create XML output.
 
 =item B<-y>, B<--double-y-scale>
 
-Double Y scale to get it right in gnuplot.
+Double Y scale (latitude) to get it right in gnuplot.
 
 =item B<-h>, B<--help>
 
