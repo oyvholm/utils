@@ -276,9 +276,18 @@ for $curr_file (@ARGV) {
                 # }}}
             } elsif (m#^<break\b.*?/>#) {
                 $found_move = 1;
-            } elsif (m#^<(desc|title|pause)\b.*?>(.*?)</(desc|title|pause)>#) {
+            } elsif (m#^<(title|pause)\b.*?>(.*?)</(title|pause)>#) {
                 $Dat{'type'} = $1;
                 $Dat{$1} = $2;
+                print_entry(%Dat);
+            } elsif (m#^<desc\b.*?>(.*$)#s) {
+                $Dat{'type'} = "desc";
+                my $Txt = $1;
+                until ($Txt =~ m#</desc>#s) {
+                    $Txt .= <CurrFP>;
+                }
+                $Txt =~ s#^(.*)(</desc>.*$)#$1#s;
+                $Dat{'desc'} = $Txt;
                 print_entry(%Dat);
             } elsif (/^<gpx\b/) {
                 $xml_data = $_;
