@@ -755,6 +755,7 @@ sub print_entry {
 
     if ($Opt{'save-to-file'} ne "\n") {
         # {{{
+        $print_time || return;
         my $base_name = "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
                         "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z" .
                         "$Opt{'save-to-file'}";
