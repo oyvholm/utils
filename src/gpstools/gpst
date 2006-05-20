@@ -673,6 +673,9 @@ sub print_entry {
     # various formats
     # {{{
     my %Dat = @_;
+    defined($Dat{'year'}) || ($Dat{'year'} = "");
+    defined($Dat{'ele'}) || ($Dat{'ele'} = "");
+    defined($Dat{'desc'}) || ($Dat{'desc'} = "");
     my $print_time = length($Dat{'year'}) ? 1 : 0;
     my $print_ele = length($Dat{'ele'}) ? 1 : 0;
     my $print_desc = length($Dat{'desc'}) ? 1 : 0;
