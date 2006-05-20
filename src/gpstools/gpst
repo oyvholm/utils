@@ -738,7 +738,7 @@ sub print_entry {
                 ));
                 # FIXME: Make --fix work with gpx and xml.
                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^(gpx|xml)$/)) {
-                    ($Line .= "# error ");
+                    $Dat{'error'} = 1;
                 }
             }
         }
