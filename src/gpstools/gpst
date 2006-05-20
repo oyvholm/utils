@@ -134,6 +134,7 @@ if ($Opt{'inside'} && $Opt{'outside'}) {
     die("$progname: Cannot mix the --inside and --outside options\n");
 }
 
+# FIXME: Hardcoding
 my $waypoint_file = "/home/sunny/gps/waypoints.gpx";
 
 # To avoid printing out extra "/> at the start of svg output:
