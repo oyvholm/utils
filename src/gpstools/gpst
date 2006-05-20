@@ -711,17 +711,23 @@ sub print_entry {
     # various formats
     # {{{
     my %Dat = @_;
-    defined($Dat{'year'}) || ($Dat{'year'} = "");
-    defined($Dat{'ele'}) || ($Dat{'ele'} = "");
     defined($Dat{'desc'}) || ($Dat{'desc'} = "");
+    defined($Dat{'ele'}) || ($Dat{'ele'} = "");
+    defined($Dat{'lat'}) || ($Dat{'lat'} = "");
+    defined($Dat{'lon'}) || ($Dat{'lon'} = "");
+    defined($Dat{'year'}) || ($Dat{'year'} = "");
     my $print_time = length($Dat{'year'}) ? 1 : 0;
+    my $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
+    if (!$print_pos) {
+        $Dat{'lat'} = $Dat{'lon'} = "";
+    }
     my $print_ele = length($Dat{'ele'}) ? 1 : 0;
     my $print_desc = length($Dat{'desc'}) ? 1 : 0;
     my $Line = "";
     D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
 
-    if ($Opt{'near'}) {
+    if ($Opt{'near'} && $print_pos) {
         $Line .= sprintf("%s ",
                          list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}));
     }
