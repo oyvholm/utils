@@ -729,7 +729,7 @@ sub print_entry {
         $Dat{'min'}   = sprintf("%02u", $Dat{'min'});
         $Dat{'sec'}   = sprintf("%02u", $Dat{'sec'});
         if ($Opt{'chronology'}) {
-            if ($last_time > $ep_time) {
+            if ($last_time > $ep_time && !$Dat{'error'}) {
                 warn(sprintf(
                     "%s: \"%sZ\": Next date is %s in the past (%sZ)\n",
                     $progname, sec_to_string($last_time, "T"),
