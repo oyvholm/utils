@@ -147,15 +147,7 @@ my %Round = ();
 
 if (defined($Opt{'round'})) {
     my $R = $Opt{'round'};
-    $R =~
-    s{
-        ([a-z]+)=(\d+)
-    }{
-        my ($Ele, $Val) =
-           (  $1,   $2);
-        $Round{$Ele} = $Val;
-        "";
-    }gex;
+    $R =~ s/([a-z]+)=(\d+)/($Round{$1}=$2, "")/eg;
 }
 
 length($Opt{'undefined'}) && ($Udef = $Opt{'undefined'});
