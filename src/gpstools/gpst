@@ -101,11 +101,11 @@ my ($lat1, $lon1, $lat2, $lon2) =
 my %Poscount = ();
 
 my %Req = (
-    'altitude' => ($Opt{'require'} =~ /a/) ? 1 : 0,
+    'ele' => ($Opt{'require'} =~ /e/) ? 1 : 0,
     'position' => ($Opt{'require'} =~ /p/) ? 1 : 0,
     'time' => ($Opt{'require'} =~ /t/) ? 1 : 0,
 );
-$Opt{'require'} =~ /[^apt]/
+$Opt{'require'} =~ /[^ept]/
     && die("$0: Unknown flag in --require (-r) value\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -451,7 +451,7 @@ for $curr_file (@ARGV) {
                     (\d\d) # Longitude minute
                     (\d\d\d) # Longitude minute degree
                     (....) # Accurancy
-                    (......) # Altitude
+                    (......) # Elevation
                     (...............)
                     $
                     # }}}
@@ -708,7 +708,7 @@ sub print_footer {
 }
 
 sub print_entry {
-    # Print a GPS entry with time, latitude, longitude and altitude in 
+    # Print a GPS entry with time, latitude, longitude and elevation in 
     # various formats
     # {{{
     my %Dat = @_;
@@ -835,7 +835,7 @@ sub print_entry {
         if ($Opt{'require'}) {
             $Req{'time'} && !$print_time && return;
             $Req{'position'} && !$print_pos && return;
-            $Req{'altitude'} && !$print_ele && return;
+            $Req{'ele'} && !$print_ele && return;
         }
 
         if ($Opt{'inside'} || $Opt{'outside'}) {
@@ -1294,8 +1294,8 @@ Options:
   -r x, --require x
     Specify requirements for trackpoints to be written. x is a string 
     with the following flags:
-      a
-        Print only waypoints which have an altitude.
+      e
+        Print only waypoints which have an elevation.
       p
         Print only waypoints which have a position.
       t
@@ -1483,11 +1483,11 @@ the following flags:
 
 =over 4
 
-=item a
+=item e
 
 =over 4
 
-=item Print only waypoints which have an altitude.
+=item Print only waypoints which have an elevation.
 
 =back
 
