@@ -426,10 +426,12 @@ for $curr_file (@ARGV) {
                  $4, $5, $6,
                  $7, $8, $9,
                  $10, $11, $12);
-                $Dat{'lat'} = sprintf("%.5f",
-                                      1*($lat_d+($lat_m/60)+($lat_s/3600)));
-                $Dat{'lon'} = sprintf("%.5f",
-                                      $lon_d+($lon_m/60)+($lon_s/3600));
+                my $Flat = defined($Round{'lat'}) ? ".$Round{'lat'}" : "";
+                my $Flon = defined($Round{'lon'}) ? ".$Round{'lon'}" : "";
+                $Dat{'lat'} = sprintf("%${Flat}f",
+                                      1.0*($lat_d+($lat_m/60)+($lat_s/3600)));
+                $Dat{'lon'} = sprintf("%${Flon}f",
+                                      1.0*$lon_d+($lon_m/60)+($lon_s/3600));
                 print_entry(%Dat);
                 # }}}
             } elsif (
@@ -490,11 +492,14 @@ for $curr_file (@ARGV) {
                     $Dat{'day'}, $Dat{'month'}-1, $Dat{'year'}
                 );
                 $last_time = $ep_time;
-                my $tmp_lon = sprintf("%.5f",
+                my $Flat = defined($Round{'lat'}) ? ".$Round{'lat'}" : "";
+                my $Flon = defined($Round{'lon'}) ? ".$Round{'lon'}" : "";
+                my $tmp_lon = sprintf(
+                                      "%${Flon}f",
                                       $lon_deg +
                                       $lon_degmin/60 +
                                       $lon_mindec/60000);
-                my $tmp_lat = sprintf("%.5f",
+                my $tmp_lat = sprintf("%${Flat}f",
                                       $lat_deg +
                                       $lat_degmin/60 +
                                       $lat_mindec/60000);
