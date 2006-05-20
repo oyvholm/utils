@@ -250,7 +250,7 @@ for $curr_file (@ARGV) {
                 $_ =~ s/^# ?//; # Also read commented-out lines.
             }
             $xml_data = "";
-            if (m#^<(e?tp)\b.*?>(.*?)</(e?tp)>$#) {
+            if (m#^<(e?tp)\b.*?>(.*?)</(e?tp)>\s*$#) {
                 # gpsml — The main storage format {{{
                 my ($Elem, $Data) =
                    (   $1,    $2);
