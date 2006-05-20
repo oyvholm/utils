@@ -102,9 +102,10 @@ my %Poscount = ();
 
 my %Req = (
     'altitude' => ($Opt{'require'} =~ /a/) ? 1 : 0,
-    'time' => ($Opt{'require'} =~ /t/) ? 1 : 0
+    'position' => ($Opt{'require'} =~ /p/) ? 1 : 0,
+    'time' => ($Opt{'require'} =~ /t/) ? 1 : 0,
 );
-$Opt{'require'} =~ /[^at]/
+$Opt{'require'} =~ /[^apt]/
     && die("$0: Unknown flag in --require (-r) value\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -833,6 +834,7 @@ sub print_entry {
         # {{{
         if ($Opt{'require'}) {
             $Req{'time'} && !$print_time && return;
+            $Req{'position'} && !$print_pos && return;
             $Req{'altitude'} && !$print_ele && return;
         }
 
@@ -1294,6 +1296,8 @@ Options:
     with the following flags:
       a
         Print only waypoints which have an altitude.
+      p
+        Print only waypoints which have a position.
       t
         Print only waypoints which have a timestamp.
   -s, --short-date
@@ -1490,6 +1494,12 @@ the following flags:
 =back
 
 =over 4
+
+=item p
+
+=over 4
+
+=item Print only waypoints which have a position.
 
 =item t
 
