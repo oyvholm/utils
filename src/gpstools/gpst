@@ -769,7 +769,6 @@ sub print_entry {
             }
         }
     } else {
-        $Req{'time'} && ($Dat{'type'} eq "tp") && return;
         $ep_time = 0;
         $Dat{'year'} = 0;
         $Dat{'month'} = 0;
@@ -829,60 +828,69 @@ sub print_entry {
 
     my $pause_len = 0;
     my $do_print = 1;
-    ($Req{'altitude'} && !$print_ele) && return;
 
-    if ($Opt{'inside'} || $Opt{'outside'}) {
+    if ($Dat{'type'} eq "tp") {
+        # {{{
+        if ($Opt{'require'}) {
+            $Req{'time'} && !$print_time && return;
+            $Req{'altitude'} && !$print_ele && return;
+        }
+
+        if ($Opt{'inside'} || $Opt{'outside'}) {
+            if (
+                ($Dat{'lat'} < $lat1) ||
+                ($Dat{'lat'} > $lat2) ||
+                ($Dat{'lon'} < $lon1) ||
+                ($Dat{'lon'} > $lon2)
+            ) {
+                $Opt{'inside'} && return;
+            } else {
+                $Opt{'outside'} && return;
+            }
+        }
+
+        if ($Opt{'output-format'} eq "ps") {
+            $Dat{'lon'} *= 100;
+            $Dat{'lat'} *= 100;
+        }
+
         if (
-            ($Dat{'lat'} < $lat1) ||
-            ($Dat{'lat'} > $lat2) ||
-            ($Dat{'lon'} < $lon1) ||
-            ($Dat{'lon'} > $lon2)
+            $Opt{'skip-dups'}
+            && ($Dat{'lon'} eq $last_lon)
+            && ($Dat{'lat'} eq $last_lat)
+            && ($Dat{'ele'} eq $last_ele)
         ) {
-            $Opt{'inside'} && return;
+            if ($in_dupskip) {
+                $do_print = 0;
+            } else {
+                $do_print = 1;
+            }
+            $in_dupskip = 1;
         } else {
-            $Opt{'outside'} && return;
+                $do_print = 1;
+                $in_dupskip && ($Line .= $last_line);
+                $in_dupskip = 0;
         }
-    }
 
-    if ($Opt{'output-format'} eq "ps") {
-        $Dat{'lon'} *= 100;
-        $Dat{'lat'} *= 100;
-    }
-    if (
-        $Opt{'skip-dups'}
-        && ($Dat{'lon'} eq $last_lon)
-        && ($Dat{'lat'} eq $last_lat)
-        && ($Dat{'ele'} eq $last_ele)
-    ) {
-        if ($in_dupskip) {
-            $do_print = 0;
-        } else {
-            $do_print = 1;
+        if (
+            $Opt{'create-breaks'}
+            && $ep_time-$last_time > $PAUSE_LIMIT
+            && $last_time
+        ) {
+            $pause_len = $ep_time-$last_time;
+            D("pause_len set to '$pause_len'");
         }
-        $in_dupskip = 1;
-    } else {
-            $do_print = 1;
-            $in_dupskip && ($Line .= $last_line);
-            $in_dupskip = 0;
-    }
 
-    if (
-        $Opt{'create-breaks'}
-        && $ep_time-$last_time > $PAUSE_LIMIT
-        && $last_time
-    ) {
-        $pause_len = $ep_time-$last_time;
-        D("pause_len set to '$pause_len'");
-    }
-
-    if ($pause_len) {
-        if ($Opt{'output-format'} eq "gpsml") {
-            $Line .= sprintf("<pause>%s</pause>\n",
-                             sec_to_readable($ep_time-$last_time));
-        } elsif ($Opt{'output-format'} eq "csv") {
-            $Line .= sprintf("# Pause: %s\n# move\n",
-                             sec_to_readable($ep_time-$last_time));
+        if ($pause_len) {
+            if ($Opt{'output-format'} eq "gpsml") {
+                $Line .= sprintf("<pause>%s</pause>\n",
+                                 sec_to_readable($ep_time-$last_time));
+            } elsif ($Opt{'output-format'} eq "csv") {
+                $Line .= sprintf("# Pause: %s\n# move\n",
+                                 sec_to_readable($ep_time-$last_time));
+            }
         }
+        # }}}
     }
 
     if ($do_print) {
