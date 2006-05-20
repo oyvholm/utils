@@ -601,12 +601,12 @@ sub print_gpx {
                     $el_trkpt =~
                     m{
                         <time>(\d\d\d\d)-?(\d\d)-?(\d\d)T
-                        (\d\d):?(\d\d):?(\d\d)\.?(\d*?)Z</time>
+                        (\d\d):?(\d\d):?([\d\.]+)Z</time>
                     }x
                 ) {
                     ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
-                     $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}, $Dat{'secfrac'}) =
-                    ($1, $2, $3, $4, $5, $6, $7);
+                     $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
+                    ($1, $2, $3, $4, $5, $6);
                 }
                 print_entry(%Dat);
                 "";
@@ -626,13 +626,13 @@ sub print_xml_gps {
     if ($Str =~
         m{
             <date>(\d\d\d\d)-?(\d\d)-?(\d\d)T
-            (\d\d):?(\d\d):?(\d\d)\.?(\d*?)Z</date>
+            (\d\d):?(\d\d):?([\d\.]+)Z</date>
         }x
     ) {
         ($Dat{'year'}, $Dat{'mon'}, $Dat{'day'},
-         $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}, $Dat{'secfrac'}) =
+         $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
         ($1, $2, $3,
-         $4, $5, $6, $7);
+         $4, $5, $6);
     }
     if ($Str =~ m#<pos>(.*?)</pos>#s) {
         my $Txt = $1;
