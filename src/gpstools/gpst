@@ -244,11 +244,13 @@ for $curr_file (@ARGV) {
                 'error' => 0,
                 'type' => 'tp',
             );
+            my $check_desc = 0;
 
             if ($Opt{'save-to-file'} ne "\n") {
                 push(@first_lines, $_);
-                $_ =~ s/^# ?//; # Also read commented-out lines.
             }
+            s/^# error // && ($Dat{'error'} = 1);
+            s/^# ?// && ($Dat{'error'} = 1, $check_desc = 1);
             $xml_data = "";
             if (m#^<(e?tp)\b.*?>(.*?)</(e?tp)>\s*$#) {
                 # gpsml — The main storage format {{{
@@ -288,12 +290,10 @@ for $curr_file (@ARGV) {
                 }
                 read_xmlfile($xml_data);
                 last;
-            } elsif (/^# Pause: /) {
+            } elsif (/^Pause: /) {
                 $Opt{'print-comments'} && print;
-            } elsif (/^# move$/) {
+            } elsif (/^move$/) {
                 $found_move = 1;
-            } elsif (/^#/) {
-                $Opt{'print-comments'} && print;
             } elsif (m#^(\d+)\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
                 # CSV format, epoch style {{{
                 my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -497,6 +497,18 @@ for $curr_file (@ARGV) {
                 ($Opt{'output-format'} eq "csv")
                     && ($Opt{'save-to-file'} eq "\n")
                     && print("\n");
+            } elsif ($check_desc) {
+                my $Comment = $_;
+                if (defined($Comment)) {
+                    $Comment =~ s/^\s*(.*?)\s*$/$1/;
+                    if ($Opt{'output-format'} eq "gpsml") {
+                        $Dat{'desc'} = $Comment;
+                        $Dat{'type'} = "desc";
+                        print_entry(%Dat);
+                    } elsif ($Opt{'print-comments'}) {
+                        print;
+                    }
+                }
             } else {
                 if ($Opt{'print-comments'}) {
                     print("# $_");
