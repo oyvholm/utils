@@ -760,11 +760,7 @@ sub print_entry {
     }
 
     if ($Opt{'output-format'} eq "poscount") {
-        my ($Lat_str, $Lon_str) =
-           (      "",       "");
-        $Dat{'lon'} =~ /^(\d+\.\d\d)/ && ($Lon_str = $1);
-        $Dat{'lat'} =~ /^(\d+\.\d\d)/ && ($Lat_str = $1);
-        my $Name = "${Lon_str},${Lat_str}";
+        my $Name = "$Dat{'lon'},$Dat{'lat'}";
         defined($Poscount{$Name}) || ($Poscount{$Name} = 0);
         $Poscount{$Name}++;
         return;
@@ -1304,7 +1300,7 @@ Options:
       gpsml (Default)
       gpstrans
       gpx (Not complete)
-      poscount (Experimental)
+      poscount
       ps (Unfinished)
       svg (Unfinished)
       xgraph
@@ -1471,7 +1467,7 @@ finished yet.
 
 =item gpx (Not complete)
 
-=item poscount (Experimental)
+=item poscount
 
 Creates a 3D plot where areas with many trackpoints are higher than 
 areas with less track points.
