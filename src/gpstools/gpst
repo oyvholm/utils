@@ -482,10 +482,12 @@ for $curr_file (@ARGV) {
                 # }}}
             } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(_{42})/) {
                 # @020721221336__________________________________________ {{{
-                my ($Alfa,   $Year,   $Month, $Day, $Hour, $Min, $Sec, $Rest) =
-                   (   $1, $2+2000,       $3,   $4,    $5,   $6,   $7,    $8);
-                $Opt{'output-format'} eq "csv" && print("\n");
-                $found_move = 1;
+                ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                 $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}, $Dat{'rest'}) =
+                ($2+2000, $3, $4,
+                 $5, $6, $7, $8);
+                $Dat{'error'} = 1;
+                print_entry(%Dat);
                 # }}}
             } elsif (/^xmaplog /) {
                 ($Opt{'output-format'} eq "csv")
