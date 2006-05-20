@@ -377,6 +377,11 @@ for $curr_file (@ARGV) {
                 ) && ($Dat{'year'} += 2000);
                 print_entry(%Dat);
                 # }}}
+            } elsif (/^Track\t(.*?)\t/) {
+                $Dat{'title'} = "$1";
+                $Dat{'type'} = "title";
+                $found_move = 1;
+                print_entry(%Dat);
             } elsif (
                 m{^
                     T\t
@@ -529,6 +534,16 @@ sub print_gpx {
     }
     {
         my $el_trk = $2;
+        $el_trk =~
+        s{
+            <name\b(.*?)>(.*?)</name>
+        }{
+            my %tmp_dat = ();
+            $tmp_dat{'title'} = "$2";
+            $tmp_dat{'type'} = "title";
+            print_entry(%tmp_dat);
+            "";
+        }sex;
         $el_trk =~
         s{
             <trkseg\b(.*?)>(.*?)</trkseg>
