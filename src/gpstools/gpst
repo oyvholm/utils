@@ -271,15 +271,14 @@ for $curr_file (@ARGV) {
                 $Data =~ m#<lat>($DIGIT*?)</lat># && ($Dat{'lat'} = $1);
                 $Data =~ m#<lon>($DIGIT*?)</lon># && ($Dat{'lon'} = $1);
                 $Data =~ m#<ele>($DIGIT*?)</ele># && ($Dat{'ele'} = $1);
-                $Data =~ m#<desc>(.*?)</desc>#
-                    && ($Dat{'desc'} = xml_to_txt($1));
+                $Data =~ m#<desc>(.*?)</desc># && ($Dat{'desc'} = $1);
                 print_entry(%Dat);
                 # }}}
             } elsif (m#^<break\b.*?/>#) {
                 $found_move = 1;
             } elsif (m#^<(desc|title|pause)\b.*?>(.*?)</(desc|title|pause)>#) {
                 $Dat{'type'} = $1;
-                $Dat{$1} = xml_to_txt($2);
+                $Dat{$1} = $2;
                 print_entry(%Dat);
             } elsif (/^<gpx\b/) {
                 $xml_data = $_;
@@ -378,7 +377,7 @@ for $curr_file (@ARGV) {
                 print_entry(%Dat);
                 # }}}
             } elsif (/^Track\t(.*?)\t/) {
-                $Dat{'title'} = "$1";
+                $Dat{'title'} = txt_to_xml($1);
                 $Dat{'type'} = "title";
                 $found_move = 1;
                 print_entry(%Dat);
@@ -502,7 +501,7 @@ for $curr_file (@ARGV) {
                 if (defined($Comment)) {
                     $Comment =~ s/^\s*(.*?)\s*$/$1/;
                     if ($Opt{'output-format'} eq "gpsml") {
-                        $Dat{'desc'} = $Comment;
+                        $Dat{'desc'} = txt_to_xml($Comment);
                         $Dat{'type'} = "desc";
                         print_entry(%Dat);
                     } elsif ($Opt{'print-comments'}) {
@@ -553,7 +552,7 @@ sub print_gpx {
             <name\b(.*?)>(.*?)</name>
         }{
             my %tmp_dat = ();
-            $tmp_dat{'title'} = "$2";
+            $tmp_dat{'title'} = $2;
             $tmp_dat{'type'} = "title";
             print_entry(%tmp_dat);
             "";
@@ -899,14 +898,14 @@ sub print_entry {
                             : "",
                         ($print_desc)
                             ? sprintf("<desc>%s</desc> ",
-                                      txt_to_xml($Dat{'desc'}))
+                                      $Dat{'desc'})
                             : "",
                      "</$Elem>\n"
                 );
             } elsif ($Dat{'type'} =~ /^(pause|desc|title)$/) {
                 $Line .= sprintf("<%s>%s</%s>\n",
                                  $1,
-                                 txt_to_xml($Dat{$1}),
+                                 $Dat{$1},
                                  $1);
             }
         } elsif ($Opt{'output-format'} eq "xgraph") {
