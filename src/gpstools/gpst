@@ -35,6 +35,7 @@ our %Opt = (
     'pos2' => "",
     'print-comments' => 0,
     'require' => "",
+    'round' => "",
     'save-to-file' => "\n", # \n =  undefined, it’s banned in filenames anyway.
     'short-date' => 0,
     'skip-dups' => 0,
@@ -71,6 +72,7 @@ GetOptions(
     "pos2=s" => \$Opt{'pos2'},
     "print-comments|C" => \$Opt{'print-comments'},
     "require|r=s" => \$Opt{'require'},
+    "round|R=s" => \$Opt{'round'},
     "save-to-file|S=s" => \$Opt{'save-to-file'},
     "short-date|s" => \$Opt{'short-date'},
     "skip-dups|d" => \$Opt{'skip-dups'},
@@ -140,6 +142,21 @@ my $waypoint_file = "/home/sunny/gps/waypoints.gpx";
 
 # To avoid printing out extra "/> at the start of svg output:
 my $svg_start_thing = "";
+
+my %Round = ();
+
+if (defined($Opt{'round'})) {
+    my $R = $Opt{'round'};
+    $R =~
+    s{
+        ([a-z]+)=(\d+)
+    }{
+        my ($Ele, $Val) =
+           (  $1,   $2);
+        $Round{$Ele} = $Val;
+        "";
+    }gex;
+}
 
 length($Opt{'undefined'}) && ($Udef = $Opt{'undefined'});
 # Kunne vært et eget script på grunn av at det gjør sine helt egne 
@@ -733,6 +750,15 @@ sub print_entry {
                          list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}));
     }
 
+    if (length($Opt{'round'})) {
+        for my $Tmp (qw{ lat lon ele }) {
+            if (defined($Round{$Tmp}) && length($Dat{$Tmp})) {
+                D("Tmp = '$Tmp'");
+                ($Dat{$Tmp} = 1.0 * sprintf("%.$Round{$Tmp}f", $Dat{$Tmp}));
+            }
+        }
+    }
+
     if ($Opt{'output-format'} eq "poscount") {
         my ($Lat_str, $Lon_str) =
            (      "",       "");
@@ -1300,6 +1326,9 @@ Options:
         Print only waypoints which have a position.
       t
         Print only waypoints which have a timestamp.
+  -R x=y[,x2=y2[...]]
+    Round trackpoint element x to y decimals. Example:
+      --round lat=4,lon=5,ele=1
   -s, --short-date
     Use short date format.
   -S x, --save-to-file x
@@ -1514,6 +1543,14 @@ the following flags:
 =back
 
 Z<>
+
+=item -R x=y[,x2=y2[...]]
+
+Round trackpoint element x to y decimals.
+
+Example:
+
+ --round lat=4,lon=5,ele=1
 
 =item B<-s>, B<--short-date>
 
