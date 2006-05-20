@@ -100,6 +100,10 @@ my ($last_lon, $last_lat, $last_ele, $last_line) =
 my ($lat1, $lon1, $lat2, $lon2) =
    (-1000, -1000,  1000,  1000);
 
+my %Cmd = (
+    'gpsbabel' => '/usr/local/bin/gpsbabel',
+);
+
 my %Poscount = ();
 
 my %Req = (
@@ -1092,7 +1096,7 @@ sub list_nearest_waypoints {
     # {{{
     my ($Lat, $Lon, $Count) = @_;
     # FIXME: Incredible unfinished and kludgy.
-    if (open(WaypFP, "gpsbabel -i gpx -f $waypoint_file " .
+    if (open(WaypFP, "$Cmd{'gpsbabel'} -i gpx -f $waypoint_file " .
                      "-x radius,lat=$Lat,lon=$Lon,distance=1000 " .
                      "-o gpx -F - |")
     ) {
@@ -1106,7 +1110,7 @@ sub list_nearest_waypoints {
         }sex;
         return($Str);
     } else {
-        die("$progname: Cannot open gpsbabel pipe: $!\n");
+        die("$progname: Cannot open $Cmd{'gpsbabel'} pipe: $!\n");
     }
     # }}}
 }
@@ -1289,7 +1293,8 @@ Options:
     Use x as undefined value. Default: "$Udef".
   --near
     Add names of the three closest waypoints to the trackpoint. 
-    Unfinished and experimental, needs gpsbabel.
+    Unfinished and experimental, needs gpsbabel, which is called from 
+    the program as "$Cmd{'gpsbabel'}".
   -o x, --output-format x
     Use output format x:
       clean
