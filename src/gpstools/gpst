@@ -743,7 +743,7 @@ sub print_entry {
             }
         }
     } else {
-        $Req{'time'} && return;
+        $Req{'time'} && ($Dat{'type'} eq "tp") && return;
         $ep_time = 0;
         $Dat{'year'} = 0;
         $Dat{'month'} = 0;
