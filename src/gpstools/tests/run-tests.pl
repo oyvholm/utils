@@ -9,8 +9,16 @@
 # License: GNU General Public License, see end of file for legal stuff.
 #=======================================================================
 
+BEGIN {
+    push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
+    our @version_array;
+}
+
 use strict;
 use Getopt::Long;
+use Test::More qw(no_plan);
+
+use GPSTxml;
 
 $| = 1;
 
@@ -40,9 +48,37 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
-}
+diag("Check that testing is working");
+
+is(1 + 1 + 1, 3, "One and one and one is three"); # got to be goodlooking ’cause he’s so hard to see
+
+diag("Testing XML routines...");
+
+# txt_to_xml() and xml_to_txt() {{{
+
+is(txt_to_xml("abc"),
+    "abc",
+    "txt_to_xml(\"abc\")");
+is(txt_to_xml("<&>"),
+    "&lt;&amp;&gt;",
+    "txt_to_xml(\"<&>\")");
+is(txt_to_xml("first line\nsecond <\rthird\r\n<&>"),
+    "first line\nsecond &lt;\rthird\r\n&lt;&amp;&gt;",
+    "txt_to_xml() with multiline string");
+
+is(xml_to_txt("abc"),
+    "abc",
+    "xml_to_txt(\"abc\")");
+is(xml_to_txt("&lt;&amp;&gt;"),
+    "<&>",
+    "xml_to_txt(\"&lt;&amp;&gt;\")");
+is(xml_to_txt("first line\nsecond &lt;\rthird\r\n&lt;&amp;&gt;"),
+    "first line\nsecond <\rthird\r\n<&>",
+    "xml_to_txt() with multiline string");
+
+}}}
+
+diag("Testing finished.");
 
 sub print_version {
     # Print program version {{{
@@ -60,6 +96,8 @@ sub usage {
 $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
+
+Contains tests for the gpst(1) program.
 
 Options:
 
