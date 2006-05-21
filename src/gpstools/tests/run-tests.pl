@@ -19,6 +19,7 @@ use Getopt::Long;
 use Test::More qw(no_plan);
 
 use GPSTxml;
+use GPSTdate;
 
 $| = 1;
 
@@ -75,6 +76,46 @@ is(xml_to_txt("&lt;&amp;&gt;"),
 is(xml_to_txt("first line\nsecond &lt;\rthird\r\n&lt;&amp;&gt;"),
     "first line\nsecond <\rthird\r\n<&>",
     "xml_to_txt() with multiline string");
+
+# }}}
+
+diag("Testing date routines...");
+
+# sec_to_string() and sec_to_readable() {{{
+
+is(sec_to_string(1148220825),
+    "2006-05-21 14:13:45",
+    "sec_to_string() without separator");
+is(sec_to_string(1148220825, "T"),
+    "2006-05-21T14:13:45",
+    "sec_to_string() with separator");
+
+TODO: {
+    local $TODO = "sec_to_string() doesn’t take decimals at the moment";
+    is(sec_to_string(1148220825.93),
+        "2006-05-21 14:13:45.93",
+        "sec_to_string() with decimals");
+}
+
+is(sec_to_readable(0),
+    "0:00:00:00",
+    "sec_to_readable(0)");
+is(sec_to_readable(86400),
+    "1:00:00:00",
+    "sec_to_readable(86400)");
+is(sec_to_readable(86400*1000),
+    "1000:00:00:00",
+    "sec_to_readable(86400*1000)");
+is(sec_to_readable(86400+7200+180+4),
+    "1:02:03:04",
+    "sec_to_readable(86400+7200+180+4)");
+
+TODO: {
+    local $TODO = "sec_to_readable() doesn’t take decimals at the moment";
+    is(sec_to_readable(3.14),
+        "0:00:00:03.14",
+        "sec_to_readable(3.14)");
+}
 
 # }}}
 
