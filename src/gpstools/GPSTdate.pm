@@ -30,11 +30,16 @@ sub sec_to_string {
     # separator
     # {{{
     my ($Seconds, $Sep) = @_;
+    length($Seconds) || return(undef);
+    ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
+    my $Secfrac = ($Seconds =~ /^([\-\d]*)(\.\d+)$/) ? 1.0*$2 : "";
+    $Secfrac =~ s/^0//;
+
     defined($Sep) || ($Sep = " ");
     my @TA = gmtime($Seconds);
-    my($DateString) = sprintf("%04u-%02u-%02u%s%02u:%02u:%02u",
+    my($DateString) = sprintf("%04u-%02u-%02u%s%02u:%02u:%02u%s",
                               $TA[5]+1900, $TA[4]+1, $TA[3], $Sep,
-                              $TA[2], $TA[1], $TA[0]);
+                              $TA[2], $TA[1], $TA[0], $Secfrac);
     return($DateString);
     # }}}
 }
@@ -42,22 +47,28 @@ sub sec_to_string {
 sub sec_to_readable {
     # Convert seconds since 1970 to human-readable format (d:hh:mm:ss)
     # {{{
-    my $secs = shift;
+    my $Seconds = shift;
     my ($Day, $Hour, $Min, $Sec) =
        (   0,     0,    0,    0);
 
-    $Day = int($secs/86400);
-    $secs -= $Day * 86400;
+    length($Seconds) || ($Seconds = 0);
+    ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
+    my $Secfrac = ($Seconds =~ /^(\d*)(\.\d+)$/) ? 1.0*$2 : "";
+    $Secfrac =~ s/^0//;
 
-    $Hour = int($secs/3600);
-    $secs -= $Hour * 3600;
+    $Day = int($Seconds/86400);
+    $Seconds -= $Day * 86400;
 
-    $Min = int($secs/60);
-    $secs -= $Min * 60;
+    $Hour = int($Seconds/3600);
+    $Seconds -= $Hour * 3600;
 
-    $Sec = $secs;
+    $Min = int($Seconds/60);
+    $Seconds -= $Min * 60;
 
-    return(sprintf("%u:%02u:%02u:%02u", $Day, $Hour, $Min, $Sec));
+    $Sec = $Seconds;
+
+    return(sprintf("%u:%02u:%02u:%02u%s",
+                   $Day, $Hour, $Min, $Sec, $Secfrac));
     # }}}
 }
 

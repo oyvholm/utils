@@ -81,7 +81,7 @@ is(xml_to_txt("first line\nsecond &lt;\rthird\r\n&lt;&amp;&gt;"),
 
 diag("Testing date routines...");
 
-# sec_to_string() and sec_to_readable() {{{
+# sec_to_string() {{{
 
 is(sec_to_string(1148220825),
     "2006-05-21 14:13:45",
@@ -89,17 +89,40 @@ is(sec_to_string(1148220825),
 is(sec_to_string(1148220825, "T"),
     "2006-05-21T14:13:45",
     "sec_to_string() with separator");
+is(sec_to_string(-5000),
+    undef,
+    "sec_to_string(-5000) — negative numbers unsupported atm");
+is(sec_to_string(""),
+    undef,
+    "sec_to_string(\"\")");
+is(sec_to_string("pH()rtY tW0"),
+    undef,
+    "sec_to_string() with invalid string");
+is(sec_to_string("00000000000000000000001148220825"),
+    "2006-05-21 14:13:45",
+    "sec_to_string() with a bunch of leading zeros");
+is(sec_to_string("1148220825.93"),
+    "2006-05-21 14:13:45.93",
+    "sec_to_string() with decimals");
+is(sec_to_string("000000000000000000000000000001148220825.7312"),
+    "2006-05-21 14:13:45.7312",
+    "sec_to_string() with decimals and prefixing zeros");
+is(sec_to_string("1148220825.93000"),
+    "2006-05-21 14:13:45.93",
+    "sec_to_string() with decimals and extra trailing zeros");
+is(sec_to_string(".863"),
+    "1970-01-01 00:00:00.863",
+    "sec_to_string() with missing zero before decimal point");
 
-TODO: {
-    local $TODO = "sec_to_string() doesn’t take decimals at the moment";
-    is(sec_to_string(1148220825.93),
-        "2006-05-21 14:13:45.93",
-        "sec_to_string() with decimals");
-}
+# }}}
+# sec_to_readable() {{{
 
 is(sec_to_readable(0),
     "0:00:00:00",
     "sec_to_readable(0)");
+is(sec_to_readable("pH()rtY tW0"),
+    undef,
+    "sec_to_readable() with invalid string");
 is(sec_to_readable(86400),
     "1:00:00:00",
     "sec_to_readable(86400)");
@@ -109,13 +132,21 @@ is(sec_to_readable(86400*1000),
 is(sec_to_readable(86400+7200+180+4),
     "1:02:03:04",
     "sec_to_readable(86400+7200+180+4)");
-
-TODO: {
-    local $TODO = "sec_to_readable() doesn’t take decimals at the moment";
-    is(sec_to_readable(3.14),
-        "0:00:00:03.14",
-        "sec_to_readable(3.14)");
-}
+is(sec_to_readable("3.14"),
+    "0:00:00:03.14",
+    "sec_to_readable(\"3.14\")");
+is(sec_to_readable("-124"),
+    undef,
+    "sec_to_readable() rejects negative numbers");
+is(sec_to_readable("-2.34"),
+    undef,
+    "sec_to_readable() rejects negative decimal");
+is(sec_to_readable(".87"),
+    "0:00:00:00.87",
+    "sec_to_readable(), missing zero before decimal point");
+is(sec_to_readable(""),
+    "0:00:00:00",
+    "sec_to_readable() with empty string");
 
 # }}}
 
