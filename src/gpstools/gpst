@@ -13,6 +13,13 @@ use strict;
 use Getopt::Long;
 use Time::Local qw { timegm_nocheck };
 
+BEGIN {
+    push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
+    our @version_array;
+}
+
+use GPSTxml;
+
 $| = 1;
 
 our $Debug = 0;
@@ -52,6 +59,8 @@ $progname =~ s#^.*/(.*?)$#$1#;
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -1225,29 +1234,11 @@ sub ddd_to_dms {
     # }}}
 }
 
-sub txt_to_xml {
-    # Convert plain text to XML {{{
-    my $Txt = shift;
-    $Txt =~ s/&/&amp;/gs;
-    $Txt =~ s/</&lt;/gs;
-    $Txt =~ s/>/&gt;/gs;
-    return($Txt);
-    # }}}
-}
-
-sub xml_to_txt {
-    # Convert XML data to plain text {{{
-    my $Txt = shift;
-    $Txt =~ s/&lt;/</gs;
-    $Txt =~ s/&gt;/>/gs;
-    $Txt =~ s/&amp;/&/gs;
-    return($Txt);
-    # }}}
-}
-
 sub print_version {
     # Print program version {{{
-    print("$rcs_id\n");
+    for (@main::version_array) {
+        print("$_\n");
+    }
     exit(0);
     # }}}
 } # print_version()
