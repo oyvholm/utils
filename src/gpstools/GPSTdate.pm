@@ -43,7 +43,6 @@ sub sec_to_readable {
     # Convert seconds since 1970 to human-readable format (d:hh:mm:ss)
     # {{{
     my $secs = shift;
-    D("sec_to_readable(\"$secs\")\n");
     my ($Day, $Hour, $Min, $Sec) =
        (   0,     0,    0,    0);
 
