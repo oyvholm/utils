@@ -76,7 +76,7 @@ is(xml_to_txt("first line\nsecond &lt;\rthird\r\n&lt;&amp;&gt;"),
     "first line\nsecond <\rthird\r\n<&>",
     "xml_to_txt() with multiline string");
 
-}}}
+# }}}
 
 diag("Testing finished.");
 
