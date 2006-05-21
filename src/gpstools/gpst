@@ -386,7 +386,7 @@ for $curr_file (@ARGV) {
                 ($Time_f =~ /^(\d+)\.(\d+)\.(\d+) (\d+):(\d+):(\d+) \((.+?)\)/) &&
                     ($Dat{'day'} = $1, $Dat{'month'} = $2, $Dat{'year'} = $3,
                      $Dat{'hour'} = $4, $Dat{'min'} = $5, $Dat{'sec'} = $6);
-                ($Alt_f =~ /^([\d+\.]+) (.*?)/) &&
+                ($Alt_f =~ /^($DIGIT+) (.*?)/) &&
                     ($Dat{'ele'} = $1, $Alt_unit = $2);
                 D("ele = \"$Dat{'ele'}\"");
                 ($NS eq "S") && ($Dat{'lat'} = 0-$Dat{'lat'});
