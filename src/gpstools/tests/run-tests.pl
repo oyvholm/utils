@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Test suite for gpst.
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
@@ -54,10 +54,6 @@ our %Cmd = (
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
-
-diag("Check that testing is working");
-
-is(1 + 1 + 1, 3, "One and one and one is three"); # got to be goodlooking ’cause he’s so hard to see
 
 diag("Testing XML routines...");
 
