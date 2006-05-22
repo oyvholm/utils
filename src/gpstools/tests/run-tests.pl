@@ -217,7 +217,107 @@ like(list_nearest_waypoints(60.42541, 5.29959, 3),
 
 # }}}
 
+diag("Testing output from ../gpst");
+
+like(`../gpst --version`, # {{{
+    qr/^(\$Id: .*? \$\n)+$/s,
+    "gpst --version");
+
+# }}}
+is(`../gpst </dev/null`, # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+</track>
+</gpsml>
+END
+    "gpst </dev/null");
+
+# }}}
+is(`../gpst -o gpx </dev/null`, # {{{
+    <<END,
+<?xml version="1.0" standalone="no"?>
+<gpx>
+  <trk>
+    <trkseg>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "gpst -o gpx </dev/null");
+
+# }}}
+is(`../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp`, # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>\$Id: chronology-error.gpsml 1774 2006-05-20 02:48:39Z sunny \$</title>
+<tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+<tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+<tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+<break/>
+<etp> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </etp>
+<break/>
+<pause>0:00:37:54</pause>
+<tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+<tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+<tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+<tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+<tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+</track>
+</gpsml>
+END
+    "gpst --fix --chronology chronology-error.gpsml");
+
+# }}}
+is(file_data("chronofix.tmp"), # {{{
+    "gpst: \"2006-05-02T09:46:46Z\": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)\n",
+    "Warning from --chronology --fix");
+unlink("chronofix.tmp") || warn("chronofix.tmp: Cannot delete file: $!\n");
+
+# }}}
+is(`../gpst -t pause.gpx`, # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>ACTIVE LOG164705</title>
+<tp> <time>2006-05-21T16:49:11Z</time> <lat>60.425494</lat> <lon>5.299534</lon> <ele>25.26</ele> </tp>
+<tp> <time>2006-05-21T16:49:46Z</time> <lat>60.425464</lat> <lon>5.29961</lon> <ele>24.931</ele> </tp>
+<pause>0:00:02:18</pause>
+<tp> <time>2006-05-21T16:52:04Z</time> <lat>60.425314</lat> <lon>5.299694</lon> <ele>27.975</ele> </tp>
+<pause>0:00:04:32</pause>
+<tp> <time>2006-05-21T16:56:36Z</time> <lat>60.425384</lat> <lon>5.299741</lon> <ele>31.017</ele> </tp>
+<tp> <time>2006-05-21T16:56:47Z</time> <lat>60.425339</lat> <lon>5.299958</lon> <ele>30.98</ele> </tp>
+<tp> <time>2006-05-21T16:56:56Z</time> <lat>60.425238</lat> <lon>5.29964</lon> <ele>30.538</ele> </tp>
+<tp> <time>2006-05-21T16:57:03Z</time> <lat>60.425246</lat> <lon>5.299686</lon> <ele>30.515</ele> </tp>
+<pause>0:00:02:05</pause>
+<tp> <time>2006-05-21T16:59:08Z</time> <lat>60.425345</lat> <lon>5.299773</lon> <ele>31.936</ele> </tp>
+<tp> <time>2006-05-21T17:00:54Z</time> <lat>60.425457</lat> <lon>5.299419</lon> <ele>31.794</ele> </tp>
+</track>
+</gpsml>
+END
+    "gpst -t pause.gpx");
+
+# }}}
+
 diag("Testing finished.");
+
+sub file_data {
+    # Return file content as a string {{{
+    my $File = shift;
+    my $Txt;
+    if (open(FP, "<", $File)) {
+        $Txt = join("", <FP>);
+        close(FP);
+        return($Txt);
+    } else {
+        return undef;
+    }
+    # }}}
+}
 
 sub print_version {
     # Print program version {{{
