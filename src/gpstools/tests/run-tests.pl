@@ -195,6 +195,14 @@ is(ddd_to_dms("-180"),
     "-180\xB000'00.0\"",
     "ddd_to_dms(\"-180\")");
 
+is(ddd_to_dms("-1"),
+    "-1\xB000'00.0\"",
+    "ddd_to_dms(\"-1\")");
+
+is(ddd_to_dms("-2"),
+    "-2\xB000'00.0\"",
+    "ddd_to_dms(\"-2\")");
+
 # }}}
 # list_nearest_waypoints() {{{
 

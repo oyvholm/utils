@@ -80,9 +80,6 @@ sub ddd_to_dms {
         $Min = 0.0;
         $Hour += 1.0;
     }
-    if ($Neg) {
-        $Hour = 0 - $Hour;
-    }
     $Retval = sprintf("%s%.0f\xB0%02.0f'%04.1f\"",
                       $Neg
                         ? "-"
