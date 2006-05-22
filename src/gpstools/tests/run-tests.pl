@@ -167,6 +167,14 @@ is(ddd_to_dms("0"),
     "0\xB000'00.0\"",
     "ddd_to_dms(\"0\")");
 
+is(ddd_to_dms(""),
+    "0\xB000'00.0\"",
+    "ddd_to_dms(\"\")");
+
+is(ddd_to_dms("pH()rtY tW0"),
+    undef,
+    "ddd_to_dms(\"pH()rtY tW0\")");
+
 is(ddd_to_dms("-12.34567"),
     "-12\xB020'44.4\"",
     "ddd_to_dms(\"-12.34567\")");
@@ -199,9 +207,9 @@ is(ddd_to_dms("-1"),
     "-1\xB000'00.0\"",
     "ddd_to_dms(\"-1\")");
 
-is(ddd_to_dms("-2"),
-    "-2\xB000'00.0\"",
-    "ddd_to_dms(\"-2\")");
+is(ddd_to_dms("2-3"),
+    undef,
+    "ddd_to_dms(\"2-3\")");
 
 # }}}
 # list_nearest_waypoints() {{{

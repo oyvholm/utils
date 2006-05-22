@@ -63,6 +63,9 @@ sub ddd_to_dms {
        (    0,    0,    0);
     my $Retval = "";
 
+    ($ddd =~ /^\-?(\d*)(\.\d+)?$/) || return(undef);
+    length($ddd) || ($ddd = 0);
+
     if ($ddd < 0.0) {
         $ddd = 0 - $ddd;
         $Neg = 1;
