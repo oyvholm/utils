@@ -18,8 +18,9 @@ BEGIN {
     our @version_array;
 }
 
-use GPSTxml;
 use GPSTdate;
+use GPSTgeo;
+use GPSTxml;
 
 $| = 1;
 
@@ -110,7 +111,7 @@ my ($last_lon, $last_lat, $last_ele, $last_line) =
 my ($lat1, $lon1, $lat2, $lon2) =
    (-1000, -1000,  1000,  1000);
 
-my %Cmd = (
+our %Cmd = (
     'gpsbabel' => '/usr/local/bin/gpsbabel',
 );
 
@@ -150,9 +151,6 @@ if ($lon1 > $lon2) {
 if ($Opt{'inside'} && $Opt{'outside'}) {
     die("$progname: Cannot mix the --inside and --outside options\n");
 }
-
-# FIXME: Hardcoding
-my $waypoint_file = "/home/sunny/gps/waypoints.gpx";
 
 # To avoid printing out extra "/> at the start of svg output:
 my $svg_start_thing = "";
@@ -1102,29 +1100,6 @@ sub print_entry {
     # }}}
 }
 
-sub list_nearest_waypoints {
-    # {{{
-    my ($Lat, $Lon, $Count) = @_;
-    # FIXME: Incredible unfinished and kludgy.
-    if (open(WaypFP, "$Cmd{'gpsbabel'} -i gpx -f $waypoint_file " .
-                     "-x radius,lat=$Lat,lon=$Lon,distance=1000 " .
-                     "-o gpx -F - |")
-    ) {
-        my $Str = join("", <WaypFP>);
-        $Str =~ s{
-            ^.*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*?
-             .*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*?
-             .*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*$
-        }{
-            "($1, $2, $3)";
-        }sex;
-        return($Str);
-    } else {
-        die("$progname: Cannot open $Cmd{'gpsbabel'} pipe: $!\n");
-    }
-    # }}}
-}
-
 sub ps_header {
     # Send a Postscript header to stdout {{{
     my ($bl_lon, $bl_lat, $br_lon, $br_lat) = @_;
@@ -1154,47 +1129,6 @@ sub ps_header {
         "%%BeginSetup\n",
         "%%EndSetup\n",
     ));
-    # }}}
-}
-
-sub ddd_to_dms {
-    # Convert floating-point degrees into D°M'S.S" (ISO-8859-1). 
-    # Necessary for import into GPSman. Based on toDMS() from 
-    # gpstrans-0.39 to ensure compatibility.
-    # {{{
-    my $ddd = shift;
-    my $Neg = 0;
-    my ($Hour, $Min, $Sec) =
-       (    0,    0,    0);
-    my $Retval = "";
-
-    if ($ddd < 0.0) {
-        $ddd = 0 - $ddd;
-        $Neg = 1;
-    }
-    $Hour = int($ddd);
-    $ddd = ($ddd - $Hour) * 60.0;
-    $Min = int($ddd);
-    $Sec = ($ddd - $Min) * 60.0;
-
-    if ($Sec > 59.5) {
-        $Sec = 0.0;
-        $Min += 1.0;
-    }
-    if ($Min > 59.5) {
-        $Min = 0.0;
-        $Hour += 1.0;
-    }
-    if ($Neg) {
-        $Hour = 0 - $Hour;
-    }
-    D("Neg = $Neg , D = $Hour , M = $Min , S = $Sec\n");
-    $Retval = sprintf("%s%.0f\xB0%02.0f'%04.1f\"",
-                      $Neg
-                        ? "-"
-                        : "",
-                      $Hour, $Min, $Sec);
-    return $Retval;
     # }}}
 }
 

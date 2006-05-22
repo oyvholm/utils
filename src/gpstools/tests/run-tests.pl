@@ -18,8 +18,9 @@ use strict;
 use Getopt::Long;
 use Test::More qw(no_plan);
 
-use GPSTxml;
 use GPSTdate;
+use GPSTgeo;
+use GPSTxml;
 
 $| = 1;
 
@@ -44,6 +45,10 @@ GetOptions(
     "help|h" => \$Opt{'help'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
+
+our %Cmd = (
+    'gpsbabel' => '/usr/local/bin/gpsbabel',
+);
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
@@ -147,6 +152,55 @@ is(sec_to_readable(".87"),
 is(sec_to_readable(""),
     "0:00:00:00",
     "sec_to_readable() with empty string");
+
+# }}}
+
+diag("Testing geo routines...");
+
+# ddd_to_dms() {{{
+
+is(ddd_to_dms("12.34567"),
+    "12\xB020'44.4\"",
+    "ddd_to_dms(\"12.34567\")");
+
+is(ddd_to_dms("0"),
+    "0\xB000'00.0\"",
+    "ddd_to_dms(\"0\")");
+
+is(ddd_to_dms("-12.34567"),
+    "-12\xB020'44.4\"",
+    "ddd_to_dms(\"-12.34567\")");
+
+is(ddd_to_dms("0.34567"),
+    "0\xB020'44.4\"",
+    "ddd_to_dms(\"0.34567\")");
+
+is(ddd_to_dms(".34567"),
+    "0\xB020'44.4\"",
+    "ddd_to_dms(\".34567\")");
+
+is(ddd_to_dms("-.34567"),
+    "-0\xB020'44.4\"",
+    "ddd_to_dms(\"-.34567\")");
+
+is(ddd_to_dms("-0.34567"),
+    "-0\xB020'44.4\"",
+    "ddd_to_dms(\"-0.34567\")");
+
+is(ddd_to_dms("180"),
+    "180\xB000'00.0\"",
+    "ddd_to_dms(\"180\")");
+
+is(ddd_to_dms("-180"),
+    "-180\xB000'00.0\"",
+    "ddd_to_dms(\"-180\")");
+
+# }}}
+# list_nearest_waypoints() {{{
+
+like(list_nearest_waypoints(60.42541, 5.29959, 3),
+    qr/^\(.*,.*,.*\)$/,
+    "list_nearest_waypoints()");
 
 # }}}
 
