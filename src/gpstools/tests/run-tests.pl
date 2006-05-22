@@ -19,6 +19,7 @@ use Getopt::Long;
 use Test::More qw(no_plan);
 
 use GPSTdate;
+use GPSTdebug;
 use GPSTgeo;
 use GPSTxml;
 
@@ -254,19 +255,6 @@ END
     exit($Retval);
     # }}}
 } # usage()
-
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
 
 __END__
 
