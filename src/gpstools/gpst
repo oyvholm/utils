@@ -51,7 +51,6 @@ our %Opt = (
     'skip-dups' => 0,
     'strip-whitespace' => 0,
     'undefined' => "",
-    'use-comma' => 0,
     'version' => 0,
     # }}}
 );
@@ -90,7 +89,6 @@ GetOptions(
     "skip-dups|d" => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
     "undefined|n=s" => \$Opt{'undefined'},
-    "use-comma|c" => \$Opt{'use-comma'},
     "verbose|v" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     # }}}
@@ -99,7 +97,6 @@ GetOptions(
 my %Dat;
 
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
-my $Des = $Opt{'use-comma'} ? "," : ".";
 my $Udef = "?";
 my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
 my $Spc = $Opt{'strip-whitespace'} ? "" : " ";
@@ -507,8 +504,6 @@ for $curr_file (@ARGV) {
                                       $lat_deg +
                                       $lat_degmin/60 +
                                       $lat_mindec/60000);
-                $tmp_lon =~ s/\./$Des/;
-                $tmp_lat =~ s/\./$Des/;
                 ($NS eq "S") && ($tmp_lat = 0-$tmp_lat);
                 ($EW eq "W") && ($tmp_lon = 0-$tmp_lon);
                 $Dat{'lat'} = $tmp_lat;
@@ -994,8 +989,6 @@ sub print_entry {
             $Line .= "\"Time = $Time.0\n$Dat{'lon'} $Dat{'lat'}\n\n";
         } elsif ($Opt{'output-format'} eq "csv") {
             # {{{
-            $Dat{'lon'} =~ s/\./$Des/;
-            $Dat{'lat'} =~ s/\./$Des/;
             # $do_print || print("skipping ");
             $Line .= join("\t",
                 $print_time
@@ -1106,8 +1099,6 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
-  -c, --comment-out-dups
-    Use comma instead of period as decimal point (For Gnumeric etc).
   -C, --print-comments
     Print existing comment lines (starting with "#") and prefix unknown 
     lines with "# ".
@@ -1224,10 +1215,6 @@ Converts between various GPS formats.
 =head1 OPTIONS
 
 =over 4
-
-=item B<-c>, B<--comment-out-dups>
-
-Use comma instead of period as decimal point (For Gnumeric etc).
 
 =item B<-C>, B<--print-comments>
 
