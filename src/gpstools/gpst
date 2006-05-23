@@ -477,7 +477,6 @@ for $curr_file (@ARGV) {
                     (....) # Accurancy
                     (......) # Elevation
                     (...............)
-                    $
                     # }}}
                     /x) {
                 my ($NS, $EW, $lat_deg, $lat_degmin, $lat_mindec, $lon_deg,
