@@ -566,9 +566,7 @@ exit(0);
 sub read_xmlfile {
     # {{{
     my $Txt = join("", @_);
-    # FIXME: The sequential stuff here is probably bad, but easy.
     $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
-    $Txt =~ s#(<gps\b.*?>.*?</gps>)#print_xml_gps($1)#gse;
     # }}}
 }
 
@@ -639,35 +637,6 @@ sub print_gpx {
     # }}}
 }
 
-sub print_xml_gps {
-    # {{{
-    my $Orig = shift;
-    my $Str = $Orig;
-    D("print_xml_gps(\"$Orig\")\n");
-    if ($Str =~
-        m{
-            <date>(\d\d\d\d)-?(\d\d)-?(\d\d)T
-            (\d\d):?(\d\d):?([\d\.]+)Z</date>
-        }x
-    ) {
-        ($Dat{'year'}, $Dat{'mon'}, $Dat{'day'},
-         $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
-        ($1, $2, $3,
-         $4, $5, $6);
-    }
-    if ($Str =~ m#<pos>(.*?)</pos>#s) {
-        my $Txt = $1;
-        ($Txt =~ m#<x\b.*?>(.*?)</x>#) && ($Dat{'lon'} = $1);
-        ($Txt =~ m#<y\b.*?>(.*?)</y>#) && ($Dat{'lat'} = $1);
-        ($Txt =~ m#<z\b.*?>(.*?)</z>#) && ($Dat{'ele'} = $1);
-    }
-    defined($Dat{'lon'}) || ($Dat{'lon'} = "");
-    defined($Dat{'lat'}) || ($Dat{'lat'} = "");
-    defined($Dat{'ele'}) || ($Dat{'ele'} = "");
-    print_entry(%Dat);
-    # }}}
-}
-
 sub print_header {
     # {{{
     local *OutFP = shift;
@@ -690,11 +659,6 @@ sub print_header {
     } elsif ($Opt{'output-format'} eq "ps") {
         print(OutFP ps_header(532, 6034, 533, 6040));
         print(OutFP "*u\n");
-    } elsif ($Opt{'output-format'} eq "xml") {
-        print(OutFP join("",
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
-            "<gpslog>\n",
-        ));
     } elsif ($Opt{'output-format'} eq "svg") {
         print(OutFP join("",
             "<?xml version=\"1.0\" standalone=\"no\"?>\n",
@@ -736,8 +700,6 @@ sub print_footer {
         ));
     } elsif ($Opt{'output-format'} eq "svg") {
         print(OutFP "\"/>\n</svg>\n");
-    } elsif ($Opt{'output-format'} eq "xml") {
-      print(OutFP "</gpslog>\n");
     }
     # }}}
 }
@@ -803,8 +765,8 @@ sub print_entry {
                     sec_to_readable($last_time-$ep_time),
                     sec_to_string($ep_time, "T")
                 ));
-                # FIXME: Make --fix work with gpx and xml.
-                if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^(gpx|xml)$/)) {
+                # FIXME: Make --fix work with gpx.
+                if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
                     $Dat{'error'} = 1;
                 }
             }
@@ -1027,28 +989,6 @@ sub print_entry {
                         "M $Dat{'lon'} $Dat{'lat'}\n")
                     : "L $Dat{'lon'} $Dat{'lat'}\n"
             );
-        } elsif ($Opt{'output-format'} eq "xml") {
-            $Line .= join("",
-                "$Spc$Spc<gps>$Spc",
-                $print_time
-                    ? "<date>" .
-                      "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
-                      "</date>$Spc"
-                    : "",
-                "<pos>$Spc",
-                length($Dat{'lon'})
-                    ? "<x>$Dat{'lon'}</x>$Spc"
-                    : "",
-                length($Dat{'lat'})
-                    ? "<y>$Dat{'lat'}</y>$Spc"
-                    : "",
-                $print_ele
-                    ? "<z>$Dat{'ele'}</z>$Spc"
-                    : "",
-                "</pos>$Spc",
-                "</gps>\n"
-            );
         } elsif ($Opt{'output-format'} eq "ygraph") {
             my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
             $Line .= "\"Time = $Time.0\n$Dat{'lon'} $Dat{'lat'}\n\n";
@@ -1180,8 +1120,8 @@ Options:
     Use seconds since 1970-01-01 00:00:00 GMT as date format.
   --fix
     Comment out entries which is obviously wrong. Use together with 
-    --chronology to fix those kind of errors. Does not work with GPX or 
-    XML output yet.
+    --chronology to fix those kind of errors. Does not work with GPX 
+    output yet.
   -h, --help
     Show this help.
   --inside
@@ -1204,7 +1144,6 @@ Options:
       ps (Unfinished)
       svg (Unfinished)
       xgraph
-      xml
       ygraph
   --outside
     Print only trackpoints outside a rectangle specified by --pos1 and 
@@ -1310,8 +1249,8 @@ Use seconds since 1970-01-01 00:00:00 GMT as date format.
 item B<--fix>
 
 Comment out entries which is obviously wrong. Use together with 
---chronology to fix those kind of errors. Does not work with GPX or XML 
-output yet.
+--chronology to fix those kind of errors. Does not work with GPX output 
+yet.
 
 =item B<-h>, B<--help>
 
@@ -1364,8 +1303,6 @@ areas with less track points.
 =item svg (Unfinished)
 
 =item xgraph
-
-=item xml
 
 =item ygraph
 
