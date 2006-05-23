@@ -312,7 +312,7 @@ for $curr_file (@ARGV) {
                 $Txt =~ s#^(.*)(</desc>.*$)#$1#s;
                 $Dat{'desc'} = $Txt;
                 print_entry(%Dat);
-            } elsif (/^<gpx\b/) {
+            } elsif (/<gpx\b/) {
                 $xml_data = $_;
                 $xml_data .= join("", <CurrFP>);
                 if (!length($Opt{'output-format'})) {
