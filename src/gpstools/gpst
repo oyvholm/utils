@@ -1404,10 +1404,6 @@ Verbose, warn about unknown lines.
 
 Strip all unnecessary whitespace.
 
-=item B<-x>, B<--xml>
-
-Create XML output.
-
 =item B<-y>, B<--double-y-scale>
 
 Double Y scale (latitude) to get it right in gnuplot.
