@@ -18,6 +18,7 @@ BEGIN {
     our @version_array;
 }
 
+use GPST;
 use GPSTdate;
 use GPSTdebug;
 use GPSTgeo;
@@ -894,28 +895,8 @@ sub print_entry {
         }
         if ($Opt{'output-format'} eq "gpsml") {
             if ($Dat{'type'} eq "tp") {
-                my $Elem = $Dat{'error'} ? "etp" : "tp";
-                $Line .= join("",
-                    "<$Elem> ",
-                        $print_time
-                            ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</time> "
-                            : "",
-                        (length($Dat{'lat'}))
-                            ? "<lat>" . $Dat{'lat'}*1.0 . "</lat> "
-                            : "",
-                        (length($Dat{'lon'}))
-                            ? "<lon>" . $Dat{'lon'}*1.0 . "</lon> "
-                            : "",
-                        ($print_ele)
-                            ? "<ele>" . $Dat{'ele'}*1.0 . "</ele> "
-                            : "",
-                        ($print_desc)
-                            ? sprintf("<desc>%s</desc> ",
-                                      $Dat{'desc'})
-                            : "",
-                     "</$Elem>\n"
-                );
+                $Dat{'format'} = "gpsml";
+                $Line .= trackpoint(%Dat);
             } elsif ($Dat{'type'} =~ /^(pause|desc|title)$/) {
                 $Line .= sprintf("<%s>%s</%s>\n",
                                  $1,

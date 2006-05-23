@@ -16,8 +16,9 @@ BEGIN {
 
 use strict;
 use Getopt::Long;
-use Test::More tests => 67;
+use Test::More tests => 69;
 
+use GPST;
 use GPSTdate;
 use GPSTdebug;
 use GPSTgeo;
@@ -641,10 +642,8 @@ END
     "gpst -re one_ele.gpsml (Only trackpoints with elevation)");
 
 # }}}
-TODO: {
-    local $TODO = "Avoid printing of empty elements";
-    is(`../gpst missing.gpsml`, # {{{
-        <<END,
+is(`../gpst missing.gpsml`, # {{{
+    <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
@@ -658,17 +657,14 @@ TODO: {
 <tp> <ele>484</ele> </tp>
 <tp> <ele>486</ele> </tp>
 <tp> <desc>Missing everything</desc> </tp>
-<tp> </tp>
-<tp> </tp>
-<tp> </tp>
 <tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
 END
-        "gpst -re missing.gpsml");
+    "gpst -re missing.gpsml");
     # }}}
-}
+
 TODO: {
     local $TODO = "Shall lat/lon be cleared if one is missing?";
     is(`../gpst -re missing.gpsml`, # {{{
@@ -768,6 +764,40 @@ END
 
     # }}}
 }
+
+my %Dat = (
+  # {{{
+  'format' => 'gpsml',
+  'year' => '2003',
+  'month' => '06',
+  'day' => '13',
+  'hour' => '14',
+  'min' => '36',
+  'sec' => '10',
+  'lat' => '59.5214',
+  'lon' => '7.392133',
+  'ele' => '762',
+  'error' => 0,
+  'type' => 'tp',
+  # }}}
+);
+
+is(trackpoint(%Dat), # {{{
+
+    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+  "trackpoint(%Dat)");
+
+is(`echo '<tp> </tp>' | ../gpst`,
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+</track>
+</gpsml>
+END
+    "Don’t print empty trackpoints");
+
+# }}}
 
 diag("Testing finished.");
 
