@@ -43,7 +43,6 @@ our %Opt = (
     'outside' => 0,
     'pos1' => "",
     'pos2' => "",
-    'print-comments' => 0,
     'require' => "",
     'round' => "",
     'save-to-file' => "\n", # \n =  undefined, it’s banned in filenames anyway.
@@ -81,7 +80,6 @@ GetOptions(
     "outside" => \$Opt{'outside'},
     "pos1=s" => \$Opt{'pos1'},
     "pos2=s" => \$Opt{'pos2'},
-    "print-comments|C" => \$Opt{'print-comments'},
     "require|r=s" => \$Opt{'require'},
     "round|R=s" => \$Opt{'round'},
     "save-to-file|S=s" => \$Opt{'save-to-file'},
@@ -318,8 +316,6 @@ for $curr_file (@ARGV) {
                 }
                 read_xmlfile($xml_data);
                 last;
-            } elsif (/^Pause: /) {
-                $Opt{'print-comments'} && print;
             } elsif (/^move$/) {
                 $found_move = 1;
             } elsif (m#^(\d+)\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
@@ -527,6 +523,8 @@ for $curr_file (@ARGV) {
                 ($Opt{'output-format'} eq "csv")
                     && ($Opt{'save-to-file'} eq "\n")
                     && print("\n");
+            } elsif (/^Pause: /) {
+                # NOP, is here to cope with old files I’ve lying around.
             } elsif ($check_desc) {
                 my $Comment = $_;
                 if (defined($Comment)) {
@@ -535,15 +533,9 @@ for $curr_file (@ARGV) {
                         $Dat{'desc'} = txt_to_xml($Comment);
                         $Dat{'type'} = "desc";
                         print_entry(%Dat);
-                    } elsif ($Opt{'print-comments'}) {
-                        print;
                     }
                 }
             } else {
-                if ($Opt{'print-comments'}) {
-                    print("# $_");
-                    chomp;
-                }
                 $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
             }
         }
@@ -1099,9 +1091,6 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
-  -C, --print-comments
-    Print existing comment lines (starting with "#") and prefix unknown 
-    lines with "# ".
   --chronology
     Check for broken chronology, warn about entries with an old 
     timestamp.
@@ -1215,11 +1204,6 @@ Converts between various GPS formats.
 =head1 OPTIONS
 
 =over 4
-
-=item B<-C>, B<--print-comments>
-
-Print existing comment lines (starting with "#") and prefix unknown 
-lines with "# ".
 
 =item B<--chronology>
 
