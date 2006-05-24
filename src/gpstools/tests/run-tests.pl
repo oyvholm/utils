@@ -374,7 +374,7 @@ testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
 
 if (1) {
     local $TODO = "Use the default output format, this Mayko thing is obsolete.";
-    is(file_data("nosignal.tmp"),
+    is(file_data("nosignal.tmp"), # {{{
         <<END,
 xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6800486 23.6746151 57.4 0 12/22/2002 21:42:24
@@ -391,6 +391,7 @@ xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6801905 23.6757542 2.5 0 12/22/2002 21:45:04
 END
         "gpst -u no_signal.mayko");
+    # }}}
 }
 
 # }}}
