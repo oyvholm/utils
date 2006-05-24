@@ -366,9 +366,11 @@ END
 );
 
 # }}}
-testcmd("../gpst -u no_signal.mayko >nosignal.tmp",
+testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
     "",
-    ); # {{{
+    );
+
+# }}}
 
 if (1) {
     local $TODO = "Use the default output format, this Mayko thing is obsolete.";
