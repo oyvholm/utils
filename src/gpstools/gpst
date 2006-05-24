@@ -98,7 +98,8 @@ my %Dat;
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
 my $Udef = "?";
 my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
-my $Spc = $Opt{'strip-whitespace'} ? "" : " ";
+$GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
+my $Spc = $GPST::Spc; # FIXME
 my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
@@ -917,21 +918,10 @@ sub print_entry {
                 $Line .= "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
             }
         } elsif($Opt{'output-format'} eq "gpx") {
-            $Line .= join("",
-                            "$Spc$Spc$Spc$Spc$Spc$Spc",
-                            "<trkpt lat=\"$Dat{'lat'}\" lon=\"$Dat{'lon'}\">",
-                            "$Spc",
-                            $print_time
-                                ? "<time>" .
-                                  "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                                  "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
-                                  "</time>$Spc"
-                                : "",
-                            $print_ele
-                                ? "<ele>$Dat{'ele'}</ele>$Spc"
-                                : "",
-                            "</trkpt>\n"
-                    );
+            if ($Dat{'type'} eq "tp") {
+                $Dat{'format'} = "gpx";
+                $Line .= trackpoint(%Dat);
+            }
         } elsif ($Opt{'output-format'} eq "clean") {
             $pause_len && ($Line .= "\n");
             ($Line .= "$Dat{'lon'}\t$Dat{'lat'}" .

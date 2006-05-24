@@ -27,6 +27,8 @@ BEGIN {
 }
 our @EXPORT_OK;
 
+our $Spc = " ";
+
 sub trackpoint {
     my %Dat = @_;
 
@@ -50,12 +52,6 @@ sub trackpoint {
         !length($Dat{'sec'})
     ) ? 0 : 1;
 
-    # defined($Dat{'year'}) || ($Dat{'year'} = "");
-    # defined($Dat{'month'}) || ($Dat{'month'} = "");
-    # defined($Dat{'day'}) || ($Dat{'day'} = "");
-    # defined($Dat{'hour'}) || ($Dat{'hour'} = "");
-    # defined($Dat{'min'}) || ($Dat{'min'} = "");
-    # defined($Dat{'sec'}) || ($Dat{'sec'} = "");
     defined($Dat{'lat'}) || ($Dat{'lat'} = "");
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'ele'}) || ($Dat{'ele'} = "");
@@ -86,6 +82,27 @@ sub trackpoint {
                         : ""
             );
             length($Retval) && ($Retval = "<$Elem> $Retval</$Elem>\n");
+        } elsif($Dat{'format'} eq "gpx") {
+            my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
+            my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
+            if (length("$lat_str$lon_str$Dat{'ele'}")) {
+                $Retval .=
+                join("",
+                    "$Spc$Spc$Spc$Spc$Spc$Spc",
+                    "<trkpt$lat_str$lon_str>",
+                    "$Spc",
+                    $print_time
+                        ? "<time>" .
+                          "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                          "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
+                          "</time>$Spc"
+                        : "",
+                    length($Dat{'ele'})
+                        ? "<ele>$Dat{'ele'}</ele>$Spc"
+                        : "",
+                    "</trkpt>\n"
+                );
+            }
         }
     }
     return $Retval;

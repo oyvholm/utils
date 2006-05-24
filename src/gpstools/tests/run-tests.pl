@@ -16,7 +16,7 @@ BEGIN {
 
 use strict;
 use Getopt::Long;
-use Test::More tests => 69;
+use Test::More qw{no_plan};
 
 use GPST;
 use GPSTdate;
@@ -664,6 +664,27 @@ is(`../gpst missing.gpsml`, # {{{
 END
     "gpst -re missing.gpsml");
     # }}}
+is(`../gpst -w -o gpx pause.gpx`, # {{{
+    <<END,
+<?xml version="1.0" standalone="no"?>
+<gpx>
+<trk>
+<trkseg>
+<trkpt lat="60.425494" lon="5.299534"><time>2006-05-21T16:49:11Z</time><ele>25.260</ele></trkpt>
+<trkpt lat="60.425464" lon="5.299610"><time>2006-05-21T16:49:46Z</time><ele>24.931</ele></trkpt>
+<trkpt lat="60.425314" lon="5.299694"><time>2006-05-21T16:52:04Z</time><ele>27.975</ele></trkpt>
+<trkpt lat="60.425384" lon="5.299741"><time>2006-05-21T16:56:36Z</time><ele>31.017</ele></trkpt>
+<trkpt lat="60.425339" lon="5.299958"><time>2006-05-21T16:56:47Z</time><ele>30.980</ele></trkpt>
+<trkpt lat="60.425238" lon="5.299640"><time>2006-05-21T16:56:56Z</time><ele>30.538</ele></trkpt>
+<trkpt lat="60.425246" lon="5.299686"><time>2006-05-21T16:57:03Z</time><ele>30.515</ele></trkpt>
+<trkpt lat="60.425345" lon="5.299773"><time>2006-05-21T16:59:08Z</time><ele>31.936</ele></trkpt>
+<trkpt lat="60.425457" lon="5.299419"><time>2006-05-21T17:00:54Z</time><ele>31.794</ele></trkpt>
+</trkseg>
+</trk>
+</gpx>
+END
+    "gpst -w -o gpx pause.gpx");
+    # }}}
 
 TODO: {
     local $TODO = "Shall lat/lon be cleared if one is missing?";
@@ -764,6 +785,28 @@ END
 
     # }}}
 }
+
+is(`../gpst -o gpx missing.gpsml`, # {{{
+    <<END,
+<?xml version="1.0" standalone="no"?>
+<gpx>
+  <trk>
+    <trkseg>
+      <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
+      <trkpt> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </trkpt>
+      <trkpt> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </trkpt>
+      <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
+      <trkpt> <ele>484</ele> </trkpt>
+      <trkpt> <ele>486</ele> </trkpt>
+      <trkpt> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </trkpt>
+      <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "gpst -o gpx missing.gpsml");
+
+# }}}
 
 my %Dat = (
   # {{{
