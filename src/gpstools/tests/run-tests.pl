@@ -325,6 +325,26 @@ END
     "gpst -o gpx no_signal.mayko");
 
 # }}}
+is(`../gpst -d no_signal.mayko`, # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
+<tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
+<tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
+<etp err="dup"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<etp err="dup"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<etp err="dup"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
+<tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
+<tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
+</track>
+</gpsml>
+END
+    "gpst -d no_signal.mayko");
+
+# }}}
 is(`../gpst --round lat=4,lon=5,ele=1 pause.gpx`, # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>

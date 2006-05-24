@@ -100,7 +100,6 @@ my $Udef = "?";
 my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
 $GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
 my $Spc = $GPST::Spc; # FIXME
-my $in_dupskip = 0; # Er 1 hvis vi holder på med ignorering av duplikater
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
 my $last_time = 0;
@@ -851,18 +850,10 @@ sub print_entry {
             $Opt{'skip-dups'}
             && ($Dat{'lon'} eq $last_lon)
             && ($Dat{'lat'} eq $last_lat)
-            && ($Dat{'ele'} eq $last_ele)
         ) {
-            if ($in_dupskip) {
-                $do_print = 0;
-            } else {
-                $do_print = 1;
-            }
-            $in_dupskip = 1;
+            $Dat{'error'} = "dup";
         } else {
                 $do_print = 1;
-                $in_dupskip && ($Line .= $last_line);
-                $in_dupskip = 0;
         }
 
         if (
@@ -1066,7 +1057,7 @@ Options:
     Check for broken chronology, warn about entries with an old 
     timestamp.
   -d, --skip-dups
-    Skip duplicated coordinates, only print first and last.
+    Skip duplicated coordinates.
   -e, --epoch
     Use seconds since 1970-01-01 00:00:00 GMT as date format.
   --fix
@@ -1182,7 +1173,7 @@ Check for broken chronology, warn about entries with an old timestamp.
 
 =item B<-d>, B<--skip-dups>
 
-Skip duplicated coordinates, only print first and last.
+Skip duplicated coordinates.
 
 =item B<-e>, B<--epoch>
 
