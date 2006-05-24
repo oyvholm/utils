@@ -30,6 +30,7 @@ our @EXPORT_OK;
 our $Spc = " ";
 
 sub trackpoint {
+    # Receive a hash and return a trackpoint as a string {{{
     my %Dat = @_;
 
     D("trackpoint(" . join('|', %Dat) . ")");
@@ -62,6 +63,7 @@ sub trackpoint {
     if ($Dat{'type'} eq "tp") {
         my $err_str = length($Dat{'error'}) ? $Dat{'error'} : "";
         if ($Dat{'format'} eq "gpsml") {
+            # {{{
             my $Elem = length($err_str) ? "etp" : "tp";
             $Retval .= join("",
                     $print_time
@@ -89,7 +91,9 @@ sub trackpoint {
                                    $Retval,
                                    $Elem)
             );
+            # }}}
         } elsif($Dat{'format'} eq "gpx") {
+            # {{{
             my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
             my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
             if (length("$lat_str$lon_str$Dat{'ele'}")) {
@@ -110,9 +114,11 @@ sub trackpoint {
                     "</trkpt>\n"
                 );
             }
+            # }}}
         }
     }
     return $Retval;
+    # }}}
 }
 
 1;
