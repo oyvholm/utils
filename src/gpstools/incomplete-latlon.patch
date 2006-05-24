@@ -1,8 +1,8 @@
 Index: tests/run-tests.pl
 ===================================================================
---- tests/run-tests.pl	(revision 1816)
+--- tests/run-tests.pl	(revision 1820)
 +++ tests/run-tests.pl	(working copy)
-@@ -669,20 +669,22 @@
+@@ -675,15 +675,17 @@
  <track>
  <title>Missing various elements</title>
  <tp> <time>2006-04-30T17:16:59Z</time> </tp>
@@ -24,21 +24,15 @@ Index: tests/run-tests.pl
  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
  </track>
  </gpsml>
- END
--    "gpst -re missing.gpsml");
-+    "gpst missing.gpsml");
-     # }}}
- is(`../gpst -w -o gpx pause.gpx`, # {{{
-     <<END,
-@@ -706,20 +708,18 @@
-     "gpst -w -o gpx pause.gpx");
+@@ -714,105 +716,129 @@
+ 
      # }}}
  
 -TODO: {
 -    local $TODO = "Shall lat/lon be cleared if one is missing?";
--    is(`../gpst -re missing.gpsml`, # {{{
+-    testcmd("../gpst -re missing.gpsml", # {{{
 -        <<END,
-+is(`../gpst -re missing.gpsml`, # {{{
++testcmd(`../gpst -re missing.gpsml`, # {{{
 +    <<END,
  <?xml version="1.0" encoding="UTF-8"?>
  <gpsml>
@@ -56,7 +50,17 @@ Index: tests/run-tests.pl
  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
  </track>
  </gpsml>
-@@ -734,11 +734,11 @@
+ END
+-    );
++);
+ 
+     # }}}
+-    testcmd("../gpst -rt missing.gpsml", # {{{
+-        <<END,
++testcmd("../gpst -rt missing.gpsml", # {{{
++    <<END,
+ <?xml version="1.0" encoding="UTF-8"?>
+ <gpsml>
  <track>
  <title>Missing various elements</title>
  <tp> <time>2006-04-30T17:16:59Z</time> </tp>
@@ -71,7 +75,17 @@ Index: tests/run-tests.pl
  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
  </track>
  </gpsml>
-@@ -752,59 +752,84 @@
+ END
+-    );
++);
+ 
+-    # }}}
+-    testcmd("../gpst -rp missing.gpsml", # {{{
+-        <<END,
++# }}}
++testcmd("../gpst -rp missing.gpsml", # {{{
++    <<END,
+ <?xml version="1.0" encoding="UTF-8"?>
  <gpsml>
  <track>
  <title>Missing various elements</title>
@@ -87,13 +101,14 @@ Index: tests/run-tests.pl
  </track>
  </gpsml>
  END
-     "gpst -rp missing.gpsml");
+-    );
++);
  
 -    # }}}
--    is(`../gpst -ret missing.gpsml`, # {{{
+-    testcmd("../gpst -ret missing.gpsml", # {{{
 -        <<END,
 +# }}}
-+is(`../gpst -ret missing.gpsml`, # {{{
++testcmd(`../gpst -ret missing.gpsml`, # {{{
 +    <<END,
  <?xml version="1.0" encoding="UTF-8"?>
  <gpsml>
@@ -108,14 +123,14 @@ Index: tests/run-tests.pl
  </track>
  </gpsml>
  END
--        "gpst -ret missing.gpsml");
-+    "gpst -ret missing.gpsml");
+-    );
++);
  
--    # }}}
--    is(`../gpst -retp missing.gpsml`, # {{{
--        <<END,
 +# }}}
-+is(`../gpst -retp missing.gpsml`, # {{{
+     # }}}
+-    testcmd("../gpst -retp missing.gpsml", # {{{
+-        <<END,
++testcmd("../gpst -retp missing.gpsml", # {{{
 +    <<END,
  <?xml version="1.0" encoding="UTF-8"?>
  <gpsml>
@@ -136,14 +151,14 @@ Index: tests/run-tests.pl
  </track>
  </gpsml>
  END
--        "gpst -retp missing.gpsml");
-+    "gpst -retp missing.gpsml");
+-    );
++);
  
 -    # }}}
--    is(`../gpst -rep missing.gpsml`, # {{{
+-    testcmd("../gpst -rep missing.gpsml", # {{{
 -        <<END,
 +# }}}
-+is(`../gpst -rep missing.gpsml`, # {{{
++testcmd("../gpst -rep missing.gpsml", # {{{
 +    <<END,
  <?xml version="1.0" encoding="UTF-8"?>
  <gpsml>
@@ -163,16 +178,16 @@ Index: tests/run-tests.pl
  </track>
  </gpsml>
  END
--        "gpst -rep missing.gpsml");
-+    "gpst -rep missing.gpsml");
+-    );
++);
  
 -    # }}}
 -}
 +# }}}
  
- is(`../gpst -o gpx missing.gpsml`, # {{{
+ testcmd("../gpst -o gpx missing.gpsml", # {{{
      <<END,
-@@ -812,13 +837,16 @@
+@@ -820,13 +846,16 @@
  <gpx>
    <trk>
      <trkseg>
@@ -192,8 +207,8 @@ Index: tests/run-tests.pl
        <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
      </trkseg>
    </trk>
-@@ -827,7 +855,59 @@
-     "gpst -o gpx missing.gpsml");
+@@ -835,7 +864,59 @@
+     );
  
  # }}}
 +is(`echo '<tp> <lat>5</lat> </tp>' | ../gpst`, # {{{
@@ -252,7 +267,7 @@ Index: tests/run-tests.pl
  my %Dat = ();
  
  is(trackpoint(%Dat), # {{{
-@@ -854,9 +934,8 @@
+@@ -862,9 +943,8 @@
  );
  
  is(trackpoint(%Dat), # {{{
@@ -263,7 +278,7 @@ Index: tests/run-tests.pl
  
  is(`echo '<tp> </tp>' | ../gpst`,
      <<END,
-@@ -866,7 +945,7 @@
+@@ -874,7 +954,7 @@
  </track>
  </gpsml>
  END
@@ -272,9 +287,432 @@ Index: tests/run-tests.pl
  
  # }}}
  
+Index: incomplete-latlon.patch
+===================================================================
+--- incomplete-latlon.patch	(revision 1820)
++++ incomplete-latlon.patch	(working copy)
+@@ -1,8 +1,8 @@
+ Index: tests/run-tests.pl
+ ===================================================================
+---- tests/run-tests.pl	(revision 1816)
++--- tests/run-tests.pl	(revision 1820)
+ +++ tests/run-tests.pl	(working copy)
+-@@ -669,20 +669,22 @@
++@@ -675,15 +675,17 @@
+  <track>
+  <title>Missing various elements</title>
+  <tp> <time>2006-04-30T17:16:59Z</time> </tp>
+@@ -24,21 +24,15 @@
+  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+  </track>
+  </gpsml>
+- END
+--    "gpst -re missing.gpsml");
+-+    "gpst missing.gpsml");
++@@ -714,105 +716,129 @@
++ 
+      # }}}
+- is(`../gpst -w -o gpx pause.gpx`, # {{{
+-     <<END,
+-@@ -706,20 +708,18 @@
+-     "gpst -w -o gpx pause.gpx");
+-     # }}}
+  
+ -TODO: {
+ -    local $TODO = "Shall lat/lon be cleared if one is missing?";
+--    is(`../gpst -re missing.gpsml`, # {{{
++-    testcmd("../gpst -re missing.gpsml", # {{{
+ -        <<END,
+-+is(`../gpst -re missing.gpsml`, # {{{
+++testcmd(`../gpst -re missing.gpsml`, # {{{
+ +    <<END,
+  <?xml version="1.0" encoding="UTF-8"?>
+  <gpsml>
+@@ -56,7 +50,17 @@
+  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+  </track>
+  </gpsml>
+-@@ -734,11 +734,11 @@
++ END
++-    );
+++);
++ 
++     # }}}
++-    testcmd("../gpst -rt missing.gpsml", # {{{
++-        <<END,
+++testcmd("../gpst -rt missing.gpsml", # {{{
+++    <<END,
++ <?xml version="1.0" encoding="UTF-8"?>
++ <gpsml>
+  <track>
+  <title>Missing various elements</title>
+  <tp> <time>2006-04-30T17:16:59Z</time> </tp>
+@@ -71,7 +75,17 @@
+  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+  </track>
+  </gpsml>
+-@@ -752,59 +752,84 @@
++ END
++-    );
+++);
++ 
++-    # }}}
++-    testcmd("../gpst -rp missing.gpsml", # {{{
++-        <<END,
+++# }}}
+++testcmd("../gpst -rp missing.gpsml", # {{{
+++    <<END,
++ <?xml version="1.0" encoding="UTF-8"?>
+  <gpsml>
+  <track>
+  <title>Missing various elements</title>
+@@ -87,13 +101,14 @@
+  </track>
+  </gpsml>
+  END
+-     "gpst -rp missing.gpsml");
++-    );
+++);
+  
+ -    # }}}
+--    is(`../gpst -ret missing.gpsml`, # {{{
++-    testcmd("../gpst -ret missing.gpsml", # {{{
+ -        <<END,
+ +# }}}
+-+is(`../gpst -ret missing.gpsml`, # {{{
+++testcmd(`../gpst -ret missing.gpsml`, # {{{
+ +    <<END,
+  <?xml version="1.0" encoding="UTF-8"?>
+  <gpsml>
+@@ -108,14 +123,14 @@
+  </track>
+  </gpsml>
+  END
+--        "gpst -ret missing.gpsml");
+-+    "gpst -ret missing.gpsml");
++-    );
+++);
+  
+--    # }}}
+--    is(`../gpst -retp missing.gpsml`, # {{{
+++# }}}
++     # }}}
++-    testcmd("../gpst -retp missing.gpsml", # {{{
+ -        <<END,
+-+# }}}
+-+is(`../gpst -retp missing.gpsml`, # {{{
+++testcmd("../gpst -retp missing.gpsml", # {{{
+ +    <<END,
+  <?xml version="1.0" encoding="UTF-8"?>
+  <gpsml>
+@@ -136,14 +151,14 @@
+  </track>
+  </gpsml>
+  END
+--        "gpst -retp missing.gpsml");
+-+    "gpst -retp missing.gpsml");
++-    );
+++);
+  
+ -    # }}}
+--    is(`../gpst -rep missing.gpsml`, # {{{
++-    testcmd("../gpst -rep missing.gpsml", # {{{
+ -        <<END,
+ +# }}}
+-+is(`../gpst -rep missing.gpsml`, # {{{
+++testcmd("../gpst -rep missing.gpsml", # {{{
+ +    <<END,
+  <?xml version="1.0" encoding="UTF-8"?>
+  <gpsml>
+@@ -163,16 +178,16 @@
+  </track>
+  </gpsml>
+  END
+--        "gpst -rep missing.gpsml");
+-+    "gpst -rep missing.gpsml");
++-    );
+++);
+  
+ -    # }}}
+ -}
+ +# }}}
+  
+- is(`../gpst -o gpx missing.gpsml`, # {{{
++ testcmd("../gpst -o gpx missing.gpsml", # {{{
+      <<END,
+-@@ -812,13 +837,16 @@
++@@ -820,13 +846,16 @@
+  <gpx>
+    <trk>
+      <trkseg>
+@@ -192,8 +207,8 @@
+        <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
+      </trkseg>
+    </trk>
+-@@ -827,7 +855,59 @@
+-     "gpst -o gpx missing.gpsml");
++@@ -835,7 +864,59 @@
++     );
+  
+  # }}}
+ +is(`echo '<tp> <lat>5</lat> </tp>' | ../gpst`, # {{{
+@@ -252,7 +267,7 @@
+  my %Dat = ();
+  
+  is(trackpoint(%Dat), # {{{
+-@@ -854,9 +934,8 @@
++@@ -862,9 +943,8 @@
+  );
+  
+  is(trackpoint(%Dat), # {{{
+@@ -263,7 +278,7 @@
+  
+  is(`echo '<tp> </tp>' | ../gpst`,
+      <<END,
+-@@ -866,7 +945,7 @@
++@@ -874,7 +954,7 @@
+  </track>
+  </gpsml>
+  END
+@@ -272,9 +287,234 @@
+  
+  # }}}
+  
++Index: incomplete-latlon.patch
++===================================================================
++--- incomplete-latlon.patch	(revision 1820)
+++++ incomplete-latlon.patch	(working copy)
++@@ -1,8 +1,8 @@
++ Index: tests/run-tests.pl
++ ===================================================================
++---- tests/run-tests.pl	(revision 1816)
+++--- tests/run-tests.pl	(revision 1820)
++ +++ tests/run-tests.pl	(working copy)
++-@@ -669,20 +669,22 @@
+++@@ -675,15 +675,17 @@
++  <track>
++  <title>Missing various elements</title>
++  <tp> <time>2006-04-30T17:16:59Z</time> </tp>
++@@ -24,21 +24,15 @@
++  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
++  </track>
++  </gpsml>
++- END
++--    "gpst -re missing.gpsml");
++-+    "gpst missing.gpsml");
+++@@ -714,105 +716,129 @@
+++ 
++      # }}}
++- is(`../gpst -w -o gpx pause.gpx`, # {{{
++-     <<END,
++-@@ -706,20 +708,18 @@
++-     "gpst -w -o gpx pause.gpx");
++-     # }}}
++  
++ -TODO: {
++ -    local $TODO = "Shall lat/lon be cleared if one is missing?";
++--    is(`../gpst -re missing.gpsml`, # {{{
+++-    testcmd("../gpst -re missing.gpsml", # {{{
++ -        <<END,
++-+is(`../gpst -re missing.gpsml`, # {{{
++++testcmd(`../gpst -re missing.gpsml`, # {{{
++ +    <<END,
++  <?xml version="1.0" encoding="UTF-8"?>
++  <gpsml>
++@@ -56,7 +50,17 @@
++  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
++  </track>
++  </gpsml>
++-@@ -734,11 +734,11 @@
+++ END
+++-    );
++++);
+++ 
+++     # }}}
+++-    testcmd("../gpst -rt missing.gpsml", # {{{
+++-        <<END,
++++testcmd("../gpst -rt missing.gpsml", # {{{
++++    <<END,
+++ <?xml version="1.0" encoding="UTF-8"?>
+++ <gpsml>
++  <track>
++  <title>Missing various elements</title>
++  <tp> <time>2006-04-30T17:16:59Z</time> </tp>
++@@ -71,7 +75,17 @@
++  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
++  </track>
++  </gpsml>
++-@@ -752,59 +752,84 @@
+++ END
+++-    );
++++);
+++ 
+++-    # }}}
+++-    testcmd("../gpst -rp missing.gpsml", # {{{
+++-        <<END,
++++# }}}
++++testcmd("../gpst -rp missing.gpsml", # {{{
++++    <<END,
+++ <?xml version="1.0" encoding="UTF-8"?>
++  <gpsml>
++  <track>
++  <title>Missing various elements</title>
++@@ -87,13 +101,14 @@
++  </track>
++  </gpsml>
++  END
++-     "gpst -rp missing.gpsml");
+++-    );
++++);
++  
++ -    # }}}
++--    is(`../gpst -ret missing.gpsml`, # {{{
+++-    testcmd("../gpst -ret missing.gpsml", # {{{
++ -        <<END,
++ +# }}}
++-+is(`../gpst -ret missing.gpsml`, # {{{
++++testcmd(`../gpst -ret missing.gpsml`, # {{{
++ +    <<END,
++  <?xml version="1.0" encoding="UTF-8"?>
++  <gpsml>
++@@ -108,14 +123,14 @@
++  </track>
++  </gpsml>
++  END
++--        "gpst -ret missing.gpsml");
++-+    "gpst -ret missing.gpsml");
+++-    );
++++);
++  
++--    # }}}
++--    is(`../gpst -retp missing.gpsml`, # {{{
++--        <<END,
++ +# }}}
++-+is(`../gpst -retp missing.gpsml`, # {{{
+++     # }}}
+++-    testcmd("../gpst -retp missing.gpsml", # {{{
+++-        <<END,
++++testcmd("../gpst -retp missing.gpsml", # {{{
++ +    <<END,
++  <?xml version="1.0" encoding="UTF-8"?>
++  <gpsml>
++@@ -136,14 +151,14 @@
++  </track>
++  </gpsml>
++  END
++--        "gpst -retp missing.gpsml");
++-+    "gpst -retp missing.gpsml");
+++-    );
++++);
++  
++ -    # }}}
++--    is(`../gpst -rep missing.gpsml`, # {{{
+++-    testcmd("../gpst -rep missing.gpsml", # {{{
++ -        <<END,
++ +# }}}
++-+is(`../gpst -rep missing.gpsml`, # {{{
++++testcmd("../gpst -rep missing.gpsml", # {{{
++ +    <<END,
++  <?xml version="1.0" encoding="UTF-8"?>
++  <gpsml>
++@@ -163,16 +178,16 @@
++  </track>
++  </gpsml>
++  END
++--        "gpst -rep missing.gpsml");
++-+    "gpst -rep missing.gpsml");
+++-    );
++++);
++  
++ -    # }}}
++ -}
++ +# }}}
++  
++- is(`../gpst -o gpx missing.gpsml`, # {{{
+++ testcmd("../gpst -o gpx missing.gpsml", # {{{
++      <<END,
++-@@ -812,13 +837,16 @@
+++@@ -820,13 +846,16 @@
++  <gpx>
++    <trk>
++      <trkseg>
++@@ -192,8 +207,8 @@
++        <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
++      </trkseg>
++    </trk>
++-@@ -827,7 +855,59 @@
++-     "gpst -o gpx missing.gpsml");
+++@@ -835,7 +864,59 @@
+++     );
++  
++  # }}}
++ +is(`echo '<tp> <lat>5</lat> </tp>' | ../gpst`, # {{{
++@@ -252,7 +267,7 @@
++  my %Dat = ();
++  
++  is(trackpoint(%Dat), # {{{
++-@@ -854,9 +934,8 @@
+++@@ -862,9 +943,8 @@
++  );
++  
++  is(trackpoint(%Dat), # {{{
++@@ -263,7 +278,7 @@
++  
++  is(`echo '<tp> </tp>' | ../gpst`,
++      <<END,
++-@@ -866,7 +945,7 @@
+++@@ -874,7 +954,7 @@
++  </track>
++  </gpsml>
++  END
++@@ -272,37 +287,3 @@
++  
++  # }}}
++  
++-Index: gpst
++-===================================================================
++---- gpst	(revision 1816)
++-+++ gpst	(working copy)
++-@@ -32,6 +32,7 @@
++-     # Initial values for command line arguments {{{
++-     'chronology' => 0,
++-     'comment-out-dups' => 0,
++-+    'complete-position' => 0,
++-     'create-breaks' => 0,
++-     'debug' => 0,
++-     'double-y-scale' => 0,
++-@@ -69,6 +70,7 @@
++-     # Command line options {{{
++-     "chronology" => \$Opt{'chronology'},
++-     "comment-out-dups|u" => \$Opt{'comment-out-dups'},
++-+    "complete-position" => \$Opt{'complete-position'},
++-     "create-breaks|t" => \$Opt{'create-breaks'},
++-     "debug" => \$Opt{'debug'},
++-     "double-y-scale|y" => \$Opt{'double-y-scale'},
++-@@ -703,7 +705,12 @@
++-     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
++-     defined($Dat{'year'}) || ($Dat{'year'} = "");
++-     my $print_time = length($Dat{'year'}) ? 1 : 0;
++--    my $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
++-+    my $print_pos = 1;
++-+    if (length($Dat{'lat'}) && length($Dat{'lon'})) {
++-+        $print_pos = 1;
++-+    } else {
++-+        $Opt{'complete-position'} && ($print_pos = 0);
++-+    }
++-     if (!$print_pos) {
++-         $Dat{'lat'} = $Dat{'lon'} = "";
++-     }
+ Index: gpst
+ ===================================================================
+---- gpst	(revision 1816)
++--- gpst	(revision 1820)
+ +++ gpst	(working copy)
+ @@ -32,6 +32,7 @@
+      # Initial values for command line arguments {{{
 Index: gpst
 ===================================================================
---- gpst	(revision 1816)
+--- gpst	(revision 1820)
 +++ gpst	(working copy)
 @@ -32,6 +32,7 @@
      # Initial values for command line arguments {{{
