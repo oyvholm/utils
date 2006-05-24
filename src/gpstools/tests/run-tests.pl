@@ -225,7 +225,7 @@ like(`../gpst --version`, # {{{
     "gpst --version");
 
 # }}}
-is(`../gpst </dev/null`, # {{{
+testcmd("../gpst </dev/null", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -233,10 +233,10 @@ is(`../gpst </dev/null`, # {{{
 </track>
 </gpsml>
 END
-    "gpst </dev/null");
+);
 
 # }}}
-is(`../gpst -o gpx </dev/null`, # {{{
+testcmd("../gpst -o gpx </dev/null", # {{{
     <<END,
 <?xml version="1.0" standalone="no"?>
 <gpx>
@@ -246,10 +246,10 @@ is(`../gpst -o gpx </dev/null`, # {{{
   </trk>
 </gpx>
 END
-    "gpst -o gpx </dev/null");
+);
 
 # }}}
-is(`../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp`, # {{{
+testcmd("../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -270,7 +270,7 @@ is(`../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp`, # {{{
 </track>
 </gpsml>
 END
-    "gpst --fix --chronology chronology-error.gpsml");
+);
 
 # }}}
 is(file_data("chronofix.tmp"), # {{{
@@ -279,7 +279,7 @@ is(file_data("chronofix.tmp"), # {{{
 unlink("chronofix.tmp") || warn("chronofix.tmp: Cannot delete file: $!\n");
 
 # }}}
-is(`../gpst -t pause.gpx`, # {{{
+testcmd("../gpst -t pause.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -300,10 +300,10 @@ is(`../gpst -t pause.gpx`, # {{{
 </track>
 </gpsml>
 END
-    "gpst -t pause.gpx");
+);
 
 # }}}
-is(`../gpst -o gpx no_signal.mayko`, # {{{
+testcmd("../gpst -o gpx no_signal.mayko", # {{{
     <<END,
 <?xml version="1.0" standalone="no"?>
 <gpx>
@@ -322,10 +322,10 @@ is(`../gpst -o gpx no_signal.mayko`, # {{{
   </trk>
 </gpx>
 END
-    "gpst -o gpx no_signal.mayko");
+);
 
 # }}}
-is(`../gpst -d no_signal.mayko`, # {{{
+testcmd("../gpst -d no_signal.mayko", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -342,10 +342,10 @@ is(`../gpst -d no_signal.mayko`, # {{{
 </track>
 </gpsml>
 END
-    "gpst -d no_signal.mayko");
+);
 
 # }}}
-is(`../gpst --round lat=4,lon=5,ele=1 pause.gpx`, # {{{
+testcmd("../gpst --round lat=4,lon=5,ele=1 pause.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -363,11 +363,14 @@ is(`../gpst --round lat=4,lon=5,ele=1 pause.gpx`, # {{{
 </track>
 </gpsml>
 END
-    "gpst --round lat=4,lon=5,ele=1 pause.gpx");
+);
 
 # }}}
-system("../gpst -u no_signal.mayko >nosignal.tmp"); # {{{
-TODO: {
+testcmd("../gpst -u no_signal.mayko >nosignal.tmp",
+    "",
+    ); # {{{
+
+if (1) {
     local $TODO = "Use the default output format, this Mayko thing is obsolete.";
     is(file_data("nosignal.tmp"),
         <<END,
@@ -389,7 +392,7 @@ END
 }
 
 # }}}
-is(`../gpst nosignal.tmp`, # {{{
+testcmd("../gpst nosignal.tmp", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -409,11 +412,11 @@ is(`../gpst nosignal.tmp`, # {{{
 </track>
 </gpsml>
 END
-    "gpst nosignal.tmp (mayko format processed with gpst -u)");
+);
 unlink("nosignal.tmp") || warn("nosignal.tmp: Cannot delete file: $!\n");
 
 # }}}
-is(`../gpst log.mcsv`, # {{{
+testcmd("../gpst log.mcsv", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -459,10 +462,10 @@ is(`../gpst log.mcsv`, # {{{
 </track>
 </gpsml>
 END
-    "gpst log.mcsv");
+);
 
 # }}}
-is(`../gpst two-digit_year.mcsv`, # {{{
+testcmd("../gpst two-digit_year.mcsv", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -479,10 +482,10 @@ is(`../gpst two-digit_year.mcsv`, # {{{
 </track>
 </gpsml>
 END
-    "gpst two-digit_year.mcsv");
+);
 
 # }}}
-is(`../gpst log.gpstxt`, # {{{
+testcmd("../gpst log.gpstxt", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -508,10 +511,10 @@ is(`../gpst log.gpstxt`, # {{{
 </track>
 </gpsml>
 END
-    "gpst log.gpstxt");
+);
 
 # }}}
-is(`../gpst log.dos.mayko`, # {{{
+testcmd("../gpst log.dos.mayko", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -525,10 +528,10 @@ is(`../gpst log.dos.mayko`, # {{{
 </track>
 </gpsml>
 END
-    "gpst log.dos.mayko");
+);
 
 # }}}
-is(`../gpst log.dos.gpstxt`, # {{{
+testcmd("../gpst log.dos.gpstxt", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -547,10 +550,10 @@ is(`../gpst log.dos.gpstxt`, # {{{
 </track>
 </gpsml>
 END
-    "gpst log.dos.gpstxt");
+);
 
 # }}}
-is(`../gpst log.unix.mcsv`, # {{{
+testcmd("../gpst log.unix.mcsv", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -569,10 +572,10 @@ is(`../gpst log.unix.mcsv`, # {{{
 </track>
 </gpsml>
 END
-    "gpst log.unix.mcsv");
+);
 
 # }}}
-is(`../gpst multitrack.gpx`, # {{{
+testcmd("../gpst multitrack.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -603,10 +606,10 @@ is(`../gpst multitrack.gpx`, # {{{
 </track>
 </gpsml>
 END
-    "gpst multitrack.gpx");
+);
 
 # }}}
-is(`../gpst compact.gpx`, # {{{
+testcmd("../gpst compact.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -627,10 +630,10 @@ is(`../gpst compact.gpx`, # {{{
 </track>
 </gpsml>
 END
-    "gpst compact.gpx");
+);
 
 # }}}
-is(`../gpst -re multitrack.gpx`, # {{{
+testcmd("../gpst -re multitrack.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -646,10 +649,10 @@ is(`../gpst -re multitrack.gpx`, # {{{
 </track>
 </gpsml>
 END
-    "gpst -re multitrack.gpx (Only trackpoints with elevation)");
+);
 
 # }}}
-is(`../gpst -re one_ele.dos.gpsml`, # {{{
+testcmd("../gpst -re one_ele.dos.gpsml", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -659,10 +662,10 @@ is(`../gpst -re one_ele.dos.gpsml`, # {{{
 </track>
 </gpsml>
 END
-    "gpst -re one_ele.gpsml (Only trackpoints with elevation)");
+);
 
 # }}}
-is(`../gpst missing.gpsml`, # {{{
+testcmd("../gpst missing.gpsml", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -682,9 +685,10 @@ is(`../gpst missing.gpsml`, # {{{
 </track>
 </gpsml>
 END
-    "gpst -re missing.gpsml");
+);
+
     # }}}
-is(`../gpst -w -o gpx pause.gpx`, # {{{
+testcmd("../gpst -w -o gpx pause.gpx", # {{{
     <<END,
 <?xml version="1.0" standalone="no"?>
 <gpx>
@@ -703,12 +707,13 @@ is(`../gpst -w -o gpx pause.gpx`, # {{{
 </trk>
 </gpx>
 END
-    "gpst -w -o gpx pause.gpx");
+);
+
     # }}}
 
 TODO: {
     local $TODO = "Shall lat/lon be cleared if one is missing?";
-    is(`../gpst -re missing.gpsml`, # {{{
+    testcmd("../gpst -re missing.gpsml", # {{{
         <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -724,10 +729,10 @@ TODO: {
 </track>
 </gpsml>
 END
-        "gpst -re missing.gpsml");
+    );
 
     # }}}
-    is(`../gpst -rt missing.gpsml`, # {{{
+    testcmd("../gpst -rt missing.gpsml", # {{{
         <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -743,10 +748,10 @@ END
 </track>
 </gpsml>
 END
-        "gpst -rt missing.gpsml");
+    );
 
     # }}}
-    is(`../gpst -rp missing.gpsml`, # {{{
+    testcmd("../gpst -rp missing.gpsml", # {{{
         <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -758,10 +763,10 @@ END
 </track>
 </gpsml>
 END
-    "gpst -rp missing.gpsml");
+    );
 
     # }}}
-    is(`../gpst -ret missing.gpsml`, # {{{
+    testcmd("../gpst -ret missing.gpsml", # {{{
         <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -774,10 +779,10 @@ END
 </track>
 </gpsml>
 END
-        "gpst -ret missing.gpsml");
+    );
 
     # }}}
-    is(`../gpst -retp missing.gpsml`, # {{{
+    testcmd("../gpst -retp missing.gpsml", # {{{
         <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -787,10 +792,10 @@ END
 </track>
 </gpsml>
 END
-        "gpst -retp missing.gpsml");
+    );
 
     # }}}
-    is(`../gpst -rep missing.gpsml`, # {{{
+    testcmd("../gpst -rep missing.gpsml", # {{{
         <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -801,12 +806,12 @@ END
 </track>
 </gpsml>
 END
-        "gpst -rep missing.gpsml");
+    );
 
     # }}}
 }
 
-is(`../gpst -o gpx missing.gpsml`, # {{{
+testcmd("../gpst -o gpx missing.gpsml", # {{{
     <<END,
 <?xml version="1.0" standalone="no"?>
 <gpx>
@@ -824,7 +829,7 @@ is(`../gpst -o gpx missing.gpsml`, # {{{
   </trk>
 </gpx>
 END
-    "gpst -o gpx missing.gpsml");
+    );
 
 # }}}
 
@@ -871,6 +876,14 @@ END
 # }}}
 
 diag("Testing finished.");
+
+sub testcmd {
+    # {{{
+    my ($Cmd, $Exp) = @_;
+
+    is(`$Cmd`, $Exp, $Cmd);
+    # }}}
+}
 
 sub file_data {
     # Return file content as a string {{{
