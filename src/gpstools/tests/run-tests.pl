@@ -259,7 +259,7 @@ is(`../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp`, # {{{
 <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
 <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
 <break/>
-<etp> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </etp>
+<etp err="chrono"> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </etp>
 <break/>
 <pause>0:00:37:54</pause>
 <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
@@ -378,9 +378,9 @@ is(`../gpst nosignal.tmp`, # {{{
 <tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
 <tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
 <desc>20021222T214351-20021222T214354: CO: No signal \x7B\x7B\x7B</desc>
-<etp> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<etp> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<etp> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<etp err="desc"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<etp err="desc"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<etp err="desc"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
 <desc>20021222T214351-20021222T214354: CO: No signal \x7D\x7D\x7D</desc>
 <break/>
 <tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
@@ -471,7 +471,7 @@ is(`../gpst log.gpstxt`, # {{{
 <tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>
 <tp> <time>2003-06-13T14:36:11Z</time> <lat>59.5213</lat> <lon>7.392417</lon> <ele>761</ele> </tp>
 <tp> <time>2003-06-13T14:36:12Z</time> <lat>59.521183</lat> <lon>7.3927</lon> <ele>761</ele> </tp>
-<etp> <time>2003-06-13T14:36:13Z</time> </etp>
+<etp err="nosignal"> <time>2003-06-13T14:36:13Z</time> </etp>
 <tp> <time>2003-06-13T14:36:15Z</time> <lat>59.52085</lat> <lon>7.393517</lon> <ele>760</ele> </tp>
 <tp> <time>2003-06-13T14:36:16Z</time> <lat>59.520733</lat> <lon>7.393783</lon> <ele>760</ele> </tp>
 <tp> <time>2003-06-13T14:36:17Z</time> <lat>59.52065</lat> <lon>7.39405</lon> <ele>760</ele> </tp>
@@ -479,7 +479,7 @@ is(`../gpst log.gpstxt`, # {{{
 <tp> <time>2003-06-13T14:36:19Z</time> <lat>59.520533</lat> <lon>7.394633</lon> <ele>759</ele> </tp>
 <tp> <time>2003-06-13T14:36:20Z</time> <lat>59.520483</lat> <lon>7.394917</lon> <ele>759</ele> </tp>
 <tp> <time>2003-06-13T14:36:21Z</time> <lat>59.520433</lat> <lon>7.395233</lon> <ele>759</ele> </tp>
-<etp> <time>2003-06-13T14:36:22Z</time> </etp>
+<etp err="nosignal"> <time>2003-06-13T14:36:22Z</time> </etp>
 <tp> <time>2003-06-13T14:36:24Z</time> <lat>59.520283</lat> <lon>7.396233</lon> <ele>758</ele> </tp>
 <tp> <time>2003-06-13T14:36:25Z</time> <lat>59.520233</lat> <lon>7.39655</lon> <ele>758</ele> </tp>
 <tp> <time>2003-06-13T14:36:26Z</time> <lat>59.520183</lat> <lon>7.396883</lon> <ele>757</ele> </tp>
@@ -820,7 +820,7 @@ my %Dat = (
   'lat' => '59.5214',
   'lon' => '7.392133',
   'ele' => '762',
-  'error' => 0,
+  'error' => "",
   'type' => 'tp',
   # }}}
 );

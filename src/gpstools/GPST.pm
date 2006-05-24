@@ -60,8 +60,9 @@ sub trackpoint {
     my $Retval = "";
 
     if ($Dat{'type'} eq "tp") {
+        my $err_str = length($Dat{'error'}) ? $Dat{'error'} : "";
         if ($Dat{'format'} eq "gpsml") {
-            my $Elem = $Dat{'error'} ? "etp" : "tp";
+            my $Elem = length($err_str) ? "etp" : "tp";
             $Retval .= join("",
                     $print_time
                         ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
@@ -81,7 +82,13 @@ sub trackpoint {
                                   $Dat{'desc'})
                         : ""
             );
-            length($Retval) && ($Retval = "<$Elem> $Retval</$Elem>\n");
+            length($Retval) &&
+                ($Retval = sprintf("<%s%s> %s</%s>\n",
+                                   $Elem,
+                                   length($err_str) ? " err=\"$err_str\"" : "",
+                                   $Retval,
+                                   $Elem)
+            );
         } elsif($Dat{'format'} eq "gpx") {
             my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
             my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";

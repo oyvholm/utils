@@ -261,22 +261,22 @@ for $curr_file (@ARGV) {
                 'lat' => '', 'lon' => '',
                 'ele' => '',
                 'desc' => '',
-                'error' => 0,
+                'error' => "",
                 'type' => 'tp',
             );
-            my $check_desc = 0;
 
             if ($Opt{'save-to-file'} ne "\n") {
                 push(@first_lines, $_);
             }
-            s/^# error // && ($Dat{'error'} = 1);
-            s/^# ?// && ($Dat{'error'} = 1, $check_desc = 1);
+            s/^# error // && ($Dat{'error'} = "error");
+            s/^# ?// && ($Dat{'error'} = "desc");
             $xml_data = "";
-            if (m#^<(e?tp)\b.*?>(.*?)</(e?tp)>\s*$#) {
+            if (m#^<(e?tp)\b(.*?)>(.*?)</(e?tp)>\s*$#) {
                 # gpsml — The main storage format {{{
-                my ($Elem, $Data) =
-                   (   $1,    $2);
-                $Elem eq "etp" && ($Dat{'error'} = 1);
+                my ($Elem, $Props, $Data) =
+                   (   $1,     $2,    $3);
+                my $err_str = ($Props =~ /\berr="(.*?)"/) ? $1 : "error";
+                $Elem eq "etp" && ($Dat{'error'} = $err_str);
                 my $Time = "";
                 $Data =~ m#<time>(.*?)</time># && ($Time = $1);
                 $Time =~ s{
@@ -514,7 +514,7 @@ for $curr_file (@ARGV) {
                  $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}, $Dat{'rest'}) =
                 ($2+2000, $3, $4,
                  $5, $6, $7, $8);
-                $Dat{'error'} = 1;
+                $Dat{'error'} = "nosignal";
                 print_entry(%Dat);
                 # }}}
             } elsif (/^xmaplog /) {
@@ -527,7 +527,7 @@ for $curr_file (@ARGV) {
                     && print("\n");
             } elsif (/^Pause: /) {
                 # NOP, is here to cope with old files I’ve lying around.
-            } elsif ($check_desc) {
+            } elsif ($Dat{'error'} eq "desc") {
                 my $Comment = $_;
                 if (defined($Comment)) {
                     $Comment =~ s/^\s*(.*?)\s*$/$1/;
@@ -599,7 +599,7 @@ sub print_gpx {
                     'lat' => '', 'lon' => '',
                     'ele' => '',
                     'desc' => '',
-                    'error' => 0,
+                    'error' => "",
                     'type' => 'tp',
                 );
                 ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
@@ -747,7 +747,7 @@ sub print_entry {
         $Dat{'min'}   = sprintf("%02u", $Dat{'min'});
         $Dat{'sec'}   = sprintf("%02u", $Dat{'sec'});
         if ($Opt{'chronology'}) {
-            if ($last_time > $ep_time && !$Dat{'error'}) {
+            if ($last_time > $ep_time && !length($Dat{'error'})) {
                 warn(sprintf(
                     "%s: \"%sZ\": Next date is %s in the past (%sZ)\n",
                     $progname, sec_to_string($last_time, "T"),
@@ -756,7 +756,7 @@ sub print_entry {
                 ));
                 # FIXME: Make --fix work with gpx.
                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
-                    $Dat{'error'} = 1;
+                    $Dat{'error'} = "chrono";
                 }
             }
         }
