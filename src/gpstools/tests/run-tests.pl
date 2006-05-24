@@ -828,7 +828,15 @@ END
 
 # }}}
 
-my %Dat = (
+my %Dat = ();
+
+is(trackpoint(%Dat), # {{{
+    undef,
+    "trackpoint() receives empty hash");
+
+# }}}
+
+%Dat = (
   # {{{
   'format' => 'gpsml',
   'year' => '2003',
