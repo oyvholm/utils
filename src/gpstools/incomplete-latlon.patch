@@ -1,6 +1,6 @@
 Index: tests/run-tests.pl
 ===================================================================
---- tests/run-tests.pl	(revision 1828)
+--- tests/run-tests.pl	(revision 1829)
 +++ tests/run-tests.pl	(working copy)
 @@ -813,15 +813,17 @@
  <track>
@@ -24,14 +24,16 @@ Index: tests/run-tests.pl
  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
  </track>
  </gpsml>
-@@ -854,125 +856,150 @@
+@@ -853,144 +855,206 @@
+ );
  
      # }}}
- 
+-
 -TODO: {
 -    local $TODO = "Shall lat/lon be cleared if one is missing?";
 -    testcmd("../gpst -re missing.gpsml", # {{{
 -        <<END,
++diag("Testing --require...");
 +testcmd("../gpst -re missing.gpsml", # {{{
 +    <<END,
  <?xml version="1.0" encoding="UTF-8"?>
@@ -152,8 +154,6 @@ Index: tests/run-tests.pl
 +<tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
 +<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
 +<tp> <ele>486</ele> </tp>
-+<tp> <lat>60.42339</lat> </tp>
-+<tp> <lon>5.34262</lon> </tp>
 +<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
  </track>
@@ -180,65 +180,63 @@ Index: tests/run-tests.pl
  <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
 +<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
 +<tp> <ele>486</ele> </tp>
-+<tp> <lat>60.42339</lat> </tp>
-+<tp> <lon>5.34262</lon> </tp>
 +<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
  <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
  </track>
  </gpsml>
  END
      "Require elevation and position",
--    );
 +);
- 
--    # }}}
--}
--
++
 +# }}}
- testcmd("../gpst -o gpx missing.gpsml", # {{{
-     <<END,
- <?xml version="1.0" standalone="no"?>
- <gpx>
-   <trk>
-     <trkseg>
-+      <trkpt lat="60.42352"> <time>2006-04-30T17:17:00Z</time> </trkpt>
-       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
--      <trkpt> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </trkpt>
-+      <trkpt lon="5.34187"> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </trkpt>
-       <trkpt> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </trkpt>
-       <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
--      <trkpt> <ele>484</ele> </trkpt>
-+      <trkpt lon="5.34224"> <ele>484</ele> </trkpt>
-       <trkpt> <ele>486</ele> </trkpt>
--      <trkpt> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </trkpt>
-+      <trkpt lat="60.42339"> </trkpt>
-+      <trkpt lon="5.34262"> </trkpt>
-+      <trkpt lat="60.42339"> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </trkpt>
-       <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
-     </trkseg>
-   </trk>
-@@ -993,7 +1020,59 @@
-     "Don’t print empty trackpoints");
- 
- # }}}
-+testcmd("echo '<tp> <lat>5</lat> </tp>' | ../gpst", # {{{
++testcmd("../gpst -o gpx missing.gpsml | ../gpst", # {{{
 +    <<END,
 +<?xml version="1.0" encoding="UTF-8"?>
 +<gpsml>
 +<track>
-+<tp> <lat>5</lat> </tp>
++<title>Missing various elements</title>
++<tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
++<tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
++<tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
++</track>
++</gpsml>
++END
++    "Via GPX from gpsml with missing data",
+     );
+ 
+-    # }}}
+-}
++# }}}
++testcmd("echo '<tp> </tp>' | ../gpst", # {{{
++    <<END,
++<?xml version="1.0" encoding="UTF-8"?>
++<gpsml>
++<track>
++</track>
++</gpsml>
++END
++    "Don’t print empty trackpoints");
+ 
+-testcmd("../gpst -o gpx missing.gpsml", # {{{
++# }}}
++testcmd("echo '<tp> <lat>5</lat> </tp>' | ../gpst", # {{{
+     <<END,
++<?xml version="1.0" encoding="UTF-8"?>
++<gpsml>
++<track>
++<etp err="incomplete"> <lat>5</lat> </etp>
 +</track>
 +</gpsml>
 +END
 +    "Only latitude, no longitude (gpsml)");
- 
++
 +# }}}
 +testcmd("echo '<tp> <lon>5</lon> </tp>' | ../gpst", # {{{
 +    <<END,
 +<?xml version="1.0" encoding="UTF-8"?>
 +<gpsml>
 +<track>
-+<tp> <lon>5</lon> </tp>
++<etp err="incomplete"> <lon>5</lon> </etp>
 +</track>
 +</gpsml>
 +END
@@ -247,67 +245,130 @@ Index: tests/run-tests.pl
 +# }}}
 +testcmd("echo '<tp> <lat>5</lat> </tp>' | ../gpst -o gpx", # {{{
 +    <<END,
-+<?xml version="1.0" standalone="no"?>
-+<gpx>
-+  <trk>
-+    <trkseg>
-+      <trkpt lat="5"> </trkpt>
-+    </trkseg>
-+  </trk>
-+</gpx>
-+END
+ <?xml version="1.0" standalone="no"?>
+ <gpx>
+   <trk>
+     <trkseg>
+-      <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
+-      <trkpt> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </trkpt>
+-      <trkpt> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </trkpt>
+-      <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
+-      <trkpt> <ele>484</ele> </trkpt>
+-      <trkpt> <ele>486</ele> </trkpt>
+-      <trkpt> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </trkpt>
+-      <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
+     </trkseg>
+   </trk>
+ </gpx>
+ END
+-    "Output GPX from gpsml with missing data",
+-    );
 +    "Only latitude, no longitude (gpx)");
-+
-+# }}}
+ 
+ # }}}
+-testcmd("echo '<tp> </tp>' | ../gpst", # {{{
 +testcmd("echo '<tp> <lon>5</lon> </tp>' | ../gpst -o gpx", # {{{
-+    <<END,
+     <<END,
+-<?xml version="1.0" encoding="UTF-8"?>
+-<gpsml>
+-<track>
+-</track>
+-</gpsml>
 +<?xml version="1.0" standalone="no"?>
 +<gpx>
 +  <trk>
 +    <trkseg>
-+      <trkpt lon="5"> </trkpt>
 +    </trkseg>
 +  </trk>
 +</gpx>
-+END
+ END
+-    "Don’t print empty trackpoints");
 +    "Only longitude, no latitude (gpx)");
-+
-+# }}}
-+
- if ($Opt{'all'}) {
-     diag("Running TODO tests...");
  
+ # }}}
+ 
+Index: GPST.pm
+===================================================================
+--- GPST.pm	(revision 1829)
++++ GPST.pm	(working copy)
+@@ -104,26 +104,23 @@
+             # }}}
+         } elsif($Dat{'format'} eq "gpx") {
+             # {{{
+-            my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
+-            my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
+-            if (length("$lat_str$lon_str$Dat{'ele'}")) {
+-                $Retval .=
+-                join("",
+-                    "$Spc$Spc$Spc$Spc$Spc$Spc",
+-                    "<trkpt$lat_str$lon_str>",
+-                    "$Spc",
+-                    $print_time
+-                        ? "<time>" .
+-                          "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+-                          "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
+-                          "</time>$Spc"
+-                        : "",
+-                    length($Dat{'ele'})
+-                        ? "<ele>$Dat{'ele'}</ele>$Spc"
+-                        : "",
+-                    "</trkpt>\n"
+-                );
+-            }
++            (length($Dat{'lat'}) && length($Dat{'lon'})) || return("");
++            $Retval .=
++            join("",
++                "$Spc$Spc$Spc$Spc$Spc$Spc",
++                "<trkpt lat=\"$Dat{'lat'}\" lon=\"$Dat{'lon'}\">",
++                "$Spc",
++                $print_time
++                    ? "<time>" .
++                      "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
++                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
++                      "</time>$Spc"
++                    : "",
++                length($Dat{'ele'})
++                    ? "<ele>$Dat{'ele'}</ele>$Spc"
++                    : "",
++                "</trkpt>\n"
++            );
+             # }}}
+         } else {
+             $Retval = undef;
 Index: gpst
 ===================================================================
---- gpst	(revision 1828)
+--- gpst	(revision 1829)
 +++ gpst	(working copy)
-@@ -32,6 +32,7 @@
-     # Initial values for command line arguments {{{
-     'chronology' => 0,
-     'comment-out-dups' => 0,
-+    'complete-position' => 0,
-     'create-breaks' => 0,
-     'debug' => 0,
-     'double-y-scale' => 0,
-@@ -69,6 +70,7 @@
-     # Command line options {{{
-     "chronology" => \$Opt{'chronology'},
-     "comment-out-dups|u" => \$Opt{'comment-out-dups'},
-+    "complete-position" => \$Opt{'complete-position'},
-     "create-breaks|t" => \$Opt{'create-breaks'},
-     "debug" => \$Opt{'debug'},
-     "double-y-scale|y" => \$Opt{'double-y-scale'},
-@@ -703,7 +705,12 @@
+@@ -703,9 +703,14 @@
      defined($Dat{'lon'}) || ($Dat{'lon'} = "");
      defined($Dat{'year'}) || ($Dat{'year'} = "");
      my $print_time = length($Dat{'year'}) ? 1 : 0;
 -    my $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
+-    if (!$print_pos) {
+-        $Dat{'lat'} = $Dat{'lon'} = "";
 +    my $print_pos = 1;
 +    if (length($Dat{'lat'}) && length($Dat{'lon'})) {
 +        $print_pos = 1;
 +    } else {
-+        $Opt{'complete-position'} && ($print_pos = 0);
-+    }
-     if (!$print_pos) {
-         $Dat{'lat'} = $Dat{'lon'} = "";
++        if (length($Dat{'lat'}) || length($Dat{'lon'})) {
++            $Dat{'error'} = "incomplete";
++            $print_pos = ($Opt{'output-format'} eq "gpsml") ? 1 : 0;
++        }
      }
+     my $print_ele = length($Dat{'ele'}) ? 1 : 0;
+     my $print_desc = length($Dat{'desc'}) ? 1 : 0;
+@@ -822,11 +827,9 @@
+ 
+     if ($Dat{'type'} eq "tp") {
+         # {{{
+-        if ($Opt{'require'}) {
+-            $Req{'time'} && !$print_time && return;
+-            $Req{'position'} && !$print_pos && return;
+-            $Req{'ele'} && !$print_ele && return;
+-        }
++        ($Req{'time'} && !$print_time) && return("");
++        ($Req{'position'} && length("$Dat{'lat'}$Dat{'lon'}")) && return("");
++        ($Req{'ele'} && !$print_ele) && return("");
+ 
+         if ($Opt{'inside'} || $Opt{'outside'}) {
+             if (
