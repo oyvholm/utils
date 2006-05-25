@@ -1,8 +1,8 @@
 Index: tests/run-tests.pl
 ===================================================================
---- tests/run-tests.pl	(revision 1820)
+--- tests/run-tests.pl	(revision 1823)
 +++ tests/run-tests.pl	(working copy)
-@@ -218,6 +218,119 @@
+@@ -218,6 +218,202 @@
  
  # }}}
  
@@ -16,6 +16,7 @@ Index: tests/run-tests.pl
 +    undef,
 +    "trackpoint() receives empty hash");
 +
++# trackpoint() (gpsml) {{{
 +is(
 +    trackpoint(
 +        'format' => 'gpsml',
@@ -34,7 +35,8 @@ Index: tests/run-tests.pl
 +    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
 +    "trackpoint() (gpsml)"
 +);
-+
++# }}}
++# trackpoint() (gpx) {{{
 +is(
 +    trackpoint(
 +        'format' => 'gpx',
@@ -53,46 +55,127 @@ Index: tests/run-tests.pl
 +    qq{      <trkpt lat="59.5214" lon="7.392133"> <time>2003-06-13T14:36:10Z</time> <ele>762</ele> </trkpt>\n},
 +    "trackpoint() (gpx)"
 +);
++# }}}
 +
-+TODO: {
-+    local $TODO = "Move to trackpoint()";
-+is(
-+    trackpoint(
-+        'format' => 'xgraph',
-+        'year' => '2003', 'month' => '06', 'day' => '13',
-+        'hour' => '14',
-+        'min' => '36',
-+        'sec' => '10',
-+        'lat' => '59.5214',
-+        'lon' => '7.392133',
-+        'ele' => '762',
-+        'error' => "",
-+        'type' => 'tp',
-+    ),
-+    "7.392133\t59.5214",
-+    "trackpoint() (xgraph)"
++my %Bck = (
++    'format' => 'gpsml',
++    'year' => '2003',
++    'month' => '06',
++    'day' => '13',
++    'hour' => '14',
++    'min' => '36',
++    'sec' => '10',
++    'lat' => '59.5214',
++    'lon' => '7.392133',
++    'ele' => '762',
++    'error' => "",
++    'type' => 'tp',
 +);
 +
-+is(
-+    trackpoint(
-+        'format' => 'clean',
-+        'year' => '2003',
-+        'month' => '06',
-+        'day' => '13',
-+        'hour' => '14',
-+        'min' => '36',
-+        'sec' => '10',
-+        'lat' => '59.5214',
-+        'lon' => '7.392133',
-+        'ele' => '762',
-+        'error' => "",
-+        'type' => 'tp',
-+    ),
-+    "7.392133\t59.5214\t762",
-+    "trackpoint() (clean)"
-+);
++# trackpoint(): Various loop tests {{{
 +
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
 +}
++
++for my $Elem (qw{year month day hour min sec}) {
++    # Date tests {{{
++    my %Dat;
++    %Dat = %Bck;
++    $Dat{"$Elem"} = '';
++    is(trackpoint(%Dat),
++        "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
++        "trackpoint(): {'$Elem'} with empty value skips date/time"
++    );
++    %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value skips date/time"
++    );
++    %Dat = %Bck;
++    $Dat{$Elem} = "00000$Dat{$Elem}";
++    is(trackpoint(%Dat),
++        "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
++        "trackpoint(): Strip prefixing zeroes from {'$Elem'}"
++    );
++    %Dat = %Bck;
++    $Dat{"$Elem"} = "$Dat{$Elem}.00";
++    is(trackpoint(%Dat),
++        "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
++        "trackpoint(): Strip trailing \".00\" from {'$Elem'}"
++    );
++    # }}}
++}
++
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
++}
++
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
++}
++
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
++}
++
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
++}
++
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
++}
++
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
++}
++
++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
++    my %Dat = %Bck;
++    $Dat{"$Elem"} = '2d';
++    is(trackpoint(%Dat),
++        undef,
++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
++    );
++}
++# }}}
 +
 +# }}}
 +
@@ -122,7 +205,7 @@ Index: tests/run-tests.pl
  diag("Testing output from ../gpst");
  
  like(`../gpst --version`, # {{{
-@@ -835,38 +948,7 @@
+@@ -835,38 +1031,7 @@
      );
  
  # }}}
@@ -162,3 +245,247 @@ Index: tests/run-tests.pl
      <<END,
  <?xml version="1.0" encoding="UTF-8"?>
  <gpsml>
+Index: GPST.pm
+===================================================================
+--- GPST.pm	(revision 1823)
++++ GPST.pm	(working copy)
+@@ -115,7 +115,11 @@
+                 );
+             }
+             # }}}
++        } else {
++            $Retval = undef;
+         }
++    } else {
++        $Retval = undef;
+     }
+     return $Retval;
+     # }}}
+Index: trackpoint-test.patch
+===================================================================
+--- trackpoint-test.patch	(revision 1823)
++++ trackpoint-test.patch	(working copy)
+@@ -1,8 +1,8 @@
+ Index: tests/run-tests.pl
+ ===================================================================
+---- tests/run-tests.pl	(revision 1820)
++--- tests/run-tests.pl	(revision 1823)
+ +++ tests/run-tests.pl	(working copy)
+-@@ -218,6 +218,119 @@
++@@ -218,6 +218,202 @@
+  
+  # }}}
+  
+@@ -16,6 +16,7 @@
+ +    undef,
+ +    "trackpoint() receives empty hash");
+ +
+++# trackpoint() (gpsml) {{{
+ +is(
+ +    trackpoint(
+ +        'format' => 'gpsml',
+@@ -34,7 +35,8 @@
+ +    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+ +    "trackpoint() (gpsml)"
+ +);
+-+
+++# }}}
+++# trackpoint() (gpx) {{{
+ +is(
+ +    trackpoint(
+ +        'format' => 'gpx',
+@@ -53,49 +55,130 @@
+ +    qq{      <trkpt lat="59.5214" lon="7.392133"> <time>2003-06-13T14:36:10Z</time> <ele>762</ele> </trkpt>\n},
+ +    "trackpoint() (gpx)"
+ +);
+++# }}}
+ +
+-+TODO: {
+-+    local $TODO = "Move to trackpoint()";
+-+is(
+-+    trackpoint(
+-+        'format' => 'xgraph',
+-+        'year' => '2003', 'month' => '06', 'day' => '13',
+-+        'hour' => '14',
+-+        'min' => '36',
+-+        'sec' => '10',
+-+        'lat' => '59.5214',
+-+        'lon' => '7.392133',
+-+        'ele' => '762',
+-+        'error' => "",
+-+        'type' => 'tp',
+-+    ),
+-+    "7.392133\t59.5214",
+-+    "trackpoint() (xgraph)"
+++my %Bck = (
+++    'format' => 'gpsml',
+++    'year' => '2003',
+++    'month' => '06',
+++    'day' => '13',
+++    'hour' => '14',
+++    'min' => '36',
+++    'sec' => '10',
+++    'lat' => '59.5214',
+++    'lon' => '7.392133',
+++    'ele' => '762',
+++    'error' => "",
+++    'type' => 'tp',
+ +);
+ +
+-+is(
+-+    trackpoint(
+-+        'format' => 'clean',
+-+        'year' => '2003',
+-+        'month' => '06',
+-+        'day' => '13',
+-+        'hour' => '14',
+-+        'min' => '36',
+-+        'sec' => '10',
+-+        'lat' => '59.5214',
+-+        'lon' => '7.392133',
+-+        'ele' => '762',
+-+        'error' => "",
+-+        'type' => 'tp',
+-+    ),
+-+    "7.392133\t59.5214\t762",
+-+    "trackpoint() (clean)"
+-+);
+++# trackpoint(): Various loop tests {{{
+ +
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+ +}
+ +
+++for my $Elem (qw{year month day hour min sec}) {
+++    # Date tests {{{
+++    my %Dat;
+++    %Dat = %Bck;
+++    $Dat{"$Elem"} = '';
+++    is(trackpoint(%Dat),
+++        "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+++        "trackpoint(): {'$Elem'} with empty value skips date/time"
+++    );
+++    %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value skips date/time"
+++    );
+++    %Dat = %Bck;
+++    $Dat{$Elem} = "00000$Dat{$Elem}";
+++    is(trackpoint(%Dat),
+++        "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+++        "trackpoint(): Strip prefixing zeroes from {'$Elem'}"
+++    );
+++    %Dat = %Bck;
+++    $Dat{"$Elem"} = "$Dat{$Elem}.00";
+++    is(trackpoint(%Dat),
+++        "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+++        "trackpoint(): Strip trailing \".00\" from {'$Elem'}"
+++    );
+++    # }}}
+++}
+++
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+++}
+++
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+++}
+++
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+++}
+++
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+++}
+++
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+++}
+++
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+++}
+++
+++for my $Elem (qw{format year month day hour min sec lat lon ele type}) {
+++    my %Dat = %Bck;
+++    $Dat{"$Elem"} = '2d';
+++    is(trackpoint(%Dat),
+++        undef,
+++        "trackpoint(): {'$Elem'} with invalid (\"2d\") value returns undef"
+++    );
+++}
+ +# }}}
+ +
+++# }}}
+++
+ +%Dat = (
+ +  # {{{
+ +  'format' => 'gpsml',
+@@ -122,7 +205,7 @@
+  diag("Testing output from ../gpst");
+  
+  like(`../gpst --version`, # {{{
+-@@ -835,38 +948,7 @@
++@@ -835,38 +1031,7 @@
+      );
+  
+  # }}}
+@@ -162,3 +245,19 @@
+      <<END,
+  <?xml version="1.0" encoding="UTF-8"?>
+  <gpsml>
++Index: GPST.pm
++===================================================================
++--- GPST.pm	(revision 1823)
+++++ GPST.pm	(working copy)
++@@ -115,7 +115,11 @@
++                 );
++             }
++             # }}}
+++        } else {
+++            $Retval = undef;
++         }
+++    } else {
+++        $Retval = undef;
++     }
++     return $Retval;
++     # }}}
