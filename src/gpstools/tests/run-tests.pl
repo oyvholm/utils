@@ -29,6 +29,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+    'all' => 0,
     'debug' => 0,
     'help' => 0,
     'version' => 0,
@@ -43,6 +44,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "all|a" => \$Opt{'all'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "version" => \$Opt{'version'},
@@ -376,10 +378,7 @@ testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
     );
 
 # }}}
-
-if (1) {
-    local $TODO = "Use gpsml, this Mayko thing is obsolete.";
-    testcmd("gpst -u no_signal.mayko", # {{{
+testcmd("gpst -u no_signal.mayko", # {{{
         <<END,
 xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6800486 23.6746151 57.4 0 12/22/2002 21:42:24
@@ -395,11 +394,10 @@ xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6801502 23.6753442 4.8 0 12/22/2002 21:44:52
 1 70.6801905 23.6757542 2.5 0 12/22/2002 21:45:04
 END
-        "Read Mayko format with duplicated entries (no signal)",
-    );
-    # }}}
-}
+        "Read Mayko format with no signal, output old Mayko format",
+);
 
+# }}}
 testcmd("../gpst nosignal.tmp", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
@@ -903,6 +901,56 @@ END
 
 # }}}
 
+if ($Opt{'all'}) {
+    diag("Running TODO tests...");
+
+    TODO: {
+        local $TODO = "Remove extra \\n from -t -o clean";
+        testcmd("../gpst -t -o clean pause.gpx", # {{{
+            <<END,
+5.299534\t60.425494\t25.260
+5.299610\t60.425464\t24.931
+
+5.299694\t60.425314\t27.975
+
+5.299741\t60.425384\t31.017
+5.299958\t60.425339\t30.980
+5.299640\t60.425238\t30.538
+5.299686\t60.425246\t30.515
+
+5.299773\t60.425345\t31.936
+5.299419\t60.425457\t31.794
+END
+            "Output clean format with time breaks"
+        );
+        # }}}
+        $TODO = "Use gpsml, this Mayko thing is obsolete.";
+        testcmd("gpst -u no_signal.mayko", # {{{
+            <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
+<tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
+<tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
+<desc>20021222T214351-20021222T214354: CO: No signal \x7B\x7B\x7B</desc>
+<etp err="nosignal"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<etp err="nosignal"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<etp err="nosignal"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+<desc>20021222T214351-20021222T214354: CO: No signal \x7D\x7D\x7D</desc>
+<break/>
+<tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
+<tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
+<tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
+</track>
+</gpsml>
+END
+            "Output gpsml from the -u option",
+        );
+    # }}}
+    }
+}
+
 diag("Testing finished.");
 
 sub testcmd {
@@ -954,6 +1002,8 @@ Contains tests for the gpst(1) program.
 
 Options:
 
+  -a, --all
+    Run all tests, also TODOs.
   -h, --help
     Show this help.
   --version
@@ -991,6 +1041,10 @@ $Id$
 =head1 OPTIONS
 
 =over 4
+
+=item B<-a>, B<--all>
+
+Run all tests, also TODOs.
 
 =item B<-h>, B<--help>
 
