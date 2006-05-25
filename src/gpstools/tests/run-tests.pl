@@ -270,6 +270,7 @@ testcmd("../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp", # {
 </track>
 </gpsml>
 END
+    "Remove bad timestamps",
 );
 
 # }}}
@@ -300,6 +301,7 @@ testcmd("../gpst -t pause.gpx", # {{{
 </track>
 </gpsml>
 END
+    "Output gpsml with <pause> elements from GPX files",
 );
 
 # }}}
@@ -322,6 +324,7 @@ testcmd("../gpst -o gpx no_signal.mayko", # {{{
   </trk>
 </gpx>
 END
+    "Output GPX from Mayko file with duplicates",
 );
 
 # }}}
@@ -342,6 +345,7 @@ testcmd("../gpst -d no_signal.mayko", # {{{
 </track>
 </gpsml>
 END
+    "Remove duplicated positions",
 );
 
 # }}}
@@ -368,13 +372,14 @@ END
 # }}}
 testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
     "",
+    "Redirect stdout",
     );
 
 # }}}
 
 if (1) {
-    local $TODO = "Use the default output format, this Mayko thing is obsolete.";
-    is(file_data("nosignal.tmp"), # {{{
+    local $TODO = "Use gpsml, this Mayko thing is obsolete.";
+    testcmd("gpst -u no_signal.mayko", # {{{
         <<END,
 xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6800486 23.6746151 57.4 0 12/22/2002 21:42:24
@@ -390,11 +395,11 @@ xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6801502 23.6753442 4.8 0 12/22/2002 21:44:52
 1 70.6801905 23.6757542 2.5 0 12/22/2002 21:45:04
 END
-        "gpst -u no_signal.mayko");
+        "Read Mayko format with duplicated entries (no signal)",
+    );
     # }}}
 }
 
-# }}}
 testcmd("../gpst nosignal.tmp", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
@@ -415,10 +420,11 @@ testcmd("../gpst nosignal.tmp", # {{{
 </track>
 </gpsml>
 END
+    "Read output from 'gpst -u *.mayko'",
 );
-unlink("nosignal.tmp") || warn("nosignal.tmp: Cannot delete file: $!\n");
 
 # }}}
+unlink("nosignal.tmp") || warn("nosignal.tmp: Cannot delete file: $!\n");
 testcmd("../gpst log.mcsv", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
@@ -465,6 +471,7 @@ testcmd("../gpst log.mcsv", # {{{
 </track>
 </gpsml>
 END
+    "Read Mapsource TAB-separated format",
 );
 
 # }}}
@@ -485,6 +492,7 @@ testcmd("../gpst two-digit_year.mcsv", # {{{
 </track>
 </gpsml>
 END
+    "Read Mapsource TAB-separated format with two-digit year",
 );
 
 # }}}
@@ -514,6 +522,7 @@ testcmd("../gpst log.gpstxt", # {{{
 </track>
 </gpsml>
 END
+    "Read Garmin serial text format",
 );
 
 # }}}
@@ -531,6 +540,7 @@ testcmd("../gpst log.dos.mayko", # {{{
 </track>
 </gpsml>
 END
+    "Read DOS-formatted Mayko format",
 );
 
 # }}}
@@ -553,6 +563,7 @@ testcmd("../gpst log.dos.gpstxt", # {{{
 </track>
 </gpsml>
 END
+    "Read DOS-formatted Garmin serial text format",
 );
 
 # }}}
@@ -575,6 +586,7 @@ testcmd("../gpst log.unix.mcsv", # {{{
 </track>
 </gpsml>
 END
+    "Read UNIX-formatted Garmin Mapsource TAB-separated format",
 );
 
 # }}}
@@ -609,6 +621,7 @@ testcmd("../gpst multitrack.gpx", # {{{
 </track>
 </gpsml>
 END
+    "Read GPX file with multiple tracks",
 );
 
 # }}}
@@ -633,6 +646,7 @@ testcmd("../gpst compact.gpx", # {{{
 </track>
 </gpsml>
 END
+    "Read GPX one-liner",
 );
 
 # }}}
@@ -652,6 +666,7 @@ testcmd("../gpst -re multitrack.gpx", # {{{
 </track>
 </gpsml>
 END
+    "Require elevation from GPX data",
 );
 
 # }}}
@@ -665,6 +680,7 @@ testcmd("../gpst -re one_ele.dos.gpsml", # {{{
 </track>
 </gpsml>
 END
+    "Require elevation from gpsml",
 );
 
 # }}}
@@ -688,6 +704,7 @@ testcmd("../gpst missing.gpsml", # {{{
 </track>
 </gpsml>
 END
+    "Read gpsml with various data missing",
 );
 
     # }}}
@@ -710,6 +727,7 @@ testcmd("../gpst -w -o gpx pause.gpx", # {{{
 </trk>
 </gpx>
 END
+    "Strip whitespace from GPX output",
 );
 
     # }}}
@@ -732,6 +750,7 @@ TODO: {
 </track>
 </gpsml>
 END
+        "Require elevation",
     );
 
     # }}}
@@ -751,6 +770,7 @@ END
 </track>
 </gpsml>
 END
+        "Require time",
     );
 
     # }}}
@@ -766,6 +786,7 @@ END
 </track>
 </gpsml>
 END
+        "Require position",
     );
 
     # }}}
@@ -782,6 +803,7 @@ END
 </track>
 </gpsml>
 END
+    "Require elevation and time",
     );
 
     # }}}
@@ -795,6 +817,7 @@ END
 </track>
 </gpsml>
 END
+    "Require elevation, time and position",
     );
 
     # }}}
@@ -809,6 +832,7 @@ END
 </track>
 </gpsml>
 END
+    "Require elevation and position",
     );
 
     # }}}
@@ -832,6 +856,7 @@ testcmd("../gpst -o gpx missing.gpsml", # {{{
   </trk>
 </gpx>
 END
+    "Output GPX from gpsml with missing data",
     );
 
 # }}}
@@ -862,11 +887,11 @@ is(trackpoint(%Dat), # {{{
 );
 
 is(trackpoint(%Dat), # {{{
-
     "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
   "trackpoint(%Dat)");
 
-is(`echo '<tp> </tp>' | ../gpst`,
+# }}}
+testcmd("echo '<tp> </tp>' | ../gpst", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -882,9 +907,15 @@ diag("Testing finished.");
 
 sub testcmd {
     # {{{
-    my ($Cmd, $Exp) = @_;
+    my ($Cmd, $Exp, $Desc) = @_;
+    my $Txt = join("",
+        "\"$Cmd\"",
+        defined($Desc)
+            ? " - $Desc"
+            : ""
+    );
 
-    is(`$Cmd`, $Exp, $Cmd);
+    is(`$Cmd`, $Exp, $Txt);
     # }}}
 }
 
