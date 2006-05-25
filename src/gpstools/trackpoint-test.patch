@@ -1,0 +1,164 @@
+Index: tests/run-tests.pl
+===================================================================
+--- tests/run-tests.pl	(revision 1820)
++++ tests/run-tests.pl	(working copy)
+@@ -218,6 +218,119 @@
+ 
+ # }}}
+ 
++diag("Testing output routines...");
++
++# trackpoint() {{{
++
++my %Dat = ();
++
++is(trackpoint(%Dat),
++    undef,
++    "trackpoint() receives empty hash");
++
++is(
++    trackpoint(
++        'format' => 'gpsml',
++        'year' => '2003',
++        'month' => '06',
++        'day' => '13',
++        'hour' => '14',
++        'min' => '36',
++        'sec' => '10',
++        'lat' => '59.5214',
++        'lon' => '7.392133',
++        'ele' => '762',
++        'error' => "",
++        'type' => 'tp',
++    ),
++    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
++    "trackpoint() (gpsml)"
++);
++
++is(
++    trackpoint(
++        'format' => 'gpx',
++        'year' => '2003',
++        'month' => '06',
++        'day' => '13',
++        'hour' => '14',
++        'min' => '36',
++        'sec' => '10',
++        'lat' => '59.5214',
++        'lon' => '7.392133',
++        'ele' => '762',
++        'error' => "",
++        'type' => 'tp',
++    ),
++    qq{      <trkpt lat="59.5214" lon="7.392133"> <time>2003-06-13T14:36:10Z</time> <ele>762</ele> </trkpt>\n},
++    "trackpoint() (gpx)"
++);
++
++TODO: {
++    local $TODO = "Move to trackpoint()";
++is(
++    trackpoint(
++        'format' => 'xgraph',
++        'year' => '2003', 'month' => '06', 'day' => '13',
++        'hour' => '14',
++        'min' => '36',
++        'sec' => '10',
++        'lat' => '59.5214',
++        'lon' => '7.392133',
++        'ele' => '762',
++        'error' => "",
++        'type' => 'tp',
++    ),
++    "7.392133\t59.5214",
++    "trackpoint() (xgraph)"
++);
++
++is(
++    trackpoint(
++        'format' => 'clean',
++        'year' => '2003',
++        'month' => '06',
++        'day' => '13',
++        'hour' => '14',
++        'min' => '36',
++        'sec' => '10',
++        'lat' => '59.5214',
++        'lon' => '7.392133',
++        'ele' => '762',
++        'error' => "",
++        'type' => 'tp',
++    ),
++    "7.392133\t59.5214\t762",
++    "trackpoint() (clean)"
++);
++
++}
++
++# }}}
++
++%Dat = (
++  # {{{
++  'format' => 'gpsml',
++  'year' => '2003',
++  'month' => '06',
++  'day' => '13',
++  'hour' => '14',
++  'min' => '36',
++  'sec' => '10',
++  'lat' => '59.5214',
++  'lon' => '7.392133',
++  'ele' => '762',
++  'error' => "",
++  'type' => 'tp',
++  # }}}
++);
++
++is(trackpoint(%Dat), # {{{
++    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
++  "trackpoint(%Dat)");
++
++# }}}
++
+ diag("Testing output from ../gpst");
+ 
+ like(`../gpst --version`, # {{{
+@@ -835,38 +948,7 @@
+     );
+ 
+ # }}}
+-
+-my %Dat = ();
+-
+-is(trackpoint(%Dat), # {{{
+-    undef,
+-    "trackpoint() receives empty hash");
+-
+-# }}}
+-
+-%Dat = (
+-  # {{{
+-  'format' => 'gpsml',
+-  'year' => '2003',
+-  'month' => '06',
+-  'day' => '13',
+-  'hour' => '14',
+-  'min' => '36',
+-  'sec' => '10',
+-  'lat' => '59.5214',
+-  'lon' => '7.392133',
+-  'ele' => '762',
+-  'error' => "",
+-  'type' => 'tp',
+-  # }}}
+-);
+-
+-is(trackpoint(%Dat), # {{{
+-
+-    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+-  "trackpoint(%Dat)");
+-
+-is(`echo '<tp> </tp>' | ../gpst`,
++is(`echo '<tp> </tp>' | ../gpst`, # {{{
+     <<END,
+ <?xml version="1.0" encoding="UTF-8"?>
+ <gpsml>
