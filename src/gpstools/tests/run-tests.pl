@@ -32,6 +32,7 @@ our %Opt = (
     'all' => 0,
     'debug' => 0,
     'help' => 0,
+    'todo' => 0,
     'version' => 0,
 );
 
@@ -47,6 +48,7 @@ GetOptions(
     "all|a" => \$Opt{'all'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "todo|t" => \$Opt{'todo'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -57,6 +59,10 @@ our %Cmd = (
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
+
+if ($Opt{'todo'} && !$Opt{'all'}) {
+    goto todo_section;
+}
 
 diag("Testing XML routines...");
 
@@ -1039,7 +1045,10 @@ END
 
 # }}}
 
-if ($Opt{'all'}) {
+todo_section:
+;
+
+if ($Opt{'all'} || $Opt{'todo'}) {
     diag("Running TODO tests...");
 
     TODO: {
@@ -1176,6 +1185,8 @@ Options:
     Run all tests, also TODOs.
   -h, --help
     Show this help.
+  -t, --todo
+    Run only the TODO tests.
   --version
     Print version information.
   --debug
@@ -1219,6 +1230,10 @@ Run all tests, also TODOs.
 =item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<-t>, B<--todo>
+
+Run only the TODO tests.
 
 =item B<--version>
 
