@@ -328,7 +328,7 @@ for my $Elem (qw{year month day hour min sec}) {
 $Dat{'sec'} = "$Dat{'sec'}.00";
 is(trackpoint(%Dat),
     "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
-    "trackpoint(): Remove trailing zeroes in {'sec'} decimals"
+    "trackpoint(): Remove trailing zeros in {'sec'} decimals"
 );
 
 for my $Elem (qw{format type error}) {
@@ -348,7 +348,7 @@ diag("Testing output from ../gpst");
 
 like(`../gpst --version`, # {{{
     qr/^(\$Id: .*? \$\n)+$/s,
-    "gpst --version");
+    "../gpst --version");
 
 # }}}
 testcmd("../gpst </dev/null", # {{{
@@ -502,7 +502,7 @@ testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
     );
 
 # }}}
-testcmd("gpst -u no_signal.mayko", # {{{
+testcmd("../gpst -u no_signal.mayko", # {{{
         <<END,
 xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6800486 23.6746151 57.4 0 12/22/2002 21:42:24
@@ -993,12 +993,57 @@ END
     "Don’t print empty trackpoints");
 
 # }}}
+testcmd("../gpst --epoch pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>ACTIVE LOG164705</title>
+<tp> <time>2006-05-21T16:49:11Z</time> <lat>60.425494</lat> <lon>5.299534</lon> <ele>25.26</ele> </tp>
+<tp> <time>2006-05-21T16:49:46Z</time> <lat>60.425464</lat> <lon>5.29961</lon> <ele>24.931</ele> </tp>
+<tp> <time>2006-05-21T16:52:04Z</time> <lat>60.425314</lat> <lon>5.299694</lon> <ele>27.975</ele> </tp>
+<tp> <time>2006-05-21T16:56:36Z</time> <lat>60.425384</lat> <lon>5.299741</lon> <ele>31.017</ele> </tp>
+<tp> <time>2006-05-21T16:56:47Z</time> <lat>60.425339</lat> <lon>5.299958</lon> <ele>30.98</ele> </tp>
+<tp> <time>2006-05-21T16:56:56Z</time> <lat>60.425238</lat> <lon>5.29964</lon> <ele>30.538</ele> </tp>
+<tp> <time>2006-05-21T16:57:03Z</time> <lat>60.425246</lat> <lon>5.299686</lon> <ele>30.515</ele> </tp>
+<tp> <time>2006-05-21T16:59:08Z</time> <lat>60.425345</lat> <lon>5.299773</lon> <ele>31.936</ele> </tp>
+<tp> <time>2006-05-21T17:00:54Z</time> <lat>60.425457</lat> <lon>5.299419</lon> <ele>31.794</ele> </tp>
+</track>
+</gpsml>
+END
+    "--epoch is ignored in gpsml output",
+);
+
+# }}}
+testcmd("../gpst --epoch -o gpx pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" standalone="no"?>
+<gpx>
+  <trk>
+    <trkseg>
+      <trkpt lat="60.425494" lon="5.299534"> <time>2006-05-21T16:49:11Z</time> <ele>25.260</ele> </trkpt>
+      <trkpt lat="60.425464" lon="5.299610"> <time>2006-05-21T16:49:46Z</time> <ele>24.931</ele> </trkpt>
+      <trkpt lat="60.425314" lon="5.299694"> <time>2006-05-21T16:52:04Z</time> <ele>27.975</ele> </trkpt>
+      <trkpt lat="60.425384" lon="5.299741"> <time>2006-05-21T16:56:36Z</time> <ele>31.017</ele> </trkpt>
+      <trkpt lat="60.425339" lon="5.299958"> <time>2006-05-21T16:56:47Z</time> <ele>30.980</ele> </trkpt>
+      <trkpt lat="60.425238" lon="5.299640"> <time>2006-05-21T16:56:56Z</time> <ele>30.538</ele> </trkpt>
+      <trkpt lat="60.425246" lon="5.299686"> <time>2006-05-21T16:57:03Z</time> <ele>30.515</ele> </trkpt>
+      <trkpt lat="60.425345" lon="5.299773"> <time>2006-05-21T16:59:08Z</time> <ele>31.936</ele> </trkpt>
+      <trkpt lat="60.425457" lon="5.299419"> <time>2006-05-21T17:00:54Z</time> <ele>31.794</ele> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "--epoch is ignored in gpx output",
+);
+
+# }}}
 
 if ($Opt{'all'}) {
     diag("Running TODO tests...");
 
     TODO: {
-        local $TODO = "Remove extra \\n from -t -o clean";
+        local $TODO = "Remove extra \\n in the beginning";
         testcmd("../gpst -t -o clean pause.gpx", # {{{
             <<END,
 5.299534\t60.425494\t25.260
@@ -1017,8 +1062,40 @@ END
             "Output clean format with time breaks"
         );
         # }}}
+        testcmd("../gpst -o csv pause.gpx", # {{{
+            <<END,
+2006-05-21 16:49:11\t5.299534\t60.425494\t25.260\t
+2006-05-21 16:49:46\t5.299610\t60.425464\t24.931\t
+2006-05-21 16:52:04\t5.299694\t60.425314\t27.975\t
+2006-05-21 16:56:36\t5.299741\t60.425384\t31.017\t
+2006-05-21 16:56:47\t5.299958\t60.425339\t30.980\t
+2006-05-21 16:56:56\t5.299640\t60.425238\t30.538\t
+2006-05-21 16:57:03\t5.299686\t60.425246\t30.515\t
+2006-05-21 16:59:08\t5.299773\t60.425345\t31.936\t
+2006-05-21 17:00:54\t5.299419\t60.425457\t31.794\t
+END
+            "csv format from gpx",
+        );
+
+        # }}}
+        testcmd("../gpst --epoch -o csv pause.gpx", # {{{
+            <<END,
+1148230151\t5.299534\t60.425494\t25.260\t
+1148230186\t5.299610\t60.425464\t24.931\t
+1148230324\t5.299694\t60.425314\t27.975\t
+1148230596\t5.299741\t60.425384\t31.017\t
+1148230607\t5.299958\t60.425339\t30.980\t
+1148230616\t5.299640\t60.425238\t30.538\t
+1148230623\t5.299686\t60.425246\t30.515\t
+1148230748\t5.299773\t60.425345\t31.936\t
+1148230854\t5.299419\t60.425457\t31.794\t
+END
+            "csv format with epoch seconds from gpx",
+        );
+
+# }}}
         $TODO = "Use gpsml, this Mayko thing is obsolete.";
-        testcmd("gpst -u no_signal.mayko", # {{{
+        testcmd("../gpst -u no_signal.mayko", # {{{
             <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
