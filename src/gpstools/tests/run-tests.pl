@@ -220,6 +220,130 @@ like(list_nearest_waypoints(60.42541, 5.29959, 3),
 
 # }}}
 
+diag("Testing trackpoint()...");
+
+# trackpoint() {{{
+
+my %Dat = ();
+
+is(trackpoint(%Dat),
+    undef,
+    "trackpoint() receives empty hash");
+
+my %Bck = (
+    # {{{
+    'format' => 'gpsml',
+    'year' => '2003',
+    'month' => '06',
+    'day' => '13',
+    'hour' => '14',
+    'min' => '36',
+    'sec' => '10',
+    'lat' => '59.5214',
+    'lon' => '7.392133',
+    'ele' => '762',
+    'error' => "",
+    'type' => 'tp',
+    # }}}
+);
+
+# trackpoint() (gpsml) {{{
+%Dat = %Bck;
+is(
+    trackpoint(%Dat),
+    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+    "trackpoint() (gpsml)"
+);
+
+# }}}
+# trackpoint() (gpx) {{{
+%Dat = %Bck;
+$Dat{'format'} = "gpx";
+is(
+    trackpoint(%Dat),
+    qq{      <trkpt lat="59.5214" lon="7.392133"> <time>2003-06-13T14:36:10Z</time> <ele>762</ele> </trkpt>\n},
+    "trackpoint() (gpx)"
+);
+
+# }}}
+
+# trackpoint(): Various loop tests {{{
+
+for my $Elem (qw{format lat lon type}) {
+    my %Dat = %Bck;
+
+    $Dat{"$Elem"} = '2d';
+    is(trackpoint(%Dat),
+        undef,
+        "trackpoint(): {'$Elem'} with invalid value (\"$Dat{$Elem}\") returns undef"
+    );
+
+}
+
+for my $Elem (qw{year month day hour min sec}) {
+    # Date tests {{{
+    my %Dat;
+
+    %Dat = %Bck;
+    $Dat{"$Elem"} = '';
+    is(trackpoint(%Dat),
+        "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+        "trackpoint(): {'$Elem'} with empty value skips time"
+    );
+
+    %Dat = %Bck;
+    $Dat{"$Elem"} = '2d';
+    is(trackpoint(%Dat),
+        "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+        "trackpoint(): {'$Elem'} with invalid value (\"$Dat{$Elem}\") skips time"
+    );
+
+    %Dat = %Bck;
+    $Dat{$Elem} = "00000$Dat{$Elem}";
+    is(trackpoint(%Dat),
+        "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+        "trackpoint(): Strip prefixing zeros from {'$Elem'}"
+    );
+
+    %Dat = %Bck;
+    $Dat{"$Elem"} = 0-$Dat{$Elem};
+    is(trackpoint(%Dat),
+        "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+        "trackpoint(): {'$Elem'} is negative, skip time"
+    );
+
+    if ($Elem ne "sec") {
+        %Dat = %Bck;
+        $Dat{"$Elem"} = "$Dat{$Elem}.00";
+        is(trackpoint(%Dat),
+            "<tp> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+            "trackpoint(): Decimals in {'$Elem'}, skip time"
+        );
+    }
+
+    # }}}
+}
+
+%Dat = %Bck;
+$Dat{'sec'} = "$Dat{'sec'}.00";
+is(trackpoint(%Dat),
+    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
+    "trackpoint(): Remove trailing zeroes in {'sec'} decimals"
+);
+
+for my $Elem (qw{format type error}) {
+    my %Dat = %Bck;
+    $Dat{$Elem} = undef;
+    is(trackpoint(%Dat),
+        undef,
+        "trackpoint(): Missing {'$Elem'}, return undef"
+    );
+}
+
+# Various loop tests }}}
+
+# trackpoint() }}}
+
 diag("Testing output from ../gpst");
 
 like(`../gpst --version`, # {{{
@@ -856,37 +980,6 @@ testcmd("../gpst -o gpx missing.gpsml", # {{{
 END
     "Output GPX from gpsml with missing data",
     );
-
-# }}}
-
-my %Dat = ();
-
-is(trackpoint(%Dat), # {{{
-    undef,
-    "trackpoint() receives empty hash");
-
-# }}}
-
-%Dat = (
-  # {{{
-  'format' => 'gpsml',
-  'year' => '2003',
-  'month' => '06',
-  'day' => '13',
-  'hour' => '14',
-  'min' => '36',
-  'sec' => '10',
-  'lat' => '59.5214',
-  'lon' => '7.392133',
-  'ele' => '762',
-  'error' => "",
-  'type' => 'tp',
-  # }}}
-);
-
-is(trackpoint(%Dat), # {{{
-    "<tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>\n",
-  "trackpoint(%Dat)");
 
 # }}}
 testcmd("echo '<tp> </tp>' | ../gpst", # {{{

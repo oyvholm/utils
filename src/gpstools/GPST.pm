@@ -33,9 +33,8 @@ sub trackpoint {
     # Receive a hash and return a trackpoint as a string {{{
     my %Dat = @_;
 
-    D("trackpoint(" . join('|', %Dat) . ")");
-
     defined($Dat{'type'}) || return(undef);
+    defined($Dat{'format'}) || return(undef);
     defined($Dat{'error'}) || return(undef);
 
     defined($Dat{'year'}) || ($Dat{'year'} = 0);
@@ -53,6 +52,14 @@ sub trackpoint {
         !length($Dat{'sec'})
     ) ? 0 : 1;
 
+    if (
+        ("$Dat{'year'}$Dat{'month'}$Dat{'day'}$Dat{'hour'}$Dat{'min'}" =~
+        /[^\d]/) || ($Dat{'sec'} =~ /[^\d\.]/)
+    ) {
+        ($print_time = 0);
+    }
+    "$Dat{'lat'}$Dat{'lon'}" =~ /[^\d\.\-\+]/ && return(undef);
+
     defined($Dat{'lat'}) || ($Dat{'lat'} = "");
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'ele'}) || ($Dat{'ele'} = "");
@@ -67,8 +74,11 @@ sub trackpoint {
             my $Elem = length($err_str) ? "etp" : "tp";
             $Retval .= join("",
                     $print_time
-                        ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                          "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</time> "
+                        ? sprintf("<time>%04u-%02u-%02uT" .
+                                  "%02u:%02u:%02gZ</time> ",
+                                   $Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                                   $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}*1.0
+                          )
                         : "",
                     (length($Dat{'lat'}))
                         ? "<lat>" . $Dat{'lat'}*1.0 . "</lat> "
@@ -115,7 +125,11 @@ sub trackpoint {
                 );
             }
             # }}}
+        } else {
+            $Retval = undef;
         }
+    } else {
+        $Retval = undef;
     }
     return $Retval;
     # }}}
