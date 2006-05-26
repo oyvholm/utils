@@ -103,8 +103,8 @@ my $Spc = $GPST::Spc; # FIXME
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
 my $last_time = 0;
-my ($last_lon, $last_lat, $last_ele, $last_line) =
-   (     1000,      1000,    100000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+my ($last_lon, $last_lat, $last_line) =
+   (     1000,      1000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
 my ($lat1, $lon1, $lat2, $lon2) =
    (-1000, -1000,  1000,  1000);
 
@@ -987,10 +987,11 @@ sub print_entry {
         }
         print($Line);
     }
-    $last_time = $ep_time;
-    $last_lon  = $Dat{'lon'};
-    $last_lat  = $Dat{'lat'};
-    $last_ele  = $Dat{'ele'};
+    $print_time && ($last_time = $ep_time);
+    if ($print_pos) {
+        $last_lon  = $Dat{'lon'};
+        $last_lat  = $Dat{'lat'};
+    }
     $last_line = $data_line;
     $svg_start_thing = "\"/>\n";
     # }}}

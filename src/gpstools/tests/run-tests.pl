@@ -1045,6 +1045,69 @@ END
 
 # }}}
 
+testcmd("../gpst multitrack-pause.gpx", # {{{
+    file_data("multitrack-pause.gpsml"),
+    "Should be equal to multitrack-pause.gpsml"
+);
+
+# }}}
+testcmd("../gpst -t multitrack-pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<tp> <time>2006-01-01T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>2</lat> <lon>2</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<break/>
+<title>track2</title>
+<pause>0:23:59:58</pause>
+<tp> <time>2006-01-02T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
+<tp> <time>2006-01-02T00:00:04Z</time> <lat>2</lat> <lon>2</lon> </tp>
+<tp> <time>2006-01-02T00:00:16Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<pause>0:01:00:00</pause>
+<tp> <time>2006-01-02T01:00:16Z</time> <lat>4</lat> <lon>4</lon> </tp>
+<break/>
+<title>track3</title>
+<pause>1:01:00:04</pause>
+<tp> <time>2006-01-03T02:00:20Z</time> <lat>5</lat> <lon>5</lon> </tp>
+</track>
+</gpsml>
+END
+    "Insert <pause> between gpx tracks"
+);
+
+# }}}
+testcmd("../gpst -t multitrack-pause.gpsml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<tp> <time>2006-01-01T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>2</lat> <lon>2</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<break/>
+<title>track2</title>
+<pause>0:23:59:58</pause>
+<tp> <time>2006-01-02T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
+<tp> <time>2006-01-02T00:00:04Z</time> <lat>2</lat> <lon>2</lon> </tp>
+<tp> <time>2006-01-02T00:00:16Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<pause>0:01:00:00</pause>
+<tp> <time>2006-01-02T01:00:16Z</time> <lat>4</lat> <lon>4</lon> </tp>
+<break/>
+<title>track3</title>
+<pause>1:01:00:04</pause>
+<tp> <time>2006-01-03T02:00:20Z</time> <lat>5</lat> <lon>5</lon> </tp>
+</track>
+</gpsml>
+END
+    "Insert <pause> between gpsml titles"
+);
+
+# }}}
+
 todo_section:
 ;
 
@@ -1102,7 +1165,7 @@ END
             "csv format with epoch seconds from gpx",
         );
 
-# }}}
+        # }}}
         $TODO = "Use gpsml, this Mayko thing is obsolete.";
         testcmd("../gpst -u no_signal.mayko", # {{{
             <<END,
@@ -1126,7 +1189,14 @@ END
 END
             "Output gpsml from the -u option",
         );
-    # }}}
+        # }}}
+        $TODO = "Tweak output";
+        testcmd("../gpst -o gpx multitrack-pause.gpsml", # {{{
+            file_data("multitrack-pause.gpx"),
+            "Should be equal to multitrack-pause.gpx"
+        );
+
+        # }}}
     }
 }
 
