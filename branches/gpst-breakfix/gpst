@@ -100,7 +100,6 @@ my $Udef = "?";
 my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
 $GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
 my $Spc = $GPST::Spc; # FIXME
-my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
 my $first_time = 0;
 my $last_time = 0;
 my ($last_lon, $last_lat, $last_ele, $last_line) =
@@ -294,7 +293,7 @@ for $curr_file (@ARGV) {
                 print_entry(%Dat);
                 # }}}
             } elsif (m#^<break\b.*?/>#) {
-                $found_move = 1;
+                $Dat{'break'} = 1;
             } elsif (m#^<(title|pause)\b.*?>(.*?)</(title|pause)>#) {
                 $Dat{'type'} = $1;
                 $Dat{$1} = $2;
@@ -318,7 +317,7 @@ for $curr_file (@ARGV) {
                 read_xmlfile($xml_data);
                 last;
             } elsif (/^move$/) {
-                $found_move = 1;
+                $Dat{'break'} = 1;
             } elsif (m#^(\d+)\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
                 # CSV format, epoch style {{{
                 my ($ep_time, $lon_val, $lat_val, $Alt) =
@@ -405,7 +404,7 @@ for $curr_file (@ARGV) {
             } elsif (/^Track\t(.*?)\t/) {
                 $Dat{'title'} = txt_to_xml($1);
                 $Dat{'type'} = "title";
-                $found_move = 1;
+                $Dat{'break'} = 1;
                 print_entry(%Dat);
             } elsif (
                 m{^
@@ -517,13 +516,9 @@ for $curr_file (@ARGV) {
                 print_entry(%Dat);
                 # }}}
             } elsif (/^xmaplog /) {
-                ($Opt{'output-format'} eq "csv")
-                    && ($Opt{'save-to-file'} eq "\n")
-                    && print("\n");
+                $Dat{'break'} = 1;
             } elsif (/^$/) {
-                ($Opt{'output-format'} eq "csv")
-                    && ($Opt{'save-to-file'} eq "\n")
-                    && print("\n");
+                ($Opt{'output-format'} eq "csv") && ($Dat{'break'} = 1);
             } elsif (/^Pause: /) {
                 # NOP, is here to cope with old files I’ve lying around.
             } elsif ($Dat{'error'} eq "desc") {
@@ -585,6 +580,7 @@ sub print_gpx {
         }
         {
             my $el_trkseg = $2;
+            $Dat{'break'} = 1;
             $el_trkseg =~
             s{
                 <trkpt\b(.*?)>(.*?)</trkpt>
@@ -618,9 +614,9 @@ sub print_gpx {
                 print_entry(%Dat);
                 "";
             }gsex;
-            $found_move = 1;
+            $Dat{'break'} = 1;
         }gsex;
-        $found_move = 1;
+        $Dat{'break'} = 1;
     }gsex;
     # }}}
 }
@@ -756,6 +752,7 @@ sub print_entry {
                 # FIXME: Make --fix work with gpx.
                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
                     $Dat{'error'} = "chrono";
+                    $Dat{'break'} = 1;
                 }
             }
         }
@@ -972,7 +969,7 @@ sub print_entry {
     }
 
     if ($do_print) {
-        if ($found_move) {
+        if ($Dat{'break'}) {
             if ($Opt{'output-format'} eq "gpsml") {
                 $Line = "<break/>\n$Line";
             }
@@ -983,7 +980,7 @@ sub print_entry {
                 $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
                          "$Spc$Spc$Spc$Spc<trkseg>\n";
             }
-            $found_move = 0;
+            $Dat{'break'} = 0;
         }
         print($Line);
     }

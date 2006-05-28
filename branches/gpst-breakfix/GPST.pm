@@ -36,6 +36,7 @@ sub trackpoint {
     defined($Dat{'type'}) || return(undef);
     defined($Dat{'format'}) || return(undef);
     defined($Dat{'error'}) || return(undef);
+    defined($Dat{'break'}) || ($Dat{'break'} = 0);
 
     defined($Dat{'year'}) || ($Dat{'year'} = 0);
     defined($Dat{'month'}) || ($Dat{'month'} = 0);
@@ -72,7 +73,9 @@ sub trackpoint {
         if ($Dat{'format'} eq "gpsml") {
             # {{{
             my $Elem = length($err_str) ? "etp" : "tp";
-            $Retval .= join("",
+            my $tp_str = "";
+            $Dat{'break'} && ($Retval .= "<break/>\n");
+            $tp_str .= join("",
                     $print_time
                         ? sprintf("<time>%04u-%02u-%02uT" .
                                   "%02u:%02u:%02gZ</time> ",
@@ -94,20 +97,30 @@ sub trackpoint {
                                   $Dat{'desc'})
                         : ""
             );
-            length($Retval) &&
-                ($Retval = sprintf("<%s%s> %s</%s>\n",
+            if (length($tp_str)) {
+                ($tp_str = sprintf("<%s%s> %s</%s>\n",
                                    $Elem,
                                    length($err_str) ? " err=\"$err_str\"" : "",
-                                   $Retval,
-                                   $Elem)
-            );
+                                   $tp_str,
+                                   $Elem
+                           )
+                );
+            }
+            $Retval .= $tp_str;
+            $Dat{'break'} = 0;
+            # }}}
             # }}}
         } elsif($Dat{'format'} eq "gpx") {
             # {{{
+            my $tp_str = "";
             my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
             my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
+            if ($Dat{'break'}) {
+                $tp_str .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
+                           "$Spc$Spc$Spc$Spc<trkseg>\n";
+            }
             if (length("$lat_str$lon_str$Dat{'ele'}")) {
-                $Retval .=
+                $tp_str .=
                 join("",
                     "$Spc$Spc$Spc$Spc$Spc$Spc",
                     "<trkpt$lat_str$lon_str>",
@@ -124,6 +137,7 @@ sub trackpoint {
                     "</trkpt>\n"
                 );
             }
+            $Retval .= $tp_str;
             # }}}
         } else {
             $Retval = undef;
