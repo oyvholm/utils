@@ -1,0 +1,32 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Konverterer obskure dataformater til ISO-8601.
+
+my %mnd_str = (
+	'Jan' => '01',
+	'Feb' => '02',
+	'Mar' => '03',
+	'Apr' => '04',
+	'May' => '05',
+	'Jun' => '06',
+	'Jul' => '07',
+	'Aug' => '08',
+	'Sep' => '09',
+	'Oct' => '10',
+	'Nov' => '11',
+	'Dec' => '12'
+);
+
+while (<>) {
+	s/
+		(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+
+		(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+
+		(\d+)\s+
+		(\d\d:\d\d:\d\d)\s+
+		(\d\d\d\d)
+	/
+		sprintf("%s %04u-%s-%02u %s", $1, $5, $mnd_str{$2}, $3, $4)
+	/eix;
+	print;
+}

@@ -1,0 +1,29 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id$
+# Removes first and last line from stdin or specified files
+#
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2003 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+
+$| = 1;
+
+my @Data = <>;
+
+if (scalar(@Data) > 2) {
+	splice(@Data, 0, 1);
+	splice(@Data, -1);
+	for (@Data) {
+		print($_);
+	}
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id$

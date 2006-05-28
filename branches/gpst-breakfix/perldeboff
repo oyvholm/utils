@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+# Kommenterer ut debuggingsmeldinger i Perl
+# $Id$
+
+while (<>) {
+	s/(&deb_pr\(__LINE__)/# $1/g;
+	print;
+}

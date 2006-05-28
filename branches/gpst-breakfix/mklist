@@ -1,0 +1,63 @@
+#!/usr/bin/perl
+
+# $Id$
+# Made by Øyvind A. Holm <sunny@dataguard.no>
+
+use Fcntl ':flock';
+
+my $curr_time = time;
+chomp($host_name = `hostname`);
+$host_name =~ s!/!!g;
+my $cvs_comment = "af-$host_name-" . &sec2str($curr_time);
+my $lock_file = "/home/sunny/MKLIST_LOCK";
+my $af_dir = "/home/sunny/etc/af/$host_name";
+my $af_file = "$af_dir/af-$host_name.dat";
+my $find_path = "/home"; # Evt. flere separeres med space
+my $stripgz_prog = "/home/sunny/bin/stripgz";
+my $sort_prog = "/bin/sort -k2";
+my $cvs_prog = "/usr/bin/cvs";
+my $sunny_uid = 500;
+my $sunny_gid = 500;
+my $cvs_root = "/home/sunny/af-cvsroot";
+# my $repository_name = "aftest-$host_name"; # Sikkert ikke nødvendig.
+my $LogName = "sunny";
+
+# print "EUID = \"$>\"\n";
+
+$> && die("$0: Has to be root\n");
+die(sprintf("$0: Unknown find(1) version: \"%s\"\n", `find --version`)) unless (`find --version` =~ /GNU find/);
+
+# FIXME: Skal flock() brukes? Kommer seinere.
+die("$0: Lock file $lock_file exists\n") if (-e $lock_file);
+
+die("$0: $cvs_root: Directory not found. Run \"cvs -d $cvs_root init\"\n") unless (-d $cvs_root);
+
+open(LockFP, ">$lock_file") || die("$0: $lock_file: Can't open lock file: $!\n");
+flock(LockFP, LOCK_EX);
+printf(LockFP "%u\n", $curr_time);
+unless (-d $af_dir) {
+	mkdir($af_dir, 0755) or die("$0: $af_dir: Can't create directory: $!\n");
+}
+chdir $af_dir || die("$0: $af_dir: Can't chdir to directory: $!\n");
+
+$Result = system("(echo '# \$Id\$'; (find $find_path -xdev -type f -printf \"%TY%Tm%TdT%TH%TM%TS %p\\n\" | $stripgz_prog | $sort_prog)) >$af_file");
+$> = $sunny_uid;
+$) = $sunny_gid;
+$ENV{CVSROOT} = "$cvs_root";
+$ENV{LOGNAME} = "$LogName";
+# system("/usr/bin/printenv");
+system("$cvs_prog -Q -d $cvs_root commit -m \"$cvs_comment\"");
+
+close(LockFP);
+unlink($lock_file) or die("$0: $lock_file: Can't unlink lock file: $!\n");
+
+# print "Like før slutten\n";
+exit;
+
+sub sec2str {
+	my @TA = gmtime(shift);
+	my $UtcTime = sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+	return($UtcTime);
+} # sec2str()
+
+#### End of file $Id$ ####

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+  <info>
+    <title>Booktitle</title>
+    <releaseinfo>$Id$</releaseinfo>
+    <author>
+      <personname>
+        <firstname>Øyvind</firstname>
+        <othername>A.</othername>
+        <surname>Holm</surname>
+      </personname>
+      <email>sunny@sunbase.org</email>
+    </author>
+    <copyright>
+      <year>2006</year>
+      <holder>Øyvind A. Holm</holder>
+    </copyright>
+  </info>
+
+  <chapter> <title>Chaptertitle</title>
+
+    <para></para>
+
+  </chapter>
+</book>

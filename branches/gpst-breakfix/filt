@@ -1,0 +1,10 @@
+#/bin/bash
+
+# $Id$
+
+cmd=$1
+shift
+for ff in "$@"; do
+    cat "$ff" | $cmd >filt.tmp
+    mv -v filt.tmp "$ff"
+done

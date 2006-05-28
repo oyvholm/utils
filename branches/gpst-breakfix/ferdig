@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# $Id$
+
+while :; do
+    echo -ne \\a.
+    sleep 1
+done

@@ -1,0 +1,10 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Remove everything inside and outside XML elements, in other words, 
+# clean up the bastard.
+
+my $Data = join("", <>);
+$Data =~ s/>[^<>]+?</></gs;
+$Data =~ s/\s*\n\s*[^\S\$]/ /gs;
+print($Data);

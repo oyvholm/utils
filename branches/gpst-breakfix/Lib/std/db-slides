@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE slides
+  PUBLIC "-//Norman Walsh//DTD Slides V3.4//EN"
+  "http://docbook.sourceforge.net/release/slides/3.4/schema/dtd/slides.dtd">
+<slides lang="no">
+  <slidesinfo> <title>Tittel</title>
+    <titleabbrev></titleabbrev>
+    <author>
+      <firstname>Øyvind</firstname>
+      <othername>A.</othername>
+      <surname>Holm</surname>
+    </author>
+    <pubdate></pubdate>
+    <releaseinfo>$Id$</releaseinfo>
+    <copyright>
+      <year>2006</year>
+      <holder>Øyvind A. Holm</holder>
+    </copyright>
+  </slidesinfo>
+  <foil> <title>Innledning</title>
+
+    <para></para>
+
+  </foil>
+  <foilgroup> <title></title>
+
+    <para></para>
+
+    <foil> <title></title>
+
+      <para></para>
+
+    </foil>
+    <foil> <title></title>
+
+      <para></para>
+
+    </foil>
+  </foilgroup>
+  <foilgroup> <title>Konklusjon</title>
+    <foil> <title></title>
+
+      <para></para>
+
+    </foil>
+    <foil> <title></title>
+
+      <para></para>
+
+    </foil>
+  </foilgroup>
+  <foilgroup> <title>Referanser</title>
+    <foil> <title></title>
+
+      <para></para>
+
+    </foil>
+  </foilgroup>
+</slides>

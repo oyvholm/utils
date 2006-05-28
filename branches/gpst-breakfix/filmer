@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Syntax: programnavn `filmer`
+# Hehe, latterlig enkelt.
+#=======================================================================
+
+find "$@" | egrep -i '\.(mpg|mpeg|avi|wmv|mng|mov|asx)$' | LC_COLLATE=C sort

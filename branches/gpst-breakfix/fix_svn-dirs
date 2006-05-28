@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# $Id$
+# Kjører sunnyrights på alle .svn-kataloger i subtreet.
+
+find $* -type d -name .svn | xargs sunnyrights

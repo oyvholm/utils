@@ -1,0 +1,19 @@
+$Id$
+
+Index: runtime/syntax/php.vim
+===================================================================
+RCS file: /cvsroot/vim/vim/runtime/syntax/php.vim,v
+retrieving revision 1.12
+diff -u -r1.12 php.vim
+--- runtime/syntax/php.vim	8 May 2004 00:02:43 -0000	1.12
++++ runtime/syntax/php.vim	3 Jul 2005 11:38:49 -0000
+@@ -55,7 +55,8 @@
+   so <sfile>:p:h/html.vim
+ else
+   runtime syntax/html.vim
+-  unlet b:current_syntax
++  " Commented out by sunny@sunbase.org , it generated an error.
++  " unlet b:current_syntax
+ endif
+ 
+ " accept old options

@@ -1,0 +1,80 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Oppdaterer de norske språkfilene i Vim-sourcen.
+#=======================================================================
+
+vimver=6
+[ "$1" = "-7" ] && { vimver=7; shift; }
+
+vimdir=$HOME/src/other/vim
+basesvn=$HOME/src/svn
+baseosvim=$basesvn/norwegian_vim/trunk
+osvim=$baseosvim/msgs/vim$vimver
+
+if [ "$1" = "-h" ]; then
+    cat <<END
+
+Syntax: $0 [valg]
+
+Oppdaterer ting i $baseosvim/vim* ved å hente ting fra norwegian_vim og 
+eventuelt patche.
+
+-7  Oppdaterer vim7-sausen
+-h  Skriv denne hjelpen
+-p  Ikke patch filene
+
+END
+    exit 0
+fi
+
+echo -e "======== mincvs_vim \x7B\x7B\x7B"
+unset ingen_patch
+[ "$1" = "-p" ] && { ingen_patch=1; shift; }
+
+if [ ! -d $osvim ]; then
+    echo "$0: $osvim: Katalogen finnes ikke, prøver å lage den..." >&2
+    cd $basesvn || { echo "$0: cd $basesvn: Det gikk så dårlig som bare det. Mystisk." >&2; exit 1; }
+    svn update || { echo "$0: Feil under update av den norske Vimmen." >&2; exit 1; }
+    echo "$0: Det gikk visst bra." >&2
+fi
+
+for f in $vimdir $vimdir/vim$vimver.clean $osvim ; do
+    [ -d $f/. ] || { echo "$0: $f: Katalogen finnes ikke. Den trenger man." >&2; exit 1; }
+done
+
+cd $osvim || { echo "cd $osvim: Gikk på trynet." >&2; exit 1; }
+echo -e "======== cd $osvim; svn up \x7B\x7B\x7B"
+svn up
+echo -e "======== cd $osvim; svn up \x7D\x7D\x7D"
+
+cd $vimdir || { echo "cd $vimdir: Gikk på trynet." >&2; exit 1; }
+[ -d vim$vimver/. ] || mkdir vim$vimver || { echo "mkdir vim$vimver gikk te hælvete." >&2; exit 1; }
+echo -e "======== cd $vimdir; rsync -av --delete vim$vimver.clean/ vim$vimver \x7B\x7B\x7B"
+rsync -av --delete vim$vimver.clean/ vim$vimver
+echo -e "======== cd $vimdir; rsync -av --delete vim$vimver.clean/ vim$vimver \x7D\x7D\x7D"
+
+echo -e "======== rsync -av $osvim/ vim$vimver \x7B\x7B\x7B"
+rsync -av $osvim/ vim$vimver
+echo -e "======== rsync -av $osvim/ vim$vimver \x7D\x7D\x7D"
+
+cd $vimdir/vim$vimver || { echo "cd $vimdir/vim$vimver: Klarte ikke chdir like før patchinga." >&2; exit 1; }
+errfound=0
+if [ -z "$ingen_patch" ]; then
+    echo -e "======== Filpatching \x7B\x7B\x7B"
+    for _vp in $HOME/bin/Patch/vim$vimver/*; do
+        echo ======== $_vp ========
+        patch -p0 <$_vp || { echo "Feil under patchinga." >&2; errfound=1; }
+    done
+    echo -e "======== Filpatching \x7D\x7D\x7D"
+else
+    echo "======== Dropper patching av filene ========"
+fi
+[ "$errfound" = "1" ] && { exit 1; }
+
+echo -e "======== mincvs_vim \x7D\x7D\x7D"
+
+exit 0
+
+# vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :

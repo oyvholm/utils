@@ -1,0 +1,217 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id$
+# Plot out data with gnuplot based on data type
+#
+# Character set: UTF-8
+# License: GNU General Public License
+# ©opyleft 2003-2004 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+
+$| = 1;
+
+use Getopt::Std;
+
+our ($opt_f, $opt_h, $opt_k, $opt_L, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
+    (    "",      0,      0,      0,     "",     "",     "",     "",     "",     "");
+getopts('f:hkLl:o:s:t:x:y:');
+
+my $rcs_id = '$Id$';
+my $rcs_id_strip = $rcs_id;
+$rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
+
+our $STD_TIMEFMT = "%Y-%m-%dT%H:%M:%SZ";
+our $time_fmt = length($opt_f) ? $opt_f : $STD_TIMEFMT;
+
+$opt_h && usage(0);
+
+my $gnuplot_script = join(".", "tmp.stpl", $$, substr(rand(), 2, 5), "plt");
+
+if (-e $gnuplot_script) {
+	die("$gnuplot_script: Strange indeed — file already exists. Spooky.\n");
+}
+
+my $data_file = "";
+
+if (defined($ARGV[0])) {
+	$data_file = $ARGV[0];
+} else {
+	usage(1);
+}
+
+process_file($data_file);
+
+exit(0);
+
+sub usage {
+	# {{{
+	my $Retval = shift;
+	print <<END;
+
+Syntax:
+
+  $0 [options] data_file
+
+Options:
+
+  -f x       Use x as date format. Default: "$STD_TIMEFMT"
+  -h         Send this help to stdout
+  -k         Keep temp file after plotting
+  -L         Draw a line from startpoint to endpoint when it’s done
+  -lp        Use linespoints instead of lines
+  -o x       Use x as output format. Can be one of these:
+               fig  (XFig)
+               png  (.png)
+               ps   (Postscript)
+               svg  (Scalable Vector Graphics)
+  -sampN     set samples N
+  -t"X"      Use title X
+  -xrXX:YY   Use X range XX:YY
+  -yrXX:YY   Use Y range XX:YY
+
+END
+	exit($Retval);
+	# }}}
+}
+
+sub process_file {
+	# {{{
+	my $data_file = shift;
+	unless (-r $data_file) {
+		die("$0: $data_file: File is unreadable or doesn’t exist.\n");
+		return undef;
+	}
+	if (open(GnupFP, ">$gnuplot_script")) {
+		# {{{
+		print(GnupFP <<END);
+#!/usr/bin/gnuplot -persist
+
+# \$\x49d\$
+# Gnuplot script created by $rcs_id_strip
+
+END
+
+		if (length($opt_x)) {
+			if ($opt_x =~ /^r(.*)/) {
+				# X range specified {{{
+				my $Range = $1;
+				if ($opt_x =~ /^r(.+:.+)$/) {
+					print(GnupFP "set xrange [$1]\n");
+				} else {
+ 					die("\"$Range\": Invalid X range specified\n");
+				}
+				# }}}
+			}
+		}
+		if (length($opt_y)) {
+			if ($opt_y =~ /^r(.*)/) {
+				# Y range specified {{{
+				my $Range = $1;
+				if ($opt_y =~ /^r(.+:.+)$/) {
+					print(GnupFP "set yrange [$1]\n");
+				} else {
+					die("\"$Range\": Invalid Y range specified\n");
+				}
+				# }}}
+			}
+		}
+
+		print(GnupFP <<END);
+set encoding iso_8859_1
+set xdata time
+set grid
+set timefmt "$time_fmt"
+set format x "%Y-%m-%d"
+END
+
+		if (length($opt_s)) {
+			if ($opt_s =~ /^amp/) {
+				if ($opt_s =~ /^amp(\d+)$/) {
+					print(GnupFP "set samples $1\n");
+				} else {
+					die("Invalid value in -samp option, number expected\n");
+				}
+			} else {
+				die("Unknown option: -s$opt_s\n");
+			}
+		}
+		if (length($opt_o)) {
+			if ($opt_o =~ /.*\.ps$/i) {
+				print(GnupFP "set terminal postscript enhanced color solid 8\nset output \"$opt_o\"\n");
+			} elsif ($opt_o =~ /.*\.png$/i) {
+				print(GnupFP "set terminal png\nset output \"$opt_o\"\n");
+			} elsif ($opt_o =~ /.*\.fig/i) {
+				print(GnupFP "set terminal fig color big metric\nset output \"$opt_o\"\n");
+			} elsif ($opt_o =~ /.*\.svg/i) {
+				print(GnupFP "set terminal svg\nset output \"$opt_o\"\n");
+			} else {
+				die("Unkonwn outfile type, has to be .ps, .png, .fig or .svg\n");
+			}
+		} else {
+			print(GnupFP "set terminal x11\n");
+		}
+
+		if (length($opt_t)) {
+			print(GnupFP "set title \"$opt_t\"\n");
+		}
+
+		my $line_type = "line 1";
+
+		if (length($opt_l)) {
+			if ($opt_l eq "p") {
+				$line_type = "linespoints";
+			}
+		}
+
+		# For framtidig bruk.
+		# while (<>) {
+			# if (/^(\d\d\d\d)[\- \/](\d\d)[\- \/](\d\d)T(\d\d):(\d\d):(\d\d)\s+(\d+)/) {
+			# }
+		# }
+
+        my $line_file = "$data_file.line.tmp";
+        my $line_str = "";
+
+        if ($opt_L) {
+            # FIXME
+            system("head -1 $data_file >$line_file");
+            system("tail -1 $data_file >>$line_file");
+            $line_str = qq{, \\\n"$line_file" using 1:2 title " " with line 3\n};
+        }
+
+		print(GnupFP <<END);
+plot \\
+"$data_file" using 1:2 title " " with $line_type, \\
+"$data_file" using 1:2 smooth bezier title " " with line -1$line_str
+
+END
+
+		close(GnupFP);
+        $opt_L && unlink($line_str);
+
+		system("gnuplot -persist $gnuplot_script");
+		if ($opt_k) {
+			print(STDERR "Keeping temp file $gnuplot_script\n");
+		} else {
+			unlink($gnuplot_script) || warn("$gnuplot_script: Unable to delete temporary file: $!\n");
+		}
+		if ($opt_o =~ /^.*\.ps$/i) {
+			system("gv $opt_o");
+		}
+		if ($opt_o =~ /^.*\.svg$/i) {
+			system("inkscape $opt_o");
+		}
+		# }}}
+	} else {
+		warn("$gnuplot_script: Can’t open file for write: $!\n");
+	}
+	# }}}
+}
+
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id$

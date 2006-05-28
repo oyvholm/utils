@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Kopierer svn-repo fra sunba til svn.sunbase.org .
+#=======================================================================
+
+[ -e /sunba.mrk ] || { echo "Må være på sunba." >&2; exit 1; }
+repo=$1
+
+if [ -d /home/sunny/Svn.sunbase.org/$1/. ]; then
+  svn log file:///home/sunny/Svn.sunbase.org/$1 >/tmp/sc.paa_sunba
+  svn log http://svn.sunbase.org/repos/$1 >/tmp/sc.paa_svn.sunbase.org
+  echo ============= Diff mellom sunba-versjonen og den på svn.sunbase.org
+  vimdiff /tmp/sc.paa_sunba /tmp/sc.paa_svn.sunbase.org
+  echo -n ====== Trykk ENTER eller CTRL-C...
+  read
+  echo ==== Prøvesending av $1 til svn.sunbase.org...
+  if [ -e  /home/sunny/Svn.sunbase.org/$1/hooks/pre-revprop-change ]; then
+    gzip -v /home/sunny/Svn.sunbase.org/$1/hooks/pre-revprop-change
+  fi
+  rsync -avnP --delete /home/sunny/Svn.sunbase.org/$1/ www-data@nett2:/var/Svn/repos/$1/
+  echo -n ====== Trykk ENTER eller CTRL-C...
+  read
+  rsync -avP --delete /home/sunny/Svn.sunbase.org/$1/ www-data@nett2:/var/Svn/repos/$1/
+  if [ -e  /home/sunny/Svn.sunbase.org/$1/hooks/pre-revprop-change.gz ]; then
+    gunzip -v /home/sunny/Svn.sunbase.org/$1/hooks/pre-revprop-change.gz
+  fi
+else
+  echo "$0: $1: Fant ikke repoen." >&2
+  exit 1
+fi
+
+# vim: set ts=2 sw=2 sts=2 et fenc=utf8 :

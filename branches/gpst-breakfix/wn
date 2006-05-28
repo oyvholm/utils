@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# “What’s New” — Lists changes in a Subversion working copy which 
+# haven’t been downloaded yet. Or in other words, see what has happened 
+# in the directory tree since your last update.
+#=======================================================================
+
+svn log -rBASE:HEAD "$@" | less

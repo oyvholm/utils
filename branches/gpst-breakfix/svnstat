@@ -1,0 +1,208 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Generates a gnuplot curve of weekly Subversion commits. Extremely 
+# primitive at the moment.
+#
+# Character set: UTF-8
+# ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License, see end of file for legal stuff.
+#=======================================================================
+
+use strict;
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+    'debug' => 0,
+    'force' => 0,
+    'help' => 0,
+    'version' => 0,
+);
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "debug" => \$Opt{'debug'},
+    "force|f" => \$Opt{'force'},
+    "help|h" => \$Opt{'help'},
+    "version" => \$Opt{'version'},
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
+
+my $dat_file = "svnstat.dat";
+my $tmp_file = "svnstat.tmp";
+my $ep_file = "svnstat.ep.tmp";
+my $week_file = "svnstat.week.dat";
+my $count_file = "svnstat.count.dat";
+my $time_file = "svnstat.time.dat";
+my $create_log = 1;
+
+my $args = "";
+
+if (scalar(@ARGV)) {
+    $args = join(" ", @ARGV);
+}
+
+if (-e $dat_file) {
+    if ($Opt{'force'}) {
+        print("$dat_file exists, but --force was specified.\n");
+    } else {
+        print("$dat_file exists, skipping svn log.\n");
+        $create_log = 0;
+    }
+}
+
+if ($create_log) {
+    print("Running svn log...\n");
+    system("svn log --xml $args >$dat_file");
+}
+
+system("LC_ALL=C LC_CTYPE=C grep '<date>' $dat_file | cut -c7-25,33 | sort >$tmp_file");
+system("deep $tmp_file >$ep_file");
+system("ep_day -w 1 $ep_file | ep >$week_file");
+system("stpl -t \"Commits per week\" $week_file");
+system("inc_epstat $tmp_file >$count_file");
+system("stpl -t \"Incrementally number of revisions\" $count_file");
+system("ep-pause -s $ep_file >$time_file");
+system("stpl -t \"Number of seconds between commits\" $time_file");
+
+# unlink($tmp_file);
+# unlink($week_file);
+
+sub print_version {
+    # Print program version {{{
+    print("$rcs_id\n");
+    exit(0);
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    print(<<END);
+
+$rcs_id
+
+Usage: $progname [options] [file_or_url [...]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -f, --force
+    Force execution of “svn log”.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+svnstat
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+svnstat [options] [file_or_url [...]]
+
+=head1 DESCRIPTION
+
+Generate statistics for Subversion commits.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-f>, B<--force>
+
+Force “svn log” to run even if F<svnstat.dat> exists.
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

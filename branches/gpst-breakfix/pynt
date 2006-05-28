@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# $Id$
+
+killall xplanetbg
+xplanetbg -projection ortho-xplanet -latitude 60.39494 -longitude 5.33016 $* &
+
+# Låst posisjon med Norge lurt plassert
+# xearth -nomarkers -bigstars 50 -shift "-275 -162" -sunpos "20 20" -mag 0.5 -once
+# (xearth -bigstars 50 -shift "-275 -162" -mag 0.5 &) || (echo $0: Kunne ikke starte xearth) >&2
+
+# xsnow -nosanta -notrees &>/dev/null &
+# (xsnow &>/dev/null &) || (echo $0: Kunne ikke starte xsnow >&2)

@@ -1,0 +1,208 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Creates ping(8) statistics for crappy connections.
+#
+# Character set: UTF-8
+# ©opyleft 2005– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License, see end of file for legal stuff.
+#=======================================================================
+
+use strict;
+use Getopt::Long;
+use Fcntl ':flock';
+use File::Path;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+    'debug' => 0,
+    'help' => 0,
+    'version' => 0,
+);
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "version" => \$Opt{'version'},
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
+
+my $Host = "194.248.216.19";
+my $log_dir = "$ENV{HOME}/log/pingstat";
+my $log_file = "$log_dir/pingstat.log";
+my $lock_dir = "/var/lock/pingstat.LOCK";
+my $CMD_PING = "/bin/ping -c 1 $Host";
+my $Delay = 30;
+
+(-d $log_dir) || mkpath($log_dir) || die("$progname: $log_dir: Cannot create directory: $!\n");
+
+my $last_time = 0;
+
+mkdir($lock_dir) || die("$lock_dir: Lockdir already exists.\n");
+
+while (1) {
+    my $curr_time = time;
+    my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
+        gmtime($curr_time);
+    my $Date = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                       $Year + 1900, $Mon + 1, $Day, $Hour, $Min, $Sec);
+    $Year += 1900; # Weird piece of shit
+    $Mon += 1;     # Urgh
+    if (open(PipeFP, "$CMD_PING |")) {
+        my $Data = join("", <PipeFP>);
+        close(PipeFP);
+        $Data =~ s/\n/\t/gs;
+        if (open(LogFP, ">>", $log_file)) {
+            if (flock(LogFP, LOCK_EX)) {
+                print(LogFP "$Date\t$Data\n");
+                close(LogFP);
+            } else {
+                warn("$progname: $log_file: Cannot lock file: $!\n");
+            }
+        } else {
+            warn("$progname: $log_file: Cannot create or append to file: $!\n");
+        }
+    } else {
+        warn("$progname: \"$CMD_PING\": Could not open pipe: $!\n");
+    }
+    while (time < ($curr_time + $Delay)) {
+        # NOP
+    }
+}
+
+sub print_version {
+    # Print program version {{{
+    print("$rcs_id\n");
+    exit(0);
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    print(<<END);
+
+$rcs_id
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

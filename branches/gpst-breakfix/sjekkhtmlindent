@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# $Id$
+# Sjekker at innrykkene på et webdokument er OK
+# Trenger sget og hfa .
+# Syntax: $0 url
+
+diff -u <(sget $1) <(sget $1|hfa)

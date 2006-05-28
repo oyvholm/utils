@@ -1,0 +1,68 @@
+#!/usr/bin/perl -w
+
+##
+##  Written by Owen Taylor <otaylor@redhat.com>
+##
+
+BEGIN {
+    use POSIX qw(:termios_h);
+    
+    my ($term, $oterm, $echo, $noecho, $fd_stdin);
+    
+    $fd_stdin = fileno(STDIN);
+    
+    $term     = POSIX::Termios->new();
+    $term->getattr($fd_stdin);
+    $oterm     = $term->getlflag();
+    
+    $echo     = ECHO | ECHOK | ICANON;
+    $noecho   = $oterm & ~$echo;
+    
+    sub noecho {
+	$term->setlflag($noecho);
+	$term->setattr($fd_stdin, TCSANOW);    
+}
+    
+    sub echo {
+	$term->setlflag($oterm);
+	$term->setattr($fd_stdin, TCSANOW);    
+    }
+}
+
+END { echo() }
+
+# Get random seed 
+
+open(RANDOM, "/dev/random") || die "Can't open /dev/random: $!";
+read(RANDOM, $a, 8) || die "Can't read: $!";
+close RANDOM;
+
+$a = join ("", map { chr(ord('0') + ord($_)%64) } split //,$a);
+$a =~ s/[^A-Za-z0-9]//g;
+
+my ($result1, $result2);
+
+$| = 0;
+
+while (1) {
+    print "Enter passwd: ";
+    noecho;
+    $password = <>;
+    chomp($password);
+    $result1 = crypt($password, substr($a,0,2));
+    echo;
+    print "\nReenter passwd to verify: ";
+    noecho;
+    $password = <>;
+    chomp($password);
+    $result2 = crypt($password, substr($a,0,2));
+    echo;
+
+    if ($result1 ne $result2) {
+	print "\nPasswords did not match, try again\n";
+    } else {
+	last;
+    }
+}
+
+print "\nCrypted value is: $result1\n";

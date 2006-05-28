@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Oppdaterer ~/src/other/vim/vim[67].clean
+#=======================================================================
+
+vimver=6
+
+if [ "$1" = "-h" ]; then
+    echo
+    echo "Syntax: $0 [valg]"
+    echo
+    echo "Oppdaterer Vim-CVS’en."
+    echo
+    echo "Valg:"
+    echo "  -7   Oppdater filene for vim7"
+    echo "  -h   Hjælp mæ."
+    echo
+    exit 0
+fi
+
+[ "$1" = "-7" ] && { vimver=7; shift; }
+
+progname=update_vim-clean
+vimbase=$HOME/src/other/vim
+vimclean=$vimbase/vim$vimver.clean
+
+# [ -e /carmbb.mrk ] && { echo "Man er på carmbb, og her er det som kjent dårlig med nettkontakt. Synd, egentlig." >&2; exit 1; }
+
+echo -e "======== update_vim-clean \x7B\x7B\x7B"
+
+if [ ! -d $vimclean ]; then
+    echo -n "$progname: $vimclean: Katalogen finnes ikke. Trykk ENTER for å prøve å sette det opp..." >&2
+    read
+    mkdir -p $vimbase || { echo "$progname: mkdir $vimbase: Gikk på ræva, avbryter." >&2; exit 1; }
+    cd $vimbase || { echo "$progname: cd $vimbase: Gikk ikke." >&2; exit 1; }
+    if [ "$vimver" = "6" ]; then
+        cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/vim co -P -d vim$vimver.clean vim || { echo "$progname: Feil under cvs checkout" >&2; exit 1; }
+    elif [ "$vimver" = "7" ]; then
+        cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/vim co -P -d vim$vimver.clean vim7 || { echo "$progname: Feil under cvs checkout" >&2; exit 1; }
+    else
+        # Hit kommer vi aldri, men for sikkerhets skyld…
+        echo "$progname: Hva pokkern er det slags Vim-versjon du har? «$vimver»???" >&2
+        exit 1
+    fi
+fi
+
+cd $vimclean || { echo "Nåh, klarte ikke \"cd $vimclean\" selv om den visstnok finnes. Skjønner ikke bæret og driter i resten." >&2; exit 1; }
+until cvs upd -dAPC; do
+    echo -n sleep 20...
+    sleep 20
+    echo våken.
+done
+
+echo -e "======== update_vim-clean \x7D\x7D\x7D"
+
+# vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :

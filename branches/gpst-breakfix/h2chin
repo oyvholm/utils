@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Konverterer fra numeriske entities til oversatt kinesisk.
+
+use strict;
+
+my %Uh;
+
+$| = 1;
+
+open(FromFP, "</tmp/Unihan-def.txt") || die("Klarte ikke å åpne unihan for lesing: $!");
+while(<FromFP>) {
+	if (/^U\+(....)\s+kDefinition\s+(.*)/) {
+		$Uh{$1} = $2;
+		# print (STDERR "$1\n");
+	} else {
+		# print(STDERR "Bomma på $_\n");
+	}
+}
+
+close(FromFP);
+
+while (<>) {
+	s!&#x([0-9A-F][0-9A-F][0-9A-F][0-9A-F]);!sprintf("\n[%s]", length($Uh{$1}) ? $Uh{$1} : join("", "U+", $1))!gei;	
+	print;
+}

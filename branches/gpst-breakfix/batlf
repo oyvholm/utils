@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# $Id$
+# Leiter i telefonlista til BA.
+
+if [ "$1" = "" ]; then
+	lynx http://intern.ba.no/telefonliste/Telefonliste.htm
+else
+	lynx -dump http://intern.ba.no/telefonliste/Telefonliste.htm | grep -i "$*"
+fi
