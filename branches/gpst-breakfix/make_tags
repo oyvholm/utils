@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# $Id$
-# Kjører exuberant-ctags på C-source.
-
-find -type f | ns | egrep '\.(c|h|cpp|chh|cc)$' | ctags -L -

@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# $Id$
-
-grep -r . "$@" | ns | grep '﻿'

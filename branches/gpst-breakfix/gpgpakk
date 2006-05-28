@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# $Id$
-
-guid=$1
-[ -z "$guid" ] && guid="-r sunny@sunbase.org"
-gpg $guid -z9 -a --comment "" -e

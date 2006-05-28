@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# $Id$
-
-if [ "$1" = "-L" ]; then
-	date -u +"%Y-%m-%dT%H:%M:%SZ" | tr -d '\n'
-else
-	date -u +"%Y%m%dT%H%M%SZ" | tr -d '\n'
-fi

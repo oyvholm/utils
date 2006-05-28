@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id$
-# Primitiv prompt for screenlogger osv.
-
-export PS1='=== PROMPT $(date +"%T") \u@\h:\w$ '
