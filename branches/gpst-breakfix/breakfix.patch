@@ -1,0 +1,435 @@
+Index: GPST.pm
+===================================================================
+--- GPST.pm	(revision 1821)
++++ GPST.pm	(working copy)
+@@ -37,6 +37,7 @@
+ 
+     defined($Dat{'type'}) || return(undef);
+     defined($Dat{'error'}) || return(undef);
++    defined($Dat{'break'}) || ($Dat{'break'} = 0);
+ 
+     defined($Dat{'year'}) || ($Dat{'year'} = 0);
+     defined($Dat{'month'}) || ($Dat{'month'} = 0);
+@@ -65,7 +66,9 @@
+         if ($Dat{'format'} eq "gpsml") {
+             # {{{
+             my $Elem = length($err_str) ? "etp" : "tp";
+-            $Retval .= join("",
++            my $tp_str = "";
++            $Dat{'break'} && ($Retval .= "<break/>\n");
++            $tp_str .= join("",
+                     $print_time
+                         ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                           "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</time> "
+@@ -84,20 +87,30 @@
+                                   $Dat{'desc'})
+                         : ""
+             );
+-            length($Retval) &&
+-                ($Retval = sprintf("<%s%s> %s</%s>\n",
++            if (length($tp_str)) {
++                ($tp_str = sprintf("<%s%s> %s</%s>\n",
+                                    $Elem,
+                                    length($err_str) ? " err=\"$err_str\"" : "",
+-                                   $Retval,
+-                                   $Elem)
+-            );
++                                   $tp_str,
++                                   $Elem
++                           )
++                );
++            }
++            $Retval .= $tp_str;
++            $Dat{'break'} = 0;
+             # }}}
++            # }}}
+         } elsif($Dat{'format'} eq "gpx") {
+             # {{{
++            my $tp_str = "";
+             my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
+             my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
++            if ($Dat{'break'}) {
++                $tp_str .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
++                           "$Spc$Spc$Spc$Spc<trkseg>\n";
++            }
+             if (length("$lat_str$lon_str$Dat{'ele'}")) {
+-                $Retval .=
++                $tp_str .=
+                 join("",
+                     "$Spc$Spc$Spc$Spc$Spc$Spc",
+                     "<trkpt$lat_str$lon_str>",
+@@ -114,6 +127,7 @@
+                     "</trkpt>\n"
+                 );
+             }
++            $Retval .= $tp_str;
+             # }}}
+         }
+     }
+Index: breakfix.patch
+===================================================================
+--- breakfix.patch	(revision 1821)
++++ breakfix.patch	(working copy)
+@@ -1,86 +1,16 @@
+-Index: tests/run-tests.pl
+-===================================================================
+---- tests/run-tests.pl	(revision 1817)
+-+++ tests/run-tests.pl	(working copy)
+-@@ -56,8 +56,31 @@
+- $Opt{'help'} && usage(0);
+- $Opt{'version'} && print_version();
+- 
+--diag("Testing XML routines...");
+-+testcmd(`../gpst -o xgraph multitrack.gpx`, # {{{
+-+    <<END,
+-+-0.1448208 51.4968987
+-+-0.1448824 51.4968266
+-+-0.1449938 51.4968227
+-+-0.1453202 51.4969040
+-+move -0.1453398 51.4969214
+-+-0.1455514 51.4969816
+-+-0.1457489 51.4970224
+-+-0.1457804 51.4970452
+-+move -0.1458608 51.4970680
+-+-0.1460047 51.4971658
+-+-0.1461614 51.4972469
+-+move -0.1462394 51.4972731
+-+-0.1463232 51.4973437
+-+-0.1462949 51.4973337
+-+-0.1462825 51.4973218
+-+-0.1462732 51.4973145
+-+END
+-+);
+- 
+-+# }}}
+-+
+-+diag("Testing XML routines... \x7B\x7B\x7B1");
+-+
+- # txt_to_xml() and xml_to_txt() {{{
+- 
+- is(txt_to_xml("abc"),
+-@@ -82,7 +105,7 @@
+- 
+- # }}}
+- 
+--diag("Testing date routines...");
+-+diag("Testing date routines... \x7B\x7B\x7B1");
+- 
+- # sec_to_string() {{{
+- 
+-@@ -153,7 +176,7 @@
+- 
+- # }}}
+- 
+--diag("Testing geo routines...");
+-+diag("Testing geo routines...\x7B\x7B\x7B1");
+- 
+- # ddd_to_dms() {{{
+- 
+-@@ -218,7 +241,7 @@
+- 
+- # }}}
+- 
+--diag("Testing output from ../gpst");
+-+diag("Testing output from ../gpst \x7B\x7B\x7B1");
+- 
+- like(`../gpst --version`, # {{{
+-     qr/^(\$Id: .*? \$\n)+$/s,
+ Index: GPST.pm
+ ===================================================================
+---- GPST.pm	(revision 1817)
++--- GPST.pm	(revision 1821)
+ +++ GPST.pm	(working copy)
+-@@ -35,8 +35,11 @@
++@@ -37,6 +37,7 @@
+  
+-     D("trackpoint(" . join('|', %Dat) . ")");
+- 
+--    defined($Dat{'type'}) || return(undef);
+--    defined($Dat{'error'}) || return(undef);
+-+    defined($Dat{'type'}) ||
+-+        (warn("trackpoint() received undefined type"), return(undef));
+-+    defined($Dat{'error'}) ||
+-+        (warn("trackpoint() received undefined error"), return(undef));
++     defined($Dat{'type'}) || return(undef);
++     defined($Dat{'error'}) || return(undef);
+ +    defined($Dat{'break'}) || ($Dat{'break'} = 0);
+  
+      defined($Dat{'year'}) || ($Dat{'year'} = 0);
+      defined($Dat{'month'}) || ($Dat{'month'} = 0);
+-@@ -65,7 +68,9 @@
++@@ -65,7 +66,9 @@
+          if ($Dat{'format'} eq "gpsml") {
+              # {{{
+              my $Elem = length($err_str) ? "etp" : "tp";
+@@ -91,7 +21,7 @@
+                      $print_time
+                          ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                            "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</time> "
+-@@ -84,20 +89,30 @@
++@@ -84,20 +87,30 @@
+                                    $Dat{'desc'})
+                          : ""
+              );
+@@ -119,8 +49,8 @@
+              my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
+              my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
+ +            if ($Dat{'break'}) {
+-+                $Retval .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
+-+                         "$Spc$Spc$Spc$Spc<trkseg>\n";
+++                $tp_str .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
+++                           "$Spc$Spc$Spc$Spc<trkseg>\n";
+ +            }
+              if (length("$lat_str$lon_str$Dat{'ele'}")) {
+ -                $Retval .=
+@@ -128,146 +58,11 @@
+                  join("",
+                      "$Spc$Spc$Spc$Spc$Spc$Spc",
+                      "<trkpt$lat_str$lon_str>",
+-@@ -115,6 +130,12 @@
++@@ -114,6 +127,7 @@
++                     "</trkpt>\n"
+                  );
+              }
+++            $Retval .= $tp_str;
+              # }}}
+-+        } elsif ($Dat{'format'} eq "xgraph") {
+-+            if (length($Dat{'lat'}) && length('lon')) {
+-+                $Dat{'break'} && ($Retval .= "move ");
+-+                $Retval .= "$Dat{'lon'}\t$Dat{'lat'}\n";
+-+                $Dat{'break'} = 0;
+-+            }
+          }
+      }
+-     return $Retval;
+-Index: gpst
+-===================================================================
+---- gpst	(revision 1817)
+-+++ gpst	(working copy)
+-@@ -100,7 +100,6 @@
+- my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
+- $GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
+- my $Spc = $GPST::Spc; # FIXME
+--my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
+- my $first_time = 0;
+- my $last_time = 0;
+- my ($last_lon, $last_lat, $last_ele, $last_line) =
+-@@ -294,7 +293,7 @@
+-                 print_entry(%Dat);
+-                 # }}}
+-             } elsif (m#^<break\b.*?/>#) {
+--                $found_move = 1;
+-+                $Dat{'break'} = 1;
+-             } elsif (m#^<(title|pause)\b.*?>(.*?)</(title|pause)>#) {
+-                 $Dat{'type'} = $1;
+-                 $Dat{$1} = $2;
+-@@ -318,7 +317,7 @@
+-                 read_xmlfile($xml_data);
+-                 last;
+-             } elsif (/^move$/) {
+--                $found_move = 1;
+-+                $Dat{'break'} = 1;
+-             } elsif (m#^(\d+)\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
+-                 # CSV format, epoch style {{{
+-                 my ($ep_time, $lon_val, $lat_val, $Alt) =
+-@@ -405,7 +404,7 @@
+-             } elsif (/^Track\t(.*?)\t/) {
+-                 $Dat{'title'} = txt_to_xml($1);
+-                 $Dat{'type'} = "title";
+--                $found_move = 1;
+-+                $Dat{'break'} = 1;
+-                 print_entry(%Dat);
+-             } elsif (
+-                 m{^
+-@@ -517,24 +516,18 @@
+-                 print_entry(%Dat);
+-                 # }}}
+-             } elsif (/^xmaplog /) {
+--                ($Opt{'output-format'} eq "csv")
+--                    && ($Opt{'save-to-file'} eq "\n")
+--                    && print("\n");
+-+                $Dat{'break'} = 1;
+-             } elsif (/^$/) {
+--                ($Opt{'output-format'} eq "csv")
+--                    && ($Opt{'save-to-file'} eq "\n")
+--                    && print("\n");
+-+                ($Opt{'output-format'} eq "csv") && ($Dat{'break'} = 1);
+-             } elsif (/^Pause: /) {
+-                 # NOP, is here to cope with old files I’ve lying around.
+-             } elsif ($Dat{'error'} eq "desc") {
+-                 my $Comment = $_;
+-                 if (defined($Comment)) {
+-                     $Comment =~ s/^\s*(.*?)\s*$/$1/;
+--                    if ($Opt{'output-format'} eq "gpsml") {
+--                        $Dat{'desc'} = txt_to_xml($Comment);
+--                        $Dat{'type'} = "desc";
+--                        print_entry(%Dat);
+--                    }
+-+                    $Dat{'desc'} = txt_to_xml($Comment);
+-+                    $Dat{'type'} = "desc";
+-+                    print_entry(%Dat);
+-                 }
+-             } else {
+-                 $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
+-@@ -585,6 +578,7 @@
+-         }
+-         {
+-             my $el_trkseg = $2;
+-+            $Dat{'break'} = 1;
+-             $el_trkseg =~
+-             s{
+-                 <trkpt\b(.*?)>(.*?)</trkpt>
+-@@ -618,9 +612,9 @@
+-                 print_entry(%Dat);
+-                 "";
+-             }gsex;
+--            $found_move = 1;
+-+            $Dat{'break'} = 1;
+-         }gsex;
+--        $found_move = 1;
+-+        $Dat{'break'} = 1;
+-     }gsex;
+-     # }}}
+- }
+-@@ -756,6 +750,7 @@
+-                 # FIXME: Make --fix work with gpx.
+-                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
+-                     $Dat{'error'} = "chrono";
+-+                    $Dat{'break'} = 1;
+-                 }
+-             }
+-         }
+-@@ -896,8 +891,10 @@
+-                                  $1);
+-             }
+-         } elsif ($Opt{'output-format'} eq "xgraph") {
+--            $pause_len && ($Line .= "move ");
+--            ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+-+            $Dat{'format'} = "xgraph";
+-+            if ($print_pos) {
+-+                $Line .= trackpoint(%Dat);
+-+            }
+-         } elsif($Opt{'output-format'} eq "gpstrans") {
+-             my ($gpt_lat, $gpt_lon) =
+-                (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
+-@@ -972,19 +969,6 @@
+-     }
+- 
+-     if ($do_print) {
+--        if ($found_move) {
+--            if ($Opt{'output-format'} eq "gpsml") {
+--                $Line = "<break/>\n$Line";
+--            }
+--            (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
+--                && ($Line .= "move $Line");
+--            ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
+--            if ($Opt{'output-format'} eq "gpx") {
+--                $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
+--                         "$Spc$Spc$Spc$Spc<trkseg>\n";
+--            }
+--            $found_move = 0;
+--        }
+-         print($Line);
+-     }
+-     $last_time = $ep_time;
+Index: gpst
+===================================================================
+--- gpst	(revision 1821)
++++ gpst	(working copy)
+@@ -100,7 +100,6 @@
+ my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
+ $GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
+ my $Spc = $GPST::Spc; # FIXME
+-my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
+ my $first_time = 0;
+ my $last_time = 0;
+ my ($last_lon, $last_lat, $last_ele, $last_line) =
+@@ -294,7 +293,7 @@
+                 print_entry(%Dat);
+                 # }}}
+             } elsif (m#^<break\b.*?/>#) {
+-                $found_move = 1;
++                $Dat{'break'} = 1;
+             } elsif (m#^<(title|pause)\b.*?>(.*?)</(title|pause)>#) {
+                 $Dat{'type'} = $1;
+                 $Dat{$1} = $2;
+@@ -318,7 +317,7 @@
+                 read_xmlfile($xml_data);
+                 last;
+             } elsif (/^move$/) {
+-                $found_move = 1;
++                $Dat{'break'} = 1;
+             } elsif (m#^(\d+)\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
+                 # CSV format, epoch style {{{
+                 my ($ep_time, $lon_val, $lat_val, $Alt) =
+@@ -405,7 +404,7 @@
+             } elsif (/^Track\t(.*?)\t/) {
+                 $Dat{'title'} = txt_to_xml($1);
+                 $Dat{'type'} = "title";
+-                $found_move = 1;
++                $Dat{'break'} = 1;
+                 print_entry(%Dat);
+             } elsif (
+                 m{^
+@@ -517,13 +516,9 @@
+                 print_entry(%Dat);
+                 # }}}
+             } elsif (/^xmaplog /) {
+-                ($Opt{'output-format'} eq "csv")
+-                    && ($Opt{'save-to-file'} eq "\n")
+-                    && print("\n");
++                $Dat{'break'} = 1;
+             } elsif (/^$/) {
+-                ($Opt{'output-format'} eq "csv")
+-                    && ($Opt{'save-to-file'} eq "\n")
+-                    && print("\n");
++                ($Opt{'output-format'} eq "csv") && ($Dat{'break'} = 1);
+             } elsif (/^Pause: /) {
+                 # NOP, is here to cope with old files I’ve lying around.
+             } elsif ($Dat{'error'} eq "desc") {
+@@ -585,6 +580,7 @@
+         }
+         {
+             my $el_trkseg = $2;
++            $Dat{'break'} = 1;
+             $el_trkseg =~
+             s{
+                 <trkpt\b(.*?)>(.*?)</trkpt>
+@@ -618,9 +614,9 @@
+                 print_entry(%Dat);
+                 "";
+             }gsex;
+-            $found_move = 1;
++            $Dat{'break'} = 1;
+         }gsex;
+-        $found_move = 1;
++        $Dat{'break'} = 1;
+     }gsex;
+     # }}}
+ }
+@@ -756,6 +752,7 @@
+                 # FIXME: Make --fix work with gpx.
+                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
+                     $Dat{'error'} = "chrono";
++                    $Dat{'break'} = 1;
+                 }
+             }
+         }
+@@ -972,7 +969,7 @@
+     }
+ 
+     if ($do_print) {
+-        if ($found_move) {
++        if ($Dat{'break'}) {
+             if ($Opt{'output-format'} eq "gpsml") {
+                 $Line = "<break/>\n$Line";
+             }
+@@ -983,7 +980,7 @@
+                 $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
+                          "$Spc$Spc$Spc$Spc<trkseg>\n";
+             }
+-            $found_move = 0;
++            $Dat{'break'} = 0;
+         }
+         print($Line);
+     }
