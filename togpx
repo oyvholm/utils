@@ -8,4 +8,4 @@
 fromfmt=$1
 shift
 
-gpsbabel -i gdb -f "$@" -o gpx -F -
+gpsbabel -i $fromfmt -f "$@" -o gpx -F -
