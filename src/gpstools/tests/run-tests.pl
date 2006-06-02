@@ -60,6 +60,17 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
+chomp(my $gpx_header = <<END);
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+END
+
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
@@ -370,8 +381,7 @@ END
 # }}}
 testcmd("../gpst -o gpx </dev/null", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
     </trkseg>
@@ -439,8 +449,7 @@ END
 # }}}
 testcmd("../gpst -o gpx no_signal.mayko", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
       <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
@@ -836,10 +845,11 @@ END
 );
 
     # }}}
+my $stripped_gpx_header = $gpx_header;
+$stripped_gpx_header =~ s/^\s*(.*)$/$1/mg;
 testcmd("../gpst -w -o gpx pause.gpx", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$stripped_gpx_header
 <trk>
 <trkseg>
 <trkpt lat="60.425494" lon="5.299534"><time>2006-05-21T16:49:11Z</time><ele>25.260</ele></trkpt>
@@ -968,8 +978,7 @@ END
 
 testcmd("../gpst -o gpx missing.gpsml", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
@@ -1023,8 +1032,7 @@ END
 # }}}
 testcmd("../gpst --epoch -o gpx pause.gpx", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
       <trkpt lat="60.425494" lon="5.299534"> <time>2006-05-21T16:49:11Z</time> <ele>25.260</ele> </trkpt>

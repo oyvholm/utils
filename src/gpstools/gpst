@@ -639,10 +639,17 @@ sub print_header {
                     "Datum[100]: WGS 84\n");
     } elsif ($Opt{'output-format'} eq "gpx") {
         print(OutFP join("",
-            "<?xml version=\"1.0\" standalone=\"no\"?>\n",
-            "<gpx>\n",
-            "$Spc$Spc<trk>\n",
-            "$Spc$Spc$Spc$Spc<trkseg>\n",
+            qq{<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n},
+            qq{<gpx\n},
+            qq{$Spc${Spc}version="1.1"\n},
+            qq{$Spc${Spc}creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"\n},
+            qq{$Spc${Spc}xmlns="http://www.topografix.com/GPX/1/1"\n},
+            qq{$Spc${Spc}xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n},
+            qq{$Spc${Spc}xsi:schemaLocation="http://www.topografix.com/GPX/1/1 },
+            qq{http://www.topografix.com/GPX/1/1/gpx.xsd"\n},
+            qq{>\n},
+            qq{$Spc$Spc<trk>\n},
+            qq{$Spc$Spc$Spc$Spc<trkseg>\n},
         ));
     } elsif ($Opt{'output-format'} eq "ps") {
         print(OutFP ps_header(532, 6034, 533, 6040));

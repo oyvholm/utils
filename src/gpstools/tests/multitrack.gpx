@@ -1,6 +1,11 @@
-<?xml version="1.0" encoding="utf8" standalone="no"?>
-<gpx>
-  <!-- $Id$ -->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
   <trk>
     <name>Track 1</name>
     <trkseg>
