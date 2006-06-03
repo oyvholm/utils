@@ -20,7 +20,7 @@
     <trkseg>
       <trkpt lat="51.4969214" lon="-0.1453398"> <time>2003-02-11T23:36:16Z</time> </trkpt>
       <trkpt lat="51.4969816" lon="-0.1455514"> <time>2003-02-11T23:36:31Z</time> </trkpt>
-      <trkpt lat="51.4970224" lon="-0.1457489"> <time>2003-02-11T23:36:43Z</time> <ele>1000</ele> </trkpt>
+      <trkpt lat="51.4970224" lon="-0.1457489"> <ele>1000</ele> <time>2003-02-11T23:36:43Z</time> </trkpt>
       <trkpt lat="51.4970452" lon="-0.1457804"> <time>2003-02-11T23:36:50Z</time> </trkpt>
     </trkseg>
   </trk>
