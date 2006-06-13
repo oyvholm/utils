@@ -958,8 +958,8 @@ sub print_entry {
                         : $Opt{'short-date'}
                             ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
                               "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
-                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'} " .
-                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}"
+                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
                     : "",
                 $Dat{'lon'},
                 $Dat{'lat'},
