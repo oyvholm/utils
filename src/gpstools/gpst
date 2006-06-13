@@ -554,6 +554,7 @@ exit(0);
 sub read_xmlfile {
     # {{{
     my $Txt = join("", @_);
+    $Txt =~ s/<!--(.*?)-->//gs;
     $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
     # }}}
 }
@@ -563,6 +564,7 @@ sub print_gpx {
     my $Orig = shift;
     my $Str = $Orig;
     D("print_xml_gps(\"$Orig\")\n");
+    $Str =~ s/<!--(.*?)-->//gs;
     $Str =~
     s{
         <trk\b(.*?)>(.*?)</trk>

@@ -733,7 +733,6 @@ testcmd("../gpst multitrack.gpx", # {{{
 <gpsml>
 <track>
 <title>Track 1</title>
-<tp> <time>2003-02-11T23:35:29Z</time> <lat>51.4968987</lat> <lon>-0.1448208</lon> </tp>
 <tp> <time>2003-02-11T23:35:39Z</time> <lat>51.4968266</lat> <lon>-0.1448824</lon> </tp>
 <tp> <time>2003-02-11T23:35:49Z</time> <lat>51.4968227</lat> <lon>-0.1449938</lon> </tp>
 <tp> <time>2003-02-11T23:36:14Z</time> <lat>51.496904</lat> <lon>-0.1453202</lon> </tp>
