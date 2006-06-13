@@ -249,7 +249,7 @@ for $curr_file (@ARGV) {
     # Scan through stdin or specified files and send every GPS entry to 
     # print_entry()
     # {{{
-    D("Opening \"$curr_file\" for read");
+    print(STDERR "$progname: Opening \"$curr_file\" for read\n") if $Opt{'verbose'};
     if (open(CurrFP, "<$curr_file")) {
         # {{{
         while (<CurrFP>) {
@@ -1132,7 +1132,7 @@ Options:
     Comment out following data with identical position values, only 
     print first entry.
   -v, --verbose
-    Verbose, warn about unknown lines.
+    Verbose output.
   --version
     Print version information.
   -w, --strip-whitespace
@@ -1341,7 +1341,7 @@ first entry.
 
 =item B<-v>, B<--verbose>
 
-Verbose, warn about unknown lines.
+Verbose output.
 
 =item B<-w>, B<--strip-whitespace>
 
