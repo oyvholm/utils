@@ -40,8 +40,49 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
+my $DIGIT = '0-9\.\-\+';
+
+print(gpx_header());
+
 while (<>) {
-    print;
+    my ($Lat, $Lon, $Name, $Phone) = ("", "", "", "");
+    if (/^([$DIGIT]+),([$DIGIT]+),(.*) - (.*?)$/) {
+        ($Lon, $Lat, $Name, $Phone) =
+        (txt_to_xml($1), txt_to_xml($2), txt_to_xml($3), txt_to_xml($4));
+        print(<<END);
+  <wpt lat="$Lat" lon="$Lon">
+    <name>$Name</name>
+    <cmt>$Name - $Phone</cmt>
+  </wpt>
+END
+    }
+}
+
+print("</gpx>\n");
+
+sub txt_to_xml {
+    # Convert plain text to XML {{{
+    my $Txt = shift;
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+}
+
+sub gpx_header {
+    # {{{
+    return(<<END);
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="csv2gpx - http://svn.sunbase.org/repos/utils/trunk/csv2gpx"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+END
+    # }}}
 }
 
 sub print_version {
