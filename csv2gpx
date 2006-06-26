@@ -55,6 +55,8 @@ while (<>) {
     <cmt>$Name - $Phone</cmt>
   </wpt>
 END
+    } else {
+        warn(sprintf("%s: Unknown line: \"%s\"\n", $progname, chomp($_)));
     }
 }
 
@@ -74,6 +76,7 @@ sub gpx_header {
     # {{{
     return(<<END);
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- \$Id\$ -->
 <gpx
   version="1.1"
   creator="csv2gpx - http://svn.sunbase.org/repos/utils/trunk/csv2gpx"
