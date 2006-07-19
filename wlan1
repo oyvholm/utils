@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Kjører opp wlan-kortet på carmbb og denslags.
+#=======================================================================
+
+[ "`whoami`" = "root" ] || { echo Det gjør seg å være root. >&2; exit 1; }
+
+modprobe ath_pci
+modprobe wlan_scan_sta
+ifconfig ath0 up
+echo ======== BEGIN iwconfig ========
+iwconfig
+echo ======== END iwconfig ========
+echo ==== Waiting for ath0... ====
+until grep ath0 /proc/net/wireless; do :; done
+echo ==== Tilgjengelige nettverk: ====
+wlanconfig ath0 list scan
