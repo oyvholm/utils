@@ -15,5 +15,6 @@ iwconfig
 echo ======== END iwconfig ========
 echo ==== Waiting for ath0... ====
 until grep ath0 /proc/net/wireless; do :; done
+sleep 1
 echo ==== Tilgjengelige nettverk: ====
 wlanconfig ath0 list scan
