@@ -4,4 +4,8 @@
 # $Id$
 #=======================================================================
 
-ls -la --color=auto --time-style=+%F\ %T "$@"
+if [ -e /nett2.mrk ]; then
+    ls -la --color=auto "$@"
+else
+    ls -la --color=auto --time-style=+%F\ %T "$@"
+fi
