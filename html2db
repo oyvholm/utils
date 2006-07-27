@@ -46,18 +46,29 @@ if ($Data =~ m#</body\b#s) {
     $Data .= $H1_kludge;
 }
 
+$Data =~ s#<!DOCTYPE .*?>#<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">#s;
+$Data = conv_elem("html", "article", $Data);
+$Data = conv_elem("head", "articleinfo", $Data);
 $Data = conv_elem("em", "emphasis", $Data);
+$Data = conv_elem("samp", "computeroutput", $Data);
+$Data = conv_elem("code", "filename", $Data, 1);
+$Data = conv_elem("kbd", "command", $Data);
 $Data = conv_elem("p", "para", $Data);
 $Data = conv_elem("ul", "itemizedlist", $Data);
 $Data = conv_elem("ol", "orderedlist", $Data);
 $Data = conv_elem("li", "listitem", $Data, 0, 1);
-$Data = conv_elem("pre", "screen", $Data, 1);
+$Data = conv_elem("dl", "variablelist", $Data);
+$Data = conv_elem("dt", "term", $Data);
+$Data = conv_elem("dd", "listitem", $Data, 0, 1);
+$Data = conv_elem("pre", "screen", $Data);
 $Data = conv_h(6, $Data);
 $Data = conv_h(5, $Data);
 $Data = conv_h(4, $Data);
 $Data = conv_h(3, $Data);
 $Data = conv_h(2, $Data);
 $Data = conv_h(1, $Data);
+
+$Data =~ s#<a\s+href="(.*?)">(.+?)</a>#<ulink url="$1">$2</ulink>#gs;
 
 D("\$Data before cleanup \x7B\x7B\x7B\n$Data\n\x7D\x7D\x7D");
 
@@ -120,7 +131,7 @@ END
         D("conv_h(): Er i regexp");
         $Attrib =~ s/^\s*(.*?)\s*$/$1/s;
         length($Attrib) && ($Attrib = " $Warn $Attrib");
-        "<sect$Level$Attrib><title>$Header</title>\n$Txt\n</sect$Level>\n<$Elem2$SubAttr2>";
+        "<sect$Level$Attrib> <title>$Header</title>\n$Txt\n</sect$Level>\n<$Elem2$SubAttr2>";
     }gsex;
     return($Str);
     # }}}
