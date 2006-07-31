@@ -2,7 +2,7 @@
 <article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
   <info>
     <title>Articletitle</title>
-    <releaseinfo>$Id$</releaseinfo>
+    <releaseinfo><![CDATA[$Id$]]></releaseinfo>
     <author>
       <personname>
         <firstname>Øyvind</firstname>

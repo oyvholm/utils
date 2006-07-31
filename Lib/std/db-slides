@@ -11,7 +11,7 @@
       <surname>Holm</surname>
     </author>
     <pubdate></pubdate>
-    <releaseinfo>$Id$</releaseinfo>
+    <releaseinfo><![CDATA[$Id$]]></releaseinfo>
     <copyright>
       <year>2006</year>
       <holder>Øyvind A. Holm</holder>

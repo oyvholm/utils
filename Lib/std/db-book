@@ -3,7 +3,7 @@
 <book lang="en">
   <bookinfo>
     <title>Booktitle</title>
-    <releaseinfo>$Id$</releaseinfo>
+    <releaseinfo><![CDATA[$Id$]]></releaseinfo>
     <author>
       <firstname>Øyvind</firstname>
       <othername>A.</othername>
