@@ -31,7 +31,6 @@
     <para>…</para>
   </refsect1>
 </refentry>
-</article>
 
 <!-- {{{
 begin-base64 644 -
@@ -71,3 +70,5 @@ qgNhQw4ikm/l1a6C/Vx/C/XLFBqMxRfC8D1ElBB9jWxWxYHCEzaN1QLPBAa5
 7FyvNBL1LMyJ+Q+jdF6KfUHjmJuJ//7+szpnGWfN1v+82v0DagX6DdMDAAA=
 ====
 -->
+<!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
+</article>
