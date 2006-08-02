@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
 
-<book lang="en">
+<book id="bookid" lang="en">
   <bookinfo>
     <title>Booktitle</title>
     <releaseinfo><![CDATA[$Id$]]></releaseinfo>
@@ -17,7 +17,8 @@
     </copyright>
   </bookinfo>
 
-  <chapter> <title>Chaptertitle</title>
+  <chapter id="chapterid">
+    <title>Chaptertitle</title>
 
     <para></para>
 

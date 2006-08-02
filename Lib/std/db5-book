@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<book xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+<book id="bookid" xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
   <info>
     <title>Booktitle</title>
     <releaseinfo><![CDATA[$Id$]]></releaseinfo>
@@ -18,7 +18,8 @@
     </copyright>
   </info>
 
-  <chapter> <title>Chaptertitle</title>
+  <chapter id="chapterid">
+    <title>Chaptertitle</title>
 
     <para></para>
 
