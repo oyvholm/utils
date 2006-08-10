@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id: perl 1720 2006-04-22 16:55:25Z sunny $
-# [Description]
+# $Id$
+# Generates .html file from DocBook source. It Works On My Machine™ and 
+# then it’s good enough. ☺
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
@@ -25,7 +26,7 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
 
-my $rcs_id = '$Id: perl 1720 2006-04-22 16:55:25Z sunny $';
+my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
@@ -40,8 +41,22 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+for my $Curr (@ARGV) {
+    my $Basename = $Curr;
+    my $tmp_file = "$Curr.xml2html.tmp";
+    $Curr =~ /^(.*)\.xml$/ && ($Basename = $1);
+    my $html_file = "$Basename.html";
+    my_system("xsltproc -o $Basename.html ~/xsl/xhtml/docbook.xsl $Curr");
+    my_system("xmllint --format --encode UTF-8 $html_file >$tmp_file");
+    my_system("mv $tmp_file $html_file");
+}
+
+sub my_system {
+    my @Cmd = @_;
+    my $cmd_txt = join(" ", @Cmd);
+    print("$progname: Executing \"$cmd_txt\"...\n");
+    system(@Cmd);
+    return;
 }
 
 sub print_version {
@@ -59,7 +74,7 @@ sub usage {
 
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] file [files [...]]
 
 Options:
 
@@ -100,7 +115,7 @@ __END__
 
 =head1 REVISION
 
-$Id: perl 1720 2006-04-22 16:55:25Z sunny $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -164,4 +179,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id: perl 1720 2006-04-22 16:55:25Z sunny $
+# End of file $Id$
