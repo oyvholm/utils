@@ -6,7 +6,7 @@
 # formatet NAVN.ååååmmddTttmmssZ-ååååmmddTttmmssZ.access_log
 #
 # ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
-# Lisens: GNU General Public License ♥
+# Lisens: GNU General Public License versjon 2 eller senere ♥
 #=====================================================================
 
 use strict;
@@ -88,7 +88,7 @@ Valg:
 Det er selvfølgelig UTC som brukes. Trenger head(1) og tail(1).
 
 Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>
-Lisens: GNU General Public License ♥
+Lisens: GNU General Public License versjon eller senere ♥
 
 END
 	exit($Retval);

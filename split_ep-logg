@@ -8,7 +8,7 @@
 # greit fra og med 1973-03-03 09:46:40 GMT til 2286-11-20 17:46:39 GMT.
 #
 # ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
-# Lisens: GNU General Public License ♥
+# Lisens: GNU General Public License versjon 2 eller nyere ♥
 #=====================================================================
 
 use strict;
@@ -113,12 +113,32 @@ her og der, men den klokkefløttinga er uendelig plagsom og lager i
 tillegg unøyaktighet i loggene.
 
 Krota sammen av Øyvind A. Holm <sunny\@sunbase.org>.
-Lisens: GNU General Public License ♥
+Lisens: GNU General Public License versjon 2 eller nyere ♥
 
 END
 	exit($Retval);
 } # usage()
 
 __END__
+
+=pod
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=cut
 
 # End of file $Id$
