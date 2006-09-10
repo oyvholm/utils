@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id: perl 1720 2006-04-22 16:55:25Z sunny $
-# [Description]
+# $Id$
+# Creates various pristine setups for all kind of things — documents, 
+# source code and so on.
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
@@ -25,7 +26,11 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
 
-my $rcs_id = '$Id: perl 1720 2006-04-22 16:55:25Z sunny $';
+my $CMD_SVN = "svn";
+my $CMD_STD = "$ENV{'HOME'}/bin/std";
+my $CMD_KEYW = "$ENV{'HOME'}/bin/keyw";
+
+my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
@@ -40,8 +45,65 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+if (!defined($ARGV[1])) {
+    die("$progname: Not enough parameters, use -h for help.\n");
+}
+
+my ($Type, $Name) = (shift, shift);
+
+if ($Type =~ /^article$/) {
+    mkdir($Name) || die("$progname: mkdir $Name: $!\n");
+    system("$CMD_STD db-article >$Name/$Name.xml");
+    if (open(OutFP, ">", "$Name/Makefile")) {
+        print(OutFP <<END);
+#!/usr/bin/make
+
+# \$Id\$
+
+SHELL = /bin/bash
+XSLTPROC = xsltproc
+XSLTOPTS =
+XHTML_XSL = ../../xsl/sunbase.xsl
+HTML_TARGETS = $Name.html
+
+all:
+\t\$(MAKE) \$(HTML_TARGETS)
+
+$Name.html: $Name.xml
+\t\$(XSLTPROC) -o $Name.html \$(XSLTOPTS) \$(XHTML_XSL) $Name.xml
+\txmllint --format --encode UTF-8 $Name.html >$Name.tmp
+\tmv $Name.tmp $Name.html
+
+check:
+\t\@(for _f in *.xml; do \\
+\t\techo ==== \$\$_f ====; \\
+\t\txmllint --valid --noout \$\$_f; \\
+\t\tdone \\
+\t)
+
+htmlclean:
+\trm -f \$(HTML_TARGETS)
+\tsvn update \$(HTML_TARGETS)
+
+valid:
+\t\$(MAKE) check
+END
+        close(OutFP);
+    } else {
+        warn("$progname: $Name/Makefile: Cannot create file: $!\n");
+    }
+    my_system($CMD_SVN, "add", $Name);
+    my_system($CMD_KEYW, "$Name/Makefile", "$Name/$Name.xml");
+} else {
+    die("$progname: $Type: Unknown type\n");
+}
+
+sub my_system {
+    my @Cmd = @_;
+    my $cmd_txt = join(" ", @Cmd);
+    print("======== $progname: Executing \"$cmd_txt\"... ========\n");
+    system(@Cmd);
+    return;
 }
 
 sub print_version {
@@ -59,7 +121,7 @@ sub usage {
 
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname type directory
 
 Options:
 
@@ -69,6 +131,11 @@ Options:
     Print version information.
   --debug
     Print debugging messages.
+
+Supported types:
+
+  article
+    DocBook article.
 
 END
     exit($Retval);
@@ -100,7 +167,7 @@ __END__
 
 =head1 REVISION
 
-$Id: perl 1720 2006-04-22 16:55:25Z sunny $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -164,4 +231,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id: perl 1720 2006-04-22 16:55:25Z sunny $
+# End of file $Id$
