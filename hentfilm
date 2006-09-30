@@ -9,4 +9,4 @@ if [ "$1" = "-b" ]; then
 else
     patt='*.mpg,*.mpeg,*.avi,*.wmv,*.mng,*.mov,*.asx'
 fi
-wget -l 1 -Hxr -A $patt -U 'Mozilla/4.78 [en] (X11; U; Linux 2.4.9-31 i686)' "$@"
+wget -l 1 -Hbxr -nc -A $patt -U 'Mozilla/4.78 [en] (X11; U; Linux 2.4.9-31 i686)' "$@"
