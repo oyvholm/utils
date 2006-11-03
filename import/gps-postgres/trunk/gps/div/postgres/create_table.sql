@@ -2,7 +2,11 @@
 
 CREATE TABLE logg (
     date timestamptz,
-    lon numeric,
     lat numeric,
-    alt numeric
+    lon numeric,
+    alt numeric,
+    sted text,
+    description text,
+    koor point,
+    avst numeric
 );
