@@ -581,7 +581,7 @@ sub print_gpx {
             $attr_wpt =~ /.*lon="($DIGIT+?)"/s &&
                 ($Lon = postgresql_copy_safe($1));
             $el_wpt =~ /.*<name\b(.*?)>(.*?)<\/name>/s &&
-                ($Title = postgresql_copy_safe($2));
+                ($Title = postgresql_copy_safe(xml_to_txt($2)));
             if ($Opt{'output-format'} eq "pgwtab") {
                 print("$Lat\t$Lon\t$Title\n");
             } elsif ($Opt{'output-format'} eq "pgwupd") {

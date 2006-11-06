@@ -1208,6 +1208,35 @@ END
 
 # }}}
 
+diag("Testing waypoint stuff...");
+
+testcmd("../gpst -o pgwtab multitrack.gpx", # {{{
+    <<END,
+51.477880000\t-0.001470000\t0-Meridian
+51.532030\t-0.177330\tAbbey Road
+61.636684\t8.312254\tGaldhøpiggen med &, < og >. ☺
+60.397460000\t5.350610000\tHalfdan Griegs vei
+51.510130000\t-0.130410000\tLeicester Square
+60.968540000\t9.285350000\tLeira camping
+END
+    "Test pgwtab format",
+);
+
+# }}}
+testcmd("../gpst -o pgwupd multitrack.gpx", # {{{
+    <<END,
+UPDATE logg SET sted = '0-Meridian' WHERE (point(51.477880000,-0.001470000) <-> koor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Abbey Road' WHERE (point(51.532030,-0.177330) <-> koor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Galdhøpiggen med &, < og >. ☺' WHERE (point(61.636684,8.312254) <-> koor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Halfdan Griegs vei' WHERE (point(60.397460000,5.350610000) <-> koor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Leicester Square' WHERE (point(51.510130000,-0.130410000) <-> koor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Leira camping' WHERE (point(60.968540000,9.285350000) <-> koor) < 0.0002 AND sted IS NULL;
+END
+    "Test pgwtab format",
+);
+
+# }}}
+
 todo_section:
 ;
 
