@@ -1,8 +1,14 @@
 -- $Id$
 
 DELETE FROM logg WHERE lat < 24;
+DELETE FROM logg WHERE date < '2002-1-1';
+DELETE FROM logg WHERE date > '2007-1-1';
+DELETE FROM logg WHERE date BETWEEN '2005-9-24' AND '2006-2-8';
+DELETE FROM logg WHERE alt = -1500;
 UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
 UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
+UPDATE logg SET alt = NULL WHERE alt < -1500;
+UPDATE logg SET alt = NULL WHERE alt > 29000;
 
 -- begin-base64 644 -
 -- H4sIAMtVSUUCA6XUTW6bQBQH8L1PMTuDhEfz/aGmVW0FKVWsqEridtPNuEwx
