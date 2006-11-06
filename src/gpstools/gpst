@@ -887,7 +887,11 @@ sub print_entry {
             && ($Dat{'lon'} eq $last_lon)
             && ($Dat{'lat'} eq $last_lat)
         ) {
-            $Dat{'error'} = "dup";
+            if ($Opt{'output-format'} eq 'gpsml') {
+                $Dat{'error'} = "dup";
+            } else {
+                $do_print = 0;
+            }
         } else {
                 $do_print = 1;
         }

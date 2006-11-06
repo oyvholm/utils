@@ -486,7 +486,33 @@ testcmd("../gpst -d no_signal.mayko", # {{{
 </track>
 </gpsml>
 END
-    "Remove duplicated positions",
+    "Remove duplicated positions from gpsml",
+);
+
+# }}}
+testcmd("../gpst -d -o csv no_signal.mayko", # {{{
+    <<END,
+2002-12-22T21:42:24Z\t23.6746151\t70.6800486\t\t
+2002-12-22T21:42:32Z\t23.6740038\t70.6799322\t\t
+2002-12-22T21:42:54Z\t23.6723991\t70.6796266\t\t
+2002-12-22T21:44:45Z\t23.6757566\t70.6800774\t\t
+2002-12-22T21:44:52Z\t23.6753442\t70.6801502\t\t
+2002-12-22T21:45:04Z\t23.6757542\t70.6801905\t\t
+END
+    "Remove duplicated positions from csv output format",
+);
+
+# }}}
+testcmd("../gpst -d -o clean no_signal.mayko", # {{{
+    <<END,
+23.6746151	70.6800486
+23.6740038	70.6799322
+23.6723991	70.6796266
+23.6757566	70.6800774
+23.6753442	70.6801502
+23.6757542	70.6801905
+END
+    "Remove duplicated positions from clean output format",
 );
 
 # }}}
