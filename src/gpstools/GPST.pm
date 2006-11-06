@@ -125,6 +125,20 @@ sub trackpoint {
                 );
             }
             # }}}
+        } elsif ($Dat{'format'} eq "pgtab") {
+            $Retval .= join("\t",
+                $Dat{'year'}
+                    ? "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                    : '\N',
+                length($Dat{'lat'}) ? $Dat{'lat'} : '\N',
+                length($Dat{'lon'}) ? $Dat{'lon'} : '\N',
+                length($Dat{'ele'}) ? $Dat{'ele'} : '\N',
+                '\N',
+                '\N',
+                '\N',
+                '\N'
+            ) . "\n";
         } else {
             $Retval = undef;
         }

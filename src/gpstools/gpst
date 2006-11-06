@@ -114,6 +114,9 @@ our %Cmd = (
 
 my %Poscount = ();
 
+if ($Opt{'output-format'} eq "pgtab") {
+    $Opt{'require'} .= "pt";
+}
 my %Req = (
     'ele' => ($Opt{'require'} =~ /e/) ? 1 : 0,
     'position' => ($Opt{'require'} =~ /p/) ? 1 : 0,
@@ -935,6 +938,11 @@ sub print_entry {
                                  $Dat{$1},
                                  $1);
             }
+        } elsif ($Opt{'output-format'} eq "pgtab") {
+            if ($Dat{'type'} eq "tp" && $Dat{'year'}) {
+                $Dat{'format'} = "pgtab";
+                $Line .= trackpoint(%Dat);
+            }
         } elsif ($Opt{'output-format'} eq "xgraph") {
             $pause_len && ($Line .= "move ");
             ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
@@ -1134,6 +1142,7 @@ Options:
       gpsml (Default)
       gpstrans
       gpx (Not complete)
+      pgtab
       pgwtab
       pgwupd
       poscount
