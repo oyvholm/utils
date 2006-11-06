@@ -575,15 +575,19 @@ sub print_gpx {
         {
             my $attr_wpt = $1;
             my $el_wpt = $2;
-            my ($Lat, $Lon, $Title);
+            my ($Lat, $Lon, $Ele, $Title) =
+               ('\N', '\N', '\N',   '\N');
             $attr_wpt =~ /.*lat="($DIGIT+?)"/s &&
                 ($Lat = postgresql_copy_safe($1));
             $attr_wpt =~ /.*lon="($DIGIT+?)"/s &&
                 ($Lon = postgresql_copy_safe($1));
             $el_wpt =~ /.*<name\b(.*?)>(.*?)<\/name>/s &&
                 ($Title = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<ele\b(.*?)>(.*?)<\/ele>/s &&
+                ($Ele = postgresql_copy_safe(xml_to_txt($2)));
             if ($Opt{'output-format'} eq "pgwtab") {
-                print("$Lat\t$Lon\t$Title\n");
+                # FIXME: Unfinished
+                print("$Lat\t$Lon\t$Ele\t$Title\t\\N\t\\N\t\\N\t\\N\n");
             } elsif ($Opt{'output-format'} eq "pgwupd") {
                 $Title =~ s/'/\\'/gs;
                 print("UPDATE logg SET sted = '$Title' WHERE (point($Lat,$Lon) <-> koor) < 0.0002 AND sted IS NULL;\n");

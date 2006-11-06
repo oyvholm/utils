@@ -1212,12 +1212,12 @@ diag("Testing waypoint stuff...");
 
 testcmd("../gpst -o pgwtab multitrack.gpx", # {{{
     <<END,
-51.477880000\t-0.001470000\t0-Meridian
-51.532030\t-0.177330\tAbbey Road
-61.636684\t8.312254\tGaldhøpiggen med &, < og >. ☺
-60.397460000\t5.350610000\tHalfdan Griegs vei
-51.510130000\t-0.130410000\tLeicester Square
-60.968540000\t9.285350000\tLeira camping
+51.477880000\t-0.001470000\t\\N\t0-Meridian\t\\N\t\\N\t\\N\t\\N
+51.532030\t-0.177330\t34.492798\tAbbey Road\t\\N\t\\N\t\\N\t\\N
+61.636684\t8.312254\t2469.012939\tGaldhøpiggen med &, < og >. ☺\t\\N\t\\N\t\\N\t\\N
+60.397460000\t5.350610000\t\\N\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t\\N
+51.510130000\t-0.130410000\t\\N\tLeicester Square\t\\N\t\\N\t\\N\t\\N
+60.968540000\t9.285350000\t\\N\tLeira camping\t\\N\t\\N\t\\N\t\\N
 END
     "Test pgwtab format",
 );
