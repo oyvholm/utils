@@ -23,7 +23,7 @@ CREATE OR REPLACE VIEW siste_halvaar
 CREATE OR REPLACE VIEW siste_maaned
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('day', date)
+            sted, date_trunc('hour', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 month ago'
@@ -83,7 +83,7 @@ CREATE OR REPLACE VIEW fjernest_siste_halvaar
 CREATE OR REPLACE VIEW fjernest_siste_maaned
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('day', date)
+            sted, date_trunc('hour', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 month ago'
