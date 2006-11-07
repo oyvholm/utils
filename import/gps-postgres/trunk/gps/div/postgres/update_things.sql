@@ -1,10 +1,17 @@
 -- $Id$
 
-DELETE FROM logg WHERE lat < 24;
+-- OBS! Må fjernes når jeg er ferdig med å teste og opprenskinga er gjort.
+DELETE FROM logg WHERE lat < 51;
+DELETE FROM logg WHERE lat > 71;
+DELETE FROM logg WHERE lon < -2;
+DELETE FROM logg WHERE lon > 26;
 DELETE FROM logg WHERE date < '2002-1-1';
 DELETE FROM logg WHERE date > '2007-1-1';
 DELETE FROM logg WHERE date BETWEEN '2005-9-24' AND '2006-2-8';
+DELETE FROM logg WHERE date BETWEEN '2003-02-15 17:58:26Z' AND '2003-02-15 17:59:37Z';
+DELETE FROM logg WHERE date BETWEEN '2003-07-15 16:06:58Z' AND '2003-07-15 16:08:05Z';
 DELETE FROM logg WHERE alt = -1500;
+
 UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
 UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
 UPDATE logg SET alt = NULL WHERE alt < -1500;
