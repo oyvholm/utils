@@ -41,7 +41,60 @@ $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
 while (<>) {
-    print;
+    if (/^
+        (\d+\.\d+\.\d+\.\d+) #  1: IP adress
+        \s
+        (\S+)                #  2: identd info (Not used)
+        \s
+        (.+?)                #  3: User name if http auth
+        \s
+        \[(.*?)\]            #  4: Timestamp
+        \s
+        "(\S+)               #  5: Method
+        \s
+        (.*?)                #  6: Page
+        \s
+        (\S+)"               #  7: Protocol
+        \s
+        (\d+)                #  8: Status code
+        \s
+        (\S+)                #  9: Bytes sent
+        \s
+        "(.*?)"              # 10: Referrer
+        \s
+        "(.*?)"              # 11: Browser
+        $
+    /x) {
+        print(
+            join("\t",
+                $1,
+                $2,
+                postgresql_copy_safe($3),
+                $4,
+                postgresql_copy_safe($5),
+                postgresql_copy_safe($6),
+                postgresql_copy_safe($7),
+                $8,
+                $9 eq '-' ? 0 : $9,
+                postgresql_copy_safe($10),
+                postgresql_copy_safe($11)
+            ) . "\n"
+        );
+    } else {
+        chomp(my $Line = $_);
+        warn("Line $.: Unknown line: '$Line'\n");
+    }
+}
+
+sub postgresql_copy_safe {
+    # {{{
+    my $Str = shift;
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
+    # }}}
 }
 
 sub print_version {
