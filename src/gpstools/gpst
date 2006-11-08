@@ -37,6 +37,7 @@ our %Opt = (
     'double-y-scale' => 0,
     'epoch' => 0,
     'fix' => 0,
+    'from-date' => "",
     'help' => 0,
     'inside' => 0,
     'near' => "",
@@ -74,6 +75,7 @@ GetOptions(
     "double-y-scale|y" => \$Opt{'double-y-scale'},
     "epoch|e" => \$Opt{'epoch'},
     "fix" => \$Opt{'fix'},
+    "from-date=s" => \$Opt{'from-date'},
     "help|h" => \$Opt{'help'},
     "inside" => \$Opt{'inside'},
     "near" => \$Opt{'near'},
@@ -566,6 +568,10 @@ sub print_gpx {
     my $Str = $Orig;
     D("print_xml_gps(\"$Orig\")\n");
     $Str =~ s/<!--(.*?)-->//gs;
+    my $fromdate_str = "";
+    if ($Opt{'from-date'}) {
+        $fromdate_str = "date >= '$Opt{'from-date'}' AND ";
+    }
     if ($Opt{'output-format'} =~ /^(pgwtab|pgwupd)$/) {
         # {{{
         $Str =~
@@ -590,7 +596,7 @@ sub print_gpx {
                 print("$Lat\t$Lon\t$Ele\t$Title\t\\N\t\\N\t\\N\t\\N\n");
             } elsif ($Opt{'output-format'} eq "pgwupd") {
                 $Title =~ s/'/\\'/gs;
-                print("UPDATE logg SET sted = '$Title' WHERE (point($Lat,$Lon) <-> koor) < 0.0002 AND sted IS NULL;\n");
+                print("UPDATE logg SET sted = '$Title' WHERE $fromdate_str(point($Lat,$Lon) <-> koor) < 0.0002 AND sted IS NULL;\n");
             }
             "";
         }gsex;
@@ -1128,6 +1134,11 @@ Options:
     Comment out entries which is obviously wrong. Use together with 
     --chronology to fix those kind of errors. Does not work with GPX 
     output yet.
+  --from-date x
+    Used by the pgwupd format. Specifies from which date waypoints 
+    should be updated. No checks for valid date format here, let 
+    PostgreSQL take care of that. All variants it understands can be 
+    used here.
   -h, --help
     Show this help.
   --inside
