@@ -3,7 +3,7 @@
 CREATE OR REPLACE VIEW siste_aar
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('week', date)
+            date_trunc('week', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 year ago'
@@ -13,7 +13,7 @@ CREATE OR REPLACE VIEW siste_aar
 CREATE OR REPLACE VIEW siste_halvaar
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('week', date)
+            date_trunc('week', date)
         ) *
         FROM logg
         WHERE date > now()+interval '0.5 year ago'
@@ -23,7 +23,7 @@ CREATE OR REPLACE VIEW siste_halvaar
 CREATE OR REPLACE VIEW siste_maaned
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('hour', date)
+            date_trunc('hour', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 month ago'
@@ -33,7 +33,7 @@ CREATE OR REPLACE VIEW siste_maaned
 CREATE OR REPLACE VIEW siste_uke
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('hour', date)
+            date_trunc('hour', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 week ago'
@@ -43,79 +43,50 @@ CREATE OR REPLACE VIEW siste_uke
 CREATE OR REPLACE VIEW siste_dogn
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('minute', date)
+            date_trunc('minute', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 day ago'
     ) as s
     ORDER BY date;
 
-/*** Fjernest ***/
+/*** De 50.000 punktene med høyest fjernesthjemmefrahet. ***/
 
 CREATE OR REPLACE VIEW fjernest
-    AS SELECT * from (
-        SELECT DISTINCT ON (
-            sted, date_trunc('week', date)
-        ) *
-        FROM logg
-    ) as s
-    ORDER BY avst DESC;
+    AS SELECT * from logg
+        ORDER BY avst DESC limit 50000;
 
 CREATE OR REPLACE VIEW fjernest_siste_aar
-    AS SELECT * from (
-        SELECT DISTINCT ON (
-            sted, date_trunc('week', date)
-        ) *
-        FROM logg
-        WHERE date > now()+interval '1 year ago') as s
-    ORDER BY avst DESC;
+    AS SELECT * from logg
+        WHERE date > now()+interval '1 year ago'
+        ORDER BY avst DESC limit 50000;
 
 CREATE OR REPLACE VIEW fjernest_siste_halvaar
-    AS SELECT * from (
-        SELECT DISTINCT ON (
-            sted, date_trunc('week', date)
-        ) *
-        FROM logg
+    AS SELECT * from logg
         WHERE date > now()+interval '0.5 year ago'
-    ) as s
-    ORDER BY avst DESC;
+        ORDER BY avst DESC limit 50000;
 
 CREATE OR REPLACE VIEW fjernest_siste_maaned
-    AS SELECT * from (
-        SELECT DISTINCT ON (
-            sted, date_trunc('hour', date)
-        ) *
-        FROM logg
+    AS SELECT * FROM logg
         WHERE date > now()+interval '1 month ago'
-    ) as s
-    ORDER BY avst DESC;
+        ORDER BY avst DESC limit 50000;
 
 CREATE OR REPLACE VIEW fjernest_siste_uke
-    AS SELECT * from (
-        SELECT DISTINCT ON (
-            sted, date_trunc('hour', date)
-        ) *
-        FROM logg
+    AS SELECT * FROM logg
         WHERE date > now()+interval '1 week ago'
-    ) as s
-    ORDER BY avst DESC;
+        ORDER BY avst DESC limit 50000;
 
 CREATE OR REPLACE VIEW fjernest_siste_dogn
-    AS SELECT * from (
-        SELECT DISTINCT ON (
-            sted, date_trunc('minute', date)
-        ) *
-        FROM logg
+    AS SELECT * FROM logg
         WHERE date > now()+interval '1 day ago'
-    ) as s
-    ORDER BY avst DESC;
+        ORDER BY avst DESC limit 50000;
 
 /*** Intervaller ***/
 
 CREATE OR REPLACE VIEW minutt
     AS SELECT * from (
         SELECT DISTINCT ON (
-            sted, date_trunc('minute', date)
+            date_trunc('minute', date)
         ) *
         FROM logg
     ) as s
