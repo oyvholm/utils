@@ -1,6 +1,9 @@
 -- $Id$
 
 BEGIN;
+    SELECT count(*)
+        AS "Antall i wayp før rensking"
+        FROM wayp;
     CREATE TEMPORARY TABLE dupfri
     ON COMMIT DROP
     AS (
@@ -14,4 +17,7 @@ BEGIN;
             FROM dupfri
             ORDER BY name
     );
+    SELECT count(*)
+        AS "Antall i wayp etter rensking"
+        FROM wayp;
 COMMIT;
