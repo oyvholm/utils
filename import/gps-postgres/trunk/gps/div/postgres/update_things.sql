@@ -13,8 +13,9 @@ DELETE FROM logg WHERE date BETWEEN '2003-02-15 17:58:26Z' AND '2003-02-15 17:59
 DELETE FROM logg WHERE date BETWEEN '2003-07-15 16:06:58Z' AND '2003-07-15 16:08:05Z';
 DELETE FROM logg WHERE alt = -1500;
 \echo
-\echo UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
+\echo Oppdater koor
 UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
+UPDATE wayp SET koor = point(lat,lon) WHERE koor IS NULL;
 \echo
 \echo UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
 UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
