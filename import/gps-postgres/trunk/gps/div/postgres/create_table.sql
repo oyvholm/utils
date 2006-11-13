@@ -12,8 +12,8 @@ CREATE TABLE logg (
 );
 
 CREATE TABLE wayp (
-    lat numeric,
-    lon numeric,
+    lat numeric(8, 5),
+    lon numeric(8, 5),
     ele numeric,
     name text,
     cmt text, -- GPS waypoint comment. Sent to GPS as comment.
