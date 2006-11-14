@@ -1232,7 +1232,7 @@ UPDATE logg SET sted = 'Halfdan Griegs vei' WHERE (point(60.397460000,5.35061000
 UPDATE logg SET sted = 'Leicester Square' WHERE (point(51.510130000,-0.130410000) <-> koor) < 0.0002 AND sted IS NULL;
 UPDATE logg SET sted = 'Leira camping' WHERE (point(60.968540000,9.285350000) <-> koor) < 0.0002 AND sted IS NULL;
 END
-    "Test pgwtab format",
+    "Test pgwupd format",
 );
 
 # }}}
