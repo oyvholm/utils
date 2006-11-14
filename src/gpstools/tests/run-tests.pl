@@ -1212,12 +1212,12 @@ diag("Testing waypoint stuff...");
 
 testcmd("../gpst -o pgwtab multitrack.gpx", # {{{
     <<END,
-51.477880000\t-0.001470000\t\\N\t0-Meridian\t\\N\t\\N\t\\N\t\\N
-51.532030\t-0.177330\t34.492798\tAbbey Road\t\\N\t\\N\t\\N\t\\N
-61.636684\t8.312254\t2469.012939\tGaldhøpiggen med &, < og >. ☺\t\\N\t\\N\t\\N\t\\N
-60.397460000\t5.350610000\t\\N\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t\\N
-51.510130000\t-0.130410000\t\\N\tLeicester Square\t\\N\t\\N\t\\N\t\\N
-60.968540000\t9.285350000\t\\N\tLeira camping\t\\N\t\\N\t\\N\t\\N
+51.477880000\t-0.001470000\t\\N\t0-Meridian\t11-FEB-03 15:46\t11-FEB-03 15:46\t\\N\t\\N
+51.532030\t-0.177330\t34.492798\tAbbey Road\tDet hellige gangfeltet der Beatles valsa over.\t26-FEB-06 17:29:46\t\\N\t\\N
+61.636684\t8.312254\t2469.012939\tGaldhøpiggen med &, < og >. ☺\tHer er det &, < og >. ☺\t08-MAY-06 18:27:59\tmountain\t\\N
+60.397460000\t5.350610000\t\\N\tHalfdan Griegs vei\t04-AUG-02 19:42\t04-AUG-02 19:42\t\\N\t\\N
+51.510130000\t-0.130410000\t\\N\tLeicester Square\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N
+60.968540000\t9.285350000\t\\N\tLeira camping\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N
 END
     "Test pgwtab format",
 );

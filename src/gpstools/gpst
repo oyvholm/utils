@@ -581,8 +581,8 @@ sub print_gpx {
         {
             my $attr_wpt = $1;
             my $el_wpt = $2;
-            my ($Lat, $Lon, $Ele, $Title) =
-               ('\N', '\N', '\N',   '\N');
+            my ($Lat, $Lon, $Ele, $Title, $Cmt, $Desc, $Type) =
+               ('\N', '\N', '\N',   '\N', '\N',  '\N',  '\N');
             $attr_wpt =~ /.*lat="($DIGIT+?)"/s &&
                 ($Lat = postgresql_copy_safe($1));
             $attr_wpt =~ /.*lon="($DIGIT+?)"/s &&
@@ -591,9 +591,14 @@ sub print_gpx {
                 ($Title = postgresql_copy_safe(xml_to_txt($2)));
             $el_wpt =~ /.*<ele\b(.*?)>(.*?)<\/ele>/s &&
                 ($Ele = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<cmt\b(.*?)>(.*?)<\/cmt>/s &&
+                ($Cmt = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<desc\b(.*?)>(.*?)<\/desc>/s &&
+                ($Desc = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<type\b(.*?)>(.*?)<\/type>/s &&
+                ($Type = postgresql_copy_safe(xml_to_txt($2)));
             if ($Opt{'output-format'} eq "pgwtab") {
-                # FIXME: Unfinished
-                print("$Lat\t$Lon\t$Ele\t$Title\t\\N\t\\N\t\\N\t\\N\n");
+                print("$Lat\t$Lon\t$Ele\t$Title\t$Cmt\t$Desc\t$Type\t\\N\n");
             } elsif ($Opt{'output-format'} eq "pgwupd") {
                 $Title =~ s/'/\\'/gs;
                 print("UPDATE logg SET sted = '$Title' WHERE $fromdate_str(point($Lat,$Lon) <-> koor) < 0.0002 AND sted IS NULL;\n");
