@@ -75,7 +75,7 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
-diag("Testing XML routines...");
+diag("Testing conversion routines...");
 
 # txt_to_xml() and xml_to_txt() {{{
 
@@ -100,6 +100,22 @@ is(xml_to_txt("first line\nsecond &lt;\rthird\r\n&lt;&amp;&gt;"),
     "xml_to_txt() with multiline string");
 
 # }}}
+
+is(postgresql_copy_safe(""),
+    "",
+    "postgresql_copy_safe() with empty string");
+
+is(postgresql_copy_safe("abcæøåÆØÅ"),
+    "abcæøåÆØÅ",
+    "postgresql_copy_safe(\"abcæøåÆØÅ\")");
+
+is(postgresql_copy_safe("abc\t'\r\n"),
+    "abc\\t'\\r\\n",
+    "postgresql_copy_safe(\"abc\\t'\\r\\n\")");
+
+is(postgresql_copy_safe("¤%/&gurgle\t325\\wer\ndfv'\r!\"#\n%\twe\r\x00sdf\xFFsadc\n\t\x00sdc\n"),
+    "¤%/&gurgle\\t325\\\\wer\\ndfv'\\r!\"#\\n%\\twe\\r\x00sdf\xFFsadc\\n\\t\x00sdc\\n",
+    "postgresql_copy_safe() with multiline, nulls and stuff");
 
 diag("Testing date routines...");
 

@@ -22,7 +22,7 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&trackpoint);
+    @EXPORT = qw(&trackpoint &postgresql_copy_safe);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -146,6 +146,17 @@ sub trackpoint {
         $Retval = undef;
     }
     return $Retval;
+    # }}}
+}
+
+sub postgresql_copy_safe {
+    # {{{
+    my $Str = shift;
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
     # }}}
 }
 
