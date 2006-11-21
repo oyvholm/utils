@@ -3,7 +3,7 @@
 CREATE OR REPLACE VIEW siste_aar
     AS SELECT * from (
         SELECT DISTINCT ON (
-            date_trunc('week', date)
+            sted, date_trunc('week', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 year ago'
@@ -13,7 +13,7 @@ CREATE OR REPLACE VIEW siste_aar
 CREATE OR REPLACE VIEW siste_halvaar
     AS SELECT * from (
         SELECT DISTINCT ON (
-            date_trunc('week', date)
+            sted, date_trunc('week', date)
         ) *
         FROM logg
         WHERE date > now()+interval '0.5 year ago'
@@ -23,7 +23,7 @@ CREATE OR REPLACE VIEW siste_halvaar
 CREATE OR REPLACE VIEW siste_maaned
     AS SELECT * from (
         SELECT DISTINCT ON (
-            date_trunc('hour', date)
+            sted, date_trunc('hour', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 month ago'
@@ -33,7 +33,7 @@ CREATE OR REPLACE VIEW siste_maaned
 CREATE OR REPLACE VIEW siste_uke
     AS SELECT * from (
         SELECT DISTINCT ON (
-            date_trunc('hour', date)
+            sted, date_trunc('hour', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 week ago'
@@ -43,7 +43,7 @@ CREATE OR REPLACE VIEW siste_uke
 CREATE OR REPLACE VIEW siste_dogn
     AS SELECT * from (
         SELECT DISTINCT ON (
-            date_trunc('minute', date)
+            sted, date_trunc('minute', date)
         ) *
         FROM logg
         WHERE date > now()+interval '1 day ago'
