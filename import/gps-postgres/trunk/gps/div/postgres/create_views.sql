@@ -96,3 +96,14 @@ CREATE OR REPLACE VIEW minutt
 
 CREATE OR REPLACE VIEW gpx
     AS select * from logg limit 1;
+
+-- Lister ut events sammen med loggen.
+CREATE OR REPLACE VIEW ev AS
+    SELECT * FROM (
+        SELECT 'l' AS flag, date, lat, lon, sted
+        FROM logg
+        UNION ALL
+        SELECT 'e', date, lat, lon, descr
+        FROM events
+    ) AS u
+    ORDER BY date;
