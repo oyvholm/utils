@@ -91,3 +91,8 @@ CREATE OR REPLACE VIEW minutt
         FROM logg
     ) as s
     ORDER BY date DESC;
+
+/*** Formater ***/
+
+CREATE OR REPLACE VIEW gpx
+    AS select * from logg limit 1;
