@@ -18,6 +18,7 @@ CREATE INDEX avst_idx on logg(avst);
 -- DROP INDEX persons_idx;
 -- DROP INDEX data_idx;
 
+CREATE INDEX date_idx ON events (date);
 CREATE INDEX begindate_idx ON events (begindate);
 CREATE INDEX enddate_idx ON events (enddate);
 CREATE INDEX cabegin_idx ON events (cabegin);

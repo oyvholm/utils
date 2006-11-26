@@ -23,14 +23,15 @@ CREATE TABLE wayp (
 );
 
 CREATE TABLE events (
+    date timestamptz,
+    koor point,
+    descr text,
     begindate timestamptz, -- Ganske eksakt tidspunt ved start
     enddate timestamptz, -- Ganske eksakt tidspunkt ved slutt
     cabegin interval,
     caend interval,
     lat numeric,
     lon numeric,
-    descr text,
-    koor point,
     flags text[],
     persons text[],
     data bytea
