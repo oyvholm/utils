@@ -600,7 +600,7 @@ sub print_gpx {
             if ($Opt{'output-format'} eq "pgwtab") {
                 print("$Lat\t$Lon\t$Ele\t$Title\t$Cmt\t$Desc\t$Type\t\\N\n");
             } elsif ($Opt{'output-format'} eq "pgwupd") {
-                $Title =~ s/'/\\'/gs;
+                $Title =~ s/'/''/gs;
                 print("UPDATE logg SET sted = '$Title' WHERE $fromdate_str(point($Lat,$Lon) <-> koor) < 0.0002 AND sted IS NULL;\n");
             }
             "";

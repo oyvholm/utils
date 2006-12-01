@@ -19,7 +19,7 @@
   </wpt>
   <wpt lat="61.636684" lon="8.312254">
     <ele>2469.012939</ele>
-    <name>Galdhøpiggen med &amp;, &lt; og &gt;. ☺</name>
+    <name>Galdhøpiggen med ', &amp;, &lt; og &gt;. ☺</name>
     <cmt>Her er det &amp;, &lt; og &gt;. ☺</cmt>
     <desc>08-MAY-06 18:27:59</desc>
     <sym>City (Small)</sym>
