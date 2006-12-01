@@ -20,4 +20,16 @@ For å kopiere ting fra nye tracklogger inn i PostgreSQL:
   1: svn update osv
   1: gpst -o pgwupd wpdata.gpx | psql -a gps
 
+For å legge til nye veipunkter:
+
+Kjør
+
+  gpst -o pgwtab *.gpx | psql -a -c "COPY wayp FROM stdin" gps
+
+For å renske opp i veipunktene:
+
+cd ~/gps/div/postgres
+psql gps
+\i cleanup.sql
+
 vim: set ts=2 sts=2 sw=2 et :
