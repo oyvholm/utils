@@ -110,3 +110,14 @@ CREATE OR REPLACE VIEW ev AS
             FROM basnakk
     ) AS u
     ORDER BY date;
+
+CREATE OR REPLACE VIEW wp AS
+    SELECT
+        wp_koor as koor,
+        substr(wp_name,1,20) AS name,
+        wp_type as type,
+        substr(wp_cmt,1,20) AS cmt,
+        wp_ele as ele,
+        wp_time as time
+        FROM wayp
+        ORDER BY wp_koor[0] desc, wp_koor[1];
