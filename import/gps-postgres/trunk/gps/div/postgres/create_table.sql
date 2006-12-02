@@ -14,7 +14,7 @@ CREATE TABLE logg (
 CREATE TABLE wayp (
     wp_koor point,
     wp_name text,
-    wp_ele numeric,
+    wp_ele numeric(6, 1),
     wp_type text,
     wp_time timestamptz,
     wp_cmt text, -- GPS waypoint comment. Sent to the GPS as comment.
