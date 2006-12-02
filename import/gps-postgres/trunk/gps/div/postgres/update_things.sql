@@ -15,7 +15,6 @@ DELETE FROM logg WHERE alt = -1500;
 \echo
 \echo Oppdater koor
 UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
-UPDATE wayp SET koor = point(lat,lon) WHERE koor IS NULL;
 \echo
 \echo UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
 UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
@@ -23,6 +22,9 @@ UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
 \echo Slett høyder som er på trynet.
 UPDATE logg SET alt = NULL WHERE alt < -1500;
 UPDATE logg SET alt = NULL WHERE alt > 29000;
+\echo
+\echo Rund av veipunkter til fem desimaler
+UPDATE wayp SET wp_koor = point(round(wp_koor[0]::numeric, 5), round(wp_koor[1]::numeric, 5));
 
 -- begin-base64 644 -
 -- H4sIAMtVSUUCA6XUTW6bQBQH8L1PMTuDhEfz/aGmVW0FKVWsqEridtPNuEwx
