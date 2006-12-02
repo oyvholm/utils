@@ -9,14 +9,14 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     ON COMMIT DROP
     AS (
         SELECT
-            DISTINCT ON (lat,lon,name) *
+            DISTINCT ON (wp_koor[0], wp_koor[1], wp_name) *
             FROM wayp
     );
     TRUNCATE wayp;
     INSERT INTO wayp (
         SELECT *
             FROM dupfri
-            ORDER BY name
+            ORDER BY wp_name
     );
 COMMIT;
 
