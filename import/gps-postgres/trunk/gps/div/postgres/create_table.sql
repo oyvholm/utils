@@ -6,6 +6,7 @@ CREATE TABLE logg (
     lon numeric,
     alt numeric,
     sted text,
+    dist numeric(8, 5),
     description text,
     koor point,
     avst numeric

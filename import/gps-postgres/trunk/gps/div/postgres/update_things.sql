@@ -21,6 +21,16 @@ DELETE FROM logg WHERE alt = -1500;
 UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
 
 \echo
+\echo ================ Oppdater sted ================
+
+UPDATE logg set sted = clname(koor) WHERE sted IS NULL;
+
+\echo
+\echo ================ Oppdater dist ================
+
+UPDATE logg set dist = cldist(koor) WHERE dist IS NULL;
+
+\echo
 \echo ================ Sett avstanden hjemmefra ================
 
 UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;

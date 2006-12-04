@@ -5,6 +5,7 @@ CREATE INDEX log_lat_idx on logg(lat);
 CREATE INDEX log_lon_idx on logg(lon);
 CREATE INDEX log_alt_idx on logg(alt);
 CREATE INDEX log_sted_idx on logg(sted);
+CREATE INDEX log_dist_idx on logg(dist);
 CREATE INDEX log_avst_idx on logg(avst);
 
 -- DROP INDEX begin_idx;
