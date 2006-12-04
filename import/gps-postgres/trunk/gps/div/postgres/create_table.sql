@@ -4,7 +4,7 @@ CREATE TABLE logg (
     date timestamptz,
     lat numeric,
     lon numeric,
-    alt numeric,
+    ele numeric,
     sted text,
     dist numeric(8, 5),
     description text,

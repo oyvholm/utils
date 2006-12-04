@@ -13,7 +13,7 @@ DELETE FROM logg WHERE date > '2007-1-1';
 DELETE FROM logg WHERE date BETWEEN '2005-9-24' AND '2006-2-8';
 DELETE FROM logg WHERE date BETWEEN '2003-02-15 17:58:26Z' AND '2003-02-15 17:59:37Z';
 DELETE FROM logg WHERE date BETWEEN '2003-07-15 16:06:58Z' AND '2003-07-15 16:08:05Z';
-DELETE FROM logg WHERE alt = -1500;
+DELETE FROM logg WHERE ele = -1500;
 
 \echo
 \echo ================ Oppdater koor ================
@@ -38,8 +38,8 @@ UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
 \echo
 \echo ================ Slett høyder som er på trynet ================
 
-UPDATE logg SET alt = NULL WHERE alt < -1500;
-UPDATE logg SET alt = NULL WHERE alt > 29000;
+UPDATE logg SET ele = NULL WHERE ele < -1500;
+UPDATE logg SET ele = NULL WHERE ele > 29000;
 
 \echo
 \echo ================ Rund av veipunkter til fem desimaler ================
