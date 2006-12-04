@@ -105,12 +105,6 @@ CREATE OR REPLACE VIEW ev AS
         UNION ALL
         SELECT   'event' AS flag, date, point(lat,lon), null, descr as descr, null
             FROM events
-        UNION ALL
-        SELECT 'basnakk' AS flag, date,           NULL, nick,  txt as descr, NULL
-            FROM basnakk
-        -- UNION ALL
-        -- SELECT     'acc' AS flag, date,           NULL, ip::text,  page as descr, NULL
-        --     FROM acc
     ) AS u
     ORDER BY date;
 
