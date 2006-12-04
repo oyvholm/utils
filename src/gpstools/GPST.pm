@@ -137,6 +137,7 @@ sub trackpoint {
                 '\N',
                 '\N',
                 '\N',
+                '\N',
                 '\N'
             ) . "\n";
         } else {
