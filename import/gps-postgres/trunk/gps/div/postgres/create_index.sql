@@ -1,11 +1,11 @@
 -- $Id$
 
-CREATE INDEX date_idx on logg(date);
-CREATE INDEX lat_idx on logg(lat);
-CREATE INDEX lon_idx on logg(lon);
-CREATE INDEX alt_idx on logg(alt);
-CREATE INDEX sted_idx on logg(sted);
-CREATE INDEX avst_idx on logg(avst);
+CREATE INDEX log_date_idx on logg(date);
+CREATE INDEX log_lat_idx on logg(lat);
+CREATE INDEX log_lon_idx on logg(lon);
+CREATE INDEX log_alt_idx on logg(alt);
+CREATE INDEX log_sted_idx on logg(sted);
+CREATE INDEX log_avst_idx on logg(avst);
 
 -- DROP INDEX begin_idx;
 -- DROP INDEX end_idx;
@@ -18,14 +18,14 @@ CREATE INDEX avst_idx on logg(avst);
 -- DROP INDEX persons_idx;
 -- DROP INDEX data_idx;
 
-CREATE INDEX date_idx ON events (date);
-CREATE INDEX begindate_idx ON events (begindate);
-CREATE INDEX enddate_idx ON events (enddate);
-CREATE INDEX cabegin_idx ON events (cabegin);
-CREATE INDEX caend_idx ON events (caend);
-CREATE INDEX lat_idx ON events (lat);
-CREATE INDEX lon_idx ON events (lon);
-CREATE INDEX descr_idx ON events (descr);
-CREATE INDEX flags_idx ON events (flags);
-CREATE INDEX persons_idx ON events (persons);
-CREATE INDEX data_idx ON events (data);
+CREATE INDEX ev_date_idx ON events (date);
+CREATE INDEX ev_begindate_idx ON events (begindate);
+CREATE INDEX ev_enddate_idx ON events (enddate);
+CREATE INDEX ev_cabegin_idx ON events (cabegin);
+CREATE INDEX ev_caend_idx ON events (caend);
+CREATE INDEX ev_lat_idx ON events (lat);
+CREATE INDEX ev_lon_idx ON events (lon);
+CREATE INDEX ev_descr_idx ON events (descr);
+CREATE INDEX ev_flags_idx ON events (flags);
+CREATE INDEX ev_persons_idx ON events (persons);
+CREATE INDEX ev_data_idx ON events (data);
