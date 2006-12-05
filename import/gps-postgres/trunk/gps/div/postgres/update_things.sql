@@ -20,15 +20,15 @@ DELETE FROM logg WHERE ele = -1500;
 
 UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
 
-\echo
-\echo ================ Oppdater sted ================
-
-UPDATE logg set sted = clname(koor) WHERE sted IS NULL;
-
-\echo
-\echo ================ Oppdater dist ================
-
-UPDATE logg set dist = cldist(koor) WHERE dist IS NULL;
+-- \echo
+-- \echo ================ Oppdater sted ================
+--
+-- UPDATE logg set sted = clname(koor) WHERE sted IS NULL;
+--
+-- \echo
+-- \echo ================ Oppdater dist ================
+--
+-- UPDATE logg set dist = cldist(koor) WHERE dist IS NULL;
 
 \echo
 \echo ================ Sett avstanden hjemmefra ================
@@ -58,7 +58,17 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     ON COMMIT DROP
     AS (
         SELECT
-            DISTINCT ON (wp_koor[0], wp_koor[1], wp_name) *
+            DISTINCT ON (
+                wp_koor[0], wp_koor[1],
+                wp_name,
+                wp_ele,
+                wp_type,
+                wp_time,
+                wp_cmt,
+                wp_desc,
+                wp_src,
+                wp_sym
+            ) *
             FROM wayp
     );
     TRUNCATE wayp;
