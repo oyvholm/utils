@@ -4,13 +4,13 @@
 DROP FUNCTION clname(point);
 CREATE OR REPLACE FUNCTION clname(point) RETURNS text
 AS $$
-SELECT wp_name FROM (
+SELECT name FROM (
         SELECT
-            wp_name,
-            ($1 <-> wp_koor)
+            name,
+            ($1 <-> koor)
             AS avs
             FROM wayp
-            WHERE ($1 <-> wp_koor) < 0.05
+            WHERE ($1 <-> koor) < 0.05
             ORDER BY avs
             LIMIT 1
     ) AS s;
@@ -22,10 +22,10 @@ CREATE OR REPLACE FUNCTION cldist(point) RETURNS numeric
 AS $$
 SELECT round(avs::numeric, 5) FROM (
         SELECT
-            ($1 <-> wp_koor)
+            ($1 <-> koor)
             AS avs
             FROM wayp
-            WHERE ($1 <-> wp_koor) < 0.05
+            WHERE ($1 <-> koor) < 0.05
             ORDER BY avs
             LIMIT 1
     ) AS s;

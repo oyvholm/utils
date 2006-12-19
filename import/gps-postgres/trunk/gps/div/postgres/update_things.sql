@@ -44,7 +44,7 @@ UPDATE logg SET ele = NULL WHERE ele > 29000;
 \echo
 \echo ================ Rund av veipunkter til fem desimaler ================
 
-UPDATE wayp SET wp_koor = point(round(wp_koor[0]::numeric, 5), round(wp_koor[1]::numeric, 5));
+UPDATE wayp SET koor = point(round(koor[0]::numeric, 5), round(koor[1]::numeric, 5));
 
 \echo
 \echo ================ Fjern duplikater i wayp ================
@@ -59,15 +59,15 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     AS (
         SELECT
             DISTINCT ON (
-                wp_koor[0], wp_koor[1],
-                wp_name,
-                wp_ele,
-                wp_type,
-                wp_time,
-                wp_cmt,
-                wp_desc,
-                wp_src,
-                wp_sym
+                koor[0], koor[1],
+                name,
+                ele,
+                type,
+                time,
+                cmt,
+                descr,
+                src,
+                sym
             ) *
             FROM wayp
     );
@@ -75,7 +75,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     INSERT INTO wayp (
         SELECT *
             FROM dupfri
-            ORDER BY wp_name
+            ORDER BY name
     );
 COMMIT;
 

@@ -13,15 +13,15 @@ CREATE TABLE logg (
 );
 
 CREATE TABLE wayp (
-    wp_koor point,
-    wp_name text,
-    wp_ele numeric(6, 1),
-    wp_type text,
-    wp_time timestamptz,
-    wp_cmt text, -- GPS waypoint comment. Sent to the GPS as comment.
-    wp_desc text, -- A text description. Additional info intended for the user, not the GPS.
-    wp_src text,
-    wp_sym text
+    koor point,
+    name text,
+    ele numeric(6, 1),
+    type text,
+    time timestamptz,
+    cmt text, -- GPS waypoint comment. Sent to the GPS as comment.
+    descr text, -- A text description. Additional info intended for the user, not the GPS.
+    src text,
+    sym text
 );
 
 CREATE TABLE events (
