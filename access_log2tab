@@ -46,27 +46,23 @@ length($Opt{'server'}) || die("Need to specify the --server (-s) option\n");
 
 while (<>) {
     if (/^
-        (\d+\.\d+\.\d+\.\d+) #  1: IP adress
+        (\d+\.\d+\.\d+\.\d+) # 1: IP adress
         \s
-        (\S+)                #  2: identd info (Not used)
+        (\S+)                # 2: identd info (Not used)
         \s
-        (.+?)                #  3: User name if http auth
+        (.+?)                # 3: User name if http auth
         \s
-        \[(.*?)\]            #  4: Timestamp
+        \[(.*?)\]            # 4: Timestamp
         \s
-        "(\S+)               #  5: Method
+        "(.*?)"              # 5: Method + Page + Protocol
         \s
-        (.*?)                #  6: Page
+        (\d+)                # 6: Status code
         \s
-        (\S+)"               #  7: Protocol
+        (\S+)                # 7: Bytes sent
         \s
-        (\d+)                #  8: Status code
+        "(.*?)"              # 8: Referrer
         \s
-        (\S+)                #  9: Bytes sent
-        \s
-        "(.*?)"              # 10: Referrer
-        \s
-        "(.*?)"              # 11: Browser
+        "(.*?)"              # 9: Browser
         $
     /x) {
         print(
@@ -77,12 +73,10 @@ while (<>) {
                 postgresql_copy_safe($3),
                 $4,
                 postgresql_copy_safe($5),
-                postgresql_copy_safe($6),
-                postgresql_copy_safe($7),
-                $8,
-                $9 eq '-' ? 0 : $9,
-                postgresql_copy_safe($10),
-                postgresql_copy_safe($11)
+                $6,
+                $7 eq '-' ? 0 : $7,
+                postgresql_copy_safe($8),
+                postgresql_copy_safe($9)
             ) . "\n"
         );
     } else {
