@@ -19,6 +19,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'server' => "",
     'version' => 0,
 );
 
@@ -33,12 +34,15 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "server|s=s" => \$Opt{'server'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
+
+length($Opt{'server'}) || die("Need to specify the --server (-s) option\n");
 
 while (<>) {
     if (/^
@@ -67,6 +71,7 @@ while (<>) {
     /x) {
         print(
             join("\t",
+                $Opt{'server'},
                 $1,
                 $2,
                 postgresql_copy_safe($3),
@@ -112,12 +117,14 @@ sub usage {
 
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname -s servername [options] [file [files [...]]]
 
 Options:
 
   -h, --help
     Show this help.
+  -s x, --server x
+    Server identification. Required.
   --version
     Print version information.
   --debug
