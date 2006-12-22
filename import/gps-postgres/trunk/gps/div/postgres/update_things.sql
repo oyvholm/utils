@@ -16,26 +16,6 @@ DELETE FROM logg WHERE date BETWEEN '2003-07-15 16:06:58Z' AND '2003-07-15 16:08
 DELETE FROM logg WHERE ele = -1500;
 
 \echo
-\echo ================ Oppdater koor ================
-
-UPDATE logg SET koor = point(lat,lon) WHERE koor IS NULL;
-
--- \echo
--- \echo ================ Oppdater sted ================
---
--- UPDATE logg set sted = clname(koor) WHERE sted IS NULL;
---
--- \echo
--- \echo ================ Oppdater dist ================
---
--- UPDATE logg set dist = cldist(koor) WHERE dist IS NULL;
-
-\echo
-\echo ================ Sett avstanden hjemmefra ================
-
-UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor WHERE avst IS NULL;
-
-\echo
 \echo ================ Slett høyder som er på trynet ================
 
 UPDATE logg SET ele = NULL WHERE ele < -1500;
@@ -109,3 +89,36 @@ COMMIT;
 SELECT count(*)
     AS "Antall i events etter rensking"
     FROM events;
+
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+    \echo
+    \echo ================ Sett avstanden hjemmefra ================
+
+    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor
+        WHERE date > (
+            SELECT max(laststed) FROM stat
+        );
+
+    \echo
+    \echo ================ Oppdater koor ================
+
+    UPDATE logg SET koor = point(lat,lon)
+        WHERE date > (
+            SELECT max(laststed) FROM stat
+        );
+
+    \echo
+    \echo ================ Oppdater sted og dist ================
+
+    UPDATE logg SET sted = clname(koor)
+        WHERE date > (
+            SELECT max(laststed) FROM stat
+        );
+    UPDATE logg SET dist = cldist(koor)
+        WHERE date > (
+            SELECT max(laststed) FROM stat
+        );
+    INSERT INTO stat (laststed) VALUES (
+        (SELECT max(date) FROM logg)
+    );
+COMMIT;

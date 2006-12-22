@@ -38,3 +38,7 @@ CREATE TABLE events (
     persons text[],
     data bytea
 );
+
+CREATE TABLE stat (
+    laststed timestamptz
+);
