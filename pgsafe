@@ -51,7 +51,6 @@ sub postgresql_copy_safe {
     $Str =~ s/\n/\\n/gs;
     $Str =~ s/\r/\\r/gs;
     $Str =~ s/\t/\\t/gs;
-    $Str =~ s/'/\\'/gs;
     return($Str);
     # }}}
 } # postgresql_copy_safe()
