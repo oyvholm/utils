@@ -19,6 +19,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'simple' => 0,
     'version' => 0,
 );
 
@@ -33,6 +34,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "simple|s" => \$Opt{'simple'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -48,9 +50,11 @@ sub postgresql_copy_safe {
     # {{{
     my $Str = shift;
     $Str =~ s/\\/\\\\/gs;
-    $Str =~ s/\n/\\n/gs;
-    $Str =~ s/\r/\\r/gs;
-    $Str =~ s/\t/\\t/gs;
+    if (!$Opt{'simple'}) {
+        $Str =~ s/\n/\\n/gs;
+        $Str =~ s/\r/\\r/gs;
+        $Str =~ s/\t/\\t/gs;
+    }
     return($Str);
     # }}}
 } # postgresql_copy_safe()
@@ -76,6 +80,8 @@ Options:
 
   -h, --help
     Show this help.
+  -s, --simple
+    Don’t convert \\n, \\r or \\t, only backslashes.
   --version
     Print version information.
   --debug
