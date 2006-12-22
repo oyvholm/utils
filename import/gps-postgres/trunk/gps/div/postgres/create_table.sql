@@ -40,5 +40,6 @@ CREATE TABLE events (
 );
 
 CREATE TABLE stat (
+    lastupdate timestamptz,
     laststed timestamptz
 );

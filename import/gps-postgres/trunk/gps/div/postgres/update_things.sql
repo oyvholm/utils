@@ -118,7 +118,8 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
         WHERE date > (
             SELECT max(laststed) FROM stat
         );
-    INSERT INTO stat (laststed) VALUES (
+    INSERT INTO stat (lastupdate, laststed) VALUES (
+        now(),
         (SELECT max(date) FROM logg)
     );
 COMMIT;
