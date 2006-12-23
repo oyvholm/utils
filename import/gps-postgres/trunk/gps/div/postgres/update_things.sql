@@ -26,7 +26,10 @@ UPDATE logg SET ele = NULL WHERE ele > 29000;
 \echo
 \echo ================ Rund av veipunkter til fem desimaler ================
 
-UPDATE wayp SET koor = point(round(koor[0]::numeric, 5), round(koor[1]::numeric, 5));
+UPDATE wayp SET koor = point(
+    round(koor[0]::numeric, 5),
+    round(koor[1]::numeric, 5)
+);
 
 \echo
 \echo ================ Fjern duplikater i wayp ================
@@ -77,7 +80,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     ON COMMIT DROP
     AS (
         SELECT
-            DISTINCT ON (date,lat,lon,descr) *
+            DISTINCT ON (date, lat, lon, descr) *
             FROM events
     );
     TRUNCATE events;
@@ -104,7 +107,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     \echo
     \echo ================ Oppdater koor ================
 
-    UPDATE logg SET koor = point(lat,lon)
+    UPDATE logg SET koor = point(lat, lon)
         WHERE date > (
             SELECT max(laststed) FROM stat
         );
@@ -120,6 +123,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
         WHERE date > (
             SELECT max(laststed) FROM stat
         );
+
     INSERT INTO stat (lastupdate, laststed) VALUES (
         now(),
         (SELECT max(date) FROM logg)
