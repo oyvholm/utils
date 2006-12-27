@@ -3,6 +3,8 @@
 CREATE INDEX log_date_idx on logg(date);
 CREATE INDEX log_lat_idx on logg(lat);
 CREATE INDEX log_lon_idx on logg(lon);
+CREATE INDEX log_koor0_idx on logg((koor[0]));
+CREATE INDEX log_koor1_idx on logg((koor[1]));
 CREATE INDEX log_ele_idx on logg(ele);
 CREATE INDEX log_sted_idx on logg(sted);
 CREATE INDEX log_dist_idx on logg(dist);
