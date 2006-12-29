@@ -8,4 +8,4 @@
 echo ==== svn update
 svn up "$@"
 echo ==== svn stat
-svn st
+svn st "$@"
