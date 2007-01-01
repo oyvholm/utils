@@ -101,7 +101,9 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
 
     UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor
         WHERE date > (
-            SELECT max(laststed) FROM stat
+            SELECT laststed FROM stat
+                WHERE lastupdate IS NOT NULL
+                ORDER BY lastupdate DESC LIMIT 1
         );
 
     \echo
@@ -109,7 +111,9 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
 
     UPDATE logg SET koor = point(lat, lon)
         WHERE date > (
-            SELECT max(laststed) FROM stat
+            SELECT laststed FROM stat
+                WHERE lastupdate IS NOT NULL
+                ORDER BY lastupdate DESC LIMIT 1
         );
 
     \echo
@@ -117,11 +121,15 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
 
     UPDATE logg SET sted = clname(koor)
         WHERE date > (
-            SELECT max(laststed) FROM stat
+            SELECT laststed FROM stat
+                WHERE lastupdate IS NOT NULL
+                ORDER BY lastupdate DESC LIMIT 1
         );
     UPDATE logg SET dist = cldist(koor)
         WHERE date > (
-            SELECT max(laststed) FROM stat
+            SELECT laststed FROM stat
+                WHERE lastupdate IS NOT NULL
+                ORDER BY lastupdate DESC LIMIT 1
         );
 
     INSERT INTO stat (lastupdate, laststed) VALUES (
