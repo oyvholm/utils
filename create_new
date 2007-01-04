@@ -85,6 +85,9 @@ htmlclean:
 \trm -f \$(HTML_TARGETS)
 \tsvn update \$(HTML_TARGETS)
 
+clean:
+\t\$(MAKE) htmlclean
+
 valid:
 \t\$(MAKE) check
 END
