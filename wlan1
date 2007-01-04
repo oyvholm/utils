@@ -2,19 +2,38 @@
 
 #=======================================================================
 # $Id$
-# Kjører opp wlan-kortet på carmbb og denslags.
+# Activates the network card.
 #=======================================================================
 
-[ "`whoami`" = "root" ] || { echo Det gjør seg å være root. >&2; exit 1; }
+[ "`whoami`" = "root" ] || {
+    echo `basename $0`: Heh, you ain’t got root power. Gonna need that, mate. >&2
+    exit 1
+}
 
 modprobe ath_pci
 modprobe wlan_scan_sta
 ifconfig ath0 up
-echo ======== BEGIN iwconfig ========
-iwconfig
-echo ======== END iwconfig ========
 echo ==== Waiting for ath0... ====
 until grep ath0 /proc/net/wireless; do :; done
 sleep 1
-echo ==== Tilgjengelige nettverk: ====
+echo
+echo ==== Available networks: ====
 wlanconfig ath0 list scan
+echo
+echo -n "Press ENTER to get promiscuous or enter ESSID of accesspoint: "
+read accpoint
+if [ -z $accpoint ]; then
+    echo iwconfig ath0 essid any ap any
+    iwconfig ath0 essid any ap any
+else
+    echo iwconfig ath0 essid \"$accpoint\"
+    iwconfig ath0 essid "$accpoint"
+fi
+echo
+echo ======== BEGIN iwconfig ========
+iwconfig ath0
+echo ======== END iwconfig ========
+echo
+echo -n Press ENTER to run \"dhclient ath0\" or CTRL-C to abort...
+read
+dhclient ath0
