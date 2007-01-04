@@ -63,7 +63,7 @@ if ($Type =~ /^article$/) {
 SHELL = /bin/bash
 XSLTPROC = xsltproc
 XSLTOPTS =
-XHTML_XSL = ../../xsl/sunbase.xsl
+XHTML_XSL = \$(HOME)/xsl/xhtml/docbook.xsl
 HTML_TARGETS = $Name.html
 
 all:
