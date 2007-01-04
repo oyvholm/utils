@@ -20,6 +20,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'no-svn' => 0,
     'version' => 0,
 );
 
@@ -38,6 +39,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "no-svn|n" => \$Opt{'no-svn'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -55,6 +57,7 @@ if ($Type =~ /^article$/) {
     mkdir($Name) || die("$progname: mkdir $Name: $!\n");
     system("$CMD_STD db-article >$Name/$Name.xml");
     if (open(OutFP, ">", "$Name/Makefile")) {
+        my $svn_str_update = !$Opt{'no-svn'} && "\tsvn update \$(HTML_TARGET)\n" || "";
         print(OutFP <<END);
 #!/usr/bin/make
 
@@ -83,8 +86,7 @@ check:
 
 htmlclean:
 \trm -f \$(HTML_TARGET)
-\tsvn update \$(HTML_TARGET)
-
+$svn_str_update
 clean:
 \t\$(MAKE) htmlclean
 
@@ -95,8 +97,8 @@ END
     } else {
         warn("$progname: $Name/Makefile: Cannot create file: $!\n");
     }
-    my_system($CMD_SVN, "add", $Name);
-    my_system($CMD_KEYW, "$Name/Makefile", "$Name/$Name.xml");
+    $Opt{'no-svn'} || my_system($CMD_SVN, "add", $Name);
+    $Opt{'no-svn'} || my_system($CMD_KEYW, "$Name/Makefile", "$Name/$Name.xml");
 } else {
     die("$progname: $Type: Unknown type\n");
 }
@@ -130,6 +132,8 @@ Options:
 
   -h, --help
     Show this help.
+  -n, --no-svn
+    Don’t use Subversion commands (svn add, etc)
   --version
     Print version information.
   --debug
