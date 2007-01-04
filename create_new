@@ -64,15 +64,15 @@ SHELL = /bin/bash
 XSLTPROC = xsltproc
 XSLTOPTS =
 XHTML_XSL = \$(HOME)/xsl/xhtml/docbook.xsl
-HTML_TARGETS = $Name.html
+HTML_TARGET = $Name.html
 
 all:
-\t\$(MAKE) \$(HTML_TARGETS)
+\t\$(MAKE) \$(HTML_TARGET)
 
-$Name.html: $Name.xml
-\t\$(XSLTPROC) -o $Name.html \$(XSLTOPTS) \$(XHTML_XSL) $Name.xml
-\txmllint --format --encode UTF-8 $Name.html >$Name.tmp
-\tmv $Name.tmp $Name.html
+\$(HTML_TARGET): $Name.xml
+\t\$(XSLTPROC) -o \$(HTML_TARGET) \$(XSLTOPTS) \$(XHTML_XSL) $Name.xml
+\txmllint --format --encode UTF-8 \$(HTML_TARGET) >$Name.tmp
+\tmv $Name.tmp \$(HTML_TARGET)
 
 check:
 \t\@(for _f in *.xml; do \\
@@ -82,8 +82,8 @@ check:
 \t)
 
 htmlclean:
-\trm -f \$(HTML_TARGETS)
-\tsvn update \$(HTML_TARGETS)
+\trm -f \$(HTML_TARGET)
+\tsvn update \$(HTML_TARGET)
 
 clean:
 \t\$(MAKE) htmlclean
