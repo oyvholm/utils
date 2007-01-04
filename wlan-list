@@ -5,4 +5,8 @@
 # Latskap.
 #=======================================================================
 
-wlanconfig ath0 list scan
+if [ "$1" = "-v" ]; then
+    iwlist ath0 scan | less
+else
+    wlanconfig ath0 list scan
+fi
