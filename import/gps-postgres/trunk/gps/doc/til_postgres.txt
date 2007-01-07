@@ -32,4 +32,10 @@ cd ~/gps/div/postgres
 psql gps
 \i cleanup.sql
 
+For å synkronisere waypoints og POI:
+
+Her trengs Postgres. Må ha en database som heter "gps" og en tabell som 
+heter "tmpwayp". Ordnes med ../div/postgres/create_table.sql . Deretter 
+er det bare å kjøre ../bin/poisync og redigere .gpx-filene.
+
 vim: set ts=2 sts=2 sw=2 et :

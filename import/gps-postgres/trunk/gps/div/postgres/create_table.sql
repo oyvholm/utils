@@ -24,6 +24,9 @@ CREATE TABLE wayp (
     sym text
 );
 
+CREATE TABLE tmpwayp AS
+    SELECT * from wayp LIMIT 0;
+
 CREATE TABLE events (
     date timestamptz,
     koor point,
