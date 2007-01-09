@@ -8,7 +8,7 @@
 if [ "$1" = "-v" ]; then
     iwlist ath0 scan | less
 elif [ "$1" = "-e" ]; then
-    iwlist ath0 scan | egrep '(Address:|ESSID:|Quality=|Encryption)'
+    iwlist ath0 scan | egrep '(Address:|ESSID:|Quality=|Encryption)' | perl -pe 's/(Encryption key:off)/\x1B[1m$1\x1B[m/g;'
 else
     wlanconfig ath0 list scan
 fi
