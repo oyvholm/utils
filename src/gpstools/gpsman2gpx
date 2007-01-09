@@ -64,7 +64,7 @@ while (<>) {
         $Line =~ /^
             (.*?)\t # name
             (.*?)\t # cmt
-            (.*\t)? # some kind of worthless date
+            (.*?)\t # some kind of worthless date
             ([NS].+?)\t # lat
             ([WE].+?)\t # lon
             (.*)    # lots of uninteresting stuff but with altitude
