@@ -7,14 +7,6 @@ logdir=$HOME/log
 [ -d $logdir ] || mkdir -p logdir || { echo "mkdir $logdir: På trynet" >&2; exit 1; }
 [ -x /usr/sbin/cronolog ] || { echo "Fant ikke /usr/sbin/cronolog, avbryter." >&2; exit 1; }
 
-lockname=$logdir/.curr_df.swp
-
 [ -r $logdir/.disks ] || { echo "$logdir/.disks finnes ikke, avbryter." >&2; exit 1; }
-until mkdir $lockname 2>/dev/null; do
-	echo "$0: $lockname: Lockdir finnes, avbryter." >&2
-	exit 1
-done
 
 df -P `cat $logdir/.disks` | grep / | perl -pe 'chomp(my $a = `date -u +"%Y-%m-%dT%H:%M:%SZ"`); s/^/$a /;' | cronolog -z 0 -S $logdir/curr_df $logdir/df/%Y/%Y-%m-%d.df.log
-
-rmdir $lockname
