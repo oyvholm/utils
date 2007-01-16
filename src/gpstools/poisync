@@ -1,0 +1,16 @@
+#!/bin/bash
+#=======================================================================
+# $Id$
+# For synkronisering av POI og waypoints fra uniten.
+#=======================================================================
+
+gpst -o pgwtab ../unit/wpdata.gpx ../poi/trans/*.gpx | psql gps -a -c "TRUNCATE tmpwayp; COPY tmpwayp FROM STDIN;"
+psql gps -a -c "UPDATE tmpwayp SET koor = point(round(koor[0]::numeric, 5), round(koor[1]::numeric, 5));"
+psql gps -a -c "COPY (SELECT koor, name FROM tmpwayp WHERE type IS NULL ORDER BY koor[0] desc, koor[1]) TO '/tmp/un';"
+psql gps -a -c "COPY (SELECT koor, name FROM tmpwayp WHERE type IS NOT NULL ORDER BY koor[0] desc, koor[1]) TO '/tmp/p';"
+
+if [ "$1" = "-d" ]; then
+    diff -u /tmp/un /tmp/p
+else
+    vimdiff /tmp/un /tmp/p
+fi
