@@ -26,9 +26,9 @@ UPDATE logg SET ele = NULL WHERE ele > 29000;
 \echo
 \echo ================ Rund av veipunkter til fem desimaler ================
 
-UPDATE wayp SET koor = point(
-    round(koor[0]::numeric, 5),
-    round(koor[1]::numeric, 5)
+UPDATE wayp SET coor = point(
+    round(coor[0]::numeric, 5),
+    round(coor[1]::numeric, 5)
 );
 
 \echo
@@ -44,7 +44,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     AS (
         SELECT
             DISTINCT ON (
-                koor[0], koor[1],
+                coor[0], coor[1],
                 name,
                 ele,
                 type,
@@ -99,7 +99,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     \echo
     \echo ================ Sett avstanden hjemmefra ================
 
-    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> koor
+    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> coor
         WHERE date > (
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL
@@ -107,9 +107,9 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
         );
 
     \echo
-    \echo ================ Oppdater koor ================
+    \echo ================ Oppdater coor ================
 
-    UPDATE logg SET koor = point(lat, lon)
+    UPDATE logg SET coor = point(lat, lon)
         WHERE date > (
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL
@@ -119,13 +119,13 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     \echo
     \echo ================ Oppdater sted og dist ================
 
-    UPDATE logg SET sted = clname(koor)
+    UPDATE logg SET sted = clname(coor)
         WHERE date > (
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL
                 ORDER BY lastupdate DESC LIMIT 1
         );
-    UPDATE logg SET dist = cldist(koor)
+    UPDATE logg SET dist = cldist(coor)
         WHERE date > (
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL

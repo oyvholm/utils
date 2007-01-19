@@ -100,7 +100,7 @@ CREATE OR REPLACE VIEW gpx
 -- Lister ut events sammen med loggen.
 CREATE OR REPLACE VIEW ev AS
     SELECT * FROM (
-        SELECT     'gps' AS flag, date,           koor, sted || ' (' || dist || ')' AS sted, NULL AS descr, avst
+        SELECT     'gps' AS flag, date,           coor, sted || ' (' || dist || ')' AS sted, NULL AS descr, avst
             FROM logg
         UNION ALL
         SELECT   'event' AS flag, date, point(lat,lon), NULL, descr AS descr, NULL
@@ -110,11 +110,11 @@ CREATE OR REPLACE VIEW ev AS
 
 CREATE OR REPLACE VIEW wp AS
     SELECT
-        koor AS koor,
+        coor AS coor,
         substr(name, 1, 20) AS name,
         type AS type,
         substr(cmt, 1, 20) AS cmt,
         ele AS ele,
         time AS time
         FROM wayp
-        ORDER BY koor[0] desc, koor[1];
+        ORDER BY coor[0] desc, coor[1];

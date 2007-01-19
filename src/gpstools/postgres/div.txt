@@ -2,4 +2,4 @@ $Id$
 
 For å liste ut de nærmeste trackpunktene for en posisjon:
 
-SELECT date, koor, sted, dist, (point(60.30738,5.34574) <-> koor)::numeric AS avs FROM logg ORDER BY avs LIMIT 100;
+SELECT date, coor, sted, dist, (point(60.30738,5.34574) <-> coor)::numeric AS avs FROM logg ORDER BY avs LIMIT 100;

@@ -8,12 +8,12 @@ CREATE TABLE logg (
     sted text,
     dist numeric(8, 5),
     description text,
-    koor point,
+    coor point,
     avst numeric
 );
 
 CREATE TABLE wayp (
-    koor point,
+    coor point,
     name text,
     ele numeric(6, 1),
     type text,
@@ -29,7 +29,7 @@ CREATE TABLE tmpwayp AS
 
 CREATE TABLE events (
     date timestamptz,
-    koor point,
+    coor point,
     descr text,
     begindate timestamptz, -- Ganske eksakt tidspunt ved start
     enddate timestamptz, -- Ganske eksakt tidspunkt ved slutt

@@ -7,10 +7,10 @@ AS $$
 SELECT name FROM (
         SELECT
             name,
-            ($1 <-> koor)
+            ($1 <-> coor)
             AS avs
             FROM wayp
-            WHERE ($1 <-> koor) < 0.05
+            WHERE ($1 <-> coor) < 0.05
             ORDER BY avs
             LIMIT 1
     ) AS s;
@@ -22,10 +22,10 @@ CREATE OR REPLACE FUNCTION cldist(point) RETURNS numeric
 AS $$
 SELECT round(avs::numeric, 5) FROM (
         SELECT
-            ($1 <-> koor)
+            ($1 <-> coor)
             AS avs
             FROM wayp
-            WHERE ($1 <-> koor) < 0.05
+            WHERE ($1 <-> coor) < 0.05
             ORDER BY avs
             LIMIT 1
     ) AS s;
