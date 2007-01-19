@@ -1241,12 +1241,12 @@ END
 # }}}
 testcmd("../gpst -o pgwupd multitrack.gpx", # {{{
     <<END,
-UPDATE logg SET sted = '0-Meridian' WHERE (point(51.477880000,-0.001470000) <-> koor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Abbey Road' WHERE (point(51.532030,-0.177330) <-> koor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Galdhøpiggen med '', &, < og >. ☺' WHERE (point(61.636684,8.312254) <-> koor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Halfdan Griegs vei' WHERE (point(60.397460000,5.350610000) <-> koor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Leicester Square' WHERE (point(51.510130000,-0.130410000) <-> koor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Leira camping' WHERE (point(60.968540000,9.285350000) <-> koor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = '0-Meridian' WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Abbey Road' WHERE (point(51.532030,-0.177330) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Galdhøpiggen med '', &, < og >. ☺' WHERE (point(61.636684,8.312254) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Halfdan Griegs vei' WHERE (point(60.397460000,5.350610000) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Leicester Square' WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Leira camping' WHERE (point(60.968540000,9.285350000) <-> coor) < 0.0002 AND sted IS NULL;
 END
     "Test pgwupd format",
 );

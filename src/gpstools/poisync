@@ -5,9 +5,9 @@
 #=======================================================================
 
 gpst -o pgwtab ../unit/wpdata.gpx ../poi/trans/*.gpx | psql gps -a -c "TRUNCATE tmpwayp; COPY tmpwayp FROM STDIN;"
-psql gps -a -c "UPDATE tmpwayp SET koor = point(round(koor[0]::numeric, 5), round(koor[1]::numeric, 5));"
-psql gps -a -c "COPY (SELECT koor, name FROM tmpwayp WHERE type IS NULL ORDER BY koor[0] desc, koor[1]) TO '/tmp/un';"
-psql gps -a -c "COPY (SELECT koor, name FROM tmpwayp WHERE type IS NOT NULL ORDER BY koor[0] desc, koor[1]) TO '/tmp/p';"
+psql gps -a -c "UPDATE tmpwayp SET coor = point(round(coor[0]::numeric, 5), round(coor[1]::numeric, 5));"
+psql gps -a -c "COPY (SELECT coor, name FROM tmpwayp WHERE type IS NULL ORDER BY coor[0] desc, coor[1]) TO '/tmp/un';"
+psql gps -a -c "COPY (SELECT coor, name FROM tmpwayp WHERE type IS NOT NULL ORDER BY coor[0] desc, coor[1]) TO '/tmp/p';"
 
 if [ "$1" = "-d" ]; then
     diff -u /tmp/un /tmp/p
