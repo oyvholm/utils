@@ -130,15 +130,15 @@ sub trackpoint {
                 $Dat{'year'}
                     ? "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
                       "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
-                    : '\N',
+                    : '\N', # date
                 (length($Dat{'lat'}) && length($Dat{'lon'}))
                     ? "($Dat{'lat'},$Dat{'lon'})"
-                    : '\N',
-                length($Dat{'ele'}) ? $Dat{'ele'} : '\N',
-                '\N',
-                '\N',
-                '\N',
-                '\N'
+                    : '\N', # coor
+                length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
+                '\N', # sted
+                '\N', # dist
+                '\N', # description
+                '\N' # avst
             ) . "\n";
         } else {
             $Retval = undef;
