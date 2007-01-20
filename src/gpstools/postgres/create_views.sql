@@ -103,7 +103,7 @@ CREATE OR REPLACE VIEW ev AS
         SELECT     'gps' AS flag, date,           coor, sted || ' (' || dist || ')' AS sted, NULL AS descr, avst
             FROM logg
         UNION ALL
-        SELECT   'event' AS flag, date, point(lat,lon), NULL, descr AS descr, NULL
+        SELECT   'event' AS flag, date, coor, NULL, descr AS descr, NULL
             FROM events
     ) AS u
     ORDER BY date;

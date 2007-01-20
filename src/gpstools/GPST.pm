@@ -131,10 +131,10 @@ sub trackpoint {
                     ? "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
                       "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
                     : '\N',
-                length($Dat{'lat'}) ? $Dat{'lat'} : '\N',
-                length($Dat{'lon'}) ? $Dat{'lon'} : '\N',
+                (length($Dat{'lat'}) && length($Dat{'lon'}))
+                    ? "($Dat{'lat'},$Dat{'lon'})"
+                    : '\N',
                 length($Dat{'ele'}) ? $Dat{'ele'} : '\N',
-                '\N',
                 '\N',
                 '\N',
                 '\N',

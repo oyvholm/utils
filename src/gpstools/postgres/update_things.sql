@@ -4,10 +4,10 @@
 \echo
 \echo ================ Slett skrotpunkter. ================
 
-DELETE FROM logg WHERE lat < 51;
-DELETE FROM logg WHERE lat > 71;
-DELETE FROM logg WHERE lon < -2;
-DELETE FROM logg WHERE lon > 26;
+DELETE FROM logg WHERE coor[0] < 51;
+DELETE FROM logg WHERE coor[0] > 71;
+DELETE FROM logg WHERE coor[1] < -2;
+DELETE FROM logg WHERE coor[1] > 26;
 DELETE FROM logg WHERE date < '2002-01-01';
 DELETE FROM logg WHERE date > '2010-01-01';
 DELETE FROM logg WHERE date BETWEEN '2005-09-24' AND '2006-02-08';
@@ -80,7 +80,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     ON COMMIT DROP
     AS (
         SELECT
-            DISTINCT ON (date, lat, lon, descr) *
+            DISTINCT ON (date, coor[0], coor[1], descr) *
             FROM events
     );
     TRUNCATE events;
@@ -100,16 +100,6 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     \echo ================ Sett avstanden hjemmefra ================
 
     UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> coor
-        WHERE date > (
-            SELECT laststed FROM stat
-                WHERE lastupdate IS NOT NULL
-                ORDER BY lastupdate DESC LIMIT 1
-        );
-
-    \echo
-    \echo ================ Oppdater coor ================
-
-    UPDATE logg SET coor = point(lat, lon)
         WHERE date > (
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL

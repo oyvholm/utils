@@ -2,14 +2,12 @@
 
 CREATE TABLE logg (
     date timestamptz,
-    lat numeric,
-    lon numeric,
+    coor point,
     ele numeric,
     sted text,
     dist numeric(8, 5),
     description text,
-    coor point,
-    avst numeric
+    avst numeric(11, 8)
 );
 
 CREATE TABLE wayp (
@@ -35,8 +33,6 @@ CREATE TABLE events (
     enddate timestamptz, -- Ganske eksakt tidspunkt ved slutt
     cabegin interval,
     caend interval,
-    lat numeric,
-    lon numeric,
     flags text[],
     persons text[],
     data bytea
