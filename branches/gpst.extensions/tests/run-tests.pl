@@ -229,6 +229,13 @@ is(ddd_to_dms("2-3"),
     "ddd_to_dms(\"2-3\")");
 
 # }}}
+# distance() {{{
+like(distance(60.42541, 5.29959, 60.42424, 5.30177, "metre"),
+    qr/^\d\d\d\.\d+$/,
+    "distance() returns a decimal number"
+);
+
+# }}}
 # list_nearest_waypoints() {{{
 
 like(list_nearest_waypoints(60.42541, 5.29959, 3),

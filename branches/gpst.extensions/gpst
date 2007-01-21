@@ -97,7 +97,7 @@ my %Dat;
 
 my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
 my $Udef = "?";
-my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
+our $DIGIT = '[0-9\.\-\+]'; # Used in regexps
 $GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
 my $Spc = $GPST::Spc; # FIXME
 my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
@@ -605,7 +605,8 @@ sub print_gpx {
                 );
                 ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
                 ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
-                ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Dat{'ele'} = $1);
+                ($el_trkpt   =~ m#<($wpt_elems)\b.*?>(.*?)</($wpt_elems)>#)
+                    && ($Dat{$1} = $2);
                 if (
                     $el_trkpt =~
                     m{
@@ -723,8 +724,8 @@ sub print_entry {
     my $ep_time;
 
     if ($Opt{'near'} && $print_pos) {
-        $Line .= sprintf("%s ",
-                         list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}));
+        $Dat{'extensions'} .= sprintf("%s ",
+            list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}, 3));
     }
 
     if (length($Opt{'round'})) {

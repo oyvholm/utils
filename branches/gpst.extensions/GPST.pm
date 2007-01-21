@@ -64,6 +64,7 @@ sub trackpoint {
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'ele'}) || ($Dat{'ele'} = "");
     defined($Dat{'desc'}) || ($Dat{'desc'} = "");
+    defined($Dat{'extensions'}) || ($Dat{'extensions'} = "");
 
     my $Retval = "";
 
@@ -120,6 +121,11 @@ sub trackpoint {
                           "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
                           "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
                           "</time>$Spc"
+                        : "",
+                    length($Dat{'extensions'})
+                        ? "<extensions>" .
+                          $Dat{'extensions'} .
+                          "</extensions>"
                         : "",
                     "</trkpt>\n"
                 );
