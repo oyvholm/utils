@@ -125,6 +125,10 @@ sub trackpoint {
                 );
             }
             # }}}
+        } elsif($Dat{'format'} eq "xgraph") {
+            if (length($Dat{'lat'}) && length($Dat{'lon'})) {
+                $Retval .= "$Dat{'lon'}\t$Dat{'lat'}";
+            }
         } elsif ($Dat{'format'} eq "pgtab") {
             $Retval .= join("\t",
                 $Dat{'year'}

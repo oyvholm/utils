@@ -979,8 +979,10 @@ sub print_entry {
                 $Line .= trackpoint(%Dat);
             }
         } elsif ($Opt{'output-format'} eq "xgraph") {
-            $pause_len && ($Line .= "move ");
-            ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            if ($print_pos) {
+                $pause_len && ($Line .= "move ");
+                ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            }
         } elsif($Opt{'output-format'} eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) =
                (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
