@@ -598,14 +598,25 @@ sub print_gpx {
                     'year' => '', 'month' => '', 'day' => '',
                     'hour' => '', 'min' => '', 'sec' => '',
                     'lat' => '', 'lon' => '',
-                    'ele' => '',
-                    'desc' => '',
                     'error' => "",
                     'type' => 'tp',
                 );
+                for my $Tmp (@wpt_elems) {
+                    $Dat{$Tmp} = "";
+                    D("Dat{$Tmp} set to ''");
+                }
                 ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
                 ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
-                ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Dat{'ele'} = $1);
+                my $wpt_elems_str = join("|", @wpt_elems);
+                D("wpt_elems_str = '$wpt_elems_str'");
+                $el_trkpt =~
+                s{
+                    <($wpt_elems_str)\b.*?>(.*?)</($wpt_elems_str)>
+                }{
+                    $Dat{$1} = $2;
+                    D("Yess, Dat{$1} set to '$2'");
+                    "";
+                }gsex;
                 if (
                     $el_trkpt =~
                     m{

@@ -22,10 +22,22 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&trackpoint);
+    @EXPORT = qw(&trackpoint @wpt_elems);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
+
+our @wpt_elems = (
+    # Position info
+    "ele", "time", "magvar", "geoidheight",
+    # Description info
+    "name", "cmt", "desc", "src", "link", "sym", "type",
+    # Accuracy info
+    "fix", "sat", "hdop", "vdop", "pdop",
+    "ageofdgpsdata", "dgpsid",
+    # Extensions
+    "extensions"
+);
 
 our $Spc = " ";
 

@@ -8,9 +8,11 @@
 >
   <trk>
     <name>Track 1</name>
+    <cmt>Track comment sent to the GPS</cmt>
+    <desc>Track description not meant for the GPS</desc>
     <trkseg>
-      <!-- <trkpt lat="51.4968987" lon="-0.1448208"> <time>2003-02-11T23:35:29Z</time> <cmt>Commented out</cmt> </trkpt> -->
-      <trkpt lat="51.4968266" lon="-0.1448824"> <time>2003-02-11T23:35:39Z</time> </trkpt>
+      <!-- <trkpt lat="51.4968987" lon="-0.1448208"> <time>2003-02-11T23:35:29Z</time> <cmt>Trackpoint comment #1 sent to the GPS</cmt> <desc>Trackpoint description #1 not meant for the GPS</desc> </trkpt> -->
+      <trkpt lat="51.4968266" lon="-0.1448824"> <time>2003-02-11T23:35:39Z</time> <cmt>Trackpoint comment #2 sent to the GPS</cmt> <desc>Trackpoint description #2 not meant for the GPS</desc> </trkpt>
       <trkpt lat="51.4968227" lon="-0.1449938"> <time>2003-02-11T23:35:49Z</time> </trkpt>
       <trkpt lat="51.4969040" lon="-0.1453202"> <time>2003-02-11T23:36:14Z</time> </trkpt>
     </trkseg>
