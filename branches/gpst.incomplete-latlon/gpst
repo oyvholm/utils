@@ -710,9 +710,14 @@ sub print_entry {
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'year'}) || ($Dat{'year'} = "");
     my $print_time = length($Dat{'year'}) ? 1 : 0;
-    my $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
-    if (!$print_pos) {
-        $Dat{'lat'} = $Dat{'lon'} = "";
+    my $print_pos = 1;
+    if (length($Dat{'lat'}) && length($Dat{'lon'})) {
+        $print_pos = 1;
+    } else {
+        if (length($Dat{'lat'}) || length($Dat{'lon'})) {
+            $Dat{'error'} = "incomplete";
+            $print_pos = ($Opt{'output-format'} eq "gpsml") ? 1 : 0;
+        }
     }
     my $print_ele = length($Dat{'ele'}) ? 1 : 0;
     my $print_desc = length($Dat{'desc'}) ? 1 : 0;
@@ -829,11 +834,9 @@ sub print_entry {
 
     if ($Dat{'type'} eq "tp") {
         # {{{
-        if ($Opt{'require'}) {
-            $Req{'time'} && !$print_time && return;
-            $Req{'position'} && !$print_pos && return;
-            $Req{'ele'} && !$print_ele && return;
-        }
+        ($Req{'time'} && !$print_time) && return("");
+        ($Req{'position'} && length("$Dat{'lat'}$Dat{'lon'}")) && return("");
+        ($Req{'ele'} && !$print_ele) && return("");
 
         if ($Opt{'inside'} || $Opt{'outside'}) {
             if (

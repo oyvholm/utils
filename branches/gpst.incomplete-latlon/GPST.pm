@@ -104,26 +104,23 @@ sub trackpoint {
             # }}}
         } elsif($Dat{'format'} eq "gpx") {
             # {{{
-            my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
-            my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
-            if (length("$lat_str$lon_str$Dat{'ele'}")) {
-                $Retval .=
-                join("",
-                    "$Spc$Spc$Spc$Spc$Spc$Spc",
-                    "<trkpt$lat_str$lon_str>",
-                    "$Spc",
-                    $print_time
-                        ? "<time>" .
-                          "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                          "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
-                          "</time>$Spc"
-                        : "",
-                    length($Dat{'ele'})
-                        ? "<ele>$Dat{'ele'}</ele>$Spc"
-                        : "",
-                    "</trkpt>\n"
-                );
-            }
+            (length($Dat{'lat'}) && length($Dat{'lon'})) || return("");
+            $Retval .=
+            join("",
+                "$Spc$Spc$Spc$Spc$Spc$Spc",
+                "<trkpt lat=\"$Dat{'lat'}\" lon=\"$Dat{'lon'}\">",
+                "$Spc",
+                $print_time
+                    ? "<time>" .
+                      "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
+                      "</time>$Spc"
+                    : "",
+                length($Dat{'ele'})
+                    ? "<ele>$Dat{'ele'}</ele>$Spc"
+                    : "",
+                "</trkpt>\n"
+            );
             # }}}
         } else {
             $Retval = undef;

@@ -828,15 +828,17 @@ testcmd("../gpst missing.gpsml", # {{{
 <track>
 <title>Missing various elements</title>
 <tp> <time>2006-04-30T17:16:59Z</time> </tp>
-<tp> <time>2006-04-30T17:17:00Z</time> </tp>
+<tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
 <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
 <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
-<tp> <ele>484</ele> </tp>
+<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
 <tp> <ele>486</ele> </tp>
 <tp> <desc>Missing everything</desc> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <lat>60.42339</lat> </tp>
+<tp> <lon>5.34262</lon> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -872,18 +874,19 @@ END
 
 TODO: {
     local $TODO = "Shall lat/lon be cleared if one is missing?";
+    diag("Testing --require...");
     testcmd("../gpst -re missing.gpsml", # {{{
         <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
 <title>Missing various elements</title>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
 <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
-<tp> <ele>484</ele> </tp>
+<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
 <tp> <ele>486</ele> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -899,11 +902,11 @@ END
 <track>
 <title>Missing various elements</title>
 <tp> <time>2006-04-30T17:16:59Z</time> </tp>
-<tp> <time>2006-04-30T17:17:00Z</time> </tp>
+<tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
 <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -918,8 +921,14 @@ END
 <gpsml>
 <track>
 <title>Missing various elements</title>
+<tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
 <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
+<tp> <lat>60.42339</lat> </tp>
+<tp> <lon>5.34262</lon> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -934,9 +943,9 @@ END
 <gpsml>
 <track>
 <title>Missing various elements</title>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -951,6 +960,15 @@ END
 <gpsml>
 <track>
 <title>Missing various elements</title>
+<tp> <time>2006-04-30T17:16:59Z</time> </tp>
+<tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
+<tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
+<tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
+<tp> <ele>486</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -965,7 +983,14 @@ END
 <gpsml>
 <track>
 <title>Missing various elements</title>
+<tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
+<tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
 <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
+<tp> <ele>486</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -975,25 +1000,19 @@ END
 
     # }}}
 }
-
-testcmd("../gpst -o gpx missing.gpsml", # {{{
-    <<END,
-$gpx_header
-  <trk>
-    <trkseg>
-      <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
-      <trkpt> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </trkpt>
-      <trkpt> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </trkpt>
-      <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
-      <trkpt> <ele>484</ele> </trkpt>
-      <trkpt> <ele>486</ele> </trkpt>
-      <trkpt> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </trkpt>
-      <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
-    </trkseg>
-  </trk>
-</gpx>
+    testcmd("../gpst -o gpx missing.gpsml | ../gpst", # {{{
+        <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>Missing various elements</title>
+<tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
+<tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+<tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+</track>
+</gpsml>
 END
-    "Output GPX from gpsml with missing data",
+    "Via GPX from gpsml with missing data",
     );
 
 # }}}
@@ -1005,7 +1024,61 @@ testcmd("echo '<tp> </tp>' | ../gpst", # {{{
 </track>
 </gpsml>
 END
-    "Don’t print empty trackpoints");
+    "Don’t print empty trackpoints"
+);
+
+# }}}
+testcmd("echo '<tp> <lat>5</lat> </tp>' | ../gpst", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<etp err="incomplete"> <lat>5</lat> </etp>
+</track>
+</gpsml>
+END
+    "Only latitude, no longitude (gpsml)"
+);
+
+# }}}
+testcmd("echo '<tp> <lon>5</lon> </tp>' | ../gpst", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<etp err="incomplete"> <lon>5</lon> </etp>
+</track>
+</gpsml>
+END
+    "Only longitude, no latitude (gpsml)"
+);
+
+# }}}
+testcmd("echo '<tp> <lat>5</lat> </tp>' | ../gpst -o gpx", # {{{
+    <<END,
+$gpx_header
+  <trk>
+    <trkseg>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "Only latitude, no longitude (gpx)"
+);
+
+# }}}
+testcmd("echo '<tp> <lon>5</lon> </tp>' | ../gpst -o gpx", # {{{
+    <<END,
+<?xml version="1.0" standalone="no"?>
+<gpx>
+  <trk>
+    <trkseg>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "Only longitude, no latitude (gpx)"
+);
 
 # }}}
 testcmd("../gpst --epoch pause.gpx", # {{{
