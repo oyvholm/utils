@@ -1063,8 +1063,8 @@ sub print_entry {
             if ($Opt{'output-format'} eq "gpsml") {
                 $Line = "<break/>\n$Line";
             }
-            # (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
-                # && ($Line .= "move $Line");
+            (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
+                && ($Line .= "move $Line");
             ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
             if ($Opt{'output-format'} eq "gpx") {
                 $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
