@@ -519,7 +519,7 @@ for $curr_file (@ARGV) {
             } elsif (/^xmaplog /) {
                 ($Opt{'output-format'} eq "csv")
                     && ($Opt{'save-to-file'} eq "\n")
-                    && print("\n");
+                    && ($found_move = 1);
             } elsif (/^$/) {
                 ($Opt{'output-format'} eq "csv")
                     && ($Opt{'save-to-file'} eq "\n")
@@ -870,7 +870,7 @@ sub print_entry {
                 $Line .= sprintf("<pause>%s</pause>\n",
                                  sec_to_readable($ep_time-$last_time));
             } elsif ($Opt{'output-format'} eq "csv") {
-                $Line .= sprintf("# Pause: %s\n# move\n",
+                $Line .= sprintf("# Pause: %s\n",
                                  sec_to_readable($ep_time-$last_time));
             }
         }
@@ -896,8 +896,10 @@ sub print_entry {
                                  $1);
             }
         } elsif ($Opt{'output-format'} eq "xgraph") {
-            $pause_len && ($Line .= "move ");
-            ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            if ($print_pos) {
+                $pause_len && ($Line .= "move ");
+                ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            }
         } elsif($Opt{'output-format'} eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) =
                (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
@@ -976,8 +978,8 @@ sub print_entry {
             if ($Opt{'output-format'} eq "gpsml") {
                 $Line = "<break/>\n$Line";
             }
-            (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
-                && ($Line .= "move $Line");
+            # (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
+                # && ($Line .= "move $Line");
             ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
             if ($Opt{'output-format'} eq "gpx") {
                 $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
