@@ -22,7 +22,7 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&trackpoint);
+    @EXPORT = qw(&trackpoint &postgresql_copy_safe);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -33,9 +33,8 @@ sub trackpoint {
     # Receive a hash and return a trackpoint as a string {{{
     my %Dat = @_;
 
-    D("trackpoint(" . join('|', %Dat) . ")");
-
     defined($Dat{'type'}) || return(undef);
+    defined($Dat{'format'}) || return(undef);
     defined($Dat{'error'}) || return(undef);
 
     defined($Dat{'year'}) || ($Dat{'year'} = 0);
@@ -53,6 +52,14 @@ sub trackpoint {
         !length($Dat{'sec'})
     ) ? 0 : 1;
 
+    if (
+        ("$Dat{'year'}$Dat{'month'}$Dat{'day'}$Dat{'hour'}$Dat{'min'}" =~
+        /[^\d]/) || ($Dat{'sec'} =~ /[^\d\.]/)
+    ) {
+        ($print_time = 0);
+    }
+    "$Dat{'lat'}$Dat{'lon'}" =~ /[^\d\.\-\+]/ && return(undef);
+
     defined($Dat{'lat'}) || ($Dat{'lat'} = "");
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'ele'}) || ($Dat{'ele'} = "");
@@ -67,8 +74,11 @@ sub trackpoint {
             my $Elem = length($err_str) ? "etp" : "tp";
             $Retval .= join("",
                     $print_time
-                        ? "<time>$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                          "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z</time> "
+                        ? sprintf("<time>%04u-%02u-%02uT" .
+                                  "%02u:%02u:%02gZ</time> ",
+                                   $Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                                   $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}*1.0
+                          )
                         : "",
                     (length($Dat{'lat'}))
                         ? "<lat>" . $Dat{'lat'}*1.0 . "</lat> "
@@ -102,14 +112,14 @@ sub trackpoint {
                     "$Spc$Spc$Spc$Spc$Spc$Spc",
                     "<trkpt$lat_str$lon_str>",
                     "$Spc",
+                    length($Dat{'ele'})
+                        ? "<ele>$Dat{'ele'}</ele>$Spc"
+                        : "",
                     $print_time
                         ? "<time>" .
                           "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
                           "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
                           "</time>$Spc"
-                        : "",
-                    length($Dat{'ele'})
-                        ? "<ele>$Dat{'ele'}</ele>$Spc"
                         : "",
                     "</trkpt>\n"
                 );
@@ -119,9 +129,39 @@ sub trackpoint {
             if (length($Dat{'lat'}) && length($Dat{'lon'})) {
                 $Retval .= "$Dat{'lon'}\t$Dat{'lat'}";
             }
+        } elsif ($Dat{'format'} eq "pgtab") {
+            $Retval .= join("\t",
+                $Dat{'year'}
+                    ? "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                    : '\N', # date
+                (length($Dat{'lat'}) && length($Dat{'lon'}))
+                    ? "($Dat{'lat'},$Dat{'lon'})"
+                    : '\N', # coor
+                length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
+                '\N', # sted
+                '\N', # dist
+                '\N', # description
+                '\N' # avst
+            ) . "\n";
+        } else {
+            $Retval = undef;
         }
+    } else {
+        $Retval = undef;
     }
     return $Retval;
+    # }}}
+}
+
+sub postgresql_copy_safe {
+    # {{{
+    my $Str = shift;
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
     # }}}
 }
 

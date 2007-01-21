@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+  <trk>
+    <name>track1</name>
+    <trkseg>
+      <trkpt lat="1" lon="1"> <time>2006-01-01T00:00:00Z</time> </trkpt>
+      <trkpt lat="2" lon="2"> <time>2006-01-01T00:00:01Z</time> </trkpt>
+      <trkpt lat="3" lon="3"> <time>2006-01-01T00:00:02Z</time> </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>track2</name>
+    <trkseg>
+      <trkpt lat="1" lon="1"> <time>2006-01-02T00:00:00Z</time> </trkpt>
+      <trkpt lat="2" lon="2"> <time>2006-01-02T00:00:04Z</time> </trkpt>
+      <trkpt lat="3" lon="3"> <time>2006-01-02T00:00:16Z</time> </trkpt>
+      <trkpt lat="4" lon="4"> <time>2006-01-02T01:00:16Z</time> </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>track3</name>
+    <trkseg>
+      <trkpt lat="5" lon="5"> <time>2006-01-03T02:00:20Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
