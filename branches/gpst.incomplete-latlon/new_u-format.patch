@@ -1,0 +1,51 @@
+Index: tests/run-tests.pl
+===================================================================
+--- tests/run-tests.pl	(revision 1817)
++++ tests/run-tests.pl	(working copy)
+@@ -370,26 +370,27 @@
+     "",
+     ); # {{{
+ 
+-if (1) {
+-    local $TODO = "Use the default output format, this Mayko thing is obsolete.";
+-    is(file_data("nosignal.tmp"),
+-        <<END,
+-xmaplog 1.0 Mon Dec 23 02:00:50 2002
+-1 70.6800486 23.6746151 57.4 0 12/22/2002 21:42:24
+-1 70.6799322 23.6740038 6.3 0 12/22/2002 21:42:32
+-1 70.6796266 23.6723991 6.0 0 12/22/2002 21:42:54
+-# 20021222T214351-20021222T214354: CO: No signal \x7B\x7B\x7B
+-# 1 70.6796266 23.6723991 0.0 0 12/22/2002 21:43:51
+-# 1 70.6796266 23.6723991 0.0 0 12/22/2002 21:43:52
+-# 1 70.6796266 23.6723991 0.0 0 12/22/2002 21:43:54
+-# 20021222T214351-20021222T214354: CO: No signal \x7D\x7D\x7D
+-# move
+-1 70.6800774 23.6757566 5.1 0 12/22/2002 21:44:45
+-1 70.6801502 23.6753442 4.8 0 12/22/2002 21:44:52
+-1 70.6801905 23.6757542 2.5 0 12/22/2002 21:45:04
++is(file_data("nosignal.tmp"),
++    <<END,
++<?xml version="1.0" encoding="UTF-8"?>
++<gpsml>
++<track>
++<tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
++<tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
++<tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
++<desc>20021222T214351-20021222T214354: CO: No signal \x7B\x7B\x7B</desc>
++<etp> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
++<etp> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
++<etp> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
++<desc>20021222T214351-20021222T214354: CO: No signal \x7D\x7D\x7D</desc>
++<break/>
++<tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
++<tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
++<tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
++</track>
++</gpsml>
+ END
+-        "gpst -u no_signal.mayko");
+-}
++    "gpst -u no_signal.mayko");
+ 
+ # }}}
+ testcmd("../gpst nosignal.tmp", # {{{
