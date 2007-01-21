@@ -948,7 +948,7 @@ sub print_entry {
                 $Line .= sprintf("<pause>%s</pause>\n",
                                  sec_to_readable($ep_time-$last_time));
             } elsif ($Opt{'output-format'} eq "csv") {
-                $Line .= sprintf("# Pause: %s\n",
+                $Line .= sprintf("# Pause: %s\n# move\n",
                                  sec_to_readable($ep_time-$last_time));
             }
         }
