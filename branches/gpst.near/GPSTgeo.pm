@@ -62,7 +62,8 @@ sub list_nearest_waypoints {
         }
     }
 
-    my @Sorted = sort { $Waypoints[$b]{distance} } <=> $Waypoints[$a]{distance} } keys @Waypoints;
+    # my @Sorted = sort { $Waypoints[$b]{distance} } <=> $Waypoints[$a]{distance} } keys @Waypoints;
+    my @Sorted = sort_waypoints("distance", "+", \@Waypoints);
 
     if ($main::Debug) {
         for my $i (0 .. $#Waypoints) {
@@ -142,6 +143,14 @@ sub parse_waypoints {
         "";
     }gsex;
     D("parse_waypoints() returns '" . join("|", @Retval) . "'");
+    return(@Retval);
+    # }}}
+}
+
+sub sort_waypoints {
+    # FIXME: Unfinished. {{{
+    my ($Key, $Dir) = (shift, shift);
+    my @Retval = @_;
     return(@Retval);
     # }}}
 }
