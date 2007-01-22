@@ -19,6 +19,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'to' => "HEAD",
     'version' => 0,
 );
 
@@ -33,6 +34,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "to|t=s" => \$Opt{'to'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -73,7 +75,7 @@ for (@Files) {
             $master_file =~ s/[\r\n]$//;
             my $safe_master_file = escape_filename($master_file);
             mysyst($CMD_SVN, "update", $File);
-            my $curr_rev = `$CMD_SVN log -rHEAD:1 --limit 1 --xml $safe_master_file`; # FIXME
+            my $curr_rev = `$CMD_SVN log -r$Opt{'to'}:1 --limit 1 --xml $safe_master_file`; # FIXME
             $curr_rev =~ s/^.*<logentry.+?revision="(\d+)".*?>.*/$1/s;
             if ($curr_rev !~ /^\d+$/) {
                 warn("$progname: $master_file: Unable to get newest revision\n");
@@ -147,6 +149,8 @@ Options:
 
   -h, --help
     Show this help.
+  -t x, --to x
+    Merge to revision x instead of HEAD.
   --version
     Print version information.
   --debug
