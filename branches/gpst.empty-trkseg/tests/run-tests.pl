@@ -75,6 +75,16 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
+testcmd("../gpst -o xgraph empty-trkseg.gpx", # {{{
+    <<END,
+1 1
+move 2 2
+move 3 3
+END
+    "xgraph output from GPX with empty trkseg",
+);
+
+# }}}
 diag("Testing conversion routines...");
 
 # txt_to_xml() and xml_to_txt() {{{
