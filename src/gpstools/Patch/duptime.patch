@@ -1,0 +1,16 @@
+Index: gpst
+===================================================================
+--- gpst	(revision 2020)
++++ gpst	(working copy)
+@@ -831,6 +831,11 @@
+                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
+                     $Dat{'error'} = "chrono";
+                 }
++            } elsif ($last_time == $ep_time && !length($Dat{'error'})) {
++                warn(sprintf(
++                    "%s: \"%sZ\": Duplicated time\n",
++                    $progname, $last_time, "T"
++                ));
+             }
+         }
+     } else {
