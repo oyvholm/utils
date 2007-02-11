@@ -18,17 +18,17 @@ my $Line = <STDIN>;
 my ($Indent, $Title) =
    (     "",     "");
 
-defined($ARGV[0]) && ($Title = join(" ", @ARGV));
+defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
 $Line =~ /^(\s+)/ && ($Indent = $1);
 my $c_S = $opt_c ? "" : " -->";
 my $c_E = $opt_c ? "" : "<!-- ";
-print("$Indent<!-- $Title \x7B\x7B\x7B$c_S\n$Line");
+print("$Indent<!-- $Title\x7B\x7B\x7B$c_S\n$Line");
 
 while (<STDIN>) {
 	print($_);
 }
 
-print("$Indent$c_E$Title \x7D\x7D\x7D -->\n");
+print("$Indent$c_E$Title\x7D\x7D\x7D -->\n");
 
 sub usage {
 	my $Retval = shift;
