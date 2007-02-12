@@ -621,7 +621,14 @@ sub print_gpx {
                 );
             } elsif ($Opt{'output-format'} eq "pgwupd") {
                 $Name =~ s/'/''/gs;
-                print("UPDATE logg SET sted = '$Name' WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.0002 AND sted IS NULL;\n");
+                print(join("\n",
+                    "BEGIN;",
+                    "    UPDATE logg SET sted = clname(coor) " .
+                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "    UPDATE logg SET dist = cldist(coor) " .
+                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "COMMIT;"
+                ) . "\n");
             }
             "";
         }gsex;
