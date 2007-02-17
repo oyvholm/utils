@@ -838,6 +838,15 @@ sub print_entry {
                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
                     $Dat{'error'} = "chrono";
                 }
+            } elsif ($last_time == $ep_time && !length($Dat{'error'})) {
+                warn(sprintf(
+                    "%s: $curr_file: \"%sZ\": Duplicated time\n",
+                    $progname, sec_to_string($last_time, "T")
+                ));
+                # FIXME: Make --fix work with gpx.
+                if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
+                    $Dat{'error'} = "duptime";
+                }
             }
         }
     } else {
