@@ -679,6 +679,7 @@ testcmd("../gpst --round lat=4,lon=5,ele=1 pause.gpx", # {{{
 </track>
 </gpsml>
 END
+    "",
 );
 
 # }}}
@@ -1503,6 +1504,9 @@ sub testcmd {
     if (defined($Exp_stderr)) {
         is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
         unlink($TMP_STDERR);
+    }
+    else {
+        diag("Warning: stderr not defined for '$Txt'");
     }
     # }}}
 }
