@@ -376,7 +376,8 @@ diag("Testing output from ../gpst");
 
 like(`../gpst --version`, # {{{
     qr/^(\$Id: .*? \$\n)+$/s,
-    "../gpst --version");
+    "../gpst --version"
+);
 
 # }}}
 testcmd("../gpst </dev/null", # {{{
@@ -429,7 +430,8 @@ END
 # }}}
 is(file_data("chronofix.tmp"), # {{{
     "gpst: \"2006-05-02T09:46:46Z\": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)\n",
-    "Warning from --chronology --fix");
+    "Warning from --chronology --fix"
+);
 unlink("chronofix.tmp") || warn("chronofix.tmp: Cannot delete file: $!\n");
 
 # }}}
@@ -675,11 +677,11 @@ END
 testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
     "",
     "Redirect stdout",
-    );
+);
 
 # }}}
 testcmd("../gpst -u no_signal.mayko", # {{{
-        <<END,
+    <<END,
 xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6800486 23.6746151 57.4 0 12/22/2002 21:42:24
 1 70.6799322 23.6740038 6.3 0 12/22/2002 21:42:32
@@ -694,7 +696,7 @@ xmaplog 1.0 Mon Dec 23 02:00:50 2002
 1 70.6801502 23.6753442 4.8 0 12/22/2002 21:44:52
 1 70.6801905 23.6757542 2.5 0 12/22/2002 21:45:04
 END
-        "Read Mayko format with no signal, output old Mayko format",
+    "Read Mayko format with no signal, output old Mayko format",
 );
 
 # }}}
@@ -1112,7 +1114,7 @@ END
 </track>
 </gpsml>
 END
-    "Require elevation and time",
+        "Require elevation and time",
     );
 
     # }}}
@@ -1126,7 +1128,7 @@ END
 </track>
 </gpsml>
 END
-    "Require elevation, time and position",
+        "Require elevation, time and position",
     );
 
     # }}}
@@ -1141,7 +1143,7 @@ END
 </track>
 </gpsml>
 END
-    "Require elevation and position",
+        "Require elevation and position",
     );
 
     # }}}
@@ -1165,7 +1167,7 @@ $gpx_header
 </gpx>
 END
     "Output GPX from gpsml with missing data",
-    );
+);
 
 # }}}
 testcmd("echo '<tp> </tp>' | ../gpst", # {{{
@@ -1176,7 +1178,8 @@ testcmd("echo '<tp> </tp>' | ../gpst", # {{{
 </track>
 </gpsml>
 END
-    "Don’t print empty trackpoints");
+    "Don’t print empty trackpoints",
+);
 
 # }}}
 testcmd("../gpst --epoch pause.gpx", # {{{
@@ -1254,7 +1257,7 @@ testcmd("../gpst -t multitrack-pause.gpx", # {{{
 </track>
 </gpsml>
 END
-    "Insert <pause> between gpx tracks"
+    "Insert <pause> between gpx tracks",
 );
 
 # }}}
@@ -1282,7 +1285,7 @@ testcmd("../gpst -t multitrack-pause.gpsml", # {{{
 </track>
 </gpsml>
 END
-    "Insert <pause> between gpsml titles"
+    "Insert <pause> between gpsml titles",
 );
 
 # }}}
@@ -1357,7 +1360,7 @@ if ($Opt{'all'} || $Opt{'todo'}) {
 5.299773\t60.425345\t31.936
 5.299419\t60.425457\t31.794
 END
-            "Output clean format with time breaks"
+            "Output clean format with time breaks",
         );
         # }}}
         testcmd("../gpst -o csv pause.gpx", # {{{
@@ -1419,7 +1422,7 @@ END
         $TODO = "Tweak output";
         testcmd("../gpst -o gpx multitrack-pause.gpsml", # {{{
             file_data("multitrack-pause.gpx"),
-            "Should be equal to multitrack-pause.gpx"
+            "Should be equal to multitrack-pause.gpx",
         );
 
         # }}}
@@ -1428,7 +1431,8 @@ END
 
         like(list_nearest_waypoints(60.42541, 5.29959, 3),
             qr/^\(.*,.*,.*\)$/,
-            "list_nearest_waypoints()");
+            "list_nearest_waypoints()"
+        );
 
         # }}}
     }
