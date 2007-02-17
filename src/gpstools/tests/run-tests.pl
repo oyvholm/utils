@@ -426,7 +426,7 @@ testcmd("../gpst --fix --chronology chronology-error.gpsml", # {{{
 </track>
 </gpsml>
 END
-    "gpst: \"2006-05-02T09:46:46Z\": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)\n",
+    "gpst: chronology-error.gpsml: \"2006-05-02T09:46:46Z\": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)\n",
     "Remove bad timestamps",
 );
 

@@ -244,7 +244,7 @@ $Opt{'save-to-file'} eq "\n" && print_header(*STDOUT);
 my @first_lines;
 my $xml_data;
 my $data_line = "";
-my $curr_file = "";
+our $curr_file = "";
 
 my $from_stdin = scalar(@ARGV) ? 0 : 1;
 
@@ -829,7 +829,7 @@ sub print_entry {
         if ($Opt{'chronology'}) {
             if ($last_time > $ep_time && !length($Dat{'error'})) {
                 warn(sprintf(
-                    "%s: \"%sZ\": Next date is %s in the past (%sZ)\n",
+                    "%s: $curr_file: \"%sZ\": Next date is %s in the past (%sZ)\n",
                     $progname, sec_to_string($last_time, "T"),
                     sec_to_readable($last_time-$ep_time),
                     sec_to_string($ep_time, "T")
