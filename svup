@@ -5,7 +5,8 @@
 # Lazyness script.
 #=======================================================================
 
-echo ==== svn update
-svn up "$@"
-echo ==== svn stat
+LC_ALL=C svn info | grep '^URL: '
+echo ==== svn update --ignore-externals "$@"
+svn up --ignore-externals "$@"
+echo ==== svn stat "$@"
 svn st "$@"
