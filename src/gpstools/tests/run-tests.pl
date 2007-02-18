@@ -410,7 +410,7 @@ testcmd("../gpst --chronology chronology-error.gpsml", # {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
-<title>\$Id: chronology-error.gpsml 1774 2006-05-20 02:48:39Z sunny \$</title>
+<title>Chronology errors</title>
 <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
 <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
 <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
@@ -438,7 +438,7 @@ testcmd("../gpst --fix --chronology chronology-error.gpsml", # {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
-<title>\$Id: chronology-error.gpsml 1774 2006-05-20 02:48:39Z sunny \$</title>
+<title>Chronology errors</title>
 <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
 <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
 <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
