@@ -2,4 +2,4 @@
 
 # $Id$
 
-gptrans_conv -o ygraph "$@" | ygraph -l0 -
+gpst -rt -o ygraph "$@" | ygraph -l0 -
