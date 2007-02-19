@@ -2,7 +2,7 @@
 
 # $Id$
 
-gpst -o xgraph -rt "$@" | rmspcall | uniq | xgraph -fmtx %.05f -fmty %.05f
+gpst -o xgraph -rt "$@" | rmspcall | uniq | xgraph -fmtx %.06f -fmty %.06f
 # gptrans_conv -o clean "$@" >/tmp/v.dat
 # cat <<END | gnuplot -persist
 # set mouse
