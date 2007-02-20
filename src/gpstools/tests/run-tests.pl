@@ -1097,6 +1097,24 @@ END
 );
 
     # }}}
+testcmd("../gpst different_dateformats.gpsml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>Date format variations</title>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>1</lat> <lon>1</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>2</lat> <lon>2</lon> </tp>
+<tp> <time>2006-01-01T00:00:03Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<tp> <time>2006-01-01T00:00:04Z</time> <lat>4</lat> <lon>4</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Read different date formats from gpsml file",
+);
+
+    # }}}
 
 TODO: {
     local $TODO = "Shall lat/lon be cleared if one is missing?";

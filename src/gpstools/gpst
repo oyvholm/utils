@@ -284,7 +284,7 @@ for $curr_file (@ARGV) {
                 my $Time = "";
                 $Data =~ m#<time>(.*?)</time># && ($Time = $1);
                 $Time =~ s{
-                    (\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?([\d\.]+?)Z
+                    (\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?([\d\.]+?)Z
                 } {
                     ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
                      $Dat{'hour'},   $Dat{'min'}, $Dat{'sec'}) =
