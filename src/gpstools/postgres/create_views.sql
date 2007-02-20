@@ -103,6 +103,12 @@ CREATE OR REPLACE VIEW gpx AS
     date, coor, ele, sted, dist, description
     FROM logg;
 
+CREATE OR REPLACE VIEW gpst AS
+    SELECT date, coor, ele, sted, dist, avst,
+    '<tp> <time>' || date at time zone 'UTC' || 'Z' || '</time> <lat>' || coor[0] || '</lat> <lon>' || coor[1] || '</lon> </tp>'
+    AS gpst
+    FROM logg;
+
 -- Lister ut events sammen med loggen.
 CREATE OR REPLACE VIEW ev AS
     SELECT * FROM (
