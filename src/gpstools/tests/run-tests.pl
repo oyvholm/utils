@@ -1335,8 +1335,10 @@ testcmd("../gpst -t multitrack-pause.gpx", # {{{
 <pause>0:01:00:00</pause>
 <tp> <time>2006-01-02T01:00:16Z</time> <lat>4</lat> <lon>4</lon> </tp>
 <break/>
+<tp> <time>2006-01-02T01:00:17Z</time> <lat>4.5</lat> <lon>4.5</lon> </tp>
+<break/>
 <title>track3</title>
-<pause>1:01:00:04</pause>
+<pause>1:01:00:03</pause>
 <tp> <time>2006-01-03T02:00:20Z</time> <lat>5</lat> <lon>5</lon> </tp>
 </track>
 </gpsml>
@@ -1364,8 +1366,10 @@ testcmd("../gpst -t multitrack-pause.gpsml", # {{{
 <pause>0:01:00:00</pause>
 <tp> <time>2006-01-02T01:00:16Z</time> <lat>4</lat> <lon>4</lon> </tp>
 <break/>
+<tp> <time>2006-01-02T01:00:17Z</time> <lat>4.5</lat> <lon>4.5</lon> </tp>
+<break/>
 <title>track3</title>
-<pause>1:01:00:04</pause>
+<pause>1:01:00:03</pause>
 <tp> <time>2006-01-03T02:00:20Z</time> <lat>5</lat> <lon>5</lon> </tp>
 </track>
 </gpsml>
