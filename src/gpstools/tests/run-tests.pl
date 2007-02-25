@@ -1313,7 +1313,7 @@ END
 testcmd("../gpst multitrack-pause.gpx", # {{{
     file_data("multitrack-pause.gpsml"),
     "",
-    "Should be equal to multitrack-pause.gpsml"
+    "Should be equal to multitrack-pause.gpsml",
 );
 
 # }}}
@@ -1556,8 +1556,7 @@ sub testcmd {
     if (defined($Exp_stderr)) {
         is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
         unlink($TMP_STDERR);
-    }
-    else {
+    } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
     # }}}
@@ -1622,7 +1621,7 @@ __END__
 
 =head1 NAME
 
-
+run-tests.pl
 
 =head1 REVISION
 
@@ -1630,11 +1629,11 @@ $Id$
 
 =head1 SYNOPSIS
 
- [options] [file [files [...]]]
+run-tests.pl [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-
+Contains tests for the gpst(1) program.
 
 =head1 OPTIONS
 
@@ -1662,10 +1661,6 @@ Print debugging messages.
 
 =back
 
-=head1 BUGS
-
-
-
 =head1 AUTHOR
 
 Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
@@ -1692,6 +1687,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
+
+gpst(1)
 
 =cut
 
