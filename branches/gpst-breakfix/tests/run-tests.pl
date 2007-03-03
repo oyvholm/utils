@@ -60,6 +60,17 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
+chomp(my $gpx_header = <<END);
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+END
+
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
@@ -267,7 +278,7 @@ is(
 $Dat{'format'} = "gpx";
 is(
     trackpoint(%Dat),
-    qq{      <trkpt lat="59.5214" lon="7.392133"> <time>2003-06-13T14:36:10Z</time> <ele>762</ele> </trkpt>\n},
+    qq{      <trkpt lat="59.5214" lon="7.392133"> <ele>762</ele> <time>2003-06-13T14:36:10Z</time> </trkpt>\n},
     "trackpoint() (gpx)"
 );
 
@@ -370,8 +381,7 @@ END
 # }}}
 testcmd("../gpst -o gpx </dev/null", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
     </trkseg>
@@ -439,8 +449,7 @@ END
 # }}}
 testcmd("../gpst -o gpx no_signal.mayko", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
       <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
@@ -724,7 +733,6 @@ testcmd("../gpst multitrack.gpx", # {{{
 <gpsml>
 <track>
 <title>Track 1</title>
-<tp> <time>2003-02-11T23:35:29Z</time> <lat>51.4968987</lat> <lon>-0.1448208</lon> </tp>
 <tp> <time>2003-02-11T23:35:39Z</time> <lat>51.4968266</lat> <lon>-0.1448824</lon> </tp>
 <tp> <time>2003-02-11T23:35:49Z</time> <lat>51.4968227</lat> <lon>-0.1449938</lon> </tp>
 <tp> <time>2003-02-11T23:36:14Z</time> <lat>51.496904</lat> <lon>-0.1453202</lon> </tp>
@@ -836,21 +844,22 @@ END
 );
 
     # }}}
+my $stripped_gpx_header = $gpx_header;
+$stripped_gpx_header =~ s/^\s*(.*)$/$1/mg;
 testcmd("../gpst -w -o gpx pause.gpx", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$stripped_gpx_header
 <trk>
 <trkseg>
-<trkpt lat="60.425494" lon="5.299534"><time>2006-05-21T16:49:11Z</time><ele>25.260</ele></trkpt>
-<trkpt lat="60.425464" lon="5.299610"><time>2006-05-21T16:49:46Z</time><ele>24.931</ele></trkpt>
-<trkpt lat="60.425314" lon="5.299694"><time>2006-05-21T16:52:04Z</time><ele>27.975</ele></trkpt>
-<trkpt lat="60.425384" lon="5.299741"><time>2006-05-21T16:56:36Z</time><ele>31.017</ele></trkpt>
-<trkpt lat="60.425339" lon="5.299958"><time>2006-05-21T16:56:47Z</time><ele>30.980</ele></trkpt>
-<trkpt lat="60.425238" lon="5.299640"><time>2006-05-21T16:56:56Z</time><ele>30.538</ele></trkpt>
-<trkpt lat="60.425246" lon="5.299686"><time>2006-05-21T16:57:03Z</time><ele>30.515</ele></trkpt>
-<trkpt lat="60.425345" lon="5.299773"><time>2006-05-21T16:59:08Z</time><ele>31.936</ele></trkpt>
-<trkpt lat="60.425457" lon="5.299419"><time>2006-05-21T17:00:54Z</time><ele>31.794</ele></trkpt>
+<trkpt lat="60.425494" lon="5.299534"><ele>25.260</ele><time>2006-05-21T16:49:11Z</time></trkpt>
+<trkpt lat="60.425464" lon="5.299610"><ele>24.931</ele><time>2006-05-21T16:49:46Z</time></trkpt>
+<trkpt lat="60.425314" lon="5.299694"><ele>27.975</ele><time>2006-05-21T16:52:04Z</time></trkpt>
+<trkpt lat="60.425384" lon="5.299741"><ele>31.017</ele><time>2006-05-21T16:56:36Z</time></trkpt>
+<trkpt lat="60.425339" lon="5.299958"><ele>30.980</ele><time>2006-05-21T16:56:47Z</time></trkpt>
+<trkpt lat="60.425238" lon="5.299640"><ele>30.538</ele><time>2006-05-21T16:56:56Z</time></trkpt>
+<trkpt lat="60.425246" lon="5.299686"><ele>30.515</ele><time>2006-05-21T16:57:03Z</time></trkpt>
+<trkpt lat="60.425345" lon="5.299773"><ele>31.936</ele><time>2006-05-21T16:59:08Z</time></trkpt>
+<trkpt lat="60.425457" lon="5.299419"><ele>31.794</ele><time>2006-05-21T17:00:54Z</time></trkpt>
 </trkseg>
 </trk>
 </gpx>
@@ -968,18 +977,17 @@ END
 
 testcmd("../gpst -o gpx missing.gpsml", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
-      <trkpt> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </trkpt>
-      <trkpt> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </trkpt>
+      <trkpt> <ele>483</ele> <time>2006-04-30T17:17:11Z</time> </trkpt>
+      <trkpt> <ele>485</ele> <time>2006-04-30T17:17:22Z</time> </trkpt>
       <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
       <trkpt> <ele>484</ele> </trkpt>
       <trkpt> <ele>486</ele> </trkpt>
-      <trkpt> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </trkpt>
-      <trkpt lat="60.42338" lon="5.34269"> <time>2006-04-30T17:18:05Z</time> <ele>487</ele> </trkpt>
+      <trkpt> <ele>490</ele> <time>2006-04-30T17:18:03Z</time> </trkpt>
+      <trkpt lat="60.42338" lon="5.34269"> <ele>487</ele> <time>2006-04-30T17:18:05Z</time> </trkpt>
     </trkseg>
   </trk>
 </gpx>
@@ -1023,19 +1031,18 @@ END
 # }}}
 testcmd("../gpst --epoch -o gpx pause.gpx", # {{{
     <<END,
-<?xml version="1.0" standalone="no"?>
-<gpx>
+$gpx_header
   <trk>
     <trkseg>
-      <trkpt lat="60.425494" lon="5.299534"> <time>2006-05-21T16:49:11Z</time> <ele>25.260</ele> </trkpt>
-      <trkpt lat="60.425464" lon="5.299610"> <time>2006-05-21T16:49:46Z</time> <ele>24.931</ele> </trkpt>
-      <trkpt lat="60.425314" lon="5.299694"> <time>2006-05-21T16:52:04Z</time> <ele>27.975</ele> </trkpt>
-      <trkpt lat="60.425384" lon="5.299741"> <time>2006-05-21T16:56:36Z</time> <ele>31.017</ele> </trkpt>
-      <trkpt lat="60.425339" lon="5.299958"> <time>2006-05-21T16:56:47Z</time> <ele>30.980</ele> </trkpt>
-      <trkpt lat="60.425238" lon="5.299640"> <time>2006-05-21T16:56:56Z</time> <ele>30.538</ele> </trkpt>
-      <trkpt lat="60.425246" lon="5.299686"> <time>2006-05-21T16:57:03Z</time> <ele>30.515</ele> </trkpt>
-      <trkpt lat="60.425345" lon="5.299773"> <time>2006-05-21T16:59:08Z</time> <ele>31.936</ele> </trkpt>
-      <trkpt lat="60.425457" lon="5.299419"> <time>2006-05-21T17:00:54Z</time> <ele>31.794</ele> </trkpt>
+      <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
+      <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
+      <trkpt lat="60.425314" lon="5.299694"> <ele>27.975</ele> <time>2006-05-21T16:52:04Z</time> </trkpt>
+      <trkpt lat="60.425384" lon="5.299741"> <ele>31.017</ele> <time>2006-05-21T16:56:36Z</time> </trkpt>
+      <trkpt lat="60.425339" lon="5.299958"> <ele>30.980</ele> <time>2006-05-21T16:56:47Z</time> </trkpt>
+      <trkpt lat="60.425238" lon="5.299640"> <ele>30.538</ele> <time>2006-05-21T16:56:56Z</time> </trkpt>
+      <trkpt lat="60.425246" lon="5.299686"> <ele>30.515</ele> <time>2006-05-21T16:57:03Z</time> </trkpt>
+      <trkpt lat="60.425345" lon="5.299773"> <ele>31.936</ele> <time>2006-05-21T16:59:08Z</time> </trkpt>
+      <trkpt lat="60.425457" lon="5.299419"> <ele>31.794</ele> <time>2006-05-21T17:00:54Z</time> </trkpt>
     </trkseg>
   </trk>
 </gpx>

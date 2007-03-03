@@ -248,7 +248,7 @@ for $curr_file (@ARGV) {
     # Scan through stdin or specified files and send every GPS entry to 
     # print_entry()
     # {{{
-    D("Opening \"$curr_file\" for read");
+    print(STDERR "$progname: Opening \"$curr_file\" for read\n") if $Opt{'verbose'};
     if (open(CurrFP, "<$curr_file")) {
         # {{{
         while (<CurrFP>) {
@@ -549,6 +549,7 @@ exit(0);
 sub read_xmlfile {
     # {{{
     my $Txt = join("", @_);
+    $Txt =~ s/<!--(.*?)-->//gs;
     $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
     # }}}
 }
@@ -558,6 +559,7 @@ sub print_gpx {
     my $Orig = shift;
     my $Str = $Orig;
     D("print_xml_gps(\"$Orig\")\n");
+    $Str =~ s/<!--(.*?)-->//gs;
     $Str =~
     s{
         <trk\b(.*?)>(.*?)</trk>
@@ -635,10 +637,17 @@ sub print_header {
                     "Datum[100]: WGS 84\n");
     } elsif ($Opt{'output-format'} eq "gpx") {
         print(OutFP join("",
-            "<?xml version=\"1.0\" standalone=\"no\"?>\n",
-            "<gpx>\n",
-            "$Spc$Spc<trk>\n",
-            "$Spc$Spc$Spc$Spc<trkseg>\n",
+            qq{<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n},
+            qq{<gpx\n},
+            qq{$Spc${Spc}version="1.1"\n},
+            qq{$Spc${Spc}creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"\n},
+            qq{$Spc${Spc}xmlns="http://www.topografix.com/GPX/1/1"\n},
+            qq{$Spc${Spc}xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n},
+            qq{$Spc${Spc}xsi:schemaLocation="http://www.topografix.com/GPX/1/1 },
+            qq{http://www.topografix.com/GPX/1/1/gpx.xsd"\n},
+            qq{>\n},
+            qq{$Spc$Spc<trk>\n},
+            qq{$Spc$Spc$Spc$Spc<trkseg>\n},
         ));
     } elsif ($Opt{'output-format'} eq "ps") {
         print(OutFP ps_header(532, 6034, 533, 6040));
@@ -948,8 +957,8 @@ sub print_entry {
                         : $Opt{'short-date'}
                             ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
                               "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
-                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'} " .
-                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}"
+                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
                     : "",
                 $Dat{'lon'},
                 $Dat{'lat'},
@@ -1120,7 +1129,7 @@ Options:
     Comment out following data with identical position values, only 
     print first entry.
   -v, --verbose
-    Verbose, warn about unknown lines.
+    Verbose output.
   --version
     Print version information.
   -w, --strip-whitespace
@@ -1329,7 +1338,7 @@ first entry.
 
 =item B<-v>, B<--verbose>
 
-Verbose, warn about unknown lines.
+Verbose output.
 
 =item B<-w>, B<--strip-whitespace>
 
