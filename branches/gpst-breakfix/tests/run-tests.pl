@@ -75,7 +75,7 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
-diag("Testing XML routines...");
+diag("Testing conversion routines...");
 
 # txt_to_xml() and xml_to_txt() {{{
 
@@ -100,6 +100,22 @@ is(xml_to_txt("first line\nsecond &lt;\rthird\r\n&lt;&amp;&gt;"),
     "xml_to_txt() with multiline string");
 
 # }}}
+
+is(postgresql_copy_safe(""),
+    "",
+    "postgresql_copy_safe() with empty string");
+
+is(postgresql_copy_safe("abcæøåÆØÅ"),
+    "abcæøåÆØÅ",
+    "postgresql_copy_safe(\"abcæøåÆØÅ\")");
+
+is(postgresql_copy_safe("abc\t'\r\n"),
+    "abc\\t'\\r\\n",
+    "postgresql_copy_safe(\"abc\\t'\\r\\n\")");
+
+is(postgresql_copy_safe("¤%/&gurgle\t325\\wer\ndfv'\r!\"#\n%\twe\r\x00sdf\xFFsadc\n\t\x00sdc\n"),
+    "¤%/&gurgle\\t325\\\\wer\\ndfv'\\r!\"#\\n%\\twe\\r\x00sdf\xFFsadc\\n\\t\x00sdc\\n",
+    "postgresql_copy_safe() with multiline, nulls and stuff");
 
 diag("Testing date routines...");
 
@@ -227,13 +243,6 @@ is(ddd_to_dms("-1"),
 is(ddd_to_dms("2-3"),
     undef,
     "ddd_to_dms(\"2-3\")");
-
-# }}}
-# list_nearest_waypoints() {{{
-
-like(list_nearest_waypoints(60.42541, 5.29959, 3),
-    qr/^\(.*,.*,.*\)$/,
-    "list_nearest_waypoints()");
 
 # }}}
 
@@ -469,6 +478,28 @@ END
 );
 
 # }}}
+testcmd("../gpst -o xgraph multitrack.gpx", # {{{
+    <<END,
+-0.1448824 51.4968266
+-0.1449938 51.4968227
+-0.1453202 51.4969040
+move -0.1453398 51.4969214
+-0.1455514 51.4969816
+-0.1457489 51.4970224
+-0.1457804 51.4970452
+move -0.1458608 51.4970680
+-0.1460047 51.4971658
+-0.1461614 51.4972469
+move -0.1462394 51.4972731
+-0.1463232 51.4973437
+-0.1462949 51.4973337
+-0.1462825 51.4973218
+-0.1462732 51.4973145
+END
+    "Output xgraph format from GPX"
+);
+
+# }}}
 testcmd("../gpst -d no_signal.mayko", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
@@ -486,7 +517,87 @@ testcmd("../gpst -d no_signal.mayko", # {{{
 </track>
 </gpsml>
 END
-    "Remove duplicated positions",
+    "Remove duplicated positions from gpsml",
+);
+
+# }}}
+testcmd("../gpst -d -o csv no_signal.mayko", # {{{
+    <<END,
+2002-12-22T21:42:24Z\t23.6746151\t70.6800486\t\t
+2002-12-22T21:42:32Z\t23.6740038\t70.6799322\t\t
+2002-12-22T21:42:54Z\t23.6723991\t70.6796266\t\t
+2002-12-22T21:44:45Z\t23.6757566\t70.6800774\t\t
+2002-12-22T21:44:52Z\t23.6753442\t70.6801502\t\t
+2002-12-22T21:45:04Z\t23.6757542\t70.6801905\t\t
+END
+    "Remove duplicated positions from csv output format",
+);
+
+# }}}
+testcmd("../gpst -d -o clean no_signal.mayko", # {{{
+    <<END,
+23.6746151	70.6800486
+23.6740038	70.6799322
+23.6723991	70.6796266
+23.6757566	70.6800774
+23.6753442	70.6801502
+23.6757542	70.6801905
+END
+    "Remove duplicated positions from clean output format",
+);
+
+# }}}
+testcmd("../gpst -d -o pgtab no_signal.mayko", # {{{
+    <<END,
+2002-12-22T21:42:24Z\t(70.6800486,23.6746151)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:42:32Z\t(70.6799322,23.6740038)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:42:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:44:45Z\t(70.6800774,23.6757566)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
+END
+    "Remove duplicated positions from pgtab output format",
+);
+
+# }}}
+testcmd("../gpst -o pgtab compact.gpx", # {{{
+    <<END,
+2002-12-30T15:22:04Z\t(70.6609320,23.7028354)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:06Z\t(70.6609392,23.7028468)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:08Z\t(70.6609429,23.7028499)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:11Z\t(70.6609381,23.7028620)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:12Z\t(70.6609368,23.7028648)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:13Z\t(70.6609344,23.7028652)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:15Z\t(70.6609349,23.7028707)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:17Z\t(70.6609348,23.7028654)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:19Z\t(70.6609347,23.7028599)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:20Z\t(70.6609348,23.7028609)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:23Z\t(70.6609388,23.7028653)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-30T15:22:25Z\t(70.6609426,23.7028732)\t\\N\t\\N\t\\N\t\\N\t\\N
+END
+);
+
+# }}}
+testcmd("../gpst -o pgtab no_signal.mayko", # {{{
+    <<END,
+2002-12-22T21:42:24Z\t(70.6800486,23.6746151)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:42:32Z\t(70.6799322,23.6740038)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:42:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:43:51Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:43:52Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:43:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:44:45Z\t(70.6800774,23.6757566)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N\t\\N
+2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
+END
+);
+
+# }}}
+testcmd("../gpst -o pgtab missing.gpsml", # {{{
+    <<END,
+2006-04-30T17:17:09Z\t(60.42353,5.34185)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-04-30T17:18:05Z\t(60.42338,5.34269)\t487\t\\N\t\\N\t\\N\t\\N
+END
 );
 
 # }}}
@@ -676,6 +787,19 @@ testcmd("../gpst log.dos.mayko", # {{{
 <tp> <time>2003-06-15T10:28:10Z</time> <lat>58.1809621</lat> <lon>8.13074</lon> </tp>
 </track>
 </gpsml>
+END
+    "Read DOS-formatted Mayko format",
+);
+
+# }}}
+testcmd("../gpst -o csv log.dos.mayko", # {{{
+    <<END,
+2003-06-15T10:27:45Z\t8.1225077\t58.1818158\t\t
+2003-06-15T10:27:53Z\t8.1253200\t58.1818712\t\t
+2003-06-15T10:27:57Z\t8.1266031\t58.1816347\t\t
+2003-06-15T10:28:03Z\t8.1284612\t58.1812099\t\t
+2003-06-15T10:28:06Z\t8.1293950\t58.1810315\t\t
+2003-06-15T10:28:10Z\t8.1307400\t58.1809621\t\t
 END
     "Read DOS-formatted Mayko format",
 );
@@ -1115,6 +1239,35 @@ END
 
 # }}}
 
+diag("Testing waypoint stuff...");
+
+testcmd("../gpst -o pgwtab multitrack.gpx", # {{{
+    <<END,
+(51.477880000,-0.001470000)\t0-Meridian\t\\N\t\\N\t\\N\t11-FEB-03 15:46\t11-FEB-03 15:46\t\\N\t\\N
+(51.532030,-0.177330)\tAbbey Road\t34.492798\t\\N\t\\N\tDet hellige gangfeltet der Beatles valsa over.\t26-FEB-06 17:29:46\t\\N\t\\N
+(61.636684,8.312254)\tGaldhøpiggen med ', &, < og >. ☺\t2469.012939\tmountain\t2006-05-08T18:27:59Z\tHer er det &, < og >. ☺\tSchwæra greie\thttp://www.example.org/\tWaypoint
+(60.397460000,5.350610000)\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t04-AUG-02 19:42\t04-AUG-02 19:42\t\\N\t\\N
+(51.510130000,-0.130410000)\tLeicester Square\t\\N\t\\N\t\\N\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N
+(60.968540000,9.285350000)\tLeira camping\t\\N\t\\N\t\\N\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N
+END
+    "Test pgwtab format",
+);
+
+# }}}
+testcmd("../gpst -o pgwupd multitrack.gpx", # {{{
+    <<END,
+UPDATE logg SET sted = '0-Meridian' WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Abbey Road' WHERE (point(51.532030,-0.177330) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Galdhøpiggen med '', &, < og >. ☺' WHERE (point(61.636684,8.312254) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Halfdan Griegs vei' WHERE (point(60.397460000,5.350610000) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Leicester Square' WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.0002 AND sted IS NULL;
+UPDATE logg SET sted = 'Leira camping' WHERE (point(60.968540000,9.285350000) <-> coor) < 0.0002 AND sted IS NULL;
+END
+    "Test pgwupd format",
+);
+
+# }}}
+
 todo_section:
 ;
 
@@ -1202,6 +1355,14 @@ END
             file_data("multitrack-pause.gpx"),
             "Should be equal to multitrack-pause.gpx"
         );
+
+        # }}}
+        $TODO = 'Fix it.';
+        # list_nearest_waypoints() {{{
+
+        like(list_nearest_waypoints(60.42541, 5.29959, 3),
+            qr/^\(.*,.*,.*\)$/,
+            "list_nearest_waypoints()");
 
         # }}}
     }
