@@ -119,10 +119,18 @@ sub trackpoint {
                 $tp_str .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
                            "$Spc$Spc$Spc$Spc<trkseg>\n";
             }
+            my ($estr_begin, $estr_ext, $estr_end) =
+               (         "",        "",        "");
+            if (length($err_str)) {
+                $estr_begin = "<!-- ";
+                $estr_ext = "<extensions>$Spc<error>$err_str</error>$Spc</extensions>$Spc";
+                $estr_end = " -->";
+            }
             if (length("$lat_str$lon_str$Dat{'ele'}")) {
                 $tp_str .=
                 join("",
                     "$Spc$Spc$Spc$Spc$Spc$Spc",
+                    $estr_begin,
                     "<trkpt$lat_str$lon_str>",
                     "$Spc",
                     length($Dat{'ele'})
@@ -134,7 +142,8 @@ sub trackpoint {
                           "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
                           "</time>$Spc"
                         : "",
-                    "</trkpt>\n"
+                        $estr_ext,
+                    "</trkpt>$estr_end\n"
                 );
             }
             $Retval .= $tp_str;

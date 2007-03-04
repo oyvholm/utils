@@ -70,6 +70,8 @@ chomp(my $gpx_header = <<END);
   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
 >
 END
+my $stripped_gpx_header = $gpx_header;
+$stripped_gpx_header =~ s/^\s*(.*)$/$1/mg;
 
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
@@ -475,6 +477,54 @@ $gpx_header
 </gpx>
 END
     "Output GPX from Mayko file with duplicates",
+);
+
+# }}}
+testcmd("../gpst -o gpx comments.mayko", # {{{
+    <<END,
+$gpx_header
+  <trk>
+    <trkseg>
+      <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
+      <trkpt lat="70.6799322" lon="23.6740038"> <time>2002-12-22T21:42:32Z</time> </trkpt>
+      <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:42:54Z</time> </trkpt>
+      <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:51Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+      <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:52Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+      <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:54Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+      <trkpt lat="70.6800774" lon="23.6757566"> <time>2002-12-22T21:44:45Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="70.6801502" lon="23.6753442"> <time>2002-12-22T21:44:52Z</time> </trkpt>
+      <trkpt lat="70.6801905" lon="23.6757542"> <time>2002-12-22T21:45:04Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "Output GPX from Mayko file with commented-out lines",
+);
+
+# }}}
+testcmd("../gpst -o gpx -w comments.mayko", # {{{
+    <<END,
+$stripped_gpx_header
+<trk>
+<trkseg>
+<trkpt lat="70.6800486" lon="23.6746151"><time>2002-12-22T21:42:24Z</time></trkpt>
+<trkpt lat="70.6799322" lon="23.6740038"><time>2002-12-22T21:42:32Z</time></trkpt>
+<trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:42:54Z</time></trkpt>
+<!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:51Z</time><extensions><error>desc</error></extensions></trkpt> -->
+<!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:52Z</time><extensions><error>desc</error></extensions></trkpt> -->
+<!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:54Z</time><extensions><error>desc</error></extensions></trkpt> -->
+<trkpt lat="70.6800774" lon="23.6757566"><time>2002-12-22T21:44:45Z</time></trkpt>
+</trkseg>
+<trkseg>
+<trkpt lat="70.6801502" lon="23.6753442"><time>2002-12-22T21:44:52Z</time></trkpt>
+<trkpt lat="70.6801905" lon="23.6757542"><time>2002-12-22T21:45:04Z</time></trkpt>
+</trkseg>
+</trk>
+</gpx>
+END
+    "Output whitespace-stripped GPX from Mayko file with commented-out lines",
 );
 
 # }}}
@@ -968,8 +1018,6 @@ END
 );
 
     # }}}
-my $stripped_gpx_header = $gpx_header;
-$stripped_gpx_header =~ s/^\s*(.*)$/$1/mg;
 testcmd("../gpst -w -o gpx pause.gpx", # {{{
     <<END,
 $stripped_gpx_header
