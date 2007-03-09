@@ -3,6 +3,7 @@
 #=======================================================================
 # $Id$
 # Activates the network card.
+# Syntax: wlan1 [essid]
 #=======================================================================
 
 [ "`whoami`" = "root" ] || {
@@ -10,6 +11,10 @@
     exit 1
 }
 
+unset accpoint
+if [ "$1" = "" ]; then
+    accpoint="$1"
+fi
 modprobe ath_pci
 modprobe wlan_scan_sta
 ifconfig ath0 up
@@ -20,8 +25,6 @@ echo
 echo ==== Available networks: ====
 wlanconfig ath0 list scan
 echo
-echo -n "Press ENTER to get promiscuous or enter ESSID of accesspoint: "
-read accpoint
 if [ -z $accpoint ]; then
     echo iwconfig ath0 essid any ap any
     iwconfig ath0 essid any ap any
@@ -35,5 +38,4 @@ iwconfig ath0
 echo ======== END iwconfig ========
 echo
 echo -n Press ENTER to run \"dhclient ath0\" or CTRL-C to abort...
-read
 dhclient ath0
