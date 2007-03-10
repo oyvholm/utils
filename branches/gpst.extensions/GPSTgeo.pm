@@ -35,114 +35,30 @@ our $wpt_elems = "ele|time|magvar|geoidheight|name|cmt|desc|src|link|sym|" .
                  "type|fix|sat|hdop|vdop|pdop|ageofdgpsdata|dgpsid|" .
                  "extensions";
 
-# FIXME: Hardcoding
-my $waypoint_file = "$ENV{HOME}/bin/src/gpstools/tests/waypoints.gpx";
-my @orig_waypoints = load_waypoints($waypoint_file);
-
 sub list_nearest_waypoints {
     # {{{
     my ($Lat, $Lon, $Count) = @_;
-    my $Retval = "";
-    my @Waypoints = @orig_waypoints;
 
-    D("list_nearest_waypoints('$Lat', '$Lon', '$Count')");
+    # FIXME: Hardcoding
+    my $waypoint_file = "/home/sunny/gps/waypoints.gpx";
 
-    for my $i (0 .. $#Waypoints) {
-        $Waypoints[$i]{'distance'} = distance(
-            $Lat, $Lon,
-            $Waypoints[$i]{'lat'},
-            $Waypoints[$i]{'lon'}
-        );
-        if ($main::Debug) {
-            my $dstr = "$i is { ";
-            for my $role (keys %{ $Waypoints[$i] }) {
-                $dstr .= "$role=\"$Waypoints[$i]{$role}\" ";
-            }
-            D($dstr . "}");
-        }
-    }
-
-    my @Sorted = sort { $Waypoints[$b]{distance} } <=> $Waypoints[$a]{distance} } keys @Waypoints;
-
-    if ($main::Debug) {
-        for my $i (0 .. $#Waypoints) {
-            my $dstr = "sorted $i is { ";
-            for my $role (keys %{ $Sorted[$i] }) {
-                $dstr .= "$role=\"$Sorted[$i]{$role}\" ";
-            }
-            D($dstr . "}");
-        }
-    }
-
-    for my $i2 (0 .. $Count - 1) {
-        my $pos = $i2 + 1;
-        $Retval .= "<near pos=\"$pos\"> <name>$Sorted[$i2]{'name'}</name> <distance>$Sorted[$i2]{'distance'}</distance> </near>";
-    }
-    return($Retval);
-    # }}}
-}
-
-sub distance {
-    # Return distance between two positions. {{{
-    my ($Lat1, $Lon1, $Lat2, $Lon2, $Unit) = @_;
-    defined($Unit) || ($Unit = "metre");
-    my  $Retval = "";
-
-    my $geo = new Geo::Distance;
-    $Retval = $geo->distance($Unit, $Lat1, $Lon1 => $Lat2, $Lon2);
-    return($Retval);
-    # }}}
-}
-
-sub load_waypoints {
-    # {{{
-    my $File = shift;
-    my @Retval = ();
-
-    D("Opening $File for read");
-    if (open(WaypFP, "<", $File)) {
-        my $Data = join("", <WaypFP>);
-        # D("Data = '$Data'");
-        close(WayFP);
-        @Retval = parse_waypoints($Data);
-    } else {
-        $main::Opt{'verbose'} && warn("$File: Cannot open file for read\n");
-        @Retval = undef;
-    }
-    D("load_waypoints('$File') returns '" . join("|", @Retval) . "'");
-    return @Retval;
-    # }}}
-}
-
-sub parse_waypoints {
-    # {{{
-    my $Data = shift;
-    my @Retval = ();
-    # D("parse_waypoints('$Data')");
-    $Data =~
-    s{
-        <wpt\b(.*?)\blat="(.+?)".+?\blon="(.+?)".*?>(.*?)</wpt>
-    }{
-        my ($Lat, $Lon, $el_wpt) =
-           (1.0 * $2, 1.0 * $3, $4);
-        my $wpt = {};
-        $wpt->{'lat'} = $Lat;
-        $wpt->{'lon'} = $Lon;
-        D("parse: Lat = '$Lat', Lon = '$Lon'");
-        $el_wpt =~
-        s{
-            <($wpt_elems)\b.*?>(.*?)</($wpt_elems)>
+    # FIXME: Incredible unfinished and kludgy.
+    if (open(WaypFP, "$main::Cmd{'gpsbabel'} -i gpx -f $waypoint_file " .
+                     "-x radius,lat=$Lat,lon=$Lon,distance=1000 " .
+                     "-o gpx -F - |")
+    ) {
+        my $Str = join("", <WaypFP>);
+        $Str =~ s{
+            ^.*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*?
+             .*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*?
+             .*?<wpt\s.*?>.*?<name>(.+?)</name>.*?</wpt>.*$
         }{
-            my $Elem = $1;
-            $wpt->{$Elem} = $2;
-            "";
-        }gsex;
-        push(@Retval, $wpt);
-        D("push Retval '$wpt'");
-        "";
-    }gsex;
-    D("parse_waypoints() returns '" . join("|", @Retval) . "'");
-    return(@Retval);
+            "($1, $2, $3)";
+        }sex;
+        return($Str);
+    } else {
+        die("$main::progname: Cannot open $main::Cmd{'gpsbabel'} pipe: $!\n");
+    }
     # }}}
 }
 
