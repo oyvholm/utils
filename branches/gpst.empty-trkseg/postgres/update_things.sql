@@ -15,6 +15,8 @@ DELETE FROM logg WHERE date BETWEEN '2003-02-15 17:58:26Z' AND '2003-02-15 17:59
 DELETE FROM logg WHERE date BETWEEN '2003-07-15 16:06:58Z' AND '2003-07-15 16:08:05Z';
 DELETE FROM logg WHERE date = '2002-12-10 01:25:28Z';
 DELETE FROM logg WHERE date = '2002-10-06 22:41:10Z';
+DELETE FROM logg WHERE date = '2006-02-12 03:33:15Z';
+DELETE FROM logg WHERE date = '2006-02-19 14:15:07Z';
 DELETE FROM logg WHERE ele = -1500;
 
 \echo
@@ -95,35 +97,4 @@ SELECT count(*)
     AS "Antall i events etter rensking"
     FROM events;
 
-BEGIN ISOLATION LEVEL SERIALIZABLE;
-    \echo
-    \echo ================ Sett avstanden hjemmefra ================
-
-    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> coor
-        WHERE date > (
-            SELECT laststed FROM stat
-                WHERE lastupdate IS NOT NULL
-                ORDER BY lastupdate DESC LIMIT 1
-        );
-
-    \echo
-    \echo ================ Oppdater sted og dist ================
-
-    UPDATE logg SET sted = clname(coor)
-        WHERE date > (
-            SELECT laststed FROM stat
-                WHERE lastupdate IS NOT NULL
-                ORDER BY lastupdate DESC LIMIT 1
-        );
-    UPDATE logg SET dist = cldist(coor)
-        WHERE date > (
-            SELECT laststed FROM stat
-                WHERE lastupdate IS NOT NULL
-                ORDER BY lastupdate DESC LIMIT 1
-        );
-
-    INSERT INTO stat (lastupdate, laststed) VALUES (
-        now(),
-        (SELECT max(date) FROM logg)
-    );
-COMMIT;
+\i distupdate.sql
