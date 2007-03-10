@@ -11,10 +11,6 @@ package GPSTgeo;
 use strict;
 use warnings;
 
-use GPSTdebug;
-
-use Geo::Distance;
-
 BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
@@ -24,16 +20,10 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(
-        $wpt_elems
-        &list_nearest_waypoints &ddd_to_dms &distance
-    );
+    @EXPORT = qw(&list_nearest_waypoints &ddd_to_dms);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
-our $wpt_elems = "ele|time|magvar|geoidheight|name|cmt|desc|src|link|sym|" .
-                 "type|fix|sat|hdop|vdop|pdop|ageofdgpsdata|dgpsid|" .
-                 "extensions";
 
 sub list_nearest_waypoints {
     # {{{
