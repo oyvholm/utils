@@ -37,5 +37,4 @@ echo ======== BEGIN iwconfig ========
 iwconfig ath0
 echo ======== END iwconfig ========
 echo
-echo -n Press ENTER to run \"dhclient ath0\" or CTRL-C to abort...
 dhclient ath0
