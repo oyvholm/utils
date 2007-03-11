@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
-<!-- $Id$ -->
 <track>
 <title>Missing various elements</title>
 <tp> <time>2006-04-30T17:16:59Z</time> </tp>
