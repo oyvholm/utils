@@ -7,5 +7,11 @@
 
 use strict;
 
-my $Elem = defined($ARGV[0]) ? $ARGV[0] : "l";
-printf("<%s>%s</%s>\n", $Elem, join("", <STDIN>), $Elem);
+defined($ARGV[0]) || ($ARGV[0] = "l");
+for my $Elem (@ARGV) {
+    print("<$Elem>");
+}
+print(join("", <STDIN>));
+for my $Elem (reverse @ARGV) {
+    print("</$Elem>");
+}
