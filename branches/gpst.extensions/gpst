@@ -37,6 +37,7 @@ our %Opt = (
     'double-y-scale' => 0,
     'epoch' => 0,
     'fix' => 0,
+    'from-date' => "",
     'help' => 0,
     'inside' => 0,
     'near' => "",
@@ -74,6 +75,7 @@ GetOptions(
     "double-y-scale|y" => \$Opt{'double-y-scale'},
     "epoch|e" => \$Opt{'epoch'},
     "fix" => \$Opt{'fix'},
+    "from-date=s" => \$Opt{'from-date'},
     "help|h" => \$Opt{'help'},
     "inside" => \$Opt{'inside'},
     "near" => \$Opt{'near'},
@@ -114,6 +116,9 @@ our %Cmd = (
 
 my %Poscount = ();
 
+if ($Opt{'output-format'} eq "pgtab") {
+    $Opt{'require'} .= "pt";
+}
 my %Req = (
     'ele' => ($Opt{'require'} =~ /e/) ? 1 : 0,
     'position' => ($Opt{'require'} =~ /p/) ? 1 : 0,
@@ -517,9 +522,7 @@ for $curr_file (@ARGV) {
                 print_entry(%Dat);
                 # }}}
             } elsif (/^xmaplog /) {
-                ($Opt{'output-format'} eq "csv")
-                    && ($Opt{'save-to-file'} eq "\n")
-                    && print("\n");
+                # NOP
             } elsif (/^$/) {
                 ($Opt{'output-format'} eq "csv")
                     && ($Opt{'save-to-file'} eq "\n")
@@ -565,65 +568,127 @@ sub print_gpx {
     my $Str = $Orig;
     D("print_xml_gps(\"$Orig\")\n");
     $Str =~ s/<!--(.*?)-->//gs;
-    $Str =~
-    s{
-        <trk\b(.*?)>(.*?)</trk>
+    my $fromdate_str = "";
+    if ($Opt{'from-date'}) {
+        $fromdate_str = "date >= '$Opt{'from-date'}' AND ";
     }
-    {
-        my $el_trk = $2;
-        $el_trk =~
+    if ($Opt{'output-format'} =~ /^(pgwtab|pgwupd)$/) {
+        # {{{
+        $Str =~
         s{
-            <name\b(.*?)>(.*?)</name>
-        }{
-            my %tmp_dat = ();
-            $tmp_dat{'title'} = $2;
-            $tmp_dat{'type'} = "title";
-            print_entry(%tmp_dat);
-            "";
-        }sex;
-        $el_trk =~
-        s{
-            <trkseg\b(.*?)>(.*?)</trkseg>
+            <wpt\b(.*?)>(.*?)</wpt>
         }
         {
-            my $el_trkseg = $2;
-            $el_trkseg =~
+            my $attr_wpt = $1;
+            my $el_wpt = $2;
+            my ($Lat, $Lon, $Name, $Ele, $Type, $Time, $Cmt, $Desc, $Src, $Sym) =
+               ('\N', '\N',  '\N', '\N',  '\N',  '\N', '\N',  '\N', '\N', '\N');
+
+            $attr_wpt =~ /.*lat="($DIGIT+?)"/s &&
+                ($Lat = postgresql_copy_safe($1));
+            $attr_wpt =~ /.*lon="($DIGIT+?)"/s &&
+                ($Lon = postgresql_copy_safe($1));
+            $el_wpt =~ /.*<name\b(.*?)>(.*?)<\/name>/s &&
+                ($Name = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<ele\b(.*?)>(.*?)<\/ele>/s &&
+                ($Ele = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<type\b(.*?)>(.*?)<\/type>/s &&
+                ($Type = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<time\b(.*?)>(.*?)<\/time>/s &&
+                ($Time = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<cmt\b(.*?)>(.*?)<\/cmt>/s &&
+                ($Cmt = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<desc\b(.*?)>(.*?)<\/desc>/s &&
+                ($Desc = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<src\b(.*?)>(.*?)<\/src>/s &&
+                ($Src = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<sym\b(.*?)>(.*?)<\/sym>/s &&
+                ($Sym = postgresql_copy_safe(xml_to_txt($2)));
+
+            if ($Opt{'output-format'} eq "pgwtab") {
+                print(
+                    join("\t",
+                        "($Lat,$Lon)",
+                        $Name,
+                        $Ele,
+                        $Type,
+                        $Time,
+                        $Cmt,
+                        $Desc,
+                        $Src,
+                        $Sym
+                    ) . "\n"
+                );
+            } elsif ($Opt{'output-format'} eq "pgwupd") {
+                $Name =~ s/'/''/gs;
+                print("UPDATE logg SET sted = '$Name' WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.0002 AND sted IS NULL;\n");
+            }
+            "";
+        }gsex;
+        # }}}
+    } else {
+        # {{{
+        $Str =~
+        s{
+            <trk\b(.*?)>(.*?)</trk>
+        }
+        {
+            my $el_trk = $2;
+            $el_trk =~
             s{
-                <trkpt\b(.*?)>(.*?)</trkpt>
+                <name\b(.*?)>(.*?)</name>
+            }{
+                my %tmp_dat = ();
+                $tmp_dat{'title'} = $2;
+                $tmp_dat{'type'} = "title";
+                print_entry(%tmp_dat);
+                "";
+            }sex;
+            $el_trk =~
+            s{
+                <trkseg\b(.*?)>(.*?)</trkseg>
             }
             {
-                my ($attr_trkpt, $el_trkpt) =
-                   (         $1,        $2);
-                %Dat = (
-                    'year' => '', 'month' => '', 'day' => '',
-                    'hour' => '', 'min' => '', 'sec' => '',
-                    'lat' => '', 'lon' => '',
-                    'ele' => '',
-                    'desc' => '',
-                    'error' => "",
-                    'type' => 'tp',
-                );
-                ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
-                ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
-                ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Dat{'ele'} = $1);
-                if (
-                    $el_trkpt =~
-                    m{
-                        <time>(\d\d\d\d)-?(\d\d)-?(\d\d)T
-                        (\d\d):?(\d\d):?([\d\.]+)Z</time>
-                    }x
-                ) {
-                    ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
-                     $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
-                    ($1, $2, $3, $4, $5, $6);
+                my $el_trkseg = $2;
+                $el_trkseg =~
+                s{
+                    <trkpt\b(.*?)>(.*?)</trkpt>
                 }
-                print_entry(%Dat);
-                "";
+                {
+                    my ($attr_trkpt, $el_trkpt) =
+                       (         $1,        $2);
+                    %Dat = (
+                        'year' => '', 'month' => '', 'day' => '',
+                        'hour' => '', 'min' => '', 'sec' => '',
+                        'lat' => '', 'lon' => '',
+                        'ele' => '',
+                        'desc' => '',
+                        'error' => "",
+                        'type' => 'tp',
+                    );
+                    ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
+                    ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
+                    ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Dat{'ele'} = $1);
+                    if (
+                        $el_trkpt =~
+                        m{
+                            <time>(\d\d\d\d)-?(\d\d)-?(\d\d)T
+                            (\d\d):?(\d\d):?([\d\.]+)Z</time>
+                        }x
+                    ) {
+                        ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                         $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
+                        ($1, $2, $3, $4, $5, $6);
+                    }
+                    print_entry(%Dat);
+                    "";
+                }gsex;
+                $found_move = 1;
             }gsex;
             $found_move = 1;
         }gsex;
-        $found_move = 1;
-    }gsex;
+        # }}}
+    }
     # }}}
 }
 
@@ -860,7 +925,11 @@ sub print_entry {
             && ($Dat{'lon'} eq $last_lon)
             && ($Dat{'lat'} eq $last_lat)
         ) {
-            $Dat{'error'} = "dup";
+            if ($Opt{'output-format'} eq 'gpsml') {
+                $Dat{'error'} = "dup";
+            } else {
+                $do_print = 0;
+            }
         } else {
                 $do_print = 1;
         }
@@ -904,9 +973,16 @@ sub print_entry {
                                  $Dat{$1},
                                  $1);
             }
+        } elsif ($Opt{'output-format'} eq "pgtab") {
+            if ($Dat{'type'} eq "tp" && $Dat{'year'}) {
+                $Dat{'format'} = "pgtab";
+                $Line .= trackpoint(%Dat);
+            }
         } elsif ($Opt{'output-format'} eq "xgraph") {
-            $pause_len && ($Line .= "move ");
-            ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            if ($print_pos) {
+                $pause_len && ($Line .= "move ");
+                ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            }
         } elsif($Opt{'output-format'} eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) =
                (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
@@ -969,6 +1045,8 @@ sub print_entry {
                 "\n"
             );
             # }}}
+        } elsif ($Opt{'output-format'} eq "pgwtab") {
+            # FIXME: NOP at the moment.
         } else {
             die("$progname: \"$Opt{'output-format'}\": " .
                 "Unknown output format\n");
@@ -1074,6 +1152,11 @@ Options:
     Comment out entries which is obviously wrong. Use together with 
     --chronology to fix those kind of errors. Does not work with GPX 
     output yet.
+  --from-date x
+    Used by the pgwupd format. Specifies from which date waypoints 
+    should be updated. No checks for valid date format here, let 
+    PostgreSQL take care of that. All variants it understands can be 
+    used here.
   -h, --help
     Show this help.
   --inside
@@ -1092,6 +1175,9 @@ Options:
       gpsml (Default)
       gpstrans
       gpx (Not complete)
+      pgtab
+      pgwtab
+      pgwupd
       poscount
       ps (Unfinished)
       svg (Unfinished)

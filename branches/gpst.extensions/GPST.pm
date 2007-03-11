@@ -22,7 +22,7 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&trackpoint);
+    @EXPORT = qw(&trackpoint &postgresql_copy_safe);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -131,6 +131,25 @@ sub trackpoint {
                 );
             }
             # }}}
+        } elsif($Dat{'format'} eq "xgraph") {
+            if (length($Dat{'lat'}) && length($Dat{'lon'})) {
+                $Retval .= "$Dat{'lon'}\t$Dat{'lat'}";
+            }
+        } elsif ($Dat{'format'} eq "pgtab") {
+            $Retval .= join("\t",
+                $Dat{'year'}
+                    ? "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                    : '\N', # date
+                (length($Dat{'lat'}) && length($Dat{'lon'}))
+                    ? "($Dat{'lat'},$Dat{'lon'})"
+                    : '\N', # coor
+                length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
+                '\N', # sted
+                '\N', # dist
+                '\N', # description
+                '\N' # avst
+            ) . "\n";
         } else {
             $Retval = undef;
         }
@@ -138,6 +157,17 @@ sub trackpoint {
         $Retval = undef;
     }
     return $Retval;
+    # }}}
+}
+
+sub postgresql_copy_safe {
+    # {{{
+    my $Str = shift;
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
     # }}}
 }
 
