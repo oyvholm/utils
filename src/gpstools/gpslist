@@ -7,7 +7,7 @@
 # usual tables.
 #=======================================================================
 
-cat "$@" | gpst -o pgtab -rt | psql -c "TRUNCATE logg; COPY logg FROM stdin;" tmpgps >/dev/null 2>&1
+cat "$@" | gpst -o pgtab | psql -c "TRUNCATE logg; COPY logg FROM stdin;" tmpgps >/dev/null 2>&1
 cd ~/bin/src/gpstools/postgres
 psql -f "$HOME/bin/src/gpstools/postgres/allupdate.sql" tmpgps >/dev/null 2>&1
 psql -f "$HOME/bin/src/gpstools/postgres/distupdate.sql" tmpgps >/dev/null 2>&1
