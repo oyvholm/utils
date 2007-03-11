@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+  <metadata>
+    <name>File with &lt;extensions&gt; elements</name>
+    <author>Me</author>
+    <extensions>
+      <a>
+        <aa>metadata aa</aa>
+      </a>
+      <mb>bb in metadata</mb>
+    </extensions>
+  </metadata>
+  <wpt lat="11" lon="12">
+    <name>Somewhere in Nigeria</name>
+    <extensions>
+      <wa>in wpt</wa>
+    </extensions>
+  </wpt>
+  <trk>
+    <name>Track 1</name>
+    <extensions>
+      <blurfl>inside trk</blurfl>
+    </extensions>
+    <trkseg>
+      <trkpt lat="21" lon="22">
+        <time>2001-02-03T04:05:06Z</time>
+        <extensions>
+          <ba>1 in trkpt</ba>
+          <bb>trkpt 2</bb>
+          <bc>
+            <bca>bca trkpt</bca>
+            <bcb>trkpt bcb</bcb>
+            <bcc>
+              <bcca>
+                <bccba>bccba stuff</bccba>
+              </bcca>
+              <bccb>
+                <bccbb>bccba thingy</bccbb>
+              </bccb>
+            </bcc>
+          </bc>
+        </extensions>
+      </trkpt>
+      <extensions>
+        <da>trkseg 1</da>
+        <db>trkseg 2</db>
+      </extensions>
+    </trkseg>
+  </trk>
+  <extensions>
+    <f>
+      <fa>in gpx</fa>
+    </f>
+    <g>Penguin Power</g>
+  </extensions>
+</gpx>
