@@ -107,10 +107,18 @@ sub trackpoint {
             # {{{
             my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
             my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
+            my ($estr_begin, $estr_ext, $estr_end) =
+               (         "",        "",        "");
+            if (length($err_str)) {
+                $estr_begin = "<!-- ";
+                $Dat{'extensions'} .= "<error>$err_str</error>";
+                $estr_end = " -->";
+            }
             if (length("$lat_str$lon_str$Dat{'ele'}")) {
                 $Retval .=
                 join("",
                     "$Spc$Spc$Spc$Spc$Spc$Spc",
+                    $estr_begin,
                     "<trkpt$lat_str$lon_str>",
                     "$Spc",
                     length($Dat{'ele'})
@@ -124,10 +132,13 @@ sub trackpoint {
                         : "",
                     length($Dat{'extensions'})
                         ? "<extensions>" .
+                          $Spc .
                           $Dat{'extensions'} .
-                          "</extensions>"
+                          $Spc .
+                          "</extensions>$Spc"
                         : "",
-                    "</trkpt>\n"
+                    $estr_ext,
+                    "</trkpt>$estr_end\n"
                 );
             }
             # }}}
