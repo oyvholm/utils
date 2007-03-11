@@ -9,7 +9,8 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL
                 ORDER BY lastupdate DESC LIMIT 1
-        );
+        )
+        OR date IS NULL;
 
     \echo
     \echo ================ Oppdater sted og dist ================
@@ -19,13 +20,15 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL
                 ORDER BY lastupdate DESC LIMIT 1
-        );
+        )
+        OR date IS NULL;
     UPDATE logg SET dist = cldist(coor)
         WHERE date > (
             SELECT laststed FROM stat
                 WHERE lastupdate IS NOT NULL
                 ORDER BY lastupdate DESC LIMIT 1
-        );
+        )
+        OR date IS NULL;
 
     INSERT INTO stat (lastupdate, laststed) VALUES (
         now(),
