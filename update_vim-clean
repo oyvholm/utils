@@ -36,9 +36,9 @@ if [ ! -d $vimclean ]; then
     mkdir -p $vimbase || { echo "$progname: mkdir $vimbase: Gikk på ræva, avbryter." >&2; exit 1; }
     cd $vimbase || { echo "$progname: cd $vimbase: Gikk ikke." >&2; exit 1; }
     if [ "$vimver" = "6" ]; then
-        cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/vim co -P -d vim$vimver.clean vim || { echo "$progname: Feil under cvs checkout" >&2; exit 1; }
+        cvs -d :pserver:anonymous@vim.cvs.sf.net:/cvsroot/vim co -P -d vim$vimver.clean vim || { echo "$progname: Feil under cvs checkout" >&2; exit 1; }
     elif [ "$vimver" = "7" ]; then
-        cvs -d :pserver:anonymous@cvs.sf.net:/cvsroot/vim co -P -d vim$vimver.clean vim7 || { echo "$progname: Feil under cvs checkout" >&2; exit 1; }
+        cvs -d :pserver:anonymous@vim.cvs.sf.net:/cvsroot/vim co -P -d vim$vimver.clean vim7 || { echo "$progname: Feil under cvs checkout" >&2; exit 1; }
     else
         # Hit kommer vi aldri, men for sikkerhets skyld…
         echo "$progname: Hva pokkern er det slags Vim-versjon du har? «$vimver»???" >&2
