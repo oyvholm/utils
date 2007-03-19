@@ -3,11 +3,11 @@ $Id$
 Index: src/edit.c
 ===================================================================
 RCS file: /cvsroot/vim/vim7/src/edit.c,v
-retrieving revision 1.22
-diff -u -r1.22 edit.c
---- src/edit.c	1 Jul 2005 22:39:56 -0000	1.22
-+++ src/edit.c	3 Jul 2005 11:22:26 -0000
-@@ -4744,6 +4744,7 @@
+retrieving revision 1.119
+diff -u -r1.119 edit.c
+--- src/edit.c	8 Mar 2007 12:10:13 -0000	1.119
++++ src/edit.c	19 Mar 2007 11:03:06 -0000
+@@ -6030,6 +6030,7 @@
  	textwidth = W_WIDTH(curwin) - 1;
  	if (textwidth > 79)
  	    textwidth = 79;
@@ -18,11 +18,11 @@ diff -u -r1.22 edit.c
 Index: src/ex_cmds.c
 ===================================================================
 RCS file: /cvsroot/vim/vim7/src/ex_cmds.c,v
-retrieving revision 1.36
-diff -u -r1.36 ex_cmds.c
---- src/ex_cmds.c	27 Jun 2005 22:47:26 -0000	1.36
-+++ src/ex_cmds.c	3 Jul 2005 11:22:26 -0000
-@@ -165,14 +165,14 @@
+retrieving revision 1.86
+diff -u -r1.86 ex_cmds.c
+--- src/ex_cmds.c	15 Mar 2007 20:38:26 -0000	1.86
++++ src/ex_cmds.c	19 Mar 2007 11:03:07 -0000
+@@ -171,14 +171,14 @@
  	/*
  	 * if 'textwidth' set, use it
  	 * else if 'wrapmargin' set, use it
