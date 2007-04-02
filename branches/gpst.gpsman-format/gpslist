@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Read GPS data from stdin or file names at the command line and send a 
+# PostgreSQL table to stdout. Needs a database called "tmpgps" with the 
+# usual tables.
+#=======================================================================
+
+cat "$@" | gpst -o pgtab | psql -c "TRUNCATE logg; COPY logg FROM stdin;" tmpgps >/dev/null 2>&1
+cd ~/bin/src/gpstools/postgres
+psql -f "$HOME/bin/src/gpstools/postgres/allupdate.sql" tmpgps >/dev/null 2>&1
+psql -f "$HOME/bin/src/gpstools/postgres/distupdate.sql" tmpgps >/dev/null 2>&1
+psql -c "SELECT date AT TIME ZONE 'UTC' || 'Z' as date, coor, sted, dist, avst FROM logg ORDER BY date;" tmpgps
