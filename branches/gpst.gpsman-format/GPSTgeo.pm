@@ -20,7 +20,7 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&list_nearest_waypoints &ddd_to_dms);
+    @EXPORT = qw(&list_nearest_waypoints &ddd_to_dms &dms_to_ddd);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -90,6 +90,24 @@ sub ddd_to_dms {
                       $Hour, $Min, $Sec);
     return $Retval;
     # }}}
+}
+
+sub dms_to_ddd {
+    my ($Deg, $Min, $Sec) = @_;
+
+    defined($Deg) || ($Deg = 0);
+    defined($Min) || ($Min = 0);
+    defined($Sec) || ($Sec = 0);
+
+    length($Deg) || ($Deg = 0);
+    length($Min) || ($Min = 0);
+    length($Sec) || ($Sec = 0);
+
+    if ("$Deg$Min$Sec" =~ /[^\d\.]/) {
+        return(undef);
+    }
+    my $Retval = 1.0 * sprintf("%f", $Deg + 1.0*$Min/60 + 1.0*$Sec/3600);
+    return($Retval);
 }
 
 1;

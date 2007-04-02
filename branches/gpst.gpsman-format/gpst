@@ -521,6 +521,39 @@ for $curr_file (@ARGV) {
                 $Dat{'error'} = "nosignal";
                 print_entry(%Dat);
                 # }}}
+            } elsif (
+                # \t2003-12-02 10:06:17\tN50 05 31.2\tE14 26 10.4\t165.003417969
+                # (GPSMan)
+                # {{{
+                /^
+                    \t
+                    (\d\d\d\d)-(\d\d)-(\d\d)\ (\d\d):(\d\d):(\d\d)
+                    \t
+                    (N|S)(\d+)\ (\d\d)\ (\d\d\.\d)
+                    \t
+                    (W|E)(\d+)\ (\d\d)\ (\d\d\.\d)
+                    \t
+                    ($DIGIT+)
+                    $
+                /x) {
+                ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                 $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
+                ($1, $2, $3, $4, $5, $6);
+                my $NS = $7;
+                $Dat{'lat'} = dms_to_ddd($8, $9, $10);
+                my $WE = $11;
+                $Dat{'lon'} = dms_to_ddd($12, $13, $14);
+                $Dat{'ele'} = $15;
+                $NS eq "S" && ($Dat{'lat'} = 0 - $Dat{'lat'});
+                $WE eq "W" && ($Dat{'lon'} = 0 - $Dat{'lon'});
+                print_entry(%Dat);
+                # }}}
+            } elsif (/^!TS:$/) {
+                $found_move = 1;
+                print_entry(%Dat);
+            } elsif (/^!T:\t(.*?)\t/) {
+                $Dat{'title'} = $1;
+                print_entry(%Dat);
             } elsif (/^xmaplog /) {
                 # NOP
             } elsif (/^$/) {

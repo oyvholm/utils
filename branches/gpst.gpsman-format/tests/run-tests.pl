@@ -202,6 +202,10 @@ is(ddd_to_dms("0"),
     "0\xB000'00.0\"",
     "ddd_to_dms(\"0\")");
 
+is(ddd_to_dms("0.00001"),
+    "0\xB000'00.0\"",
+    "ddd_to_dms(\"0.00001\") — Precision of DDD with five decimals");
+
 is(ddd_to_dms(""),
     "0\xB000'00.0\"",
     "ddd_to_dms(\"\")");
@@ -245,6 +249,57 @@ is(ddd_to_dms("-1"),
 is(ddd_to_dms("2-3"),
     undef,
     "ddd_to_dms(\"2-3\")");
+
+# }}}
+# dms_to_ddd() {{{
+is(dms_to_ddd(),
+    0,
+    "dms_to_ddd() with no parameters");
+is(dms_to_ddd(0, 0, 0),
+    0,
+    "dms_to_ddd(0, 0, 0)");
+is(dms_to_ddd(12, 30, 45),
+    12.5125,
+    "dms_to_ddd(12, 30, 45)");
+is(dms_to_ddd("asd", 0, 0),
+    undef,
+    "dms_to_ddd() with invalid degrees");
+is(dms_to_ddd(0, "asd", 0),
+    undef,
+    "dms_to_ddd() with invalid minutes");
+is(dms_to_ddd(0, 0, "asd"),
+    undef,
+    "dms_to_ddd() with invalid seconds");
+is(dms_to_ddd("", 0, 0),
+    0,
+    "dms_to_ddd() with empty degree string");
+is(dms_to_ddd(0, 0, ""),
+    0,
+    "dms_to_ddd() with empty second string");
+is(dms_to_ddd(-12, 30, 45),
+    undef,
+    "dms_to_ddd() doesn’t accept negative degrees atm");
+is(dms_to_ddd(12, -30, 45),
+    undef,
+    "dms_to_ddd() doesn’t accept negative minutes atm");
+is(dms_to_ddd(12, 30, -45),
+    undef,
+    "dms_to_ddd() doesn’t accept negative seconds atm");
+is(dms_to_ddd(0, 0, 0.1),
+    "0.00001",
+    "dms_to_ddd(0, 0, 0.1) — Precision of DMS with one decimal");
+is(dms_to_ddd(2, 30),
+    2.5,
+    "dms_to_ddd(2, 30)");
+is(dms_to_ddd(4),
+    4,
+    "dms_to_ddd(4)");
+is(dms_to_ddd(4.3),
+    4.3,
+    "dms_to_ddd(4.3)");
+is(dms_to_ddd(120.5, 0.3),
+    120.505,
+    "dms_to_ddd(120.5, 0.3)");
 
 # }}}
 
@@ -1114,8 +1169,55 @@ END
     "",
     "Read different date formats from gpsml file",
 );
+# }}}
+testcmd("../gpst tracks.gpsman", # {{{
+    <<END,
+END
+    "",
+    "Output gpsml format from gpsman",
+);
 
-    # }}}
+# }}}
+testcmd("../gpst -o gpx -R lat=7,lon=7,ele=2 tracks.gpsman", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+  <trk>
+    <title>ACTIVE LOG</title>
+    <trkseg>
+      <trkpt lat="60.2891111" lon="5.2276111"> <ele>54.45</ele> <time>2003-12-01T04:21:09Z</time> </trkpt>
+      <trkpt lat="60.2885833" lon="5.2261667"> <ele>54.45</ele> <time>2003-12-01T04:21:26Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="52.1221667" lon="14.0295278"> <ele>1494.99</ele> <time>2003-12-01T09:27:21Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="52.0858889" lon="14.0401389"> <ele>1494.99</ele> <time>2003-12-01T09:27:42Z</time> </trkpt>
+      <trkpt lat="52.0842778" lon="14.0406667"> <ele>1494.03</ele> <time>2003-12-01T09:27:43Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="50.0858333" lon="14.4290833"> <ele>183.27</ele> <time>2003-12-01T21:26:07Z</time> </trkpt>
+      <trkpt lat="50.0859722" lon="14.4291111"> <ele>184.71</ele> <time>2003-12-01T21:26:31Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="50.092" lon="14.43625"> <ele>180.38</ele> <time>2003-12-01T21:47:30Z</time> </trkpt>
+      <trkpt lat="50.092" lon="14.43625"> <ele>181.35</ele> <time>2003-12-01T21:47:47Z</time> </trkpt>
+      <trkpt lat="50.092" lon="14.4362222"> <ele>182.31</ele> <time>2003-12-01T21:47:53Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+    "Output GPX format from gpsman",
+);
+
+# }}}
 
 TODO: {
     local $TODO = "Shall lat/lon be cleared if one is missing?";
