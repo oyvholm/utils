@@ -3,6 +3,8 @@
 # $Id$
 # Konverterer obskure dataformater til ISO-8601.
 
+use strict;
+
 my %mnd_str = (
 	'Jan' => '01',
 	'Feb' => '02',
@@ -27,6 +29,15 @@ while (<>) {
 		(\d\d\d\d)
 	/
 		sprintf("%s %04u-%s-%02u %s", $1, $5, $mnd_str{$2}, $3, $4)
+	/eix;
+	s/
+		(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s+
+		(\d+)\s+
+		(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+
+		(\d\d\d\d)\s+
+		(\d\d:\d\d:\d\d)
+	/
+		sprintf("%s %04u-%s-%02u %s", $1, $4, $mnd_str{$3}, $2, $5)
 	/eix;
 	print;
 }
