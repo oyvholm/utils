@@ -2,9 +2,7 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
 
 <refentry id="ls">
-  <referenceinfo>
-    <releaseinfo><![CDATA[$Id$]]></releaseinfo>
-  </referenceinfo>
+  <!-- $Id$ -->
   <refmeta>
     <refentrytitle>ls</refentrytitle>
     <manvolnum>1</manvolnum>
