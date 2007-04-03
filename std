@@ -6,7 +6,8 @@
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
 
 use strict;
@@ -14,10 +15,13 @@ use Getopt::Long;
 
 $| = 1;
 
-our ($opt_help) =
-    (        0);
+our $Debug = 0;
 
-my $VERSION = "0.0";
+our %Opt = (
+    'debug' => 0,
+    'help' => 0,
+    'version' => 0,
+);
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -36,10 +40,14 @@ if (defined($ARGV[0])) {
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "help|h"       => \$opt_help
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$opt_help && usage(0);
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
 my $dat_file = $0;
 
@@ -55,13 +63,20 @@ if (open(FromFP, "<$dat_file")) {
     die("$progname: $dat_file: Cannot read file: $!\n");
 }
 
+sub print_version {
+    # Print program version {{{
+    print("$rcs_id\n");
+    exit(0);
+    # }}}
+} # print_version()
 
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
+
     print(<<END);
 
-$progname v$VERSION -- $id_date
+$rcs_id
 
 Usage: $progname [options] type
 
@@ -69,12 +84,30 @@ Send a template of a special file type to stdout.
 
 Options:
 
--h, --help  Show this help.
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
 
 END
     exit($Retval);
     # }}}
-}
+} # usage()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
 
 __END__
 
@@ -92,7 +125,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+ [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
@@ -106,6 +139,14 @@ $Id$
 
 Print a brief help summary.
 
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
 =back
 
 =head1 BUGS
@@ -114,7 +155,7 @@ Print a brief help summary.
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 

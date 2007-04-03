@@ -9,7 +9,8 @@
 #
 # Character set: UTF-8
 # (C)opyleft 1999– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
 
 use strict;
