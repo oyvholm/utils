@@ -260,7 +260,7 @@ my %Bck = (
     'lon' => '7.392133',
     'ele' => '762',
     'error' => "",
-    'type' => 'tp',
+    'what' => 'tp',
     # }}}
 );
 
@@ -286,7 +286,7 @@ is(
 
 # trackpoint(): Various loop tests {{{
 
-for my $Elem (qw{format lat lon type}) {
+for my $Elem (qw{format lat lon what}) {
     my %Dat = %Bck;
 
     $Dat{"$Elem"} = '2d';
@@ -348,7 +348,7 @@ is(trackpoint(%Dat),
     "trackpoint(): Remove trailing zeros in {'sec'} decimals"
 );
 
-for my $Elem (qw{format type error}) {
+for my $Elem (qw{format what error}) {
     my %Dat = %Bck;
     $Dat{$Elem} = undef;
     is(trackpoint(%Dat),
@@ -733,7 +733,7 @@ testcmd("../gpst multitrack.gpx", # {{{
 <gpsml>
 <track>
 <title>Track 1</title>
-<tp> <time>2003-02-11T23:35:39Z</time> <lat>51.4968266</lat> <lon>-0.1448824</lon> </tp>
+<tp> <time>2003-02-11T23:35:39Z</time> <lat>51.4968266</lat> <lon>-0.1448824</lon> <desc>Trackpoint description #2 not meant for the GPS</desc> </tp>
 <tp> <time>2003-02-11T23:35:49Z</time> <lat>51.4968227</lat> <lon>-0.1449938</lon> </tp>
 <tp> <time>2003-02-11T23:36:14Z</time> <lat>51.496904</lat> <lon>-0.1453202</lon> </tp>
 <break/>

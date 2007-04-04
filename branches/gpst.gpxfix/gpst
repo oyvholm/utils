@@ -261,7 +261,7 @@ for $curr_file (@ARGV) {
                 'ele' => '',
                 'desc' => '',
                 'error' => "",
-                'type' => 'tp',
+                'what' => 'tp',
             );
 
             if ($Opt{'save-to-file'} ne "\n") {
@@ -296,11 +296,11 @@ for $curr_file (@ARGV) {
             } elsif (m#^<break\b.*?/>#) {
                 $found_move = 1;
             } elsif (m#^<(title|pause)\b.*?>(.*?)</(title|pause)>#) {
-                $Dat{'type'} = $1;
+                $Dat{'what'} = $1;
                 $Dat{$1} = $2;
                 print_entry(%Dat);
             } elsif (m#^<desc\b.*?>(.*$)#s) {
-                $Dat{'type'} = "desc";
+                $Dat{'what'} = "desc";
                 my $Txt = $1;
                 until ($Txt =~ m#</desc>#s) {
                     $Txt .= <CurrFP>;
@@ -404,7 +404,7 @@ for $curr_file (@ARGV) {
                 # }}}
             } elsif (/^Track\t(.*?)\t/) {
                 $Dat{'title'} = txt_to_xml($1);
-                $Dat{'type'} = "title";
+                $Dat{'what'} = "title";
                 $found_move = 1;
                 print_entry(%Dat);
             } elsif (
@@ -532,7 +532,7 @@ for $curr_file (@ARGV) {
                     $Comment =~ s/^\s*(.*?)\s*$/$1/;
                     if ($Opt{'output-format'} eq "gpsml") {
                         $Dat{'desc'} = txt_to_xml($Comment);
-                        $Dat{'type'} = "desc";
+                        $Dat{'what'} = "desc";
                         print_entry(%Dat);
                     }
                 }
@@ -577,7 +577,7 @@ sub print_gpx {
         }{
             my %tmp_dat = ();
             $tmp_dat{'title'} = $2;
-            $tmp_dat{'type'} = "title";
+            $tmp_dat{'what'} = "title";
             print_entry(%tmp_dat);
             "";
         }sex;
@@ -599,7 +599,7 @@ sub print_gpx {
                     'hour' => '', 'min' => '', 'sec' => '',
                     'lat' => '', 'lon' => '',
                     'error' => "",
-                    'type' => 'tp',
+                    'what' => 'tp',
                 );
                 for my $Tmp (@wpt_elems) {
                     $Dat{$Tmp} = "";
@@ -609,14 +609,6 @@ sub print_gpx {
                 ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
                 my $wpt_elems_str = join("|", @wpt_elems);
                 D("wpt_elems_str = '$wpt_elems_str'");
-                $el_trkpt =~
-                s{
-                    <($wpt_elems_str)\b.*?>(.*?)</($wpt_elems_str)>
-                }{
-                    $Dat{$1} = $2;
-                    D("Yess, Dat{$1} set to '$2'");
-                    "";
-                }gsex;
                 if (
                     $el_trkpt =~
                     m{
@@ -628,6 +620,14 @@ sub print_gpx {
                      $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
                     ($1, $2, $3, $4, $5, $6);
                 }
+                $el_trkpt =~
+                s{
+                    <($wpt_elems_str)\b.*?>(.*?)</($wpt_elems_str)>
+                }{
+                    $Dat{$1} = $2;
+                    D("Yess, Dat{$1} set to '$2'");
+                    "";
+                }gsex;
                 print_entry(%Dat);
                 "";
             }gsex;
@@ -840,7 +840,7 @@ sub print_entry {
     my $pause_len = 0;
     my $do_print = 1;
 
-    if ($Dat{'type'} eq "tp") {
+    if ($Dat{'what'} eq "tp") {
         # {{{
         if ($Opt{'require'}) {
             $Req{'time'} && !$print_time && return;
@@ -906,10 +906,10 @@ sub print_entry {
             $Dat{'lat'} *= 2;
         }
         if ($Opt{'output-format'} eq "gpsml") {
-            if ($Dat{'type'} eq "tp") {
+            if ($Dat{'what'} eq "tp") {
                 $Dat{'format'} = "gpsml";
                 $Line .= trackpoint(%Dat);
-            } elsif ($Dat{'type'} =~ /^(pause|desc|title)$/) {
+            } elsif ($Dat{'what'} =~ /^(pause|desc|title)$/) {
                 $Line .= sprintf("<%s>%s</%s>\n",
                                  $1,
                                  $Dat{$1},
@@ -929,7 +929,7 @@ sub print_entry {
                 $Line .= "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
             }
         } elsif($Opt{'output-format'} eq "gpx") {
-            if ($Dat{'type'} eq "tp") {
+            if ($Dat{'what'} eq "tp") {
                 $Dat{'format'} = "gpx";
                 $Line .= trackpoint(%Dat);
             }
