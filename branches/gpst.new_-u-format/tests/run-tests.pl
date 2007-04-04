@@ -70,6 +70,8 @@ chomp(my $gpx_header = <<END);
   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
 >
 END
+my $stripped_gpx_header = $gpx_header;
+$stripped_gpx_header =~ s/^\s*(.*)$/$1/mg;
 
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
@@ -374,7 +376,8 @@ diag("Testing output from ../gpst");
 
 like(`../gpst --version`, # {{{
     qr/^(\$Id: .*? \$\n)+$/s,
-    "../gpst --version");
+    "../gpst --version"
+);
 
 # }}}
 testcmd("../gpst </dev/null", # {{{
@@ -385,6 +388,7 @@ testcmd("../gpst </dev/null", # {{{
 </track>
 </gpsml>
 END
+    "",
 );
 
 # }}}
@@ -397,15 +401,44 @@ $gpx_header
   </trk>
 </gpx>
 END
+    "",
 );
 
 # }}}
-testcmd("../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp", # {{{
+testcmd("../gpst --chronology chronology-error.gpsml", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
-<title>\$Id: chronology-error.gpsml 1774 2006-05-20 02:48:39Z sunny \$</title>
+<title>Chronology errors</title>
+<tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+<tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+<tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+<break/>
+<tp> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </tp>
+<break/>
+<pause>0:00:37:54</pause>
+<tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+<tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+<tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+<tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+<tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+<tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+</track>
+</gpsml>
+END
+    "gpst: chronology-error.gpsml: \"2006-05-02T09:46:46Z\": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)\n" .
+    "gpst: chronology-error.gpsml: \"2006-05-02T10:18:09Z\": Duplicated time\n",
+    "Check for chronology errors and duplicated times",
+);
+
+# }}}
+testcmd("../gpst --fix --chronology chronology-error.gpsml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>Chronology errors</title>
 <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
 <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
 <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
@@ -416,19 +449,16 @@ testcmd("../gpst --fix --chronology chronology-error.gpsml 2>chronofix.tmp", # {
 <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
 <tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
 <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+<etp err="duptime"> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </etp>
 <tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
 <tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
 </track>
 </gpsml>
 END
+    "gpst: chronology-error.gpsml: \"2006-05-02T09:46:46Z\": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)\n" .
+    "gpst: chronology-error.gpsml: \"2006-05-02T10:18:09Z\": Duplicated time\n",
     "Remove bad timestamps",
 );
-
-# }}}
-is(file_data("chronofix.tmp"), # {{{
-    "gpst: \"2006-05-02T09:46:46Z\": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)\n",
-    "Warning from --chronology --fix");
-unlink("chronofix.tmp") || warn("chronofix.tmp: Cannot delete file: $!\n");
 
 # }}}
 testcmd("../gpst -t pause.gpx", # {{{
@@ -452,6 +482,7 @@ testcmd("../gpst -t pause.gpx", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Output gpsml with <pause> elements from GPX files",
 );
 
@@ -474,7 +505,81 @@ $gpx_header
   </trk>
 </gpx>
 END
+    "",
     "Output GPX from Mayko file with duplicates",
+);
+
+# }}}
+testcmd("../gpst -o gpx comments.mayko", # {{{
+    <<END,
+$gpx_header
+  <trk>
+    <trkseg>
+      <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
+      <trkpt lat="70.6799322" lon="23.6740038"> <time>2002-12-22T21:42:32Z</time> </trkpt>
+      <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:42:54Z</time> </trkpt>
+      <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:51Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+      <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:52Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+      <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:54Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+      <trkpt lat="70.6800774" lon="23.6757566"> <time>2002-12-22T21:44:45Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="70.6801502" lon="23.6753442"> <time>2002-12-22T21:44:52Z</time> </trkpt>
+      <trkpt lat="70.6801905" lon="23.6757542"> <time>2002-12-22T21:45:04Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+    "Output GPX from Mayko file with commented-out lines",
+);
+
+# }}}
+testcmd("../gpst -o gpx -w comments.mayko", # {{{
+    <<END,
+$stripped_gpx_header
+<trk>
+<trkseg>
+<trkpt lat="70.6800486" lon="23.6746151"><time>2002-12-22T21:42:24Z</time></trkpt>
+<trkpt lat="70.6799322" lon="23.6740038"><time>2002-12-22T21:42:32Z</time></trkpt>
+<trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:42:54Z</time></trkpt>
+<!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:51Z</time><extensions><error>desc</error></extensions></trkpt> -->
+<!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:52Z</time><extensions><error>desc</error></extensions></trkpt> -->
+<!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:54Z</time><extensions><error>desc</error></extensions></trkpt> -->
+<trkpt lat="70.6800774" lon="23.6757566"><time>2002-12-22T21:44:45Z</time></trkpt>
+</trkseg>
+<trkseg>
+<trkpt lat="70.6801502" lon="23.6753442"><time>2002-12-22T21:44:52Z</time></trkpt>
+<trkpt lat="70.6801905" lon="23.6757542"><time>2002-12-22T21:45:04Z</time></trkpt>
+</trkseg>
+</trk>
+</gpx>
+END
+    "",
+    "Output whitespace-stripped GPX from Mayko file with commented-out lines",
+);
+
+# }}}
+testcmd("../gpst -o xgraph multitrack.gpx", # {{{
+    <<END,
+-0.1448824 51.4968266
+-0.1449938 51.4968227
+-0.1453202 51.4969040
+move -0.1453398 51.4969214
+-0.1455514 51.4969816
+-0.1457489 51.4970224
+-0.1457804 51.4970452
+move -0.1458608 51.4970680
+-0.1460047 51.4971658
+-0.1461614 51.4972469
+move -0.1462394 51.4972731
+-0.1463232 51.4973437
+-0.1462949 51.4973337
+-0.1462825 51.4973218
+-0.1462732 51.4973145
+END
+    "",
+    "Output xgraph format from GPX"
 );
 
 # }}}
@@ -495,6 +600,7 @@ testcmd("../gpst -d no_signal.mayko", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Remove duplicated positions from gpsml",
 );
 
@@ -508,6 +614,7 @@ testcmd("../gpst -d -o csv no_signal.mayko", # {{{
 2002-12-22T21:44:52Z\t23.6753442\t70.6801502\t\t
 2002-12-22T21:45:04Z\t23.6757542\t70.6801905\t\t
 END
+    "",
     "Remove duplicated positions from csv output format",
 );
 
@@ -521,6 +628,7 @@ testcmd("../gpst -d -o clean no_signal.mayko", # {{{
 23.6753442	70.6801502
 23.6757542	70.6801905
 END
+    "",
     "Remove duplicated positions from clean output format",
 );
 
@@ -534,6 +642,7 @@ testcmd("../gpst -d -o pgtab no_signal.mayko", # {{{
 2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N\t\\N
 2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
 END
+    "",
     "Remove duplicated positions from pgtab output format",
 );
 
@@ -553,6 +662,7 @@ testcmd("../gpst -o pgtab compact.gpx", # {{{
 2002-12-30T15:22:23Z\t(70.6609388,23.7028653)\t\\N\t\\N\t\\N\t\\N\t\\N
 2002-12-30T15:22:25Z\t(70.6609426,23.7028732)\t\\N\t\\N\t\\N\t\\N\t\\N
 END
+    "",
 );
 
 # }}}
@@ -568,14 +678,17 @@ testcmd("../gpst -o pgtab no_signal.mayko", # {{{
 2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N\t\\N
 2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
 END
+    "",
 );
 
 # }}}
 testcmd("../gpst -o pgtab missing.gpsml", # {{{
     <<END,
 2006-04-30T17:17:09Z\t(60.42353,5.34185)\t\\N\t\\N\t\\N\t\\N\t\\N
+\\N\t(60.42347,5.34212)\t486\t\\N\t\\N\t\\N\t\\N
 2006-04-30T17:18:05Z\t(60.42338,5.34269)\t487\t\\N\t\\N\t\\N\t\\N
 END
+    "",
 );
 
 # }}}
@@ -597,15 +710,18 @@ testcmd("../gpst --round lat=4,lon=5,ele=1 pause.gpx", # {{{
 </track>
 </gpsml>
 END
+    "",
 );
 
 # }}}
 testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
     "",
+    "",
     "Redirect stdout",
-    );
+);
 
-is(file_data("nosignal.tmp"),
+# }}}
+is(file_data("nosignal.tmp"), # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -625,7 +741,8 @@ is(file_data("nosignal.tmp"),
 </track>
 </gpsml>
 END
-    "../gpst -u no_signal.mayko");
+    "../gpst -u no_signal.mayko"
+);
 
 # }}}
 testcmd("../gpst nosignal.tmp", # {{{
@@ -648,6 +765,7 @@ testcmd("../gpst nosignal.tmp", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read output from 'gpst -u *.mayko'",
 );
 
@@ -699,6 +817,7 @@ testcmd("../gpst log.mcsv", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read Mapsource TAB-separated format",
 );
 
@@ -720,6 +839,7 @@ testcmd("../gpst two-digit_year.mcsv", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read Mapsource TAB-separated format with two-digit year",
 );
 
@@ -750,6 +870,7 @@ testcmd("../gpst log.gpstxt", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read Garmin serial text format",
 );
 
@@ -768,6 +889,7 @@ testcmd("../gpst log.dos.mayko", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read DOS-formatted Mayko format",
 );
 
@@ -781,6 +903,7 @@ testcmd("../gpst -o csv log.dos.mayko", # {{{
 2003-06-15T10:28:06Z\t8.1293950\t58.1810315\t\t
 2003-06-15T10:28:10Z\t8.1307400\t58.1809621\t\t
 END
+    "",
     "Read DOS-formatted Mayko format",
 );
 
@@ -804,6 +927,7 @@ testcmd("../gpst log.dos.gpstxt", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read DOS-formatted Garmin serial text format",
 );
 
@@ -827,6 +951,7 @@ testcmd("../gpst log.unix.mcsv", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read UNIX-formatted Garmin Mapsource TAB-separated format",
 );
 
@@ -861,6 +986,7 @@ testcmd("../gpst multitrack.gpx", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read GPX file with multiple tracks",
 );
 
@@ -886,6 +1012,7 @@ testcmd("../gpst compact.gpx", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read GPX one-liner",
 );
 
@@ -906,6 +1033,7 @@ testcmd("../gpst -re multitrack.gpx", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Require elevation from GPX data",
 );
 
@@ -920,6 +1048,7 @@ testcmd("../gpst -re one_ele.dos.gpsml", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Require elevation from gpsml",
 );
 
@@ -944,12 +1073,11 @@ testcmd("../gpst missing.gpsml", # {{{
 </track>
 </gpsml>
 END
+    "",
     "Read gpsml with various data missing",
 );
 
     # }}}
-my $stripped_gpx_header = $gpx_header;
-$stripped_gpx_header =~ s/^\s*(.*)$/$1/mg;
 testcmd("../gpst -w -o gpx pause.gpx", # {{{
     <<END,
 $stripped_gpx_header
@@ -968,7 +1096,26 @@ $stripped_gpx_header
 </trk>
 </gpx>
 END
+    "",
     "Strip whitespace from GPX output",
+);
+
+    # }}}
+testcmd("../gpst different_dateformats.gpsml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>Date format variations</title>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>1</lat> <lon>1</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>2</lat> <lon>2</lon> </tp>
+<tp> <time>2006-01-01T00:00:03Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<tp> <time>2006-01-01T00:00:04Z</time> <lat>4</lat> <lon>4</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Read different date formats from gpsml file",
 );
 
     # }}}
@@ -991,6 +1138,7 @@ TODO: {
 </track>
 </gpsml>
 END
+        "",
         "Require elevation",
     );
 
@@ -1011,6 +1159,7 @@ END
 </track>
 </gpsml>
 END
+        "",
         "Require time",
     );
 
@@ -1027,6 +1176,7 @@ END
 </track>
 </gpsml>
 END
+        "",
         "Require position",
     );
 
@@ -1044,7 +1194,8 @@ END
 </track>
 </gpsml>
 END
-    "Require elevation and time",
+        "",
+        "Require elevation and time",
     );
 
     # }}}
@@ -1058,7 +1209,8 @@ END
 </track>
 </gpsml>
 END
-    "Require elevation, time and position",
+        "",
+        "Require elevation, time and position",
     );
 
     # }}}
@@ -1073,7 +1225,8 @@ END
 </track>
 </gpsml>
 END
-    "Require elevation and position",
+        "",
+        "Require elevation and position",
     );
 
     # }}}
@@ -1096,8 +1249,9 @@ $gpx_header
   </trk>
 </gpx>
 END
+    "",
     "Output GPX from gpsml with missing data",
-    );
+);
 
 # }}}
 testcmd("echo '<tp> </tp>' | ../gpst", # {{{
@@ -1108,7 +1262,9 @@ testcmd("echo '<tp> </tp>' | ../gpst", # {{{
 </track>
 </gpsml>
 END
-    "Don’t print empty trackpoints");
+    "",
+    "Don’t print empty trackpoints",
+);
 
 # }}}
 testcmd("../gpst --epoch pause.gpx", # {{{
@@ -1129,6 +1285,7 @@ testcmd("../gpst --epoch pause.gpx", # {{{
 </track>
 </gpsml>
 END
+    "",
     "--epoch is ignored in gpsml output",
 );
 
@@ -1151,6 +1308,7 @@ $gpx_header
   </trk>
 </gpx>
 END
+    "",
     "--epoch is ignored in gpx output",
 );
 
@@ -1158,7 +1316,8 @@ END
 
 testcmd("../gpst multitrack-pause.gpx", # {{{
     file_data("multitrack-pause.gpsml"),
-    "Should be equal to multitrack-pause.gpsml"
+    "",
+    "Should be equal to multitrack-pause.gpsml",
 );
 
 # }}}
@@ -1168,25 +1327,36 @@ testcmd("../gpst -t multitrack-pause.gpx", # {{{
 <gpsml>
 <track>
 <title>track1</title>
-<tp> <time>2006-01-01T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
-<tp> <time>2006-01-01T00:00:01Z</time> <lat>2</lat> <lon>2</lon> </tp>
-<tp> <time>2006-01-01T00:00:02Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
 <break/>
 <title>track2</title>
 <pause>0:23:59:58</pause>
-<tp> <time>2006-01-02T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
-<tp> <time>2006-01-02T00:00:04Z</time> <lat>2</lat> <lon>2</lon> </tp>
-<tp> <time>2006-01-02T00:00:16Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+<tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+<tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
 <pause>0:01:00:00</pause>
-<tp> <time>2006-01-02T01:00:16Z</time> <lat>4</lat> <lon>4</lon> </tp>
+<tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+<break/>
+<tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
 <break/>
 <title>track3</title>
-<pause>1:01:00:04</pause>
-<tp> <time>2006-01-03T02:00:20Z</time> <lat>5</lat> <lon>5</lon> </tp>
+<pause>1:01:00:03</pause>
+<tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+<tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+<tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+<break/>
+<tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+<tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+<tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+<tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+<tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
 </track>
 </gpsml>
 END
-    "Insert <pause> between gpx tracks"
+    "",
+    "Insert <pause> between gpx tracks",
 );
 
 # }}}
@@ -1196,25 +1366,36 @@ testcmd("../gpst -t multitrack-pause.gpsml", # {{{
 <gpsml>
 <track>
 <title>track1</title>
-<tp> <time>2006-01-01T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
-<tp> <time>2006-01-01T00:00:01Z</time> <lat>2</lat> <lon>2</lon> </tp>
-<tp> <time>2006-01-01T00:00:02Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
 <break/>
 <title>track2</title>
 <pause>0:23:59:58</pause>
-<tp> <time>2006-01-02T00:00:00Z</time> <lat>1</lat> <lon>1</lon> </tp>
-<tp> <time>2006-01-02T00:00:04Z</time> <lat>2</lat> <lon>2</lon> </tp>
-<tp> <time>2006-01-02T00:00:16Z</time> <lat>3</lat> <lon>3</lon> </tp>
+<tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+<tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+<tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
 <pause>0:01:00:00</pause>
-<tp> <time>2006-01-02T01:00:16Z</time> <lat>4</lat> <lon>4</lon> </tp>
+<tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+<break/>
+<tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
 <break/>
 <title>track3</title>
-<pause>1:01:00:04</pause>
-<tp> <time>2006-01-03T02:00:20Z</time> <lat>5</lat> <lon>5</lon> </tp>
+<pause>1:01:00:03</pause>
+<tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+<tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+<tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+<break/>
+<tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+<tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+<tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+<tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+<tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
 </track>
 </gpsml>
 END
-    "Insert <pause> between gpsml titles"
+    "",
+    "Insert <pause> between gpsml titles",
 );
 
 # }}}
@@ -1230,19 +1411,39 @@ testcmd("../gpst -o pgwtab multitrack.gpx", # {{{
 (51.510130000,-0.130410000)\tLeicester Square\t\\N\t\\N\t\\N\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N
 (60.968540000,9.285350000)\tLeira camping\t\\N\t\\N\t\\N\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N
 END
+    "",
     "Test pgwtab format",
 );
 
 # }}}
 testcmd("../gpst -o pgwupd multitrack.gpx", # {{{
     <<END,
-UPDATE logg SET sted = '0-Meridian' WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Abbey Road' WHERE (point(51.532030,-0.177330) <-> coor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Galdhøpiggen med '', &, < og >. ☺' WHERE (point(61.636684,8.312254) <-> coor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Halfdan Griegs vei' WHERE (point(60.397460000,5.350610000) <-> coor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Leicester Square' WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.0002 AND sted IS NULL;
-UPDATE logg SET sted = 'Leira camping' WHERE (point(60.968540000,9.285350000) <-> coor) < 0.0002 AND sted IS NULL;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+COMMIT;
 END
+    "",
     "Test pgwupd format",
 );
 
@@ -1271,7 +1472,8 @@ if ($Opt{'all'} || $Opt{'todo'}) {
 5.299773\t60.425345\t31.936
 5.299419\t60.425457\t31.794
 END
-            "Output clean format with time breaks"
+            "",
+            "Output clean format with time breaks",
         );
         # }}}
         testcmd("../gpst -o csv pause.gpx", # {{{
@@ -1286,6 +1488,7 @@ END
 2006-05-21 16:59:08\t5.299773\t60.425345\t31.936\t
 2006-05-21 17:00:54\t5.299419\t60.425457\t31.794\t
 END
+            "",
             "csv format from gpx",
         );
 
@@ -1302,6 +1505,7 @@ END
 1148230748\t5.299773\t60.425345\t31.936\t
 1148230854\t5.299419\t60.425457\t31.794\t
 END
+            "",
             "csv format with epoch seconds from gpx",
         );
 
@@ -1327,13 +1531,15 @@ END
 </track>
 </gpsml>
 END
+            "",
             "Output gpsml from the -u option",
         );
         # }}}
         $TODO = "Tweak output";
         testcmd("../gpst -o gpx multitrack-pause.gpsml", # {{{
             file_data("multitrack-pause.gpx"),
-            "Should be equal to multitrack-pause.gpx"
+            "",
+            "Should be equal to multitrack-pause.gpx",
         );
 
         # }}}
@@ -1342,7 +1548,8 @@ END
 
         like(list_nearest_waypoints(60.42541, 5.29959, 3),
             qr/^\(.*,.*,.*\)$/,
-            "list_nearest_waypoints()");
+            "list_nearest_waypoints()"
+        );
 
         # }}}
     }
@@ -1352,15 +1559,26 @@ diag("Testing finished.");
 
 sub testcmd {
     # {{{
-    my ($Cmd, $Exp, $Desc) = @_;
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
+    my $stderr_cmd = "";
     my $Txt = join("",
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
             : ""
     );
+    my $TMP_STDERR = "gpst-stderr.tmp";
 
-    is(`$Cmd`, $Exp, $Txt);
+    if (defined($Exp_stderr)) {
+        $stderr_cmd = " 2>$TMP_STDERR";
+    }
+    is(`$Cmd$stderr_cmd`, $Exp_stdout, $Txt);
+    if (defined($Exp_stderr)) {
+        is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+        unlink($TMP_STDERR);
+    } else {
+        diag("Warning: stderr not defined for '$Txt'");
+    }
     # }}}
 }
 
@@ -1423,7 +1641,7 @@ __END__
 
 =head1 NAME
 
-
+run-tests.pl
 
 =head1 REVISION
 
@@ -1431,11 +1649,11 @@ $Id$
 
 =head1 SYNOPSIS
 
- [options] [file [files [...]]]
+run-tests.pl [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-
+Contains tests for the gpst(1) program.
 
 =head1 OPTIONS
 
@@ -1463,10 +1681,6 @@ Print debugging messages.
 
 =back
 
-=head1 BUGS
-
-
-
 =head1 AUTHOR
 
 Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
@@ -1493,6 +1707,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
+
+gpst(1)
 
 =cut
 

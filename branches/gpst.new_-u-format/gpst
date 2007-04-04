@@ -117,7 +117,7 @@ our %Cmd = (
 my %Poscount = ();
 
 if ($Opt{'output-format'} eq "pgtab") {
-    $Opt{'require'} .= "pt";
+    $Opt{'require'} .= "p";
 }
 my %Req = (
     'ele' => ($Opt{'require'} =~ /e/) ? 1 : 0,
@@ -244,7 +244,7 @@ $Opt{'save-to-file'} eq "\n" && print_header(*STDOUT);
 my @first_lines;
 my $xml_data;
 my $data_line = "";
-my $curr_file = "";
+our $curr_file = "";
 
 my $from_stdin = scalar(@ARGV) ? 0 : 1;
 
@@ -284,7 +284,7 @@ for $curr_file (@ARGV) {
                 my $Time = "";
                 $Data =~ m#<time>(.*?)</time># && ($Time = $1);
                 $Time =~ s{
-                    (\d\d\d\d)-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?([\d\.]+?)Z
+                    (\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?([\d\.]+?)Z
                 } {
                     ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
                      $Dat{'hour'},   $Dat{'min'}, $Dat{'sec'}) =
@@ -621,7 +621,14 @@ sub print_gpx {
                 );
             } elsif ($Opt{'output-format'} eq "pgwupd") {
                 $Name =~ s/'/''/gs;
-                print("UPDATE logg SET sted = '$Name' WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.0002 AND sted IS NULL;\n");
+                print(join("\n",
+                    "BEGIN;",
+                    "    UPDATE logg SET sted = clname(coor) " .
+                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "    UPDATE logg SET dist = cldist(coor) " .
+                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "COMMIT;"
+                ) . "\n");
             }
             "";
         }gsex;
@@ -822,7 +829,7 @@ sub print_entry {
         if ($Opt{'chronology'}) {
             if ($last_time > $ep_time && !length($Dat{'error'})) {
                 warn(sprintf(
-                    "%s: \"%sZ\": Next date is %s in the past (%sZ)\n",
+                    "%s: $curr_file: \"%sZ\": Next date is %s in the past (%sZ)\n",
                     $progname, sec_to_string($last_time, "T"),
                     sec_to_readable($last_time-$ep_time),
                     sec_to_string($ep_time, "T")
@@ -830,6 +837,15 @@ sub print_entry {
                 # FIXME: Make --fix work with gpx.
                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
                     $Dat{'error'} = "chrono";
+                }
+            } elsif ($last_time == $ep_time && !length($Dat{'error'})) {
+                warn(sprintf(
+                    "%s: $curr_file: \"%sZ\": Duplicated time\n",
+                    $progname, sec_to_string($last_time, "T")
+                ));
+                # FIXME: Make --fix work with gpx.
+                if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
+                    $Dat{'error'} = "duptime";
                 }
             }
         }
@@ -974,13 +990,15 @@ sub print_entry {
                                  $1);
             }
         } elsif ($Opt{'output-format'} eq "pgtab") {
-            if ($Dat{'type'} eq "tp" && $Dat{'year'}) {
+            if ($Dat{'type'} eq "tp") {
                 $Dat{'format'} = "pgtab";
                 $Line .= trackpoint(%Dat);
             }
         } elsif ($Opt{'output-format'} eq "xgraph") {
-            $pause_len && ($Line .= "move ");
-            ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            if ($print_pos) {
+                $pause_len && ($Line .= "move ");
+                ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            }
         } elsif($Opt{'output-format'} eq "gpstrans") {
             my ($gpt_lat, $gpt_lon) =
                (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
