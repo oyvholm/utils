@@ -22,7 +22,7 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&trackpoint @wpt_elems);
+    @EXPORT = qw(&trackpoint &postgresql_copy_safe @wpt_elems);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -118,10 +118,18 @@ sub trackpoint {
             # {{{
             my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
             my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
+            my ($estr_begin, $estr_ext, $estr_end) =
+               (         "",        "",        "");
+            if (length($err_str)) {
+                $estr_begin = "<!-- ";
+                $estr_ext = "<extensions>$Spc<error>$err_str</error>$Spc</extensions>$Spc";
+                $estr_end = " -->";
+            }
             if (length("$lat_str$lon_str$Dat{'ele'}")) {
                 $Retval .=
                 join("",
                     "$Spc$Spc$Spc$Spc$Spc$Spc",
+                    $estr_begin,
                     "<trkpt$lat_str$lon_str>",
                     "$Spc",
                     length($Dat{'ele'})
@@ -133,10 +141,30 @@ sub trackpoint {
                           "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
                           "</time>$Spc"
                         : "",
-                    "</trkpt>\n"
+                        $estr_ext,
+                    "</trkpt>$estr_end\n"
                 );
             }
             # }}}
+        } elsif($Dat{'format'} eq "xgraph") {
+            if (length($Dat{'lat'}) && length($Dat{'lon'})) {
+                $Retval .= "$Dat{'lon'}\t$Dat{'lat'}";
+            }
+        } elsif ($Dat{'format'} eq "pgtab") {
+            $Retval .= join("\t",
+                $Dat{'year'}
+                    ? "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                    : '\N', # date
+                (length($Dat{'lat'}) && length($Dat{'lon'}))
+                    ? "($Dat{'lat'},$Dat{'lon'})"
+                    : '\N', # coor
+                length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
+                '\N', # sted
+                '\N', # dist
+                '\N', # description
+                '\N' # avst
+            ) . "\n";
         } else {
             $Retval = undef;
         }
@@ -144,6 +172,17 @@ sub trackpoint {
         $Retval = undef;
     }
     return $Retval;
+    # }}}
+}
+
+sub postgresql_copy_safe {
+    # {{{
+    my $Str = shift;
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
     # }}}
 }
 

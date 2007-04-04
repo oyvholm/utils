@@ -41,6 +41,8 @@ sub xml_to_txt {
     $Txt =~ s/&lt;/</gs;
     $Txt =~ s/&gt;/>/gs;
     $Txt =~ s/&amp;/&/gs;
+    $Txt =~ s/&quot;/"/gs;
+    $Txt =~ s/&apos;/'/gs;
     return($Txt);
     # }}}
 }
