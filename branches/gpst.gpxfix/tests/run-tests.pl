@@ -77,6 +77,50 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
+diag("Tests for this branch");
+
+testcmd("../gpst -o gpx extensions.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+  <trk>
+    <trkseg>
+      <trkpt lat="1.1" lon="2.1"> <ele>3.1</ele> <extensions> <test>yepp1</test> </extensions> </trkpt>
+      <trkpt lat="1.2" lon="2.2"> <ele>3.2</ele> <extensions> <test>yepp2</test> </extensions> </trkpt>
+      <extensions> <another>test</another> </extensions>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+    "Read and output GPX with <extensions> element",
+);
+
+# }}}
+testcmd("../gpst -w -o gpx extensions.gpx", # {{{
+    <<END,
+$stripped_gpx_header
+<trk>
+<trkseg>
+<trkpt lat="1.1" lon="2.1"><ele>3.1</ele><extensions><test>yepp1</test></extensions></trkpt>
+<trkpt lat="1.2" lon="2.2"><ele>3.2</ele><extensions><test>yepp2</test></extensions></trkpt>
+<extensions><another>test</another></extensions>
+</trkseg>
+</trk>
+</gpx>
+END
+    "",
+    "Read and output GPX with <extensions> element and strip whitespace",
+);
+
+# }}}
+
 diag("Testing conversion routines...");
 
 # txt_to_xml() and xml_to_txt() {{{
@@ -1393,47 +1437,6 @@ testcmd("../gpst -t multitrack-pause.gpsml", # {{{
 END
     "",
     "Insert <pause> between gpsml titles",
-);
-
-# }}}
-testcmd("../gpst -o gpx extensions.gpx", # {{{
-    <<END,
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<gpx
-  version="1.1"
-  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
-  xmlns="http://www.topografix.com/GPX/1/1"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
->
-  <trk>
-    <trkseg>
-      <trkpt lat="1.1" lon="2.1"> <ele>3.1</ele> <extensions> <test>yepp1</test> </extensions> </trkpt>
-      <trkpt lat="1.2" lon="2.2"> <ele>3.2</ele> <extensions> <test>yepp2</test> </extensions> </trkpt>
-      <extensions> <another>test</another> </extensions>
-    </trkseg>
-  </trk>
-</gpx>
-END
-    "",
-    "Read and output GPX with <extensions> element",
-);
-
-# }}}
-testcmd("../gpst -w -o gpx extensions.gpx", # {{{
-    <<END,
-$stripped_gpx_header
-<trk>
-<trkseg>
-<trkpt lat="1.1" lon="2.1"><ele>3.1</ele><extensions><test>yepp1</test></extensions></trkpt>
-<trkpt lat="1.2" lon="2.2"><ele>3.2</ele><extensions><test>yepp2</test></extensions></trkpt>
-<extensions><another>test</another></extensions>
-</trkseg>
-</trk>
-</gpx>
-END
-    "",
-    "Read and output GPX with <extensions> element and strip whitespace",
 );
 
 # }}}
