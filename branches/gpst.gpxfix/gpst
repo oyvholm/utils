@@ -703,6 +703,19 @@ sub print_gpx {
                     print_entry(%Dat);
                     "";
                 }gsex;
+                if ($Opt{'output-format'} eq "gpx") {
+                    $el_trkseg =~
+                    s{
+                        <extensions\b.*?>(.*?)</extensions>
+                    }{
+                        my $el_extensions = $1;
+                        $el_extensions =~ s/^\s+</</;
+                        $el_extensions =~ s/>\s+$/>/;
+                        if (length($el_extensions)) {
+                            print("$Spc$Spc$Spc$Spc$Spc$Spc<extensions>$Spc$el_extensions$Spc</extensions>\n");
+                        }
+                    }sex;
+                }
                 $found_move = 1;
             }gsex;
             $found_move = 1;

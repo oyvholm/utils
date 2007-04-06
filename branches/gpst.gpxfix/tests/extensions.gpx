@@ -8,12 +8,21 @@
 >
   <trk>
     <trkseg>
-      <trkpt lat="1" lon="2">
-        <ele>3</ele>
+      <trkpt lat="1.1" lon="2.1">
+        <ele>3.1</ele>
         <extensions>
-          <test>yepp</test>
+          <test>yepp1</test>
         </extensions>
       </trkpt>
+      <trkpt lat="1.2" lon="2.2">
+        <ele>3.2</ele>
+        <extensions>
+          <test>yepp2</test>
+        </extensions>
+      </trkpt>
+      <extensions>
+        <another>test</another>
+      </extensions>
     </trkseg>
   </trk>
 </gpx>

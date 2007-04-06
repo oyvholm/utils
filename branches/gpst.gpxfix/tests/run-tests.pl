@@ -1408,7 +1408,9 @@ testcmd("../gpst -o gpx extensions.gpx", # {{{
 >
   <trk>
     <trkseg>
-      <trkpt lat="1" lon="2"> <ele>3</ele> <extensions> <test>yepp</test> </extensions> </trkpt>
+      <trkpt lat="1.1" lon="2.1"> <ele>3.1</ele> <extensions> <test>yepp1</test> </extensions> </trkpt>
+      <trkpt lat="1.2" lon="2.2"> <ele>3.2</ele> <extensions> <test>yepp2</test> </extensions> </trkpt>
+      <extensions> <another>test</another> </extensions>
     </trkseg>
   </trk>
 </gpx>
@@ -1423,7 +1425,9 @@ testcmd("../gpst -w -o gpx extensions.gpx", # {{{
 $stripped_gpx_header
 <trk>
 <trkseg>
-<trkpt lat="1" lon="2"><ele>3</ele><extensions><test>yepp</test></extensions></trkpt>
+<trkpt lat="1.1" lon="2.1"><ele>3.1</ele><extensions><test>yepp1</test></extensions></trkpt>
+<trkpt lat="1.2" lon="2.2"><ele>3.2</ele><extensions><test>yepp2</test></extensions></trkpt>
+<extensions><another>test</another></extensions>
 </trkseg>
 </trk>
 </gpx>
