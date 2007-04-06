@@ -806,8 +806,8 @@ sub print_entry {
     my $ep_time;
 
     if ($Opt{'near'} && $print_pos) {
-        $Line .= sprintf("%s ",
-                         list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}));
+        $Dat{'extensions'} .= sprintf("%s ",
+            list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}, 3));
     }
 
     if (length($Opt{'round'})) {

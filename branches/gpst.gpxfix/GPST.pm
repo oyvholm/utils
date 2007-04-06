@@ -76,6 +76,7 @@ sub trackpoint {
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'ele'}) || ($Dat{'ele'} = "");
     defined($Dat{'desc'}) || ($Dat{'desc'} = "");
+    defined($Dat{'extensions'}) || ($Dat{'extensions'} = "");
 
     my $Retval = "";
 
@@ -122,7 +123,7 @@ sub trackpoint {
                (         "",        "",        "");
             if (length($err_str)) {
                 $estr_begin = "<!-- ";
-                $estr_ext = "<extensions>$Spc<error>$err_str</error>$Spc</extensions>$Spc";
+                $Dat{'extensions'} .= "<error>$err_str</error>";
                 $estr_end = " -->";
             }
             if (length("$lat_str$lon_str$Dat{'ele'}")) {
@@ -141,7 +142,14 @@ sub trackpoint {
                           "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
                           "</time>$Spc"
                         : "",
-                        $estr_ext,
+                    length($Dat{'extensions'})
+                        ? "<extensions>" .
+                          $Spc .
+                          $Dat{'extensions'} .
+                          $Spc .
+                          "</extensions>$Spc"
+                        : "",
+                    $estr_ext,
                     "</trkpt>$estr_end\n"
                 );
             }
