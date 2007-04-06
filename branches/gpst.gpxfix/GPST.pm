@@ -119,8 +119,8 @@ sub trackpoint {
             # {{{
             my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
             my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
-            my ($estr_begin, $estr_ext, $estr_end) =
-               (         "",        "",        "");
+            my ($estr_begin, $estr_end) =
+               (         "",        "");
             if (length($err_str)) {
                 $estr_begin = "<!-- ";
                 $Dat{'extensions'} .= "<error>$err_str</error>";
@@ -149,7 +149,6 @@ sub trackpoint {
                           $Spc .
                           "</extensions>$Spc"
                         : "",
-                    $estr_ext,
                     "</trkpt>$estr_end\n"
                 );
             }
