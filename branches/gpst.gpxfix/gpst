@@ -698,6 +698,8 @@ sub print_gpx {
                         D("Yess, Dat{$1} set to '$2'");
                         "";
                     }gsex;
+                    $Dat{'extensions'} =~ s/^\s+</</;
+                    $Dat{'extensions'} =~ s/>\s+$/>/;
                     print_entry(%Dat);
                     "";
                 }gsex;

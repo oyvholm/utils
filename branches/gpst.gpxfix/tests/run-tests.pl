@@ -1396,6 +1396,43 @@ END
 );
 
 # }}}
+testcmd("../gpst -o gpx extensions.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+  <trk>
+    <trkseg>
+      <trkpt lat="1" lon="2"> <ele>3</ele> <extensions> <test>yepp</test> </extensions> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+    "Read and output GPX with <extensions> element",
+);
+
+# }}}
+testcmd("../gpst -w -o gpx extensions.gpx", # {{{
+    <<END,
+$stripped_gpx_header
+<trk>
+<trkseg>
+<trkpt lat="1" lon="2"><ele>3</ele><extensions><test>yepp</test></extensions></trkpt>
+</trkseg>
+</trk>
+</gpx>
+END
+    "",
+    "Read and output GPX with <extensions> element and strip whitespace",
+);
+
+# }}}
 
 diag("Testing waypoint stuff...");
 
