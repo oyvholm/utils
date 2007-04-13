@@ -94,6 +94,16 @@ CREATE OR REPLACE VIEW minutt
 
 /*** Formater ***/
 
+CREATE OR REPLACE VIEW closest AS
+    SELECT * FROM (
+        SELECT DISTINCT ON (sted) * FROM (
+            SELECT * FROM LOGG
+                ORDER BY dist
+        ) AS b
+        WHERE sted IS NOT NULL
+    ) AS a
+        ORDER BY date;
+
 CREATE OR REPLACE VIEW gpx AS
     SELECT '<trkpt lat="' || coor[0] || '" lon="' || coor[1] || '"> ' ||
         '<ele>' || ele || '</ele> ' ||
