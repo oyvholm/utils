@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# $Id$
+
+gpst -o clean -re -d "$@" | rmspcall | uniq >/tmp/vg.tmp
+cat <<END >/tmp/vg-cmd.tmp
+set mouse
+# load "/tmp/label.gnuplot"
+splot "/tmp/vg.tmp" w l 3
+pause -1 "Trykk Enter..."
+END
+gnuplot -persist /tmp/vg-cmd.tmp
