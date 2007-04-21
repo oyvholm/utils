@@ -621,12 +621,12 @@ END
 # }}}
 testcmd("../gpst -d -o clean no_signal.mayko", # {{{
     <<END,
-23.6746151\t70.6800486
-23.6740038\t70.6799322
-23.6723991\t70.6796266
-23.6757566\t70.6800774
-23.6753442\t70.6801502
-23.6757542\t70.6801905
+23.6746151\t70.6800486\t
+23.6740038\t70.6799322\t
+23.6723991\t70.6796266\t
+23.6757566\t70.6800774\t
+23.6753442\t70.6801502\t
+23.6757542\t70.6801905\t
 END
     "",
     "Remove duplicated positions from clean output format",
@@ -1442,6 +1442,146 @@ COMMIT;
 END
     "",
     "Test pgwupd format",
+);
+
+# }}}
+
+diag("Strip error from Mayko format...");
+
+testcmd("../gpst -o csv date_error.mayko", # {{{
+    <<END,
+2003-06-13T09:12:36Z\t5.5794667\t60.4280897\t\t
+2003-06-13T09:12:38Z\t5.5802255\t60.4281867\t\t
+2003-06-13T09:12:41Z\t5.5813636\t60.4283320\t\t
+2003-06-13T09:12:42Z\t5.5817430\t60.4283806\t\t
+END
+    "",
+    "Strip error from mayko format in csv output",
+);
+
+# }}}
+testcmd("../gpst -o clean date_error.mayko", # {{{
+    <<END,
+5.5794667\t60.4280897\t
+5.5802255\t60.4281867\t
+5.5813636\t60.4283320\t
+5.5817430\t60.4283806\t
+END
+    "",
+    "Strip error from mayko format in clean output",
+);
+
+# }}}
+testcmd("../gpst -o gpsml date_error.mayko", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<tp> <time>2003-06-13T09:12:36Z</time> <lat>60.4280897</lat> <lon>5.5794667</lon> </tp>
+<tp> <time>2003-06-13T09:12:38Z</time> <lat>60.4281867</lat> <lon>5.5802255</lon> </tp>
+<etp err="error"> <time>2037-06-25T17:19:22Z</time> <lat>103.4034054</lat> <lon>129.7271053</lon> </etp>
+<tp> <time>2003-06-13T09:12:41Z</time> <lat>60.428332</lat> <lon>5.5813636</lon> </tp>
+<tp> <time>2003-06-13T09:12:42Z</time> <lat>60.4283806</lat> <lon>5.581743</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Strip error from mayko format in gpsml output",
+);
+
+# }}}
+testcmd("../gpst -o gpx date_error.mayko", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+  <trk>
+    <trkseg>
+      <trkpt lat="60.4280897" lon="5.5794667"> <time>2003-06-13T09:12:36Z</time> </trkpt>
+      <trkpt lat="60.4281867" lon="5.5802255"> <time>2003-06-13T09:12:38Z</time> </trkpt>
+      <!-- <trkpt lat="103.4034054" lon="129.7271053"> <time>2037-06-25T17:19:22Z</time> <extensions> <error>error</error> </extensions> </trkpt> -->
+      <trkpt lat="60.4283320" lon="5.5813636"> <time>2003-06-13T09:12:41Z</time> </trkpt>
+      <trkpt lat="60.4283806" lon="5.5817430"> <time>2003-06-13T09:12:42Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+    "Strip error from mayko format in gpx output",
+);
+
+# }}}
+testcmd("../gpst -o gpstrans date_error.mayko", # {{{
+    <<END,
+Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84
+T\t06/13/2003 09:12:36\t60\xB025'41.1"\t5\xB034'46.1"
+T\t06/13/2003 09:12:38\t60\xB025'41.5"\t5\xB034'48.8"
+T\t06/13/2003 09:12:41\t60\xB025'42.0"\t5\xB034'52.9"
+T\t06/13/2003 09:12:42\t60\xB025'42.2"\t5\xB034'54.3"
+END
+    "",
+    "Strip error from mayko format in gpstrans output",
+);
+
+# }}}
+testcmd("../gpst -o pgtab date_error.mayko", # {{{
+    <<END,
+2003-06-13T09:12:36Z\t(60.4280897,5.5794667)\t\\N\t\\N\t\\N\t\\N\t\\N
+2003-06-13T09:12:38Z\t(60.4281867,5.5802255)\t\\N\t\\N\t\\N\t\\N\t\\N
+2003-06-13T09:12:41Z\t(60.4283320,5.5813636)\t\\N\t\\N\t\\N\t\\N\t\\N
+2003-06-13T09:12:42Z\t(60.4283806,5.5817430)\t\\N\t\\N\t\\N\t\\N\t\\N
+END
+    "",
+    "Strip error from mayko format in pgtab output",
+);
+
+# }}}
+testcmd("../gpst -o poscount date_error.mayko", # {{{
+    <<END,
+5.5802255\t60.4281867\t1
+5.5817430\t60.4283806\t1
+5.5813636\t60.4283320\t1
+5.5794667\t60.4280897\t1
+END
+    "",
+    "Strip error from mayko format in poscount output",
+);
+
+# }}}
+testcmd("../gpst -o xgraph date_error.mayko", # {{{
+    <<END,
+5.5794667 60.4280897
+5.5802255 60.4281867
+5.5813636 60.4283320
+5.5817430 60.4283806
+END
+    "",
+    "Strip error from mayko format in xgraph output",
+);
+
+# }}}
+testcmd("../gpst -o ygraph date_error.mayko", # {{{
+    <<END,
+"Time = 0.0
+5.5794667 60.4280897
+
+"Time = 2.0
+5.5802255 60.4281867
+
+"Time = 5.0
+5.5813636 60.4283320
+
+"Time = 6.0
+5.5817430 60.4283806
+
+END
+    "",
+    "Strip error from mayko format in ygraph output",
 );
 
 # }}}

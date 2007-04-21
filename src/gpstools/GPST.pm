@@ -12,6 +12,7 @@ use strict;
 use warnings;
 
 use GPSTdebug;
+use GPSTgeo;
 
 BEGIN {
     use Exporter ();
@@ -134,9 +135,27 @@ sub trackpoint {
                 );
             }
             # }}}
+        } elsif($Dat{'format'} eq "clean") {
+            $Retval .= "$Dat{'lon'}\t$Dat{'lat'}\t$Dat{'ele'}\n";
+        } elsif($Dat{'format'} eq "csv") {
+            $Retval .= join("\t",
+                $print_time
+                    ? $Dat{'date-format'} eq "epoch"
+                        ? $Dat{'epoch'}
+                        : $Dat{'date-format'} eq "short"
+                            ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
+                              "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
+                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                    : "",
+                $Dat{'lon'},
+                $Dat{'lat'},
+                $Dat{'ele'},
+                "\n"
+            );
         } elsif($Dat{'format'} eq "xgraph") {
             if (length($Dat{'lat'}) && length($Dat{'lon'})) {
-                $Retval .= "$Dat{'lon'}\t$Dat{'lat'}";
+                $Retval .= "$Dat{'lon'} $Dat{'lat'}\n";
             }
         } elsif ($Dat{'format'} eq "pgtab") {
             $Retval .= join("\t",
@@ -153,6 +172,18 @@ sub trackpoint {
                 '\N', # description
                 '\N' # avst
             ) . "\n";
+        } elsif ($Dat{'format'} eq "gpstrans") {
+            # {{{
+            my ($gpt_lat, $gpt_lon) =
+               (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
+            if ($print_time) {
+                $Retval .= "T\t$Dat{'month'}/$Dat{'day'}/$Dat{'year'} " .
+                         "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}\t" .
+                         "$gpt_lat\t$gpt_lon\n";
+            } else {
+                $Retval .= "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
+            }
+            # }}}
         } else {
             $Retval = undef;
         }
