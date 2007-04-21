@@ -150,6 +150,10 @@ if ($lon1 > $lon2) {
     $lon2 = $Tmp;
 }
 
+if ($Opt{'epoch'} && $Opt{'short-date'}) {
+    die("$progname: Cannot mix the --epoch (-e) and --short-date (-s) options\n");
+}
+
 if ($Opt{'inside'} && $Opt{'outside'}) {
     die("$progname: Cannot mix the --inside and --outside options\n");
 }
