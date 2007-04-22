@@ -26,4 +26,12 @@ plot \
 "hosts.timeonly.dat" using 1:2 title " " with line 1, \
 "hosts.timeonly.dat" using 1:2 smooth bezier title " " with line -1
 
+set encoding iso_8859_1
+set grid
+set output "connections.png"
+set logscale y
+plot \
+"c.dat" using 2:1 title " " with line 1, \
+"c.dat" using 1:2 smooth bezier title " " with line -1
+
 # vim: set sw=2 sts=0 ts=2 et :
