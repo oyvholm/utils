@@ -2,11 +2,25 @@
 
 # $Id$
 
-gpst -o clean -re -d "$@" | rmspcall | uniq >/tmp/vg.tmp
-cat <<END >/tmp/vg-cmd.tmp
+if [ "$1" = "-t" ]; then
+    shift
+    gpst -o csv -rt -d "$@" | rmspcall | uniq >/tmp/vg-t.tmp
+    cat <<END >/tmp/vg-t-cmd.tmp
+set mouse
+# load "/tmp/label.gnuplot"
+set zdata time
+set timefmt "%Y-%m-%dT%H:%M:%SZ"
+splot "/tmp/vg-t.tmp" using 2:3:1 w l 3
+pause -1 "Trykk Enter..."
+END
+    gnuplot -persist /tmp/vg-t-cmd.tmp
+else
+    gpst -o clean -re -d "$@" | rmspcall | uniq >/tmp/vg.tmp
+    cat <<END >/tmp/vg-cmd.tmp
 set mouse
 # load "/tmp/label.gnuplot"
 splot "/tmp/vg.tmp" w l 3
 pause -1 "Trykk Enter..."
 END
-gnuplot -persist /tmp/vg-cmd.tmp
+    gnuplot -persist /tmp/vg-cmd.tmp
+fi
