@@ -576,7 +576,7 @@ sub print_gpx {
     # {{{
     my $Orig = shift;
     my $Str = $Orig;
-    D("print_xml_gps(\"$Orig\")\n");
+    # D("print_xml_gps(\"$Orig\")\n");
     $Str =~ s/<!--(.*?)-->//gs;
     my $fromdate_str = "";
     if ($Opt{'from-date'}) {
