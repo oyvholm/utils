@@ -677,6 +677,8 @@ sub print_gpx {
                     %Dat = (
                         'year' => '', 'month' => '', 'day' => '',
                         'hour' => '', 'min' => '', 'sec' => '',
+                        'epoch' => '',
+                        'date-format' => '',
                         'lat' => '', 'lon' => '',
                         'ele' => '',
                         'desc' => '',
