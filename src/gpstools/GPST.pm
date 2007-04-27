@@ -137,22 +137,6 @@ sub trackpoint {
             # }}}
         } elsif($Dat{'format'} eq "clean") {
             $Retval .= "$Dat{'lon'}\t$Dat{'lat'}\t$Dat{'ele'}\n";
-        } elsif($Dat{'format'} eq "csv") {
-            $Retval .= join("\t",
-                $print_time
-                    ? $Dat{'date-format'} eq "epoch"
-                        ? $Dat{'epoch'}
-                        : $Dat{'date-format'} eq "short"
-                            ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
-                              "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
-                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
-                    : "",
-                $Dat{'lon'},
-                $Dat{'lat'},
-                $Dat{'ele'},
-                "\n"
-            );
         } elsif($Dat{'format'} eq "xgraph") {
             if (length($Dat{'lat'}) && length($Dat{'lon'})) {
                 $Retval .= "$Dat{'lon'} $Dat{'lat'}\n";
