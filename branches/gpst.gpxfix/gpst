@@ -667,10 +667,6 @@ sub print_gpx {
                        (         $1,        $2);
                     %Dat = reset_Dat();
                     $Dat{'what'} = 'tp';
-                    for my $Tmp (@wpt_elems) {
-                        $Dat{$Tmp} = "";
-                        D("Dat{$Tmp} set to ''");
-                    }
                     ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
                     ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
                     my $wpt_elems_str = join("|", @wpt_elems);
