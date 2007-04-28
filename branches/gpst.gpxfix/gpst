@@ -263,17 +263,8 @@ for $curr_file (@ARGV) {
         # {{{
         while (<CurrFP>) {
             $data_line = $_;
-            %Dat = (
-                'year' => '', 'month' => '', 'day' => '',
-                'hour' => '', 'min' => '', 'sec' => '',
-                'epoch' => '',
-                'date-format' => '',
-                'lat' => '', 'lon' => '',
-                'ele' => '',
-                'desc' => '',
-                'error' => "",
-                'what' => 'tp',
-            );
+            %Dat = reset_Dat();
+            $Dat{'what'} = "tp";
 
             $Opt{'epoch'} && ($Dat{'date-format'} = "epoch");
             $Opt{'short-date'} && ($Dat{'date-format'} = "short");
@@ -674,13 +665,8 @@ sub print_gpx {
                 {
                     my ($attr_trkpt, $el_trkpt) =
                        (         $1,        $2);
-                    %Dat = (
-                        'year' => '', 'month' => '', 'day' => '',
-                        'hour' => '', 'min' => '', 'sec' => '',
-                        'lat' => '', 'lon' => '',
-                        'error' => "",
-                        'what' => 'tp',
-                    );
+                    %Dat = reset_Dat();
+                    $Dat{'what'} = 'tp';
                     for my $Tmp (@wpt_elems) {
                         $Dat{$Tmp} = "";
                         D("Dat{$Tmp} set to ''");
@@ -1123,6 +1109,39 @@ sub print_entry {
     }
     $last_line = $data_line;
     $svg_start_thing = "\"/>\n";
+    # }}}
+}
+
+sub reset_Dat {
+    # {{{
+    my %Retval = (
+        'year' => "", 'month' => "", 'day' => "",
+        'hour' => "", 'min' => "", 'sec' => "",
+        'epoch' => "",
+        'date-format' => "",
+        'error' => "",
+        'what' => "",
+        # Position info
+        'lat' => "", 'lon' => "",
+        'ele' => "",
+        'time' => "",
+        'magvar' => "",
+        'geoidheight' => "",
+        # Description info
+        'name' => "",
+        'cmt' => "", 'desc' => "",
+        'src' => "", 'link' => "",
+        'sym' => "", 'type' => "",
+        # Accuracy info
+        'fix' => "",
+        'sat' => "",
+        'hdop' => "", 'vdop' => "", 'pdop' => "",
+        'ageofdgpsdata' => "",
+        'dgpsid' => "",
+        # Extensions
+        'extensions' => "",
+    );
+    return(%Retval);
     # }}}
 }
 
