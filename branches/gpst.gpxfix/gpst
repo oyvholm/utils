@@ -567,7 +567,7 @@ sub print_gpx {
     # {{{
     my $Orig = shift;
     my $Str = $Orig;
-    D("print_xml_gps(\"$Orig\")\n");
+    # D("print_xml_gps(\"$Orig\")\n");
     $Str =~ s/<!--(.*?)-->//gs;
     my $fromdate_str = "";
     if ($Opt{'from-date'}) {
@@ -649,6 +649,7 @@ sub print_gpx {
                 my %tmp_dat = ();
                 $tmp_dat{'title'} = $2;
                 $tmp_dat{'what'} = "title";
+                $tmp_dat{'error'} = "";
                 print_entry(%tmp_dat);
                 "";
             }sex;
@@ -1066,7 +1067,21 @@ sub print_entry {
             # {{{
             if (!length($Dat{'error'})) {
                 $Dat{'format'} = "csv";
-                $Line .= trackpoint(%Dat);
+                $Line .= join("\t",
+                    $print_time
+                        ? $Opt{'epoch'}
+                            ? $ep_time
+                            : $Opt{'short-date'}
+                                ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
+                                  "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
+                                : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                                  "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                        : "",
+                    $Dat{'lon'},
+                    $Dat{'lat'},
+                    $print_ele ? $Dat{'ele'} : "", # Elevation
+                    "\n"
+                );
             }
             # }}}
         } elsif ($Opt{'output-format'} eq "pgwtab") {
