@@ -996,7 +996,7 @@ sub print_entry {
         unless ($first_time) {
             $first_time = $ep_time;
         }
-        if ($Opt{'double-y-scale'}) {
+        if ($Opt{'double-y-scale'} && length($Dat{'lat'})) {
             $Dat{'lat'} *= 2;
         }
         if ($Opt{'output-format'} eq "gpsml") {

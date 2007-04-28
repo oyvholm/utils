@@ -1500,6 +1500,37 @@ END
 # }}}
 # --strip-whitespace option }}}
 diag("Testing --double-y-scale option..."); # {{{
+testcmd("../gpst -y -o clean pause.gpx", # {{{
+    <<END,
+5.299534\t120.850988\t25.260
+5.299610\t120.850928\t24.931
+5.299694\t120.850628\t27.975
+5.299741\t120.850768\t31.017
+5.299958\t120.850678\t30.980
+5.299640\t120.850476\t30.538
+5.299686\t120.850492\t30.515
+5.299773\t120.85069\t31.936
+5.299419\t120.850914\t31.794
+END
+    "",
+    "Double y scale, clean output from gpx format",
+);
+
+# }}}
+testcmd("../gpst -y -o clean log.dos.mayko", # {{{
+    <<END,
+8.1225077\t116.3636316\t
+8.1253200\t116.3637424\t
+8.1266031\t116.3632694\t
+8.1284612\t116.3624198\t
+8.1293950\t116.362063\t
+8.1307400\t116.3619242\t
+END
+    "",
+    "Double y scale, clean output from mayko format",
+);
+
+# }}}
 # --double-y-scale option }}}
 diag("Testing --debug option..."); # {{{
 # --debug option }}}
