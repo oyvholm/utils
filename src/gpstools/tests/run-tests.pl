@@ -1815,6 +1815,7 @@ sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
     my $stderr_cmd = "";
+    my $deb_str = $Opt{'debug'} ? " --debug" : "";
     my $Txt = join("",
         "\"$Cmd\"",
         defined($Desc)
@@ -1823,13 +1824,15 @@ sub testcmd {
     );
     my $TMP_STDERR = "gpst-stderr.tmp";
 
-    if (defined($Exp_stderr)) {
+    if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    is(`$Cmd$stderr_cmd`, $Exp_stdout, $Txt);
+    is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
     if (defined($Exp_stderr)) {
-        is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
-        unlink($TMP_STDERR);
+        if (!length($deb_str)) {
+            is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+            unlink($TMP_STDERR);
+        }
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
