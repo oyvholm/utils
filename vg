@@ -4,18 +4,19 @@
 
 if [ "$1" = "-t" ]; then
     shift
-    gpst -o csv -rt -d "$@" | rmspcall | uniq >/tmp/vg-t.tmp
+    gpst -o csv -rt -e -d -t "$@" | rmspcall | uniq >/tmp/vg-t.tmp
     cat <<END >/tmp/vg-t-cmd.tmp
 set mouse
 # load "/tmp/label.gnuplot"
 set zdata time
-set timefmt "%Y-%m-%dT%H:%M:%SZ"
-splot "/tmp/vg-t.tmp" using 2:3:1 w lp 3
+# set timefmt "%Y-%m-%dT%H:%M:%SZ"
+set timefmt "%s"
+splot "/tmp/vg-t.tmp" using 2:3:1 w l 3
 pause -1 "Trykk Enter..."
 END
     gnuplot -persist /tmp/vg-t-cmd.tmp
 else
-    gpst -o clean -re -d "$@" | rmspcall | uniq >/tmp/vg.tmp
+    gpst -o clean -ret -d -t "$@" | rmspcall | uniq >/tmp/vg.tmp
     cat <<END >/tmp/vg-cmd.tmp
 set mouse
 # load "/tmp/label.gnuplot"
