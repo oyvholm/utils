@@ -6,6 +6,7 @@
 
 BOOKFILES = index.xml
 HTMLFILE = index.html
+XMLLINT = xmllint
 
 $(HTMLFILE): $(BOOKFILES)
 	xsltproc --output $(HTMLFILE) ~/xsl/xhtml/docbook.xsl $(BOOKFILES)
@@ -22,6 +23,9 @@ ready:
 	$(MAKE) clean
 	$(MAKE)
 	svn st
+
+valid:
+	XML_CATALOG_FILES=catalog.xml $(XMLLINT) --noout --nonet --valid $(BOOKFILES)
 
 # $Id$
 # vim: set ts=4 sw=4 sts=4 noet :
