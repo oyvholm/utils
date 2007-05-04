@@ -11,7 +11,7 @@ set mouse
 set zdata time
 # set timefmt "%Y-%m-%dT%H:%M:%SZ"
 set timefmt "%s"
-splot "/tmp/vg-t.tmp" using 2:3:1 w l 3
+splot "/tmp/vg-t.tmp" using 2:3:1 w l palette
 pause -1 "Trykk Enter..."
 END
     gnuplot -persist /tmp/vg-t-cmd.tmp
@@ -20,7 +20,7 @@ else
     cat <<END >/tmp/vg-cmd.tmp
 set mouse
 # load "/tmp/label.gnuplot"
-splot "/tmp/vg.tmp" w l 3
+splot "/tmp/vg.tmp" w l palette
 pause -1 "Trykk Enter..."
 END
     gnuplot -persist /tmp/vg-cmd.tmp
