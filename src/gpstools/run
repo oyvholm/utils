@@ -1,0 +1,13 @@
+#!/usr/bin/gnuplot
+
+# $Id$
+
+!./makemesh >x
+set pm3d
+splot "x" w l, "x" w pm3d
+pause -1
+
+splot "x" w l
+pause -1
+splot "x" w d
+pause -1
