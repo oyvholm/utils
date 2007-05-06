@@ -150,6 +150,10 @@ if ($lon1 > $lon2) {
     $lon2 = $Tmp;
 }
 
+if ($Opt{'epoch'} && $Opt{'short-date'}) {
+    die("$progname: Cannot mix the --epoch (-e) and --short-date (-s) options\n");
+}
+
 if ($Opt{'inside'} && $Opt{'outside'}) {
     die("$progname: Cannot mix the --inside and --outside options\n");
 }
@@ -262,12 +266,17 @@ for $curr_file (@ARGV) {
             %Dat = (
                 'year' => '', 'month' => '', 'day' => '',
                 'hour' => '', 'min' => '', 'sec' => '',
+                'epoch' => '',
+                'date-format' => '',
                 'lat' => '', 'lon' => '',
                 'ele' => '',
                 'desc' => '',
                 'error' => "",
                 'type' => 'tp',
             );
+
+            $Opt{'epoch'} && ($Dat{'date-format'} = "epoch");
+            $Opt{'short-date'} && ($Dat{'date-format'} = "short");
 
             if ($Opt{'save-to-file'} ne "\n") {
                 push(@first_lines, $_);
@@ -328,6 +337,7 @@ for $curr_file (@ARGV) {
                 # CSV format, epoch style {{{
                 my ($ep_time, $lon_val, $lat_val, $Alt) =
                    (      $1,       $2,       $3,   $4);
+                $Dat{'epoch'} = $ep_time;
                 ($Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
                  $Dat{'day'}, $Dat{'month'}, $Dat{'year'},
                  $Dat{'wday'}, $Dat{'yday'}) = gmtime($ep_time);
@@ -599,7 +609,7 @@ sub print_gpx {
     # {{{
     my $Orig = shift;
     my $Str = $Orig;
-    D("print_xml_gps(\"$Orig\")\n");
+    # D("print_xml_gps(\"$Orig\")\n");
     $Str =~ s/<!--(.*?)-->//gs;
     my $fromdate_str = "";
     if ($Opt{'from-date'}) {
@@ -681,6 +691,7 @@ sub print_gpx {
                 my %tmp_dat = ();
                 $tmp_dat{'title'} = $2;
                 $tmp_dat{'type'} = "title";
+                $tmp_dat{'error'} = "";
                 print_entry(%tmp_dat);
                 "";
             }sex;
@@ -700,6 +711,8 @@ sub print_gpx {
                     %Dat = (
                         'year' => '', 'month' => '', 'day' => '',
                         'hour' => '', 'min' => '', 'sec' => '',
+                        'epoch' => '',
+                        'date-format' => '',
                         'lat' => '', 'lon' => '',
                         'ele' => '',
                         'desc' => '',
@@ -842,9 +855,11 @@ sub print_entry {
     }
 
     if ($Opt{'output-format'} eq "poscount") {
-        my $Name = "$Dat{'lon'},$Dat{'lat'}";
-        defined($Poscount{$Name}) || ($Poscount{$Name} = 0);
-        $Poscount{$Name}++;
+        if (!length($Dat{'error'})) {
+            my $Name = "$Dat{'lon'},$Dat{'lat'}";
+            defined($Poscount{$Name}) || ($Poscount{$Name} = 0);
+            $Poscount{$Name}++;
+        }
         return;
     }
 
@@ -853,6 +868,7 @@ sub print_entry {
             $Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
             $Dat{'day'}, $Dat{'month'} - 1, $Dat{'year'}
         );
+        $Dat{'epoch'} = $ep_time;
         $Dat{'year'}  = sprintf("%04u", $Dat{'year'});
         $Dat{'month'} = sprintf("%02u", $Dat{'month'});
         $Dat{'day'}   = sprintf("%02u", $Dat{'day'});
@@ -996,9 +1012,13 @@ sub print_entry {
             if ($Opt{'output-format'} eq "gpsml") {
                 $Line .= sprintf("<pause>%s</pause>\n",
                                  sec_to_readable($ep_time-$last_time));
+            } elsif ($Opt{'output-format'} eq "clean") {
+                $pause_len && ($Line .= "\n");
             } elsif ($Opt{'output-format'} eq "csv") {
                 $Line .= sprintf("# Pause: %s\n# move\n",
                                  sec_to_readable($ep_time-$last_time));
+            } elsif ($Opt{'output-format'} eq "xgraph") {
+                $pause_len && ($Line .= "move ");
             }
         }
         # }}}
@@ -1009,7 +1029,7 @@ sub print_entry {
         unless ($first_time) {
             $first_time = $ep_time;
         }
-        if ($Opt{'double-y-scale'}) {
+        if ($Opt{'double-y-scale'} && length($Dat{'lat'})) {
             $Dat{'lat'} *= 2;
         }
         if ($Opt{'output-format'} eq "gpsml") {
@@ -1023,24 +1043,19 @@ sub print_entry {
                                  $1);
             }
         } elsif ($Opt{'output-format'} eq "pgtab") {
-            if ($Dat{'type'} eq "tp") {
+            if ($Dat{'type'} eq "tp" && !length($Dat{'error'})) {
                 $Dat{'format'} = "pgtab";
                 $Line .= trackpoint(%Dat);
             }
         } elsif ($Opt{'output-format'} eq "xgraph") {
-            if ($print_pos) {
-                $pause_len && ($Line .= "move ");
-                ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
+            if ($print_pos && !length($Dat{'error'})) {
+                $Dat{'format'} = "xgraph";
+                $Line .= trackpoint(%Dat);
             }
         } elsif($Opt{'output-format'} eq "gpstrans") {
-            my ($gpt_lat, $gpt_lon) =
-               (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
-            if ($print_time) {
-                $Line .= "T\t$Dat{'month'}/$Dat{'day'}/$Dat{'year'} " .
-                         "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}\t" .
-                         "$gpt_lat\t$gpt_lon\n";
-            } else {
-                $Line .= "T\t00/00/00 00:00:00\t$gpt_lat\t$gpt_lon\n";
+            if ($print_pos && !length($Dat{'error'})) {
+                $Dat{'format'} = "gpstrans";
+                $Line .= trackpoint(%Dat);
             }
         } elsif($Opt{'output-format'} eq "gpx") {
             if ($Dat{'type'} eq "tp") {
@@ -1048,12 +1063,10 @@ sub print_entry {
                 $Line .= trackpoint(%Dat);
             }
         } elsif ($Opt{'output-format'} eq "clean") {
-            $pause_len && ($Line .= "\n");
-            ($Line .= "$Dat{'lon'}\t$Dat{'lat'}" .
-                      ($print_ele
-                        ? "\t$Dat{'ele'}"
-                        : "") .
-                      "\n");
+            if ($Dat{'type'} eq "tp" && !length($Dat{'error'})) {
+                $Dat{'format'} = "clean";
+                $Line .= trackpoint(%Dat);
+            }
         } elsif ($Opt{'output-format'} eq "ps") {
             $Line .= (
                 $pause_len
@@ -1073,26 +1086,30 @@ sub print_entry {
                     : "L $Dat{'lon'} $Dat{'lat'}\n"
             );
         } elsif ($Opt{'output-format'} eq "ygraph") {
-            my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
-            $Line .= "\"Time = $Time.0\n$Dat{'lon'} $Dat{'lat'}\n\n";
+            if (!length($Dat{'error'})) {
+                my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
+                $Line .= "\"Time = $Time.0\n$Dat{'lon'} $Dat{'lat'}\n\n";
+            }
         } elsif ($Opt{'output-format'} eq "csv") {
             # {{{
-            # $do_print || print("skipping ");
-            $Line .= join("\t",
-                $print_time
-                    ? $Opt{'epoch'}
-                        ? $ep_time
-                        : $Opt{'short-date'}
-                            ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
-                              "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
-                            : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                              "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
-                    : "",
-                $Dat{'lon'},
-                $Dat{'lat'},
-                $print_ele ? $Dat{'ele'} : "", # Elevation
-                "\n"
-            );
+            if (!length($Dat{'error'})) {
+                $Dat{'format'} = "csv";
+                $Line .= join("\t",
+                    $print_time
+                        ? $Opt{'epoch'}
+                            ? $ep_time
+                            : $Opt{'short-date'}
+                                ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
+                                  "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
+                                : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                                  "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                        : "",
+                    $Dat{'lon'},
+                    $Dat{'lat'},
+                    $print_ele ? $Dat{'ele'} : "", # Elevation
+                    "\n"
+                );
+            }
             # }}}
         } elsif ($Opt{'output-format'} eq "pgwtab") {
             # FIXME: NOP at the moment.
