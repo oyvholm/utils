@@ -1195,13 +1195,13 @@ Options:
   --inside
     Print only trackpoints inside a rectangle specified by --pos1 and 
     --pos2.
-  -n x, --undefined x
+  -n, --undefined x
     Use x as undefined value. Default: "$Udef".
   --near
     Add names of the three closest waypoints to the trackpoint. 
     Unfinished and experimental, needs gpsbabel, which is called from 
     the program as "$Cmd{'gpsbabel'}".
-  -o x, --output-format x
+  -o, --output-format x
     Use output format x:
       clean
       csv
@@ -1219,11 +1219,12 @@ Options:
   --outside
     Print only trackpoints outside a rectangle specified by --pos1 and 
     --pos2.
-  --pos1 x, --pos2 x
+  --pos1 x
+  --pos2 x
     Specifies one corner where x is in "lat,lon" format (decimal 
     degrees, negative for west or south) of area rectangle used by the 
     --inside and --outside options.
-  -r x, --require x
+  -r, --require x
     Specify requirements for trackpoints to be written. x is a string 
     with the following flags:
       e
@@ -1232,12 +1233,12 @@ Options:
         Print only waypoints which have a position.
       t
         Print only waypoints which have a timestamp.
-  -R x=y[,x2=y2[...]]
+  -R, --round x=y[,x2=y2[...]]
     Round trackpoint element x to y decimals. Example:
       --round lat=4,lon=5,ele=1
   -s, --short-date
     Use short date format.
-  -S x, --save-to-file x
+  -S, --save-to-file x
     Save the unconverted data to a file with a filename starting with 
     the timestamp of the first trackpoint. The parameter string x is 
     added at the end of the filename. For the time being this option 
@@ -1328,11 +1329,11 @@ Print only trackpoints inside a rectangle specified by --pos1 and
 Add names of the three closest waypoints to the trackpoint. Unfinished 
 and experimental, needs gpsbabel.
 
-=item B<-n x>, B<--undefined x>
+=item B<-n>, B<--undefined x>
 
 Use x as undefined value.
 
-=item B<-o x>, B<--output-format x>
+=item B<-o>, B<--output-format x>
 
 Use output format x:
 
@@ -1379,13 +1380,14 @@ Z<>
 Print only trackpoints outside a rectangle specified by --pos1 and 
 --pos2.
 
-=item B<--pos1 x>, B<--pos2 x>
+=item B<--pos1 x>
+=item B<--pos2 x>
 
 Specifies corners of an area rectangle used by the --inside and 
 --outside options. The x value is in "lat,lon" format (decimal degrees, 
 negative for west or south) .
 
-=item B<-r x>, B<--require x>
+=item B<-r>, B<--require x>
 
 Specify requirements for trackpoints to be written. x is a string with 
 the following flags:
@@ -1426,7 +1428,7 @@ the following flags:
 
 Z<>
 
-=item -R x=y[,x2=y2[...]]
+=item B<-R>, B<--round x=y[,x2=y2[...]]>
 
 Round trackpoint element x to y decimals.
 
@@ -1438,7 +1440,7 @@ Example:
 
 Use short date format.
 
-=item B<-S x>, B<--save-to-file x>
+=item B<-S>, B<--save-to-file x>
 
 Save the unconverted data to a file with a filename starting with the 
 timestamp of the first trackpoint. The parameter string x is added at 
