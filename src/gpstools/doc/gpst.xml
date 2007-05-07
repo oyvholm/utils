@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
-<article lang="en">
-  <articleinfo>
-    <title>Articletitle</title>
-    <releaseinfo>$Id$</releaseinfo>
-    <author>
-      <firstname>Øyvind</firstname>
-      <othername>A.</othername>
-      <surname>Holm</surname>
-      <email>sunny@sunbase.org</email>
-    </author>
-    <copyright>
-      <year>2006</year>
-      <holder>Øyvind A. Holm</holder>
-    </copyright>
-  </articleinfo>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
 
-  <section> <title>Sectiontitle</title>
-
-    <para></para>
-
-  </section>
-</article>
+<refentry id="ls">
+  <!-- $Id$ -->
+  <refmeta>
+    <refentrytitle>ls</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+  <refnamediv>
+    <refname>ls</refname>
+    <refpurpose>list contents of a directory</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>/usr/bin/ls</command>
+      <arg choice="opt">
+        <option>aAbcCdfFgilLmnopqrRstux1</option>
+      </arg>
+      <arg choice="opt" rep="repeat">file</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>Description</title>
+    <para>For each file that is a directory, <command>ls</command> lists 
+    the contents of the directory; for each file that is an ordinary 
+    file, <command>ls</command> repeats its name and any other 
+    information requested.</para>
+    <para>…</para>
+  </refsect1>
+  <!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
+</refentry>
