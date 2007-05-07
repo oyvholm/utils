@@ -28,5 +28,262 @@
     information requested.</para>
     <para>…</para>
   </refsect1>
+<!--
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+gptrans_conv
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+B<gptrans_conv> [options] [file [files [...]]]
+
+B<gptrans_conv> -S [options] [file [files [...]]]
+
+B<gptrans_conv> -u [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+Converts between various GPS formats.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--chronology>
+
+Check for broken chronology, warn about entries with an old timestamp.
+
+=item B<-d>, B<--skip-dups>
+
+Skip duplicated coordinates.
+
+=item B<-e>, B<--epoch>
+
+Use seconds since 1970-01-01 00:00:00 GMT as date format.
+
+item B<--fix>
+
+Comment out entries which is obviously wrong. Use together with 
+--chronology to fix those kind of errors. Does not work with GPX output 
+yet.
+
+=item B<-h>, B<--help>
+
+Show this help.
+
+=item B<--inside>
+
+Print only trackpoints inside a rectangle specified by --pos1 and 
+--pos2.
+
+=item B<--near>
+
+Add names of the three closest waypoints to the trackpoint. Unfinished 
+and experimental, needs gpsbabel.
+
+=item B<-n>, B<--undefined x>
+
+Use x as undefined value.
+
+=item B<-o>, B<--output-format x>
+
+Use output format x:
+
+=over 4
+
+=over 4
+
+=item clean
+
+=item csv
+
+=item gpsml (Default)
+
+This is the format which is meant to be used when storing the track 
+logs.
+It is line-based XML which makes it easy to edit and grep. Probably not 
+finished yet.
+
+=item gpstrans
+
+=item gpx (Not complete)
+
+=item poscount
+
+Creates a 3D plot where areas with many trackpoints are higher than 
+areas with less track points.
+
+=item ps (Unfinished)
+
+=item svg (Unfinished)
+
+=item xgraph
+
+=item ygraph
+
+=back
+
+=back
+
+Z<>
+
+=item B<--outside>
+
+Print only trackpoints outside a rectangle specified by --pos1 and 
+--pos2.
+
+=item B<--pos1 x>
+=item B<--pos2 x>
+
+Specifies corners of an area rectangle used by the --inside and 
+--outside options. The x value is in "lat,lon" format (decimal degrees, 
+negative for west or south) .
+
+=item B<-r>, B<--require x>
+
+Specify requirements for trackpoints to be written. x is a string with 
+the following flags:
+
+=over 4
+
+=over 4
+
+=item e
+
+=over 4
+
+=item Print only waypoints which have an elevation.
+
+=back
+
+=back
+
+=over 4
+
+=item p
+
+=over 4
+
+=item Print only waypoints which have a position.
+
+=item t
+
+=over 4
+
+=item Print only waypoints which have a timestamp.
+
+=back
+
+=back
+
+=back
+
+Z<>
+
+=item B<-R>, B<--round x=y[,x2=y2[...]]>
+
+Round trackpoint element x to y decimals.
+
+Example:
+
+ --round lat=4,lon=5,ele=1
+
+=item B<-s>, B<--short-date>
+
+Use short date format.
+
+=item B<-S>, B<--save-to-file x>
+
+Save the unconverted data to a file with a filename starting with the 
+timestamp of the first trackpoint. The parameter string x is added at 
+the end of the filename. For the time being this option will ignore all 
+other options.
+
+Note: If several files are specified on the command line, all data will 
+be saved into only one file. This behaviour may change in the future.
+
+=item B<-t>, B<--create-breaks>
+
+Create breaks in track between points with a difference more than the 
+number of seconds specified by the C<$PAUSE_LIMIT> variable.
+
+=item B<-u>, B<--comment-out-dups>
+
+Comment out following data with identical position values, only print 
+first entry.
+
+=item B<-v>, B<--verbose>
+
+Verbose output.
+
+=item B<-w>, B<--strip-whitespace>
+
+Strip all unnecessary whitespace.
+
+=item B<-y>, B<--double-y-scale>
+
+Double Y scale (latitude) to get it right in gnuplot.
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+Pretty incomplete in some areas. Some of the source formats are 
+undocumented and thus incomplete. Some functionality is not working 
+properly, for example the Postscript output.
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+gpsbabel(1)
+
+=cut
+
+# }}}
+-->
   <!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
 </refentry>
