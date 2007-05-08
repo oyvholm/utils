@@ -1,38 +1,38 @@
 Index: tests/run-tests.pl
 ===================================================================
---- tests/run-tests.pl	(revision 2143)
+--- tests/run-tests.pl	(revision 2148)
 +++ tests/run-tests.pl	(working copy)
 @@ -1655,16 +1655,16 @@
  # }}}
  testcmd("../gpst -o ygraph date_error.mayko", # {{{
      <<END,
 -"Time = 0.0
-+"Time = 13716.0
++"Time = 33156.0
  5.5794667 60.4280897
  
 -"Time = 2.0
-+"Time = 13718.0
++"Time = 33158.0
  5.5802255 60.4281867
  
 -"Time = 5.0
-+"Time = 13721.0
++"Time = 33161.0
  5.5813636 60.4283320
  
 -"Time = 6.0
-+"Time = 13722.0
++"Time = 33162.0
  5.5817430 60.4283806
  
  END
 Index: gpst
 ===================================================================
---- gpst	(revision 2143)
+--- gpst	(revision 2148)
 +++ gpst	(working copy)
 @@ -1054,7 +1054,7 @@
              );
          } elsif ($Opt{'output-format'} eq "ygraph") {
              if (!length($Dat{'error'})) {
 -                my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
-+                my $Time = $print_time ? ($Dat{'hour'} * 1440 + $Dat{'min'} * 60 + $Dat{'sec'}) : 0;
++                my $Time = $print_time ? ($Dat{'hour'} * 3600 + $Dat{'min'} * 60 + $Dat{'sec'}) : 0;
                  $Line .= "\"Time = $Time.0\n$Dat{'lon'} $Dat{'lat'}\n\n";
              }
          } elsif ($Opt{'output-format'} eq "csv") {
