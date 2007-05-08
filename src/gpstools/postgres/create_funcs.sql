@@ -30,3 +30,10 @@ SELECT round(avs::numeric, 5) FROM (
             LIMIT 1
     ) AS s;
 $$ LANGUAGE SQL;
+
+-- Returnerer antall sekunder sia midnatt for en dato.
+DROP FUNCTION secmidnight(timestamptz);
+CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision
+AS $$
+SELECT extract(hour from $1) * 3600 + extract(minute from $1) * 60 + extract(second from $1);
+$$ LANGUAGE SQL;
