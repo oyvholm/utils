@@ -1,0 +1,258 @@
+.\"     Title: gpst
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
+.\"      Date: $Id$
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "GPST" "1" "$Id$" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+gpst \- Converts between various GPS formats.
+.SH "SYNOPSIS"
+.HP 5
+\fBgpst\fR [\fIoptions\fR] [\fIfile\fR...]
+.HP 5
+\fBgpst\fR {\-S} [\fIoptions\fR] [\fIfile\fR...]
+.HP 5
+\fBgpst\fR {\-u} [\fIoptions\fR] [\fIfile\fR...]
+.SH "DESCRIPTION"
+.PP
+\fB\-\-chronology\fR
+.RS 4
+Check for broken chronology, warn about entries with an old timestamp.
+.RE
+.PP
+\fB\-d\fR, \fB\-\-skip\-dups\fR
+.RS 4
+Skip duplicated coordinates.
+.RE
+.PP
+\fB\-e\fR, \fB\-\-epoch\fR
+.RS 4
+Use seconds since 1970\-01\-01 00:00:00 GMT as date format.
+.RE
+.PP
+\fB\-\-fix\fR
+.RS 4
+Comment out entries which is obviously wrong. Use together with
+\fB\-\-chronology\fR
+to fix those kind of errors. Does not work with GPX output yet.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show this help.
+.RE
+.PP
+\fB\-\-inside\fR
+.RS 4
+Print only trackpoints inside a rectangle specified by
+\fB\-\-pos1\fR
+and
+\fB\-\-pos2\fR.
+.RE
+.PP
+\fB\-\-near\fR
+.RS 4
+Add names of the three closest waypoints to the trackpoint. Unfinished and experimental, needs
+\fBgpsbabel\fR.
+.RE
+.PP
+\fB\-n\fR, \fB\-\-undefined \fR\fB\fIx\fR\fR
+.RS 4
+Use
+\fIx\fR
+as undefined value.
+.RE
+.PP
+\fB\-o\fR, \fB\-\-output\-format \fR\fB\fIx\fR\fR
+.RS 4
+Use output format
+\fIx\fR:
+.RS 4
+.PP
+\fBclean\fR
+.RS 4
+.RE
+.PP
+\fBcsv\fR
+.RS 4
+.RE
+.PP
+\fBgpsml\fR (Default)
+.RS 4
+This is the format which is meant to be used when storing the track logs. It is line\-based XML which makes it easy to edit and grep. Probably not finished yet.
+.RE
+.PP
+\fBgpstrans\fR
+.RS 4
+.RE
+.PP
+\fBgpx\fR (Not complete)
+.RS 4
+.RE
+.PP
+\fBposcount\fR
+.RS 4
+Creates a 3D plot where areas with many trackpoints are higher than areas with less track points.
+.RE
+.PP
+\fBps\fR (Unfinished)
+.RS 4
+.RE
+.PP
+\fBsvg\fR (Unfinished)
+.RS 4
+.RE
+.PP
+\fBxgraph\fR
+.RS 4
+.RE
+.PP
+\fBygraph\fR
+.RS 4
+.RE
+.RE
+.RE
+.PP
+\fB\-\-outside\fR
+.RS 4
+Print only trackpoints outside a rectangle specified by
+\fB\-\-pos1\fR
+and
+\fB\-\-pos2\fR.
+.RE
+.PP
+\fB\-\-pos1 \fR\fB\fIx\fR\fR, \fB\-\-pos2 \fR\fB\fIx\fR\fR
+.RS 4
+Specifies corners of an area rectangle used by the
+\fB\-\-inside\fR
+and
+\fB\-\-outside\fR
+options. The
+\fIx\fR
+value is in
+\(lqlat,lon\(rq
+format (decimal degrees, negative for west or south).
+.RE
+.PP
+\fB\-r\fR, \fB\-\-require \fR\fB\fIx\fR\fR
+.RS 4
+Specify requirements for trackpoints to be written.
+\fIx\fR
+is a string with the following flags:
+.RS 4
+.PP
+\fBe\fR
+.RS 4
+Print only waypoints which have an elevation.
+.RE
+.PP
+\fBp\fR
+.RS 4
+Print only waypoints which have a position.
+.RE
+.PP
+\fBt\fR
+.RS 4
+Print only waypoints which have a timestamp.
+.RE
+.RE
+.RE
+.PP
+\fB\-R\fR, \fB\-\-round \fR\fB\fIx\fR\fR\fB=\fR\fB\fIy\fR\fR\fB[,\fR\fB\fIx2\fR\fR\fB=\fR\fB\fIy2\fR\fR\fB[...]]\fR
+.RS 4
+Round trackpoint element
+\fIx\fR
+to
+\fIy\fR
+decimals.
+.sp
+Example:
+\fB\-\-round lat=4,lon=5,ele=1\fR
+.RE
+.PP
+\fB\-s\fR, \fB\-\-short\-date\fR
+.RS 4
+Use short date format.
+.RE
+.PP
+\fB\-S\fR, \fB\-\-save\-to\-file \fR\fB\fIx\fR\fR
+.RS 4
+Save the unconverted data to a file with a filename starting with the timestamp of the first trackpoint. The parameter string
+\fIx\fR
+is added at the end of the filename. For the time being this option will ignore all other options.
+.sp
+Note: If several files are specified on the command line, all data will be saved into only one file. This behaviour may change in the future.
+.RE
+.PP
+\fB\-t\fR, \fB\-\-create\-breaks\fR
+.RS 4
+Create breaks in track between points with a difference more than the number of seconds specified by the
+\fI$PAUSE_LIMIT\fR
+variable.
+.RE
+.PP
+\fB\-u\fR, \fB\-\-comment\-out\-dups\fR
+.RS 4
+Comment out following data with identical position values, only print first entry.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-verbose\fR
+.RS 4
+Verbose output.
+.RE
+.PP
+\fB\-w\fR, \fB\-\-strip\-whitespace\fR
+.RS 4
+Strip all unnecessary whitespace.
+.RE
+.PP
+\fB\-y\fR, \fB\-\-double\-y\-scale\fR
+.RS 4
+Double Y scale (latitude) to get it right in gnuplot.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Print a brief help summary.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print version information.
+.RE
+.PP
+\fB\-\-debug\fR
+.RS 4
+Print debugging messages.
+.RE
+.SH "BUGS"
+.PP
+Pretty incomplete in some areas. Some of the source formats are undocumented and thus incomplete. Some functionality is not working properly, for example the Postscript output.
+.SH "AUTHOR"
+.PP
+Made by
+Øyvind A. Holm
+<sunny@sunbase.org>.
+.SH "COPYRIGHT"
+.PP
+Copyleft \(co
+Øyvind A. Holm
+<sunny@sunbase.org>. This is free software; see the file
+\fICOPYING\fR
+for legalese stuff.
+.SH "LICENSE"
+.PP
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+.PP
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111\-1307 USA
+.SH "SEE ALSO"
+.PP
+\fBgpsbabel\fR(1)
