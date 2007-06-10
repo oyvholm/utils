@@ -275,7 +275,7 @@
 
       <varlistentry>
         <term><option>-R</option>, <option>--round 
-        <replaceable>x</replaceable>=<replaceable>y</replaceable>[,<replaceable>x2</replaceable>=<replaceable>y2</replaceable>[...]]</option></term>
+        <replaceable>x</replaceable>=<replaceable>y</replaceable><optional>,<replaceable>x2</replaceable>=<replaceable>y2</replaceable><optional>...</optional></optional></option></term>
         <listitem>
           <para>Round trackpoint element <replaceable>x</replaceable> to 
           <replaceable>y</replaceable> decimals.</para>
@@ -381,10 +381,10 @@
   <refsect1 id="gpst.bugs">
     <title>Bugs</title>
 
-  <para>Pretty incomplete in some areas.
-  Some of the source formats are undocumented and thus incomplete.
-  Some functionality is not working properly, for example the Postscript 
-  output.</para>
+    <para>Pretty incomplete in some areas.
+    Some of the source formats are undocumented and thus incomplete.
+    Some functionality is not working properly, for example the 
+    Postscript output.</para>
 
   </refsect1>
   <refsect1 id="gpst.author">
@@ -431,6 +431,7 @@
       <refentrytitle>gpsbabel</refentrytitle>
       <manvolnum>1</manvolnum>
     </citerefentry></para>
+
   </refsect1>
   <!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
 </refentry>
