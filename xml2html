@@ -20,6 +20,7 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'format' => 0,
     'help' => 0,
     'version' => 0,
 );
@@ -34,6 +35,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
+    "format" => \$Opt{'format'},
     "help|h" => \$Opt{'help'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -48,8 +50,10 @@ for my $Curr (@ARGV) {
     $Curr =~ /^(.*)\.xml$/ && ($Basename = $1);
     my $html_file = "$Basename.html";
     my_system("xsltproc -o $Basename.html ~/xsl/xhtml/docbook.xsl $Curr");
-    my_system("xmllint --format --encode UTF-8 $html_file >$tmp_file");
-    my_system("mv $tmp_file $html_file");
+    if ($Opt{'format'}) {
+        my_system("xmllint --format --encode UTF-8 $html_file >$tmp_file");
+        my_system("mv $tmp_file $html_file");
+    }
 }
 
 sub my_system {
@@ -79,6 +83,9 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
+  --format
+    Filter the HTML through xmllint --format to make it prettier. Some 
+    things are likely to be fucked up by this, for example <personname>.
   -h, --help
     Show this help.
   --version
