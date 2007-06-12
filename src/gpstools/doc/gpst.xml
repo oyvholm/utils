@@ -85,7 +85,7 @@
       <varlistentry>
         <term><option>-h</option>, <option>--help</option></term>
         <listitem>
-          <para>Send help text with option summary to stdout.</para>
+          <para>Send a brief help summary to stdout.</para>
         </listitem>
       </varlistentry>
 
@@ -375,7 +375,7 @@
       <varlistentry>
         <term><option>-v</option>, <option>--verbose</option></term>
         <listitem>
-          <para>Verbose output.</para>
+          <para>Verbose output, can be repeated.</para>
         </listitem>
       </varlistentry>
 
@@ -393,13 +393,6 @@
         <listitem>
           <para>Double Y scale (latitude) to get it right in 
           gnuplot.</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term><option>-h</option>, <option>--help</option></term>
-        <listitem>
-          <para>Print a brief help summary.</para>
         </listitem>
       </varlistentry>
 
@@ -451,19 +444,23 @@
     <title>License</title>
 
     <para>This program is free software; you can redistribute it and/or 
-    modify it under the terms of the GNU General Public License as 
-    published by the Free Software Foundation; either version 2 of the 
-    License, or (at your option) any later version.</para>
+    modify it under the terms of the <citetitle>GNU General Public 
+    License</citetitle> as published by the <orgname 
+    class="nonprofit">Free Software Foundation</orgname>; either version 
+    2 of the License, or (at your option) any later version.</para>
 
     <para>This program is distributed in the hope that it will be 
-    useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    useful, but <emphasis>WITHOUT ANY WARRANTY</emphasis>; without even 
+    the implied warranty of <emphasis>MERCHANTABILITY</emphasis> or 
+    <emphasis>FITNESS FOR A PARTICULAR PURPOSE</emphasis>.
     See the GNU General Public License for more details.</para>
 
     <para>You should have received a copy of the GNU General Public 
-    License along with this program; if not, write to the Free Software 
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  
-    USA</para>
+    License along with this program; if not, write to
+<address>The Free Software Foundation, Inc.
+<street>59 Temple Place</street>, <otheraddr>Suite 330</otheraddr>
+<city>Boston</city>, <state>MA</state> <postcode>02111-1307</postcode>
+<country>USA</country></address></para>
 
   </refsect1>
   <refsect1 id="gpst.seealso">
