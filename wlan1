@@ -26,11 +26,11 @@ echo ==== Available networks: ====
 wlanconfig ath0 list scan
 echo
 if [ -z $accpoint ]; then
-    echo iwconfig ath0 essid any ap any
-    iwconfig ath0 essid any ap any
+    echo iwconfig ath0 ap any ap any
+    iwconfig ath0 ap any ap any
 else
-    echo iwconfig ath0 essid \"$accpoint\"
-    iwconfig ath0 essid "$accpoint"
+    echo iwconfig ath0 ap \"$accpoint\"
+    iwconfig ath0 ap "$accpoint"
 fi
 echo
 echo ======== BEGIN iwconfig ========
