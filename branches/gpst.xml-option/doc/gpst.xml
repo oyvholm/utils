@@ -52,7 +52,13 @@
         <term><option>--chronology</option></term>
         <listitem>
           <para>Check for broken chronology, warn about entries with an 
-          old timestamp.</para>
+          old timestamp.
+          If the <option>--xml</option> option is specified, the result 
+          of the scan is written to stdout as usual, and all other 
+          output is suppressed.
+          If the <option>--xml</option> option is 
+          <emphasis>not</emphasis> used, it is reported as warnings to 
+          stderr.</para>
         </listitem>
       </varlistentry>
 
@@ -384,6 +390,15 @@
         <option>--strip-whitespace</option></term>
         <listitem>
           <para>Strip all unnecessary whitespace.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-x</option>, 
+        <option>--xml</option></term>
+        <listitem>
+          <para>Create XML output.</para>
+          <para></para>
         </listitem>
       </varlistentry>
 

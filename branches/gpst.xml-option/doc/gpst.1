@@ -23,7 +23,13 @@ gpst \- Converts between various GPS formats.
 .PP
 \fB\-\-chronology\fR
 .RS 4
-Check for broken chronology, warn about entries with an old timestamp.
+Check for broken chronology, warn about entries with an old timestamp. If the
+\fB\-\-xml\fR
+option is specified, the result of the scan is written to stdout as usual, and all other output is suppressed. If the
+\fB\-\-xml\fR
+option is
+\fInot\fR
+used, it is reported as warnings to stderr.
 .RE
 .PP
 \fB\-d\fR, \fB\-\-skip\-dups\fR
@@ -254,6 +260,12 @@ Verbose output, can be repeated.
 \fB\-w\fR, \fB\-\-strip\-whitespace\fR
 .RS 4
 Strip all unnecessary whitespace.
+.RE
+.PP
+\fB\-x\fR, \fB\-\-xml\fR
+.RS 4
+Create XML output.
+.sp
 .RE
 .PP
 \fB\-y\fR, \fB\-\-double\-y\-scale\fR

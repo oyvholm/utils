@@ -77,6 +77,33 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
+diag("Nytt...");
+
+diag("Testing --chronology option with --xml..."); # {{{
+testcmd("../gpst --chronology --xml chronology-error.gpsml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<chronoerr>
+  <error>
+    <file>chronology-error.gpsml</file>
+    <line>9</line>
+    <corrtime>2006-05-02T09:46:46Z</corrtime>
+    <errtime>2006-05-02T09:40:07Z</errtime>
+    <diff>300</diff>
+  </error>
+  <error>
+    <file>chronology-error.gpsml</file>
+    <line>15</line>
+    <duptime>2006-05-02T10:18:09Z</duptime>
+  </error>
+</chronoerr>
+END
+    "",
+);
+
+# }}}
+# --chronology option }}}
+
 diag("Testing conversion routines...");
 
 # txt_to_xml() and xml_to_txt() {{{

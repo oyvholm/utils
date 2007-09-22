@@ -53,6 +53,7 @@ our %Opt = (
     'strip-whitespace' => 0,
     'undefined' => "",
     'version' => 0,
+    'xml' => 0
     # }}}
 );
 
@@ -92,6 +93,7 @@ GetOptions(
     "undefined|n=s" => \$Opt{'undefined'},
     "verbose|v" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'}
     # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -751,6 +753,11 @@ sub print_header {
             "$Spc$Spc<title></title>\n",
             "$Spc$Spc<desc></desc>\n",
         ));
+    } elsif ($Opt{'xml'} && $Opt{'chrono'}) {
+      print(OutFP join("",
+        qq{<?xml version="1.0" encoding="UTF-8">\n},
+        qq{<chronoerr>\n},
+      ));
     }
     # }}}
 }
@@ -782,6 +789,8 @@ sub print_footer {
         ));
     } elsif ($Opt{'output-format'} eq "svg") {
         print(OutFP "\"/>\n</svg>\n");
+    } elsif ($Opt{'xml'} && $Opt{'chrono'}) {
+        print(OutFP "</chronoerr>\n");
     }
     # }}}
 }
@@ -844,17 +853,38 @@ sub print_entry {
         $Dat{'sec'}   = sprintf("%02u", $Dat{'sec'});
         if ($Opt{'chronology'}) {
             if ($last_time > $ep_time && !length($Dat{'error'})) {
-                warn(sprintf(
-                    "%s: $curr_file: \"%sZ\": Next date is %s in the past (%sZ)\n",
-                    $progname, sec_to_string($last_time, "T"),
-                    sec_to_readable($last_time-$ep_time),
-                    sec_to_string($ep_time, "T")
-                ));
+                if ($Opt{'xml'}) {
+                    print(
+                      sprintf(
+                        join("",
+                          "  <error>\n",
+                          "    <file>%s</file>\n",
+                          "    <line>%u</line>\n",
+                          "    <corrdate>%sZ</corrdate>\n",
+                          "    <errdate>%sZ</errdate>\n",
+                          "    <secs>%u</secs>\n",
+                          "  </error>\n",
+                        ), txt_to_xml($curr_file), 
+                        $.,
+                        sec_to_string($last_time, "T"),
+                        sec_to_string($ep_time, "T"),
+                        $last_time-$ep_time
+                      )
+                    );
+                } else {
+                    warn(sprintf(
+                        "%s: $curr_file: \"%sZ\": Next date is %s in the past (%sZ)\n",
+                        $progname, sec_to_string($last_time, "T"),
+                        sec_to_readable($last_time-$ep_time),
+                        sec_to_string($ep_time, "T")
+                    ));
+                }
                 # FIXME: Make --fix work with gpx.
                 if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
                     $Dat{'error'} = "chrono";
                 }
             } elsif ($last_time == $ep_time && !length($Dat{'error'})) {
+                $Opt{'xml'} && return;
                 warn(sprintf(
                     "%s: $curr_file: \"%sZ\": Duplicated time\n",
                     $progname, sec_to_string($last_time, "T")
@@ -1257,6 +1287,8 @@ Options:
     Print version information.
   -w, --strip-whitespace
     Strip all unnecessary whitespace.
+  -x, --xml
+    Create XML output.
   -y, --double-y-scale
     Double Y scale (latitude) to get it right in gnuplot.
   --debug
