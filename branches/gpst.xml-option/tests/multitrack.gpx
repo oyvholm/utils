@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx
+  version="1.1"
+  creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+>
+  <wpt lat="51.477880000" lon="-0.001470000">
+    <name>0-Meridian</name>
+    <cmt>11-FEB-03 15:46</cmt>
+    <desc>11-FEB-03 15:46</desc>
+  </wpt>
+  <wpt lat="51.532030" lon="-0.177330">
+    <ele>34.492798</ele>
+    <name>Abbey Road</name>
+    <cmt>Det hellige gangfeltet der Beatles valsa over.</cmt>
+    <desc>26-FEB-06 17:29:46</desc>
+  </wpt>
+  <wpt lat="61.636684" lon="8.312254">
+    <ele>2469.012939</ele>
+    <time>2006-05-08T18:27:59Z</time>
+    <name>Galdhøpiggen med ', &amp;, &lt; og &gt;. ☺</name>
+    <cmt>Her er det &amp;, &lt; og &gt;. ☺</cmt>
+    <desc>Schwæra greie</desc>
+    <src>http://www.example.org/</src>
+    <sym>Waypoint</sym>
+    <type>mountain</type>
+  </wpt>
+  <wpt lat="60.397460000" lon="5.350610000">
+    <name>Halfdan Griegs vei</name>
+    <cmt>04-AUG-02 19:42</cmt>
+    <desc>04-AUG-02 19:42</desc>
+  </wpt>
+  <wpt lat="51.510130000" lon="-0.130410000">
+    <name>Leicester Square</name>
+    <cmt>11-FEB-03 18:00</cmt>
+    <desc>11-FEB-03 18:00</desc>
+  </wpt>
+  <wpt lat="60.968540000" lon="9.285350000">
+    <name>Leira camping</name>
+    <cmt>03-OKT-02 21:58</cmt>
+    <desc>03-OKT-02 21:58</desc>
+  </wpt>
+  <trk>
+    <name>Track 1</name>
+    <trkseg>
+      <!-- <trkpt lat="51.4968987" lon="-0.1448208"> <time>2003-02-11T23:35:29Z</time> <cmt>Commented out</cmt> </trkpt> -->
+      <trkpt lat="51.4968266" lon="-0.1448824"> <time>2003-02-11T23:35:39Z</time> </trkpt>
+      <trkpt lat="51.4968227" lon="-0.1449938"> <time>2003-02-11T23:35:49Z</time> </trkpt>
+      <trkpt lat="51.4969040" lon="-0.1453202"> <time>2003-02-11T23:36:14Z</time> </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>Track 2</name>
+    <trkseg>
+      <trkpt lat="51.4969214" lon="-0.1453398"> <time>2003-02-11T23:36:16Z</time> </trkpt>
+      <trkpt lat="51.4969816" lon="-0.1455514"> <time>2003-02-11T23:36:31Z</time> </trkpt>
+      <trkpt lat="51.4970224" lon="-0.1457489"> <ele>1000</ele> <time>2003-02-11T23:36:43Z</time> </trkpt>
+      <trkpt lat="51.4970452" lon="-0.1457804"> <time>2003-02-11T23:36:50Z</time> </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>Track 3</name>
+    <trkseg>
+      <trkpt lat="51.4970680" lon="-0.1458608"> <time>2003-02-11T23:37:05Z</time> </trkpt>
+      <trkpt lat="51.4971658" lon="-0.1460047"> <time>2003-02-11T23:37:22Z</time> </trkpt>
+      <trkpt lat="51.4972469" lon="-0.1461614"> <time>2003-02-11T23:37:36Z</time> </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>Track 4</name>
+    <trkseg>
+      <trkpt lat="51.4972731" lon="-0.1462394"> <time>2003-02-11T23:37:43Z</time> </trkpt>
+      <trkpt lat="51.4973437" lon="-0.1463232"> <time>2003-02-11T23:38:04Z</time> </trkpt>
+      <trkpt lat="51.4973337" lon="-0.1462949"> <time>2003-02-11T23:38:28Z</time> </trkpt>
+      <trkpt lat="51.4973218" lon="-0.1462825"> <time>2003-02-11T23:38:34Z</time> </trkpt>
+      <trkpt lat="51.4973145" lon="-0.1462732"> <time>2003-02-11T23:38:35Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
