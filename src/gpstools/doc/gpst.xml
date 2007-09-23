@@ -13,6 +13,7 @@
     <refpurpose>Converts between various GPS formats.</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
+
     <cmdsynopsis>
       <command>gpst</command>
       <arg choice="opt">
@@ -22,6 +23,7 @@
         <replaceable>file</replaceable>
       </arg>
     </cmdsynopsis>
+
     <cmdsynopsis>
       <command>gpst</command>
       <arg choice="req">-S</arg>
@@ -32,6 +34,7 @@
         <replaceable>file</replaceable>
       </arg>
     </cmdsynopsis>
+
     <cmdsynopsis>
       <command>gpst</command>
       <arg choice="req">-u</arg>
@@ -42,6 +45,7 @@
         <replaceable>file</replaceable>
       </arg>
     </cmdsynopsis>
+
   </refsynopsisdiv>
   <refsect1 id="gpst.description">
     <title>Description</title>
@@ -123,6 +127,7 @@
         <listitem>
           <para>Use output format <replaceable>x</replaceable>:</para>
           <variablelist>
+
             <varlistentry>
               <term><option>clean</option></term>
               <listitem>
@@ -253,9 +258,9 @@
                 <manvolnum>1</manvolnum> </citerefentry>.</para>
               </listitem>
             </varlistentry>
+
           </variablelist>
         </listitem>
-
       </varlistentry>
 
       <varlistentry>
@@ -271,7 +276,6 @@
         <replaceable>x</replaceable></option></term>
         <term><option>--pos2 
         <replaceable>x</replaceable></option></term>
-
         <listitem>
           <para>Specifies corners of an area rectangle used by the 
           <option>--inside</option> and <option>--outside</option> 
@@ -290,6 +294,7 @@
           <replaceable>x</replaceable> is a string with the following 
           flags:</para>
           <variablelist>
+
             <varlistentry>
               <term><option>e</option></term>
               <listitem>
@@ -297,12 +302,14 @@
                 elevation.</para>
               </listitem>
             </varlistentry>
+
             <varlistentry>
               <term><option>p</option></term>
               <listitem>
                 <para>Print only waypoints which have a position.</para>
               </listitem>
             </varlistentry>
+
             <varlistentry>
               <term><option>t</option></term>
               <listitem>
@@ -310,6 +317,7 @@
                 timestamp.</para>
               </listitem>
             </varlistentry>
+
           </variablelist>
         </listitem>
       </varlistentry>
@@ -337,7 +345,6 @@
       <varlistentry>
         <term><option>-S</option>, <option>--save-to-file 
         <replaceable>x</replaceable></option></term>
-
         <listitem>
           <para>Save the unconverted data to a file with a filename 
           starting with the timestamp of the first trackpoint.
