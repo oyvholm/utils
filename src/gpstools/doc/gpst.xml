@@ -87,6 +87,18 @@
       </varlistentry>
 
       <varlistentry>
+        <term><option>--from-date 
+        <replaceable>x</replaceable></option></term>
+        <listitem>
+          <para>Used by the <literal>pgwupd</literal> format.
+          Specifies from which date waypoints should be updated.
+          No checks for valid date format here, let 
+          <application>PostgreSQL</application> take care of that.
+          All variants it understands can be used here.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
         <term><option>-h</option>, <option>--help</option></term>
         <listitem>
           <para>Send a brief help summary to stdout.</para>
@@ -102,22 +114,24 @@
       </varlistentry>
 
       <varlistentry>
+        <term><option>-n</option>, <option>--undefined 
+        <replaceable>x</replaceable></option></term>
+        <listitem>
+          <para>Use <replaceable>x</replaceable> as undefined 
+          value.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
         <term><option>--near</option></term>
         <listitem>
           <para>Add names of the three closest waypoints to the 
           trackpoint.
           Unfinished and experimental, needs <citerefentry> 
           <refentrytitle>gpsbabel</refentrytitle> 
-          <manvolnum>1</manvolnum> </citerefentry>.</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term><option>-n</option>, <option>--undefined 
-        <replaceable>x</replaceable></option></term>
-        <listitem>
-          <para>Use <replaceable>x</replaceable> as undefined 
-          value.</para>
+          <manvolnum>1</manvolnum> </citerefentry>, which is called from 
+          the program as 
+          <command>/usr/local/bin/gpsbabel</command>.</para>
         </listitem>
       </varlistentry>
 
@@ -215,6 +229,196 @@
               <listitem>
                 <para>Not complete yet, but good enough in most 
                 cases.</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term><option>pgtab</option></term>
+              <listitem>
+                <para>TAB-separated format for import into 
+                <application>PostgreSQL</application>.
+                Undefined values are written as <literal>\N</literal> if 
+                the <option>--undefined</option> option is not 
+                specified.</para>
+                <variablelist>
+
+<!--
+                $Dat{'year'}
+                    ? "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                      "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                    : '\N', # date
+                (length($Dat{'lat'}) && length($Dat{'lon'}))
+                    ? "($Dat{'lat'},$Dat{'lon'})"
+                    : '\N', # coor
+                length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
+                '\N', # sted
+                '\N', # dist
+                '\N', # description
+                '\N' # avst
+            ) . "\n";
+-->
+
+                  <varlistentry>
+                    <term><database class="field">date</database></term>
+                    <listitem>
+                      <para>Format: 
+                      <literal><replaceable>yyyy</replaceable>-<replaceable>mm</replaceable>-<replaceable>dd</replaceable>T<replaceable>hh</replaceable>:<replaceable>mm</replaceable>:<replaceable>ss</replaceable>Z</literal></para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">coor</database></term>
+                    <listitem>
+                      <para>Format:
+                      <literal>(<replaceable>lat</replaceable>,<replaceable>lon</replaceable>)</literal></para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">ele</database></term>
+                    <listitem>
+                      <para>Altitude in metres above sea level.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">sted</database></term>
+                    <listitem>
+                      <para>Short name of closest waypoint.
+                      Calculated in 
+                      <application>PostgreSQL</application>, so this 
+                      value is always <literal>\N</literal>.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">dist</database></term>
+                    <listitem>
+                      <para>Distance in decimal degrees to closest 
+                      waypoint.
+                      Calculated in 
+                      <application>PostgreSQL</application>, so this 
+                      value is always <literal>\N</literal>.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database 
+                    class="field">description</database></term>
+                    <listitem>
+                      <para>Description of waypoint.
+                      Calculated in 
+                      <application>PostgreSQL</application>, so this 
+                      value is always <literal>\N</literal>.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">avst</database></term>
+                    <listitem>
+                      <para>Distance to trackpoint in decimal degrees 
+                      from a defined <quote>home</quote> position.
+                      This is calculated in 
+                      <application>PostgreSQL</application>, so the 
+                      field value is always 
+                      <literal>\N</literal>.</para>
+                    </listitem>
+                  </varlistentry>
+
+                </variablelist>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term><option>pgwtab</option></term>
+              <listitem>
+                <para>Output waypoints on a TAB-separated format:</para>
+                <variablelist>
+
+                  <varlistentry>
+                    <term><database class="field">coor</database></term>
+                    <listitem>
+                      <para>Format:
+                      <literal>(<replaceable>lat</replaceable>,<replaceable>lon</replaceable>)</literal></para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">name</database></term>
+                    <listitem>
+                      <para>Title of waypoint.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">ele</database></term>
+                    <listitem>
+                      <para>Elevation in metres above sea level.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">type</database></term>
+                    <listitem>
+                      <para>Type of waypoint, same as the GPX <sgmltag 
+                      class="starttag">type</sgmltag> element.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">time</database></term>
+                    <listitem>
+                      <para>Timestamp of waypoint.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">cmt</database></term>
+                    <listitem>
+                      <para>Short waypoint description, used by the GPS 
+                      as a comment.
+                      Same as the GPX <sgmltag 
+                      class="starttag">cmt</sgmltag> element.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database 
+                    class="field">descr</database></term>
+                    <listitem>
+                      <para>Long description, not used by the GPS.
+                      Same as the GPX <sgmltag 
+                      class="starttag">desc</sgmltag> element.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">src</database></term>
+                    <listitem>
+                      <para>Source of data, same as the <sgmltag 
+                      class="starttag">src</sgmltag> GPX element.</para>
+                    </listitem>
+                  </varlistentry>
+
+                  <varlistentry>
+                    <term><database class="field">sym</database></term>
+                    <listitem>
+                      <para>GPS symbol name.
+                      Same as the <sgmltag 
+                      class="starttag">sym</sgmltag> GPX element.</para>
+                    </listitem>
+                  </varlistentry>
+
+                </variablelist>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term><option>pgwupd</option></term>
+              <listitem>
+                <para>Output waypoints as SQL transactions which updates  
+                the <database class="field">sted</database> and 
+                <database class="field">dist</database> columns.</para>
               </listitem>
             </varlistentry>
 
@@ -366,7 +570,7 @@
         <listitem>
           <para>Create breaks in track between points with a difference 
           more than the number of seconds specified by the 
-          <varname>$PAUSE_LIMIT</varname> variable.</para>
+          <envar>PAUSE_LIMIT</envar> variable.</para>
         </listitem>
       </varlistentry>
 
@@ -387,6 +591,13 @@
       </varlistentry>
 
       <varlistentry>
+        <term><option>--version</option></term>
+        <listitem>
+          <para>Print program version information.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
         <term><option>-w</option>, 
         <option>--strip-whitespace</option></term>
         <listitem>
@@ -398,15 +609,7 @@
         <term><option>-y</option>, 
         <option>--double-y-scale</option></term>
         <listitem>
-          <para>Double Y scale (latitude) to get it right in 
-          gnuplot.</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term><option>--version</option></term>
-        <listitem>
-          <para>Print version information.</para>
+          <para>Double Y scale (latitude).</para>
         </listitem>
       </varlistentry>
 
@@ -421,12 +624,32 @@
 
   </refsect1>
   <refsect1 id="gpst.bugs">
-    <title>Bugs</title>
+    <title>Bugs and things that need to be done</title>
 
-    <para>Pretty incomplete in some areas.
-    Some of the source formats are undocumented and thus incomplete.
-    Some functionality is not working properly, for example the 
-    Postscript output.</para>
+    <itemizedlist>
+
+      <listitem>
+        <para>Pretty incomplete in some areas.
+        Some of the source formats are undocumented and thus incomplete.
+        Some functionality is not working properly, for example the 
+        Postscript output.</para>
+      </listitem>
+
+      <listitem>
+        <para>Remove hardcodings, for example the <quote>home</quote> 
+        position used to calculate the <database 
+        class="field">avst</database> database column.</para>
+      </listitem>
+
+      <listitem>
+        <para>Translate database column names to English.</para>
+      </listitem>
+
+      <listitem>
+        <para>Add more tests to cover all command-line options.</para>
+      </listitem>
+
+    </itemizedlist>
 
   </refsect1>
   <refsect1 id="gpst.author">
