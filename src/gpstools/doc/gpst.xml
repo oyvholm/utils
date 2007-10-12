@@ -461,16 +461,16 @@
 
       <varlistentry>
         <term><option>--pos1 
-        <replaceable>x</replaceable></option></term>
+        <replaceable>x1</replaceable>,<replaceable>y1</replaceable></option></term>
         <term><option>--pos2 
-        <replaceable>x</replaceable></option></term>
+        <replaceable>x2</replaceable>,<replaceable>y2</replaceable></option></term>
         <listitem>
           <para>Specifies corners of an area rectangle used by the 
           <option>--inside</option> and <option>--outside</option> 
           options.
-          The <replaceable>x</replaceable> value is in 
-          <literal><replaceable>lat</replaceable>,<replaceable>lon</replaceable></literal> 
-          format (decimal degrees, negative for west or south).</para>
+          The <replaceable>x</replaceable> and 
+          <replaceable>y</replaceable> values are specified as decimal 
+          degrees, negative for west or south.</para>
         </listitem>
       </varlistentry>
 
