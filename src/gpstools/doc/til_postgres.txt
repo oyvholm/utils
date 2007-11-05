@@ -1,5 +1,14 @@
 $Id$
 
+Opprettelse av "gps"-databasen:
+
+  $ cd ~/bin/src/gpstools/postgres
+  $ createdb gps
+  $ psql gps
+  gps=# \i create_table.sql
+  gps=# \i create_funcs.sql
+  gps=# \i create_views.sql
+
 For å kopiere ting fra nye tracklogger inn i PostgreSQL:
 
   1: cd til der de nye filene er.
