@@ -13,7 +13,7 @@ For å kopiere ting fra nye tracklogger inn i PostgreSQL:
 
   1: cd til der de nye filene er.
   1: Kjør svn update og slett de filene som allerede er lagt inn.
-  1: gpst -o pgtab -d *.gpx | psql -a -c "COPY logg FROM stdin" gps
+  1: gpst -o pgtab -d -rpt *.gpx | psql -a -c "COPY logg FROM stdin" gps
 
   2: cd ~/gps/div/postgres
   2: psql gps
@@ -36,7 +36,7 @@ Kjør
 
 For å renske opp i veipunktene:
 
-cd ~/gps/div/postgres
+cd ~/bin/src/gpstools/postgres
 psql gps
 \i cleanup.sql
 
