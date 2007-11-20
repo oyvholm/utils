@@ -8,5 +8,5 @@
 LC_ALL=C svn info | grep '^URL: '
 echo ==== svn update --ignore-externals "$@"
 svn update --ignore-externals "$@"
-echo ==== svn stat -q "$@"
-svn stat -q "$@"
+echo ==== svn stat "$@"
+svn stat "$@"
