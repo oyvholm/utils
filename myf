@@ -13,5 +13,5 @@ elif [ "$1" = "-d" ]; then
 	shift
 	TZ=UTC find $* -printf "%TY-%Tm-%TdT%TH:%TM:%TSZ\n"
 else
-	find $* -printf "%TY-%Tm-%Td %TH:%TM:%TS\t%6s\t%04m\t%U.%G\t%p\n"
+	TZ=UTC find $* -printf "%TY-%Tm-%Td %TH:%TM:%TSZ\t%s\t%04m\t%U.%G\t%p\n"
 fi
