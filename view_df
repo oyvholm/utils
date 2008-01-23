@@ -2,21 +2,32 @@
 
 # $Id$
 
-lfile=$HOME/log/df.log
+logdir=$HOME/log
+vdtmpdir=/tmp/view_df
+lfile=$vdtmpdir/df.log
+
+[ -d $vdtmpdir/. ] || \
+    mkdir $vdtmpdir || \
+        { echo "$0: $vdtmpdir: Cannot create tempdir" >&2; exit 1; }
 
 if [ "$1" = "-a" ]; then
-    for f in `cat ~/log/.disks`; do
+    rm -fv $lfile
+    for f in `cat $logdir/.disks`; do
         view_df $f $2
     done
     exit 0
 fi
 
-if [ "$2" != "" ]; then
-    grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | tail -$2 >~/log/data
-else
-    grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 >~/log/data
+if [ ! -e $lfile ]; then
+    find $logdir/df -name '*.log' | sort | xargs zcat -f >>$lfile
 fi
 
-cd ~/log
-df -h $1 | grep $1 >~/log/data.title
+if [ "$2" != "" ]; then
+    grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 | tail -$2 >$vdtmpdir/data
+else
+    grep $1 $lfile | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 1,5 >$vdtmpdir/data
+fi
+
+cd $vdtmpdir
+df -h $1 | grep $1 >$vdtmpdir/data.title
 statplot
