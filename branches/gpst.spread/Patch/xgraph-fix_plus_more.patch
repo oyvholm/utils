@@ -1,0 +1,101 @@
+Index: tests/run-tests.pl
+===================================================================
+--- tests/run-tests.pl	(revision 1817)
++++ tests/run-tests.pl	(working copy)
+@@ -56,6 +56,29 @@
+ $Opt{'help'} && usage(0);
+ $Opt{'version'} && print_version();
+ 
++testcmd("../gpst -o xgraph multitrack.gpx", # {{{
++    <<END,
++-0.1448208 51.4968987
++-0.1448824 51.4968266
++-0.1449938 51.4968227
++-0.1453202 51.4969040
++move -0.1453398 51.4969214
++-0.1455514 51.4969816
++-0.1457489 51.4970224
++-0.1457804 51.4970452
++move -0.1458608 51.4970680
++-0.1460047 51.4971658
++-0.1461614 51.4972469
++move -0.1462394 51.4972731
++-0.1463232 51.4973437
++-0.1462949 51.4973337
++-0.1462825 51.4973218
++-0.1462732 51.4973145
++END
++);
++
++# }}}
++
+ diag("Testing XML routines...");
+ 
+ # txt_to_xml() and xml_to_txt() {{{
+Index: gpst
+===================================================================
+--- gpst	(revision 1817)
++++ gpst	(working copy)
+@@ -517,24 +517,18 @@
+                 print_entry(%Dat);
+                 # }}}
+             } elsif (/^xmaplog /) {
+-                ($Opt{'output-format'} eq "csv")
+-                    && ($Opt{'save-to-file'} eq "\n")
+-                    && print("\n");
++                $found_move = 1;
+             } elsif (/^$/) {
+-                ($Opt{'output-format'} eq "csv")
+-                    && ($Opt{'save-to-file'} eq "\n")
+-                    && print("\n");
++                ($Opt{'output-format'} eq "csv") && ($found_move = 1);
+             } elsif (/^Pause: /) {
+                 # NOP, is here to cope with old files I’ve lying around.
+             } elsif ($Dat{'error'} eq "desc") {
+                 my $Comment = $_;
+                 if (defined($Comment)) {
+                     $Comment =~ s/^\s*(.*?)\s*$/$1/;
+-                    if ($Opt{'output-format'} eq "gpsml") {
+-                        $Dat{'desc'} = txt_to_xml($Comment);
+-                        $Dat{'type'} = "desc";
+-                        print_entry(%Dat);
+-                    }
++                    $Dat{'desc'} = txt_to_xml($Comment);
++                    $Dat{'type'} = "desc";
++                    print_entry(%Dat);
+                 }
+             } else {
+                 $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
+@@ -870,7 +864,7 @@
+                 $Line .= sprintf("<pause>%s</pause>\n",
+                                  sec_to_readable($ep_time-$last_time));
+             } elsif ($Opt{'output-format'} eq "csv") {
+-                $Line .= sprintf("# Pause: %s\n# move\n",
++                $Line .= sprintf("# Pause: %s\n",
+                                  sec_to_readable($ep_time-$last_time));
+             }
+         }
+@@ -896,8 +890,10 @@
+                                  $1);
+             }
+         } elsif ($Opt{'output-format'} eq "xgraph") {
+-            $pause_len && ($Line .= "move ");
+-            ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
++            if ($print_pos) {
++                $pause_len && ($Line .= "move ");
++                ($Line .= "$Dat{'lon'} $Dat{'lat'}\n");
++            }
+         } elsif($Opt{'output-format'} eq "gpstrans") {
+             my ($gpt_lat, $gpt_lon) =
+                (ddd_to_dms($Dat{'lat'}), ddd_to_dms($Dat{'lon'}));
+@@ -976,8 +972,8 @@
+             if ($Opt{'output-format'} eq "gpsml") {
+                 $Line = "<break/>\n$Line";
+             }
+-            (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
+-                && ($Line .= "move $Line");
++            # (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
++                # && ($Line .= "move $Line");
+             ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
+             if ($Opt{'output-format'} eq "gpx") {
+                 $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
