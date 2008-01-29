@@ -1310,12 +1310,19 @@ $gpx_header
       <trkpt lat="3" lon="13"> <time>2007-02-01T00:20:03Z</time> </trkpt>
       <trkpt lat="4" lon="14"> <time>2007-02-01T00:20:04Z</time> </trkpt>
       <trkpt lat="5" lon="15"> <time>2007-02-01T00:20:05Z</time> </trkpt>
+      <trkpt lat="6" lon="16"> <time>2007-02-01T00:20:06Z</time> </trkpt>
+      <trkpt lat="7" lon="17"> <time>2007-02-01T00:20:07Z</time> </trkpt>
+      <trkpt lat="8" lon="18"> <time>2007-02-01T00:20:08Z</time> </trkpt>
+      <trkpt lat="9" lon="19"> <time>2007-02-01T00:20:09Z</time> </trkpt>
+      <trkpt lat="10" lon="20"> <time>2007-02-01T00:20:10Z</time> </trkpt>
     </trkseg>
   </trk>
 </gpx>
 END
     "",
 );
+
+# }}}
 # --spread option }}}
 diag("Testing --create-breaks option..."); # {{{
 testcmd("../gpst -t pause.gpx", # {{{

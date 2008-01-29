@@ -14,6 +14,9 @@
       <trkpt lat="5" lon="15">
         <time>2007-02-01T00:20:05Z</time>
       </trkpt>
+      <trkpt lat="10" lon="20">
+        <time>2007-02-01T00:20:10Z</time>
+      </trkpt>
     </trkseg>
   </trk>
 </gpx>
