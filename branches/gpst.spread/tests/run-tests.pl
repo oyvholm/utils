@@ -373,6 +373,28 @@ for my $Elem (qw{format type error}) {
 
 # trackpoint() }}}
 
+diag("Testing current_pos()...");
+
+is(current_pos(1, 10, 3, 20, 2),
+    15,
+    "current_pos(1, 10, 3, 20, 2): In the middle between the points");
+
+is(current_pos(57, 3267, 93, 5693, 93),
+    5693,
+    "current_pos(57, 3267, 93, 5693, 93): at end of time span");
+
+is(current_pos(3.14159, 13.32, 9.713, 21.00001, 9.713),
+    21.00001,
+    "current_pos(3.14159, 13.32, 9.713, 21.00001, 9.713)");
+
+is(current_pos(10, 50, 20, 100, 5),
+    25,
+    "current_pos(10, 50, 20, 100, 5): currtime is before first time");
+ 
+is(current_pos(10, 50, 20, 100, 40),
+    200,
+    "current_pos(10, 50, 20, 100, 40): currtime is after last time");
+
 diag("Testing output from ../gpst");
 
 diag("Read empty input (/dev/null)..."); # {{{
@@ -1277,6 +1299,24 @@ diag("Testing --short-date option..."); # {{{
 # --short-date option }}}
 diag("Testing --save-to-file option..."); # {{{
 # --save-to-file option }}}
+diag("Testing --spread option..."); # {{{
+testcmd("../gpst --spread 1 -o gpx spread.gpx", # {{{
+    <<END,
+$gpx_header
+  <trk>
+    <trkseg>
+      <trkpt lat="1" lon="11"> <time>2007-02-01T00:20:01Z</time> </trkpt>
+      <trkpt lat="2" lon="12"> <time>2007-02-01T00:20:02Z</time> </trkpt>
+      <trkpt lat="3" lon="13"> <time>2007-02-01T00:20:03Z</time> </trkpt>
+      <trkpt lat="4" lon="14"> <time>2007-02-01T00:20:04Z</time> </trkpt>
+      <trkpt lat="5" lon="15"> <time>2007-02-01T00:20:05Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+);
+# --spread option }}}
 diag("Testing --create-breaks option..."); # {{{
 testcmd("../gpst -t pause.gpx", # {{{
     <<END,

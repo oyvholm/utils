@@ -50,6 +50,7 @@ our %Opt = (
     'save-to-file' => "\n", # \n =  undefined, it’s banned in filenames anyway.
     'short-date' => 0,
     'skip-dups' => 0,
+    'spread' => 0,
     'strip-whitespace' => 0,
     'undefined' => "",
     'version' => 0,
@@ -88,6 +89,7 @@ GetOptions(
     "save-to-file|S=s" => \$Opt{'save-to-file'},
     "short-date|s" => \$Opt{'short-date'},
     "skip-dups|d" => \$Opt{'skip-dups'},
+    "spread=i" => \$Opt{'spread'}, # FIXME: Allow decimals some day
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
     "undefined|n=s" => \$Opt{'undefined'},
     "verbose|v" => \$Opt{'verbose'},
@@ -831,6 +833,7 @@ sub print_entry {
     }
 
     if ($print_time) {
+        D("\$print_time = '$print_time'");
         $ep_time = timegm_nocheck(
             $Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
             $Dat{'day'}, $Dat{'month'} - 1, $Dat{'year'}
@@ -842,6 +845,42 @@ sub print_entry {
         $Dat{'hour'}  = sprintf("%02u", $Dat{'hour'});
         $Dat{'min'}   = sprintf("%02u", $Dat{'min'});
         $Dat{'sec'}   = sprintf("%02u", $Dat{'sec'});
+
+        if ($Opt{'spread'}) {
+            D("Inside spread check, spread = '$Opt{'spread'}'");
+            if ($last_time) {
+                D("Inside last_time, \$last_time = '$last_time', \$ep_time = '$ep_time'");
+                if ($ep_time - $last_time >= $Opt{'spread'}) {
+                    D("Inside '\$last_time - \$ep_time > 1' thingy");
+                    my %tmp_dat = %Dat;
+                    my $bck_lasttime = $last_time;
+                    my $bck_lastlat = $last_lat;
+                    my $bck_lastlon = $last_lon;
+                    my $bck_currtime = $ep_time;
+                    my $bck_currlat = $Dat{'lat'};
+                    my $bck_currlon = $Dat{'lon'};
+                    my $bck_spread = $Opt{'spread'};
+                    $Opt{'spread'} = 0;
+                    for (my $tmpsec = $bck_lasttime;
+                         $tmpsec < $bck_currtime;) {
+                        D("\$tmpsec = '$tmpsec'");
+                        print_entry(%tmp_dat);
+                        if (defined($last_lat)) {
+                            $tmp_dat{'lat'} = current_pos($bck_lasttime, $bck_lastlat,
+                                                          $bck_currtime, $bck_currlat,
+                                                          $tmpsec);
+                            $tmp_dat{'lon'} = current_pos($bck_lasttime, $bck_lastlon,
+                                                          $bck_currtime, $bck_currlon,
+                                                          $tmpsec);
+                        }
+                        $tmpsec += $bck_spread;
+                        $tmp_dat{'sec'} += $bck_spread;
+                    }
+                    $Opt{'spread'} = $bck_spread;
+                }
+            }
+        }
+
         if ($Opt{'chronology'}) {
             if ($last_time > $ep_time && !length($Dat{'error'})) {
                 warn(sprintf(
@@ -1105,7 +1144,7 @@ sub print_entry {
             }
             $found_move = 0;
         }
-        print($Line);
+        $Opt{'spread'} || print($Line);
     }
     $print_time && ($last_time = $ep_time);
     if ($print_pos) {
@@ -1245,6 +1284,9 @@ Options:
     will ignore all other options. Note: If several files are specified 
     on the command line, all data will be saved into only one file. This 
     behaviour may change in the future.
+  --spread x
+    Generate "missing" points by calculating estimated position every x 
+    seconds.
   -t, --create-breaks
     Create breaks in track between points with a difference more than 
     $PAUSE_LIMIT seconds.

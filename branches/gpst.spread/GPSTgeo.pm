@@ -11,6 +11,8 @@ package GPSTgeo;
 use strict;
 use warnings;
 
+use GPSTdebug;
+
 BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
@@ -20,7 +22,7 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&list_nearest_waypoints &ddd_to_dms);
+    @EXPORT = qw(&list_nearest_waypoints &ddd_to_dms &current_pos &current_pos);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -90,6 +92,21 @@ sub ddd_to_dms {
                       $Hour, $Min, $Sec);
     return $Retval;
     # }}}
+}
+
+sub current_pos {
+    # Calculate current lat or lon position based on time.
+    # ta/tb = first/last time
+    # xa/xb = first/last position
+    # tc/xc = current time/position
+    #
+    # xc = xa+((xb-xa)*((tc-ta)/(tb-ta)))
+
+    my ($ta, $xa, $tb, $xb, $tc) = @_;
+    D("current_pos('" . join("', '", @_) . "');");
+    my $xc = $xa+(($xb-$xa)*(($tc-$ta)/($tb-$ta)));
+    D("current_pos() returns '$xc'");
+    return($xc);
 }
 
 1;
