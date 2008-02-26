@@ -1,0 +1,58 @@
+$Id$
+
+Strøtanker om hvordan fldb skal fungere og hva den skal gjøre.
+
+Status på programmet: På planleggingsstadiet.
+
+Den skal være et bibliotek over filer på alle former for media – 
+harddisker, CD-er, floppyer, minnekort, you name it. Programmet skal 
+basere seg på SHA1- og MD5-summer av filer og legge det inn i en 
+database. Jeg bruker selvfølgelig Postgres.
+
+Her kommer en grov skisse over hva som må være med i fildataene. 
+
+  - SHA1
+  - MD5
+  - CRC32 - Den som ZIP bruker. Grunnen til den får oppmerksomhet er at 
+    den var mye brukt i gamle dager – tidlig 1990-tallet og deromkring.
+  - Størrelse i bytes
+  - Filnavn
+  - Tidspunkt for siste modifisering (fildato)
+  - Path til der den ligger, som returnert av «/bin/pwd».
+  - Device som filsystemet ligger på. Eksempelvis «sda1», «fd0».
+  - Hostnavn til maskinen som devicet er på. Det vil si filsystemet.
+  - Brukernavn, eventuelt UID
+  - Gruppenavn, eventuelt GID
+  - Rettigheter
+  - Beskrivelse av fila.
+  - Tidspunkt for lagring i databasen
+
+Så hvis vi skal prøve å representere det i en slags XML, blir det vel 
+noe sånt:
+
+<file>
+  <sha1>3330b4373640f9e4604991e73c7e86bfd8da2dc3</sha1>
+  <md5>f5ac8127b3b6b85cdc13f237c6005d80</md5>
+  <crc32>588aa4ac</crc32>
+  <size>4</size>
+  <name>abcd.txt</name>
+  <mtime>2001-02-03T04:05:06Z</mtime>
+  <ctime>2008-02-26T21:42:59Z</ctime>
+  <path>/home/sunny/tmp/</path>
+  <device>sda1</device>
+  <host>myhost</host>
+  <user>sunny</user>
+  <group>root</group>
+  <perm>0750</perm>
+  <desc>Inneholder strengen "abcd\n".</desc>
+  <desc>Det kan være flere kommentarer.</desc>
+</file>
+
+Alt der kan selvfølgelig ha verdien NULL, og enkelte ganger er det å 
+foretrekke for å kunne minske antallet duplikater.
+
+Det som er ovenfor er _valgfritt_ og til hverdags kan man vel droppe mye 
+av det for minske databasestørrelsen. I begynnelsen kjøres det med full 
+pupp, unntatt CRC32. Den er bare med av historiske årsaker.
+
+vim: set tw=72 fo=tcqw2 fenc=UTF-8 ts=2 sw=2 sts=2 et :
