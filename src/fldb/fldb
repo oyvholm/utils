@@ -2,10 +2,10 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# File Library Database
 #
 # Character set: UTF-8
-# ©opyleft 2007– Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
@@ -16,10 +16,12 @@ use Getopt::Long;
 $| = 1;
 
 our $Debug = 0;
+my $STD_OUTPUT_FORMAT = "sql";
 
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'output-format' => $STD_OUTPUT_FORMAT,
     'verbose' => 0,
     'version' => 0,
 );
@@ -35,6 +37,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "output-format|o=s" => \$Opt{'output-format'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -43,9 +46,38 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+while (my $Filename = <>) {
+    print_entry($Filename);
 }
+
+return 0;
+
+sub print_entry {
+    my $File = $1;
+    # printf(join("\t",
+    printf(<<END,
+INSERT INTO files (sha1, md5, crc32, size, filename, mtime, ctime, path, device, hostname, uid, gid, perm, lastver, nextver, descr) VALUES (
+    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+);
+END
+        "NULL", # sha1
+        "NULL", # md5
+        "NULL", # crc32
+        "NULL", # size
+        "NULL", # filename
+        "NULL", # mtime
+        "NULL", # ctime
+        "NULL", # path
+        "NULL", # device
+        "NULL", # hostname
+        "NULL", # uid
+        "NULL", # gid
+        "NULL", # perm
+        "NULL", # lastver
+        "NULL", # nextver
+        "NULL", # descr
+    );
+} # print_entry()
 
 sub print_version {
     # Print program version {{{
@@ -68,6 +100,8 @@ Options:
 
   -h, --help
     Show this help.
+  -o x, --output x
+    Output format. Default: $STD_OUTPUT_FORMAT
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
