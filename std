@@ -20,6 +20,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'verbose' => 0,
     'version' => 0,
 );
 
@@ -43,6 +44,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -99,6 +101,8 @@ Options:
 
   -h, --help
     Show this help.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
   --debug
@@ -108,6 +112,16 @@ END
     exit($Retval);
     # }}}
 } # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
 
 sub D {
     # Print a debugging message {{{
@@ -152,6 +166,10 @@ Send a template of a special file type to stdout.
 
 Print a brief help summary.
 
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
 =item B<--version>
 
 Print version information.
@@ -172,7 +190,7 @@ Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
