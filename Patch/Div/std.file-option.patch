@@ -1,0 +1,53 @@
+Index: std
+===================================================================
+--- std	(revision 2201)
++++ std	(working copy)
+@@ -19,6 +19,7 @@
+ 
+ our %Opt = (
+     'debug' => 0,
++    'file' => '',
+     'help' => 0,
+     'verbose' => 0,
+     'version' => 0,
+@@ -43,6 +44,7 @@
+ Getopt::Long::Configure("bundling");
+ GetOptions(
+     "debug" => \$Opt{'debug'},
++    "file|f=s" => \$Opt{'file'},
+     "help|h" => \$Opt{'help'},
+     "verbose|v+" => \$Opt{'verbose'},
+     "version" => \$Opt{'version'},
+@@ -95,10 +97,12 @@
+ 
+ Usage: $progname [options] type
+ 
+-Send a template of a special file type to stdout.
++Create basis for various file types.
+ 
+ Options:
+ 
++  -f x, --file x
++    Store output in file x.
+   -h, --help
+     Show this help.
+   -v, --verbose
+@@ -156,12 +160,17 @@
+ 
+ =head1 DESCRIPTION
+ 
+-Send a template of a special file type to stdout.
++Create basis for various file types.
+ 
+ =head1 OPTIONS
+ 
+ =over 4
+ 
++=item B<-f> I<x>, B<--file> I<x>
++
++Store output in file I<x>.
++If not specified, the output goes to stdout.
++
+ =item B<-h>, B<--help>
+ 
+ Print a brief help summary.
