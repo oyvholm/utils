@@ -2,7 +2,7 @@
 
 # $Id$
 
-if [ -e /carmbb.mrk ]; then
+if [ -e /carmbb.mrk -o -e /nynett-ubuntu.mrk ]; then
 	# [ "`whoami`" = "root" ] || { echo $0: Må være root. >&2; exit 1; }
 	if [ "$1" = "-h" ]; then
 		# Sett hardwareklokka etter systemklokka
