@@ -3,4 +3,4 @@
 # $Id$
 # Latskap.
 
-myf $* -type f | sort
+myf "$@" -type f | sort
