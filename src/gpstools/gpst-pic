@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Extract EXIF data from pictures for use with COPY in Postgres
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -13,12 +13,22 @@
 use strict;
 use Getopt::Long;
 
+BEGIN {
+    push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
+    our @version_array;
+}
+
+use GPST;
+
 $| = 1;
 
 our $Debug = 0;
+our $NA = '\N';
 
 our %Opt = (
+    'author' => '',
     'debug' => 0,
+    'description' => '',
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -33,7 +43,9 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "author|a=s" => \$Opt{'author'},
     "debug" => \$Opt{'debug'},
+    "description|d=s" => \$Opt{'description'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -43,9 +55,63 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+if ($#ARGV < 0) {
+    while (<>) {
+        chomp();
+        print_entry($_);
+    }
+} else {
+    for my $fname (@ARGV) {
+        print_entry($fname);
+    }
 }
+
+sub print_entry {
+    my $filename = shift;
+    my $Retval = 0;
+    my ($date, $coor) = 
+       ( '',  '');
+    my @Dates = ();
+    local *PicFP;
+    D("filename = '$filename'");
+    if (open(PicFP, "exifprobe -L \"$filename\" |")) { # FIXME: Quick & Dirty™
+        while (<PicFP>) {
+            if (/DateTime/) {
+                s/^.*'(.*?)'.*$/$1/;
+                chomp($date = $_);
+                $date =~ s/^(\d\d\d\d)(.)(\d\d)(.)(\d\d)(.)(\d\d:\d\d:\d\d)(.*)/$1-$3-$5 $7$8/;
+                D("date = '$date'");
+                push(@Dates, $date);
+            }
+        }
+        close(PicFP);
+        @Dates = reverse sort @Dates;
+        $date = $Dates[0];
+        defined($date) || ($date = '');
+        D("final date = '$date'");
+        if ($date =~ /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/) {
+            $filename =~ s/^.*\/(.*?)$/$1/;
+            my $Output = join("\t",
+                postgresql_copy_safe($date),
+                length($coor) ? postgresql_copy_safe($coor) : $NA,
+                length($Opt{'description'}) ? postgresql_copy_safe($Opt{'description'}) : $NA,
+                length($filename) ? postgresql_copy_safe($filename) : $NA,
+                length($Opt{'author'}) ? postgresql_copy_safe($Opt{'author'}) : $NA
+            ) . "\n";
+            print($Output);
+            $Opt{'verbose'} && print(STDERR $Output);
+        } else {
+            if (length($date)) {
+                warn("$filename: $date: Invalid date format");
+                $Retval = 2;
+            }
+        }
+    } else {
+        warn("$filename: Cannot open exifprobe(1) pipe: $!");
+        $Retval = 1;
+    }
+    return($Retval);
+} # print_entry()
 
 sub print_version {
     # Print program version {{{
@@ -64,8 +130,16 @@ $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
+Extract EXIF info from pictures for use with PostgreSQL's COPY command. 
+If no filenames are specified on the command line, file names are read 
+from stdin.
+
 Options:
 
+  -a, --author x
+    Specify author of picture.
+  -d, --description x
+    Specify description for picture.
   -h, --help
     Show this help.
   -v, --verbose

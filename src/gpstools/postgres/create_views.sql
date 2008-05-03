@@ -127,6 +127,9 @@ CREATE OR REPLACE VIEW ev AS
         UNION ALL
         SELECT   'event' AS flag, date, coor, NULL, descr AS descr, NULL
             FROM events
+        UNION ALL
+        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL
+            FROM pictures
     ) AS u
     ORDER BY date;
 
