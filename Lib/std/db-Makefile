@@ -129,5 +129,5 @@ sync:
 	$(MAKE) commitmode
 	rmdir sync.LOCK
 
-# $Id: Makefile 2779 2007-04-11 16:25:24Z sunny256 $
+# $Id: Makefile 2779 2008-04-11 16:25:24Z sunny256 $
 # vim: set ts=4 sw=4 sts=4 noet :
