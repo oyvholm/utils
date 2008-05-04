@@ -97,4 +97,31 @@ SELECT count(*)
     AS "Antall i events etter rensking"
     FROM events;
 
+\echo
+\echo ================ Fjern duplikater i pictures ================
+
+SELECT count(*)
+    AS "Antall i pictures før rensking"
+    FROM pictures;
+
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+    CREATE TEMPORARY TABLE dupfri
+    ON COMMIT DROP
+    AS (
+        SELECT
+            DISTINCT ON (date, coor[0], coor[1], descr, filename, author) *
+            FROM pictures
+    );
+    TRUNCATE pictures;
+    INSERT INTO pictures (
+        SELECT *
+            FROM dupfri
+            ORDER BY date
+    );
+COMMIT;
+
+SELECT count(*)
+    AS "Antall i pictures etter rensking"
+    FROM pictures;
+
 \i distupdate.sql
