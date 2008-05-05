@@ -31,6 +31,85 @@ SELECT round(avs::numeric, 5) FROM (
     ) AS s;
 $$ LANGUAGE SQL;
 
+-- Beregn koordinater for et tidspunkt som ligger mellom to 
+-- trackpunkter.
+CREATE OR REPLACE FUNCTION findpos(currtime timestamptz) RETURNS point AS $$
+DECLARE
+    firstdate timestamptz;
+    lastdate timestamptz;
+    firsttime timestamptz;
+    firstcoor point;
+    lasttime timestamptz;
+    lastcoor point;
+    currlat numeric;
+    currlon numeric;
+BEGIN
+    -- RAISE NOTICE '-----------------------------------';
+    SELECT INTO firstdate date
+        FROM logg
+        ORDER BY date;
+    SELECT INTO lastdate date
+        FROM logg
+        ORDER BY date DESC;
+    IF currtime < firstdate OR currtime > lastdate THEN
+        return(NULL);
+    END IF;
+
+    SELECT INTO firsttime date
+        FROM logg
+        WHERE date <= currtime ORDER BY date DESC;
+    SELECT INTO firstcoor coor
+        FROM logg
+        WHERE date <= currtime ORDER BY date DESC;
+    SELECT INTO lasttime date
+        FROM logg
+        WHERE date >= currtime ORDER BY date;
+    SELECT INTO lastcoor coor
+        FROM logg
+        WHERE date >= currtime ORDER BY date;
+    -- RAISE NOTICE 'currtime = %', currtime;
+    -- RAISE NOTICE 'firsttime = %, firstcoor = %', firsttime, firstcoor;
+    -- RAISE NOTICE 'lasttime = %, lastcoor = %', lasttime, lastcoor;
+
+    IF firsttime = lasttime THEN
+        RETURN(firstcoor);
+    END IF;
+
+    currlat = firstcoor[0] + 
+    (
+        (
+            lastcoor[0]-firstcoor[0]
+        ) *
+        (
+            (
+                EXTRACT(EPOCH FROM currtime)-EXTRACT(EPOCH FROM firsttime)
+            )
+            /
+            (
+                EXTRACT(EPOCH FROM lasttime)-EXTRACT(EPOCH FROM firsttime)
+            )
+        )
+    );
+    currlon = firstcoor[1] + 
+    (
+        (
+            lastcoor[1]-firstcoor[1]
+        ) *
+        (
+            (
+                EXTRACT(EPOCH FROM currtime)-EXTRACT(EPOCH FROM firsttime)
+            )
+            /
+            (
+                EXTRACT(EPOCH FROM lasttime)-EXTRACT(EPOCH FROM firsttime)
+            )
+        )
+    );
+    -- RAISE NOTICE 'currcoor = (%,%)', currlat, currlon;
+    RETURN (currlat,currlon);
+END;
+$$ LANGUAGE plpgsql;
+
 -- Returnerer antall sekunder sia midnatt for en dato.
 DROP FUNCTION secmidnight(timestamptz);
 CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision

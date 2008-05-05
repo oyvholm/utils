@@ -124,4 +124,16 @@ SELECT count(*)
     AS "Antall i pictures etter rensking"
     FROM pictures;
 
+\echo
+\echo ================ Oppdater koordinater for bilder ================
+
+UPDATE pictures SET coor = findpos(date)
+    WHERE coor IS NULL;
+
+\echo ================ Rund av bildekoordinater ================
+UPDATE pictures SET coor = point(
+    round(coor[0]::numeric, 5),
+    round(coor[1]::numeric, 5)
+);
+
 \i distupdate.sql
