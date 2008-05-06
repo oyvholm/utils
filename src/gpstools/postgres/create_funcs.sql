@@ -110,6 +110,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION wherepos(timestamptz);
+CREATE OR REPLACE FUNCTION wherepos(currtime timestamptz) RETURNS text AS $$
+DECLARE
+    currpos point;
+    currsted text;
+    currdist numeric;
+    currlat numeric(8, 5);
+    currlon numeric(8, 5);
+BEGIN
+    currpos = findpos(currtime);
+    currlat = currpos[1];
+    currlon = currpos[0];
+    currsted = clname(currpos);
+    currdist = cldist(currpos);
+    RETURN(currtime || ' - ' || currlat::text || ' ' || currlon::text || ' - ' || currsted || ' - ' || currdist);
+END;
+$$ LANGUAGE plpgsql;
+
 -- Returnerer antall sekunder sia midnatt for en dato.
 DROP FUNCTION secmidnight(timestamptz);
 CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision
