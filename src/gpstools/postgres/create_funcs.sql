@@ -116,8 +116,8 @@ DECLARE
     currpos point;
     currsted text;
     currdist numeric;
-    currlat numeric(8, 5);
-    currlon numeric(8, 5);
+    currlat numeric(9, 6);
+    currlon numeric(9, 6);
 BEGIN
     currpos = findpos(currtime);
     currlat = currpos[0];
