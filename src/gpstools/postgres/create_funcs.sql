@@ -120,8 +120,8 @@ DECLARE
     currlon numeric(8, 5);
 BEGIN
     currpos = findpos(currtime);
-    currlat = currpos[1];
-    currlon = currpos[0];
+    currlat = currpos[0];
+    currlon = currpos[1];
     currsted = clname(currpos);
     currdist = cldist(currpos);
     RETURN(currtime || ' - ' || currlat::text || ' ' || currlon::text || ' - ' || currsted || ' - ' || currdist);
