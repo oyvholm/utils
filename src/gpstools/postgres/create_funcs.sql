@@ -47,26 +47,36 @@ BEGIN
     -- RAISE NOTICE '-----------------------------------';
     SELECT INTO firstdate date
         FROM logg
-        ORDER BY date;
+        ORDER BY date
+        LIMIT 1;
     SELECT INTO lastdate date
         FROM logg
-        ORDER BY date DESC;
+        ORDER BY date DESC
+        LIMIT 1;
     IF currtime < firstdate OR currtime > lastdate THEN
         return(NULL);
     END IF;
 
     SELECT INTO firsttime date
         FROM logg
-        WHERE date <= currtime ORDER BY date DESC;
+        WHERE date <= currtime
+        ORDER BY date DESC
+        LIMIT 1;
     SELECT INTO firstcoor coor
         FROM logg
-        WHERE date <= currtime ORDER BY date DESC;
+        WHERE date <= currtime
+        ORDER BY date DESC
+        LIMIT 1;
     SELECT INTO lasttime date
         FROM logg
-        WHERE date >= currtime ORDER BY date;
+        WHERE date >= currtime
+        ORDER BY date
+        LIMIT 1;
     SELECT INTO lastcoor coor
         FROM logg
-        WHERE date >= currtime ORDER BY date;
+        WHERE date >= currtime
+        ORDER BY date
+        LIMIT 1;
     -- RAISE NOTICE 'currtime = %', currtime;
     -- RAISE NOTICE 'firsttime = %, firstcoor = %', firsttime, firstcoor;
     -- RAISE NOTICE 'lasttime = %, lastcoor = %', lasttime, lastcoor;
