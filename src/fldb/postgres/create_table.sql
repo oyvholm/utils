@@ -1,6 +1,8 @@
 -- $Id$
 
 CREATE TABLE files (
+    id bigserial PRIMARY KEY,
+    idate time DEFAULT now(),
     sha1 varchar(40),
     md5 varchar(32),
     crc32 varchar(8),
@@ -21,6 +23,8 @@ CREATE TABLE files (
 );
 
 CREATE TABLE other (
+    id bigserial PRIMARY KEY,
+    idate time DEFAULT now(),
     kind varchar,
     sha1 varchar(40),
     md5 varchar(32),
