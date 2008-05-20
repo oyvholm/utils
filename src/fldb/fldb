@@ -83,6 +83,7 @@ while (my $Filename = <>) {
 exit 0;
 
 sub add_entry {
+    # {{{
     my $Filename = shift;
     my $safe_filename = $Filename;
     $safe_filename =~ s/'/''/g;
@@ -122,6 +123,7 @@ END
         $Retval = undef;
     }
     return($Retval);
+    # }}}
 } # add_entry()
 
 sub checksum {
@@ -219,8 +221,7 @@ END
 } # usage()
 
 sub sec_to_string {
-    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ"
-    # {{{
+    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
     my ($Seconds) = shift;
     ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
 
