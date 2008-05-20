@@ -12,13 +12,20 @@
 
 use strict;
 use Getopt::Long;
+use DBI;
+use Digest::MD5;
+use Digest::SHA1;
+use Digest::CRC;
 
 $| = 1;
 
 our $Debug = 0;
 my $STD_OUTPUT_FORMAT = "sql";
+my $STD_DATABASE = "fldb";
 
 our %Opt = (
+    'add' => 0,
+    'database' => $STD_DATABASE,
     'debug' => 0,
     'help' => 0,
     'output-format' => $STD_OUTPUT_FORMAT,
@@ -35,6 +42,8 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "add" => \$Opt{'add'},
+    "database|d=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "output-format|o=s" => \$Opt{'output-format'},
@@ -46,13 +55,103 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
+my $postgresql_database = $Opt{'database'};
+# my $postgresql_user=yourpostgresuser;
+# my $postgresql_password=yourpostgrespass;
+my $postgresql_host="localhost";
+my $sth;
+
 while (my $Filename = <>) {
-    print_entry($Filename);
+    chomp($Filename);
+    # my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host", "$postgresql_user", "$postgresql_password");
+    my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
+        or die("connect: På trynet: $!");
+
+    if ($Opt{'add'}) {
+        my $Sql = add_entry($Filename);
+        if (defined($Sql)) {
+            $dbh->do($Sql) || warn("$Filename: Cannot INSERT\n");
+            $Opt{'verbose'} && print("$Filename\n");
+        } else {
+            # warn("$Filename: Could not retrieve file data\n");
+        }
+    } else {
+        print_entry($Filename);
+    }
 }
 
-return 0;
+exit 0;
+
+sub add_entry {
+    my $Filename = shift;
+    my $safe_filename = $Filename;
+    $safe_filename =~ s/'/''/g;
+    D("add_entry(\"$Filename\")");
+    my $Retval = "";
+    my @stat_array = ();
+    if (@stat_array = stat($Filename)) {
+        my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
+            $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
+        my $base_filename = $safe_filename;
+        $base_filename =~ s/^.*\/(.*?)$/$1/;
+        $Mtime = sec_to_string($Mtime);
+        $Ctime = sec_to_string($Ctime);
+        D("Mode før: '$Mode'");
+        $Mode = sprintf("%04o", $Mode & 07777);
+        D("Mode etter: '$Mode'");
+        D("base_filename = '$base_filename'");
+        chomp(my $Hostname = `/bin/hostname`); # FIXME
+        my %Sum = checksum($Filename);
+        if (scalar(%Sum)) {
+            $Retval = <<END;
+INSERT INTO files (
+    sha1, md5, crc32, size, filename, mtime, ctime, path,
+    inode, device, hostname, uid, gid, perm, lastver, nextver, descr
+) VALUES (
+    '$Sum{sha1}', '$Sum{md5}', '$Sum{crc32}', $Size, '$base_filename', '$Mtime', '$Ctime', '$safe_filename',
+    $Inode, '$Dev', '$Hostname', $Uid, $Gid, '$Mode', NULL, NULL, NULL
+);
+END
+            D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
+        } else {
+            warn("$Filename: Cannot read file: $!\n");
+            $Retval = undef;
+        }
+    } else {
+        warn("$progname: $Filename: Cannot stat file: $!\n");
+        $Retval = undef;
+    }
+    return($Retval);
+} # add_entry()
+
+sub checksum {
+    # {{{
+    my $Filename = shift;
+    my $Retval = "";
+    my %Sum = ();
+    local *FP;
+
+    if (open(FP, "<", "$Filename")) {
+        my $sha1 = Digest::SHA1->new;
+        my $md5 = Digest::MD5->new;
+        my $crc32 = Digest::CRC->new(type => "crc32");
+        while (my $Curr = <FP>) {
+            $sha1->add($Curr);
+            $md5->add($Curr);
+            $crc32->add($Curr);
+        }
+        $Sum{'sha1'} = $sha1->hexdigest;
+        $Sum{'md5'} = $md5->hexdigest;
+        $Sum{'crc32'} = sprintf("%08x", $crc32->digest);
+    } else {
+        # warn("$Filename: Cannot read file: $!\n");
+    }
+    return(%Sum);
+    # }}}
+} # checksum()
 
 sub print_entry {
+    # {{{
     my $File = $1;
     # printf(join("\t",
     printf(<<END,
@@ -77,6 +176,7 @@ END
         "NULL", # nextver
         "NULL", # descr
     );
+    # }}}
 } # print_entry()
 
 sub print_version {
@@ -98,6 +198,10 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -a, --add
+    Add file information to database.
+  -d x, --database x
+    Use database x.
   -h, --help
     Show this help.
   -o x, --output x
@@ -113,6 +217,20 @@ END
     exit($Retval);
     # }}}
 } # usage()
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ"
+    # {{{
+    my ($Seconds) = shift;
+    ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
+
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0]);
+    return($DateString);
+    # }}}
+} # sec_to_string()
 
 sub msg {
     # Print a status message to stderr based on verbosity level {{{
