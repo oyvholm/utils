@@ -20,7 +20,8 @@ CREATE TABLE files (
     perm varchar,
     lastver varchar(40),
     nextver varchar(40),
-    descr varchar
+    descr varchar,
+    latin1 boolean
 );
 
 CREATE TABLE other (
@@ -45,5 +46,6 @@ CREATE TABLE other (
     perm varchar,
     lastver varchar(40),
     nextver varchar(40),
-    descr varchar
+    descr varchar,
+    latin1 boolean
 );
