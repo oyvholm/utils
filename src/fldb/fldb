@@ -65,17 +65,17 @@ my $postgresql_host="localhost";
 my $sth;
 chomp(my $Hostname = `/bin/hostname`); # FIXME
 
+# my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host", "$postgresql_user", "$postgresql_password");
+my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
+    or die("connect: På trynet: $!");
+
 while (my $Filename = <>) {
     chomp($Filename);
-    # my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host", "$postgresql_user", "$postgresql_password");
-    my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
-        or die("connect: På trynet: $!");
-
     if ($Opt{'add'}) {
+        $Opt{'verbose'} && print("$Filename\n");
         my $Sql = add_entry($Filename);
         if (defined($Sql)) {
             $dbh->do($Sql) || warn("$Filename: Cannot INSERT\n");
-            $Opt{'verbose'} && print("$Filename\n");
         } else {
             # warn("$Filename: Could not retrieve file data\n");
         }
