@@ -63,6 +63,7 @@ my $postgresql_database = $Opt{'database'};
 # my $postgresql_password=yourpostgrespass;
 my $postgresql_host="localhost";
 my $sth;
+chomp(my $Hostname = `/bin/hostname`); # FIXME
 
 while (my $Filename = <>) {
     chomp($Filename);
@@ -104,7 +105,6 @@ sub add_entry {
         $Mode = sprintf("%04o", $Mode & 07777);
         D("Mode etter: '$Mode'");
         D("base_filename = '$base_filename'");
-        chomp(my $Hostname = `/bin/hostname`); # FIXME
         my %Sum = checksum($Filename);
         my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
         if (scalar(%Sum)) {
