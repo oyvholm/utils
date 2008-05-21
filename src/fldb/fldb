@@ -26,6 +26,7 @@ my $STD_DATABASE = "fldb";
 
 our %Opt = (
     'add' => 0,
+    'crc32' => 0,
     'database' => $STD_DATABASE,
     'debug' => 0,
     'help' => 0,
@@ -44,6 +45,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 Getopt::Long::Configure("bundling");
 GetOptions(
     "add" => \$Opt{'add'},
+    "crc32" => \$Opt{'crc32'},
     "database|d=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
@@ -104,13 +106,14 @@ sub add_entry {
         D("base_filename = '$base_filename'");
         chomp(my $Hostname = `/bin/hostname`); # FIXME
         my %Sum = checksum($Filename);
+        my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
         if (scalar(%Sum)) {
             $Retval = <<END;
 INSERT INTO files (
     sha1, md5, crc32, size, filename, mtime, ctime, calctime, path,
     inode, device, hostname, uid, gid, perm, lastver, nextver, descr
 ) VALUES (
-    '$Sum{sha1}', '$Sum{md5}', '$Sum{crc32}', $Size, '$base_filename', '$Mtime', '$Ctime', $Sum{calctime}, '$safe_filename',
+    '$Sum{sha1}', '$Sum{md5}', $crc32_str, $Size, '$base_filename', '$Mtime', '$Ctime', $Sum{calctime}, '$safe_filename',
     $Inode, '$Dev', '$Hostname', $Uid, $Gid, '$Mode', NULL, NULL, NULL
 );
 END
@@ -143,11 +146,11 @@ sub checksum {
         while (my $Curr = <FP>) {
             $sha1->add($Curr);
             $md5->add($Curr);
-            $crc32->add($Curr);
+            $crc32->add($Curr) if $Opt{'crc32'};
         }
         $Sum{'sha1'} = $sha1->hexdigest;
         $Sum{'md5'} = $md5->hexdigest;
-        $Sum{'crc32'} = sprintf("%08x", $crc32->digest);
+        $Opt{'crc32'} && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
     } else {
         # warn("$Filename: Cannot read file: $!\n");
     }
@@ -208,6 +211,9 @@ Options:
 
   -a, --add
     Add file information to database.
+  --crc32
+    Also calculate CRC32. Reads the whole file into memory, so it’s not 
+    suitable for big files. Maybe fixed in newer Perl versions.
   -d x, --database x
     Use database x.
   -h, --help
