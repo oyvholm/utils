@@ -16,6 +16,7 @@ use DBI;
 use Digest::MD5;
 use Digest::SHA1;
 use Digest::CRC;
+use Time::HiRes qw{ gettimeofday };
 
 $| = 1;
 
@@ -106,10 +107,10 @@ sub add_entry {
         if (scalar(%Sum)) {
             $Retval = <<END;
 INSERT INTO files (
-    sha1, md5, crc32, size, filename, mtime, ctime, path,
+    sha1, md5, crc32, size, filename, mtime, ctime, calctime, path,
     inode, device, hostname, uid, gid, perm, lastver, nextver, descr
 ) VALUES (
-    '$Sum{sha1}', '$Sum{md5}', '$Sum{crc32}', $Size, '$base_filename', '$Mtime', '$Ctime', '$safe_filename',
+    '$Sum{sha1}', '$Sum{md5}', '$Sum{crc32}', $Size, '$base_filename', '$Mtime', '$Ctime', $Sum{calctime}, '$safe_filename',
     $Inode, '$Dev', '$Hostname', $Uid, $Gid, '$Mode', NULL, NULL, NULL
 );
 END
@@ -131,8 +132,10 @@ sub checksum {
     my $Filename = shift;
     my $Retval = "";
     my %Sum = ();
+    my $starttime = gettimeofday;
     local *FP;
 
+    D("checksum(\"$Filename\"");
     if (open(FP, "<", "$Filename")) {
         my $sha1 = Digest::SHA1->new;
         my $md5 = Digest::MD5->new;
@@ -148,6 +151,9 @@ sub checksum {
     } else {
         # warn("$Filename: Cannot read file: $!\n");
     }
+    my $endtime = gettimeofday;
+    $Sum{'calctime'} = $endtime-$starttime;
+    D("checksum() returnerer " . scalar(%Sum) . " elementer");
     return(%Sum);
     # }}}
 } # checksum()
