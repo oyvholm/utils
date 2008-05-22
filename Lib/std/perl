@@ -10,12 +10,12 @@
 # file for legal stuff.
 #=======================================================================
 
-use strict;
-use Getopt::Long;
-
 BEGIN {
     our @version_array;
 }
+
+use strict;
+use Getopt::Long;
 
 $| = 1;
 
