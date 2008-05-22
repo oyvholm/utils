@@ -22,7 +22,7 @@ $| = 1;
 
 our $Debug = 0;
 my $STD_OUTPUT_FORMAT = "sql";
-my $STD_DATABASE = "fldb";
+my $STD_DATABASE = "fldbtest";
 
 our %Opt = (
     'add' => 0,
@@ -65,15 +65,39 @@ my $postgresql_host="localhost";
 my $sth;
 chomp(my $Hostname = `/bin/hostname`); # FIXME
 
+my $TAG = '$lD8qQ$'; # FIXME: should be random and checked against every string.
 # my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host", "$postgresql_user", "$postgresql_password");
 my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
     or die("connect: På trynet: $!");
+my $Sql;
+
+my $use_pg = 0;
+my $Table = "jada";
+
+# Test
+$dbh->do(
+    "CREATE TABLE $Table (" .
+        "id serial, counter integer, text varchar, value smallint, bin bytea" .
+    ");"
+) || warn("Cannot CREATE TABLE $Table");
+my $Counter = 1;
+for (my $t = ord("\x01"); $t <= ord("\xFF"); $t++) {
+    msg(1, "==================== $t ('" . widechar($t) . "') ===================\n");
+    $Sql = "INSERT INTO $Table (counter, text, value) VALUES($Counter, ${TAG}"
+        . widechar($t)
+        . "${TAG}, $t);";
+    print("$Sql\n");
+    $use_pg && eval('$dbh->do($Sql) || warn("$t: Cannot INSERT\n");');
+    $Counter++;
+}
+$use_pg && print(STDERR "Result stored in database \"$postgresql_database\", table \"$Table\".\n");
+exit 0;
 
 while (my $Filename = <>) {
     chomp($Filename);
     if ($Opt{'add'}) {
         $Opt{'verbose'} && print("$Filename\n");
-        my $Sql = add_entry($Filename);
+        $Sql = add_entry($Filename);
         if (defined($Sql)) {
             $dbh->do($Sql) || warn("$Filename: Cannot INSERT\n");
         } else {
@@ -90,7 +114,7 @@ sub add_entry {
     # {{{
     my $Filename = shift;
     my $safe_filename = $Filename;
-    $safe_filename =~ s/'/''/g;
+    # $safe_filename =~ s/'/''/g;
     D("add_entry(\"$Filename\")");
     my $Retval = "";
     my @stat_array = ();
@@ -121,8 +145,8 @@ INSERT INTO files (
     sha1, md5, crc32, size, filename, mtime, ctime, calctime, path,
     inode, device, hostname, uid, gid, perm, lastver, nextver, descr, latin1
 ) VALUES (
-    '$Sum{sha1}', '$Sum{md5}', $crc32_str, $Size, '$base_filename', '$Mtime', '$Ctime', $Sum{calctime}, '$safe_filename',
-    $Inode, '$Dev', '$Hostname', $Uid, $Gid, '$Mode', NULL, NULL, NULL, $latin1_str
+    ${TAG}$Sum{sha1}${TAG}, ${TAG}$Sum{md5}${TAG}, $crc32_str, $Size, ${TAG}$base_filename${TAG}, ${TAG}$Mtime${TAG}, ${TAG}$Ctime${TAG}, $Sum{calctime}, ${TAG}$safe_filename${TAG},
+    $Inode, ${TAG}$Dev${TAG}, ${TAG}$Hostname${TAG}, $Uid, $Gid, ${TAG}$Mode${TAG}, NULL, NULL, NULL, $latin1_str
 );
 END
             D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
@@ -134,6 +158,7 @@ END
         warn("$progname: $Filename: Cannot stat file: $!\n");
         $Retval = undef;
     }
+    D("add_entry() finished");
     return($Retval);
     # }}}
 } # add_entry()
