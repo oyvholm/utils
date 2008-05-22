@@ -17,10 +17,10 @@ BEGIN {
 use strict;
 use Getopt::Long;
 use DBI;
-use Digest::MD5;
-use Digest::SHA1;
-use Digest::CRC;
-use Time::HiRes qw{ gettimeofday };
+
+use lib "$ENV{'HOME'}/bin/src/fldb";
+use FLDButf;
+use FLDBsum;
 
 $| = 1;
 
@@ -108,7 +108,7 @@ sub add_entry {
         D("Mode før: '$Mode'");
         $Mode = sprintf("%04o", $Mode & 07777);
         D("Mode etter: '$Mode'");
-        my %Sum = checksum($Filename);
+        my %Sum = checksum($Filename, $Opt{'crc32'});
         my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
         if (scalar(%Sum)) {
             my $latin1_str;
@@ -144,37 +144,6 @@ END
     # }}}
 } # add_entry()
 
-sub checksum {
-    # {{{
-    my $Filename = shift;
-    my $Retval = "";
-    my %Sum = ();
-    my $starttime = gettimeofday;
-    local *FP;
-
-    D("checksum(\"$Filename\"");
-    if (open(FP, "<", "$Filename")) {
-        my $sha1 = Digest::SHA1->new;
-        my $md5 = Digest::MD5->new;
-        my $crc32 = Digest::CRC->new(type => "crc32");
-        while (my $Curr = <FP>) {
-            $sha1->add($Curr);
-            $md5->add($Curr);
-            $crc32->add($Curr) if $Opt{'crc32'};
-        }
-        $Sum{'sha1'} = $sha1->hexdigest;
-        $Sum{'md5'} = $md5->hexdigest;
-        $Opt{'crc32'} && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
-    } else {
-        # warn("$Filename: Cannot read file: $!\n");
-    }
-    my $endtime = gettimeofday;
-    $Sum{'calctime'} = $endtime-$starttime;
-    D("checksum() returnerer " . scalar(%Sum) . " elementer");
-    return(%Sum);
-    # }}}
-} # checksum()
-
 sub print_entry {
     # {{{
     my $File = $1;
@@ -203,63 +172,6 @@ END
     );
     # }}}
 } # print_entry()
-
-sub valid_utf8 {
-    # {{{
-    my $Text = shift;
-    $Text =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-    $Text =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-    $Text =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-    $Text =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
-    $Text =~ s/([\xC0-\xDF][\x80-\xBF])//g;
-    return($Text =~ /[\x80-\xFF]/ ? 0 : 1);
-    # }}}
-} # valid_utf8()
-
-sub latin1_to_utf8 {
-    # {{{
-    my $Text = shift;
-    D("latin1_to_utf8()");
-    $Text =~ s/([\x80-\xFF])/widechar(ord($1))/ge;
-    return($Text);
-    # }}}
-} # latin1_to_utf8()
-
-sub widechar {
-    # {{{
-    my $Val = shift;
-    if ($Val < 0x80) {
-        return sprintf("%c", $Val);
-    } elsif ($Val < 0x800) {
-        return sprintf("%c%c", 0xC0 | ($Val >> 6),
-                               0x80 | ($Val & 0x3F));
-    } elsif ($Val < 0x10000) {
-        return sprintf("%c%c%c", 0xE0 |  ($Val >> 12),
-                                 0x80 | (($Val >>  6) & 0x3F),
-                                 0x80 |  ($Val        & 0x3F));
-    } elsif ($Val < 0x200000) {
-        return sprintf("%c%c%c%c", 0xF0 |  ($Val >> 18),
-                                   0x80 | (($Val >> 12) & 0x3F),
-                                   0x80 | (($Val >>  6) & 0x3F),
-                                   0x80 |  ($Val        & 0x3F));
-    } elsif ($Val < 0x4000000) {
-        return sprintf("%c%c%c%c%c", 0xF8 |  ($Val >> 24),
-                                     0x80 | (($Val >> 18) & 0x3F),
-                                     0x80 | (($Val >> 12) & 0x3F),
-                                     0x80 | (($Val >>  6) & 0x3F),
-                                     0x80 | ( $Val        & 0x3F));
-    } elsif ($Val < 0x80000000) {
-        return sprintf("%c%c%c%c%c%c", 0xFC |  ($Val >> 30),
-                                       0x80 | (($Val >> 24) & 0x3F),
-                                       0x80 | (($Val >> 18) & 0x3F),
-                                       0x80 | (($Val >> 12) & 0x3F),
-                                       0x80 | (($Val >>  6) & 0x3F),
-                                       0x80 | ( $Val        & 0x3F));
-    } else {
-        return widechar(0xFFFD);
-    }
-    # }}}
-} # widechar()
 
 sub print_version {
     # Print program version {{{
