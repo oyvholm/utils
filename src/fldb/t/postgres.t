@@ -18,6 +18,10 @@ use Digest::SHA1;
 use Digest::CRC;
 use Time::HiRes qw{ gettimeofday };
 
+BEGIN {
+    our @version_array;
+}
+
 $| = 1;
 
 our $Debug = 0;
@@ -41,6 +45,8 @@ $progname =~ s#^.*/(.*?)$#$1#;
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -282,7 +288,9 @@ sub widechar {
 
 sub print_version {
     # Print program version {{{
-    print("$rcs_id\n");
+    for (@main::version_array) {
+        print("$_\n");
+    }
     exit(0);
     # }}}
 } # print_version()
