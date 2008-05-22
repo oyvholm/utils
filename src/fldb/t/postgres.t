@@ -10,6 +10,10 @@
 # file for legal stuff.
 #=======================================================================
 
+BEGIN {
+    our @version_array;
+}
+
 use strict;
 use Getopt::Long;
 use DBI;
@@ -17,10 +21,6 @@ use Digest::MD5;
 use Digest::SHA1;
 use Digest::CRC;
 use Time::HiRes qw{ gettimeofday };
-
-BEGIN {
-    our @version_array;
-}
 
 $| = 1;
 
