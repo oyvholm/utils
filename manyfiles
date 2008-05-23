@@ -7,8 +7,13 @@
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
+
+BEGIN {
+    our @version_array;
+}
 
 use strict;
 use Getopt::Long;
@@ -18,10 +23,13 @@ $| = 1;
 
 our $Debug = 0;
 
-our ($opt_help, $opt_count) =
-    (        0,          0);
-
-my $VERSION = "0.1";
+our %Opt = (
+    'count' => 0,
+    'debug' => 0,
+    'help' => 0,
+    'verbose' => 0,
+    'version' => 0,
+);
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -30,20 +38,27 @@ my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
+push(@main::version_array, $rcs_id);
+
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "help|h"       => \$opt_help,
-    "count|c=i"       => \$opt_count
+    "count|c=i" => \$Opt{'count'},
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$opt_help && usage(0);
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
-$opt_count && $opt_count++;
+$Opt{'count'} && $Opt{'count'}++;
 
 my $a;
 my $start_time = gettimeofday;
 
-for ($a = 1; $a != $opt_count; $a++) {
+for ($a = 1; $a != $Opt{'count'}; $a++) {
     unless (open(FP, ">$a")) {
         print(".");
     }
@@ -63,12 +78,22 @@ printf("Created %u file%s in %s second%s%s.\n",
 
 close(FP);
 
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    exit(0);
+    # }}}
+} # print_version()
+
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
+
     print(<<END);
 
-$progname v$VERSION -- $id_date
+$rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -77,16 +102,34 @@ system profiling and other interesting stuff.
 
 Options:
 
--c, --count x  Stop after x files are created.
--h, --help     Show this help.
+  -c, --count x
+    Stop after x files are created.
+  -h, --help
+    Show this help.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
 
 END
     exit($Retval);
     # }}}
-}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
 
 sub D {
-    # {{{
+    # Print a debugging message {{{
     $Debug || return;
     my @call_info = caller;
     chomp(my $Txt = shift);
@@ -114,7 +157,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+ [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
@@ -128,6 +171,18 @@ $Id$
 
 Print a brief help summary.
 
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
 =back
 
 =head1 BUGS
@@ -136,11 +191,11 @@ Print a brief help summary.
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
