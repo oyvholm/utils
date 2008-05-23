@@ -15,6 +15,9 @@ use Digest::SHA1;
 use Digest::CRC;
 use Time::HiRes qw{ gettimeofday };
 
+use lib "$ENV{'HOME'}/bin/src/fldb";
+use FLDBdebug;
+
 BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
