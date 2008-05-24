@@ -11,6 +11,9 @@ package FLDButf;
 use strict;
 use warnings;
 
+use lib "$ENV{'HOME'}/bin/src/fldb";
+use FLDBdebug;
+
 BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
