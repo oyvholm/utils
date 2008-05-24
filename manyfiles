@@ -27,6 +27,7 @@ our %Opt = (
     'char' => "",
     'count' => 0,
     'debug' => 0,
+    'extension' => "",
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -46,6 +47,7 @@ GetOptions(
     "char=s" => \$Opt{'char'},
     "count|c=i" => \$Opt{'count'},
     "debug" => \$Opt{'debug'},
+    "extension|e=s" => \$Opt{'extension'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -104,7 +106,7 @@ sub fill_directory {
             D("char_start = '$char_start', char_end = '$char_end'");
             for ($a = $char_start; $a <= $char_end; $a++) {
                 my $hex_val = sprintf("%02x", $a);
-                my $File = sprintf("%s/%s_%c", $Dir, ${hex_val}, $a);
+                my $File = sprintf("%s/%s_%c%s", $Dir, ${hex_val}, $a, $Opt{'extension'});
                 D("a = '$a', File = '$File'");
                 unless (open(FP, ">$File")) {
                     warn("$progname: $File: Cannot create file: $!\n");
@@ -115,7 +117,7 @@ sub fill_directory {
         }
     } else {
         for ($a = 1; $a != $Opt{'count'}; $a++) {
-            my $File = "$Dir/$a";
+            my $File = "$Dir/$a$Opt{'extension'}";
             unless (open(FP, ">$File")) {
                 warn("$0: $File: Cannot create file: $!");
             } else {
@@ -173,6 +175,8 @@ Options:
   --char start-end
     Create files with filenames containing bytes in the area specified 
     (0-255).
+  -e, --extension x
+    Use x as extension of the created files.
   -h, --help
     Show this help.
   -v, --verbose
