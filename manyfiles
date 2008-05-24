@@ -86,6 +86,7 @@ D("exit($Retval)");
 exit($Retval);
 
 sub fill_directory {
+    # {{{
     my $Dir = shift;
     my $start_time = gettimeofday;
     my $total_created = 0;
@@ -137,7 +138,8 @@ sub fill_directory {
             : ""
     );
     return(0);
-}
+    # }}}
+} # fill_directory()
 
 close(FP);
 
