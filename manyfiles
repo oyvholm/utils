@@ -106,7 +106,7 @@ sub fill_directory {
                 my $File = sprintf("%s/%s_%c", $Dir, ${hex_val}, $a);
                 D("a = '$a', File = '$File'");
                 unless (open(FP, ">$File")) {
-                    warn("$progname: $Dir/$a: Cannot create file: $!\n");
+                    warn("$progname: $File: Cannot create file: $!\n");
                 } else {
                     $total_created++;
                 }
