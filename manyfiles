@@ -24,6 +24,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+    'char' => "",
     'count' => 0,
     'debug' => 0,
     'help' => 0,
@@ -42,6 +43,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "char=s" => \$Opt{'char'},
     "count|c=i" => \$Opt{'count'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
@@ -59,6 +61,19 @@ my $Retval = 0;
 
 if ($#ARGV < 0) {
     die("$progname: No directory specified. Use \"$progname -h\" for help.\n");
+}
+
+my ($char_start, $char_end);
+
+if (length($Opt{'char'})) {
+    my $Str = $Opt{'char'};
+    if ($Str =~ /^(\d+)-(\d+)$/) {
+        ($char_start, $char_end) = ($1, $2);
+        if ($char_start > 255 || $char_start > 255) {
+            die("$progname: Invalid character value in --char value, " .
+                "has to be in range 0-255.\n");
+        }
+    }
 }
 
 for my $Curr (@ARGV) {
@@ -83,11 +98,27 @@ sub fill_directory {
             return(1);
         }
     }
-    for ($a = 1; $a != $Opt{'count'}; $a++) {
-        unless (open(FP, ">$Dir/$a")) {
-            warn("$progname: $Dir/$a: Cannot create file: $!\n");
-        } else {
-            $total_created++;
+    if ($Opt{'char'}) {
+        if (defined($char_start) && defined($char_end)) {
+            D("char_start = '$char_start', char_end = '$char_end'");
+            for ($a = $char_start; $a <= $char_end; $a++) {
+                my $hex_val = sprintf("%02x", $a);
+                my $File = sprintf("%s/%s_%c", $Dir, ${hex_val}, $a);
+                D("a = '$a', File = '$File'");
+                unless (open(FP, ">$File")) {
+                    warn("$progname: $Dir/$a: Cannot create file: $!\n");
+                } else {
+                    $total_created++;
+                }
+            }
+        }
+    } else {
+        for ($a = 1; $a != $Opt{'count'}; $a++) {
+            unless (open(FP, ">$Dir/$a")) {
+                warn("$0: $Dir/$a: Cannot create file: $!");
+            } else {
+                $total_created++;
+            }
         }
     }
 
@@ -136,6 +167,9 @@ Options:
 
   -c, --count x
     Stop after x files are created.
+  --char start-end
+    Create files with filenames containing bytes in the area specified 
+    (0-255).
   -h, --help
     Show this help.
   -v, --verbose
