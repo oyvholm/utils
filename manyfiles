@@ -144,8 +144,6 @@ sub fill_directory {
     # }}}
 } # fill_directory()
 
-close(FP);
-
 sub print_version {
     # Print program version {{{
     for (@main::version_array) {
