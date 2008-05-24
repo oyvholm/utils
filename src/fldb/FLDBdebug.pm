@@ -4,7 +4,7 @@ package FLDBdebug;
 # $Id$
 #
 # Character set: UTF-8
-# ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License, see end of file for legal stuff.
 #=======================================================================
 
