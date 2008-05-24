@@ -85,7 +85,7 @@ sub fill_directory {
     }
     for ($a = 1; $a != $Opt{'count'}; $a++) {
         unless (open(FP, ">$Dir/$a")) {
-            warn("$0: $Dir/$a: Cannot create file: $!");
+            warn("$progname: $Dir/$a: Cannot create file: $!\n");
         } else {
             $total_created++;
         }
