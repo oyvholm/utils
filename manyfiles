@@ -55,26 +55,58 @@ $Opt{'version'} && print_version();
 
 $Opt{'count'} && $Opt{'count'}++;
 
-my $a;
-my $start_time = gettimeofday;
+my $Retval = 0;
 
-for ($a = 1; $a != $Opt{'count'}; $a++) {
-    unless (open(FP, ">$a")) {
-        print(".");
-    }
+if ($#ARGV < 0) {
+    die("$progname: No directory specified. Use \"$progname -h\" for help.\n");
 }
 
-my $end_time = gettimeofday;
-my $total_time = $end_time - $start_time;
-$a--;
+for my $Curr (@ARGV) {
+    D("\$Curr = '$Curr'");
+    $Retval ||= fill_directory($Curr);
+    D("After fill_directory(i'$Curr')");
+}
 
-printf("Created %u file%s in %s second%s%s.\n",
-       $a,
-       $a == 1 ? "" : "s",
-       $total_time,
-       $total_time == 1 ? "" : "s",
-       $total_time ? sprintf(", %s files/second on average", $a / $total_time) : ""
-);
+D("exit($Retval)");
+exit($Retval);
+
+sub fill_directory {
+    my $Dir = shift;
+    my $start_time = gettimeofday;
+    my $total_created = 0;
+    my $a;
+
+    D("fill_directory(\"$Dir\")");
+    if (!-d "$Dir/.") {
+        if (!mkdir($Dir)) {
+            warn("$progname: $Dir: Cannot create directory: $!\n");
+            return(1);
+        }
+    }
+    for ($a = 1; $a != $Opt{'count'}; $a++) {
+        unless (open(FP, ">$Dir/$a")) {
+            warn("$0: $Dir/$a: Cannot create file: $!");
+        } else {
+            $total_created++;
+        }
+    }
+
+    my $end_time = gettimeofday;
+    my $total_time = $end_time - $start_time;
+    $a--;
+
+    printf("$Dir: Created %u file%s in %.6f second%s%s.\n",
+        $total_created,
+        $total_created == 1 ? "" : "s",
+        $total_time,
+        $total_time == 1 ? "" : "s",
+        $total_time
+            ? sprintf(", %.2f files/second on average",
+                $total_created / $total_time)
+            : ""
+    );
+    return(0);
+}
 
 close(FP);
 
@@ -95,9 +127,9 @@ sub usage {
 
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] directory [directories [...]]
 
-Creates loads of empty files in the current directory. Used for file 
+Creates loads of empty files in the specified directories. Used for file 
 system profiling and other interesting stuff.
 
 Options:
