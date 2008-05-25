@@ -37,6 +37,7 @@ our %Opt = (
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
+    'zero' => 0,
 );
 
 our $progname = $0;
@@ -57,6 +58,7 @@ GetOptions(
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "zero|z" => \$Opt{'zero'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -79,6 +81,8 @@ my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host
     or die("connect: På trynet: $!");
 
 my $Sql; # How ironic.
+
+$Opt{'zero'} && ($/ = "\x00");
 
 while (my $Filename = <>) {
     chomp($Filename);
@@ -199,6 +203,9 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -z, --zero
+    Filenames are separated by a zero byte (\\0x00) instead of newline 
+    (\\n). This makes it possible to read files containing newlines.
   --debug
     Print debugging messages.
 
