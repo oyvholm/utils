@@ -22,6 +22,7 @@ use lib "$ENV{'HOME'}/bin/src/fldb";
 use FLDButf;
 use FLDBsum;
 use FLDBdebug;
+use FLDBpg;
 
 $| = 1;
 
@@ -68,6 +69,10 @@ my $postgresql_database = $Opt{'database'};
 my $postgresql_host="localhost";
 my $sth;
 chomp(my $Hostname = `/bin/hostname`); # FIXME
+if (!valid_utf8($Hostname)) {
+    $Hostname = latin1_to_utf8($Hostname);
+}
+my $safe_hostname = safe_sql($Hostname);
 
 # my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host", "$postgresql_user", "$postgresql_password");
 my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
@@ -77,16 +82,14 @@ my $Sql; # How ironic.
 
 while (my $Filename = <>) {
     chomp($Filename);
-    if ($Opt{'add'}) {
-        $Opt{'verbose'} && print("$Filename\n");
-        $Sql = add_entry($Filename);
-        if (defined($Sql)) {
-            $dbh->do($Sql) || warn("$Filename: Cannot INSERT\n");
+    $Sql = add_entry($Filename);
+    if (defined($Sql)) {
+        if ($Opt{'add'}) {
+            $Opt{'verbose'} && print("$Filename\n");
+            $dbh->do($Sql) || warn("$progname: $Filename: Cannot INSERT\n");
         } else {
-            # warn("$Filename: Could not retrieve file data\n");
+            print($Sql);
         }
-    } else {
-        print(add_entry($Filename));
     }
 }
 
@@ -95,8 +98,7 @@ exit 0;
 sub add_entry {
     # {{{
     my $Filename = shift;
-    my $safe_filename = $Filename;
-    $safe_filename =~ s/'/''/g;
+    my $safe_filename = safe_sql($Filename);
     D("add_entry(\"$Filename\")");
     my $Retval = "";
     my @stat_array = ();
@@ -109,8 +111,9 @@ sub add_entry {
         $Mode = sprintf("%04o", $Mode & 07777);
         D("Mode etter: '$Mode'");
         my %Sum = checksum($Filename, $Opt{'crc32'});
-        my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
         if (scalar(%Sum)) {
+            my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
+            D("crc32_str = '$crc32_str'");
             my $latin1_str;
             if (valid_utf8($Filename)) {
                 $latin1_str = "FALSE";
@@ -122,18 +125,36 @@ sub add_entry {
             my $base_filename = $safe_filename;
             $base_filename =~ s/^.*\/(.*?)$/$1/;
             D("base_filename = '$base_filename'");
-            $Retval = <<END;
+            $Retval = sprintf(<<END,
 INSERT INTO files (
-    sha1, md5, crc32, size, filename, mtime, ctime, calctime, path,
-    inode, device, hostname, uid, gid, perm, lastver, nextver, descr, latin1
+ sha1, md5, crc32,
+ size, filename, mtime, ctime,
+ calctime, path,
+ inode, device, hostname,
+ uid, gid, perm,
+ lastver, nextver, descr,
+ latin1
 ) VALUES (
-    '$Sum{sha1}', '$Sum{md5}', $crc32_str, $Size, '$base_filename', '$Mtime', '$Ctime', $Sum{calctime}, '$safe_filename',
-    $Inode, '$Dev', '$Hostname', $Uid, $Gid, '$Mode', NULL, NULL, NULL, $latin1_str
+ '%s', '%s', %s,
+ %s, E'%s', '%s', '%s',
+ %s, E'%s',
+ %s, E'%s', E'%s',
+ %s, %s, '%s',
+ %s, %s, %s,
+ %s
 );
 END
+                $Sum{sha1}, $Sum{md5}, $crc32_str,
+                $Size, $base_filename, $Mtime, $Ctime,
+                $Sum{calctime}, $safe_filename,
+                $Inode, safe_sql($Dev), $safe_hostname,
+                $Uid, $Gid, $Mode,
+                'NULL', 'NULL', 'NULL',
+                $latin1_str
+            );
             D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
         } else {
-            warn("$Filename: Cannot read file: $!\n");
+            warn("$progname: $Filename: Cannot read file: $!\n");
             $Retval = undef;
         }
     } else {

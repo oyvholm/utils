@@ -38,6 +38,7 @@ sub checksum {
     my $Retval = "";
     my %Sum = ();
     my $starttime = gettimeofday;
+    my $endtime;
     local *FP;
 
     D("checksum(\"$Filename\"");
@@ -53,11 +54,11 @@ sub checksum {
         $Sum{'sha1'} = $sha1->hexdigest;
         $Sum{'md5'} = $md5->hexdigest;
         $use_crc32 && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
+        $endtime = gettimeofday;
+        $Sum{'calctime'} = $endtime - $starttime;
     } else {
-        # warn("$Filename: Cannot read file: $!\n");
+        %Sum = ();
     }
-    my $endtime = gettimeofday;
-    $Sum{'calctime'} = $endtime-$starttime;
     D("checksum() returnerer " . scalar(%Sum) . " elementer");
     return(%Sum);
     # }}}
