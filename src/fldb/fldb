@@ -26,7 +26,6 @@ use FLDBdebug;
 $| = 1;
 
 our $Debug = 0;
-my $STD_OUTPUT_FORMAT = "sql";
 my $STD_DATABASE = "fldb";
 
 our %Opt = (
@@ -35,7 +34,6 @@ our %Opt = (
     'database' => $STD_DATABASE,
     'debug' => 0,
     'help' => 0,
-    'output-format' => $STD_OUTPUT_FORMAT,
     'verbose' => 0,
     'version' => 0,
 );
@@ -56,7 +54,6 @@ GetOptions(
     "database|d=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
-    "output-format|o=s" => \$Opt{'output-format'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -76,18 +73,20 @@ chomp(my $Hostname = `/bin/hostname`); # FIXME
 my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
     or die("connect: På trynet: $!");
 
+my $Sql; # How ironic.
+
 while (my $Filename = <>) {
     chomp($Filename);
     if ($Opt{'add'}) {
         $Opt{'verbose'} && print("$Filename\n");
-        my $Sql = add_entry($Filename);
+        $Sql = add_entry($Filename);
         if (defined($Sql)) {
             $dbh->do($Sql) || warn("$Filename: Cannot INSERT\n");
         } else {
             # warn("$Filename: Could not retrieve file data\n");
         }
     } else {
-        print_entry($Filename);
+        print(add_entry($Filename));
     }
 }
 
@@ -145,35 +144,6 @@ END
     # }}}
 } # add_entry()
 
-sub print_entry {
-    # {{{
-    my $File = $1;
-    # printf(join("\t",
-    printf(<<END,
-INSERT INTO files (sha1, md5, crc32, size, filename, mtime, ctime, path, device, hostname, uid, gid, perm, lastver, nextver, descr) VALUES (
-    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-);
-END
-        "NULL", # sha1
-        "NULL", # md5
-        "NULL", # crc32
-        "NULL", # size
-        "NULL", # filename
-        "NULL", # mtime
-        "NULL", # ctime
-        "NULL", # path
-        "NULL", # device
-        "NULL", # hostname
-        "NULL", # uid
-        "NULL", # gid
-        "NULL", # perm
-        "NULL", # lastver
-        "NULL", # nextver
-        "NULL", # descr
-    );
-    # }}}
-} # print_entry()
-
 sub print_version {
     # Print program version {{{
     for (@main::version_array) {
@@ -204,8 +174,6 @@ Options:
     Use database x.
   -h, --help
     Show this help.
-  -o x, --output x
-    Output format. Default: $STD_OUTPUT_FORMAT
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
