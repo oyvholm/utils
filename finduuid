@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id: perl 2235 2008-05-22 19:32:40Z sunny $
-# [Description]
+# Scan files for UUIDs.
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -50,7 +50,7 @@ $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
 while (<>) {
-    print;
+    s/\b([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})\b/print("$1\n")/ge;
 }
 
 sub print_version {
@@ -69,6 +69,8 @@ sub usage {
     print(<<END);
 
 $rcs_id
+
+Scan files for UUIDs.
 
 Usage: $progname [options] [file [files [...]]]
 
