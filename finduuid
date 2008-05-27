@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id: perl 2235 2008-05-22 19:32:40Z sunny $
+# $Id$
 # Scan files for UUIDs.
 #
 # Character set: UTF-8
@@ -32,7 +32,7 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
 
-my $rcs_id = '$Id: perl 2235 2008-05-22 19:32:40Z sunny $';
+my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
@@ -136,7 +136,7 @@ __END__
 
 =head1 REVISION
 
-$Id: perl 2235 2008-05-22 19:32:40Z sunny $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -204,4 +204,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id: perl 2235 2008-05-22 19:32:40Z sunny $
+# End of file $Id$
