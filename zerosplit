@@ -22,6 +22,8 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+    'char' => 0,
+    'count' => 0,
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -39,8 +41,10 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "char|c=o" => \$Opt{'char'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "count|n=i" => \$Opt{'count'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -49,8 +53,35 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
+if ($Opt{'char'} < 0 || $Opt{'char'} > 255) {
+    die("$progname: $Opt{'char'}: Invalid character value\n");
+}
+
+my $Count = $Opt{'count'};
+$Count ||
+    die("$progname: Has to specify --count option " .
+    "with a value greater than 0\n");
+my $curr_count = $Count + 1;
+
+$/ = chr($Opt{'char'});
+
+my $File;
+my $file_count = 0;
+
 while (<>) {
-    print;
+    my $Curr = $_;
+    if ($curr_count >= $Count) {
+        $File = sprintf("%08x", $file_count);
+        if (open(FP, ">$File")) {
+            $file_count++;
+            $curr_count = 0;
+            msg(1, "Creating $File");
+        } else {
+            die("$progname: $File: Cannot create file: $!\n");
+        }
+    }
+    print(FP "$Curr");
+    $curr_count++;
 }
 
 sub print_version {
@@ -70,10 +101,16 @@ sub usage {
 
 $rcs_id
 
+Split a stream separated by a special character into files.
+
 Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -c x, --char x
+    Use character with value x as separator. Default: 0.
+  -n x, --count x
+    Store x records in every file.
   -h, --help
     Show this help.
   -v, --verbose
