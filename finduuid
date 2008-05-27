@@ -23,6 +23,7 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'filenames' => 0,
     'help' => 0,
     'line' => 0,
     'verbose' => 0,
@@ -41,6 +42,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
+    "filenames|f" => \$Opt{'filenames'},
     "help|h" => \$Opt{'help'},
     "line|l" => \$Opt{'line'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -55,9 +57,9 @@ while (<>) {
     chomp(my $Line = $_);
     if (/\b([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})\b/) {
         if ($Opt{'line'}) {
-            print("$Line\n");
+            printf("%s$Line\n", $Opt{'filenames'} ? "$ARGV: " : "");
         } else {
-            $Line =~ s/\b([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})\b/print("$1\n")/ge;
+            $Line =~ s/\b([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})\b/printf("%s$1\n", $Opt{'filenames'} ? "$ARGV: " : "")/ge;
         }
     }
 }
@@ -85,6 +87,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -f, --filenames
+    Include file names in output.
   -h, --help
     Show this help.
   -l, --line
