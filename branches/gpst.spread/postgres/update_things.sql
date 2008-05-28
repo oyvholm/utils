@@ -26,11 +26,11 @@ UPDATE logg SET ele = NULL WHERE ele < -1500;
 UPDATE logg SET ele = NULL WHERE ele > 29000;
 
 \echo
-\echo ================ Rund av veipunkter til fem desimaler ================
+\echo ================ Rund av veipunkter til seks desimaler ================
 
 UPDATE wayp SET coor = point(
-    round(coor[0]::numeric, 5),
-    round(coor[1]::numeric, 5)
+    round(coor[0]::numeric, 6),
+    round(coor[1]::numeric, 6)
 );
 
 \echo
@@ -96,6 +96,18 @@ COMMIT;
 SELECT count(*)
     AS "Antall i events etter rensking"
     FROM events;
+
+\echo
+\echo ================ Oppdater koordinater for bilder ================
+
+UPDATE pictures SET coor = findpos(date)
+    WHERE coor IS NULL;
+
+\echo ================ Rund av bildekoordinater ================
+UPDATE pictures SET coor = point(
+    round(coor[0]::numeric, 6),
+    round(coor[1]::numeric, 6)
+);
 
 \echo
 \echo ================ Fjern duplikater i pictures ================

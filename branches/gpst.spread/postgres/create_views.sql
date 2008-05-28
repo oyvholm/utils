@@ -122,13 +122,13 @@ CREATE OR REPLACE VIEW gpst AS
 -- Lister ut events sammen med loggen.
 CREATE OR REPLACE VIEW ev AS
     SELECT * FROM (
-        SELECT     'gps' AS flag, date,           coor, sted || ' (' || dist || ')' AS sted, NULL AS descr, avst
+        SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
             FROM logg
         UNION ALL
-        SELECT   'event' AS flag, date, coor, NULL, descr AS descr, NULL
+        SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr, NULL
             FROM events
         UNION ALL
-        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL
+        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL, NULL
             FROM pictures
     ) AS u
     ORDER BY date;
