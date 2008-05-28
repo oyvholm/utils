@@ -13,6 +13,7 @@ CREATE TABLE files (
     calctime real,
     path varchar,
     inode bigint,
+    links integer,
     device varchar,
     hostname varchar,
     uid varchar,

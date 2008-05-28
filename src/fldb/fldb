@@ -133,7 +133,7 @@ INSERT INTO files (
  sha1, md5, crc32,
  size, filename, mtime, ctime,
  calctime, path,
- inode, device, hostname,
+ inode, links, device, hostname,
  uid, gid, perm,
  lastver, nextver, descr,
  latin1
@@ -141,7 +141,7 @@ INSERT INTO files (
  '%s', '%s', %s,
  %s, E'%s', '%s', '%s',
  %s, E'%s',
- %s, E'%s', E'%s',
+ %s, %s, E'%s', E'%s',
  %s, %s, '%s',
  %s, %s, %s,
  %s
@@ -150,7 +150,7 @@ END
                 $Sum{sha1}, $Sum{md5}, $crc32_str,
                 $Size, $base_filename, $Mtime, $Ctime,
                 $Sum{calctime}, $safe_filename,
-                $Inode, safe_sql($Dev), $safe_hostname,
+                $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
                 $Uid, $Gid, $Mode,
                 'NULL', 'NULL', 'NULL',
                 $latin1_str
