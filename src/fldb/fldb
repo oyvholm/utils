@@ -119,11 +119,11 @@ sub add_entry {
             my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
             D("crc32_str = '$crc32_str'");
             my $latin1_str;
-            if (valid_utf8($Filename)) {
+            if (valid_utf8($safe_filename)) {
                 $latin1_str = "FALSE";
             } else {
                 $latin1_str = "TRUE";
-                $safe_filename = latin1_to_utf8($Filename);
+                $safe_filename = latin1_to_utf8($safe_filename);
             }
             D("latin1_str = '$latin1_str'");
             my $base_filename = $safe_filename;
