@@ -66,8 +66,6 @@ $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
 my $postgresql_database = $Opt{'database'};
-# my $postgresql_user=yourpostgresuser;
-# my $postgresql_password=yourpostgrespass;
 my $postgresql_host="localhost";
 my ($dbh, $sth);
 chomp(my $Hostname = `/bin/hostname`); # FIXME
