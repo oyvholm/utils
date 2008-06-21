@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id: bash 1875 2006-08-21 17:29:27Z sunny $
+# Kopierer bilder til maskinen.
+# License: GNU General Public License version 2 or later. Fordi dette er 
+# stor og viktig software som alle klør etter å få tak i.
+#=======================================================================
+
+if [ -d /media/NIKON\ D300/DCIM/. ]; then
+    nf /media/NIKON\ D300/DCIM | tail -2
+    rsync -av /media/NIKON\ D300/ /media/alt/bilder/pool/Nikon_D300/
+fi
+
+if [ -d /media/2\ GB/Videos/. ]; then
+    nf /media/2\ GB/Videos | grep -v _PAlbTN | tail -1
+    nf /media/2\ GB/Images | grep -v _PAlbTN | tail -1
+    rsync -av /media/2\ GB/ /media/alt/bilder/pool/Nokia_N95/
+fi
