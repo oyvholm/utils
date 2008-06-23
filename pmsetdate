@@ -16,6 +16,7 @@ BEGIN {
 
 use strict;
 use Getopt::Long;
+use Time::HiRes qw{ gettimeofday };
 
 $| = 1;
 
@@ -49,9 +50,30 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
-}
+chomp(my $server_text = `ntpdate -q pool.ntp.org`);
+
+D("=== server_diff \x7B\x7B\x7B\n$server_text=== \x7D\x7D\x7D");
+
+my $server_diff = $server_text;
+D("server_diff = '$server_diff'");
+
+$server_diff =~ s/^\s*(.*?)\s*$/$1/s;
+$server_diff =~ s/^.*?(\S+) sec$/$1/s;
+D("server_diff = '$server_diff'");
+
+my $currtime = gettimeofday();
+D("currtime = '$currtime'");
+
+my $newtime = $currtime + $server_diff;
+my $time_text = localtime($newtime);
+
+D("newtime = '$newtime'");
+my $cmd_str = "date -s \"$time_text\"";
+D("cmd_str = '$cmd_str'");
+
+printf("Old date: " . localtime(gettimeofday) . "\n");
+system($cmd_str);
+printf("New date: " . localtime(gettimeofday) . "\n");
 
 sub print_version {
     # Print program version {{{
