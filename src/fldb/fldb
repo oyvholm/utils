@@ -36,6 +36,7 @@ our %Opt = (
     'debug' => 0,
     'files-from' => "",
     'help' => 0,
+    'short-format' => 0,
     'verbose' => 0,
     'version' => 0,
     'zero' => 0,
@@ -58,6 +59,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "files-from|f=s" => \$Opt{'files-from'},
     "help|h" => \$Opt{'help'},
+    "short-format|s" => \$Opt{'short-format'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "zero|z" => \$Opt{'zero'},
@@ -153,7 +155,24 @@ sub add_entry {
             my $base_filename = $safe_filename;
             $base_filename =~ s/^.*\/(.*?)$/$1/;
             D("base_filename = '$base_filename'");
-            $Retval = sprintf(<<END,
+            if ($Opt{'short-format'}) {
+                $Retval = sprintf(<<END,
+INSERT INTO files (
+ sha1, md5, crc32,
+ size, filename, mtime,
+ latin1
+) VALUES (
+ '%s', '%s', %s,
+ %s, E'%s', '%s',
+ %s
+);
+END
+                    $Sum{sha1}, $Sum{md5}, $crc32_str,
+                    $Size, $base_filename, $Mtime,
+                    $latin1_str
+                );
+            } else {
+                $Retval = sprintf(<<END,
 INSERT INTO files (
  sha1, md5, crc32,
  size, filename, mtime, ctime,
@@ -172,14 +191,15 @@ INSERT INTO files (
  %s
 );
 END
-                $Sum{sha1}, $Sum{md5}, $crc32_str,
-                $Size, $base_filename, $Mtime, $Ctime,
-                $Sum{calctime}, $safe_filename,
-                $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
-                $Uid, $Gid, $Mode,
-                'NULL', 'NULL', 'NULL',
-                $latin1_str
-            );
+                    $Sum{sha1}, $Sum{md5}, $crc32_str,
+                    $Size, $base_filename, $Mtime, $Ctime,
+                    $Sum{calctime}, $safe_filename,
+                    $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
+                    $Uid, $Gid, $Mode,
+                    'NULL', 'NULL', 'NULL',
+                    $latin1_str
+                );
+            }
             D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
         } else {
             warn("$progname: $Filename: Cannot read file: $!\n");
@@ -223,6 +243,8 @@ Options:
     Use database x.
   -h, --help
     Show this help.
+  -s, --short-format
+    Output checksums, size, filname, mtime and latin1 fields only.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
