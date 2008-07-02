@@ -5,4 +5,5 @@
 # logging.
 
 date -Iseconds
+uuid
 stty -a
