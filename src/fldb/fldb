@@ -108,6 +108,7 @@ if (length($Opt{'files-from'})) {
 exit 0;
 
 sub process_file {
+    # {{{
     my $Filename = shift;
     D("process_file('$Filename')");
     $Sql = add_entry($Filename);
@@ -119,6 +120,7 @@ sub process_file {
             print($Sql);
         }
     }
+    # }}}
 } # process_file()
 
 sub add_entry {
