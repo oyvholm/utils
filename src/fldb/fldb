@@ -34,6 +34,7 @@ our %Opt = (
     'crc32' => 0,
     'database' => $STD_DATABASE,
     'debug' => 0,
+    'files-from' => "",
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -55,6 +56,7 @@ GetOptions(
     "crc32" => \$Opt{'crc32'},
     "database|d=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
+    "files-from|f=s" => \$Opt{'files-from'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -83,8 +85,29 @@ my $Sql; # How ironic.
 
 $Opt{'zero'} && ($/ = "\x00");
 
-while (my $Filename = <>) {
-    chomp($Filename);
+if (length($Opt{'files-from'})) {
+    D("Opt{files-from} = '$Opt{'files-from'}'");
+    if (open(FP, "<", $Opt{'files-from'})) {
+        while (my $Filename = <FP>) {
+            chomp($Filename);
+            process_file($Filename);
+        }
+        close(FP);
+    } else {
+        die("$progname: $Opt{'files-from'}: Cannot open file for read: $!\n");
+    }
+} else {
+    for (@ARGV) {
+        chomp;
+        process_file($_);
+    }
+}
+
+exit 0;
+
+sub process_file {
+    my $Filename = shift;
+    D("process_file('$Filename')");
     $Sql = add_entry($Filename);
     if (defined($Sql)) {
         if ($Opt{'add'}) {
@@ -94,9 +117,7 @@ while (my $Filename = <>) {
             print($Sql);
         }
     }
-}
-
-exit 0;
+} # process_file()
 
 sub add_entry {
     # {{{
