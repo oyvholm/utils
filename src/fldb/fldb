@@ -39,6 +39,7 @@ our %Opt = (
     'short-format' => 0,
     'verbose' => 0,
     'version' => 0,
+    'xml' => 0,
     'zero' => 0,
 );
 
@@ -62,6 +63,7 @@ GetOptions(
     "short-format|s" => \$Opt{'short-format'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'},
     "zero|z" => \$Opt{'zero'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -76,7 +78,7 @@ chomp(my $Hostname = `/bin/hostname`); # FIXME
 if (!valid_utf8($Hostname)) {
     $Hostname = latin1_to_utf8($Hostname);
 }
-my $safe_hostname = safe_sql($Hostname);
+my $safe_hostname = safe_string($Hostname);
 
 if ($Opt{'add'}) {
     $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
@@ -87,6 +89,7 @@ my $Sql; # How ironic.
 
 $Opt{'zero'} && ($/ = "\x00");
 
+$Opt{'xml'} && print("<fldb>\n");
 if (length($Opt{'files-from'})) {
     D("Opt{files-from} = '$Opt{'files-from'}'");
     if (open(FP, "<", $Opt{'files-from'})) {
@@ -96,7 +99,7 @@ if (length($Opt{'files-from'})) {
         }
         close(FP);
     } else {
-        die("$progname: $Opt{'files-from'}: Cannot open file for read: $!\n");
+        warn("$progname: $Opt{'files-from'}: Cannot open file for read: $!\n");
     }
 } else {
     for (@ARGV) {
@@ -104,6 +107,7 @@ if (length($Opt{'files-from'})) {
         process_file($_);
     }
 }
+$Opt{'xml'} && print("</fldb>\n");
 
 exit 0;
 
@@ -130,7 +134,7 @@ sub add_entry {
         warn("$progname: $Filename: Ignoring filename containing zero byte. Did you forget the --zero option?\n");
         return(undef);
     }
-    my $safe_filename = safe_sql($Filename);
+    my $safe_filename = safe_string($Filename);
     D("add_entry(\"$Filename\")");
     my $Retval = "";
     my @stat_array = ();
@@ -144,21 +148,58 @@ sub add_entry {
         D("Mode etter: '$Mode'");
         my %Sum = checksum($Filename, $Opt{'crc32'});
         if (scalar(%Sum)) {
-            my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
+            my $crc32_str;
+            if ($Opt{'xml'}){
+                $crc32_str = $Opt{'crc32'} ? "<crc32>$Sum{crc32}</crc32> " : "";
+            } else {
+                $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
+            }
             D("crc32_str = '$crc32_str'");
             my $latin1_str;
             if (valid_utf8($safe_filename)) {
-                $latin1_str = "FALSE";
+                $latin1_str = $Opt{'xml'} ? "" : "FALSE";
             } else {
-                $latin1_str = "TRUE";
+                $latin1_str = $Opt{'xml'} ? "<latin1>1</latin1> " : "TRUE";
                 $safe_filename = latin1_to_utf8($safe_filename);
             }
             D("latin1_str = '$latin1_str'");
             my $base_filename = $safe_filename;
             $base_filename =~ s/^.*\/(.*?)$/$1/;
             D("base_filename = '$base_filename'");
-            if ($Opt{'short-format'}) {
-                $Retval = sprintf(<<END,
+            if ($Opt{'xml'}) {
+                if ($Opt{'short-format'}) {
+                    $Retval = sprintf(
+                        "<file> " .
+                        "<name>%s</name> <size>%u</size> " .
+                        "<sha1>%s</sha1> <md5>%s</md5> %s<date>%s</date> " .
+                        "%s" .
+                        "</file>\n",
+                        $safe_filename, $Size, $Sum{'sha1'}, $Sum{'md5'}, $crc32_str, $Mtime,
+                        $latin1_str
+                    );
+                } else {
+                    $Retval = sprintf(
+                        "<file> " .
+                        "<sha1>%s</sha1> <md5>%s</md5> %s" .
+                        "<size>%s</size> <filename>%s</filename> <mtime>%s</mtime> <ctime>%s</ctime> " .
+                        "<calctime>%s</calctime> <path>%s</path> " .
+                        "<inode>%s</inode> <links>%s</links> <device>%s</device> <hostname>%s</hostname> " .
+                        "<uid>%s</uid> <gid>%s</gid> <perm>%s</perm> " .
+                        # "<lastver>%s</lastver> <nextver>%s</nextver> <descr>%s</descr> " .
+                        "%s" .
+                        "</file>\n",
+                        $Sum{sha1}, $Sum{md5}, $crc32_str,
+                        $Size, $base_filename, $Mtime, $Ctime,
+                        $Sum{calctime}, $safe_filename,
+                        $Inode, $Nlinks, txt_to_xml($Dev), $safe_hostname,
+                        $Uid, $Gid, $Mode,
+                        # "", "", "",
+                        $latin1_str
+                    );
+                }
+            } else {
+                if ($Opt{'short-format'}) {
+                    $Retval = sprintf(<<END,
 INSERT INTO files (
  sha1, md5, crc32,
  size, filename, mtime,
@@ -169,12 +210,12 @@ INSERT INTO files (
  %s
 );
 END
-                    $Sum{sha1}, $Sum{md5}, $crc32_str,
-                    $Size, $base_filename, $Mtime,
-                    $latin1_str
-                );
-            } else {
-                $Retval = sprintf(<<END,
+                        $Sum{sha1}, $Sum{md5}, $crc32_str,
+                        $Size, $base_filename, $Mtime,
+                        $latin1_str
+                    );
+                } else {
+                    $Retval = sprintf(<<END,
 INSERT INTO files (
  sha1, md5, crc32,
  size, filename, mtime, ctime,
@@ -193,14 +234,15 @@ INSERT INTO files (
  %s
 );
 END
-                    $Sum{sha1}, $Sum{md5}, $crc32_str,
-                    $Size, $base_filename, $Mtime, $Ctime,
-                    $Sum{calctime}, $safe_filename,
-                    $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
-                    $Uid, $Gid, $Mode,
-                    'NULL', 'NULL', 'NULL',
-                    $latin1_str
-                );
+                        $Sum{sha1}, $Sum{md5}, $crc32_str,
+                        $Size, $base_filename, $Mtime, $Ctime,
+                        $Sum{calctime}, $safe_filename,
+                        $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
+                        $Uid, $Gid, $Mode,
+                        'NULL', 'NULL', 'NULL',
+                        $latin1_str
+                    );
+                }
             }
             D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
         } else {
@@ -214,6 +256,29 @@ END
     return($Retval);
     # }}}
 } # add_entry()
+
+sub safe_string {
+    # {{{
+    my $Str = shift;
+
+    if ($Opt{'xml'}) {
+        $Str = txt_to_xml($Str);
+    } else {
+        $Str = safe_sql($Str);
+    }
+    return($Str);
+    # }}}
+} # safe_string()
+
+sub txt_to_xml {
+    # Convert plain text to XML {{{
+    my $Txt = shift;
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+} # txt_to_xml()
 
 sub print_version {
     # Print program version {{{
@@ -251,6 +316,8 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -x, --xml
+    Use XML output.
   -z, --zero
     Filenames are separated by a zero byte (\\0x00) instead of newline 
     (\\n). This makes it possible to read files containing newlines.
