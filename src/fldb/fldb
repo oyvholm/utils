@@ -101,6 +101,10 @@ exit 0;
 sub add_entry {
     # {{{
     my $Filename = shift;
+    if ($Filename =~ /\0/) {
+        warn("$progname: $Filename: Ignoring filename containing zero byte. Did you forget the --zero option?\n");
+        return(undef);
+    }
     my $safe_filename = safe_sql($Filename);
     D("add_entry(\"$Filename\")");
     my $Retval = "";
