@@ -170,30 +170,65 @@ sub add_entry {
                 if ($Opt{'short-format'}) {
                     $Retval = sprintf(
                         "<file> " .
-                        "<name>%s</name> <size>%u</size> " .
-                        "<sha1>%s</sha1> <md5>%s</md5> %s<date>%s</date> " .
-                        "%s" .
+                            "<name>%s</name> " .
+                            "<size>%u</size> " .
+                            "<sha1>%s</sha1> " .
+                            "<md5>%s</md5> " .
+                            "%s" .
+                            "<date>%s</date> " .
+                            "%s" .
                         "</file>\n",
-                        $safe_filename, $Size, $Sum{'sha1'}, $Sum{'md5'}, $crc32_str, $Mtime,
+                        $safe_filename,
+                        $Size,
+                        $Sum{'sha1'},
+                        $Sum{'md5'},
+                        $crc32_str,
+                        $Mtime,
                         $latin1_str
                     );
                 } else {
                     $Retval = sprintf(
                         "<file> " .
-                        "<sha1>%s</sha1> <md5>%s</md5> %s" .
-                        "<size>%s</size> <filename>%s</filename> <mtime>%s</mtime> <ctime>%s</ctime> " .
-                        "<calctime>%s</calctime> <path>%s</path> " .
-                        "<inode>%s</inode> <links>%s</links> <device>%s</device> <hostname>%s</hostname> " .
-                        "<uid>%s</uid> <gid>%s</gid> <perm>%s</perm> " .
-                        # "<lastver>%s</lastver> <nextver>%s</nextver> <descr>%s</descr> " .
-                        "%s" .
+                            "<sha1>%s</sha1> ".
+                            "<md5>%s</md5> ".
+                            "%s" .
+                            "<size>%s</size> ".
+                            "<filename>%s</filename> ".
+                            "<mtime>%s</mtime> ".
+                            "<ctime>%s</ctime> " .
+                            "<calctime>%s</calctime> ".
+                            "<path>%s</path> " .
+                            "<inode>%s</inode> ".
+                            "<links>%s</links> ".
+                            "<device>%s</device> ".
+                            "<hostname>%s</hostname> " .
+                            "<uid>%s</uid> ".
+                            "<gid>%s</gid> ".
+                            "<perm>%s</perm> " .
+                            # "<lastver>%s</lastver> " .
+                            # "<nextver>%s</nextver> " .
+                            # "<descr>%s</descr> " .
+                            "%s" .
                         "</file>\n",
-                        $Sum{sha1}, $Sum{md5}, $crc32_str,
-                        $Size, $base_filename, $Mtime, $Ctime,
-                        $Sum{calctime}, $safe_filename,
-                        $Inode, $Nlinks, txt_to_xml($Dev), $safe_hostname,
-                        $Uid, $Gid, $Mode,
-                        # "", "", "",
+                        $Sum{sha1},
+                        $Sum{md5},
+                        $crc32_str,
+                        $Size,
+                        $base_filename,
+                        $Mtime,
+                        $Ctime,
+                        $Sum{calctime},
+                        $safe_filename,
+                        $Inode,
+                        $Nlinks,
+                        txt_to_xml($Dev),
+                        $safe_hostname,
+                        $Uid,
+                        $Gid,
+                        $Mode,
+                        # "",
+                        # "",
+                        # "",
                         $latin1_str
                     );
                 }
