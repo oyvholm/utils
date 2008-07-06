@@ -30,6 +30,7 @@ our $Debug = 0;
 my $STD_DATABASE = "fldb";
 
 our %Opt = (
+    # {{{
     'add' => 0,
     'crc32' => 0,
     'database' => $STD_DATABASE,
@@ -41,6 +42,7 @@ our %Opt = (
     'version' => 0,
     'xml' => 0,
     'zero' => 0,
+    # }}}
 );
 
 our $progname = $0;
@@ -54,6 +56,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    # {{{
     "add" => \$Opt{'add'},
     "crc32" => \$Opt{'crc32'},
     "database|d=s" => \$Opt{'database'},
@@ -65,6 +68,7 @@ GetOptions(
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'},
     "zero|z" => \$Opt{'zero'},
+    # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -139,6 +143,7 @@ sub add_entry {
     my $Retval = "";
     my @stat_array = ();
     if (@stat_array = stat($Filename)) {
+        # {{{
         my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
             $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
         $Mtime = sec_to_string($Mtime);
@@ -148,6 +153,7 @@ sub add_entry {
         D("Mode etter: '$Mode'");
         my %Sum = checksum($Filename, $Opt{'crc32'});
         if (scalar(%Sum)) {
+            # {{{
             my $crc32_str;
             if ($Opt{'xml'}){
                 $crc32_str = $Opt{'crc32'} ? "<crc32>$Sum{crc32}</crc32> " : "";
@@ -168,6 +174,7 @@ sub add_entry {
             D("base_filename = '$base_filename'");
             if ($Opt{'xml'}) {
                 if ($Opt{'short-format'}) {
+                    # {{{
                     $Retval = sprintf(
                         "<file> " .
                             "<name>%s</name> " .
@@ -186,7 +193,9 @@ sub add_entry {
                         $Mtime,
                         $latin1_str
                     );
+                    # }}}
                 } else {
+                    # {{{
                     $Retval = sprintf(
                         "<file> " .
                             "<sha1>%s</sha1> ".
@@ -231,9 +240,11 @@ sub add_entry {
                         # "",
                         $latin1_str
                     );
+                    # }}}
                 }
             } else {
                 if ($Opt{'short-format'}) {
+                    # {{{
                     $Retval = sprintf(<<END,
 INSERT INTO files (
  sha1, md5, crc32,
@@ -249,7 +260,9 @@ END
                         $Size, $base_filename, $Mtime,
                         $latin1_str
                     );
+                    # }}}
                 } else {
+                    # {{{
                     $Retval = sprintf(<<END,
 INSERT INTO files (
  sha1, md5, crc32,
@@ -277,13 +290,16 @@ END
                         'NULL', 'NULL', 'NULL',
                         $latin1_str
                     );
+                    # }}}
                 }
             }
             D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
+            # }}}
         } else {
             warn("$progname: $Filename: Cannot read file: $!\n");
             $Retval = undef;
         }
+        # }}}
     } else {
         warn("$progname: $Filename: Cannot stat file: $!\n");
         $Retval = undef;
