@@ -181,9 +181,9 @@ sub add_entry {
                             "<size>%u</size> " .
                             "<sha1>%s</sha1> " .
                             "<md5>%s</md5> " .
-                            "%s" .
+                            "%s" . # $crc32_str
                             "<date>%s</date> " .
-                            "%s" .
+                            "%s" . # $latin_str
                         "</file>\n",
                         $safe_filename,
                         $Size,
@@ -200,7 +200,7 @@ sub add_entry {
                         "<file> " .
                             "<sha1>%s</sha1> ".
                             "<md5>%s</md5> ".
-                            "%s" .
+                            "%s" . # $crc32_str
                             "<size>%s</size> ".
                             "<filename>%s</filename> ".
                             "<mtime>%s</mtime> ".
@@ -217,7 +217,7 @@ sub add_entry {
                             # "<lastver>%s</lastver> " .
                             # "<nextver>%s</nextver> " .
                             # "<descr>%s</descr> " .
-                            "%s" .
+                            "%s" . # $latin1_str
                         "</file>\n",
                         $Sum{sha1},
                         $Sum{md5},
