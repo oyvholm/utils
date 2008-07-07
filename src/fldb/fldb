@@ -198,21 +198,21 @@ sub add_entry {
                     # {{{
                     $Retval = sprintf(
                         "<file> " .
-                            "<sha1>%s</sha1> ".
-                            "<md5>%s</md5> ".
+                            "<sha1>%s</sha1> " .
+                            "<md5>%s</md5> " .
                             "%s" . # $crc32_str
-                            "<size>%s</size> ".
-                            "<filename>%s</filename> ".
-                            "<mtime>%s</mtime> ".
+                            "<size>%s</size> " .
+                            "<filename>%s</filename> " .
+                            "<mtime>%s</mtime> " .
                             "<ctime>%s</ctime> " .
-                            "<calctime>%s</calctime> ".
+                            "<calctime>%s</calctime> " .
                             "<path>%s</path> " .
-                            "<inode>%s</inode> ".
-                            "<links>%s</links> ".
-                            "<device>%s</device> ".
+                            "<inode>%s</inode> " .
+                            "<links>%s</links> " .
+                            "<device>%s</device> " .
                             "<hostname>%s</hostname> " .
-                            "<uid>%s</uid> ".
-                            "<gid>%s</gid> ".
+                            "<uid>%s</uid> " .
+                            "<gid>%s</gid> " .
                             "<perm>%s</perm> " .
                             # "<lastver>%s</lastver> " .
                             # "<nextver>%s</nextver> " .
