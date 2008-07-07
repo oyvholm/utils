@@ -1,7 +1,6 @@
 -- $Id$
 
 -- Returnerer navnet på det nærmeste veipunktet i wayp.
-DROP FUNCTION clname(point);
 CREATE OR REPLACE FUNCTION clname(point) RETURNS text
 AS $$
 SELECT name FROM (
@@ -17,7 +16,6 @@ SELECT name FROM (
 $$ LANGUAGE SQL;
 
 -- Returnerer avstanden (i grader) til det nærmeste veipunktet i wayp.
-DROP FUNCTION cldist(point);
 CREATE OR REPLACE FUNCTION cldist(point) RETURNS numeric
 AS $$
 SELECT round(avs::numeric, 5) FROM (
@@ -120,7 +118,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP FUNCTION wherepos(timestamptz);
 CREATE OR REPLACE FUNCTION wherepos(currtime timestamptz) RETURNS text AS $$
 DECLARE
     currpos point;
@@ -139,7 +136,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Returnerer antall sekunder sia midnatt for en dato.
-DROP FUNCTION secmidnight(timestamptz);
 CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision
 AS $$
 SELECT extract(hour from $1) * 3600 + extract(minute from $1) * 60 + extract(second from $1);
