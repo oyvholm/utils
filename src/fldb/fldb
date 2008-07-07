@@ -177,19 +177,19 @@ sub add_entry {
                     # {{{
                     $Retval = sprintf(
                         "<file> " .
-                            "<name>%s</name> " .
                             "<size>%u</size> " .
                             "<sha1>%s</sha1> " .
                             "<md5>%s</md5> " .
                             "%s" . # $crc32_str
+                            "<name>%s</name> " .
                             "<date>%s</date> " .
                             "%s" . # $latin_str
                         "</file>\n",
-                        $safe_filename,
                         $Size,
                         $Sum{'sha1'},
                         $Sum{'md5'},
                         $crc32_str,
+                        $safe_filename,
                         $Mtime,
                         $latin1_str,
                     );
@@ -198,14 +198,13 @@ sub add_entry {
                     # {{{
                     $Retval = sprintf(
                         "<file> " .
+                            "<size>%s</size> " .
                             "<sha1>%s</sha1> " .
                             "<md5>%s</md5> " .
                             "%s" . # $crc32_str
-                            "<size>%s</size> " .
                             "<filename>%s</filename> " .
                             "<mtime>%s</mtime> " .
                             "<ctime>%s</ctime> " .
-                            "<calctime>%s</calctime> " .
                             "<path>%s</path> " .
                             "<inode>%s</inode> " .
                             "<links>%s</links> " .
@@ -218,15 +217,15 @@ sub add_entry {
                             # "<nextver>%s</nextver> " .
                             # "<descr>%s</descr> " .
                             "%s" . # $latin1_str
+                            "<calctime>%s</calctime> " .
                         "</file>\n",
+                        $Size,
                         $Sum{sha1},
                         $Sum{md5},
                         $crc32_str,
-                        $Size,
                         $base_filename,
                         $Mtime,
                         $Ctime,
-                        $Sum{calctime},
                         $safe_filename,
                         $Inode,
                         $Nlinks,
@@ -239,6 +238,7 @@ sub add_entry {
                         # "",
                         # "",
                         $latin1_str,
+                        $Sum{calctime},
                     );
                     # }}}
                 }
