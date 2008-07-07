@@ -6,6 +6,6 @@
 logdir=$HOME/log
 
 [ -d $logdir ] || mkdir -p logdir || { echo "$0: mkdir $logdir: På trynet" >&2; exit 1; }
-[ -x /usr/sbin/cronolog ] || { echo "$0: Fant ikke /usr/sbin/cronolog, avbryter." >&2; exit 1; }
+[ -x /usr/bin/cronolog ] || { echo "$0: Fant ikke /usr/sbin/cronolog, avbryter." >&2; exit 1; }
 
-(echo -n "`date -u +"%Y-%m-%dT%H:%M:%SZ"` "; cat /proc/loadavg) | cronolog -z 0 -S $logdir/curr_load $logdir/load/%Y/%Y-%m-%d.load.log
+(echo -n "`date -u +"%Y-%m-%dT%H:%M:%SZ"` "; cat /proc/loadavg) | /usr/bin/cronolog -z 0 -S $logdir/curr_load $logdir/load/%Y/%Y-%m-%d.load.log
