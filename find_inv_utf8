@@ -21,6 +21,7 @@ use Getopt::Long;
 $| = 1;
 
 our $Debug = 0;
+my $Retval = 0;
 
 our %Opt = (
     'debug' => 0,
@@ -64,7 +65,11 @@ if ($Opt{'skip-invalid'}) {
 		s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
 		s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
 		s/([\xC0-\xDF][\x80-\xBF])//g;
-		print $Orig unless (/[\x80-\xFF]/);
+		unless (/[\x80-\xFF]/) {
+            print $Orig;
+        } else {
+            $Retval = 1;
+        }
 	}
 } else {
 	while (<>) {
@@ -74,9 +79,14 @@ if ($Opt{'skip-invalid'}) {
 		s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
 		s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
 		s/([\xC0-\xDF][\x80-\xBF])//g;
-		print $Orig if (/[\x80-\xFF]/);
+		if (/[\x80-\xFF]/) {
+            $Retval = 1;
+            print $Orig;
+        }
 	}
 }
+
+exit($Retval);
 
 sub print_version {
     # Print program version {{{
@@ -97,7 +107,8 @@ $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
-Print lines containing invalid UTF-8.
+Print lines containing invalid UTF-8. Returns 1 if invalid UTF-8 is 
+found, otherwise 0 is returned.
 
 Options:
 
