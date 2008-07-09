@@ -26,6 +26,7 @@ my $Retval = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'quiet' => 0,
     'skip-invalid' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -44,6 +45,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "quiet|q" => \$Opt{'quiet'},
     "skip-invalid|s" => \$Opt{'skip-invalid'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -66,7 +68,7 @@ if ($Opt{'skip-invalid'}) {
 		s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
 		s/([\xC0-\xDF][\x80-\xBF])//g;
 		unless (/[\x80-\xFF]/) {
-            print $Orig;
+            $Opt{'quiet'} || print $Orig;
         } else {
             $Retval = 1;
         }
@@ -81,7 +83,7 @@ if ($Opt{'skip-invalid'}) {
 		s/([\xC0-\xDF][\x80-\xBF])//g;
 		if (/[\x80-\xFF]/) {
             $Retval = 1;
-            print $Orig;
+            $Opt{'quiet'} || print $Orig;
         }
 	}
 }
@@ -114,6 +116,8 @@ Options:
 
   -h, --help
     Show this help.
+  -q, --quiet
+    Don't produce any output, use only return value.
   -s, --skip-invalid
     Vice versa, skip lines with invalid UTF-8 and only print those 
     containing proper UTF-8.
