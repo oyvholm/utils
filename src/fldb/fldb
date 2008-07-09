@@ -119,6 +119,10 @@ sub process_file {
     # {{{
     my $Filename = shift;
     D("process_file('$Filename')");
+    if (!-f $Filename) {
+        warn("$progname: $Filename: Ignoring non-file\n");
+        return;
+    }
     $Sql = add_entry($Filename);
     if (defined($Sql)) {
         if ($Opt{'add'}) {
