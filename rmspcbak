@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 # $Id$
 
 while (<>) {
-	s/\s*$//g;
-	print "$_\n";
+	s/[ \t]*$//g;
+	print;
 }
