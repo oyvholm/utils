@@ -53,6 +53,7 @@ while (<>) {
     s/(.)/sprintf("%02x ", ord($1))/gse;
     print;
 }
+print "\n";
 
 sub print_version {
     # Print program version {{{
