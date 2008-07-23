@@ -55,7 +55,7 @@ while (<>) {
     chomp($Line = $_);
 }
 
-if ($Line =~ /^([[:xdigit:]]{8}-[[:xdigit:]]{4}-1[[:xdigit:]]{3}-[89ab][[:xdigit:]]{3}-[[:xdigit:]]{12})$/) {
+if ($Line =~ /^([[:xdigit:]]{8}-[[:xdigit:]]{4}-1[[:xdigit:]]{3}-[89ab][[:xdigit:]]{3}-[[:xdigit:]]{12}|nouuid)$/) {
     exit(0);
 } else {
     exit(1);
