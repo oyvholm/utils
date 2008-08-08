@@ -32,18 +32,6 @@ if [ "$1" = "trunkmerge" ]; then
     echo ======== msgfmt
     msgfmt -cv nb.po
 elif [ "$1" = "update" ]; then
-    if [ ! -e apr ]; then
-        echo "Fant ikke apr-katalogen. Hvis du er sikker på at du står i rett" >&2
-        echo -n "katalog, trykk Enter for å pakke den ut..." >&2
-        read
-        echo "OK, hang on..." >&2
-        # sget http://musthave.sunbase.org/progs/subversion/apr+neon.tar.gz | tar xzv
-
-        # svn co http://svn.apache.org/repos/asf/apr/apr/branches/0.9.x apr
-        # svn co http://svn.apache.org/repos/asf/apr/apr-util/branches/0.9.x apr-util
-        # sget http://www.webdav.org/neon/neon-0.25.5.tar.gz | tar xzv
-        mv -v neon-0.25.5 neon
-    fi
     ./autogen.sh && \
     ./configure --prefix=/usr/local/varprg/subversion-trunk.r`svnversion .|tr -d M` \
       --enable-maintainer-mode --disable-shared --with-ssl && \
