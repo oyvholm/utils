@@ -4,10 +4,6 @@
 \echo
 \echo ================ Slett skrotpunkter. ================
 
-DELETE FROM logg WHERE coor[0] < 51;
-DELETE FROM logg WHERE coor[0] > 71;
-DELETE FROM logg WHERE coor[1] < -2;
-DELETE FROM logg WHERE coor[1] > 26;
 DELETE FROM logg WHERE date < '2002-01-01';
 DELETE FROM logg WHERE date > '2010-01-01';
 DELETE FROM logg WHERE date BETWEEN '2005-09-24' AND '2006-02-08';
