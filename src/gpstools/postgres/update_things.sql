@@ -1,26 +1,5 @@
 -- $Id$
 
--- OBS! Må fjernes når jeg er ferdig med å teste og opprenskinga er gjort.
-\echo
-\echo ================ Slett skrotpunkter. ================
-
-DELETE FROM logg WHERE date < '2002-01-01';
-DELETE FROM logg WHERE date > '2010-01-01';
-DELETE FROM logg WHERE date BETWEEN '2005-09-24' AND '2006-02-08';
-DELETE FROM logg WHERE date BETWEEN '2003-02-15 17:58:26Z' AND '2003-02-15 17:59:37Z';
-DELETE FROM logg WHERE date BETWEEN '2003-07-15 16:06:58Z' AND '2003-07-15 16:08:05Z';
-DELETE FROM logg WHERE date = '2002-12-10 01:25:28Z';
-DELETE FROM logg WHERE date = '2002-10-06 22:41:10Z';
-DELETE FROM logg WHERE date = '2006-02-12 03:33:15Z';
-DELETE FROM logg WHERE date = '2006-02-19 14:15:07Z';
-DELETE FROM logg WHERE ele = -1500;
-
-\echo
-\echo ================ Slett høyder som er på trynet ================
-
-UPDATE logg SET ele = NULL WHERE ele < -1500;
-UPDATE logg SET ele = NULL WHERE ele > 29000;
-
 \echo
 \echo ================ Rund av veipunkter til seks desimaler ================
 
