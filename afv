@@ -4,7 +4,10 @@
 # $Id$
 # Lagrer alle nye versjoner av en fil.
 #
-# ©2001–2004 Øyvind A. Holm. Lisens: GNU GPL ♥
+# Character set: UTF-8
+# ©opyleft 2001– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
 
 # FIXME: Finn en standard Perl-måte for å erstatte kjøring av /bin/pwd .
@@ -13,67 +16,59 @@ use strict;
 use Fcntl ':flock';
 use File::Path;
 use Digest::MD5;
-use Getopt::Std;
-
-our $Debug = 0;
-
-our ($opt_d, $opt_h, $opt_l, $opt_s) =
-    ("",     0,      "",     0     );
-getopts('d:hl:s') || die("Ukjent valg, \"afv -h\" for hjelp\n");
+use Getopt::Long;
 
 $| = 1;
 
-if ($opt_h) {
-    # Skriv ut hjelpen {{{
-    print(<<END);
+our $Debug = 0;
 
-Syntax: $0 [valg] [fil [flere filer [...]]]
+our %Opt = (
+    'directory' => "",
+    'debug' => 0,
+    'help' => 0,
+    'loop' => "",
+    'stop' => 0,
+    'verbose' => 0,
+    'version' => 0,
+);
 
-Lagrer flere versjoner av en eller flere filer i katalogen som \$AFVROOT 
-er satt til. Hvis ingen filer er spesifisert på kommandolinja, leses 
-filnavn fra stdin.
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
 
-Valg:
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
--d X  De forskjellige versjonene skal lagres under X. Overstyrer 
-      \$AFVROOT .
--h    Hjelp.
--l X  Kjør i loop, sjekk filene hvert X. sekund. Eksempel:
+push(@main::version_array, $rcs_id);
 
-        afv -l5 foo.txt bar.pl &
-        find /etc | afv -l 15 &
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "directory|d=s" => \$Opt{'directory'},
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "loop|l=i" => \$Opt{'loop'},
+    "stop|s" => \$Opt{'stop'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+) || die("$progname: Option error. Use -h for help.\n");
 
-      for å kjøre den i bakgrunnen. Bruk afvctl(1) for å stoppe afv’er 
-      som kjører. Filnavn på filer som lagres blir ikke skrevet ut når 
-      "-l"-parameteret brukes.
--s    Stopp afv-looper som kjører i denne katalogen.
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
-Som filnavn kan jokertegn (wildcards) også brukes. Hvis disse escapes, 
-brukes den innebygde glob’en og nye filer blir lagt til når den går i 
-loop. Eksempel:
 
-  afv -l5 '*' &
-
-sjekker alle filer hvert femte sekund og kjører også ny glob hver gang 
-loopen gjentas.
-
-END
-    exit(0);
-    # }}}
-}
-
-unless (length($opt_d)) {
+unless (length($Opt{'directory'})) {
     defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
 }
 
 my $Dir = ".AFV";
-my $root_dir = length($opt_d) ? $opt_d : $ENV{AFVROOT};
+my $root_dir = length($Opt{'directory'}) ? $Opt{'directory'} : $ENV{AFVROOT};
 my $dest_dir = "";
 my $curr_dir = "";
 my ($do_loop, $sleep_time, $orig_dir) = (0, 5, `/bin/pwd`); # FIXME
 chomp($orig_dir);
 
-if ($opt_s) {
+if ($Opt{'stop'}) {
     chomp($curr_dir = `/bin/pwd`);
     $dest_dir = "$root_dir$curr_dir";
     if (-d "$dest_dir/.") {
@@ -92,10 +87,10 @@ if ($opt_s) {
     }
 }
 
-if (length($opt_l)) {
-    if ($opt_l =~ /^\d+$/) {
+if (length($Opt{'loop'})) {
+    if ($Opt{'loop'} =~ /^\d+$/) {
         $do_loop = 1;
-        $sleep_time = $opt_l;
+        $sleep_time = $Opt{'loop'};
     } else {
         die("Parameteret til -l må være et tall.\n");
     }
@@ -212,12 +207,6 @@ if ($do_loop) {
 
 exit;
 
-sub D {
-    chomp(my $Txt = shift);
-    my @call_info = caller;
-    $Debug && print(STDERR "DEBUG $call_info[2]: $Txt\n");
-}
-
 sub sec_to_string {
     # Konverter antall sekunder sia 1970-01-01 00:00:00 GMT til 
     # ååååmmddTttmmssZ
@@ -274,5 +263,168 @@ sub my_sleep {
     # }}}
 } # my_sleep()
 
-# vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :
-#### End of file $Id$ ####
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    exit(0);
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    print(<<END);
+
+$rcs_id
+
+Syntax: $0 [valg] [fil [flere filer [...]]]
+
+Lagrer flere versjoner av en eller flere filer i katalogen som \$AFVROOT 
+er satt til. Hvis ingen filer er spesifisert på kommandolinja, leses 
+filnavn fra stdin.
+
+Valg:
+
+  -d X, --directory X
+    De forskjellige versjonene skal lagres under X. Overstyrer \$AFVROOT .
+  -h, --help
+    Show this help.
+  -l X, --loop X
+    Kjør i loop, sjekk filene hvert X. sekund. Eksempel:
+
+      afv -l5 foo.txt bar.pl &
+      find /etc | afv -l 15 &
+
+    for å kjøre den i bakgrunnen. Bruk afvctl(1) for å stoppe afv’er som 
+        kjører. Filnavn på filer som lagres blir ikke skrevet ut når 
+        "-l"-parameteret brukes.
+  -s, --stop
+    Stopp afv-looper som kjører i denne katalogen.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+Som filnavn kan jokertegn (wildcards) også brukes. Hvis disse escapes, 
+brukes den innebygde glob’en og nye filer blir lagt til når den går i 
+loop. Eksempel:
+
+  afv -l5 '*' &
+
+sjekker alle filer hvert femte sekund og kjører også ny glob hver gang 
+loopen gjentas.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$
