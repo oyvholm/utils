@@ -10,6 +10,10 @@
 # file for legal stuff.
 #=======================================================================
 
+BEGIN {
+    our @version_array;
+}
+
 use strict;
 use Getopt::Long;
 
@@ -21,6 +25,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'server' => "",
+    'verbose' => 0,
     'version' => 0,
 );
 
@@ -31,11 +36,14 @@ my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
+push(@main::version_array, $rcs_id);
+
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "server|s=s" => \$Opt{'server'},
+    "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -99,7 +107,9 @@ sub postgresql_copy_safe {
 
 sub print_version {
     # Print program version {{{
-    print("$rcs_id\n");
+    for (@main::version_array) {
+        print("$_\n");
+    }
     exit(0);
     # }}}
 } # print_version()
@@ -120,6 +130,8 @@ Options:
     Show this help.
   -s x, --server x
     Server identification. Required.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
   --debug
@@ -129,6 +141,16 @@ END
     exit($Retval);
     # }}}
 } # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
 
 sub D {
     # Print a debugging message {{{
@@ -173,6 +195,10 @@ $Id$
 
 Print a brief help summary.
 
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
 =item B<--version>
 
 Print version information.
@@ -193,7 +219,7 @@ Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
