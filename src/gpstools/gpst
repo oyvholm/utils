@@ -6,8 +6,13 @@
 #
 # Character set: UTF-8
 # ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
+
+BEGIN {
+    our @version_array;
+}
 
 use strict;
 use Getopt::Long;
@@ -52,6 +57,7 @@ our %Opt = (
     'skip-dups' => 0,
     'strip-whitespace' => 0,
     'undefined' => "",
+    'verbose' => 0,
     'version' => 0,
     # }}}
 );
@@ -90,7 +96,7 @@ GetOptions(
     "skip-dups|d" => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
     "undefined|n=s" => \$Opt{'undefined'},
-    "verbose|v" => \$Opt{'verbose'},
+    "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -1252,7 +1258,7 @@ Options:
     Comment out following data with identical position values, only 
     print first entry.
   -v, --verbose
-    Verbose output.
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
   -w, --strip-whitespace
@@ -1266,6 +1272,16 @@ END
     exit($Retval);
     # }}}
 } # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
 
 __END__
 
