@@ -69,9 +69,14 @@ if (open(PipeFP, "$CMD_SVN stat $dat_file |")) {
     warn("$progname: Unable to open \"$CMD_SVN stat\" pipe\n");
 }
 
+my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime();
+$Year += 1900;
+$Mon += 1;
+
 if (open(FromFP, "<$dat_file")) {
-    while (<FromFP>) {
-        print($_);
+    while (my $Line = <FromFP>) {
+        $Line =~ s/\(!year!\)/$Year/g;
+        print($Line);
     }
     close(FromFP);
 } else {

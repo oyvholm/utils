@@ -14,7 +14,7 @@
     <pubdate></pubdate>
     <releaseinfo><![CDATA[$Id$]]></releaseinfo>
     <copyright>
-      <year>2008</year>
+      <year>(!year!)</year>
       <holder>Øyvind A. Holm</holder>
     </copyright>
   </slidesinfo>
