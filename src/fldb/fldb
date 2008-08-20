@@ -363,6 +363,8 @@ Options:
     suitable for big files. Maybe fixed in newer Perl versions.
   -d x, --database x
     Use database x.
+  -f x, --files-from x
+    Read filenames from x.
   -h, --help
     Show this help.
   -s, --short-format
