@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Generates smsum hashes
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -16,6 +16,8 @@ BEGIN {
 
 use strict;
 use Getopt::Long;
+use Digest::MD5;
+use Digest::SHA1;
 
 $| = 1;
 
@@ -49,9 +51,68 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+if ($#ARGV >= 0) {
+    for (@ARGV) {
+        chomp;
+        print(process_file($_));
+    }
+} else {
+    print(process_file("-"));
 }
+
+sub process_file {
+    # {{{
+    my $Filename = shift;
+    my $Retval = "";
+    my %Sum = ();
+    D("process_file('$Filename')");
+    my $use_stdin = ($Filename eq "-") ? 1 : 0;
+    my @stat_array = ();
+    if ($use_stdin || (@stat_array = stat($Filename))) {
+        my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
+            $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
+        if ($use_stdin || -f $Filename) {
+            local *FP;
+            if ($use_stdin || open(FP, "<", $Filename)) {
+                my $sha1 = Digest::SHA1->new;
+                my $md5 = Digest::MD5->new;
+                $use_stdin && (*FP = *STDIN, $Size = 0);
+                msg(2, sprintf("Reading %s...", safe_tab($Filename)));
+                while (my $Curr = <FP>) {
+                    $sha1->add($Curr);
+                    $md5->add($Curr);
+                    $use_stdin && ($Size += length($Curr));
+                }
+                $Sum{'sha1'} = $sha1->hexdigest;
+                $Sum{'md5'} = $md5->hexdigest;
+                $Retval =
+                    $Sum{'sha1'}        . "-" .
+                    $Sum{'md5'}         . "-" .
+                    $Size               . "\t" .
+                    safe_tab($Filename) . "\n";
+            } else {
+                warn("$progname: $Filename: Cannot read file\n");
+            }
+        } else {
+            msg(1, "$Filename: Ignoring non-file");
+        }
+    } else {
+        warn("$progname: $Filename: Cannot read file status\n");
+    }
+    return($Retval);
+    # }}}
+} # process_file()
+
+sub safe_tab {
+    # {{{
+    my $Str = shift;
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
+    # }}}
+} # safe_tab()
 
 sub print_version {
     # Print program version {{{
@@ -71,6 +132,28 @@ sub usage {
 $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
+
+The program is based on the same principle as md5sum(1) and sha1sum(1), 
+but combines the two hashes and also includes the file size:
+
+  [SHA1][-][MD5][-][SIZE][\\t][FILENAME][\\n]
+
+The reason for this approach, is that both hashing algoritms are well 
+known and widely used. Both algorithms are good enogh for everyday 
+content verification, but at least the MD5 algorithm is vulnerable to 
+intentional collisions. Instead of inventing new algorithms which has to 
+earn trust over the years, combining the two well examined algorithms 
+and adding the size of the file will make a smsum hash collision much 
+harder.
+
+If no filenames are specified on the command line, stdin is used.
+
+Special characters in filenames are escaped this way:
+
+Horizontal Tab  (0x09): \\t
+Line feed       (0x0a): \\n
+Carriage return (0x0d): \\r
+Backslash  ('\\', 0x5c): \\\\
 
 Options:
 
