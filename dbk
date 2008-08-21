@@ -38,7 +38,7 @@ our %Opt = (
 );
 
 our $progname = $0;
-$progname =~ s#^.*/(.*?)$#$1#;
+$progname =~ s/^.*\/(.*?)$/$1/;
 
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;

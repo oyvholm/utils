@@ -31,7 +31,7 @@ our %Opt = (
 );
 
 our $progname = $0;
-$progname =~ s#^.*/(.*?)$#$1#;
+$progname =~ s/^.*\/(.*?)$/$1/;
 
 my $CMD_SVN = "svn";
 my $CMD_STD = "$ENV{'HOME'}/bin/std";
