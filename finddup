@@ -6,5 +6,15 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-myf "$@" -type f | ns | cut -f2- | sort -rn | sumdup | grep . | cut -f4 | tr '\n' '\0' | xargs -0 sha1sum | sort | sumdup | cut -c43-
-
+myf "$@" -type f | \
+ns | \
+cut -f2- | \
+sort -rn | \
+sumdup | \
+grep . | \
+cut -f4 | \
+tr '\n' '\0' | \
+xargs -0 sha1sum | \
+sort | \
+sumdup | \
+cut -c43-
