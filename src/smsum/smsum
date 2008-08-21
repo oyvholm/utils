@@ -28,6 +28,7 @@ our %Opt = (
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
+    'with-mtime' => 0,
 );
 
 our $progname = $0;
@@ -45,6 +46,7 @@ GetOptions(
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "with-mtime|m" => \$Opt{'with-mtime'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -76,7 +78,7 @@ sub process_file {
             if ($use_stdin || open(FP, "<", $Filename)) {
                 my $sha1 = Digest::SHA1->new;
                 my $md5 = Digest::MD5->new;
-                $use_stdin && (*FP = *STDIN, $Size = 0);
+                $use_stdin && (*FP = *STDIN, $Size = 0, $Mtime = time);
                 msg(2, sprintf("Reading %s...", safe_tab($Filename)));
                 while (my $Curr = <FP>) {
                     $sha1->add($Curr);
@@ -89,7 +91,11 @@ sub process_file {
                     $Sum{'sha1'}        . "-" .
                     $Sum{'md5'}         . "-" .
                     $Size               . "\t" .
-                    safe_tab($Filename) . "\n";
+                    safe_tab($Filename) . (
+                        $Opt{'with-mtime'}
+                            ? "\t" . sec_to_string($Mtime)
+                            : ""
+                    ) . "\n";
             } else {
                 warn("$progname: $Filename: Cannot read file\n");
             }
@@ -113,6 +119,18 @@ sub safe_tab {
     return($Str);
     # }}}
 } # safe_tab()
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
+    my ($Seconds) = shift;
+
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0]);
+    return($DateString);
+    # }}}
+} # sec_to_string()
 
 sub print_version {
     # Print program version {{{
@@ -138,6 +156,10 @@ but combines the two hashes and also includes the file size:
 
   [SHA1][-][MD5][-][SIZE][\\t][FILENAME][\\n]
 
+or if the --with-mtime option is used:
+
+  [SHA1][-][MD5][-][SIZE][\\t][FILENAME][\\t][MTIME][\\n]
+
 The reason for this approach, is that both hashing algoritms are well 
 known and widely used. Both algorithms are good enogh for everyday 
 content verification, but at least the MD5 algorithm is vulnerable to 
@@ -159,6 +181,10 @@ Options:
 
   -h, --help
     Show this help.
+  -m, --with-mtime
+    Also include file modification time at the end of every line. The 
+    date uses the UTC timezone and has the format 
+    "yyyy-mm-ddThh:mm:ssZ". If stdin is read, the current time is used.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
