@@ -30,6 +30,7 @@ our %Opt = (
     'skip-invalid' => 0,
     'verbose' => 0,
     'version' => 0,
+    'zero' => 0,
 );
 
 our $progname = $0;
@@ -49,6 +50,7 @@ GetOptions(
     "skip-invalid|s" => \$Opt{'skip-invalid'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "zero|z" => \$Opt{'zero'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -56,6 +58,8 @@ $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
 # Warning: Does not barf on overlong sequences.
+
+$Opt{'zero'} && ($/ = "\x00");
 
 # Dobbelt opp for å få opp farta.
 
@@ -123,6 +127,9 @@ Options:
     containing proper UTF-8.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -z, zero
+    Use NUL character (0x00) as separator instead of \\n. This affects 
+    both input and output.
   --version
     Print version information.
   --debug
