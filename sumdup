@@ -55,7 +55,7 @@ my $first_printed = 0;
 
 while (<>) {
     chomp($Line = $_);
-    /^([[:xdigit:]]+)\s/ && ($Curr = $1);
+    /^([[:xdigit:]]+)/ && ($Curr = $1);
     if ($Curr eq $Last) {
         if (!$first_printed) {
             print("\n$last_line\n");
