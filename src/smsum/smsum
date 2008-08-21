@@ -55,7 +55,6 @@ $Opt{'version'} && print_version();
 
 if ($#ARGV >= 0) {
     for (@ARGV) {
-        chomp;
         print(process_file($_));
     }
 } else {
