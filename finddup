@@ -15,6 +15,7 @@ grep . | \
 cut -f4 | \
 tr '\n' '\0' | \
 xargs -0 sha1sum | \
+sed s/\\\\// | \
 sort | \
 sumdup | \
 cut -c43-
