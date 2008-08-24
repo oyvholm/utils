@@ -46,4 +46,11 @@ Her trengs Postgres. Må ha en database som heter "gps" og en tabell som
 heter "tmpwayp". Ordnes med  ../postgres/create_table.sql . Deretter er 
 det bare å kjøre ../poisync og redigere .gpx-filene.
 
+En grei makro som kan brukes i vimdiff når wpdata.gpx er i venstre vindu 
+og den som veipunktet skal legges inn i er i høyre, er:
+
+:map <f1> y<C-w><C-w>GP?<type><cr>Y/<sym><cr>p<C-w><C-w>
+
+(Marker veipunktet i venstre vindu med Shift-V og trykk F1.)
+
 vim: set ts=2 sts=2 sw=2 et :
