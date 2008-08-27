@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Encode videos for Nokia N95.
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -155,7 +155,7 @@ $rcs_id
 Usage: $progname [options] [file [files [...]]]
 
 Encode movies for the Nokia N95. If no files are specified, the program 
-encodes from stdin to stdout. Needs the mencoder(1) encoder.
+encodes from stdin to stdout.
 
 Options:
 
