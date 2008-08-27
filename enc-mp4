@@ -23,6 +23,7 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'encoder' => "ffmpeg",
     'force' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -41,6 +42,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
+    "encoder|e=s" => \$Opt{'encoder'},
     "force|f" => \$Opt{'force'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -70,24 +72,53 @@ sub process_file {
             return;
         }
         msg(1, "Encoding $Filename...");
-        # Recipe created by Tomasz Sterna, found at 
-        # <http://notes.xiaoka.com/2008/03/29/encode-mp4-files-for-nokia-n95-with-mencoder/>.
-        mysyst(
-            "mencoder",
-            "-of", "lavf",
-            "-lavfopts", "format=mp4",
-            "-oac", "lavc",
-            "-ovc", "lavc",
-            "-lavcopts", "aglobal=1:vglobal=1:acodec=libfaac:abitrate=128:vcodec=mpeg4:keyint=25",
-            "-ofps", "25",
-            "-af", "lavcresample=44100",
-            "-vf", "harddup,scale=320:-3",
-            "-mc", "0",
-            "-noskip",
-            $Filename,
-            "-o",
-            $use_stdin ? "-" : "$Filename.mp4"
-        );
+        if ($Opt{'encoder'} eq "mencoder") {
+            # Recipe created by Tomasz Sterna, found at 
+            # <http://notes.xiaoka.com/2008/03/29/encode-mp4-files-for-nokia-n95-with-mencoder/>.
+            # Has sound sync issues.
+            mysyst(
+                "mencoder",
+                "-of", "lavf",
+                "-lavfopts", "format=mp4",
+                "-oac", "lavc",
+                "-ovc", "lavc",
+                "-lavcopts", "aglobal=1:vglobal=1:acodec=libfaac:abitrate=128:vcodec=mpeg4:keyint=25",
+                "-ofps", "25",
+                "-af", "lavcresample=44100",
+                "-vf", "harddup,scale=320:-3",
+                "-mc", "0",
+                "-noskip",
+                $Filename,
+                "-o",
+                $use_stdin ? "-" : "$Filename.mp4"
+            );
+        } elsif ($Opt{'encoder'} eq "ffmpeg") {
+            # Modified version of something found at 
+            # <http://www.n95users.com/forum/general-95/2602-howto-convert-avi-nokia-n95-compatible-avi-embedded-subtitle-linux.html>. 
+            # Does not keep aspect ratio, fills the entire N95 screen, 
+            # but that’s probably better than using 30% of the screen in 
+            # extreme cases.
+            mysyst(
+                "ffmpeg",
+                "-i", $Filename,    # Input filename
+                "-f", "mp4",        # Format
+                "-vcodec", "mpeg4", # Video codec
+                "-b", "250000",     # Video bitrate
+                "-r", "25",         # Frames per second
+                "-s", "320x240",    # Frame size
+                "-acodec", "aac",   # Audio codec
+                "-ar", "44100",     # Audio sampling frequency
+                "-ab", "64",        # Audio bitrate in kbit/s
+                "-ac", "2",         # Number of audio channels
+                "-me", "epzs",      # Motion estimation method (best quality)
+                "-y",               # Overwrite output files
+                $use_stdin          # Output filename
+                    ? "-"
+                    : "$Filename.mp4"
+            );
+        } else {
+            die("$progname: $Opt{'encoder'}: Unknown --encoder value.\n");
+        }
     } else {
         warn("$progname: $Filename: File not found");
     }
@@ -128,6 +159,10 @@ encodes from stdin to stdout. Needs the mencoder(1) encoder.
 
 Options:
 
+  -e x, --encoder x
+    Use encoder x:
+      ffmpeg (default)
+      mencoder (may have audio/video sync problems)
   -h, --help
     Show this help.
   -f, --force
