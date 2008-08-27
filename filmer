@@ -6,4 +6,4 @@
 # Hehe, latterlig enkelt.
 #=======================================================================
 
-find "$@" | egrep -i '\.(mpg|mpeg|mp4|avi|wmv|mng|mov|asx)$' | LC_COLLATE=C sort
+find "$@" | egrep -i '\.(mpg|mpeg|mp4|avi|wmv|mng|mov|asx|flv)$' | LC_COLLATE=C sort
