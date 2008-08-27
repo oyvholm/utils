@@ -23,6 +23,7 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'force' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -40,6 +41,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
+    "force|f" => \$Opt{'force'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -49,9 +51,58 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+if ($#ARGV >= 0) {
+    for (@ARGV) {
+        process_file($_);
+    }
+} else {
+    process_file("-");
 }
+
+sub process_file {
+    # {{{
+    my $Filename = shift;
+    D("process_file('$Filename')");
+    my $use_stdin = ($Filename eq "-") ? 1 : 0;
+    if ($use_stdin || -e $Filename) {
+        if (-e "$Filename.mp4" && !$Opt{'force'}) {
+            warn("$progname: $Filename.mp4: Will not overwrite existing file. Use --force (-f) option to override.\n");
+            return;
+        }
+        msg(1, "Encoding $Filename...");
+        # Recipe created by Tomasz Sterna, found at 
+        # <http://notes.xiaoka.com/2008/03/29/encode-mp4-files-for-nokia-n95-with-mencoder/>.
+        mysyst(
+            "mencoder",
+            "-of", "lavf",
+            "-lavfopts", "format=mp4",
+            "-oac", "lavc",
+            "-ovc", "lavc",
+            "-lavcopts", "aglobal=1:vglobal=1:acodec=libfaac:abitrate=128:vcodec=mpeg4:keyint=25",
+            "-ofps", "25",
+            "-af", "lavcresample=44100",
+            "-vf", "harddup,scale=320:-3",
+            "-mc", "0",
+            "-noskip",
+            $Filename,
+            "-o",
+            $use_stdin ? "-" : "$Filename.mp4"
+        );
+    } else {
+        warn("$progname: $Filename: File not found");
+    }
+    return;
+    # }}}
+} # process_file()
+
+sub mysyst {
+    # Customised system() {{{
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    msg(2, "Executing \"" . join(" ", @_) . "\"...");
+    system(@_);
+    # }}}
+} # mysyst()
 
 sub print_version {
     # Print program version {{{
@@ -72,10 +123,15 @@ $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
+Encode movies for the Nokia N95. If no files are specified, the program 
+encodes from stdin to stdout. Needs the mencoder(1) encoder.
+
 Options:
 
   -h, --help
     Show this help.
+  -f, --force
+    Overwrite existing files (input filename with .mp4 extension).
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
