@@ -32,6 +32,7 @@ our %Opt = (
     'force' => 0,
     'frames-per-second' => $Std{'frames-per-second'},
     'help' => 0,
+    'output-file' => "",
     'verbose' => 0,
     'version' => 0,
 );
@@ -52,6 +53,7 @@ GetOptions(
     "force|f" => \$Opt{'force'},
     "frames-per-second|fps=i" => \$Opt{'frames-per-second'},
     "help|h" => \$Opt{'help'},
+    "output-file|o=s" => \$Opt{'output-file'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -76,12 +78,17 @@ sub process_file {
     my $Fps = length($Opt{'frames-per-second'})
         ? $Opt{'frames-per-second'}
         : $Std{'frames-per-second'};
+    my $output_file = length($Opt{'output-file'})
+        ? $Opt{'output-file'}
+        : $use_stdin
+            ? "-"
+            : "$Filename.mp4";
     if ($use_stdin || -e $Filename) {
         if (-e "$Filename.mp4" && !$Opt{'force'}) {
             warn("$progname: $Filename.mp4: Will not overwrite existing file. Use --force (-f) option to override.\n");
             return;
         }
-        msg(1, "Encoding $Filename...");
+        msg(1, "Encoding \"$Filename\" to \"$output_file\"...");
         if ($Opt{'encoder'} eq "mencoder") {
             # Recipe created by Tomasz Sterna, found at 
             # <http://notes.xiaoka.com/2008/03/29/encode-mp4-files-for-nokia-n95-with-mencoder/>.
@@ -100,7 +107,7 @@ sub process_file {
                 "-noskip",
                 $Filename,
                 "-o",
-                $use_stdin ? "-" : "$Filename.mp4"
+                $output_file
             );
         } elsif ($Opt{'encoder'} eq "ffmpeg") {
             # Modified version of something found at 
@@ -122,9 +129,7 @@ sub process_file {
                 "-ac", "2",         # Number of audio channels
                 "-me", "epzs",      # Motion estimation method (best quality)
                 "-y",               # Overwrite output files
-                $use_stdin          # Output filename
-                    ? "-"
-                    : "$Filename.mp4"
+                $output_file        # Output filename
             );
         } else {
             die("$progname: $Opt{'encoder'}: Unknown --encoder value.\n");
@@ -181,6 +186,8 @@ Options:
     Show this help.
   -f, --force
     Overwrite existing files (input filename with .mp4 extension).
+  -o x, --output-filename x
+    Use x as output filename.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
