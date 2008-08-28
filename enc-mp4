@@ -23,12 +23,14 @@ our $Debug = 0;
 
 our %Std = (
     'encoder' => "ffmpeg",
+    'frames-per-second' => 15,
 );
 
 our %Opt = (
     'debug' => 0,
     'encoder' => $Std{'encoder'},
     'force' => 0,
+    'frames-per-second' => $Std{'frames-per-second'},
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -48,6 +50,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "encoder|e=s" => \$Opt{'encoder'},
     "force|f" => \$Opt{'force'},
+    "frames-per-second|fps=i" => \$Opt{'frames-per-second'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -70,6 +73,9 @@ sub process_file {
     my $Filename = shift;
     D("process_file('$Filename')");
     my $use_stdin = ($Filename eq "-") ? 1 : 0;
+    my $Fps = length($Opt{'frames-per-second'})
+        ? $Opt{'frames-per-second'}
+        : $Std{'frames-per-second'};
     if ($use_stdin || -e $Filename) {
         if (-e "$Filename.mp4" && !$Opt{'force'}) {
             warn("$progname: $Filename.mp4: Will not overwrite existing file. Use --force (-f) option to override.\n");
@@ -87,7 +93,7 @@ sub process_file {
                 "-oac", "lavc",
                 "-ovc", "lavc",
                 "-lavcopts", "aglobal=1:vglobal=1:acodec=libfaac:abitrate=128:vcodec=mpeg4:keyint=25",
-                "-ofps", "25",
+                "-ofps", $Fps,
                 "-af", "lavcresample=44100",
                 "-vf", "harddup,scale=320:-3",
                 "-mc", "0",
@@ -108,7 +114,7 @@ sub process_file {
                 "-f", "mp4",        # Format
                 "-vcodec", "mpeg4", # Video codec
                 "-b", "250000",     # Video bitrate
-                "-r", "25",         # Frames per second
+                "-r", $Fps,         # Frames per second
                 "-s", "320x240",    # Frame size
                 "-acodec", "aac",   # Audio codec
                 "-ar", "44100",     # Audio sampling frequency
@@ -168,6 +174,9 @@ Options:
       ffmpeg
       mencoder (may have audio/video sync problems)
     Default: $Std{'encoder'}
+  --fps x, --frames-per-second x
+    Generate video with x frames per second.
+    Default: $Std{'frames-per-second'}.
   -h, --help
     Show this help.
   -f, --force
