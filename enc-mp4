@@ -21,9 +21,13 @@ $| = 1;
 
 our $Debug = 0;
 
+our %Std = (
+    'encoder' => "ffmpeg",
+);
+
 our %Opt = (
     'debug' => 0,
-    'encoder' => "ffmpeg",
+    'encoder' => $Std{'encoder'},
     'force' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -161,8 +165,9 @@ Options:
 
   -e x, --encoder x
     Use encoder x:
-      ffmpeg (default)
+      ffmpeg
       mencoder (may have audio/video sync problems)
+    Default: $Std{'encoder'}
   -h, --help
     Show this help.
   -f, --force
