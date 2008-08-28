@@ -94,31 +94,7 @@ sub process_file {
             return;
         }
         msg(1, "Encoding \"$Filename\" to \"$output_file\"...");
-        if ($Opt{'encoder'} eq "mencoder") {
-            # Recipe created by Tomasz Sterna, found at 
-            # <http://notes.xiaoka.com/2008/03/29/encode-mp4-files-for-nokia-n95-with-mencoder/>.
-            # Has sound sync issues.
-            my @Cmd = (
-                "mencoder",
-                "-of", "lavf",
-                "-lavfopts", "format=mp4",
-                "-oac", "lavc",
-                "-ovc", "lavc",
-                "-lavcopts", "aglobal=1:vglobal=1:acodec=libfaac:abitrate=128:vcodec=mpeg4:keyint=25",
-                "-ofps", $Fps,
-                "-af", "lavcresample=44100",
-                "-vf", "harddup,scale=320:-3",
-                "-mc", "0",
-                "-noskip",
-                $Filename,
-                "-o",
-                $output_file
-            );
-            if (length($Comment)) {
-                splice(@Cmd, 1, 0, "-info", "comment=$Comment");
-            }
-            mysyst(@Cmd);
-        } elsif ($Opt{'encoder'} eq "ffmpeg") {
+        if ($Opt{'encoder'} eq "ffmpeg") {
             # Modified version of something found at 
             # <http://www.n95users.com/forum/general-95/2602-howto-convert-avi-nokia-n95-compatible-avi-embedded-subtitle-linux.html>. 
             # Does not keep aspect ratio, fills the entire N95 screen, 
@@ -142,6 +118,30 @@ sub process_file {
             );
             if (length($Comment)) {
                 splice(@Cmd, 1, 0, "-comment", $Comment);
+            }
+            mysyst(@Cmd);
+        } elsif ($Opt{'encoder'} eq "mencoder") {
+            # Recipe created by Tomasz Sterna, found at 
+            # <http://notes.xiaoka.com/2008/03/29/encode-mp4-files-for-nokia-n95-with-mencoder/>.
+            # Has sound sync issues.
+            my @Cmd = (
+                "mencoder",
+                "-of", "lavf",
+                "-lavfopts", "format=mp4",
+                "-oac", "lavc",
+                "-ovc", "lavc",
+                "-lavcopts", "aglobal=1:vglobal=1:acodec=libfaac:abitrate=128:vcodec=mpeg4:keyint=25",
+                "-ofps", $Fps,
+                "-af", "lavcresample=44100",
+                "-vf", "harddup,scale=320:-3",
+                "-mc", "0",
+                "-noskip",
+                $Filename,
+                "-o",
+                $output_file
+            );
+            if (length($Comment)) {
+                splice(@Cmd, 1, 0, "-info", "comment=$Comment");
             }
             mysyst(@Cmd);
         } else {
