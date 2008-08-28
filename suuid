@@ -84,6 +84,10 @@ my $Logfile = "$Opt{'logdir'}/$Host";
 
 my %uuids = ();
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
+if ($Comment eq "-") {
+    print(STDERR "$progname: Enter uuid comment: ");
+    chomp($Comment = <STDIN>);
+}
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     my $uuid = $new_uuid;
@@ -154,7 +158,8 @@ comment or tag/category.
 Options:
 
   -c x, --comment x
-    Store comment x in the log file.
+    Store comment x in the log file. If "-" is specified as comment, the 
+    program will read one line from stdin.
   -h, --help
     Show this help.
   -l x, --logdir x
