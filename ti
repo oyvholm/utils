@@ -5,5 +5,5 @@
 # logging.
 
 date -Iseconds
-uuid
+suuid -t ti -c "$*"
 stty -a
