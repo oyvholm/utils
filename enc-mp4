@@ -27,6 +27,7 @@ our %Std = (
 );
 
 our %Opt = (
+    'comment' => "",
     'debug' => 0,
     'encoder' => $Std{'encoder'},
     'force' => 0,
@@ -48,6 +49,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "encoder|e=s" => \$Opt{'encoder'},
     "force|f" => \$Opt{'force'},
@@ -75,6 +77,9 @@ sub process_file {
     my $Filename = shift;
     D("process_file('$Filename')");
     my $use_stdin = ($Filename eq "-") ? 1 : 0;
+    my $Comment = length($Opt{'comment'})
+        ? $Opt{'comment'}
+        : "";
     my $Fps = length($Opt{'frames-per-second'})
         ? $Opt{'frames-per-second'}
         : $Std{'frames-per-second'};
@@ -93,7 +98,7 @@ sub process_file {
             # Recipe created by Tomasz Sterna, found at 
             # <http://notes.xiaoka.com/2008/03/29/encode-mp4-files-for-nokia-n95-with-mencoder/>.
             # Has sound sync issues.
-            mysyst(
+            my @Cmd = (
                 "mencoder",
                 "-of", "lavf",
                 "-lavfopts", "format=mp4",
@@ -109,13 +114,17 @@ sub process_file {
                 "-o",
                 $output_file
             );
+            if (length($Comment)) {
+                splice(@Cmd, 1, 0, "-info", "comment=$Comment");
+            }
+            mysyst(@Cmd);
         } elsif ($Opt{'encoder'} eq "ffmpeg") {
             # Modified version of something found at 
             # <http://www.n95users.com/forum/general-95/2602-howto-convert-avi-nokia-n95-compatible-avi-embedded-subtitle-linux.html>. 
             # Does not keep aspect ratio, fills the entire N95 screen, 
             # but that’s probably better than using 30% of the screen in 
             # extreme cases.
-            mysyst(
+            my @Cmd = (
                 "ffmpeg",
                 "-i", $Filename,    # Input filename
                 "-f", "mp4",        # Format
@@ -131,6 +140,10 @@ sub process_file {
                 "-y",               # Overwrite output files
                 $output_file        # Output filename
             );
+            if (length($Comment)) {
+                splice(@Cmd, 1, 0, "-comment", $Comment);
+            }
+            mysyst(@Cmd);
         } else {
             die("$progname: $Opt{'encoder'}: Unknown --encoder value.\n");
         }
@@ -174,6 +187,8 @@ encodes from stdin to stdout.
 
 Options:
 
+  -c x, --comment x
+    Use x as comment in the encoded file.
   -e x, --encoder x
     Use encoder x:
       ffmpeg
