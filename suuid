@@ -113,11 +113,13 @@ if (open(LogFP, ">>", $Logfile)) {
 }
 
 sub host_id {
+    # {{{
     my $uuid = new OSSP::uuid;
     $uuid->make("v1");
     my $Retval = $uuid->export("str");
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
+    # }}}
 } # host_id()
 
 sub safe_tab {
