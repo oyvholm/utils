@@ -90,7 +90,6 @@ for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     $new_uuid->make("v$Opt{'version'}");
     my $uuid = $new_uuid->export("str");
     my $curr_time = time;
-    print("$uuid\n");
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
         safe_tab($Tag),
@@ -103,6 +102,7 @@ if (open(LogFP, ">>", $Logfile)) {
         for my $key (keys %uuids) {
             D("key = '$key', value = '$uuids{$key}'");
             print(LogFP $key . "\t" . $uuids{$key} . "\n");
+            print("$key\n");
         }
         close(LogFP);
     } else {
