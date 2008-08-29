@@ -9,3 +9,6 @@ HTMLFILE = file.html
 
 $(HTMLFILE): $(BOOKFILES)
 	xsltproc --output $(HTMLFILE) ~/xsl/xhtml/docbook.xsl $(BOOKFILES)
+
+valid:
+	xmllint --valid --noout $(BOOKFILES)
