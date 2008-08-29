@@ -34,6 +34,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'logdir' => $Std{'logdir'},
+    'quiet' => 0,
     'show-version' => $Std{'show-version'},
     'tag' => "",
     'verbose' => 0,
@@ -56,6 +57,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "logdir|l=s" => \$Opt{'logdir'},
+    "quiet|q" => \$Opt{'quiet'},
     "show-version|V" => \$Opt{'show-version'},
     "tag|t=s" => \$Opt{'tag'},
     "verbose" => \$Opt{'verbose'},
@@ -80,7 +82,7 @@ my $Logfile = "$Opt{'logdir'}/$Host";
 my %uuids = ();
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 if ($Comment eq "-") {
-    print(STDERR "$progname: Enter uuid comment: ");
+    $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
     chomp($Comment = <STDIN>);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
@@ -179,6 +181,8 @@ Options:
     Default: $Std{'logdir'}/
   -n x, --count x
     Print and store x UUIDs.
+  -q, --quiet
+    Avoid unnecessary output.
   -t x, --tag x
     Use x as tag (category).
   --verbose
