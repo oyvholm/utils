@@ -16,7 +16,6 @@ BEGIN {
 
 use strict;
 use Getopt::Long;
-use OSSP::uuid;
 
 $| = 1;
 
@@ -84,10 +83,8 @@ if ($Comment eq "-") {
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 
-my $new_uuid = new OSSP::uuid;
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
-    $new_uuid->make("v$Opt{'version'}");
-    my $uuid = $new_uuid->export("str");
+    chomp(my $uuid = `uuid`);
     my $curr_time = time;
     print("$uuid\n");
     $uuids{$uuid} = join("\t",
@@ -108,9 +105,7 @@ if (open(LogFP, ">>", $Logfile)) {
 }
 
 sub host_id {
-    my $uuid = new OSSP::uuid;
-    $uuid->make("v1");
-    my $Retval = $uuid->export("str");
+    chomp(my $Retval = `uuid`);
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
 } # host_id()
