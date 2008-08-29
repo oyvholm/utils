@@ -1,20 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 # $Id$
 
-# FIXME: Den locken virker ikke, det allokeres en ny tty.
-
-lockprefix=$HOME/.lock
-lockname=$lockprefix/`tty`
-echo lockname = "$lockname"
-
-[ -d $lockprefix/. ] || mkdir $lockprefix || { echo "mkdir $lockprefix: Gikk dårlig." >&2; exit 1; }
-
-until mkdir -p $lockname 2>/dev/null; do
-	echo $0: $lockname: Venter på lock... >&2
-	sleep 5
-done
-
-script -f $HOME/.scriptlogger/`u`.$$.scrlog
-date -Iseconds
-stty -a
+export LOGDIR=$HOME/log/script
+[ -d $LOGDIR/. ] || mkdir -p $LOGDIR || { echo logging: $LOGDIR: Cannot create log directory >&2; exit 1; }
+export LDATE=`u`
+script -ft $LOGDIR/$LDATE.scrlog 2>$LOGDIR/$LDATE.timing
