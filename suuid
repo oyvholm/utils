@@ -15,6 +15,7 @@ BEGIN {
 }
 
 use strict;
+use Fcntl ':flock';
 use Getopt::Long;
 use OSSP::uuid;
 
@@ -98,11 +99,15 @@ for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
 }
 
 if (open(LogFP, ">>", $Logfile)) {
-    for my $key (keys %uuids) {
-        D("key = '$key', value = '$uuids{$key}'");
-        print(LogFP $key . "\t" . $uuids{$key} . "\n");
+    if (flock(LogFP, LOCK_EX)) {
+        for my $key (keys %uuids) {
+            D("key = '$key', value = '$uuids{$key}'");
+            print(LogFP $key . "\t" . $uuids{$key} . "\n");
+        }
+        close(LogFP);
+    } else {
+        die("$progname: $Logfile: Cannot lock file: $!\n");
     }
-    close(LogFP);
 } else {
     die("$progname: $Logfile: Cannot open file for append: $!\n");
 }
