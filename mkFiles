@@ -11,7 +11,8 @@ until mkdir $lockname 2>/dev/null; do
 	sleep 5
 done
 
-find -type f -print0 | LC_COLLATE=C sort -z | xargs -0 smsum -m | grep -v '  \./Files\.smsum' >Files.smsum
+echo \# `suuid -t mkfiles -c "mkFiles i $(hostname):$(/bin/pwd)"` >Files.smsum
+find -type f -print0 | LC_COLLATE=C sort -z | xargs -0 smsum -m | grep -v '  \./Files\.smsum' >>Files.smsum
 echo mkFiles: Done.
 
 rmdir $lockname
