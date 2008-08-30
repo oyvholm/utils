@@ -86,8 +86,9 @@ if ($Comment eq "-") {
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 
+my $Cmd = ($Opt{'version'} != 1) ? "uuidgen -r" : "uuidgen -t";
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
-    chomp(my $uuid = `uuid`);
+    chomp(my $uuid = `$Cmd`);
     my $curr_time = time;
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
@@ -113,7 +114,7 @@ if (open(LogFP, ">>", $Logfile)) {
 
 sub host_id {
     # {{{
-    chomp(my $Retval = `uuid`);
+    chomp(my $Retval = `uuidgen -t`);
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
     # }}}
