@@ -5,7 +5,7 @@
 
 DUFILE=du.dat
 
-echo \# `suuid -t du -c "du(1) in $(hostname):$(/bin/pwd)"` >$DUFILE
+echo \# `suuid -t upd -c "~/bin/upd in $(hostname):$(/bin/pwd)"` >$DUFILE
 du -kx | sort -n | perl -e 'while (<>) { s/^(\d{3,})/commify($1)/ge; print; } sub commify { my $Str = reverse $_[0]; $Str =~ s/(\d\d\d)(?=\d)(?!\d*\,)/$1\./g; return scalar reverse $Str; }' >>$DUFILE
 chmod 600 $DUFILE
 chown sunny.sunny $DUFILE
