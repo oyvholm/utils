@@ -3,11 +3,11 @@ $Id$
 Index: src/ops.c
 ===================================================================
 RCS file: /cvsroot/vim/vim7/src/ops.c,v
-retrieving revision 1.53
-diff -u -r1.53 ops.c
---- src/ops.c	4 Mar 2007 20:22:01 -0000	1.53
-+++ src/ops.c	19 Mar 2007 11:05:11 -0000
-@@ -6347,20 +6347,22 @@
+retrieving revision 1.67
+diff -u -r1.67 ops.c
+--- src/ops.c	24 Jun 2008 21:59:55 -0000	1.67
++++ src/ops.c	30 Aug 2008 08:27:34 -0000
+@@ -6398,20 +6398,22 @@
  
  	    if (char_count_cursor == byte_count_cursor
  		    && char_count == byte_count)

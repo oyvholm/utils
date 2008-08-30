@@ -3,11 +3,11 @@ $Id$
 Index: src/feature.h
 ===================================================================
 RCS file: /cvsroot/vim/vim7/src/feature.h,v
-retrieving revision 1.32
-diff -u -r1.32 feature.h
---- src/feature.h	1 Nov 2006 17:11:38 -0000	1.32
-+++ src/feature.h	19 Mar 2007 11:00:36 -0000
-@@ -962,7 +962,7 @@
+retrieving revision 1.38
+diff -u -r1.38 feature.h
+--- src/feature.h	6 Aug 2008 16:45:07 -0000	1.38
++++ src/feature.h	30 Aug 2008 08:25:33 -0000
+@@ -967,7 +967,7 @@
   *			a modifed version of Vim.
   *			Also from the "--with-modified-by" configure argument.
   */
