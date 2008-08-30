@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Replays files with timing information created by script(1)
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -24,6 +24,7 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'speed' => 1,
     'verbose' => 0,
     'version' => 0,
 );
@@ -41,6 +42,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "speed|s=f" => \$Opt{'speed'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -49,8 +51,13 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-while (<>) {
-    print;
+if ($#ARGV >= 0) {
+    for (@ARGV) {
+        my $fname = $_;
+        $fname =~ s/(^.*)\.(scrlog|timing)/$1/;
+        system("reset");
+        system("scriptreplay", "$fname.timing", "$fname.scrlog", $Opt{'speed'});
+    }
 }
 
 sub print_version {
@@ -72,10 +79,15 @@ $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
+Replay log files with timing information created by script(1). Expecting 
+.scrlog and .timing extensions.
+
 Options:
 
   -h, --help
     Show this help.
+  -s x, --speed x
+    Replay files at speed x. 1 = normal, 2 = double, 0.5 = half, etc.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
