@@ -33,6 +33,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'logdir' => $Std{'logdir'},
+    'quiet' => 0,
     'show-version' => $Std{'show-version'},
     'tag' => "",
     'verbose' => 0,
@@ -55,6 +56,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "logdir|l=s" => \$Opt{'logdir'},
+    "quiet|q" => \$Opt{'quiet'},
     "show-version|V" => \$Opt{'show-version'},
     "tag|t=s" => \$Opt{'tag'},
     "verbose" => \$Opt{'verbose'},
@@ -79,7 +81,7 @@ my $Logfile = "$Opt{'logdir'}/$Host";
 my %uuids = ();
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 if ($Comment eq "-") {
-    print(STDERR "$progname: Enter uuid comment: ");
+    $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
     chomp($Comment = <STDIN>);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
@@ -87,7 +89,6 @@ my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     chomp(my $uuid = `uuid`);
     my $curr_time = time;
-    print("$uuid\n");
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
         safe_tab($Tag),
@@ -100,6 +101,7 @@ if (open(LogFP, ">>", $Logfile)) {
         for my $key (keys %uuids) {
             D("key = '$key', value = '$uuids{$key}'");
             print(LogFP $key . "\t" . $uuids{$key} . "\n");
+            print("$key\n");
         }
         close(LogFP);
     } else {
@@ -110,9 +112,11 @@ if (open(LogFP, ">>", $Logfile)) {
 }
 
 sub host_id {
+    # {{{
     chomp(my $Retval = `uuid`);
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
+    # }}}
 } # host_id()
 
 sub safe_tab {
@@ -172,6 +176,8 @@ Options:
     Default: $Std{'logdir'}/
   -n x, --count x
     Print and store x UUIDs.
+  -q, --quiet
+    Avoid unnecessary output.
   -t x, --tag x
     Use x as tag (category).
   --verbose
