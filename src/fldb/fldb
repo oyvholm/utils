@@ -59,7 +59,7 @@ GetOptions(
     # {{{
     "add" => \$Opt{'add'},
     "crc32" => \$Opt{'crc32'},
-    "database|d=s" => \$Opt{'database'},
+    "database|D=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "files-from|f=s" => \$Opt{'files-from'},
     "help|h" => \$Opt{'help'},
@@ -361,7 +361,7 @@ Options:
   --crc32
     Also calculate CRC32. Reads the whole file into memory, so it’s not 
     suitable for big files. Maybe fixed in newer Perl versions.
-  -d x, --database x
+  -D x, --database x
     Use database x.
   -f x, --files-from x
     Read filenames from x.
