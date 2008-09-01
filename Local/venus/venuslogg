@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# [Description]
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+rsync -avzP /home/sunny/log sunny@svnhost:/home/sunny/venuslogg
