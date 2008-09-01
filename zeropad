@@ -2,7 +2,8 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Pads all integers read from stdin with zeros so they all have the same 
+# length.
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -49,9 +50,27 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
+my @Array = ();
+my $max_length = 0;
+
 while (<>) {
-    print;
+    my $Line = $_;
+    push(@Array, $Line);
+    $Line =~ s/(\d+)/check_max($1)/ge;
 }
+
+for my $Curr (@Array) {
+    $Curr =~ s/(\d+)/sprintf("%0${max_length}lu", $1)/ge;
+    print($Curr);
+}
+
+sub check_max {
+    my $Str = shift;
+    if (length($Str) > $max_length) {
+        $max_length = length($Str);
+    }
+    return("");
+} # check_max()
 
 sub print_version {
     # Print program version {{{
@@ -70,7 +89,10 @@ sub usage {
 
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options]
+
+Pads all integers read from stdin with zeros so they all have the same 
+length. I.e.: 1 5 12 156 1024 = 0001 0005 0012 0156 1024.
 
 Options:
 
