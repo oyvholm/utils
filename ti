@@ -4,7 +4,6 @@
 # Terminal Identification ’ for å identifisere skjermhøyde etc ved
 # logging.
 
-[ -z "$*" ] && { echo ti: Missing comment >&2; exit 1; }
 date -Iseconds
 suuid -t ti -c "$*"
 stty -a
