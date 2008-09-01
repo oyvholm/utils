@@ -17,7 +17,7 @@ fi
 
 [ -d "$2/." ] || { echo "$2: Not a directory" >&2; exit 1; }
 
-for f in `svnrevs -r1:HEAD "$1" | tr -d ,`; do
+for f in `svnrevs -r1:HEAD "$1" | tr -d , | zeropad`; do
     echo ========= $f =======
     svn export -$f "$1" "$2/`echo $1 | tr / _`.$f"
 done
