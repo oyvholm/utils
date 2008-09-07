@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Clean up a subversion working copy
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+svn revert -R .
+svn stat --no-ignore | grep -E '^[\?I]' | cut -c 8- | perl -pe 's/^/\.\//' | tr '\n' '\0' | xargs -0 -r rm -rfv
+svn update "$@"
+echo ======== svn stat --no-ignore ========
+svn stat --no-ignore
