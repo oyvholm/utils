@@ -89,7 +89,7 @@ cd .. || { echo "$0: Cannot \"cd ..\"" >&2; exit 1; }
 tar cf $_prefix.tar --label=`suuid -t mkt -c "Created $_prefix.tar$_packext with mkt(1) of directory $HOSTN:$CURRDIR/"` $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\" in parent dir" >&2; exit 1; }
 
 if [ "$_no_compress" -eq "1" ]; then
-	exit 1;
+	exit 0
 fi
 
 $_packcmd $_prefix.tar || { echo "$0: Error running \"$_packcmd $_prefix.tar\" in parent dir" >&2; exit 1; }
