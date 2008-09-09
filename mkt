@@ -2,7 +2,7 @@
 
 # Creates a .tar.gz file of current directory
 # $Id$
-# (C)opyleft 1999-2001 sunny256@mail.com
+# (C)opyleft 1999- sunny@sunbase.org
 # License: GNU General Public License version 2 or later
 
 # FIXME: Finn ut av -r kombinert med -n
