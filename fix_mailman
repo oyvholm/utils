@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Make fucked-up mailman mailboxes readable in mutt(1).
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+perl -pe 's/^(From \S+) at (.*)$/$1\@$2/' "$@"
