@@ -73,6 +73,7 @@ if ($#ARGV < 0) {
 }
 
 sub print_entry {
+    # {{{
     my $filename = shift;
     my $Retval = 0;
     my ($date, $coor) = 
@@ -117,6 +118,7 @@ sub print_entry {
         $Retval = 1;
     }
     return($Retval);
+    # }}}
 } # print_entry()
 
 sub print_version {
