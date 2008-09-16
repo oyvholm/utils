@@ -6,7 +6,8 @@
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
 
 BEGIN {
@@ -33,15 +34,18 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'todo' => 0,
+    'verbose' => 0,
     'version' => 0,
 );
 
 our $progname = $0;
-$progname =~ s#^.*/(.*?)$#$1#;
+$progname =~ s/^.*\/(.*?)$/$1/;
 
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -49,6 +53,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "todo|t" => \$Opt{'todo'},
+    "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -1957,7 +1962,9 @@ sub file_data {
 
 sub print_version {
     # Print program version {{{
-    print("$rcs_id\n");
+    for (@main::version_array) {
+        print("$_\n");
+    }
     exit(0);
     # }}}
 } # print_version()
@@ -1982,6 +1989,8 @@ Options:
     Show this help.
   -t, --todo
     Run only the TODO tests.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
   --debug
@@ -1991,6 +2000,16 @@ END
     exit($Retval);
     # }}}
 } # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
 
 __END__
 
@@ -2030,6 +2049,10 @@ Print a brief help summary.
 
 Run only the TODO tests.
 
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
 =item B<--version>
 
 Print version information.
@@ -2046,7 +2069,7 @@ Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE

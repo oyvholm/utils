@@ -38,6 +38,14 @@ CREATE TABLE events (
     data bytea
 );
 
+CREATE TABLE pictures (
+    date timestamptz,
+    coor point,
+    descr text,
+    filename text,
+    author text
+);
+
 CREATE TABLE stat (
     lastupdate timestamptz,
     laststed timestamptz
