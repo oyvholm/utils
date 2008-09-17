@@ -11,4 +11,4 @@ cat "$@" | gpst -o pgtab | psql -c "TRUNCATE logg; COPY logg FROM stdin;" tmpgps
 cd ~/bin/src/gpstools/postgres
 psql -f "$HOME/bin/src/gpstools/postgres/allupdate.sql" tmpgps >/dev/null 2>&1
 psql -f "$HOME/bin/src/gpstools/postgres/distupdate.sql" tmpgps >/dev/null 2>&1
-psql -c "SELECT date AT TIME ZONE 'UTC' || 'Z' as date, coor, sted, dist, avst FROM logg ORDER BY date;" tmpgps
+psql -c "SELECT date as date, coor, sted, dist, avst FROM logg ORDER BY date;" tmpgps
