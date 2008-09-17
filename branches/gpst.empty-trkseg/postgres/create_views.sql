@@ -94,6 +94,16 @@ CREATE OR REPLACE VIEW minutt
 
 /*** Formater ***/
 
+CREATE OR REPLACE VIEW closest AS
+    SELECT * FROM (
+        SELECT DISTINCT ON (sted) * FROM (
+            SELECT * FROM LOGG
+                ORDER BY dist
+        ) AS b
+        WHERE sted IS NOT NULL
+    ) AS a
+        ORDER BY date;
+
 CREATE OR REPLACE VIEW gpx AS
     SELECT '<trkpt lat="' || coor[0] || '" lon="' || coor[1] || '"> ' ||
         '<ele>' || ele || '</ele> ' ||
@@ -112,11 +122,14 @@ CREATE OR REPLACE VIEW gpst AS
 -- Lister ut events sammen med loggen.
 CREATE OR REPLACE VIEW ev AS
     SELECT * FROM (
-        SELECT     'gps' AS flag, date,           coor, sted || ' (' || dist || ')' AS sted, NULL AS descr, avst
+        SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
             FROM logg
         UNION ALL
-        SELECT   'event' AS flag, date, coor, NULL, descr AS descr, NULL
+        SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr, NULL
             FROM events
+        UNION ALL
+        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL, NULL
+            FROM pictures
     ) AS u
     ORDER BY date;
 
