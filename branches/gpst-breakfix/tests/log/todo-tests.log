@@ -144,23 +144,15 @@ not ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack
 #       <trkpt lat="1.11" lon="1.12"> <time>2006-01-01T00:00:00Z</time> </trkpt>
 #       <trkpt lat="1.21" lon="1.22"> <time>2006-01-01T00:00:01Z</time> </trkpt>
 #       <trkpt lat="1.31" lon="1.32"> <time>2006-01-01T00:00:02Z</time> </trkpt>
-#     </trkseg>
-#     <trkseg>
 #       <trkpt lat="2.11" lon="2.12"> <time>2006-01-02T00:00:00Z</time> </trkpt>
 #       <trkpt lat="2.21" lon="2.22"> <time>2006-01-02T00:00:04Z</time> </trkpt>
 #       <trkpt lat="2.31" lon="2.32"> <time>2006-01-02T00:00:16Z</time> </trkpt>
 #       <trkpt lat="2.41" lon="2.42"> <time>2006-01-02T01:00:16Z</time> </trkpt>
 #       <trkpt lat="2.451" lon="2.452"> <time>2006-01-02T01:00:17Z</time> </trkpt>
-#     </trkseg>
-#     <trkseg>
-#     </trkseg>
-#     <trkseg>
 #       <trkpt lat="3.11" lon="3.12"> <time>2006-01-03T02:00:20Z</time> </trkpt>
 #       <trkpt lat="3.21" lon="3.22"> <time>2006-01-03T02:00:21Z</time> </trkpt>
 #       <trkpt lat="3.31" lon="3.32"> <time>2006-01-03T02:00:22Z</time> </trkpt>
 #       <trkpt lat="3.41" lon="3.42"> <time>2006-01-03T02:00:23Z</time> </trkpt>
-#     </trkseg>
-#     <trkseg>
 #       <trkpt lat="3.51" lon="3.52"> <time>2006-01-03T02:00:24Z</time> </trkpt>
 #       <trkpt lat="3.61" lon="3.62"> <time>2006-01-03T02:00:25Z</time> </trkpt>
 #       <trkpt lat="3.71" lon="3.72"> <time>2006-01-03T02:00:26Z</time> </trkpt>

@@ -95,7 +95,47 @@ ok - "../gpst -o gpx </dev/null" (stderr)
 ok - "echo '<tp> </tp>' | ../gpst" - Don’t print empty trackpoints
 ok - "echo '<tp> </tp>' | ../gpst" - Don’t print empty trackpoints (stderr)
 # Testing --chronology option...
-ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times
+not ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times
+#   Failed test '"../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Chronology errors</title>
+# <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+# <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+# <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+# <tp> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </tp>
+# <pause>0:00:37:54</pause>
+# <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+# <tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+# <tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Chronology errors</title>
+# <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+# <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+# <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+# <break/>
+# <tp> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </tp>
+# <break/>
+# <pause>0:00:37:54</pause>
+# <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+# <tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+# <tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times (stderr)
 # Testing --skip-dups option...
 ok - "../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml
@@ -112,13 +152,94 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output (stderr)
 # Testing --fix option...
-ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
+not ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
+#   Failed test '"../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Chronology errors</title>
+# <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+# <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+# <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+# <break/>
+# <break/>
+# <etp err="chrono"> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </etp>
+# <pause>0:00:37:54</pause>
+# <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+# <tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <etp err="duptime"> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </etp>
+# <tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+# <tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Chronology errors</title>
+# <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+# <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+# <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+# <break/>
+# <etp err="chrono"> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </etp>
+# <break/>
+# <pause>0:00:37:54</pause>
+# <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+# <tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <etp err="duptime"> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </etp>
+# <tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+# <tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
 # Testing --from-date option...
 # Testing --help option...
 ok - "../gpst -h"
 # Testing --inside option...
-ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
+not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
+#   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <title>track2</title>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <title>track3</title>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <break/>
+# <title>track2</title>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst) (stderr)
 # Testing --undefined option...
 # Testing --near option...
@@ -135,7 +256,62 @@ ok - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format
 ok - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format (stderr)
 ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format
 ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format (stderr)
-ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks
+not ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks
+#   Failed test '"../gpst multitrack.gpx" - Read GPX file with multiple tracks'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Track 1</title>
+# <tp> <time>2003-02-11T23:35:39Z</time> <lat>51.4968266</lat> <lon>-0.1448824</lon> </tp>
+# <tp> <time>2003-02-11T23:35:49Z</time> <lat>51.4968227</lat> <lon>-0.1449938</lon> </tp>
+# <tp> <time>2003-02-11T23:36:14Z</time> <lat>51.496904</lat> <lon>-0.1453202</lon> </tp>
+# <title>Track 2</title>
+# <tp> <time>2003-02-11T23:36:16Z</time> <lat>51.4969214</lat> <lon>-0.1453398</lon> </tp>
+# <tp> <time>2003-02-11T23:36:31Z</time> <lat>51.4969816</lat> <lon>-0.1455514</lon> </tp>
+# <tp> <time>2003-02-11T23:36:43Z</time> <lat>51.4970224</lat> <lon>-0.1457489</lon> <ele>1000</ele> </tp>
+# <tp> <time>2003-02-11T23:36:50Z</time> <lat>51.4970452</lat> <lon>-0.1457804</lon> </tp>
+# <title>Track 3</title>
+# <tp> <time>2003-02-11T23:37:05Z</time> <lat>51.497068</lat> <lon>-0.1458608</lon> </tp>
+# <tp> <time>2003-02-11T23:37:22Z</time> <lat>51.4971658</lat> <lon>-0.1460047</lon> </tp>
+# <tp> <time>2003-02-11T23:37:36Z</time> <lat>51.4972469</lat> <lon>-0.1461614</lon> </tp>
+# <title>Track 4</title>
+# <tp> <time>2003-02-11T23:37:43Z</time> <lat>51.4972731</lat> <lon>-0.1462394</lon> </tp>
+# <tp> <time>2003-02-11T23:38:04Z</time> <lat>51.4973437</lat> <lon>-0.1463232</lon> </tp>
+# <tp> <time>2003-02-11T23:38:28Z</time> <lat>51.4973337</lat> <lon>-0.1462949</lon> </tp>
+# <tp> <time>2003-02-11T23:38:34Z</time> <lat>51.4973218</lat> <lon>-0.1462825</lon> </tp>
+# <tp> <time>2003-02-11T23:38:35Z</time> <lat>51.4973145</lat> <lon>-0.1462732</lon> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Track 1</title>
+# <tp> <time>2003-02-11T23:35:39Z</time> <lat>51.4968266</lat> <lon>-0.1448824</lon> </tp>
+# <tp> <time>2003-02-11T23:35:49Z</time> <lat>51.4968227</lat> <lon>-0.1449938</lon> </tp>
+# <tp> <time>2003-02-11T23:36:14Z</time> <lat>51.496904</lat> <lon>-0.1453202</lon> </tp>
+# <break/>
+# <title>Track 2</title>
+# <tp> <time>2003-02-11T23:36:16Z</time> <lat>51.4969214</lat> <lon>-0.1453398</lon> </tp>
+# <tp> <time>2003-02-11T23:36:31Z</time> <lat>51.4969816</lat> <lon>-0.1455514</lon> </tp>
+# <tp> <time>2003-02-11T23:36:43Z</time> <lat>51.4970224</lat> <lon>-0.1457489</lon> <ele>1000</ele> </tp>
+# <tp> <time>2003-02-11T23:36:50Z</time> <lat>51.4970452</lat> <lon>-0.1457804</lon> </tp>
+# <break/>
+# <title>Track 3</title>
+# <tp> <time>2003-02-11T23:37:05Z</time> <lat>51.497068</lat> <lon>-0.1458608</lon> </tp>
+# <tp> <time>2003-02-11T23:37:22Z</time> <lat>51.4971658</lat> <lon>-0.1460047</lon> </tp>
+# <tp> <time>2003-02-11T23:37:36Z</time> <lat>51.4972469</lat> <lon>-0.1461614</lon> </tp>
+# <break/>
+# <title>Track 4</title>
+# <tp> <time>2003-02-11T23:37:43Z</time> <lat>51.4972731</lat> <lon>-0.1462394</lon> </tp>
+# <tp> <time>2003-02-11T23:38:04Z</time> <lat>51.4973437</lat> <lon>-0.1463232</lon> </tp>
+# <tp> <time>2003-02-11T23:38:28Z</time> <lat>51.4973337</lat> <lon>-0.1462949</lon> </tp>
+# <tp> <time>2003-02-11T23:38:34Z</time> <lat>51.4973218</lat> <lon>-0.1462825</lon> </tp>
+# <tp> <time>2003-02-11T23:38:35Z</time> <lat>51.4973145</lat> <lon>-0.1462732</lon> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks (stderr)
 ok - "../gpst compact.gpx" - Read GPX one-liner
 ok - "../gpst compact.gpx" - Read GPX one-liner (stderr)
@@ -143,15 +319,155 @@ ok - "../gpst missing.gpsml" - Read gpsml with various data missing
 ok - "../gpst missing.gpsml" - Read gpsml with various data missing (stderr)
 ok - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file
 ok - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file (stderr)
-ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml
+not ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml
+#   Failed test '"../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <title>track2</title>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <title>track3</title>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml (stderr)
 ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates
 ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates (stderr)
-ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines
+not ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines
+#   Failed test '"../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
+#       <trkpt lat="70.6799322" lon="23.6740038"> <time>2002-12-22T21:42:32Z</time> </trkpt>
+#       <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:42:54Z</time> </trkpt>
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:51Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:52Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:54Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <trkpt lat="70.6800774" lon="23.6757566"> <time>2002-12-22T21:44:45Z</time> </trkpt>
+#       <trkpt lat="70.6801502" lon="23.6753442"> <time>2002-12-22T21:44:52Z</time> </trkpt>
+#       <trkpt lat="70.6801905" lon="23.6757542"> <time>2002-12-22T21:45:04Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
+#       <trkpt lat="70.6799322" lon="23.6740038"> <time>2002-12-22T21:42:32Z</time> </trkpt>
+#       <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:42:54Z</time> </trkpt>
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:51Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:52Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:54Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <trkpt lat="70.6800774" lon="23.6757566"> <time>2002-12-22T21:44:45Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="70.6801502" lon="23.6753442"> <time>2002-12-22T21:44:52Z</time> </trkpt>
+#       <trkpt lat="70.6801905" lon="23.6757542"> <time>2002-12-22T21:45:04Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data (stderr)
-ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
+not ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
+#   Failed test '"../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX'
+#   in ./run-tests.pl at line 1894.
+#          got: '-0.1448824 51.4968266
+# -0.1449938 51.4968227
+# -0.1453202 51.4969040
+# -0.1453398 51.4969214
+# -0.1455514 51.4969816
+# -0.1457489 51.4970224
+# -0.1457804 51.4970452
+# -0.1458608 51.4970680
+# -0.1460047 51.4971658
+# -0.1461614 51.4972469
+# -0.1462394 51.4972731
+# -0.1463232 51.4973437
+# -0.1462949 51.4973337
+# -0.1462825 51.4973218
+# -0.1462732 51.4973145
+# '
+#     expected: '-0.1448824 51.4968266
+# -0.1449938 51.4968227
+# -0.1453202 51.4969040
+# move -0.1453398 51.4969214
+# -0.1455514 51.4969816
+# -0.1457489 51.4970224
+# -0.1457804 51.4970452
+# move -0.1458608 51.4970680
+# -0.1460047 51.4971658
+# -0.1461614 51.4972469
+# move -0.1462394 51.4972731
+# -0.1463232 51.4973437
+# -0.1462949 51.4973337
+# -0.1462825 51.4973218
+# -0.1462732 51.4973145
+# '
 ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX (stderr)
 ok - "../gpst -o pgtab compact.gpx"
 ok - "../gpst -o pgtab compact.gpx" (stderr)
@@ -168,11 +484,77 @@ ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format (stderr)
 ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks
 ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr)
 # Testing --outside option...
-ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)
+not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)
+#   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <title>track2</title>
+# <title>track3</title>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <break/>
+# <title>track3</title>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst) (stderr)
 # Testing --pos1 and --pos2 options...
 # Testing --require option...
-ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data
+not ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data
+#   Failed test '"../gpst -re multitrack.gpx" - Require elevation from GPX data'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Track 1</title>
+# <title>Track 2</title>
+# <tp> <time>2003-02-11T23:36:43Z</time> <lat>51.4970224</lat> <lon>-0.1457489</lon> <ele>1000</ele> </tp>
+# <title>Track 3</title>
+# <title>Track 4</title>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Track 1</title>
+# <break/>
+# <title>Track 2</title>
+# <tp> <time>2003-02-11T23:36:43Z</time> <lat>51.4970224</lat> <lon>-0.1457489</lon> <ele>1000</ele> </tp>
+# <break/>
+# <title>Track 3</title>
+# <break/>
+# <title>Track 4</title>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data (stderr)
 ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml
 ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml (stderr)
@@ -196,14 +578,175 @@ ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" (stderr)
 # Testing --create-breaks option...
 ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files
 ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files (stderr)
-ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
+not ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
+#   Failed test '"../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <title>track2</title>
+# <pause>0:23:59:58</pause>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <pause>0:01:00:00</pause>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <title>track3</title>
+# <pause>1:01:00:03</pause>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <pause>0:23:59:58</pause>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <pause>0:01:00:00</pause>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <pause>1:01:00:03</pause>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
-ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
+not ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
+#   Failed test '"../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <title>track2</title>
+# <pause>0:23:59:58</pause>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <pause>0:01:00:00</pause>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <title>track3</title>
+# <pause>1:01:00:03</pause>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <pause>0:23:59:58</pause>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <pause>0:01:00:00</pause>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <pause>1:01:00:03</pause>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
 # Testing --comment-out-dups option...
 ok - "../gpst -u no_signal.mayko >nosignal.tmp" - Redirect stdout
 ok - "../gpst -u no_signal.mayko >nosignal.tmp" - Redirect stdout (stderr)
-ok - "../gpst nosignal.tmp" - Read output from 'gpst -u *.mayko'
+not ok - "../gpst nosignal.tmp" - Read output from 'gpst -u *.mayko'
+#   Failed test '"../gpst nosignal.tmp" - Read output from 'gpst -u *.mayko''
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
+# <tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
+# <tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
+# <desc>20021222T214351-20021222T214354: CO: No signal {{{</desc>
+# <etp err="desc"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <etp err="desc"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <etp err="desc"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <desc>20021222T214351-20021222T214354: CO: No signal }}}</desc>
+# <tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
+# <tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
+# <tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
+# </track>
+# </gpsml>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
+# <tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
+# <tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
+# <desc>20021222T214351-20021222T214354: CO: No signal {{{</desc>
+# <etp err="desc"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <etp err="desc"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <etp err="desc"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <desc>20021222T214351-20021222T214354: CO: No signal }}}</desc>
+# <break/>
+# <tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
+# <tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
+# <tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
+# </track>
+# </gpsml>
+# '
 ok - "../gpst nosignal.tmp" - Read output from 'gpst -u *.mayko' (stderr)
 ok - "../gpst -u no_signal.mayko" - Read Mayko format with no signal, output old Mayko format
 ok - "../gpst -u no_signal.mayko" - Read Mayko format with no signal, output old Mayko format (stderr)
@@ -213,7 +756,57 @@ ok - "../gpst --version"
 # Testing --strip-whitespace option...
 ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output (stderr)
-ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines
+not ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines
+#   Failed test '"../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines'
+#   in ./run-tests.pl at line 1894.
+#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+# version="1.1"
+# creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+# xmlns="http://www.topografix.com/GPX/1/1"
+# xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+# xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+# <trk>
+# <trkseg>
+# <trkpt lat="70.6800486" lon="23.6746151"><time>2002-12-22T21:42:24Z</time></trkpt>
+# <trkpt lat="70.6799322" lon="23.6740038"><time>2002-12-22T21:42:32Z</time></trkpt>
+# <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:42:54Z</time></trkpt>
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:51Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:52Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:54Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <trkpt lat="70.6800774" lon="23.6757566"><time>2002-12-22T21:44:45Z</time></trkpt>
+# <trkpt lat="70.6801502" lon="23.6753442"><time>2002-12-22T21:44:52Z</time></trkpt>
+# <trkpt lat="70.6801905" lon="23.6757542"><time>2002-12-22T21:45:04Z</time></trkpt>
+# </trkseg>
+# </trk>
+# </gpx>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+# version="1.1"
+# creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+# xmlns="http://www.topografix.com/GPX/1/1"
+# xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+# xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+# <trk>
+# <trkseg>
+# <trkpt lat="70.6800486" lon="23.6746151"><time>2002-12-22T21:42:24Z</time></trkpt>
+# <trkpt lat="70.6799322" lon="23.6740038"><time>2002-12-22T21:42:32Z</time></trkpt>
+# <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:42:54Z</time></trkpt>
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:51Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:52Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:54Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <trkpt lat="70.6800774" lon="23.6757566"><time>2002-12-22T21:44:45Z</time></trkpt>
+# </trkseg>
+# <trkseg>
+# <trkpt lat="70.6801502" lon="23.6753442"><time>2002-12-22T21:44:52Z</time></trkpt>
+# <trkpt lat="70.6801905" lon="23.6757542"><time>2002-12-22T21:45:04Z</time></trkpt>
+# </trkseg>
+# </trk>
+# </gpx>
+# '
 ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines (stderr)
 # Testing --double-y-scale option...
 ok - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format
@@ -242,3 +835,4 @@ ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
 1..211
+# Looks like you failed 13 tests of 211.
