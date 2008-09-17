@@ -162,6 +162,8 @@ ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format
 ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format (stderr)
 ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format
 ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format (stderr)
+ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks
+ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr)
 # Testing --outside option...
 # Testing --pos1 and --pos2 options...
 # Testing --require option...
@@ -234,4 +236,4 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..204
+1..206

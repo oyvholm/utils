@@ -1,6 +1,4 @@
 # Running TODO tests...
-ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks # TODO Remove extra \n in the beginning
-ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -o csv multitrack.gpx" - Output csv format from gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -o csv multitrack.gpx" - Output csv format from gpx'
 #   in ./run-tests.pl at line 1835.
@@ -224,4 +222,4 @@ not ok - list_nearest_waypoints() # TODO Fix it.
 #                   ''
 #     doesn't match '(?-xism:^\(.*,.*,.*\)$)'
 # Testing finished.
-1..13
+1..11
