@@ -3,7 +3,7 @@ testcmd("../gpst command", # {{{
 [expected stdin]
 END
     "",
-    "description"
+    "description",
 );
 
 # }}}

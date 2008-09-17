@@ -390,6 +390,7 @@ testcmd("../gpst </dev/null", # {{{
 </gpsml>
 END
     "",
+    "Read from /dev/null",
 );
 
 # }}}
@@ -403,6 +404,7 @@ $gpx_header
 </gpx>
 END
     "",
+    "Output gpx from /dev/null",
 );
 
 # }}}
@@ -601,7 +603,7 @@ diag("Testing --from-date option..."); # {{{
 diag("Testing --help option..."); # {{{
 like(`../gpst -h`, # {{{
     '/Converts between various GPS formats\./',
-    '"../gpst -h"'
+    "Check -h (--help) option"
 );
 # }}}
 # --help option }}}
@@ -629,7 +631,7 @@ testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx
 </gpsml>
 END
     "",
-    "Check --inside option (gpx to gpst)"
+    "Check --inside option (gpx to gpst)",
 );
 # }}}
 
@@ -1013,7 +1015,7 @@ move -0.1462394 51.4972731
 -0.1462732 51.4973145
 END
     "",
-    "Output xgraph format from GPX"
+    "Output xgraph format from GPX",
 );
 
 # }}}
@@ -1034,6 +1036,7 @@ testcmd("../gpst -o pgtab compact.gpx", # {{{
 2002-12-30T15:22:25Z\t(70.6609426,23.7028732)\t\\N\t\\N\t\\N\t\\N\t\\N
 END
     "",
+    "Output pgtab from gpx format",
 );
 
 # }}}
@@ -1050,6 +1053,7 @@ testcmd("../gpst -o pgtab no_signal.mayko", # {{{
 2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
 END
     "",
+    "Output pgtab from mayko format",
 );
 
 # }}}
@@ -1060,6 +1064,7 @@ testcmd("../gpst -o pgtab missing.gpsml", # {{{
 2006-04-30T17:18:05Z\t(60.42338,5.34269)\t487\t\\N\t\\N\t\\N\t\\N
 END
     "",
+    "Output pgtab from missing.gpsml",
 );
 
 # }}}
@@ -1074,7 +1079,7 @@ testcmd("../gpst -o csv log.dos.mayko", # {{{
 2003-06-15T10:28:10Z\t8.1307400\t58.1809621\t\t
 END
     "",
-    "Read DOS-formatted Mayko format",
+    "Output csv from DOS-formatted Mayko format",
 );
 
 # }}}
@@ -1176,7 +1181,7 @@ testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gp
 </gpsml>
 END
     "",
-    "Check --outside option (gpx to gpst)"
+    "Check --outside option (gpx to gpst)",
 );
 
 # }}}
@@ -1352,6 +1357,7 @@ testcmd("../gpst -R lat=4,lon=5,ele=1 pause.gpx", # {{{
 </gpsml>
 END
     "",
+    "--round works with lat, lon, ele from gpx",
 );
 
 # }}}
@@ -1527,7 +1533,7 @@ diag("Testing --verbose option..."); # {{{
 diag("Testing --version option..."); # {{{
 like(`../gpst --version`, # {{{
     qr/^(\$Id: .*? \$\n)+$/s,
-    '"../gpst --version"'
+    '"../gpst --version" - The --version option outputs Id strings',
 );
 
 # }}}

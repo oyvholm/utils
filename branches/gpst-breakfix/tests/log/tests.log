@@ -87,10 +87,10 @@ ok - trackpoint(): Missing {'type'}, return undef
 ok - trackpoint(): Missing {'error'}, return undef
 # Testing output from ../gpst
 # Read empty input (/dev/null)...
-ok - "../gpst </dev/null"
-ok - "../gpst </dev/null" (stderr)
-ok - "../gpst -o gpx </dev/null"
-ok - "../gpst -o gpx </dev/null" (stderr)
+ok - "../gpst </dev/null" - Read from /dev/null
+ok - "../gpst </dev/null" - Read from /dev/null (stderr)
+ok - "../gpst -o gpx </dev/null" - Output gpx from /dev/null
+ok - "../gpst -o gpx </dev/null" - Output gpx from /dev/null (stderr)
 # Read empty files...
 ok - "echo '<tp> </tp>' | ../gpst" - Don’t print empty trackpoints
 ok - "echo '<tp> </tp>' | ../gpst" - Don’t print empty trackpoints (stderr)
@@ -198,7 +198,7 @@ not ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timest
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
 # Testing --from-date option...
 # Testing --help option...
-ok - "../gpst -h"
+ok - Check -h (--help) option
 # Testing --inside option...
 not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
 #   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)'
@@ -469,14 +469,14 @@ not ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
 # -0.1462732 51.4973145
 # '
 ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX (stderr)
-ok - "../gpst -o pgtab compact.gpx"
-ok - "../gpst -o pgtab compact.gpx" (stderr)
-ok - "../gpst -o pgtab no_signal.mayko"
-ok - "../gpst -o pgtab no_signal.mayko" (stderr)
-ok - "../gpst -o pgtab missing.gpsml"
-ok - "../gpst -o pgtab missing.gpsml" (stderr)
-ok - "../gpst -o csv log.dos.mayko" - Read DOS-formatted Mayko format
-ok - "../gpst -o csv log.dos.mayko" - Read DOS-formatted Mayko format (stderr)
+ok - "../gpst -o pgtab compact.gpx" - Output pgtab from gpx format
+ok - "../gpst -o pgtab compact.gpx" - Output pgtab from gpx format (stderr)
+ok - "../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format
+ok - "../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format (stderr)
+ok - "../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml
+ok - "../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml (stderr)
+ok - "../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format
+ok - "../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format (stderr)
 ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format
 ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format (stderr)
 ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format
@@ -571,8 +571,8 @@ ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stder
 ok - "../gpst -rep missing.gpsml" - Require elevation and position # TODO Shall lat/lon be cleared if one is missing?
 ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
 # Testing --round option...
-ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx"
-ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" (stderr)
+ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx
+ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx (stderr)
 # Testing --short-date option...
 # Testing --save-to-file option...
 # Testing --create-breaks option...
@@ -752,7 +752,7 @@ ok - "../gpst -u no_signal.mayko" - Read Mayko format with no signal, output old
 ok - "../gpst -u no_signal.mayko" - Read Mayko format with no signal, output old Mayko format (stderr)
 # Testing --verbose option...
 # Testing --version option...
-ok - "../gpst --version"
+ok - "../gpst --version" - The --version option outputs Id strings
 # Testing --strip-whitespace option...
 ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output (stderr)
