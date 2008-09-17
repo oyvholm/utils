@@ -23,7 +23,7 @@ BEGIN {
     $VERSION = ($rcs_id =~ / (\d+) /, $1);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&trackpoint &postgresql_copy_safe);
+    @EXPORT = qw(&trackpoint &postgresql_copy_safe &num_expand);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -186,6 +186,19 @@ sub postgresql_copy_safe {
     $Str =~ s/\r/\\r/gs;
     $Str =~ s/\t/\\t/gs;
     return($Str);
+    # }}}
+}
+
+sub num_expand {
+    # {{{
+    my $n = shift;
+    my $Retval;
+    return $n unless $n =~ /^(.*)e([-+]?)(.*)$/;
+    my ($num, $sign, $exp) = ($1, $2, $3);
+    my $sig = $sign eq '-' ? "." . ($exp - 1 + length $num) : '';
+    $Retval = sprintf("%${sig}f", $n);
+    D("num_expand('$n') returns '$Retval'");
+    return($Retval);
     # }}}
 }
 

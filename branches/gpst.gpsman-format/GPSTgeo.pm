@@ -107,8 +107,9 @@ sub dms_to_ddd {
     if ("$Deg$Min$Sec" =~ /[^\d\.]/) {
         return(undef);
     }
-    my $Retval = 1.0 * sprintf("%f", $Deg + 1.0*$Min/60 + 1.0*$Sec/3600);
-    return($Retval);
+    # Limit at 16 decimals, due to float restriction. YAGNI.
+    my $Retval = 1.0 * sprintf("%.16f", $Deg + 1.0*$Min/60 + 1.0*$Sec/3600);
+    return(GPST::num_expand($Retval));
     # }}}
 }
 

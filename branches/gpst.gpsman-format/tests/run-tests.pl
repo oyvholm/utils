@@ -293,8 +293,9 @@ is(dms_to_ddd(12, -30, 45),
 is(dms_to_ddd(12, 30, -45),
     undef,
     "dms_to_ddd() doesn’t accept negative seconds atm");
-is(dms_to_ddd(0, 0, 0.1),
-    "0.00001",
+# Weird behaviour, this scientific notation thing.
+is(num_expand(sprintf("%.08f", dms_to_ddd(0, 0, 0.1))),
+    "0.00002778",
     "dms_to_ddd(0, 0, 0.1) — Precision of DMS with one decimal");
 is(dms_to_ddd(2, 30),
     2.5,
