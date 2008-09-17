@@ -1,0 +1,237 @@
+# Testing conversion routines...
+ok 1 - txt_to_xml("abc")
+ok 2 - txt_to_xml("<&>")
+ok 3 - txt_to_xml() with multiline string
+ok 4 - xml_to_txt("abc")
+ok 5 - xml_to_txt("&lt;&amp;&gt;")
+ok 6 - xml_to_txt() with multiline string
+ok 7 - postgresql_copy_safe() with empty string
+ok 8 - postgresql_copy_safe("abcæøåÆØÅ")
+ok 9 - postgresql_copy_safe("abc\t'\r\n")
+ok 10 - postgresql_copy_safe() with multiline, nulls and stuff
+# Testing date routines...
+ok 11 - sec_to_string() without separator
+ok 12 - sec_to_string() with separator
+ok 13 - sec_to_string(-5000) — negative numbers unsupported atm
+ok 14 - sec_to_string("")
+ok 15 - sec_to_string() with invalid string
+ok 16 - sec_to_string() with a bunch of leading zeros
+ok 17 - sec_to_string() with decimals
+ok 18 - sec_to_string() with decimals and prefixing zeros
+ok 19 - sec_to_string() with decimals and extra trailing zeros
+ok 20 - sec_to_string() with missing zero before decimal point
+ok 21 - sec_to_readable(0)
+ok 22 - sec_to_readable() with invalid string
+ok 23 - sec_to_readable(86400)
+ok 24 - sec_to_readable(86400*1000)
+ok 25 - sec_to_readable(86400+7200+180+4)
+ok 26 - sec_to_readable("3.14")
+ok 27 - sec_to_readable() rejects negative numbers
+ok 28 - sec_to_readable() rejects negative decimal
+ok 29 - sec_to_readable(), missing zero before decimal point
+ok 30 - sec_to_readable() with empty string
+# Testing geo routines...
+ok 31 - ddd_to_dms("12.34567")
+ok 32 - ddd_to_dms("0")
+ok 33 - ddd_to_dms("")
+ok 34 - ddd_to_dms("pH()rtY tW0")
+ok 35 - ddd_to_dms("-12.34567")
+ok 36 - ddd_to_dms("0.34567")
+ok 37 - ddd_to_dms(".34567")
+ok 38 - ddd_to_dms("-.34567")
+ok 39 - ddd_to_dms("-0.34567")
+ok 40 - ddd_to_dms("180")
+ok 41 - ddd_to_dms("-180")
+ok 42 - ddd_to_dms("-1")
+ok 43 - ddd_to_dms("2-3")
+# Testing trackpoint()...
+ok 44 - trackpoint() receives empty hash
+ok 45 - trackpoint() (gpsml)
+ok 46 - trackpoint() (gpx)
+ok 47 - trackpoint(): {'format'} with invalid value ("2d") returns undef
+ok 48 - trackpoint(): {'lat'} with invalid value ("2d") returns undef
+ok 49 - trackpoint(): {'lon'} with invalid value ("2d") returns undef
+ok 50 - trackpoint(): {'type'} with invalid value ("2d") returns undef
+ok 51 - trackpoint(): {'year'} with empty value skips time
+ok 52 - trackpoint(): {'year'} with invalid value ("2d") skips time
+ok 53 - trackpoint(): Strip prefixing zeros from {'year'}
+ok 54 - trackpoint(): {'year'} is negative, skip time
+ok 55 - trackpoint(): Decimals in {'year'}, skip time
+ok 56 - trackpoint(): {'month'} with empty value skips time
+ok 57 - trackpoint(): {'month'} with invalid value ("2d") skips time
+ok 58 - trackpoint(): Strip prefixing zeros from {'month'}
+ok 59 - trackpoint(): {'month'} is negative, skip time
+ok 60 - trackpoint(): Decimals in {'month'}, skip time
+ok 61 - trackpoint(): {'day'} with empty value skips time
+ok 62 - trackpoint(): {'day'} with invalid value ("2d") skips time
+ok 63 - trackpoint(): Strip prefixing zeros from {'day'}
+ok 64 - trackpoint(): {'day'} is negative, skip time
+ok 65 - trackpoint(): Decimals in {'day'}, skip time
+ok 66 - trackpoint(): {'hour'} with empty value skips time
+ok 67 - trackpoint(): {'hour'} with invalid value ("2d") skips time
+ok 68 - trackpoint(): Strip prefixing zeros from {'hour'}
+ok 69 - trackpoint(): {'hour'} is negative, skip time
+ok 70 - trackpoint(): Decimals in {'hour'}, skip time
+ok 71 - trackpoint(): {'min'} with empty value skips time
+ok 72 - trackpoint(): {'min'} with invalid value ("2d") skips time
+ok 73 - trackpoint(): Strip prefixing zeros from {'min'}
+ok 74 - trackpoint(): {'min'} is negative, skip time
+ok 75 - trackpoint(): Decimals in {'min'}, skip time
+ok 76 - trackpoint(): {'sec'} with empty value skips time
+ok 77 - trackpoint(): {'sec'} with invalid value ("2d") skips time
+ok 78 - trackpoint(): Strip prefixing zeros from {'sec'}
+ok 79 - trackpoint(): {'sec'} is negative, skip time
+ok 80 - trackpoint(): Remove trailing zeros in {'sec'} decimals
+ok 81 - trackpoint(): Missing {'format'}, return undef
+ok 82 - trackpoint(): Missing {'type'}, return undef
+ok 83 - trackpoint(): Missing {'error'}, return undef
+# Testing output from ../gpst
+# Read empty input (/dev/null)...
+ok 84 - "../gpst </dev/null"
+ok 85 - "../gpst </dev/null" (stderr)
+ok 86 - "../gpst -o gpx </dev/null"
+ok 87 - "../gpst -o gpx </dev/null" (stderr)
+# Read empty files...
+ok 88 - "echo '<tp> </tp>' | ../gpst" - Don’t print empty trackpoints
+ok 89 - "echo '<tp> </tp>' | ../gpst" - Don’t print empty trackpoints (stderr)
+# Testing --chronology option...
+ok 90 - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times
+ok 91 - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times (stderr)
+# Testing --skip-dups option...
+ok 92 - "../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml
+ok 93 - "../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml (stderr)
+ok 94 - "../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format
+ok 95 - "../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format (stderr)
+ok 96 - "../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format
+ok 97 - "../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format (stderr)
+ok 98 - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format
+ok 99 - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format (stderr)
+# Testing --epoch option...
+ok 100 - "../gpst --epoch pause.gpx" - --epoch is ignored in gpsml output
+ok 101 - "../gpst --epoch pause.gpx" - --epoch is ignored in gpsml output (stderr)
+ok 102 - "../gpst --epoch -o gpx pause.gpx" - --epoch is ignored in gpx output
+ok 103 - "../gpst --epoch -o gpx pause.gpx" - --epoch is ignored in gpx output (stderr)
+# Testing --fix option...
+ok 104 - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
+ok 105 - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
+# Testing --from-date option...
+# Testing --help option...
+# Testing --inside option...
+# Testing --undefined option...
+# Testing --near option...
+# Testing --output option...
+ok 106 - "../gpst log.mcsv" - Read Mapsource TAB-separated format
+ok 107 - "../gpst log.mcsv" - Read Mapsource TAB-separated format (stderr)
+ok 108 - "../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year
+ok 109 - "../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year (stderr)
+ok 110 - "../gpst log.gpstxt" - Read Garmin serial text format
+ok 111 - "../gpst log.gpstxt" - Read Garmin serial text format (stderr)
+ok 112 - "../gpst log.dos.mayko" - Read DOS-formatted Mayko format
+ok 113 - "../gpst log.dos.mayko" - Read DOS-formatted Mayko format (stderr)
+ok 114 - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format
+ok 115 - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format (stderr)
+ok 116 - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format
+ok 117 - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format (stderr)
+ok 118 - "../gpst multitrack.gpx" - Read GPX file with multiple tracks
+ok 119 - "../gpst multitrack.gpx" - Read GPX file with multiple tracks (stderr)
+ok 120 - "../gpst compact.gpx" - Read GPX one-liner
+ok 121 - "../gpst compact.gpx" - Read GPX one-liner (stderr)
+ok 122 - "../gpst missing.gpsml" - Read gpsml with various data missing
+ok 123 - "../gpst missing.gpsml" - Read gpsml with various data missing (stderr)
+ok 124 - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file
+ok 125 - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file (stderr)
+ok 126 - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml
+ok 127 - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml (stderr)
+ok 128 - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates
+ok 129 - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates (stderr)
+ok 130 - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines
+ok 131 - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
+ok 132 - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
+ok 133 - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data (stderr)
+ok 134 - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
+ok 135 - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX (stderr)
+ok 136 - "../gpst -o pgtab compact.gpx"
+ok 137 - "../gpst -o pgtab compact.gpx" (stderr)
+ok 138 - "../gpst -o pgtab no_signal.mayko"
+ok 139 - "../gpst -o pgtab no_signal.mayko" (stderr)
+ok 140 - "../gpst -o pgtab missing.gpsml"
+ok 141 - "../gpst -o pgtab missing.gpsml" (stderr)
+ok 142 - "../gpst -o csv log.dos.mayko" - Read DOS-formatted Mayko format
+ok 143 - "../gpst -o csv log.dos.mayko" - Read DOS-formatted Mayko format (stderr)
+ok 144 - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format
+ok 145 - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format (stderr)
+ok 146 - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format
+ok 147 - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format (stderr)
+# Testing --outside option...
+# Testing --pos1 and --pos2 options...
+# Testing --require option...
+ok 148 - "../gpst -re multitrack.gpx" - Require elevation from GPX data
+ok 149 - "../gpst -re multitrack.gpx" - Require elevation from GPX data (stderr)
+ok 150 - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml
+ok 151 - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml (stderr)
+ok 152 - "../gpst -re missing.gpsml" - Require elevation # TODO Shall lat/lon be cleared if one is missing?
+ok 153 - "../gpst -re missing.gpsml" - Require elevation (stderr) # TODO Shall lat/lon be cleared if one is missing?
+ok 154 - "../gpst -rt missing.gpsml" - Require time # TODO Shall lat/lon be cleared if one is missing?
+ok 155 - "../gpst -rt missing.gpsml" - Require time (stderr) # TODO Shall lat/lon be cleared if one is missing?
+ok 156 - "../gpst -rp missing.gpsml" - Require position # TODO Shall lat/lon be cleared if one is missing?
+ok 157 - "../gpst -rp missing.gpsml" - Require position (stderr) # TODO Shall lat/lon be cleared if one is missing?
+ok 158 - "../gpst -ret missing.gpsml" - Require elevation and time # TODO Shall lat/lon be cleared if one is missing?
+ok 159 - "../gpst -ret missing.gpsml" - Require elevation and time (stderr) # TODO Shall lat/lon be cleared if one is missing?
+ok 160 - "../gpst -retp missing.gpsml" - Require elevation, time and position # TODO Shall lat/lon be cleared if one is missing?
+ok 161 - "../gpst -retp missing.gpsml" - Require elevation, time and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
+ok 162 - "../gpst -rep missing.gpsml" - Require elevation and position # TODO Shall lat/lon be cleared if one is missing?
+ok 163 - "../gpst -rep missing.gpsml" - Require elevation and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
+# Testing --round option...
+ok 164 - "../gpst --round lat=4,lon=5,ele=1 pause.gpx"
+ok 165 - "../gpst --round lat=4,lon=5,ele=1 pause.gpx" (stderr)
+# Testing --short-date option...
+# Testing --save-to-file option...
+# Testing --create-breaks option...
+ok 166 - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files
+ok 167 - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files (stderr)
+ok 168 - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
+ok 169 - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
+ok 170 - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
+ok 171 - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
+# Testing --comment-out-dups option...
+ok 172 - "../gpst -u no_signal.mayko >nosignal.tmp" - Redirect stdout
+ok 173 - "../gpst -u no_signal.mayko >nosignal.tmp" - Redirect stdout (stderr)
+ok 174 - "../gpst nosignal.tmp" - Read output from 'gpst -u *.mayko'
+ok 175 - "../gpst nosignal.tmp" - Read output from 'gpst -u *.mayko' (stderr)
+ok 176 - "../gpst -u no_signal.mayko" - Read Mayko format with no signal, output old Mayko format
+ok 177 - "../gpst -u no_signal.mayko" - Read Mayko format with no signal, output old Mayko format (stderr)
+# Testing --verbose option...
+# Testing --version option...
+ok 178 - ../gpst --version
+# Testing --strip-whitespace option...
+ok 179 - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
+ok 180 - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output (stderr)
+ok 181 - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines
+ok 182 - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines (stderr)
+# Testing --double-y-scale option...
+ok 183 - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format
+ok 184 - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format (stderr)
+ok 185 - "../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format
+ok 186 - "../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format (stderr)
+# Testing --debug option...
+# Strip error from Mayko format...
+ok 187 - "../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output
+ok 188 - "../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output (stderr)
+ok 189 - "../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output
+ok 190 - "../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output (stderr)
+ok 191 - "../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output
+ok 192 - "../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output (stderr)
+ok 193 - "../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output
+ok 194 - "../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output (stderr)
+ok 195 - "../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output
+ok 196 - "../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output (stderr)
+ok 197 - "../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output
+ok 198 - "../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output (stderr)
+ok 199 - "../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output
+ok 200 - "../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output (stderr)
+ok 201 - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output
+ok 202 - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output (stderr)
+ok 203 - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
+ok 204 - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
+# Testing finished.
+1..204
