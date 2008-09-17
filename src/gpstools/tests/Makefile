@@ -4,5 +4,5 @@
 # gpstools/tests/Makefile
 
 all:
-	./run-tests.pl >log/tests.log 2>&1
-	./run-tests.pl --todo >log/todo-tests.log 2>&1
+	./run-tests.pl 2>&1 | ./unify.pl >log/tests.log
+	./run-tests.pl --todo 2>&1 | ./unify.pl >log/todo-tests.log

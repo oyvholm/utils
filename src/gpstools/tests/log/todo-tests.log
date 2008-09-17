@@ -1,7 +1,7 @@
 # Running TODO tests...
-ok 1 - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks # TODO Remove extra \n in the beginning
-ok 2 - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr) # TODO Remove extra \n in the beginning
-not ok 3 - "../gpst -o csv multitrack.gpx" - Output csv format from gpx # TODO Remove extra \n in the beginning
+ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks # TODO Remove extra \n in the beginning
+ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst -o csv multitrack.gpx" - Output csv format from gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -o csv multitrack.gpx" - Output csv format from gpx'
 #   in ./run-tests.pl at line 1835.
 #          got: '				
@@ -43,8 +43,8 @@ not ok 3 - "../gpst -o csv multitrack.gpx" - Output csv format from gpx # TODO R
 # 2003-02-11T23:38:34Z	-0.1462825	51.4973218		
 # 2003-02-11T23:38:35Z	-0.1462732	51.4973145		
 # '
-ok 4 - "../gpst -o csv multitrack.gpx" - Output csv format from gpx (stderr) # TODO Remove extra \n in the beginning
-not ok 5 - "../gpst -o csv pause.gpx" - csv format from gpx # TODO Remove extra \n in the beginning
+ok - "../gpst -o csv multitrack.gpx" - Output csv format from gpx (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst -o csv pause.gpx" - csv format from gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -o csv pause.gpx" - csv format from gpx'
 #   in ./run-tests.pl at line 1835.
 #          got: '				
@@ -68,8 +68,8 @@ not ok 5 - "../gpst -o csv pause.gpx" - csv format from gpx # TODO Remove extra 
 # 2006-05-21 16:59:08	5.299773	60.425345	31.936	
 # 2006-05-21 17:00:54	5.299419	60.425457	31.794	
 # '
-ok 6 - "../gpst -o csv pause.gpx" - csv format from gpx (stderr) # TODO Remove extra \n in the beginning
-not ok 7 - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
+ok - "../gpst -o csv pause.gpx" - csv format from gpx (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx'
 #   in ./run-tests.pl at line 1835.
 #          got: '				
@@ -93,8 +93,8 @@ not ok 7 - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds fr
 # 1148230748	5.299773	60.425345	31.936	
 # 1148230854	5.299419	60.425457	31.794	
 # '
-ok 8 - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx (stderr) # TODO Remove extra \n in the beginning
-not ok 9 - "../gpst -u no_signal.mayko" - Output gpsml from the -u option # TODO Use gpsml, this Mayko thing is obsolete.
+ok - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst -u no_signal.mayko" - Output gpsml from the -u option # TODO Use gpsml, this Mayko thing is obsolete.
 #   Failed (TODO) test '"../gpst -u no_signal.mayko" - Output gpsml from the -u option'
 #   in ./run-tests.pl at line 1835.
 #          got: 'xmaplog 1.0 Mon Dec 23 02:00:50 2002
@@ -129,8 +129,8 @@ not ok 9 - "../gpst -u no_signal.mayko" - Output gpsml from the -u option # TODO
 # </track>
 # </gpsml>
 # '
-ok 10 - "../gpst -u no_signal.mayko" - Output gpsml from the -u option (stderr) # TODO Use gpsml, this Mayko thing is obsolete.
-not ok 11 - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx # TODO Tweak output
+ok - "../gpst -u no_signal.mayko" - Output gpsml from the -u option (stderr) # TODO Use gpsml, this Mayko thing is obsolete.
+not ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx # TODO Tweak output
 #   Failed (TODO) test '"../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx'
 #   in ./run-tests.pl at line 1835.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -216,9 +216,9 @@ not ok 11 - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitr
 #   </trk>
 # </gpx>
 # '
-ok 12 - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx (stderr) # TODO Tweak output
+ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx (stderr) # TODO Tweak output
 GPX: Cannot open file '/home/sunny/gps/waypoints.gpx'!
-not ok 13 - list_nearest_waypoints() # TODO Fix it.
+not ok - list_nearest_waypoints() # TODO Fix it.
 #   Failed (TODO) test 'list_nearest_waypoints()'
 #   in ./run-tests.pl at line 1807.
 #                   ''
