@@ -2,17 +2,13 @@
 
 #=======================================================================
 # $Id$
-# Quick & dirty script for converting gpsman(1) sdata files to GPX.
+# Create random 3D surface for use in plotting programs.
 #
 # Character set: UTF-8
-# ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2007– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
-
-BEGIN {
-    push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
-}
 
 BEGIN {
     our @version_array;
@@ -21,8 +17,6 @@ BEGIN {
 use strict;
 use Getopt::Long;
 
-use GPSTxml;
-
 $| = 1;
 
 our $Debug = 0;
@@ -30,6 +24,8 @@ our $Debug = 0;
 our %Opt = (
     'debug' => 0,
     'help' => 0,
+    'max' => 1000,
+    'min' => 0,
     'verbose' => 0,
     'version' => 0,
 );
@@ -47,6 +43,8 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "max=f" => \$Opt{'max'},
+    "min=f" => \$Opt{'min'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -55,66 +53,50 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-print(<<END);
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<gpx
-  version="1.1"
-  creator="gpsman2gpx - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/gpsman2gpx"
-  xmlns="http://www.topografix.com/GPX/1/1"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
->
-  <!-- \$Id\$ -->
-END
+my ($Lat, $Lon) =
+    (  0,    0);
 
-while (<>) {
-    my $Line = $_;
-    if (
-        $Line =~ /^
-            (.*?)\t # name
-            (.*?)\t # cmt
-            (.*?)\t # some kind of worthless date
-            ([NS].+?)\t # lat
-            ([WE].+?)\t # lon
-            (.*)    # lots of uninteresting stuff but with altitude
-            $
-        /x
-    ) {
-        my ($Name, $Cmt, $wl_date, $Lat, $Lon, $Rest) =
-           (   $1,   $2,       $3,   $4,   $5,    $6);
-        my $Ele = "";
+my @Ele = ();
 
-        $Name = txt_to_xml($Name);
-        $Cmt = txt_to_xml($Cmt);
-        $Lat = conv_pos($Lat);
-        $Lon = conv_pos($Lon);
-        if ($Rest =~ /ele=([\d\.]+)\D/) {
-            $Ele = 1.0 * $1;
+my $Size = 20;
+
+while (1) {
+    D("Lon = '$Lon'");
+    for $Lon (0..$Size) {
+        my $Left = defined($Ele[$Lat][$Lon-1]) ? $Ele[$Lat][$Lon-1]  : rand(1);
+        my $Right = defined($Ele[$Lat][$Lon+1]) ? $Ele[$Lat][$Lon+1] : rand(1);
+        my $Over = defined($Ele[$Lat+1][$Lon]) ? $Ele[$Lat+1][$Lon]  : rand(1);
+        my $Under = defined($Ele[$Lat-1][$Lon]) ? $Ele[$Lat-1][$Lon] : rand(1);
+        my $Curr = ($Left+$Right+$Over+$Under)/4;
+        $Curr += rand(1) >= 0.5 ? rand(1) : 0-rand(1);
+        # until ($Curr >= $Opt{'min'}) {
+        #     D("Curr >= Min");
+        #     $Curr += rand(1) * 1.0;
+        # }
+        # until ($Curr <= $Opt{'max'}) {
+        #     D("Curr <= Max");
+        #     $Curr -= rand(1) * 1.0;
+        # }
+        if ($Lat > 0 && $Lat < $Size && $Lon > 0 && $Lon < $Size) {
+            # print("$Lat\t$Lon\t$Curr\n");
+            # print($Lat   . "\t" . $Lon-1 . "\t" . $Left  . "\n");
+            print($Lat   . "\t" . $Lon   . "\t" . $Curr  . "\n");
+            # print("\n");
+            print($Lat+1 . "\t" . $Lon   . "\t" . $Over  . "\n");
+            print($Lat   . "\t" . $Lon   . "\t" . $Curr  . "\n");
+            # print("\n");
+            # print($Lat   . "\t" . $Lon+1 . "\t" . $Right . "\n");
+            print($Lat   . "\t" . $Lon   . "\t" . $Curr  . "\n");
+            # print("\n");
+            print($Lat-1 . "\t" . $Lon   . "\t" . $Under . "\n");
+            print($Lat   . "\t" . $Lon   . "\t" . $Curr  . "\n");
+            # print("\n");
         }
-        print("  <wpt lat=\"$Lat\" lon=\"$Lon\">\n");
-        print("    <ele>$Ele</ele>\n") if length($Ele);
-        print("    <name>$Name</name>\n") if length($Name);
-        print("    <cmt>$Cmt</cmt>\n") if length($Cmt);
-        print("  </wpt>\n");
+        $Ele[$Lat][$Lon] = $Curr;
+        print("\n");
     }
-}
-
-print("</gpx>\n");
-
-sub conv_pos {
-    # {{{
-    my $Retval = shift;
-
-    if ($Retval =~ /^([NSWE])([0-9\.]+)$/) {
-        my ($Pref, $Deg) = ($1, $2);
-        $Retval = ($Pref =~ /[SW]/)
-            ? 0-$Deg
-            : $Deg;
-    } else {
-        warn("\"$Retval\": Invalid coordinate\n");
-    }
-    return $Retval;
-    # }}}
+    $Lat += 1;
+    last if ($Lat > $Size);
 }
 
 sub print_version {

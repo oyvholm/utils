@@ -1,0 +1,9 @@
+testcmd("../gpst command", # {{{
+    <<END,
+[expected stdin]
+END
+    "",
+    "description"
+);
+
+# }}}
