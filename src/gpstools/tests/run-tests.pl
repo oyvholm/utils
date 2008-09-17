@@ -599,8 +599,40 @@ END
 diag("Testing --from-date option..."); # {{{
 # --from-date option }}}
 diag("Testing --help option..."); # {{{
+like(`../gpst --help`, # {{{
+    '/Converts between various GPS formats\./',
+    '"../gpst --help"'
+);
+# }}}
 # --help option }}}
 diag("Testing --inside option..."); # {{{
+testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<break/>
+<title>track2</title>
+<tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+<tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+<tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+<tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+<break/>
+<tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+<break/>
+<title>track3</title>
+<tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+<tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+<tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Check --inside option (gpx to gpst)"
+);
+# }}}
+
 # --inside option }}}
 diag("Testing --undefined option..."); # {{{
 # --undefined option }}}
@@ -1121,6 +1153,33 @@ END
 # ygraph
 # --output option }}}
 diag("Testing --outside option..."); # {{{
+testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+<break/>
+<title>track2</title>
+<break/>
+<title>track3</title>
+<break/>
+<tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+<tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+<tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+<tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+<tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Check --outside option (gpx to gpst)"
+);
+
+# }}}
 # --outside option }}}
 diag("Testing --pos1 and --pos2 options..."); # {{{
 # --pos1 and --pos2 options }}}
@@ -1468,7 +1527,7 @@ diag("Testing --verbose option..."); # {{{
 diag("Testing --version option..."); # {{{
 like(`../gpst --version`, # {{{
     qr/^(\$Id: .*? \$\n)+$/s,
-    "../gpst --version"
+    '"../gpst --version"'
 );
 
 # }}}
