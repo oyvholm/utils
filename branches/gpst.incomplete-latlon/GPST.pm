@@ -110,14 +110,14 @@ sub trackpoint {
                 "$Spc$Spc$Spc$Spc$Spc$Spc",
                 "<trkpt lat=\"$Dat{'lat'}\" lon=\"$Dat{'lon'}\">",
                 "$Spc",
+                length($Dat{'ele'})
+                ? "<ele>$Dat{'ele'}</ele>$Spc"
+                : "",
                 $print_time
                     ? "<time>" .
                       "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
                       "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
                       "</time>$Spc"
-                    : "",
-                length($Dat{'ele'})
-                    ? "<ele>$Dat{'ele'}</ele>$Spc"
                     : "",
                 "</trkpt>\n"
             );
