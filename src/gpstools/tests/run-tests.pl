@@ -519,7 +519,7 @@ END
 # }}}
 # --skip-dups option }}}
 diag("Testing --epoch option..."); # {{{
-testcmd("../gpst --epoch pause.gpx", # {{{
+testcmd("../gpst -e pause.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -542,7 +542,7 @@ END
 );
 
 # }}}
-testcmd("../gpst --epoch -o gpx pause.gpx", # {{{
+testcmd("../gpst -e -o gpx pause.gpx", # {{{
     <<END,
 $gpx_header
   <trk>
@@ -599,9 +599,9 @@ END
 diag("Testing --from-date option..."); # {{{
 # --from-date option }}}
 diag("Testing --help option..."); # {{{
-like(`../gpst --help`, # {{{
+like(`../gpst -h`, # {{{
     '/Converts between various GPS formats\./',
-    '"../gpst --help"'
+    '"../gpst -h"'
 );
 # }}}
 # --help option }}}
@@ -1333,7 +1333,7 @@ END
 }
 # --require option }}}
 diag("Testing --round option..."); # {{{
-testcmd("../gpst --round lat=4,lon=5,ele=1 pause.gpx", # {{{
+testcmd("../gpst -R lat=4,lon=5,ele=1 pause.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -1810,7 +1810,7 @@ END
         );
 
         # }}}
-        testcmd("../gpst --epoch -o csv pause.gpx", # {{{
+        testcmd("../gpst -e -o csv pause.gpx", # {{{
             <<END,
 1148230151\t5.299534\t60.425494\t25.260\t
 1148230186\t5.299610\t60.425464\t24.931\t

@@ -67,8 +67,8 @@ not ok - "../gpst -o csv pause.gpx" - csv format from gpx # TODO Remove extra \n
 # 2006-05-21 17:00:54	5.299419	60.425457	31.794	
 # '
 ok - "../gpst -o csv pause.gpx" - csv format from gpx (stderr) # TODO Remove extra \n in the beginning
-not ok - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
-#   Failed (TODO) test '"../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx'
+not ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
+#   Failed (TODO) test '"../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx'
 #   in ./run-tests.pl at line 1894.
 #          got: '				
 # 1148230151	5.299534	60.425494	25.260	
@@ -91,7 +91,7 @@ not ok - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from
 # 1148230748	5.299773	60.425345	31.936	
 # 1148230854	5.299419	60.425457	31.794	
 # '
-ok - "../gpst --epoch -o csv pause.gpx" - csv format with epoch seconds from gpx (stderr) # TODO Remove extra \n in the beginning
+ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -u no_signal.mayko" - Output gpsml from the -u option # TODO Use gpsml, this Mayko thing is obsolete.
 #   Failed (TODO) test '"../gpst -u no_signal.mayko" - Output gpsml from the -u option'
 #   in ./run-tests.pl at line 1894.

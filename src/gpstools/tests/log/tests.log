@@ -107,16 +107,16 @@ ok - "../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from cl
 ok - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format
 ok - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format (stderr)
 # Testing --epoch option...
-ok - "../gpst --epoch pause.gpx" - --epoch is ignored in gpsml output
-ok - "../gpst --epoch pause.gpx" - --epoch is ignored in gpsml output (stderr)
-ok - "../gpst --epoch -o gpx pause.gpx" - --epoch is ignored in gpx output
-ok - "../gpst --epoch -o gpx pause.gpx" - --epoch is ignored in gpx output (stderr)
+ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
+ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
+ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
+ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output (stderr)
 # Testing --fix option...
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
 # Testing --from-date option...
 # Testing --help option...
-ok - "../gpst --help"
+ok - "../gpst -h"
 # Testing --inside option...
 ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
 ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst) (stderr)
@@ -189,8 +189,8 @@ ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stder
 ok - "../gpst -rep missing.gpsml" - Require elevation and position # TODO Shall lat/lon be cleared if one is missing?
 ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
 # Testing --round option...
-ok - "../gpst --round lat=4,lon=5,ele=1 pause.gpx"
-ok - "../gpst --round lat=4,lon=5,ele=1 pause.gpx" (stderr)
+ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx"
+ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" (stderr)
 # Testing --short-date option...
 # Testing --save-to-file option...
 # Testing --create-breaks option...
