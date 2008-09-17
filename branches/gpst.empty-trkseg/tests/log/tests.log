@@ -1,3 +1,16 @@
+not ok - "../gpst -o xgraph empty-trkseg.gpx" - xgraph output from GPX with empty trkseg
+#   Failed test '"../gpst -o xgraph empty-trkseg.gpx" - xgraph output from GPX with empty trkseg'
+#   in ./run-tests.pl at line 1911.
+#          got: '1 1
+# move move 2 2
+# move 2 2
+# move 3 3
+# '
+#     expected: '1 1
+# move 2 2
+# move 3 3
+# '
+ok - "../gpst -o xgraph empty-trkseg.gpx" - xgraph output from GPX with empty trkseg (stderr)
 # Testing conversion routines...
 ok - txt_to_xml("abc")
 ok - txt_to_xml("<&>")
@@ -241,4 +254,5 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..211
+1..213
+# Looks like you failed 1 test of 213.
