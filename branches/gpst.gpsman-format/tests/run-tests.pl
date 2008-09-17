@@ -446,6 +446,7 @@ testcmd("../gpst </dev/null", # {{{
 </gpsml>
 END
     "",
+    "Read from /dev/null",
 );
 
 # }}}
@@ -459,6 +460,7 @@ $gpx_header
 </gpx>
 END
     "",
+    "Output gpx from /dev/null",
 );
 
 # }}}
@@ -575,7 +577,7 @@ END
 # }}}
 # --skip-dups option }}}
 diag("Testing --epoch option..."); # {{{
-testcmd("../gpst --epoch pause.gpx", # {{{
+testcmd("../gpst -e pause.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -598,7 +600,7 @@ END
 );
 
 # }}}
-testcmd("../gpst --epoch -o gpx pause.gpx", # {{{
+testcmd("../gpst -e -o gpx pause.gpx", # {{{
     <<END,
 $gpx_header
   <trk>
@@ -655,8 +657,40 @@ END
 diag("Testing --from-date option..."); # {{{
 # --from-date option }}}
 diag("Testing --help option..."); # {{{
+like(`../gpst -h`, # {{{
+    '/Converts between various GPS formats\./',
+    "Check -h (--help) option"
+);
+# }}}
 # --help option }}}
 diag("Testing --inside option..."); # {{{
+testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<break/>
+<title>track2</title>
+<tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+<tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+<tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+<tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+<break/>
+<tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+<break/>
+<title>track3</title>
+<tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+<tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+<tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Check --inside option (gpx to gpst)",
+);
+# }}}
+
 # --inside option }}}
 diag("Testing --undefined option..."); # {{{
 # --undefined option }}}
@@ -1037,7 +1071,7 @@ move -0.1462394 51.4972731
 -0.1462732 51.4973145
 END
     "",
-    "Output xgraph format from GPX"
+    "Output xgraph format from GPX",
 );
 
 # }}}
@@ -1058,6 +1092,7 @@ testcmd("../gpst -o pgtab compact.gpx", # {{{
 2002-12-30T15:22:25Z\t(70.6609426,23.7028732)\t\\N\t\\N\t\\N\t\\N\t\\N
 END
     "",
+    "Output pgtab from gpx format",
 );
 
 # }}}
@@ -1074,6 +1109,7 @@ testcmd("../gpst -o pgtab no_signal.mayko", # {{{
 2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
 END
     "",
+    "Output pgtab from mayko format",
 );
 
 # }}}
@@ -1084,6 +1120,7 @@ testcmd("../gpst -o pgtab missing.gpsml", # {{{
 2006-04-30T17:18:05Z\t(60.42338,5.34269)\t487\t\\N\t\\N\t\\N\t\\N
 END
     "",
+    "Output pgtab from missing.gpsml",
 );
 
 # }}}
@@ -1098,7 +1135,7 @@ testcmd("../gpst -o csv log.dos.mayko", # {{{
 2003-06-15T10:28:10Z\t8.1307400\t58.1809621\t\t
 END
     "",
-    "Read DOS-formatted Mayko format",
+    "Output csv from DOS-formatted Mayko format",
 );
 
 # }}}
@@ -1151,6 +1188,25 @@ END
 
 # }}}
 # clean
+testcmd("../gpst -t -o clean pause.gpx", # {{{
+    <<END,
+5.299534\t60.425494\t25.260
+5.299610\t60.425464\t24.931
+
+5.299694\t60.425314\t27.975
+
+5.299741\t60.425384\t31.017
+5.299958\t60.425339\t30.980
+5.299640\t60.425238\t30.538
+5.299686\t60.425246\t30.515
+
+5.299773\t60.425345\t31.936
+5.299419\t60.425457\t31.794
+END
+    "",
+    "Output clean format with time breaks",
+);
+# }}}
 # gpstrans
 # poscount
 # ps (Unfinished)
@@ -1158,6 +1214,33 @@ END
 # ygraph
 # --output option }}}
 diag("Testing --outside option..."); # {{{
+testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+<tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+<tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+<break/>
+<title>track2</title>
+<break/>
+<title>track3</title>
+<break/>
+<tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+<tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+<tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+<tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+<tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Check --outside option (gpx to gpst)",
+);
+
+# }}}
 # --outside option }}}
 diag("Testing --pos1 and --pos2 options..."); # {{{
 # --pos1 and --pos2 options }}}
@@ -1358,7 +1441,7 @@ END
 }
 # --require option }}}
 diag("Testing --round option..."); # {{{
-testcmd("../gpst --round lat=4,lon=5,ele=1 pause.gpx", # {{{
+testcmd("../gpst -R lat=4,lon=5,ele=1 pause.gpx", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
@@ -1377,6 +1460,7 @@ testcmd("../gpst --round lat=4,lon=5,ele=1 pause.gpx", # {{{
 </gpsml>
 END
     "",
+    "--round works with lat, lon, ele from gpx",
 );
 
 # }}}
@@ -1552,7 +1636,7 @@ diag("Testing --verbose option..."); # {{{
 diag("Testing --version option..."); # {{{
 like(`../gpst --version`, # {{{
     qr/^(\$Id: .*? \$\n)+$/s,
-    "../gpst --version"
+    '"../gpst --version" - The --version option outputs Id strings',
 );
 
 # }}}
@@ -1792,25 +1876,6 @@ if ($Opt{'all'} || $Opt{'todo'}) {
 
     TODO: {
         local $TODO = "Remove extra \\n in the beginning";
-        testcmd("../gpst -t -o clean pause.gpx", # {{{
-            <<END,
-5.299534\t60.425494\t25.260
-5.299610\t60.425464\t24.931
-
-5.299694\t60.425314\t27.975
-
-5.299741\t60.425384\t31.017
-5.299958\t60.425339\t30.980
-5.299640\t60.425238\t30.538
-5.299686\t60.425246\t30.515
-
-5.299773\t60.425345\t31.936
-5.299419\t60.425457\t31.794
-END
-            "",
-            "Output clean format with time breaks",
-        );
-        # }}}
         testcmd("../gpst -o csv multitrack.gpx", # {{{
             <<END,
 2003-02-11T23:35:39Z\t-0.1448824\t51.4968266\t\t
@@ -1854,7 +1919,7 @@ END
         );
 
         # }}}
-        testcmd("../gpst --epoch -o csv pause.gpx", # {{{
+        testcmd("../gpst -e -o csv pause.gpx", # {{{
             <<END,
 1148230151\t5.299534\t60.425494\t25.260\t
 1148230186\t5.299610\t60.425464\t24.931\t
