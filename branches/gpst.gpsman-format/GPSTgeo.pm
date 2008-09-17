@@ -93,6 +93,7 @@ sub ddd_to_dms {
 }
 
 sub dms_to_ddd {
+    # {{{
     my ($Deg, $Min, $Sec) = @_;
 
     defined($Deg) || ($Deg = 0);
@@ -108,6 +109,7 @@ sub dms_to_ddd {
     }
     my $Retval = 1.0 * sprintf("%f", $Deg + 1.0*$Min/60 + 1.0*$Sec/3600);
     return($Retval);
+    # }}}
 }
 
 1;
