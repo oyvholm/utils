@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<article id="articleid" xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+<article xml:id="articleid" xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
   <info>
     <title>Articletitle</title>
     <releaseinfo><![CDATA[$Id$]]></releaseinfo>
@@ -18,7 +18,7 @@
     </copyright>
   </info>
 
-  <section id="sectionid">
+  <section xml:id="sectionid">
     <title>Sectiontitle</title>
 
     <para></para>

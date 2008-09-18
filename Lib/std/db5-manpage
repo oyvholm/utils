@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<article id="articleid" xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+<article xml:id="articleid" xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
   <!-- FIXME: Very unfinished and untested. -->
   <title>Example refentry</title>
 <refentry xml:id="ls">
