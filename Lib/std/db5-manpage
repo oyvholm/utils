@@ -1,74 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<article xml:id="articleid" xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
-  <!-- FIXME: Very unfinished and untested. -->
+<article xmlns="http://docbook.org/ns/docbook"
+         xml:id="articleid"
+         version="5.0" xml:lang="en">
   <title>Example refentry</title>
-<refentry xml:id="ls">
-  <!-- $Id$ -->
-  <refmeta>
-    <refentrytitle>ls</refentrytitle>
-    <manvolnum>1</manvolnum>
-  </refmeta>
-  <refnamediv>
-    <refname>ls</refname>
-    <refpurpose>list contents of a directory</refpurpose>
-  </refnamediv>
-  <refsynopsisdiv>
-    <cmdsynopsis>
-      <command>/usr/bin/ls</command>
-      <arg choice="opt">
-        <option>aAbcCdfFgilLmnopqrRstux1</option>
-      </arg>
-      <arg choice="opt" rep="repeat">file</arg>
-    </cmdsynopsis>
-  </refsynopsisdiv>
-  <refsect1>
-    <title>Description</title>
-    <para>For each file that is a directory, <command>ls</command> lists 
-    the contents of the directory; for each file that is an ordinary 
-    file, <command>ls</command> repeats its name and any other 
-    information requested.</para>
-    <para>…</para>
-  </refsect1>
-</refentry>
+  <refentry xml:id="ls">
+    <!-- $Id$ -->
+    <refmeta>
+      <refentrytitle>ls</refentrytitle>
+      <manvolnum>1</manvolnum>
+    </refmeta>
+    <refnamediv>
+      <refname>ls</refname>
+      <refpurpose>list contents of a directory</refpurpose>
+    </refnamediv>
+    <refsynopsisdiv>
+      <cmdsynopsis>
+        <command>/usr/bin/ls</command>
+        <arg choice="opt">
+          <option>aAbcCdfFgilLmnopqrRstux1</option>
+        </arg>
+        <arg choice="opt" rep="repeat">file</arg>
+      </cmdsynopsis>
+    </refsynopsisdiv>
+    <refsect1>
+      <title>Description</title>
 
-<!-- {{{
-begin-base64 644 -
-H4sIAESYlEMCA81Vy27bMBC86yuIBEjaoLCa5tLGioCiTgGjKXrIBwQ0uZKJ
-SqRAroyoX98l9bYTw7lFB1m7XC6Hw+E4iSsLaUIvJgru3N1ZZU1ueVkoh0rn
-Z2nCLSpRAHsuC+3uLreI1W0cSyM2xvxdGJvH2vXhZRolqLCA9P6ZlxXNspCB
-RtskcZuPoqRP+Y63SvollcbsrBsrAXk6VrXT2pIknmejpOR6Zwpdl+nNYxKP
-URRK21ahl+YlSLVLh2DaMsTjSPb6kHtxqKptZVzXkmXGlhwRJDM1VjWG4r4k
-GqYGNGG6a7SpnHJdJqu16FPpPFQ6M2l0rrQoagnsosClQ6nMYnuR45J6HxaH
-+XSoaLCpaH3GQkZClnqwIUBl9MDHkGg/faGfVHFShQ+E0Q6Z2HLLrtosINi0
-3XUSj5nu+6DBYrGYDrXLTBCeDjk7FfPP9cP9DK1DW56C9R1t1p18QPto3bvY
-6VycfufxofZ9BgRep52NrMAJqyq/3cFBwpLpEeGyquACXHf9mNEMt8Acci25
-lVGXJgkAL+lHUmIRtdj77hfnX7/cfF4OyXgAFo0mFPbQ2aPPvwMrVWYH4qiT
-hopjRvrtrUY6djx0RMmRE8XG8tyfgK0F1kQQqYqt4z+sJpPKWa3M2zwyGVU0
-98LGxfXEDScueoLW1prknZFy2APsoNjT23crtgqhxa+0hAroRTe08MXsmn1Y
-rdbx6tf640RLE9mcpu1+Mc0SYeTAbfie8CfD1A1pnDNPcdRTzEnTgV20XLsM
-LEFlPEoEQR9ku6eInv6pHuhiH1HErFs0wFqwH0YLqLDmRdF8ihSykjdsA3T/
-TJ1v6SpmjHvMG+4Iq5QWHIVaEok6xy1zFQiVKcE9KSOP8/u3z+PjQMtvKDdg
-3ZTN2RX0+6JH+JWfkDFi98lDWTIWX81BEVJvGjP9BnKv4rbJSw81sUAG4IgZ
-+vvfNKFHOMPJ4fUdvL23HwSDCFi2HZz6B68vT8e5aZAOnrp4x5lv723u9R/E
-Tcgc/QkAAA==
-====
-}}} -->
+      <para>For each file that is a directory, <command>ls</command> 
+      lists the contents of the directory; for each file that is an 
+      ordinary file, <command>ls</command> repeats its name and any 
+      other information requested.</para>
 
-<!--
-begin-base64 644 -
-H4sIALKXlEMCA3VTzW6cMBC+71NMrRzLGlbdtiJAVLVaqVJPVXPpzWsbsAo2
-sc0q3Po0fbA+SccmBLZKDkaev++b+QYXd499BxdpnTK6JNk+JSA1N0LppiT3
-P07JR3JX7Qora6m9nQDTcyVK0jkS7tqVpPV+yCkVhp+N+bU3tqHaLSZZwY8B
-PNR3LIBLTaodQPEmSeDmq8hBnI9Jz/TAGgnZMT3AIU2PSXZI0iNkH/LsXX54
-/xPcqPUEN5AksRob66Vn4T5bsU2vfCerzhX02jNnIcnFdHrsq6ygqxHg6AYv
-oGnWS6EuK3xwLMDx/hwZRjsYh0HlPHCjPfI6MDUwEMpK7o2dYtmSuPBtOAKO
-m7QZnHIrLe/F4pw9wWd67FxUdHSWnpWmoafFuSQx2wBvjeKyJGbwZAlgCE1c
-SsU+nflnUZ8a1X3rkeLBfnd+fERdnhIWKIpYr+KClUNJ8CMZktSqk5t8bOu6
-/zj0f1PGwVGj7KlmXtcX6bhVsZGCbjc4MMuqk7EgGW8hEIJvmQfltmq/XWXa
-qgNhQw4ikm/l1a6C/Vx/C/XLFBqMxRfC8D1ElBB9jWxWxYHCEzaN1QLPBAa5
-7FyvNBL1LMyJ+Q+jdF6KfUHjmJuJ//7+szpnGWfN1v+82v0DagX6DdMDAAA=
-====
--->
-<!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
+      <para>…</para>
+
+    </refsect1>
+  </refentry>
+  <!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
 </article>
