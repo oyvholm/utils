@@ -177,10 +177,6 @@ gpst \- Converts between various GPS formats\&.
 .HP \w'\fBgpst\fR\ 'u
 \fBgpst\fR {\-S} [\fIoptions\fR] [\fIfile\fR...]
 .fam
-.fam C
-.HP \w'\fBgpst\fR\ 'u
-\fBgpst\fR {\-u} [\fIoptions\fR] [\fIfile\fR...]
-.fam
 .SH "Description"
 .PP
 \fB\-\-chronology\fR
@@ -542,11 +538,6 @@ If several files are specified on the command line, all data will be saved into 
 Create breaks in track between points with a difference more than the number of seconds specified by the
 \fBPAUSE_LIMIT\fR
 variable\&.
-.RE
-.PP
-\fB\-u\fR, \fB\-\-comment\-out\-dups\fR
-.RS 4
-Comment out following data with identical position values, only print first entry\&.
 .RE
 .PP
 \fB\-v\fR, \fB\-\-verbose\fR

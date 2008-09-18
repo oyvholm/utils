@@ -36,7 +36,6 @@ our $Debug = 0;
 our %Opt = (
     # Initial values for command line arguments {{{
     'chronology' => 0,
-    'comment-out-dups' => 0,
     'create-breaks' => 0,
     'debug' => 0,
     'double-y-scale' => 0,
@@ -75,7 +74,6 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     # Command line options {{{
     "chronology" => \$Opt{'chronology'},
-    "comment-out-dups|u" => \$Opt{'comment-out-dups'},
     "create-breaks|t" => \$Opt{'create-breaks'},
     "debug" => \$Opt{'debug'},
     "double-y-scale|y" => \$Opt{'double-y-scale'},
@@ -175,79 +173,6 @@ if (defined($Opt{'round'})) {
 }
 
 length($Opt{'undefined'}) && ($Udef = $Opt{'undefined'});
-# Kunne vært et eget script på grunn av at det gjør sine helt egne 
-# greier, men like greit å samle det på en plass.
-# FIXME: Fjerner ikke første duplikatentryen.
-# FIXME: Se om det går å få flytta den inn i print_entry() så man 
-# slipper å ha to gptrans_conv’er i pipen.
-# FIXME: Legg inn alle formatene.
-if ($Opt{'comment-out-dups'}) {
-    # Comment out areas without reception {{{
-    my ($start_date, $end_date, $found_dup) = ("", "", 0);
-    my @Dup = ();
-    while (<>) {
-        if (
-            m{^
-                1\x20
-                (\S+)\x20 # Lat
-                (\S+)\x20 # Lon
-                (\S+)\x20 # Speed
-                (\S+)\x20 # Unknown
-                (\d\d)/(\d\d)/(\d\d\d\d)\x20 # Month/Day/Year — urgh
-                (\d\d):(\d\d):(\d\d) # Hour:Min:Sec
-            }x
-        ) {
-            # {{{
-            my ($lat_val, $lon_val, $Speed, $Unkn,
-                $Month, $Day, $Year, $Hour, $Min, $Sec) =
-               ($1, $2, $3, $4,
-                $5, $6, $7, $8, $9, $10);
-            if (($lat_val eq $last_lat) && ($lon_val eq $last_lon)) {
-                unless ($found_dup) {
-                    $start_date = "$Year$Month${Day}T$Hour$Min$Sec";
-                    @Dup = ();
-                    $found_dup = 1;
-                }
-                push(@Dup, "# $_");
-                $end_date = "$Year$Month${Day}T$Hour$Min$Sec";
-            } else {
-                if ($found_dup) {
-                    print("# $start_date-$end_date: " .
-                          "CO: No signal \x7B\x7B\x7B\n");
-                    for (@Dup) {
-                        print($_);
-                    }
-                    print("# $start_date-$end_date: " .
-                          "CO: No signal \x7D\x7D\x7D\n# move\n$_");
-                    $found_dup = 0;
-                } else {
-                    print($_);
-                }
-            }
-            $last_lat = $lat_val;
-            $last_lon = $lon_val;
-            # }}}
-        } else {
-            if ($found_dup) {
-                push(@Dup, $_);
-            } else {
-                print($_);
-            }
-        }
-    }
-    if ($found_dup) {
-        print("# $start_date-$end_date: " .
-              "CO: No signal \x7B\x7B\x7B\n");
-        for (@Dup) {
-            print($_);
-        }
-        print("# $start_date-$end_date: " .
-              "CO: No signal \x7D\x7D\x7D\n# move\n");
-        $found_dup = 0;
-    }
-    exit(0);
-    # }}}
-}
 
 $Opt{'save-to-file'} eq "\n" && print_header(*STDOUT);
 
@@ -1254,9 +1179,6 @@ Options:
   -t, --create-breaks
     Create breaks in track between points with a difference more than 
     $PAUSE_LIMIT seconds.
-  -u, --comment-out-dups
-    Comment out following data with identical position values, only 
-    print first entry.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
