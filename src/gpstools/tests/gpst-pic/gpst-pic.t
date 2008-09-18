@@ -72,7 +72,7 @@ likecmd("exifprobe -V", # {{{
 diag("Testing --author option...");
 testcmd("$GP -a sunny files/DSC_4426.JPG", # {{{
     <<END,
-2008-09-18 17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
+2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
 END
     "",
     "Read date from DSC_4426.JPG and set --author",
@@ -83,7 +83,7 @@ END
 diag("Testing --description option...");
 testcmd("$GP -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{
     <<END,
-2008-09-18 17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
+2008-09-18T17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
 END
     "",
     "Read date from DSC_4426.JPG and set --description with backslash",
@@ -110,7 +110,7 @@ likecmd("$GP --version", # {{{
 diag("Various...");
 testcmd("$GP files/DSC_4426.JPG", # {{{
     <<END,
-2008-09-18 17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
+2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
 END
     "",
     "Read date from DSC_4426.JPG, no options",

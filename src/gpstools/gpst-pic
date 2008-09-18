@@ -86,7 +86,7 @@ sub print_entry {
             if (/DateTime/) {
                 s/^.*'(.*?)'.*$/$1/;
                 chomp($date = $_);
-                $date =~ s/^(\d\d\d\d)(.)(\d\d)(.)(\d\d)(.)(\d\d:\d\d:\d\d)(.*)/$1-$3-$5 $7$8/;
+                $date =~ s/^(\d\d\d\d)(.)(\d\d)(.)(\d\d)(.)(\d\d:\d\d:\d\d)(.*)/$1-$3-${5}T$7$8/;
                 D("date = '$date'");
                 push(@Dates, $date);
             }
@@ -96,7 +96,7 @@ sub print_entry {
         $date = $Dates[0];
         defined($date) || ($date = '');
         D("final date = '$date'");
-        if ($date =~ /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/) {
+        if ($date =~ /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d$/) {
             $filename =~ s/^.*\/(.*?)$/$1/;
             my $Output = join("\t",
                 postgresql_copy_safe($date),
