@@ -548,6 +548,7 @@ testcmd("../gpst -e -o gpx pause.gpx", # {{{
     <<END,
 $gpx_header
   <trk>
+    <name>ACTIVE LOG164705</name>
     <trkseg>
       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
@@ -977,6 +978,7 @@ testcmd("../gpst -o gpx missing.gpsml", # {{{
     <<END,
 $gpx_header
   <trk>
+    <name>Missing various elements</name>
     <trkseg>
       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
       <trkpt> <ele>483</ele> <time>2006-04-30T17:17:11Z</time> </trkpt>
@@ -1543,6 +1545,7 @@ testcmd("../gpst -w -o gpx pause.gpx", # {{{
     <<END,
 $stripped_gpx_header
 <trk>
+<name>ACTIVE LOG164705</name>
 <trkseg>
 <trkpt lat="60.425494" lon="5.299534"><ele>25.260</ele><time>2006-05-21T16:49:11Z</time></trkpt>
 <trkpt lat="60.425464" lon="5.299610"><ele>24.931</ele><time>2006-05-21T16:49:46Z</time></trkpt>
