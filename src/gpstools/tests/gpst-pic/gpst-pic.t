@@ -22,6 +22,7 @@ use Test::More qw{no_plan};
 $| = 1;
 
 our $Debug = 0;
+our $GP = "../../gpst-pic";
 
 our %Opt = (
     'all' => 0,
@@ -59,6 +60,29 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
+diag("Testing --author option...");
+diag("Testing --debug option...");
+diag("Testing --description option...");
+diag("Testing --help option...");
+
+likecmd("$GP -h", # {{{
+    'Extract EXIF info from pictures',
+    '^$',
+    "Option -h prints help screen",
+);
+
+diag("Testing --verbose option...");
+diag("Testing --version option...");
+
+likecmd("$GP --version", # {{{
+    '\$Id: .*?\$',
+    '^$',
+    "Option --version returns Id string",
+);
+
+
+# }}}
+
 todo_section:
 ;
 
@@ -93,6 +117,34 @@ sub testcmd {
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+            unlink($TMP_STDERR);
+        }
+    } else {
+        diag("Warning: stderr not defined for '$Txt'");
+    }
+    # }}}
+}
+
+sub likecmd {
+    # {{{
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
+    my $stderr_cmd = "";
+    my $deb_str = $Opt{'debug'} ? " --debug" : "";
+    my $Txt = join("",
+        "\"$Cmd\"",
+        defined($Desc)
+            ? " - $Desc"
+            : ""
+    );
+    my $TMP_STDERR = "gpst-stderr.tmp";
+
+    if (defined($Exp_stderr) && !length($deb_str)) {
+        $stderr_cmd = " 2>$TMP_STDERR";
+    }
+    like(`$Cmd$deb_str$stderr_cmd`, "/$Exp_stdout/", $Txt);
+    if (defined($Exp_stderr)) {
+        if (!length($deb_str)) {
+            like(file_data($TMP_STDERR), "/$Exp_stderr/", "$Txt (stderr)");
             unlink($TMP_STDERR);
         }
     } else {
