@@ -2,10 +2,10 @@
 
 #=======================================================================
 # $Id$
-# Test suite for gpst.
+# Test suite for gpst-pic.
 #
 # Character set: UTF-8
-# ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
@@ -13,11 +13,12 @@
 BEGIN {
     push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
     our @version_array;
+    use Test::More qw{no_plan};
+    use_ok(GPST);
 }
 
 use strict;
 use Getopt::Long;
-use Test::More qw{no_plan};
 
 $| = 1;
 
@@ -60,26 +61,60 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
-diag("Testing --author option...");
-diag("Testing --debug option...");
-diag("Testing --description option...");
-diag("Testing --help option...");
+diag("Checking dependencies...");
+likecmd("exifprobe -V", # {{{
+    "Program: 'exifprobe' version [234]",
+    '^$',
+    "Check that exifprobe(1) is installed",
+);
 
+# }}}
+diag("Testing --author option...");
+testcmd("$GP -a sunny files/DSC_4426.JPG", # {{{
+    <<END,
+2008-09-18 17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
+END
+    "",
+    "Read date from DSC_4426.JPG and set --author",
+);
+
+# }}}
+# diag("Testing --debug option...");
+diag("Testing --description option...");
+testcmd("$GP -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{
+    <<END,
+2008-09-18 17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Read date from DSC_4426.JPG and set --description with backslash",
+);
+
+# }}}
+diag("Testing --help option...");
 likecmd("$GP -h", # {{{
     'Extract EXIF info from pictures',
     '^$',
     "Option -h prints help screen",
 );
 
-diag("Testing --verbose option...");
+# }}}
+# diag("Testing --verbose option...");
 diag("Testing --version option...");
-
 likecmd("$GP --version", # {{{
     '\$Id: .*?\$',
     '^$',
     "Option --version returns Id string",
 );
 
+# }}}
+diag("Various...");
+testcmd("$GP files/DSC_4426.JPG", # {{{
+    <<END,
+2008-09-18 17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Read date from DSC_4426.JPG, no options",
+);
 
 # }}}
 
@@ -108,7 +143,7 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "gpst-stderr.tmp";
+    my $TMP_STDERR = "gpst-pic-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -136,7 +171,7 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "gpst-stderr.tmp";
+    my $TMP_STDERR = "gpst-pic-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -186,7 +221,7 @@ $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the gpst(1) program.
+Contains tests for the gpst-pic(1) program.
 
 Options:
 
