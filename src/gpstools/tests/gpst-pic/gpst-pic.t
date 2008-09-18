@@ -15,6 +15,7 @@ BEGIN {
     our @version_array;
     use Test::More qw{no_plan};
     use_ok(GPST);
+    use_ok(GPSTxml);
 }
 
 use strict;
@@ -98,6 +99,42 @@ likecmd("$GP -h", # {{{
 );
 
 # }}}
+diag("Testing --output-format option..."); # {{{
+# pgtab
+testcmd("$GP -o pgtab files/DSC_4426.JPG", # {{{
+    <<END,
+2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Output pgtab format from DSC_4426.JPG",
+);
+
+# }}}
+# xml
+testcmd("$GP -o xml files/DSC_4426.JPG", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstpic>
+  <img>
+    <filename>DSC_4426.JPG</filename>
+    <date>2008-09-18T17:02:27</date>
+  </img>
+</gpstpic>
+END
+    "",
+    "Output XML information for DSC_4426.JPG",
+);
+
+# }}}
+# Unknown format
+testcmd("$GP -o blurfl files/DSC_4426.JPG", # {{{
+    "",
+    "gpst-pic: blurfl: Unknown output format\n",
+    "Unknown output format specified",
+);
+
+# }}}
+# }}} --output-format
 # diag("Testing --verbose option...");
 diag("Testing --version option...");
 likecmd("$GP --version", # {{{
@@ -125,7 +162,39 @@ if ($Opt{'all'} || $Opt{'todo'}) {
     diag("Running TODO tests..."); # {{{
 
     TODO: {
-        local $TODO = "sometext";
+
+local $TODO = "";
+testcmd("$GP -o extxml files/DSC_4426.JPG", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstpic>
+  <img>
+    <filename>DSC_4426.JPG</filename>
+    <crc type="sha1">267e841cb6788c795541e36aea70e2a55d8ec3bb</crc>
+    <crc type="md5">19eb5c86f6b3662b57bc94c3ea428372</crc>
+    <date type="DateTimeOriginal">2008-03-02T17:51:39Z</date>
+    <date type="DateTimeDigitized">2008-03-02T17:51:39Z</date>
+    <date type="DateTime">2008-09-18T15:02:27Z</date>
+    <exposure>
+      <iso>200</iso>
+      <speed>0.333333</speed>
+      <fnumber>3.5 APEX</fnumber>
+      <flash>0</flash>
+    </exposure>
+    <camera>
+      <make>NIKON CORPRORATION</make>
+      <model>NIKON D300</model>
+      <shuttercount>4610</shuttercount>
+    </camera>
+  </img>
+</gpstpic>
+END
+    "",
+    "Show extended XML information for DSC_4426.JPG",
+);
+
+# }}}
+
     }
     # TODO tests }}}
 }
