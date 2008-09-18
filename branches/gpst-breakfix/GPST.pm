@@ -110,7 +110,6 @@ sub trackpoint {
             $Retval .= $tp_str;
             $Dat{'break'} = 0;
             # }}}
-            # }}}
         } elsif($Dat{'format'} eq "gpx") {
             # {{{
             my $tp_str = "";
