@@ -1267,6 +1267,26 @@ END
 # }}}
 testcmd("../gpst tracks.gpsman", # {{{
     <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>ACTIVE LOG</title>
+<tp> <time>2003-12-01T04:21:09Z</time> <lat>60.2891111111111</lat> <lon>5.22761111111111</lon> <ele>54.4517822266</ele> </tp>
+<tp> <time>2003-12-01T04:21:26Z</time> <lat>60.2885833333333</lat> <lon>5.22616666666667</lon> <ele>54.4517822266</ele> </tp>
+<break/>
+<tp> <time>2003-12-01T09:27:21Z</time> <lat>52.1221666666667</lat> <lon>14.0295277777778</lon> <ele>1494.98730469</ele> </tp>
+<break/>
+<tp> <time>2003-12-01T09:27:42Z</time> <lat>52.0858888888889</lat> <lon>14.0401388888889</lon> <ele>1494.98730469</ele> </tp>
+<tp> <time>2003-12-01T09:27:43Z</time> <lat>52.0842777777778</lat> <lon>14.0406666666667</lon> <ele>1494.02612305</ele> </tp>
+<break/>
+<tp> <time>2003-12-01T21:26:07Z</time> <lat>50.0858333333333</lat> <lon>14.4290833333333</lon> <ele>183.268432617</ele> </tp>
+<tp> <time>2003-12-01T21:26:31Z</time> <lat>50.0859722222222</lat> <lon>14.4291111111111</lon> <ele>184.710571289</ele> </tp>
+<break/>
+<tp> <time>2003-12-01T21:47:30Z</time> <lat>50.092</lat> <lon>14.43625</lon> <ele>180.384521484</ele> </tp>
+<tp> <time>2003-12-01T21:47:47Z</time> <lat>50.092</lat> <lon>14.43625</lon> <ele>181.345825195</ele> </tp>
+<tp> <time>2003-12-01T21:47:53Z</time> <lat>50.092</lat> <lon>14.4362222222222</lon> <ele>182.307128906</ele> </tp>
+</track>
+</gpsml>
 END
     "",
     "Output gpsml format from gpsman",

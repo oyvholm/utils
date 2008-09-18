@@ -569,6 +569,7 @@ for $curr_file (@ARGV) {
                 print_entry(%Dat);
             } elsif (/^!T:\t(.*?)\t/) {
                 $Dat{'title'} = $1;
+                $Dat{'type'} = "title";
                 print_entry(%Dat);
             } elsif (/^xmaplog /) {
                 # NOP
@@ -1064,8 +1065,8 @@ sub print_entry {
                 $Line .= trackpoint(%Dat);
             }
         } elsif($Opt{'output-format'} eq "gpx") {
-            if ($Dat{'type'} eq "tp") {
-                $Dat{'format'} = "gpx";
+            $Dat{'format'} = "gpx";
+            if ($Dat{'type'} =~ /^(tp|title)$/) {
                 $Line .= trackpoint(%Dat);
             }
         } elsif ($Opt{'output-format'} eq "clean") {

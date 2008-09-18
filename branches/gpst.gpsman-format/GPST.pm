@@ -13,6 +13,7 @@ use warnings;
 
 use GPSTdebug;
 use GPSTgeo;
+use GPSTxml;
 
 BEGIN {
     use Exporter ();
@@ -170,6 +171,10 @@ sub trackpoint {
             # }}}
         } else {
             $Retval = undef;
+        }
+    } elsif ($Dat{'type'} eq 'title') {
+        if ($Dat{'format'} eq "gpsml") {
+            $Retval = sprintf("<title>%s</title> ", txt_to_xml($Dat{'title'}));
         }
     } else {
         $Retval = undef;
