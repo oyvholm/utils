@@ -1,6 +1,6 @@
 # Running TODO tests...
-not ok - "../gpst -o csv multitrack.gpx" - Output csv format from gpx # TODO Remove extra \n in the beginning
-#   Failed (TODO) test '"../gpst -o csv multitrack.gpx" - Output csv format from gpx'
+not ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx # TODO Remove extra \n in the beginning
+#   Failed (TODO) test '"../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx'
 #   in ./run-tests.pl at line 1903.
 #          got: '				
 # 2003-02-11T23:35:39Z	-0.1448824	51.4968266		
@@ -41,9 +41,9 @@ not ok - "../gpst -o csv multitrack.gpx" - Output csv format from gpx # TODO Rem
 # 2003-02-11T23:38:34Z	-0.1462825	51.4973218		
 # 2003-02-11T23:38:35Z	-0.1462732	51.4973145		
 # '
-ok - "../gpst -o csv multitrack.gpx" - Output csv format from gpx (stderr) # TODO Remove extra \n in the beginning
-not ok - "../gpst -o csv pause.gpx" - csv format from gpx # TODO Remove extra \n in the beginning
-#   Failed (TODO) test '"../gpst -o csv pause.gpx" - csv format from gpx'
+ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx # TODO Remove extra \n in the beginning
+#   Failed (TODO) test '"../gpst -o csv pause.gpx" - Output csv format from pause.gpx'
 #   in ./run-tests.pl at line 1903.
 #          got: '				
 # 2006-05-21T16:49:11Z	5.299534	60.425494	25.260	
@@ -56,17 +56,17 @@ not ok - "../gpst -o csv pause.gpx" - csv format from gpx # TODO Remove extra \n
 # 2006-05-21T16:59:08Z	5.299773	60.425345	31.936	
 # 2006-05-21T17:00:54Z	5.299419	60.425457	31.794	
 # '
-#     expected: '2006-05-21 16:49:11	5.299534	60.425494	25.260	
-# 2006-05-21 16:49:46	5.299610	60.425464	24.931	
-# 2006-05-21 16:52:04	5.299694	60.425314	27.975	
-# 2006-05-21 16:56:36	5.299741	60.425384	31.017	
-# 2006-05-21 16:56:47	5.299958	60.425339	30.980	
-# 2006-05-21 16:56:56	5.299640	60.425238	30.538	
-# 2006-05-21 16:57:03	5.299686	60.425246	30.515	
-# 2006-05-21 16:59:08	5.299773	60.425345	31.936	
-# 2006-05-21 17:00:54	5.299419	60.425457	31.794	
+#     expected: '2006-05-21T16:49:11Z	5.299534	60.425494	25.260	
+# 2006-05-21T16:49:46Z	5.299610	60.425464	24.931	
+# 2006-05-21T16:52:04Z	5.299694	60.425314	27.975	
+# 2006-05-21T16:56:36Z	5.299741	60.425384	31.017	
+# 2006-05-21T16:56:47Z	5.299958	60.425339	30.980	
+# 2006-05-21T16:56:56Z	5.299640	60.425238	30.538	
+# 2006-05-21T16:57:03Z	5.299686	60.425246	30.515	
+# 2006-05-21T16:59:08Z	5.299773	60.425345	31.936	
+# 2006-05-21T17:00:54Z	5.299419	60.425457	31.794	
 # '
-ok - "../gpst -o csv pause.gpx" - csv format from gpx (stderr) # TODO Remove extra \n in the beginning
+ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx'
 #   in ./run-tests.pl at line 1903.
