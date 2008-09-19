@@ -106,7 +106,25 @@ if (open(LogFP, ">>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
         for my $key (keys %uuids) {
             D("key = '$key', value = '$uuids{$key}'");
-            print(LogFP $key . "\t" . $uuids{$key} . "\n");
+            # Version description {{{
+            # Without version field, they have to be exterminated:
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \n
+            # Version 1 (same as above, but with version field):
+            #   1 \t
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \n
+            # }}}
+            print(LogFP join("\t",
+                    1,
+                    $key,
+                    $uuids{$key}
+                ) . "\n"
+            );
             print("$key\n");
         }
         close(LogFP);
