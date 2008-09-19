@@ -87,13 +87,16 @@ if ($Comment eq "-") {
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 
 my $Cmd = ($Opt{'version'} != 1) ? "uuidgen -r" : "uuidgen -t";
+my $safe_comment = safe_tab($Comment);
+my $safe_tag = safe_tab($Tag);
+
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     chomp(my $uuid = `$Cmd`);
     my $curr_time = time;
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
-        safe_tab($Tag),
-        safe_tab($Comment)
+        $safe_tag,
+        $safe_comment
     );
 }
 
@@ -101,7 +104,25 @@ if (open(LogFP, ">>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
         for my $key (keys %uuids) {
             D("key = '$key', value = '$uuids{$key}'");
-            print(LogFP $key . "\t" . $uuids{$key} . "\n");
+            # Version description {{{
+            # Without version field, they have to be exterminated:
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \n
+            # Version 1 (same as above, but with version field):
+            #   1 \t
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \n
+            # }}}
+            print(LogFP join("\t",
+                    1,
+                    $key,
+                    $uuids{$key}
+                ) . "\n"
+            );
             print("$key\n");
         }
         close(LogFP);
