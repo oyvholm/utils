@@ -87,6 +87,9 @@ if ($Comment eq "-") {
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 
+my $safe_comment = safe_tab($Comment);
+my $safe_tag = safe_tab($Tag);
+
 my $new_uuid = new OSSP::uuid;
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     $new_uuid->make("v$Opt{'version'}");
@@ -94,8 +97,8 @@ for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     my $curr_time = time;
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
-        safe_tab($Tag),
-        safe_tab($Comment)
+        $safe_tag,
+        $safe_comment
     );
 }
 
