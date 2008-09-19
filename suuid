@@ -86,9 +86,17 @@ if ($Comment eq "-") {
     chomp($Comment = <STDIN>);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
+my $Hostname = `hostname`; # FIXME
+chomp($Hostname);
+my $curr_dir = `/bin/pwd`; # FIXME
+chomp($curr_dir);
 
 my $safe_comment = safe_tab($Comment);
 my $safe_tag = safe_tab($Tag);
+my $safe_currdir = "";
+length($Hostname) && ($safe_currdir = "$Hostname:");
+$safe_currdir .= $curr_dir;
+$safe_currdir = safe_tab($safe_currdir);
 
 my $new_uuid = new OSSP::uuid;
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
@@ -98,7 +106,8 @@ for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
         $safe_tag,
-        $safe_comment
+        $safe_comment,
+        $safe_currdir
     );
 }
 
@@ -118,9 +127,16 @@ if (open(LogFP, ">>", $Logfile)) {
             #   curr_time \t
             #   tag \t
             #   comment \n
+            # Version 2
+            #   2 \t
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \t
+            #   current_dir \n
             # }}}
             print(LogFP join("\t",
-                    1,
+                    2,
                     $key,
                     $uuids{$key}
                 ) . "\n"
