@@ -124,16 +124,19 @@ sub find_revision {
         my $mid_pos = int(($min_pos + $max_pos) / 2);
         last if ($has_checked && ($mid_pos == $last_mid));
         my $Rev = $Array[$mid_pos];
-        print("==== Checking revision $Rev ($mid_pos) ====\n");
-        if (test_ok($Want, $File, $Rev, $Exec, $Cleanup)) {
-            print("OK\n");
+        D("max_pos = '$max_pos', scalar(");
+        printf("==== Checking revision %lu (%lu:%lu)...",
+            $Rev, $Array[$min_pos], $Array[$max_pos-1]);
+        my $exit_code = test_ok($Want, $File, $Rev, $Exec, $Cleanup);
+        if ($exit_code != $Opt{'want'}) {
+            print("NOT FOUND (code $exit_code), going up\n");
             $min_pos = $mid_pos;
             D("min_pos set to '$mid_pos'");
             if (!$last_good || ($Rev > $last_good)) {
                 $last_good = $Rev;
             }
         } else {
-            print("FAIL\n");
+            print("FOUND, going down\n");
             $max_pos = $mid_pos;
             D("max_pos set to '$mid_pos'");
             if (!$first_fail || ($Rev < $first_fail)) {
@@ -144,12 +147,12 @@ sub find_revision {
         $last_mid = $mid_pos;
     }
     print($first_fail
-        ? "First fail at r$first_fail. "
-        : "No tests failed. "
+        ? "Found at r$first_fail. "
+        : "Condition not found. "
     );
     print($last_good
-        ? "Last revision where the test succeeds at r$last_good.\n"
-        : "All revisions failed the test.\n"
+        ? "Last revision where the test fails at r$last_good.\n"
+        : "Condition found in all revisions.\n"
     );
 
     # }}}
@@ -173,7 +176,7 @@ sub revisions {
         $Data =~ s/<logentry\b.*?\brevision="(\d+)".*?>/push(@Revs, "$1")/egs;
     }
     if ($Revs[0] eq $Start) {
-        splice(@Revs, 0, 1);
+        # splice(@Revs, 0, 1);
     }
     return(@Revs);
     # }}}
@@ -214,6 +217,7 @@ sub deb_wait {
 } # deb_wait()
 
 sub test_ok {
+    # {{{
     my ($Want, $File, $Rev, $Exec, $Cleanup) = @_;
     my $Retval;
 
@@ -221,23 +225,17 @@ sub test_ok {
     if (length($Cleanup)) {
         mysyst($Cleanup);
     }
+    print("svn update...");
     if ($Opt{'ignore-externals'}) {
         mysyst($CMD_SVN, "update", "--ignore-externals", "-q", "-r$Rev", $File);
     } else {
         mysyst($CMD_SVN, "update", "-q", "-r$Rev", $File);
     }
-    my $cmd_result = mysyst($Exec);
-    if ($Want =~ /^ok$/i) {
-        $Retval = $cmd_result ? 0 : 1;
-    } elsif ($Want =~ /^fail$/i) {
-        $Retval = $cmd_result ? 1 : 0;
-    } elsif ($Want == $cmd_result) {
-        $Retval = 1;
-    } else {
-        $Retval = 0;
-    }
-    D("test_ok() returns '$Retval', cmd_result = '$cmd_result'");
+    print("run test:\n");
+    $Retval = mysyst($Exec);
+    D("test_ok() returns '$Retval'");
     return($Retval);
+    # }}}
 } # test_ok()
 
 sub print_version {
@@ -259,12 +257,34 @@ $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
+Do a binary search through revisions of a Subversion working copy for 
+special conditions. A test script/command and cleanup script/command can 
+be supplied. The script will search through the specified revisions (or 
+1:HEAD if missing) until it finds the first revision the test script 
+succeeds.
+
+Test script return values:
+  0 (or a value specified with -w/--want) means that the condition is 
+    true, and it tries a lower revision number next time.
+  Anything else means the test has failed, and it tries a higher 
+    revision next time.
+
 Options:
 
+  -c x, --cleanup x
+    Use x as cleanup command.
+  -e x, --exec x
+    Execute command x to check revisions.
+  -f x, --file x
+    Use revisions file x is a member of.
   -h, --help
     Show this help.
+  --ignore-externals
+    Don’t update svn externals.
+  -r x, --revision x
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -w x, --want x
   --version
     Print version information.
   --debug
@@ -377,5 +397,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 # }}}
 
-# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w fo+=2 :
 # End of file $Id$
