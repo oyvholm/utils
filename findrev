@@ -10,6 +10,10 @@
 # file for legal stuff.
 #=======================================================================
 
+BEGIN {
+    our @version_array;
+}
+
 use strict;
 use Getopt::Long;
 
@@ -31,13 +35,15 @@ our %Opt = (
 );
 
 our $progname = $0;
-$progname =~ s#^.*/(.*?)$#$1#;
+$progname =~ s/^.*\/(.*?)$/$1/;
 
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 my $CMD_SVN = "svn";
+
+push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -236,7 +242,9 @@ sub test_ok {
 
 sub print_version {
     # Print program version {{{
-    print("$rcs_id\n");
+    for (@main::version_array) {
+        print("$_\n");
+    }
     exit(0);
     # }}}
 } # print_version()
@@ -369,5 +377,5 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 # }}}
 
-# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=0 et fo+=w :
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
 # End of file $Id$
