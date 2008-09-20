@@ -25,7 +25,6 @@ our %Opt = (
     'cleanup' => "",
     'exec' => "",
     'debug' => 0,
-    'file' => ".",
     'help' => 0,
     'ignore-externals' => 0,
     'revision' => "",
@@ -50,7 +49,6 @@ GetOptions(
     "cleanup|c=s" => \$Opt{'cleanup'},
     "exec|e=s" => \$Opt{'exec'},
     "debug" => \$Opt{'debug'},
-    "file|f=s" => \$Opt{'file'},
     "help|h" => \$Opt{'help'},
     "ignore-externals" => \$Opt{'ignore-externals'},
     "revision|r=s" => \$Opt{'revision'},
@@ -81,7 +79,17 @@ if (!length($Opt{'exec'})) {
     die("$progname: No --exec (-e) parameter specified. You might want to consult '$progname --help'.\n");
 }
 
-find_revision($Opt{'want'}, $Opt{'file'}, $Start, $End, $Opt{'exec'}, $Opt{'cleanup'});
+my $File;
+
+if ($#ARGV == -1) {
+    $File = ".";
+} elsif ($#ARGV == 0) {
+    $File = $ARGV[0];
+} else {
+    die("$progname: Only one file or directory name allowed\n");
+}
+
+find_revision($Opt{'want'}, $File, $Start, $End, $Opt{'exec'}, $Opt{'cleanup'});
 
 my $Found = 0;
 
@@ -247,7 +255,7 @@ sub usage {
 
 $rcs_id
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] [path]
 
 Do a binary search through revisions of a Subversion working copy for 
 special conditions. A test script/command and cleanup script/command can 
@@ -261,14 +269,15 @@ Test script return values:
   Anything else means the test has failed, and it tries a higher 
     revision next time.
 
+A path can be specified; the program will operate on this element, and 
+using the same revision range as the element.
+
 Options:
 
   -c x, --cleanup x
     Use x as cleanup command.
   -e x, --exec x
     Execute command x to check revisions.
-  -f x, --file x
-    Operate on file x and use the revisions it is a member of.
   -h, --help
     Show this help.
   --ignore-externals
