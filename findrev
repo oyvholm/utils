@@ -125,8 +125,8 @@ sub find_revision {
         last if ($has_checked && ($mid_pos == $last_mid));
         my $Rev = $Array[$mid_pos];
         D("max_pos = '$max_pos', scalar(");
-        printf("==== Checking revision %lu (%lu:%lu)...",
-            $Rev, $Array[$min_pos], $Array[$max_pos-1]);
+        printf("==== Checking revision %lu (%lu:%lu, %lu left)...",
+            $Rev, $Array[$min_pos], $Array[$max_pos-1], $max_pos - $min_pos);
         my $exit_code = test_ok($Want, $File, $Rev, $Exec, $Cleanup);
         if ($exit_code != $Opt{'want'}) {
             print("NOT FOUND (code $exit_code), going up\n");
@@ -136,7 +136,7 @@ sub find_revision {
                 $last_good = $Rev;
             }
         } else {
-            print("FOUND, going down\n");
+            print("FOUND (code $exit_code), going down\n");
             $max_pos = $mid_pos;
             D("max_pos set to '$mid_pos'");
             if (!$first_fail || ($Rev < $first_fail)) {
@@ -276,12 +276,13 @@ Options:
   -e x, --exec x
     Execute command x to check revisions.
   -f x, --file x
-    Use revisions file x is a member of.
+    Operate on file x and use the revisions it is a member of.
   -h, --help
     Show this help.
   --ignore-externals
     Don’t update svn externals.
-  -r x, --revision x
+  -r x:y, --revision x:y
+    Limit the search to revision range x:y. Default: 1:HEAD.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   -w x, --want x
