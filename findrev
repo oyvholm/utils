@@ -1,0 +1,373 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Locate a Subversion revision based on used defined criteras.
+#
+# Character set: UTF-8
+# ©opyleft 2007– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+    'cleanup' => "",
+    'exec' => "",
+    'debug' => 0,
+    'file' => ".",
+    'help' => 0,
+    'ignore-externals' => 0,
+    'revision' => "",
+    'verbose' => 0,
+    'version' => 0,
+    'want' => 0,
+);
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+my $CMD_SVN = "svn";
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "cleanup|c=s" => \$Opt{'cleanup'},
+    "exec|e=s" => \$Opt{'exec'},
+    "debug" => \$Opt{'debug'},
+    "file|f=s" => \$Opt{'file'},
+    "help|h" => \$Opt{'help'},
+    "ignore-externals" => \$Opt{'ignore-externals'},
+    "revision|r=s" => \$Opt{'revision'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+    "want|w=s" => \$Opt{'want'},
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
+
+my ($Start, $End) = (1, "HEAD");
+
+if (length($Opt{'revision'})) {
+    if ($Opt{'revision'} =~ /^(\d*):(\d*|head)$/i) {
+        D("regexp good");
+        length($1) && ($Start = $1);
+        length($2) && ($End = $2);
+    } else {
+        die("$progname: Invalid revision range in --revision (-r) parameter\n");
+    }
+}
+
+D("Start = '$Start', End = '$End'");
+
+if (!length($Opt{'exec'})) {
+    die("$progname: No --exec (-e) parameter specified. You might want to consult '$progname --help'.\n");
+}
+
+=pod
+
+-rSTARTREV:ENDREV
+--cleanup CLEANUPCMD
+--exec TESTCMD
+
+=cut
+
+find_revision($Opt{'want'}, $Opt{'file'}, $Start, $End, $Opt{'exec'}, $Opt{'cleanup'});
+
+my $Found = 0;
+
+sub find_revision {
+    # Scan a specific revision range for the first merge conflict and 
+    # return the revision number
+    # {{{
+    my ($Want, $File, $Start, $End, $Exec, $Cleanup) = @_;
+
+    D("find_revision('$Want', '$File', '$Start', '$End', '$Exec', '$Cleanup')");
+    print("$progname: $File: Scanning revision range r$Start:$End " .
+          "for return value $Want\n");
+    my @Array = revisions($File, $Start, $End);
+    if (!scalar(@Array)) {
+        print("No revisions found.\n");
+        return undef;
+    }
+
+    my $rev_count = scalar(@Array);
+    printf("$rev_count revision%s to check\n", $rev_count == 1 ? "" : "s");
+    print("(" . join(", ", @Array) . ")\n");
+
+    my $min_block = 0;
+    my ($min_pos, $max_pos) = (0, $rev_count);
+
+    my $last_mid = 0;
+    my $first_fail = 0;
+    my $last_good = 0;
+    my $has_checked = 0;
+
+    while (1) {
+        my $mid_pos = int(($min_pos + $max_pos) / 2);
+        last if ($has_checked && ($mid_pos == $last_mid));
+        my $Rev = $Array[$mid_pos];
+        print("==== Checking revision $Rev ($mid_pos) ====\n");
+        if (test_ok($Want, $File, $Rev, $Exec, $Cleanup)) {
+            print("OK\n");
+            $min_pos = $mid_pos;
+            D("min_pos set to '$mid_pos'");
+            if (!$last_good || ($Rev > $last_good)) {
+                $last_good = $Rev;
+            }
+        } else {
+            print("FAIL\n");
+            $max_pos = $mid_pos;
+            D("max_pos set to '$mid_pos'");
+            if (!$first_fail || ($Rev < $first_fail)) {
+                $first_fail = $Rev;
+            }
+        }
+        $has_checked = 1;
+        $last_mid = $mid_pos;
+    }
+    print($first_fail
+        ? "First fail at r$first_fail. "
+        : "No tests failed. "
+    );
+    print($last_good
+        ? "Last revision where the test succeeds at r$last_good.\n"
+        : "All revisions failed the test.\n"
+    );
+
+    # }}}
+} # find_revision()
+
+sub revisions {
+    # Return an array of revision numbers from a specific revision range 
+    # for a version controlled element
+    # {{{
+    my ($File, $Start, $End) = @_;
+    D("revisions('$File', '$Start', '$End')");
+    my $safe_file = escape_filename($File);
+    my $Data = "";
+    my @Revs = ();
+
+    my $pipe_cmd = "$CMD_SVN log --xml -r$Start:$End $safe_file\@$End |";
+    D("opening pipe '$pipe_cmd'");
+    if (open(PipeFP, $pipe_cmd)) {
+        $Data = join("", <PipeFP>);
+        close(PipeFP);
+        $Data =~ s/<logentry\b.*?\brevision="(\d+)".*?>/push(@Revs, "$1")/egs;
+    }
+    if ($Revs[0] eq $Start) {
+        splice(@Revs, 0, 1);
+    }
+    return(@Revs);
+    # }}}
+} # revisions()
+
+sub mysyst {
+    # Customised system() {{{
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    D("$system_txt");
+    deb_wait();
+    msg(1, "@_\n");
+    system(@_);
+    # }}}
+} # mysyst()
+
+sub escape_filename {
+    # Kludge for handling file names with spaces and characters that 
+    # trigger shell functions
+    # {{{
+    my $Name = shift;
+    # $Name =~ s/\\/\\\\/g;
+    # $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
+    $Name =~ s/'/\\'/g;
+    $Name = "'$Name'";
+    return($Name);
+    # }}}
+} # escape_filename()
+
+sub deb_wait {
+    # Wait until Enter is pressed if $Debug and verbose >= 2 {{{
+    $Debug || return;
+    if ($Opt{'verbose'} >= 2) {
+        print("debug: Press ENTER...");
+        <STDIN>;
+    }
+    # }}}
+} # deb_wait()
+
+sub test_ok {
+    my ($Want, $File, $Rev, $Exec, $Cleanup) = @_;
+    my $Retval;
+
+    D("test_ok(Want='$Want', File='$File', Rev='$Rev', Exec='$Exec', Cleanup='$Cleanup')");
+    if (length($Cleanup)) {
+        mysyst($Cleanup);
+    }
+    if ($Opt{'ignore-externals'}) {
+        mysyst($CMD_SVN, "update", "--ignore-externals", "-q", "-r$Rev", $File);
+    } else {
+        mysyst($CMD_SVN, "update", "-q", "-r$Rev", $File);
+    }
+    my $cmd_result = mysyst($Exec);
+    if ($Want =~ /^ok$/i) {
+        $Retval = $cmd_result ? 0 : 1;
+    } elsif ($Want =~ /^fail$/i) {
+        $Retval = $cmd_result ? 1 : 0;
+    } elsif ($Want == $cmd_result) {
+        $Retval = 1;
+    } else {
+        $Retval = 0;
+    }
+    D("test_ok() returns '$Retval', cmd_result = '$cmd_result'");
+    return($Retval);
+} # test_ok()
+
+sub print_version {
+    # Print program version {{{
+    print("$rcs_id\n");
+    exit(0);
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    print(<<END);
+
+$rcs_id
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=0 et fo+=w :
+# End of file $Id$
