@@ -1,6 +1,6 @@
 Index: postgres/create_table.sql
 ===================================================================
---- postgres/create_table.sql	(revisjon 2229)
+--- postgres/create_table.sql	(revisjon 2455)
 +++ postgres/create_table.sql	(arbeidskopi)
 @@ -46,6 +46,17 @@
      author text
@@ -22,7 +22,7 @@ Index: postgres/create_table.sql
      laststed timestamptz
 Index: postgres/create_views.sql
 ===================================================================
---- postgres/create_views.sql	(revisjon 2229)
+--- postgres/create_views.sql	(revisjon 2455)
 +++ postgres/create_views.sql	(arbeidskopi)
 @@ -133,6 +133,22 @@
      ) AS u
@@ -47,3 +47,14 @@ Index: postgres/create_views.sql
  CREATE OR REPLACE VIEW wp AS
      SELECT
          coor AS coor,
+Index: BRANCHINFO
+===================================================================
+--- BRANCHINFO	(revisjon 0)
++++ BRANCHINFO	(revisjon 0)
+@@ -0,0 +1,6 @@
++$Id$
++
++Legger inn informasjon om filer i Postgres. Fildato, navn, plassering og 
++så videre skal kunne mikses inn med alt det andre.
++
++vim: set tw=72 et fo=tcqw :
