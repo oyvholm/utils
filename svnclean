@@ -6,8 +6,17 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-svn revert -R .
-svn stat --no-ignore | grep -E '^[\?I]' | cut -c 8- | perl -pe 's/^/\.\//' | tr '\n' '\0' | xargs -0 -r rm -rfv
-svn update "$@"
-echo ======== svn stat --no-ignore ========
-svn stat --no-ignore
+echo "Warning, this command will clean out all non-versioned files." >&2
+echo -n "Press 'y' + Enter to continue..."
+read choice
+if [ "$choice" = "y" ]; then
+    echo ==== svn cleanup...
+    svn cleanup .
+    echo ==== svn revert...
+    svn revert -R .
+    echo ==== Remove unknown files...
+    svn stat --no-ignore | grep -E '^[\?I]' | cut -c 8- | \
+        perl -pe 's/^/\.\//' | tr '\n' '\0' | xargs -0 -r rm -rfv
+    echo ==== svn stat --no-ignore...
+    svn stat --no-ignore
+fi
