@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Test suite for STDprojnameDTS.
+# Test suite for STDprognameDTS(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -11,10 +11,10 @@
 #=======================================================================
 
 # After installing this file:
-# 1. Replace all STDprojnameDTS with project name.
-# 2. Replace all STDprognameDTS with name of executable to test.
-# 3. Replace value of $CMD with STDprognameDTS
-# 4. Replace all STDtestnameDTS with name of test script (this file).
+# 1. Replace all STDprognameDTS with program (executable) name.
+# 2. Replace all STDexecDTS with name of executable to test.
+# 3. Replace value of $CMD with STDexecDTS
+# 4. Replace all STDtestcmdDTS with name of test script (this file).
 # Remove this comment block.
 
 BEGIN {
@@ -265,7 +265,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-STDtestnameDTS [options] [file [files [...]]]
+STDtestcmdDTS [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
