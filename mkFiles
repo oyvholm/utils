@@ -12,7 +12,10 @@ until mkdir $lockname 2>/dev/null; do
 done
 
 echo \# `suuid -t mkfiles -c "mkFiles i $(hostname):$(/bin/pwd)"` >Files.smsum
-find -type f -print0 | LC_COLLATE=C sort -z | grep -zv -e '^\./Files\.smsum$' | xargs -0 smsum -m >>Files.smsum
+find -type f -print0 | \
+    LC_COLLATE=C sort -z | \
+    grep -zv -e '^\./Files\.smsum$' | \
+    xargs -0 smsum -m >>Files.smsum
 echo mkFiles: Done.
 
 rmdir $lockname
