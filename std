@@ -81,7 +81,7 @@ $Mon += 1;
 
 if (open(FromFP, "<$dat_file")) {
     while (my $Line = <FromFP>) {
-        $Line =~ s/\(!year!\)/$Year/g;
+        $Line =~ s/STDyearDTS/$Year/g;
         print($Line);
     }
     close(FromFP);
