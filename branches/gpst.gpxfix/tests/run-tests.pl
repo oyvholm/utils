@@ -125,6 +125,69 @@ END
 );
 
 # }}}
+testcmd("../gpst -o gpx many-extensions.gpx", # {{{
+    <<END,
+$gpx_header
+  <metadata>
+    <name>File with &lt;extensions&gt; elements</name>
+    <author>Me</author>
+    <extensions>
+      <a>
+        <aa>metadata aa</aa>
+      </a>
+      <mb>bb in metadata</mb>
+    </extensions>
+  </metadata>
+  <wpt lat="11" lon="12">
+    <name>Somewhere in Nigeria</name>
+    <extensions>
+      <wa>in wpt</wa>
+    </extensions>
+  </wpt>
+  <trk>
+    <name>Track 1</name>
+    <extensions>
+      <blurfl>inside trk</blurfl>
+    </extensions>
+    <trkseg>
+      <trkpt lat="21" lon="22">
+        <time>2001-02-03T04:05:06Z</time>
+        <extensions>
+          <ba>1 in trkpt</ba>
+          <bb>trkpt 2</bb>
+          <bc>
+            <bca>bca trkpt</bca>
+            <bcb>trkpt bcb</bcb>
+            <bcc>
+              <bcca>
+                <bccba>bccba stuff</bccba>
+              </bcca>
+              <bccb>
+                <bccbb>bccba thingy</bccbb>
+              </bccb>
+            </bcc>
+          </bc>
+        </extensions>
+      </trkpt>
+      <extensions>
+        <da>trkseg 1</da>
+        <db>trkseg 2</db>
+      </extensions>
+    </trkseg>
+  </trk>
+  <extensions>
+    <f>
+      <fa>in gpx</fa>
+    </f>
+    <g>Penguin Power</g>
+  </extensions>
+</gpx>
+END
+    "",
+    "Output GPX format from GPX with many <extensions>",
+);
+
+# }}}
 
 diag("Testing conversion routines...");
 

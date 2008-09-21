@@ -3,6 +3,103 @@ ok - "../gpst -o gpx extensions.gpx" - Read and output GPX with <extensions> ele
 ok - "../gpst -o gpx extensions.gpx" - Read and output GPX with <extensions> element (stderr)
 ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> element and strip whitespace
 ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> element and strip whitespace (stderr)
+not ok - "../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>
+#   Failed test '"../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>'
+#   in ./run-tests.pl at line 1929.
+#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="21" lon="22"> <time>2001-02-03T04:05:06Z</time> <extensions> <ba>1 in trkpt</ba>
+#           <bb>trkpt 2</bb>
+#           <bc>
+#             <bca>bca trkpt</bca>
+#             <bcb>trkpt bcb</bcb>
+#             <bcc>
+#               <bcca>
+#                 <bccba>bccba stuff</bccba>
+#               </bcca>
+#               <bccb>
+#                 <bccbb>bccba thingy</bccbb>
+#               </bccb>
+#             </bcc>
+#           </bc> </extensions> </trkpt>
+#       <extensions> <da>trkseg 1</da>
+#         <db>trkseg 2</db> </extensions>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <metadata>
+#     <name>File with &lt;extensions&gt; elements</name>
+#     <author>Me</author>
+#     <extensions>
+#       <a>
+#         <aa>metadata aa</aa>
+#       </a>
+#       <mb>bb in metadata</mb>
+#     </extensions>
+#   </metadata>
+#   <wpt lat="11" lon="12">
+#     <name>Somewhere in Nigeria</name>
+#     <extensions>
+#       <wa>in wpt</wa>
+#     </extensions>
+#   </wpt>
+#   <trk>
+#     <name>Track 1</name>
+#     <extensions>
+#       <blurfl>inside trk</blurfl>
+#     </extensions>
+#     <trkseg>
+#       <trkpt lat="21" lon="22">
+#         <time>2001-02-03T04:05:06Z</time>
+#         <extensions>
+#           <ba>1 in trkpt</ba>
+#           <bb>trkpt 2</bb>
+#           <bc>
+#             <bca>bca trkpt</bca>
+#             <bcb>trkpt bcb</bcb>
+#             <bcc>
+#               <bcca>
+#                 <bccba>bccba stuff</bccba>
+#               </bcca>
+#               <bccb>
+#                 <bccbb>bccba thingy</bccbb>
+#               </bccb>
+#             </bcc>
+#           </bc>
+#         </extensions>
+#       </trkpt>
+#       <extensions>
+#         <da>trkseg 1</da>
+#         <db>trkseg 2</db>
+#       </extensions>
+#     </trkseg>
+#   </trk>
+#   <extensions>
+#     <f>
+#       <fa>in gpx</fa>
+#     </f>
+#     <g>Penguin Power</g>
+#   </extensions>
+# </gpx>
+# '
+ok - "../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions> (stderr)
 # Testing conversion routines...
 ok - txt_to_xml("abc")
 ok - txt_to_xml("<&>")
@@ -116,7 +213,7 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 #   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 1866.
+#   in ./run-tests.pl at line 1929.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -205,7 +302,7 @@ ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 #   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 1866.
+#   in ./run-tests.pl at line 1929.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -307,7 +404,7 @@ ok - "../gpst --version" - The --version option outputs Id strings
 # Testing --strip-whitespace option...
 not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 #   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 1866.
+#   in ./run-tests.pl at line 1929.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
@@ -384,5 +481,5 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..209
-# Looks like you failed 3 tests of 209.
+1..211
+# Looks like you failed 4 tests of 211.
