@@ -13,6 +13,7 @@ done
 
 echo \# `suuid -t mkfiles -c "mkFiles i $(hostname):$(/bin/pwd)"` >Files.smsum
 find -type f -print0 | \
+    grep -zv '/\.svn/' | \
     LC_COLLATE=C sort -z | \
     grep -zv -e '^\./Files\.smsum$' | \
     xargs -0 smsum -m >>Files.smsum
