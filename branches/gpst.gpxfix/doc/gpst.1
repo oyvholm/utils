@@ -1,60 +1,218 @@
 .\"     Title: gpst
-.\"    Author: 
-.\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
+.\"    Author: [see the "Author" section]
+.\" Generator: DocBook XSL Stylesheets v1.74.0 <http://docbook.sf.net/>
 .\"      Date: $Id$
-.\"    Manual: 
-.\"    Source: 
+.\"    Manual: [FIXME: manual]
+.\"    Source: [FIXME: source]
+.\"  Language: English
 .\"
-.TH "GPST" "1" "$Id$" "" ""
+.TH "GPST" "1" "$Id$" "[FIXME: source]" "[FIXME: manual]"
+.\" -----------------------------------------------------------------
+.\" * (re)Define some macros
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" toupper - uppercase a string (locale-aware)
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de toupper
+.tr aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ
+\\$*
+.tr aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH-xref - format a cross-reference to an SH section
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de SH-xref
+.ie n \{\
+.\}
+.toupper \\$*
+.el \{\
+\\$*
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SH - level-one heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SH
+.\" put an extra blank line of space above the head in non-TTY output
+.if t \{\
+.sp 1
+.\}
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[an-margin]u
+.ti 0
+.HTML-TAG ".NH \\n[an-level]"
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+\." make the size of the head bigger
+.ps +3
+.ft B
+.ne (2v + 1u)
+.ie n \{\
+.\" if n (TTY output), use uppercase
+.toupper \\$*
+.\}
+.el \{\
+.nr an-break-flag 0
+.\" if not n (not TTY), use normal case (not uppercase)
+\\$1
+.in \\n[an-margin]u
+.ti 0
+.\" if not n (not TTY), put a border/line under subheading
+.sp -.6
+\l'\n(.lu'
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" SS - level-two heading that works better for non-TTY output
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de1 SS
+.sp \\n[PD]u
+.nr an-level 1
+.set-an-margin
+.nr an-prevailing-indent \\n[IN]
+.fi
+.in \\n[IN]u
+.ti \\n[SN]u
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.ps \\n[PS-SS]u
+\." make the size of the head bigger
+.ps +2
+.ft B
+.ne (2v + 1u)
+.if \\n[.$] \&\\$*
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BB/BE - put background/screen (filled box) around block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BB
+.if t \{\
+.sp -.5
+.br
+.in +2n
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EB
+.if t \{\
+.if "\\$2"adjust-for-leading-newline" \{\
+.sp -1
+.\}
+.br
+.di
+.in
+.ll
+.gcolor
+.nr BW \\n(.lu-\\n(.i
+.nr BH \\n(dn+.5v
+.ne \\n(BHu+.5v
+.ie "\\$2"adjust-for-leading-newline" \{\
+\M[\\$1]\h'1n'\v'+.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.el \{\
+\M[\\$1]\h'1n'\v'-.5v'\D'P \\n(BWu 0 0 \\n(BHu -\\n(BWu 0 0 -\\n(BHu'\M[]
+.\}
+.in 0
+.sp -.5v
+.nf
+.BX
+.in
+.sp .5v
+.fi
+.\}
+..
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" BM/EM - put colored marker in margin next to block of text
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.de BM
+.if t \{\
+.br
+.ll -2n
+.gcolor red
+.di BX
+.\}
+..
+.de EM
+.if t \{\
+.br
+.di
+.ll
+.gcolor
+.nr BH \\n(dn
+.ne \\n(BHu
+\M[\\$1]\D'P -.75n 0 0 \\n(BHu -(\\n[.i]u - \\n(INu - .75n) 0 0 -\\n(BHu'\M[]
+.in 0
+.nf
+.BX
+.in
+.fi
+.\}
+..
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
 .\" disable hyphenation
 .nh
 .\" disable justification (adjust text to left margin only)
 .ad l
-.SH "NAME"
-gpst \- Converts between various GPS formats.
-.SH "SYNOPSIS"
-.HP 5
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "Name"
+gpst \- Converts between various GPS formats\&.
+.SH "Synopsis"
+.fam C
+.HP \w'\fBgpst\fR\ 'u
 \fBgpst\fR [\fIoptions\fR] [\fIfile\fR...]
-.HP 5
+.fam
+.fam C
+.HP \w'\fBgpst\fR\ 'u
 \fBgpst\fR {\-S} [\fIoptions\fR] [\fIfile\fR...]
-.HP 5
-\fBgpst\fR {\-u} [\fIoptions\fR] [\fIfile\fR...]
-.SH "DESCRIPTION"
+.fam
+.SH "Description"
 .PP
 \fB\-\-chronology\fR
 .RS 4
-Check for broken chronology, warn about entries with an old timestamp.
+Check for broken chronology, warn about entries with an old timestamp\&.
 .RE
 .PP
 \fB\-d\fR, \fB\-\-skip\-dups\fR
 .RS 4
-If succeeding identical coordinates are found, print only the first one and ignore the rest.
+If succeeding identical coordinates are found, print only the first one and ignore the rest\&.
 .RE
 .PP
 \fB\-e\fR, \fB\-\-epoch\fR
 .RS 4
-Use seconds since 1970\-01\-01 00:00:00 GMT as date format.
+Use seconds since 1970\-01\-01 00:00:00 GMT as date format\&.
 .RE
 .PP
 \fB\-\-fix\fR
 .RS 4
-Comment out entries which is obviously wrong. Use together with
+Comment out entries which is obviously wrong\&. Use together with
 \fB\-\-chronology\fR
-to fix those kind of errors. Does not work with GPX output yet.
+to fix those kind of errors\&. Does not work with GPX output yet\&.
 .RE
 .PP
 \fB\-\-from\-date \fR\fB\fIx\fR\fR
 .RS 4
 Used by the
-pgwupd
-format. Specifies from which date waypoints should be updated. No checks for valid date format here, let
+\FCpgwupd\F[]
+format\&. Specifies from which date waypoints should be updated\&. No checks for valid date format here, let
 PostgreSQL
-take care of that. All variants it understands can be used here.
+take care of that\&. All variants it understands can be used here\&.
 .RE
 .PP
 \fB\-h\fR, \fB\-\-help\fR
 .RS 4
-Send a brief help summary to stdout.
+Send a brief help summary to stdout\&.
 .RE
 .PP
 \fB\-\-inside\fR
@@ -62,202 +220,195 @@ Send a brief help summary to stdout.
 Print only trackpoints inside a rectangle specified by
 \fB\-\-pos1\fR
 and
-\fB\-\-pos2\fR.
+\fB\-\-pos2\fR\&.
 .RE
 .PP
 \fB\-n\fR, \fB\-\-undefined \fR\fB\fIx\fR\fR
 .RS 4
 Use
 \fIx\fR
-as undefined value.
+as undefined value\&.
 .RE
 .PP
 \fB\-\-near\fR
 .RS 4
-Add names of the three closest waypoints to the trackpoint. Unfinished and experimental, needs
+Add names of the three closest waypoints to the trackpoint\&. Unfinished and experimental, needs
 \fBgpsbabel\fR(1), which is called from the program as
-\fB/usr/local/bin/gpsbabel\fR.
+\fB/usr/local/bin/gpsbabel\fR\&.
 .RE
 .PP
 \fB\-o\fR, \fB\-\-output\-format \fR\fB\fIx\fR\fR
 .RS 4
 Use output format
 \fIx\fR:
-.RS 4
 .PP
 \fBclean\fR
 .RS 4
-TAB\-separated format with longitude, latitude and altitude.
+TAB\-separated format with longitude, latitude and altitude\&.
 .RE
 .PP
 \fBcsv\fR
 .RS 4
 TAB\-separated format:
-.RS 4
 .PP
 date
 .RS 4
-Date of trackpoint. Format:
-\fIyyyy\fR\-\fImm\fR\-\fIdd\fRT\fIhh\fR:\fImm\fR:\fIss\fRZ
+Date of trackpoint\&. Format:
+\FC\fIyyyy\fR\-\fImm\fR\-\fIdd\fRT\fIhh\fR:\fImm\fR:\fIss\fRZ\F[]
 unless the
 \fB\-\-epoch\fR
-option is specified. If so, it\(cqs represented as number of seconds since 1970\-01\-01 00:00:00 UTC.
+option is specified\&. If so, it\(cqs represented as number of seconds since 1970\-01\-01 00:00:00 UTC\&.
 .RE
 .PP
 longitude
 .RS 4
-Longitude, decimal degrees.
+Longitude, decimal degrees\&.
 .RE
 .PP
 latitude
 .RS 4
-Latitude, decimal degrees.
+Latitude, decimal degrees\&.
 .RE
 .PP
 altitude
 .RS 4
-Altitude in metres above sea level. Optional. If not present, the corresponding TAB is also printed, to keep the number of columns intact.
-.RE
+Altitude in metres above sea level\&. Optional\&. If not present, the corresponding TAB is also printed, to keep the number of columns intact\&.
 .RE
 .RE
 .PP
 \fBgpsml\fR (Default)
 .RS 4
-Line\-based XML which makes it easy to edit and grep. In the past, there was this big plan about making this the default storage format, so it was declared as The Honourable Default Output Format. But using GPX is the way to go, so this will probably change in the future. It\(cqs way too
+Line\-based XML which makes it easy to edit and grep\&. In the past, there was this big plan about making this the default storage format, so it was declared as The Honourable Default Output Format\&. But using GPX is the way to go, so this will probably change in the future\&. It\(cqs way too
 de facto
-and widely used, so storing GPS data in anything else is sheer waste of work. Probably not finished yet.
+and widely used, so storing GPS data in anything else is sheer waste of work\&. Probably not finished yet\&.
 .RE
 .PP
 \fBgpstrans\fR
 .RS 4
 The format generated by
-\fBgpstrans\fR(1).
+\fBgpstrans\fR(1)\&.
 .RE
 .PP
 \fBgpx\fR
 .RS 4
-Not complete yet, but good enough in most cases.
+Not complete yet, but good enough in most cases\&.
 .RE
 .PP
 \fBpgtab\fR
 .RS 4
 TAB\-separated format for import into
-PostgreSQL. Undefined values are written as
-\\N
+PostgreSQL\&. Undefined values are written as
+\FC\eN\F[]
 if the
 \fB\-\-undefined\fR
-option is not specified.
-.RS 4
+option is not specified\&.
 .PP
 date
 .RS 4
 Format:
-\fIyyyy\fR\-\fImm\fR\-\fIdd\fRT\fIhh\fR:\fImm\fR:\fIss\fRZ
+\FC\fIyyyy\fR\-\fImm\fR\-\fIdd\fRT\fIhh\fR:\fImm\fR:\fIss\fRZ\F[]
 .RE
 .PP
 coor
 .RS 4
 Format:
-(\fIlat\fR,\fIlon\fR)
+\FC(\fIlat\fR,\fIlon\fR)\F[]
 .RE
 .PP
 ele
 .RS 4
-Altitude in metres above sea level.
+Altitude in metres above sea level\&.
 .RE
 .PP
 sted
 .RS 4
-Short name of closest waypoint. Calculated in
+Short name of closest waypoint\&. Calculated in
 PostgreSQL, so this value is always
-\\N.
+\FC\eN\F[]\&.
 .RE
 .PP
 dist
 .RS 4
-Distance in decimal degrees to closest waypoint. Calculated in
+Distance in decimal degrees to closest waypoint\&. Calculated in
 PostgreSQL, so this value is always
-\\N.
+\FC\eN\F[]\&.
 .RE
 .PP
 description
 .RS 4
-Description of waypoint. Calculated in
+Description of waypoint\&. Calculated in
 PostgreSQL, so this value is always
-\\N.
+\FC\eN\F[]\&.
 .RE
 .PP
 avst
 .RS 4
 Distance to trackpoint in decimal degrees from a defined
 \(lqhome\(rq
-position. This is calculated in
+position\&. This is calculated in
 PostgreSQL, so the field value is always
-\\N.
-.RE
+\FC\eN\F[]\&.
 .RE
 .RE
 .PP
 \fBpgwtab\fR
 .RS 4
 Output waypoints on a TAB\-separated format:
-.RS 4
 .PP
 coor
 .RS 4
 Format:
-(\fIlat\fR,\fIlon\fR)
+\FC(\fIlat\fR,\fIlon\fR)\F[]
 .RE
 .PP
 name
 .RS 4
-Title of waypoint.
+Title of waypoint\&.
 .RE
 .PP
 ele
 .RS 4
-Elevation in metres above sea level.
+Elevation in metres above sea level\&.
 .RE
 .PP
 type
 .RS 4
 Type of waypoint, same as the GPX
 <type>
-element.
+element\&.
 .RE
 .PP
 time
 .RS 4
-Timestamp of waypoint.
+Timestamp of waypoint\&.
 .RE
 .PP
 cmt
 .RS 4
-Short waypoint description, used by the GPS as a comment. Same as the GPX
+Short waypoint description, used by the GPS as a comment\&. Same as the GPX
 <cmt>
-element.
+element\&.
 .RE
 .PP
 descr
 .RS 4
-Long description, not used by the GPS. Same as the GPX
+Long description, not used by the GPS\&. Same as the GPX
 <desc>
-element.
+element\&.
 .RE
 .PP
 src
 .RS 4
 Source of data, same as the
 <src>
-GPX element.
+GPX element\&.
 .RE
 .PP
 sym
 .RS 4
-GPS symbol name. Same as the
+GPS symbol name\&. Same as the
 <sym>
-GPX element.
-.RE
+GPX element\&.
 .RE
 .RE
 .PP
@@ -267,35 +418,34 @@ Output waypoints as SQL transactions which updates the
 sted
 and
 dist
-columns.
+columns\&.
 .RE
 .PP
 \fBposcount\fR
 .RS 4
-Creates a 3D plot where areas with many trackpoints are higher than areas with less track points.
+Creates a 3D plot where areas with many trackpoints are higher than areas with less track points\&.
 .RE
 .PP
 \fBps\fR
 .RS 4
-Postscript. Unfinished.
+Postscript\&. Unfinished\&.
 .RE
 .PP
 \fBsvg\fR
 .RS 4
-Unfinished.
+Unfinished\&.
 .RE
 .PP
 \fBxgraph\fR
 .RS 4
 Input format for
-\fBxgraph\fR(1).
+\fBxgraph\fR(1)\&.
 .RE
 .PP
 \fBygraph\fR
 .RS 4
 Input format for
-\fBygraph\fR(1).
-.RE
+\fBygraph\fR(1)\&.
 .RE
 .RE
 .PP
@@ -304,7 +454,7 @@ Input format for
 Print only trackpoints outside a rectangle specified by
 \fB\-\-pos1\fR
 and
-\fB\-\-pos2\fR.
+\fB\-\-pos2\fR\&.
 .RE
 .PP
 \fB\-\-pos1 \fR\fB\fIx1\fR\fR\fB,\fR\fB\fIy1\fR\fR, \fB\-\-pos2 \fR\fB\fIx2\fR\fR\fB,\fR\fB\fIy2\fR\fR
@@ -313,44 +463,42 @@ Specifies corners of an area rectangle used by the
 \fB\-\-inside\fR
 and
 \fB\-\-outside\fR
-options. The
+options\&. The
 \fIx\fR
 and
 \fIy\fR
-values are specified as decimal degrees, negative for west or south.
+values are specified as decimal degrees, negative for west or south\&.
 .RE
 .PP
 \fB\-r\fR, \fB\-\-require \fR\fB\fIx\fR\fR
 .RS 4
-Specify requirements for trackpoints to be written.
+Specify requirements for trackpoints to be written\&.
 \fIx\fR
 is a string with the following flags:
-.RS 4
 .PP
 \fBe\fR
 .RS 4
-Print only waypoints which have an elevation.
+Print only waypoints which have an elevation\&.
 .RE
 .PP
 \fBp\fR
 .RS 4
-Print only waypoints which have a position.
+Print only waypoints which have a position\&.
 .RE
 .PP
 \fBt\fR
 .RS 4
-Print only waypoints which have a timestamp.
-.RE
+Print only waypoints which have a timestamp\&.
 .RE
 .RE
 .PP
-\fB\-R\fR, \fB\-\-round \fR\fB\fIx\fR\fR\fB=\fR\fB\fIy\fR\fR\fB[,\fIx2\fR=\fIy2\fR[...]]\fR
+\fB\-R\fR, \fB\-\-round \fR\fB\fIx\fR\fR\fB=\fR\fB\fIy\fR\fR\fB[,\fIx2\fR=\fIy2\fR[\&.\&.\&.]]\fR
 .RS 4
 Round trackpoint element
 \fIx\fR
 to
 \fIy\fR
-decimals.
+decimals\&.
 .sp
 Example:
 \fB\-\-round lat=4,lon=5,ele=1\fR
@@ -358,111 +506,156 @@ Example:
 .PP
 \fB\-s\fR, \fB\-\-short\-date\fR
 .RS 4
-Use short date format.
+Use short date format\&.
 .RE
 .PP
 \fB\-S\fR, \fB\-\-save\-to\-file \fR\fB\fIx\fR\fR
 .RS 4
-Save the unconverted data to a file with a filename starting with the timestamp of the first trackpoint. The parameter string
+Save the unconverted data to a file with a filename starting with the timestamp of the first trackpoint\&. The parameter string
 \fIx\fR
-is added at the end of the filename. For the time being this option will ignore all other options.
+is added at the end of the filename\&. For the time being this option will ignore all other options\&.
+.if n \{\
 .sp
+.\}
+.RS 4
+.BM yellow
 .it 1 an-trap
 .nr an-no-space-flag 1
 .nr an-break-flag 1
 .br
+.ps +1
 \fBNote\fR
-If several files are specified on the command line, all data will be saved into only one file. This behaviour may change in the future.
+.ps -1
+.br
+If several files are specified on the command line, all data will be saved into only one file\&. This behaviour may change in the future\&.
+.sp .5v
+.EM yellow
+.RE
 .RE
 .PP
 \fB\-t\fR, \fB\-\-create\-breaks\fR
 .RS 4
 Create breaks in track between points with a difference more than the number of seconds specified by the
 \fBPAUSE_LIMIT\fR
-variable.
-.RE
-.PP
-\fB\-u\fR, \fB\-\-comment\-out\-dups\fR
-.RS 4
-Comment out following data with identical position values, only print first entry.
+variable\&.
 .RE
 .PP
 \fB\-v\fR, \fB\-\-verbose\fR
 .RS 4
-Verbose output, can be repeated.
+Verbose output, can be repeated\&.
 .RE
 .PP
 \fB\-\-version\fR
 .RS 4
-Print program version information.
+Print program version information\&.
 .RE
 .PP
 \fB\-w\fR, \fB\-\-strip\-whitespace\fR
 .RS 4
-Strip all unnecessary whitespace.
+Strip all unnecessary whitespace\&.
 .RE
 .PP
 \fB\-y\fR, \fB\-\-double\-y\-scale\fR
 .RS 4
-Double Y scale (latitude).
+Double Y scale (latitude)\&.
 .RE
 .PP
 \fB\-\-debug\fR
 .RS 4
-Print debugging messages.
+Print debugging messages\&.
 .RE
-.SH "BUGS AND THINGS THAT NEED TO BE DONE"
-.TP 4
-\(bu
-Pretty incomplete in some areas. Some of the source formats are undocumented and thus incomplete. Some functionality is not working properly, for example the Postscript output.
-.TP 4
-\(bu
+.SH "Bugs and things that need to be done"
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Pretty incomplete in some areas\&. Some of the source formats are undocumented and thus incomplete\&. Some functionality is not working properly, for example the Postscript output\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
 Remove hardcodings, for example the
 \(lqhome\(rq
 position used to calculate the
 avst
-database column.
-.TP 4
-\(bu
-Translate database column names to English.
-.TP 4
-\(bu
-Add more tests to cover all command\-line options.
-.SH "AUTHOR"
+database column\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Translate database column names to English\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Add more tests to cover all command\-line options\&.
+.RE
+.SH "Author"
 .PP
 Made by
-Øyvind A. Holm
-<sunny@sunbase.org>.
-.SH "COPYRIGHT"
+Øyvind A\&. Holm
+\FCsunny@sunbase\&.org\F[]\&.
+.SH "Copyright"
 .PP
 Copyleft \(co
-Øyvind A. Holm
-<sunny@sunbase.org>. This is free software; see the file
-\fICOPYING\fR
-for legalese stuff.
-.SH "LICENSE"
+Øyvind A\&. Holm
+\FCsunny@sunbase\&.org\F[]\&. This is free software; see the file
+\FCCOPYING\F[]
+for legalese stuff\&.
+.SH "License"
 .PP
 This program is free software; you can redistribute it and/or modify it under the terms of the
 GNU General Public License
 as published by the
-Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+Free Software Foundation; either version 2 of the License, or (at your option) any later version\&.
 .PP
 This program is distributed in the hope that it will be useful, but
 \fIWITHOUT ANY WARRANTY\fR; without even the implied warranty of
 \fIMERCHANTABILITY\fR
 or
-\fIFITNESS FOR A PARTICULAR PURPOSE\fR. See the GNU General Public License for more details.
+\fIFITNESS FOR A PARTICULAR PURPOSE\fR\&. See the GNU General Public License for more details\&.
 .PP
 You should have received a copy of the GNU General Public License along with this program; if not, write to
 .sp
+.if n \{\
 .RS 4
+.\}
+.fam C
+.ps -1
 .nf
-The Free Software Foundation, Inc.
+The Free Software Foundation, Inc\&.
 59 Temple Place, Suite 330
 Boston, MA 02111\-1307
 USA
 .fi
+.fam
+.ps +1
+.if n \{\
 .RE
-.SH "SEE ALSO"
+.\}
+.SH "See also"
 .PP
 \fBgpsbabel\fR(1)

@@ -592,6 +592,7 @@ testcmd("../gpst -e -o gpx pause.gpx", # {{{
     <<END,
 $gpx_header
   <trk>
+    <name>ACTIVE LOG164705</name>
     <trkseg>
       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
@@ -1021,6 +1022,7 @@ testcmd("../gpst -o gpx missing.gpsml", # {{{
     <<END,
 $gpx_header
   <trk>
+    <name>Missing various elements</name>
     <trkseg>
       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
       <trkpt> <ele>483</ele> <time>2006-04-30T17:17:11Z</time> </trkpt>
@@ -1516,62 +1518,6 @@ END
 
 # }}}
 # --create-breaks option }}}
-diag("Testing --comment-out-dups option..."); # {{{
-testcmd("../gpst -u no_signal.mayko >nosignal.tmp", # {{{
-    "",
-    "",
-    "Redirect stdout",
-);
-
-# }}}
-testcmd("../gpst nosignal.tmp", # {{{
-    <<END,
-<?xml version="1.0" encoding="UTF-8"?>
-<gpsml>
-<track>
-<tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
-<tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
-<tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
-<desc>20021222T214351-20021222T214354: CO: No signal \x7B\x7B\x7B</desc>
-<etp err="desc"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<etp err="desc"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<etp err="desc"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<desc>20021222T214351-20021222T214354: CO: No signal \x7D\x7D\x7D</desc>
-<break/>
-<tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
-<tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
-<tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
-</track>
-</gpsml>
-END
-    "",
-    "Read output from 'gpst -u *.mayko'",
-);
-
-# }}}
-unlink("nosignal.tmp") || warn("nosignal.tmp: Cannot delete file: $!\n");
-testcmd("../gpst -u no_signal.mayko", # {{{
-    <<END,
-xmaplog 1.0 Mon Dec 23 02:00:50 2002
-1 70.6800486 23.6746151 57.4 0 12/22/2002 21:42:24
-1 70.6799322 23.6740038 6.3 0 12/22/2002 21:42:32
-1 70.6796266 23.6723991 6.0 0 12/22/2002 21:42:54
-# 20021222T214351-20021222T214354: CO: No signal \x7B\x7B\x7B
-# 1 70.6796266 23.6723991 0.0 0 12/22/2002 21:43:51
-# 1 70.6796266 23.6723991 0.0 0 12/22/2002 21:43:52
-# 1 70.6796266 23.6723991 0.0 0 12/22/2002 21:43:54
-# 20021222T214351-20021222T214354: CO: No signal \x7D\x7D\x7D
-# move
-1 70.6800774 23.6757566 5.1 0 12/22/2002 21:44:45
-1 70.6801502 23.6753442 4.8 0 12/22/2002 21:44:52
-1 70.6801905 23.6757542 2.5 0 12/22/2002 21:45:04
-END
-    "",
-    "Read Mayko format with no signal, output old Mayko format",
-);
-
-# }}}
-# --comment-out-dups option }}}
 diag("Testing --verbose option..."); # {{{
 # --verbose option }}}
 diag("Testing --version option..."); # {{{
@@ -1587,6 +1533,7 @@ testcmd("../gpst -w -o gpx pause.gpx", # {{{
     <<END,
 $stripped_gpx_header
 <trk>
+<name>ACTIVE LOG164705</name>
 <trkseg>
 <trkpt lat="60.425494" lon="5.299534"><ele>25.260</ele><time>2006-05-21T16:49:11Z</time></trkpt>
 <trkpt lat="60.425464" lon="5.299610"><ele>24.931</ele><time>2006-05-21T16:49:46Z</time></trkpt>
@@ -1839,24 +1786,24 @@ if ($Opt{'all'} || $Opt{'todo'}) {
 2003-02-11T23:38:35Z\t-0.1462732\t51.4973145\t\t
 END
             "",
-            "Output csv format from gpx",
+            "Output csv format from multitrack.gpx",
         );
 
         # }}}
         testcmd("../gpst -o csv pause.gpx", # {{{
             <<END,
-2006-05-21 16:49:11\t5.299534\t60.425494\t25.260\t
-2006-05-21 16:49:46\t5.299610\t60.425464\t24.931\t
-2006-05-21 16:52:04\t5.299694\t60.425314\t27.975\t
-2006-05-21 16:56:36\t5.299741\t60.425384\t31.017\t
-2006-05-21 16:56:47\t5.299958\t60.425339\t30.980\t
-2006-05-21 16:56:56\t5.299640\t60.425238\t30.538\t
-2006-05-21 16:57:03\t5.299686\t60.425246\t30.515\t
-2006-05-21 16:59:08\t5.299773\t60.425345\t31.936\t
-2006-05-21 17:00:54\t5.299419\t60.425457\t31.794\t
+2006-05-21T16:49:11Z\t5.299534\t60.425494\t25.260\t
+2006-05-21T16:49:46Z\t5.299610\t60.425464\t24.931\t
+2006-05-21T16:52:04Z\t5.299694\t60.425314\t27.975\t
+2006-05-21T16:56:36Z\t5.299741\t60.425384\t31.017\t
+2006-05-21T16:56:47Z\t5.299958\t60.425339\t30.980\t
+2006-05-21T16:56:56Z\t5.299640\t60.425238\t30.538\t
+2006-05-21T16:57:03Z\t5.299686\t60.425246\t30.515\t
+2006-05-21T16:59:08Z\t5.299773\t60.425345\t31.936\t
+2006-05-21T17:00:54Z\t5.299419\t60.425457\t31.794\t
 END
             "",
-            "csv format from gpx",
+            "Output csv format from pause.gpx",
         );
 
         # }}}
@@ -1876,31 +1823,6 @@ END
             "csv format with epoch seconds from gpx",
         );
 
-        # }}}
-        $TODO = "Use gpsml, this Mayko thing is obsolete.";
-        testcmd("../gpst -u no_signal.mayko", # {{{
-            <<END,
-<?xml version="1.0" encoding="UTF-8"?>
-<gpsml>
-<track>
-<tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
-<tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
-<tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
-<desc>20021222T214351-20021222T214354: CO: No signal \x7B\x7B\x7B</desc>
-<etp err="nosignal"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<etp err="nosignal"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<etp err="nosignal"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
-<desc>20021222T214351-20021222T214354: CO: No signal \x7D\x7D\x7D</desc>
-<break/>
-<tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
-<tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
-<tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
-</track>
-</gpsml>
-END
-            "",
-            "Output gpsml from the -u option",
-        );
         # }}}
         $TODO = "Tweak output";
         testcmd("../gpst -o gpx multitrack-pause.gpsml", # {{{

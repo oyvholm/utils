@@ -23,17 +23,21 @@ BEGIN {
 }
 
 use GPST;
+use GPSTxml;
 
 $| = 1;
 
 our $Debug = 0;
 our $NA = '\N';
-
+our %Std = (
+    'output-format' => 'pgtab',
+);
 our %Opt = (
     'author' => '',
     'debug' => 0,
     'description' => '',
     'help' => 0,
+    'output-format' => $Std{'output-format'},
     'verbose' => 0,
     'version' => 0,
 );
@@ -53,6 +57,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "description|d=s" => \$Opt{'description'},
     "help|h" => \$Opt{'help'},
+    "output-format|o=s" => \$Opt{'output-format'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -60,6 +65,10 @@ GetOptions(
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
+
+if ($Opt{'output-format'} eq "xml") {
+    print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpstpic>\n");
+}
 
 if ($#ARGV < 0) {
     while (<>) {
@@ -70,6 +79,10 @@ if ($#ARGV < 0) {
     for my $fname (@ARGV) {
         print_entry($fname);
     }
+}
+
+if ($Opt{'output-format'} eq "xml") {
+    print("</gpstpic>\n");
 }
 
 sub print_entry {
@@ -86,7 +99,7 @@ sub print_entry {
             if (/DateTime/) {
                 s/^.*'(.*?)'.*$/$1/;
                 chomp($date = $_);
-                $date =~ s/^(\d\d\d\d)(.)(\d\d)(.)(\d\d)(.)(\d\d:\d\d:\d\d)(.*)/$1-$3-$5 $7$8/;
+                $date =~ s/^(\d\d\d\d)(.)(\d\d)(.)(\d\d)(.)(\d\d:\d\d:\d\d)(.*)/$1-$3-${5}T$7$8/;
                 D("date = '$date'");
                 push(@Dates, $date);
             }
@@ -96,15 +109,43 @@ sub print_entry {
         $date = $Dates[0];
         defined($date) || ($date = '');
         D("final date = '$date'");
-        if ($date =~ /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/) {
+        if ($date =~ /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d$/) {
             $filename =~ s/^.*\/(.*?)$/$1/;
-            my $Output = join("\t",
-                postgresql_copy_safe($date),
-                length($coor) ? postgresql_copy_safe($coor) : $NA,
-                length($Opt{'description'}) ? postgresql_copy_safe($Opt{'description'}) : $NA,
-                length($filename) ? postgresql_copy_safe($filename) : $NA,
-                length($Opt{'author'}) ? postgresql_copy_safe($Opt{'author'}) : $NA
-            ) . "\n";
+            my $Output = "";
+            if ($Opt{'output-format'} eq "xml") {
+                if (length("$filename$date")) {
+                    $Output = join("",
+                        "  <img>\n",
+                        length($filename)
+                            ? sprintf("    <filename>%s</filename>\n",
+                                txt_to_xml($filename))
+                            : "",
+                        length($date)
+                            ? sprintf("    <date>%s</date>\n",
+                                txt_to_xml($date))
+                            : "",
+                        "  </img>\n",
+                    );
+                }
+            } elsif ($Opt{'output-format'} eq "pgtab") {
+                $Output = join("\t",
+                    postgresql_copy_safe($date),
+                    length($coor)
+                        ? postgresql_copy_safe($coor)
+                        : $NA,
+                    length($Opt{'description'})
+                        ? postgresql_copy_safe($Opt{'description'})
+                        : $NA,
+                    length($filename)
+                        ? postgresql_copy_safe($filename)
+                        : $NA,
+                    length($Opt{'author'})
+                        ? postgresql_copy_safe($Opt{'author'})
+                        : $NA
+                ) . "\n";
+            } else {
+                die("$progname: $Opt{'output-format'}: Unknown output format\n");
+            }
             print($Output);
             $Opt{'verbose'} && print(STDERR $Output);
         } else {
@@ -154,6 +195,11 @@ Options:
     Show this help.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -o x, --output-format x
+    Create output of type x:
+      xml
+      pgtab
+    Default: "$Std{'output-format'}".
   --version
     Print version information.
   --debug

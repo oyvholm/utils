@@ -35,17 +35,6 @@
       </arg>
     </cmdsynopsis>
 
-    <cmdsynopsis>
-      <command>gpst</command>
-      <arg choice="req">-u</arg>
-      <arg choice="opt">
-        <replaceable>options</replaceable>
-      </arg>
-      <arg choice="opt" rep="repeat">
-        <replaceable>file</replaceable>
-      </arg>
-    </cmdsynopsis>
-
   </refsynopsisdiv>
   <refsect1 id="gpst.description">
     <title>Description</title>
@@ -555,15 +544,6 @@
           <para>Create breaks in track between points with a difference 
           more than the number of seconds specified by the 
           <envar>PAUSE_LIMIT</envar> variable.</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term><option>-u</option>, 
-        <option>--comment-out-dups</option></term>
-        <listitem>
-          <para>Comment out following data with identical position 
-          values, only print first entry.</para>
         </listitem>
       </varlistentry>
 
