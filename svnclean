@@ -6,8 +6,14 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-echo "Warning, this command will clean out all non-versioned files." >&2
-echo -n "Press 'y' + Enter to continue..."
+if [ ! -d .svn/. ]; then
+    echo "Current directory is not a svn working copy, aborting." >&2
+    exit 1
+fi
+
+echo Warning, this command will delete all files which is not versioned with >&2
+echo Subversion. The working copy will be reset. >&2
+echo -n "Press 'y' + Enter to continue..." >&2
 read choice
 if [ "$choice" = "y" ]; then
     echo ==== svn cleanup...
