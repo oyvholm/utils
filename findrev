@@ -265,10 +265,10 @@ $rcs_id
 Usage: $progname [options] [path]
 
 Do a binary search through revisions of a Subversion working copy for 
-special conditions. A test script/command and cleanup script/command can 
-be supplied. The script will search through the specified revisions (or 
-1:HEAD if missing) until it finds the first revision the test script 
-succeeds.
+special conditions. A test script/command and script/command before and 
+after each test can be supplied. The script will search through the 
+specified revisions (or 1:HEAD if missing) until it finds the first 
+revision the test script succeeds.
 
 Test script return values:
   0 (or a value specified with -w/--want) means that the condition is 
@@ -296,6 +296,7 @@ Options:
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   -w x, --want x
+    Search for return code x instead of the default 0.
   --version
     Print version information.
   --debug
