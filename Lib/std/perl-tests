@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Test suite for gpst-pic.
+# Test suite for STDprojnameDTS.
 #
 # Character set: UTF-8
 # ©opyleft STDyearDTS– Øyvind A. Holm <sunny@sunbase.org>
@@ -10,12 +10,18 @@
 # file for legal stuff.
 #=======================================================================
 
+# After installing this file:
+# 1. Replace all STDprojnameDTS with project name.
+# 2. Replace all STDprognameDTS with name of executable to test.
+# 3. Replace value of $CMD with STDprognameDTS
+# 4. Replace all STDtestnameDTS with name of test script (this file).
+# Remove this comment block.
+
 BEGIN {
-    push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
+    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     our @version_array;
     use Test::More qw{no_plan};
-    use_ok(GPST);
-    use_ok(GPSTxml);
+    # use_ok() goes here
 }
 
 use strict;
@@ -24,7 +30,7 @@ use Getopt::Long;
 $| = 1;
 
 our $Debug = 0;
-our $GP = "../../gpst-pic";
+our $CMD = "./perl";
 
 our %Opt = (
     'all' => 0,
@@ -65,95 +71,41 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
-diag("Checking dependencies...");
-likecmd("exifprobe -V", # {{{
-    "Program: 'exifprobe' version [234]",
-    '^$',
-    "Check that exifprobe(1) is installed",
-);
+=pod
 
-# }}}
-diag("Testing --author option...");
-testcmd("$GP -a sunny files/DSC_4426.JPG", # {{{
+testcmd("$CMD command", # {{{
     <<END,
-2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
+[expected stdin]
 END
     "",
-    "Read date from DSC_4426.JPG and set --author",
+    "description",
 );
 
 # }}}
-# diag("Testing --debug option...");
-diag("Testing --description option...");
-testcmd("$GP -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{
-    <<END,
-2008-09-18T17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Read date from DSC_4426.JPG and set --description with backslash",
-);
 
-# }}}
-diag("Testing --help option...");
-likecmd("$GP -h", # {{{
-    'Extract EXIF info from pictures',
-    '^$',
+=cut
+
+diag("Testing -h (--help) option...");
+likecmd("$CMD -h", # {{{
+    '/  Show this help\./s',
+    '/^$/',
     "Option -h prints help screen",
 );
 
 # }}}
-diag("Testing --output-format option..."); # {{{
-# pgtab
-testcmd("$GP -o pgtab files/DSC_4426.JPG", # {{{
-    <<END,
-2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Output pgtab format from DSC_4426.JPG",
+diag("Testing -v (--verbose) option...");
+likecmd("$CMD -hv", # {{{
+    '/\$Id: .*? \$/',
+    '/^$/',
+    "Option --version with -h returns Id string and help screen",
 );
 
 # }}}
-# xml
-testcmd("$GP -o xml files/DSC_4426.JPG", # {{{
-    <<END,
-<?xml version="1.0" encoding="UTF-8"?>
-<gpstpic>
-  <img>
-    <filename>DSC_4426.JPG</filename>
-    <date>2008-09-18T17:02:27</date>
-  </img>
-</gpstpic>
-END
-    "",
-    "Output XML information for DSC_4426.JPG",
-);
-
-# }}}
-# Unknown format
-testcmd("$GP -o blurfl files/DSC_4426.JPG", # {{{
-    "",
-    "gpst-pic: blurfl: Unknown output format\n",
-    "Unknown output format specified",
-);
-
-# }}}
-# }}} --output-format
-# diag("Testing --verbose option...");
 diag("Testing --version option...");
-likecmd("$GP --version", # {{{
-    '\$Id: .*?\$',
-    '^$',
+likecmd("$CMD --version", # {{{
+    '/\$Id: .*? \$/',
+    '/^$/',
     "Option --version returns Id string",
-);
-
-# }}}
-diag("Various...");
-testcmd("$GP files/DSC_4426.JPG", # {{{
-    <<END,
-2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Read date from DSC_4426.JPG, no options",
 );
 
 # }}}
@@ -167,36 +119,7 @@ if ($Opt{'all'} || $Opt{'todo'}) {
     TODO: {
 
 local $TODO = "";
-testcmd("$GP -o extxml files/DSC_4426.JPG", # {{{
-    <<END,
-<?xml version="1.0" encoding="UTF-8"?>
-<gpstpic>
-  <img>
-    <filename>DSC_4426.JPG</filename>
-    <crc type="sha1">267e841cb6788c795541e36aea70e2a55d8ec3bb</crc>
-    <crc type="md5">19eb5c86f6b3662b57bc94c3ea428372</crc>
-    <date type="DateTimeOriginal">2008-03-02T17:51:39Z</date>
-    <date type="DateTimeDigitized">2008-03-02T17:51:39Z</date>
-    <date type="DateTime">2008-09-18T15:02:27Z</date>
-    <exposure>
-      <iso>200</iso>
-      <speed>0.333333</speed>
-      <fnumber>3.5 APEX</fnumber>
-      <flash>0</flash>
-    </exposure>
-    <camera>
-      <make>NIKON CORPRORATION</make>
-      <model>NIKON D300</model>
-      <shuttercount>4610</shuttercount>
-    </camera>
-  </img>
-</gpstpic>
-END
-    "",
-    "Show extended XML information for DSC_4426.JPG",
-);
-
-# }}}
+# Insert TODO tests here.
 
     }
     # TODO tests }}}
@@ -215,7 +138,7 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "gpst-pic-stderr.tmp";
+    my $TMP_STDERR = "STDprognameDTS-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -243,15 +166,15 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "gpst-pic-stderr.tmp";
+    my $TMP_STDERR = "STDprognameDTS-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$deb_str$stderr_cmd`, "/$Exp_stdout/", $Txt);
+    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
-            like(file_data($TMP_STDERR), "/$Exp_stderr/", "$Txt (stderr)");
+            like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
             unlink($TMP_STDERR);
         }
     } else {
@@ -294,7 +217,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the gpst-pic(1) program.
+Contains tests for the STDprognameDTS(1) program.
 
 Options:
 
@@ -342,11 +265,11 @@ $Id$
 
 =head1 SYNOPSIS
 
-gpst-pic.t [options] [file [files [...]]]
+STDtestnameDTS [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Contains tests for the gpst-pic(1) program.
+Contains tests for the STDprognameDTS(1) program.
 
 =head1 OPTIONS
 
@@ -404,8 +327,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
-
-gpst(1)
 
 =cut
 
