@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id: perl-tests 2502 2008-09-22 15:51:12Z sunny $
+# $Id$
 # Test suite for pmsetdate(1).
 #
 # Character set: UTF-8
@@ -37,7 +37,7 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 
-my $rcs_id = '$Id: perl-tests 2502 2008-09-22 15:51:12Z sunny $';
+my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
@@ -267,7 +267,7 @@ run-tests.pl
 
 =head1 REVISION
 
-$Id: perl-tests 2502 2008-09-22 15:51:12Z sunny $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -339,4 +339,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id: perl-tests 2502 2008-09-22 15:51:12Z sunny $
+# End of file $Id$
