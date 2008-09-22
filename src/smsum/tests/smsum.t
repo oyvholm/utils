@@ -2,20 +2,13 @@
 
 #=======================================================================
 # $Id$
-# Test suite for STDprognameDTS(1).
+# Test suite for smsum(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
-
-# After installing this file:
-# 1. Replace all STDprognameDTS with program (executable) name.
-# 2. Replace all STDexecDTS with name of executable to test.
-# 3. Replace value of $CMD with STDexecDTS
-# 4. Replace all STDtestcmdDTS with name of test script (this file).
-# Remove this comment block.
 
 BEGIN {
     # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
@@ -30,7 +23,7 @@ use Getopt::Long;
 $| = 1;
 
 our $Debug = 0;
-our $CMD = "./perl";
+our $CMD = "../smsum";
 
 our %Opt = (
     'all' => 0,
@@ -138,7 +131,7 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "STDprognameDTS-stderr.tmp";
+    my $TMP_STDERR = "smsum-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -166,7 +159,7 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "STDprognameDTS-stderr.tmp";
+    my $TMP_STDERR = "smsum-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -217,7 +210,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the STDprognameDTS(1) program.
+Contains tests for the smsum(1) program.
 
 Options:
 
@@ -265,11 +258,11 @@ $Id$
 
 =head1 SYNOPSIS
 
-STDtestcmdDTS [options] [file [files [...]]]
+smsum.t [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Contains tests for the STDprognameDTS(1) program.
+Contains tests for the smsum(1) program.
 
 =head1 OPTIONS
 
