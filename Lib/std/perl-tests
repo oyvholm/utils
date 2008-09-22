@@ -50,6 +50,8 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 push(@main::version_array, $rcs_id);
 
+my @cmdline_array = @ARGV;
+
 Getopt::Long::Configure("bundling");
 GetOptions(
     "all|a" => \$Opt{'all'},
@@ -66,6 +68,11 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+diag(sprintf("========== Executing \"%s%s%s\" ==========",
+    $progname,
+    scalar(@cmdline_array) ? " " : "",
+    join(" ", @cmdline_array)));
 
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
