@@ -1,0 +1,11 @@
+# Testing -h (--help) option...
+ok - "../smsum -h" - Option -h prints help screen
+ok - "../smsum -h" - Option -h prints help screen (stderr)
+# Testing -v (--verbose) option...
+ok - "../smsum -hv" - Option --version with -h returns Id string and help screen
+ok - "../smsum -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../smsum --version" - Option --version returns Id string
+ok - "../smsum --version" - Option --version returns Id string (stderr)
+# Testing finished.
+1..6
