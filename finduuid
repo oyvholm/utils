@@ -60,9 +60,9 @@ while (<>) {
     chomp(my $Line = $_);
     if (/([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/) {
         if ($Opt{'line'}) {
-            printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV: " : ""), $Line);
+            printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
         } else {
-            $Line =~ s/([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV: " : ""), $1)/ge;
+            $Line =~ s/([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $1)/ge;
         }
     }
 }
