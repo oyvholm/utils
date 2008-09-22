@@ -1,6 +1,7 @@
 # Testing -h (--help) option...
 ok - "../smsum -h" - Option -h prints help screen
 ok - "../smsum -h" - Option -h prints help screen (stderr)
+ok - No Id with only -h
 # Testing -v (--verbose) option...
 ok - "../smsum -hv" - Option --version with -h returns Id string and help screen
 ok - "../smsum -hv" - Option --version with -h returns Id string and help screen (stderr)
@@ -14,4 +15,4 @@ ok - "../smsum files/dir1/*" - Read all files in dir1/ (stderr)
 ok - "../smsum -m files/dir1/*" - Read files from dir1/ with mtime
 ok - "../smsum -m files/dir1/*" - Read files from dir1/ with mtime (stderr)
 # Testing finished.
-1..12
+1..13
