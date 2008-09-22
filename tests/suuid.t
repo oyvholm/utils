@@ -95,7 +95,7 @@ likecmd("$CMD -h", # {{{
 # }}}
 unlike(`$CMD -h`, # {{{
     '/\$Id: /',
-    "No Id with only -h",
+    "\"$CMD -h\" - No Id with only -h",
 );
 
 # }}}
