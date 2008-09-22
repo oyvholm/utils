@@ -13,7 +13,6 @@ use warnings;
 use Digest::MD5;
 use Digest::SHA1;
 use Digest::CRC;
-use Time::HiRes qw{ gettimeofday };
 
 use lib "$ENV{'HOME'}/bin/src/fldb";
 use FLDBdebug;
@@ -37,7 +36,6 @@ sub checksum {
     my ($Filename, $use_crc32) = @_;
     my $Retval = "";
     my %Sum = ();
-    my $starttime = gettimeofday;
     my $endtime;
     local *FP;
 
@@ -54,8 +52,6 @@ sub checksum {
         $Sum{'sha1'} = $sha1->hexdigest;
         $Sum{'md5'} = $md5->hexdigest;
         $use_crc32 && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
-        $endtime = gettimeofday;
-        $Sum{'calctime'} = $endtime - $starttime;
     } else {
         %Sum = ();
     }

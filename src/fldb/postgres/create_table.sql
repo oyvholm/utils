@@ -10,7 +10,6 @@ CREATE TABLE files (
     filename varchar,
     mtime timestamptz,
     ctime timestamptz,
-    calctime real,
     path varchar,
     inode bigint,
     links integer,

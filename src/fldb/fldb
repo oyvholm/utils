@@ -224,7 +224,6 @@ sub add_entry {
                             # "<nextver>%s</nextver> " .
                             # "<descr>%s</descr> " .
                             "%s" . # $latin1_str
-                            "<calctime>%s</calctime> " .
                         "</file>\n",
                         $Size,
                         $Sum{sha1},
@@ -245,7 +244,6 @@ sub add_entry {
                         # "",
                         # "",
                         $latin1_str,
-                        $Sum{calctime},
                     );
                     # }}}
                 }
@@ -274,7 +272,7 @@ END
 INSERT INTO files (
  sha1, md5, crc32,
  size, filename, mtime, ctime,
- calctime, path,
+ path,
  inode, links, device, hostname,
  uid, gid, perm,
  lastver, nextver, descr,
@@ -291,7 +289,7 @@ INSERT INTO files (
 END
                         $Sum{sha1}, $Sum{md5}, $crc32_str,
                         $Size, $base_filename, $Mtime, $Ctime,
-                        $Sum{calctime}, $safe_filename,
+                        $safe_filename,
                         $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
                         $Uid, $Gid, $Mode,
                         'NULL', 'NULL', 'NULL',
