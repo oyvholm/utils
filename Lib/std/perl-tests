@@ -87,15 +87,21 @@ END
 
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
-    '/  Show this help\./s',
+    '/  Show this help\./',
     '/^$/',
     "Option -h prints help screen",
 );
 
 # }}}
+unlike(`$CMD -h`, # {{{
+    '/\$Id: /',
+    "No Id with only -h",
+);
+
+# }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
-    '/\$Id: .*? \$/',
+    '/\$Id: .*? \$.*  Show this help\./s',
     '/^$/',
     "Option --version with -h returns Id string and help screen",
 );
