@@ -30,7 +30,7 @@ use Getopt::Long;
 $| = 1;
 
 our $Debug = 0;
-our $CMD = "./perl";
+our $CMD = "STDexecDTS";
 
 our %Opt = (
     'all' => 0,
