@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Test suite for gpst-pic.
+# Test suite for gpst-pic(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -24,7 +24,7 @@ use Getopt::Long;
 $| = 1;
 
 our $Debug = 0;
-our $GP = "../../gpst-pic";
+our $CMD = "../../gpst-pic";
 
 our %Opt = (
     'all' => 0,
@@ -44,6 +44,8 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 push(@main::version_array, $rcs_id);
 
+my @cmdline_array = @ARGV;
+
 Getopt::Long::Configure("bundling");
 GetOptions(
     "all|a" => \$Opt{'all'},
@@ -56,22 +58,44 @@ GetOptions(
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
-$Opt{'version'} && print_version();
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+diag(sprintf("========== Executing \"%s%s%s\" ==========",
+    $progname,
+    scalar(@cmdline_array) ? " " : "",
+    join(" ", @cmdline_array)));
 
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
 
+=pod
+
+testcmd("$CMD command", # {{{
+    <<END,
+[expected stdin]
+END
+    "",
+    "description",
+);
+
+# }}}
+
+=cut
+
 diag("Checking dependencies...");
 likecmd("exifprobe -V", # {{{
-    "Program: 'exifprobe' version [234]",
-    '^$',
+    "/Program: 'exifprobe' version [234]/",
+    '/^$/',
     "Check that exifprobe(1) is installed",
 );
 
 # }}}
 diag("Testing --author option...");
-testcmd("$GP -a sunny files/DSC_4426.JPG", # {{{
+testcmd("$CMD -a sunny files/DSC_4426.JPG", # {{{
     <<END,
 2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
 END
@@ -82,7 +106,7 @@ END
 # }}}
 # diag("Testing --debug option...");
 diag("Testing --description option...");
-testcmd("$GP -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{
+testcmd("$CMD -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{
     <<END,
 2008-09-18T17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
 END
@@ -91,17 +115,23 @@ END
 );
 
 # }}}
-diag("Testing --help option...");
-likecmd("$GP -h", # {{{
-    'Extract EXIF info from pictures',
-    '^$',
+diag("Testing -h (--help) option...");
+likecmd("$CMD -h", # {{{
+    '/  Show this help\./',
+    '/^$/',
     "Option -h prints help screen",
+);
+
+# }}}
+unlike(`$CMD -h`, # {{{
+    '/\$Id: /',
+    "\"$CMD -h\" - No Id with only -h",
 );
 
 # }}}
 diag("Testing --output-format option..."); # {{{
 # pgtab
-testcmd("$GP -o pgtab files/DSC_4426.JPG", # {{{
+testcmd("$CMD -o pgtab files/DSC_4426.JPG", # {{{
     <<END,
 2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
 END
@@ -111,7 +141,7 @@ END
 
 # }}}
 # xml
-testcmd("$GP -o xml files/DSC_4426.JPG", # {{{
+testcmd("$CMD -o xml files/DSC_4426.JPG", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpstpic>
@@ -127,7 +157,7 @@ END
 
 # }}}
 # Unknown format
-testcmd("$GP -o blurfl files/DSC_4426.JPG", # {{{
+testcmd("$CMD -o blurfl files/DSC_4426.JPG", # {{{
     "",
     "gpst-pic: blurfl: Unknown output format\n",
     "Unknown output format specified",
@@ -135,17 +165,24 @@ testcmd("$GP -o blurfl files/DSC_4426.JPG", # {{{
 
 # }}}
 # }}} --output-format
-# diag("Testing --verbose option...");
+diag("Testing -v (--verbose) option...");
+likecmd("$CMD -hv", # {{{
+    '/\$Id: .*? \$.*  Show this help\./s',
+    '/^$/',
+    "Option --version with -h returns Id string and help screen",
+);
+
+# }}}
 diag("Testing --version option...");
-likecmd("$GP --version", # {{{
-    '\$Id: .*?\$',
-    '^$',
+likecmd("$CMD --version", # {{{
+    '/\$Id: .*? \$/',
+    '/^$/',
     "Option --version returns Id string",
 );
 
 # }}}
 diag("Various...");
-testcmd("$GP files/DSC_4426.JPG", # {{{
+testcmd("$CMD files/DSC_4426.JPG", # {{{
     <<END,
 2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
 END
@@ -164,7 +201,7 @@ if ($Opt{'all'} || $Opt{'todo'}) {
     TODO: {
 
 local $TODO = "";
-testcmd("$GP -o extxml files/DSC_4426.JPG", # {{{
+testcmd("$CMD -o extxml files/DSC_4426.JPG", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpstpic>
@@ -245,10 +282,10 @@ sub likecmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$deb_str$stderr_cmd`, "/$Exp_stdout/", $Txt);
+    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
-            like(file_data($TMP_STDERR), "/$Exp_stderr/", "$Txt (stderr)");
+            like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
             unlink($TMP_STDERR);
         }
     } else {
@@ -276,7 +313,6 @@ sub print_version {
     for (@main::version_array) {
         print("$_\n");
     }
-    exit(0);
     # }}}
 } # print_version()
 
@@ -284,9 +320,11 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
     print(<<END);
-
-$rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
