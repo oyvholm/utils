@@ -25,9 +25,11 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'local' => 0,
+    'tag' => 0,
     'verbose' => 0,
     'version' => 0,
 );
+my @Tags = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
@@ -55,6 +57,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "local|l+" => \$Opt{'local'},
+    "tag|t=s" => \@Tags,
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -66,9 +69,23 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my %Tag = ();
+if (scalar(@Tags)) {
+    for my $Curr (@Tags) {
+        if ($Curr =~ /^([^=]+?)=(.*)$/) {
+            $Tag{$1} = $2;
+        } else {
+            die("$progname: $Curr: Invalid tag, must have the form name=value\n");
+        }
+    }
+}
+
 if (length($Dest) && -e $Dest) {
     die("$progname: $Dest: File already exists, will not overwrite\n");
 }
+
+D(sprintf("\@Tags = \"%s", join("\", \"", @Tags) . "\""));
+D(sprintf("%%Tag = \"%s", join("\", \"", %Tag) . "\""));
 
 my $dat_file = $0;
 
@@ -109,6 +126,11 @@ if (open(FromFP, "<$tmpfile")) {
     # FIXME: Fix stdout
     if (open(DestFP, length($Dest) ? ">$Dest" : *STDOUT)) {
         while (my $Line = <FromFP>) {
+            if (scalar(@Tags)) {
+                for my $Curr (keys %Tag) {
+                    $Line =~ s/STD${Curr}DTS/$Tag{$Curr}/g;
+                }
+            }
             $Line =~ s/STDyearDTS/$Year/g;
             print(DestFP $Line);
         }
@@ -179,6 +201,12 @@ Options:
     Show this help.
   -l, --local
     Use local copy, don’t download.
+  -t x, --tag x
+    Replaces strings of the form "STDtagDTS" in the template file with 
+    another string. Examples:
+      -t testcmd=myscript.pl
+      -t year=1997 -t "personname=John Lennon" -t os=GNU/Linux
+    The option can be specified many times.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
