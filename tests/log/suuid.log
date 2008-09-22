@@ -1,0 +1,14 @@
+# ========== Executing "suuid.t --all" ==========
+# Testing -h (--help) option...
+ok - "../suuid -h" - Option -h prints help screen
+ok - "../suuid -h" - Option -h prints help screen (stderr)
+ok - "../suuid -h" - No Id with only -h
+# Testing --verbose option...
+ok - "../suuid -h --verbose" - Option --verbose with -h returns Id string and help screen
+ok - "../suuid -h --verbose" - Option --verbose with -h returns Id string and help screen (stderr)
+# Testing --show-version option...
+ok - "../suuid --show-version" - Option --show-version returns Id string
+ok - "../suuid --show-version" - Option --show-version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

@@ -1,0 +1,14 @@
+# ========== Executing "html2db.t --all" ==========
+# Testing -h (--help) option...
+ok - "../html2db -h" - Option -h prints help screen
+ok - "../html2db -h" - Option -h prints help screen (stderr)
+ok - "../html2db -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../html2db -hv" - Option --version with -h returns Id string and help screen
+ok - "../html2db -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../html2db --version" - Option --version returns Id string
+ok - "../html2db --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

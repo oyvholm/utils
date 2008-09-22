@@ -1,0 +1,14 @@
+# ========== Executing "std.t --all" ==========
+# Testing -h (--help) option...
+ok - "../std -h" - Option -h prints help screen
+ok - "../std -h" - Option -h prints help screen (stderr)
+ok - "../std -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../std -hv" - Option --version with -h returns Id string and help screen
+ok - "../std -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../std --version" - Option --version returns Id string
+ok - "../std --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

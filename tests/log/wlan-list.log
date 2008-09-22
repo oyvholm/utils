@@ -1,0 +1,14 @@
+# ========== Executing "wlan-list.t --all" ==========
+# Testing -h (--help) option...
+ok - "../wlan-list -h" - Option -h prints help screen
+ok - "../wlan-list -h" - Option -h prints help screen (stderr)
+ok - "../wlan-list -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../wlan-list -hv" - Option --version with -h returns Id string and help screen
+ok - "../wlan-list -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../wlan-list --version" - Option --version returns Id string
+ok - "../wlan-list --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7
