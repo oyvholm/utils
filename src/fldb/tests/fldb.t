@@ -11,10 +11,12 @@
 #=======================================================================
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
+    push(@INC, "$ENV{'HOME'}/bin/src/fldb");
     our @version_array;
     use Test::More qw{no_plan};
-    # use_ok() goes here
+    use_ok(FLDBpg);
+    use_ok(FLDBsum);
+    use_ok(FLDButf);
 }
 
 use strict;
@@ -78,6 +80,83 @@ END
 
 =cut
 
+diag("Testing safe_sql()...");
+is(safe_sql(""), # {{{
+    "",
+    'safe_sql("") - Empty string'
+);
+
+# }}}
+is(safe_sql("abc"), # {{{
+    "abc",
+    'safe_sql("abc") - Regular ASCII'
+);
+
+# }}}
+is(safe_sql("'"), # {{{
+    "''",
+    'safe_sql("\'") - Apostrophe'
+);
+
+# }}}
+is(safe_sql("\t\n\r"), # {{{
+    "\\t\\n\\r",
+    'safe_sql("\\t\\n\\r") - TAB, LF and CR'
+);
+
+# }}}
+is(safe_sql("æ☺’"), # {{{
+    "æ☺’",
+    'safe_sql("abc") - UTF-8'
+);
+
+# }}}
+is(safe_sql("a\0b"), # {{{
+    "a\0b",
+    'safe_sql("a\\0b") - Null byte'
+);
+
+# }}}
+is(safe_sql("\xF8"), # {{{
+    "\xF8", # FIXME: Is this OK? It will never happen.
+    'safe_sql("\\xF8") - Invalid UTF-8'
+);
+
+# }}}
+# diag("Testing checksum()...");
+diag("Testing valid_utf8()...");
+is(valid_utf8(""), # {{{
+    1,
+    'valid_utf8("") - Empty string'
+);
+
+# }}}
+is(valid_utf8("abc"), # {{{
+    1,
+    'valid_utf8("abc") - Reglar ASCII'
+);
+
+# }}}
+is(valid_utf8("æ©☺"), # {{{
+    1,
+    'valid_utf8("æ©☺") - Valid UTF-8'
+);
+
+# }}}
+is(valid_utf8("\xF8"), # {{{
+    0,
+    'valid_utf8("\\xF8") - Invalid UTF-8'
+);
+
+# }}}
+# is(valid_utf8(""), # {{{
+#     "",
+#     'valid_utf8("")'
+# );
+
+# }}}
+diag("Testing widechar()...");
+diag("Testing latin1_to_utf8()...");
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -108,6 +187,43 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
+
+# }}}
+# system("cd files && tar xzf dir1.tar.gz 2>/dev/null");
+
+testcmd("$CMD -s files/dir1/random_2048", # {{{
+    <<END,
+INSERT INTO files (
+ sha1, md5, crc32,
+ size, filename, mtime,
+ latin1
+) VALUES (
+ 'bd91a93ca0462da03f2665a236d7968b0fd9455d', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ 2048, E'random_2048', '2008-09-22T00:18:37Z',
+ FALSE
+);
+END
+    "",
+    "Output short SQL from dir1/random_2048",
+);
+
+# }}}
+diag("Testing -x (--xml) option...");
+testcmd("$CMD -xs files/dir1/random_2048", # {{{
+    <<END,
+<fldb>
+<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> </file>
+</fldb>
+END
+    "",
+    "Output short XML from dir1/random_2048 with mtime",
+);
+
+# }}}
+
+# chmod(0644, "files/dir1/chmod_0000") || warn("$progname: files/dir1/chmod_0000: Cannot chmod to 0644: $!\n");
+# unlink(glob("files/dir1/*")) || warn("$progname: Cannot unlink() files in files/dir1/*: $!\n");
+# rmdir("files/dir1") || warn("$progname: files/dir1: Cannot rmdir(): $!\n");
 
 todo_section:
 ;

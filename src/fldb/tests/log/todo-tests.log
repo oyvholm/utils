@@ -1,3 +1,6 @@
+ok - use FLDBpg;
+ok - use FLDBsum;
+ok - use FLDButf;
 # Running TODO tests...
 # Testing finished.
-# No tests run!
+1..3
