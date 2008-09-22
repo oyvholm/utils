@@ -51,6 +51,13 @@ GetOptions(
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
 unless (chdir($svn_clean)) {
     warn("$svn_clean: Directory not found, installing newest svn-1.x.x .\n");
     mkpath($svn_base, 1);
@@ -99,7 +106,6 @@ sub print_version {
     for (@main::version_array) {
         print("$_\n");
     }
-    exit(0);
     # }}}
 } # print_version()
 
@@ -107,9 +113,11 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
     print(<<END);
-
-$rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 

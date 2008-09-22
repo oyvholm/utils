@@ -49,7 +49,10 @@ GetOptions(
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
-$Opt{'version'} && print_version();
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
 
 length($Opt{'server'}) || die("Need to specify the --server (-s) option\n");
 
@@ -110,7 +113,6 @@ sub print_version {
     for (@main::version_array) {
         print("$_\n");
     }
-    exit(0);
     # }}}
 } # print_version()
 
@@ -118,9 +120,11 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
     print(<<END);
-
-$rcs_id
 
 Usage: $progname -s servername [options] [file [files [...]]]
 
