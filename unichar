@@ -2,4 +2,4 @@
 
 # $Id$
 
-zcat -f /home/sunny/pub/unicode/UNIDATA/UnicodeData.txt* | egrep -i $*
+zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* | grep -Ei "$@"
