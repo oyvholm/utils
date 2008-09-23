@@ -2,54 +2,7 @@
 # Testing -h (--help) option...
 ok - "../findrev -h" - Option -h prints help screen
 ok - "../findrev -h" - Option -h prints help screen (stderr)
-not ok - "../findrev -h" - No Id with only -h
-#   Failed test '"../findrev -h" - No Id with only -h'
-#   in ./findrev.t at line 96.
-#                   '
-# $Id: findrev 2515 2008-09-23 20:43:25Z sunny $
-# 
-# Usage: findrev [options] [path]
-# 
-# Do a binary search through revisions of a Subversion working copy for 
-# special conditions. A test script/command and script/command before and 
-# after each test can be supplied. The script will search through the 
-# specified revisions (or 1:HEAD if missing) until it finds the first 
-# revision the test script succeeds.
-# 
-# Test script return values:
-#   0 (or a value specified with -w/--want) means that the condition is 
-#     true, and it tries a lower revision number next time.
-#   Anything else means the test has failed, and it tries a higher 
-#     revision next time.
-# 
-# A path can be specified; the program will operate on this element, and 
-# using the same revision range as the element.
-# 
-# Options:
-# 
-#   -A x, --after x
-#     Execute command x after the test has run.
-#   -B x, --before x
-#     Execute command x before the test is run.
-#   -e x, --exec x
-#     Execute command x to check revisions.
-#   -h, --help
-#     Show this help.
-#   --ignore-externals
-#     Don’t update svn externals.
-#   -r x:y, --revision x:y
-#     Limit the search to revision range x:y. Default: 1:HEAD.
-#   -v, --verbose
-#     Increase level of verbosity. Can be repeated.
-#   -w x, --want x
-#     Search for return code x instead of the default 0.
-#   --version
-#     Print version information.
-#   --debug
-#     Print debugging messages.
-# 
-# '
-#           matches '/\$Id: /'
+ok - "../findrev -h" - No Id with only -h
 # Testing -v (--verbose) option...
 ok - "../findrev -hv" - Option --version with -h returns Id string and help screen
 ok - "../findrev -hv" - Option --version with -h returns Id string and help screen (stderr)
@@ -59,4 +12,3 @@ ok - "../findrev --version" - Option --version returns Id string (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7
-# Looks like you failed 1 test of 7.
