@@ -10,13 +10,6 @@
 # file for legal stuff.
 #=======================================================================
 
-# After installing this file:
-# 1. Replace all STDprognameDTS with program (executable) name.
-# 2. Replace all STDexecDTS with name of executable to test.
-# 3. Replace value of $CMD with STDexecDTS
-# 4. Replace all STDtestcmdDTS with name of test script (this file).
-# Remove this comment block.
-
 BEGIN {
     # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     our @version_array;

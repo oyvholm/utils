@@ -1,0 +1,4 @@
+# $Id$
+progname - program name. (name)
+exec - name of executable to test. (../name)
+testcmd - name of test script (this file). (name.t)
