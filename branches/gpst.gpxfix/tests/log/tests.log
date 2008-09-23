@@ -1,3 +1,9 @@
+ok - use GPST;
+ok - use GPSTdate;
+ok - use GPSTdebug;
+ok - use GPSTgeo;
+ok - use GPSTxml;
+# ========== Executing "run-tests.pl" ==========
 # Tests for this branch
 ok - "../gpst -o gpx extensions.gpx" - Read and output GPX with <extensions> element
 ok - "../gpst -o gpx extensions.gpx" - Read and output GPX with <extensions> element (stderr)
@@ -5,7 +11,7 @@ ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> 
 ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> element and strip whitespace (stderr)
 not ok - "../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>
 #   Failed test '"../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>'
-#   in ./run-tests.pl at line 1929.
+#   in ./run-tests.pl at line 1967.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -213,7 +219,7 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 #   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 1929.
+#   in ./run-tests.pl at line 1967.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -266,8 +272,10 @@ ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output (stderr)
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
 # Testing --from-date option...
-# Testing --help option...
-ok - Check -h (--help) option
+# Testing -h (--help) option...
+ok - "../gpst -h" - Option -h prints help screen
+ok - "../gpst -h" - Option -h prints help screen (stderr)
+ok - "../gpst -h" - No Id with only -h
 # Testing --inside option...
 ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
 ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst) (stderr)
@@ -302,7 +310,7 @@ ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 #   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 1929.
+#   in ./run-tests.pl at line 1967.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -398,13 +406,16 @@ ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
 ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
-# Testing --verbose option...
+# Testing -v (--verbose) option...
+ok - "../gpst -hv" - Option --version with -h returns Id string and help screen
+ok - "../gpst -hv" - Option --version with -h returns Id string and help screen (stderr)
 # Testing --version option...
-ok - "../gpst --version" - The --version option outputs Id strings
+ok - "../gpst --version" - Option --version returns Id string
+ok - "../gpst --version" - Option --version returns Id string (stderr)
 # Testing --strip-whitespace option...
 not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 #   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 1929.
+#   in ./run-tests.pl at line 1967.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
@@ -481,5 +492,5 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..211
-# Looks like you failed 4 tests of 211.
+1..221
+# Looks like you failed 4 tests of 221.
