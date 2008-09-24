@@ -32,6 +32,7 @@ my $CMD_SVN = "svn";
 
 my $ST_CONFLICT = 'C';
 my $ST_MODIFIED = 'M';
+my $valid_rev = '\d+|HEAD|{\d+[^}]*?[Z\d]}'; # Used in regexps
 
 our $progname = $0;
 $progname =~ s#^(.*)/(.+?)$#$2#;
@@ -148,11 +149,11 @@ sub diff_file {
     if (length($opt_revision)) {
         my ($Rev1, $Rev2);
         my ($tmp1, $tmp2);
-        if ($opt_revision =~ /^(\d+)$/) {
+        if ($opt_revision =~ /^($valid_rev)$/) {
             $Rev1 = $1;
             $Rev2 = "";
             $tmp1 = "$File1.r$Rev1.tmp";
-        } elsif ($opt_revision =~ /^(\d+):(\d+)$/) {
+        } elsif ($opt_revision =~ /^($valid_rev):($valid_rev)$/) {
             $Rev1 = $1;
             $Rev2 = $2;
             $tmp1 = "$File1.r$Rev1.tmp";
@@ -416,6 +417,9 @@ Options:
                       Compare r111 and r222.
                     123
                       Compare your working file against r123.
+                    {2001-05-17T18:12:16Z}:900
+                      Compare between a specific point in time with 
+                      r900.
 
 END
     exit($Retval);
