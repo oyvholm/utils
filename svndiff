@@ -34,6 +34,8 @@ my $ST_MODIFIED = 'M';
 our $progname = $0;
 $progname =~ s#^(.*)/(.+?)$#$2#;
 
+my %rev_diff = ();
+
 my $rc_file = defined($ENV{SVNDIFFRC}) ? $ENV{SVNDIFFRC} : "";
 
 unless (length($rc_file)) {
@@ -177,7 +179,13 @@ sub diff_file {
                         return
                    );
 
-    if ($Cmd eq "vimdiff") {
+    my $use_reverse = 0;
+
+    if (defined($rev_diff{$Cmd})) {
+        ($rev_diff{$Cmd} eq "1") && ($use_reverse = 1);
+    }
+
+    if ($use_reverse) {
         mysyst("$Cmd $File1 $File2");
     } else {
         mysyst("$Cmd $File2 $File1");
@@ -273,6 +281,55 @@ sub read_rcfile {
                 $CMD_SVN = xml_to_txt($2);
                 D("read_rcfile(): \$CMD_SVN = \"$CMD_SVN\"");
                 "";
+            }sex;
+
+            $el_svndiffrc =~
+            s{
+                <reversediffs\b(.*?)>(.*?)</reversediffs>
+            }
+            {
+                my $el_reversediffs = $2;
+                D("Inside <reversediffs></reversediffs>");
+
+                $el_reversediffs =~
+                s{
+                    <program\b(.*?)>(.*?)</program>
+                }
+                {
+                    my $el_program = $2;
+                    D("Inside <program></program>");
+
+                    my ($Name, $Reverse) =
+                       (   "",       "");
+
+                    $el_program =~
+                    s{
+                        <name\b(.*?)>(.*?)</name>
+                    }
+                    {
+                        $Name = xml_to_txt($2);
+                        D("Name = \"$Name\"");
+                        "";
+                    }sex;
+
+                    $el_program =~
+                    s{
+                        <reverse\b(.*?)>(.*?)</reverse>
+                    }
+                    {
+                        $Reverse = xml_to_txt($2);
+                        D("Reverse = \"$Reverse\"");
+                        "";
+                    }sex;
+
+                    if (length($Name)) {
+                        $rev_diff{$Name} = ($Reverse eq "1" ? 1 : 0);
+                        D("\$rev_diff{$Name} = \"$rev_diff{$Name}\"");
+                    } else {
+                        warn("$progname: $File: Found empty <name></name> element\n");
+                    }
+                    "";
+                }gsex;
             }sex;
             print_leftover($el_svndiffrc, "svndiffrc");
         }sex;
@@ -415,9 +472,16 @@ It is a standard XML file with this structure:
   <svndiffrc>
     <diffprog>vimdiff</diffprog>
     <svnclient>svn</svnclient>
+    <reversediffs>
+      <program>
+        <name>vimdiff</name>
+        <reverse>1</reverse>
+      </program>
+      <!-- Several "program" element groups can be specified -->
+    </reversediffs>
   </svndiffrc>
 
-(Whitespace is optional and more options will come.)
+(Whitespace and linebreaks are optional.)
 
 The string inside the C<diffprog> elements can be set to whatever your 
 diff program is called as, the default string is "vimdiff".
@@ -425,6 +489,23 @@ diff program is called as, the default string is "vimdiff".
 You can also define an alternative svn(1) client to use inside the 
 C<svnclient> elements.
 The default value here is of course "svn".
+
+When using visual diff viewers (for example B<vimdiff>), the program 
+expects the file names to be switched on the command line so your 
+modified file appears in the correct window.
+By creating a C<E<lt>programE<gt>E<lt>/programE<gt>> section, programs 
+can be instructed to take arguments the opposite way.
+If you for example use the B<meld> program and you want your modified 
+file to be in the left window, add this to the file (I<inside> the 
+C<E<lt>reversediffsE<gt>E<lt>/reversediffsE<gt>> elements):
+
+  <program>
+    <name>meld</name>
+    <reverse>1</reverse>
+  </program>
+
+The value in the C<reverse> element have to be B<1>, all other values 
+will count as B<0>.
 
 =back
 
