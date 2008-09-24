@@ -16,14 +16,18 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_C, $opt_c, $opt_h, $opt_p) =
-    (     0,     "",      0,     "");
-getopts('Cc:hp:') || die("Option error. Use -h for help.\n");
+our ($opt_C, $opt_c, $opt_e, $opt_h, $opt_p) =
+    (     0,     "",     "",      0,     "");
+getopts('Cc:e:hp:') || die("Option error. Use -h for help.\n");
 
 # Change this to the default diff command to use
 my $Cmd = "vimdiff";
 
 my $Debug = 0;
+
+# Change this if the svn executable is non-standard and you don’t want 
+# to use the -e option all the time:
+my $CMD_SVN = "svn";
 
 our $progname = $0;
 $progname =~ s#^(.*)/(.+?)$#$2#;
@@ -32,6 +36,7 @@ $opt_h && usage(0);
 
 length($opt_c) && ($Cmd = $opt_c);
 length($opt_p) && ($Cmd .= " $opt_p");
+length($opt_e) && ($CMD_SVN = $opt_e);
 
 my $stat_chars = "CM";
 $opt_C && ($stat_chars = "C");
@@ -44,7 +49,7 @@ if (scalar(@ARGV)) {
         diff_file($Curr);
     }
 } else {
-    if (open(PipeFP, "svn stat -q |")) {
+    if (open(PipeFP, "$CMD_SVN stat -q |")) {
         while (<PipeFP>) {
             chomp();
             D("<PipeFP> = \"$_\"\n");
@@ -58,7 +63,7 @@ if (scalar(@ARGV)) {
             diff_file($File);
         }
     } else {
-        warn("$progname: Error opening \"svn stat -q\" pipe");
+        warn("$progname: Error opening \"$CMD_SVN stat -q\" pipe");
     }
 }
 
@@ -119,6 +124,7 @@ Options:
 
 -C    Only run diff on conflicted files.
 -c x  Use x as the diff command. Default: "$Cmd".
+-e x  Use x as the svn executable. Default: "$CMD_SVN".
 -h    Show this help.
 -p x  Use x as parameters to the diff program.
 
@@ -160,6 +166,13 @@ Only run diff on conflicted files.
 =item B<-c> x
 
 Use x as the diff command. Default: "svndiff".
+
+=item B<-e> x
+
+-e x  Use x as the svn executable.
+Example:
+
+  svndiff -e /usr/local/bin/svn-1.0
 
 =item B<-p> x
 
