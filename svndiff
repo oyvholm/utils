@@ -87,7 +87,8 @@ if (scalar(@ARGV)) {
             if (open(PipeFP, "$CMD_SVN stat $Curr -q |")) {
                 $has_conflict = (<PipeFP> =~ /$ST_CONFLICT/) ? 1 : 0;
             } else {
-                warn("$progname: Error opening \"$CMD_SVN $Curr stat -q\" pipe");
+                warn("$progname: Error opening " .
+                     "\"$CMD_SVN $Curr stat -q\" pipe");
             }
             diff_file($Curr, $has_conflict, $opt_revision);
         } else {
@@ -98,7 +99,8 @@ if (scalar(@ARGV)) {
     # }}}
 } else {
     # {{{
-    length($opt_revision) && die("You need to specify one or more files when using the -r option\n");
+    length($opt_revision) && die("You need to specify one or more " .
+                                 "files when using the -r option\n");
     D("Before PipeFP 2: CMD_SVN = \"$CMD_SVN\"");
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
         my %has_conflict = ();
@@ -203,7 +205,8 @@ sub diff_file {
 
     for my $curr_rm (@rm_files) {
         D("Removing tempfile \"$curr_rm\"...");
-        unlink($curr_rm) || warn("$progname: $curr_rm: Can't delete temporary file: $!");
+        unlink($curr_rm) || warn("$progname: $curr_rm: " .
+                                 "Can't delete temporary file: $!");
     }
 
     if (!length($opt_revision) && $has_conflict) {
@@ -336,7 +339,8 @@ sub read_rcfile {
                         $rev_diff{$Name} = ($Reverse eq "1" ? 1 : 0);
                         D("\$rev_diff{$Name} = \"$rev_diff{$Name}\"");
                     } else {
-                        warn("$progname: $File: Found empty <name></name> element\n");
+                        warn("$progname: $File: Found empty " .
+                             "<name></name> element\n");
                     }
                     "";
                 }gsex;
