@@ -102,7 +102,7 @@ sub usage {
     my $Retval = shift;
     print(<<END);
 
-Usage: $progname [options] file
+Usage: $progname [options] [file [...]]
 
 Options:
 
@@ -132,7 +132,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-svndiff [options] file
+svndiff [options] [file [...]]
 
 =head1 DESCRIPTION
 
