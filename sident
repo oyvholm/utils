@@ -16,8 +16,10 @@ $| = 1;
 
 our $Debug = 0;
 
-our ($opt_help, $opt_known, $opt_namesonly, $opt_verbose, $opt_xml) =
-    (        0,          0,              0,            0,        0);
+our ($opt_help, $opt_known, $opt_namesonly, $opt_unique) =
+    (        0,          0,              0,           0);
+our ($opt_verbose, $opt_xml) =
+    (           0,        0);
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -30,6 +32,7 @@ GetOptions(
     "help|h"                => \$opt_help,
     "known-keywords-only|k" => \$opt_known,
     "filenames-only|l"      => \$opt_namesonly,
+    "unique-keywords|u"     => \$opt_unique,
     "verbose|v"             => \$opt_verbose,
     "xml|x"                 => \$opt_xml
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -68,6 +71,19 @@ for (@ARGV) {
             s/(\$($Keyw)::? .*? \$)/push(@Out, $1)/ge;
         }
         if (scalar(@Out)) {
+
+            if ($opt_unique) {
+                my %Done = ();
+                my @Out2 = @Out;
+                @Out = ();
+                for my $Curr (@Out2) {
+                    if (!defined($Done{$Curr})) {
+                        push(@Out, $Curr);
+                        $Done{$Curr} = 1;
+                    }
+                }
+            }
+
             $opt_xml && print("  <file>\n");
             if ($opt_namesonly) {
                 if ($opt_xml) {
@@ -149,6 +165,8 @@ Options:
   -l, --filenames-only
       Suppress normal output; only list names of files which contain 
       keywords
+  -u, --unique-keywords
+      List keywords only once per file, avoid duplicates.
   -v, --verbose
       Also list files without keywords.
   -x, --xml
@@ -234,6 +252,10 @@ Only list keywords known to Subversion and CVS.
 
 Suppress normal output; only list names of files which contains 
 keywords.
+
+=item B<-u>, B<--unique-keywords>
+
+Only list keywords once per file, avoid duplicates.
 
 =item B<-v>, B<--verbose>
 
