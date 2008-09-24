@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "SVNDIFF 1"
-.TH SVNDIFF 1 "2005-02-19" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SVNDIFF 1 "2005-04-02" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 99 2005\-02\-19 20:15:11Z sunny256 $
+$Id: svndiff 113 2005\-04\-02 07:22:13Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 svndiff [options] [file [...]]
@@ -163,6 +163,16 @@ Use x as parameters to the diff program.
 .IP "\fB\-h\fR" 4
 .IX Item "-h"
 Print a brief help summary.
+.IP "\fB\-r\fR x" 4
+.IX Item "-r x"
+Run the external diff command against previous revisions:
+.Sp
+.Vb 4
+\&  111:222
+\&    Compare r111 and r222.
+\&  123
+\&    Compare your working file against r123.
+.Ve
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 Made by Øyvind A. Holm <sunny\ _AT_\ sunbase.org>.
