@@ -431,6 +431,8 @@ program is called as, the default string is "vimdiff".
 
 Path to a configuration file in another location than F<~/.svndiffrc> .
 
+=back
+
 =head1 AUTHOR
 
 Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
