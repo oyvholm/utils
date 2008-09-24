@@ -6,8 +6,13 @@
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
+
+BEGIN {
+    our @version_array;
+}
 
 use strict;
 use Getopt::Long;
@@ -17,7 +22,6 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
-    # Initialise option variables {{{
     'debug' => 0,
     'expanded' => 0,
     'filesfrom' => "",
@@ -28,35 +32,37 @@ our %Opt = (
     'verbose' => 0,
     'version' => 0,
     'xml' => 0
-    # }}}
 );
 
 our $progname = $0;
-$progname =~ s#^.*/(.*?)$#$1#;
+$progname =~ s/^.*\/(.*?)$/$1/;
 
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
+push(@main::version_array, $rcs_id);
+
 Getopt::Long::Configure("bundling");
 GetOptions(
-    # Define command line options {{{
     "debug" => \$Opt{'debug'},
     "expanded-only|e" => \$Opt{'expanded'},
     "filenames-from|f=s" => \$Opt{'filesfrom'},
+    "filenames-only|l" => \$Opt{'namesonly'},
     "help|h" => \$Opt{'help'},
     "known-keywords-only|k" => \$Opt{'known'},
-    "filenames-only|l" => \$Opt{'namesonly'},
     "unique-keywords|u" => \$Opt{'unique'},
-    "verbose|v" => \$Opt{'verbose'},
+    "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'}
-    # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
-$Opt{'version'} && print_version();
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
 
 my @Keywords = (
                 # List of recognised keywords {{{
@@ -173,45 +179,22 @@ for (@Files) {
 $Opt{'xml'} && print("</sident>\n");
 
 sub print_version {
-    # {{{
-    xml_print("$rcs_id\n");
-    exit(0);
-    # }}}
-}
-
-sub xml_print {
-    # Print out some text, using DocBook if --xml is specified {{{
-    my $Txt = shift;
-    my ($xml_start, $xml_end) =
-       (        "",       "");
-
-    if ($Opt{'xml'}) {
-        $xml_start = <<END;
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
-<article>
-  <screen>
-END
-        $xml_end = <<END;
-</screen>
-</article>
-END
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
     }
-
-    printf("%s%s%s",
-        $xml_start,
-        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
     # }}}
-}
+} # print_version()
 
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
-    xml_print(<<END);
-$rcs_id
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -241,29 +224,31 @@ Options:
     Create XML output.
   --debug
     Print debugging messages.
+
 END
     exit($Retval);
     # }}}
-}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
 
 sub D {
-    # {{{
+    # Print a debugging message {{{
     $Debug || return;
     my @call_info = caller;
     chomp(my $Txt = shift);
     my $File = $call_info[1];
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
-    if ($Opt{'xml'}) {
-        printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
-            txt_to_xml($$),
-            txt_to_xml($File),
-            txt_to_xml($call_info[2]),
-            txt_to_xml($Txt)
-        );
-    } else {
-        print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    }
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
     return("");
     # }}}
 } # D()
@@ -295,7 +280,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-sident [options] [file [file [...]]]
+sident [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
@@ -355,11 +340,11 @@ None that I know of.
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE

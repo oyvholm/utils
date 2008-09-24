@@ -1,0 +1,14 @@
+# ========== Executing "sident.t --all" ==========
+# Testing -h (--help) option...
+ok - "../sident -h" - Option -h prints help screen
+ok - "../sident -h" - Option -h prints help screen (stderr)
+ok - "../sident -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../sident -hv" - Option --version with -h returns Id string and help screen
+ok - "../sident -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../sident --version" - Option --version returns Id string
+ok - "../sident --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7
