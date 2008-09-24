@@ -6,7 +6,9 @@
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+# This file is part of the svnutils project — http://svnutils.tigris.org
 #=======================================================================
 
 use strict;
@@ -43,7 +45,6 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 my $CMD_SVN = "svn";
-my $CMD_SVNVERSION = "svnversion";
 
 my $PROP_NAME = "mergesvn";
 
@@ -66,7 +67,8 @@ for (@Files) {
     my $File = $_;
     my $prop_val = `svn propget $PROP_NAME $File`;
     if (!length($prop_val)) {
-        warn("$progname: $File: \"mergesvn\" property not found, skipping file\n");
+        warn("$progname: $File: \"mergesvn\" property not found, " .
+             "skipping file\n");
         next LOOP;
     }
     my @new_prop = ();
@@ -77,11 +79,14 @@ for (@Files) {
             my ($last_merge, $orig_master) =
                (         $1,           $2);
             $orig_master =~ s/[\r\n]+$//;
-            my $master_file = length($Opt{'alias'}) ? $Opt{'alias'} : $orig_master;
+            my $master_file = length($Opt{'alias'})
+                                ? $Opt{'alias'}
+                                : $orig_master;
             mysyst($CMD_SVN, "update", $File);
             my $curr_rev = highest_revision($master_file, $Opt{'to'});
             if ($curr_rev !~ /^\d+$/) {
-                warn("$progname: $master_file: Unable to get newest revision\n");
+                warn("$progname: $master_file: " .
+                     "Unable to get newest revision\n");
                 next LOOP;
             }
             if ($Opt{'dry-run'}) {
@@ -102,7 +107,8 @@ for (@Files) {
             next LOOP;
         }
     }
-    $Opt{'dry-run'} || mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
+    $Opt{'dry-run'} ||
+        mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
     # }}}
 }
 
@@ -119,7 +125,7 @@ sub highest_revision {
 } # highest_revision()
 
 sub mysyst {
-    # {{{
+    # Customised system() {{{
     my @Args = @_;
     my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
     D("$system_txt");
@@ -143,7 +149,7 @@ sub escape_filename {
 } # escape_filename()
 
 sub deb_wait {
-    # {{{
+    # Wait until Enter is pressed if --debug {{{
     $Debug || return;
     print("debug: Press ENTER...");
     <STDIN>;
@@ -175,8 +181,8 @@ Usage: $progname [options] [file [files [...]]]
 Options:
 
   -a x, --alias x
-    Use x as alias for the URL. The old value will still be written to 
-    the mergesvn property.
+    Use x as alias for the master URL. The old value will still be 
+    written to the mergesvn property.
   --dry-run
     Try operation without making any changes. Can be used to see if the 
     merge will result in conflicts.
@@ -195,7 +201,7 @@ END
 } # usage()
 
 sub D {
-    # Print a debugging message {{{
+    # Print a debugging message if --debug {{{
     $Debug || return;
     my @call_info = caller;
     chomp(my $Txt = shift);
@@ -252,8 +258,8 @@ These two fields are separated by exactly one space (U+0020).
 
 =item B<-a>, B<--alias> I<x>
 
-Use I<x> as alias for the URL. The old value will still be written to 
-the mergesvn property.
+Use I<x> as alias for the master URL. The old value will still be 
+written to the mergesvn property.
 
 =item B<--dry-run>
 
@@ -304,6 +310,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
+
+svn(1)
 
 =cut
 
