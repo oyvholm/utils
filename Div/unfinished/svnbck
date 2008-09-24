@@ -1,0 +1,82 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id$
+# Backup of active Subversion repositories
+#
+# Character set: UTF-8
+# License: GNU General Public License ♥
+# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+use Env qw{HOME};
+
+$| = 1;
+
+my $Simulate = 1;
+
+my $prog_name = $0;
+$prog_name =~ s/\/(.*?)$/$1/;
+my $svn_Id = '$Id$';
+$svn_Id =~ s/^\$Id: (.*) \$/$1/;
+my ($rev_nr, $rev_date) =
+   ("",      ""       );
+if ($svn_Id =~ /^(\S+) (\d+) (\S+ \S+)/) {
+	$rev_nr = $2;
+	$rev_date = $3;
+}
+
+print("$prog_name r$rev_nr ($rev_date)\n");
+exit;
+
+defined($HOME) || die("$prog_name: The HOME environment variable is not defined. Aborting...\n");
+
+my $config_file = "$HOME/.backupsvnrc";
+my $reposconf_found = 0;
+
+if (open(ConfigFP, "<$config_file")) {
+	while (<ConfigFP>) {
+		if (/^[repositories]/) {
+			$reposconf_found = 1;
+		} else {
+		}
+	}
+} else {
+	die("$prog_name: $config_file: Unable to open configuration file for read\n");
+}
+
+-e "/sunba.mrk" || die("Saken må kjøres på sunba.");
+
+my $rcs_id = '$Id$';
+$rcs_id =~ s/\$Id: (.*) \$/$1/;
+
+=pod
+
+=head1 Plan for opplegget
+
+cd ~/Svn
+glob alle filene i ~/Svn
+
+for (@glob_array) {
+	my $Curr = $_;
+
+	mysystem("svnadmin
+}
+
+
+=cut
+
+sub mysystem {
+	chomp(my $Cmd = shift);
+	if ($Simulate) {
+		print("Simulating \"$Cmd\"\n");
+	} else {
+		print("Executing \"$Cmd\"\n");
+		# system($Cmd);
+	}
+}
+__END__
+
+# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# End of file $Id$
