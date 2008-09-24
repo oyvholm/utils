@@ -153,6 +153,7 @@ if (length($Dest)) {
     } else {
         mysyst("mergesvn -s $URL $Dest");
     }
+    mysyst("keyw $Dest");
 }
 
 unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
