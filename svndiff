@@ -47,9 +47,22 @@ $opt_C && ($stat_chars = "$ST_CONFLICT");
 my @mod_array = ();
 
 if (scalar(@ARGV)) {
-    for my $Curr (@ARGV) {
+    @mod_array = @ARGV;
+    for my $Curr (@mod_array) {
         D("ARG = \"$Curr\"\n");
-        diff_file($Curr);
+        if (-f $Curr && !-l $Curr) {
+            D("$Curr is a file.");
+            my $has_conflict;
+            if (open(PipeFP, "$CMD_SVN stat $Curr -q |")) {
+                $has_conflict = (<PipeFP> =~ /$ST_CONFLICT/) ? 1 : 0;
+            } else {
+                warn("$progname: Error opening \"$CMD_SVN $Curr stat -q\" pipe");
+            }
+            diff_file($Curr, $has_conflict);
+        } else {
+            D("$Curr is NOT a file.");
+            warn("$progname: \"$Curr\" is not a file or doesn't exist\n");
+        }
     }
 } else {
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
@@ -69,7 +82,7 @@ if (scalar(@ARGV)) {
         close(PipeFP);
         for (sort @mod_array) {
             my $File = $_;
-            diff_file($File, $has_conflict{$File});
+            (-f $File && !-l $File) && diff_file($File, $has_conflict{$File});
         }
     } else {
         warn("$progname: Error opening \"$CMD_SVN stat -q\" pipe");
