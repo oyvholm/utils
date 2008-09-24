@@ -118,6 +118,11 @@ for (@Files) {
                 );
             }
             push(@new_prop, "$curr_rev $orig_master");
+            print(
+                "$progname: $File: Merged r$last_merge:$curr_rev (" .
+                join(", ", revisions($master_file, $last_merge, $curr_rev)) .
+                ")\n"
+            );
         } else {
             warn("$File: \"$Curr\": Invalid property line\n");
             next LOOP;
