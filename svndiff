@@ -16,9 +16,9 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_a, $opt_c, $opt_h, $opt_p) =
-    (     0,     "",      0,     "");
-getopts('ac:hp:') || die("Option error. Use -h for help.\n");
+our ($opt_c, $opt_h, $opt_p) =
+    (    "",      0,     "");
+getopts('c:hp:') || die("Option error. Use -h for help.\n");
 
 # Change this to the default diff command to use
 my $Cmd = "vimdiff";
@@ -33,14 +33,14 @@ $opt_h && usage(0);
 length($opt_c) && ($Cmd = $opt_c);
 length($opt_p) && ($Cmd .= " $opt_p");
 
-for my $Curr (@ARGV) {
-    D("ARG = \"$Curr\"\n");
-    diff_file($Curr);
-}
-
 my @mod_array = ();
 
-if ($opt_a) {
+if (scalar(@ARGV)) {
+    for my $Curr (@ARGV) {
+        D("ARG = \"$Curr\"\n");
+        diff_file($Curr);
+    }
+} else {
     if (open(PipeFP, "svn stat -q |")) {
         while (<PipeFP>) {
             if (/^[MC]......(.*)/) {
@@ -103,8 +103,6 @@ Usage: $progname [options] file
 
 Options:
 
--a    Run $progname on every modified file in current directory and all 
-      subdirectories. Needs the svn command-line client.
 -c x  Use x as the diff command. Default: "$Cmd".
 -h    Show this help.
 -p x  Use x as parameters to the diff program.
@@ -134,12 +132,11 @@ svndiff [options] file
 
 =head1 DESCRIPTION
 
-=over 4
-
-=item B<->a
-
 Run the diff program on every modified file in current directory and all 
-subdirectories. Needs the svn command-line client.
+subdirectories or on the files specified on the command line. Needs the 
+svn command-line client unless files are specified.
+
+=over 4
 
 =item B<-c> x
 
