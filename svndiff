@@ -16,9 +16,9 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_c, $opt_h, $opt_p) =
-    (    "",      0,     "");
-getopts('c:hp:') || die("Option error. Use -h for help.\n");
+our ($opt_C, $opt_c, $opt_h, $opt_p) =
+    (     0,     "",      0,     "");
+getopts('Cc:hp:') || die("Option error. Use -h for help.\n");
 
 # Change this to the default diff command to use
 my $Cmd = "vimdiff";
@@ -33,6 +33,9 @@ $opt_h && usage(0);
 length($opt_c) && ($Cmd = $opt_c);
 length($opt_p) && ($Cmd .= " $opt_p");
 
+my $stat_chars = "CM";
+$opt_C && ($stat_chars = "C");
+
 my @mod_array = ();
 
 if (scalar(@ARGV)) {
@@ -43,7 +46,7 @@ if (scalar(@ARGV)) {
 } else {
     if (open(PipeFP, "svn stat -q |")) {
         while (<PipeFP>) {
-            if (/^[MC]......(.*)/) {
+            if (/^[$stat_chars]......(.*)/) {
                 push(@mod_array, $1);
             }
         }
@@ -103,6 +106,7 @@ Usage: $progname [options] file
 
 Options:
 
+-C    Only run diff on conflicted files.
 -c x  Use x as the diff command. Default: "$Cmd".
 -h    Show this help.
 -p x  Use x as parameters to the diff program.
@@ -137,6 +141,10 @@ subdirectories or on the files specified on the command line. Needs the
 svn command-line client unless files are specified.
 
 =over 4
+
+=item B<-C>
+
+Only run diff on conflicted files.
 
 =item B<-c> x
 
