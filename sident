@@ -14,7 +14,8 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_h) = (0);
+our ($opt_h) =
+    (     0);
 getopts('h') || die("Option error. Use -h for help.\n");
 
 my @Keywords = (
@@ -59,9 +60,13 @@ sub usage {
 
 Usage:
 
-    sident file [files [...]]
+    sident [options] file [files [...]]
 
 Lists RCS-like keywords in a file.
+
+Options:
+
+  -h  Print this help
 
 END
     exit($Retval);
@@ -76,7 +81,7 @@ __END__
 
 =head1 NAME
 
-
+sident
 
 =head1 REVISION
 
@@ -84,11 +89,11 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+sident [options] [file [file [...]]]
 
 =head1 DESCRIPTION
 
-
+Replacement for ident(1), lists RCS-like keywords in a file.
 
 =head1 OPTIONS
 
@@ -102,7 +107,7 @@ Print a brief help summary.
 
 =head1 BUGS
 
-
+None that I know of.
 
 =head1 AUTHOR
 
