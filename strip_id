@@ -1,38 +1,24 @@
 #!/usr/bin/perl -w
 
-#============================================================================
+#=======================================================================
 # $Id$
-# Strips the " $","$Id: :" and "$Date: " fom RCS/CVS/Subversion keywords to
-# protect it from changes when importing or adding the file to a new
-# repository.
+# Strips the " $", "$Id: :" and "$Date: " from RCS/CVS/Subversion 
+# keywords to protect it from changes when importing or adding the file 
+# to a new repository.
 #
-# Syntax: strip_id file [file [...]]
-#
-# Default behaviour at the moment (% = $):
-#
-#   "%Id: file.txt 123 2004-01-21 17:12:16Z fjodor %"
-#     is changed to
-#   "file.txt 123 2004-01-21 17:12:16Z fjodor"
-#
-#   "%Date: 2004-05-18 10:44:54 +0200 (Tue, 18 May 2004) %"
-#     is changed to
-#   "2004-05-18 10:44:54 +0200"
-#
-# Character set:
-#   UTF-8
-# Project page:
-#   http://svnutils.tigris.org
-# Subversion repository:
-#   http://svn.sunbase.org/repos/svnutils
-# License:
-#   GNU General Public License
-# Authors:
-#   Use "svn blame" or "svn log" against the Subversion repository to
-#   nail the responsible guys. As of 2004-06-07, it is only:
-#     - sunny, Øyvind A. Holm <sunny@sunbase.org>
-#============================================================================
+# Character set: UTF-8
+# License: GNU General Public License
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# This file is part of the svnutils package — http://svnutils.tigris.org
+#=======================================================================
 
 use strict;
+use Getopt::Std;
+
+our $opt_h = 0;
+getopts('h') || die("Option error, use -h for help");
+
+$opt_h || usage(0);
 
 $| = 1;
 
@@ -65,7 +51,33 @@ sub process_line {
     return($Retval);
 }
 
+sub usage {
+    print <<END
+
+Syntax: strip_id [options] file [file [...]]
+
+Strips the " \$", "\$Id: :" and "\$Date: " from RCS/CVS/Subversion 
+keywords to protect it from changes when importing or adding the file to 
+a new repository.
+
+Default behaviour at the moment:
+
+    "\$Id: file.txt 123 2004-01-21 17:12:16Z fjodor \$"
+    is changed to
+    "file.txt 123 2004-01-21 17:12:16Z fjodor"
+
+    "\$Date: 2004-05-18 10:44:54 +0200 (Tue, 18 May 2004) \$"
+    is changed to
+    "2004-05-18 10:44:54 +0200"
+
+Options:
+
+    -h  Print this help.
+
+END
+}
+
 __END__
 
-# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# vim: set et ts=4 sw=4 sts=4 fo+=w fo+=c fo-=t tw=72 :
 # End of file $Id$
