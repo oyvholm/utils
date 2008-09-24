@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "SIDENT 1"
-.TH SIDENT 1 "2005-08-23" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SIDENT 1 "2005-10-02" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 sident
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: sident 159 2005\-08\-22 23:27:39Z sunny256 $
+$Id: sident 162 2005\-10\-02 01:26:41Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 sident [options] [file [file [...]]]
@@ -146,6 +146,10 @@ Replacement for \fIident\fR\|(1), lists RCS-like keywords in a file.
 .IP "\fB\-e\fR, \fB\-\-expanded\-only\fR" 4
 .IX Item "-e, --expanded-only"
 List only expanded keywords.
+.IP "\fB\-f\fR, \fB\-\-filenames\-from\fR x" 4
+.IX Item "-f, --filenames-from x"
+Read filenames from file \fIx\fR in addition to files specified on the 
+command line.
 .IP "\fB\-h\fR, \fB\-\-help\fR" 4
 .IX Item "-h, --help"
 Print a brief help summary.
