@@ -582,7 +582,7 @@ $Id$
 
 =head1 SYNOPSIS
 
-svndiff [options] [file [...]]
+B<svndiff> [I<options>] [I<file> [I<...>]]
 
 =head1 DESCRIPTION
 
@@ -592,7 +592,7 @@ command line.
 An URL to a file can also be specified, but then the --revision option 
 has to be specified.
 
-The program needs the L<svn(1)> commandline client to run.
+The program needs the svn(1) commandline client to run.
 
 =over 4
 
@@ -610,7 +610,7 @@ F<~/.svndiffrc> file, write
 =item B<--diff-cmd> x
 
 Use x as the diff command.
-Default: "svndiff".
+Default: "vimdiff".
 
 =item B<-e>, B<--svn-cmd> x
 
@@ -683,7 +683,7 @@ The default value here is of course "svn".
 
 When using visual diff viewers (for example B<vimdiff>), the program 
 sometimes expects the file names to be switched on the command line so 
-your modified file appears in the correct window.
+your modified file appears in the window of your taste.
 By creating a C<E<lt>programE<gt>E<lt>/programE<gt>> section, programs 
 can be instructed to take arguments the opposite way.
 If you for example use the B<meld> program and you want your modified 
@@ -714,7 +714,7 @@ Path to a configuration file in another location than F<~/.svndiffrc> .
 
 =head2 vimdiff mappings
 
-The standard diff program used in this script is L<vimdiff(1)> which in 
+The standard diff program used in this script is vimdiff(1) which in 
 fact is the Vim editor called with another name.
 The main reasons for this are because Vim is Free and widely available, 
 portable, console based and an effective diff tool.
@@ -723,7 +723,7 @@ The following macros makes moving differences between windows easier
 
   " F1: Move differences from the other window to the current window.
   map <f1> :diffget<cr>]cz.
-  
+
   " F2: Move differences from the current window to the other window.
   map <f2> :diffput<cr>]c
 
@@ -742,7 +742,7 @@ Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 This file is part of the svnutils project — 
-L<http://svnutils.tigris.org>
+L<http://svnutils.tigris.org/>
 
 =head1 LICENCE
 
@@ -762,7 +762,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 =head1 SEE ALSO
 
-L<svn(1)>
+svn(1)
 
 =cut
 
