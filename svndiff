@@ -53,17 +53,23 @@ if (scalar(@ARGV)) {
     }
 } else {
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
+        my %has_conflict = ();
         while (<PipeFP>) {
             chomp();
             D("<PipeFP> = \"$_\"\n");
-            if (/^[$stat_chars]......(.*)/) {
-                push(@mod_array, $1);
+            if (/^([$stat_chars])......(.*)/) {
+                my ($Stat, $File) =
+                   (   $1,    $2);
+                D("\$Stat = \"$Stat\", \$File = \"$File\"\n");
+                push(@mod_array, $File);
+                $has_conflict{$File} = ($Stat =~ /$ST_CONFLICT/) ? 1 : 0;
+                D("\$has_conflict{$File} = \"$has_conflict{$File}\"\n");
             }
         }
         close(PipeFP);
         for (sort @mod_array) {
             my $File = $_;
-            diff_file($File);
+            diff_file($File, $has_conflict{$File});
         }
     } else {
         warn("$progname: Error opening \"$CMD_SVN stat -q\" pipe");
@@ -71,7 +77,7 @@ if (scalar(@ARGV)) {
 }
 
 sub diff_file {
-    my $File1 = shift;
+    my ($File1, $has_conflict) = @_;
     my $Path = "";
     my $File = $File1;
 
@@ -97,6 +103,16 @@ sub diff_file {
         D("CMD: $Cmd $File2 $File1\n");
         deb_wait();
         system("$Cmd $File2 $File1");
+    }
+
+    if ($has_conflict) {
+        print("$progname: Write y and press ENTER if the conflict " .
+              "in $File1 is resolved: ");
+        if (<STDIN> =~ /^y$/i) {
+            print("$progname: OK, marking $File1 as resolved.\n");
+            D("CMD: $CMD_SVN resolved $File1");
+            system("$CMD_SVN resolved $File1");
+        }
     }
 
     # Sleep one second after $Cmd is done to make it easier to interrupt 
