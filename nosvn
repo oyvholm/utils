@@ -1,6 +1,12 @@
 #!/bin/sh
 
+#=======================================================================
 # $Id$
-# Stripper bort .svn-kataloger fra stdin.
+# Reads a bunch of filenames from stdin or files specified on the 
+# command line. Example of really cleaning up the working copy:
+#   cd /top/of/working/copy
+#   find . -type f | nosvn | xargs rm
+#   svn revert -R .
+#=======================================================================
 
 cat $* | egrep -v '/\.svn(/|$)'
