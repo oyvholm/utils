@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "SVNDIFF 1"
-.TH SVNDIFF 1 "2005-05-12" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SVNDIFF 1 "2005-05-16" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 142 2005\-05\-12 03:53:51Z sunny256 $
+$Id: svndiff 144 2005\-05\-16 15:06:45Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 svndiff [options] [file [...]]
@@ -150,6 +150,14 @@ The program needs the \fIsvn\fR\|(1) commandline client to run.
 .IP "\fB\-C\fR, \fB\-\-conflict\fR" 4
 .IX Item "-C, --conflict"
 Only run diff on conflicted files.
+.IP "\fB\-\-create\-rc\fR" 4
+.IX Item "--create-rc"
+Send a configuration file example to stdout. To create a new 
+\&\fI~/.svndiffrc\fR file, write
+.Sp
+.Vb 1
+\&  $progname \-\-create\-rc >~/.svndiffrc
+.Ve
 .IP "\fB\-c\fR, \fB\-\-diffcmd\fR x" 4
 .IX Item "-c, --diffcmd x"
 Use x as the diff command.
