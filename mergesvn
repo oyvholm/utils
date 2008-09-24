@@ -228,7 +228,8 @@ sub find_conflict {
         my $mid_pos = int(($min_pos + $max_pos) / 2);
         last if ($has_checked && ($mid_pos == $last_mid));
         my $Rev = $Array[$mid_pos];
-        print(STDERR "Checking revision $Rev ($mid_pos)...");
+        printf(STDERR "Checking revision %lu (%lu/%lu)...",
+            $Rev, $mid_pos + 1, $rev_count);
         if (!has_conflict($Src, $Dest, $Start, $Rev)) {
             print(STDERR "No conflict\n");
             $min_pos = $mid_pos;
