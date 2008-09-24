@@ -146,6 +146,7 @@ for (@Files) {
 }
 
 sub legal_revision {
+    # Check that a string is a legal revision number {{{
     my $Rev = shift;
     my $Retval = 1;
 
@@ -153,7 +154,8 @@ sub legal_revision {
         $Retval = 0;
     }
     return($Retval);
-}
+    # }}}
+} # legal_revision()
 
 sub set_mergesvn_prop {
     # Define the $PROP_NAME property for an element. Finds the highest 
@@ -187,7 +189,7 @@ sub set_mergesvn_prop {
     }
     mysyst($CMD_SVN, "propset", $PROP_NAME, "$highest_rev $Source", $File);
     # }}}
-}
+} # set_mergesvn_prop()
 
 sub find_conflict {
     # Scan a specific revision range for the first merge conflict and 
@@ -345,7 +347,7 @@ sub log_range {
 
     mysyst($CMD_SVN, "log", "-r$Start:$End", $File);
     # }}}
-}
+} # log_range()
 
 sub deb_wait {
     # Wait until Enter is pressed if --debug {{{
