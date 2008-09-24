@@ -16,8 +16,8 @@ $| = 1;
 
 our $Debug = 0;
 
-our ($opt_help, $opt_known, $opt_namesonly, $opt_unique) =
-    (        0,          0,              0,           0);
+our ($opt_expanded, $opt_help, $opt_known, $opt_namesonly, $opt_unique) =
+    (            0,         0,          0,              0,           0);
 our ($opt_verbose, $opt_xml) =
     (           0,        0);
 
@@ -29,6 +29,7 @@ my $id_date = $rcs_id;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "expanded-only|e"       => \$opt_expanded,
     "help|h"                => \$opt_help,
     "known-keywords-only|k" => \$opt_known,
     "filenames-only|l"      => \$opt_namesonly,
@@ -67,7 +68,7 @@ for (@ARGV) {
     my $File = $_;
     if (open(FromFP, "<$File")) {
         while (<FromFP>) {
-            s/(\$($Keyw)\$)/push(@Out, $1)/ge;
+            $opt_expanded || s/(\$($Keyw)\$)/push(@Out, $1)/ge;
             s/(\$($Keyw)::? .*? \$)/push(@Out, $1)/ge;
         }
         if (scalar(@Out)) {
@@ -158,6 +159,8 @@ Lists RCS-like keywords in a file.
 
 Options:
 
+  -e, --expanded-only
+      List only expanded keywords
   -h, --help
       Show this help.
   -k, --known-keywords-only
@@ -239,6 +242,10 @@ Replacement for ident(1), lists RCS-like keywords in a file.
 =head1 OPTIONS
 
 =over 4
+
+=item B<-e>, B<--expanded-only>
+
+List only expanded keywords.
 
 =item B<-h>, B<--help>
 
