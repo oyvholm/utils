@@ -436,23 +436,23 @@ sub print_leftover {
 } # print_leftover()
 
 sub txt_to_xml {
-	# {{{
-	my $Txt = shift;
-	$Txt =~ s/&/&amp;/gs;
-	$Txt =~ s/</&lt;/gs;
-	$Txt =~ s/>/&gt;/gs;
-	return($Txt);
-	# }}}
+    # {{{
+    my $Txt = shift;
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
 } # txt_to_xml()
 
 sub xml_to_txt {
-	# {{{
-	my $Txt = shift;
-	$Txt =~ s/&lt;/</gs;
-	$Txt =~ s/&gt;/>/gs;
-	$Txt =~ s/&amp;/&/gs;
-	return($Txt);
-	# }}}
+    # {{{
+    my $Txt = shift;
+    $Txt =~ s/&lt;/</gs;
+    $Txt =~ s/&gt;/>/gs;
+    $Txt =~ s/&amp;/&/gs;
+    return($Txt);
+    # }}}
 } # xml_to_txt()
 
 sub usage {
