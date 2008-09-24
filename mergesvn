@@ -84,9 +84,6 @@ for (@Files) {
             my $master_file = length($Opt{'alias'})
                                 ? $Opt{'alias'}
                                 : $orig_master;
-            if (!$Opt{'diff'} && !$Opt{'dry-run'}) {
-                mysyst($CMD_SVN, "update", $File);
-            }
             my $curr_rev = highest_revision($master_file, $Opt{'to'});
             if ($curr_rev !~ /^\d+$/) {
                 warn("$progname: $master_file: " .
