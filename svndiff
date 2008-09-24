@@ -15,9 +15,11 @@ use strict;
 
 $| = 1;
 
-use Getopt::Std;
-our ($opt_C, $opt_c, $opt_e, $opt_h, $opt_p, $opt_r) =
-    (     0,     "",     "",      0,     "",     "");
+use Getopt::Long;
+our ($opt_conflict, $opt_diffcmd, $opt_svncmd, $opt_help) =
+    (            0,           "",          "",         0);
+our ($opt_diffargs, $opt_revision) =
+    (           "",            "");
 
 my $Debug = 0;
 
@@ -52,16 +54,24 @@ unless (length($rc_file)) {
 
 length($rc_file) && (-e $rc_file) && read_rcfile($rc_file);
 
-getopts('Cc:e:hp:r:') || die("$progname: Option error. Use -h for help.\n");
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "conflict|C"   => \$opt_conflict,
+    "diffcmd|c=s"  => \$opt_diffcmd,
+    "svncmd|e=s"   => \$opt_svncmd,
+    "help|h"       => \$opt_help,
+    "diffargs|p=s" => \$opt_diffargs,
+    "revision|r=s" => \$opt_revision
+) || die("$progname: Option error. Use -h for help.\n");
 
-$opt_h && usage(0);
+$opt_help && usage(0);
 
-length($opt_c) && ($Cmd = $opt_c);
-length($opt_p) && ($Cmd .= " $opt_p");
-length($opt_e) && ($CMD_SVN = $opt_e);
+length($opt_diffcmd)  && ($Cmd = $opt_diffcmd);
+length($opt_diffargs) && ($Cmd .= " $opt_diffargs");
+length($opt_svncmd)   && ($CMD_SVN = $opt_svncmd);
 
 my $stat_chars = "$ST_CONFLICT$ST_MODIFIED";
-$opt_C && ($stat_chars = "$ST_CONFLICT");
+$opt_conflict && ($stat_chars = "$ST_CONFLICT");
 
 my @mod_array = ();
 
@@ -79,7 +89,7 @@ if (scalar(@ARGV)) {
             } else {
                 warn("$progname: Error opening \"$CMD_SVN $Curr stat -q\" pipe");
             }
-            diff_file($Curr, $has_conflict, $opt_r);
+            diff_file($Curr, $has_conflict, $opt_revision);
         } else {
             D("$Curr is NOT a file.");
             warn("$progname: \"$Curr\" is not a file or doesn't exist\n");
@@ -88,7 +98,7 @@ if (scalar(@ARGV)) {
     # }}}
 } else {
     # {{{
-    length($opt_r) && die("You need to specify one or more files when using the -r option\n");
+    length($opt_revision) && die("You need to specify one or more files when using the -r option\n");
     D("Before PipeFP 2: CMD_SVN = \"$CMD_SVN\"");
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
         my %has_conflict = ();
@@ -132,14 +142,14 @@ sub diff_file {
     my $File2 = "";
     my @rm_files = ();
 
-    if (length($opt_r)) {
+    if (length($opt_revision)) {
         my ($Rev1, $Rev2);
         my ($tmp1, $tmp2);
-        if ($opt_r =~ /^(\d+)$/) {
+        if ($opt_revision =~ /^(\d+)$/) {
             $Rev1 = $1;
             $Rev2 = "";
             $tmp1 = "$File1.r$Rev1.tmp";
-        } elsif ($opt_r =~ /^(\d+):(\d+)$/) {
+        } elsif ($opt_revision =~ /^(\d+):(\d+)$/) {
             $Rev1 = $1;
             $Rev2 = $2;
             $tmp1 = "$File1.r$Rev1.tmp";
@@ -171,9 +181,9 @@ sub diff_file {
 
     (-e $File1) || (warn("$File1: File not found\n"), return);
     (-e $File2) || (warn("$File2: File not found" .
-                         length($opt_r) ? ""
-                                        : ", is not under version " .
-                                          "control" .
+                         length($opt_revision) ? ""
+                                               : ", is not under version " .
+                                                 "control" .
                          "\n"
                         ),
                         return
@@ -196,7 +206,7 @@ sub diff_file {
         unlink($curr_rm) || warn("$progname: $curr_rm: Can't delete temporary file: $!");
     }
 
-    if (!length($opt_r) && $has_conflict) {
+    if (!length($opt_revision) && $has_conflict) {
         print("$progname: Write y and press ENTER if the conflict " .
               "in $File1 is resolved: ");
         if (<STDIN> =~ /^y$/i) {
@@ -384,16 +394,16 @@ Usage: $progname [options] [file [...]]
 
 Options:
 
--C    Only run diff on conflicted files.
--c x  Use x as the diff command. Default: "$Cmd".
--e x  Use x as the svn executable. Default: "$CMD_SVN".
--h    Show this help.
--p x  Use x as parameters to the diff program.
--r x  Run a $Cmd command against previous revisions:
-        111:222
-          Compare r111 and r222.
-        123
-          Compare your working file against r123.
+-C, --conflict    Only run diff on conflicted files.
+-c, --diffcmd x   Use x as the diff command. Default: "$Cmd".
+-e, --svncmd x    Use x as the svn executable. Default: "$CMD_SVN".
+-h, --help        Show this help.
+-p, --diffargs x  Use x as parameters to the diff program.
+-r, --revision x  Run a $Cmd command against previous revisions:
+                    111:222
+                      Compare r111 and r222.
+                    123
+                      Compare your working file against r123.
 
 END
     exit($Retval);
@@ -426,31 +436,31 @@ Needs the svn command-line client unless files are specified.
 
 =over 4
 
-=item B<-C>
+=item B<-C>, B<--conflict>
 
 Only run diff on conflicted files.
 
-=item B<-c> x
+=item B<-c>, B<--diffcmd> x
 
 Use x as the diff command.
 Default: "svndiff".
 
-=item B<-e> x
+=item B<-e>, B<--svncmd> x
 
 Use x as the svn executable.
 Example:
 
   svndiff -e /usr/local/bin/svn-1.0
 
-=item B<-p> x
+=item B<-p>, B<--diffargs> x
 
 Use x as parameters to the diff program.
 
-=item B<-h>
+=item B<-h>, B<--help>
 
 Print a brief help summary.
 
-=item B<-r> x
+=item B<-r>, B<--revision> x
 
 Run the external diff command against previous revisions:
 
