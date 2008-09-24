@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "SVNDIFF 1"
-.TH SVNDIFF 1 "2005-05-16" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SVNDIFF 1 "2007-04-05" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 144 2005\-05\-16 15:06:45Z sunny256 $
+$Id: svndiff 202 2007\-04\-05 03:53:39Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 svndiff [options] [file [...]]
@@ -187,6 +187,15 @@ Run the external diff command against previous revisions:
 \&    Compare your working file against r123. If the file is an URL, the 
 \&    second revision is set to HEAD.
 .Ve
+.IP "\fB\-v\fR, \fB\-\-verbose\fR" 4
+.IX Item "-v, --verbose"
+Increase level of verbosity. Can be repeated.
+.IP "\fB\-\-version\fR" 4
+.IX Item "--version"
+Print version information.
+.IP "\fB\-\-debug\fR" 4
+.IX Item "--debug"
+Print debugging messages.
 .SH "FILES"
 .IX Header "FILES"
 .IP "\fI~/.svndiffrc\fR" 4
@@ -269,10 +278,10 @@ The following macros makes moving differences between windows easier
 .Ve
 .SH "AUTHOR"
 .IX Header "AUTHOR"
-Made by Øyvind A. Holm <sunny\ _AT_\ sunbase.org>.
+Made by Øyvind A. Holm <sunny@sunbase.org>.
 .SH "COPYRIGHT"
 .IX Header "COPYRIGHT"
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm <sunny@sunbase.org>
 This is free software; see the file \fI\s-1COPYING\s0\fR for legalese stuff.
 .PP
 This file is part of the svnutils project — 
