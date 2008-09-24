@@ -72,7 +72,7 @@ for (@Files) {
         if ($Curr =~ /^(\d+) (.+)$/) {
             my ($last_merge, $master_file) =
                (         $1,           $2);
-            $master_file =~ s/[\r\n]$//;
+            $master_file =~ s/[\r\n]+$//;
             my $safe_master_file = escape_filename($master_file);
             mysyst($CMD_SVN, "update", $File);
             my $curr_rev = `$CMD_SVN log -r$Opt{'to'}:1 --limit 1 --xml $safe_master_file`; # FIXME
