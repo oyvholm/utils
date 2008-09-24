@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "SVNDIFF 1"
-.TH SVNDIFF 1 "2005-04-26" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SVNDIFF 1 "2005-04-27" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 121 2005\-04\-26 21:11:10Z sunny256 $
+$Id: svndiff 124 2005\-04\-26 22:38:21Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 svndiff [options] [file [...]]
@@ -180,18 +180,23 @@ Run the external diff command against previous revisions:
 A configuration file where you can store your own settings.
 It is a standard \s-1XML\s0 file with this structure:
 .Sp
-.Vb 5
+.Vb 6
 \&  <svndiffrc>
 \&    <defaults>
 \&      <diffprog>vimdiff</diffprog>
+\&      <svnclient>svn</svnclient>
 \&    </defaults>
 \&  </svndiffrc>
 .Ve
 .Sp
 (Whitespace is optional and more options will come.)
 .Sp
-The string inside the \f(CW\*(C`diffprog\*(C'\fR can be set to whatever your diff 
-program is called as, the default string is \*(L"vimdiff\*(R".
+The string inside the \f(CW\*(C`diffprog\*(C'\fR elements can be set to whatever your 
+diff program is called as, the default string is \*(L"vimdiff\*(R".
+.Sp
+You can also define an alternative \fIsvn\fR\|(1) client to use inside the 
+\&\f(CW\*(C`svnclient\*(C'\fR elements.
+The default value here is of course \*(L"svn\*(R".
 .SH "ENVIRONMENT VARIABLES"
 .IX Header "ENVIRONMENT VARIABLES"
 .IP "\fI\s-1SVNDIFFRC\s0\fR" 4
