@@ -147,7 +147,12 @@ if (length($Dest)) {
     msg(1, "svn add");
     mysyst("$CMD_SVN add $Dest");
     msg(1, "mergesvn");
-    mysyst("mergesvn -s $URL $Dest");
+    if (-f "Lib/std/$Type") {
+        mysyst("svn up Lib/std");
+        mysyst("mergesvn -s Lib/std/$Type $Dest");
+    } else {
+        mysyst("mergesvn -s $URL $Dest");
+    }
 }
 
 unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
