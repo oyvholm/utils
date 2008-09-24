@@ -17,14 +17,16 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
-    'expanded'  => 0,
+    'debug' => 0,
+    'expanded' => 0,
     'filesfrom' => "",
-    'help'      => 0,
-    'known'     => 0,
+    'help' => 0,
+    'known' => 0,
     'namesonly' => 0,
-    'unique'    => 0,
-    'verbose'   => 0,
-    'xml'       => 0
+    'unique' => 0,
+    'verbose' => 0,
+    'version' => 0,
+    'xml' => 0
 );
 
 our $progname = $0;
@@ -32,20 +34,25 @@ $progname =~ s#^.*/(.*?)$#$1#;
 
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "expanded-only|e"       => \$Opt{'expanded'},
-    "help|h"                => \$Opt{'help'},
-    "filenames-from|f=s"    => \$Opt{'filesfrom'},
+    "debug" => \$Opt{'debug'},
+    "expanded-only|e" => \$Opt{'expanded'},
+    "filenames-from|f=s" => \$Opt{'filesfrom'},
+    "help|h" => \$Opt{'help'},
     "known-keywords-only|k" => \$Opt{'known'},
-    "filenames-only|l"      => \$Opt{'namesonly'},
-    "unique-keywords|u"     => \$Opt{'unique'},
-    "verbose|v"             => \$Opt{'verbose'},
-    "xml|x"                 => \$Opt{'xml'}
+    "filenames-only|l" => \$Opt{'namesonly'},
+    "unique-keywords|u" => \$Opt{'unique'},
+    "verbose|v" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
+$Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
+$Opt{'version'} && print_version();
 
 my @Keywords = (
                 "Id",
@@ -153,10 +160,15 @@ for (@Files) {
 
 $Opt{'xml'} && print("</sident>\n");
 
-sub usage {
-    # Send the help message to stdout {{{
-    my $Retval = shift;
-    my ($xml_start, $xml_end)  =
+sub print_version {
+    xml_print("$rcs_id\n");
+    exit(0);
+}
+
+sub xml_print {
+    # Print out some text, using DocBook if --xml is specified {{{
+    my $Txt = shift;
+    my ($xml_start, $xml_end) =
        (        "",       "");
 
     if ($Opt{'xml'}) {
@@ -171,7 +183,20 @@ END
 </article>
 END
     }
-    my $Txt = <<END;
+
+    printf("%s%s%s",
+        $xml_start,
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
+    # }}}
+}
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    xml_print(<<END);
 $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
@@ -181,29 +206,28 @@ Lists RCS-like keywords in a file.
 Options:
 
   -e, --expanded-only
-      List only expanded keywords
+    List only expanded keywords.
   -f, --filenames-from x
-      Read filenames from file x in addition to files specified on the 
-      command line.
+    Read filenames from file x in addition to files specified on the 
+    command line.
   -h, --help
-      Show this help.
+    Show this help.
   -k, --known-keywords-only
-      Only list keywords known to Subversion and CVS
+    Only list keywords known to Subversion and CVS.
   -l, --filenames-only
-      Suppress normal output; only list names of files which contain 
-      keywords
+    Suppress normal output; only list names of files which contain 
+    keywords.
   -u, --unique-keywords
-      List keywords only once per file, avoid duplicates.
+    List keywords only once per file, avoid duplicates.
   -v, --verbose
-      Also list files without keywords.
+    Also list files without keywords.
+  --version
+    Print version information.
   -x, --xml
-      Create XML output
+    Create XML output.
+  --debug
+    Print debugging messages.
 END
-    printf("%s%s%s",
-        $xml_start,
-        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
-        $xml_end
-    );
     exit($Retval);
     # }}}
 }
@@ -297,9 +321,17 @@ Only list keywords once per file, avoid duplicates.
 
 In addition to list keywords, also list names of files without keywords.
 
+=item B<--version>
+
+Print version information.
+
 =item B<-x>, B<--xml>
 
 Create XML output.
+
+=item B<--debug>
+
+Print debugging messages.
 
 =back
 
