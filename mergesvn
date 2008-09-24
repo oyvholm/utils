@@ -11,6 +11,10 @@
 # This file is part of the svnutils project — http://svnutils.tigris.org
 #=======================================================================
 
+BEGIN {
+    our @version_array;
+}
+
 use strict;
 use Getopt::Long;
 
@@ -33,11 +37,13 @@ our %Opt = (
 );
 
 our $progname = $0;
-$progname =~ s#^.*/(.*?)$#$1#;
+$progname =~ s/^.*\/(.*?)$/$1/;
 
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -60,7 +66,10 @@ my $PROP_NAME = "mergesvn";
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
-$Opt{'version'} && print_version();
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
 
 my @Files = @ARGV;
 
@@ -374,8 +383,9 @@ sub deb_wait {
 
 sub print_version {
     # Print program version {{{
-    print("$rcs_id\n");
-    exit(0);
+    for (@main::version_array) {
+        print("$_\n");
+    }
     # }}}
 } # print_version()
 
@@ -383,9 +393,11 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
     print(<<END);
-
-$rcs_id
 
 Merge changes between Subversion controlled files or directories. 
 Elements without the "$PROP_NAME" property will be ignored. If no 
@@ -604,5 +616,5 @@ svn(1)
 
 # }}}
 
-# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=0 et fo+=w :
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
 # End of file $Id$
