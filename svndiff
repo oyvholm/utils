@@ -16,9 +16,9 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_C, $opt_c, $opt_e, $opt_h, $opt_p) =
-    (     0,     "",     "",      0,     "");
-getopts('Cc:e:hp:') || die("Option error. Use -h for help.\n");
+our ($opt_C, $opt_c, $opt_e, $opt_h, $opt_p, $opt_r) =
+    (     0,     "",     "",      0,     "",     "");
+getopts('Cc:e:hp:r:') || die("Option error. Use -h for help.\n");
 
 # Change this to the default diff command to use
 my $Cmd = "vimdiff";
@@ -58,13 +58,14 @@ if (scalar(@ARGV)) {
             } else {
                 warn("$progname: Error opening \"$CMD_SVN $Curr stat -q\" pipe");
             }
-            diff_file($Curr, $has_conflict);
+            diff_file($Curr, $has_conflict, $opt_r);
         } else {
             D("$Curr is NOT a file.");
             warn("$progname: \"$Curr\" is not a file or doesn't exist\n");
         }
     }
 } else {
+    length($opt_r) && die("You need to specify one or more files when using the -r option\n");
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
         my %has_conflict = ();
         while (<PipeFP>) {
@@ -90,23 +91,58 @@ if (scalar(@ARGV)) {
 }
 
 sub diff_file {
-    my ($File1, $has_conflict) = @_;
+    my ($File1, $has_conflict, $Revs) = @_;
     my $Path = "";
     my $File = $File1;
 
-    D("diff_file(\"$File1\", \"$has_conflict\");\n");
+    D("diff_file(\"$File1\", \"$has_conflict\", \"$Revs\");\n");
 
     if ($File =~ m#^(.*/)(.+?)$#) {
         $Path = $1;
         $File = $2;
     }
 
-    my $File2 = "$Path.svn/text-base/$File.svn-base";
+    my $File2 = "";
+    my @rm_files = ();
+
+    if (length($opt_r)) {
+        my ($Rev1, $Rev2);
+        if ($opt_r =~ /^(\d+)$/) {
+            $Rev1 = $1;
+            $Rev2 = "";
+        } elsif ($opt_r =~ /^(\d+):(\d+)$/) {
+            $Rev1 = $1;
+            $Rev2 = $2;
+        } else {
+            die("Revision format error in -r option, use -h for help\n");
+        }
+        D("Rev1 = \"$Rev1\", Rev2 = \"$Rev2\"\n");
+        mysyst("$CMD_SVN cat -r$Rev1 $File1 >$File1.r$Rev1.tmp");
+        mysyst("$CMD_SVN cat -r$Rev2 $File1 >$File1.r$Rev2.tmp") if (length($Rev2));
+        if (length($Rev2)) {
+            $File2 = "$File1.r$Rev2.tmp";
+            $File1 = "$File1.r$Rev1.tmp";
+            push(@rm_files, $File1, $File2);
+        } else {
+            $File2 = "$File1.r$Rev1.tmp";
+            push(@rm_files, $File2);
+        }
+    } else {
+        $File2 = "$Path.svn/text-base/$File.svn-base";
+    }
+
     D("File1 = \"$File1\"\n");
     D("File2 = \"$File2\"\n");
 
     (-e $File1) || (warn("$File1: File not found\n"), return);
-    (-e $File2) || (warn("$File2: File not found, is not under version control\n"), return);
+    (-e $File2) || (warn("$File2: File not found" .
+                         length($opt_r) ? ""
+                                        : ", is not under version " .
+                                          "control" .
+                         "\n"
+                        ),
+                        return
+                   );
 
     if ($Cmd eq "vimdiff") {
         mysyst("$Cmd $File1 $File2");
@@ -114,7 +150,12 @@ sub diff_file {
         mysyst("$Cmd $File2 $File1");
     }
 
-    if ($has_conflict) {
+    for my $curr_rm (@rm_files) {
+        D("Removing tempfile \"$curr_rm\"...");
+        unlink($curr_rm) || warn("$progname: $curr_rm: Can't delete temporary file: $!");
+    }
+
+    if (!length($opt_r) && $has_conflict) {
         print("$progname: Write y and press ENTER if the conflict " .
               "in $File1 is resolved: ");
         if (<STDIN> =~ /^y$/i) {
@@ -162,6 +203,11 @@ Options:
 -e x  Use x as the svn executable. Default: "$CMD_SVN".
 -h    Show this help.
 -p x  Use x as parameters to the diff program.
+-r x  Run a $Cmd command against previous revisions:
+        111:222
+          Compare r111 and r222.
+        123
+          Compare your working file against r123.
 
 END
     exit($Retval);
@@ -216,6 +262,15 @@ Use x as parameters to the diff program.
 =item B<-h>
 
 Print a brief help summary.
+
+=item B<-r> x
+
+Run the external diff command against previous revisions:
+
+  111:222
+    Compare r111 and r222.
+  123
+    Compare your working file against r123.
 
 =back
 
