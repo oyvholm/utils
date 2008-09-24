@@ -115,9 +115,9 @@ Options:
             \$Id: file.txt 123 2004-01-21 17:12:16Z fjodor \$
           is changed to
             file.txt 123 2004-01-21 17:12:16Z fjodor
-        WARNING: After using this keyword, further processing of 
-        keywords in the file is impossible. Meant for use in tarballs 
-        and releases.
+        WARNING: After using this option, further processing of keywords 
+        in the file is impossible. Meant for use in tarballs and 
+        releases.
 
 END
     # }}}
