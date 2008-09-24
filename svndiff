@@ -29,6 +29,9 @@ my $Debug = 0;
 # to use the -e option all the time:
 my $CMD_SVN = "svn";
 
+my $ST_CONFLICT = 'C';
+my $ST_MODIFIED = 'M';
+
 our $progname = $0;
 $progname =~ s#^(.*)/(.+?)$#$2#;
 
@@ -38,8 +41,8 @@ length($opt_c) && ($Cmd = $opt_c);
 length($opt_p) && ($Cmd .= " $opt_p");
 length($opt_e) && ($CMD_SVN = $opt_e);
 
-my $stat_chars = "CM";
-$opt_C && ($stat_chars = "C");
+my $stat_chars = "$ST_CONFLICT$ST_MODIFIED";
+$opt_C && ($stat_chars = "$ST_CONFLICT");
 
 my @mod_array = ();
 
