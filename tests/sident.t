@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
 # Test suite for sident(1).
 #
 # Character set: UTF-8
@@ -37,7 +36,7 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 
-my $rcs_id = '$Id$';
+my $rcs_id = '$Id: svn:keywords disabled for this file $';
 my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
@@ -90,14 +89,14 @@ testcmd("$CMD sident-files/textfile", # {{{
     <<'END',
 
 sident-files/textfile:
-     $Id$
-     $Id$
-     $Id$
-     $Id$
-     $Id$
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
      $Date: 1999/12/23 21:59:22 $
      $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
-     $Id$
+     $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 END
     "",
@@ -109,7 +108,7 @@ testcmd("$CMD sident-files/random", # {{{
     <<'END',
 
 sident-files/random:
-     $Id$
+     $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
     "",
     "Read random binary data, no arguments",
@@ -121,7 +120,7 @@ testcmd("$CMD - <sident-files/random", # {{{
     <<'END',
 
 -:
-     $Id$
+     $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
     "",
     "Read random binary data from stdin with hyphen as filename",
@@ -132,7 +131,7 @@ testcmd("cat sident-files/random | $CMD -", # {{{
     <<'END',
 
 -:
-     $Id$
+     $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
     "",
     "Read random binary through pipe, hyphen filename",
@@ -152,17 +151,17 @@ testcmd("$CMD -f sident-files/filenames", # {{{
     <<'END',
 
 sident-files/random:
-     $Id$
+     $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 
 sident-files/textfile:
-     $Id$
-     $Id$
-     $Id$
-     $Id$
-     $Id$
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
      $Date: 1999/12/23 21:59:22 $
      $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
-     $Id$
+     $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 
 sident-files/unexpanded:
@@ -201,14 +200,14 @@ testcmd("$CMD -k sident-files/textfile", # {{{
     <<'END',
 
 sident-files/textfile:
-     $Id$
-     $Id$
-     $Id$
-     $Id$
-     $Id$
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
      $Date: 1999/12/23 21:59:22 $
      $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
-     $Id$
+     $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
 END
     "",
     "List only known keywords",
@@ -231,11 +230,11 @@ testcmd("$CMD -u sident-files/textfile", # {{{
     <<'END',
 
 sident-files/textfile:
-     $Id$
-     $Id$
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
      $Date: 1999/12/23 21:59:22 $
      $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
-     $Id$
+     $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 END
     "",
@@ -259,17 +258,17 @@ sident-files/filenames:
 sident-files/nothing_here:
 
 sident-files/random:
-     $Id$
+     $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 
 sident-files/textfile:
-     $Id$
-     $Id$
-     $Id$
-     $Id$
-     $Id$
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
      $Date: 1999/12/23 21:59:22 $
      $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
-     $Id$
+     $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 
 sident-files/unexpanded:
@@ -302,20 +301,20 @@ testcmd("$CMD -vx sident-files/*", # {{{
   <file>
     <filename>sident-files/random</filename>
     <keywords>
-      <keyword>$Id$</keyword>
+      <keyword>$Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $</keyword>
     </keywords>
   </file>
   <file>
     <filename>sident-files/textfile</filename>
     <keywords>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
+      <keyword>$Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $</keyword>
+      <keyword>$Id: yeh 1234 2008-09-22 12:25:05Z sunny $</keyword>
+      <keyword>$Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $</keyword>
+      <keyword>$Id: yeh 1234 2008-09-22 12:25:05Z sunny $</keyword>
+      <keyword>$Id: yeh 1234 2008-09-22 12:25:05Z sunny $</keyword>
       <keyword>$Date: 1999/12/23 21:59:22 $</keyword>
       <keyword>$Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
-      <keyword>$Id$</keyword>
+      <keyword>$Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
       <keyword>$Weirdo: blah blah $</keyword>
     </keywords>
   </file>
@@ -357,14 +356,14 @@ testcmd("$CMD -x sident-files/textfile", # {{{
   <file>
     <filename>sident-files/textfile</filename>
     <keywords>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
+      <keyword>$Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $</keyword>
+      <keyword>$Id: yeh 1234 2008-09-22 12:25:05Z sunny $</keyword>
+      <keyword>$Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $</keyword>
+      <keyword>$Id: yeh 1234 2008-09-22 12:25:05Z sunny $</keyword>
+      <keyword>$Id: yeh 1234 2008-09-22 12:25:05Z sunny $</keyword>
       <keyword>$Date: 1999/12/23 21:59:22 $</keyword>
       <keyword>$Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
-      <keyword>$Id$</keyword>
+      <keyword>$Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
       <keyword>$Weirdo: blah blah $</keyword>
     </keywords>
   </file>
@@ -382,11 +381,11 @@ testcmd("$CMD -ux sident-files/textfile", # {{{
   <file>
     <filename>sident-files/textfile</filename>
     <keywords>
-      <keyword>$Id$</keyword>
-      <keyword>$Id$</keyword>
+      <keyword>$Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $</keyword>
+      <keyword>$Id: yeh 1234 2008-09-22 12:25:05Z sunny $</keyword>
       <keyword>$Date: 1999/12/23 21:59:22 $</keyword>
       <keyword>$Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
-      <keyword>$Id$</keyword>
+      <keyword>$Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
       <keyword>$Weirdo: blah blah $</keyword>
     </keywords>
   </file>
@@ -394,14 +393,6 @@ testcmd("$CMD -ux sident-files/textfile", # {{{
 END
     "",
     "Output XML, remove duplicates",
-);
-
-# }}}
-diag("Use all options...");
-testcmd("$CMD sident-files", # {{{
-    "",
-    "",
-    "Ignore directories",
 );
 
 # }}}
@@ -417,6 +408,14 @@ testcmd("$CMD sident-files/shbvkdsvsdfv", # {{{
     "",
     "sident: sident-files/shbvkdsvsdfv: Cannot read file: No such file or directory\n",
     "File not found",
+);
+
+# }}}
+diag("Validate POD (Plain Old Documentation)");
+testcmd("podchecker $CMD", # {{{
+    "",
+    "$CMD pod syntax OK.\n",
+    "$CMD contains valid POD",
 );
 
 # }}}
@@ -572,7 +571,7 @@ run-tests.pl
 
 =head1 REVISION
 
-$Id$
+svn:keywords disabled for this file, so I reckon you have to guess.
 
 =head1 SYNOPSIS
 
@@ -644,4 +643,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$
+# End of file

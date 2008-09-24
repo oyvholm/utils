@@ -43,14 +43,14 @@ ok - "../sident -x sident-files/textfile" - Output XML from textfile
 ok - "../sident -x sident-files/textfile" - Output XML from textfile (stderr)
 ok - "../sident -ux sident-files/textfile" - Output XML, remove duplicates
 ok - "../sident -ux sident-files/textfile" - Output XML, remove duplicates (stderr)
-# Use all options...
-ok - "../sident sident-files" - Ignore directories
-ok - "../sident sident-files" - Ignore directories (stderr)
 # Error conditions...
 ok - "../sident sident-files" - Ignore directories
 ok - "../sident sident-files" - Ignore directories (stderr)
 ok - "../sident sident-files/shbvkdsvsdfv" - File not found
 ok - "../sident sident-files/shbvkdsvsdfv" - File not found (stderr)
+# Validate POD (Plain Old Documentation)
+ok - "podchecker ../sident" - ../sident contains valid POD
+ok - "podchecker ../sident" - ../sident contains valid POD (stderr)
 # Running TODO tests...
 # Testing finished.
 1..39
