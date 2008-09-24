@@ -19,6 +19,8 @@ our ($opt_c, $opt_D, $opt_h, $opt_s) =
     (     0,      0,      0,      0);
 getopts('cDhs') || die("Option error, use -h for help");
 
+$| = 1;
+
 my @Keywords = (
                 "Id",
                 "Author", "LastChangedBy",
@@ -29,8 +31,6 @@ my @Keywords = (
 my $Keyw = join('|', @Keywords); # Used in regexps
 
 $opt_h && usage(0);
-
-$| = 1;
 
 my $rand_ext = "$$." . substr(rand, 2, 8);
 while (defined($ARGV[0])) {
@@ -94,7 +94,7 @@ Options:
 
     -c  Compress keywords in the file, for example:
             \$Id: dbk 963 2004-09-29 08:14:15Z sunny \$
-          is converted to
+          is changed to
             \$Id\$
         This can be useful when comparing files against the text-base.
     -D  Remove the long date format from Subversion \$Id\$ strings.
