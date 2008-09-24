@@ -16,10 +16,15 @@ $| = 1;
 
 our $Debug = 0;
 
-our ($opt_expanded, $opt_help, $opt_known, $opt_namesonly, $opt_unique) =
-    (            0,         0,          0,              0,           0);
-our ($opt_verbose, $opt_xml) =
-    (           0,        0);
+our %Opt = (
+    'expanded'  => 0,
+    'help'      => 0,
+    'known'     => 0,
+    'namesonly' => 0,
+    'unique'    => 0,
+    'verbose'   => 0,
+    'xml'       => 0
+);
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -29,16 +34,16 @@ my $id_date = $rcs_id;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "expanded-only|e"       => \$opt_expanded,
-    "help|h"                => \$opt_help,
-    "known-keywords-only|k" => \$opt_known,
-    "filenames-only|l"      => \$opt_namesonly,
-    "unique-keywords|u"     => \$opt_unique,
-    "verbose|v"             => \$opt_verbose,
-    "xml|x"                 => \$opt_xml
+    "expanded-only|e"       => \$Opt{'expanded'},
+    "help|h"                => \$Opt{'help'},
+    "known-keywords-only|k" => \$Opt{'known'},
+    "filenames-only|l"      => \$Opt{'namesonly'},
+    "unique-keywords|u"     => \$Opt{'unique'},
+    "verbose|v"             => \$Opt{'verbose'},
+    "xml|x"                 => \$Opt{'xml'}
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$opt_help && usage(0);
+$Opt{'help'} && usage(0);
 
 my @Keywords = (
                 "Id",
@@ -54,9 +59,9 @@ my @Keywords = (
                 "Source",
                 "State"
                );
-my $Keyw = $opt_known ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
+my $Keyw = $Opt{'known'} ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
 
-if ($opt_xml) {
+if ($Opt{'xml'}) {
     print(<<END);
 <?xml version="1.0"?>
 <sident>
@@ -68,12 +73,12 @@ for (@ARGV) {
     my $File = $_;
     if (open(FromFP, "<$File")) {
         while (<FromFP>) {
-            $opt_expanded || s/(\$($Keyw)\$)/push(@Out, $1)/ge;
+            $Opt{'expanded'} || s/(\$($Keyw)\$)/push(@Out, $1)/ge;
             s/(\$($Keyw)::? .*? \$)/push(@Out, $1)/ge;
         }
         if (scalar(@Out)) {
 
-            if ($opt_unique) {
+            if ($Opt{'unique'}) {
                 my %Done = ();
                 my @Out2 = @Out;
                 @Out = ();
@@ -85,9 +90,9 @@ for (@ARGV) {
                 }
             }
 
-            $opt_xml && print("  <file>\n");
-            if ($opt_namesonly) {
-                if ($opt_xml) {
+            $Opt{'xml'} && print("  <file>\n");
+            if ($Opt{'namesonly'}) {
+                if ($Opt{'xml'}) {
                     printf("    <filename>%s</filename>\n",
                         txt_to_xml($File)
                     );
@@ -95,42 +100,42 @@ for (@ARGV) {
                     print("$File\n");
                 }
             } else {
-                if ($opt_xml) {
+                if ($Opt{'xml'}) {
                     printf("    <filename>%s</filename>\n",
                         txt_to_xml($File)
                     );
                 } else {
                     print("\n$File:\n");
                 }
-                $opt_xml && print("    <keywords>\n");
+                $Opt{'xml'} && print("    <keywords>\n");
                 for (@Out) {
-                    if ($opt_xml) {
+                    if ($Opt{'xml'}) {
                         printf("      <keyword>%s</keyword>\n",
                             txt_to_xml($_));
                     } else {
                         print("     $_\n");
                     }
                 }
-                $opt_xml && print("    </keywords>\n");
+                $Opt{'xml'} && print("    </keywords>\n");
             }
-            $opt_xml && print("  </file>\n");
+            $Opt{'xml'} && print("  </file>\n");
         } else {
-            if ($opt_verbose) {
-                $opt_xml && print("  <file>\n");
-                if ($opt_xml) {
+            if ($Opt{'verbose'}) {
+                $Opt{'xml'} && print("  <file>\n");
+                if ($Opt{'xml'}) {
                     printf("    <filename>%s</filename>\n",
                         txt_to_xml($File)
                     );
                 } else {
                     print("\n$File:\n");
                 }
-                $opt_xml && print("  </file>\n");
+                $Opt{'xml'} && print("  </file>\n");
             }
         }
     }
 }
 
-$opt_xml && print("</sident>\n");
+$Opt{'xml'} && print("</sident>\n");
 
 sub usage {
     # Send the help message to stdout {{{
@@ -138,7 +143,7 @@ sub usage {
     my ($xml_start, $xml_end)  =
        (        "",       "");
 
-    if ($opt_xml) {
+    if ($Opt{'xml'}) {
         $xml_start = <<END;
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
@@ -177,7 +182,7 @@ Options:
 END
     printf("%s%s%s",
         $xml_start,
-        $opt_xml ? txt_to_xml($Txt) : "\n$Txt\n",
+        $Opt{'xml'} ? txt_to_xml($Txt) : "\n$Txt\n",
         $xml_end
     );
     exit($Retval);
@@ -192,7 +197,7 @@ sub D {
     my $File = $call_info[1];
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
-    if ($opt_xml) {
+    if ($Opt{'xml'}) {
         printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
             txt_to_xml($$),
             txt_to_xml($File),
