@@ -17,6 +17,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+    'alias' => "",
     'debug' => 0,
     'help' => 0,
     'to' => "HEAD",
@@ -32,6 +33,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "alias|a=s" => \$Opt{'alias'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "to|t=s" => \$Opt{'to'},
@@ -73,7 +75,9 @@ for (@Files) {
             my ($last_merge, $master_file) =
                (         $1,           $2);
             $master_file =~ s/[\r\n]+$//;
-            my $safe_master_file = escape_filename($master_file);
+            my $safe_master_file = escape_filename(
+                length($Opt{'alias'}) ? $Opt{'alias'} : $master_file
+            );
             mysyst($CMD_SVN, "update", $File);
             my $curr_rev = `$CMD_SVN log -r$Opt{'to'}:1 --limit 1 --xml $safe_master_file`; # FIXME
             $curr_rev =~ s/^.*<logentry.+?revision="(\d+)".*?>.*/$1/s;
@@ -81,7 +85,11 @@ for (@Files) {
                 warn("$progname: $master_file: Unable to get newest revision\n");
                 next LOOP;
             }
-            mysyst($CMD_SVN, "merge", "-r$last_merge:$curr_rev", $master_file, $File);
+            mysyst(
+                $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
+                length($Opt{'alias'}) ? $Opt{'alias'} : $master_file,
+                $File
+            );
             push(@new_prop, "$curr_rev $master_file");
         } else {
             warn("$File: \"$Curr\": Invalid property line\n");
@@ -147,6 +155,9 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -a x, --alias x
+    Use x as alias for the URL. The old value will still be written to 
+    the mergesvn property.
   -h, --help
     Show this help.
   -t x, --to x
@@ -215,6 +226,11 @@ These two fields are separated by exactly one space (U+0020).
 =head1 OPTIONS
 
 =over 4
+
+=item B<-a>, B<--alias> I<x>
+
+Use I<x> as alias for the URL. The old value will still be written to 
+the mergesvn property.
 
 =item B<-h>, B<--help>
 
