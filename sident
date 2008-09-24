@@ -10,13 +10,32 @@
 #=======================================================================
 
 use strict;
+use Getopt::Long;
 
 $| = 1;
 
-use Getopt::Std;
-our ($opt_h, $opt_k, $opt_l) =
-    (     0,      0,      0);
-getopts('hkl') || die("Option error. Use -h for help.\n");
+our $Debug = 0;
+
+our ($opt_help, $opt_known, $opt_namesonly) =
+    (        0,          0,              0);
+
+my $VERSION = "0.0";
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "help|h"           => \$opt_help,
+    "known-keywords-only|k" => \$opt_known,
+    "filenames-only|l" => \$opt_namesonly
+) || die("$progname: Option error. Use -h for help.\n");
+
+$opt_help && usage(0);
 
 my @Keywords = (
                 "Id",
@@ -32,9 +51,7 @@ my @Keywords = (
                 "Source",
                 "State"
                );
-my $Keyw = $opt_k ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
-
-$opt_h && usage(0);
+my $Keyw = $opt_known ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
 
 for (@ARGV) {
     my @Out = ();
@@ -45,7 +62,7 @@ for (@ARGV) {
             s/(\$($Keyw)::? .*? \$)/push(@Out, "     $1\n")/ge;
         }
         if (scalar(@Out)) {
-            if ($opt_l) {
+            if ($opt_namesonly) {
                 print("$File\n");
             } else {
                 print("\n$File:\n");
@@ -62,23 +79,39 @@ sub usage {
     my $Retval = shift;
     print(<<END);
 
-Usage:
+$progname v$VERSION -- $id_date
 
-    sident [options] file [files [...]]
+Usage: $progname [options] [file [files [...]]]
 
 Lists RCS-like keywords in a file.
 
 Options:
 
-  -h  Print this help
-  -k  Only list keywords known to Subversion and CVS
-  -l  Suppress normal output; only list names of files which contain 
+  -h, --help
+      Show this help.
+  -k, --known-keywords-only
+      Only list keywords known to Subversion and CVS
+  -l, --filenames-only
+      Suppress normal output; only list names of files which contain 
       keywords
 
 END
     exit($Retval);
     # }}}
 }
+
+sub D {
+    # {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
 
 __END__
 
@@ -106,15 +139,15 @@ Replacement for ident(1), lists RCS-like keywords in a file.
 
 =over 4
 
-=item B<-h>
+=item B<-h>, B<--help>
 
 Print a brief help summary.
 
-=item B<-k>
+=item B<-k>, B<--known-keywords-only>
 
 Only list keywords known to Subversion and CVS.
 
-=item B<-l>
+=item B<-l>, B<--filenames-only>
 
 Suppress normal output; only list names of files which contains 
 keywords.
