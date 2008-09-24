@@ -276,6 +276,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 =head1 SEE ALSO
 
+ident(1)
+
 =cut
 
 # }}}
