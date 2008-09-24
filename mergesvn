@@ -28,6 +28,7 @@ our %Opt = (
     'log' => 0,
     'set' => "",
     'to' => "HEAD",
+    'verbose' => 0,
     'version' => 0,
 );
 
@@ -49,6 +50,7 @@ GetOptions(
     "log|l" => \$Opt{'log'},
     "set|s=s" => \$Opt{'set'},
     "to|t=s" => \$Opt{'to'},
+    "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -407,6 +409,8 @@ Options:
     revision the source changed.
   -t x, --to x
     Merge to revision x instead of HEAD.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
   --debug
@@ -416,6 +420,16 @@ END
     exit($Retval);
     # }}}
 } # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
 
 sub D {
     # Print a debugging message if --debug {{{
@@ -516,6 +530,10 @@ changed.
 
 Merge to revision I<x> instead of HEAD.
 
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
 =item B<--version>
 
 Print version information.
@@ -542,7 +560,7 @@ Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
@@ -569,5 +587,5 @@ svn(1)
 
 # }}}
 
-# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=0 et fo+=w :
 # End of file $Id$
