@@ -14,9 +14,9 @@ use strict;
 $| = 1;
 
 use Getopt::Std;
-our ($opt_h) =
-    (     0);
-getopts('h') || die("Option error. Use -h for help.\n");
+our ($opt_h, $opt_k) =
+    (     0,      0);
+getopts('hk') || die("Option error. Use -h for help.\n");
 
 my @Keywords = (
                 "Id",
@@ -32,7 +32,7 @@ my @Keywords = (
                 "Source",
                 "State"
                );
-my $Keyw = join('|', @Keywords); # Used in regexps
+my $Keyw = $opt_k ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
 
 $opt_h && usage(0);
 
@@ -67,6 +67,7 @@ Lists RCS-like keywords in a file.
 Options:
 
   -h  Print this help
+  -k  Only list keywords known to Subversion and CVS
 
 END
     exit($Retval);
@@ -102,6 +103,10 @@ Replacement for ident(1), lists RCS-like keywords in a file.
 =item B<-h>
 
 Print a brief help summary.
+
+=item B<-k>
+
+Only list keywords known to Subversion and CVS.
 
 =back
 
