@@ -58,6 +58,7 @@ sub process_line {
 }
 
 sub usage {
+    my $Retval = shift;
     print <<END
 
 Syntax: convkeyw [options] file [file [...]]
@@ -86,6 +87,7 @@ Options:
     -h  Print this help.
 
 END
+    exit($Retval);
 }
 
 __END__
