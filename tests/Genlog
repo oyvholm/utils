@@ -8,9 +8,17 @@
 
 [ -z "$1" ] && { echo "Syntax: $0 testname [testname [...]]" >&2; exit 1; }
 
+maxlen=0
+
+for gf in "$@"; do
+    currlen=`echo -n $gf | perl -pe 's/\.t$//' | wc -c`
+    [ $currlen -gt $maxlen ] && maxlen=$currlen
+done
+
 for gf in "$@"; do
     testname=$gf
     testname=`echo -n $testname | perl -pe 's/\.t$//'`
-    echo === $testname.t
+    printf "%${maxlen}s.t: " $testname
     ./$testname.t --all 2>&1 | remove_perltestnumbers >log/$testname.log
+    printf "%2u ok, %2u not ok\\n" $(grep "^ok -" log/$testname.log | wc -l) $(grep "^not ok -" log/$testname.log | wc -l)
 done
