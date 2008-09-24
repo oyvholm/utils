@@ -94,7 +94,7 @@ sub diff_file {
     my $Path = "";
     my $File = $File1;
 
-    D("diff_file(\"$File1\");\n");
+    D("diff_file(\"$File1\", \"$has_conflict\");\n");
 
     if ($File =~ m#^(.*/)(.+?)$#) {
         $Path = $1;
