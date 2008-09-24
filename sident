@@ -18,6 +18,7 @@ our $Debug = 0;
 
 our %Opt = (
     'expanded'  => 0,
+    'filesfrom' => "",
     'help'      => 0,
     'known'     => 0,
     'namesonly' => 0,
@@ -36,6 +37,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "expanded-only|e"       => \$Opt{'expanded'},
     "help|h"                => \$Opt{'help'},
+    "filenames-from|f=s"    => \$Opt{'filesfrom'},
     "known-keywords-only|k" => \$Opt{'known'},
     "filenames-only|l"      => \$Opt{'namesonly'},
     "unique-keywords|u"     => \$Opt{'unique'},
@@ -68,7 +70,21 @@ if ($Opt{'xml'}) {
 END
 }
 
-for (@ARGV) {
+my @Files = @ARGV;
+
+if (length($Opt{'filesfrom'})) {
+    if (open(FromFP, "<$Opt{'filesfrom'}")) {
+        while(<FromFP>) {
+            chomp;
+            push(@Files, $_);
+        }
+        close(FromFP);
+    } else {
+        die("$progname: $Opt{'filesfrom'}: Cannot read filenames from file: $!\n");
+    }
+}
+
+for (@Files) {
     my @Out = ();
     my $File = $_;
     if (open(FromFP, "<$File")) {
@@ -166,6 +182,9 @@ Options:
 
   -e, --expanded-only
       List only expanded keywords
+  -f, --filenames-from x
+      Read filenames from file x in addition to files specified on the 
+      command line.
   -h, --help
       Show this help.
   -k, --known-keywords-only
@@ -251,6 +270,11 @@ Replacement for ident(1), lists RCS-like keywords in a file.
 =item B<-e>, B<--expanded-only>
 
 List only expanded keywords.
+
+=item B<-f>, B<--filenames-from> x
+
+Read filenames from file F<x> in addition to files specified on the 
+command line.
 
 =item B<-h>, B<--help>
 
