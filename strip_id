@@ -18,9 +18,18 @@
 #     is changed to
 #   "2004-05-18 10:44:54 +0200"
 #
-# Character set: UTF-8
-# License: GNU General Public License
-# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
+# Character set:
+#   UTF-8
+# Project page:
+#   http://svnutils.tigris.org
+# Subversion repository:
+#   http://svn.sunbase.org/repos/svnutils
+# License:
+#   GNU General Public License
+# Authors:
+#   Use "svn blame" or "svn log" against the Subversion repository to
+#   nail the responsible guys. As of 2004-06-07, it is only:
+#     - sunny, Øyvind A. Holm <sunny@sunbase.org>
 #============================================================================
 
 use strict;
