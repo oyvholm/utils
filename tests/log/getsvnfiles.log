@@ -1,4 +1,6 @@
 # ========== Executing "getsvnfiles.t --all" ==========
+ok - "../getsvnfiles" - Missing --source, --dest and --revisions arguments
+ok - "../getsvnfiles" - Missing --source, --dest and --revisions arguments (stderr)
 # Testing -h (--help) option...
 ok - "../getsvnfiles -h" - Option -h prints help screen
 ok - "../getsvnfiles -h" - Option -h prints help screen (stderr)
@@ -11,4 +13,4 @@ ok - "../getsvnfiles --version" - Option --version returns Id string
 ok - "../getsvnfiles --version" - Option --version returns Id string (stderr)
 # Running TODO tests...
 # Testing finished.
-1..7
+1..9

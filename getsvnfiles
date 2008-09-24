@@ -16,6 +16,7 @@ BEGIN {
 
 use strict;
 use Getopt::Long;
+use File::Temp;
 
 $| = 1;
 
@@ -23,7 +24,11 @@ our $Debug = 0;
 
 our %Opt = (
     'debug' => 0,
+    'dest' => "",
+    'dry-run' => 0,
     'help' => 0,
+    'revisions' => "",
+    'source' => "",
     'verbose' => 0,
     'version' => 0,
 );
@@ -40,7 +45,11 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
     "debug" => \$Opt{'debug'},
+    "dest|d=s" => \$Opt{'dest'},
+    "dry-run" => \$Opt{'dry-run'},
     "help|h" => \$Opt{'help'},
+    "revisions|r=s" => \$Opt{'revisions'},
+    "source|s=s" => \$Opt{'source'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -52,9 +61,230 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+my $CMD_SVN = "svn";
+my $PROP_PREFIX = "getsvnfiles:";
+my %Prop = (
+    'author' => "${PROP_PREFIX}author",
+    'date' => "${PROP_PREFIX}date",
+    'log' => "${PROP_PREFIX}log",
+    'revision' => "${PROP_PREFIX}revision",
+    'source' => "${PROP_PREFIX}source",
+);
+
+my @Revs = ();
+my ($start_rev, $end_rev);
+
+my $missing_args = 0;
+for my $chkdef (qw{source dest revisions}) {
+    length($Opt{$chkdef}) ||
+        (warn("$progname: --$chkdef option not defined\n"), $missing_args = 1);
 }
+$missing_args && exit(1);
+
+if ($Opt{'revisions'} =~ /^(\d+):(\d+|head)$/i) {
+    ($start_rev, $end_rev) = (uc($1), uc($2));
+} else {
+    die("$progname: \"$Opt{'revisions'}\": " .
+        "Invalid format of --revisions argument\n");
+}
+
+if (!-f $Opt{'dest'}) {
+    die("$progname: $Opt{'dest'}: File does not exist\n");
+}
+
+@Revs = revisions($Opt{'source'}, $start_rev, $end_rev);
+
+D(sprintf("\@Revs = '%s'\n", join(", ", @Revs)));
+
+my $tmpfile_logmsg = mktemp("$progname-logmsg-XXXXXX");
+my $tmpfile_propset = mktemp("$progname-propset-XXXXXX");
+mysyst($CMD_SVN, "update", $Opt{'dest'});
+for my $curr_rev (@Revs) {
+    print(STDERR "======== $progname: Downloading revision $curr_rev ========\n");
+
+    if (!$Opt{'dry-run'}) {
+        my %rev_info = revision_info($Opt{'source'}, $curr_rev);
+        my $log_msg = log_message($Opt{'source'}, $curr_rev);
+        if (open(LogMsgFP, ">", $tmpfile_logmsg)) {
+            print(LogMsgFP prepare_logmsg($log_msg));
+            print(LogMsgFP "\n" . `suuid -t $progname -c "Commit r$curr_rev of $Opt{'dest'} from $Opt{'source'}"`);
+            close(LogMsgFP);
+        } else {
+            die("$progname: $tmpfile_logmsg: Cannot create file: $!\n");
+        }
+        if (open(CatFP, "$CMD_SVN cat $Opt{'source'} -r$curr_rev |")) {
+            if (open(DestFP, ">", $Opt{'dest'})) {
+                while (<CatFP>) {
+                    print(DestFP $_);
+                }
+                close(DestFP);
+            } else {
+                die("$progname: $Opt{'dest'}: Cannot open file for write: $!\n");
+            }
+            close(CatFP);
+        } else {
+            die("$progname: Cannot open \"svn cat\" pipe: $!\n");
+        }
+        svn_propset($Prop{'source'}, $Opt{'source'}, $Opt{'dest'});
+        svn_propset($Prop{'revision'}, $curr_rev, $Opt{'dest'});
+        svn_propset($Prop{'date'}, $rev_info{'date'}, $Opt{'dest'});
+        svn_propset($Prop{'author'}, $rev_info{'author'}, $Opt{'dest'});
+        svn_propset($Prop{'log'}, $rev_info{'log'}, $Opt{'dest'});
+        mysyst($CMD_SVN, "commit", "-F", $tmpfile_logmsg, $Opt{'dest'});
+    }
+}
+if (!$Opt{'dry-run'}) {
+    mysyst($CMD_SVN, "propdel", $Prop{'author'}, $Opt{'dest'});
+    mysyst($CMD_SVN, "propdel", $Prop{'date'}, $Opt{'dest'});
+    mysyst($CMD_SVN, "propdel", $Prop{'log'}, $Opt{'dest'});
+    mysyst($CMD_SVN, "propdel", $Prop{'revision'}, $Opt{'dest'});
+    mysyst($CMD_SVN, "propdel", $Prop{'source'}, $Opt{'dest'});
+    my $file_loc = file_location($Opt{'dest'});
+    if (open(LogMsgFP, ">", $tmpfile_logmsg)) {
+        print(LogMsgFP
+            sprintf(
+                "%s: %u revision%s between r%s:%s downloaded from\n" .
+                "<%s>.\n" .
+                "\n" .
+                "* %s\n" .
+                "  Deleted download properties.\n" .
+                "\n" .
+                "%s",
+                $progname, scalar(@Revs), scalar(@Revs) == 1 ? "" : "s",
+                $start_rev, $end_rev, $Opt{'source'},
+                file_location($Opt{'dest'}),
+                `suuid -t $progname -c "Delete download properties from $Opt{'dest'}, downloaded from $Opt{'source'}"`
+            )
+        );
+        close(LogMsgFP);
+    } else {
+        die("$progname: $tmpfile_logmsg: Cannot open file for write: $!\n");
+    }
+
+    mysyst($CMD_SVN, "commit", "-F", $tmpfile_logmsg, $Opt{'dest'});
+    unlink($tmpfile_logmsg);
+}
+
+sub file_location {
+    # Find the repository location for a file {{{
+    my $File = shift;
+    my $Info = `$CMD_SVN info --xml $File`;
+    my ($Url, $Root) = ("", "");
+    $Info =~ /<url>(.*?)<\/url>/s && ($Url = $1);
+    $Info =~ /<root>(.*?)<\/root>/s && ($Root = $1);
+    my $Retval = substr($Url, length($Root));
+    return($Retval);
+    # }}}
+} # file_location()
+
+sub svn_propset {
+    # Set file property for a file {{{
+    my ($Propname, $Propval, $Dest) = @_;
+    D("svn_propset('$Propname', '$Propval', '$Dest');");
+    if (open(PropFP, ">", $tmpfile_propset)) {
+        print(PropFP $Propval);
+        close(PropFP);
+    } else {
+        die("$progname: $tmpfile_propset: Cannot create file: $!\n");
+    }
+    mysyst($CMD_SVN, "propset", $Propname, "-F", $tmpfile_propset, $Dest);
+    unlink($tmpfile_propset);
+    # }}}
+} # svn_propset()
+
+sub prepare_logmsg {
+    # {{{
+    my $Txt = shift;
+    $Txt = "# $Txt";
+    $Txt =~ s/(\n)/$1# /gs;
+    $Txt =~ s/# $//s;
+    $Txt =~ s/\n# \n/\n#\n/gs;
+    $Txt =~ s/\n# \n/\n#\n/gs;
+    $Txt =~ s/#\n(# ------------------------------------------------------------------------\n)/$1/gs;
+    $Txt =~ s/^# ------------------------------------------------------------------------\n//s;
+    $Txt =~ s/# ------------------------------------------------------------------------\n$//s;
+    return($Txt);
+    # }}}
+} # prepare_logmsg()
+
+sub log_message {
+    # Return log message for a specific revision {{{
+    my ($Source, $Rev) = @_;
+    my $Retval = `$CMD_SVN log -r$Rev $Source`;
+    return($Retval);
+    # }}}
+} # log_message()
+
+sub revision_info {
+    # Return raw log message for a specific revision {{{
+    my ($Source, $Rev) = @_;
+    my %Retval = ();
+    my $Xml = `$CMD_SVN log --xml -r$Rev $Source`;
+    $Xml =~ /<author>(.*?)<\/author>/s && ($Retval{'author'} = xml_to_txt($1));
+    $Xml =~ /<date>(.*?)<\/date>/s && ($Retval{'date'} = xml_to_txt($1));
+    $Xml =~ /<msg>(.*?)<\/msg>/s && ($Retval{'log'} = xml_to_txt($1));
+    # $Retval =~ s/^.*<msg>(.*?)<\/msg>.*$/$1/s;
+    return(%Retval);
+    # }}}
+} # revision_info()
+
+sub revisions {
+    # Return an array of revision numbers from a specific revision range 
+    # for a version controlled element
+    # {{{
+    my ($File, $Start, $End) = @_;
+    D("revisions('$File', '$Start', '$End')");
+    my $safe_file = escape_filename($File);
+    my $Data = "";
+    my @Revs = ();
+
+    if (open(PipeFP, "$CMD_SVN log --xml -r$Start:$End $safe_file |")) {
+        $Data = join("", <PipeFP>);
+        close(PipeFP);
+        $Data =~ s/<logentry\b.*?\brevision="(\d+)".*?>/push(@Revs, "$1")/egs;
+    }
+    return(@Revs);
+    # }}}
+} # revisions()
+
+sub escape_filename {
+    # Kludge for handling file names with spaces and characters that 
+    # trigger shell functions
+    # {{{
+    my $Name = shift;
+    # $Name =~ s/\\/\\\\/g;
+    # $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
+    $Name =~ s/'/\\'/g;
+    $Name = "'$Name'";
+    return($Name);
+    # }}}
+} # escape_filename()
+
+sub xml_to_txt {
+    # Convert XML data to plain text {{{
+    my $Txt = shift;
+    $Txt =~ s/&lt;/</gs;
+    $Txt =~ s/&gt;/>/gs;
+    $Txt =~ s/&amp;/&/gs;
+    return($Txt);
+    # }}}
+} # xml_to_txt()
+
+sub mysyst {
+    # Customised system() {{{
+    my @Args = @_;
+    msg(1, sprintf("%s \"%s\"", $Opt{'dry-run'} ? "Simulating" : "Executing", join(" ", @Args)));
+    $Opt{'dry-run'} || system(@Args);
+    # }}}
+} # mysyst()
+
+sub deb_wait {
+    # Wait until Enter is pressed if --debug {{{
+    $Debug || return;
+    print(STDERR "debug: Press ENTER...");
+    <STDIN>;
+    # }}}
+} # deb_wait()
 
 sub print_version {
     # Print program version {{{
@@ -74,12 +304,24 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [OPTIONS] -s SOURCE -d DEST -r STARTREV:ENDREV
+
+Copy all revisions of a file from a remote repository into a local file 
+and commit it with the log message from the remote repository. Does not 
+handle file properties yet.
 
 Options:
 
+  -d X, --dest X
+    Use X as local file destination.
+  --dry-run
+    Don’t make any changes, only simulate.
   -h, --help
     Show this help.
+  -r X:Y, --revision X:Y
+    Copy revision range X:Y from remote repository.
+  -s X, --source X
+    Source file to download from remote repository.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
