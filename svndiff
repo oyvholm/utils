@@ -16,8 +16,8 @@ use strict;
 $| = 1;
 
 use Getopt::Long;
-our ($opt_conflict, $opt_diffcmd, $opt_svncmd, $opt_help) =
-    (            0,           "",          "",         0);
+our ($opt_conflict, $opt_create_rc, $opt_diffcmd, $opt_svncmd, $opt_help) =
+    (            0,              0,           "",          "",         0);
 our ($opt_diffargs, $opt_revision) =
     (           "",            "");
 
@@ -58,6 +58,7 @@ length($rc_file) && (-e $rc_file) && read_rcfile($rc_file);
 Getopt::Long::Configure("bundling");
 GetOptions(
     "conflict|C"   => \$opt_conflict,
+    "create-rc"    => \$opt_create_rc,
     "diffcmd|c=s"  => \$opt_diffcmd,
     "svncmd|e=s"   => \$opt_svncmd,
     "help|h"       => \$opt_help,
@@ -66,6 +67,35 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $opt_help && usage(0);
+
+if ($opt_create_rc) {
+    print(<<END);
+<?xml version="1.0" encoding="UTF-8"?>
+<svndiffrc>
+  <diffprog>vimdiff</diffprog>
+  <svnclient>svn</svnclient>
+  <reversediffs>
+    <program>
+      <name>vimdiff</name>
+      <reverse>1</reverse>
+    </program>
+    <program>
+      <name>meld</name>
+      <reverse>1</reverse>
+    </program>
+    <program>
+      <name>kompare</name>
+      <reverse>1</reverse>
+    </program>
+    <program>
+      <name>xxdiff</name>
+      <reverse>1</reverse>
+    </program>
+  </reversediffs>
+</svndiffrc>
+END
+    exit(0);
+}
 
 length($opt_diffcmd)  && ($Cmd = $opt_diffcmd);
 length($opt_diffargs) && ($Cmd .= " $opt_diffargs");
@@ -439,6 +469,9 @@ specified.
 Options:
 
 -C, --conflict    Only run diff on conflicted files.
+    --create-rc   Send a configuration file example to stdout. To create 
+                  a new ~/.svndiffrc file, write
+                    $progname --create-rc >~/.svndiffrc
 -c, --diffcmd x   Use x as the diff command. Default: "$Cmd".
 -e, --svncmd x    Use x as the svn executable. Default: "$CMD_SVN".
 -h, --help        Show this help.
@@ -492,6 +525,13 @@ The program needs the L<svn(1)> commandline client to run.
 =item B<-C>, B<--conflict>
 
 Only run diff on conflicted files.
+
+=item B<--create-rc>
+
+Send a configuration file example to stdout. To create a new 
+F<~/.svndiffrc> file, write
+
+  $progname --create-rc >~/.svndiffrc
 
 =item B<-c>, B<--diffcmd> x
 
