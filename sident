@@ -164,6 +164,8 @@ for (@Files) {
                 $Opt{'xml'} && print("  </file>\n");
             }
         }
+    } else {
+        warn("$progname: $File: Unable to open file for read\n");
     }
     # }}}
 }
