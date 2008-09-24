@@ -158,10 +158,11 @@ sub find_conflict {
     my $last_mid = 0;
     my $first_conflict = 0;
     my $last_good = 0;
+    my $has_checked = 0;
 
     while (1) {
         my $mid_pos = int(($min_pos + $max_pos) / 2);
-        last if ($mid_pos == $last_mid);
+        last if ($has_checked && ($mid_pos == $last_mid));
         my $Rev = $Array[$mid_pos];
         print("Checking revision $Rev ($mid_pos)...");
         if (!has_conflict($Src, $Dest, $Start, $Rev)) {
@@ -179,6 +180,7 @@ sub find_conflict {
                 $first_conflict = $Rev;
             }
         }
+        $has_checked = 1;
         $last_mid = $mid_pos;
     }
     print($first_conflict
