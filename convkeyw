@@ -26,7 +26,14 @@ my @Keywords = (
                 "Author", "LastChangedBy",
                 "Date", "LastChangedDate",
                 "LastChangedRevision", "Revision", "Rev",
-                "URL", "HeadURL"
+                "URL", "HeadURL",
+                "Header",
+                "Name",
+                "Locker",
+                "Log",
+                "RCSfile",
+                "Source",
+                "State"
                );
 my $Keyw = join('|', @Keywords); # Used in regexps
 
