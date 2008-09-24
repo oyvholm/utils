@@ -38,8 +38,8 @@ $svn_Id =~ s/^\$Id: (.*) \$/$1/;
 my ($rev_nr, $rev_date) =
    ("",      ""       );
 if ($svn_Id =~ /^(\S+) (\d+) (\S+ \S+)/) {
-	$rev_nr = $2;
-	$rev_date = $3;
+    $rev_nr = $2;
+    $rev_date = $3;
 }
 
 my @repos_array = ();
@@ -60,44 +60,44 @@ $rcs_id =~ s/\$Id: (.*) \$/$1/;
 parse_config_file();
 
 sub mysystem {
-	# Wrapper around the system() call to enable simulation {{{
-	chomp(my $Cmd = shift);
-	if ($Simulate) {
-		print("Simulating \"$Cmd\"\n");
-	} else {
-		print("Executing \"$Cmd\"\n");
-		# system($Cmd);
-	}
-	# }}}
+    # Wrapper around the system() call to enable simulation {{{
+    chomp(my $Cmd = shift);
+    if ($Simulate) {
+        print("Simulating \"$Cmd\"\n");
+    } else {
+        print("Executing \"$Cmd\"\n");
+        # system($Cmd);
+    }
+    # }}}
 } # mysystem()
 
 sub parse_config_file {
-	my $repos_found = 0;
-	if (open(ConfigFP, "<$config_file")) {
-		while (<ConfigFP>) {
-			chomp();
-			s/\s+$//g;
-			if (/^[repositories]/) {
-				$repos_found = 1;
-			} else {
-				if ($repos_found) {
-					if (/^(.+)$/) {
-						push(@repos_array, glob($1));
-					}
-				} else {
+    my $repos_found = 0;
+    if (open(ConfigFP, "<$config_file")) {
+        while (<ConfigFP>) {
+            chomp();
+            s/\s+$//g;
+            if (/^[repositories]/) {
+                $repos_found = 1;
+            } else {
+                if ($repos_found) {
+                    if (/^(.+)$/) {
+                        push(@repos_array, glob($1));
+                    }
+                } else {
 
-				}
-			}
-		}
-	} else {
-		die("$prog_name: $config_file: Unable to open configuration file for read\n");
-	}
+                }
+            }
+        }
+    } else {
+        die("$prog_name: $config_file: Unable to open configuration file for read\n");
+    }
 } # parse_config_file()
 
 sub usage {
-	# Prints a help screen {{{
-	my $Retval = shift;
-	print(<<END);
+    # Prints a help screen {{{
+    my $Retval = shift;
+    print(<<END);
 
 $prog_name r$rev_nr ($rev_date)
 
@@ -109,8 +109,8 @@ You can create a man page from this documentation by executing
   pod2man $0 >$0.1
 
 END
-	exit($Retval);
-	# }}}
+    exit($Retval);
+    # }}}
 } usage()
 
 __END__
@@ -251,5 +251,5 @@ Only one destination dir is allowed at the moment.
 
 # }}}
 
-# vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
+# vim: set et ts=4 sw=4 sts=4 fo+=w fenc=UTF-8 :
 # End of file $Id$
