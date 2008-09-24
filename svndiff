@@ -94,6 +94,7 @@ sub diff_file {
     my ($File1, $has_conflict, $Revs) = @_;
     my $Path = "";
     my $File = $File1;
+    defined($Revs) || ($Revs = "");
 
     D("diff_file(\"$File1\", \"$has_conflict\", \"$Revs\");\n");
 
