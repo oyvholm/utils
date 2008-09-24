@@ -116,7 +116,11 @@ for (@Files) {
                 next LOOP;
             }
             if ($Opt{'log'}) {
-                log_range($master_file, $last_merge + 1, $curr_rev);
+                if ($last_merge == $curr_rev) {
+                    print("No revisions found\n");
+                } else {
+                    log_range($master_file, $last_merge + 1, $curr_rev);
+                }
                 next LOOP;
             }
             if ($Opt{'dry-run'}) {
