@@ -6,22 +6,55 @@
 # versioned directory tree.
 #
 # Character set: UTF-8
-# License: GNU General Public License, see end of file for legal stuff.
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 # This file is part of the svnutils project — http://svnutils.tigris.org
 #=======================================================================
 
 use strict;
+use Getopt::Long;
 
 $| = 1;
 
-use Getopt::Long;
-our ($opt_conflict, $opt_create_rc, $opt_diffcmd, $opt_svncmd, $opt_help) =
-    (            0,              0,           "",          "",         0);
-our ($opt_diffargs, $opt_revision) =
-    (           "",            "");
+our $Debug = 0;
 
-my $Debug = 0;
+our %Opt = (
+    'conflict' => 0,
+    'create-rc' => 0,
+    'debug' => 0,
+    'diffargs' => "",
+    'diffcmd' => "",
+    'help' => 0,
+    'revision' => "",
+    'svncmd' => "",
+    'verbose' => 0,
+    'version' => 0,
+);
+
+our $progname = $0;
+$progname =~ s#^.*/(.*?)$#$1#;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    "conflict|C" => \$Opt{'conflict'},
+    "create-rc" => \$Opt{'create-rc'},
+    "debug" => \$Opt{'debug'},
+    "diffargs|p=s" => \$Opt{'diffargs'},
+    "diffcmd|c=s" => \$Opt{'diffcmd'},
+    "help|h" => \$Opt{'help'},
+    "revision|r=s" => \$Opt{'revision'},
+    "svncmd|e=s" => \$Opt{'svncmd'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'version'} && print_version();
 
 # Default value, can be overridden in ~/.svndiffrc
 my $Cmd = "vimdiff";
@@ -33,9 +66,6 @@ my $CMD_SVN = "svn";
 my $ST_CONFLICT = 'C';
 my $ST_MODIFIED = 'M';
 my $valid_rev = '\d+|HEAD|{\d+[^}]*?[Z\d]}'; # Used in regexps
-
-our $progname = $0;
-$progname =~ s#^(.*)/(.+?)$#$2#;
 
 my %rev_diff = ();
 
@@ -55,20 +85,9 @@ unless (length($rc_file)) {
 
 length($rc_file) && (-e $rc_file) && read_rcfile($rc_file);
 
-Getopt::Long::Configure("bundling");
-GetOptions(
-    "conflict|C"   => \$opt_conflict,
-    "create-rc"    => \$opt_create_rc,
-    "diffcmd|c=s"  => \$opt_diffcmd,
-    "svncmd|e=s"   => \$opt_svncmd,
-    "help|h"       => \$opt_help,
-    "diffargs|p=s" => \$opt_diffargs,
-    "revision|r=s" => \$opt_revision
-) || die("$progname: Option error. Use -h for help.\n");
+$Opt{'help'} && usage(0);
 
-$opt_help && usage(0);
-
-if ($opt_create_rc) {
+if ($Opt{'create-rc'}) {
     print(<<END);
 <svndiffrc>
   <diffprog>vimdiff</diffprog>
@@ -96,12 +115,12 @@ END
     exit(0);
 }
 
-length($opt_diffcmd)  && ($Cmd = $opt_diffcmd);
-length($opt_diffargs) && ($Cmd .= " $opt_diffargs");
-length($opt_svncmd)   && ($CMD_SVN = $opt_svncmd);
+length($Opt{'diffcmd'})  && ($Cmd = $Opt{'diffcmd'});
+length($Opt{'diffargs'}) && ($Cmd .= " $Opt{'diffargs'}");
+length($Opt{'svncmd'})   && ($CMD_SVN = $Opt{'svncmd'});
 
 my $stat_chars = "$ST_CONFLICT$ST_MODIFIED";
-$opt_conflict && ($stat_chars = "$ST_CONFLICT");
+$Opt{'conflict'} && ($stat_chars = "$ST_CONFLICT");
 
 my @mod_array = ();
 
@@ -122,13 +141,13 @@ if (scalar(@ARGV)) {
                          "\"$CMD_SVN $Curr stat -q\" pipe: $!");
                 }
             } else {
-                if (!length($opt_revision)) {
+                if (!length($Opt{'revision'})) {
                     die("$progname: Need to specify the --revision option " .
                         "when diffing an URL\n");
                 }
                 $has_conflict = 0;
             }
-            diff_file($Curr, $has_conflict, $opt_revision);
+            diff_file($Curr, $has_conflict, $Opt{'revision'});
         } else {
             D("$Curr is NOT a file.");
             warn("$progname: \"$Curr\" is not a file or doesn't exist\n");
@@ -137,7 +156,7 @@ if (scalar(@ARGV)) {
     # }}}
 } else {
     # {{{
-    length($opt_revision) && die("Need to specify one or more " .
+    length($Opt{'revision'}) && die("Need to specify one or more " .
                                  "files when using the -r option\n");
     D("Before PipeFP 2: CMD_SVN = \"$CMD_SVN\"");
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
@@ -182,15 +201,15 @@ sub diff_file {
     my $File2 = "";
     my @rm_files = ();
 
-    D("opt_revision = \"$opt_revision\"");
-    if (length($opt_revision)) {
+    D("Opt{'revision'} = \"$Opt{'revision'}\"");
+    if (length($Opt{'revision'})) {
         my ($Rev1, $Rev2);
         my ($tmp1, $tmp2);
-        if ($opt_revision =~ /^($valid_rev)$/) {
+        if ($Opt{'revision'} =~ /^($valid_rev)$/) {
             $Rev1 = $1;
             $Rev2 = "";
             $tmp1 = "$File1.r$Rev1.tmp";
-        } elsif ($opt_revision =~ /^($valid_rev):($valid_rev)$/) {
+        } elsif ($Opt{'revision'} =~ /^($valid_rev):($valid_rev)$/) {
             $Rev1 = $1;
             $Rev2 = $2;
             $tmp1 = "$File1.r$Rev1.tmp";
@@ -238,9 +257,9 @@ sub diff_file {
     if (!is_url($File1)) {
         (-e $File1) || (warn("$File1: File not found\n"), return);
         (-e $File2) || (warn("$File2: File not found" .
-                             length($opt_revision) ? ""
-                                                   : ", is not under version " .
-                                                     "control\n"
+                             length($Opt{'revision'})
+                                ? ""
+                                : ", is not under version control\n"
                             ),
                             return
                        );
@@ -264,7 +283,7 @@ sub diff_file {
                                  "Can't delete temporary file: $!\n");
     }
 
-    if (!length($opt_revision) && $has_conflict) {
+    if (!length($Opt{'revision'}) && $has_conflict) {
         print("$progname: Write y and press ENTER if the conflict " .
               "in $File1 is resolved: ");
         if (<STDIN> =~ /^y$/i) {
@@ -278,19 +297,6 @@ sub diff_file {
     sleep(1) if (scalar(@mod_array) > 1);
     # }}}
 } # diff_file()
-
-sub D {
-    # {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
 
 sub deb_wait {
     # {{{
@@ -455,10 +461,20 @@ sub xml_to_txt {
     # }}}
 } # xml_to_txt()
 
+sub print_version {
+    # Print program version {{{
+    print("$rcs_id\n");
+    exit(0);
+    # }}}
+} # print_version()
+
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
+
     print(<<END);
+
+$rcs_id
 
 Usage: $progname [options] [file [...]]
 
@@ -467,29 +483,63 @@ specified.
 
 Options:
 
--C, --conflict    Only run diff on conflicted files.
-    --create-rc   Send a configuration file example to stdout. To create 
-                  a new ~/.svndiffrc file, write
-                    $progname --create-rc >~/.svndiffrc
--c, --diffcmd x   Use x as the diff command. Default: "$Cmd".
--e, --svncmd x    Use x as the svn executable. Default: "$CMD_SVN".
--h, --help        Show this help.
--p, --diffargs x  Use x as parameters to the diff program.
--r, --revision x  Run a $Cmd command against previous revisions:
-                    111:222
-                      Compare r111 and r222.
-                    123
-                      Compare your working file against r123. If the 
-                      file is an URL, the second revision is set to 
-                      HEAD.
-                    {2001-05-17T18:12:16Z}:900
-                      Compare between a specific point in time with 
-                      r900.
+  -C, --conflict
+    Only run diff on conflicted files.
+  --create-rc
+    Send a configuration file example to stdout. To create a new 
+    ~/.svndiffrc file, write
+      $progname --create-rc >~/.svndiffrc
+  -c, --diffcmd x
+    Use x as the diff command. Default: "$Cmd".
+  -e, --svncmd x
+    Use x as the svn executable. Default: "$CMD_SVN".
+  -h, --help
+    Show this help.
+  -p, --diffargs x
+    Use x as parameters to the diff program.
+  -r, --revision x
+    Run a $Cmd command against previous revisions:
+      111:222
+        Compare r111 and r222.
+      123
+        Compare your working file against r123. If the file is an URL, 
+        the second revision is set to HEAD.
+      {2001-05-17T18:12:16Z}:900
+        Compare between a specific point in time with r900.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
 
 END
     exit($Retval);
     # }}}
 } # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
 
 __END__
 
@@ -561,6 +611,18 @@ Run the external diff command against previous revisions:
   123
     Compare your working file against r123. If the file is an URL, the 
     second revision is set to HEAD.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
 
 =back
 
@@ -647,11 +709,11 @@ The following macros makes moving differences between windows easier
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 This file is part of the svnutils project — 
@@ -681,5 +743,5 @@ L<svn(1)>
 
 # }}}
 
-# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=0 et fo+=w :
 # End of file $Id$
