@@ -16,8 +16,8 @@ $| = 1;
 
 our $Debug = 0;
 
-our ($opt_help, $opt_known, $opt_namesonly, $opt_verbose) =
-    (        0,          0,              0,            0);
+our ($opt_help, $opt_known, $opt_namesonly, $opt_verbose, $opt_xml) =
+    (        0,          0,              0,            0,        0);
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -30,7 +30,8 @@ GetOptions(
     "help|h"                => \$opt_help,
     "known-keywords-only|k" => \$opt_known,
     "filenames-only|l"      => \$opt_namesonly,
-    "verbose|v"             => \$opt_verbose
+    "verbose|v"             => \$opt_verbose,
+    "xml|x"                 => \$opt_xml
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $opt_help && usage(0);
@@ -51,34 +52,88 @@ my @Keywords = (
                );
 my $Keyw = $opt_known ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
 
+if ($opt_xml) {
+    print(<<END);
+<?xml version="1.0"?>
+<sident>
+END
+}
+
 for (@ARGV) {
     my @Out = ();
     my $File = $_;
     if (open(FromFP, "<$File")) {
         while (<FromFP>) {
-            s/(\$($Keyw)\$)/push(@Out, "     $1\n")/ge;
-            s/(\$($Keyw)::? .*? \$)/push(@Out, "     $1\n")/ge;
+            s/(\$($Keyw)\$)/push(@Out, $1)/ge;
+            s/(\$($Keyw)::? .*? \$)/push(@Out, $1)/ge;
         }
         if (scalar(@Out)) {
+            $opt_xml && print("  <file>\n");
             if ($opt_namesonly) {
-                print("$File\n");
-            } else {
-                print("\n$File:\n");
-                for (@Out) {
-                    print($_);
+                if ($opt_xml) {
+                    printf("    <filename>%s</filename>\n",
+                        txt_to_xml($File)
+                    );
+                } else {
+                    print("$File\n");
                 }
+            } else {
+                if ($opt_xml) {
+                    printf("    <filename>%s</filename>\n",
+                        txt_to_xml($File)
+                    );
+                } else {
+                    print("\n$File:\n");
+                }
+                $opt_xml && print("    <keywords>\n");
+                for (@Out) {
+                    if ($opt_xml) {
+                        printf("      <keyword>%s</keyword>\n",
+                            txt_to_xml($_));
+                    } else {
+                        print("     $_\n");
+                    }
+                }
+                $opt_xml && print("    </keywords>\n");
             }
+            $opt_xml && print("  </file>\n");
         } else {
-            print("\n$File:\n") if ($opt_verbose);
+            if ($opt_verbose) {
+                $opt_xml && print("  <file>\n");
+                if ($opt_xml) {
+                    printf("    <filename>%s</filename>\n",
+                        txt_to_xml($File)
+                    );
+                } else {
+                    print("\n$File:\n");
+                }
+                $opt_xml && print("  </file>\n");
+            }
         }
     }
 }
 
+$opt_xml && print("</sident>\n");
+
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
-    print(<<END);
+    my ($xml_start, $xml_end)  =
+       (        "",       "");
 
+    if ($opt_xml) {
+        $xml_start = <<END;
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
+<article>
+  <screen>
+END
+        $xml_end = <<END;
+</screen>
+</article>
+END
+    }
+    my $Txt = <<END;
 $rcs_id
 
 Usage: $progname [options] [file [files [...]]]
@@ -96,8 +151,14 @@ Options:
       keywords
   -v, --verbose
       Also list files without keywords.
-
+  -x, --xml
+      Create XML output
 END
+    printf("%s%s%s",
+        $xml_start,
+        $opt_xml ? txt_to_xml($Txt) : "\n$Txt\n",
+        $xml_end
+    );
     exit($Retval);
     # }}}
 }
@@ -110,10 +171,30 @@ sub D {
     my $File = $call_info[1];
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    if ($opt_xml) {
+        printf(STDERR "<debug> <pid>%s</pid> <file>%s</file> <line>%s</line> <msg>%s</msg> </debug>\n",
+            txt_to_xml($$),
+            txt_to_xml($File),
+            txt_to_xml($call_info[2]),
+            txt_to_xml($Txt)
+        );
+    } else {
+        print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    }
     return("");
     # }}}
 } # D()
+
+sub txt_to_xml {
+    # Return a XML-safe version of a string {{{
+    my $Txt = shift;
+
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+} # txt_to_xml()
 
 __END__
 
@@ -157,6 +238,10 @@ keywords.
 =item B<-v>, B<--verbose>
 
 In addition to list keywords, also list names of files without keywords.
+
+=item B<-x>, B<--xml>
+
+Create XML output.
 
 =back
 
