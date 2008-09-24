@@ -129,20 +129,20 @@
 .\" ========================================================================
 .\"
 .IX Title "SVNDIFF 1"
-.TH SVNDIFF 1 "2005-04-02" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SVNDIFF 1 "2005-04-26" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 113 2005\-04\-02 07:22:13Z sunny256 $
+$Id: svndiff 121 2005\-04\-26 21:11:10Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 svndiff [options] [file [...]]
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 Run the diff program on every modified file in current directory and all 
-subdirectories or on the files specified on the command line. Needs the 
-svn command-line client unless files are specified.
+subdirectories or on the files specified on the command line.
+Needs the svn command-line client unless files are specified.
 .IP "\fB\-C\fR" 4
 .IX Item "-C"
 Only run diff on conflicted files.
@@ -173,6 +173,30 @@ Run the external diff command against previous revisions:
 \&  123
 \&    Compare your working file against r123.
 .Ve
+.SH "FILES"
+.IX Header "FILES"
+.IP "\fI~/.svndiffrc\fR" 4
+.IX Item "~/.svndiffrc"
+A configuration file where you can store your own settings.
+It is a standard \s-1XML\s0 file with this structure:
+.Sp
+.Vb 5
+\&  <svndiffrc>
+\&    <defaults>
+\&      <diffprog>vimdiff</diffprog>
+\&    </defaults>
+\&  </svndiffrc>
+.Ve
+.Sp
+(Whitespace is optional and more options will come.)
+.Sp
+The string inside the \f(CW\*(C`diffprog\*(C'\fR can be set to whatever your diff 
+program is called as, the default string is \*(L"vimdiff\*(R".
+.SH "ENVIRONMENT VARIABLES"
+.IX Header "ENVIRONMENT VARIABLES"
+.IP "\fI\s-1SVNDIFFRC\s0\fR" 4
+.IX Item "SVNDIFFRC"
+Path to a configuration file in another location than \fI~/.svndiffrc\fR .
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 Made by Øyvind A. Holm <sunny\ _AT_\ sunbase.org>.
@@ -181,7 +205,8 @@ Made by Øyvind A. Holm <sunny\ _AT_\ sunbase.org>.
 Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
 This is free software; see the file \fI\s-1COPYING\s0\fR for legalese stuff.
 .PP
-This file is part of the svnutils project — <http://svnutils.tigris.org>
+This file is part of the svnutils project — 
+<http://svnutils.tigris.org>
 .SH "LICENCE"
 .IX Header "LICENCE"
 This program is free software; you can redistribute it and/or modify it 
