@@ -273,6 +273,16 @@ sub read_rcfile {
                     D("read_rcfile(): \$Cmd = \"$Cmd\"");
                     "";
                 }sex;
+
+                $el_defaults =~
+                s{
+                    <svnclient\b(.*?)>(.*?)</svnclient>
+                }
+                {
+                    $CMD_SVN = xml_to_txt($2);
+                    D("read_rcfile(): \$CMD_SVN = \"$CMD_SVN\"");
+                    "";
+                }sex;
                 print_leftover($el_defaults, "defaults");
             }sex;
             print_leftover($el_svndiffrc, "svndiffrc");
@@ -416,6 +426,7 @@ It is a standard XML file with this structure:
   <svndiffrc>
     <defaults>
       <diffprog>vimdiff</diffprog>
+      <svnclient>svn</svnclient>
     </defaults>
   </svndiffrc>
 
@@ -423,6 +434,10 @@ It is a standard XML file with this structure:
 
 The string inside the C<diffprog> elements can be set to whatever your 
 diff program is called as, the default string is "vimdiff".
+
+You can also define an alternative svn(1) client to use inside the 
+C<svnclient> elements.
+The default value here is of course "svn".
 
 =back
 
