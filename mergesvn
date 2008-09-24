@@ -20,6 +20,7 @@ our $Debug = 0;
 
 our %Opt = (
     'alias' => "",
+    'conflict' => 0,
     'debug' => 0,
     'diff' => 0,
     'dry-run' => 0,
@@ -38,6 +39,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 Getopt::Long::Configure("bundling");
 GetOptions(
     "alias|a=s" => \$Opt{'alias'},
+    "conflict|C" => \$Opt{'conflict'},
     "debug" => \$Opt{'debug'},
     "diff|d" => \$Opt{'diff'},
     "dry-run" => \$Opt{'dry-run'},
@@ -90,6 +92,10 @@ for (@Files) {
                      "Unable to get newest revision\n");
                 next LOOP;
             }
+            if ($Opt{'conflict'}) {
+                find_conflict($master_file, $File, $last_merge, $curr_rev);
+                next LOOP;
+            }
             if ($Opt{'diff'}) {
                 my $Repos = repos_url($File);
                 mysyst(
@@ -122,6 +128,107 @@ for (@Files) {
     # }}}
 }
 
+sub find_conflict {
+    # Scan a specific revision range for the first merge conflict and 
+    # return the revision number
+    # {{{
+    my ($Src, $Dest, $Start, $End) = @_;
+
+    D("find_conflict('$Src', '$Dest', '$Start', '$End')");
+    print("$progname: $Dest: Scanning revision range r$Start:$End " .
+          "for conflicts\n");
+    my @Array = revisions($Src, $Start, $End);
+    if (!scalar(@Array)) {
+        print("No revisions found.\n");
+        return undef;
+    }
+
+    my $rev_count = scalar(@Array);
+    printf("$rev_count revision%s to check\n", $rev_count == 1 ? "" : "s");
+    print("(" . join(", ", @Array) . ")\n");
+
+    my $min_block = 0;
+    my ($min_pos, $max_pos) = (0, $rev_count);
+
+    my $last_mid = 0;
+    my $first_conflict = 0;
+    my $last_good = 0;
+
+    while (1) {
+        my $mid_pos = int(($min_pos + $max_pos) / 2);
+        last if ($mid_pos == $last_mid);
+        my $Rev = $Array[$mid_pos];
+        print("Checking revision $Rev ($mid_pos)...");
+        if (!has_conflict($Src, $Dest, $Start, $Rev)) {
+            print("No conflict\n");
+            $min_pos = $mid_pos;
+            D("min_pos set to '$mid_pos'");
+            if (!$last_good || ($Rev > $last_good)) {
+                $last_good = $Rev;
+            }
+        } else {
+            print("Conflict\n");
+            $max_pos = $mid_pos;
+            D("max_pos set to '$mid_pos'");
+            if (!$first_conflict || ($Rev < $first_conflict)) {
+                $first_conflict = $Rev;
+            }
+        }
+        $last_mid = $mid_pos;
+    }
+    print($first_conflict
+        ? "First conflict at r$first_conflict. "
+        : "No conflicts found. "
+    );
+    print($last_good
+        ? "Last revision without conflict at r$last_good.\n"
+        : "No revisions without conflicts found.\n"
+    );
+
+    # }}}
+} # find_conflict()
+
+sub has_conflict {
+    # {{{
+    my ($Src, $Dest, $Start, $End) = @_;
+    my (            $safe_src,             $safe_dest) = 
+       (escape_filename($Src), escape_filename($Dest));
+    my $Retval = 0;
+    D("has_conflict('$Src', '$Dest', '$Start', '$End')");
+    if (open(ConflFP, "$CMD_SVN merge --dry-run " .
+                      "-r$Start:$End $safe_src $safe_dest |")) {
+        while (<ConflFP>) {
+            my $Stat = substr($_, 0, 2);
+            ($Stat =~ /C/) && ($Retval = 1);
+        }
+        close(ConflFP);
+    }
+    return($Retval);
+    # }}}
+} # has_conflict()
+
+sub revisions {
+    # Return an array of revision numbers from a specific revision range 
+    # for a version controlled element
+    # {{{
+    my ($File, $Start, $End) = @_;
+    D("revisions('$File', '$Start', '$End')");
+    my $safe_file = escape_filename($File);
+    my $Data = "";
+    my @Revs = ();
+
+    if (open(PipeFP, "svn log --xml -r$Start:$End $safe_file |")) {
+        $Data = join("", <PipeFP>);
+        close(PipeFP);
+        $Data =~ s/<logentry\b.*?\brevision="(\d+)".*?>/push(@Revs, "$1")/egs;
+    }
+    if ($Revs[0] eq $Start) {
+        splice(@Revs, 0, 1);
+    }
+    return(@Revs);
+    # }}}
+} # revisions()
+
 sub highest_revision {
     # Return the newest revision of a versioned element inside a 
     # specified revision range
@@ -139,10 +246,10 @@ sub repos_url {
     my $File = shift;
     my $safe_file = escape_filename($File);
     my $Retval = `$CMD_SVN info --xml $safe_file`;
-    $Retval =~ s/^.*<url>(.*?)<\/url>.*$/$1/s;
+    $Retval =~ s/^.*<url>(.*?)<\/url>.*$/$1/s; # FIXME: Add XML parsing
     return($Retval);
     # }}}
-}
+} # repos_url()
 
 sub mysyst {
     # Customised system() {{{
@@ -203,6 +310,12 @@ Options:
   -a x, --alias x
     Use x as alias for the master URL. The old value will still be 
     written to the mergesvn property.
+  -c, --conflict
+    Do not merge, but search for the first revision a conflict will 
+    occur when a merge is done. After the search is finished, the first 
+    revision number of a troublesome patch is printed, and you can 
+    choose by using the -t option if you want to include the conflicting 
+    revision in the merge.
   -d, --diff
     Instead of merging, show a repository diff between the master URL 
     and the versioned element.
@@ -283,6 +396,14 @@ These two fields are separated by exactly one space (U+0020).
 
 Use I<x> as alias for the master URL. The old value will still be 
 written to the mergesvn property.
+
+=item B<-c>, B<--conflict>
+
+Do not merge, but search for the first revision a conflict will occur 
+when a merge is done. After the search is finished, the first revision 
+number of a troublesome patch is printed, and you can choose by using 
+the -t option if you want to include the conflicting revision in the 
+merge.
 
 =item B<-d>, B<--diff>
 
