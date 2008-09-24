@@ -119,7 +119,8 @@ for (@Files) {
                 my $Repos = repos_url($File);
                 mysyst(
                     $CMD_SVN, "diff",
-                    repos_url($master_file) . "\@$last_merge",
+                    repos_url($master_file),
+                    "-r", $last_merge,
                     $Repos
                 );
                 next LOOP;
