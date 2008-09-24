@@ -134,10 +134,10 @@
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 202 2007\-04\-05 03:53:39Z sunny256 $
+$Id: svndiff 205 2007\-04\-05 15:05:22Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-svndiff [options] [file [...]]
+\&\fBsvndiff\fR [\fIoptions\fR] [\fIfile\fR [\fI...\fR]]
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 Run the specified diff program on every modified file in current 
@@ -158,20 +158,20 @@ Send a configuration file example to stdout. To create a new
 .Vb 1
 \&  $progname \-\-create\-rc >~/.svndiffrc
 .Ve
-.IP "\fB\-c\fR, \fB\-\-diffcmd\fR x" 4
-.IX Item "-c, --diffcmd x"
+.IP "\fB\-\-diff\-cmd\fR x" 4
+.IX Item "--diff-cmd x"
 Use x as the diff command.
-Default: \*(L"svndiff\*(R".
-.IP "\fB\-e\fR, \fB\-\-svncmd\fR x" 4
-.IX Item "-e, --svncmd x"
+Default: \*(L"vimdiff\*(R".
+.IP "\fB\-e\fR, \fB\-\-svn\-cmd\fR x" 4
+.IX Item "-e, --svn-cmd x"
 Use x as the svn executable.
 Example:
 .Sp
 .Vb 1
 \&  svndiff \-e /usr/local/bin/svn\-1.0
 .Ve
-.IP "\fB\-p\fR, \fB\-\-diffargs\fR x" 4
-.IX Item "-p, --diffargs x"
+.IP "\fB\-x\fR, \fB\-\-extensions\fR x" 4
+.IX Item "-x, --extensions x"
 Use x as parameters to the diff program.
 .IP "\fB\-h\fR, \fB\-\-help\fR" 4
 .IX Item "-h, --help"
@@ -228,7 +228,7 @@ The default value here is of course \*(L"svn\*(R".
 .Sp
 When using visual diff viewers (for example \fBvimdiff\fR), the program 
 sometimes expects the file names to be switched on the command line so 
-your modified file appears in the correct window.
+your modified file appears in the window of your taste.
 By creating a \f(CW\*(C`<program></program>\*(C'\fR section, programs 
 can be instructed to take arguments the opposite way.
 If you for example use the \fBmeld\fR program and you want your modified 
@@ -285,7 +285,7 @@ Copyleft © Øyvind A. Holm <sunny@sunbase.org>
 This is free software; see the file \fI\s-1COPYING\s0\fR for legalese stuff.
 .PP
 This file is part of the svnutils project — 
-<http://svnutils.tigris.org>
+<http://svnutils.tigris.org/>
 .SH "LICENCE"
 .IX Header "LICENCE"
 This program is free software; you can redistribute it and/or modify it 
