@@ -2,9 +2,21 @@
 
 #============================================================================
 # $Id$
-# Lager «-kv»-feeling på Id og Date. Subversion gjør visst ikke sånt enda. Og
-# jeg er mildt sagt irritert over det nye formatet på $Date , så det engelske
-# kjøret i parentesen strippes bort.
+# Strips the " $","$Id: :" and "$Date: " fom RCS/CVS/Subversion keywords to
+# protect it from changes when importing or adding the file to a new
+# repository.
+#
+# Syntax: strip_id file [file [...]]
+#
+# Default behaviour at the moment (% = $):
+#
+#   "%Id: file.txt 123 2004-01-21 17:12:16Z fjodor %"
+#     is changed to
+#   "file.txt 123 2004-01-21 17:12:16Z fjodor"
+#
+#   "%Date: 2004-05-18 10:44:54 +0200 (Tue, 18 May 2004) %"
+#     is changed to
+#   "2004-05-18 10:44:54 +0200"
 #
 # Character set: UTF-8
 # License: GNU General Public License
