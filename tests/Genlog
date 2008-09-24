@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id: bash 2298 2008-07-08 22:53:17Z sunny $
+# Update files in log/
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+[ -z "$1" ] && { echo "Syntax: $0 testname [testname [...]]" >&2; exit 1; }
+
+for gf in "$@"; do
+    testname=$gf
+    testname=`echo -n $testname | perl -pe 's/\.t$//'`
+    echo === $testname.t
+    ./$testname.t --all 2>&1 | remove_perltestnumbers >log/$testname.log
+done
