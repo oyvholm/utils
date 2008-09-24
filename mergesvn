@@ -19,6 +19,7 @@ our $Debug = 0;
 our %Opt = (
     'alias' => "",
     'debug' => 0,
+    'dry-run' => 0,
     'help' => 0,
     'to' => "HEAD",
     'version' => 0,
@@ -35,6 +36,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "alias|a=s" => \$Opt{'alias'},
     "debug" => \$Opt{'debug'},
+    "dry-run" => \$Opt{'dry-run'},
     "help|h" => \$Opt{'help'},
     "to|t=s" => \$Opt{'to'},
     "version" => \$Opt{'version'},
@@ -85,18 +87,27 @@ for (@Files) {
                 warn("$progname: $master_file: Unable to get newest revision\n");
                 next LOOP;
             }
-            mysyst(
-                $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
-                length($Opt{'alias'}) ? $Opt{'alias'} : $master_file,
-                $File
-            );
+            if ($Opt{'dry-run'}) {
+                mysyst(
+                    $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
+                    "--dry-run",
+                    length($Opt{'alias'}) ? $Opt{'alias'} : $master_file,
+                    $File
+                );
+            } else {
+                mysyst(
+                    $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
+                    length($Opt{'alias'}) ? $Opt{'alias'} : $master_file,
+                    $File
+                );
+            }
             push(@new_prop, "$curr_rev $master_file");
         } else {
             warn("$File: \"$Curr\": Invalid property line\n");
             next LOOP;
         }
     }
-    mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
+    $Opt{'dry-run'} || mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
     # }}}
 }
 
@@ -159,6 +170,9 @@ Options:
   -a x, --alias x
     Use x as alias for the URL. The old value will still be written to 
     the mergesvn property.
+ --dry-run
+    Try operation without making any changes. Can be used to see if the 
+    merge will result in conflicts.
   -h, --help
     Show this help.
   -t x, --to x
@@ -233,6 +247,11 @@ These two fields are separated by exactly one space (U+0020).
 
 Use I<x> as alias for the URL. The old value will still be written to 
 the mergesvn property.
+
+=item B<--dry-run>
+
+Try operation without making any changes.
+Can be used to see if the merge will result in conflicts.
 
 =item B<-h>, B<--help>
 
