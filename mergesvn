@@ -170,7 +170,7 @@ Options:
   -a x, --alias x
     Use x as alias for the URL. The old value will still be written to 
     the mergesvn property.
- --dry-run
+  --dry-run
     Try operation without making any changes. Can be used to see if the 
     merge will result in conflicts.
   -h, --help
