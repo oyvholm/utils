@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "SVNDIFF 1"
-.TH SVNDIFF 1 "2005-04-27" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SVNDIFF 1 "2005-04-29" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 126 2005\-04\-26 23:03:00Z sunny256 $
+$Id: svndiff 129 2005\-04\-29 05:10:20Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 svndiff [options] [file [...]]
@@ -180,14 +180,21 @@ Run the external diff command against previous revisions:
 A configuration file where you can store your own settings.
 It is a standard \s-1XML\s0 file with this structure:
 .Sp
-.Vb 4
+.Vb 11
 \&  <svndiffrc>
 \&    <diffprog>vimdiff</diffprog>
 \&    <svnclient>svn</svnclient>
+\&    <reversediffs>
+\&      <program>
+\&        <name>vimdiff</name>
+\&        <reverse>1</reverse>
+\&      </program>
+\&      <!-- Several "program" element groups can be specified -->
+\&    </reversediffs>
 \&  </svndiffrc>
 .Ve
 .Sp
-(Whitespace is optional and more options will come.)
+(Whitespace and linebreaks are optional.)
 .Sp
 The string inside the \f(CW\*(C`diffprog\*(C'\fR elements can be set to whatever your 
 diff program is called as, the default string is \*(L"vimdiff\*(R".
@@ -195,6 +202,25 @@ diff program is called as, the default string is \*(L"vimdiff\*(R".
 You can also define an alternative \fIsvn\fR\|(1) client to use inside the 
 \&\f(CW\*(C`svnclient\*(C'\fR elements.
 The default value here is of course \*(L"svn\*(R".
+.Sp
+When using visual diff viewers (for example \fBvimdiff\fR), the program 
+expects the file names to be switched on the command line so your 
+modified file appears in the correct window.
+By creating a \f(CW\*(C`<program></program>\*(C'\fR section, programs 
+can be instructed to take arguments the opposite way.
+If you for example use the \fBmeld\fR program and you want your modified 
+file to be in the left window, add this to the file (\fIinside\fR the 
+\&\f(CW\*(C`<reversediffs></reversediffs>\*(C'\fR elements):
+.Sp
+.Vb 4
+\&  <program>
+\&    <name>meld</name>
+\&    <reverse>1</reverse>
+\&  </program>
+.Ve
+.Sp
+The value in the \f(CW\*(C`reverse\*(C'\fR element have to be \fB1\fR, all other values 
+will count as \fB0\fR.
 .SH "ENVIRONMENT VARIABLES"
 .IX Header "ENVIRONMENT VARIABLES"
 .IP "\fI\s-1SVNDIFFRC\s0\fR" 4
