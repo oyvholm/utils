@@ -81,15 +81,23 @@ if (scalar(@ARGV)) {
     @mod_array = @ARGV;
     for my $Curr (@mod_array) {
         D("ARG = \"$Curr\"\n");
-        if (-f $Curr && !-l $Curr) {
-            D("$Curr is a file.");
+        if ((-f $Curr && !-l $Curr) || is_url($Curr)) {
+            D("$Curr is a file or URL.");
             my $has_conflict;
-            D("Before PipeFP 1: CMD_SVN = \"$CMD_SVN\"");
-            if (open(PipeFP, "$CMD_SVN stat $Curr -q |")) {
-                $has_conflict = (<PipeFP> =~ /$ST_CONFLICT/) ? 1 : 0;
+            if (!is_url($Curr)) {
+                D("Before PipeFP 1: CMD_SVN = \"$CMD_SVN\"");
+                if (open(PipeFP, "$CMD_SVN stat $Curr -q |")) {
+                    $has_conflict = (<PipeFP> =~ /$ST_CONFLICT/) ? 1 : 0;
+                } else {
+                    warn("$progname: Error opening " .
+                         "\"$CMD_SVN $Curr stat -q\" pipe: $!");
+                }
             } else {
-                warn("$progname: Error opening " .
-                     "\"$CMD_SVN $Curr stat -q\" pipe: $!");
+                if (!length($opt_revision)) {
+                    die("$progname: Need to specify the --revision option " .
+                        "when diffing an URL\n");
+                }
+                $has_conflict = 0;
             }
             diff_file($Curr, $has_conflict, $opt_revision);
         } else {
@@ -162,6 +170,14 @@ sub diff_file {
             die("$progname: Revision format error in --revision argument, " .
                 "use -h for help\n");
         }
+        if (is_url($File1)) {
+            $tmp1 =~ s#^(\S+/)(\S+?)$#$2#;
+            length($Rev2) || ($Rev2 = "HEAD");
+            $tmp2 = "$File1.r$Rev2.tmp";
+            $tmp2 =~ s#^(\S+/)(\S+?)$#$2#;
+        } else {
+            $tmp2 = "$File1.r$Rev2.tmp";
+        }
         D("Rev1 = \"$Rev1\", Rev2 = \"$Rev2\"\n");
         (-e $tmp1)
             && (die("$progname: $tmp1: Temporary file already exists\n"));
@@ -190,14 +206,16 @@ sub diff_file {
     D("File1 = \"$File1\"\n");
     D("File2 = \"$File2\"\n");
 
-    (-e $File1) || (warn("$File1: File not found\n"), return);
-    (-e $File2) || (warn("$File2: File not found" .
-                         length($opt_revision) ? ""
-                                               : ", is not under version " .
-                                                 "control\n"
-                        ),
-                        return
-                   );
+    if (!is_url($File1)) {
+        (-e $File1) || (warn("$File1: File not found\n"), return);
+        (-e $File2) || (warn("$File2: File not found" .
+                             length($opt_revision) ? ""
+                                                   : ", is not under version " .
+                                                     "control\n"
+                            ),
+                            return
+                       );
+    }
 
     my $use_reverse = 0;
 
@@ -252,6 +270,16 @@ sub deb_wait {
     <STDIN>;
     # }}}
 } # deb_wait()
+
+sub is_url {
+    # {{{
+    my $Url = shift;
+
+    my $Retval = ($Url =~ m#^\S+://\S+/#) ? 1 : 0;
+    D("is_url(\"$Url\") returns \"$Retval\".");
+    return($Retval);
+    # }}}
+} # is_url()
 
 sub mysyst {
     # {{{
@@ -405,6 +433,9 @@ sub usage {
 
 Usage: $progname [options] [file [...]]
 
+"file" can also be an URL, but then the --revision option has to be 
+specified.
+
 Options:
 
 -C, --conflict    Only run diff on conflicted files.
@@ -416,7 +447,9 @@ Options:
                     111:222
                       Compare r111 and r222.
                     123
-                      Compare your working file against r123.
+                      Compare your working file against r123. If the 
+                      file is an URL, the second revision is set to 
+                      HEAD.
                     {2001-05-17T18:12:16Z}:900
                       Compare between a specific point in time with 
                       r900.
@@ -449,6 +482,8 @@ svndiff [options] [file [...]]
 Run the specified diff program on every modified file in current 
 directory and all subdirectories or on the files specified on the 
 command line.
+An URL to a file can also be specified, but then the --revision option 
+has to be specified.
 
 The program needs the L<svn(1)> commandline client to run.
 
@@ -485,7 +520,8 @@ Run the external diff command against previous revisions:
   111:222
     Compare r111 and r222.
   123
-    Compare your working file against r123.
+    Compare your working file against r123. If the file is an URL, the 
+    second revision is set to HEAD.
 
 =back
 
