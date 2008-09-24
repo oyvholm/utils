@@ -30,9 +30,9 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "help|h"           => \$opt_help,
+    "help|h"                => \$opt_help,
     "known-keywords-only|k" => \$opt_known,
-    "filenames-only|l" => \$opt_namesonly
+    "filenames-only|l"      => \$opt_namesonly
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $opt_help && usage(0);
