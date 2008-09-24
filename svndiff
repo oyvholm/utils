@@ -18,12 +18,16 @@ $| = 1;
 use Getopt::Std;
 our ($opt_C, $opt_c, $opt_e, $opt_h, $opt_p, $opt_r) =
     (     0,     "",     "",      0,     "",     "");
-getopts('Cc:e:hp:r:') || die("Option error. Use -h for help.\n");
+
+my $Debug = 0;
 
 # Change this to the default diff command to use
 my $Cmd = "vimdiff";
 
-my $Debug = 0;
+our $progname = $0;
+$progname =~ s#^(.*)/(.+?)$#$2#;
+
+getopts('Cc:e:hp:r:') || die("$progname: Option error. Use -h for help.\n");
 
 # Change this if the svn executable is non-standard and you don’t want 
 # to use the -e option all the time:
@@ -31,9 +35,6 @@ my $CMD_SVN = "svn";
 
 my $ST_CONFLICT = 'C';
 my $ST_MODIFIED = 'M';
-
-our $progname = $0;
-$progname =~ s#^(.*)/(.+?)$#$2#;
 
 $opt_h && usage(0);
 
@@ -187,8 +188,13 @@ sub diff_file {
 sub D {
     # {{{
     $Debug || return;
+    my @call_info = caller;
     chomp(my $Txt = shift);
-    print("$Txt\n");
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
     # }}}
 } # D()
 
@@ -256,8 +262,8 @@ svndiff [options] [file [...]]
 =head1 DESCRIPTION
 
 Run the diff program on every modified file in current directory and all 
-subdirectories or on the files specified on the command line. Needs the 
-svn command-line client unless files are specified.
+subdirectories or on the files specified on the command line.
+Needs the svn command-line client unless files are specified.
 
 =over 4
 
@@ -304,7 +310,8 @@ Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
 Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
 This is free software; see the file F<COPYING> for legalese stuff.
 
-This file is part of the svnutils project — L<http://svnutils.tigris.org>
+This file is part of the svnutils project — 
+L<http://svnutils.tigris.org>
 
 =head1 LICENCE
 
