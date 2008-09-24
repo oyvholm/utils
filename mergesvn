@@ -21,6 +21,7 @@ our $Debug = 0;
 our %Opt = (
     'alias' => "",
     'debug' => 0,
+    'diff' => 0,
     'dry-run' => 0,
     'help' => 0,
     'to' => "HEAD",
@@ -38,6 +39,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
     "alias|a=s" => \$Opt{'alias'},
     "debug" => \$Opt{'debug'},
+    "diff|d" => \$Opt{'diff'},
     "dry-run" => \$Opt{'dry-run'},
     "help|h" => \$Opt{'help'},
     "to|t=s" => \$Opt{'to'},
@@ -82,11 +84,22 @@ for (@Files) {
             my $master_file = length($Opt{'alias'})
                                 ? $Opt{'alias'}
                                 : $orig_master;
-            mysyst($CMD_SVN, "update", $File);
+            if (!$Opt{'diff'} && !$Opt{'dry-run'}) {
+                mysyst($CMD_SVN, "update", $File);
+            }
             my $curr_rev = highest_revision($master_file, $Opt{'to'});
             if ($curr_rev !~ /^\d+$/) {
                 warn("$progname: $master_file: " .
                      "Unable to get newest revision\n");
+                next LOOP;
+            }
+            if ($Opt{'diff'}) {
+                my $Repos = repos_url($File);
+                mysyst(
+                    $CMD_SVN, "diff",
+                    repos_url($master_file) . "\@$last_merge",
+                    $Repos
+                );
                 next LOOP;
             }
             if ($Opt{'dry-run'}) {
@@ -123,6 +136,16 @@ sub highest_revision {
     return($highest_rev);
     # }}}
 } # highest_revision()
+
+sub repos_url {
+    # Return the repository address of an element {{{
+    my $File = shift;
+    my $safe_file = escape_filename($File);
+    my $Retval = `$CMD_SVN info --xml $safe_file`;
+    $Retval =~ s/^.*<url>(.*?)<\/url>.*$/$1/s;
+    return($Retval);
+    # }}}
+}
 
 sub mysyst {
     # Customised system() {{{
@@ -183,6 +206,9 @@ Options:
   -a x, --alias x
     Use x as alias for the master URL. The old value will still be 
     written to the mergesvn property.
+  -d, --diff
+    Instead of merging, show a repository diff between the master URL 
+    and the versioned element.
   --dry-run
     Try operation without making any changes. Can be used to see if the 
     merge will result in conflicts.
@@ -261,6 +287,11 @@ These two fields are separated by exactly one space (U+0020).
 Use I<x> as alias for the master URL. The old value will still be 
 written to the mergesvn property.
 
+=item B<-d>, B<--diff>
+
+Instead of merging, show a repository diff between the master URL and 
+the versioned element.
+
 =item B<--dry-run>
 
 Try operation without making any changes.
@@ -281,6 +312,16 @@ Print version information.
 =item B<--debug>
 
 Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+=over 4
+
+=item The svn(1) client does not support diffs between different 
+repositories (yet), so the B<--diff> option will only work with elements 
+that has the master in the same repository.
 
 =back
 
