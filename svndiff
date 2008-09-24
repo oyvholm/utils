@@ -83,9 +83,11 @@ sub diff_file {
 
     if ($Cmd eq "vimdiff") {
         D("CMD: $Cmd $File1 $File2\n");
+        deb_wait();
         system("$Cmd $File1 $File2");
     } else {
         D("CMD: $Cmd $File2 $File1\n");
+        deb_wait();
         system("$Cmd $File2 $File1");
     }
 
@@ -98,6 +100,12 @@ sub D {
     $Debug || return;
     chomp(my $Txt = shift);
     print("$Txt\n");
+}
+
+sub deb_wait {
+    $Debug || return;
+    print("debug: Press ENTER...");
+    <STDIN>;
 }
 
 sub usage {
