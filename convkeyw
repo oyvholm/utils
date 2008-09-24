@@ -54,7 +54,7 @@ sub process_line {
 sub usage {
     print <<END
 
-Syntax: strip_id [options] file [file [...]]
+Syntax: convkeyw [options] file [file [...]]
 
 Strips the " \$", "\$Id: :" and "\$Date: " from RCS/CVS/Subversion 
 keywords to protect it from changes when importing or adding the file to 
