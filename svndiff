@@ -491,8 +491,8 @@ C<svnclient> elements.
 The default value here is of course "svn".
 
 When using visual diff viewers (for example B<vimdiff>), the program 
-expects the file names to be switched on the command line so your 
-modified file appears in the correct window.
+sometimes expects the file names to be switched on the command line so 
+your modified file appears in the correct window.
 By creating a C<E<lt>programE<gt>E<lt>/programE<gt>> section, programs 
 can be instructed to take arguments the opposite way.
 If you for example use the B<meld> program and you want your modified 
