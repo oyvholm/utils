@@ -109,13 +109,9 @@ sub diff_file {
     (-e $File2) || (warn("$File2: File not found, is not under version control\n"), return);
 
     if ($Cmd eq "vimdiff") {
-        D("CMD: $Cmd $File1 $File2\n");
-        deb_wait();
-        system("$Cmd $File1 $File2");
+        mysyst("$Cmd $File1 $File2");
     } else {
-        D("CMD: $Cmd $File2 $File1\n");
-        deb_wait();
-        system("$Cmd $File2 $File1");
+        mysyst("$Cmd $File2 $File1");
     }
 
     if ($has_conflict) {
@@ -123,8 +119,7 @@ sub diff_file {
               "in $File1 is resolved: ");
         if (<STDIN> =~ /^y$/i) {
             print("$progname: OK, marking $File1 as resolved.\n");
-            D("CMD: $CMD_SVN resolved $File1");
-            system("$CMD_SVN resolved $File1");
+            mysyst("$CMD_SVN resolved $File1");
         }
     }
 
@@ -143,6 +138,14 @@ sub deb_wait {
     $Debug || return;
     print("debug: Press ENTER...");
     <STDIN>;
+}
+
+sub mysyst {
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    D("$system_txt");
+    deb_wait();
+    system(@_);
 }
 
 sub usage {
