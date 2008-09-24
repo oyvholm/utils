@@ -2,11 +2,13 @@
 
 #=======================================================================
 # $Id$
-# Uses vimdiff to show differences in a Subversion-controlled file.
+# Uses a specified diff program for viewing differences in a Subversion 
+# versioned directory tree.
 #
 # Character set: UTF-8
 # License: GNU General Public License, see end of file for legal stuff.
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
+# This file is part of the svnutils project — http://svnutils.tigris.org
 #=======================================================================
 
 use strict;
@@ -128,25 +130,30 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+svndiff [options] file
 
 =head1 DESCRIPTION
 
-
-
-=head1 OPTIONS
-
 =over 4
+
+=item B<->a
+
+Run the diff program on every modified file in current directory and all 
+subdirectories. Needs the svn command-line client.
+
+=item B<-c> x
+
+Use x as the diff command. Default: "svndiff".
+
+=item B<-p> x
+
+Use x as parameters to the diff program.
 
 =item B<-h>
 
 Print a brief help summary.
 
 =back
-
-=head1 BUGS
-
-
 
 =head1 AUTHOR
 
@@ -156,6 +163,8 @@ Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
 
 Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
 This is free software; see the file F<COPYING> for legalese stuff.
+
+This file is part of the svnutils project — L<http://svnutils.tigris.org>
 
 =head1 LICENCE
 
