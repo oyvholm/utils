@@ -25,6 +25,7 @@ our %Opt = (
     'diff' => 0,
     'dry-run' => 0,
     'help' => 0,
+    'log' => 0,
     'set' => "",
     'to' => "HEAD",
     'version' => 0,
@@ -45,6 +46,7 @@ GetOptions(
     "diff|d" => \$Opt{'diff'},
     "dry-run" => \$Opt{'dry-run'},
     "help|h" => \$Opt{'help'},
+    "log|l" => \$Opt{'log'},
     "set|s=s" => \$Opt{'set'},
     "to|t=s" => \$Opt{'to'},
     "version" => \$Opt{'version'},
@@ -109,6 +111,10 @@ for (@Files) {
                     repos_url($master_file) . "\@$last_merge",
                     $Repos
                 );
+                next LOOP;
+            }
+            if ($Opt{'log'}) {
+                log_range($master_file, $last_merge + 1, $curr_rev);
                 next LOOP;
             }
             if ($Opt{'dry-run'}) {
@@ -333,6 +339,14 @@ sub escape_filename {
     # }}}
 } # escape_filename()
 
+sub log_range {
+    # Show a revision log of the specified range {{{
+    my ($File, $Start, $End) = @_;
+
+    mysyst($CMD_SVN, "log", "-r$Start:$End", $File);
+    # }}}
+}
+
 sub deb_wait {
     # Wait until Enter is pressed if --debug {{{
     $Debug || return;
@@ -382,6 +396,8 @@ Options:
     merge will result in conflicts.
   -h, --help
     Show this help.
+  -l, --log
+    Show a revision log of the remaining merges.
   -s x[\@y], --set x[\@y]
     Set merge source for all filenames on the command line. If \@y is 
     specified, revision y will be used as the merge source, otherwise 
@@ -481,6 +497,10 @@ Can be used to see if the merge will result in conflicts.
 =item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<-l>, B<--log>
+
+Show a revision log of the remaining merges.
 
 =item B<-s>, B<--set> I<x>[@I<y>]
 
