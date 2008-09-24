@@ -24,6 +24,13 @@ my $Debug = 0;
 # Default value, can be overridden in ~/.svndiffrc
 my $Cmd = "vimdiff";
 
+# Change this if the svn executable is non-standard and you don’t want 
+# to use the -e option all the time:
+my $CMD_SVN = "svn";
+
+my $ST_CONFLICT = 'C';
+my $ST_MODIFIED = 'M';
+
 our $progname = $0;
 $progname =~ s#^(.*)/(.+?)$#$2#;
 
@@ -45,13 +52,6 @@ length($rc_file) && read_rcfile($rc_file);
 
 getopts('Cc:e:hp:r:') || die("$progname: Option error. Use -h for help.\n");
 
-# Change this if the svn executable is non-standard and you don’t want 
-# to use the -e option all the time:
-my $CMD_SVN = "svn";
-
-my $ST_CONFLICT = 'C';
-my $ST_MODIFIED = 'M';
-
 $opt_h && usage(0);
 
 length($opt_c) && ($Cmd = $opt_c);
@@ -71,6 +71,7 @@ if (scalar(@ARGV)) {
         if (-f $Curr && !-l $Curr) {
             D("$Curr is a file.");
             my $has_conflict;
+            D("Before PipeFP 1: CMD_SVN = \"$CMD_SVN\"");
             if (open(PipeFP, "$CMD_SVN stat $Curr -q |")) {
                 $has_conflict = (<PipeFP> =~ /$ST_CONFLICT/) ? 1 : 0;
             } else {
@@ -86,6 +87,7 @@ if (scalar(@ARGV)) {
 } else {
     # {{{
     length($opt_r) && die("You need to specify one or more files when using the -r option\n");
+    D("Before PipeFP 2: CMD_SVN = \"$CMD_SVN\"");
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
         my %has_conflict = ();
         while (<PipeFP>) {
@@ -261,6 +263,7 @@ sub read_rcfile {
                 my $el_defaults = $2;
                 D("Inside <defaults></defaults>");
                 D("\$el_defaults \x7B\x7B\x7B\n$el_defaults\n\x7D\x7D\x7D");
+
                 $el_defaults =~
                 s{
                     <diffprog\b(.*?)>(.*?)</diffprog>
@@ -418,8 +421,8 @@ It is a standard XML file with this structure:
 
 (Whitespace is optional and more options will come.)
 
-The string inside the C<diffprog> can be set to whatever your diff 
-program is called as, the default string is "vimdiff".
+The string inside the C<diffprog> elements can be set to whatever your 
+diff program is called as, the default string is "vimdiff".
 
 =back
 
