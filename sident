@@ -19,14 +19,11 @@ our $Debug = 0;
 our ($opt_help, $opt_known, $opt_namesonly, $opt_verbose) =
     (        0,          0,              0,            0);
 
-my $VERSION = "0.0";
-
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
 
 my $rcs_id = '$Id$';
 my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -82,7 +79,7 @@ sub usage {
     my $Retval = shift;
     print(<<END);
 
-$progname v$VERSION -- $id_date
+$rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
