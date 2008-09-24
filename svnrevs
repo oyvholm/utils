@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#=======================================================================
+# $Id$
+# When calling this one-liner instead of svn, a comma-separated list of 
+# the revision numbers is generated. For use in log messages etc.
+# Example: svnrevs -r512:HEAD http://blah.com/path/to/repository
+#=======================================================================
+
+svn log --xml $* | perl -e '$a = join("", <>); $b = $c = ""; $a =~ s/<logentry\b.*?\brevision="(\d+)".*?>/($b .= "${c}r$1", $c = ", ")/egs; print "$b\n";'
