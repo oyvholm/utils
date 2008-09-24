@@ -15,9 +15,9 @@
 use strict;
 use Getopt::Std;
 
-our ($opt_c, $opt_D, $opt_h, $opt_s, $opt_V) =
-    (     0,      0,      0,      0,      0);
-getopts('cDhsV') || die("Option error, use -h for help");
+our ($opt_c, $opt_D, $opt_h, $opt_S, $opt_s, $opt_V) =
+    (     0,      0,      0,      0,      0,      0);
+getopts('cDhSsV') || die("Option error, use -h for help");
 
 my $rcs_id = '$Id$';
 my $stripped_rcs_id = $rcs_id;
@@ -42,6 +42,8 @@ my @Keywords = (
 my $Keyw = join('|', @Keywords); # Used in regexps
 
 $opt_h && usage(0);
+
+$opt_s && $opt_S && die("convkeyw: Cannot mix the -s and -S option.\n");
 
 if ($opt_V) {
     print("$stripped_rcs_id\n");
@@ -87,9 +89,14 @@ sub process_line {
     }
 
     if ($opt_s) {
-        # Strip keywords — remove dollars. This action is destructive 
-        # and has to be last.
+        # Strip keywords — remove dollars, keyword and colon. This 
+        # action is destructive and has to be last.
         $Retval =~ s/\$($Keyw): (.*?) \$/$2/g;
+        $Retval =~ s/\$($Keyw)\$/$1/g;
+    } elsif ($opt_S) {
+        # Strip keywords — remove dollars only. This action is 
+        # destructive and has to be last.
+        $Retval =~ s/\$($Keyw): (.*?) \$/$1: $2/g;
         $Retval =~ s/\$($Keyw)\$/$1/g;
     }
 
@@ -127,6 +134,11 @@ Options:
         WARNING: After using this option, further processing of keywords 
         in the file is impossible. Meant for use in tarballs and 
         releases.
+    -S  Strip dollars from keywords like -s, but leave the keyword 
+        itself and the colon intact. I.e.:
+            \$Id: file.txt 123 2004-01-21 17:12:16Z fjodor \$
+          is changed to
+            Id: file.txt 123 2004-01-21 17:12:16Z fjodor
     -V  Print version of the script:
           $stripped_rcs_id
 
