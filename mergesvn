@@ -69,9 +69,9 @@ LOOP:
 for (@Files) {
     # {{{
     my $File = $_;
-    my $prop_val = `svn propget $PROP_NAME $File`;
+    my $prop_val = `$CMD_SVN propget $PROP_NAME $File`;
     if (!length($prop_val)) {
-        warn("$progname: $File: \"mergesvn\" property not found, " .
+        warn("$progname: $File: \"$PROP_NAME\" property not found, " .
              "skipping file\n");
         next LOOP;
     }
@@ -234,7 +234,7 @@ sub revisions {
     my $Data = "";
     my @Revs = ();
 
-    if (open(PipeFP, "svn log --xml -r$Start:$End $safe_file |")) {
+    if (open(PipeFP, "$CMD_SVN log --xml -r$Start:$End $safe_file |")) {
         $Data = join("", <PipeFP>);
         close(PipeFP);
         $Data =~ s/<logentry\b.*?\brevision="(\d+)".*?>/push(@Revs, "$1")/egs;
@@ -317,7 +317,7 @@ sub usage {
 $rcs_id
 
 Merge changes between Subversion controlled files or directories. 
-Elements without the "mergesvn" property will be ignored. If no 
+Elements without the "$PROP_NAME" property will be ignored. If no 
 filenames are specified on the command line, it reads filenames from 
 stdin.
 
@@ -327,7 +327,7 @@ Options:
 
   -a x, --alias x
     Use x as alias for the master URL. The old value will still be 
-    written to the mergesvn property.
+    written to the $PROP_NAME property.
   -C, --conflict
     Do not merge, but search for the first revision a conflict will 
     occur when a merge is done. After the search is finished, the first 
