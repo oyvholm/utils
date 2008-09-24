@@ -134,7 +134,7 @@
 mergesvn
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: mergesvn 180 2007\-03\-04 12:07:26Z sunny $
+$Id: mergesvn 183 2007\-03\-04 15:38:04Z sunny $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 mergesvn [options] [file [files [...]]]
@@ -158,8 +158,12 @@ These two fields are separated by exactly one space (U+0020).
 .IX Header "OPTIONS"
 .IP "\fB\-a\fR, \fB\-\-alias\fR \fIx\fR" 4
 .IX Item "-a, --alias x"
-Use \fIx\fR as alias for the \s-1URL\s0. The old value will still be written to 
-the mergesvn property.
+Use \fIx\fR as alias for the master \s-1URL\s0. The old value will still be 
+written to the mergesvn property.
+.IP "\fB\-d\fR, \fB\-\-diff\fR" 4
+.IX Item "-d, --diff"
+Instead of merging, show a repository diff between the master \s-1URL\s0 and 
+the versioned element.
 .IP "\fB\-\-dry\-run\fR" 4
 .IX Item "--dry-run"
 Try operation without making any changes.
@@ -176,6 +180,10 @@ Print version information.
 .IP "\fB\-\-debug\fR" 4
 .IX Item "--debug"
 Print debugging messages.
+.SH "BUGS"
+.IX Header "BUGS"
+.IP "The \fIsvn\fR\|(1) client does not support diffs between different repositories (yet), so the \fB\-\-diff\fR option will only work with elements that has the master in the same repository." 4
+.IX Item "The svn client does not support diffs between different repositories (yet), so the --diff option will only work with elements that has the master in the same repository."
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 Made by Øyvind A. Holm <sunny@sunbase.org>.
@@ -200,3 +208,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, \s-1MA\s0  02111\-1307  \s-1USA\s0
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
+\&\fIsvn\fR\|(1)
