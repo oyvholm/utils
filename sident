@@ -17,6 +17,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+    # Initialise option variables {{{
     'debug' => 0,
     'expanded' => 0,
     'filesfrom' => "",
@@ -27,6 +28,7 @@ our %Opt = (
     'verbose' => 0,
     'version' => 0,
     'xml' => 0
+    # }}}
 );
 
 our $progname = $0;
@@ -38,6 +40,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    # Define command line options {{{
     "debug" => \$Opt{'debug'},
     "expanded-only|e" => \$Opt{'expanded'},
     "filenames-from|f=s" => \$Opt{'filesfrom'},
@@ -48,6 +51,7 @@ GetOptions(
     "verbose|v" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'}
+    # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -55,6 +59,7 @@ $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
 my @Keywords = (
+                # List of recognised keywords {{{
                 "Id",
                 "Author", "LastChangedBy",
                 "Date", "LastChangedDate",
@@ -67,6 +72,7 @@ my @Keywords = (
                 "RCSfile",
                 "Source",
                 "State"
+                # }}}
                );
 my $Keyw = $Opt{'known'} ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
 
@@ -80,6 +86,7 @@ END
 my @Files = @ARGV;
 
 if (length($Opt{'filesfrom'})) {
+    # {{{
     if (open(FromFP, "<$Opt{'filesfrom'}")) {
         while(<FromFP>) {
             chomp;
@@ -89,9 +96,11 @@ if (length($Opt{'filesfrom'})) {
     } else {
         die("$progname: $Opt{'filesfrom'}: Cannot read filenames from file: $!\n");
     }
+    # }}}
 }
 
 for (@Files) {
+    # {{{
     my @Out = ();
     my $File = $_;
     if (open(FromFP, "<$File")) {
@@ -156,13 +165,16 @@ for (@Files) {
             }
         }
     }
+    # }}}
 }
 
 $Opt{'xml'} && print("</sident>\n");
 
 sub print_version {
+    # {{{
     xml_print("$rcs_id\n");
     exit(0);
+    # }}}
 }
 
 sub xml_print {
