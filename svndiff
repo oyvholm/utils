@@ -88,7 +88,7 @@ if (scalar(@ARGV)) {
                 $has_conflict = (<PipeFP> =~ /$ST_CONFLICT/) ? 1 : 0;
             } else {
                 warn("$progname: Error opening " .
-                     "\"$CMD_SVN $Curr stat -q\" pipe");
+                     "\"$CMD_SVN $Curr stat -q\" pipe: $!");
             }
             diff_file($Curr, $has_conflict, $opt_revision);
         } else {
@@ -99,7 +99,7 @@ if (scalar(@ARGV)) {
     # }}}
 } else {
     # {{{
-    length($opt_revision) && die("You need to specify one or more " .
+    length($opt_revision) && die("Need to specify one or more " .
                                  "files when using the -r option\n");
     D("Before PipeFP 2: CMD_SVN = \"$CMD_SVN\"");
     if (open(PipeFP, "$CMD_SVN stat -q |")) {
@@ -122,7 +122,7 @@ if (scalar(@ARGV)) {
             (-f $File && !-l $File) && diff_file($File, $has_conflict{$File});
         }
     } else {
-        warn("$progname: Error opening \"$CMD_SVN stat -q\" pipe");
+        warn("$progname: Error opening \"$CMD_SVN stat -q\" pipe: $!");
     }
     # }}}
 }
@@ -144,6 +144,7 @@ sub diff_file {
     my $File2 = "";
     my @rm_files = ();
 
+    D("opt_revision = \"$opt_revision\"");
     if (length($opt_revision)) {
         my ($Rev1, $Rev2);
         my ($tmp1, $tmp2);
@@ -157,13 +158,20 @@ sub diff_file {
             $tmp1 = "$File1.r$Rev1.tmp";
             $tmp2 = "$File1.r$Rev2.tmp";
         } else {
-            die("Revision format error in -r option, use -h for help\n");
+            die("$progname: Revision format error in --revision argument, " .
+                "use -h for help\n");
         }
         D("Rev1 = \"$Rev1\", Rev2 = \"$Rev2\"\n");
         (-e $tmp1)
             && (die("$progname: $tmp1: Temporary file already exists\n"));
         (length($Rev2) && -e $tmp2)
             && (die("$progname: $tmp2: Temporary file already exists\n"));
+        D("tmp1 = \"$tmp1\"");
+        D("tmp2 = \"$tmp2\"");
+        if ($tmp1 eq $tmp2) {
+            warn("$progname: $File1: Start and end revisions are the same\n");
+            return;
+        }
         mysyst("$CMD_SVN cat -r$Rev1 $File1 >$tmp1");
         mysyst("$CMD_SVN cat -r$Rev2 $File1 >$tmp2") if (length($Rev2));
         if (length($Rev2)) {
@@ -185,8 +193,7 @@ sub diff_file {
     (-e $File2) || (warn("$File2: File not found" .
                          length($opt_revision) ? ""
                                                : ", is not under version " .
-                                                 "control" .
-                         "\n"
+                                                 "control\n"
                         ),
                         return
                    );
@@ -206,7 +213,7 @@ sub diff_file {
     for my $curr_rm (@rm_files) {
         D("Removing tempfile \"$curr_rm\"...");
         unlink($curr_rm) || warn("$progname: $curr_rm: " .
-                                 "Can't delete temporary file: $!");
+                                 "Can't delete temporary file: $!\n");
     }
 
     if (!length($opt_revision) && $has_conflict) {
@@ -340,16 +347,17 @@ sub read_rcfile {
                         D("\$rev_diff{$Name} = \"$rev_diff{$Name}\"");
                     } else {
                         warn("$progname: $File: Found empty " .
-                             "<name></name> element\n");
+                             "<name></name> element.\n");
                     }
                     "";
                 }gsex;
+                "";
             }sex;
             print_leftover($el_svndiffrc, "svndiffrc");
         }sex;
         print_leftover($el_top, "top");
     } else {
-        warn("$progname: $File: Can't open rc file for read\n");
+        warn("$progname: $File: Can't open rc file for read: $!\n");
     }
     # }}}
 } # read_rcfile()
@@ -363,7 +371,7 @@ sub print_leftover {
     $Txt =~ s/\s+/ /g;
     defined($Element) || ($Element = "[unknown]");
     if ($Txt =~ /\S/) {
-        warn("Leftover: $Element: \"$Txt\"\n");
+        warn("$progname: Leftover: $Element: \"$Txt\"\n");
     }
     return("");
     # }}}
@@ -434,9 +442,11 @@ svndiff [options] [file [...]]
 
 =head1 DESCRIPTION
 
-Run the diff program on every modified file in current directory and all 
-subdirectories or on the files specified on the command line.
-Needs the svn command-line client unless files are specified.
+Run the specified diff program on every modified file in current 
+directory and all subdirectories or on the files specified on the 
+command line.
+
+The program needs the L<svn(1)> commandline client to run.
 
 =over 4
 
@@ -533,6 +543,28 @@ will count as B<0>.
 Path to a configuration file in another location than F<~/.svndiffrc> .
 
 =back
+
+=head1 USAGE TIPS
+
+=head2 vimdiff mappings
+
+The standard diff program used in this script is L<vimdiff(1)> which in 
+fact is the Vim editor called with another name.
+The main reasons for this are because Vim is Free and widely available, 
+portable, console based and an effective diff tool.
+The following macros makes moving differences between windows easier 
+(can also be put into F<~/.vimrc>):
+
+  " F1: Move differences from the other window to the current window.
+  map <f1> :diffget<cr>]cz.
+  
+  " F2: Move differences from the current window to the other window.
+  map <f2> :diffput<cr>]c
+
+  " F12: Update the syntax highlighting and the diffs. Use this if your 
+  "      diff isn’t properly updated.
+  noremap <f12> :syntax sync fromstart<cr>:diffu<cr>
+  inoremap <f12> <esc>:syntax sync fromstart<cr>:diffu<cr>a
 
 =head1 AUTHOR
 
