@@ -315,7 +315,7 @@ Options:
   -a x, --alias x
     Use x as alias for the master URL. The old value will still be 
     written to the mergesvn property.
-  -c, --conflict
+  -C, --conflict
     Do not merge, but search for the first revision a conflict will 
     occur when a merge is done. After the search is finished, the first 
     revision number of a troublesome patch is printed, and you can 
@@ -402,7 +402,7 @@ These two fields are separated by exactly one space (U+0020).
 Use I<x> as alias for the master URL. The old value will still be 
 written to the mergesvn property.
 
-=item B<-c>, B<--conflict>
+=item B<-C>, B<--conflict>
 
 Do not merge, but search for the first revision a conflict will occur 
 when a merge is done. After the search is finished, the first revision 
