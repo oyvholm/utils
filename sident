@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id: std.pl 69 2004-10-12 08:48:18Z sunny $
+# $Id$
 # Lists RCS-like keywords in files. Replacement for ident(1).
 #
 # Character set: UTF-8
@@ -73,7 +73,7 @@ __END__
 
 =head1 REVISION
 
-$Id: std.pl 69 2004-10-12 08:48:18Z sunny $
+$Id$
 
 =head1 SYNOPSIS
 
@@ -129,4 +129,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id: std.pl 69 2004-10-12 08:48:18Z sunny $
+# End of file $Id$
