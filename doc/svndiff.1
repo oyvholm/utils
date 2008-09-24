@@ -134,7 +134,7 @@
 svndiff
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: svndiff 124 2005\-04\-26 22:38:21Z sunny256 $
+$Id: svndiff 126 2005\-04\-26 23:03:00Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 svndiff [options] [file [...]]
@@ -180,12 +180,10 @@ Run the external diff command against previous revisions:
 A configuration file where you can store your own settings.
 It is a standard \s-1XML\s0 file with this structure:
 .Sp
-.Vb 6
+.Vb 4
 \&  <svndiffrc>
-\&    <defaults>
-\&      <diffprog>vimdiff</diffprog>
-\&      <svnclient>svn</svnclient>
-\&    </defaults>
+\&    <diffprog>vimdiff</diffprog>
+\&    <svnclient>svn</svnclient>
 \&  </svndiffrc>
 .Ve
 .Sp
