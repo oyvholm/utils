@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "MERGESVN 1"
-.TH MERGESVN 1 "2007-03-04" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH MERGESVN 1 "2007-03-05" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 mergesvn
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: mergesvn 183 2007\-03\-04 15:38:04Z sunny $
+$Id: mergesvn 187 2007\-03\-05 16:38:47Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 mergesvn [options] [file [files [...]]]
@@ -160,6 +160,13 @@ These two fields are separated by exactly one space (U+0020).
 .IX Item "-a, --alias x"
 Use \fIx\fR as alias for the master \s-1URL\s0. The old value will still be 
 written to the mergesvn property.
+.IP "\fB\-c\fR, \fB\-\-conflict\fR" 4
+.IX Item "-c, --conflict"
+Do not merge, but search for the first revision a conflict will occur 
+when a merge is done. After the search is finished, the first revision 
+number of a troublesome patch is printed, and you can choose by using 
+the \-t option if you want to include the conflicting revision in the 
+merge.
 .IP "\fB\-d\fR, \fB\-\-diff\fR" 4
 .IX Item "-d, --diff"
 Instead of merging, show a repository diff between the master \s-1URL\s0 and 
