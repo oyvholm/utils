@@ -23,11 +23,14 @@ our %Opt = (
     'conflict' => 0,
     'create-rc' => 0,
     'debug' => 0,
-    'diffargs' => "",
-    'diffcmd' => "",
+    'diff-cmd' => "",
+    'diffargs' => "", # DEPRECATED
+    'diffcmd' => "", # DEPRECATED
+    'extensions' => "",
     'help' => 0,
     'revision' => "",
-    'svncmd' => "",
+    'svn-cmd' => "",
+    'svncmd' => "", # DEPRECATED
     'verbose' => 0,
     'version' => 0,
 );
@@ -44,14 +47,36 @@ GetOptions(
     "conflict|C" => \$Opt{'conflict'},
     "create-rc" => \$Opt{'create-rc'},
     "debug" => \$Opt{'debug'},
-    "diffargs|p=s" => \$Opt{'diffargs'},
-    "diffcmd|c=s" => \$Opt{'diffcmd'},
+    "diff-cmd=s" => \$Opt{'diff-cmd'},
+    "diffargs|p=s" => \$Opt{'diffargs'}, # DEPRECATED
+    "diffcmd|c=s" => \$Opt{'diffcmd'}, # DEPRECATED
+    "extensions|x=s" => \$Opt{'extensions'},
     "help|h" => \$Opt{'help'},
     "revision|r=s" => \$Opt{'revision'},
-    "svncmd|e=s" => \$Opt{'svncmd'},
+    "svn-cmd|e=s" => \$Opt{'svn-cmd'},
+    "svncmd=s" => \$Opt{'svncmd'}, # DEPRECATED
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 ) || die("$progname: Option error. Use -h for help.\n");
+
+deprecated("diffargs", "extensions", "--diffargs (-p)", "--extensions (-x)");
+deprecated("diffcmd", "diff-cmd", "--diffcmd (-c)", "--diff-cmd");
+deprecated("svncmd", "svn-cmd", "--svncmd", "--svn-cmd (-e)");
+
+sub deprecated {
+    # Temporary subroutine until the old versions of the options are 
+    # removed.
+    # {{{
+    my ($old_name, $new_name, $Old, $New) = @_;
+
+    if (length($Opt{$old_name})) {
+        warn("$progname: WARNING: The use of the $Old option " .
+        "is deprecated, use $New instead\n");
+        $Opt{$new_name} = $Opt{$old_name};
+        $Opt{$old_name} = undef;
+    }
+    # }}}
+} # deprecated()
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'version'} && print_version();
@@ -115,9 +140,9 @@ END
     exit(0);
 }
 
-length($Opt{'diffcmd'})  && ($Cmd = $Opt{'diffcmd'});
-length($Opt{'diffargs'}) && ($Cmd .= " $Opt{'diffargs'}");
-length($Opt{'svncmd'})   && ($CMD_SVN = $Opt{'svncmd'});
+length($Opt{'diff-cmd'})  && ($Cmd = $Opt{'diff-cmd'});
+length($Opt{'extensions'}) && ($Cmd .= " $Opt{'extensions'}");
+length($Opt{'svn-cmd'})   && ($CMD_SVN = $Opt{'svn-cmd'});
 
 my $stat_chars = "$ST_CONFLICT$ST_MODIFIED";
 $Opt{'conflict'} && ($stat_chars = "$ST_CONFLICT");
@@ -489,13 +514,13 @@ Options:
     Send a configuration file example to stdout. To create a new 
     ~/.svndiffrc file, write
       $progname --create-rc >~/.svndiffrc
-  -c, --diffcmd x
+  --diff-cmd x
     Use x as the diff command. Default: "$Cmd".
-  -e, --svncmd x
+  -e, --svn-cmd x
     Use x as the svn executable. Default: "$CMD_SVN".
   -h, --help
     Show this help.
-  -p, --diffargs x
+  -x, --extensions x
     Use x as parameters to the diff program.
   -r, --revision x
     Run a $Cmd command against previous revisions:
@@ -582,19 +607,19 @@ F<~/.svndiffrc> file, write
 
   $progname --create-rc >~/.svndiffrc
 
-=item B<-c>, B<--diffcmd> x
+=item B<--diff-cmd> x
 
 Use x as the diff command.
 Default: "svndiff".
 
-=item B<-e>, B<--svncmd> x
+=item B<-e>, B<--svn-cmd> x
 
 Use x as the svn executable.
 Example:
 
   svndiff -e /usr/local/bin/svn-1.0
 
-=item B<-p>, B<--diffargs> x
+=item B<-x>, B<--extensions> x
 
 Use x as parameters to the diff program.
 
