@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Generates statistics from a Subversion repository.
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
@@ -17,7 +17,7 @@ $| = 1;
 our ($opt_help) =
     (        0);
 
-my $VERSION = "0.0";
+my $VERSION = "0.0.0";
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
@@ -63,7 +63,7 @@ __END__
 
 =head1 NAME
 
-
+svnstat
 
 =head1 REVISION
 
@@ -71,25 +71,71 @@ $Id$
 
 =head1 SYNOPSIS
 
-
+svnstat [options] [[file|dir|URL] ...]]
 
 =head1 DESCRIPTION
 
-
+Generates various statistics from a Subversion repository.
 
 =head1 OPTIONS
 
+(Not implemented yet, only drafts.)
+
 =over 4
+
+=item B<--author> x
+
+Use only data from author x. Can be repeated.
 
 =item B<-h>, B<--help>
 
 Print a brief help summary.
 
+=item B<--commits-per> timespec
+
+Generate a curve with the number of commits per I<timespec>.
+Valid strftime(3)-like modifiers:
+
+=over 4
+
+=item B<y>
+
+year
+
+=item B<m>
+
+month
+
+=item B<w>
+
+week
+
+=item B<d>
+
+day
+
+=item B<H>
+
+hour
+
+=item B<M>
+
+minute
+
+=item B<S>
+
+second
+
+|1d|1h|2h|4w|1m|2y
+
+=back
+
+
 =back
 
 =head1 BUGS
 
-
+No code, no bugs.
 
 =head1 AUTHOR
 
