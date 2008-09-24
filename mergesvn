@@ -117,7 +117,7 @@ for (@Files) {
             }
             if ($Opt{'log'}) {
                 if ($last_merge == $curr_rev) {
-                    print("No revisions found\n");
+                    print(STDERR "No revisions found\n");
                 } else {
                     log_range($master_file, $last_merge + 1, $curr_rev);
                 }
@@ -136,7 +136,7 @@ for (@Files) {
                 );
             }
             push(@new_prop, "$curr_rev $orig_master");
-            print(
+            print(STDERR
                 "$progname: $File: Merged r$last_merge:$curr_rev (" .
                 join(", ", revisions($master_file, $last_merge, $curr_rev)) .
                 ")\n"
@@ -204,17 +204,17 @@ sub find_conflict {
     my ($Src, $Dest, $Start, $End) = @_;
 
     D("find_conflict('$Src', '$Dest', '$Start', '$End')");
-    print("$progname: $Dest: Scanning revision range r$Start:$End " .
+    print(STDERR "$progname: $Dest: Scanning revision range r$Start:$End " .
           "for conflicts\n");
     my @Array = revisions($Src, $Start, $End);
     if (!scalar(@Array)) {
-        print("No revisions found.\n");
+        print(STDERR "No revisions found.\n");
         return undef;
     }
 
     my $rev_count = scalar(@Array);
-    printf("$rev_count revision%s to check\n", $rev_count == 1 ? "" : "s");
-    print("(" . join(", ", @Array) . ")\n");
+    printf(STDERR "$rev_count revision%s to check\n", $rev_count == 1 ? "" : "s");
+    print(STDERR "(" . join(", ", @Array) . ")\n");
 
     my $min_block = 0;
     my ($min_pos, $max_pos) = (0, $rev_count);
@@ -228,16 +228,16 @@ sub find_conflict {
         my $mid_pos = int(($min_pos + $max_pos) / 2);
         last if ($has_checked && ($mid_pos == $last_mid));
         my $Rev = $Array[$mid_pos];
-        print("Checking revision $Rev ($mid_pos)...");
+        print(STDERR "Checking revision $Rev ($mid_pos)...");
         if (!has_conflict($Src, $Dest, $Start, $Rev)) {
-            print("No conflict\n");
+            print(STDERR "No conflict\n");
             $min_pos = $mid_pos;
             D("min_pos set to '$mid_pos'");
             if (!$last_good || ($Rev > $last_good)) {
                 $last_good = $Rev;
             }
         } else {
-            print("Conflict\n");
+            print(STDERR "Conflict\n");
             $max_pos = $mid_pos;
             D("max_pos set to '$mid_pos'");
             if (!$first_conflict || ($Rev < $first_conflict)) {
@@ -247,11 +247,11 @@ sub find_conflict {
         $has_checked = 1;
         $last_mid = $mid_pos;
     }
-    print($first_conflict
+    print(STDERR $first_conflict
         ? "First conflict at r$first_conflict. "
         : "No conflicts found. "
     );
-    print($last_good
+    print(STDERR $last_good
         ? "Last revision without conflict at r$last_good.\n"
         : "No revisions without conflicts found.\n"
     );
@@ -329,7 +329,7 @@ sub mysyst {
     my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
     D("$system_txt");
     deb_wait();
-    print("---- @_\n");
+    print(STDERR "---- @_\n");
     system(@_);
     # }}}
 } # mysyst()
@@ -362,7 +362,7 @@ sub log_range {
 sub deb_wait {
     # Wait until Enter is pressed if --debug {{{
     $Debug || return;
-    print("debug: Press ENTER...");
+    print(STDERR "debug: Press ENTER...");
     <STDIN>;
     # }}}
 } # deb_wait()
