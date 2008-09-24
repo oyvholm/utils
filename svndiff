@@ -21,11 +21,27 @@ our ($opt_C, $opt_c, $opt_e, $opt_h, $opt_p, $opt_r) =
 
 my $Debug = 0;
 
-# Change this to the default diff command to use
+# Default value, can be overridden in ~/.svndiffrc
 my $Cmd = "vimdiff";
 
 our $progname = $0;
 $progname =~ s#^(.*)/(.+?)$#$2#;
+
+my $rc_file = defined($ENV{SVNDIFFRC}) ? $ENV{SVNDIFFRC} : "";
+
+unless (length($rc_file)) {
+    if (defined($ENV{HOME})) {
+        $rc_file = "$ENV{HOME}/.svndiffrc";
+    } else {
+        warn("Both SVNDIFFRC and HOME environment variables not defined, " .
+             "unable to read rc file.\n" .
+             "Using default values. To override, " .
+             "define the SVNDIFFRC variable.\n"
+        );
+    }
+}
+
+length($rc_file) && read_rcfile($rc_file);
 
 getopts('Cc:e:hp:r:') || die("$progname: Option error. Use -h for help.\n");
 
@@ -216,6 +232,90 @@ sub mysyst {
     # }}}
 } # mysyst()
 
+sub read_rcfile {
+    # {{{
+    my $File = shift;
+
+    D("read_rcfile(\"$File\")");
+    if (open(RcFP, "<$File")) {
+        my $all_rc = join("", <RcFP>);
+        close(RcFP);
+        D("\$all_rc \x7B\x7B\x7B\n$all_rc\n\x7D\x7D\x7D");
+
+        my $el_top = $all_rc;
+        $el_top =~ s/<!--.*?-->//gsx;
+
+        $el_top =~
+        s{
+            <svndiffrc\b(.*?)>(.*?)</svndiffrc>
+        }
+        {
+            my $el_svndiffrc = $2;
+            D("Inside <svndiffrc></svndiffrc>");
+            D("\$el_svndiffrc \x7B\x7B\x7B\n$el_svndiffrc\n\x7D\x7D\x7D");
+            $el_svndiffrc =~
+            s{
+                <defaults\b(.*?)>(.*?)</defaults>
+            }
+            {
+                my $el_defaults = $2;
+                D("Inside <defaults></defaults>");
+                D("\$el_defaults \x7B\x7B\x7B\n$el_defaults\n\x7D\x7D\x7D");
+                $el_defaults =~
+                s{
+                    <diffprog\b(.*?)>(.*?)</diffprog>
+                }
+                {
+                    $Cmd = xml_to_txt($2);
+                    D("read_rcfile(): \$Cmd = \"$Cmd\"");
+                    "";
+                }sex;
+                print_leftover($el_defaults, "defaults");
+            }sex;
+            print_leftover($el_svndiffrc, "svndiffrc");
+        }sex;
+        print_leftover($el_top, "top");
+    } else {
+        warn("$progname: $File: Can't open rc file for read\n");
+    }
+    # }}}
+} # read_rcfile()
+
+sub print_leftover {
+    # Print all non-whitespace in a string, used to spot erroneous XML. {{{
+    $Debug || return("");
+    my ($Txt, $Element) = @_;
+    $Txt =~ s/^\s+//gs;
+    $Txt =~ s/\s+$//gs;
+    $Txt =~ s/\s+/ /g;
+    defined($Element) || ($Element = "[unknown]");
+    if ($Txt =~ /\S/) {
+        warn("Leftover: $Element: \"$Txt\"\n");
+    }
+    return("");
+    # }}}
+} # print_leftover()
+
+sub txt_to_xml {
+	# {{{
+	my $Txt = shift;
+	$Txt =~ s/&/&amp;/gs;
+	$Txt =~ s/</&lt;/gs;
+	$Txt =~ s/>/&gt;/gs;
+	return($Txt);
+	# }}}
+} # txt_to_xml()
+
+sub xml_to_txt {
+	# {{{
+	my $Txt = shift;
+	$Txt =~ s/&lt;/</gs;
+	$Txt =~ s/&gt;/>/gs;
+	$Txt =~ s/&amp;/&/gs;
+	return($Txt);
+	# }}}
+} # xml_to_txt()
+
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
@@ -300,6 +400,36 @@ Run the external diff command against previous revisions:
     Compare your working file against r123.
 
 =back
+
+=head1 FILES
+
+=over 4
+
+=item F<~/.svndiffrc>
+
+A configuration file where you can store your own settings.
+It is a standard XML file with this structure:
+
+  <svndiffrc>
+    <defaults>
+      <diffprog>vimdiff</diffprog>
+    </defaults>
+  </svndiffrc>
+
+(Whitespace is optional and more options will come.)
+
+The string inside the C<diffprog> can be set to whatever your diff 
+program is called as, the default string is "vimdiff".
+
+=back
+
+=head1 ENVIRONMENT VARIABLES
+
+=over 4
+
+=item I<SVNDIFFRC>
+
+Path to a configuration file in another location than F<~/.svndiffrc> .
 
 =head1 AUTHOR
 
