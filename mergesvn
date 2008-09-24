@@ -147,9 +147,10 @@ sub usage {
 
 $rcs_id
 
-Merge changes between Subversion controlled files. Files without the 
-"mergesvn" property will be ignored. If no filenames are specified on 
-the command line, it reads filenames from stdin.
+Merge changes between Subversion controlled files or directories. 
+Elements without the "mergesvn" property will be ignored. If no 
+filenames are specified on the command line, it reads filenames from 
+stdin.
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -205,12 +206,13 @@ mergesvn [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Merge changes between Subversion controlled files.
-Files without the "mergesvn" property will be ignored.
+Merge changes between Subversion controlled files or directories.
+Elements without the "mergesvn" property will be ignored.
 If no filenames are specified on the command line, it reads filenames 
 from stdin.
 
-Needs to have the following property set to work:
+Files or directories to be controlled by mergesvn must have the 
+following property set:
 
 =over 4
 
@@ -218,7 +220,7 @@ Needs to have the following property set to work:
 
 =back
 
-Which contains one line for every place to merge from.
+Contains one line for every place to merge from.
 The line consists of two elements, the revision in the master file the 
 last merge was done, and path or URL to the master file.
 These two fields are separated by exactly one space (U+0020).
@@ -236,6 +238,10 @@ the mergesvn property.
 
 Print a brief help summary.
 
+=item B<-t>, B<--to> I<x>
+
+Merge to revision I<x> instead of HEAD.
+
 =item B<--version>
 
 Print version information.
@@ -245,10 +251,6 @@ Print version information.
 Print debugging messages.
 
 =back
-
-=head1 BUGS
-
-
 
 =head1 AUTHOR
 
