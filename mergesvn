@@ -74,15 +74,12 @@ for (@Files) {
     D("Props = (\"" . join("\", \"", @Props) . "\")");
     for my $Curr (@Props) {
         if ($Curr =~ /^(\d+) (.+)$/) {
-            my ($last_merge, $master_file) =
+            my ($last_merge, $orig_master) =
                (         $1,           $2);
-            $master_file =~ s/[\r\n]+$//;
-            my $safe_master_file = escape_filename(
-                length($Opt{'alias'}) ? $Opt{'alias'} : $master_file
-            );
+            $orig_master =~ s/[\r\n]+$//;
+            my $master_file = length($Opt{'alias'}) ? $Opt{'alias'} : $orig_master;
             mysyst($CMD_SVN, "update", $File);
-            my $curr_rev = `$CMD_SVN log -r$Opt{'to'}:1 --limit 1 --xml $safe_master_file`; # FIXME
-            $curr_rev =~ s/^.*<logentry.+?revision="(\d+)".*?>.*/$1/s;
+            my $curr_rev = highest_revision($master_file, $Opt{'to'});
             if ($curr_rev !~ /^\d+$/) {
                 warn("$progname: $master_file: Unable to get newest revision\n");
                 next LOOP;
@@ -91,17 +88,15 @@ for (@Files) {
                 mysyst(
                     $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
                     "--dry-run",
-                    length($Opt{'alias'}) ? $Opt{'alias'} : $master_file,
-                    $File
+                    $master_file, $File
                 );
             } else {
                 mysyst(
                     $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
-                    length($Opt{'alias'}) ? $Opt{'alias'} : $master_file,
-                    $File
+                    $master_file, $File
                 );
             }
-            push(@new_prop, "$curr_rev $master_file");
+            push(@new_prop, "$curr_rev $orig_master");
         } else {
             warn("$File: \"$Curr\": Invalid property line\n");
             next LOOP;
@@ -110,6 +105,18 @@ for (@Files) {
     $Opt{'dry-run'} || mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
     # }}}
 }
+
+sub highest_revision {
+    # Return the newest revision of a versioned element inside a 
+    # specified revision range
+    # {{{
+    my ($Path, $max_rev) = @_;
+    my $safe_path = escape_filename($Path);
+    my $highest_rev = `$CMD_SVN log -r$max_rev:1 --limit 1 --xml $safe_path`; # FIXME
+    $highest_rev =~ s/^.*?<logentry.+?revision="(\d+)".*?>.*/$1/s;
+    return($highest_rev);
+    # }}}
+} # highest_revision()
 
 sub mysyst {
     # {{{
