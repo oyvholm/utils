@@ -4,9 +4,18 @@
 # $Id$
 # Backup of active Subversion repositories
 #
-# Character set: UTF-8
-# License: GNU General Public License ♥
-# ©opyleft 2004 Øyvind A. Holm <sunny@sunbase.org>
+# Character set:
+#   UTF-8
+# Project page:
+#   http://svnutils.tigris.org
+# Subversion repository:
+#   http://svn.sunbase.org/repos/svnutils
+# License:
+#   GNU General Public License
+# Authors:
+#   Use "svn blame" or "svn log" against the Subversion repository to
+#   nail the responsible guys. As of 2004-06-07, it is only:
+#     - sunny, Øyvind A. Holm <sunny@sunbase.org>
 #===============================================================
 
 use strict;
@@ -161,7 +170,15 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 AUTHOR
 
-Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+Use "svn blame" or "svn log" against the Subversion repository to nail the responsible guys.
+
+As of 2004-06-07, it is only:
+
+=over 4
+
+=item sunny — Øyvind A. Holm <sunny@sunbase.org>
+
+=back
 
 =head1 LICENCE
 
