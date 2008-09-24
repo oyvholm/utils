@@ -65,7 +65,7 @@ sub process_line {
 sub usage {
     # Send help text to stdout {{{
     my $Retval = shift;
-    print <<END
+    print <<END;
 
 Syntax: convkeyw [options] file [file [...]]
 
