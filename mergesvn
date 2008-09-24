@@ -87,7 +87,7 @@ for (@Files) {
                                 ? $Opt{'alias'}
                                 : $orig_master;
             my $curr_rev = highest_revision($master_file, $Opt{'to'});
-            if ($curr_rev !~ /^\d+$/) {
+            if (!legal_revision($curr_rev)) {
                 warn("$progname: $master_file: " .
                      "Unable to get newest revision\n");
                 next LOOP;
@@ -131,6 +131,16 @@ for (@Files) {
     $Opt{'dry-run'} ||
         mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
     # }}}
+}
+
+sub legal_revision {
+    my $Rev = shift;
+    my $Retval = 1;
+
+    if ($Rev =~ /[^\d]/ || !length($Rev)) {
+        $Retval = 0;
+    }
+    return($Retval);
 }
 
 sub find_conflict {
@@ -244,6 +254,7 @@ sub highest_revision {
     my $safe_path = escape_filename($Path);
     my $highest_rev = `$CMD_SVN log -r$max_rev:1 --limit 1 --xml $safe_path`; # FIXME
     $highest_rev =~ s/^.*?<logentry.+?revision="(\d+)".*?>.*/$1/s;
+    legal_revision($highest_rev) || ($highest_rev = "");
     return($highest_rev);
     # }}}
 } # highest_revision()
