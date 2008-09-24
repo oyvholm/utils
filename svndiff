@@ -257,33 +257,22 @@ sub read_rcfile {
             D("\$el_svndiffrc \x7B\x7B\x7B\n$el_svndiffrc\n\x7D\x7D\x7D");
             $el_svndiffrc =~
             s{
-                <defaults\b(.*?)>(.*?)</defaults>
+                <diffprog\b(.*?)>(.*?)</diffprog>
             }
             {
-                my $el_defaults = $2;
-                D("Inside <defaults></defaults>");
-                D("\$el_defaults \x7B\x7B\x7B\n$el_defaults\n\x7D\x7D\x7D");
+                $Cmd = xml_to_txt($2);
+                D("read_rcfile(): \$Cmd = \"$Cmd\"");
+                "";
+            }sex;
 
-                $el_defaults =~
-                s{
-                    <diffprog\b(.*?)>(.*?)</diffprog>
-                }
-                {
-                    $Cmd = xml_to_txt($2);
-                    D("read_rcfile(): \$Cmd = \"$Cmd\"");
-                    "";
-                }sex;
-
-                $el_defaults =~
-                s{
-                    <svnclient\b(.*?)>(.*?)</svnclient>
-                }
-                {
-                    $CMD_SVN = xml_to_txt($2);
-                    D("read_rcfile(): \$CMD_SVN = \"$CMD_SVN\"");
-                    "";
-                }sex;
-                print_leftover($el_defaults, "defaults");
+            $el_svndiffrc =~
+            s{
+                <svnclient\b(.*?)>(.*?)</svnclient>
+            }
+            {
+                $CMD_SVN = xml_to_txt($2);
+                D("read_rcfile(): \$CMD_SVN = \"$CMD_SVN\"");
+                "";
             }sex;
             print_leftover($el_svndiffrc, "svndiffrc");
         }sex;
@@ -424,10 +413,8 @@ A configuration file where you can store your own settings.
 It is a standard XML file with this structure:
 
   <svndiffrc>
-    <defaults>
-      <diffprog>vimdiff</diffprog>
-      <svnclient>svn</svnclient>
-    </defaults>
+    <diffprog>vimdiff</diffprog>
+    <svnclient>svn</svnclient>
   </svndiffrc>
 
 (Whitespace is optional and more options will come.)
