@@ -347,7 +347,11 @@ sub log_range {
     # Show a revision log of the specified range {{{
     my ($File, $Start, $End) = @_;
 
-    mysyst($CMD_SVN, "log", "-r$Start:$End", $File);
+    if ($Opt{'verbose'}) {
+        mysyst($CMD_SVN, "log", "-r$Start:$End", "-v", $File);
+    } else {
+        mysyst($CMD_SVN, "log", "-r$Start:$End", $File);
+    }
     # }}}
 } # log_range()
 
@@ -410,7 +414,7 @@ Options:
   -t x, --to x
     Merge to revision x instead of HEAD.
   -v, --verbose
-    Increase level of verbosity. Can be repeated.
+    Use the -v option together with svn commands that accepts it.
   --version
     Print version information.
   --debug
@@ -537,6 +541,10 @@ Increase level of verbosity. Can be repeated.
 =item B<--version>
 
 Print version information.
+
+=item B<-v>, B<--verbose>
+
+Use the -v option together with svn commands that accepts it.
 
 =item B<--debug>
 
