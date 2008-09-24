@@ -130,6 +130,10 @@ for (@Files) {
                     $master_file, $File
                 );
             } else {
+                if ($last_merge == $curr_rev) {
+                    print(STDERR "$progname: $File: No new revisions available (r$last_merge)\n");
+                    next LOOP;
+                }
                 mysyst(
                     $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
                     $master_file, $File
