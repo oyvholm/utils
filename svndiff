@@ -48,7 +48,7 @@ unless (length($rc_file)) {
     }
 }
 
-length($rc_file) && read_rcfile($rc_file);
+length($rc_file) && (-e $rc_file) && read_rcfile($rc_file);
 
 getopts('Cc:e:hp:r:') || die("$progname: Option error. Use -h for help.\n");
 
