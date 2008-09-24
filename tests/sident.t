@@ -85,6 +85,103 @@ END
 
 =cut
 
+diag("Testing without options...");
+testcmd("$CMD sident-files/textfile", # {{{
+    <<'END',
+
+sident-files/textfile:
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Date: 1999/12/23 21:59:22 $
+     $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Id$
+     $Weirdo: blah blah $
+END
+    "",
+    "Read textfile, no arguments",
+);
+
+# }}}
+testcmd("$CMD sident-files/random", # {{{
+    <<'END',
+
+sident-files/random:
+     $Id$
+END
+    "",
+    "Read random binary data, no arguments",
+);
+
+# }}}
+diag("Testing stdin...");
+testcmd("$CMD - <sident-files/random", # {{{
+    <<'END',
+
+-:
+     $Id$
+END
+    "",
+    "Read random binary data from stdin with hyphen as filename",
+);
+
+# }}}
+testcmd("cat sident-files/random | $CMD -", # {{{
+    <<'END',
+
+-:
+     $Id$
+END
+    "",
+    "Read random binary through pipe, hyphen filename",
+);
+
+# }}}
+diag("Testing -e (--expanded-only) option...");
+testcmd("$CMD -e sident-files/unexpanded", # {{{
+    "",
+    "",
+    "description",
+);
+
+# }}}
+diag("Testing -f (--filenames-from) option...");
+testcmd("$CMD -f sident-files/filenames", # {{{
+    <<'END',
+
+sident-files/random:
+     $Id$
+
+sident-files/textfile:
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Date: 1999/12/23 21:59:22 $
+     $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Id$
+     $Weirdo: blah blah $
+
+sident-files/unexpanded:
+     $URL$
+     $HeadURL$
+     $LastChangedBy$
+     $Date$
+     $LastChangedDate$
+     $Rev$
+     $Revision$
+     $LastChangedRevision$
+     $Id$
+     $RealLyuNKoWN$
+END
+    "sident: does_not_exist: Cannot read file: No such file or directory\n",
+    "Read filenames from file, including one non-existing",
+);
+
+# }}}
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -99,6 +196,53 @@ unlike(`$CMD -h`, # {{{
 );
 
 # }}}
+diag("Testing -k (--known-keywords-only) option...");
+testcmd("$CMD -k sident-files/textfile", # {{{
+    <<'END',
+
+sident-files/textfile:
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Date: 1999/12/23 21:59:22 $
+     $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Id$
+END
+    "",
+    "List only known keywords",
+);
+
+# }}}
+diag("Testing -l (--filenames-only) option...");
+testcmd("$CMD -le sident-files/*", # {{{
+    <<'END',
+sident-files/random
+sident-files/textfile
+END
+    "",
+    "Only list names of files with expanded keywords",
+);
+
+# }}}
+diag("Testing -u (--unique-keywords) option...");
+testcmd("$CMD -u sident-files/textfile", # {{{
+    <<'END',
+
+sident-files/textfile:
+     $Id$
+     $Id$
+     $Date: 1999/12/23 21:59:22 $
+     $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Id$
+     $Weirdo: blah blah $
+END
+    "",
+    "Remove duplicates from textfile",
+);
+
+# }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',
@@ -107,11 +251,172 @@ likecmd("$CMD -hv", # {{{
 );
 
 # }}}
+testcmd("$CMD -v sident-files/*", # {{{
+    <<'END',
+
+sident-files/filenames:
+
+sident-files/nothing_here:
+
+sident-files/random:
+     $Id$
+
+sident-files/textfile:
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Id$
+     $Date: 1999/12/23 21:59:22 $
+     $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Id$
+     $Weirdo: blah blah $
+
+sident-files/unexpanded:
+     $URL$
+     $HeadURL$
+     $LastChangedBy$
+     $Date$
+     $LastChangedDate$
+     $Rev$
+     $Revision$
+     $LastChangedRevision$
+     $Id$
+     $RealLyuNKoWN$
+END
+    "",
+    "Also list files without keywords",
+);
+
+# }}}
+testcmd("$CMD -vx sident-files/*", # {{{
+    <<'END',
+<?xml version="1.0"?>
+<sident>
+  <file>
+    <filename>sident-files/filenames</filename>
+  </file>
+  <file>
+    <filename>sident-files/nothing_here</filename>
+  </file>
+  <file>
+    <filename>sident-files/random</filename>
+    <keywords>
+      <keyword>$Id$</keyword>
+    </keywords>
+  </file>
+  <file>
+    <filename>sident-files/textfile</filename>
+    <keywords>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Date: 1999/12/23 21:59:22 $</keyword>
+      <keyword>$Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Weirdo: blah blah $</keyword>
+    </keywords>
+  </file>
+  <file>
+    <filename>sident-files/unexpanded</filename>
+    <keywords>
+      <keyword>$URL$</keyword>
+      <keyword>$HeadURL$</keyword>
+      <keyword>$LastChangedBy$</keyword>
+      <keyword>$Date$</keyword>
+      <keyword>$LastChangedDate$</keyword>
+      <keyword>$Rev$</keyword>
+      <keyword>$Revision$</keyword>
+      <keyword>$LastChangedRevision$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$RealLyuNKoWN$</keyword>
+    </keywords>
+  </file>
+</sident>
+END
+    "",
+    "Output XML, including files without keywords",
+);
+
+# }}}
 diag("Testing --version option...");
 likecmd("$CMD --version", # {{{
     '/\$Id: .*? \$/',
     '/^$/',
     "Option --version returns Id string",
+);
+
+# }}}
+diag("Testing -x (--xml) option...");
+testcmd("$CMD -x sident-files/textfile", # {{{
+    <<'END',
+<?xml version="1.0"?>
+<sident>
+  <file>
+    <filename>sident-files/textfile</filename>
+    <keywords>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Date: 1999/12/23 21:59:22 $</keyword>
+      <keyword>$Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Weirdo: blah blah $</keyword>
+    </keywords>
+  </file>
+</sident>
+END
+    "",
+    "Output XML from textfile",
+);
+
+# }}}
+testcmd("$CMD -ux sident-files/textfile", # {{{
+    <<'END',
+<?xml version="1.0"?>
+<sident>
+  <file>
+    <filename>sident-files/textfile</filename>
+    <keywords>
+      <keyword>$Id$</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Date: 1999/12/23 21:59:22 $</keyword>
+      <keyword>$Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $</keyword>
+      <keyword>$Id$</keyword>
+      <keyword>$Weirdo: blah blah $</keyword>
+    </keywords>
+  </file>
+</sident>
+END
+    "",
+    "Output XML, remove duplicates",
+);
+
+# }}}
+diag("Use all options...");
+testcmd("$CMD sident-files", # {{{
+    "",
+    "",
+    "Ignore directories",
+);
+
+# }}}
+diag("Error conditions...");
+testcmd("$CMD sident-files", # {{{
+    "",
+    "",
+    "Ignore directories",
+);
+
+# }}}
+testcmd("$CMD sident-files/shbvkdsvsdfv", # {{{
+    "",
+    "sident: sident-files/shbvkdsvsdfv: Cannot read file: No such file or directory\n",
+    "File not found",
 );
 
 # }}}
