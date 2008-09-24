@@ -129,12 +129,12 @@
 .\" ========================================================================
 .\"
 .IX Title "SIDENT 1"
-.TH SIDENT 1 "2005-08-21" "perl v5.8.4" "User Contributed Perl Documentation"
+.TH SIDENT 1 "2005-08-23" "perl v5.8.4" "User Contributed Perl Documentation"
 .SH "NAME"
 sident
 .SH "REVISION"
 .IX Header "REVISION"
-$Id: sident 155 2005\-08\-20 22:10:52Z sunny256 $
+$Id: sident 157 2005\-08\-22 22:52:41Z sunny256 $
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 sident [options] [file [file [...]]]
@@ -153,6 +153,9 @@ Only list keywords known to Subversion and \s-1CVS\s0.
 .IX Item "-l, --filenames-only"
 Suppress normal output; only list names of files which contains 
 keywords.
+.IP "\fB\-u\fR, \fB\-\-unique\-keywords\fR" 4
+.IX Item "-u, --unique-keywords"
+Only list keywords once per file, avoid duplicates.
 .IP "\fB\-v\fR, \fB\-\-verbose\fR" 4
 .IX Item "-v, --verbose"
 In addition to list keywords, also list names of files without keywords.
