@@ -41,7 +41,7 @@ for (@ARGV) {
     if (open(FromFP, "<$File")) {
         while (<FromFP>) {
             s/(\$($Keyw)\$)/push(@Out, "     $1\n")/ge;
-            s/(\$($Keyw): .*? \$)/push(@Out, "     $1\n")/ge;
+            s/(\$($Keyw)::? .*? \$)/push(@Out, "     $1\n")/ge;
         }
         if (scalar(@Out)) {
             print("\n$File:\n");
