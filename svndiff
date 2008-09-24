@@ -432,11 +432,12 @@ Only run diff on conflicted files.
 
 =item B<-c> x
 
-Use x as the diff command. Default: "svndiff".
+Use x as the diff command.
+Default: "svndiff".
 
 =item B<-e> x
 
--e x  Use x as the svn executable.
+Use x as the svn executable.
 Example:
 
   svndiff -e /usr/local/bin/svn-1.0
@@ -548,6 +549,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
+
+L<svn(1)>
 
 =cut
 
