@@ -7,4 +7,5 @@
 # in the directory tree since your last update.
 #=======================================================================
 
-svn log -rBASE:HEAD "$@" | less
+curr=`svnversion . | tr -d MS`
+svn log -r$[$curr+1]:HEAD "$@" | less
