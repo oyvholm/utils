@@ -10,8 +10,10 @@ ok - "../sident - <sident-files/random" - Read random binary data from stdin wit
 ok - "cat sident-files/random | ../sident -" - Read random binary through pipe, hyphen filename
 ok - "cat sident-files/random | ../sident -" - Read random binary through pipe, hyphen filename (stderr)
 # Testing -e (--expanded-only) option...
-ok - "../sident -e sident-files/unexpanded" - description
-ok - "../sident -e sident-files/unexpanded" - description (stderr)
+ok - "../sident -e sident-files/unexpanded sident-files/textfile" - List only expanded keywords
+ok - "../sident -e sident-files/unexpanded sident-files/textfile" - List only expanded keywords (stderr)
+ok - "../sident -ev sident-files/unexpanded sident-files/textfile" - List only expanded keywords, plus list filename without expanded kw
+ok - "../sident -ev sident-files/unexpanded sident-files/textfile" - List only expanded keywords, plus list filename without expanded kw (stderr)
 # Testing -f (--filenames-from) option...
 ok - "../sident -f sident-files/filenames" - Read filenames from file
 ok - "../sident -f sident-files/filenames" - Read filenames from file (stderr)
@@ -50,9 +52,11 @@ ok - "../sident -v sident-files" - Ignore directories, even with --verbose
 ok - "../sident -v sident-files" - Ignore directories, even with --verbose (stderr)
 ok - "../sident sident-files/shbvkdsvsdfv" - File not found
 ok - "../sident sident-files/shbvkdsvsdfv" - File not found (stderr)
+ok - "../sident -x sident-files/shbvkdsvsdfv" - File not found, don’t break the XML
+ok - "../sident -x sident-files/shbvkdsvsdfv" - File not found, don’t break the XML (stderr)
 # Validate POD (Plain Old Documentation)
 ok - "podchecker ../sident" - ../sident contains valid POD
 ok - "podchecker ../sident" - ../sident contains valid POD (stderr)
 # Running TODO tests...
 # Testing finished.
-1..41
+1..45

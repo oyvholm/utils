@@ -139,10 +139,43 @@ END
 
 # }}}
 diag("Testing -e (--expanded-only) option...");
-testcmd("$CMD -e sident-files/unexpanded", # {{{
+testcmd("$CMD -e sident-files/unexpanded sident-files/textfile", # {{{
+    <<'END',
+
+sident-files/textfile:
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Date: 1999/12/23 21:59:22 $
+     $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Weirdo: blah blah $
+END
     "",
+    "List only expanded keywords",
+);
+
+# }}}
+testcmd("$CMD -ev sident-files/unexpanded sident-files/textfile", # {{{
+    <<'END',
+
+sident-files/unexpanded:
+
+sident-files/textfile:
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Id: yeh 1234 2008-09-22 12:25:05Z sunny $
+     $Date: 1999/12/23 21:59:22 $
+     $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
+     $Weirdo: blah blah $
+END
     "",
-    "description",
+    "List only expanded keywords, plus list filename without expanded kw",
 );
 
 # }}}
@@ -415,6 +448,13 @@ likecmd("$CMD sident-files/shbvkdsvsdfv", # {{{
     '/^$/',
     '/^sident: sident-files/shbvkdsvsdfv: .*$/',
     "File not found",
+);
+
+# }}}
+likecmd("$CMD -x sident-files/shbvkdsvsdfv", # {{{
+    '/^<\?xml version="1\.0"\?>\n<sident>\n<\/sident>$/',
+    '/^sident: sident-files/shbvkdsvsdfv: .*$/',
+    "File not found, don’t break the XML",
 );
 
 # }}}
