@@ -46,6 +46,8 @@ ok - "../sident -ux sident-files/textfile" - Output XML, remove duplicates (stde
 # Error conditions...
 ok - "../sident sident-files" - Ignore directories
 ok - "../sident sident-files" - Ignore directories (stderr)
+ok - "../sident -v sident-files" - Ignore directories, even with --verbose
+ok - "../sident -v sident-files" - Ignore directories, even with --verbose (stderr)
 ok - "../sident sident-files/shbvkdsvsdfv" - File not found
 ok - "../sident sident-files/shbvkdsvsdfv" - File not found (stderr)
 # Validate POD (Plain Old Documentation)
@@ -53,4 +55,4 @@ ok - "podchecker ../sident" - ../sident contains valid POD
 ok - "podchecker ../sident" - ../sident contains valid POD (stderr)
 # Running TODO tests...
 # Testing finished.
-1..39
+1..41

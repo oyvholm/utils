@@ -404,6 +404,13 @@ testcmd("$CMD sident-files", # {{{
 );
 
 # }}}
+testcmd("$CMD -v sident-files", # {{{
+    "",
+    "",
+    "Ignore directories, even with --verbose",
+);
+
+# }}}
 likecmd("$CMD sident-files/shbvkdsvsdfv", # {{{
     '/^$/',
     '/^sident: sident-files/shbvkdsvsdfv: .*$/',

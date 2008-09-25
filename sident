@@ -158,7 +158,7 @@ for (@Files) {
             }
             $Opt{'xml'} && print("  </file>\n");
         } else {
-            if ($Opt{'verbose'}) {
+            if ($Opt{'verbose'} && !-d $File) {
                 $Opt{'xml'} && print("  <file>\n");
                 if ($Opt{'xml'}) {
                     printf("    <filename>%s</filename>\n",
@@ -171,7 +171,7 @@ for (@Files) {
             }
         }
     } else {
-        warn("$progname: $File: Unable to open file for read\n");
+        warn("$progname: $File: Cannot read file: $!\n");
     }
     # }}}
 }
