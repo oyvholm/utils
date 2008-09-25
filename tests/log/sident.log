@@ -13,8 +13,8 @@ ok - "cat sident-files/random | ../sident -" - Read random binary through pipe, 
 ok - "../sident -e sident-files/unexpanded" - description
 ok - "../sident -e sident-files/unexpanded" - description (stderr)
 # Testing -f (--filenames-from) option...
-ok - "../sident -f sident-files/filenames" - Read filenames from file, including one non-existing
-ok - "../sident -f sident-files/filenames" - Read filenames from file, including one non-existing (stderr)
+ok - "../sident -f sident-files/filenames" - Read filenames from file
+ok - "../sident -f sident-files/filenames" - Read filenames from file (stderr)
 # Testing -h (--help) option...
 ok - "../sident -h" - Option -h prints help screen
 ok - "../sident -h" - Option -h prints help screen (stderr)

@@ -176,8 +176,8 @@ sident-files/unexpanded:
      $Id$
      $RealLyuNKoWN$
 END
-    "sident: does_not_exist: Cannot read file: No such file or directory\n",
-    "Read filenames from file, including one non-existing",
+    "",
+    "Read filenames from file",
 );
 
 # }}}
@@ -404,9 +404,9 @@ testcmd("$CMD sident-files", # {{{
 );
 
 # }}}
-testcmd("$CMD sident-files/shbvkdsvsdfv", # {{{
-    "",
-    "sident: sident-files/shbvkdsvsdfv: Cannot read file: No such file or directory\n",
+likecmd("$CMD sident-files/shbvkdsvsdfv", # {{{
+    '/^$/',
+    '/^sident: sident-files/shbvkdsvsdfv: .*$/',
     "File not found",
 );
 
