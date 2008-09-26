@@ -100,6 +100,8 @@ my $safe_currdir = "";
 length($Hostname) && ($safe_currdir = "$Hostname:");
 $safe_currdir .= $curr_dir;
 $safe_currdir = safe_tab($safe_currdir);
+my $Username = getpwuid($<);
+my $safe_username = safe_tab($Username);
 
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     chomp(my $uuid = `$Cmd`);
@@ -135,11 +137,20 @@ if (open(LogFP, ">>", $Logfile)) {
             #   tag \t
             #   comment \t
             #   current_dir \n
+            # Version 3
+            #   3 \t
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \t
+            #   current_dir \t
+            #   username \n
             # }}}
             print(LogFP join("\t",
-                    2,
+                    3,
                     $key,
-                    $uuids{$key}
+                    $uuids{$key},
+                    $safe_username
                 ) . "\n"
             );
             print("$key\n");
