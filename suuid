@@ -24,11 +24,14 @@ $| = 1;
 our $Debug = 0;
 
 our %Std = (
+
     'logdir' => "$ENV{'HOME'}/uuids",
     'version' => 1,
+
 );
 
 our %Opt = (
+
     'comment' => "",
     'count' => 1,
     'debug' => 0,
@@ -39,6 +42,7 @@ our %Opt = (
     'tag' => "",
     'verbose' => 0,
     'version' => $Std{'version'},
+
 );
 
 our $progname = $0;
@@ -52,6 +56,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "comment|c=s" => \$Opt{'comment'},
     "count|n=i" => \$Opt{'count'},
     "debug" => \$Opt{'debug'},
@@ -62,6 +67,7 @@ GetOptions(
     "tag|t=s" => \$Opt{'tag'},
     "verbose" => \$Opt{'verbose'},
     "version|v=i" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 if ($Opt{'version'} !~ /^[14]$/) {
