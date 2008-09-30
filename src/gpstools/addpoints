@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# [Description]
+# Add new waypoints or trackpoints to the database.
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -21,11 +21,19 @@ $| = 1;
 
 our $Debug = 0;
 
+our %Std = (
+    'database' => "gps",
+);
+
 our %Opt = (
+    'database' => $Std{'database'},
     'debug' => 0,
     'help' => 0,
+    'route' => 0,
+    'track' => 0,
     'verbose' => 0,
     'version' => 0,
+    'waypoint' => 0,
 );
 
 our $progname = $0;
@@ -39,10 +47,14 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+    "database|D=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "route|r" => \$Opt{'route'},
+    "track|t" => \$Opt{'track'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "waypoint|w" => \$Opt{'waypoint'},
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -52,8 +64,19 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+for my $Currarg (@ARGV) {
+    for my $Currfile (glob($Currarg)) {
+        D("Currfile = '$Currfile'");
+        if ($Opt{'track'}) {
+            system("gpst -o pgtab -d -rpt $Currfile | psql -a -c \"COPY logg FROM stdin\" $Opt{'database'}");
+        }
+        if ($Opt{'waypoint'}) {
+            system("gpst -o pgwtab $Currfile | psql -a -c \"COPY wayp FROM stdin\" $Opt{'database'}");
+        }
+        if ($Opt{'route'}) {
+            warn("$progname: --route not implemented yet");
+        }
+    }
 }
 
 sub print_version {
@@ -78,12 +101,20 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -D X, --database X
+    Load into PostgreSQL database X. Default: "$Std{'database'}".
   -h, --help
     Show this help.
+  -r, --route
+    Load routes. Not implemented yet.
+  -t, --track
+    Load trackpoints.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -w, --waypoint
+    Load waypoints.
   --debug
     Print debugging messages.
 
