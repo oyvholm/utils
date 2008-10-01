@@ -26,12 +26,14 @@ our $Debug = 0;
 our $CMD = "../zerosplit";
 
 our %Opt = (
+
     'all' => 0,
     'debug' => 0,
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -47,12 +49,14 @@ my @cmdline_array = @ARGV;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "all|a" => \$Opt{'all'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "todo|t" => \$Opt{'todo'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
