@@ -30,7 +30,10 @@ $| = 1;
 our $Debug = 0;
 our $NA = '\N';
 our %Std = (
+
     'output-format' => 'pgtab',
+    'timezone' => '',
+
 );
 our %Opt = (
 
@@ -39,6 +42,7 @@ our %Opt = (
     'description' => '',
     'help' => 0,
     'output-format' => $Std{'output-format'},
+    'timezone' => $Std{'timezone'},
     'verbose' => 0,
     'version' => 0,
 
@@ -61,6 +65,7 @@ GetOptions(
     "description|d=s" => \$Opt{'description'},
     "help|h" => \$Opt{'help'},
     "output-format|o=s" => \$Opt{'output-format'},
+    "timezone|T=s" => \$Opt{'timezone'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -71,6 +76,19 @@ $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
+}
+
+my $tz_str = "";
+if (length($Opt{'timezone'})) {
+    if ($Opt{'timezone'} =~ /^[\+\-][0-2][0-9]{3}$/) {
+        $tz_str = $Opt{'timezone'};
+    } elsif ($Opt{'timezone'} =~ /^z$/i) {
+        $tz_str = $Opt{'timezone'};
+    } elsif ($Opt{'timezone'} =~ /^[a-z]+$/i) {
+        $tz_str = " $Opt{'timezone'}";
+    } else {
+        die("$progname: $Opt{'timezone'}: Invalid time zone\n");
+    }
 }
 
 if ($Opt{'output-format'} eq "xml") {
@@ -189,7 +207,7 @@ sub pgtab_entry {
     if ($Version == 1) {
         $Retval = join("\t",
             1, # Version number
-            postgresql_copy_safe($Date),
+            postgresql_copy_safe($Date) . $tz_str,
             length($Coor)
                 ? postgresql_copy_safe($Coor)
                 : $NA,
@@ -247,6 +265,18 @@ Options:
       xml
       pgtab
     Default: "$Std{'output-format'}".
+  -T X, --timezone X
+    Prepend X as timezone to the date. Valid formats:
+      UTC offset
+        A '+' or '-' followed by a four-digit number (HHMM) which 
+        indicates the offset relative to UTC. Examples:
+          +0000
+          -1600
+          +0630
+      Time zone abbreviation. Examples:
+        UTC
+        Z
+        CET 
   --version
     Print version information.
   --debug

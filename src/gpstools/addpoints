@@ -24,6 +24,7 @@ our $Debug = 0;
 our %Std = (
 
     'database' => "gps",
+    'timezone' => "",
     'type' => "track",
 
 );
@@ -33,6 +34,7 @@ our %Opt = (
     'database' => $Std{'database'},
     'debug' => 0,
     'help' => 0,
+    'timezone' => $Std{'timezone'},
     'type' => $Std{'type'},
     'verbose' => 0,
     'version' => 0,
@@ -55,6 +57,7 @@ GetOptions(
     "database|D=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "timezone|T=s" => \$Opt{'timezone'},
     "type|t=s" => \$Opt{'type'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -69,9 +72,30 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $tz_str = "";
+if (length($Opt{'timezone'})) {
+    if ($Opt{'timezone'} =~ /^[\+\-][0-2][0-9]{3}$/) {
+        $tz_str = $Opt{'timezone'};
+    } elsif ($Opt{'timezone'} =~ /^z$/i) {
+        $tz_str = $Opt{'timezone'};
+    } elsif ($Opt{'timezone'} =~ /^[a-z]+$/i) {
+        $tz_str = " $Opt{'timezone'}";
+    } else {
+        die("$progname: $Opt{'timezone'}: Invalid time zone\n");
+    }
+}
+
 for my $Currarg (@ARGV) {
     for my $Currfile (glob($Currarg)) {
         D("Currfile = '$Currfile'");
+        if ($Opt{'type'} =~ /picture/) {
+            if ($Currfile =~ /\.jpg$/i) {
+                my $tz_str = length($Opt{'timezone'})
+                    ? "-T $Opt{'timezone'} "
+                    : "";
+                system("gpst-pic $tz_str$Currfile | psql -c \"COPY pictures FROM stdin\" $Opt{'database'}");
+            }
+        }
         if ($Opt{'type'} =~ /track/) {
             system("gpst -o pgtab -d -rpt $Currfile | psql -a -c \"COPY logg FROM stdin\" $Opt{'database'}");
         }
@@ -107,8 +131,21 @@ Options:
     Load into PostgreSQL database X. Default: "$Std{'database'}".
   -h, --help
     Show this help.
+  -T X, --timezone X
+    Prepend X as timezone to the date. Valid formats:
+      UTC offset
+        A '+' or '-' followed by a four-digit number (HHMM) which 
+        indicates the offset relative to UTC. Examples:
+          +0000
+          -1600
+          +0630
+      Time zone abbreviation. Examples:
+        UTC
+        Z
+        CET 
   -t X, --type X
     Comma-separated list of point types to extract from files:
+      picture
       track
       waypoint
     Default: "$Std{'type'}".

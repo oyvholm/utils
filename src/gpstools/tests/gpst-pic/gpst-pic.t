@@ -169,6 +169,59 @@ testcmd("$CMD -o blurfl files/DSC_4426.JPG", # {{{
 
 # }}}
 # }}} --output-format
+diag("Testing -T (--timezone) option...");
+testcmd("$CMD --timezone +1234 files/DSC_4426.JPG", # {{{
+    <<END,
+1\t2008-09-18T17:02:27+1234\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "--timezone works",
+);
+
+# }}}
+testcmd("$CMD -T +0200 files/DSC_4426.JPG", # {{{
+    <<END,
+1\t2008-09-18T17:02:27+0200\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Positive time zone",
+);
+
+# }}}
+testcmd("$CMD -T-0600 files/DSC_4426.JPG", # {{{
+    <<END,
+1\t2008-09-18T17:02:27-0600\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Negative time zone",
+);
+
+# }}}
+testcmd("$CMD -T CET files/DSC_4426.JPG", # {{{
+    <<END,
+1\t2008-09-18T17:02:27 CET\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Time zone abbreviation",
+);
+
+# }}}
+testcmd("$CMD -T Z files/DSC_4426.JPG", # {{{
+    <<END,
+1\t2008-09-18T17:02:27Z\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Zulu abbreviation",
+);
+
+# }}}
+testcmd("$CMD -T erf324 files/DSC_4426.JPG", # {{{
+    "",
+    "gpst-pic: erf324: Invalid time zone\n",
+    "Invalid time zone abbr, contains digits",
+);
+
+# }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',
