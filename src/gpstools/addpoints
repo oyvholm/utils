@@ -22,7 +22,10 @@ $| = 1;
 our $Debug = 0;
 
 our %Std = (
+
     'database' => "gps",
+    'type' => "track",
+
 );
 
 our %Opt = (
@@ -30,7 +33,7 @@ our %Opt = (
     'database' => $Std{'database'},
     'debug' => 0,
     'help' => 0,
-    'track' => 0,
+    'type' => $Std{'type'},
     'verbose' => 0,
     'version' => 0,
     'waypoint' => 0,
@@ -52,7 +55,7 @@ GetOptions(
     "database|D=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
-    "track|t" => \$Opt{'track'},
+    "type|t=s" => \$Opt{'type'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "waypoint|w" => \$Opt{'waypoint'},
@@ -69,10 +72,10 @@ if ($Opt{'version'}) {
 for my $Currarg (@ARGV) {
     for my $Currfile (glob($Currarg)) {
         D("Currfile = '$Currfile'");
-        if ($Opt{'track'}) {
+        if ($Opt{'type'} =~ /track/) {
             system("gpst -o pgtab -d -rpt $Currfile | psql -a -c \"COPY logg FROM stdin\" $Opt{'database'}");
         }
-        if ($Opt{'waypoint'}) {
+        if ($Opt{'type'} =~ /waypoint/) {
             system("gpst -o pgwtab $Currfile | psql -a -c \"COPY wayp FROM stdin\" $Opt{'database'}");
         }
     }
@@ -104,14 +107,15 @@ Options:
     Load into PostgreSQL database X. Default: "$Std{'database'}".
   -h, --help
     Show this help.
-  -t, --track
-    Load trackpoints.
+  -t X, --type X
+    Comma-separated list of point types to extract from files:
+      track
+      waypoint
+    Default: "$Std{'type'}".
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  -w, --waypoint
-    Load waypoints.
   --debug
     Print debugging messages.
 
