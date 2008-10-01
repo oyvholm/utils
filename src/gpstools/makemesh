@@ -22,12 +22,14 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'help' => 0,
     'max' => 1000,
     'min' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -41,17 +43,22 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "max=f" => \$Opt{'max'},
     "min=f" => \$Opt{'min'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
-$Opt{'version'} && print_version();
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
 
 my ($Lat, $Lon) =
     (  0,    0);
@@ -104,7 +111,6 @@ sub print_version {
     for (@main::version_array) {
         print("$_\n");
     }
-    exit(0);
     # }}}
 } # print_version()
 
@@ -112,9 +118,11 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
     print(<<END);
-
-$rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 

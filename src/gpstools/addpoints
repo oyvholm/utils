@@ -26,6 +26,7 @@ our %Std = (
 );
 
 our %Opt = (
+
     'database' => $Std{'database'},
     'debug' => 0,
     'help' => 0,
@@ -34,6 +35,7 @@ our %Opt = (
     'verbose' => 0,
     'version' => 0,
     'waypoint' => 0,
+
 );
 
 our $progname = $0;
@@ -47,6 +49,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "database|D=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
@@ -55,6 +58,7 @@ GetOptions(
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "waypoint|w" => \$Opt{'waypoint'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

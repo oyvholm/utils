@@ -117,7 +117,7 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 #   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 1861.
+#   in ./run-tests.pl at line 1865.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -208,7 +208,7 @@ ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 #   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 1861.
+#   in ./run-tests.pl at line 1865.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -313,7 +313,7 @@ ok - "../gpst --version" - Option --version returns Id string (stderr)
 # Testing --strip-whitespace option...
 not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 #   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 1861.
+#   in ./run-tests.pl at line 1865.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
