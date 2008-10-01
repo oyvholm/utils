@@ -24,6 +24,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'conflict' => 0,
     'create-rc' => 0,
     'debug' => 0,
@@ -37,6 +38,7 @@ our %Opt = (
     'svncmd' => "", # DEPRECATED
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -50,6 +52,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "conflict|C" => \$Opt{'conflict'},
     "create-rc" => \$Opt{'create-rc'},
     "debug" => \$Opt{'debug'},
@@ -63,6 +66,7 @@ GetOptions(
     "svncmd=s" => \$Opt{'svncmd'}, # DEPRECATED
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 deprecated("diffargs", "extensions", "--diffargs (-p)", "--extensions (-x)");

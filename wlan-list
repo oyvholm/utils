@@ -22,13 +22,14 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'encrypted' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
-    'verbose' => 0,
     'xml' => 0,
+
 );
 
 our $progname = $0;
@@ -42,12 +43,14 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "encrypted|e" => \$Opt{'encrypted'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

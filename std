@@ -22,12 +22,14 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'help' => 0,
     'local' => 0,
     'tag' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 my @Tags = ();
 
@@ -46,12 +48,14 @@ my $Dest = "";
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "local|l+" => \$Opt{'local'},
     "tag|t=s" => \@Tags,
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

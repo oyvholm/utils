@@ -22,16 +22,18 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'after' => "",
     'before' => "",
-    'exec' => "",
     'debug' => 0,
+    'exec' => "",
     'help' => 0,
     'ignore-externals' => 0,
     'revision' => "",
     'verbose' => 0,
     'version' => 0,
     'want' => 0,
+
 );
 
 our $progname = $0;
@@ -47,16 +49,18 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "after|A=s" => \$Opt{'after'},
     "before|B=s" => \$Opt{'before'},
-    "exec|e=s" => \$Opt{'exec'},
     "debug" => \$Opt{'debug'},
+    "exec|e=s" => \$Opt{'exec'},
     "help|h" => \$Opt{'help'},
     "ignore-externals" => \$Opt{'ignore-externals'},
     "revision|r=s" => \$Opt{'revision'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "want|w=s" => \$Opt{'want'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

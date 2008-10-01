@@ -22,12 +22,14 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'filenames' => 0,
     'help' => 0,
     'line' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -41,12 +43,14 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "filenames|f" => \$Opt{'filenames'},
     "help|h" => \$Opt{'help'},
     "line|l" => \$Opt{'line'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

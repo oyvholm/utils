@@ -22,6 +22,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'expanded' => 0,
     'filesfrom' => "",
@@ -32,6 +33,7 @@ our %Opt = (
     'verbose' => 0,
     'version' => 0,
     'xml' => 0
+
 );
 
 our $progname = $0;
@@ -45,6 +47,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "expanded-only|e" => \$Opt{'expanded'},
     "filenames-from|f=s" => \$Opt{'filesfrom'},
@@ -55,6 +58,7 @@ GetOptions(
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'}
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

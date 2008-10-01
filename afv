@@ -23,13 +23,15 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
-    'directory' => "",
+
     'debug' => 0,
+    'directory' => "",
     'help' => 0,
     'loop' => "",
     'stop' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -43,13 +45,15 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    "directory|d=s" => \$Opt{'directory'},
+
     "debug" => \$Opt{'debug'},
+    "directory|d=s" => \$Opt{'directory'},
     "help|h" => \$Opt{'help'},
     "loop|l=i" => \$Opt{'loop'},
     "stop|s" => \$Opt{'stop'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

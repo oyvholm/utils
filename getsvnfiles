@@ -23,6 +23,7 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'dest' => "",
     'dry-run' => 0,
@@ -31,6 +32,7 @@ our %Opt = (
     'source' => "",
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -44,6 +46,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "dest|d=s" => \$Opt{'dest'},
     "dry-run" => \$Opt{'dry-run'},
@@ -52,6 +55,7 @@ GetOptions(
     "source|s=s" => \$Opt{'source'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

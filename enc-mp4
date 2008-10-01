@@ -27,6 +27,7 @@ our %Std = (
 );
 
 our %Opt = (
+
     'comment' => "",
     'debug' => 0,
     'encoder' => $Std{'encoder'},
@@ -36,6 +37,7 @@ our %Opt = (
     'output-file' => "",
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -49,6 +51,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "encoder|e=s" => \$Opt{'encoder'},
@@ -58,6 +61,7 @@ GetOptions(
     "output-file|o=s" => \$Opt{'output-file'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

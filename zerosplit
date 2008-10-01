@@ -22,12 +22,14 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'char' => 0,
     'count' => 0,
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -41,12 +43,14 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "char|c=o" => \$Opt{'char'},
+    "count|n=i" => \$Opt{'count'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
-    "count|n=i" => \$Opt{'count'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);

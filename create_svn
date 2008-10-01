@@ -23,10 +23,12 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 die("Unfinished.\n");
@@ -45,10 +47,12 @@ my $svn_clean = "$ENV{HOME}/src/other/subversioni/1.1.x.clean";
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
