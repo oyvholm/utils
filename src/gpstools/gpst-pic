@@ -178,6 +178,7 @@ sub print_entry {
 } # print_entry()
 
 sub pgtab_entry {
+    # {{{
     my ($Version, $Date, $Coor, $Descr, $Filename, $Author) = @_;
     defined($Date)     || ($Date = $NA);
     defined($Coor)     || ($Coor = $NA);
@@ -204,6 +205,7 @@ sub pgtab_entry {
         ) . "\n";
     }
     return($Retval);
+    # }}}
 } # pgtab_entry()
 
 sub print_version {
