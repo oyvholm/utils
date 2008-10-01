@@ -10,22 +10,22 @@ ok - "../suuid -h --verbose" - Option --verbose with -h returns Id string and he
 ok - "../suuid --show-version" - Option --show-version returns Id string
 ok - "../suuid --show-version" - Option --show-version returns Id string (stderr)
 # No options (except --logfile)...
-ok - "../suuid -l tmp-sident-t-2858-41072719" - No options (except -l) sends UUID to stdout
-ok - "../suuid -l tmp-sident-t-2858-41072719" - No options (except -l) sends UUID to stdout (stderr)
+ok - "../suuid -l tmp-suuid-t-..." - No options (except -l) sends UUID to stdout
+ok - "../suuid -l tmp-suuid-t-..." - No options (except -l) sends UUID to stdout (stderr)
 ok - Filename of logfile OK
 ok - Log contents OK after exec with no options
 ok - Entries are added, not replacing
 # Testing -t (--tag) option...
-ok - "../suuid -t snaddertag -l tmp-sident-t-2858-41072719" - -t (--tag) option
-ok - "../suuid -t snaddertag -l tmp-sident-t-2858-41072719" - -t (--tag) option (stderr)
+ok - "../suuid -t snaddertag -l tmp-suuid-t-..." - -t (--tag) option
+ok - "../suuid -t snaddertag -l tmp-suuid-t-..." - -t (--tag) option (stderr)
 ok - Log contents OK after tag
 # Testing -c (--comment) option...
-ok - "../suuid -c "Great test" -l tmp-sident-t-2858-41072719" - -c (--comment) option
-ok - "../suuid -c "Great test" -l tmp-sident-t-2858-41072719" - -c (--comment) option (stderr)
+ok - "../suuid -c "Great test" -l tmp-suuid-t-..." - -c (--comment) option
+ok - "../suuid -c "Great test" -l tmp-suuid-t-..." - -c (--comment) option (stderr)
 ok - Log contents OK after comment
 # Testing -n (--count) option...
-ok - "../suuid -n 5 -c "Great test" -t testeri -l tmp-sident-t-2858-41072719" - -n (--count) option with comment and tag
-ok - "../suuid -n 5 -c "Great test" -t testeri -l tmp-sident-t-2858-41072719" - -n (--count) option with comment and tag (stderr)
+ok - "../suuid -n 5 -c "Great test" -t testeri -l tmp-suuid-t-..." - -n (--count) option with comment and tag
+ok - "../suuid -n 5 -c "Great test" -t testeri -l tmp-suuid-t-..." - -n (--count) option with comment and tag (stderr)
 ok - Log contents OK after count, comment and tag
 # Testing -v (--version) option...
 # Testing -q (--quiet) option...

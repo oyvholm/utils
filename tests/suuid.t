@@ -85,7 +85,7 @@ END
 
 =cut
 
-my $Outdir = "tmp-sident-t-$$-" . substr(rand, 2, 8);
+my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
 if (-e $Outdir) {
     die("$progname: $Outdir: WTF?? Directory element already exists.");
 }
@@ -269,6 +269,7 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
+    $Txt =~ s/(-l tmp-suuid-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "suuid-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
@@ -297,6 +298,7 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
+    $Txt =~ s/(-l tmp-suuid-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "suuid-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
