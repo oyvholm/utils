@@ -131,7 +131,23 @@ sub print_entry {
                     );
                 }
             } elsif ($Opt{'output-format'} eq "pgtab") {
+                # Version information {{{
+                # Without version field (same as version 1):
+                #   date \t
+                #   "(lat,lon)"-coordinates \t
+                #   description \t
+                #   filename \t
+                #   author \t
+                # Version 1:
+                #   "1" \t
+                #   date \t
+                #   "(lat,lon)"-coordinates \t
+                #   description \t
+                #   filename \t
+                #   author \n
+                # }}}
                 $Output = join("\t",
+                    1, # Version number
                     postgresql_copy_safe($date),
                     length($coor)
                         ? postgresql_copy_safe($coor)

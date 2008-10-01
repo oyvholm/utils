@@ -97,7 +97,7 @@ likecmd("exifprobe -V", # {{{
 diag("Testing --author option...");
 testcmd("$CMD -a sunny files/DSC_4426.JPG", # {{{
     <<END,
-2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
+1\t2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
 END
     "",
     "Read date from DSC_4426.JPG and set --author",
@@ -108,7 +108,7 @@ END
 diag("Testing --description option...");
 testcmd("$CMD -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{
     <<END,
-2008-09-18T17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
+1\t2008-09-18T17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
 END
     "",
     "Read date from DSC_4426.JPG and set --description with backslash",
@@ -133,7 +133,7 @@ diag("Testing --output-format option..."); # {{{
 # pgtab
 testcmd("$CMD -o pgtab files/DSC_4426.JPG", # {{{
     <<END,
-2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
+1\t2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
 END
     "",
     "Output pgtab format from DSC_4426.JPG",
@@ -184,7 +184,7 @@ likecmd("$CMD --version", # {{{
 diag("Various...");
 testcmd("$CMD files/DSC_4426.JPG", # {{{
     <<END,
-2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
+1\t2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
 END
     "",
     "Read date from DSC_4426.JPG, no options",
