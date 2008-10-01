@@ -30,7 +30,6 @@ our %Opt = (
     'database' => $Std{'database'},
     'debug' => 0,
     'help' => 0,
-    'route' => 0,
     'track' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -53,7 +52,6 @@ GetOptions(
     "database|D=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
-    "route|r" => \$Opt{'route'},
     "track|t" => \$Opt{'track'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -76,9 +74,6 @@ for my $Currarg (@ARGV) {
         }
         if ($Opt{'waypoint'}) {
             system("gpst -o pgwtab $Currfile | psql -a -c \"COPY wayp FROM stdin\" $Opt{'database'}");
-        }
-        if ($Opt{'route'}) {
-            warn("$progname: --route not implemented yet");
         }
     }
 }
@@ -109,8 +104,6 @@ Options:
     Load into PostgreSQL database X. Default: "$Std{'database'}".
   -h, --help
     Show this help.
-  -r, --route
-    Load routes. Not implemented yet.
   -t, --track
     Load trackpoints.
   -v, --verbose
