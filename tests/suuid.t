@@ -85,6 +85,14 @@ END
 
 =cut
 
+my $Outdir = "tmp-sident-t-$$-" . substr(rand, 2, 8);
+if (-e $Outdir) {
+    die("$progname: $Outdir: WTF?? Directory element already exists.");
+}
+unless (mkdir($Outdir)) {
+    die("$progname: $Outdir: Cannot mkdir(): $!\n");
+}
+
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -115,7 +123,121 @@ likecmd("$CMD --show-version", # {{{
 );
 
 # }}}
+my $Lh = "[0-9a-f]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+my $v4_templ = "$Lh\{8}-$Lh\{4}-4$Lh\{3}-$Lh\{4}-$Lh\{12}";
+my $date_templ = "20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]Z";
+diag("No options (except --logfile)...");
+likecmd("$CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    "No options (except -l) sends UUID to stdout",
+);
 
+# }}}
+my $Outfile = glob("$Outdir/*");
+like($Outfile, "/^$Outdir\\/$Lh\{12}\$/", "Filename of logfile OK");
+like(file_data($Outfile), # {{{
+    '/^' . join('\t',
+        '3',
+        $v1_templ, # uuid
+        $date_templ, # date
+        '', # tag
+        '', # comment
+        '.+?', # hostname:dir
+        '.+' # username
+    ) . '\n$/s',
+    "Log contents OK after exec with no options",
+);
+
+# }}}
+system("$CMD -l $Outdir >/dev/null");
+like(file_data($Outfile), # {{{
+    '/^(' . join('\t',
+        '3',
+        $v1_templ, # uuid
+        $date_templ, # date
+        '', # tag
+        '', # comment
+        '.+?', # hostname:dir
+        '.+' # username
+    ) . '\n){2}$/s',
+    "Entries are added, not replacing",
+);
+
+# }}}
+unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+diag("Testing -t (--tag) option...");
+likecmd("$CMD -t snaddertag -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    "-t (--tag) option",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . join('\t',
+        '3',
+        $v1_templ, # uuid
+        $date_templ, # date
+        'snaddertag', # tag
+        '', # comment
+        '.+?', # hostname:dir
+        '.+' # username
+    ) . '\n$/s',
+    "Log contents OK after tag",
+);
+
+# }}}
+unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+diag("Testing -c (--comment) option...");
+likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    "-c (--comment) option",
+);
+
+# }}}
+like(`tail -1 $Outfile`, # {{{
+    '/^' . join('\t',
+        '3',
+        $v1_templ, # uuid
+        $date_templ, # date
+        '', # tag
+        'Great test', # comment
+        '.+?', # hostname:dir
+        '.+' # username
+    ) . '\n$/s',
+    "Log contents OK after comment",
+);
+
+# }}}
+unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+diag("Testing -n (--count) option...");
+likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
+    "/^($v1_templ\n){5}\$/s",
+    '/^$/',
+    "-n (--count) option with comment and tag",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^(' . join('\t',
+        '3',
+        $v1_templ, # uuid
+        $date_templ, # date
+        'testeri', # tag
+        'Great test', # comment
+        '.+?', # hostname:dir
+        '.+' # username
+    ) . '\n){5}$/s',
+    "Log contents OK after count, comment and tag",
+);
+
+# }}}
+diag("Testing -v (--version) option...");
+diag("Testing -q (--quiet) option...");
 todo_section:
 ;
 
@@ -132,6 +254,9 @@ local $TODO = "";
 }
 
 diag("Testing finished.");
+
+unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+rmdir($Outdir) || warn("$progname: $Outdir: Cannot remove directory: $!\n");
 
 sub testcmd {
     # {{{
