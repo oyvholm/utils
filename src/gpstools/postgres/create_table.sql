@@ -39,6 +39,7 @@ CREATE TABLE events (
 );
 
 CREATE TABLE pictures (
+    version smallint,
     date timestamptz,
     coor point,
     descr text,
