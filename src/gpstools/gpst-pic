@@ -146,22 +146,14 @@ sub print_entry {
                 #   filename \t
                 #   author \n
                 # }}}
-                $Output = join("\t",
+                $Output = pgtab_entry(
                     1, # Version number
-                    postgresql_copy_safe($date),
-                    length($coor)
-                        ? postgresql_copy_safe($coor)
-                        : $NA,
-                    length($Opt{'description'})
-                        ? postgresql_copy_safe($Opt{'description'})
-                        : $NA,
-                    length($filename)
-                        ? postgresql_copy_safe($filename)
-                        : $NA,
-                    length($Opt{'author'})
-                        ? postgresql_copy_safe($Opt{'author'})
-                        : $NA
-                ) . "\n";
+                    $date,
+                    $coor,
+                    $Opt{'description'},
+                    $filename,
+                    $Opt{'author'}
+                );
             } else {
                 die("$progname: $Opt{'output-format'}: Unknown output format\n");
             }
@@ -180,6 +172,35 @@ sub print_entry {
     return($Retval);
     # }}}
 } # print_entry()
+
+sub pgtab_entry {
+    my ($Version, $Date, $Coor, $Descr, $Filename, $Author) = @_;
+    defined($Date)     || ($Date = $NA);
+    defined($Coor)     || ($Coor = $NA);
+    defined($Descr)    || ($Descr = $NA);
+    defined($Filename) || ($Filename = $NA);
+    defined($Author)   || ($Author = $NA);
+    my $Retval = "";
+    if ($Version == 1) {
+        $Retval = join("\t",
+            1, # Version number
+            postgresql_copy_safe($Date),
+            length($Coor)
+                ? postgresql_copy_safe($Coor)
+                : $NA,
+            length($Opt{'description'})
+                ? postgresql_copy_safe($Opt{'description'})
+                : $NA,
+            length($Filename)
+                ? postgresql_copy_safe($Filename)
+                : $NA,
+            length($Opt{'author'})
+                ? postgresql_copy_safe($Opt{'author'})
+                : $NA
+        ) . "\n";
+    }
+    return($Retval);
+} # pgtab_entry()
 
 sub print_version {
     # Print program version {{{
