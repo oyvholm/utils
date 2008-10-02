@@ -58,8 +58,13 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my $curr = `svnversion . | tr -d MS`;
-system(sprintf("svn log -r%lu:HEAD %s| less", $curr+1, join(" ", @ARGV)));
+my $curr = `svn info --xml .`;
+$curr =~ s/^.*?<entry\b.+revision="(\d+)".*$/$1/s;
+system(sprintf("svn log -r%lu:HEAD %s%s",
+    $curr+1,
+    $Opt{'verbose'} ? "-v " : "",
+    join(" ", @ARGV)
+));
 
 sub print_version {
     # Print program version {{{
