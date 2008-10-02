@@ -127,12 +127,7 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-unlike(`$CMD -h`, # {{{
-    '/\$Id: /',
-    "\"$CMD -h\" - No Id with only -h",
-);
-
-# }}}
+ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
 diag("Testing --output-format option..."); # {{{
 # pgtab
 testcmd("$CMD -o pgtab files/DSC_4426.JPG", # {{{

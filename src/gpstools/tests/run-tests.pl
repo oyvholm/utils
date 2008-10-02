@@ -637,12 +637,7 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-unlike(`$CMD -h`, # {{{
-    '/\$Id: /',
-    "\"$CMD -h\" - No Id with only -h",
-);
-
-# }}}
+ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
 # --help option }}}
 diag("Testing --inside option..."); # {{{
 testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx", # {{{
