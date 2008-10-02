@@ -34,7 +34,7 @@ sub trackpoint {
     # Receive a hash and return a trackpoint as a string {{{
     my %Dat = @_;
 
-    defined($Dat{'type'}) || return(undef);
+    defined($Dat{'what'}) || return(undef);
     defined($Dat{'format'}) || return(undef);
     defined($Dat{'error'}) || return(undef);
 
@@ -68,7 +68,7 @@ sub trackpoint {
 
     my $Retval = "";
 
-    if ($Dat{'type'} eq "tp") {
+    if ($Dat{'what'} eq "tp") {
         my $err_str = length($Dat{'error'}) ? $Dat{'error'} : "";
         if ($Dat{'format'} eq "gpsml") {
             # {{{

@@ -305,7 +305,7 @@ my %Bck = (
     'lon' => '7.392133',
     'ele' => '762',
     'error' => "",
-    'type' => 'tp',
+    'what' => 'tp',
     # }}}
 );
 
@@ -331,7 +331,7 @@ is(
 
 # trackpoint(): Various loop tests {{{
 
-for my $Elem (qw{format lat lon type}) {
+for my $Elem (qw{format lat lon what}) {
     my %Dat = %Bck;
 
     $Dat{"$Elem"} = '2d';
@@ -393,7 +393,7 @@ is(trackpoint(%Dat),
     "trackpoint(): Remove trailing zeros in {'sec'} decimals"
 );
 
-for my $Elem (qw{format type error}) {
+for my $Elem (qw{format what error}) {
     my %Dat = %Bck;
     $Dat{$Elem} = undef;
     is(trackpoint(%Dat),

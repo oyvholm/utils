@@ -210,7 +210,7 @@ for $curr_file (@ARGV) {
                 'ele' => '',
                 'desc' => '',
                 'error' => "",
-                'type' => 'tp',
+                'what' => 'tp',
             );
 
             $Opt{'epoch'} && ($Dat{'date-format'} = "epoch");
@@ -248,11 +248,11 @@ for $curr_file (@ARGV) {
             } elsif (m#^<break\b.*?/>#) {
                 $found_move = 1;
             } elsif (m#^<(title|pause)\b.*?>(.*?)</(title|pause)>#) {
-                $Dat{'type'} = $1;
+                $Dat{'what'} = $1;
                 $Dat{$1} = $2;
                 print_entry(%Dat);
             } elsif (m#^<desc\b.*?>(.*$)#s) {
-                $Dat{'type'} = "desc";
+                $Dat{'what'} = "desc";
                 my $Txt = $1;
                 until ($Txt =~ m#</desc>#s) {
                     $Txt .= <CurrFP>;
@@ -357,7 +357,7 @@ for $curr_file (@ARGV) {
                 # }}}
             } elsif (/^Track\t(.*?)\t/) {
                 $Dat{'title'} = txt_to_xml($1);
-                $Dat{'type'} = "title";
+                $Dat{'what'} = "title";
                 $found_move = 1;
                 print_entry(%Dat);
             } elsif (
@@ -483,7 +483,7 @@ for $curr_file (@ARGV) {
                     $Comment =~ s/^\s*(.*?)\s*$/$1/;
                     if ($Opt{'output-format'} eq "gpsml") {
                         $Dat{'desc'} = txt_to_xml($Comment);
-                        $Dat{'type'} = "desc";
+                        $Dat{'what'} = "desc";
                         print_entry(%Dat);
                     }
                 }
@@ -595,7 +595,7 @@ sub print_gpx {
             }{
                 my %tmp_dat = ();
                 $tmp_dat{'title'} = $2;
-                $tmp_dat{'type'} = "title";
+                $tmp_dat{'what'} = "title";
                 $tmp_dat{'error'} = "";
                 print_entry(%tmp_dat);
                 "";
@@ -622,7 +622,7 @@ sub print_gpx {
                         'ele' => '',
                         'desc' => '',
                         'error' => "",
-                        'type' => 'tp',
+                        'what' => 'tp',
                     );
                     ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
                     ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
@@ -864,7 +864,7 @@ sub print_entry {
     my $pause_len = 0;
     my $do_print = 1;
 
-    if ($Dat{'type'} eq "tp") {
+    if ($Dat{'what'} eq "tp") {
         # {{{
         if ($Opt{'require'}) {
             $Req{'time'} && !$print_time && return;
@@ -938,17 +938,17 @@ sub print_entry {
             $Dat{'lat'} *= 2;
         }
         if ($Opt{'output-format'} eq "gpsml") {
-            if ($Dat{'type'} eq "tp") {
+            if ($Dat{'what'} eq "tp") {
                 $Dat{'format'} = "gpsml";
                 $Line .= trackpoint(%Dat);
-            } elsif ($Dat{'type'} =~ /^(pause|desc|title)$/) {
+            } elsif ($Dat{'what'} =~ /^(pause|desc|title)$/) {
                 $Line .= sprintf("<%s>%s</%s>\n",
                                  $1,
                                  $Dat{$1},
                                  $1);
             }
         } elsif ($Opt{'output-format'} eq "pgtab") {
-            if ($Dat{'type'} eq "tp" && !length($Dat{'error'})) {
+            if ($Dat{'what'} eq "tp" && !length($Dat{'error'})) {
                 $Dat{'format'} = "pgtab";
                 $Line .= trackpoint(%Dat);
             }
@@ -963,12 +963,12 @@ sub print_entry {
                 $Line .= trackpoint(%Dat);
             }
         } elsif($Opt{'output-format'} eq "gpx") {
-            if ($Dat{'type'} eq "tp") {
+            if ($Dat{'what'} eq "tp") {
                 $Dat{'format'} = "gpx";
                 $Line .= trackpoint(%Dat);
             }
         } elsif ($Opt{'output-format'} eq "clean") {
-            if ($Dat{'type'} eq "tp" && !length($Dat{'error'})) {
+            if ($Dat{'what'} eq "tp" && !length($Dat{'error'})) {
                 $Dat{'format'} = "clean";
                 $Line .= trackpoint(%Dat);
             }

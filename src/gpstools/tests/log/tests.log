@@ -57,7 +57,7 @@ ok - trackpoint() (gpx)
 ok - trackpoint(): {'format'} with invalid value ("2d") returns undef
 ok - trackpoint(): {'lat'} with invalid value ("2d") returns undef
 ok - trackpoint(): {'lon'} with invalid value ("2d") returns undef
-ok - trackpoint(): {'type'} with invalid value ("2d") returns undef
+ok - trackpoint(): {'what'} with invalid value ("2d") returns undef
 ok - trackpoint(): {'year'} with empty value skips time
 ok - trackpoint(): {'year'} with invalid value ("2d") skips time
 ok - trackpoint(): Strip prefixing zeros from {'year'}
@@ -89,7 +89,7 @@ ok - trackpoint(): Strip prefixing zeros from {'sec'}
 ok - trackpoint(): {'sec'} is negative, skip time
 ok - trackpoint(): Remove trailing zeros in {'sec'} decimals
 ok - trackpoint(): Missing {'format'}, return undef
-ok - trackpoint(): Missing {'type'}, return undef
+ok - trackpoint(): Missing {'what'}, return undef
 ok - trackpoint(): Missing {'error'}, return undef
 # Testing output from ../gpst
 # Read empty input (/dev/null)...
