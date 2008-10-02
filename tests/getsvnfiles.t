@@ -108,12 +108,7 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-unlike(`$CMD -h`, # {{{
-    '/\$Id: /',
-    "\"$CMD -h\" - No Id with only -h",
-);
-
-# }}}
+ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',
