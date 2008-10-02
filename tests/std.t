@@ -114,6 +114,14 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
+likecmd("$CMD perl | head", # {{{
+    '/perl -w/',
+    '/^$/s',
+    "One argument sends file to stdout",
+);
+
+# }}}
+
 my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
 diag("Creating tempdir...");
 likecmd("svn mkdir $Tmptop", # {{{
@@ -125,7 +133,7 @@ likecmd("svn mkdir $Tmptop", # {{{
 # }}}
 chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
 likecmd("../$CMD bash bashfile", # {{{
-    '/^A    tmp\.std\..+$/s',
+    '/^A\s+bashfile.+$/s',
     '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n.+$/s',
     "Create bash script",
 );
