@@ -1,0 +1,28 @@
+$Id$
+
+FIXME: Uferdig.
+
+Og hva skjer i /branches/gpst.gpxfix/ ?
+
+Det begynte som en branch der jeg skulle legge inn komplett GPX-støtte, 
+men så lot jeg være å merge det over pga mulig senking av hastigheta, og 
+jeg har ikke bruk for det. Nå er formålet med denne branchen dette:
+
+  - Legge inn støtte for <extensions> og alle GPX-elementer.
+  - Feilen med at GPX mangler titler ordnes også her.
+
+Forandringer som er gjort i forhold til trunk:
+
+* GPST.pm
+  - (@wpt_elems): Ny. Inneholder alle GPX-elementer. Den er også lagt 
+    til i @EXPORT.
+  - $Dat{'type'} forandres til 'what' for å unngå konflikt med <type> i 
+    GPX.
+  - <extensions> leses inn og skrives ut.
+
+* gpst
+  - $Dat{'type'} forandres til 'what' for å unngå konflikt med <type> i 
+    GPX.
+  - (reset_Dat): Ny. Brukes til å resette en %Dat-lignende hash.
+
+vim: set tw=72 ts=2 sw=2 sts=2 fo=tcqw2 et fenc=utf8 :
