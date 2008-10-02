@@ -30,16 +30,22 @@ $| = 1;
 our $Debug = 0;
 our $NA = '\N';
 our %Std = (
+
     'output-format' => 'pgtab',
+    'timezone' => '',
+
 );
 our %Opt = (
+
     'author' => '',
     'debug' => 0,
     'description' => '',
     'help' => 0,
     'output-format' => $Std{'output-format'},
+    'timezone' => $Std{'timezone'},
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -53,13 +59,16 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "author|a=s" => \$Opt{'author'},
     "debug" => \$Opt{'debug'},
     "description|d=s" => \$Opt{'description'},
     "help|h" => \$Opt{'help'},
     "output-format|o=s" => \$Opt{'output-format'},
+    "timezone|T=s" => \$Opt{'timezone'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -67,6 +76,19 @@ $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
+}
+
+my $tz_str = "";
+if (length($Opt{'timezone'})) {
+    if ($Opt{'timezone'} =~ /^[\+\-][0-2][0-9]{3}$/) {
+        $tz_str = $Opt{'timezone'};
+    } elsif ($Opt{'timezone'} =~ /^z$/i) {
+        $tz_str = $Opt{'timezone'};
+    } elsif ($Opt{'timezone'} =~ /^[a-z]+$/i) {
+        $tz_str = " $Opt{'timezone'}";
+    } else {
+        die("$progname: $Opt{'timezone'}: Invalid time zone\n");
+    }
 }
 
 if ($Opt{'output-format'} eq "xml") {
@@ -131,21 +153,29 @@ sub print_entry {
                     );
                 }
             } elsif ($Opt{'output-format'} eq "pgtab") {
-                $Output = join("\t",
-                    postgresql_copy_safe($date),
-                    length($coor)
-                        ? postgresql_copy_safe($coor)
-                        : $NA,
-                    length($Opt{'description'})
-                        ? postgresql_copy_safe($Opt{'description'})
-                        : $NA,
-                    length($filename)
-                        ? postgresql_copy_safe($filename)
-                        : $NA,
-                    length($Opt{'author'})
-                        ? postgresql_copy_safe($Opt{'author'})
-                        : $NA
-                ) . "\n";
+                # Version information {{{
+                # Without version field (same as version 1):
+                #   date \t
+                #   "(lat,lon)"-coordinates \t
+                #   description \t
+                #   filename \t
+                #   author \t
+                # Version 1:
+                #   "1" \t
+                #   date \t
+                #   "(lat,lon)"-coordinates \t
+                #   description \t
+                #   filename \t
+                #   author \n
+                # }}}
+                $Output = pgtab_entry(
+                    1, # Version number
+                    $date,
+                    $coor,
+                    $Opt{'description'},
+                    $filename,
+                    $Opt{'author'}
+                );
             } else {
                 die("$progname: $Opt{'output-format'}: Unknown output format\n");
             }
@@ -164,6 +194,37 @@ sub print_entry {
     return($Retval);
     # }}}
 } # print_entry()
+
+sub pgtab_entry {
+    # {{{
+    my ($Version, $Date, $Coor, $Descr, $Filename, $Author) = @_;
+    defined($Date)     || ($Date = $NA);
+    defined($Coor)     || ($Coor = $NA);
+    defined($Descr)    || ($Descr = $NA);
+    defined($Filename) || ($Filename = $NA);
+    defined($Author)   || ($Author = $NA);
+    my $Retval = "";
+    if ($Version == 1) {
+        $Retval = join("\t",
+            1, # Version number
+            postgresql_copy_safe($Date) . $tz_str,
+            length($Coor)
+                ? postgresql_copy_safe($Coor)
+                : $NA,
+            length($Opt{'description'})
+                ? postgresql_copy_safe($Opt{'description'})
+                : $NA,
+            length($Filename)
+                ? postgresql_copy_safe($Filename)
+                : $NA,
+            length($Opt{'author'})
+                ? postgresql_copy_safe($Opt{'author'})
+                : $NA
+        ) . "\n";
+    }
+    return($Retval);
+    # }}}
+} # pgtab_entry()
 
 sub print_version {
     # Print program version {{{
@@ -204,6 +265,18 @@ Options:
       xml
       pgtab
     Default: "$Std{'output-format'}".
+  -T X, --timezone X
+    Prepend X as timezone to the date. Valid formats:
+      UTC offset
+        A '+' or '-' followed by a four-digit number (HHMM) which 
+        indicates the offset relative to UTC. Examples:
+          +0000
+          -1600
+          +0630
+      Time zone abbreviation. Examples:
+        UTC
+        Z
+        CET 
   --version
     Print version information.
   --debug

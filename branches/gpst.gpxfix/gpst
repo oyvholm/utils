@@ -35,6 +35,7 @@ our $Debug = 0;
 
 our %Opt = (
     # Initial values for command line arguments {{{
+
     'chronology' => 0,
     'create-breaks' => 0,
     'debug' => 0,
@@ -58,6 +59,7 @@ our %Opt = (
     'undefined' => "",
     'verbose' => 0,
     'version' => 0,
+
     # }}}
 );
 
@@ -73,6 +75,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
     # Command line options {{{
+
     "chronology" => \$Opt{'chronology'},
     "create-breaks|t" => \$Opt{'create-breaks'},
     "debug" => \$Opt{'debug'},
@@ -96,6 +99,7 @@ GetOptions(
     "undefined|n=s" => \$Opt{'undefined'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
     # }}}
 ) || die("$progname: Option error. Use -h for help.\n");
 

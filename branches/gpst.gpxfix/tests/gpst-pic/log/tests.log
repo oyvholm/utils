@@ -21,6 +21,19 @@ ok - "../../gpst-pic -o xml files/DSC_4426.JPG" - Output XML information for DSC
 ok - "../../gpst-pic -o xml files/DSC_4426.JPG" - Output XML information for DSC_4426.JPG (stderr)
 ok - "../../gpst-pic -o blurfl files/DSC_4426.JPG" - Unknown output format specified
 ok - "../../gpst-pic -o blurfl files/DSC_4426.JPG" - Unknown output format specified (stderr)
+# Testing -T (--timezone) option...
+ok - "../../gpst-pic --timezone +1234 files/DSC_4426.JPG" - --timezone works
+ok - "../../gpst-pic --timezone +1234 files/DSC_4426.JPG" - --timezone works (stderr)
+ok - "../../gpst-pic -T +0200 files/DSC_4426.JPG" - Positive time zone
+ok - "../../gpst-pic -T +0200 files/DSC_4426.JPG" - Positive time zone (stderr)
+ok - "../../gpst-pic -T-0600 files/DSC_4426.JPG" - Negative time zone
+ok - "../../gpst-pic -T-0600 files/DSC_4426.JPG" - Negative time zone (stderr)
+ok - "../../gpst-pic -T CET files/DSC_4426.JPG" - Time zone abbreviation
+ok - "../../gpst-pic -T CET files/DSC_4426.JPG" - Time zone abbreviation (stderr)
+ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation
+ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation (stderr)
+ok - "../../gpst-pic -T erf324 files/DSC_4426.JPG" - Invalid time zone abbr, contains digits
+ok - "../../gpst-pic -T erf324 files/DSC_4426.JPG" - Invalid time zone abbr, contains digits (stderr)
 # Testing -v (--verbose) option...
 ok - "../../gpst-pic -hv" - Option --version with -h returns Id string and help screen
 ok - "../../gpst-pic -hv" - Option --version with -h returns Id string and help screen (stderr)
@@ -31,4 +44,4 @@ ok - "../../gpst-pic --version" - Option --version returns Id string (stderr)
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options (stderr)
 # Testing finished.
-1..23
+1..35
