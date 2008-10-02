@@ -27,6 +27,7 @@ our %Std = (
 
     'logdir' => "$ENV{'HOME'}/uuids",
     'version' => 1,
+    'whereto' => "o",
 
 );
 
@@ -42,6 +43,7 @@ our %Opt = (
     'tag' => "",
     'verbose' => 0,
     'version' => $Std{'version'},
+    'whereto' => $Std{'whereto'},
 
 );
 
@@ -67,6 +69,7 @@ GetOptions(
     "tag|t=s" => \$Opt{'tag'},
     "verbose" => \$Opt{'verbose'},
     "version|v=i" => \$Opt{'version'},
+    "whereto|w=s" => \$Opt{'whereto'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -161,7 +164,8 @@ if (open(LogFP, ">>", $Logfile)) {
                     $safe_username
                 ) . "\n"
             );
-            print("$key\n");
+            $Opt{'whereto'} =~ /o/ && print("$key\n");
+            $Opt{'whereto'} =~ /e/ && print(STDERR "$key\n");
         }
         close(LogFP);
     } else {
@@ -249,6 +253,18 @@ Options:
     Generate UUID version x.
   -V, --show-version
     Print version information.
+  -w x, --whereto x
+    x is a string which decides where the UUID will be written:
+      The string contains 'e' - stderr
+      The string contains 'o' - stdout
+    All other characters will be ignored. Examples:
+      e
+        Send to stderr.
+      eo
+        Send to both stdout and stderr.
+      n
+        Don’t output anything.
+    Default: "$Std{'whereto'}"
   --debug
     Print debugging messages.
 

@@ -28,7 +28,16 @@ ok - "../suuid -n 5 -c "Great test" -t testeri -l tmp-suuid-t-..." - -n (--count
 ok - "../suuid -n 5 -c "Great test" -t testeri -l tmp-suuid-t-..." - -n (--count) option with comment and tag (stderr)
 ok - Log contents OK after count, comment and tag
 # Testing -v (--version) option...
+# Testing -w (--whereto) option...
+ok - "../suuid -w o -l tmp-suuid-t-..." - Output goes to stdout
+ok - "../suuid -w o -l tmp-suuid-t-..." - Output goes to stdout (stderr)
+ok - "../suuid -w e -l tmp-suuid-t-..." - Output goes to stderr
+ok - "../suuid -w e -l tmp-suuid-t-..." - Output goes to stderr (stderr)
+ok - "../suuid -w eo -l tmp-suuid-t-..." - Output goes to stdout and stderr
+ok - "../suuid -w eo -l tmp-suuid-t-..." - Output goes to stdout and stderr (stderr)
+ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere
+ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere (stderr)
 # Testing -q (--quiet) option...
 # Running TODO tests...
 # Testing finished.
-1..21
+1..29

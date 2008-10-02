@@ -236,6 +236,35 @@ like(file_data($Outfile), # {{{
 
 # }}}
 diag("Testing -v (--version) option...");
+diag("Testing -w (--whereto) option...");
+likecmd("$CMD -w o -l $Outdir", # {{{
+    "/^$v1_templ\\n\$/s",
+    '/^$/s',
+    "Output goes to stdout",
+);
+
+# }}}
+likecmd("$CMD -w e -l $Outdir", # {{{
+    '/^$/s',
+    "/^$v1_templ\\n\$/s",
+    "Output goes to stderr",
+);
+
+# }}}
+likecmd("$CMD -w eo -l $Outdir", # {{{
+    "/^$v1_templ\\n\$/s",
+    "/^$v1_templ\\n\$/s",
+    "Output goes to stdout and stderr",
+);
+
+# }}}
+likecmd("$CMD -w n -l $Outdir", # {{{
+    '/^$/s',
+    '/^$/s',
+    "Output goes nowhere",
+);
+
+# }}}
 diag("Testing -q (--quiet) option...");
 todo_section:
 ;
