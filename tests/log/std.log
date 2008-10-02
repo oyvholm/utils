@@ -9,6 +9,18 @@ ok - "../std -hv" - Option --version with -h returns Id string and help screen (
 # Testing --version option...
 ok - "../std --version" - Option --version returns Id string
 ok - "../std --version" - Option --version returns Id string (stderr)
+# Creating tempdir...
+ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory
+ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory (stderr)
+ok - "../../std bash bashfile" - Create bash script
+ok - "../../std bash bashfile" - Create bash script (stderr)
+ok - bashfile exists
+ok - bashfile is executable
+ok - "svn propget mergesvn bashfile" - mergesvn property is defined
+ok - "svn propget mergesvn bashfile" - mergesvn property is defined (stderr)
 # Running TODO tests...
+# Cleaning up temp files...
+ok - "svn revert tmp-std-t-..." - svn revert tempdir
+ok - "svn revert tmp-std-t-..." - svn revert tempdir (stderr)
 # Testing finished.
-1..7
+1..17

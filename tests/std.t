@@ -119,6 +119,32 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
+my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
+diag("Creating tempdir...");
+likecmd("svn mkdir $Tmptop", # {{{
+    '/^A\s+tmp-std-t-.+$/s',
+    '/^$/s',
+    "Create svn-controlled directory",
+);
+
+# }}}
+chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
+likecmd("../$CMD bash bashfile", # {{{
+    '/^A    tmp\.std\..+$/s',
+    '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n.+$/s',
+    "Create bash script",
+);
+
+# }}}
+ok(-e "bashfile", "bashfile exists");
+ok(-x "bashfile", "bashfile is executable");
+likecmd("svn propget mergesvn bashfile", # {{{
+    '/^\d+ .*$/s',
+    '/^$/s',
+    "mergesvn property is defined",
+);
+
+# }}}
 
 todo_section:
 ;
@@ -135,6 +161,18 @@ local $TODO = "";
     # TODO tests }}}
 }
 
+chdir("..") || warn("$progname: Cannot 'chdir ..': $!");
+diag("Cleaning up temp files...");
+likecmd("svn revert $Tmptop", # {{{
+    '/tmp-std-t/s',
+    '/^$/s',
+    "svn revert tempdir",
+);
+unlink("$Tmptop/bashfile") || warn("$progname: $Tmptop/bashfile: Cannot delete file: $!");
+rmdir($Tmptop) || warn("$progname: rmdir('$Tmptop'): $!");
+
+# }}}
+
 diag("Testing finished.");
 
 sub testcmd {
@@ -148,6 +186,7 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
+    $Txt =~ s/(tmp-std-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "std-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
@@ -176,6 +215,7 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
+    $Txt =~ s/(tmp-std-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "std-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
