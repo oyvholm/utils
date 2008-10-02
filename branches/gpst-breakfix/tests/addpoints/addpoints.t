@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Test suite for gpst-pic(1).
+# Test suite for addpoints(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
@@ -11,11 +11,10 @@
 #=======================================================================
 
 BEGIN {
-    push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
+    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     our @version_array;
     use Test::More qw{no_plan};
-    use_ok(GPST);
-    use_ok(GPSTxml);
+    # use_ok() goes here
 }
 
 use strict;
@@ -24,7 +23,7 @@ use Getopt::Long;
 $| = 1;
 
 our $Debug = 0;
-our $CMD = "../../gpst-pic";
+our $CMD = "../../addpoints";
 
 our %Opt = (
 
@@ -90,35 +89,6 @@ END
 
 =cut
 
-diag("Checking dependencies...");
-likecmd("exifprobe -V", # {{{
-    "/Program: 'exifprobe' version [234]/",
-    '/^$/',
-    "Check that exifprobe(1) is installed",
-);
-
-# }}}
-diag("Testing --author option...");
-testcmd("$CMD -a sunny files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\tsunny
-END
-    "",
-    "Read date from DSC_4426.JPG and set --author",
-);
-
-# }}}
-# diag("Testing --debug option...");
-diag("Testing --description option...");
-testcmd("$CMD -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27\t\\N\tSkumle til\\\\stander i Bergen.\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Read date from DSC_4426.JPG and set --description with backslash",
-);
-
-# }}}
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -128,95 +98,6 @@ likecmd("$CMD -h", # {{{
 
 # }}}
 ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
-diag("Testing --output-format option..."); # {{{
-# pgtab
-testcmd("$CMD -o pgtab files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Output pgtab format from DSC_4426.JPG",
-);
-
-# }}}
-# xml
-testcmd("$CMD -o xml files/DSC_4426.JPG", # {{{
-    <<END,
-<?xml version="1.0" encoding="UTF-8"?>
-<gpstpic>
-  <img>
-    <filename>DSC_4426.JPG</filename>
-    <date>2008-09-18T17:02:27</date>
-  </img>
-</gpstpic>
-END
-    "",
-    "Output XML information for DSC_4426.JPG",
-);
-
-# }}}
-# Unknown format
-testcmd("$CMD -o blurfl files/DSC_4426.JPG", # {{{
-    "",
-    "gpst-pic: blurfl: Unknown output format\n",
-    "Unknown output format specified",
-);
-
-# }}}
-# }}} --output-format
-diag("Testing -T (--timezone) option...");
-testcmd("$CMD --timezone +1234 files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27+1234\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "--timezone works",
-);
-
-# }}}
-testcmd("$CMD -T +0200 files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27+0200\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Positive time zone",
-);
-
-# }}}
-testcmd("$CMD -T-0600 files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27-0600\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Negative time zone",
-);
-
-# }}}
-testcmd("$CMD -T CET files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27 CET\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Time zone abbreviation",
-);
-
-# }}}
-testcmd("$CMD -T Z files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27Z\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Zulu abbreviation",
-);
-
-# }}}
-testcmd("$CMD -T erf324 files/DSC_4426.JPG", # {{{
-    "",
-    "gpst-pic: erf324: Invalid time zone\n",
-    "Invalid time zone abbr, contains digits",
-);
-
-# }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',
@@ -233,16 +114,6 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
-diag("Various...");
-testcmd("$CMD files/DSC_4426.JPG", # {{{
-    <<END,
-1\t2008-09-18T17:02:27\t\\N\t\\N\tDSC_4426.JPG\t\\N
-END
-    "",
-    "Read date from DSC_4426.JPG, no options",
-);
-
-# }}}
 
 todo_section:
 ;
@@ -253,36 +124,7 @@ if ($Opt{'all'} || $Opt{'todo'}) {
     TODO: {
 
 local $TODO = "";
-testcmd("$CMD -o extxml files/DSC_4426.JPG", # {{{
-    <<END,
-<?xml version="1.0" encoding="UTF-8"?>
-<gpstpic>
-  <img>
-    <filename>DSC_4426.JPG</filename>
-    <crc type="sha1">267e841cb6788c795541e36aea70e2a55d8ec3bb</crc>
-    <crc type="md5">19eb5c86f6b3662b57bc94c3ea428372</crc>
-    <date type="DateTimeOriginal">2008-03-02T17:51:39Z</date>
-    <date type="DateTimeDigitized">2008-03-02T17:51:39Z</date>
-    <date type="DateTime">2008-09-18T15:02:27Z</date>
-    <exposure>
-      <iso>200</iso>
-      <speed>0.333333</speed>
-      <fnumber>3.5 APEX</fnumber>
-      <flash>0</flash>
-    </exposure>
-    <camera>
-      <make>NIKON CORPRORATION</make>
-      <model>NIKON D300</model>
-      <shuttercount>4610</shuttercount>
-    </camera>
-  </img>
-</gpstpic>
-END
-    "",
-    "Show extended XML information for DSC_4426.JPG",
-);
-
-# }}}
+# Insert TODO tests here.
 
     }
     # TODO tests }}}
@@ -301,7 +143,7 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "gpst-pic-stderr.tmp";
+    my $TMP_STDERR = "addpoints-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -329,7 +171,7 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
-    my $TMP_STDERR = "gpst-pic-stderr.tmp";
+    my $TMP_STDERR = "addpoints-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -380,7 +222,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the gpst-pic(1) program.
+Contains tests for the addpoints(1) program.
 
 Options:
 
@@ -428,11 +270,11 @@ $Id$
 
 =head1 SYNOPSIS
 
-gpst-pic.t [options] [file [files [...]]]
+addpoints.t [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Contains tests for the gpst-pic(1) program.
+Contains tests for the addpoints(1) program.
 
 =head1 OPTIONS
 
@@ -490,8 +332,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =head1 SEE ALSO
-
-gpst(1)
 
 =cut
 

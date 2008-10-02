@@ -1,3 +1,9 @@
+ok - use GPST;
+ok - use GPSTdate;
+ok - use GPSTdebug;
+ok - use GPSTgeo;
+ok - use GPSTxml;
+# ========== Executing "run-tests.pl" ==========
 # Testing conversion routines...
 ok - txt_to_xml("abc")
 ok - txt_to_xml("<&>")
@@ -97,7 +103,7 @@ ok - "echo '<tp> </tp>' | ../gpst" - Don’t print empty trackpoints (stderr)
 # Testing --chronology option...
 not ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times
 #   Failed test '"../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -151,7 +157,7 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 #   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -203,7 +209,7 @@ ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output (stderr)
 # Testing --fix option...
 not ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
 #   Failed test '"../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -246,12 +252,14 @@ not ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timest
 # '
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
 # Testing --from-date option...
-# Testing --help option...
-ok - Check -h (--help) option
+# Testing -h (--help) option...
+ok - "../gpst -h" - Option -h prints help screen
+ok - "../gpst -h" - Option -h prints help screen (stderr)
+ok - "../gpst -h" - No Id with only -h
 # Testing --inside option...
 not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
 #   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -307,7 +315,7 @@ ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separate
 ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format (stderr)
 not ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks
 #   Failed test '"../gpst multitrack.gpx" - Read GPX file with multiple tracks'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -370,7 +378,7 @@ ok - "../gpst different_dateformats.gpsml" - Read different date formats from gp
 ok - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file (stderr)
 not ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml
 #   Failed test '"../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -430,7 +438,7 @@ ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicat
 ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates (stderr)
 not ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines
 #   Failed test '"../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -482,7 +490,7 @@ not ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with comme
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 #   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -531,7 +539,7 @@ not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing dat
 ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data (stderr)
 not ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
 #   Failed test '"../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '-0.1448824 51.4968266
 # -0.1449938 51.4968227
 # -0.1453202 51.4969040
@@ -582,7 +590,7 @@ ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (std
 # Testing --outside option...
 not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)
 #   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -625,7 +633,7 @@ ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" 
 # Testing --require option...
 not ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data
 #   Failed test '"../gpst -re multitrack.gpx" - Require elevation from GPX data'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -676,7 +684,7 @@ ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files
 ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files (stderr)
 not ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
 #   Failed test '"../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -740,7 +748,7 @@ not ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
 ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
 not ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
 #   Failed test '"../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpsml>
 # <track>
@@ -802,13 +810,16 @@ not ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titl
 # </gpsml>
 # '
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
-# Testing --verbose option...
+# Testing -v (--verbose) option...
+ok - "../gpst -hv" - Option --version with -h returns Id string and help screen
+ok - "../gpst -hv" - Option --version with -h returns Id string and help screen (stderr)
 # Testing --version option...
-ok - "../gpst --version" - The --version option outputs Id strings
+ok - "../gpst --version" - Option --version returns Id string
+ok - "../gpst --version" - Option --version returns Id string (stderr)
 # Testing --strip-whitespace option...
 not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 #   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
@@ -859,7 +870,7 @@ not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output (stderr)
 not ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines
 #   Failed test '"../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines'
-#   in ./run-tests.pl at line 1822.
+#   in ./run-tests.pl at line 1860.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
@@ -935,5 +946,5 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..205
-# Looks like you failed 15 tests of 205.
+1..215
+# Looks like you failed 15 tests of 215.

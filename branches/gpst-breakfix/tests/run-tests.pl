@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Test suite for gpst.
+# Test suite for gpst(1).
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
@@ -13,29 +13,31 @@
 BEGIN {
     push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
     our @version_array;
+    use Test::More qw{no_plan};
+    use_ok(GPST);
+    use_ok(GPSTdate);
+    use_ok(GPSTdebug);
+    use_ok(GPSTgeo);
+    use_ok(GPSTxml);
 }
 
 use strict;
 use Getopt::Long;
-use Test::More qw{no_plan};
-
-use GPST;
-use GPSTdate;
-use GPSTdebug;
-use GPSTgeo;
-use GPSTxml;
 
 $| = 1;
 
 our $Debug = 0;
+our $CMD = "../gpst";
 
 our %Opt = (
+
     'all' => 0,
     'debug' => 0,
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -47,14 +49,18 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 push(@main::version_array, $rcs_id);
 
+my @cmdline_array = @ARGV;
+
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "all|a" => \$Opt{'all'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "todo|t" => \$Opt{'todo'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 our %Cmd = (
@@ -63,7 +69,15 @@ our %Cmd = (
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
-$Opt{'version'} && print_version();
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+diag(sprintf("========== Executing \"%s%s%s\" ==========",
+    $progname,
+    scalar(@cmdline_array) ? " " : "",
+    join(" ", @cmdline_array)));
 
 chomp(my $gpx_header = <<END);
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -81,6 +95,20 @@ $stripped_gpx_header =~ s/^\s*(.*)$/$1/mg;
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
+
+=pod
+
+testcmd("$CMD command", # {{{
+    <<END,
+[expected stdin]
+END
+    "",
+    "description",
+);
+
+# }}}
+
+=cut
 
 diag("Testing conversion routines...");
 
@@ -601,12 +629,15 @@ END
 # --fix option }}}
 diag("Testing --from-date option..."); # {{{
 # --from-date option }}}
-diag("Testing --help option..."); # {{{
-like(`../gpst -h`, # {{{
-    '/Converts between various GPS formats\./',
-    "Check -h (--help) option"
+diag("Testing -h (--help) option...");
+likecmd("$CMD -h", # {{{
+    '/  Show this help\./',
+    '/^$/',
+    "Option -h prints help screen",
 );
+
 # }}}
+ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
 # --help option }}}
 diag("Testing --inside option..."); # {{{
 testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx", # {{{
@@ -1474,12 +1505,19 @@ END
 
 # }}}
 # --create-breaks option }}}
-diag("Testing --verbose option..."); # {{{
-# --verbose option }}}
-diag("Testing --version option..."); # {{{
-like(`../gpst --version`, # {{{
-    qr/^(\$Id: .*? \$\n)+$/s,
-    '"../gpst --version" - The --version option outputs Id strings',
+diag("Testing -v (--verbose) option...");
+likecmd("$CMD -hv", # {{{
+    '/\$Id: .*? \$.*  Show this help\./s',
+    '/^$/',
+    "Option --version with -h returns Id string and help screen",
+);
+
+# }}}
+diag("Testing --version option...");
+likecmd("$CMD --version", # {{{
+    '/\$Id: .*? \$/',
+    '/^$/',
+    "Option --version returns Id string",
 );
 
 # }}}
@@ -1831,6 +1869,34 @@ sub testcmd {
     # }}}
 }
 
+sub likecmd {
+    # {{{
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
+    my $stderr_cmd = "";
+    my $deb_str = $Opt{'debug'} ? " --debug" : "";
+    my $Txt = join("",
+        "\"$Cmd\"",
+        defined($Desc)
+            ? " - $Desc"
+            : ""
+    );
+    my $TMP_STDERR = "gpst-stderr.tmp";
+
+    if (defined($Exp_stderr) && !length($deb_str)) {
+        $stderr_cmd = " 2>$TMP_STDERR";
+    }
+    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    if (defined($Exp_stderr)) {
+        if (!length($deb_str)) {
+            like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
+            unlink($TMP_STDERR);
+        }
+    } else {
+        diag("Warning: stderr not defined for '$Txt'");
+    }
+    # }}}
+}
+
 sub file_data {
     # Return file content as a string {{{
     my $File = shift;
@@ -1850,7 +1916,6 @@ sub print_version {
     for (@main::version_array) {
         print("$_\n");
     }
-    exit(0);
     # }}}
 } # print_version()
 
@@ -1858,9 +1923,11 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
 
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
     print(<<END);
-
-$rcs_id
 
 Usage: $progname [options] [file [files [...]]]
 
