@@ -20,5 +20,11 @@ for gf in "$@"; do
     testname=`echo -n $testname | perl -pe 's/\.t$//'`
     printf "%${maxlen}s.t: " $testname
     ./$testname.t --all 2>&1 | remove_perltestnumbers >log/$testname.log
-    printf "%2u ok, %2u not ok\\n" $(grep "^ok -" log/$testname.log | wc -l) $(grep "^not ok -" log/$testname.log | wc -l)
+    not_ok_count=$(grep "^not ok -" log/$testname.log | wc -l)
+    if [ $not_ok_count -gt 0 ]; then
+        not_ok_str=", $not_ok_count not ok"
+    else
+        unset not_ok_str
+    fi
+    printf "%2u ok%s\\n" $(grep "^ok -" log/$testname.log | wc -l) "$not_ok_str"
 done
