@@ -4,3 +4,6 @@
 
 all:
 	./Genlog *.t
+
+clean:
+	svn revert log/*
