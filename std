@@ -65,7 +65,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-if (defined($ARGV[1])) { # FIXME: Fix stdout
+if (defined($ARGV[0])) {
     $Type = $ARGV[0];
 } else {
     usage(1);
@@ -118,7 +118,7 @@ if ($Opt{'local'}) {
         warn("$progname: Unable to open \"$CMD_SVN stat\" pipe\n");
     }
 } else {
-    mysyst("$CMD_SVN export $URL $tmpfile");
+    mysyst("$CMD_SVN -q export $URL $tmpfile");
 }
 
 if (length($Dest)) {
@@ -127,24 +127,22 @@ if (length($Dest)) {
 }
 
 if (open(FromFP, "<$tmpfile")) {
-    # FIXME: Fix stdout
-    if (open(DestFP, length($Dest) ? ">$Dest" : *STDOUT)) {
-        while (my $Line = <FromFP>) {
-            if (scalar(@Tags)) {
-                for my $Curr (keys %Tag) {
-                    $Line =~ s/STD${Curr}DTS/$Tag{$Curr}/g;
-                }
-            }
-            $Line =~ s/STDyearDTS/$Year/g;
-            print(DestFP $Line);
-        }
-        close(DestFP);
-        close(FromFP);
-    } else {
-        die("$progname: $Dest: Cannot open file for write: $!\n");
+    if (length($Dest)) {
+        open(DestFP, ">$Dest")
+            || die("$progname: $Dest: Cannot open file for write: $!\n");
     }
+    while (my $Line = <FromFP>) {
+        $Line = replace_tags($Line);
+        if (length($Dest)) {
+            print(DestFP $Line);
+        } else {
+            print($Line);
+        }
+    }
+    length($Dest) && close(DestFP);
+    close(FromFP);
 } else {
-    die("$progname: $dat_file: Cannot read file: $!\n");
+    die("$progname: $tmpfile: Cannot read file: $!\n");
 }
 
 if (length($Dest)) {
@@ -161,6 +159,19 @@ if (length($Dest)) {
 }
 
 unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
+
+sub replace_tags {
+    # {{{
+    my $Txt = shift;
+    if (scalar(@Tags)) {
+        for my $Curr (keys %Tag) {
+            $Txt =~ s/STD${Curr}DTS/$Tag{$Curr}/g;
+        }
+    }
+    $Txt =~ s/STDyearDTS/$Year/g;
+    return($Txt);
+    # }}}
+} # replace_tags()
 
 sub mysyst {
     # Customised system() {{{
@@ -201,9 +212,10 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] type destfile
+Usage: $progname [options] type [destfile]
 
-Create a file of a specific type using a predefined template.
+Create a file of a specific type using a predefined template. If no 
+destination file is specified, output goes to stdout.
 
 Options:
 
