@@ -913,15 +913,17 @@ testcmd("../gpst missing.gpsml", # {{{
 <track>
 <title>Missing various elements</title>
 <tp> <time>2006-04-30T17:16:59Z</time> </tp>
-<tp> <time>2006-04-30T17:17:00Z</time> </tp>
+<tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
 <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
 <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
-<tp> <ele>484</ele> </tp>
+<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
 <tp> <ele>486</ele> </tp>
 <tp> <desc>Missing everything</desc> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <lat>60.42339</lat> </tp>
+<tp> <lon>5.34262</lon> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
@@ -1258,52 +1260,50 @@ END
 );
 
 # }}}
-TODO: {
-    local $TODO = "Shall lat/lon be cleared if one is missing?";
-    testcmd("../gpst -re missing.gpsml", # {{{
-        <<END,
+testcmd("../gpst -re missing.gpsml", # {{{
+    <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
 <title>Missing various elements</title>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
 <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
-<tp> <ele>484</ele> </tp>
+<tp> <lon>5.34224</lon> <ele>484</ele> </tp>
 <tp> <ele>486</ele> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
 END
-        "",
-        "Require elevation",
-    );
+    "",
+    "Require elevation",
+);
 
-    # }}}
-    testcmd("../gpst -rt missing.gpsml", # {{{
-        <<END,
+# }}}
+testcmd("../gpst -rt missing.gpsml", # {{{
+    <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
 <title>Missing various elements</title>
 <tp> <time>2006-04-30T17:16:59Z</time> </tp>
-<tp> <time>2006-04-30T17:17:00Z</time> </tp>
+<tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
 <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
 END
-        "",
-        "Require time",
-    );
+    "",
+    "Require time",
+);
 
-    # }}}
-    testcmd("../gpst -rp missing.gpsml", # {{{
-        <<END,
+# }}}
+testcmd("../gpst -rp missing.gpsml", # {{{
+    <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
@@ -1314,31 +1314,31 @@ END
 </track>
 </gpsml>
 END
-        "",
-        "Require position",
-    );
+    "",
+    "Require position",
+);
 
-    # }}}
-    testcmd("../gpst -ret missing.gpsml", # {{{
-        <<END,
+# }}}
+testcmd("../gpst -ret missing.gpsml", # {{{
+    <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
 <title>Missing various elements</title>
-<tp> <time>2006-04-30T17:17:11Z</time> <ele>483</ele> </tp>
+<tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
 <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
-<tp> <time>2006-04-30T17:18:03Z</time> <ele>490</ele> </tp>
+<tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
 <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
 </track>
 </gpsml>
 END
-        "",
-        "Require elevation and time",
-    );
+    "",
+    "Require elevation and time",
+);
 
-    # }}}
-    testcmd("../gpst -retp missing.gpsml", # {{{
-        <<END,
+# }}}
+testcmd("../gpst -retp missing.gpsml", # {{{
+    <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
@@ -1347,13 +1347,13 @@ END
 </track>
 </gpsml>
 END
-        "",
-        "Require elevation, time and position",
-    );
+    "",
+    "Require elevation, time and position",
+);
 
-    # }}}
-    testcmd("../gpst -rep missing.gpsml", # {{{
-        <<END,
+# }}}
+testcmd("../gpst -rep missing.gpsml", # {{{
+    <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <gpsml>
 <track>
@@ -1363,12 +1363,11 @@ END
 </track>
 </gpsml>
 END
-        "",
-        "Require elevation and position",
-    );
+    "",
+    "Require elevation and position",
+);
 
-    # }}}
-}
+# }}}
 # --require option }}}
 diag("Testing --round option..."); # {{{
 testcmd("../gpst -R lat=4,lon=5,ele=1 pause.gpx", # {{{

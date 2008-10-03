@@ -735,7 +735,12 @@ sub print_entry {
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'year'}) || ($Dat{'year'} = "");
     my $print_time = length($Dat{'year'}) ? 1 : 0;
-    my $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
+    my $print_pos;
+    if (!$Req{'position'} && $Opt{'output-format'} eq "gpsml") {
+        $print_pos = (length($Dat{'lat'}) || length($Dat{'lon'})) ? 1 : 0;
+    } else {
+        $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
+    }
     if (!$print_pos) {
         $Dat{'lat'} = $Dat{'lon'} = "";
     }

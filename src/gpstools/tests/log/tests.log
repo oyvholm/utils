@@ -117,7 +117,7 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 #   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 1860.
+#   in ./run-tests.pl at line 1859.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -208,7 +208,7 @@ ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 #   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 1860.
+#   in ./run-tests.pl at line 1859.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -280,18 +280,18 @@ ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data
 ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data (stderr)
 ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml
 ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml (stderr)
-ok - "../gpst -re missing.gpsml" - Require elevation # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -re missing.gpsml" - Require elevation (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rt missing.gpsml" - Require time # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rt missing.gpsml" - Require time (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rp missing.gpsml" - Require position # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rp missing.gpsml" - Require position (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -ret missing.gpsml" - Require elevation and time # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -ret missing.gpsml" - Require elevation and time (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -retp missing.gpsml" - Require elevation, time and position # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rep missing.gpsml" - Require elevation and position # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
+ok - "../gpst -re missing.gpsml" - Require elevation
+ok - "../gpst -re missing.gpsml" - Require elevation (stderr)
+ok - "../gpst -rt missing.gpsml" - Require time
+ok - "../gpst -rt missing.gpsml" - Require time (stderr)
+ok - "../gpst -rp missing.gpsml" - Require position
+ok - "../gpst -rp missing.gpsml" - Require position (stderr)
+ok - "../gpst -ret missing.gpsml" - Require elevation and time
+ok - "../gpst -ret missing.gpsml" - Require elevation and time (stderr)
+ok - "../gpst -retp missing.gpsml" - Require elevation, time and position
+ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stderr)
+ok - "../gpst -rep missing.gpsml" - Require elevation and position
+ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr)
 # Testing --round option...
 ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx
 ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx (stderr)
@@ -313,7 +313,7 @@ ok - "../gpst --version" - Option --version returns Id string (stderr)
 # Testing --strip-whitespace option...
 not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 #   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 1860.
+#   in ./run-tests.pl at line 1859.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
