@@ -1,0 +1,1243 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Converts between various GPS formats
+#
+# Character set: UTF-8
+# ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+BEGIN {
+    our @version_array;
+}
+
+use strict;
+use Getopt::Long;
+use Time::Local qw { timegm_nocheck };
+
+BEGIN {
+    push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
+    our @version_array;
+}
+
+use GPST;
+use GPSTdate;
+use GPSTdebug;
+use GPSTgeo;
+use GPSTxml;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+    # Initial values for command line arguments {{{
+
+    'chronology' => 0,
+    'create-breaks' => 0,
+    'debug' => 0,
+    'double-y-scale' => 0,
+    'epoch' => 0,
+    'fix' => 0,
+    'from-date' => "",
+    'help' => 0,
+    'inside' => 0,
+    'near' => "",
+    'output-format' => "gpsml",
+    'outside' => 0,
+    'pos1' => "",
+    'pos2' => "",
+    'require' => "",
+    'round' => "",
+    'save-to-file' => "\n", # \n =  undefined, it’s banned in filenames anyway.
+    'short-date' => 0,
+    'skip-dups' => 0,
+    'strip-whitespace' => 0,
+    'undefined' => "",
+    'verbose' => 0,
+    'version' => 0,
+
+    # }}}
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+    # Command line options {{{
+
+    "chronology" => \$Opt{'chronology'},
+    "create-breaks|t" => \$Opt{'create-breaks'},
+    "debug" => \$Opt{'debug'},
+    "double-y-scale|y" => \$Opt{'double-y-scale'},
+    "epoch|e" => \$Opt{'epoch'},
+    "fix" => \$Opt{'fix'},
+    "from-date=s" => \$Opt{'from-date'},
+    "help|h" => \$Opt{'help'},
+    "inside" => \$Opt{'inside'},
+    "near" => \$Opt{'near'},
+    "output-format|o=s" => \$Opt{'output-format'},
+    "outside" => \$Opt{'outside'},
+    "pos1=s" => \$Opt{'pos1'},
+    "pos2=s" => \$Opt{'pos2'},
+    "require|r=s" => \$Opt{'require'},
+    "round|R=s" => \$Opt{'round'},
+    "save-to-file|S=s" => \$Opt{'save-to-file'},
+    "short-date|s" => \$Opt{'short-date'},
+    "skip-dups|d" => \$Opt{'skip-dups'},
+    "strip-whitespace|w" => \$Opt{'strip-whitespace'},
+    "undefined|n=s" => \$Opt{'undefined'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+
+    # }}}
+) || die("$progname: Option error. Use -h for help.\n");
+
+my %Dat;
+
+my $PAUSE_LIMIT = 2 * 60; # Antall sekunder mellom to punkter det må til før en move legges inn.
+my $Udef = "?";
+my $DIGIT = '[0-9\.\-\+]'; # Used in regexps
+$GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
+my $Spc = $GPST::Spc; # FIXME
+my $found_move = 0; # Settes til 1 hvis en /^# move$/ blir funnet.
+my $first_time = 0;
+my $last_time = 0;
+my ($last_lon, $last_lat, $last_line) =
+   (     1000,      1000,         ""); # Vi kan jo teoretisk sett være i Greenwich eller på ekvator
+my ($lat1, $lon1, $lat2, $lon2) =
+   (-1000, -1000,  1000,  1000);
+
+our %Cmd = (
+    'gpsbabel' => '/usr/local/bin/gpsbabel',
+);
+
+my %Poscount = ();
+
+if ($Opt{'output-format'} eq "pgtab") {
+    $Opt{'require'} .= "p";
+}
+my %Req = (
+    'ele' => ($Opt{'require'} =~ /e/) ? 1 : 0,
+    'position' => ($Opt{'require'} =~ /p/) ? 1 : 0,
+    'time' => ($Opt{'require'} =~ /t/) ? 1 : 0,
+);
+$Opt{'require'} =~ /[^ept]/
+    && die("$0: Unknown flag in --require (-r) value\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+if ($Opt{'pos1'} =~ /^($DIGIT+),($DIGIT+)$/) {
+    $lat1 = $1;
+    $lon1 = $2;
+}
+if ($Opt{'pos2'} =~ /^($DIGIT+),($DIGIT+)$/) {
+    $lat2 = $1;
+    $lon2 = $2;
+}
+if ($lat1 > $lat2) {
+    my $Tmp = $lat1;
+    $lat1 = $lat2;
+    $lat2 = $Tmp;
+}
+if ($lon1 > $lon2) {
+    my $Tmp = $lon1;
+    $lon1 = $lon2;
+    $lon2 = $Tmp;
+}
+
+if ($Opt{'epoch'} && $Opt{'short-date'}) {
+    die("$progname: Cannot mix the --epoch (-e) and --short-date (-s) options\n");
+}
+
+if ($Opt{'inside'} && $Opt{'outside'}) {
+    die("$progname: Cannot mix the --inside and --outside options\n");
+}
+
+# To avoid printing out extra "/> at the start of svg output:
+my $svg_start_thing = "";
+
+my %Round = ();
+
+if (defined($Opt{'round'})) {
+    my $R = $Opt{'round'};
+    $R =~ s/([a-z]+)=(\d+)/($Round{$1}=$2, "")/eg;
+}
+
+length($Opt{'undefined'}) && ($Udef = $Opt{'undefined'});
+
+$Opt{'save-to-file'} eq "\n" && print_header(*STDOUT);
+
+my @first_lines;
+my $xml_data;
+my $data_line = "";
+our $curr_file = "";
+
+my $from_stdin = scalar(@ARGV) ? 0 : 1;
+
+$from_stdin && push(@ARGV, "-");
+
+for $curr_file (@ARGV) {
+    # Scan through stdin or specified files and send every GPS entry to 
+    # print_entry()
+    # {{{
+    print(STDERR "$progname: Opening \"$curr_file\" for read\n") if $Opt{'verbose'};
+    if (open(CurrFP, "<$curr_file")) {
+        # {{{
+        while (<CurrFP>) {
+            $data_line = $_;
+            %Dat = (
+                'year' => '', 'month' => '', 'day' => '',
+                'hour' => '', 'min' => '', 'sec' => '',
+                'epoch' => '',
+                'date-format' => '',
+                'lat' => '', 'lon' => '',
+                'ele' => '',
+                'desc' => '',
+                'error' => "",
+                'what' => 'tp',
+            );
+
+            $Opt{'epoch'} && ($Dat{'date-format'} = "epoch");
+            $Opt{'short-date'} && ($Dat{'date-format'} = "short");
+
+            if ($Opt{'save-to-file'} ne "\n") {
+                push(@first_lines, $_);
+            }
+            s/^# error // && ($Dat{'error'} = "error");
+            s/^# ?// && ($Dat{'error'} = "desc");
+            $xml_data = "";
+            if (m#^<(e?tp)\b(.*?)>(.*?)</(e?tp)>\s*$#) {
+                # gpsml — The main storage format {{{
+                my ($Elem, $Props, $Data) =
+                   (   $1,     $2,    $3);
+                my $err_str = ($Props =~ /\berr="(.*?)"/) ? $1 : "error";
+                $Elem eq "etp" && ($Dat{'error'} = $err_str);
+                my $Time = "";
+                $Data =~ m#<time>(.*?)</time># && ($Time = $1);
+                $Time =~ s{
+                    (\d\d\d\d)-?(\d\d)-?(\d\d)[T ](\d\d):?(\d\d):?([\d\.]+?)Z
+                } {
+                    ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                     $Dat{'hour'},   $Dat{'min'}, $Dat{'sec'}) =
+                    (          $1,            $2,          $3,
+                               $4,            $5,          $6);
+                    "";
+                }ex;
+                $Data =~ m#<lat>($DIGIT*?)</lat># && ($Dat{'lat'} = $1);
+                $Data =~ m#<lon>($DIGIT*?)</lon># && ($Dat{'lon'} = $1);
+                $Data =~ m#<ele>($DIGIT*?)</ele># && ($Dat{'ele'} = $1);
+                $Data =~ m#<desc>(.*?)</desc># && ($Dat{'desc'} = $1);
+                print_entry(%Dat);
+                # }}}
+            } elsif (m#^<break\b.*?/>#) {
+                $found_move = 1;
+            } elsif (m#^<(title|pause)\b.*?>(.*?)</(title|pause)>#) {
+                $Dat{'what'} = $1;
+                $Dat{$1} = $2;
+                print_entry(%Dat);
+            } elsif (m#^<desc\b.*?>(.*$)#s) {
+                $Dat{'what'} = "desc";
+                my $Txt = $1;
+                until ($Txt =~ m#</desc>#s) {
+                    $Txt .= <CurrFP>;
+                }
+                $Txt =~ s#^(.*)(</desc>.*$)#$1#s;
+                $Dat{'desc'} = $Txt;
+                print_entry(%Dat);
+            } elsif (/<gpx\b/) {
+                $xml_data = $_;
+                $xml_data .= join("", <CurrFP>);
+                if (!length($Opt{'output-format'})) {
+                    $Opt{'output-format'} = "gpx";
+                    print_header(*STDOUT);
+                }
+                read_xmlfile($xml_data);
+                last;
+            } elsif (/^move$/) {
+                $found_move = 1;
+            } elsif (m#^(\d+)\t($DIGIT+)\t($DIGIT+)\t($DIGIT)#) {
+                # CSV format, epoch style {{{
+                my ($ep_time, $lon_val, $lat_val, $Alt) =
+                   (      $1,       $2,       $3,   $4);
+                $Dat{'epoch'} = $ep_time;
+                ($Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
+                 $Dat{'day'}, $Dat{'month'}, $Dat{'year'},
+                 $Dat{'wday'}, $Dat{'yday'}) = gmtime($ep_time);
+                $Dat{'month'}++; # Urgh Ⅰ
+                $Dat{'year'} += 1900; # Urgh Ⅱ
+                print_entry(%Dat);
+                # }}}
+            } elsif (
+                m{^
+                    (\d\d\d\d)-?(\d\d)-?(\d\d)[T\ ](\d\d):?(\d\d):?(\d\d)Z?\t
+                    ($DIGIT+)\t($DIGIT+)\t($DIGIT)
+                }x
+            ) {
+                # CSV format, human-readable date format {{{
+                ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                 $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'},
+                 $Dat{'lon'}, $Dat{'lat'}, $Dat{'ele'}) =
+                ($1, $2, $3,
+                 $4, $5, $6,
+                 $7, $8, $9);
+                print_entry(%Dat);
+                # }}}
+            } elsif (/^Trackpoint\t/) {
+                # Trackpoint\tN60.41630 E5.31675\t09.02.2006 20:24:37 (UTC)\t13.6 m\t\t93.9 m\t00:00:06\t56 kph\t123° true {{{
+                #
+                # Trackpoint\t
+                # N60.41630 E5.31675\t
+                # 09.02.2006 20:24:37 (UTC)\t
+                # 13.6 m\t
+                # \t
+                # 93.9 m\t
+                # 00:00:06\t
+                # 56 kph\t
+                # 123° true
+                my $Orig = $_;
+                $Orig =~ s/[\r\n]+$//;
+                my ($Marker_f, $Position_f, $Time_f, $Alt_f, $Depth_f,
+                    $Leglength_f, $Legtime_f, $Legspeed_f, $Legcourse_f) =
+                       split(/\t/, $Orig .
+                                   # Nødløsning for å unngå at variabler 
+                                   # blir udefinert.
+                                   "\t\t\t\t\t\t\t\t\t\t"
+                       );
+                D(join("",
+                    "Position_f=\"$Position_f\" \x7B\x7B\x7B\n",
+                    "Time_f=\"$Time_f\"\n",
+                    "Alt_f=\"$Alt_f\"\n",
+                    "Depth_f=\"$Depth_f\"\n",
+                    "Leglength_f=\"$Leglength_f\"\n",
+                    "Legtime_f=\"$Legtime_f\"\n",
+                    "Legspeed_f=\"$Legspeed_f\"\n",
+                    "Legcourse_f=\"$Legcourse_f\" \x7D\x7D\x7D\n",
+                ));
+                my ($NS, $WE,
+                    $Alt_unit,
+                    $Leglength,
+                    $Legtime_hour, $Legtime_min, $Legtime_sec,
+                    $Legspeed, $Legspeed_unit,
+                    $Legcourse
+                ) = ("", "", "", "", "", "", "", "", "", "", "", "", "",
+                     "", "", "", "", "", "", "", "", "", "");
+                ($Position_f =~ /^(N|S)([\d\.]+) (W|E)([\d\.]+)/) &&
+                    ($NS = $1, $Dat{'lat'} = $2, $WE = $3, $Dat{'lon'} = $4);
+                ($Time_f =~ /^(\d+)\.(\d+)\.(\d+) (\d+):(\d+):(\d+) \((.+?)\)/) &&
+                    ($Dat{'day'} = $1, $Dat{'month'} = $2, $Dat{'year'} = $3,
+                     $Dat{'hour'} = $4, $Dat{'min'} = $5, $Dat{'sec'} = $6);
+                ($Alt_f =~ /^($DIGIT+) (.*?)/) &&
+                    ($Dat{'ele'} = $1, $Alt_unit = $2);
+                D("ele = \"$Dat{'ele'}\"");
+                ($NS eq "S") && ($Dat{'lat'} = 0-$Dat{'lat'});
+                ($WE eq "W") && ($Dat{'lon'} = 0-$Dat{'lon'});
+                # MapSource in win xp writes YYYY, but YY in win98se.
+                (
+                    defined($Dat{'year'})
+                        && $Dat{'year'} =~ /\d/
+                        && $Dat{'year'} < 1900
+                ) && ($Dat{'year'} += 2000);
+                print_entry(%Dat);
+                # }}}
+            } elsif (/^Track\t(.*?)\t/) {
+                $Dat{'title'} = txt_to_xml($1);
+                $Dat{'what'} = "title";
+                $found_move = 1;
+                print_entry(%Dat);
+            } elsif (
+                m{^
+                    T\t
+                    (\d\d)/(\d\d)/(\d\d\d\d)\ (\d\d):(\d\d):(\d\d)\t
+                    (.+)\xB0(.+)'(.+)"\t
+                    (.+)\xB0(.+)'(.+)"
+                }x
+            ) {
+                # T 09/01/2002 11:51:26 60°23'36.3" 5°19'35.9" {{{
+                my ($lat_d, $lat_m, $lat_s, $lon_d, $lon_m, $lon_s);
+                ($Dat{'month'}, $Dat{'day'}, $Dat{'year'}, 
+                 $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'},
+                 $lat_d, $lat_m, $lat_s,
+                 $lon_d, $lon_m, $lon_s) =
+                ($1, $2, $3,
+                 $4, $5, $6,
+                 $7, $8, $9,
+                 $10, $11, $12);
+                my $Flat = defined($Round{'lat'}) ? ".$Round{'lat'}" : "";
+                my $Flon = defined($Round{'lon'}) ? ".$Round{'lon'}" : "";
+                $Dat{'lat'} = sprintf("%${Flat}f",
+                                      1.0*($lat_d+($lat_m/60)+($lat_s/3600)));
+                $Dat{'lon'} = sprintf("%${Flon}f",
+                                      1.0*$lon_d+($lon_m/60)+($lon_s/3600));
+                print_entry(%Dat);
+                # }}}
+            } elsif (
+                m{^
+                    1\ (\S+)\ (\S+)\ (\S+)\ (\S+)\x20
+                    (\d\d)/(\d\d)/(\d\d\d\d)\ (\d\d):(\d\d):(\d\d)
+                }x
+            ) {
+                # 1 60.3938222 5.3238754 17.3 0 09/01/2002 14:18:23 {{{
+                ($Dat{'lat'}, $Dat{'lon'}, $Dat{'speed'},
+                 $Dat{'unkn'},
+                 $Dat{'month'}, $Dat{'day'}, $Dat{'year'},
+                 $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
+                ($1, $2, $3,
+                 $4,
+                 $5, $6, $7,
+                 $8, $9, $10);
+                print_entry(%Dat);
+                # }}}
+            } elsif (/^
+                # @020721221336N6048353E00701826S015-00001E4859N1673U0000 {{{
+                    # Regexp {{{
+                    (@) # @
+                    (\d\d) # Year
+                    (\d\d) # Month
+                    (\d\d) # Day
+                    (\d\d) # Hours
+                    (\d\d) # Minutes
+                    (\d\d) # Seconds
+                    ([NS]) # N|S
+                    (\d\d) # Latitude degree
+                    (\d\d) # Latitude minute
+                    (\d\d\d) # Latitude minute decimals
+                    ([EW]) # E|W
+                    (\d\d\d) # Longitude degree
+                    (\d\d) # Longitude minute
+                    (\d\d\d) # Longitude minute degree
+                    (....) # Accurancy
+                    (......) # Elevation
+                    (...............)
+                    # }}}
+                    /x) {
+                my ($NS, $EW, $lat_deg, $lat_degmin, $lat_mindec, $lon_deg,
+                    $lon_degmin, $lon_mindec);
+                ($Dat{'year'}, $Dat{'month'}, $Dat{'day'}, $Dat{'hour'},
+                 $Dat{'min'}, $Dat{'sec'}, $NS, $lat_deg,
+                 $lat_degmin, $lat_mindec, $EW,
+                 $lon_deg, $lon_degmin, $lon_mindec,
+                 $Dat{'accur'}, $Dat{'ele'}, $Dat{'unknown'}) =
+                ($2+2000, $3, $4, $5,
+                 $6, $7, $8, $9,
+                 $10, $11, $12,
+                 $13, $14, $15,
+                 $16, $17, $18);
+                my $ep_time = timegm_nocheck(
+                    $Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
+                    $Dat{'day'}, $Dat{'month'}-1, $Dat{'year'}
+                );
+                $last_time = $ep_time;
+                my $Flat = defined($Round{'lat'}) ? ".$Round{'lat'}" : "";
+                my $Flon = defined($Round{'lon'}) ? ".$Round{'lon'}" : "";
+                my $tmp_lon = sprintf(
+                                      "%${Flon}f",
+                                      $lon_deg +
+                                      $lon_degmin/60 +
+                                      $lon_mindec/60000);
+                my $tmp_lat = sprintf("%${Flat}f",
+                                      $lat_deg +
+                                      $lat_degmin/60 +
+                                      $lat_mindec/60000);
+                ($NS eq "S") && ($tmp_lat = 0-$tmp_lat);
+                ($EW eq "W") && ($tmp_lon = 0-$tmp_lon);
+                $Dat{'lat'} = $tmp_lat;
+                $Dat{'lon'} = $tmp_lon;
+                print_entry(%Dat);
+                # }}}
+            } elsif (/^(@)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(_{42})/) {
+                # @020721221336__________________________________________ {{{
+                ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                 $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}, $Dat{'rest'}) =
+                ($2+2000, $3, $4,
+                 $5, $6, $7, $8);
+                $Dat{'error'} = "nosignal";
+                print_entry(%Dat);
+                # }}}
+            } elsif (/^xmaplog /) {
+                # NOP
+            } elsif (/^$/) {
+                ($Opt{'output-format'} eq "csv")
+                    && ($Opt{'save-to-file'} eq "\n")
+                    && print("\n");
+            } elsif (/^Pause: /) {
+                # NOP, is here to cope with old files I’ve lying around.
+            } elsif ($Dat{'error'} eq "desc") {
+                my $Comment = $_;
+                if (defined($Comment)) {
+                    $Comment =~ s/^\s*(.*?)\s*$/$1/;
+                    if ($Opt{'output-format'} eq "gpsml") {
+                        $Dat{'desc'} = txt_to_xml($Comment);
+                        $Dat{'what'} = "desc";
+                        print_entry(%Dat);
+                    }
+                }
+            } else {
+                $Opt{'verbose'} && warn("Line $.: Unknown: \"$_\"\n");
+            }
+        }
+        # }}}
+    } else {
+        warn("$progname: $curr_file: Cannot open file for read: $!\n");
+    }
+    # }}}
+}
+
+print_footer(*STDOUT);
+
+exit(0);
+
+sub read_xmlfile {
+    # {{{
+    my $Txt = join("", @_);
+    $Txt =~ s/<!--(.*?)-->//gs;
+    $Txt =~ s#(<gpx\b.*?>.*?</gpx>)#print_gpx($1)#gse;
+    # }}}
+}
+
+sub print_gpx {
+    # {{{
+    my $Orig = shift;
+    my $Str = $Orig;
+    # D("print_xml_gps(\"$Orig\")\n");
+    $Str =~ s/<!--(.*?)-->//gs;
+    my $fromdate_str = "";
+    if ($Opt{'from-date'}) {
+        $fromdate_str = "date >= '$Opt{'from-date'}' AND ";
+    }
+    if ($Opt{'output-format'} =~ /^(pgwtab|pgwupd)$/) {
+        # {{{
+        $Str =~
+        s{
+            <wpt\b(.*?)>(.*?)</wpt>
+        }
+        {
+            my $attr_wpt = $1;
+            my $el_wpt = $2;
+            my ($Lat, $Lon, $Name, $Ele, $Type, $Time, $Cmt, $Desc, $Src, $Sym) =
+               ('\N', '\N',  '\N', '\N',  '\N',  '\N', '\N',  '\N', '\N', '\N');
+
+            $attr_wpt =~ /.*lat="($DIGIT+?)"/s &&
+                ($Lat = postgresql_copy_safe($1));
+            $attr_wpt =~ /.*lon="($DIGIT+?)"/s &&
+                ($Lon = postgresql_copy_safe($1));
+            $el_wpt =~ /.*<name\b(.*?)>(.*?)<\/name>/s &&
+                ($Name = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<ele\b(.*?)>(.*?)<\/ele>/s &&
+                ($Ele = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<type\b(.*?)>(.*?)<\/type>/s &&
+                ($Type = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<time\b(.*?)>(.*?)<\/time>/s &&
+                ($Time = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<cmt\b(.*?)>(.*?)<\/cmt>/s &&
+                ($Cmt = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<desc\b(.*?)>(.*?)<\/desc>/s &&
+                ($Desc = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<src\b(.*?)>(.*?)<\/src>/s &&
+                ($Src = postgresql_copy_safe(xml_to_txt($2)));
+            $el_wpt =~ /.*<sym\b(.*?)>(.*?)<\/sym>/s &&
+                ($Sym = postgresql_copy_safe(xml_to_txt($2)));
+
+            if ($Opt{'output-format'} eq "pgwtab") {
+                print(
+                    join("\t",
+                        "($Lat,$Lon)",
+                        $Name,
+                        $Ele,
+                        $Type,
+                        $Time,
+                        $Cmt,
+                        $Desc,
+                        $Src,
+                        $Sym
+                    ) . "\n"
+                );
+            } elsif ($Opt{'output-format'} eq "pgwupd") {
+                $Name =~ s/'/''/gs;
+                print(join("\n",
+                    "BEGIN;",
+                    "    UPDATE logg SET sted = clname(coor) " .
+                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "    UPDATE logg SET dist = cldist(coor) " .
+                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "COMMIT;"
+                ) . "\n");
+            }
+            "";
+        }gsex;
+        # }}}
+    } else {
+        # {{{
+        $Str =~
+        s{
+            <trk\b(.*?)>(.*?)</trk>
+        }
+        {
+            my $el_trk = $2;
+            $el_trk =~
+            s{
+                <name\b(.*?)>(.*?)</name>
+            }{
+                my %tmp_dat = ();
+                $tmp_dat{'title'} = $2;
+                $tmp_dat{'what'} = "title";
+                $tmp_dat{'error'} = "";
+                print_entry(%tmp_dat);
+                "";
+            }sex;
+            $el_trk =~
+            s{
+                <trkseg\b(.*?)>(.*?)</trkseg>
+            }
+            {
+                my $el_trkseg = $2;
+                $el_trkseg =~
+                s{
+                    <trkpt\b(.*?)>(.*?)</trkpt>
+                }
+                {
+                    my ($attr_trkpt, $el_trkpt) =
+                       (         $1,        $2);
+                    %Dat = (
+                        'year' => '', 'month' => '', 'day' => '',
+                        'hour' => '', 'min' => '', 'sec' => '',
+                        'epoch' => '',
+                        'date-format' => '',
+                        'lat' => '', 'lon' => '',
+                        'ele' => '',
+                        'desc' => '',
+                        'error' => "",
+                        'what' => 'tp',
+                    );
+                    ($attr_trkpt =~ /\blon="(.*?)"/) && ($Dat{'lon'} = $1);
+                    ($attr_trkpt =~ /\blat="(.*?)"/) && ($Dat{'lat'} = $1);
+                    ($el_trkpt   =~ m#<ele\b.*?>(.*?)</ele>#) && ($Dat{'ele'} = $1);
+                    if (
+                        $el_trkpt =~
+                        m{
+                            <time>(\d\d\d\d)-?(\d\d)-?(\d\d)T
+                            (\d\d):?(\d\d):?([\d\.]+)Z</time>
+                        }x
+                    ) {
+                        ($Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                         $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}) =
+                        ($1, $2, $3, $4, $5, $6);
+                    }
+                    print_entry(%Dat);
+                    "";
+                }gsex;
+                $found_move = 1;
+            }gsex;
+            $found_move = 1;
+        }gsex;
+        # }}}
+    }
+    # }}}
+}
+
+sub print_header {
+    # {{{
+    local *OutFP = shift;
+    if ($Opt{'output-format'} eq "gpsml") {
+        print(OutFP join("",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+            "<gpsml>\n",
+            "<track>\n",
+        ));
+    } elsif ($Opt{'output-format'} eq "gpstrans") {
+        print(OutFP "Format: DMS  UTC Offset:   0.00 hrs  " .
+                    "Datum[100]: WGS 84\n");
+    } elsif ($Opt{'output-format'} eq "gpx") {
+        print(OutFP join("",
+            qq{<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n},
+            qq{<gpx\n},
+            qq{$Spc${Spc}version="1.1"\n},
+            qq{$Spc${Spc}creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"\n},
+            qq{$Spc${Spc}xmlns="http://www.topografix.com/GPX/1/1"\n},
+            qq{$Spc${Spc}xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n},
+            qq{$Spc${Spc}xsi:schemaLocation="http://www.topografix.com/GPX/1/1 },
+            qq{http://www.topografix.com/GPX/1/1/gpx.xsd"\n},
+            qq{>\n},
+            qq{$Spc$Spc<trk>\n},
+            qq{$Spc$Spc$Spc$Spc<trkseg>\n},
+        ));
+    } elsif ($Opt{'output-format'} eq "ps") {
+        print(OutFP ps_header(532, 6034, 533, 6040));
+        print(OutFP "*u\n");
+    } elsif ($Opt{'output-format'} eq "svg") {
+        print(OutFP join("",
+            "<?xml version=\"1.0\" standalone=\"no\"?>\n",
+            "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"\n",
+            "$Spc$Spc\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n",
+            "<svg height=\"1000\" width=\"1000\" viewBox=\"23 70 2 2\"\n",
+            "$Spc${Spc}xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n",
+            "$Spc$Spc<title></title>\n",
+            "$Spc$Spc<desc></desc>\n",
+        ));
+    }
+    # }}}
+}
+
+sub print_footer {
+    # Print footer {{{
+    local *OutFP = shift;
+    if ($Opt{'output-format'} eq "gpsml") {
+        print(OutFP join("",
+            "</track>\n",
+            "</gpsml>\n",
+        ));
+    } elsif ($Opt{'output-format'} eq "gpx") {
+        print(OutFP join("",
+            "$Spc$Spc$Spc$Spc</trkseg>\n",
+            "$Spc$Spc</trk>\n",
+            "</gpx>\n",
+        ));
+    } elsif ($Opt{'output-format'} eq "poscount") {
+        while (my ($l_name, $l_val) = each %Poscount) {
+            $l_name =~ /^(.+?),(.+?)$/
+                && print(OutFP "$1\t$2\t$l_val\n");
+        }
+    } elsif ($Opt{'output-format'} eq "ps") {
+        print(OutFP join("",
+            "*U\n",
+            "%%Trailer\n",
+            "%%EOF\n",
+        ));
+    } elsif ($Opt{'output-format'} eq "svg") {
+        print(OutFP "\"/>\n</svg>\n");
+    }
+    # }}}
+}
+
+sub print_entry {
+    # Print a GPS entry with time, latitude, longitude and elevation in 
+    # various formats
+    # {{{
+    my %Dat = @_;
+    defined($Dat{'desc'}) || ($Dat{'desc'} = "");
+    defined($Dat{'ele'}) || ($Dat{'ele'} = "");
+    defined($Dat{'lat'}) || ($Dat{'lat'} = "");
+    defined($Dat{'lon'}) || ($Dat{'lon'} = "");
+    defined($Dat{'year'}) || ($Dat{'year'} = "");
+    my $print_time = length($Dat{'year'}) ? 1 : 0;
+    my $print_pos;
+    if (!$Req{'position'} && $Opt{'output-format'} eq "gpsml") {
+        $print_pos = (length($Dat{'lat'}) || length($Dat{'lon'})) ? 1 : 0;
+    } else {
+        $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
+    }
+    if (!$print_pos) {
+        $Dat{'lat'} = $Dat{'lon'} = "";
+    }
+    my $print_ele = length($Dat{'ele'}) ? 1 : 0;
+    my $print_desc = length($Dat{'desc'}) ? 1 : 0;
+    my $Line = "";
+    D("print_entry(\"" . join("\", \"", @_) . "\");");
+    my $ep_time;
+
+    if ($Opt{'near'} && $print_pos) {
+        $Line .= sprintf("%s ",
+                         list_nearest_waypoints($Dat{'lat'}, $Dat{'lon'}));
+    }
+
+    if (length($Opt{'round'})) {
+        for my $Tmp (qw{ lat lon ele }) {
+            if (defined($Round{$Tmp}) && length($Dat{$Tmp})) {
+                D("Tmp = '$Tmp'");
+                ($Dat{$Tmp} = 1.0 * sprintf("%.$Round{$Tmp}f", $Dat{$Tmp}));
+            }
+        }
+    }
+
+    if ($Opt{'output-format'} eq "poscount") {
+        if (!length($Dat{'error'})) {
+            my $Name = "$Dat{'lon'},$Dat{'lat'}";
+            defined($Poscount{$Name}) || ($Poscount{$Name} = 0);
+            $Poscount{$Name}++;
+        }
+        return;
+    }
+
+    if ($print_time) {
+        $ep_time = timegm_nocheck(
+            $Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
+            $Dat{'day'}, $Dat{'month'} - 1, $Dat{'year'}
+        );
+        $Dat{'epoch'} = $ep_time;
+        $Dat{'year'}  = sprintf("%04u", $Dat{'year'});
+        $Dat{'month'} = sprintf("%02u", $Dat{'month'});
+        $Dat{'day'}   = sprintf("%02u", $Dat{'day'});
+        $Dat{'hour'}  = sprintf("%02u", $Dat{'hour'});
+        $Dat{'min'}   = sprintf("%02u", $Dat{'min'});
+        $Dat{'sec'}   = sprintf("%02u", $Dat{'sec'});
+        if ($Opt{'chronology'}) {
+            if ($last_time > $ep_time && !length($Dat{'error'})) {
+                warn(sprintf(
+                    "%s: $curr_file: \"%sZ\": Next date is %s in the past (%sZ)\n",
+                    $progname, sec_to_string($last_time, "T"),
+                    sec_to_readable($last_time-$ep_time),
+                    sec_to_string($ep_time, "T")
+                ));
+                # FIXME: Make --fix work with gpx.
+                if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
+                    $Dat{'error'} = "chrono";
+                }
+            } elsif ($last_time == $ep_time && !length($Dat{'error'})) {
+                warn(sprintf(
+                    "%s: $curr_file: \"%sZ\": Duplicated time\n",
+                    $progname, sec_to_string($last_time, "T")
+                ));
+                # FIXME: Make --fix work with gpx.
+                if ($Opt{'fix'} && ($Opt{'output-format'} !~ /^gpx$/)) {
+                    $Dat{'error'} = "duptime";
+                }
+            }
+        }
+    } else {
+        $ep_time = 0;
+        $Dat{'year'} = 0;
+        $Dat{'month'} = 0;
+        $Dat{'day'} = 0;
+        $Dat{'hour'} = 0;
+        $Dat{'min'} = 0;
+        $Dat{'sec'} = 0;
+    }
+
+    if ($Opt{'save-to-file'} ne "\n") {
+        # {{{
+        $print_time || return;
+        my $base_name = "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
+                        "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z" .
+                        "$Opt{'save-to-file'}";
+        my $file_name = $base_name;
+        if (-e $file_name) {
+            for (my $a = 1; (-e $file_name) && ($a < 1000); $a++) {
+                $file_name = "$base_name.dup_$a";
+            }
+            if (-e $file_name) {
+                die("$progname: $base_name: File already exists, and ran " .
+                    "out of attempts to create unique file name\n");
+            }
+            if ($Opt{'verbose'}) {
+                warn("$progname: $base_name: File already exists, using " .
+                     "unique name \"$file_name\" instead\n");
+            }
+        }
+        if (open(ToFP, ">", $file_name)) {
+            print_header(*ToFP);
+            print(ToFP (
+                $from_stdin
+                    ? @first_lines
+                    : ()),
+                (length($xml_data)
+                    ? $xml_data
+                    : <>)
+            ) || die("$progname: $file_name: Cannot write to file: $!\n");
+            print_footer(*ToFP);
+            close(ToFP);
+            if ($Opt{'output-format'} eq "gpsml") {
+                printf("<include>%s</include>\n",
+                       txt_to_xml($file_name));
+            } elsif ($Opt{'output-format'} eq "gpx") {
+                printf("<!-- Saved unconverted data to \"%s\" -->\n",
+                       txt_to_xml($file_name));
+            } else {
+                print("$progname: Saved unconverted data to \"$file_name\"\n");
+            }
+            exit 0;
+        } else {
+            die("$progname: $file_name: Cannot create file: $!\n");
+        }
+        # }}}
+    }
+
+    my $pause_len = 0;
+    my $do_print = 1;
+
+    if ($Dat{'what'} eq "tp") {
+        # {{{
+        if ($Opt{'require'}) {
+            $Req{'time'} && !$print_time && return;
+            $Req{'position'} && !$print_pos && return;
+            $Req{'ele'} && !$print_ele && return;
+        }
+
+        if ($Opt{'inside'} || $Opt{'outside'}) {
+            if (
+                ($Dat{'lat'} < $lat1) ||
+                ($Dat{'lat'} > $lat2) ||
+                ($Dat{'lon'} < $lon1) ||
+                ($Dat{'lon'} > $lon2)
+            ) {
+                $Opt{'inside'} && return;
+            } else {
+                $Opt{'outside'} && return;
+            }
+        }
+
+        if ($Opt{'output-format'} eq "ps") {
+            $Dat{'lon'} *= 100;
+            $Dat{'lat'} *= 100;
+        }
+
+        if (
+            $Opt{'skip-dups'}
+            && ($Dat{'lon'} eq $last_lon)
+            && ($Dat{'lat'} eq $last_lat)
+        ) {
+            if ($Opt{'output-format'} eq 'gpsml') {
+                $Dat{'error'} = "dup";
+            } else {
+                $do_print = 0;
+            }
+        } else {
+                $do_print = 1;
+        }
+
+        if (
+            $Opt{'create-breaks'}
+            && $ep_time-$last_time > $PAUSE_LIMIT
+            && $last_time
+        ) {
+            $pause_len = $ep_time-$last_time;
+            D("pause_len set to '$pause_len'");
+        }
+
+        if ($pause_len) {
+            if ($Opt{'output-format'} eq "gpsml") {
+                $Line .= sprintf("<pause>%s</pause>\n",
+                                 sec_to_readable($ep_time-$last_time));
+            } elsif ($Opt{'output-format'} eq "clean") {
+                $pause_len && ($Line .= "\n");
+            } elsif ($Opt{'output-format'} eq "csv") {
+                $Line .= sprintf("# Pause: %s\n# move\n",
+                                 sec_to_readable($ep_time-$last_time));
+            } elsif ($Opt{'output-format'} eq "xgraph") {
+                $pause_len && ($Line .= "move ");
+            }
+        }
+        # }}}
+    }
+
+    if ($do_print) {
+        # Valid data was found, send to stdout {{{
+        unless ($first_time) {
+            $first_time = $ep_time;
+        }
+        if ($Opt{'double-y-scale'} && length($Dat{'lat'})) {
+            $Dat{'lat'} *= 2;
+        }
+        if ($Opt{'output-format'} eq "gpsml") {
+            if ($Dat{'what'} eq "tp") {
+                $Dat{'format'} = "gpsml";
+                $Line .= trackpoint(%Dat);
+            } elsif ($Dat{'what'} =~ /^(pause|desc|title)$/) {
+                $Line .= sprintf("<%s>%s</%s>\n",
+                                 $1,
+                                 $Dat{$1},
+                                 $1);
+            }
+        } elsif ($Opt{'output-format'} eq "pgtab") {
+            if ($Dat{'what'} eq "tp" && !length($Dat{'error'})) {
+                $Dat{'format'} = "pgtab";
+                $Line .= trackpoint(%Dat);
+            }
+        } elsif ($Opt{'output-format'} eq "xgraph") {
+            if ($print_pos && !length($Dat{'error'})) {
+                $Dat{'format'} = "xgraph";
+                $Line .= trackpoint(%Dat);
+            }
+        } elsif($Opt{'output-format'} eq "gpstrans") {
+            if ($print_pos && !length($Dat{'error'})) {
+                $Dat{'format'} = "gpstrans";
+                $Line .= trackpoint(%Dat);
+            }
+        } elsif($Opt{'output-format'} eq "gpx") {
+            if ($Dat{'what'} eq "tp") {
+                $Dat{'format'} = "gpx";
+                $Line .= trackpoint(%Dat);
+            }
+        } elsif ($Opt{'output-format'} eq "clean") {
+            if ($Dat{'what'} eq "tp" && !length($Dat{'error'})) {
+                $Dat{'format'} = "clean";
+                $Line .= trackpoint(%Dat);
+            }
+        } elsif ($Opt{'output-format'} eq "ps") {
+            $Line .= (
+                $pause_len
+                    ? "f\n$Dat{'lon'} $Dat{'lat'} m\n"
+                    : "$Dat{'lon'} $Dat{'lat'} l\n"
+            );
+        } elsif ($Opt{'output-format'} eq "svg") {
+            $Line .= (
+                ($last_lon == 1000) || $pause_len
+                    ? join("",
+                        "$svg_start_thing<path\n",
+                        "  stroke=\"blue\"\n",
+                        "  stroke-width=\"0.001\"\n",
+                        "  fill=\"none\"\n",
+                        "  d=\"\n",
+                        "M $Dat{'lon'} $Dat{'lat'}\n")
+                    : "L $Dat{'lon'} $Dat{'lat'}\n"
+            );
+        } elsif ($Opt{'output-format'} eq "ygraph") {
+            if (!length($Dat{'error'})) {
+                my $Time = $print_time ? ($ep_time - $first_time) * 1 : 0;
+                $Line .= "\"Time = $Time.0\n$Dat{'lon'} $Dat{'lat'}\n\n";
+            }
+        } elsif ($Opt{'output-format'} eq "csv") {
+            # {{{
+            if (!length($Dat{'error'})) {
+                $Dat{'format'} = "csv";
+                $Line .= join("\t",
+                    $print_time
+                        ? $Opt{'epoch'}
+                            ? $ep_time
+                            : $Opt{'short-date'}
+                                ? "$Dat{'year'}$Dat{'month'}$Dat{'day'}T" .
+                                  "$Dat{'hour'}$Dat{'min'}$Dat{'sec'}Z"
+                                : "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                                  "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z"
+                        : "",
+                    $Dat{'lon'},
+                    $Dat{'lat'},
+                    $print_ele ? $Dat{'ele'} : "", # Elevation
+                    "\n"
+                );
+            }
+            # }}}
+        } elsif ($Opt{'output-format'} eq "pgwtab") {
+            # FIXME: NOP at the moment.
+        } else {
+            die("$progname: \"$Opt{'output-format'}\": " .
+                "Unknown output format\n");
+        }
+        # }}}
+    }
+
+    if (!$last_time && $Opt{'output-format'} eq "ps") {
+        $Line .= "$Dat{'lon'} $Dat{'lat'} m\n";
+    }
+
+    if ($do_print) {
+        if ($found_move) {
+            if ($Opt{'output-format'} eq "gpsml") {
+                $Line = "<break/>\n$Line";
+            }
+            (!$pause_len && ($Opt{'output-format'} eq "xgraph"))
+                && ($Line .= "move $Line");
+            ($Opt{'output-format'} eq "clean") && ($Line .= "\n");
+            if ($Opt{'output-format'} eq "gpx") {
+                $Line .= "$Spc$Spc$Spc$Spc</trkseg>\n" .
+                         "$Spc$Spc$Spc$Spc<trkseg>\n";
+            }
+            $found_move = 0;
+        }
+        print($Line);
+    }
+    $print_time && ($last_time = $ep_time);
+    if ($print_pos) {
+        $last_lon  = $Dat{'lon'};
+        $last_lat  = $Dat{'lat'};
+    }
+    $last_line = $data_line;
+    $svg_start_thing = "\"/>\n";
+    # }}}
+}
+
+sub ps_header {
+    # Send a Postscript header to stdout {{{
+    my ($bl_lon, $bl_lat, $br_lon, $br_lat) = @_;
+    my $Date = sec_to_string(time);
+    return(join("",
+        "%!PS-Adobe-3.0 EPSF-3.0\n",
+        "%%Creator: $rcs_id\n",
+        "%%Title:\n",
+        "%%CreationDate: $Date\n",
+        "%%BoundingBox: $bl_lon $bl_lat $br_lon $br_lat\n",
+        "%%DocumentData: Clean7Bit\n",
+        "%%EndComments\n",
+        "%%BeginProlog\n",
+        "/bd { bind def } bind def\n",
+        "/incompound false def\n",
+        "/m { moveto } bd\n",
+        "/l { lineto } bd\n",
+        "/c { curveto } bd\n",
+        "/F { incompound not {fill} if } bd\n",
+        "/f { closepath F } bd\n",
+        "/S { stroke } bd\n",
+        "/*u { /incompound true def } bd\n",
+        "/*U { /incompound false def f} bd\n",
+        "/k { setcmykcolor } bd\n",
+        "/K { k } bd\n",
+        "%%EndProlog\n",
+        "%%BeginSetup\n",
+        "%%EndSetup\n",
+    ));
+    # }}}
+}
+
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
+
+Converts between various GPS formats.
+
+Usage: $progname [options] [file [files [...]]]
+       $progname -S [file [files [...]]]
+       $progname -u [file [files [...]]]
+
+Options:
+
+  --chronology
+    Check for broken chronology, warn about entries with an old 
+    timestamp.
+  -d, --skip-dups
+    Skip duplicated coordinates.
+  -e, --epoch
+    Use seconds since 1970-01-01 00:00:00 GMT as date format.
+  --fix
+    Comment out entries which is obviously wrong. Use together with 
+    --chronology to fix those kind of errors. Does not work with GPX 
+    output yet.
+  --from-date x
+    Used by the pgwupd format. Specifies from which date waypoints 
+    should be updated. No checks for valid date format here, let 
+    PostgreSQL take care of that. All variants it understands can be 
+    used here.
+  -h, --help
+    Show this help.
+  --inside
+    Print only trackpoints inside a rectangle specified by --pos1 and 
+    --pos2.
+  -n, --undefined x
+    Use x as undefined value. Default: "$Udef".
+  --near
+    Add names of the three closest waypoints to the trackpoint. 
+    Unfinished and experimental, needs gpsbabel, which is called from 
+    the program as "$Cmd{'gpsbabel'}".
+  -o, --output-format x
+    Use output format x:
+      clean
+      csv
+      gpsml (Default)
+      gpstrans
+      gpx (Not complete)
+      pgtab
+      pgwtab
+      pgwupd
+      poscount
+      ps (Unfinished)
+      svg (Unfinished)
+      xgraph
+      ygraph
+  --outside
+    Print only trackpoints outside a rectangle specified by --pos1 and 
+    --pos2.
+  --pos1 x
+  --pos2 x
+    Specifies one corner where x is in "lat,lon" format (decimal 
+    degrees, negative for west or south) of area rectangle used by the 
+    --inside and --outside options.
+  -r, --require x
+    Specify requirements for trackpoints to be written. x is a string 
+    with the following flags:
+      e
+        Print only waypoints which have an elevation.
+      p
+        Print only waypoints which have a position.
+      t
+        Print only waypoints which have a timestamp.
+  -R, --round x=y[,x2=y2[...]]
+    Round trackpoint element x to y decimals. Example:
+      --round lat=4,lon=5,ele=1
+  -s, --short-date
+    Use short date format.
+  -S, --save-to-file x
+    Save the unconverted data to a file with a filename starting with 
+    the timestamp of the first trackpoint. The parameter string x is 
+    added at the end of the filename. For the time being this option 
+    will ignore all other options. Note: If several files are specified 
+    on the command line, all data will be saved into only one file. This 
+    behaviour may change in the future.
+  -t, --create-breaks
+    Create breaks in track between points with a difference more than 
+    $PAUSE_LIMIT seconds.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  -w, --strip-whitespace
+    Strip all unnecessary whitespace.
+  -y, --double-y-scale
+    Double Y scale (latitude) to get it right in gnuplot.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+__END__
+
+# Law talk {{{
+# Copyleft © Øyvind A. Holm <sunny@sunbase.org>
+#
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  
+# USA
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

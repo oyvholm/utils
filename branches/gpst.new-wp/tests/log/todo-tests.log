@@ -1,0 +1,195 @@
+ok - use GPST;
+ok - use GPSTdate;
+ok - use GPSTdebug;
+ok - use GPSTgeo;
+ok - use GPSTxml;
+# ========== Executing "run-tests.pl --todo" ==========
+# Running TODO tests...
+not ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx # TODO Remove extra \n in the beginning
+#   Failed (TODO) test '"../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx'
+#   in ./run-tests.pl at line 1859.
+#          got: '				
+# 2003-02-11T23:35:39Z	-0.1448824	51.4968266		
+# 2003-02-11T23:35:49Z	-0.1449938	51.4968227		
+# 2003-02-11T23:36:14Z	-0.1453202	51.4969040		
+# 				
+# 2003-02-11T23:36:16Z	-0.1453398	51.4969214		
+# 2003-02-11T23:36:31Z	-0.1455514	51.4969816		
+# 2003-02-11T23:36:43Z	-0.1457489	51.4970224	1000	
+# 2003-02-11T23:36:50Z	-0.1457804	51.4970452		
+# 				
+# 2003-02-11T23:37:05Z	-0.1458608	51.4970680		
+# 2003-02-11T23:37:22Z	-0.1460047	51.4971658		
+# 2003-02-11T23:37:36Z	-0.1461614	51.4972469		
+# 				
+# 2003-02-11T23:37:43Z	-0.1462394	51.4972731		
+# 2003-02-11T23:38:04Z	-0.1463232	51.4973437		
+# 2003-02-11T23:38:28Z	-0.1462949	51.4973337		
+# 2003-02-11T23:38:34Z	-0.1462825	51.4973218		
+# 2003-02-11T23:38:35Z	-0.1462732	51.4973145		
+# '
+#     expected: '2003-02-11T23:35:39Z	-0.1448824	51.4968266		
+# 2003-02-11T23:35:49Z	-0.1449938	51.4968227		
+# 2003-02-11T23:36:14Z	-0.1453202	51.4969040		
+# 				
+# 2003-02-11T23:36:16Z	-0.1453398	51.4969214		
+# 2003-02-11T23:36:31Z	-0.1455514	51.4969816		
+# 2003-02-11T23:36:43Z	-0.1457489	51.4970224	1000	
+# 2003-02-11T23:36:50Z	-0.1457804	51.4970452		
+# 				
+# 2003-02-11T23:37:05Z	-0.1458608	51.4970680		
+# 2003-02-11T23:37:22Z	-0.1460047	51.4971658		
+# 2003-02-11T23:37:36Z	-0.1461614	51.4972469		
+# 				
+# 2003-02-11T23:37:43Z	-0.1462394	51.4972731		
+# 2003-02-11T23:38:04Z	-0.1463232	51.4973437		
+# 2003-02-11T23:38:28Z	-0.1462949	51.4973337		
+# 2003-02-11T23:38:34Z	-0.1462825	51.4973218		
+# 2003-02-11T23:38:35Z	-0.1462732	51.4973145		
+# '
+ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx # TODO Remove extra \n in the beginning
+#   Failed (TODO) test '"../gpst -o csv pause.gpx" - Output csv format from pause.gpx'
+#   in ./run-tests.pl at line 1859.
+#          got: '				
+# 2006-05-21T16:49:11Z	5.299534	60.425494	25.260	
+# 2006-05-21T16:49:46Z	5.299610	60.425464	24.931	
+# 2006-05-21T16:52:04Z	5.299694	60.425314	27.975	
+# 2006-05-21T16:56:36Z	5.299741	60.425384	31.017	
+# 2006-05-21T16:56:47Z	5.299958	60.425339	30.980	
+# 2006-05-21T16:56:56Z	5.299640	60.425238	30.538	
+# 2006-05-21T16:57:03Z	5.299686	60.425246	30.515	
+# 2006-05-21T16:59:08Z	5.299773	60.425345	31.936	
+# 2006-05-21T17:00:54Z	5.299419	60.425457	31.794	
+# '
+#     expected: '2006-05-21T16:49:11Z	5.299534	60.425494	25.260	
+# 2006-05-21T16:49:46Z	5.299610	60.425464	24.931	
+# 2006-05-21T16:52:04Z	5.299694	60.425314	27.975	
+# 2006-05-21T16:56:36Z	5.299741	60.425384	31.017	
+# 2006-05-21T16:56:47Z	5.299958	60.425339	30.980	
+# 2006-05-21T16:56:56Z	5.299640	60.425238	30.538	
+# 2006-05-21T16:57:03Z	5.299686	60.425246	30.515	
+# 2006-05-21T16:59:08Z	5.299773	60.425345	31.936	
+# 2006-05-21T17:00:54Z	5.299419	60.425457	31.794	
+# '
+ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
+#   Failed (TODO) test '"../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx'
+#   in ./run-tests.pl at line 1859.
+#          got: '				
+# 1148230151	5.299534	60.425494	25.260	
+# 1148230186	5.299610	60.425464	24.931	
+# 1148230324	5.299694	60.425314	27.975	
+# 1148230596	5.299741	60.425384	31.017	
+# 1148230607	5.299958	60.425339	30.980	
+# 1148230616	5.299640	60.425238	30.538	
+# 1148230623	5.299686	60.425246	30.515	
+# 1148230748	5.299773	60.425345	31.936	
+# 1148230854	5.299419	60.425457	31.794	
+# '
+#     expected: '1148230151	5.299534	60.425494	25.260	
+# 1148230186	5.299610	60.425464	24.931	
+# 1148230324	5.299694	60.425314	27.975	
+# 1148230596	5.299741	60.425384	31.017	
+# 1148230607	5.299958	60.425339	30.980	
+# 1148230616	5.299640	60.425238	30.538	
+# 1148230623	5.299686	60.425246	30.515	
+# 1148230748	5.299773	60.425345	31.936	
+# 1148230854	5.299419	60.425457	31.794	
+# '
+ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx (stderr) # TODO Remove extra \n in the beginning
+not ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx # TODO Tweak output
+#   Failed (TODO) test '"../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx'
+#   in ./run-tests.pl at line 1859.
+#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="1.11" lon="1.12"> <time>2006-01-01T00:00:00Z</time> </trkpt>
+#       <trkpt lat="1.21" lon="1.22"> <time>2006-01-01T00:00:01Z</time> </trkpt>
+#       <trkpt lat="1.31" lon="1.32"> <time>2006-01-01T00:00:02Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="2.11" lon="2.12"> <time>2006-01-02T00:00:00Z</time> </trkpt>
+#       <trkpt lat="2.21" lon="2.22"> <time>2006-01-02T00:00:04Z</time> </trkpt>
+#       <trkpt lat="2.31" lon="2.32"> <time>2006-01-02T00:00:16Z</time> </trkpt>
+#       <trkpt lat="2.41" lon="2.42"> <time>2006-01-02T01:00:16Z</time> </trkpt>
+#       <trkpt lat="2.451" lon="2.452"> <time>2006-01-02T01:00:17Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="3.11" lon="3.12"> <time>2006-01-03T02:00:20Z</time> </trkpt>
+#       <trkpt lat="3.21" lon="3.22"> <time>2006-01-03T02:00:21Z</time> </trkpt>
+#       <trkpt lat="3.31" lon="3.32"> <time>2006-01-03T02:00:22Z</time> </trkpt>
+#       <trkpt lat="3.41" lon="3.42"> <time>2006-01-03T02:00:23Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="3.51" lon="3.52"> <time>2006-01-03T02:00:24Z</time> </trkpt>
+#       <trkpt lat="3.61" lon="3.62"> <time>2006-01-03T02:00:25Z</time> </trkpt>
+#       <trkpt lat="3.71" lon="3.72"> <time>2006-01-03T02:00:26Z</time> </trkpt>
+#       <trkpt lat="3.81" lon="3.82"> <time>2006-01-03T02:00:27Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <name>track1</name>
+#     <trkseg>
+#       <trkpt lat="1.11" lon="1.12"> <time>2006-01-01T00:00:00Z</time> </trkpt>
+#       <trkpt lat="1.21" lon="1.22"> <time>2006-01-01T00:00:01Z</time> </trkpt>
+#       <trkpt lat="1.31" lon="1.32"> <time>2006-01-01T00:00:02Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+#   <trk>
+#     <name>track2</name>
+#     <trkseg>
+#       <trkpt lat="2.11" lon="2.12"> <time>2006-01-02T00:00:00Z</time> </trkpt>
+#       <trkpt lat="2.21" lon="2.22"> <time>2006-01-02T00:00:04Z</time> </trkpt>
+#       <trkpt lat="2.31" lon="2.32"> <time>2006-01-02T00:00:16Z</time> </trkpt>
+#       <trkpt lat="2.41" lon="2.42"> <time>2006-01-02T01:00:16Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="2.451" lon="2.452"> <time>2006-01-02T01:00:17Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+#   <trk>
+#     <name>track3</name>
+#     <trkseg>
+#       <trkpt lat="3.11" lon="3.12"> <time>2006-01-03T02:00:20Z</time> </trkpt>
+#       <trkpt lat="3.21" lon="3.22"> <time>2006-01-03T02:00:21Z</time> </trkpt>
+#       <trkpt lat="3.31" lon="3.32"> <time>2006-01-03T02:00:22Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="3.41" lon="3.42"> <time>2006-01-03T02:00:23Z</time> </trkpt>
+#       <trkpt lat="3.51" lon="3.52"> <time>2006-01-03T02:00:24Z</time> </trkpt>
+#       <trkpt lat="3.61" lon="3.62"> <time>2006-01-03T02:00:25Z</time> </trkpt>
+#       <trkpt lat="3.71" lon="3.72"> <time>2006-01-03T02:00:26Z</time> </trkpt>
+#       <trkpt lat="3.81" lon="3.82"> <time>2006-01-03T02:00:27Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx (stderr) # TODO Tweak output
+GPX: Cannot open file '/home/sunny/gps/waypoints.gpx'!
+not ok - list_nearest_waypoints() # TODO Fix it.
+#   Failed (TODO) test 'list_nearest_waypoints()'
+#   in ./run-tests.pl at line 1831.
+#                   ''
+#     doesn't match '(?-xism:^\(.*,.*,.*\)$)'
+# Testing finished.
+1..14
