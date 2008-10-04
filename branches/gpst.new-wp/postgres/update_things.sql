@@ -1,5 +1,6 @@
 -- $Id$
 
+-- Rund av veipunkter til seks desimaler -- {{{
 \echo
 \echo ================ Rund av veipunkter til seks desimaler ================
 
@@ -7,7 +8,9 @@ UPDATE wayp SET coor = point(
     round(coor[0]::numeric, 6),
     round(coor[1]::numeric, 6)
 );
+-- }}}
 
+-- Fjern duplikater i wayp -- {{{
 \echo
 \echo ================ Fjern duplikater i wayp ================
 
@@ -44,7 +47,9 @@ COMMIT;
 SELECT count(*)
     AS "Antall i wayp etter rensking"
     FROM wayp;
+-- }}}
 
+-- Fjern duplikater i events -- {{{
 \echo
 \echo ================ Fjern duplikater i events ================
 
@@ -71,19 +76,25 @@ COMMIT;
 SELECT count(*)
     AS "Antall i events etter rensking"
     FROM events;
+-- }}}
 
+-- Oppdater koordinater for bilder -- {{{
 \echo
 \echo ================ Oppdater koordinater for bilder ================
 
 UPDATE pictures SET coor = findpos(date)
     WHERE coor IS NULL;
+-- }}}
 
+-- Rund av bildekoordinater -- {{{
 \echo ================ Rund av bildekoordinater ================
 UPDATE pictures SET coor = point(
     round(coor[0]::numeric, 6),
     round(coor[1]::numeric, 6)
 );
+-- }}}
 
+-- Fjern duplikater i pictures -- {{{
 \echo
 \echo ================ Fjern duplikater i pictures ================
 
@@ -110,5 +121,6 @@ COMMIT;
 SELECT count(*)
     AS "Antall i pictures etter rensking"
     FROM pictures;
+-- }}}
 
 \i distupdate.sql

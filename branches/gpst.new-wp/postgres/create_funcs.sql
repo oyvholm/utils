@@ -1,7 +1,7 @@
 -- $Id$
 
 -- Returnerer navnet på det nærmeste veipunktet i wayp.
-CREATE OR REPLACE FUNCTION clname(point) RETURNS text
+CREATE OR REPLACE FUNCTION clname(point) RETURNS text -- {{{
 AS $$
 SELECT name FROM (
         SELECT
@@ -14,9 +14,10 @@ SELECT name FROM (
             LIMIT 1
     ) AS s;
 $$ LANGUAGE SQL;
+-- }}}
 
 -- Returnerer avstanden (i grader) til det nærmeste veipunktet i wayp.
-CREATE OR REPLACE FUNCTION cldist(point) RETURNS numeric
+CREATE OR REPLACE FUNCTION cldist(point) RETURNS numeric -- {{{
 AS $$
 SELECT round(avs::numeric, 5) FROM (
         SELECT
@@ -28,10 +29,11 @@ SELECT round(avs::numeric, 5) FROM (
             LIMIT 1
     ) AS s;
 $$ LANGUAGE SQL;
+-- }}}
 
 -- Beregn koordinater for et tidspunkt som ligger mellom to 
 -- trackpunkter.
-CREATE OR REPLACE FUNCTION findpos(currtime timestamptz) RETURNS point AS $$
+CREATE OR REPLACE FUNCTION findpos(currtime timestamptz) RETURNS point AS $$ -- {{{
 DECLARE
     firstdate timestamptz;
     lastdate timestamptz;
@@ -117,8 +119,10 @@ BEGIN
     RETURN (currlat,currlon);
 END;
 $$ LANGUAGE plpgsql;
+-- }}}
 
-CREATE OR REPLACE FUNCTION wherepos(currtime timestamptz) RETURNS text AS $$
+-- Returnerer en streng med dato, posisjon, nærmeste navn og avstand til nærmeste punkt.
+CREATE OR REPLACE FUNCTION wherepos(currtime timestamptz) RETURNS text AS $$ -- {{{
 DECLARE
     currpos point;
     currsted text;
@@ -134,9 +138,11 @@ BEGIN
     RETURN(currtime || ' - ' || currlat::text || ' ' || currlon::text || ' - ' || currsted || ' - ' || currdist);
 END;
 $$ LANGUAGE plpgsql;
+-- }}}
 
 -- Returnerer antall sekunder sia midnatt for en dato.
-CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision
+CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision -- {{{
 AS $$
 SELECT extract(hour from $1) * 3600 + extract(minute from $1) * 60 + extract(second from $1);
 $$ LANGUAGE SQL;
+-- }}}
