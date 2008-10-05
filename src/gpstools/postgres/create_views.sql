@@ -1,6 +1,6 @@
  -- $Id$
 
--- List ut alle plasser siste år, DISTINCT ON sted og hver uke
+-- siste_aar: List ut alle plasser siste år, DISTINCT ON sted og hver uke
 CREATE OR REPLACE VIEW siste_aar -- {{{
     AS SELECT * FROM (
         SELECT DISTINCT ON (
@@ -9,10 +9,9 @@ CREATE OR REPLACE VIEW siste_aar -- {{{
         FROM logg
         WHERE date > now() + interval '1 year ago'
     ) AS s
-    ORDER BY date;
--- }}}
+    ORDER BY date; -- }}}
 
--- List ut alle plasser siste halvår, DISTINCT ON sted og hver uke
+-- siste_halvaar: List ut alle plasser siste halvår, DISTINCT ON sted og hver uke
 CREATE OR REPLACE VIEW siste_halvaar -- {{{
     AS SELECT * FROM (
         SELECT DISTINCT ON (
@@ -21,10 +20,9 @@ CREATE OR REPLACE VIEW siste_halvaar -- {{{
         FROM logg
         WHERE date > now() + interval '0.5 year ago'
     ) AS s
-    ORDER BY date;
--- }}}
+    ORDER BY date; -- }}}
 
--- List ut alle plasser siste måned, DISTINCT ON sted og hver time
+-- siste_maaned: List ut alle plasser siste måned, DISTINCT ON sted og hver time
 CREATE OR REPLACE VIEW siste_maaned -- {{{
     AS SELECT * FROM (
         SELECT DISTINCT ON (
@@ -33,10 +31,9 @@ CREATE OR REPLACE VIEW siste_maaned -- {{{
         FROM logg
         WHERE date > now() + interval '1 month ago'
     ) AS s
-    ORDER BY date;
--- }}}
+    ORDER BY date; -- }}}
 
--- List ut alle plasser siste uka, DISTINCT ON sted og hver time
+-- siste_uke: List ut alle plasser siste uka, DISTINCT ON sted og hver time
 CREATE OR REPLACE VIEW siste_uke -- {{{
     AS SELECT * FROM (
         SELECT DISTINCT ON (
@@ -45,10 +42,9 @@ CREATE OR REPLACE VIEW siste_uke -- {{{
         FROM logg
         WHERE date > now()+interval '1 week ago'
     ) AS s
-    ORDER BY date;
--- }}}
+    ORDER BY date; -- }}}
 
--- List ut alle plasser siste døgn, DISTINCT ON sted og hvert minutt
+-- siste_dogn: List ut alle plasser siste døgn, DISTINCT ON sted og hvert minutt
 CREATE OR REPLACE VIEW siste_dogn -- {{{
     AS SELECT * FROM (
         SELECT DISTINCT ON (
@@ -57,49 +53,42 @@ CREATE OR REPLACE VIEW siste_dogn -- {{{
         FROM logg
         WHERE date > now()+interval '1 day ago'
     ) AS s
-    ORDER BY date;
--- }}}
+    ORDER BY date; -- }}}
 
--- List ut de 50.000 punktene som ligger lengst hjemmefra
+-- fjernest: List ut de 50.000 punktene som ligger lengst hjemmefra
 CREATE OR REPLACE VIEW fjernest -- {{{
     AS SELECT * FROM logg
-        ORDER BY avst DESC LIMIT 50000;
--- }}}
+        ORDER BY avst DESC LIMIT 50000; -- }}}
 
--- List ut de 50.000 punktene lengst hjemmefra siste året
+-- fjernest_siste_aar: List ut de 50.000 punktene lengst hjemmefra siste året
 CREATE OR REPLACE VIEW fjernest_siste_aar -- {{{
     AS SELECT * FROM logg
         WHERE date > now()+interval '1 year ago'
-        ORDER BY avst DESC LIMIT 50000;
--- }}}
+        ORDER BY avst DESC LIMIT 50000; -- }}}
 
--- List ut de 50.000 punktene lengst hjemmefra siste halvåret
+-- fjernest_siste_halvaar: List ut de 50.000 punktene lengst hjemmefra siste halvåret
 CREATE OR REPLACE VIEW fjernest_siste_halvaar -- {{{
     AS SELECT * FROM logg
         WHERE date > now()+interval '0.5 year ago'
-        ORDER BY avst DESC LIMIT 50000;
--- }}}
+        ORDER BY avst DESC LIMIT 50000; -- }}}
 
--- List ut de 50.000 punktene lengst hjemmefra siste måneden
+-- fjernest_siste_maaned: List ut de 50.000 punktene lengst hjemmefra siste måneden
 CREATE OR REPLACE VIEW fjernest_siste_maaned -- {{{
     AS SELECT * FROM logg
         WHERE date > now() + interval '1 month ago'
-        ORDER BY avst DESC LIMIT 50000;
--- }}}
+        ORDER BY avst DESC LIMIT 50000; -- }}}
 
--- List ut de 50.000 punktene lengst hjemmefra siste uka
+-- fjernest_siste_uke: List ut de 50.000 punktene lengst hjemmefra siste uka
 CREATE OR REPLACE VIEW fjernest_siste_uke -- {{{
     AS SELECT * FROM logg
         WHERE date > now() + interval '1 week ago'
-        ORDER BY avst DESC LIMIT 50000;
--- }}}
+        ORDER BY avst DESC LIMIT 50000; -- }}}
 
--- List ut de 50.000 punktene lengst hjemmefra siste døgn
+-- fjernest_siste_dogn: List ut de 50.000 punktene lengst hjemmefra siste døgn
 CREATE OR REPLACE VIEW fjernest_siste_dogn -- {{{
     AS SELECT * FROM logg
         WHERE date > now() + interval '1 day ago'
-        ORDER BY avst DESC LIMIT 50000;
--- }}}
+        ORDER BY avst DESC LIMIT 50000; -- }}}
 
 /*** Intervaller ***/
 
@@ -110,8 +99,7 @@ CREATE OR REPLACE VIEW minutt -- {{{
         ) *
         FROM logg
     ) AS s
-    ORDER BY date DESC;
--- }}}
+    ORDER BY date DESC; -- }}}
 
 /*** Formater ***/
 
@@ -123,8 +111,7 @@ CREATE OR REPLACE VIEW closest AS -- {{{
         ) AS b
         WHERE sted IS NOT NULL
     ) AS a
-        ORDER BY date;
--- }}}
+        ORDER BY date; -- }}}
 
 CREATE OR REPLACE VIEW gpx AS -- {{{
     SELECT '<trkpt lat="' || coor[0] || '" lon="' || coor[1] || '"> ' ||
@@ -133,17 +120,15 @@ CREATE OR REPLACE VIEW gpx AS -- {{{
     '</trkpt>'
     AS gpx,
     date, coor, ele, sted, dist, description
-    FROM logg;
--- }}}
+    FROM logg; -- }}}
 
 CREATE OR REPLACE VIEW gpst AS -- {{{
     SELECT date, coor, ele, sted, dist, avst,
     '<tp> <time>' || date at time zone 'UTC' || 'Z' || '</time> <lat>' || coor[0] || '</lat> <lon>' || coor[1] || '</lon> </tp>'
     AS gpst
-    FROM logg;
--- }}}
+    FROM logg; -- }}}
 
--- Lister ut events sammen med loggen.
+-- ev: Lister ut events sammen med loggen.
 CREATE OR REPLACE VIEW ev AS -- {{{
     SELECT * FROM (
         SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
@@ -155,10 +140,9 @@ CREATE OR REPLACE VIEW ev AS -- {{{
         SELECT     'pic' AS flag, date, coor, filename, NULL, NULL, NULL
             FROM pictures
     ) AS u
-    ORDER BY date;
--- }}}
+    ORDER BY date; -- }}}
 
--- Lister ut veipunktene, sortert nord → sør, vest → øst
+-- wp: Lister ut veipunktene, sortert nord → sør, vest → øst
 CREATE OR REPLACE VIEW wp AS -- {{{
     SELECT
         coor AS coor,
@@ -168,5 +152,4 @@ CREATE OR REPLACE VIEW wp AS -- {{{
         ele AS ele,
         time AS time
         FROM wayp
-        ORDER BY coor[0] desc, coor[1];
--- }}}
+        ORDER BY coor[0] desc, coor[1]; -- }}}
