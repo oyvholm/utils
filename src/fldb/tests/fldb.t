@@ -256,9 +256,31 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
+likecmd("$CMD files/dir1/random_2048", # {{{
+    '/^INSERT INTO files \(\n' .
+        ' sha1, md5, crc32,\n' .
+        ' size, filename, mtime, descr, ctime,\n' .
+        ' path,\n' .
+        ' inode, links, device, hostname,\n' .
+        ' uid, gid, perm,\n' .
+        ' lastver, nextver,\n' .
+        ' latin1\n' .
+        '\) VALUES \(\n' .
+        ' \'bd91a93ca0462da03f2665a236d7968b0fd9455d\', \'4a3074b2aae565f8558b7ea707ca48d2\', NULL,\n' .
+        ' 2048, E\'random_2048\', \'2008-09-22T00:18:37Z\', NULL, \'\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ\',\n' .
+        ' E\'files\/dir1\/random_2048\',\n' .
+        ' \d+, 1, E\'\d+\', E\'.+\',\n' .
+        ' \d+, \d+, \'0644\',\n' .
+        ' NULL, NULL,\n' .
+        ' FALSE\n' .
+        '\);\n' .
+        '$/',
+    '/^$/',
+    "Output SQL from random_2048",
+);
 
 # }}}
-
+diag("Testing -s (--short-format) option...");
 testcmd("$CMD -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
@@ -279,6 +301,29 @@ END
 
 # }}}
 diag("Testing -x (--xml) option...");
+likecmd("$CMD -x files/dir1/random_2048", # {{{
+    '/^<fldb>\n' .
+            '<file> ' .
+                '<size>2048<\/size> ' .
+                '<sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d<\/sha1> ' .
+                '<md5>4a3074b2aae565f8558b7ea707ca48d2<\/md5> ' .
+                '<filename>random_2048<\/filename> ' .
+                '<mtime>2008-09-22T00:18:37Z<\/mtime> ' .
+                '<ctime>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ<\/ctime> ' .
+                '<path>files\/dir1\/random_2048<\/path> ' .
+                '<inode>\d+<\/inode> <links>1<\/links> ' .
+                '<device>\d+<\/device> ' .
+                '<hostname>dungen<\/hostname> ' .
+                '<uid>\d+<\/uid> <gid>\d+<\/gid> ' .
+                '<perm>0644<\/perm> ' .
+            '<\/file>\n' .
+        '<\/fldb>\n' .
+        '$/',
+    '/^$/',
+    "Output short XML from dir1/random_2048 with mtime",
+);
+
+# }}}
 testcmd("$CMD -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>

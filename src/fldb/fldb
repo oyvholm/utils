@@ -58,7 +58,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
 
-    "add" => \$Opt{'add'},
+    "add|a" => \$Opt{'add'},
     "crc32" => \$Opt{'crc32'},
     "database|D=s" => \$Opt{'database'},
     "debug" => \$Opt{'debug'},
@@ -290,15 +290,15 @@ INSERT INTO files (
  path,
  inode, links, device, hostname,
  uid, gid, perm,
- lastver, nextver, descr,
+ lastver, nextver,
  latin1
 ) VALUES (
  '%s', '%s', %s,
- %s, E'%s', %s, '%s',
+ %s, E'%s', '%s', %s, '%s',
  E'%s',
  %s, %s, E'%s', E'%s',
  %s, %s, '%s',
- %s, %s, %s,
+ %s, %s,
  %s
 );
 END
@@ -307,7 +307,7 @@ END
                         $safe_filename,
                         $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
                         $Uid, $Gid, $Mode,
-                        'NULL', 'NULL', 'NULL',
+                        'NULL', 'NULL',
                         $latin1_str,
                     );
                     # }}}
