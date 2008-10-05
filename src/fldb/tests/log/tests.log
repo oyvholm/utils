@@ -17,6 +17,15 @@ ok - valid_utf8("æ©☺") - Valid UTF-8
 ok - valid_utf8("\xF8") - Invalid UTF-8
 # Testing widechar()...
 # Testing latin1_to_utf8()...
+# Testing -d (--description) option...
+ok - "../fldb -d Groovy -s files/dir1/random_2048" - Output SQL with description
+ok - "../fldb -d Groovy -s files/dir1/random_2048" - Output SQL with description (stderr)
+ok - "../fldb -d Yess -xs files/dir1/random_2048" - Output short XML from random_2048 with description and mtime
+ok - "../fldb -d Yess -xs files/dir1/random_2048" - Output short XML from random_2048 with description and mtime (stderr)
+ok - "../fldb -d "This is a description with spaces" -s files/dir1/random_2048" - Output SQL with description with space and apos
+ok - "../fldb -d "This is a description with spaces" -s files/dir1/random_2048" - Output SQL with description with space and apos (stderr)
+ok - "../fldb -d "Somewhat & weird < > yepp" -xs files/dir1/random_2048" - Output short XML from random_2048 with weird description and mtime
+ok - "../fldb -d "Somewhat & weird < > yepp" -xs files/dir1/random_2048" - Output short XML from random_2048 with weird description and mtime (stderr)
 # Testing -h (--help) option...
 ok - "../fldb -h" - Option -h prints help screen
 ok - "../fldb -h" - Option -h prints help screen (stderr)
@@ -33,4 +42,4 @@ ok - "../fldb -s files/dir1/random_2048" - Output short SQL from dir1/random_204
 ok - "../fldb -xs files/dir1/random_2048" - Output short XML from dir1/random_2048 with mtime
 ok - "../fldb -xs files/dir1/random_2048" - Output short XML from dir1/random_2048 with mtime (stderr)
 # Testing finished.
-1..25
+1..33

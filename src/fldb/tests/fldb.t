@@ -91,6 +91,8 @@ END
 
 =cut
 
+system("(cd files && tar xzf dir1.tar.gz 2>/dev/null)");
+
 diag("Testing safe_sql()...");
 is(safe_sql(""), # {{{
     "",
@@ -168,6 +170,67 @@ is(valid_utf8("\xF8"), # {{{
 # }}}
 diag("Testing widechar()...");
 diag("Testing latin1_to_utf8()...");
+diag("Testing -d (--description) option...");
+testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
+    <<END,
+INSERT INTO files (
+ sha1, md5, crc32,
+ size, filename, mtime,
+ descr,
+ latin1
+) VALUES (
+ 'bd91a93ca0462da03f2665a236d7968b0fd9455d', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ 2048, E'random_2048', '2008-09-22T00:18:37Z',
+ E'Groovy',
+ FALSE
+);
+END
+    "",
+    "Output SQL with description",
+);
+
+# }}}
+testcmd("$CMD -d Yess -xs files/dir1/random_2048", # {{{
+    <<END,
+<fldb>
+<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Yess</descr> </file>
+</fldb>
+END
+    "",
+    "Output short XML from random_2048 with description and mtime",
+);
+
+# }}}
+testcmd("$CMD -d \"This is a description with spaces\" -s files/dir1/random_2048", # {{{
+    <<END,
+INSERT INTO files (
+ sha1, md5, crc32,
+ size, filename, mtime,
+ descr,
+ latin1
+) VALUES (
+ 'bd91a93ca0462da03f2665a236d7968b0fd9455d', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ 2048, E'random_2048', '2008-09-22T00:18:37Z',
+ E'This is a description with spaces',
+ FALSE
+);
+END
+    "",
+    "Output SQL with description with space and apos",
+);
+
+# }}}
+testcmd("$CMD -d \"Somewhat & weird < > yepp\" -xs files/dir1/random_2048", # {{{
+    <<END,
+<fldb>
+<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
+</fldb>
+END
+    "",
+    "Output short XML from random_2048 with weird description and mtime",
+);
+
+# }}}
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -195,17 +258,18 @@ likecmd("$CMD --version", # {{{
 # }}}
 
 # }}}
-system("cd files && tar xzf dir1.tar.gz 2>/dev/null");
 
 testcmd("$CMD -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha1, md5, crc32,
  size, filename, mtime,
+ descr,
  latin1
 ) VALUES (
  'bd91a93ca0462da03f2665a236d7968b0fd9455d', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
  2048, E'random_2048', '2008-09-22T00:18:37Z',
+ NULL,
  FALSE
 );
 END
