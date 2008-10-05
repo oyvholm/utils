@@ -28,12 +28,14 @@ our $Debug = 0;
 our $CMD = "../fldb";
 
 our %Opt = (
+
     'all' => 0,
     'debug' => 0,
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
     'version' => 0,
+
 );
 
 our $progname = $0;
@@ -45,14 +47,18 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 push(@main::version_array, $rcs_id);
 
+my @cmdline_array = @ARGV;
+
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "all|a" => \$Opt{'all'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "todo|t" => \$Opt{'todo'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
@@ -61,6 +67,11 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+diag(sprintf("========== Executing \"%s%s%s\" ==========",
+    $progname,
+    scalar(@cmdline_array) ? " " : "",
+    join(" ", @cmdline_array)));
 
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
@@ -165,12 +176,7 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-unlike(`$CMD -h`, # {{{
-    '/\$Id: /',
-    "No Id with only -h",
-);
-
-# }}}
+ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',

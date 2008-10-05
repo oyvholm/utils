@@ -1,6 +1,7 @@
 ok - use FLDBpg;
 ok - use FLDBsum;
 ok - use FLDButf;
+# ========== Executing "fldb.t" ==========
 # Testing safe_sql()...
 ok - safe_sql("") - Empty string
 ok - safe_sql("abc") - Regular ASCII
@@ -19,7 +20,7 @@ ok - valid_utf8("\xF8") - Invalid UTF-8
 # Testing -h (--help) option...
 ok - "../fldb -h" - Option -h prints help screen
 ok - "../fldb -h" - Option -h prints help screen (stderr)
-ok - No Id with only -h
+ok - "../fldb -h" - No Id with only -h
 # Testing -v (--verbose) option...
 ok - "../fldb -hv" - Option --version with -h returns Id string and help screen
 ok - "../fldb -hv" - Option --version with -h returns Id string and help screen (stderr)

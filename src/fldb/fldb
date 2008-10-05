@@ -30,7 +30,7 @@ our $Debug = 0;
 my $STD_DATABASE = "fldb";
 
 our %Opt = (
-    # {{{
+
     'add' => 0,
     'crc32' => 0,
     'database' => $STD_DATABASE,
@@ -42,7 +42,7 @@ our %Opt = (
     'version' => 0,
     'xml' => 0,
     'zero' => 0,
-    # }}}
+
 );
 
 our $progname = $0;
@@ -56,7 +56,7 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
-    # {{{
+
     "add" => \$Opt{'add'},
     "crc32" => \$Opt{'crc32'},
     "database|D=s" => \$Opt{'database'},
@@ -68,7 +68,7 @@ GetOptions(
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'},
     "zero|z" => \$Opt{'zero'},
-    # }}}
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
