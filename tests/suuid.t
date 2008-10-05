@@ -198,7 +198,7 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 );
 
 # }}}
-like(`tail -1 $Outfile`, # {{{
+like(file_data($Outfile), # {{{
     '/^' . join('\t',
         '3',
         $v1_templ, # uuid
