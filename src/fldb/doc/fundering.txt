@@ -13,9 +13,9 @@ Her kommer en grov skisse over hva som må være med i fildataene.
 
   - SHA1
   - MD5
-  - CRC32 - Den som ZIP og ARJ bruker. Grunnen til den får oppmerksomhet 
-    er at den var mye brukt i gamle dager – tidlig 1990-tallet og 
-    deromkring.
+  - CRC32 - Den som ZIP og ARJ bruker. Grunnen til at den får 
+    oppmerksomhet er at den var mye brukt i gamle dager – tidlig 
+    1990-tallet og deromkring.
   - Størrelse i bytes
   - Filnavn
   - Tidspunkt for siste modifisering (fildato)
