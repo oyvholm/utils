@@ -564,7 +564,8 @@ sub print_gpx {
                         $Cmt,
                         $Desc,
                         $Src,
-                        $Sym
+                        $Sym,
+                        '\N' # Local db id, will be defined when read into wayp_new
                     ) . "\n"
                 );
             } elsif ($Opt{'output-format'} eq "pgwupd") {

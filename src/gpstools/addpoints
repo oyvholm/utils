@@ -100,7 +100,7 @@ for my $Currarg (@ARGV) {
             system("gpst -o pgtab -d -rpt $Currfile | psql -a -c \"COPY logg FROM stdin\" $Opt{'database'}");
         }
         if ($Opt{'type'} =~ /waypoint/) {
-            system("gpst -o pgwtab $Currfile | psql -a -c \"COPY wayp FROM stdin\" $Opt{'database'}");
+            system("gpst -o pgwtab $Currfile | psql -a -c \"COPY wayp_new FROM stdin\" $Opt{'database'}");
         }
     }
 }

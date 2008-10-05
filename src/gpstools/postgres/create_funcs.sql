@@ -136,6 +136,63 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql; -- }}}
 
+-- loop_wayp_new(): Loop gjennom alle entryene i wayp_new og legg dem inn i systemet.
+CREATE OR REPLACE FUNCTION loop_wayp_new() RETURNS void AS $$ -- {{{
+DECLARE
+    curr_id integer;
+    currpoint point;
+BEGIN
+    -- FOR curr IN SELECT * FROM wayp_new LOOP
+    --     NULL;
+    -- END LOOP;
+    LOOP
+        curr_id = first_wayp_new();
+        IF curr_id IS NOT NULL THEN
+            RAISE NOTICE 'curr_id er ikke null: %', curr_id;
+            currpoint = (SELECT coor FROM wayp_new WHERE id = curr_id);
+            IF (SELECT coor FROM wayp WHERE coor[0] = currpoint[0] AND coor[1] = currpoint[1]) IS NOT NULL THEN
+                RAISE NOTICE '% finnes allerede i wayp', currpoint;
+                INSERT INTO wayp_rej SELECT * FROM wayp_new WHERE id = curr_id;
+            ELSE
+                RAISE NOTICE '% er ikke i wayp', currpoint;
+                INSERT INTO wayp SELECT * FROM wayp_new WHERE id = curr_id;
+                PERFORM update_trackpoint(currpoint);
+            END IF;
+            DELETE FROM wayp_new WHERE id = curr_id;
+            -- COPY (SELECT name FROM wayp WHERE coor::varchar = currpoint::varchar)
+            --     TO STDOUT;
+        ELSE
+            RAISE NOTICE 'currpoint er null';
+            EXIT;
+        END IF;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql; -- }}}
+
+-- update_trackpoint(): Oppdater alle feltene i en viss omkrets av punktet som spesifiseres.
+CREATE OR REPLACE FUNCTION update_trackpoint(currpoint point) RETURNS void AS $$ -- {{{
+BEGIN
+    RAISE NOTICE 'starter';
+    -- Avstanden hjemmefra.
+    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> $1
+        WHERE ($1 <-> coor) < 0.05;
+    RAISE NOTICE 'avst ferdig';
+    -- Sted og dist
+    UPDATE logg SET sted = clname(coor), dist = cldist(coor)
+        WHERE ($1 <-> coor) < 0.05;
+    RAISE NOTICE 'update_trackpoint(%) er ferdig', currpoint;
+END;
+$$ LANGUAGE plpgsql;
+-- }}}
+
+-- first_wayp_new(): Returnerer id for den eldste i wayp_new.
+CREATE OR REPLACE FUNCTION first_wayp_new() RETURNS integer AS $$ -- {{{
+BEGIN
+    RETURN (SELECT id FROM wayp_new ORDER BY id LIMIT 1);
+END
+$$ LANGUAGE plpgsql;
+-- }}}
+
 -- secmidnight(): Returnerer antall sekunder sia midnatt for en dato.
 CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision -- {{{
 AS $$
