@@ -114,8 +114,8 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
-likecmd("$CMD perl | head", # {{{
-    '/perl -w/',
+likecmd("$CMD bash", # {{{
+    '/GNU General Public License/s',
     '/^$/s',
     "One argument sends file to stdout",
 );

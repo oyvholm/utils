@@ -9,8 +9,8 @@ ok - "../std -hv" - Option --version with -h returns Id string and help screen (
 # Testing --version option...
 ok - "../std --version" - Option --version returns Id string
 ok - "../std --version" - Option --version returns Id string (stderr)
-ok - "../std perl | head" - One argument sends file to stdout
-ok - "../std perl | head" - One argument sends file to stdout (stderr)
+ok - "../std bash" - One argument sends file to stdout
+ok - "../std bash" - One argument sends file to stdout (stderr)
 # Creating tempdir...
 ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory
 ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory (stderr)
