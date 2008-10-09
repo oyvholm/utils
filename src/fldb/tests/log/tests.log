@@ -12,7 +12,7 @@ ok - safe_sql("a\0b") - Null byte
 ok - safe_sql("\xF8") - Invalid UTF-8
 # Testing valid_utf8()...
 ok - valid_utf8("") - Empty string
-ok - valid_utf8("abc") - Reglar ASCII
+ok - valid_utf8("abc") - Regular ASCII
 ok - valid_utf8("æ©☺") - Valid UTF-8
 ok - valid_utf8("\xF8") - Invalid UTF-8
 # Testing widechar()...

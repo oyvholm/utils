@@ -146,7 +146,7 @@ is(valid_utf8(""), # {{{
 # }}}
 is(valid_utf8("abc"), # {{{
     1,
-    'valid_utf8("abc") - Reglar ASCII'
+    'valid_utf8("abc") - Regular ASCII'
 );
 
 # }}}
