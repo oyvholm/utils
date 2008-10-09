@@ -60,7 +60,7 @@ if ($Opt{'version'}) {
 
 my $curr = `svn info --xml .`;
 $curr =~ s/^.*?<entry\b.+revision="(\d+)".*$/$1/s;
-system(sprintf("svn log -r%lu:HEAD %s%s",
+system(sprintf("svn log -r%lu:HEAD %s%s | less",
     $curr+1,
     $Opt{'verbose'} ? "-v " : "",
     join(" ", @ARGV)
