@@ -24,6 +24,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'force' => 0,
     'help' => 0,
     'local' => 0,
     'tag' => 0,
@@ -50,6 +51,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "force|f" => \$Opt{'force'},
     "help|h" => \$Opt{'help'},
     "local|l+" => \$Opt{'local'},
     "tag|t=s" => \@Tags,
@@ -85,7 +87,11 @@ if (scalar(@Tags)) {
 }
 
 if (length($Dest) && -e $Dest) {
-    die("$progname: $Dest: File already exists, will not overwrite\n");
+    if ($Opt{'force'}) {
+        msg(1, "Overwriting '$Dest'...");
+    } else {
+        die("$progname: $Dest: File already exists, will not overwrite\n");
+    }
 }
 
 D(sprintf("\@Tags = \"%s", join("\", \"", @Tags) . "\""));
@@ -146,8 +152,10 @@ if (open(FromFP, "<$tmpfile")) {
 }
 
 if (length($Dest)) {
-    msg(1, "svn add");
-    mysyst("$CMD_SVN add $Dest");
+    if (!is_added($Dest)) {
+        msg(1, "svn add");
+        mysyst("$CMD_SVN add $Dest");
+    }
     msg(1, "mergesvn");
     if (-f "Lib/std/$Type") {
         mysyst("svn up Lib/std");
@@ -159,6 +167,17 @@ if (length($Dest)) {
 }
 
 unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
+
+sub is_added {
+    # Check if a file is already added with svn(1) {{{
+    my $File = shift;
+    my $Res = `svn stat --xml $File`;
+    my $Retval = $Res =~ /<wc-status.*?item="added".*?<\/wc-status>/s
+        ? 1
+        : 0;
+    return($Retval);
+    # }}}
+} # is_added()
 
 sub replace_tags {
     # {{{
@@ -221,6 +240,8 @@ Options:
 
   -h, --help
     Show this help.
+  -f, --force
+    Overwrite existing file.
   -l, --local
     Use local copy, don’t download.
   -t x, --tag x

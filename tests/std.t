@@ -142,9 +142,37 @@ likecmd("../$CMD bash bashfile", # {{{
 ok(-e "bashfile", "bashfile exists");
 ok(-x "bashfile", "bashfile is executable");
 likecmd("svn propget mergesvn bashfile", # {{{
-    '/^\d+ .*$/s',
+    '/^\d+ \S+Lib\/std\/bash\n$/s',
     '/^$/s',
-    "mergesvn property is defined",
+    "mergesvn property is set to bash template",
+);
+
+# }}}
+diag("Testing -f (--force) option...");
+likecmd("../$CMD bash bashfile", # {{{
+    '/^$/s',
+    '/^std: bashfile: File already exists, will not overwrite\n$/s',
+    "Create bash script, file already exists, don’t use --force",
+);
+
+# }}}
+likecmd("LC_ALL=C ../$CMD -fv perl bashfile", # {{{
+    '/^property \'mergesvn\' set on \'bashfile\'\n/s',
+    '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+    "Overwrite bashfile with perl script using --force",
+);
+
+# }}}
+like(file_data("bashfile"), # {{{
+    qr/perl -w/s,
+    "Contents of bashfile is replaced"
+);
+
+# }}}
+likecmd("svn propget mergesvn bashfile", # {{{
+    '/^\d+ \S+Lib\/std\/perl\n$/s',
+    '/^$/s',
+    "mergesvn property is replaced with perl template",
 );
 
 # }}}
