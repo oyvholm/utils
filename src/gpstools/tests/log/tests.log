@@ -117,7 +117,7 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 #   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 1859.
+#   in ./run-tests.pl at line 2032.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -208,7 +208,7 @@ ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 #   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 1859.
+#   in ./run-tests.pl at line 2032.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -304,6 +304,17 @@ ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
 ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
+# Testing -T (--time-shift) option...
+ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml
+ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml (stderr)
+ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml
+ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml (stderr)
+ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX
+ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX (stderr)
+ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option
+ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option (stderr)
+ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab
+ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab (stderr)
 # Testing -v (--verbose) option...
 ok - "../gpst -hv" - Option --version with -h returns Id string and help screen
 ok - "../gpst -hv" - Option --version with -h returns Id string and help screen (stderr)
@@ -313,7 +324,7 @@ ok - "../gpst --version" - Option --version returns Id string (stderr)
 # Testing --strip-whitespace option...
 not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 #   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 1859.
+#   in ./run-tests.pl at line 2032.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
@@ -390,5 +401,5 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..215
-# Looks like you failed 3 tests of 215.
+1..225
+# Looks like you failed 3 tests of 225.

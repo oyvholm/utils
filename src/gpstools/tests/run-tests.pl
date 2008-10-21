@@ -1504,6 +1504,179 @@ END
 
 # }}}
 # --create-breaks option }}}
+diag("Testing -T (--time-shift) option...");
+testcmd("$CMD -T 3600 multitrack-pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<tp> <time>2006-01-01T01:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+<tp> <time>2006-01-01T01:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+<tp> <time>2006-01-01T01:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+<break/>
+<title>track2</title>
+<tp> <time>2006-01-02T01:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+<tp> <time>2006-01-02T01:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+<tp> <time>2006-01-02T01:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+<tp> <time>2006-01-02T02:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+<break/>
+<tp> <time>2006-01-02T02:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+<break/>
+<title>track3</title>
+<tp> <time>2006-01-03T03:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+<tp> <time>2006-01-03T03:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+<tp> <time>2006-01-03T03:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+<break/>
+<tp> <time>2006-01-03T03:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+<tp> <time>2006-01-03T03:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+<tp> <time>2006-01-03T03:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+<tp> <time>2006-01-03T03:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+<tp> <time>2006-01-03T03:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Add one hour to GPX input, output gpsml",
+);
+
+# }}}
+testcmd("$CMD -T -3600 multitrack-pause.gpx", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpsml>
+<track>
+<title>track1</title>
+<tp> <time>2005-12-31T23:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+<tp> <time>2005-12-31T23:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+<tp> <time>2005-12-31T23:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+<break/>
+<title>track2</title>
+<tp> <time>2006-01-01T23:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+<tp> <time>2006-01-01T23:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+<tp> <time>2006-01-01T23:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+<tp> <time>2006-01-02T00:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+<break/>
+<tp> <time>2006-01-02T00:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+<break/>
+<title>track3</title>
+<tp> <time>2006-01-03T01:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+<tp> <time>2006-01-03T01:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+<tp> <time>2006-01-03T01:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+<break/>
+<tp> <time>2006-01-03T01:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+<tp> <time>2006-01-03T01:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+<tp> <time>2006-01-03T01:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+<tp> <time>2006-01-03T01:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+<tp> <time>2006-01-03T01:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+</track>
+</gpsml>
+END
+    "",
+    "Subtract one hour from GPX input, output gpsml",
+);
+
+# }}}
+testcmd("$CMD -T 1 -o gpx multitrack-pause.gpx", # {{{
+    <<END,
+$gpx_header
+  <trk>
+    <trkseg>
+      <trkpt lat="1.11" lon="1.12"> <time>2006-01-01T00:00:01Z</time> </trkpt>
+      <trkpt lat="1.21" lon="1.22"> <time>2006-01-01T00:00:02Z</time> </trkpt>
+      <trkpt lat="1.31" lon="1.32"> <time>2006-01-01T00:00:03Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="2.11" lon="2.12"> <time>2006-01-02T00:00:01Z</time> </trkpt>
+      <trkpt lat="2.21" lon="2.22"> <time>2006-01-02T00:00:05Z</time> </trkpt>
+      <trkpt lat="2.31" lon="2.32"> <time>2006-01-02T00:00:17Z</time> </trkpt>
+      <trkpt lat="2.41" lon="2.42"> <time>2006-01-02T01:00:17Z</time> </trkpt>
+      <trkpt lat="2.451" lon="2.452"> <time>2006-01-02T01:00:18Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="3.11" lon="3.12"> <time>2006-01-03T02:00:21Z</time> </trkpt>
+      <trkpt lat="3.21" lon="3.22"> <time>2006-01-03T02:00:22Z</time> </trkpt>
+      <trkpt lat="3.31" lon="3.32"> <time>2006-01-03T02:00:23Z</time> </trkpt>
+      <trkpt lat="3.41" lon="3.42"> <time>2006-01-03T02:00:24Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="3.51" lon="3.52"> <time>2006-01-03T02:00:25Z</time> </trkpt>
+      <trkpt lat="3.61" lon="3.62"> <time>2006-01-03T02:00:26Z</time> </trkpt>
+      <trkpt lat="3.71" lon="3.72"> <time>2006-01-03T02:00:27Z</time> </trkpt>
+      <trkpt lat="3.81" lon="3.82"> <time>2006-01-03T02:00:28Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+    "Add one second to GPX input, output GPX",
+);
+
+# }}}
+testcmd("$CMD --time-shift -1 -o gpx multitrack-pause.gpsml", # {{{
+    <<END,
+$gpx_header
+  <trk>
+    <trkseg>
+      <trkpt lat="1.11" lon="1.12"> <time>2005-12-31T23:59:59Z</time> </trkpt>
+      <trkpt lat="1.21" lon="1.22"> <time>2006-01-01T00:00:00Z</time> </trkpt>
+      <trkpt lat="1.31" lon="1.32"> <time>2006-01-01T00:00:01Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="2.11" lon="2.12"> <time>2006-01-01T23:59:59Z</time> </trkpt>
+      <trkpt lat="2.21" lon="2.22"> <time>2006-01-02T00:00:03Z</time> </trkpt>
+      <trkpt lat="2.31" lon="2.32"> <time>2006-01-02T00:00:15Z</time> </trkpt>
+      <trkpt lat="2.41" lon="2.42"> <time>2006-01-02T01:00:15Z</time> </trkpt>
+      <trkpt lat="2.451" lon="2.452"> <time>2006-01-02T01:00:16Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="3.11" lon="3.12"> <time>2006-01-03T02:00:19Z</time> </trkpt>
+      <trkpt lat="3.21" lon="3.22"> <time>2006-01-03T02:00:20Z</time> </trkpt>
+      <trkpt lat="3.31" lon="3.32"> <time>2006-01-03T02:00:21Z</time> </trkpt>
+      <trkpt lat="3.41" lon="3.42"> <time>2006-01-03T02:00:22Z</time> </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="3.51" lon="3.52"> <time>2006-01-03T02:00:23Z</time> </trkpt>
+      <trkpt lat="3.61" lon="3.62"> <time>2006-01-03T02:00:24Z</time> </trkpt>
+      <trkpt lat="3.71" lon="3.72"> <time>2006-01-03T02:00:25Z</time> </trkpt>
+      <trkpt lat="3.81" lon="3.82"> <time>2006-01-03T02:00:26Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+    "",
+    "Subtract one second from gpsml input, output GPX, use long option",
+);
+
+# }}}
+testcmd("$CMD -T 0 -o pgtab multitrack-pause.gpx", # {{{
+    <<END,
+2006-01-01T00:00:00Z\t(1.11,1.12)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-01T00:00:01Z\t(1.21,1.22)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-01T00:00:02Z\t(1.31,1.32)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-02T00:00:00Z\t(2.11,2.12)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-02T00:00:04Z\t(2.21,2.22)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-02T00:00:16Z\t(2.31,2.32)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-02T01:00:16Z\t(2.41,2.42)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-02T01:00:17Z\t(2.451,2.452)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:20Z\t(3.11,3.12)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:21Z\t(3.21,3.22)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:22Z\t(3.31,3.32)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:23Z\t(3.41,3.42)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:24Z\t(3.51,3.52)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:25Z\t(3.61,3.62)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:26Z\t(3.71,3.72)\t\\N\t\\N\t\\N\t\\N\t\\N
+2006-01-03T02:00:27Z\t(3.81,3.82)\t\\N\t\\N\t\\N\t\\N\t\\N
+END
+    "",
+    "Read GPX, time-shift 0 seconds, output pgtab",
+);
+
+# }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',

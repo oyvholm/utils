@@ -56,6 +56,7 @@ our %Opt = (
     'short-date' => 0,
     'skip-dups' => 0,
     'strip-whitespace' => 0,
+    'time-shift' => 0,
     'undefined' => "",
     'verbose' => 0,
     'version' => 0,
@@ -96,6 +97,7 @@ GetOptions(
     "short-date|s" => \$Opt{'short-date'},
     "skip-dups|d" => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
+    "time-shift|T=i" => \$Opt{'time-shift'},
     "undefined|n=s" => \$Opt{'undefined'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -779,6 +781,15 @@ sub print_entry {
             $Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
             $Dat{'day'}, $Dat{'month'} - 1, $Dat{'year'}
         );
+        if ($Opt{'time-shift'}) {
+            D("ep_time før: '$ep_time'");
+            $ep_time += $Opt{'time-shift'};
+            D("ep_time etter: '$ep_time'");
+            ($Dat{'sec'}, $Dat{'min'},$Dat{'hour'}, $Dat{'day'},
+             $Dat{'month'}, $Dat{'year'}) = gmtime($ep_time);
+            $Dat{'year'} += 1900;
+            $Dat{'month'}++;
+        }
         $Dat{'epoch'} = $ep_time;
         $Dat{'year'}  = sprintf("%04u", $Dat{'year'});
         $Dat{'month'} = sprintf("%02u", $Dat{'month'});
@@ -1193,6 +1204,9 @@ Options:
   -t, --create-breaks
     Create breaks in track between points with a difference more than 
     $PAUSE_LIMIT seconds.
+  -T x, --time-shift x
+    Move time of trackpoint x seconds forwards or backwards. x can be a 
+    positive or negative integer.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
