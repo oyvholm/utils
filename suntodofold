@@ -17,7 +17,7 @@ chomp($Line);
 print("$Line \x7B\x7B\x7B\n");
 
 while (<STDIN>) {
-	print("\t$_");
+	print("$_");
 }
 
 print("$Indent\x7D\x7D\x7D\n");
