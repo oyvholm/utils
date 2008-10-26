@@ -347,7 +347,7 @@ sub mysyst {
     my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
     D("$system_txt");
     deb_wait();
-    print(STDERR "---- @_\n");
+    msg(1, "Executing '@_'");
     system(@_);
     # }}}
 } # mysyst()
