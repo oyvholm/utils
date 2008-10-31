@@ -1,22 +1,722 @@
-#!/usr/bin/perl
-
-$VERSION = "0.17";
-$CVS_VERSION = '$Revision: 1.17 $ $Date: 2001/08/31 23:00:55 $ $Author: hta $';
-
+#!/usr/bin/perl -w
+# For Emacs: -*- mode:cperl; mode:folding; -*-
 #
-# Get a machine's critical features, And mail them to the Linux Counter
+# Get a machine's critical features, And mail/http them to the Linux Counter
 #
-# Copyright (c) Harald Tveit Alvestrand, the Linux Counter Project
-# License: GNU Copyleft - see bottom of file.
+# (c) 1999 - Harald Tveit Alvestrand, the Linux Counter Project
+#     2003 - PetaMem Group (www.petamem.com)
+# License:   GNU Copyleft - see bottom of file.
+# Changelog: see even more bottom of the file
 #
 # As a matter of courtesy, if you change this file on your own,
-# make sure it does NOT mail to the counter!!!!!!!!!!!!
+# make sure it does NOT mail to the counter!
 #
-$HELP = <<EoF;
+use strict;
+use POSIX;
+
+our $VERSION     = '0.31';
+our $CVS_VERSION = '$Revision: 1.9 $ $Date: 2008/01/05 15:03:50 $ $Author: patrick $';
+our $IsInTestHarness;
+use vars qw(%values %oldvalues $errordata $debugdata %files); # data that is sent
+use vars qw($progname %option $mailprogram);
+use vars qw(%is_sys_account %is_user %is_account);
+
+# stuff that controls defaults for passwdscan & accounts subroutines
+my ($UID_MIN, $UID_MAX, $got_defs) = (100, 65533, '');
+
+# Make sure nothing happens, so that the script's routines
+# can be debugged from another file
+return 1 if($IsInTestHarness);
+
+&preparation;
+&options;
+
+&readfile;
+&checkconfig;
+
+if ($option{ask}) {
+  &askquestions;
+}
+
+&writefile;
+&sendfile;
+
+# {{{ preparation
+
+#
+sub preparation {
+  die "No HOME environment variable\n" if (!$ENV{HOME});
+  die "No home diretory\n" if ! -d $ENV{HOME};
+  # Kill some internationalization
+  $ENV{LANG} = 'C';
+  delete $ENV{LC_CTYPE};
+  delete $ENV{LC_NUMERIC};
+  delete $ENV{LC_NAME};
+  delete $ENV{LC_TIME};
+  delete $ENV{LC_MESSAGES};
+  delete $ENV{LC_COLLATE};
+  delete $ENV{LC_MONETARY};
+
+  my $infodir = "$ENV{HOME}/.linuxcounter";
+  if (! -d $infodir) {
+    mkdir($infodir, 0766) || die "Unable to make $infodir\n";
+  }
+  # Keep track of where I am; need it to install crontab entry
+  # progname is a global.
+  $progname = $0;
+  if ($progname !~ /^\//) {
+    my $progdir = `pwd`;
+    chop $progdir;
+    $progname = "$progdir/$progname";
+    $progname =~ s!/./!/!;
+  }
+  chdir($infodir) || die "Unable to change to $infodir\n";
+  my ($sysname, $nodename, $release, $version, $machine ) = POSIX::uname();
+  if (! -f $nodename) {
+    print STDERR "Machine-update $VERSION. Use $0 -l to display license.\n";
+    print STDERR "Creating the infofile for your computer.\n";
+    # Create the infodir
+    open(INFO, ">$nodename");
+    print INFO "uniqueid: ", randomnumber(), "\n";
+    close INFO;
+  }
+
+  srand time % $$;            # do some seed "randomization"
+
+  # Find out what mail program to use !! Terrible kludge !!
+  $mailprogram = "/usr/bin/mail";
+  if (! -x "$mailprogram") {
+    if (-x "/bin/mail") {
+      $mailprogram = "/bin/mail";
+    } else {
+      if (-x "/bin/mailx") {
+        $mailprogram = "/bin/mailx";
+      } else {
+        if (-x "/usr/sbin/sendmail") {
+          $mailprogram = "/usr/sbin/sendmail";
+        } else {
+          if (-x "/usr/lib/sendmail") {
+            $mailprogram = "/usr/lib/sendmail";
+          } else {
+            if (-x "/usr/bin/mutt") {
+              $mailprogram = "/usr/bin/mutt";
+            } else {
+              if (-x "/usr/sbin/exim4") {
+                $mailprogram = "/usr/sbin/exim4";
+              } else {
+                if (-x "/usr/bin/elm") {
+                  $mailprogram = "/usr/bin/elm";
+                } else {
+                  die "Cannot find a mail program to use";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+# }}}
+# {{{ options
+
+#
+sub options {
+  my $opt;
+
+  while (defined($ARGV[0]) && $ARGV[0] =~ /^-/) {
+    $opt = shift @ARGV;
+    $opt =~ /c/ && &installcrontab;
+    $opt =~ /d/ && $option{DEBUG}++ && print STDERR "Debug is $option{DEBUG}\n";
+    $opt =~ /h/	&& &help;
+    $opt =~ /i/ && ($option{ask}  = 1);
+    $opt =~ /l/ && &license;
+    $opt =~ /m/ && ($option{mail} = 1);
+    $opt =~ /t/ && ($option{mail} = 0);
+    $opt =~ /u/ && &uninstallcrontab;
+    $opt =~ /v/ && die "\n\t Linux Counter machine-update version $VERSION\n"
+      . "\tCVS version $CVS_VERSION\n";
+    $opt =~ /x/ && ($option{info} = 1);
+  }
+}
+
+# }}}
+
+# {{{ askquestions
+
+#
+sub askquestions {
+  return if ! -t STDIN || ! -t STDOUT;
+  $| = 1;
+  print "Here you can specify some info that the script can't know for itself\n";
+  $values{owner} = askone("Your Linux Counter reg#, if any", $values{owner});
+  $values{key}   = askone("Your machine's counter reg#, if any", $values{key});
+}
+
+# }}}
+# {{{ askone
+#
+sub askone {
+  my $prompt  = shift;
+  my $default = shift;
+
+  print $prompt;
+  if (defined($default)) {
+    print " [$default]";
+  }
+  print ':';
+
+  my $ans = <STDIN>;
+
+  chop $ans;
+  &Debug("Answer was $ans\n");
+  $ans = $default if (!length($ans));
+
+  return $ans;
+}
+# }}}
+
+# {{{ readfile
+
+#
+sub readfile {
+  my ($sysname, $nodename, $release, $version, $machine ) = POSIX::uname();
+  open(INFO, $nodename) || die "Did not find infofile $nodename\n";
+  while (<INFO>) {
+    chop;
+    s/#.*//;
+    if (/^(\S+): *(.+)/) {
+      my $key = $1;
+      my $value = $2;
+      if ($1 !~ /^(owner|key|uniqueid)$/) {
+	next;
+      }
+      &Debug("Read $key: $value\n");
+      $values{$key} = $value;
+    } else {
+      print STDERR "Unparsed info line: $_ - discarded\n";
+    }
+  }
+  close INFO;
+  %oldvalues = %values;
+}
+
+# }}}
+# {{{ writefile
+
+#
+sub writefile {
+  my ($sysname, $nodename, $release, $version, $machine ) = POSIX::uname();
+
+  open(INFO, ">$nodename.new");
+  for my $val (sort keys(%values)) {
+    &Debug("Saving $val: $values{$val}\n");
+    print INFO "$val: $values{$val}\n";
+  }
+  close INFO;
+  rename("$nodename.new", $nodename) || die "Rename failed\n";
+}
+
+# }}}
+# {{{ sendfile
+
+#
+sub sendfile {
+  if ($option{mail}) {
+    open(MAIL, "|$mailprogram machine-registration\@counter.li.org")
+      || die "Unable to open $mailprogram\n";
+  } else {
+    warn "--------------------------------------------------------\n";
+    warn "This is what will be sent to the Linux Counter if you\n";
+    warn "run the program with the -m switch. Now, NOTHING IS SENT\n";
+    warn "--------------------------------------------------------\n";
+    open(MAIL, ">&STDOUT");
+  }
+  # note that $ENV{USER} isn't (always) set in a cron job...
+  my $user = (getpwuid($<))[0];
+  $user = "unknown-id-$<" if !$user;
+  print MAIL <<EOF
+From: $user
+To: machine-registration\@counter.li.org
+Subject: machine-update for $values{name}
+
+Mail program that sent this email: $mailprogram
+Perl version used to run machine-update: $]
+
+//MACHINE
+EOF
+    ;
+  for my $val (sort keys(%values)) {
+    print MAIL "$val: $values{$val}\n"
+      if length($values{$val}) > 0;
+  }
+  print MAIL "//END\n";
+  # Attach files
+  for my $file (keys(%files)) {
+    print MAIL "//FILE $file\n";
+    print MAIL $files{$file};
+    print MAIL "//EOF\n";
+  }
+
+
+  # Attach possible other info
+  if ($errordata) {
+    print MAIL "----- Problem info gathered during probing -----\n";
+    print MAIL $errordata;
+  }
+  $option{info} && do {
+    print MAIL "----- Debug data for the script maintainer's aid -----\n";
+    print MAIL $debugdata;
+  };
+  close MAIL;
+}
+
+# }}}
+
+# {{{ randomnumber
+#
+sub randomnumber {
+  return int(rand(1_000_000_000));
+}
+# }}}
+
+# {{{ checkconfig
+
+#
+sub checkconfig {
+  my ($sysname, $nodename, $release, $version, $machine ) = POSIX::uname();
+
+  warn "This is not Linux, but $sysname!\n" if($sysname ne 'Linux');
+  $values{method}    = "machine-update version $VERSION";
+  $values{os}        = $sysname;
+  $values{kernel}    = $release;
+  $values{cpu_uname} = $machine;
+  $values{name}      = $nodename;	# First order guess
+
+  # Credit for some of the code below goes to
+  # Denis Havlik: <havlik@ap.univie.ac.at>
+  # Blame is, of course, all mine - HTA -
+  # Note - there are numerous problems with df, including:
+  # - early versions don't support the -l option
+  # - at least some include SAMBA filesystems in the -l option
+  # 1: Snarf a df -T
+  my $dfbin = &xbin("df");
+  $files{"df -T"} = `$dfbin -T -x nfs`;
+
+  $values{accounts} = &accounts;
+  $values{users}    = &active_users;
+
+  my $uptime = &xbin('uptime');
+  if($uptime) {
+    $uptime = `$uptime`;
+    $values{uptime_1} = $uptime; # preserve raw version
+    $values{uptime_1} =~ s/\n.*//;
+  }
+  my $lastprog = xbin('last');
+  if ($lastprog && -r "/var/run/utmp") {
+    $values{uptime_2} = `$lastprog -xf /var/run/utmp runlevel`;
+    $values{uptime_2} =~ s/\n.*$//s;
+  } else {
+    DebugInfo("Can't do last to find uptime");
+  }
+  # Not sure this is a Right Thing...so not saving it for the moment
+  # This section based on a patch from Mark-Jason Dominus <mjd@plover.com>
+  # try to guess mailer based on content of /usr/lib/sendmail link
+  if (-l '/usr/lib/sendmail') {
+    my $realsendmail = readlink('/usr/lib/sendmail');
+    if ($realsendmail eq '../sbin/sendmail') {
+      $realsendmail = '/usr/sbin/sendmail';
+      if (-l $realsendmail) {
+	$realsendmail = readlink($realsendmail);
+      }
+    }
+    if ($realsendmail =~ m{^/var/qmail}) {
+      $values{mailer} = "qmail";
+    } else {
+      &DebugInfo("Found sendmail as a link to $realsendmail\n");
+    }
+  }
+  # Link method did not work. Try to guess based on presence of
+  # config files. (this is more susceptible to the old-junk problem)
+  if (!$values{mailer}) {
+    if ( -d '/var/qmail') {
+      $values{mailer} = 'qmail';
+    } elsif ( -f '/etc/sendmail.cf' || -f '/etc/mail/sendmail.cf') {
+      # TMDG claims recent Fedora Core has it in /etc/mail/sendmail.cf
+      $values{mailer} = 'sendmail';
+    } elsif ( -d '/etc/postfix') {
+      $values{mailer} = 'postfix';
+    }
+  }
+
+  $values{kcoresize} = -s "/proc/kcore" || 0;
+  addonefileforsending("/proc/meminfo");
+  addonefileforsending("/proc/cpuinfo");
+  addonefileforsending("/proc/version");
+  # info on what devices are in use on the system
+  addonefileforsending("/proc/pci");
+  addonefileforsending("/proc/bus/usb/devices");
+  # Both Mandrake and Red Hat use this file....
+  addonefileforsending("/etc/redhat-release");
+}
+
+# }}}
+
+# {{{ accounts
+
+#
+sub accounts {
+  my $s;
+  my $niss;
+  my $ypcatbin;                # will hold path to the ypcat binary (if any)
+
+  open (TMP,"</etc/passwd");
+  $s += &passwdscan;
+  &DebugErr("Found $s accounts total\n");
+  &Debug("Switching to NIS passwords\n");
+
+  $ypcatbin = &xbin('ypcat');  # get path to ypcat binary (empty if none)
+  if($ypcatbin) {              # test whether ypcat was found
+    open TMP, "$ypcatbin passwd 2> /dev/null|"
+      || ($errordata .= "ypcat failed: $!\n");
+    $niss = &passwdscan;
+    $s   += $niss;
+    close TMP;
+    &Debug("Status of ypcat: $?\n");
+    &DebugErr("Found $niss accounts in ypcat passwd\n");
+  }
+
+  &DebugErr('Sysaccounts: ', join(' ', keys(%is_sys_account)), "\n");
+  &DebugErr("Found $s accounts total\n");
+
+  return $s;
+}
+
+# }}}
+# {{{ passwdscan
+
+#
+sub passwdscan {
+  # Code for reading login.defs courtesy of Vassilii Khachaturov
+  # <vassilii@tarunz.org>
+  local (*DEFS);
+  # Try importing UID_MIN and UID_MAX from /etc/login.defs, if possible
+  # else just assume the above defaults for min and max non-system UID
+  if (!$got_defs && open (DEFS, '/etc/login.defs')) {
+    while (<DEFS>) {
+      if (/^\s*(UID_(?:MIN|MAX))\s+(\d+)/) {
+	# elegant, but not compatible with "strict refs":
+	#${ $1 } = $2;
+	if ($1 eq "UID_MIN") {
+	  $UID_MIN = $2;
+	} else {
+	  $UID_MAX = $2;
+	}
+	&Debug("DEFS match: $1 = $2\n");
+      }
+    }
+    close (DEFS);
+    $got_defs = 1;
+  }
+  &Debug("UID_MIN = $UID_MIN, UID_MAX = $UID_MAX\n");
+  # I suppose this is as good as it gets - 
+  #   Usually user accounts have UID > 100 and 
+  #   "system accounts" have UID < 100, but there is no guarantee   
+  # that 
+  #   this will hold for pseudo-users like "postgress" etc.
+  # Also nobody is usually 99 on linux, but -1 on "standard" unices.
+  # RedHat places the dividing line at 500. Others use 400...
+  my @line;
+  my $s = 0;
+
+  while (<TMP>) {
+    @line = split ':';
+    if ($line[2] >= $UID_MIN && $line[2] <= $UID_MAX
+	&& !($line[0] eq 'nobody')) {
+      $s++;
+      $is_account{$line[0]} = 1;
+    } else {
+      $is_sys_account{$line[0]} = 1;
+    }
+  }
+
+  return $s;
+}
+
+# }}}
+# {{{ active_users
+
+#
+# This is kind of alpha, but please test it.
+# It calculates the number of "active" users based on the "wtmp" entries
+# unfortunately at least Mandrake 8 and 9 ship with non-world-read wtmp
+# and non-set-uid last, so this does not work any more...
+#
+# RJ: Actually I think the best thing to do is to bury this code and be silent about it.
+#
+sub active_users {
+  my $userslisted;
+
+  for (qw(reboot wtmp runlevel)) {  # This sysaccounts shouldn't be counted. Who else?
+    $is_sys_account{$_} = 1;
+  }
+  open( TMP, "/usr/bin/last 2>&1|");
+  while (<TMP>) {
+    chop;
+    if (m!/var/log/wtmp: Permission denied!) { # RJ: ***Boom*** on every non-EN system
+      &ErrorInfo("/usr/bin/last failed because /var/log/wtmp isn't readable\n");
+      last;
+    }
+    last if(!$_);                            # RJ: quick hack to safe bad code from harm
+    my @tmp  = split;
+    my $name = $tmp[0];
+    if ($is_sys_account{$name}) {
+      # do nothing
+    } elsif (defined $is_account{$name}) {
+      $is_user{$name} = 1;
+    } elsif (/^\s*$/) {                      # blank line - do nothing
+    } elsif ($#tmp == 9) {                   # OK line, but unknown user
+      $option{DEBUG} && do {
+	if (!$userslisted) {
+	  print STDERR 'Know users are: ',
+	    join(' ', keys(%is_account)), "\n";
+	  $userslisted = 1;
+	}
+	print STDERR "Unknown user: $name\n";
+      }
+    } else {
+      &DebugErr("Strange line: $_\n");
+    }
+  }
+  close TMP;
+  my $i = 0;
+  for (sort keys %is_user) {
+    $option{DEBUG} && printf "Active user %3d: %s\n", ++$i, $_;
+  }
+  &Debug("$i active users found.\n");
+
+  return $i;
+}
+
+# }}}
+
+# {{{ installcrontab
+
+#
+sub installcrontab {
+  my $hour = int(rand(24));
+  my $min  = int(rand(60));
+  my $day  = int(rand(7));	# Weekday. This version runs once a week.
+  my $cron = "";
+
+  warn "Installing start of script into your crontab\n";
+  if (open(CRON, "crontab -l |")) {
+    &Debug("Checking crontab for machine-update\n");
+    &Debug("Want to install as $progname\n");
+    while (<CRON>) {
+      if (/machine-update/) {
+	if (/ $progname -m/) {
+	  die "Crontab entry already installed: $_\n";
+	} else {
+	  die "Another entry with machine-update: $_\n";
+	}
+      }
+      $cron .= $_;
+    }
+    close CRON;
+    &Debug("Result from crontab -l: ", $? / 256, "\n");
+    if ($? == 0) {
+      &Debug("Crontab successfully read\n");
+    } elsif ($? == 256) {
+      warn "You don't seem to have a crontab. I will create one.\n";
+    } else {
+      die "Failed to read your crontab. Please report this as a bug: $?\n";
+    }
+  } else {
+    &Debug("Result from crontab open(): $?\n");
+    die "Unable to execute crontab command. Please check your system\n";
+  }
+  open(CRON, "|crontab -");
+  print CRON $cron;
+  print CRON "$min $hour * * $day $progname -m\n";
+  close CRON;
+  &Debug("Result from crontab: $?\n");
+  if ($?) {
+    die(<<EoF);
+Installing new crontab failed.
+YOUR CRONTAB MAY BE DAMAGED - use crontab -l to check it.
+Here's its former content (if any):
+
+$cron
+
+EoF
+  }
+  print "Crontab entry successfully installed.\nWill run on day $day of every week, at $hour:$min\n";
+
+  exit 0;
+}
+
+# }}}
+# {{{ uninstallcrontab
+
+#
+sub uninstallcrontab {
+  my $found = 0;
+  my $cron;
+
+  print STDERR "Removing $progname from your crontab\n";
+  open(CRON, "crontab -l |");
+  &Debug("Checking crontab for machine-update\n");
+  &Debug("Want to uninstall as $progname\n");
+  while (<CRON>) {
+    if (/^#/ && $. <= 3) {	# initial comment
+      &Debug("Skipping comment: $_");
+      next;
+    }
+    if (/machine-update/) {
+      if (/ $progname -m/) {
+	print STDERR "Crontab entry found and removed\n";
+	$found = 1;
+	next;			# skip stuff at end....
+      } else {
+	die "Another entry with machine-update: $_\nUninstall manually?\n";
+      }
+    }
+    $cron .= $_;
+  }
+  close CRON;
+  &Debug("Result from crontab -l: $?\n");
+  if ($?) {
+    die "Failed to read your crontab. You may not have one?\n";
+  }
+  if ($found) {
+    open(CRON, "|crontab -");
+    print CRON $cron;
+    close CRON;
+    &Debug("Result from crontab: $?\n");
+    if ($?) {
+      die(<<EoF);
+Installing new crontab failed.
+YOUR CRONTAB MAY BE DAMAGED - use crontab -l to check it.
+Here's its former content (if any):
+
+$cron
+
+EoF
+    }
+  } else {
+    print STDERR "No instance of $progname found in your crontab\n";
+  }
+
+  exit 0;
+}
+
+# }}}
+
+# {{{ xbin                       execute a linux binary
+
+#
+# This sub is to execute a linux binary robustly. i.e. testing
+# whether it is present, where it is present, whether it is executable
+#
+sub xbin {
+  my $bin = shift;             # get name of binary to execute
+
+  $bin = `which $bin 2>/dev/null`;         # determine binarys full path
+  chomp $bin;
+  return $bin if(-x $bin);     # if there and executable: all is well - return it
+
+  if(!$bin) {                  # if not there
+    &Debug("No $bin found\n"); # state so
+  } else {                     # there but not executable
+    &Debug("$bin found, but not executable\n");
+  }
+
+  return '';                   # so return an empty string (binary will not exec)
+}
+
+# }}}
+# {{{ getval_from_file           get value from system file @ row,col
+
+#
+sub getval_from_file {
+  my $file = shift;
+  my $row  = shift;
+  my $col  = shift;
+  my @file;
+  my @cols;
+
+  if (!(-r $file)) {
+    &DebugErr("File $file not readable\n");
+    return '';
+  }
+  sysopen(FH,$file, O_RDONLY);
+  @file = <FH>;                     # read whole file to array
+  close FH;
+
+  @cols = split /\s+/, $file[$row]; # get the right row
+
+  return $cols[$col];               # return the right column
+}
+
+# }}}
+
+sub addonefileforsending {
+  my $file = shift;
+  my @file;
+
+  if (!(-r $file)) {
+    &DebugErr("File $file not readable\n");
+    return '';
+  }
+  sysopen(FH,$file, O_RDONLY);
+  @file = <FH>;                     # read whole file to array
+  close FH;
+  $files{$file} = join('', @file);
+
+}
+
+# {{{ Debug                      print debug information if flag is set
+
+#
+sub Debug {
+  $option{DEBUG} && print @_;
+}
+
+# }}}
+# {{{ DebugErr                   print debug on STDERR if flag is set
+
+#
+sub DebugErr {
+  $option{DEBUG} && print STDERR @_;
+}
+
+# }}}
+# {{{ ErrorInfo
+sub ErrorInfo {
+  $errordata .= join('', @_);
+}
+# }}}
+# {{{ DebugInfo
+
+sub DebugInfo {
+  $option{info} && ($debugdata .= join('', @_));
+}
+
+# }}}
+
+# {{{ help                       print help & exit
+
+#
+sub help {
+  my $host = `uname -n`;
+
+  print <<EoF;
 machine-update version $VERSION
 Send machine information to the Linux Counter
 
-USE: machine-update [-i] [-(t|d|l|m|v|x|c|u|h)] 
+USE: machine-update [-i] [-(t|d|l|m|v|x|c|u|h)]
 
 SWITCHES:
  -i = interactive
@@ -29,563 +729,25 @@ SWITCHES:
  -c = install crontab entry
  -u = uninstall crontab entry
  -h = print usage information and exit
-If called interactively, will ask some questions and store the
-answers in $HOME/.linuxcounter/<uname -n>
+If called with the "-i" option, will ask some questions and store the
+answers in $ENV{HOME}/.linuxcounter/$host
 
 EoF
+
+exit 0;
+}
+
+# }}}
+# {{{ license                    print license & exit
+
 #
-
-use POSIX;
-
-# Predecarations
-sub Debug;
-sub ErrorInfo;
-sub DebugInfo;
-
-
-# Some variables are for internal use, and never prompted for in
-# the loop of askquestions
-%dontask = (
-"uniqueid", 1, # Internal use
-"manual", 1,
-"method", 1,
-"owner", 1, # These 2 are always prompted for
-"key", 1,
-"uptime", 1, # We think we know how to get these
-);
-
-# Configuration: Where to fetch information from
-$cpufile = "/proc/cpuinfo";
-$kcorefile = "/proc/kcore";
-
-# Make sure nothing happens, so that the script's routines
-# can be debugged from another file
-if ($IsInTestHarness) {
-return 1;
-}
-preparation();
-options();
-
-if ($option{crontab}) {
-    installcrontab();
-    exit(0)
-} elsif ($option{uncrontab}) {
-    uninstallcrontab();
-    exit(0);
-}
-readfile();
-checkconfig();
-if ($option{ask}) {
-   askquestions();
-} else {
-   copymanuals();
-}
-writefile();
-sendfile();
-
-sub preparation {
-  die "No HOME environment variable\n" if (!$ENV{HOME});
-  die "No home diretory\n" if ! -d $ENV{HOME};
-  $infodir = "$ENV{HOME}/.linuxcounter";
-  if (! -d $infodir) {
-    mkdir($infodir, 0766) || die "Unable to make $infodir\n";
-  }
-  # Keep track of where I am; need it to install crontab entry
-  # progname is a global.
-  $progname = $0;
-  if ($progname !~ /^\//) {
-      my $progdir = `pwd`;
-      chop $progdir;
-      $progname = "$progdir/$progname";
-      $progname =~ s!/./!/!;
-  }
-  chdir($infodir) || die "Unable to change to $infodir\n";
-  ($sysname, $nodename, $release, $version, $machine ) = POSIX::uname();
-  if (! -f $nodename) {
-      print STDERR "Machine-update $VERSION. Use $0 -l to display license.\n";
-      print STDERR "Creating the infofile for your computer.\n";
-      # Create the infodir
-      open(INFO, ">$nodename");
-      print INFO "uniqueid: ", randomnumber(), "\n";
-      close INFO;
-  }
-}
-
-sub options {
-    while ($ARGV[0] =~ /^-/) {
-	$opt = shift @ARGV;
-	$opt =~ /i/ && ($option{ask}=1) ;
-	$opt =~ /d/ && ($option{DEBUG}+=1) && (print STDERR "Debug is $option{DEBUG}\n");
-	$opt =~ /l/ && do {license(); exit(0)};
-	$opt =~ /t/ && ($option{mail}=0);
-	$opt =~ /m/ && ($option{mail}=1);
-	$opt =~ /x/ && ($option{info}=1);
-	$opt =~ /c/ && ($option{crontab}=1);
-	$opt =~ /u/ && ($option{uncrontab}=1);
-	$opt =~ /v/ && die "\n\t Linux Counter machine-update version $VERSION\n";
-	$opt =~ /h/	&& die $HELP;
-}
-}
-
-sub askquestions {
-    return if ! -t STDIN || ! -t STDOUT;
-    $| = 1;
-    print "Here you can specify some info that the script can't know for itself\n";
-    $values{owner} = askone("Your Linux Counter reg#, if any", $values{owner});
-    $values{key} = askone("Your machine's counter reg#, if any", $values{key});
-    print "Here is what the program has found:\n";
-    for $key (keys(%values)) {
-	if (!$dontask{$key}) {
-	    printf "%-10s%1s: %s\n", $key, $dontask{$key}?"*":" ", $values{$key};
-	}
-    }
-    $domore = askone("Do you want to override some of the found values?", "no");
-    if ($domore =~ /^Y/i) {
-	my $manual;
-	for $key (keys(%values)) {
-	    next if $dontask{$key};
-	    my $value = askone($key, $oldvalues{$key}, $values{$key});
-	    if ($values{$key} eq $value) {
-		# go to automatic
-		Debug "auto value: $key\n";
-	    } else {
-		Debug "still manual value: $key\n";
-		$manual .= " $key";
-	    }
-	    $values{$key} = $value;
-	}
-	$values{manual} = $manual;
-    } else {
-	delete $values{manual};
-    }
-}
-
-sub askone {
-    my $prompt = shift;
-    my $default = shift;
-    my $probed = shift;
-    print $prompt;
-    if (!defined($default) && defined($probed)) {
-	$default = $probed;
-    }
-    if (defined($default)) {
-	print " [$default]";
-    }
-    if (defined($probed) && $probed ne $default) {
-	print "(program found $probed)";
-    }
-    print ":";
-    $ans = <STDIN>;
-    chop $ans;
-    Debug "Answer was $ans\n";
-    if (length($ans) == 0) {
-	$ans = $default;
-    }
-    $ans;
-}
- 
-sub copymanuals {
-    my %keeps = map {$_ => 1} split(" ", $values{manual});
-    Debug "Keeping ", join(" ", keys(%keeps)), "\n";
-    for $key (keys(%keeps)) {
-	$values{$key} = $oldvalues{$key};
-    }
-}
-
-sub readfile {
-  open(INFO, $nodename) || die "Did not find infofile $nodename\n";
-  while (<INFO>) {
-    chop;
-    s/#.*//;
-    if (/^(\S+): *(.+)/) {
-      Debug "Read $1: $2\n"; 
-      $values{$1} = $2;
-    } else {
-      print STDERR "Unparsed info line: $_ - discarded\n";
-    }
-    }
-  close INFO;
-  %oldvalues = %values;
-}
-
-sub writefile {
-    open(INFO, ">$nodename.new");
-    for $val (sort keys(%values)) {
-	Debug "Saving $val: $values{$val}\n";
-	print INFO "$val: $values{$val}\n";
-    }
-    close INFO;
-    rename("$nodename.new", $nodename) || die "Rename failed\n";
-}
-
-sub sendfile {
-    if ($option{mail}) {
-	open(MAIL, "|/usr/lib/sendmail machine-registration\@counter.li.org")
-	    || die "Unable to open sendmail\n"; 
-    } else {
-	warn "--------------------------------------------------------\n";
-	warn "This is what will be sent to the Linux Counter if you\n";
-	warn "run the program with the -m switch. Now, NOTHING IS SENT\n";
-	warn "--------------------------------------------------------\n";
-	open(MAIL, ">&STDOUT");
-    }
-    # note that $ENV{USER} isn't (always) set in a cron job...
-    $user = (getpwuid($<))[0];
-    $user = "unknown-id-$<" if !$user;
-    print MAIL <<EOF
-From: $user
-To: machine-registration\@counter.li.org
-Subject: machine-update for $values{name}
-
-//MACHINE
-EOF
-;
-    for $val (sort keys(%values)) {
-      print MAIL "$val: $values{$val}\n";
-    }
-    print MAIL "//END\n";
-    # Attach possible other info
-    if ($errordata) {
-	print MAIL "----- Problem info gathered during probing -----\n";
-	print MAIL $errordata;
-    }
-    $option{info} && do {
-	print MAIL "----- Debug data for the script maintainer's aid -----\n";
-	print MAIL $debugdata;
-    };
-    close MAIL;
-}
-
-sub randomnumber {
-    # Better randomness desired.
-    return int(rand(1_000_000_000));
-}
-	
-	
-sub checkconfig {
-
-    $values{method} = "machine-update version $VERSION";
-
-    ($sysname, $nodename, $release, $version, $machine ) = POSIX::uname();
-    die "This is not Linux, but $sysname!\n" if $sysname ne "Linux";
-    $values{kernel} = $release;
-    $values{cpu_uname} = $machine;
-    $values{name} = $nodename; # First order guess
-
-    # Credit for some of the code below goes to
-    # Denis Havlik: <havlik@ap.univie.ac.at>
-    # Blame is, of course, all mine - HTA -
-
-    open (TMP,"df -l |");
-    $HD=0;
-    while (<TMP>) {
-	@line=split(/\s+/);
-	($line[1]=~ /blocks$/) || ($HD+=$line[1]);
-    }
-    Debug "$HD kbytes of disk found\n";
-    $HD/=1024;
-    $values{disk} = sprintf("%d", $HD);
-    $values{accounts} = accounts();
-    $values{users} = active_users();
-    $uptime = `uptime`;
-    if ($uptime =~ /up\s+(.*),\s+\d+ user/) {
-	$values{uptime} = $1;
-    } else {
-	ErrorInfo "Can't parse uptime output: $uptime\n";
-    }
-    if ($option{info}) {
-	DebugInfo "***** Uptime output *****\n$uptime";
-    }
-    # Not sure this is a Right Thing...so not saving it for the moment
-    $s{mailaddr}=$s{hostname};
-    if ( -f "/etc/sendmail.cf" ) {
-	$values{mailer} = "sendmail";
-	open (TMP,"</etc/sendmail.cf"); 
-	while (<TMP>) {
-	    if (/^DM(.+)/) {
-		$s{mailaddr}=$1;
-		Debug "Found $s{mailaddr} in /etc/sendmail.cf\n";
-	    }
-	}
-    }
-    if (-f $kcorefile) { 
-	$values{memory} = ((-s $kcorefile) - 4096) / (1024*1024);
-    } else {
-	ErrorInfo "No /proc/kcore file\n";
-    }
-    cpuinfo();
-}
-
-
-sub cpuinfo {
-# This procedure is likely to get tacky enough that I want to
-# isolate it from the rest....
-    my %interesting = (
-		       # 2.0 and 2.2 kernels
-		       "bogomips" => "+bogomips",
-		       "processor" => "1+processors",
-		       "vendor_id" => "cpu_vendor",
-		       # 2.0 kernels
-		       "cpu" => "cpu_only",
-		       "model" => "cpu_model",
-		       "model name" => "cpu_model_name",
-		       # 2.2 kernels
-		       "cpu MHz" => "cpu_mhz",
-		       "cpu family" => "cpu_family",
-		       # from an Alpha processor
-		       "cycle frequency [Hz]" => "cpu_hz",
-		       "BogoMIPS" => "+bogomips",
-		       "cpu model" => "cpu_model",
-		       "system type" => "cpu_system_type",
-		       "cpus detected" => "processors",
-		       # from a PowerMAC
-		       "machine" => "cpu_machine",
-		       "clock" => "cpu_clock",
-		       "motherboard" => "cpu_motherboard",
-		       );
-
-    # Zero out the accumulative values
-    $values{bogomips} = 0;
-    $values{processors} = 0;
-    if (open (TMP,"<$cpufile")) {
-        DebugInfo "**** Contents of $cpufile ****\n";
-	while (<TMP>) {
-	    # Save /proc/cpuinfo to debugdata if -d
-	    DebugInfo $_;
-	    chop;
-	    # A bizarre selection of names are "interesting".
-	    # Make a data-driven pick routine
-	    if (/^(\S+[^:]+\S)\s+: /) {
-		$name = $1;
-		$value = $';
-		if ($interesting{$name}) {
-		    if ($interesting{$name} =~ /^\+/) {
-			$values{$'} += $value;
-		    } elsif ($interesting{$name} =~ /^1\+/) {
-			$values{$'} += 1;
-		    } else {
-			$values{$interesting{$name}} = $value;
-		    }
-		}
-	    }
-	}
-    } else {
-	ErrorInfo "Could not open $cpufile\n";
-    }
-}
-
-sub accounts {
-    my $s;
-    my $niss;
-
-    open (TMP,"</etc/passwd"); 
-    $s += passwdscan();
-    $option{DEBUG} && do {
-	print STDERR "Found $s accounts total\n";
-    };
-    Debug "Switching to NIS passwords\n";
-    open(TMP, "ypcat passwd 2> /dev/null|")
-	|| do {$errrordata .= "ypcat failed: $!\n"};
-    $niss = passwdscan();
-    $s += $niss;
-    close TMP;
-    Debug "Status of ypcat: $?\n";
-
-    $option{DEBUG} && do {
-	print STDERR "Found $niss accounts in ypcat passwd\n";
-    };
-    $option{DEBUG} && do {
-	print STDERR "Sysaccounts: ", join(" ", keys(%is_sys_account)), "\n";
-	print STDERR "Found $s accounts total\n";
-    };
-    return $s
-    }
-
-sub passwdscan {
-    # I suppose this is as good as it gets - 
-    #   Usually user accounts have UID > 100 and 
-    #   "system accounts" have UID < 100, but there is no guarantee that 
-    #   this will hold for pseudo-users like "postgress" etc.
-    # Also nobody is usually 99 on linux, but -1 on "standard" unices.
-    my @line;
-    my $s=0;
-
-    while (<TMP>) {
-	@line=split(":");
-	if ($line[2] > 100) {
-	    $s++;
-	    $is_account{$line[0]} = 1;
-	} else {
-	    $is_sys_account{$line[0]} = 1;
-	}
-    }
-    $s;
-}
-    
-sub active_users {
-
-# This is kind of alpha, but please test it. 
-# It calculates the number of "active" users based on the "wtmp" entries
-
-# This guys shouldn't be counted. Who else?
-    for $q (qw(reboot wtmp runlevel)) {
-	$is_sys_account{$q} = 1;
-    }
-    open( TMP, "/usr/bin/last|");
-    while (<TMP>){
-	chop;
-	@tmp=split;
-	$name = $tmp[0];
-	if ($is_sys_account{$name}) {
-	    # do nothing
-	} elsif ($is_account{$name}) {
-	    $is_user{$name}=1;
-	} elsif (/^\s*$/) {
-	    # blank line - do nothing
-	} elsif ($#tmp == 9) {
-	    # OK line, but unknown user
-	    $option{DEBUG} && do {
-		if (!$userslisted) {
-		    print STDERR "Know users are: ",
-		    join(" ", keys(%is_account)), "\n";
-		    $userslisted = 1;
-		};
-		print STDERR "Unknown user: $name\n";
-	    }
-	} else {
-	   $option{DEBUG} &&  print STDERR "Strange line: $_\n";
-	}
-    }
-    close TMP;
-    $i=0;
-    foreach $user (sort keys %is_user) {
-	$i++;
-	$option{DEBUG} && printf "Active user %3d: %s\n", $i, $user;
-    }
-    $option{DEBUG} && print "$i active users found.\n";
-    return $i;
-}
-
-sub installcrontab {
-    print STDERR "Installing start of script into your crontab\n";
-    $hour = int(rand(24));
-    $min = int(rand(60));
-    $day = int(rand(7)); # Weekday. This version runs once a week.
-                         # Previous versions ran once a month.
-    if (open(CRON, "crontab -l |")) {
-	$option{DEBUG} && print "Checking crontab for machine-update\n";
-	$option{DEBUG} && print "Want to install as $progname\n";
-	while (<CRON>) {
-	    if (/^#/ && $. <= 3) { # initial comment
-		Debug "Skipping comment: $_";
-		next;
-	    }
-	    if (/machine-update/) {
-		if (/ $progname -m/) {
-		    die "Crontab entry already installed: $_\n";
-		} else {
-		    die "Another entry with machine-update: $_\n";
-		}
-	    }
-	    $cron .= $_;
-	}
-	close CRON;
-	Debug "Result from crontab -l: ", $? / 256, "\n";
-	if ($? == 0) {
-	    Debug "Crontab successfully read\n";
-	} elsif ($? == 256) {
-	    warn "You don't seem to have a crontab. I will create one.\n";
-	} else {
-	    die "Failed to read your crontab. Please report this as a bug: $?\n";
-	}
-    } else {
-	Debug "Result from crontab open(): $?\n";
-	die "Unable to execute crontab command. Please check your system\n";
-    }
-    open(CRON, "|crontab -");
-    print CRON $cron;
-    print CRON "$min $hour * * $day $progname -m\n";
-    close CRON;
-    Debug "Result from crontab: $?\n";
-    if ($?) {
-	print <<EoF;
-Installing new crontab failed.
-YOUR CRONTAB MAY BE DAMAGED - use crontab -l to check it.
-Here's its former content (if any):
-
-$cron
-EoF
-        die("\n");
-    }
-    print "Crontab entry successfully installed.\nWill run on day $day of every week, at $hour:$min\n";
-}
-
-sub uninstallcrontab {
-    print STDERR "Removing $progname from your crontab\n";
-    open(CRON, "crontab -l |");
-    Debug "Checking crontab for machine-update\n";
-    Debug "Want to uninstall as $progname\n";
-    my $found = 0;
-    while (<CRON>) {
-	if (/^#/ && $. <= 3) { # initial comment
-	    Debug "Skipping comment: $_";
-	    next;
-	}
-	if (/machine-update/) {
-	    if (/ $progname -m/) {
-		print STDERR "Crontab entry found and removed\n";
-		$found = 1;
-		next; # skip stuff at end....
-	    } else {
-		die "Another entry with machine-update: $_\nUninstall manually?\n";
-	    }
-	}
-	$cron .= $_;
-    }
-    close CRON;
-    Debug "Result from crontab -l: $?\n";
-    if ($?) {
-	die "Failed to read your crontab. You may not have one?\n";
-    }
-    if ($found) {
-	open(CRON, "|crontab -");
-	print CRON $cron;
-	close CRON;
-	Debug "Result from crontab: $?\n";
-	if ($?) {
-	    print <<EoF;
-Installing new crontab failed.
-YOUR CRONTAB MAY BE DAMAGED - use crontab -l to check it.
-Here's its former content (if any):
-
-$cron
-EoF
-            die("\n");
-        }
-    } else {
-        print STDERR "No instance of $progname found in your crontab\n";
-    }
-}
-
-sub Debug {
-    $option{DEBUG} && print @_;
-}
-
-sub ErrorInfo {
-    $errordata .= join("", @_);
-}
-
-sub DebugInfo {
-    $option{info} && {$debugdata .= join("", @_)};
-}
-
 sub license {
-
-    print <<EoF;
+  print <<EoF;
 
     Linux Counter Machine Update version $VERSION
 
-    Copyright (C) 1999 Harald Tveit Alvestrand
+    Copyright (C) 1999-2005 Harald Tveit Alvestrand
+                  2003 PetaMem Group (www.petamem.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -881,4 +1043,66 @@ POSSIBILITY OF SUCH DAMAGES.
 
 EoF
 
+  exit 0;
 }
+
+# }}}
+
+# Changelog for 0.2
+#  - indentation and folding marks
+#  - made script work with -w and use strict
+#  - removed some localization traps
+#  - marked some BUGS - but they`re still there (mostly localization)
+#  - more robust binary calls
+#  - getval_from_file data acquisition method
+#  - fixed df (shmfs) - but only temporarily (quick hack)
+#  - various code optimizations & cleanup (removed unneded vars)
+#  - Memory size detection now robst and >960MB capable
+#  - slightly better randomness
+#
+
+# Changelog 0.21
+# - added attaching of files
+# - added fetching of uptime_1 and uptime_2
+#
+# Changelog 0.22
+# - removed "manual" copying of entries
+# - added suppressing error messages from "xbin" calling "which"
+# - suppressed NFS from "df -T" listing
+#
+# Changelog 0.23
+# - added sending /proc/pci
+# - removed client-side parsing of DF output and uptime
+#
+# Changelog 0.24
+# - added sending /proc/version (inspired by klive)
+# - changed fetching of old data from "all" to "needed"
+# - removed CPU-parsing code
+# - fixed warning (harmless) from crontab creation
+# - added sending /proc/bus/usb/devices
+#
+# Changelog 0.25
+# - added sending size of /proc/kcore
+# - removed computation of memory client-side
+#
+# Changelog 0.26
+# - adding cron entry no longer removes comments from crontab.
+#   Crontab is not ours, so hands off.
+#
+# Changelog 0.27
+# - When /proc/kcore does not exist on a system, its size is now zero
+#
+# Changelog 0.28
+# - Added a terrible way to find out what email program can be used to send out the mail
+#
+# Changelog 0.29
+# - Extended the hardcoded list of programs that can be used to send the
+#   machine-update email
+#
+# Changelog 0.30  
+# - The script now sends us the version of perl used to run the script
+#   We need this to solve some problems due to changes in between perl
+#   versions
+#
+#vim:ts=8:sw=4:sts=4
+ 
