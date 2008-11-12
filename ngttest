@@ -8,8 +8,7 @@
 
 res=`sget http://nett.ba.no/ngt/test | tohex | rmspcall`
 
-echo Fikk \"$res\"
-echo -n "Det vil si at den er "
+echo -n "Fikk \"$res\". Det vil si at den er "
 if [ "$res" = "0a 00 00 02" ]; then
     echo OK. Fantastisk.
     exit 0
