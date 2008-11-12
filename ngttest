@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Sjekker om den NextGenTel-forbindelsen er herpa
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+res=`sget http://nett.ba.no/ngt/test | tohex | rmspcall`
+
+echo Fikk \"$res\"
+echo -n "Det vil si at den er "
+if [ "$res" = "0a 00 00 02" ]; then
+    echo OK. Fantastisk.
+    exit 0
+else
+    echo herpa. Fuck you.
+    exit 1
+fi
