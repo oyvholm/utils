@@ -117,7 +117,7 @@ ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
 not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
 #   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 2032.
+#   in ./run-tests.pl at line 2095.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -208,7 +208,7 @@ ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
 not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
 #   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 2032.
+#   in ./run-tests.pl at line 2095.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -295,6 +295,12 @@ ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr)
 # Testing --round option...
 ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx
 ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx (stderr)
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele (stderr)
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output (stderr)
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx (stderr)
 # Testing --short-date option...
 # Testing --save-to-file option...
 # Testing --create-breaks option...
@@ -324,7 +330,7 @@ ok - "../gpst --version" - Option --version returns Id string (stderr)
 # Testing --strip-whitespace option...
 not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
 #   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 2032.
+#   in ./run-tests.pl at line 2095.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 # version="1.1"
@@ -401,5 +407,5 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..225
-# Looks like you failed 3 tests of 225.
+1..231
+# Looks like you failed 3 tests of 231.

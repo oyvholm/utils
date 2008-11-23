@@ -1393,6 +1393,69 @@ END
 );
 
 # }}}
+testcmd("../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx", # {{{
+    <<END,
+2006-05-21T16:49:11Z\t(60.425,5.3)\t25.3\t\\N\t\\N\t\\N\t\\N
+2006-05-21T16:49:46Z\t(60.425,5.3)\t24.9\t\\N\t\\N\t\\N\t\\N
+2006-05-21T16:52:04Z\t(60.425,5.3)\t28\t\\N\t\\N\t\\N\t\\N
+2006-05-21T16:56:36Z\t(60.425,5.3)\t31\t\\N\t\\N\t\\N\t\\N
+2006-05-21T16:56:47Z\t(60.425,5.3)\t31\t\\N\t\\N\t\\N\t\\N
+2006-05-21T16:56:56Z\t(60.425,5.3)\t30.5\t\\N\t\\N\t\\N\t\\N
+2006-05-21T16:57:03Z\t(60.425,5.3)\t30.5\t\\N\t\\N\t\\N\t\\N
+2006-05-21T16:59:08Z\t(60.425,5.3)\t31.9\t\\N\t\\N\t\\N\t\\N
+2006-05-21T17:00:54Z\t(60.425,5.299)\t31.8\t\\N\t\\N\t\\N\t\\N
+END
+    "",
+    "pgtab output from gpx works with --round lat, lon, ele",
+);
+
+# }}}
+testcmd("../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx", # {{{
+    <<END,
+(51.478,-0.001)\t0-Meridian\t\\N\t\\N\t\\N\t11-FEB-03 15:46\t11-FEB-03 15:46\t\\N\t\\N\t\\N
+(51.532,-0.177)\tAbbey Road\t34.5\t\\N\t\\N\tDet hellige gangfeltet der Beatles valsa over.\t26-FEB-06 17:29:46\t\\N\t\\N\t\\N
+(61.637,8.312)\tGaldhøpiggen med ', &, < og >. ☺\t2469\tmountain\t2006-05-08T18:27:59Z\tHer er det &, < og >. ☺\tSchwæra greie\thttp://www.example.org/\tWaypoint\t\\N
+(60.397,5.351)\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t04-AUG-02 19:42\t04-AUG-02 19:42\t\\N\t\\N\t\\N
+(51.51,-0.13)\tLeicester Square\t\\N\t\\N\t\\N\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N\t\\N
+(60.969,9.285)\tLeira camping\t\\N\t\\N\t\\N\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N\t\\N
+END
+    "",
+    "--round works with lat, lon, ele from gpx, pgwtab output",
+);
+
+# }}}
+testcmd("../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx", # {{{
+    <<END,
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+    UPDATE logg SET sted = clname(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
+    UPDATE logg SET dist = cldist(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
+COMMIT;
+END
+    "",
+    "pgwupd output and --round works with lat, lon, ele from gpx",
+);
+
+# }}}
 # --round option }}}
 diag("Testing --short-date option..."); # {{{
 # --short-date option }}}

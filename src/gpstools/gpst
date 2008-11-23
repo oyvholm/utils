@@ -555,6 +555,18 @@ sub print_gpx {
             $el_wpt =~ /.*<sym\b(.*?)>(.*?)<\/sym>/s &&
                 ($Sym = postgresql_copy_safe(xml_to_txt($2)));
 
+            if (length($Opt{'round'})) {
+                if (defined($Round{'lat'}) && length($Lat)) {
+                    ($Lat = 1.0 * sprintf("%.$Round{'lat'}f", $Lat));
+                }
+                if (defined($Round{'lon'}) && length($Lon)) {
+                    ($Lon = 1.0 * sprintf("%.$Round{'lon'}f", $Lon));
+                }
+                if (defined($Round{'ele'}) && $Ele ne '\N') {
+                    ($Ele = 1.0 * sprintf("%.$Round{'ele'}f", $Ele));
+                }
+            }
+
             if ($Opt{'output-format'} eq "pgwtab") {
                 print(
                     join("\t",
