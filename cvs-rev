@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Lister ut alle cvs2svn:cvs-rev fra et element i en svn-repo.
+#=======================================================================
+
+dest=$1
+rev=$2
+if [ -z "$rev" ]; then
+    rev=1:HEAD
+fi
+
+for f in `svnrevs -r$rev $dest | tr -d r,`; do
+    echo r$f `svn pl -v -r$f $dest | grep cvs2svn`
+done
