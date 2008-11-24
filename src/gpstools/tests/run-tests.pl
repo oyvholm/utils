@@ -1137,28 +1137,28 @@ END
 testcmd("../gpst -o pgwupd multitrack.gpx", # {{{
     <<END,
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
 COMMIT;
 END
     "",
@@ -1427,28 +1427,28 @@ END
 testcmd("../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx", # {{{
     <<END,
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
 COMMIT;
 BEGIN;
-    UPDATE logg SET sted = clname(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
-    UPDATE logg SET dist = cldist(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
+  UPDATE logg SET sted = clname(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
+  UPDATE logg SET dist = cldist(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
 COMMIT;
 END
     "",
@@ -1804,6 +1804,38 @@ $stripped_gpx_header
 END
     "",
     "Output whitespace-stripped GPX from Mayko file with commented-out lines",
+);
+
+# }}}
+testcmd("../gpst -w -o pgwupd multitrack.gpx", # {{{
+    <<END,
+BEGIN;
+UPDATE logg SET sted = clname(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+UPDATE logg SET dist = cldist(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+UPDATE logg SET sted = clname(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+UPDATE logg SET dist = cldist(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+UPDATE logg SET sted = clname(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+UPDATE logg SET dist = cldist(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+UPDATE logg SET sted = clname(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+UPDATE logg SET dist = cldist(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+UPDATE logg SET sted = clname(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+UPDATE logg SET dist = cldist(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+COMMIT;
+BEGIN;
+UPDATE logg SET sted = clname(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+UPDATE logg SET dist = cldist(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+COMMIT;
+END
+    "",
+    "Strip whitespace from pgwupd output",
 );
 
 # }}}

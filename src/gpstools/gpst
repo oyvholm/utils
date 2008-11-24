@@ -586,10 +586,10 @@ sub print_gpx {
                 $Name =~ s/'/''/gs;
                 print(join("\n",
                     "BEGIN;",
-                    "    UPDATE logg SET sted = clname(coor) " .
-                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
-                    "    UPDATE logg SET dist = cldist(coor) " .
-                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "$Spc${Spc}UPDATE logg SET sted = clname(coor) " .
+                        "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "$Spc${Spc}UPDATE logg SET dist = cldist(coor) " .
+                        "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
                     "COMMIT;"
                 ) . "\n");
             }

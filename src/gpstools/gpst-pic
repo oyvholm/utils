@@ -42,6 +42,7 @@ our %Opt = (
     'description' => '',
     'help' => 0,
     'output-format' => $Std{'output-format'},
+    'strip-whitespace' => 0,
     'timezone' => $Std{'timezone'},
     'verbose' => 0,
     'version' => 0,
@@ -65,6 +66,7 @@ GetOptions(
     "description|d=s" => \$Opt{'description'},
     "help|h" => \$Opt{'help'},
     "output-format|o=s" => \$Opt{'output-format'},
+    "strip-whitespace|w" => \$Opt{'strip-whitespace'},
     "timezone|T=s" => \$Opt{'timezone'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -78,6 +80,8 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+$GPST::Spc = $Opt{'strip-whitespace'} ? "" : " ";
+my $Spc = $GPST::Spc; # FIXME
 my $tz_str = "";
 if (length($Opt{'timezone'})) {
     if ($Opt{'timezone'} =~ /^[\+\-][0-2][0-9]{3}$/) {
@@ -140,16 +144,16 @@ sub print_entry {
             if ($Opt{'output-format'} eq "xml") {
                 if (length("$filename$date")) {
                     $Output = join("",
-                        "  <img>\n",
+                        "$Spc$Spc<img>\n",
                         length($filename)
-                            ? sprintf("    <filename>%s</filename>\n",
+                            ? sprintf("$Spc$Spc$Spc$Spc<filename>%s</filename>\n",
                                 txt_to_xml($filename))
                             : "",
                         length($date)
-                            ? sprintf("    <date>%s</date>\n",
+                            ? sprintf("$Spc$Spc$Spc$Spc<date>%s</date>\n",
                                 txt_to_xml($date))
                             : "",
-                        "  </img>\n",
+                        "$Spc$Spc</img>\n",
                     );
                 }
             } elsif ($Opt{'output-format'} eq "pgtab") {
@@ -277,6 +281,8 @@ Options:
         UTC
         Z
         CET
+  -w, --strip-whitespace
+    Strip all unnecessary whitespace.
   --version
     Print version information.
   --debug
