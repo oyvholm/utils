@@ -142,7 +142,7 @@ Options:
       Time zone abbreviation. Examples:
         UTC
         Z
-        CET 
+        CET
   -t X, --type X
     Comma-separated list of point types to extract from files:
       picture

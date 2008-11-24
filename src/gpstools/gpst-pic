@@ -276,7 +276,7 @@ Options:
       Time zone abbreviation. Examples:
         UTC
         Z
-        CET 
+        CET
   --version
     Print version information.
   --debug
