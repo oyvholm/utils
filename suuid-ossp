@@ -17,6 +17,7 @@ BEGIN {
 use strict;
 use Fcntl ':flock';
 use Getopt::Long;
+use OSSP::uuid;
 
 $| = 1;
 
@@ -102,7 +103,6 @@ chomp($Hostname);
 my $curr_dir = `/bin/pwd`; # FIXME
 chomp($curr_dir);
 
-my $Cmd = ($Opt{'version'} != 1) ? "uuidgen -r" : "uuidgen -t";
 my $safe_comment = safe_tab($Comment);
 my $safe_tag = safe_tab($Tag);
 my $safe_currdir = "";
@@ -112,8 +112,10 @@ $safe_currdir = safe_tab($safe_currdir);
 my $Username = getpwuid($<);
 my $safe_username = safe_tab($Username);
 
+my $new_uuid = new OSSP::uuid;
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
-    chomp(my $uuid = `$Cmd`);
+    $new_uuid->make("v$Opt{'version'}");
+    my $uuid = $new_uuid->export("str");
     my $curr_time = time;
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
@@ -175,7 +177,9 @@ if (open(LogFP, ">>", $Logfile)) {
 
 sub host_id {
     # {{{
-    chomp(my $Retval = `uuidgen -t`);
+    my $uuid = new OSSP::uuid;
+    $uuid->make("v1");
+    my $Retval = $uuid->export("str");
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
     # }}}
