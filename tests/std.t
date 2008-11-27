@@ -134,7 +134,7 @@ likecmd("svn mkdir $Tmptop", # {{{
 chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
 likecmd("../$CMD bash bashfile", # {{{
     '/^A\s+bashfile.+$/s',
-    '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n.+$/s',
+    '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
     "Create bash script",
 );
 
