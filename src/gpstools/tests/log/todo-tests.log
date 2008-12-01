@@ -7,7 +7,7 @@ ok - use GPSTxml;
 # Running TODO tests...
 not ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx'
-#   in ./run-tests.pl at line 2127.
+#   at ./run-tests.pl line 2127.
 #          got: '				
 # 2003-02-11T23:35:39Z	-0.1448824	51.4968266		
 # 2003-02-11T23:35:49Z	-0.1449938	51.4968227		
@@ -50,7 +50,7 @@ not ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx
 ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -o csv pause.gpx" - Output csv format from pause.gpx'
-#   in ./run-tests.pl at line 2127.
+#   at ./run-tests.pl line 2127.
 #          got: '				
 # 2006-05-21T16:49:11Z	5.299534	60.425494	25.260	
 # 2006-05-21T16:49:46Z	5.299610	60.425464	24.931	
@@ -75,7 +75,7 @@ not ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx # TODO Re
 ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx'
-#   in ./run-tests.pl at line 2127.
+#   at ./run-tests.pl line 2127.
 #          got: '				
 # 1148230151	5.299534	60.425494	25.260	
 # 1148230186	5.299610	60.425464	24.931	
@@ -100,7 +100,7 @@ not ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx 
 ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx # TODO Tweak output
 #   Failed (TODO) test '"../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx'
-#   in ./run-tests.pl at line 2127.
+#   at ./run-tests.pl line 2127.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -188,7 +188,7 @@ ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pau
 GPX: Cannot open file '/home/sunny/gps/waypoints.gpx'!
 not ok - list_nearest_waypoints() # TODO Fix it.
 #   Failed (TODO) test 'list_nearest_waypoints()'
-#   in ./run-tests.pl at line 2099.
+#   at ./run-tests.pl line 2099.
 #                   ''
 #     doesn't match '(?-xism:^\(.*,.*,.*\)$)'
 # Testing finished.
