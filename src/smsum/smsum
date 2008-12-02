@@ -93,7 +93,7 @@ sub process_file {
                     $Sum{'sha1'} . "-" .
                     $Sum{'md5'} . "-" .
                     $Size . (
-                        $use_stdin
+                        $use_stdin && !$Opt{'with-mtime'}
                             ? ""
                             : "\t" . safe_tab($Filename) . (
                                   $Opt{'with-mtime'}
