@@ -64,7 +64,7 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 our %Cmd = (
-    'gpsbabel' => '/usr/local/bin/gpsbabel',
+    'gpsbabel' => 'gpsbabel',
 );
 
 $Opt{'debug'} && ($Debug = 1);
