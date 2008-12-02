@@ -120,6 +120,7 @@ END
 # }}}
 system("cd files && tar xzf dir1.tar.gz 2>/dev/null");
 
+diag("No options specified...");
 testcmd("$CMD files/dir1/*", # {{{
     <<END,
 da39a3ee5e6b4b0d3255bfef95601890afd80709-d41d8cd98f00b204e9800998ecf8427e-0\tfiles/dir1/empty
@@ -134,6 +135,16 @@ END
 );
 
 # }}}
+testcmd("cat files/dir1/random_2048 | $CMD", # {{{
+    <<END,
+bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048
+END
+    "",
+    "Read data from stdin",
+);
+
+# }}}
+diag("Testing -m (--with-mtime) option...");
 testcmd("$CMD -m files/dir1/*", # {{{
     <<END,
 da39a3ee5e6b4b0d3255bfef95601890afd80709-d41d8cd98f00b204e9800998ecf8427e-0\tfiles/dir1/empty\t2008-09-22T00:10:24Z
@@ -145,15 +156,6 @@ c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfi
 END
     "smsum: files/dir1/chmod_0000: Cannot read file\n",
     "Read files from dir1/ with mtime",
-);
-
-# }}}
-testcmd("cat files/dir1/random_2048 | $CMD", # {{{
-    <<END,
-bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048
-END
-    "",
-    "Read data from stdin",
 );
 
 # }}}
