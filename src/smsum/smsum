@@ -168,7 +168,7 @@ or if the --with-mtime option is used:
   [SHA1][-][MD5][-][SIZE][\\t][FILENAME][\\t][MTIME][\\n]
 
 The reason for this approach, is that both hashing algoritms are well 
-known and widely used. Both algorithms are good enogh for everyday 
+known and widely used. Both algorithms are good enough for everyday 
 content verification, but at least the MD5 algorithm is vulnerable to 
 intentional collisions. Instead of inventing new algorithms which has to 
 earn trust over the years, combining the two well examined algorithms 
