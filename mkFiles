@@ -2,7 +2,7 @@
 
 #=======================================================================
 # $Id$
-# Creates Files.md5 and Files.sha1 in current directory.
+# Creates Files.smsum in current directory.
 #=======================================================================
 
 lockname=mkFiles.lock
