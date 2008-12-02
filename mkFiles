@@ -17,6 +17,8 @@ find -type f -print0 | \
     LC_COLLATE=C sort -z | \
     grep -zv -e '^\./Files\.smsum$' | \
     xargs -0 smsum -m >>Files.smsum
+    echo -n "# " >>Files.smsum
+    echo smsum:`smsum <Files.smsum` >>Files.smsum
 echo mkFiles: Done.
 
 rmdir $lockname
