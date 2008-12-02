@@ -148,6 +148,15 @@ END
 );
 
 # }}}
+testcmd("cat files/dir1/random_2048 | $CMD", # {{{
+    <<END,
+bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048
+END
+    "",
+    "Read data from stdin",
+);
+
+# }}}
 
 chmod(0644, "files/dir1/chmod_0000") || warn("$progname: files/dir1/chmod_0000: Cannot chmod to 0644: $!\n");
 unlink(glob("files/dir1/*")) || warn("$progname: Cannot unlink() files in files/dir1/*: $!\n");

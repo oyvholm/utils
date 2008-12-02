@@ -14,5 +14,7 @@ ok - "../smsum files/dir1/*" - Read all files in dir1/
 ok - "../smsum files/dir1/*" - Read all files in dir1/ (stderr)
 ok - "../smsum -m files/dir1/*" - Read files from dir1/ with mtime
 ok - "../smsum -m files/dir1/*" - Read files from dir1/ with mtime (stderr)
+ok - "cat files/dir1/random_2048 | ../smsum" - Read data from stdin
+ok - "cat files/dir1/random_2048 | ../smsum" - Read data from stdin (stderr)
 # Testing finished.
-1..13
+1..15

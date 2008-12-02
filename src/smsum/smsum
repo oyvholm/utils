@@ -90,14 +90,18 @@ sub process_file {
                 $Sum{'sha1'} = $sha1->hexdigest;
                 $Sum{'md5'} = $md5->hexdigest;
                 $Retval =
-                    $Sum{'sha1'}        . "-" .
-                    $Sum{'md5'}         . "-" .
-                    $Size               . "\t" .
-                    safe_tab($Filename) . (
-                        $Opt{'with-mtime'}
-                            ? "\t" . sec_to_string($Mtime)
-                            : ""
-                    ) . "\n";
+                    $Sum{'sha1'} . "-" .
+                    $Sum{'md5'} . "-" .
+                    $Size . (
+                        $use_stdin
+                            ? ""
+                            : "\t" . safe_tab($Filename) . (
+                                  $Opt{'with-mtime'}
+                                      ? "\t" . sec_to_string($Mtime)
+                                      : ""
+                              )
+                    )
+                    . "\n";
             } else {
                 warn("$progname: $Filename: Cannot read file\n");
             }
