@@ -6,6 +6,7 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+[ "$1" = "-h" -o "$1" = "--help" ] && { echo; echo "n95film: No help available, but here's the source code:"; echo; cat $0; exit; }
 [ -d mp4/. ] || mkdir mp4 || { echo mp4: Cannot create directory; exit 1; }
 export ENC=$HOME/bin/enc-mp4
 # FIXME: Dirty, men det funker foreløpig.
