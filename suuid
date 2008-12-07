@@ -38,6 +38,7 @@ our %Opt = (
     'help' => 0,
     'logdir' => $Std{'logdir'},
     'quiet' => 0,
+    'random-mac' => 0,
     'show-version' => $Std{'show-version'},
     'tag' => "",
     'verbose' => 0,
@@ -64,6 +65,7 @@ GetOptions(
     "help|h" => \$Opt{'help'},
     "logdir|l=s" => \$Opt{'logdir'},
     "quiet|q" => \$Opt{'quiet'},
+    "random-mac|m" => \$Opt{'random-mac'},
     "show-version|V" => \$Opt{'show-version'},
     "tag|t=s" => \$Opt{'tag'},
     "verbose" => \$Opt{'verbose'},
@@ -114,6 +116,9 @@ my $safe_username = safe_tab($Username);
 
 for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
     chomp(my $uuid = `$Cmd`);
+    if ($Opt{'random-mac'}) {
+        $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
+    }
     my $curr_time = time;
     $uuids{$uuid} = join("\t",
         sec_to_string($curr_time),
@@ -181,6 +186,19 @@ sub host_id {
     # }}}
 } # host_id()
 
+sub random_mac {
+    # Return a random MAC address field {{{
+    my $Str = "";
+    for (1..6) {
+        $Str .= sprintf("%02x", int(rand(256)));
+    }
+    my @Arr = ("3", "7", "b", "f");
+    my $mc_val = @Arr[int(rand(4))];
+    $Str =~ s/^(.)(.)(..........)$/$1$mc_val$3/;
+    return($Str);
+    # }}}
+} # random_mac()
+
 sub safe_tab {
     # {{{
     my $Str = shift;
@@ -237,6 +255,8 @@ Options:
   -l x, --logdir x
     Store log files in directory x.
     Default: $Std{'logdir'}/
+  -m, --random-mac
+    Don’t use the hardware MAC address, generate a random address field.
   -n x, --count x
     Print and store x UUIDs.
   -q, --quiet

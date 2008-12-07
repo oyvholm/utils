@@ -15,6 +15,10 @@ ok - "../suuid -l tmp-suuid-t-..." - No options (except -l) sends UUID to stdout
 ok - Filename of logfile OK
 ok - Log contents OK after exec with no options
 ok - Entries are added, not replacing
+# Testing -m (--random-mac) option...
+ok - "../suuid -m -l tmp-suuid-t-..." - --random-mac option works
+ok - "../suuid -m -l tmp-suuid-t-..." - --random-mac option works (stderr)
+ok - Log contents OK after --random-mac
 # Testing -t (--tag) option...
 ok - "../suuid -t snaddertag -l tmp-suuid-t-..." - -t (--tag) option
 ok - "../suuid -t snaddertag -l tmp-suuid-t-..." - -t (--tag) option (stderr)
@@ -40,4 +44,4 @@ ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere (stderr)
 # Testing -q (--quiet) option...
 # Running TODO tests...
 # Testing finished.
-1..29
+1..32
