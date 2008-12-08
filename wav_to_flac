@@ -23,8 +23,15 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'album' => "",
+    'artist' => "",
     'debug' => 0,
+    'force' => 0,
+    'genre' => "",
     'help' => 0,
+    'releasedate' => "",
+    'title' => "",
+    'tracknumber' => "",
     'verbose' => 0,
     'version' => 0,
 
@@ -42,8 +49,15 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "album|a=s" => \$Opt{'album'},
+    "artist|A=s" => \$Opt{'artist'},
     "debug" => \$Opt{'debug'},
+    "force|f" => \$Opt{'force'},
+    "genre|g=s" => \$Opt{'genre'},
     "help|h" => \$Opt{'help'},
+    "releasedate|r=s" => \$Opt{'releasedate'},
+    "title|t=s" => \$Opt{'title'},
+    "tracknumber|n=s" => \$Opt{'tracknumber'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -56,9 +70,74 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+my $wav_file;
+
+if (defined($ARGV[0])) {
+    $wav_file = $ARGV[0];
+} else {
+    die("$progname: No .wav file specified\n");
 }
+
+(!-r $wav_file) &&
+    die("$progname: $wav_file: Cannot read file: $!\n");
+
+(-d $wav_file) &&
+    die("$progname: $wav_file: Is a directory\n");
+
+my $out_file = $wav_file;
+$out_file =~ s/^(.*)\.wav$/$1.flac/i;
+
+if (-e $out_file) {
+    if ($Opt{'force'}) {
+        unlink($out_file) || die("$progname: $out_file: Cannot delete file: $!\n");
+    } else {
+        die("$progname: $out_file: File already exists, use -f / --force to overwrite\n");
+    }
+}
+
+my $flac_version = `flac --version`;
+$flac_version =~ s/^\s+//;
+$flac_version =~ s/\s+$//;
+
+my @Params = "flac";
+
+length($Opt{'album'}) && push(@Params, tag_string("ALBUM", $Opt{'album'}));
+length($Opt{'artist'}) && push(@Params, tag_string("ARTIST", $Opt{'artist'}));
+
+my $esc_wav_file = shell_escape($wav_file);
+chomp(my $suuid_str = `suuid -m -t encode -c "$progname $esc_wav_file - $flac_version"`);
+push(@Params, "-TENC_ID=$suuid_str");
+push(@Params, "-TENCODED_WITH=$flac_version");
+
+length($Opt{'genre'}) && push(@Params, tag_string("GENRE", $Opt{'genre'}));
+length($Opt{'releasedate'}) && push(@Params, tag_string("RELEASEDATE", $Opt{'releasedate'}));
+length($Opt{'title'}) && push(@Params, tag_string("TITLE", $Opt{'title'}));
+length($Opt{'tracknumber'}) && push(@Params, tag_string("TRACKNUMBER", $Opt{'tracknumber'}));
+
+push(@Params, sprintf("%s", $wav_file));
+
+msg(1, join(" ", @Params));
+system(@Params);
+
+sub tag_string {
+    # {{{
+    # Return parameter for use with flac(1)
+    my ($Label, $Val) = @_;
+    my $Retval = "-T$Label=$Val";
+    return($Retval);
+    # }}}
+} # tag_string()
+
+sub shell_escape {
+    # {{{
+    my $Txt = shift;
+    $Txt =~ s/"/\\"/g;
+    $Txt =~ s/\$/\\\$/g;
+    $Txt =~ s/!/\\!/g;
+    $Txt =~ s/`/\\`/g;
+    return($Txt);
+    # }}}
+} # shell_escape()
 
 sub print_version {
     # Print program version {{{
@@ -78,12 +157,28 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] wav_file
+
+Convert .wav to .flac .
 
 Options:
 
+  -a X, --album X
+    Name of music album.
+  -A X, --artist X
+    Name of artist/group.
+  -f, --force
+    Overwrite existing files.
+  -g X, --genre X
+    Music genre.
   -h, --help
     Show this help.
+  -n X, --tracknumber X
+    Track number of this song.
+  -r X, --releasedate X
+    The date the album was released.
+  -t X, --title X
+    Title of song.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
