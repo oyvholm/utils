@@ -8,11 +8,11 @@ You can generate different passwords for many domains from one passphrase.
 usage: genpasswd [options] [string...]
 
 example:
-    genpasswd example.com           # domain to login
+    $ genpasswd example.com         # domain to login
     Passphrase:My Passphrase        # without echoback
     Vn/aHPNgXbieJCkSGYiAA7y9GwM     # got your password for example.com
 
-    genpasswd example.net           # domain to login
+    $ genpasswd example.net         # domain to login
     Passphrase:My Passphrase        # without echoback
     /+/G4MzuaiSo9dHE/c0+GgPi6Nc     # got your password for example.net
 """
@@ -53,6 +53,8 @@ from getpass import getpass
 
 
 def parse_args(argv):
+    """Parse command line argments.
+    """
     usage = 'usage: %prog [options] [string...]'
     parser = optparse.OptionParser(usage=usage)
     parser.add_option('-a', '--alphanum', dest='alphanum_mode',
@@ -65,6 +67,8 @@ def parse_args(argv):
 
 
 def generate_password(seed, options):
+    """Generate password(hash) from seed.
+    """
     digest = sha.new(':'.join(seed)).digest()
     passwd = base64.encodestring(digest).replace('=', '').strip()
 
@@ -78,24 +82,34 @@ def generate_password(seed, options):
 
 class GeneratePasswordTest(unittest.TestCase):
     def test_generate(self):
+        """Default.
+        """
         argv = ['foo', 'bar']
         options, seed = parse_args(argv)
         result = generate_password(seed, options)
         self.assertEquals('VNy+Z9IdXrOUk9Rtia4fQS071t4', result)
 
     def test_generate_alpha(self):
+        """Set alpha_num_mode on.
+        """
         argv = ['foo', 'bar', '-a']
         options, seed = parse_args(argv)
         result = generate_password(seed, options)
         self.assertEquals('VNyZ9IdXrOUk9Rtia4fQS071t4', result)
 
     def test_generate_size(self):
+        """Set Size.
+        """
         argv = ['foo', 'bar', '-s', '6']
         options, seed = parse_args(argv)
         result = generate_password(seed, options)
         self.assertEquals('VNy+Z9', result)
 
     def test_generate_alpha_size(self):
+        """Set size and alpha_num_mode.
+
+        Password size is set size.
+        """
         argv = ['foo', 'bar', '-a', '-s', '6']
         options, seed = parse_args(argv)
         result = generate_password(seed, options)
