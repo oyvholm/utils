@@ -2,6 +2,8 @@
 """Generate Password from Seeds and Passphrase.
 
 The seeds come from command line option and the passphrase from stdin.
+Print ``hash(seeds + passphrase)'' for your password.
+You can generate different passwords for many domains from one passphrase.
 
 usage: genpasswd [options] [string...]
 
@@ -9,6 +11,10 @@ example:
     genpasswd example.com           # domain to login
     Passphrase:My Passphrase        # without echoback
     Vn/aHPNgXbieJCkSGYiAA7y9GwM     # got your password for example.com
+
+    genpasswd example.net           # domain to login
+    Passphrase:My Passphrase        # without echoback
+    /+/G4MzuaiSo9dHE/c0+GgPi6Nc     # got your password for example.net
 """
 #
 # Copyright (c) 2009 Satoshi Fukutomi <info@fuktommy.com>.
