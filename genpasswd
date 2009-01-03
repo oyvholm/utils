@@ -1,0 +1,118 @@
+#!/usr/bin/python
+"""Generate Password from Seeds and Passphrase.
+
+The seeds come from command line option and the passphrase from stdin.
+
+usage: genpasswd [options] [string...]
+
+example:
+    genpasswd example.com           # domain to login
+    Passphrase:My Passphrase        # without echoback
+    Vn/aHPNgXbieJCkSGYiAA7y9GwM     # got your password for example.com
+"""
+#
+# Copyright (c) 2009 Satoshi Fukutomi <info@fuktommy.com>.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHORS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+# $Id$
+#
+
+import base64
+import optparse
+import sha
+import sys
+import unittest
+from getpass import getpass
+
+
+def parse_args(argv):
+    usage = 'usage: %prog [options] [string...]'
+    parser = optparse.OptionParser(usage=usage)
+    parser.add_option('-a', '--alphanum', dest='alphanum_mode',
+                      default=False, action='store_true',
+                      help='password includes alphabet and number only')
+    parser.add_option('-s', '--size', type='int', dest='size',
+                      help='password size')
+    parser.add_option('--test', action='callback', callback=_test)
+    return parser.parse_args(argv)
+
+
+def generate_password(seed, options):
+    digest = sha.new(':'.join(seed)).digest()
+    passwd = base64.encodestring(digest).replace('=', '').strip()
+
+    if options.alphanum_mode:
+        passwd = passwd.replace('+', '').replace('/', '')
+    if options.size is not None:
+        passwd = passwd[:options.size]
+
+    return passwd
+
+
+class GeneratePasswordTest(unittest.TestCase):
+    def test_generate(self):
+        argv = ['foo', 'bar']
+        options, seed = parse_args(argv)
+        result = generate_password(seed, options)
+        self.assertEquals('VNy+Z9IdXrOUk9Rtia4fQS071t4', result)
+
+    def test_generate_alpha(self):
+        argv = ['foo', 'bar', '-a']
+        options, seed = parse_args(argv)
+        result = generate_password(seed, options)
+        self.assertEquals('VNyZ9IdXrOUk9Rtia4fQS071t4', result)
+
+    def test_generate_size(self):
+        argv = ['foo', 'bar', '-s', '6']
+        options, seed = parse_args(argv)
+        result = generate_password(seed, options)
+        self.assertEquals('VNy+Z9', result)
+
+    def test_generate_alpha_size(self):
+        argv = ['foo', 'bar', '-a', '-s', '6']
+        options, seed = parse_args(argv)
+        result = generate_password(seed, options)
+        self.assertEquals('VNyZ9I', result)
+
+
+def _test(option, opt_str, value, parser, *args, **kwargs):
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(GeneratePasswordTest))
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    if result.errors or result.failures:
+        sys.exit(1)
+    else:
+        sys.exit()
+
+
+def main():
+    options, seed = parse_args(sys.argv[1:])
+    passphrase = getpass('Passphrase:')
+    seed.append(passphrase)
+    passwd = generate_password(seed, options)
+    print passwd
+
+
+if __name__ == '__main__':
+    main()
