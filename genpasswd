@@ -1,8 +1,8 @@
 #!/usr/bin/python
-"""Generate Password from Seeds and Passphrase.
+"""Generate Password from Salts and Passphrase.
 
-The seeds come from command line option and the passphrase from stdin.
-Print ``hash(seeds + passphrase)'' for your password.
+The salts come from command line option and the passphrase from stdin.
+Print ``hash(salts + passphrase)'' for your password.
 You can generate different passwords for many domains from one passphrase.
 
 usage: genpasswd [options] [string...]
@@ -67,10 +67,10 @@ def parse_args(argv):
     return parser.parse_args(argv)
 
 
-def generate_password(seed, options):
-    """Generate password(hash) from seed.
+def generate_password(salt, options):
+    """Generate password(hash) from salt.
     """
-    digest = sha.new(':'.join(seed)).digest()
+    digest = sha.new(':'.join(salt)).digest()
     passwd = base64.encodestring(digest).replace('=', '').strip()
 
     if options.alphanum_mode:
@@ -86,24 +86,24 @@ class GeneratePasswordTest(unittest.TestCase):
         """Default.
         """
         argv = ['foo', 'bar']
-        options, seed = parse_args(argv)
-        result = generate_password(seed, options)
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
         self.assertEquals('VNy+Z9IdXrOUk9Rtia4fQS071t4', result)
 
     def test_generate_alpha(self):
         """Set alpha_num_mode on.
         """
         argv = ['foo', 'bar', '-a']
-        options, seed = parse_args(argv)
-        result = generate_password(seed, options)
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
         self.assertEquals('VNyZ9IdXrOUk9Rtia4fQS071t4', result)
 
     def test_generate_size(self):
         """Set Size.
         """
         argv = ['foo', 'bar', '-s', '6']
-        options, seed = parse_args(argv)
-        result = generate_password(seed, options)
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
         self.assertEquals('VNy+Z9', result)
 
     def test_generate_alpha_size(self):
@@ -112,8 +112,8 @@ class GeneratePasswordTest(unittest.TestCase):
         Password size is set size.
         """
         argv = ['foo', 'bar', '-a', '-s', '6']
-        options, seed = parse_args(argv)
-        result = generate_password(seed, options)
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
         self.assertEquals('VNyZ9I', result)
 
 
@@ -128,10 +128,10 @@ def _test(option, opt_str, value, parser, *args, **kwargs):
 
 
 def main():
-    options, seed = parse_args(sys.argv[1:])
+    options, salt = parse_args(sys.argv[1:])
     passphrase = getpass('Passphrase:')
-    seed.append(passphrase)
-    passwd = generate_password(seed, options)
+    salt.append(passphrase)
+    passwd = generate_password(salt, options)
     print passwd
 
 
