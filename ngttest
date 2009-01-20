@@ -8,11 +8,14 @@
 
 res=`sget http://nett.ba.no/ngt/test | tohex | rmspcall`
 
-echo -n "Fikk \"$res\". Det vil si at den er "
+logfile=~/ngt-fucked/logg.txt
+echo -n `u` "Fikk \"$res\". Det vil si at den er " >>$logfile
 if [ "$res" = "0a 00 00 02" ]; then
-    echo OK. Fantastisk.
+    echo OK. Fantastisk. >>$logfile
+    tail -1 $logfile
     exit 0
 else
-    echo herpa. Fuck you.
+    echo herpa. Fuck you. >>$logfile
+    tail -1 $logfile
     exit 1
 fi
