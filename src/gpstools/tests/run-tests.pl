@@ -1121,12 +1121,12 @@ END
 # pgwtab
 testcmd("../gpst -o pgwtab multitrack.gpx", # {{{
     <<END,
-(51.477880000,-0.001470000)\t0-Meridian\t\\N\t\\N\t\\N\t11-FEB-03 15:46\t11-FEB-03 15:46\t\\N\t\\N\t\\N
-(51.532030,-0.177330)\tAbbey Road\t34.492798\t\\N\t\\N\tDet hellige gangfeltet der Beatles valsa over.\t26-FEB-06 17:29:46\t\\N\t\\N\t\\N
-(61.636684,8.312254)\tGaldhøpiggen med ', &, < og >. ☺\t2469.012939\tmountain\t2006-05-08T18:27:59Z\tHer er det &, < og >. ☺\tSchwæra greie\thttp://www.example.org/\tWaypoint\t\\N
-(60.397460000,5.350610000)\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t04-AUG-02 19:42\t04-AUG-02 19:42\t\\N\t\\N\t\\N
-(51.510130000,-0.130410000)\tLeicester Square\t\\N\t\\N\t\\N\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N\t\\N
-(60.968540000,9.285350000)\tLeira camping\t\\N\t\\N\t\\N\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N\t\\N
+(51.477880000,-0.001470000)\t0-Meridian\t\\N\t\\N\t\\N\t11-FEB-03 15:46\t11-FEB-03 15:46\t\\N\t\\N
+(51.532030,-0.177330)\tAbbey Road\t34.492798\t\\N\t\\N\tDet hellige gangfeltet der Beatles valsa over.\t26-FEB-06 17:29:46\t\\N\t\\N
+(61.636684,8.312254)\tGaldhøpiggen med ', &, < og >. ☺\t2469.012939\tmountain\t2006-05-08T18:27:59Z\tHer er det &, < og >. ☺\tSchwæra greie\thttp://www.example.org/\tWaypoint
+(60.397460000,5.350610000)\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t04-AUG-02 19:42\t04-AUG-02 19:42\t\\N\t\\N
+(51.510130000,-0.130410000)\tLeicester Square\t\\N\t\\N\t\\N\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N
+(60.968540000,9.285350000)\tLeira camping\t\\N\t\\N\t\\N\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N
 END
     "",
     "Test pgwtab format",
@@ -1412,12 +1412,12 @@ END
 # }}}
 testcmd("../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx", # {{{
     <<END,
-(51.478,-0.001)\t0-Meridian\t\\N\t\\N\t\\N\t11-FEB-03 15:46\t11-FEB-03 15:46\t\\N\t\\N\t\\N
-(51.532,-0.177)\tAbbey Road\t34.5\t\\N\t\\N\tDet hellige gangfeltet der Beatles valsa over.\t26-FEB-06 17:29:46\t\\N\t\\N\t\\N
-(61.637,8.312)\tGaldhøpiggen med ', &, < og >. ☺\t2469\tmountain\t2006-05-08T18:27:59Z\tHer er det &, < og >. ☺\tSchwæra greie\thttp://www.example.org/\tWaypoint\t\\N
-(60.397,5.351)\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t04-AUG-02 19:42\t04-AUG-02 19:42\t\\N\t\\N\t\\N
-(51.51,-0.13)\tLeicester Square\t\\N\t\\N\t\\N\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N\t\\N
-(60.969,9.285)\tLeira camping\t\\N\t\\N\t\\N\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N\t\\N
+(51.478,-0.001)\t0-Meridian\t\\N\t\\N\t\\N\t11-FEB-03 15:46\t11-FEB-03 15:46\t\\N\t\\N
+(51.532,-0.177)\tAbbey Road\t34.5\t\\N\t\\N\tDet hellige gangfeltet der Beatles valsa over.\t26-FEB-06 17:29:46\t\\N\t\\N
+(61.637,8.312)\tGaldhøpiggen med ', &, < og >. ☺\t2469\tmountain\t2006-05-08T18:27:59Z\tHer er det &, < og >. ☺\tSchwæra greie\thttp://www.example.org/\tWaypoint
+(60.397,5.351)\tHalfdan Griegs vei\t\\N\t\\N\t\\N\t04-AUG-02 19:42\t04-AUG-02 19:42\t\\N\t\\N
+(51.51,-0.13)\tLeicester Square\t\\N\t\\N\t\\N\t11-FEB-03 18:00\t11-FEB-03 18:00\t\\N\t\\N
+(60.969,9.285)\tLeira camping\t\\N\t\\N\t\\N\t03-OKT-02 21:58\t03-OKT-02 21:58\t\\N\t\\N
 END
     "",
     "--round works with lat, lon, ele from gpx, pgwtab output",
