@@ -2,4 +2,4 @@
 
 # $Id$
 
-svn ls -v $SV/utils/branches "$@"
+svn ls -v $SR/utils/branches "$@"

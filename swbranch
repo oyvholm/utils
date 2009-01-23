@@ -2,4 +2,4 @@
 
 # $Id$
 
-svn sw $SV/utils/branches/$1 .
+svn sw $SR/utils/branches/$1 .
