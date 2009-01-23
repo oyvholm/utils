@@ -1,0 +1,138 @@
+Index: finduuid
+===================================================================
+--- finduuid	(revisjon 2813)
++++ finduuid	(arbeidskopi)
+@@ -27,6 +27,7 @@
+     'filenames' => 0,
+     'help' => 0,
+     'line' => 0,
++    'once' => 0,
+     'verbose' => 0,
+     'version' => 0,
+ 
+@@ -48,6 +49,7 @@
+     "filenames|f" => \$Opt{'filenames'},
+     "help|h" => \$Opt{'help'},
+     "line|l" => \$Opt{'line'},
++    "once|1" => \$Opt{'once'},
+     "verbose|v+" => \$Opt{'verbose'},
+     "version" => \$Opt{'version'},
+ 
+@@ -60,14 +62,20 @@
+     exit(0);
+ }
+ 
++my %uuid_list = ();
++
+ while (<>) {
+     chomp(my $Line = $_);
+     if (/([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/) {
+-        if ($Opt{'line'}) {
+-            printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
+-        } else {
+-            $Line =~ s/([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $1)/ge;
++        my $Curr = $1;
++        if (!$Opt{'once'} || !defined($uuid_list{lc($Curr)})) {
++            if ($Opt{'line'}) {
++                printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
++            } else {
++                $Line =~ s/([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $1)/ge;
++            }
+         }
++        $Opt{'once'} && ($uuid_list{lc($Curr)} = 1);
+     }
+ }
+ 
+@@ -95,6 +103,8 @@
+ 
+ Options:
+ 
++  -1, --once
++    Print only the first occurence of every uuid.
+   -f, --filenames
+     Include file names in output.
+   -h, --help
+Index: tests/finduuid-files/textfile
+===================================================================
+--- tests/finduuid-files/textfile	(revisjon 2813)
++++ tests/finduuid-files/textfile	(arbeidskopi)
+@@ -5,3 +5,4 @@
+ 5 dsfv dsf qw weqd
+ 6 fd5d1200-88da-11dd-b7cf-000475e441b9
+ 7 i ksjn klasjdnc
++8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
+Index: tests/finduuid.t
+===================================================================
+--- tests/finduuid.t	(revisjon 2813)
++++ tests/finduuid.t	(arbeidskopi)
+@@ -138,6 +138,7 @@
+ finduuid-files/std-random:2bd76352-88d5-11dd-8848-000475e441b9
+ finduuid-files/textfile:9829c1a8-88d5-11dd-9a24-000475e441b9
+ finduuid-files/textfile:fd5d1200-88da-11dd-b7cf-000475e441b9
++finduuid-files/textfile:9829C1A8-88D5-11DD-9A24-000475E441B9
+ END
+     "",
+     "Option --filenames lists file name",
+@@ -167,6 +168,7 @@
+     <<END,
+ 4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
+ 6 fd5d1200-88da-11dd-b7cf-000475e441b9
++8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
+ END
+     "",
+     "Print whole line with UUID",
+@@ -177,6 +179,7 @@
+     <<END,
+ 4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
+ 6 fd5d1200-88da-11dd-b7cf-000475e441b9
++8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
+ END
+     "",
+     "Read from stdin and print whole line with UUID",
+@@ -187,6 +190,7 @@
+     <<END,
+ finduuid-files/textfile:4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
+ finduuid-files/textfile:6 fd5d1200-88da-11dd-b7cf-000475e441b9
++finduuid-files/textfile:8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
+ finduuid-files/text2:here 08CCB59A-88E1-11DD-A80C-000475E441B9blabla
+ END
+     "",
+@@ -203,6 +207,38 @@
+ );
+ 
+ # }}}
++diag("Testing -1 (--once) option...");
++testcmd("$CMD --once -l finduuid-files/textfile", # {{{
++    <<END,
++4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
++6 fd5d1200-88da-11dd-b7cf-000475e441b9
++END
++    "",
++    "Print whole line with only one UUID + --once works",
++);
++
++# }}}
++testcmd("$CMD -1 -l <finduuid-files/textfile", # {{{
++    <<END,
++4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
++6 fd5d1200-88da-11dd-b7cf-000475e441b9
++END
++    "",
++    "Read from stdin and print unique uuids",
++);
++
++# }}}
++testcmd("$CMD -1 -lf finduuid-files/textfile finduuid-files/text2", # {{{
++    <<END,
++finduuid-files/textfile:4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
++finduuid-files/textfile:6 fd5d1200-88da-11dd-b7cf-000475e441b9
++finduuid-files/text2:here 08CCB59A-88E1-11DD-A80C-000475E441B9blabla
++END
++    "",
++    "Print filename and whole line with unique uuids",
++);
++
++# }}}
+ diag("Testing -v (--verbose) option...");
+ likecmd("$CMD -hv", # {{{
+     '/\$Id: .*? \$.*  Show this help\./s',
