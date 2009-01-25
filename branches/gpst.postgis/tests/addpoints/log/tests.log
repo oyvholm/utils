@@ -1,0 +1,13 @@
+# ========== Executing "addpoints.t" ==========
+# Testing -h (--help) option...
+ok - "../../addpoints -h" - Option -h prints help screen
+ok - "../../addpoints -h" - Option -h prints help screen (stderr)
+ok - "../../addpoints -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../../addpoints -hv" - Option --version with -h returns Id string and help screen
+ok - "../../addpoints -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../../addpoints --version" - Option --version returns Id string
+ok - "../../addpoints --version" - Option --version returns Id string (stderr)
+# Testing finished.
+1..7
