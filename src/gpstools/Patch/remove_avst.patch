@@ -1,0 +1,436 @@
+Index: gpslist
+===================================================================
+--- gpslist	(revisjon 2821)
++++ gpslist	(arbeidskopi)
+@@ -11,4 +11,4 @@
+ cd ~/bin/src/gpstools/postgres
+ psql -f "$HOME/bin/src/gpstools/postgres/allupdate.sql" tmpgps >/dev/null 2>&1
+ psql -f "$HOME/bin/src/gpstools/postgres/distupdate.sql" tmpgps >/dev/null 2>&1
+-psql -c "SELECT date as date, coor, sted, dist, avst FROM logg ORDER BY date;" tmpgps
++psql -c "SELECT date as date, coor, sted, dist FROM logg ORDER BY date;" tmpgps
+Index: addpoints
+===================================================================
+--- addpoints	(revisjon 2821)
++++ addpoints	(arbeidskopi)
+@@ -119,7 +119,6 @@
+                     "sted",
+                     "dist",
+                     "description",
+-                    "avst"
+                 ) .
+                 ") FROM stdin\" $Opt{'database'}";
+             msg(1, "Executing '$exec_str'...");
+Index: GPST.pm
+===================================================================
+--- GPST.pm	(revisjon 2821)
++++ GPST.pm	(arbeidskopi)
+@@ -154,7 +154,6 @@
+                 '\N', # sted
+                 '\N', # dist
+                 '\N', # description
+-                '\N' # avst
+             ) . "\n";
+         } elsif ($Dat{'format'} eq "gpstrans") {
+             # {{{
+Index: tests/run-tests.pl
+===================================================================
+--- tests/run-tests.pl	(revisjon 2821)
++++ tests/run-tests.pl	(arbeidskopi)
+@@ -535,12 +535,12 @@
+ # }}}
+ testcmd("../gpst -d -o pgtab no_signal.mayko", # {{{
+     <<END,
+-2002-12-22T21:42:24Z\t(70.6800486,23.6746151)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:42:32Z\t(70.6799322,23.6740038)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:42:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:44:45Z\t(70.6800774,23.6757566)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:42:24Z\t(70.6800486,23.6746151)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:42:32Z\t(70.6799322,23.6740038)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:42:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:44:45Z\t(70.6800774,23.6757566)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N
+ END
+     "",
+     "Remove duplicated positions from pgtab output format",
+@@ -1057,18 +1057,18 @@
+ # pgtab
+ testcmd("../gpst -o pgtab compact.gpx", # {{{
+     <<END,
+-2002-12-30T15:22:04Z\t(70.6609320,23.7028354)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:06Z\t(70.6609392,23.7028468)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:08Z\t(70.6609429,23.7028499)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:11Z\t(70.6609381,23.7028620)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:12Z\t(70.6609368,23.7028648)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:13Z\t(70.6609344,23.7028652)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:15Z\t(70.6609349,23.7028707)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:17Z\t(70.6609348,23.7028654)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:19Z\t(70.6609347,23.7028599)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:20Z\t(70.6609348,23.7028609)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:23Z\t(70.6609388,23.7028653)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-30T15:22:25Z\t(70.6609426,23.7028732)\t\\N\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:04Z\t(70.6609320,23.7028354)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:06Z\t(70.6609392,23.7028468)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:08Z\t(70.6609429,23.7028499)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:11Z\t(70.6609381,23.7028620)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:12Z\t(70.6609368,23.7028648)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:13Z\t(70.6609344,23.7028652)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:15Z\t(70.6609349,23.7028707)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:17Z\t(70.6609348,23.7028654)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:19Z\t(70.6609347,23.7028599)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:20Z\t(70.6609348,23.7028609)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:23Z\t(70.6609388,23.7028653)\t\\N\t\\N\t\\N\t\\N
++2002-12-30T15:22:25Z\t(70.6609426,23.7028732)\t\\N\t\\N\t\\N\t\\N
+ END
+     "",
+     "Output pgtab from gpx format",
+@@ -1077,15 +1077,15 @@
+ # }}}
+ testcmd("../gpst -o pgtab no_signal.mayko", # {{{
+     <<END,
+-2002-12-22T21:42:24Z\t(70.6800486,23.6746151)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:42:32Z\t(70.6799322,23.6740038)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:42:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:43:51Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:43:52Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:43:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:44:45Z\t(70.6800774,23.6757566)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:42:24Z\t(70.6800486,23.6746151)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:42:32Z\t(70.6799322,23.6740038)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:42:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:43:51Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:43:52Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:43:54Z\t(70.6796266,23.6723991)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:44:45Z\t(70.6800774,23.6757566)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:44:52Z\t(70.6801502,23.6753442)\t\\N\t\\N\t\\N\t\\N
++2002-12-22T21:45:04Z\t(70.6801905,23.6757542)\t\\N\t\\N\t\\N\t\\N
+ END
+     "",
+     "Output pgtab from mayko format",
+@@ -1094,9 +1094,9 @@
+ # }}}
+ testcmd("../gpst -o pgtab missing.gpsml", # {{{
+     <<END,
+-2006-04-30T17:17:09Z\t(60.42353,5.34185)\t\\N\t\\N\t\\N\t\\N\t\\N
+-\\N\t(60.42347,5.34212)\t486\t\\N\t\\N\t\\N\t\\N
+-2006-04-30T17:18:05Z\t(60.42338,5.34269)\t487\t\\N\t\\N\t\\N\t\\N
++2006-04-30T17:17:09Z\t(60.42353,5.34185)\t\\N\t\\N\t\\N\t\\N
++\\N\t(60.42347,5.34212)\t486\t\\N\t\\N\t\\N
++2006-04-30T17:18:05Z\t(60.42338,5.34269)\t487\t\\N\t\\N\t\\N
+ END
+     "",
+     "Output pgtab from missing.gpsml",
+@@ -1395,15 +1395,15 @@
+ # }}}
+ testcmd("../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx", # {{{
+     <<END,
+-2006-05-21T16:49:11Z\t(60.425,5.3)\t25.3\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T16:49:46Z\t(60.425,5.3)\t24.9\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T16:52:04Z\t(60.425,5.3)\t28\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T16:56:36Z\t(60.425,5.3)\t31\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T16:56:47Z\t(60.425,5.3)\t31\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T16:56:56Z\t(60.425,5.3)\t30.5\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T16:57:03Z\t(60.425,5.3)\t30.5\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T16:59:08Z\t(60.425,5.3)\t31.9\t\\N\t\\N\t\\N\t\\N
+-2006-05-21T17:00:54Z\t(60.425,5.299)\t31.8\t\\N\t\\N\t\\N\t\\N
++2006-05-21T16:49:11Z\t(60.425,5.3)\t25.3\t\\N\t\\N\t\\N
++2006-05-21T16:49:46Z\t(60.425,5.3)\t24.9\t\\N\t\\N\t\\N
++2006-05-21T16:52:04Z\t(60.425,5.3)\t28\t\\N\t\\N\t\\N
++2006-05-21T16:56:36Z\t(60.425,5.3)\t31\t\\N\t\\N\t\\N
++2006-05-21T16:56:47Z\t(60.425,5.3)\t31\t\\N\t\\N\t\\N
++2006-05-21T16:56:56Z\t(60.425,5.3)\t30.5\t\\N\t\\N\t\\N
++2006-05-21T16:57:03Z\t(60.425,5.3)\t30.5\t\\N\t\\N\t\\N
++2006-05-21T16:59:08Z\t(60.425,5.3)\t31.9\t\\N\t\\N\t\\N
++2006-05-21T17:00:54Z\t(60.425,5.299)\t31.8\t\\N\t\\N\t\\N
+ END
+     "",
+     "pgtab output from gpx works with --round lat, lon, ele",
+@@ -1718,22 +1718,22 @@
+ # }}}
+ testcmd("$CMD -T 0 -o pgtab multitrack-pause.gpx", # {{{
+     <<END,
+-2006-01-01T00:00:00Z\t(1.11,1.12)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-01T00:00:01Z\t(1.21,1.22)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-01T00:00:02Z\t(1.31,1.32)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-02T00:00:00Z\t(2.11,2.12)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-02T00:00:04Z\t(2.21,2.22)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-02T00:00:16Z\t(2.31,2.32)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-02T01:00:16Z\t(2.41,2.42)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-02T01:00:17Z\t(2.451,2.452)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:20Z\t(3.11,3.12)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:21Z\t(3.21,3.22)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:22Z\t(3.31,3.32)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:23Z\t(3.41,3.42)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:24Z\t(3.51,3.52)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:25Z\t(3.61,3.62)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:26Z\t(3.71,3.72)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2006-01-03T02:00:27Z\t(3.81,3.82)\t\\N\t\\N\t\\N\t\\N\t\\N
++2006-01-01T00:00:00Z\t(1.11,1.12)\t\\N\t\\N\t\\N\t\\N
++2006-01-01T00:00:01Z\t(1.21,1.22)\t\\N\t\\N\t\\N\t\\N
++2006-01-01T00:00:02Z\t(1.31,1.32)\t\\N\t\\N\t\\N\t\\N
++2006-01-02T00:00:00Z\t(2.11,2.12)\t\\N\t\\N\t\\N\t\\N
++2006-01-02T00:00:04Z\t(2.21,2.22)\t\\N\t\\N\t\\N\t\\N
++2006-01-02T00:00:16Z\t(2.31,2.32)\t\\N\t\\N\t\\N\t\\N
++2006-01-02T01:00:16Z\t(2.41,2.42)\t\\N\t\\N\t\\N\t\\N
++2006-01-02T01:00:17Z\t(2.451,2.452)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:20Z\t(3.11,3.12)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:21Z\t(3.21,3.22)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:22Z\t(3.31,3.32)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:23Z\t(3.41,3.42)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:24Z\t(3.51,3.52)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:25Z\t(3.61,3.62)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:26Z\t(3.71,3.72)\t\\N\t\\N\t\\N\t\\N
++2006-01-03T02:00:27Z\t(3.81,3.82)\t\\N\t\\N\t\\N\t\\N
+ END
+     "",
+     "Read GPX, time-shift 0 seconds, output pgtab",
+@@ -1960,10 +1960,10 @@
+ # }}}
+ testcmd("../gpst -o pgtab date_error.mayko", # {{{
+     <<END,
+-2003-06-13T09:12:36Z\t(60.4280897,5.5794667)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2003-06-13T09:12:38Z\t(60.4281867,5.5802255)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2003-06-13T09:12:41Z\t(60.4283320,5.5813636)\t\\N\t\\N\t\\N\t\\N\t\\N
+-2003-06-13T09:12:42Z\t(60.4283806,5.5817430)\t\\N\t\\N\t\\N\t\\N\t\\N
++2003-06-13T09:12:36Z\t(60.4280897,5.5794667)\t\\N\t\\N\t\\N\t\\N
++2003-06-13T09:12:38Z\t(60.4281867,5.5802255)\t\\N\t\\N\t\\N\t\\N
++2003-06-13T09:12:41Z\t(60.4283320,5.5813636)\t\\N\t\\N\t\\N\t\\N
++2003-06-13T09:12:42Z\t(60.4283806,5.5817430)\t\\N\t\\N\t\\N\t\\N
+ END
+     "",
+     "Strip error from mayko format in pgtab output",
+Index: doc/gpst.html
+===================================================================
+--- doc/gpst.html	(revisjon 2821)
++++ doc/gpst.html	(arbeidskopi)
+@@ -66,12 +66,7 @@
+                       value is always <code class="literal">\N</code>.</p></dd><dt><span class="term"><span class="database">description</span></span></dt><dd><p>Description of waypoint.
+                       Calculated in 
+                       <span class="application">PostgreSQL</span>, so this 
+-                      value is always <code class="literal">\N</code>.</p></dd><dt><span class="term"><span class="database">avst</span></span></dt><dd><p>Distance to trackpoint in decimal degrees 
+-                      from a defined “<span class="quote">home</span>” position.
+-                      This is calculated in 
+-                      <span class="application">PostgreSQL</span>, so the 
+-                      field value is always 
+-                      <code class="literal">\N</code>.</p></dd></dl></div></dd><dt><span class="term"><code class="option">pgwtab</code></span></dt><dd><p>Output waypoints on a TAB-separated format:</p><div class="variablelist"><dl><dt><span class="term"><span class="database">coor</span></span></dt><dd><p>Format:
++                      value is always <code class="literal">\N</code>.</p></dd></dl></div></dd><dt><span class="term"><code class="option">pgwtab</code></span></dt><dd><p>Output waypoints on a TAB-separated format:</p><div class="variablelist"><dl><dt><span class="term"><span class="database">coor</span></span></dt><dd><p>Format:
+                       <code class="literal">(<em class="replaceable"><code>lat</code></em>,<em class="replaceable"><code>lon</code></em>)</code></p></dd><dt><span class="term"><span class="database">name</span></span></dt><dd><p>Title of waypoint.</p></dd><dt><span class="term"><span class="database">ele</span></span></dt><dd><p>Elevation in metres above sea level.</p></dd><dt><span class="term"><span class="database">type</span></span></dt><dd><p>Type of waypoint, same as the GPX <code class="sgmltag-starttag">&lt;type&gt;</code> element.</p></dd><dt><span class="term"><span class="database">time</span></span></dt><dd><p>Timestamp of waypoint.</p></dd><dt><span class="term"><span class="database">cmt</span></span></dt><dd><p>Short waypoint description, used by the GPS 
+                       as a comment.
+                       Same as the GPX <code class="sgmltag-starttag">&lt;cmt&gt;</code> element.</p></dd><dt><span class="term"><span class="database">descr</span></span></dt><dd><p>Long description, not used by the GPS.
+@@ -116,8 +111,7 @@
+         <code class="option">--double-y-scale</code></span></dt><dd><p>Double Y scale (latitude).</p></dd><dt><span class="term"><code class="option">--debug</code></span></dt><dd><p>Print debugging messages.</p></dd></dl></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.bugs"></a><h2>Bugs and things that need to be done</h2><div class="itemizedlist"><ul type="disc"><li><p>Pretty incomplete in some areas.
+         Some of the source formats are undocumented and thus incomplete.
+         Some functionality is not working properly, for example the 
+-        Postscript output.</p></li><li><p>Remove hardcodings, for example the “<span class="quote">home</span>” 
+-        position used to calculate the <span class="database">avst</span> database column.</p></li><li><p>Translate database column names to English.</p></li><li><p>Add more tests to cover all command-line options.</p></li></ul></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.author"></a><h2>Author</h2><p>Made by <span class="personname"><span class="firstname">Øyvind</span> <span class="othername">A.</span> <span class="surname">Holm</span></span> 
++        Postscript output.</p></li><li><p>Remove hardcodings.</p></li><li><p>Translate database column names to English.</p></li><li><p>Add more tests to cover all command-line options.</p></li></ul></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.author"></a><h2>Author</h2><p>Made by <span class="personname"><span class="firstname">Øyvind</span> <span class="othername">A.</span> <span class="surname">Holm</span></span> 
+     <code class="email">&lt;<a class="email" href="mailto:sunny@sunbase.org">sunny@sunbase.org</a>&gt;</code>.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.copyright"></a><h2>Copyright</h2><p>Copyleft © <span class="personname"><span class="firstname">Øyvind</span> <span class="othername">A.</span> <span class="surname">Holm</span></span> 
+     <code class="email">&lt;<a class="email" href="mailto:sunny@sunbase.org">sunny@sunbase.org</a>&gt;</code>.
+     This is free software; see the file <code class="filename">COPYING</code> for 
+Index: doc/gpst.1
+===================================================================
+--- doc/gpst.1	(revisjon 2821)
++++ doc/gpst.1	(arbeidskopi)
+@@ -340,16 +340,7 @@
+ PostgreSQL, so this value is always
+ \FC\eN\F[]\&.
+ .RE
+-.PP
+-avst
+-.RS 4
+-Distance to trackpoint in decimal degrees from a defined
+-\(lqhome\(rq
+-position\&. This is calculated in
+-PostgreSQL, so the field value is always
+-\FC\eN\F[]\&.
+ .RE
+-.RE
+ .PP
+ \fBpgwtab\fR
+ .RS 4
+@@ -594,11 +585,7 @@
+ .sp -1
+ .IP \(bu 2.3
+ .\}
+-Remove hardcodings, for example the
+-\(lqhome\(rq
+-position used to calculate the
+-avst
+-database column\&.
++Remove hardcodings\&.
+ .RE
+ .sp
+ .RS 4
+Index: doc/gpst.xml
+===================================================================
+--- doc/gpst.xml	(revisjon 2821)
++++ doc/gpst.xml	(arbeidskopi)
+@@ -286,18 +286,6 @@
+                     </listitem>
+                   </varlistentry>
+ 
+-                  <varlistentry>
+-                    <term><database class="field">avst</database></term>
+-                    <listitem>
+-                      <para>Distance to trackpoint in decimal degrees 
+-                      from a defined <quote>home</quote> position.
+-                      This is calculated in 
+-                      <application>PostgreSQL</application>, so the 
+-                      field value is always 
+-                      <literal>\N</literal>.</para>
+-                    </listitem>
+-                  </varlistentry>
+-
+                 </variablelist>
+               </listitem>
+             </varlistentry>
+@@ -612,9 +600,7 @@
+       </listitem>
+ 
+       <listitem>
+-        <para>Remove hardcodings, for example the <quote>home</quote> 
+-        position used to calculate the <database 
+-        class="field">avst</database> database column.</para>
++        <para>Remove hardcodings.</para>
+       </listitem>
+ 
+       <listitem>
+Index: postgres/create_funcs.sql
+===================================================================
+--- postgres/create_funcs.sql	(revisjon 2821)
++++ postgres/create_funcs.sql	(arbeidskopi)
+@@ -173,10 +173,6 @@
+ CREATE OR REPLACE FUNCTION update_trackpoint(currpoint point) RETURNS void AS $$ -- {{{
+ BEGIN
+     RAISE NOTICE 'starter update_trackpoint(%), %', currpoint, clname(currpoint);
+-    -- Avstanden hjemmefra.
+-    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> $1
+-        WHERE ($1 <-> coor) < 0.05;
+-    RAISE NOTICE 'avst ferdig';
+     -- Sted og dist
+     UPDATE logg SET sted = clname(coor), dist = cldist(coor)
+         WHERE ($1 <-> coor) < 0.05;
+Index: postgres/distupdate.sql
+===================================================================
+--- postgres/distupdate.sql	(revisjon 2821)
++++ postgres/distupdate.sql	(arbeidskopi)
+@@ -2,17 +2,6 @@
+ 
+ BEGIN ISOLATION LEVEL SERIALIZABLE;
+     \echo
+-    \echo ================ Sett avstanden hjemmefra ================
+-
+-    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> coor
+-        WHERE date > (
+-            SELECT laststed FROM stat
+-                WHERE lastupdate IS NOT NULL
+-                ORDER BY lastupdate DESC LIMIT 1
+-        )
+-        OR date IS NULL;
+-
+-    \echo
+     \echo ================ Oppdater sted og dist ================
+ 
+     UPDATE logg SET sted = clname(coor), dist = cldist(coor)
+Index: postgres/create_index.sql
+===================================================================
+--- postgres/create_index.sql	(revisjon 2821)
++++ postgres/create_index.sql	(arbeidskopi)
+@@ -6,7 +6,6 @@
+ CREATE INDEX log_ele_idx on logg(ele);
+ CREATE INDEX log_sted_idx on logg(sted);
+ CREATE INDEX log_dist_idx on logg(dist);
+-CREATE INDEX log_avst_idx on logg(avst);
+ 
+ -- DROP INDEX begin_idx;
+ -- DROP INDEX end_idx;
+Index: postgres/create_table.sql
+===================================================================
+--- postgres/create_table.sql	(revisjon 2821)
++++ postgres/create_table.sql	(arbeidskopi)
+@@ -6,8 +6,7 @@
+     ele numeric,
+     sted text,
+     dist numeric(8, 5),
+-    description text,
+-    avst numeric(8, 5)
++    description text
+ );
+ 
+ CREATE TABLE wayp (
+Index: postgres/create_views.sql
+===================================================================
+--- postgres/create_views.sql	(revisjon 2821)
++++ postgres/create_views.sql	(arbeidskopi)
+@@ -55,41 +55,6 @@
+     ) AS s
+     ORDER BY date; -- }}}
+ 
+--- fjernest: List ut de 50.000 punktene som ligger lengst hjemmefra
+-CREATE OR REPLACE VIEW fjernest -- {{{
+-    AS SELECT * FROM logg
+-        ORDER BY avst DESC LIMIT 50000; -- }}}
+-
+--- fjernest_siste_aar: List ut de 50.000 punktene lengst hjemmefra siste året
+-CREATE OR REPLACE VIEW fjernest_siste_aar -- {{{
+-    AS SELECT * FROM logg
+-        WHERE date > now()+interval '1 year ago'
+-        ORDER BY avst DESC LIMIT 50000; -- }}}
+-
+--- fjernest_siste_halvaar: List ut de 50.000 punktene lengst hjemmefra siste halvåret
+-CREATE OR REPLACE VIEW fjernest_siste_halvaar -- {{{
+-    AS SELECT * FROM logg
+-        WHERE date > now()+interval '0.5 year ago'
+-        ORDER BY avst DESC LIMIT 50000; -- }}}
+-
+--- fjernest_siste_maaned: List ut de 50.000 punktene lengst hjemmefra siste måneden
+-CREATE OR REPLACE VIEW fjernest_siste_maaned -- {{{
+-    AS SELECT * FROM logg
+-        WHERE date > now() + interval '1 month ago'
+-        ORDER BY avst DESC LIMIT 50000; -- }}}
+-
+--- fjernest_siste_uke: List ut de 50.000 punktene lengst hjemmefra siste uka
+-CREATE OR REPLACE VIEW fjernest_siste_uke -- {{{
+-    AS SELECT * FROM logg
+-        WHERE date > now() + interval '1 week ago'
+-        ORDER BY avst DESC LIMIT 50000; -- }}}
+-
+--- fjernest_siste_dogn: List ut de 50.000 punktene lengst hjemmefra siste døgn
+-CREATE OR REPLACE VIEW fjernest_siste_dogn -- {{{
+-    AS SELECT * FROM logg
+-        WHERE date > now() + interval '1 day ago'
+-        ORDER BY avst DESC LIMIT 50000; -- }}}
+-
+ /*** Intervaller ***/
+ 
+ CREATE OR REPLACE VIEW minutt -- {{{
+@@ -123,7 +88,7 @@
+     FROM logg; -- }}}
+ 
+ CREATE OR REPLACE VIEW gpst AS -- {{{
+-    SELECT date, coor, ele, sted, dist, avst,
++    SELECT date, coor, ele, sted, dist,
+     '<tp> <time>' || date at time zone 'UTC' || 'Z' || '</time> <lat>' || coor[0] || '</lat> <lon>' || coor[1] || '</lon> </tp>'
+     AS gpst
+     FROM logg; -- }}}
+@@ -131,13 +96,13 @@
+ -- ev: Lister ut events sammen med loggen.
+ CREATE OR REPLACE VIEW ev AS -- {{{
+     SELECT * FROM (
+-        SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
++        SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr
+             FROM logg
+         UNION ALL
+-        SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr, NULL
++        SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr
+             FROM events
+         UNION ALL
+-        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL, NULL
++        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL
+             FROM pictures
+     ) AS u
+     ORDER BY date; -- }}}
