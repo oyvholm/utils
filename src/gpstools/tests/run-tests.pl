@@ -572,11 +572,10 @@ END
 );
 
 # }}}
-testcmd("../gpst -e -o gpx pause.gpx", # {{{
+testcmd("../gpst -e -o gpx pause-noname.gpx", # {{{
     <<END,
 $gpx_header
   <trk>
-    <name>ACTIVE LOG164705</name>
     <trkseg>
       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
@@ -1007,11 +1006,10 @@ END
 );
 
 # }}}
-testcmd("../gpst -o gpx missing.gpsml", # {{{
+testcmd("../gpst -o gpx missing-noname.gpsml", # {{{
     <<END,
 $gpx_header
   <trk>
-    <name>Missing various elements</name>
     <trkseg>
       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
       <trkpt> <ele>483</ele> <time>2006-04-30T17:17:11Z</time> </trkpt>
@@ -1758,11 +1756,10 @@ likecmd("$CMD --version", # {{{
 # }}}
 # --version option }}}
 diag("Testing --strip-whitespace option..."); # {{{
-testcmd("../gpst -w -o gpx pause.gpx", # {{{
+testcmd("../gpst -w -o gpx pause-noname.gpx", # {{{
     <<END,
 $stripped_gpx_header
 <trk>
-<name>ACTIVE LOG164705</name>
 <trkseg>
 <trkpt lat="60.425494" lon="5.299534"><ele>25.260</ele><time>2006-05-21T16:49:11Z</time></trkpt>
 <trkpt lat="60.425464" lon="5.299610"><ele>24.931</ele><time>2006-05-21T16:49:46Z</time></trkpt>
@@ -2024,6 +2021,31 @@ if ($Opt{'all'} || $Opt{'todo'}) {
     diag("Running TODO tests..."); # {{{
 
     TODO: {
+        local $TODO = "Fix read/write of GPX name element";
+        testcmd("../gpst -o gpx pause.gpx", # {{{
+            <<END,
+$gpx_header
+  <name>ACTIVE LOG164705</name>
+  <trk>
+    <trkseg>
+      <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
+      <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
+      <trkpt lat="60.425314" lon="5.299694"> <ele>27.975</ele> <time>2006-05-21T16:52:04Z</time> </trkpt>
+      <trkpt lat="60.425384" lon="5.299741"> <ele>31.017</ele> <time>2006-05-21T16:56:36Z</time> </trkpt>
+      <trkpt lat="60.425339" lon="5.299958"> <ele>30.980</ele> <time>2006-05-21T16:56:47Z</time> </trkpt>
+      <trkpt lat="60.425238" lon="5.299640"> <ele>30.538</ele> <time>2006-05-21T16:56:56Z</time> </trkpt>
+      <trkpt lat="60.425246" lon="5.299686"> <ele>30.515</ele> <time>2006-05-21T16:57:03Z</time> </trkpt>
+      <trkpt lat="60.425345" lon="5.299773"> <ele>31.936</ele> <time>2006-05-21T16:59:08Z</time> </trkpt>
+      <trkpt lat="60.425457" lon="5.299419"> <ele>31.794</ele> <time>2006-05-21T17:00:54Z</time> </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
+END
+            "",
+            "Read and write name element from/to GPX",
+        );
+
+        # }}}
         local $TODO = "Remove extra \\n in the beginning";
         testcmd("../gpst -o csv multitrack.gpx", # {{{
             <<END,
