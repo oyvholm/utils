@@ -2025,8 +2025,8 @@ if ($Opt{'all'} || $Opt{'todo'}) {
         testcmd("../gpst -o gpx pause.gpx", # {{{
             <<END,
 $gpx_header
-  <name>ACTIVE LOG164705</name>
   <trk>
+    <name>ACTIVE LOG164705</name>
     <trkseg>
       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
