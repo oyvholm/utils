@@ -8,3 +8,8 @@ all:
 	./run-tests.pl --todo 2>&1 | remove_perltestnumbers >log/todo-tests.log
 	cd gpst-pic && make
 	cd addpoints && make
+
+clean:
+	svn revert log/tests.log log/todo-tests.log
+	cd addpoints && make clean
+	cd gpst-pic && make clean
