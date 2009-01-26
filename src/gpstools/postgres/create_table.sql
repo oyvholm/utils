@@ -49,7 +49,7 @@ CREATE TABLE wayp_rej (
 );
 
 CREATE TABLE tmpwayp AS
-    SELECT * from wayp LIMIT 0;
+    SELECT * FROM wayp LIMIT 0;
 
 CREATE TABLE events (
     date timestamptz,

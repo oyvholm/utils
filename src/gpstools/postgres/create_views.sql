@@ -89,7 +89,7 @@ CREATE OR REPLACE VIEW gpx AS -- {{{
 
 CREATE OR REPLACE VIEW gpst AS -- {{{
     SELECT date, coor, ele, sted, dist,
-    '<tp> <time>' || date at time zone 'UTC' || 'Z' || '</time> <lat>' || coor[0] || '</lat> <lon>' || coor[1] || '</lon> </tp>'
+    '<tp> <time>' || date AT TIME ZONE 'UTC' || 'Z' || '</time> <lat>' || coor[0] || '</lat> <lon>' || coor[1] || '</lon> </tp>'
     AS gpst
     FROM logg; -- }}}
 
@@ -117,4 +117,4 @@ CREATE OR REPLACE VIEW wp AS -- {{{
         ele AS ele,
         time AS time
         FROM wayp
-        ORDER BY coor[0] desc, coor[1]; -- }}}
+        ORDER BY coor[0] DESC, coor[1]; -- }}}

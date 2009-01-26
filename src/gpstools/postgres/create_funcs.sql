@@ -42,7 +42,6 @@ DECLARE
     currlat numeric;
     currlon numeric;
 BEGIN
-    -- RAISE NOTICE '-----------------------------------';
     SELECT INTO firstdate date
         FROM logg
         ORDER BY date
@@ -52,7 +51,7 @@ BEGIN
         ORDER BY date DESC
         LIMIT 1;
     IF currtime < firstdate OR currtime > lastdate THEN
-        return(NULL);
+        RETURN(NULL);
     END IF;
 
     SELECT INTO firsttime date
@@ -75,46 +74,42 @@ BEGIN
         WHERE date >= currtime
         ORDER BY date
         LIMIT 1;
-    -- RAISE NOTICE 'currtime = %', currtime;
-    -- RAISE NOTICE 'firsttime = %, firstcoor = %', firsttime, firstcoor;
-    -- RAISE NOTICE 'lasttime = %, lastcoor = %', lasttime, lastcoor;
 
     IF firsttime = lasttime THEN
         RETURN(firstcoor);
     END IF;
 
-    currlat = firstcoor[0] + 
+    currlat = firstcoor[0] +
     (
         (
-            lastcoor[0]-firstcoor[0]
+            lastcoor[0] - firstcoor[0]
         ) *
         (
             (
-                EXTRACT(EPOCH FROM currtime)-EXTRACT(EPOCH FROM firsttime)
+                extract(EPOCH FROM currtime) - extract(EPOCH FROM firsttime)
             )
             /
             (
-                EXTRACT(EPOCH FROM lasttime)-EXTRACT(EPOCH FROM firsttime)
+                extract(EPOCH FROM lasttime) - extract(EPOCH FROM firsttime)
             )
         )
     );
-    currlon = firstcoor[1] + 
+    currlon = firstcoor[1] +
     (
         (
-            lastcoor[1]-firstcoor[1]
+            lastcoor[1] - firstcoor[1]
         ) *
         (
             (
-                EXTRACT(EPOCH FROM currtime)-EXTRACT(EPOCH FROM firsttime)
+                extract(EPOCH FROM currtime) - extract(EPOCH FROM firsttime)
             )
             /
             (
-                EXTRACT(EPOCH FROM lasttime)-EXTRACT(EPOCH FROM firsttime)
+                extract(EPOCH FROM lasttime) - extract(EPOCH FROM firsttime)
             )
         )
     );
-    -- RAISE NOTICE 'currcoor = (%,%)', currlat, currlon;
-    RETURN (currlat,currlon);
+    RETURN(currlat, currlon);
 END;
 $$ LANGUAGE plpgsql; -- }}}
 
@@ -142,9 +137,6 @@ DECLARE
     curr_id integer;
     currpoint point;
 BEGIN
-    -- FOR curr IN SELECT * FROM wayp_new LOOP
-    --     NULL;
-    -- END LOOP;
     UPDATE wayp_new SET coor = point(
         round(coor[0]::numeric, 6),
         round(coor[1]::numeric, 6)
@@ -163,8 +155,6 @@ BEGIN
                 PERFORM update_trackpoint(currpoint);
             END IF;
             DELETE FROM wayp_new WHERE id = curr_id;
-            -- COPY (SELECT name FROM wayp WHERE coor::varchar = currpoint::varchar)
-            --     TO STDOUT;
         ELSE
             RAISE NOTICE 'currpoint er null';
             EXIT;
@@ -177,7 +167,6 @@ $$ LANGUAGE plpgsql; -- }}}
 CREATE OR REPLACE FUNCTION update_trackpoint(currpoint point) RETURNS void AS $$ -- {{{
 BEGIN
     RAISE NOTICE 'starter update_trackpoint(%), %', currpoint, clname(currpoint);
-    -- Sted og dist
     UPDATE logg SET sted = clname(coor), dist = cldist(coor)
         WHERE ($1 <-> coor) < 0.05;
     RAISE NOTICE 'update_trackpoint(%) er ferdig', currpoint;
@@ -188,7 +177,7 @@ $$ LANGUAGE plpgsql;
 -- first_wayp_new(): Returnerer id for den eldste i wayp_new.
 CREATE OR REPLACE FUNCTION first_wayp_new() RETURNS integer AS $$ -- {{{
 BEGIN
-    RETURN (SELECT id FROM wayp_new ORDER BY id LIMIT 1);
+    RETURN(SELECT id FROM wayp_new ORDER BY id LIMIT 1);
 END
 $$ LANGUAGE plpgsql;
 -- }}}
@@ -196,5 +185,5 @@ $$ LANGUAGE plpgsql;
 -- secmidnight(): Returnerer antall sekunder sia midnatt for en dato.
 CREATE OR REPLACE FUNCTION secmidnight(timestamptz) RETURNS double precision -- {{{
 AS $$
-SELECT extract(hour from $1) * 3600 + extract(minute from $1) * 60 + extract(second from $1);
+    SELECT extract(HOUR FROM $1) * 3600 + extract(MINUTE FROM $1) * 60 + extract(SECOND FROM $1);
 $$ LANGUAGE SQL; -- }}}
