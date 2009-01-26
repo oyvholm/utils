@@ -145,6 +145,10 @@ BEGIN
     -- FOR curr IN SELECT * FROM wayp_new LOOP
     --     NULL;
     -- END LOOP;
+    UPDATE wayp_new SET coor = point(
+        round(coor[0]::numeric, 6),
+        round(coor[1]::numeric, 6)
+    );
     LOOP
         curr_id = first_wayp_new();
         IF curr_id IS NOT NULL THEN
