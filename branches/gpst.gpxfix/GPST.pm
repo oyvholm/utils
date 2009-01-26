@@ -172,8 +172,7 @@ sub trackpoint {
                 length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
                 '\N', # sted
                 '\N', # dist
-                '\N', # description
-                '\N' # avst
+                '\N'  # description
             ) . "\n";
         } elsif ($Dat{'format'} eq "gpstrans") {
             # {{{

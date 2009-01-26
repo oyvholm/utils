@@ -286,18 +286,6 @@
                     </listitem>
                   </varlistentry>
 
-                  <varlistentry>
-                    <term><database class="field">avst</database></term>
-                    <listitem>
-                      <para>Distance to trackpoint in decimal degrees 
-                      from a defined <quote>home</quote> position.
-                      This is calculated in 
-                      <application>PostgreSQL</application>, so the 
-                      field value is always 
-                      <literal>\N</literal>.</para>
-                    </listitem>
-                  </varlistentry>
-
                 </variablelist>
               </listitem>
             </varlistentry>
@@ -548,6 +536,18 @@
       </varlistentry>
 
       <varlistentry>
+        <term><option>-T <replaceable>x</replaceable></option>, 
+        <option>--time-shift 
+        <replaceable>x</replaceable></option></term>
+        <listitem>
+          <para>Move timestamps <replaceable>x</replaceable> seconds 
+          forwards or backwards in output.
+          <replaceable>x</replaceable> can be a positive or negative 
+          integer.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
         <term><option>-v</option>, <option>--verbose</option></term>
         <listitem>
           <para>Verbose output, can be repeated.</para>
@@ -600,9 +600,7 @@
       </listitem>
 
       <listitem>
-        <para>Remove hardcodings, for example the <quote>home</quote> 
-        position used to calculate the <database 
-        class="field">avst</database> database column.</para>
+        <para>Remove hardcodings.</para>
       </listitem>
 
       <listitem>

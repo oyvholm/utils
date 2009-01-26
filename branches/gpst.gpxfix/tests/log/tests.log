@@ -11,7 +11,7 @@ ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> 
 ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> element and strip whitespace (stderr)
 not ok - "../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>
 #   Failed test '"../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>'
-#   in ./run-tests.pl at line 1966.
+#   at ./run-tests.pl line 2255.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -217,57 +217,8 @@ ok - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pg
 # Testing --epoch option...
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
 ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
-not ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output
-#   Failed test '"../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output'
-#   in ./run-tests.pl at line 1966.
-#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-# <gpx
-#   version="1.1"
-#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
-#   xmlns="http://www.topografix.com/GPX/1/1"
-#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
-# >
-#   <trk>
-#     <trkseg>
-#       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
-#       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
-#       <trkpt lat="60.425314" lon="5.299694"> <ele>27.975</ele> <time>2006-05-21T16:52:04Z</time> </trkpt>
-#       <trkpt lat="60.425384" lon="5.299741"> <ele>31.017</ele> <time>2006-05-21T16:56:36Z</time> </trkpt>
-#       <trkpt lat="60.425339" lon="5.299958"> <ele>30.980</ele> <time>2006-05-21T16:56:47Z</time> </trkpt>
-#       <trkpt lat="60.425238" lon="5.299640"> <ele>30.538</ele> <time>2006-05-21T16:56:56Z</time> </trkpt>
-#       <trkpt lat="60.425246" lon="5.299686"> <ele>30.515</ele> <time>2006-05-21T16:57:03Z</time> </trkpt>
-#       <trkpt lat="60.425345" lon="5.299773"> <ele>31.936</ele> <time>2006-05-21T16:59:08Z</time> </trkpt>
-#       <trkpt lat="60.425457" lon="5.299419"> <ele>31.794</ele> <time>2006-05-21T17:00:54Z</time> </trkpt>
-#     </trkseg>
-#   </trk>
-# </gpx>
-# '
-#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-# <gpx
-#   version="1.1"
-#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
-#   xmlns="http://www.topografix.com/GPX/1/1"
-#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
-# >
-#   <trk>
-#     <name>ACTIVE LOG164705</name>
-#     <trkseg>
-#       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
-#       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
-#       <trkpt lat="60.425314" lon="5.299694"> <ele>27.975</ele> <time>2006-05-21T16:52:04Z</time> </trkpt>
-#       <trkpt lat="60.425384" lon="5.299741"> <ele>31.017</ele> <time>2006-05-21T16:56:36Z</time> </trkpt>
-#       <trkpt lat="60.425339" lon="5.299958"> <ele>30.980</ele> <time>2006-05-21T16:56:47Z</time> </trkpt>
-#       <trkpt lat="60.425238" lon="5.299640"> <ele>30.538</ele> <time>2006-05-21T16:56:56Z</time> </trkpt>
-#       <trkpt lat="60.425246" lon="5.299686"> <ele>30.515</ele> <time>2006-05-21T16:57:03Z</time> </trkpt>
-#       <trkpt lat="60.425345" lon="5.299773"> <ele>31.936</ele> <time>2006-05-21T16:59:08Z</time> </trkpt>
-#       <trkpt lat="60.425457" lon="5.299419"> <ele>31.794</ele> <time>2006-05-21T17:00:54Z</time> </trkpt>
-#     </trkseg>
-#   </trk>
-# </gpx>
-# '
-ok - "../gpst -e -o gpx pause.gpx" - --epoch is ignored in gpx output (stderr)
+ok - "../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output
+ok - "../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output (stderr)
 # Testing --fix option...
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
 ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
@@ -308,55 +259,8 @@ ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicat
 ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates (stderr)
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines
 ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
-not ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data
-#   Failed test '"../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data'
-#   in ./run-tests.pl at line 1966.
-#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-# <gpx
-#   version="1.1"
-#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
-#   xmlns="http://www.topografix.com/GPX/1/1"
-#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
-# >
-#   <trk>
-#     <trkseg>
-#       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
-#       <trkpt> <ele>483</ele> <time>2006-04-30T17:17:11Z</time> </trkpt>
-#       <trkpt> <ele>485</ele> <time>2006-04-30T17:17:22Z</time> </trkpt>
-#       <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
-#       <trkpt> <ele>484</ele> </trkpt>
-#       <trkpt> <ele>486</ele> </trkpt>
-#       <trkpt> <ele>490</ele> <time>2006-04-30T17:18:03Z</time> </trkpt>
-#       <trkpt lat="60.42338" lon="5.34269"> <ele>487</ele> <time>2006-04-30T17:18:05Z</time> </trkpt>
-#     </trkseg>
-#   </trk>
-# </gpx>
-# '
-#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-# <gpx
-#   version="1.1"
-#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
-#   xmlns="http://www.topografix.com/GPX/1/1"
-#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
-# >
-#   <trk>
-#     <name>Missing various elements</name>
-#     <trkseg>
-#       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
-#       <trkpt> <ele>483</ele> <time>2006-04-30T17:17:11Z</time> </trkpt>
-#       <trkpt> <ele>485</ele> <time>2006-04-30T17:17:22Z</time> </trkpt>
-#       <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
-#       <trkpt> <ele>484</ele> </trkpt>
-#       <trkpt> <ele>486</ele> </trkpt>
-#       <trkpt> <ele>490</ele> <time>2006-04-30T17:18:03Z</time> </trkpt>
-#       <trkpt lat="60.42338" lon="5.34269"> <ele>487</ele> <time>2006-04-30T17:18:05Z</time> </trkpt>
-#     </trkseg>
-#   </trk>
-# </gpx>
-# '
-ok - "../gpst -o gpx missing.gpsml" - Output GPX from gpsml with missing data (stderr)
+ok - "../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data
+ok - "../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data (stderr)
 ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
 ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX (stderr)
 ok - "../gpst -o pgtab compact.gpx" - Output pgtab from gpx format
@@ -382,21 +286,27 @@ ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data
 ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data (stderr)
 ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml
 ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml (stderr)
-ok - "../gpst -re missing.gpsml" - Require elevation # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -re missing.gpsml" - Require elevation (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rt missing.gpsml" - Require time # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rt missing.gpsml" - Require time (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rp missing.gpsml" - Require position # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rp missing.gpsml" - Require position (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -ret missing.gpsml" - Require elevation and time # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -ret missing.gpsml" - Require elevation and time (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -retp missing.gpsml" - Require elevation, time and position # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rep missing.gpsml" - Require elevation and position # TODO Shall lat/lon be cleared if one is missing?
-ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr) # TODO Shall lat/lon be cleared if one is missing?
+ok - "../gpst -re missing.gpsml" - Require elevation
+ok - "../gpst -re missing.gpsml" - Require elevation (stderr)
+ok - "../gpst -rt missing.gpsml" - Require time
+ok - "../gpst -rt missing.gpsml" - Require time (stderr)
+ok - "../gpst -rp missing.gpsml" - Require position
+ok - "../gpst -rp missing.gpsml" - Require position (stderr)
+ok - "../gpst -ret missing.gpsml" - Require elevation and time
+ok - "../gpst -ret missing.gpsml" - Require elevation and time (stderr)
+ok - "../gpst -retp missing.gpsml" - Require elevation, time and position
+ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stderr)
+ok - "../gpst -rep missing.gpsml" - Require elevation and position
+ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr)
 # Testing --round option...
 ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx
 ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx (stderr)
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele (stderr)
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output (stderr)
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx
+ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx (stderr)
 # Testing --short-date option...
 # Testing --save-to-file option...
 # Testing --create-breaks option...
@@ -406,6 +316,17 @@ ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
 ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
 ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
+# Testing -T (--time-shift) option...
+ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml
+ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml (stderr)
+ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml
+ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml (stderr)
+ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX
+ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX (stderr)
+ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option
+ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option (stderr)
+ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab
+ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab (stderr)
 # Testing -v (--verbose) option...
 ok - "../gpst -hv" - Option --version with -h returns Id string and help screen
 ok - "../gpst -hv" - Option --version with -h returns Id string and help screen (stderr)
@@ -413,59 +334,12 @@ ok - "../gpst -hv" - Option --version with -h returns Id string and help screen 
 ok - "../gpst --version" - Option --version returns Id string
 ok - "../gpst --version" - Option --version returns Id string (stderr)
 # Testing --strip-whitespace option...
-not ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output
-#   Failed test '"../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output'
-#   in ./run-tests.pl at line 1966.
-#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-# <gpx
-# version="1.1"
-# creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
-# xmlns="http://www.topografix.com/GPX/1/1"
-# xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-# xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
-# >
-# <trk>
-# <trkseg>
-# <trkpt lat="60.425494" lon="5.299534"><ele>25.260</ele><time>2006-05-21T16:49:11Z</time></trkpt>
-# <trkpt lat="60.425464" lon="5.299610"><ele>24.931</ele><time>2006-05-21T16:49:46Z</time></trkpt>
-# <trkpt lat="60.425314" lon="5.299694"><ele>27.975</ele><time>2006-05-21T16:52:04Z</time></trkpt>
-# <trkpt lat="60.425384" lon="5.299741"><ele>31.017</ele><time>2006-05-21T16:56:36Z</time></trkpt>
-# <trkpt lat="60.425339" lon="5.299958"><ele>30.980</ele><time>2006-05-21T16:56:47Z</time></trkpt>
-# <trkpt lat="60.425238" lon="5.299640"><ele>30.538</ele><time>2006-05-21T16:56:56Z</time></trkpt>
-# <trkpt lat="60.425246" lon="5.299686"><ele>30.515</ele><time>2006-05-21T16:57:03Z</time></trkpt>
-# <trkpt lat="60.425345" lon="5.299773"><ele>31.936</ele><time>2006-05-21T16:59:08Z</time></trkpt>
-# <trkpt lat="60.425457" lon="5.299419"><ele>31.794</ele><time>2006-05-21T17:00:54Z</time></trkpt>
-# </trkseg>
-# </trk>
-# </gpx>
-# '
-#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-# <gpx
-# version="1.1"
-# creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
-# xmlns="http://www.topografix.com/GPX/1/1"
-# xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-# xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
-# >
-# <trk>
-# <name>ACTIVE LOG164705</name>
-# <trkseg>
-# <trkpt lat="60.425494" lon="5.299534"><ele>25.260</ele><time>2006-05-21T16:49:11Z</time></trkpt>
-# <trkpt lat="60.425464" lon="5.299610"><ele>24.931</ele><time>2006-05-21T16:49:46Z</time></trkpt>
-# <trkpt lat="60.425314" lon="5.299694"><ele>27.975</ele><time>2006-05-21T16:52:04Z</time></trkpt>
-# <trkpt lat="60.425384" lon="5.299741"><ele>31.017</ele><time>2006-05-21T16:56:36Z</time></trkpt>
-# <trkpt lat="60.425339" lon="5.299958"><ele>30.980</ele><time>2006-05-21T16:56:47Z</time></trkpt>
-# <trkpt lat="60.425238" lon="5.299640"><ele>30.538</ele><time>2006-05-21T16:56:56Z</time></trkpt>
-# <trkpt lat="60.425246" lon="5.299686"><ele>30.515</ele><time>2006-05-21T16:57:03Z</time></trkpt>
-# <trkpt lat="60.425345" lon="5.299773"><ele>31.936</ele><time>2006-05-21T16:59:08Z</time></trkpt>
-# <trkpt lat="60.425457" lon="5.299419"><ele>31.794</ele><time>2006-05-21T17:00:54Z</time></trkpt>
-# </trkseg>
-# </trk>
-# </gpx>
-# '
-ok - "../gpst -w -o gpx pause.gpx" - Strip whitespace from GPX output (stderr)
+ok - "../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output
+ok - "../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output (stderr)
 ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines
 ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines (stderr)
+ok - "../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output
+ok - "../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output (stderr)
 # Testing --double-y-scale option...
 ok - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format
 ok - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format (stderr)
@@ -492,5 +366,5 @@ ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgr
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
 ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
 # Testing finished.
-1..221
-# Looks like you failed 4 tests of 221.
+1..239
+# Looks like you failed 1 test of 239.

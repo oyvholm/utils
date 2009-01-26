@@ -93,14 +93,55 @@ for my $Currarg (@ARGV) {
                 my $tz_str = length($Opt{'timezone'})
                     ? "-T $Opt{'timezone'} "
                     : "";
-                system("gpst-pic $tz_str$Currfile | psql -c \"COPY pictures FROM stdin\" $Opt{'database'}");
+                my $exec_str =
+                    "gpst-pic $tz_str$Currfile | psql -c \"COPY pictures (" .
+                    join(", ",
+                        "version",
+                        "date",
+                        "coor",
+                        "descr",
+                        "filename",
+                        "author"
+                    ) .
+                    ") FROM stdin\" $Opt{'database'}";
+                msg(1, "Executing '$exec_str'...");
+                system($exec_str);
             }
         }
         if ($Opt{'type'} =~ /track/) {
-            system("gpst -o pgtab -d -rpt $Currfile | psql -a -c \"COPY logg FROM stdin\" $Opt{'database'}");
+            my $exec_str =
+                "gpst -o pgtab -d -rpt $Currfile | " .
+                "psql -a -c \"COPY logg (" .
+                join(", ",
+                    "date",
+                    "coor",
+                    "ele",
+                    "sted",
+                    "dist",
+                    "description"
+                ) .
+                ") FROM stdin\" $Opt{'database'}";
+            msg(1, "Executing '$exec_str'...");
+            system($exec_str);
         }
         if ($Opt{'type'} =~ /waypoint/) {
-            system("gpst -o pgwtab $Currfile | psql -a -c \"COPY wayp FROM stdin\" $Opt{'database'}");
+            my $exec_str =
+                "gpst -o pgwtab $Currfile | " .
+                "psql -a -c \"COPY wayp_new (" .
+                join(", ",
+                    "coor",
+                    "name",
+                    "ele",
+                    "type",
+                    "time",
+                    "cmt",
+                    "descr",
+                    "src",
+                    "sym"
+                ) .
+                ") FROM stdin\" $Opt{'database'}";
+            msg(1, "Executing '$exec_str'...");
+            system($exec_str);
         }
     }
 }
@@ -142,7 +183,7 @@ Options:
       Time zone abbreviation. Examples:
         UTC
         Z
-        CET 
+        CET
   -t X, --type X
     Comma-separated list of point types to extract from files:
       picture

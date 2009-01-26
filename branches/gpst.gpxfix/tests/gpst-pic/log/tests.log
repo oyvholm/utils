@@ -21,6 +21,9 @@ ok - "../../gpst-pic -o xml files/DSC_4426.JPG" - Output XML information for DSC
 ok - "../../gpst-pic -o xml files/DSC_4426.JPG" - Output XML information for DSC_4426.JPG (stderr)
 ok - "../../gpst-pic -o blurfl files/DSC_4426.JPG" - Unknown output format specified
 ok - "../../gpst-pic -o blurfl files/DSC_4426.JPG" - Unknown output format specified (stderr)
+# Testing -w (--strip-whitespace) option...
+ok - "../../gpst-pic -w -o xml files/DSC_4426.JPG" - Strip whitespace from XML
+ok - "../../gpst-pic -w -o xml files/DSC_4426.JPG" - Strip whitespace from XML (stderr)
 # Testing -T (--timezone) option...
 ok - "../../gpst-pic --timezone +1234 files/DSC_4426.JPG" - --timezone works
 ok - "../../gpst-pic --timezone +1234 files/DSC_4426.JPG" - --timezone works (stderr)
@@ -44,4 +47,4 @@ ok - "../../gpst-pic --version" - Option --version returns Id string (stderr)
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options (stderr)
 # Testing finished.
-1..35
+1..37

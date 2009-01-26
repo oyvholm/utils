@@ -56,6 +56,7 @@ our %Opt = (
     'short-date' => 0,
     'skip-dups' => 0,
     'strip-whitespace' => 0,
+    'time-shift' => 0,
     'undefined' => "",
     'verbose' => 0,
     'version' => 0,
@@ -96,6 +97,7 @@ GetOptions(
     "short-date|s" => \$Opt{'short-date'},
     "skip-dups|d" => \$Opt{'skip-dups'},
     "strip-whitespace|w" => \$Opt{'strip-whitespace'},
+    "time-shift|T=i" => \$Opt{'time-shift'},
     "undefined|n=s" => \$Opt{'undefined'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -544,6 +546,18 @@ sub print_gpx {
             $el_wpt =~ /.*<sym\b(.*?)>(.*?)<\/sym>/s &&
                 ($Sym = postgresql_copy_safe(xml_to_txt($2)));
 
+            if (length($Opt{'round'})) {
+                if (defined($Round{'lat'}) && length($Lat)) {
+                    ($Lat = 1.0 * sprintf("%.$Round{'lat'}f", $Lat));
+                }
+                if (defined($Round{'lon'}) && length($Lon)) {
+                    ($Lon = 1.0 * sprintf("%.$Round{'lon'}f", $Lon));
+                }
+                if (defined($Round{'ele'}) && $Ele ne '\N') {
+                    ($Ele = 1.0 * sprintf("%.$Round{'ele'}f", $Ele));
+                }
+            }
+
             if ($Opt{'output-format'} eq "pgwtab") {
                 print(
                     join("\t",
@@ -562,10 +576,10 @@ sub print_gpx {
                 $Name =~ s/'/''/gs;
                 print(join("\n",
                     "BEGIN;",
-                    "    UPDATE logg SET sted = clname(coor) " .
-                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
-                    "    UPDATE logg SET dist = cldist(coor) " .
-                            "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "$Spc${Spc}UPDATE logg SET sted = clname(coor) " .
+                        "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
+                    "$Spc${Spc}UPDATE logg SET dist = cldist(coor) " .
+                        "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
                     "COMMIT;"
                 ) . "\n");
             }
@@ -741,7 +755,12 @@ sub print_entry {
     defined($Dat{'lon'}) || ($Dat{'lon'} = "");
     defined($Dat{'year'}) || ($Dat{'year'} = "");
     my $print_time = length($Dat{'year'}) ? 1 : 0;
-    my $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
+    my $print_pos;
+    if (!$Req{'position'} && $Opt{'output-format'} eq "gpsml") {
+        $print_pos = (length($Dat{'lat'}) || length($Dat{'lon'})) ? 1 : 0;
+    } else {
+        $print_pos = (length($Dat{'lat'}) && length($Dat{'lon'})) ? 1 : 0;
+    }
     if (!$print_pos) {
         $Dat{'lat'} = $Dat{'lon'} = "";
     }
@@ -779,6 +798,15 @@ sub print_entry {
             $Dat{'sec'}, $Dat{'min'}, $Dat{'hour'},
             $Dat{'day'}, $Dat{'month'} - 1, $Dat{'year'}
         );
+        if ($Opt{'time-shift'}) {
+            D("ep_time før: '$ep_time'");
+            $ep_time += $Opt{'time-shift'};
+            D("ep_time etter: '$ep_time'");
+            ($Dat{'sec'}, $Dat{'min'},$Dat{'hour'}, $Dat{'day'},
+             $Dat{'month'}, $Dat{'year'}) = gmtime($ep_time);
+            $Dat{'year'} += 1900;
+            $Dat{'month'}++;
+        }
         $Dat{'epoch'} = $ep_time;
         $Dat{'year'}  = sprintf("%04u", $Dat{'year'});
         $Dat{'month'} = sprintf("%02u", $Dat{'month'});
@@ -1226,6 +1254,9 @@ Options:
   -t, --create-breaks
     Create breaks in track between points with a difference more than 
     $PAUSE_LIMIT seconds.
+  -T x, --time-shift x
+    Move time of trackpoint x seconds forwards or backwards. x can be a 
+    positive or negative integer.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version

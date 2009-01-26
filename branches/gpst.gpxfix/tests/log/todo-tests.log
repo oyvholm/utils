@@ -5,9 +5,60 @@ ok - use GPSTgeo;
 ok - use GPSTxml;
 # ========== Executing "run-tests.pl --todo" ==========
 # Running TODO tests...
+not ok - "../gpst -o gpx pause.gpx" - Read and write name element from/to GPX # TODO Fix read/write of GPX name element
+#   Failed (TODO) test '"../gpst -o gpx pause.gpx" - Read and write name element from/to GPX'
+#   at ./run-tests.pl line 2255.
+#          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
+#       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
+#       <trkpt lat="60.425314" lon="5.299694"> <ele>27.975</ele> <time>2006-05-21T16:52:04Z</time> </trkpt>
+#       <trkpt lat="60.425384" lon="5.299741"> <ele>31.017</ele> <time>2006-05-21T16:56:36Z</time> </trkpt>
+#       <trkpt lat="60.425339" lon="5.299958"> <ele>30.980</ele> <time>2006-05-21T16:56:47Z</time> </trkpt>
+#       <trkpt lat="60.425238" lon="5.299640"> <ele>30.538</ele> <time>2006-05-21T16:56:56Z</time> </trkpt>
+#       <trkpt lat="60.425246" lon="5.299686"> <ele>30.515</ele> <time>2006-05-21T16:57:03Z</time> </trkpt>
+#       <trkpt lat="60.425345" lon="5.299773"> <ele>31.936</ele> <time>2006-05-21T16:59:08Z</time> </trkpt>
+#       <trkpt lat="60.425457" lon="5.299419"> <ele>31.794</ele> <time>2006-05-21T17:00:54Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <name>ACTIVE LOG164705</name>
+#     <trkseg>
+#       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
+#       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
+#       <trkpt lat="60.425314" lon="5.299694"> <ele>27.975</ele> <time>2006-05-21T16:52:04Z</time> </trkpt>
+#       <trkpt lat="60.425384" lon="5.299741"> <ele>31.017</ele> <time>2006-05-21T16:56:36Z</time> </trkpt>
+#       <trkpt lat="60.425339" lon="5.299958"> <ele>30.980</ele> <time>2006-05-21T16:56:47Z</time> </trkpt>
+#       <trkpt lat="60.425238" lon="5.299640"> <ele>30.538</ele> <time>2006-05-21T16:56:56Z</time> </trkpt>
+#       <trkpt lat="60.425246" lon="5.299686"> <ele>30.515</ele> <time>2006-05-21T16:57:03Z</time> </trkpt>
+#       <trkpt lat="60.425345" lon="5.299773"> <ele>31.936</ele> <time>2006-05-21T16:59:08Z</time> </trkpt>
+#       <trkpt lat="60.425457" lon="5.299419"> <ele>31.794</ele> <time>2006-05-21T17:00:54Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+ok - "../gpst -o gpx pause.gpx" - Read and write name element from/to GPX (stderr) # TODO Fix read/write of GPX name element
 not ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx'
-#   in ./run-tests.pl at line 1966.
+#   at ./run-tests.pl line 2255.
 #          got: '				
 # 2003-02-11T23:35:39Z	-0.1448824	51.4968266		
 # 2003-02-11T23:35:49Z	-0.1449938	51.4968227		
@@ -50,7 +101,7 @@ not ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx
 ok - "../gpst -o csv multitrack.gpx" - Output csv format from multitrack.gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -o csv pause.gpx" - Output csv format from pause.gpx'
-#   in ./run-tests.pl at line 1966.
+#   at ./run-tests.pl line 2255.
 #          got: '				
 # 2006-05-21T16:49:11Z	5.299534	60.425494	25.260	
 # 2006-05-21T16:49:46Z	5.299610	60.425464	24.931	
@@ -75,7 +126,7 @@ not ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx # TODO Re
 ok - "../gpst -o csv pause.gpx" - Output csv format from pause.gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx # TODO Remove extra \n in the beginning
 #   Failed (TODO) test '"../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx'
-#   in ./run-tests.pl at line 1966.
+#   at ./run-tests.pl line 2255.
 #          got: '				
 # 1148230151	5.299534	60.425494	25.260	
 # 1148230186	5.299610	60.425464	24.931	
@@ -100,7 +151,7 @@ not ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx 
 ok - "../gpst -e -o csv pause.gpx" - csv format with epoch seconds from gpx (stderr) # TODO Remove extra \n in the beginning
 not ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx # TODO Tweak output
 #   Failed (TODO) test '"../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pause.gpx'
-#   in ./run-tests.pl at line 1966.
+#   at ./run-tests.pl line 2255.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"
@@ -188,8 +239,8 @@ ok - "../gpst -o gpx multitrack-pause.gpsml" - Should be equal to multitrack-pau
 GPX: Cannot open file '/home/sunny/gps/waypoints.gpx'!
 not ok - list_nearest_waypoints() # TODO Fix it.
 #   Failed (TODO) test 'list_nearest_waypoints()'
-#   in ./run-tests.pl at line 1938.
+#   at ./run-tests.pl line 2227.
 #                   ''
 #     doesn't match '(?-xism:^\(.*,.*,.*\)$)'
 # Testing finished.
-1..14
+1..16

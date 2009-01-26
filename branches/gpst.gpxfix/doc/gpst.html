@@ -66,12 +66,7 @@
                       value is always <code class="literal">\N</code>.</p></dd><dt><span class="term"><span class="database">description</span></span></dt><dd><p>Description of waypoint.
                       Calculated in 
                       <span class="application">PostgreSQL</span>, so this 
-                      value is always <code class="literal">\N</code>.</p></dd><dt><span class="term"><span class="database">avst</span></span></dt><dd><p>Distance to trackpoint in decimal degrees 
-                      from a defined “<span class="quote">home</span>” position.
-                      This is calculated in 
-                      <span class="application">PostgreSQL</span>, so the 
-                      field value is always 
-                      <code class="literal">\N</code>.</p></dd></dl></div></dd><dt><span class="term"><code class="option">pgwtab</code></span></dt><dd><p>Output waypoints on a TAB-separated format:</p><div class="variablelist"><dl><dt><span class="term"><span class="database">coor</span></span></dt><dd><p>Format:
+                      value is always <code class="literal">\N</code>.</p></dd></dl></div></dd><dt><span class="term"><code class="option">pgwtab</code></span></dt><dd><p>Output waypoints on a TAB-separated format:</p><div class="variablelist"><dl><dt><span class="term"><span class="database">coor</span></span></dt><dd><p>Format:
                       <code class="literal">(<em class="replaceable"><code>lat</code></em>,<em class="replaceable"><code>lon</code></em>)</code></p></dd><dt><span class="term"><span class="database">name</span></span></dt><dd><p>Title of waypoint.</p></dd><dt><span class="term"><span class="database">ele</span></span></dt><dd><p>Elevation in metres above sea level.</p></dd><dt><span class="term"><span class="database">type</span></span></dt><dd><p>Type of waypoint, same as the GPX <code class="sgmltag-starttag">&lt;type&gt;</code> element.</p></dd><dt><span class="term"><span class="database">time</span></span></dt><dd><p>Timestamp of waypoint.</p></dd><dt><span class="term"><span class="database">cmt</span></span></dt><dd><p>Short waypoint description, used by the GPS 
                       as a comment.
                       Same as the GPX <code class="sgmltag-starttag">&lt;cmt&gt;</code> element.</p></dd><dt><span class="term"><span class="database">descr</span></span></dt><dd><p>Long description, not used by the GPS.
@@ -106,13 +101,17 @@
             This behaviour may change in the future.</p></div></dd><dt><span class="term"><code class="option">-t</code>, 
         <code class="option">--create-breaks</code></span></dt><dd><p>Create breaks in track between points with a difference 
           more than the number of seconds specified by the 
-          <code class="envar">PAUSE_LIMIT</code> variable.</p></dd><dt><span class="term"><code class="option">-v</code>, <code class="option">--verbose</code></span></dt><dd><p>Verbose output, can be repeated.</p></dd><dt><span class="term"><code class="option">--version</code></span></dt><dd><p>Print program version information.</p></dd><dt><span class="term"><code class="option">-w</code>, 
+          <code class="envar">PAUSE_LIMIT</code> variable.</p></dd><dt><span class="term"><code class="option">-T <em class="replaceable"><code>x</code></em></code>, 
+        <code class="option">--time-shift 
+        <em class="replaceable"><code>x</code></em></code></span></dt><dd><p>Move timestamps <em class="replaceable"><code>x</code></em> seconds 
+          forwards or backwards in output.
+          <em class="replaceable"><code>x</code></em> can be a positive or negative 
+          integer.</p></dd><dt><span class="term"><code class="option">-v</code>, <code class="option">--verbose</code></span></dt><dd><p>Verbose output, can be repeated.</p></dd><dt><span class="term"><code class="option">--version</code></span></dt><dd><p>Print program version information.</p></dd><dt><span class="term"><code class="option">-w</code>, 
         <code class="option">--strip-whitespace</code></span></dt><dd><p>Strip all unnecessary whitespace.</p></dd><dt><span class="term"><code class="option">-y</code>, 
         <code class="option">--double-y-scale</code></span></dt><dd><p>Double Y scale (latitude).</p></dd><dt><span class="term"><code class="option">--debug</code></span></dt><dd><p>Print debugging messages.</p></dd></dl></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.bugs"></a><h2>Bugs and things that need to be done</h2><div class="itemizedlist"><ul type="disc"><li><p>Pretty incomplete in some areas.
         Some of the source formats are undocumented and thus incomplete.
         Some functionality is not working properly, for example the 
-        Postscript output.</p></li><li><p>Remove hardcodings, for example the “<span class="quote">home</span>” 
-        position used to calculate the <span class="database">avst</span> database column.</p></li><li><p>Translate database column names to English.</p></li><li><p>Add more tests to cover all command-line options.</p></li></ul></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.author"></a><h2>Author</h2><p>Made by <span class="personname"><span class="firstname">Øyvind</span> <span class="othername">A.</span> <span class="surname">Holm</span></span> 
+        Postscript output.</p></li><li><p>Remove hardcodings.</p></li><li><p>Translate database column names to English.</p></li><li><p>Add more tests to cover all command-line options.</p></li></ul></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.author"></a><h2>Author</h2><p>Made by <span class="personname"><span class="firstname">Øyvind</span> <span class="othername">A.</span> <span class="surname">Holm</span></span> 
     <code class="email">&lt;<a class="email" href="mailto:sunny@sunbase.org">sunny@sunbase.org</a>&gt;</code>.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="gpst.copyright"></a><h2>Copyright</h2><p>Copyleft © <span class="personname"><span class="firstname">Øyvind</span> <span class="othername">A.</span> <span class="surname">Holm</span></span> 
     <code class="email">&lt;<a class="email" href="mailto:sunny@sunbase.org">sunny@sunbase.org</a>&gt;</code>.
     This is free software; see the file <code class="filename">COPYING</code> for 

@@ -6,8 +6,7 @@ CREATE TABLE logg (
     ele numeric,
     sted text,
     dist numeric(8, 5),
-    description text,
-    avst numeric(8, 5)
+    description text
 );
 
 CREATE TABLE wayp (
@@ -19,7 +18,34 @@ CREATE TABLE wayp (
     cmt text, -- GPS waypoint comment. Sent to the GPS as comment.
     descr text, -- A text description. Additional info intended for the user, not the GPS.
     src text,
-    sym text
+    sym text,
+    id integer
+);
+
+CREATE TABLE wayp_new (
+    coor point,
+    name text,
+    ele numeric(6, 1),
+    type text,
+    time timestamptz,
+    cmt text, -- GPS waypoint comment. Sent to the GPS as comment.
+    descr text, -- A text description. Additional info intended for the user, not the GPS.
+    src text,
+    sym text,
+    id serial
+);
+
+CREATE TABLE wayp_rej (
+    coor point,
+    name text,
+    ele numeric(6, 1),
+    type text,
+    time timestamptz,
+    cmt text, -- GPS waypoint comment. Sent to the GPS as comment.
+    descr text, -- A text description. Additional info intended for the user, not the GPS.
+    src text,
+    sym text,
+    id integer
 );
 
 CREATE TABLE tmpwayp AS

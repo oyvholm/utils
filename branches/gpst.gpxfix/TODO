@@ -1,0 +1,56 @@
+$Id$
+
+Nye veipunkter havner i wayp_new istedenfor å gå rett inn i wayp.
+
+  Dette skal gjøre det mulig å oppdatere dataene for kun nye veipunkter 
+  (<wpt>) istedenfor å måtte kjøre \allupdate.sql etterfulgt av 
+  \update_things.sql . Planen er:
+
+  En ny tabell lages, "wayp_new". Nye veipunkter lagres der før de blir 
+  forfremmet til wayp-tabellen. For at kun de nye punktene blir 
+  behandlet, må det tråles gjennom lista og alle punktene som er nærmere 
+  enn 0.05 blir oppdatert.
+
+  Last nye punkter inn i wayp_new;
+  Trål gjennom alle koordinater i wayp_new {
+    Hvis navn og posisjon finnes i wayp fra før {
+      Slett punktet fra wayp_new;
+    } else {
+      BEGIN {
+        Oppdater alle trackpoints i databasen som er nærmere enn 0.05;
+        Slett alle veipunkter fra wayp som har de samme koordinatene;
+        Kopier veipunktet til wayp;
+        Slett punktet fra wayp_new;
+      }
+  }
+
+  En annen måte:
+
+  logg.coor er UNIQUE
+  Last nye punkter inn i wayp_new;
+  Trål gjennom alle koordinater i wayp_new {
+    Hvis navn og posisjon finnes i wayp fra før {
+      Flytt veipunktet fra new_wayp til wayp_rej;
+    } else {
+      BEGIN {
+        Oppdater alle trackpoints i databasen som er nærmere enn 0.05;
+        Flytt veipunktet fra wayp_new til wayp;
+      }
+  }
+
+  Eller kanskje en bedre metode er:
+
+  logg.coor er UNIQUE
+  Last nye punkter inn i wayp_new;
+  Trål gjennom alle koordinater i wayp_new {
+    BEGIN {
+      Flytt veipunktet fra wayp_new til wayp;
+      Hvis det gikk fint {
+        Oppdater alle trackpoints i databasen som er nærmere enn 0.05;
+      } else {
+        Flytt veipunktet fra new_wayp til wayp_rej;
+      }
+    }
+  }
+
+vim: set tw=72 ts=2 sw=2 sts=2 fo=tcqw2 et fenc=utf8 :
