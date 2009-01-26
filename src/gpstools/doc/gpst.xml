@@ -286,18 +286,6 @@
                     </listitem>
                   </varlistentry>
 
-                  <varlistentry>
-                    <term><database class="field">avst</database></term>
-                    <listitem>
-                      <para>Distance to trackpoint in decimal degrees 
-                      from a defined <quote>home</quote> position.
-                      This is calculated in 
-                      <application>PostgreSQL</application>, so the 
-                      field value is always 
-                      <literal>\N</literal>.</para>
-                    </listitem>
-                  </varlistentry>
-
                 </variablelist>
               </listitem>
             </varlistentry>
@@ -612,9 +600,7 @@
       </listitem>
 
       <listitem>
-        <para>Remove hardcodings, for example the <quote>home</quote> 
-        position used to calculate the <database 
-        class="field">avst</database> database column.</para>
+        <para>Remove hardcodings.</para>
       </listitem>
 
       <listitem>

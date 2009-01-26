@@ -6,8 +6,7 @@ CREATE TABLE logg (
     ele numeric,
     sted text,
     dist numeric(8, 5),
-    description text,
-    avst numeric(8, 5)
+    description text
 );
 
 CREATE TABLE wayp (

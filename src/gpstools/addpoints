@@ -118,8 +118,7 @@ for my $Currarg (@ARGV) {
                     "ele",
                     "sted",
                     "dist",
-                    "description",
-                    "avst"
+                    "description"
                 ) .
                 ") FROM stdin\" $Opt{'database'}";
             msg(1, "Executing '$exec_str'...");

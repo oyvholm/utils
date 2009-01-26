@@ -173,10 +173,6 @@ $$ LANGUAGE plpgsql; -- }}}
 CREATE OR REPLACE FUNCTION update_trackpoint(currpoint point) RETURNS void AS $$ -- {{{
 BEGIN
     RAISE NOTICE 'starter update_trackpoint(%), %', currpoint, clname(currpoint);
-    -- Avstanden hjemmefra.
-    UPDATE logg SET avst = '(60.42543,5.29959)'::point <-> $1
-        WHERE ($1 <-> coor) < 0.05;
-    RAISE NOTICE 'avst ferdig';
     -- Sted og dist
     UPDATE logg SET sted = clname(coor), dist = cldist(coor)
         WHERE ($1 <-> coor) < 0.05;

@@ -55,41 +55,6 @@ CREATE OR REPLACE VIEW siste_dogn -- {{{
     ) AS s
     ORDER BY date; -- }}}
 
--- fjernest: List ut de 50.000 punktene som ligger lengst hjemmefra
-CREATE OR REPLACE VIEW fjernest -- {{{
-    AS SELECT * FROM logg
-        ORDER BY avst DESC LIMIT 50000; -- }}}
-
--- fjernest_siste_aar: List ut de 50.000 punktene lengst hjemmefra siste året
-CREATE OR REPLACE VIEW fjernest_siste_aar -- {{{
-    AS SELECT * FROM logg
-        WHERE date > now()+interval '1 year ago'
-        ORDER BY avst DESC LIMIT 50000; -- }}}
-
--- fjernest_siste_halvaar: List ut de 50.000 punktene lengst hjemmefra siste halvåret
-CREATE OR REPLACE VIEW fjernest_siste_halvaar -- {{{
-    AS SELECT * FROM logg
-        WHERE date > now()+interval '0.5 year ago'
-        ORDER BY avst DESC LIMIT 50000; -- }}}
-
--- fjernest_siste_maaned: List ut de 50.000 punktene lengst hjemmefra siste måneden
-CREATE OR REPLACE VIEW fjernest_siste_maaned -- {{{
-    AS SELECT * FROM logg
-        WHERE date > now() + interval '1 month ago'
-        ORDER BY avst DESC LIMIT 50000; -- }}}
-
--- fjernest_siste_uke: List ut de 50.000 punktene lengst hjemmefra siste uka
-CREATE OR REPLACE VIEW fjernest_siste_uke -- {{{
-    AS SELECT * FROM logg
-        WHERE date > now() + interval '1 week ago'
-        ORDER BY avst DESC LIMIT 50000; -- }}}
-
--- fjernest_siste_dogn: List ut de 50.000 punktene lengst hjemmefra siste døgn
-CREATE OR REPLACE VIEW fjernest_siste_dogn -- {{{
-    AS SELECT * FROM logg
-        WHERE date > now() + interval '1 day ago'
-        ORDER BY avst DESC LIMIT 50000; -- }}}
-
 /*** Intervaller ***/
 
 CREATE OR REPLACE VIEW minutt -- {{{
@@ -123,7 +88,7 @@ CREATE OR REPLACE VIEW gpx AS -- {{{
     FROM logg; -- }}}
 
 CREATE OR REPLACE VIEW gpst AS -- {{{
-    SELECT date, coor, ele, sted, dist, avst,
+    SELECT date, coor, ele, sted, dist,
     '<tp> <time>' || date at time zone 'UTC' || 'Z' || '</time> <lat>' || coor[0] || '</lat> <lon>' || coor[1] || '</lon> </tp>'
     AS gpst
     FROM logg; -- }}}
@@ -131,13 +96,13 @@ CREATE OR REPLACE VIEW gpst AS -- {{{
 -- ev: Lister ut events sammen med loggen.
 CREATE OR REPLACE VIEW ev AS -- {{{
     SELECT * FROM (
-        SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
+        SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr
             FROM logg
         UNION ALL
-        SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr, NULL
+        SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr
             FROM events
         UNION ALL
-        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL, NULL
+        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL
             FROM pictures
     ) AS u
     ORDER BY date; -- }}}
