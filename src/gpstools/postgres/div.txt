@@ -3,3 +3,22 @@ $Id$
 For å liste ut de nærmeste trackpunktene for en posisjon:
 
 SELECT date, coor, sted, dist, (point(60.30738,5.34574) <-> coor)::numeric AS avs FROM logg ORDER BY avs LIMIT 100;
+
+Tida det tar for å oppdatere:
+
+gps=# VACUUM ANALYZE ;
+VACUUM
+Time: 161378.262 ms
+gps=# UPDATE logg set sted = clname(coor);
+UPDATE 1338265
+Time: 9048130.264 ms
+gps=# DROP INDEX log_sted_idx ;
+DROP INDEX
+Time: 1505.479 ms
+gps=# UPDATE logg set sted = clname(coor);
+UPDATE 1338265
+Time: 11840073.695 ms
+gps=# CREATE INDEX log_sted_idx ON logg (sted);
+CREATE INDEX
+Time: 191318.425 ms
+gps=#
