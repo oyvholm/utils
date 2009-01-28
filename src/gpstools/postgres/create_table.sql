@@ -6,7 +6,8 @@ CREATE TABLE logg (
     ele numeric,
     sted text,
     dist numeric(8, 5),
-    description text
+    description text,
+    id serial
 );
 
 CREATE TABLE wayp (
