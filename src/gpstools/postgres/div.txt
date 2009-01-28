@@ -22,3 +22,8 @@ gps=# CREATE INDEX log_sted_idx ON logg (sted);
 CREATE INDEX
 Time: 191318.425 ms
 gps=#
+
+gps=# UPDATE logg SET sted = clname(coor), dist = cldist(coor);
+UPDATE 201745
+Time: 721844.368 ms
+gps=#
