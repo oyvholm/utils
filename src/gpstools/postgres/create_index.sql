@@ -6,6 +6,7 @@ CREATE INDEX log_coor1_idx ON logg((coor[1]));
 CREATE INDEX log_ele_idx ON logg(ele);
 CREATE INDEX log_sted_idx ON logg(sted);
 CREATE INDEX log_dist_idx ON logg(dist);
+CREATE INDEX log_id_idx ON logg(id);
 
 CREATE INDEX ev_date_idx ON events (date);
 CREATE INDEX ev_begindate_idx ON events (begindate);
