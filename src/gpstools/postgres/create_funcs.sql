@@ -146,7 +146,7 @@ BEGIN
         IF curr_id IS NOT NULL THEN
             RAISE NOTICE 'curr_id er ikke null: %', curr_id;
             currpoint = (SELECT coor FROM wayp_new WHERE id = curr_id);
-            IF (SELECT coor FROM wayp WHERE coor[0] = currpoint[0] AND coor[1] = currpoint[1]) IS NOT NULL THEN
+            IF (SELECT coor FROM wayp WHERE coor[0] = currpoint[0] AND coor[1] = currpoint[1] LIMIT 1) IS NOT NULL THEN
                 RAISE NOTICE '% finnes allerede i wayp', currpoint;
                 INSERT INTO wayp_rej SELECT * FROM wayp_new WHERE id = curr_id;
             ELSE
@@ -156,7 +156,7 @@ BEGIN
             END IF;
             DELETE FROM wayp_new WHERE id = curr_id;
         ELSE
-            RAISE NOTICE 'currpoint er null';
+            RAISE NOTICE 'curr_id er null';
             EXIT;
         END IF;
     END LOOP;
