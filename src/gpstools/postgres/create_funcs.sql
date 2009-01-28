@@ -152,7 +152,6 @@ BEGIN
             ELSE
                 RAISE NOTICE '% er ikke i wayp', currpoint;
                 INSERT INTO wayp SELECT * FROM wayp_new WHERE id = curr_id;
-                PERFORM update_trackpoint(currpoint);
             END IF;
             DELETE FROM wayp_new WHERE id = curr_id;
         ELSE
