@@ -142,7 +142,7 @@ BEGIN
         round(coor[1]::numeric, 6)
     );
     LOOP
-        curr_id = first_wayp_new();
+        curr_id = (SELECT id FROM wayp_new ORDER BY id LIMIT 1);
         IF curr_id IS NOT NULL THEN
             RAISE NOTICE 'curr_id er ikke null: %', curr_id;
             currpoint = (SELECT coor FROM wayp_new WHERE id = curr_id);
@@ -171,14 +171,6 @@ BEGIN
         WHERE ($1 <-> coor) < 0.05;
     RAISE NOTICE 'update_trackpoint(%) er ferdig', currpoint;
 END;
-$$ LANGUAGE plpgsql;
--- }}}
-
--- first_wayp_new(): Returnerer id for den eldste i wayp_new.
-CREATE OR REPLACE FUNCTION first_wayp_new() RETURNS integer AS $$ -- {{{
-BEGIN
-    RETURN(SELECT id FROM wayp_new ORDER BY id LIMIT 1);
-END
 $$ LANGUAGE plpgsql;
 -- }}}
 
