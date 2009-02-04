@@ -106,7 +106,7 @@ my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime();
 $Year += 1900;
 $Mon += 1;
 
-my $URL = "http://svn.sunbase.org/repos/utils/trunk/Lib/std/$Type";
+my $URL = "$ENV{SR}/utils/trunk/Lib/std/$Type";
 my $tmpfile = "tmp.std." . time;
 
 if ($Opt{'local'}) {
