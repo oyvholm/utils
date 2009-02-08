@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id: bash 1875 2006-08-21 17:29:27Z sunny $
-# En liten sak som jeg fikk hos Mike Menk.ø
+# $Id$
+# En liten sak som jeg fikk hos Mike Menk.
 #=======================================================================
 
 gpsbabel -i gpx -f $1 -x discard,hdop=2 -o gpx -F $(basename $1 .gpx ).del_hdup2.gpx
