@@ -64,7 +64,16 @@ CREATE OR REPLACE VIEW minutt -- {{{
         ) *
         FROM logg
     ) AS s
-    ORDER BY date DESC; -- }}}
+    ORDER BY date; -- }}}
+CREATE OR REPLACE VIEW minuttname -- {{{
+    AS SELECT * FROM (
+        SELECT DISTINCT ON (
+            date_trunc('minute', date),
+            name
+        ) *
+        FROM logg
+    ) AS s
+    ORDER BY date; -- }}}
 
 /*** Formater ***/
 
