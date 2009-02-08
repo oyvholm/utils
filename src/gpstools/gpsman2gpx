@@ -31,6 +31,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -50,6 +51,7 @@ GetOptions(
 
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "quiet|q" => \$Opt{'quiet'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -118,7 +120,7 @@ sub conv_pos {
             ? 0-$Deg
             : $Deg;
     } else {
-        warn("\"$Retval\": Invalid coordinate\n");
+        warn("\"$Retval\": Invalid coordinate\n") unless $Opt{'quiet'};
     }
     return $Retval;
     # }}}
@@ -150,6 +152,8 @@ Options:
     Show this help.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -q, --quiet
+    Be quiet, don’t warn about unknown lines and stuff.
   --version
     Print version information.
   --debug
