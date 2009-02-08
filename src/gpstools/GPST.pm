@@ -151,7 +151,7 @@ sub trackpoint {
                     ? "($Dat{'lat'},$Dat{'lon'})"
                     : '\N', # coor
                 length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
-                '\N', # sted
+                '\N', # name
                 '\N', # dist
                 '\N'  # description
             ) . "\n";

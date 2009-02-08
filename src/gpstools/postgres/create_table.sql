@@ -4,7 +4,7 @@ CREATE TABLE logg (
     date timestamptz,
     coor point,
     ele numeric,
-    sted text,
+    name text,
     dist numeric(8, 5),
     description text,
     id serial
@@ -76,5 +76,5 @@ CREATE TABLE pictures (
 
 CREATE TABLE stat (
     lastupdate timestamptz,
-    laststed timestamptz
+    lastname timestamptz
 );

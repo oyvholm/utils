@@ -117,7 +117,7 @@ $$ LANGUAGE plpgsql; -- }}}
 CREATE OR REPLACE FUNCTION wherepos(currtime timestamptz) RETURNS text AS $$ -- {{{
 DECLARE
     currpos point;
-    currsted text;
+    currname text;
     currdist numeric;
     currlat numeric(9, 6);
     currlon numeric(9, 6);
@@ -125,9 +125,9 @@ BEGIN
     currpos = findpos(currtime);
     currlat = currpos[0];
     currlon = currpos[1];
-    currsted = clname(currpos);
+    currname = clname(currpos);
     currdist = cldist(currpos);
-    RETURN(currtime || ' - ' || currlat::text || ' ' || currlon::text || ' - ' || currsted || ' - ' || currdist);
+    RETURN(currtime || ' - ' || currlat::text || ' ' || currlon::text || ' - ' || currname || ' - ' || currdist);
 END;
 $$ LANGUAGE plpgsql; -- }}}
 
@@ -166,7 +166,7 @@ $$ LANGUAGE plpgsql; -- }}}
 CREATE OR REPLACE FUNCTION update_trackpoint(currpoint point) RETURNS void AS $$ -- {{{
 BEGIN
     RAISE NOTICE 'starter update_trackpoint(%), %', currpoint, clname(currpoint);
-    UPDATE logg SET sted = clname(coor), dist = cldist(coor)
+    UPDATE logg SET name = clname(coor), dist = cldist(coor)
         WHERE ($1 <-> coor) < 0.05;
     RAISE NOTICE 'update_trackpoint(%) er ferdig', currpoint;
 END;

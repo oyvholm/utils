@@ -255,7 +255,7 @@
                   </varlistentry>
 
                   <varlistentry>
-                    <term><database class="field">sted</database></term>
+                    <term><database class="field">name</database></term>
                     <listitem>
                       <para>Short name of closest waypoint.
                       Calculated in 
@@ -378,7 +378,7 @@
               <term><option>pgwupd</option></term>
               <listitem>
                 <para>Output waypoints as SQL transactions which updates  
-                the <database class="field">sted</database> and 
+                the <database class="field">name</database> and 
                 <database class="field">dist</database> columns.</para>
               </listitem>
             </varlistentry>

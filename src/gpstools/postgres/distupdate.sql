@@ -2,17 +2,17 @@
 
 BEGIN ISOLATION LEVEL SERIALIZABLE;
     \echo
-    \echo ================ Oppdater sted og dist ================
+    \echo ================ Oppdater name og dist ================
 
-    UPDATE logg SET sted = clname(coor), dist = cldist(coor)
+    UPDATE logg SET name = clname(coor), dist = cldist(coor)
         WHERE date > (
-            SELECT laststed FROM stat
+            SELECT lastname FROM stat
                 WHERE lastupdate IS NOT NULL
                 ORDER BY lastupdate DESC LIMIT 1
         )
         OR date IS NULL;
 
-    INSERT INTO stat (lastupdate, laststed) VALUES (
+    INSERT INTO stat (lastupdate, lastname) VALUES (
         now(),
         (SELECT max(date) FROM logg)
     );

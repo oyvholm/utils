@@ -116,7 +116,7 @@ for my $Currarg (@ARGV) {
                     "date",
                     "coor",
                     "ele",
-                    "sted",
+                    "name",
                     "dist",
                     "description"
                 ) .
