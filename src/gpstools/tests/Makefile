@@ -10,6 +10,7 @@ all:
 	cd addpoints && make
 
 clean:
+	rm -vf gpst-stderr.tmp
 	svn revert log/tests.log log/todo-tests.log
 	cd addpoints && make clean
 	cd gpst-pic && make clean
