@@ -131,6 +131,7 @@ CREATE OR REPLACE VIEW wp AS -- {{{
         coor AS coor,
         substr(name, 1, 20) AS name,
         type AS type,
+        numpoints as nump,
         substr(cmt, 1, 20) AS cmt,
         ele AS ele,
         time AS time
