@@ -16,4 +16,6 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
         now(),
         (SELECT max(date) FROM logg)
     );
+    \echo ================ Oppdater wayp.numpoints ================
+    UPDATE wayp SET numpoints = numpoints(name);
 COMMIT;

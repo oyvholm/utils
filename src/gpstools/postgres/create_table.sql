@@ -20,6 +20,7 @@ CREATE TABLE wayp (
     descr text, -- A text description. Additional info intended for the user, not the GPS.
     src text,
     sym text,
+    numpoints integer,
     id integer
 );
 
@@ -33,6 +34,7 @@ CREATE TABLE wayp_new (
     descr text, -- A text description. Additional info intended for the user, not the GPS.
     src text,
     sym text,
+    numpoints integer,
     id serial
 );
 
@@ -46,6 +48,7 @@ CREATE TABLE wayp_rej (
     descr text, -- A text description. Additional info intended for the user, not the GPS.
     src text,
     sym text,
+    numpoints integer,
     id integer
 );
 

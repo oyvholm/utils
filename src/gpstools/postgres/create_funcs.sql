@@ -162,6 +162,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql; -- }}}
 
+CREATE OR REPLACE FUNCTION numpoints(place varchar) RETURNS integer AS $$ -- {{{
+BEGIN
+    RETURN((SELECT count(*) from logg where name = place));
+END;
+$$ LANGUAGE plpgsql; -- }}}
+
 -- update_trackpoint(): Oppdater alle feltene i en viss omkrets av punktet som spesifiseres.
 CREATE OR REPLACE FUNCTION update_trackpoint(currpoint point) RETURNS void AS $$ -- {{{
 BEGIN
