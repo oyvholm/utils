@@ -13,5 +13,5 @@ export ENC=$HOME/bin/enc-mp4
 # FIXME: Dirty, men det funker foreløpig.
 export encver=`svn --xml info $ENC | xf | grep '<commit revision' | perl -pe 's/^.*"(\d+)".*$/$1/'`
 for f in "$@"; do
-    ~/bin/enc-mp4 -vv -o "mp4/$f.mp4" -c $(suuid -t n95film -c "enc-mp4 r$encver på $f ($(smsum -vv "$f" | cut -f 1))") "$f";
+    ~/bin/enc-mp4 -vv -o "mp4/$f.mp4" -c $(suuid -t n95film -w eo -c "enc-mp4 r$encver på $f ($(smsum -vv "$f" | cut -f 1))") "$f";
 done

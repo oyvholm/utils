@@ -106,7 +106,7 @@ length($Opt{'album'}) && push(@Params, tag_string("ALBUM", $Opt{'album'}));
 length($Opt{'artist'}) && push(@Params, tag_string("ARTIST", $Opt{'artist'}));
 
 my $esc_wav_file = shell_escape($wav_file);
-chomp(my $suuid_str = `suuid -m -t encode -c "$progname $esc_wav_file - $flac_version"`);
+chomp(my $suuid_str = `suuid -m -t encode -w eo -c "$progname $esc_wav_file - $flac_version"`);
 push(@Params, "-TENC_ID=$suuid_str");
 push(@Params, "-TENCODED_WITH=$flac_version");
 

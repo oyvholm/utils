@@ -112,7 +112,7 @@ for my $curr_rev (@Revs) {
         my $log_msg = log_message($Opt{'source'}, $curr_rev);
         if (open(LogMsgFP, ">", $tmpfile_logmsg)) {
             print(LogMsgFP prepare_logmsg($log_msg));
-            print(LogMsgFP "\n" . `suuid -t $progname -c "Commit r$curr_rev of $Opt{'dest'} from $Opt{'source'}"`);
+            print(LogMsgFP "\n" . `suuid -t $progname -w eo -c "Commit r$curr_rev of $Opt{'dest'} from $Opt{'source'}"`);
             close(LogMsgFP);
         } else {
             die("$progname: $tmpfile_logmsg: Cannot create file: $!\n");
@@ -158,7 +158,7 @@ if (!$Opt{'dry-run'}) {
                 $progname, scalar(@Revs), scalar(@Revs) == 1 ? "" : "s",
                 $start_rev, $end_rev, $Opt{'source'},
                 file_location($Opt{'dest'}),
-                `suuid -t $progname -c "Delete download properties from $Opt{'dest'}, downloaded from $Opt{'source'}"`
+                `suuid -t $progname -w eo -c "Delete download properties from $Opt{'dest'}, downloaded from $Opt{'source'}"`
             )
         );
         close(LogMsgFP);
