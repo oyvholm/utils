@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 0b01571e-f743-11dd-ac94-000475e441b9
 # Make fucked-up mailman mailboxes readable in mutt(1).
 # License: GNU General Public License version 2 or later.
 #=======================================================================

@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: f8b42aae-f743-11dd-b0d8-000475e441b9
 # Search for duplicates in MD5 and SHA1 files.
 #
 # Character set: UTF-8

@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 04c64336-f744-11dd-bddd-000475e441b9
 # Generate and store UUID with optional comment in a log file.
 #
 # Character set: UTF-8

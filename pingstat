@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: ba10e77e-f743-11dd-adac-000475e441b9
 # Creates ping(8) statistics for crappy connections.
 #
 # Character set: UTF-8

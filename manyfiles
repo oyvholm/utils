@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 7046da86-f743-11dd-8d25-000475e441b9
 # Creates loads of files in the current directory. Used for 
 # stresstesting file systems and stuff.
 #

@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 2530c5b0-f744-11dd-a6f8-000475e441b9
 # Stores the file date in a special svn property.
 #
 # Character set: UTF-8

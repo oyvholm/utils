@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: da340b94-f743-11dd-8d53-000475e441b9
 # Lists RCS-like keywords in files. Replacement for ident(1).
 #
 # Character set: UTF-8

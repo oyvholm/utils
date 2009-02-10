@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 58bc21ea-f744-11dd-afa7-000475e441b9
 # “What’s New” — Lists changes in a Subversion working copy which 
 # haven’t been downloaded yet. Or in other words, see what has happened 
 # in the directory tree since your last update.

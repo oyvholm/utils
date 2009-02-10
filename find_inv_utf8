@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: d971a582-f742-11dd-9aeb-000475e441b9
 # Read lines from stdin and print those who contains eight-bit 
 # characters not encoded in UTF-8.
 #

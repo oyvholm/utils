@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 7028de4a-f744-11dd-a3ac-000475e441b9
 # Pads all integers read from stdin with zeros so they all have the same 
 # length.
 #

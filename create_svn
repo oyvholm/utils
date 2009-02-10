@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 8cc27860-f742-11dd-82e0-000475e441b9
 # Configures, compiles and installs new groovy Subversion from the 
 # repository at svn.collab.net .
 #

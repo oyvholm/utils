@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 175cfc6a-f744-11dd-bd1f-000475e441b9
 # Uses a specified diff program for viewing differences in a Subversion 
 # versioned directory tree.
 #

@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 37c2594c-f743-11dd-b452-000475e441b9
 # Skriver ut dato og klokkeslett, brukes for det meste for å sjekke 
 # synkroniseringa mellom maskiner.
 #

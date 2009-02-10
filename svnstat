@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 348a6fb6-f744-11dd-87e5-000475e441b9
 # Generates a gnuplot curve of weekly Subversion commits. Extremely 
 # primitive at the moment.
 #

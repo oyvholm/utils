@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: ab0489f6-f744-11dd-ba4c-000475e441b9
 #
 # Syntax: mvdirnewest directory
 # Forandrer navnet på directoryen til den nyeste fila i trestrukturen under.

@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 17c58aec-f743-11dd-a648-000475e441b9
 # Converts a hexadecimal string to plain text.
 #
 # Character set: UTF-8
