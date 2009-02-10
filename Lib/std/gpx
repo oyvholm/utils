@@ -7,6 +7,7 @@
   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
 >
   <!-- $Id$ -->
+  <!-- File ID: STDuuidDTS -->
   <metadata>
     <name></name>
     <desc></desc>

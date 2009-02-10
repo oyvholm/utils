@@ -3,8 +3,9 @@
          xml:id="articleid"
          version="5.0" xml:lang="en">
   <title>Example refentry</title>
+  <!-- $Id$ -->
+  <!-- File ID: STDuuidDTS -->
   <refentry xml:id="ls">
-    <!-- $Id$ -->
     <refmeta>
       <refentrytitle>ls</refentrytitle>
       <manvolnum>1</manvolnum>

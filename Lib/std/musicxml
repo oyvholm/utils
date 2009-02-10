@@ -4,6 +4,7 @@
   "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise>
   <!-- $Id$ -->
+  <!-- File ID: STDuuidDTS -->
   <part-list>
     <score-part id="P1">
       <part-name>Music</part-name>

@@ -3,6 +3,7 @@
          xml:id="articleid"
          version="5.0" xml:lang="en">
   <info>
+    <!-- File ID: STDuuidDTS -->
     <title>Articletitle</title>
     <releaseinfo><![CDATA[$Id$]]></releaseinfo>
     <author>

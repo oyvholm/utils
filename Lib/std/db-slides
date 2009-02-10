@@ -4,6 +4,7 @@
   "http://docbook.sourceforge.net/release/slides/3.4/schema/dtd/slides.dtd">
 
 <slides lang="no">
+  <!-- File ID: STDuuidDTS -->
   <slidesinfo> <title>Tittel</title>
     <titleabbrev></titleabbrev>
     <author>

@@ -2,6 +2,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
 
 <article id="articleid" lang="en">
+  <!-- File ID: STDuuidDTS -->
   <articleinfo>
     <title>Articletitle</title>
     <releaseinfo><![CDATA[$Id$]]></releaseinfo>
