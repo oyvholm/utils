@@ -2,10 +2,13 @@
 
 # $Id$
 
+cmdl=$*
+uuid=`suuid -w eo -t vg -c "vg $*"`
 if [ "$1" = "-t" ]; then
     shift
-    gpst -o csv -rt -e -d -t "$@" | rmspcall | uniq >/tmp/vg-t.tmp
+    (echo "# Session ID: $uuid"; gpst -o csv -rt -e -d -t "$@") | rmspcall | uniq >/tmp/vg-t.tmp
     cat <<END >/tmp/vg-t-cmd.tmp
+# Session ID: $uuid
 set mouse
 # load "/tmp/label.gnuplot"
 set zdata time
@@ -16,8 +19,9 @@ pause -1 "Trykk Enter..."
 END
     gnuplot -persist /tmp/vg-t-cmd.tmp
 else
-    gpst -o clean -ret -d -t "$@" | rmspcall | uniq >/tmp/vg.tmp
+    (echo "# Session ID: $uuid"; gpst -o clean -ret -d -t "$@") | rmspcall | uniq >/tmp/vg.tmp
     cat <<END >/tmp/vg-cmd.tmp
+# Session ID: $uuid
 set mouse
 # load "/tmp/label.gnuplot"
 splot "/tmp/vg.tmp" w l palette
