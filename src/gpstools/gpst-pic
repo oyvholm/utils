@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 18245170-f924-11dd-93fc-0001805bf4b1
 # Extract EXIF data from pictures for use with COPY in Postgres
 #
 # Character set: UTF-8

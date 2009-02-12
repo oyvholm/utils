@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: f66b9fe8-f923-11dd-a087-0001805bf4b1
 # Quick & dirty script for converting gpsman(1) sdata files to GPX.
 #
 # Character set: UTF-8
