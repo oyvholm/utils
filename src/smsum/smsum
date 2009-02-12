@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: ac639b66-f942-11dd-8b88-0001805bf4b1
 # Generates smsum hashes
 #
 # Character set: UTF-8
@@ -24,11 +25,13 @@ $| = 1;
 our $Debug = 0;
 
 our %Opt = (
+
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
     'with-mtime' => 0,
+
 );
 
 our $progname = $0;
@@ -42,11 +45,13 @@ push(@main::version_array, $rcs_id);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
+
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "with-mtime|m" => \$Opt{'with-mtime'},
+
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
