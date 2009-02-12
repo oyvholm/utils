@@ -313,7 +313,7 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
                 '<path>files\/dir1\/random_2048<\/path> ' .
                 '<inode>\d+<\/inode> <links>1<\/links> ' .
                 '<device>\d+<\/device> ' .
-                '<hostname>dungen<\/hostname> ' .
+                '<hostname>.*?<\/hostname> ' .
                 '<uid>\d+<\/uid> <gid>\d+<\/gid> ' .
                 '<perm>0644<\/perm> ' .
             '<\/file>\n' .
