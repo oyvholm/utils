@@ -57,9 +57,11 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
-}
+defined($ARGV[0]) || die("$progname: Filename not specified. Use -h for help.\n");
+
+my $exec_str = "suuid -c 'Lager File ID for $ARGV[0]' -t '$progname'";
+msg(1, "Executing '$exec_str'...");
+system($exec_str);
 
 sub print_version {
     # Print program version {{{
@@ -79,7 +81,7 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname file
 
 Options:
 
