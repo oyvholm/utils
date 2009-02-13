@@ -24,6 +24,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'comment' => "",
     'debug' => 0,
     'help' => 0,
     'type' => "",
@@ -45,6 +46,7 @@ my $cmdline_str = join(" ", @ARGV);
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "type|t=s" => \$Opt{'type'},
@@ -104,6 +106,8 @@ Usage: $progname file
 
 Options:
 
+  -c X, --comment X
+    Use X as additional comment.
   -h, --help
     Show this help.
   -t X, --type X
