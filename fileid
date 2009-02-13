@@ -26,6 +26,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'type' => "",
     'verbose' => 0,
     'version' => 0,
 
@@ -46,6 +47,7 @@ GetOptions(
 
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "type|t=s" => \$Opt{'type'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -60,9 +62,21 @@ if ($Opt{'version'}) {
 
 defined($ARGV[0]) || die("$progname: Filename not specified. Use -h for help.\n");
 
+my $Comment = "";
+if (length($Opt{'type'})) {
+    if ($Opt{'type'} =~ /^(perl|bash|sh)$/) {
+        $Comment = ("# File ID: _%uuid%_\n");
+    } elsif ($Opt{'type'} =~ /^(html|xml)$/) {
+        $Comment = ("  <!-- File ID: _%uuid%_ -->\n");
+    } else {
+        die("$progname: $Opt{'type'}: Unkown comment type. Use -h for help.\n");
+    }
+}
 my $exec_str = "suuid -c '$progname $cmdline_str' -t '$progname'";
 msg(1, "Executing '$exec_str'...");
-system($exec_str);
+chomp(my $uuid = `$exec_str`);
+$Comment =~ s/_%uuid%_/$uuid/gs;
+print($Comment);
 
 sub print_version {
     # Print program version {{{
@@ -88,6 +102,9 @@ Options:
 
   -h, --help
     Show this help.
+  -t X, --type X
+    Create comment of type X:
+      bash, html, perl, sh, xml
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
