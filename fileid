@@ -70,13 +70,14 @@ my $file_name = $ARGV[0];
 my $Lh = "[0-9a-f]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 
-my $Comment = "";
+my $Comment = "_%uuid%_\n";
 my $new_uuid = "";
-if (length($Opt{'new'})) {
+if ($Opt{'new'}) {
     while (<STDIN>) {
         s/($Templ)/new_uuid($1)/ge;
         print;
     }
+    exit(0);
 } elsif (length($Opt{'type'})) {
     if ($Opt{'type'} =~ /^(txt)$/) {
         $Comment = ("File ID: _%uuid%_\n");
@@ -89,12 +90,12 @@ if (length($Opt{'new'})) {
     } else {
         die("$progname: $Opt{'type'}: Unkown comment type. Use -h for help.\n");
     }
-    my $exec_str = "suuid -c '$progname $cmdline_str' -t '$progname'";
-    msg(1, "Executing '$exec_str'...");
-    chomp(my $uuid = `$exec_str`);
-    $Comment =~ s/_%uuid%_/$uuid/gs;
-    print($Comment);
 }
+my $exec_str = "suuid -c '$progname $cmdline_str' -t '$progname'";
+msg(1, "Executing '$exec_str'...");
+chomp(my $uuid = `$exec_str`);
+$Comment =~ s/_%uuid%_/$uuid/gs;
+print($Comment);
 
 sub new_uuid {
     # {{{
