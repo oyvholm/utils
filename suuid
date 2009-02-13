@@ -110,7 +110,13 @@ chomp($Hostname);
 my $curr_dir = `/bin/pwd`; # FIXME
 chomp($curr_dir);
 
-my $Cmd = ($Opt{'version'} != 1) ? "uuidgen -r" : "uuidgen -t";
+my $Cmd;
+# FIXME: Hardkoding
+if (-e "/dungen.mrk") {
+    $Cmd = ($Opt{'version'} != 1) ? "uuid -v4" : "uuid -v1";
+} else {
+    $Cmd = ($Opt{'version'} != 1) ? "uuidgen -r" : "uuidgen -t";
+}
 my $safe_comment = safe_tab($Comment);
 my $safe_tag = safe_tab($Tag);
 my $safe_currdir = "";
