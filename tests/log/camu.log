@@ -1,0 +1,14 @@
+# ========== Executing "camu.t --all" ==========
+# Testing -h (--help) option...
+ok - "../camu -h" - Option -h prints help screen
+ok - "../camu -h" - Option -h prints help screen (stderr)
+ok - "../camu -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../camu -hv" - Option --version with -h returns Id string and help screen
+ok - "../camu -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../camu --version" - Option --version returns Id string
+ok - "../camu --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7
