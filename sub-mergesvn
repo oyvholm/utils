@@ -7,9 +7,13 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+echo -n "Starting sub-mergesvn: " >&2
+uuid=`suuid -w eo -t submergesvn -c "Starting sub-mergesvn..."`
 for f in `find -type d | ns | sort`; do
     echo "=========== $f ===========";
     (cd "$f" \
         && (find . -maxdepth 1 -type f | xargs mergesvn) \
         || echo "$f: cannot chdir");
 done
+echo -n "sub-mergesvn finished: " >&2
+suuid -w e -t submergesvn -c "Session $uuid finished."
