@@ -67,6 +67,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-f]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+
 diag(sprintf("========== Executing \"%s%s%s\" ==========",
     $progname,
     scalar(@cmdline_array) ? " " : "",
@@ -90,6 +93,7 @@ END
 
 =cut
 
+mkdir("tmpuuids") || die("$progname: Cannot create directory: $!");
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -115,6 +119,16 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
+diag("Testing -t/--type option...");
+likecmd("SUUID_LOGDIR=tmpuuids $CMD -t perl ohyes", # {{{
+    "/^# File ID: $Templ\\n\$/",
+    '/^$/',
+    "--type perl returns Perl comment",
+);
+
+# }}}
+my $uuid_tmpfile = glob("tmpuuids/*");
+ok(-f $uuid_tmpfile, "uuid file exists");
 
 todo_section:
 ;
@@ -131,6 +145,9 @@ local $TODO = "";
     # TODO tests }}}
 }
 
+diag("Cleaning up...");
+unlink($uuid_tmpfile) || warn("$progname: $uuid_tmpfile: Cannot remove file: $!\n");
+rmdir("tmpuuids") || warn("$progname: Cannot rmdir(tmpuuids): $!\n");
 diag("Testing finished.");
 
 sub testcmd {
