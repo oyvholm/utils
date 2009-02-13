@@ -64,7 +64,9 @@ defined($ARGV[0]) || die("$progname: Filename not specified. Use -h for help.\n"
 
 my $Comment = "";
 if (length($Opt{'type'})) {
-    if ($Opt{'type'} =~ /^(perl|bash|sh)$/) {
+    if ($Opt{'type'} =~ /^(txt)$/) {
+        $Comment = ("File ID: _%uuid%_\n");
+    } elsif ($Opt{'type'} =~ /^(perl|bash|sh)$/) {
         $Comment = ("# File ID: _%uuid%_\n");
     } elsif ($Opt{'type'} =~ /^(html|xml)$/) {
         $Comment = ("  <!-- File ID: _%uuid%_ -->\n");
