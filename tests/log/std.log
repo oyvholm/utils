@@ -32,9 +32,12 @@ ok - "LC_ALL=C SUUID_LOGDIR=tmpuuids ../../std -fv perl bashfile" - Overwrite ba
 ok - Contents of bashfile is replaced
 ok - "svn propget mergesvn bashfile" - mergesvn property is replaced with perl template
 ok - "svn propget mergesvn bashfile" - mergesvn property is replaced with perl template (stderr)
+# Testing -T (--notag) option...
+ok - "SUUID_LOGDIR=tmpuuids ../../std -T uuid,year perl" - Send perl script to stdout, don’t expand uuid and year tag
+ok - "SUUID_LOGDIR=tmpuuids ../../std -T uuid,year perl" - Send perl script to stdout, don’t expand uuid and year tag (stderr)
 # Running TODO tests...
 # Cleaning up temp files...
 ok - "svn revert tmp-std-t-..." - svn revert tempdir
 ok - "svn revert tmp-std-t-..." - svn revert tempdir (stderr)
 # Testing finished.
-1..29
+1..31

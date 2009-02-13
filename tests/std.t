@@ -191,6 +191,14 @@ likecmd("svn propget mergesvn bashfile", # {{{
 );
 
 # }}}
+diag("Testing -T (--notag) option...");
+likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -T uuid,year perl", # {{{
+    '/STDuuidDTS.*STDyearDTS/s',
+    '/^std: Warning: Undefined tags: uuid year\n.*$/s',
+    "Send perl script to stdout, don’t expand uuid and year tag",
+);
+
+# }}}
 
 todo_section:
 ;
