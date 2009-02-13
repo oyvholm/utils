@@ -125,6 +125,14 @@ likecmd("$CMD bash", # {{{
 );
 
 # }}}
+diag("Check for unused tags...");
+likecmd("$CMD perl-tests", # {{{
+    '/^.*Contains tests for the.*$/s',
+    '/^std: Warning: Undefined tags: testcmd progname exec libdir\n$/s',
+    "Report unused tags",
+);
+
+# }}}
 
 my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
 diag("Creating tempdir...");

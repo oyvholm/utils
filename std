@@ -135,26 +135,33 @@ if (length($Dest)) {
     mysyst("cp -a $tmpfile $Dest");
 }
 
+my $Output = "";
+
 if (open(FromFP, "<$tmpfile")) {
-    if (length($Dest)) {
-        open(DestFP, ">$Dest")
-            || die("$progname: $Dest: Cannot open file for write: $!\n");
-    }
     while (my $Line = <FromFP>) {
         $Line = replace_tags($Line);
-        if (length($Dest)) {
-            print(DestFP $Line);
-        } else {
-            print($Line);
-        }
+        $Output .= $Line;
     }
-    length($Dest) && close(DestFP);
     close(FromFP);
+    if ($Output =~ /STD\S+DTS/s) {
+        my ($tmp, $tmp2) = ($Output, "");
+        my %Ha = ();
+        $tmp =~ s/STD(\S+?)DTS/($Ha{$1} = 1)/gse;
+        for my $key (keys %Ha) {
+            defined($Ha{$key}) && ($tmp2 .= "$key ");
+        }
+        $tmp2 =~ s/ $//;
+        warn("$progname: Warning: Undefined tags: $tmp2\n");
+    }
 } else {
     die("$progname: $tmpfile: Cannot read file: $!\n");
 }
 
 if (length($Dest)) {
+    open(DestFP, ">$Dest")
+        || die("$progname: $Dest: Cannot open file for write: $!\n");
+    print(DestFP $Output);
+    close(DestFP);
     if (!is_added($Dest)) {
         msg(1, "svn add");
         mysyst("$CMD_SVN add $Dest");
@@ -167,6 +174,8 @@ if (length($Dest)) {
         mysyst("mergesvn -s $URL $Dest");
     }
     mysyst("keyw $Dest");
+} else {
+    print($Output);
 }
 
 unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");

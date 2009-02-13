@@ -11,6 +11,9 @@ ok - "../std --version" - Option --version returns Id string
 ok - "../std --version" - Option --version returns Id string (stderr)
 ok - "../std bash" - One argument sends file to stdout
 ok - "../std bash" - One argument sends file to stdout (stderr)
+# Check for unused tags...
+ok - "../std perl-tests" - Report unused tags
+ok - "../std perl-tests" - Report unused tags (stderr)
 # Creating tempdir...
 ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory
 ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory (stderr)
@@ -33,4 +36,4 @@ ok - "svn propget mergesvn bashfile" - mergesvn property is replaced with perl t
 ok - "svn revert tmp-std-t-..." - svn revert tempdir
 ok - "svn revert tmp-std-t-..." - svn revert tempdir (stderr)
 # Testing finished.
-1..26
+1..28
