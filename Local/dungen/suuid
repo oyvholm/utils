@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 1a54c15e-f99d-11dd-b205-000475e441b9
 # Generate and store UUID with optional comment in a log file.
 #
 # Character set: UTF-8
@@ -22,9 +23,14 @@ $| = 1;
 
 our $Debug = 0;
 
+my $suuid_env = "SUUID_LOGDIR";
+my $env_dir = defined($ENV{$suuid_env})
+    ? $ENV{$suuid_env}
+    : "$ENV{'HOME'}/uuids";
+
 our %Std = (
 
-    'logdir' => "$ENV{'HOME'}/uuids",
+    'logdir' => $env_dir,
     'version' => 1,
     'whereto' => "o",
 
@@ -254,7 +260,9 @@ Options:
     Show this help.
   -l x, --logdir x
     Store log files in directory x.
-    Default: $Std{'logdir'}/
+    If the $suuid_env environment variable is defined, that value is 
+    used. Otherwise the value "\$HOME/uuids" is used.
+    Current default: $Std{'logdir'}
   -m, --random-mac
     Don’t use the hardware MAC address, generate a random address field.
   -n x, --count x
