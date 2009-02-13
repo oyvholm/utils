@@ -47,6 +47,7 @@ push(@main::version_array, $rcs_id);
 my $CMD_SVN = "svn";
 my $Type = "";
 my $Dest = "";
+my $session_uuid = "";
 my @bck_cmdline = @ARGV;
 
 Getopt::Long::Configure("bundling");
@@ -208,8 +209,12 @@ sub mysyst {
 
 sub gen_uuid {
     # {{{
+    my $Retval = "";
     my $Comment = "$progname " . join(" ", @bck_cmdline) . "";
-    chomp(my $Retval = `suuid --tag std --whereto o --comment "$Comment"`);
+    if (!length($session_uuid)) {
+        chomp($session_uuid = `suuid --tag std --whereto o --comment "$Comment"`);
+    }
+    $Retval = $session_uuid;
     D("gen_uuid(): Retval = '$Retval'");
     return($Retval);
     # }}}
