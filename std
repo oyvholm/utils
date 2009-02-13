@@ -213,6 +213,9 @@ sub gen_uuid {
     my $Comment = "$progname " . join(" ", @bck_cmdline) . "";
     if (!length($session_uuid)) {
         chomp($session_uuid = `suuid --tag std --whereto o --comment "$Comment"`);
+        if (length($Dest)) {
+            print("$session_uuid\n");
+        }
     }
     $Retval = $session_uuid;
     D("gen_uuid(): Retval = '$Retval'");

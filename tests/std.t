@@ -66,6 +66,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-f]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 diag(sprintf("========== Executing \"%s%s%s\" ==========",
     $progname,
     scalar(@cmdline_array) ? " " : "",
@@ -133,7 +136,7 @@ likecmd("svn mkdir $Tmptop", # {{{
 # }}}
 chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
 likecmd("../$CMD bash bashfile", # {{{
-    '/^A\s+bashfile.+$/s',
+    "/^$v1_templ\\nA\\s+bashfile.+\$/s",
     '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
     "Create bash script",
 );
@@ -157,7 +160,7 @@ likecmd("../$CMD bash bashfile", # {{{
 
 # }}}
 likecmd("LC_ALL=C ../$CMD -fv perl bashfile", # {{{
-    '/^property \'mergesvn\' set on \'bashfile\'\n/s',
+    "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
     '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
     "Overwrite bashfile with perl script using --force",
 );
