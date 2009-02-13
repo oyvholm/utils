@@ -3,8 +3,13 @@
 #=======================================================================
 # $Id$
 # File ID: 346a3428-f9ef-11dd-8b2b-000475e441b9
-# [Description]
+# Execute mergesvn(1) on all files in current directory tree.
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-
+for f in `find -type d | ns | sort`; do
+    echo "=========== $f ===========";
+    (cd "$f" \
+        && (find . -maxdepth 1 -type f | xargs mergesvn) \
+        || echo "$f: cannot chdir");
+done
