@@ -9,25 +9,26 @@ ok - "../std -hv" - Option --version with -h returns Id string and help screen (
 # Testing --version option...
 ok - "../std --version" - Option --version returns Id string
 ok - "../std --version" - Option --version returns Id string (stderr)
-ok - "../std bash" - One argument sends file to stdout
-ok - "../std bash" - One argument sends file to stdout (stderr)
-# Check for unused tags...
-ok - "../std perl-tests" - Report unused tags
-ok - "../std perl-tests" - Report unused tags (stderr)
 # Creating tempdir...
 ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory
 ok - "svn mkdir tmp-std-t-..." - Create svn-controlled directory (stderr)
-ok - "../../std bash bashfile" - Create bash script
-ok - "../../std bash bashfile" - Create bash script (stderr)
+ok - "SUUID_LOGDIR=tmpuuids ../../std bash" - One argument sends file to stdout
+ok - "SUUID_LOGDIR=tmpuuids ../../std bash" - One argument sends file to stdout (stderr)
+ok - suuid log file exists
+ok - "SUUID_LOGDIR=tmpuuids ../../std bash bashfile" - Create bash script
+ok - "SUUID_LOGDIR=tmpuuids ../../std bash bashfile" - Create bash script (stderr)
 ok - bashfile exists
 ok - bashfile is executable
 ok - "svn propget mergesvn bashfile" - mergesvn property is set to bash template
 ok - "svn propget mergesvn bashfile" - mergesvn property is set to bash template (stderr)
+# Check for unused tags...
+ok - "SUUID_LOGDIR=tmpuuids ../../std perl-tests" - Report unused tags
+ok - "SUUID_LOGDIR=tmpuuids ../../std perl-tests" - Report unused tags (stderr)
 # Testing -f (--force) option...
 ok - "../../std bash bashfile" - Create bash script, file already exists, don’t use --force
 ok - "../../std bash bashfile" - Create bash script, file already exists, don’t use --force (stderr)
-ok - "LC_ALL=C ../../std -fv perl bashfile" - Overwrite bashfile with perl script using --force
-ok - "LC_ALL=C ../../std -fv perl bashfile" - Overwrite bashfile with perl script using --force (stderr)
+ok - "LC_ALL=C SUUID_LOGDIR=tmpuuids ../../std -fv perl bashfile" - Overwrite bashfile with perl script using --force
+ok - "LC_ALL=C SUUID_LOGDIR=tmpuuids ../../std -fv perl bashfile" - Overwrite bashfile with perl script using --force (stderr)
 ok - Contents of bashfile is replaced
 ok - "svn propget mergesvn bashfile" - mergesvn property is replaced with perl template
 ok - "svn propget mergesvn bashfile" - mergesvn property is replaced with perl template (stderr)
@@ -36,4 +37,4 @@ ok - "svn propget mergesvn bashfile" - mergesvn property is replaced with perl t
 ok - "svn revert tmp-std-t-..." - svn revert tempdir
 ok - "svn revert tmp-std-t-..." - svn revert tempdir (stderr)
 # Testing finished.
-1..28
+1..29

@@ -118,21 +118,6 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
-likecmd("$CMD bash", # {{{
-    '/GNU General Public License/s',
-    '/^$/s',
-    "One argument sends file to stdout",
-);
-
-# }}}
-diag("Check for unused tags...");
-likecmd("$CMD perl-tests", # {{{
-    '/^.*Contains tests for the.*$/s',
-    '/^std: Warning: Undefined tags: testcmd progname exec libdir\n$/s',
-    "Report unused tags",
-);
-
-# }}}
 
 my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
 diag("Creating tempdir...");
@@ -144,7 +129,17 @@ likecmd("svn mkdir $Tmptop", # {{{
 
 # }}}
 chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
-likecmd("../$CMD bash bashfile", # {{{
+mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
+likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
+    '/GNU General Public License/s',
+    '/^$/s',
+    "One argument sends file to stdout",
+);
+
+# }}}
+my $suuid_file = glob("tmpuuids/*");
+ok(-e $suuid_file, "suuid log file exists");
+likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
     "/^$v1_templ\\nA\\s+bashfile.+\$/s",
     '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
     "Create bash script",
@@ -160,6 +155,14 @@ likecmd("svn propget mergesvn bashfile", # {{{
 );
 
 # }}}
+diag("Check for unused tags...");
+likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
+    '/^.*Contains tests for the.*$/s',
+    '/^std: Warning: Undefined tags: testcmd progname exec libdir\n$/s',
+    "Report unused tags",
+);
+
+# }}}
 diag("Testing -f (--force) option...");
 likecmd("../$CMD bash bashfile", # {{{
     '/^$/s',
@@ -168,7 +171,7 @@ likecmd("../$CMD bash bashfile", # {{{
 );
 
 # }}}
-likecmd("LC_ALL=C ../$CMD -fv perl bashfile", # {{{
+likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
     "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
     '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
     "Overwrite bashfile with perl script using --force",
@@ -211,6 +214,9 @@ likecmd("svn revert $Tmptop", # {{{
     '/^$/s',
     "svn revert tempdir",
 );
+
+unlink("$Tmptop/$suuid_file") || warn("$progname: $Tmptop/$suuid_file: Cannot delete file: $!");
+rmdir("$Tmptop/tmpuuids") || warn("$progname: rmdir('$Tmptop/tmpuuids'): $!");
 unlink("$Tmptop/bashfile") || warn("$progname: $Tmptop/bashfile: Cannot delete file: $!");
 rmdir($Tmptop) || warn("$progname: rmdir('$Tmptop'): $!");
 
