@@ -345,7 +345,7 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
-    $Txt =~ s/(-l tmp-suuid-t-)\d+-\d+/$1.../g;
+    $Txt =~ s/((-l |SUUID_LOGDIR=)tmp-suuid-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "suuid-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
@@ -374,7 +374,7 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
-    $Txt =~ s/(-l tmp-suuid-t-)\d+-\d+/$1.../g;
+    $Txt =~ s/((-l |SUUID_LOGDIR=)tmp-suuid-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "suuid-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {

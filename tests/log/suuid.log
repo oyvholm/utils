@@ -16,8 +16,8 @@ ok - Filename of logfile OK
 ok - Log contents OK after exec with no options
 ok - Entries are added, not replacing
 # Read the environment variable...
-ok - "SUUID_LOGDIR=tmp-suuid-t-14003-17707969 ../suuid" - Read environment variable
-ok - "SUUID_LOGDIR=tmp-suuid-t-14003-17707969 ../suuid" - Read environment variable (stderr)
+ok - "SUUID_LOGDIR=tmp-suuid-t-... ../suuid" - Read environment variable
+ok - "SUUID_LOGDIR=tmp-suuid-t-... ../suuid" - Read environment variable (stderr)
 ok - The environment variable was read
 # Testing -m (--random-mac) option...
 ok - "../suuid -m -l tmp-suuid-t-..." - --random-mac option works
