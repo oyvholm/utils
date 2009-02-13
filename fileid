@@ -27,6 +27,7 @@ our %Opt = (
     'comment' => "",
     'debug' => 0,
     'help' => 0,
+    'new' => 0,
     'type' => "",
     'verbose' => 0,
     'version' => 0,
@@ -49,6 +50,7 @@ GetOptions(
     "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "new|n" => \$Opt{'new'},
     "type|t=s" => \$Opt{'type'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -63,9 +65,19 @@ if ($Opt{'version'}) {
 }
 
 defined($ARGV[0]) || die("$progname: Filename not specified. Use -h for help.\n");
+my $file_name = $ARGV[0];
+
+my $Lh = "[0-9a-f]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 
 my $Comment = "";
-if (length($Opt{'type'})) {
+my $new_uuid = "";
+if (length($Opt{'new'})) {
+    while (<STDIN>) {
+        s/($Templ)/new_uuid($1)/ge;
+        print;
+    }
+} elsif (length($Opt{'type'})) {
     if ($Opt{'type'} =~ /^(txt)$/) {
         $Comment = ("File ID: _%uuid%_\n");
     } elsif ($Opt{'type'} =~ /^(perl|bash|sh)$/) {
@@ -77,12 +89,22 @@ if (length($Opt{'type'})) {
     } else {
         die("$progname: $Opt{'type'}: Unkown comment type. Use -h for help.\n");
     }
+    my $exec_str = "suuid -c '$progname $cmdline_str' -t '$progname'";
+    msg(1, "Executing '$exec_str'...");
+    chomp(my $uuid = `$exec_str`);
+    $Comment =~ s/_%uuid%_/$uuid/gs;
+    print($Comment);
 }
-my $exec_str = "suuid -c '$progname $cmdline_str' -t '$progname'";
-msg(1, "Executing '$exec_str'...");
-chomp(my $uuid = `$exec_str`);
-$Comment =~ s/_%uuid%_/$uuid/gs;
-print($Comment);
+
+sub new_uuid {
+    # {{{
+    my $Old = shift;
+    if (!length($new_uuid)) {
+        chomp($new_uuid = `suuid -t "$progname" -c "Changing File ID of $file_name from $Old ($progname $cmdline_str)"`);
+    }
+    return($new_uuid);
+    # }}}
+} # new_uuid()
 
 sub print_version {
     # Print program version {{{
@@ -110,6 +132,10 @@ Options:
     Use X as additional comment.
   -h, --help
     Show this help.
+  -n, --new
+    Replace all uuids from stdin with a new single uuid which is the new 
+    File ID and log the change. Example in Vim:
+      :%!fileid -n
   -t X, --type X
     Create comment of type X:
       c, css, bash, html, perl, sh, xml
