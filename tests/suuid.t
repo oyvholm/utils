@@ -169,6 +169,29 @@ like(file_data($Outfile), # {{{
 
 # }}}
 unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+diag("Read the environment variable...");
+likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    "Read environment variable",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . join('\t',
+        '3',
+        $v1_templ, # uuid
+        $date_templ, # date
+        '', # tag
+        '', # comment
+        '.+?', # hostname:dir
+        '.+' # username
+    ) . '\n$/s',
+    "The environment variable was read",
+);
+
+# }}}
+unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
 diag("Testing -m (--random-mac) option...");
 likecmd("$CMD -m -l $Outdir", # {{{
     "/^$v1rand_templ\\n\$/s",
