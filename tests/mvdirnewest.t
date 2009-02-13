@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 35d2b3ba-f988-11dd-aee6-000475e441b9
 # Test suite for mvdirnewest(1).
 #
 # Character set: UTF-8

@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 008facd0-f988-11dd-bf3b-000475e441b9
 # Test suite for finduuid(1).
 #
 # Character set: UTF-8

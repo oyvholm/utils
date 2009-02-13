@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: cd67d13e-f987-11dd-a3b3-000475e441b9
 # Test suite for create_new(1).
 #
 # Character set: UTF-8

@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 83c9a5f6-f988-11dd-91b2-000475e441b9
 # Test suite for svnfiledate(1).
 #
 # Character set: UTF-8

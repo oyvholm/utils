@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 19f0abe8-f988-11dd-bcbb-000475e441b9
 # Test suite for klokke(1).
 #
 # Character set: UTF-8

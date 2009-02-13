@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 0b17b346-f988-11dd-bb71-000475e441b9
 # Test suite for getsvnfiles(1).
 #
 # Character set: UTF-8

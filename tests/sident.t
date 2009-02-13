@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
+# File ID: 9e63b5fe-f989-11dd-9357-000475e441b9
 # Test suite for sident(1).
 #
 # Character set: UTF-8
