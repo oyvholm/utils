@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 446af502-fa61-11dd-aef2-0001805bf4b1
 # Latskap. Lister ut loggen for Subversion, SVK eller CVS.
 #
 # Valg (Må spesifiseres alfabetisk):
@@ -12,6 +13,7 @@
 #   Bruk --stop-on-copy.
 #=======================================================================
 
+uuid=`suuid -t c_cl -w eo -c "cl $*"`
 if [ "$1" = "-k" ]; then
     use_svk=1
     shift
@@ -45,3 +47,4 @@ else
         svn log$stoponcopy "$@" | less
     fi
 fi
+suuid -t c_cl -c "Session $uuid ferdig."
