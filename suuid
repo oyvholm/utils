@@ -98,7 +98,6 @@ if (!-d "$Opt{'logdir'}/.") {
 }
 my $Logfile = "$Opt{'logdir'}/$Host";
 
-my %uuids = ();
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 if ($Comment eq "-") {
     $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
@@ -126,24 +125,14 @@ $safe_currdir = safe_tab($safe_currdir);
 my $Username = getpwuid($<);
 my $safe_username = safe_tab($Username);
 
-for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
-    chomp(my $uuid = `$Cmd`);
-    if ($Opt{'random-mac'}) {
-        $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
-    }
-    my $curr_time = time;
-    $uuids{$uuid} = join("\t",
-        sec_to_string($curr_time),
-        $safe_tag,
-        $safe_comment,
-        $safe_currdir
-    );
-}
-
 if (open(LogFP, ">>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
-        for my $key (keys %uuids) {
-            D("key = '$key', value = '$uuids{$key}'");
+        for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
+            chomp(my $uuid = `$Cmd`);
+            my $curr_time = time;
+            if ($Opt{'random-mac'}) {
+                $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
+            }
             # Version description {{{
             # Without version field, they have to be exterminated:
             #   uuid \t
@@ -174,13 +163,16 @@ if (open(LogFP, ">>", $Logfile)) {
             # }}}
             print(LogFP join("\t",
                     3,
-                    $key,
-                    $uuids{$key},
+                    $uuid,
+                    sec_to_string($curr_time),
+                    $safe_tag,
+                    $safe_comment,
+                    $safe_currdir,
                     $safe_username
                 ) . "\n"
             );
-            $Opt{'whereto'} =~ /o/ && print("$key\n");
-            $Opt{'whereto'} =~ /e/ && print(STDERR "$key\n");
+            $Opt{'whereto'} =~ /o/ && print("$uuid\n");
+            $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
         }
         close(LogFP);
     } else {
