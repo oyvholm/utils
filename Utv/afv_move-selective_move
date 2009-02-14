@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: f6e12fcc-fa51-11dd-b506-000475e441b9
 # Reads file names from stdin or files and places them into a directory 
 # structure based on a date in the file name or the modification time.
 #
@@ -290,7 +291,7 @@ Examples:
   afv_move -vL /tmp/filenames.txt -d %Y/%Y-%m-%d
 
 Made by Øyvind A. Holm <sunny\@sunbase.org>
-License: GNU General Public License ♥
+License: GNU General Public License version 2 or later ♥
 
 END
     exit($Retval);
@@ -298,6 +299,26 @@ END
 } # usage()
 
 __END__
+
+=pod
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=cut
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
 # End of file $Id$
