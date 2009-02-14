@@ -47,4 +47,4 @@ else
         svn log$stoponcopy "$@" | less
     fi
 fi
-suuid -t c_cl -c "Session $uuid ferdig."
+suuid -t c_cl -w e -c "Session $uuid ferdig."
