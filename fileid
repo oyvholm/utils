@@ -3,7 +3,7 @@
 #=======================================================================
 # $Id$
 # File ID: db86c666-f938-11dd-9040-0001805bf4b1
-# [Description]
+# Generate and change File IDs.
 #
 # Character set: UTF-8
 # ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
@@ -136,7 +136,7 @@ Options:
   -n, --new
     Replace all uuids from stdin with a new single uuid which is the new 
     File ID and log the change. Example in Vim:
-      :%!fileid -n
+      :%!fileid -n %
   -t X, --type X
     Create comment of type X:
       c, css, bash, html, perl, sh, xml
