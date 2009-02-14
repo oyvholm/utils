@@ -1,9 +1,11 @@
 #!/bin/sh
 
 # $Id$
+# File ID: db9d9ec0-fa70-11dd-9fc7-000475e441b9
 # Terminal Identification ’ for å identifisere skjermhøyde etc ved
 # logging.
 
-date -Iseconds
 suuid -t ti -c "$*"
-stty -a
+LC_ALL=C stty -a | grep speed
+echo -n "`date -Iseconds` "
+tty
