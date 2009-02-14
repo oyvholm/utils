@@ -1,6 +1,8 @@
 #!/bin/sh
 
 # PRE-REVPROP-CHANGE HOOK
+# $Id$
+# File ID: 8f73893a-fae1-11dd-aa9f-0001805bf4b1
 #
 # The pre-revprop-change hook is invoked before a revision property
 # is modified.  Subversion runs this hook by invoking a program
@@ -45,5 +47,9 @@ REV="$2"
 USER="$3"
 PROPNAME="$4"
 
-if [ "$PROPNAME" = "svn:log" ]; then exit 0; fi
+if [ "$PROPNAME" = "svn:log" ]; then
+    export PATH=/home/sunny/bin:$PATH
+    suuid -t prerevpropchange -l /home/sunny/uuids -w n -c "Loggmelding forandres: $REPOS r$REV (`svnlook log $REPOS -r$REV | finduuid | tail -1`)"
+    exit 0;
+fi
 exit 1
