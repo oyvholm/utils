@@ -1,4 +1,5 @@
 $Id$
+File ID: 095695ee-fa5b-11dd-ad37-000475e441b9
 
 Strøtanker om hvordan fldb skal fungere og hva den skal gjøre.
 

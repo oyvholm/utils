@@ -1,4 +1,5 @@
 $Id$
+File ID: ff697f9c-fa5a-11dd-a6c6-000475e441b9
 
 Få orden på stdin. Hvis ingenting spesifiseres på kommandolinja og -f 
 ikke er brukt, kjør checksum og currtime på den.

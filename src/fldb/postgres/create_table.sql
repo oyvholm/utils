@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 98ed2ea2-fa5b-11dd-9ad8-000475e441b9
 
 CREATE TABLE files (
     id bigserial PRIMARY KEY,

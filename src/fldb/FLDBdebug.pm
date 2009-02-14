@@ -2,6 +2,7 @@ package FLDBdebug;
 
 #=======================================================================
 # $Id$
+# File ID: da6a708e-fa5a-11dd-a406-000475e441b9
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>

@@ -2,6 +2,7 @@ package FLDBsum;
 
 #=======================================================================
 # $Id$
+# File ID: e4463e6c-fa5a-11dd-af7b-000475e441b9
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
