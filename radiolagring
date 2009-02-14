@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # $Id$
+# File ID: 011d0820-fa5d-11dd-a357-0001805bf4b1
 # Syntax: radiolagring navn kanal lengde
 
 export PATH=$HOME/bin:$HOME/bin/basnakk:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/X11R6/bin:/sbin:/usr/sbin:/usr/games
@@ -9,4 +10,6 @@ navn=$1
 kanal=$2
 lengde=$3
 
+uuid=`suuid -t radiolagring -c "radiolagring $*"`
 timeout $[60*$lengde] wget -U "xmms/1.2.7" -O /home/sunny/dl/nettradio/`u`.$navn.nrk_$kanal.mp3 http://radio.hiof.no:8000/nrk-$kanal-128
+suuid -w n -t radiolagring -c "Download $uuid ferdig."
