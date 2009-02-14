@@ -101,7 +101,11 @@ my $Logfile = "$Opt{'logdir'}/$Host";
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 if ($Comment eq "-") {
     $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
-    chomp($Comment = <STDIN>);
+    $Comment = "";
+    while (<STDIN>) {
+        $Comment .= $_;
+    }
+    chomp($Comment);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 my $Hostname = `hostname`; # FIXME
@@ -265,7 +269,7 @@ Options:
 
   -c x, --comment x
     Store comment x in the log file. If "-" is specified as comment, the 
-    program will read one line from stdin.
+    program will read the comment from stdin.
   -h, --help
     Show this help.
   -l x, --logdir x
