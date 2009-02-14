@@ -141,13 +141,14 @@ my $Outfile = glob("$Outdir/*");
 like($Outfile, "/^$Outdir\\/$Lh\{12}\$/", "Filename of logfile OK");
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '3',
+        '4',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
         '', # comment
         '.+?', # hostname:dir
-        '.+' # username
+        '.+', # username
+        '.+' # tty
     ) . '\n$/s',
     "Log contents OK after exec with no options",
 );
@@ -156,13 +157,14 @@ like(file_data($Outfile), # {{{
 system("$CMD -l $Outdir >/dev/null");
 like(file_data($Outfile), # {{{
     '/^(' . join('\t',
-        '3',
+        '4',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
         '', # comment
         '.+?', # hostname:dir
-        '.+' # username
+        '.+', # username
+        '.+' # tty
     ) . '\n){2}$/s',
     "Entries are added, not replacing",
 );
@@ -179,13 +181,14 @@ likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '3',
+        '4',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
         '', # comment
         '.+?', # hostname:dir
-        '.+' # username
+        '.+', # username
+        '.+' # tty
     ) . '\n$/s',
     "The environment variable was read",
 );
@@ -202,13 +205,14 @@ likecmd("$CMD -m -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '3',
+        '4',
         $v1rand_templ, # uuid
         $date_templ, # date
         '', # tag
         '', # comment
         '.+?', # hostname:dir
-        '.+' # username
+        '.+', # username
+        '.+' # tty
     ) . '\n$/s',
     "Log contents OK after --random-mac",
 );
@@ -225,13 +229,14 @@ likecmd("$CMD -t snaddertag -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '3',
+        '4',
         $v1_templ, # uuid
         $date_templ, # date
         'snaddertag', # tag
         '', # comment
         '.+?', # hostname:dir
-        '.+' # username
+        '.+', # username
+        '.+' # tty
     ) . '\n$/s',
     "Log contents OK after tag",
 );
@@ -248,13 +253,14 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '3',
+        '4',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
         'Great test', # comment
         '.+?', # hostname:dir
-        '.+' # username
+        '.+', # username
+        '.+' # tty
     ) . '\n$/s',
     "Log contents OK after comment",
 );
@@ -271,13 +277,14 @@ likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^(' . join('\t',
-        '3',
+        '4',
         $v1_templ, # uuid
         $date_templ, # date
         'testeri', # tag
         'Great test', # comment
         '.+?', # hostname:dir
-        '.+' # username
+        '.+', # username
+        '.+' # tty
     ) . '\n){5}$/s',
     "Log contents OK after count, comment and tag",
 );

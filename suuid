@@ -124,6 +124,8 @@ $safe_currdir .= $curr_dir;
 $safe_currdir = safe_tab($safe_currdir);
 my $Username = getpwuid($<);
 my $safe_username = safe_tab($Username);
+chomp(my $tty = `tty`);
+my $safe_tty = safe_tab($tty);
 
 if (open(LogFP, ">>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
@@ -160,15 +162,25 @@ if (open(LogFP, ">>", $Logfile)) {
             #   comment \t
             #   current_dir \t
             #   username \n
+            # Version 4
+            #   4 \t
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \t
+            #   current_dir \t
+            #   username \t
+            #   tty \n
             # }}}
             print(LogFP join("\t",
-                    3,
+                    4,
                     $uuid,
                     sec_to_string($curr_time),
                     $safe_tag,
                     $safe_comment,
                     $safe_currdir,
-                    $safe_username
+                    $safe_username,
+                    $safe_tty
                 ) . "\n"
             );
             $Opt{'whereto'} =~ /o/ && print("$uuid\n");
