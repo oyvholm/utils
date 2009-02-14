@@ -3,7 +3,7 @@
 #=======================================================================
 # $Id$
 # File ID: d8ba490a-fa1c-11dd-827e-000475e441b9
-# [Description]
+# Sort lines based on first UUID found on each line.
 #
 # Character set: UTF-8
 # ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
@@ -24,6 +24,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'all' => 0,
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -43,6 +44,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "all|a" => \$Opt{'all'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -57,9 +59,61 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+my $Lh = "[0-9a-f]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
+my @uuid_lines = ();
+my @other_lines = ();
+
+while (my $Line = <>) {
+    if ($Line =~ /^.*?($v1_templ)/) {
+        push(@uuid_lines, $Line);
+    } else {
+        $Opt{'all'} && push(@other_lines, $Line);
+    }
 }
+
+my @tmp_arr = ();
+for my $Curr (@uuid_lines) {
+    if ($Curr =~ /^.*?($v1_templ)/) {
+        my $uuid = $1;
+        push(@tmp_arr, uuid_hex_date($uuid) . "-$Curr");
+    }
+}
+for my $Curr (sort @tmp_arr) {
+    $Curr =~ s/^[0-9a-f]+-//;
+    print($Curr);
+}
+
+$Opt{'all'} && print(join("", @other_lines));
+
+sub uuid_hex_date {
+    # {{{
+    my $uuid = shift;
+    my $time_low = lc(substr($uuid, 0, 8));
+    my $time_mid = lc(substr($uuid, 9, 4));
+    my $time_hi = lc(substr($uuid, 14, 4));
+    # CO: Notes {{{
+    # 2639d59e-fa20-11dd-8aa6-000475e441b9
+    # 012345678901234567890123456789012345
+    # 000000000011111111112222222222333333
+    #
+    # 2639d59e 0-3
+    # -
+    # fa20 4-5
+    # -
+    # 11dd 6-7
+    # -
+    # 8aa6 8-9
+    # -
+    # 000475e441b9 10-15
+    # }}}
+    my $Retval = "$time_hi$time_mid$time_low";
+    D("uuid_hex_date('$uuid') returns '$Retval'");
+    return($Retval);
+    # }}}
+} # uuid_hex_date()
 
 sub print_version {
     # Print program version {{{
@@ -81,8 +135,13 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
+Sort lines based on the first time-based UUID on every line.
+
 Options:
 
+  -a, --all
+    Print all lines, also those without a time-based UUID. They’re 
+    listed unsorted after all the lines with time UUIDs.
   -h, --help
     Show this help.
   -v, --verbose
