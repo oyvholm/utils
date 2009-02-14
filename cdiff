@@ -21,4 +21,4 @@ else
 		cvs -n diff -u $* 2>/dev/null | grep -v '^\? ' | less -S
 	fi
 fi
-suuid -t c_cdiff -c "Session $uuid ferdig."
+suuid -t c_cdiff -w e -c "Session $uuid ferdig."
