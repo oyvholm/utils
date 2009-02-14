@@ -10,6 +10,6 @@ navn=$1
 kanal=$2
 lengde=$3
 
-uuid=`suuid -t radiolagring -c "radiolagring $*"`
+uuid=`suuid -t radiolagring -w eo -c "radiolagring $*"`
 timeout $[60*$lengde] wget -U "xmms/1.2.7" -O /home/sunny/dl/nettradio/`u`.$navn.nrk_$kanal.mp3 http://radio.hiof.no:8000/nrk-$kanal-128
-suuid -w n -t radiolagring -c "Download $uuid ferdig."
+suuid -w o -t radiolagring -c "Download $uuid ferdig."
