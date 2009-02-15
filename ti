@@ -9,3 +9,5 @@ suuid -t ti -c "$*"
 LC_ALL=C stty -a | grep speed
 echo -n "`date -Iseconds` "
 tty
+[ -z "$SESS_UUID" ] || echo SESS_UUID = $SESS_UUID
+[ -z "$LOGGING_UUID" ] || echo LOGGING_UUID = $LOGGING_UUID
