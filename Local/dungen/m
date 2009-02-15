@@ -6,6 +6,4 @@
 # Latskap.
 #=======================================================================
 
-uuid=`suuid -t c_m -w eo -c "m $*"`
 mplayer -fs -framedrop "$@"
-suuid -t c_m -c "Session $uuid ferdig."
