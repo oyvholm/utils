@@ -5,8 +5,9 @@
 # Latskapen lenge leve. Kjører en svn eller cvs diff og stripper bort alle
 # ukjente filer.
 
-uuid=`suuid -t c_cdiff -w eo -c "cdiff $*"`
+uuid=`suuid -t c_cdiff -w o -c "cdiff $*"`
 (
+    echo "# $uuid"
     if [ -d .svn/. ]; then
         if [ "$1" = "-s" ]; then
             shift
