@@ -60,17 +60,23 @@ if ($Opt{'version'}) {
 }
 
 my @Cmd = @ARGV;
+my $cmd_str = join(" ", @ARGV);
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
 my $begin_cmd = sprintf(
     "suuid -t sess -c \"Starting '%s'%s\"",
-    join(" ", @Cmd),
+    $cmd_str,
     (length($Opt{'comment'}) ? " ($Opt{'comment'})" : "")
 );
 chomp(my $uuid = `$begin_cmd`);
 print(STDERR "sess.begin:$uuid\n");
 $ENV{'SESS_UUID'} = $uuid;
 system(@Cmd);
-chomp(my $end_uuid = `suuid -t sess -c 'Session $uuid finished.'`);
+my $end_cmd = sprintf(
+    "suuid -t sess -c \"Session %s (%s) finished.\"",
+    $uuid,
+    $cmd_str
+);
+chomp(my $end_uuid = `$end_cmd`);
 print(STDERR "sess.end:$end_uuid\n");
 
 sub print_version {
