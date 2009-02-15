@@ -1,0 +1,10 @@
+# ========== Executing "suuid.t --todo" ==========
+# Running TODO tests...
+# Testing finished.
+Use of uninitialized value $Outfile in unlink at ./suuid.t line 341.
+Use of uninitialized value $Outfile in concatenation (.) or string at ./suuid.t line 341.
+suuid.t: : Cannot delete file: No such file or directory
+Use of uninitialized value $Outdir in rmdir at ./suuid.t line 342.
+Use of uninitialized value $Outdir in concatenation (.) or string at ./suuid.t line 342.
+suuid.t: : Cannot remove directory: No such file or directory
+# No tests run!

@@ -1,4 +1,4 @@
-# ========== Executing "suuid.t --all" ==========
+# ========== Executing "suuid.t" ==========
 # Testing -h (--help) option...
 ok - "../suuid -h" - Option -h prints help screen
 ok - "../suuid -h" - Option -h prints help screen (stderr)
@@ -46,6 +46,5 @@ ok - "../suuid -w eo -l tmp-suuid-t-..." - Output goes to stdout and stderr (std
 ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere
 ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere (stderr)
 # Testing -q (--quiet) option...
-# Running TODO tests...
 # Testing finished.
 1..35
