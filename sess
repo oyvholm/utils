@@ -70,9 +70,9 @@ my $begin_cmd = sprintf(
 chomp(my $uuid = `$begin_cmd`);
 print(STDERR "sess.begin:$uuid\n");
 $ENV{'SESS_UUID'} = $uuid;
-system(@Cmd);
+my $retval = system(@Cmd);
 my $end_cmd = sprintf(
-    "suuid -t sess -c \"Session %s (%s) finished.\"",
+    "suuid -t sess -c \"Session %s (%s) finished, exit code = '$retval'.\"",
     $uuid,
     $cmd_str
 );
