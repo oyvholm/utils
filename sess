@@ -68,6 +68,7 @@ my $begin_cmd = sprintf(
 );
 chomp(my $uuid = `$begin_cmd`);
 print(STDERR "sess.begin:$uuid\n");
+$ENV{'SESS_UUID'} = $uuid;
 system(@Cmd);
 chomp(my $end_uuid = `suuid -t sess -c 'Session $uuid finished.'`);
 print(STDERR "sess.end:$end_uuid\n");
@@ -94,7 +95,8 @@ Usage: $progname [options] [--] command
 
 Execute a command and log start and end time with suuid(1). If the 
 command contains options, include the -- option to switch off parameter 
-parsing of the command.
+parsing of the command. The uuid of the session can be read from the 
+SESS_UUID environment variable.
 
 Options:
 
