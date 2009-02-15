@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 1f5e7aa0-fafb-11dd-beac-000475e441b9
 
 CREATE INDEX log_date_idx ON logg(date);
 CREATE INDEX log_coor0_idx ON logg((coor[0]));

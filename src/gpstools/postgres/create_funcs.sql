@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 1a0fae52-fafb-11dd-b392-000475e441b9
 
 -- clname(): Returnerer navnet på det nærmeste veipunktet i wayp.
 CREATE OR REPLACE FUNCTION clname(point) RETURNS text -- {{{

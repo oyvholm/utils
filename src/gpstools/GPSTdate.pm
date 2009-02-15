@@ -2,6 +2,7 @@ package GPSTdate;
 
 #=======================================================================
 # $Id$
+# File ID: 624dab98-fafa-11dd-831c-000475e441b9
 #
 # Character set: UTF-8
 # ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>

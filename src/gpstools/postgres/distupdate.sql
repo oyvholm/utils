@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 2d79727a-fafb-11dd-9a1e-000475e441b9
 
 BEGIN ISOLATION LEVEL SERIALIZABLE;
     \echo

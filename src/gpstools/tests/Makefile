@@ -1,6 +1,7 @@
 #!/usr/bin/make
 
 # $Id$
+# File ID: 676b0476-fafb-11dd-925c-000475e441b9
 # gpstools/tests/Makefile
 
 all:

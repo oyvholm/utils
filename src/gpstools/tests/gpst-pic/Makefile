@@ -1,6 +1,7 @@
 #!/usr/bin/make
 
 # $Id$
+# File ID: 75946178-fafb-11dd-99e8-000475e441b9
 # gpstools/tests/gpst-pic/Makefile
 
 all:

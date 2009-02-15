@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 21f7f30e-fafb-11dd-8266-000475e441b9
 
 CREATE TABLE logg (
     date timestamptz,

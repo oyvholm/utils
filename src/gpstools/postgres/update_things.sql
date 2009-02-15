@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 4765dc0a-fafb-11dd-874c-000475e441b9
 
 -- Rund av veipunkter til seks desimaler -- {{{
 \echo

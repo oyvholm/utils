@@ -1,4 +1,5 @@
- -- $Id$
+-- $Id$
+-- File ID: 24babc2a-fafb-11dd-96fe-000475e441b9
 
 -- siste_aar: List ut alle plasser siste år, DISTINCT ON name og hver uke
 CREATE OR REPLACE VIEW siste_aar -- {{{
