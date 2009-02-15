@@ -72,6 +72,14 @@ diag(sprintf("========== Executing \"%s%s%s\" ==========",
     scalar(@cmdline_array) ? " " : "",
     join(" ", @cmdline_array)));
 
+my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
+if (-e $Outdir) {
+    die("$progname: $Outdir: WTF?? Directory element already exists.");
+}
+unless (mkdir($Outdir)) {
+    die("$progname: $Outdir: Cannot mkdir(): $!\n");
+}
+
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
@@ -89,14 +97,6 @@ END
 # }}}
 
 =cut
-
-my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
-if (-e $Outdir) {
-    die("$progname: $Outdir: WTF?? Directory element already exists.");
-}
-unless (mkdir($Outdir)) {
-    die("$progname: $Outdir: Cannot mkdir(): $!\n");
-}
 
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
@@ -338,7 +338,9 @@ local $TODO = "";
 
 diag("Testing finished.");
 
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+if (defined($Outfile)) {
+    unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+}
 rmdir($Outdir) || warn("$progname: $Outdir: Cannot remove directory: $!\n");
 
 sub testcmd {
