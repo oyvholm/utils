@@ -24,6 +24,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'comment' => "",
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -43,6 +44,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -59,7 +61,11 @@ if ($Opt{'version'}) {
 
 my @Cmd = @ARGV;
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
-my $begin_cmd = "suuid -t sess -c \"Starting '" . join(" ", @Cmd) . "'\"...";
+my $begin_cmd = sprintf(
+    "suuid -t sess -c \"Starting '%s'%s\"",
+    join(" ", @Cmd),
+    (length($Opt{'comment'}) ? " ($Opt{'comment'})" : "")
+);
 chomp(my $uuid = `$begin_cmd`);
 print(STDERR "sess.begin:$uuid\n");
 system(@Cmd);
@@ -92,6 +98,8 @@ parsing of the command.
 
 Options:
 
+  -c X, --comment X
+    Specify X as comment.
   -h, --help
     Show this help.
   -v, --verbose
