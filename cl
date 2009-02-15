@@ -13,7 +13,6 @@
 #   Bruk --stop-on-copy.
 #=======================================================================
 
-uuid=`suuid -t c_cl -w eo -c "cl $*"`
 if [ "$1" = "-k" ]; then
     use_svk=1
     shift
@@ -47,4 +46,3 @@ else
         svn log$stoponcopy "$@" | less
     fi
 fi
-suuid -t c_cl -w e -c "Session $uuid ferdig."

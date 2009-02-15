@@ -6,7 +6,6 @@
 # Lazyness script.
 #=======================================================================
 
-suuid -t c_svup -c "svup $*"
 LC_ALL=C svn info | grep '^URL: '
 echo ==== svn update --ignore-externals "$@"
 svn update --ignore-externals "$@"

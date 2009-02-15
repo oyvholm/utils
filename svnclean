@@ -17,7 +17,6 @@ echo Subversion. The working copy will be reset. >&2
 echo -n "Press 'y' + Enter to continue..." >&2
 read choice
 if [ "$choice" = "y" ]; then
-    suuid -t c_svnclean -c "svnclean $*"
     echo ==== svn cleanup...
     svn cleanup .
     echo ==== svn revert...
