@@ -2,9 +2,9 @@
 <article xmlns="http://docbook.org/ns/docbook"
          xml:id="articleid"
          version="5.0" xml:lang="en">
-  <title>Example refentry</title>
   <!-- $Id$ -->
   <!-- File ID: STDuuidDTS -->
+  <title>Example refentry</title>
   <refentry xml:id="ls">
     <refmeta>
       <refentrytitle>ls</refentrytitle>
