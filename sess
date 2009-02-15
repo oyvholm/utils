@@ -57,9 +57,14 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
-}
+my @Cmd = @ARGV;
+scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
+my $begin_cmd = "suuid -t sess -c \"Starting '" . join(" ", @Cmd) . "'\"...";
+chomp(my $uuid = `$begin_cmd`);
+print(STDERR "sess.begin:$uuid\n");
+system(@Cmd);
+chomp(my $end_uuid = `suuid -t sess -c 'Session $uuid finished.'`);
+print(STDERR "sess.end:$end_uuid\n");
 
 sub print_version {
     # Print program version {{{
@@ -79,7 +84,11 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] [--] command
+
+Execute a command and log start and end time with suuid(1). If the 
+command contains options, include the -- option to switch off parameter 
+parsing of the command.
 
 Options:
 
