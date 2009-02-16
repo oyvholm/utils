@@ -93,21 +93,22 @@ sub uuid_hex_date {
     my $uuid = shift;
     my $time_low = lc(substr($uuid, 0, 8));
     my $time_mid = lc(substr($uuid, 9, 4));
-    my $time_hi = lc(substr($uuid, 14, 4));
+    my $time_hi = lc(substr($uuid, 15, 3));
     # CO: Notes {{{
     # 2639d59e-fa20-11dd-8aa6-000475e441b9
     # 012345678901234567890123456789012345
     # 000000000011111111112222222222333333
     #
-    # 2639d59e 0-3
+    # 2639d59e 0-3 time_low (0-7)
     # -
-    # fa20 4-5
+    # fa20 4-5 time_mid (9-12)
     # -
-    # 11dd 6-7
+    # 11dd 6-7 time_hi_and_version (15-17)
     # -
-    # 8aa6 8-9
+    # 8a  8 clock_seq_hi_and_reserved (19-20)
+    # a6  9 clock_seq_low (21-22)
     # -
-    # 000475e441b9 10-15
+    # 000475e441b9 10-15 node (24-35)
     # }}}
     my $Retval = "$time_hi$time_mid$time_low";
     D("uuid_hex_date('$uuid') returns '$Retval'");
