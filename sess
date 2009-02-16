@@ -85,7 +85,7 @@ my $end_cmd = sprintf(
 );
 chomp(my $end_uuid = `$end_cmd`);
 $Opt{'quiet'} < 2 && print(STDERR "sess.end:$end_uuid");
-$Opt{'quiet'} < 1 && printf(STDERR " %s, exit code '%d'.",
+$Opt{'quiet'} < 1 && printf(STDERR " -- %s, exit code '%d'.",
                             time_period($end_time - $begin_time), $retval);
 $Opt{'quiet'} < 2 && print(STDERR "\n");
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
