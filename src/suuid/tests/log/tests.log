@@ -46,5 +46,9 @@ ok - "../suuid -w eo -l tmp-suuid-t-..." - Output goes to stdout and stderr (std
 ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere
 ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere (stderr)
 # Testing -q (--quiet) option...
+# Test logging of $SESS_UUID environment variable...
+ok - "SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 ../suuid -t yess -l tmp-suuid-t-..." - -t (--tag) option
+ok - "SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 ../suuid -t yess -l tmp-suuid-t-..." - -t (--tag) option (stderr)
+ok - $SESS_UUID envariable is logged
 # Testing finished.
-1..35
+1..38

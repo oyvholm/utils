@@ -141,7 +141,7 @@ my $Outfile = glob("$Outdir/*");
 like($Outfile, "/^$Outdir\\/$Lh\{12}\$/", "Filename of logfile OK");
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '4',
+        '5',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
@@ -149,6 +149,7 @@ like(file_data($Outfile), # {{{
         '.+?', # hostname:dir
         '.+', # username
         '.+', # tty
+        '', # sess_uuid
     ) . '\n$/s',
     "Log contents OK after exec with no options",
 );
@@ -157,7 +158,7 @@ like(file_data($Outfile), # {{{
 system("$CMD -l $Outdir >/dev/null");
 like(file_data($Outfile), # {{{
     '/^(' . join('\t',
-        '4',
+        '5',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
@@ -165,6 +166,7 @@ like(file_data($Outfile), # {{{
         '.+?', # hostname:dir
         '.+', # username
         '.+', # tty
+        '', # sess_uuid
     ) . '\n){2}$/s',
     "Entries are added, not replacing",
 );
@@ -181,7 +183,7 @@ likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '4',
+        '5',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
@@ -189,6 +191,7 @@ like(file_data($Outfile), # {{{
         '.+?', # hostname:dir
         '.+', # username
         '.+', # tty
+        '', # sess_uuid
     ) . '\n$/s',
     "The environment variable was read",
 );
@@ -205,7 +208,7 @@ likecmd("$CMD -m -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '4',
+        '5',
         $v1rand_templ, # uuid
         $date_templ, # date
         '', # tag
@@ -213,6 +216,7 @@ like(file_data($Outfile), # {{{
         '.+?', # hostname:dir
         '.+', # username
         '.+', # tty
+        '', # sess_uuid
     ) . '\n$/s',
     "Log contents OK after --random-mac",
 );
@@ -229,7 +233,7 @@ likecmd("$CMD -t snaddertag -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '4',
+        '5',
         $v1_templ, # uuid
         $date_templ, # date
         'snaddertag', # tag
@@ -237,6 +241,7 @@ like(file_data($Outfile), # {{{
         '.+?', # hostname:dir
         '.+', # username
         '.+', # tty
+        '', # sess_uuid
     ) . '\n$/s',
     "Log contents OK after tag",
 );
@@ -253,7 +258,7 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . join('\t',
-        '4',
+        '5',
         $v1_templ, # uuid
         $date_templ, # date
         '', # tag
@@ -261,6 +266,7 @@ like(file_data($Outfile), # {{{
         '.+?', # hostname:dir
         '.+', # username
         '.+', # tty
+        '', # sess_uuid
     ) . '\n$/s',
     "Log contents OK after comment",
 );
@@ -277,7 +283,7 @@ likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^(' . join('\t',
-        '4',
+        '5',
         $v1_templ, # uuid
         $date_templ, # date
         'testeri', # tag
@@ -285,6 +291,7 @@ like(file_data($Outfile), # {{{
         '.+?', # hostname:dir
         '.+', # username
         '.+', # tty
+        '', # sess_uuid
     ) . '\n){5}$/s',
     "Log contents OK after count, comment and tag",
 );
@@ -321,6 +328,31 @@ likecmd("$CMD -w n -l $Outdir", # {{{
 
 # }}}
 diag("Testing -q (--quiet) option...");
+diag("Test logging of \$SESS_UUID environment variable...");
+unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    "-t (--tag) option",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . join('\t',
+        '5',
+        $v1_templ, # uuid
+        $date_templ, # date
+        'yess', # tag
+        '', # comment
+        '.+?', # hostname:dir
+        '.+', # username
+        '.+', # tty
+        '27538da4-fc68-11dd-996d-000475e441b9', # sess_uuid
+    ) . '\n$/s',
+    "\$SESS_UUID envariable is logged",
+);
+
+# }}}
 todo_section:
 ;
 

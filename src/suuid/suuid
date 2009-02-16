@@ -140,6 +140,13 @@ my $safe_username = safe_tab($Username);
 chomp(my $tty = `tty`);
 my $safe_tty = safe_tab($tty);
 
+my $sess_uuid = "";
+if (defined($ENV{'SESS_UUID'})) {
+    if ($ENV{'SESS_UUID'} =~ /([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/) {
+        $sess_uuid = $ENV{'SESS_UUID'};
+    }
+}
+
 if (open(LogFP, ">>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
         for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
@@ -184,9 +191,19 @@ if (open(LogFP, ">>", $Logfile)) {
             #   current_dir \t
             #   username \t
             #   tty \n
+            # Version 5
+            #   5 \t
+            #   uuid \t
+            #   curr_time \t
+            #   tag \t
+            #   comment \t
+            #   current_dir \t
+            #   username \t
+            #   tty \t
+            #   sess_uuid \n
             # }}}
             print(LogFP join("\t",
-                    4,
+                    5,
                     $uuid,
                     sec_to_string($curr_time),
                     $safe_tag,
@@ -194,6 +211,7 @@ if (open(LogFP, ">>", $Logfile)) {
                     $safe_currdir,
                     $safe_username,
                     $safe_tty,
+                    $sess_uuid,
                 ) . "\n"
             );
             $Opt{'whereto'} =~ /o/ && print("$uuid\n");
@@ -316,6 +334,9 @@ Options:
     Default: "$Std{'whereto'}"
   --debug
     Print debugging messages.
+
+If the \$SESS_UUID environment variable is defined by sess(1) or another 
+program, the value is logged if it is an UUID.
 
 END
     exit($Retval);
