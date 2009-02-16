@@ -10,12 +10,13 @@ navn=$1
 kanal=$2
 lengde=$3
 
-uuid=`suuid -t radiolagring -w eo -c "radiolagring $*"`
+dlfile=`u`.$navn.nrk_$kanal.mp3
+uuid=`suuid -t radiolagring -w eo -c "radiolagring $* ($dlfile)"`
 dldir=$HOME/dl/nettradio
 logdir=$HOME/log/radiolagring
 logfile=$logdir/$uuid.wgetlog
 
 [ -d $logdir/. ] || mkdir -p $logdir || { echo "$0: $logdir: Klarte ikke mkdir" >&2; exit 1; }
-timeout $[60*$lengde] wget -U "xmms/1.2.7" -o $logfile -O $dldir/`u`.$navn.nrk_$kanal.mp3 http://radio.hiof.no:8000/nrk-$kanal-128
+timeout $[60*$lengde] wget -U "xmms/1.2.7" -o $logfile -O $dldir/$dlfile http://radio.hiof.no:8000/nrk-$kanal-128
 suuid -w o -t radiolagring -c "Download $uuid ferdig."
 gzip -q $logfile
