@@ -1,0 +1,117 @@
+Index: addpoints
+===================================================================
+--- addpoints	(revision 2897)
++++ addpoints	(working copy)
+@@ -109,6 +109,93 @@
+                 system($exec_str);
+             }
+         }
++        if ($Opt{'type'} =~ /suuid/) {
++            if (open(FromFP, "<$Currfile")) {
++                while (my $Line = <FromFP>) {
++                    # Version description from suuid r2886 (04c64336-f744-11dd-bddd-000475e441b9):
++                    # Version 1 (same as above, but with version field):
++                    #   1 \t
++                    #   uuid \t
++                    #   curr_time \t
++                    #   tag \t
++                    #   comment \n
++                    # Version 2
++                    #   2 \t
++                    #   uuid \t
++                    #   curr_time \t
++                    #   tag \t
++                    #   comment \t
++                    #   current_dir \n
++                    # Version 3
++                    #   3 \t
++                    #   uuid \t
++                    #   curr_time \t
++                    #   tag \t
++                    #   comment \t
++                    #   current_dir \t
++                    #   username \n
++
++                    my %Data = ();
++                    if ($Line =~ # Version 1
++                        /^
++                            (1)\t    # version
++                            (.*?)\t  # uuid
++                            (.*?)\t  # date
++                            (.*?)\t  # tag
++                            (.*?)\n  # comment
++                        /x
++                    ) {
++                        $Data{'version'} = $1;
++                        $Data{'uuid'} = $2;
++                        $Data{'date'} = $3;
++                        $Data{'tag'} = $4;
++                        $Data{'comment'} = $5;
++                    }
++                    elsif ($Line =~ # Version 2
++                        /^
++                            (2)\t    # version
++                            (.*?)\t  # uuid
++                            (.*?)\t  # date
++                            (.*?)\t  # tag
++                            (.*?)\n  # comment
++                            (.*?)\n  # currdir
++                        /x
++                    ) {
++                        $Data{'version'} = $1;
++                        $Data{'uuid'} = $2;
++                        $Data{'date'} = $3;
++                        $Data{'tag'} = $4;
++                        $Data{'comment'} = $5;
++                        $Data{'currdir'} = $5;
++                    }
++                    elsif ($Line =~ # Version 3
++                        /^
++                            (3)\t    # version
++                            (.*?)\t  # uuid
++                            (.*?)\t  # date
++                            (.*?)\t  # tag
++                            (.*?)\n  # comment
++                            (.*?)\n  # currdir
++                            (.*?)\n  # username
++                        /x
++                    ) {
++                        $Data{'version'} = $1;
++                        $Data{'uuid'} = $2;
++                        $Data{'date'} = $3;
++                        $Data{'tag'} = $4;
++                        $Data{'comment'} = $5;
++                        $Data{'currdir'} = $5;
++                        $Data{'username'} = $5;
++                    }
++                }
++                print(
++INSERT INTO suuid (version, suuid, date, tag, comment, currdir, username) VALUES (
++  '$Data{'version'}', 
++                close(FromFP);
++            } else {
++                warn("$progname: $Currfile: Cannot open file for read: $!\n");
++            }
++        }
+         if ($Opt{'type'} =~ /track/) {
+             my $exec_str =
+                 "gpst -o pgtab -d -rpt $Currfile | " .
+Index: postgres/create_table.sql
+===================================================================
+--- postgres/create_table.sql	(revision 2897)
++++ postgres/create_table.sql	(working copy)
+@@ -81,3 +81,14 @@
+     lastupdate timestamptz,
+     lastname timestamptz
+ );
++
++CREATE TABLE suuid (
++    version smallint,
++    suuid uuid,
++    date timestamptz,
++    tag varchar,
++    comment varchar.
++    currdir varchar,
++    username varchar,
++    id serial
++);

@@ -1,22 +1,13 @@
 -- $Id$
+-- File ID: 1f5e7aa0-fafb-11dd-beac-000475e441b9
 
-CREATE INDEX log_date_idx on logg(date);
-CREATE INDEX log_coor0_idx on logg((coor[0]));
-CREATE INDEX log_coor1_idx on logg((coor[1]));
-CREATE INDEX log_ele_idx on logg(ele);
-CREATE INDEX log_sted_idx on logg(sted);
-CREATE INDEX log_dist_idx on logg(dist);
-
--- DROP INDEX begin_idx;
--- DROP INDEX end_idx;
--- DROP INDEX cabegin_idx;
--- DROP INDEX caend_idx;
--- DROP INDEX lat_idx;
--- DROP INDEX lon_idx;
--- DROP INDEX descr_idx;
--- DROP INDEX flags_idx;
--- DROP INDEX persons_idx;
--- DROP INDEX data_idx;
+CREATE INDEX log_date_idx ON logg(date);
+CREATE INDEX log_coor0_idx ON logg((coor[0]));
+CREATE INDEX log_coor1_idx ON logg((coor[1]));
+CREATE INDEX log_ele_idx ON logg(ele);
+CREATE INDEX log_name_idx ON logg(name);
+CREATE INDEX log_dist_idx ON logg(dist);
+CREATE INDEX log_id_idx ON logg(id);
 
 CREATE INDEX ev_date_idx ON events (date);
 CREATE INDEX ev_begindate_idx ON events (begindate);

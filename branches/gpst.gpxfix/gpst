@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 082106ec-f924-11dd-b757-0001805bf4b1
 # Converts between various GPS formats
 #
 # Character set: UTF-8
@@ -576,7 +577,7 @@ sub print_gpx {
                 $Name =~ s/'/''/gs;
                 print(join("\n",
                     "BEGIN;",
-                    "$Spc${Spc}UPDATE logg SET sted = clname(coor) " .
+                    "$Spc${Spc}UPDATE logg SET name = clname(coor) " .
                         "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",
                     "$Spc${Spc}UPDATE logg SET dist = cldist(coor) " .
                         "WHERE $fromdate_str(point($Lat,$Lon) <-> coor) < 0.05;",

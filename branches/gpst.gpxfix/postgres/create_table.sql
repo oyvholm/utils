@@ -1,12 +1,14 @@
 -- $Id$
+-- File ID: 21f7f30e-fafb-11dd-8266-000475e441b9
 
 CREATE TABLE logg (
     date timestamptz,
     coor point,
     ele numeric,
-    sted text,
+    name text,
     dist numeric(8, 5),
-    description text
+    description text,
+    id serial
 );
 
 CREATE TABLE wayp (
@@ -19,6 +21,7 @@ CREATE TABLE wayp (
     descr text, -- A text description. Additional info intended for the user, not the GPS.
     src text,
     sym text,
+    numpoints integer,
     id integer
 );
 
@@ -32,6 +35,7 @@ CREATE TABLE wayp_new (
     descr text, -- A text description. Additional info intended for the user, not the GPS.
     src text,
     sym text,
+    numpoints integer,
     id serial
 );
 
@@ -45,11 +49,12 @@ CREATE TABLE wayp_rej (
     descr text, -- A text description. Additional info intended for the user, not the GPS.
     src text,
     sym text,
+    numpoints integer,
     id integer
 );
 
 CREATE TABLE tmpwayp AS
-    SELECT * from wayp LIMIT 0;
+    SELECT * FROM wayp LIMIT 0;
 
 CREATE TABLE events (
     date timestamptz,
@@ -75,5 +80,5 @@ CREATE TABLE pictures (
 
 CREATE TABLE stat (
     lastupdate timestamptz,
-    laststed timestamptz
+    lastname timestamptz
 );

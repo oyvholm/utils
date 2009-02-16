@@ -2,6 +2,7 @@ package GPSTgeo;
 
 #=======================================================================
 # $Id$
+# File ID: 6ac1a50e-fafa-11dd-a267-000475e441b9
 #
 # Character set: UTF-8
 # ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>

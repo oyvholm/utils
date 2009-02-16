@@ -2,6 +2,7 @@ package GPSTxml;
 
 #=======================================================================
 # $Id$
+# File ID: 7065d156-fafa-11dd-a242-000475e441b9
 #
 # Character set: UTF-8
 # ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>

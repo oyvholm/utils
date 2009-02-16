@@ -1,4 +1,5 @@
 $Id$
+File ID: 0529a718-fafb-11dd-b55f-000475e441b9
 
 Opprettelse av "gps"-databasen:
 

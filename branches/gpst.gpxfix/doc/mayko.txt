@@ -1,4 +1,5 @@
 $Id$
+File ID: 01befb00-fafb-11dd-bbff-000475e441b9
 
 Description of the “Mayko Xmap” format written by gpstrans(1). From the 
 C source.

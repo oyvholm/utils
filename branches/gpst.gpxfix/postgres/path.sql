@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 42ce10a4-fafb-11dd-b73a-000475e441b9
 
 SELECT * FROM logg
     WHERE coor <@ polygon(path('(

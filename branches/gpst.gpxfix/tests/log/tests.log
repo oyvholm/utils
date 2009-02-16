@@ -11,7 +11,7 @@ ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> 
 ok - "../gpst -w -o gpx extensions.gpx" - Read and output GPX with <extensions> element and strip whitespace (stderr)
 not ok - "../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>
 #   Failed test '"../gpst -o gpx many-extensions.gpx" - Output GPX format from GPX with many <extensions>'
-#   at ./run-tests.pl line 2255.
+#   at ./run-tests.pl line 2256.
 #          got: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 # <gpx
 #   version="1.1"

@@ -2,6 +2,7 @@ package GPSTdebug;
 
 #=======================================================================
 # $Id$
+# File ID: 65c74694-fafa-11dd-955a-000475e441b9
 #
 # Character set: UTF-8
 # ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>

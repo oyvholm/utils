@@ -1,4 +1,5 @@
 -- $Id$
+-- File ID: 4765dc0a-fafb-11dd-874c-000475e441b9
 
 -- Rund av veipunkter til seks desimaler -- {{{
 \echo
@@ -14,9 +15,7 @@ UPDATE wayp SET coor = point(
 \echo
 \echo ================ Fjern duplikater i wayp ================
 
-SELECT count(*)
-    AS "Antall i wayp før rensking"
-    FROM wayp;
+COPY (SELECT '======== Antall i wayp før rensking: ' || count(*) from wayp) to STDOUT;
 
 BEGIN ISOLATION LEVEL SERIALIZABLE;
     CREATE TEMPORARY TABLE dupfri
@@ -44,18 +43,14 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     );
 COMMIT;
 
-SELECT count(*)
-    AS "Antall i wayp etter rensking"
-    FROM wayp;
+COPY (SELECT '======== Antall i wayp etter rensking: ' || count(*) from wayp) to STDOUT;
 -- }}}
 
 -- Fjern duplikater i events -- {{{
 \echo
 \echo ================ Fjern duplikater i events ================
 
-SELECT count(*)
-    AS "Antall i events før rensking"
-    FROM events;
+COPY (SELECT '======== Antall i events før rensking: ' || count(*) from events) to STDOUT;
 
 BEGIN ISOLATION LEVEL SERIALIZABLE;
     CREATE TEMPORARY TABLE dupfri
@@ -73,9 +68,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     );
 COMMIT;
 
-SELECT count(*)
-    AS "Antall i events etter rensking"
-    FROM events;
+COPY (SELECT '======== Antall i events etter rensking: ' || count(*) from events) to STDOUT;
 -- }}}
 
 -- Oppdater koordinater for bilder -- {{{
@@ -98,9 +91,7 @@ UPDATE pictures SET coor = point(
 \echo
 \echo ================ Fjern duplikater i pictures ================
 
-SELECT count(*)
-    AS "Antall i pictures før rensking"
-    FROM pictures;
+COPY (SELECT '======== Antall i pictures før rensking: ' || count(*) from pictures) to STDOUT;
 
 BEGIN ISOLATION LEVEL SERIALIZABLE;
     CREATE TEMPORARY TABLE dupfri
@@ -118,9 +109,7 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
     );
 COMMIT;
 
-SELECT count(*)
-    AS "Antall i pictures etter rensking"
-    FROM pictures;
+COPY (SELECT '======== Antall i pictures etter rensking: ' || count(*) from pictures) to STDOUT;
 -- }}}
 
 \i distupdate.sql

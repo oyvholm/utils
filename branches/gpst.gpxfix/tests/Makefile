@@ -1,6 +1,7 @@
 #!/usr/bin/make
 
 # $Id$
+# File ID: 676b0476-fafb-11dd-925c-000475e441b9
 # gpstools/tests/Makefile
 
 all:
@@ -10,6 +11,7 @@ all:
 	cd addpoints && make
 
 clean:
+	rm -vf gpst-stderr.tmp
 	svn revert log/tests.log log/todo-tests.log
 	cd addpoints && make clean
 	cd gpst-pic && make clean

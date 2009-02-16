@@ -2,6 +2,7 @@ package GPST;
 
 #=======================================================================
 # $Id$
+# File ID: 5e0437a0-fafa-11dd-abd7-000475e441b9
 #
 # Character set: UTF-8
 # ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>
@@ -170,7 +171,7 @@ sub trackpoint {
                     ? "($Dat{'lat'},$Dat{'lon'})"
                     : '\N', # coor
                 length($Dat{'ele'}) ? $Dat{'ele'} : '\N', # ele
-                '\N', # sted
+                '\N', # name
                 '\N', # dist
                 '\N'  # description
             ) . "\n";

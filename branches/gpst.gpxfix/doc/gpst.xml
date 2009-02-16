@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "../../../Tools/dtd/docbook-4.4/docbookx.dtd">
 <refentry id="gpst" lang="en">
+  <!-- File ID: 84662624-f924-11dd-9043-0001805bf4b1 -->
   <refentryinfo>
     <date><![CDATA[$Id$]]></date>
   </refentryinfo>
@@ -255,7 +256,7 @@
                   </varlistentry>
 
                   <varlistentry>
-                    <term><database class="field">sted</database></term>
+                    <term><database class="field">name</database></term>
                     <listitem>
                       <para>Short name of closest waypoint.
                       Calculated in 
@@ -378,7 +379,7 @@
               <term><option>pgwupd</option></term>
               <listitem>
                 <para>Output waypoints as SQL transactions which updates  
-                the <database class="field">sted</database> and 
+                the <database class="field">name</database> and 
                 <database class="field">dist</database> columns.</para>
               </listitem>
             </varlistentry>
