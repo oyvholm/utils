@@ -125,17 +125,17 @@ if ($Opt{'local'}) {
             }
         }
         close(PipeFP);
-        mysyst("cp -a $dat_file $tmpfile");
+        mysyst("cp", "-a", $dat_file, $tmpfile);
     } else {
         warn("$progname: Unable to open \"$CMD_SVN stat\" pipe\n");
     }
 } else {
-    mysyst("$CMD_SVN -q export $URL $tmpfile");
+    mysyst($CMD_SVN, "-q", "export", $URL, $tmpfile);
 }
 
 if (length($Dest)) {
     msg(1, "Copying temp file");
-    mysyst("cp -a $tmpfile $Dest");
+    mysyst("cp", "-a", $tmpfile, $Dest);
 }
 
 my $Output = "";
@@ -168,15 +168,15 @@ if (length($Dest)) {
     if ($is_svn_wc) {
         if (!is_added($Dest)) {
             msg(1, "$CMD_SVN add");
-            mysyst("$CMD_SVN add $Dest");
+            mysyst($CMD_SVN, "add", $Dest);
         }
         msg(1, "mergesvn");
         if (-f "Lib/std/$Type") {
-            mysyst("mergesvn -s Lib/std/$Type $Dest");
+            mysyst("mergesvn", "-s", "Lib/std/$Type", $Dest);
         } else {
-            mysyst("mergesvn -s $URL $Dest");
+            mysyst("mergesvn", "-s", $URL, $Dest);
         }
-        mysyst("keyw $Dest");
+        mysyst("keyw", $Dest);
     }
 } else {
     print($Output);
@@ -187,7 +187,7 @@ unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
 sub is_added {
     # Check if a file is already added with svn(1) {{{
     my $File = shift;
-    my $Res = `$CMD_SVN stat --xml $File`;
+    my $Res = `$CMD_SVN stat --xml "$File"`;
     my $Retval = $Res =~ /<wc-status.*?item="added".*?<\/wc-status>/s
         ? 1
         : 0;
