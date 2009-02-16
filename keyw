@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 881b567a-fc3c-11dd-9a35-0001805bf4b1
 # Setter properties på tekstfiler sånn som jeg vil ha det.
 # Valg:
 #   -k  Bruk svk istedenfor svn.
@@ -17,14 +18,14 @@ fi
 
 if [ "$1" != "-u" ]; then
     for _k in "$@"; do
-        [ -f $_k ] && $CMD_SVN propset svn:eol-style native "$_k"
+        [ -f "$_k" ] && $CMD_SVN propset svn:eol-style native "$_k"
     done
 else
     shift
 fi
 
 for _k in "$@"; do
-    [ -f $_k ] && $CMD_SVN propset svn:keywords Id "$_k"
+    [ -f "$_k" ] && $CMD_SVN propset svn:keywords Id "$_k"
     $CMD_SVN propdel cvs2svn:cvs-rev "$_k"
     $CMD_SVN proplist -v "$_k"
 done
