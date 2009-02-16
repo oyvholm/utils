@@ -1,0 +1,5 @@
+$Id$
+File ID: 663bb746-fc48-11dd-83ee-000475e441b9
+
+Ka du sei, din gorrfinn?
+Bare en test.
