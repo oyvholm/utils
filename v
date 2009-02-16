@@ -72,8 +72,11 @@ for my $curr_arg (@ARGV) {
 }
 my $cmd_str = join(" ", @Fancy);
 chomp(my $uuid=`suuid -t c_v -w eo -c "v $cmd_str"`);
+defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
+$ENV{'SESS_UUID'} .= "$uuid,";
 system("vim", @ARGV);
 system("suuid -t c_v -c 'Vim-session $uuid ferdig.'");
+$ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 sub print_version {
     # Print program version {{{
