@@ -148,7 +148,7 @@ like(file_data($Outfile), # {{{
         '', # comment
         '.+?', # hostname:dir
         '.+', # username
-        '.+' # tty
+        '.+', # tty
     ) . '\n$/s',
     "Log contents OK after exec with no options",
 );
@@ -164,7 +164,7 @@ like(file_data($Outfile), # {{{
         '', # comment
         '.+?', # hostname:dir
         '.+', # username
-        '.+' # tty
+        '.+', # tty
     ) . '\n){2}$/s',
     "Entries are added, not replacing",
 );
@@ -188,7 +188,7 @@ like(file_data($Outfile), # {{{
         '', # comment
         '.+?', # hostname:dir
         '.+', # username
-        '.+' # tty
+        '.+', # tty
     ) . '\n$/s',
     "The environment variable was read",
 );
@@ -212,7 +212,7 @@ like(file_data($Outfile), # {{{
         '', # comment
         '.+?', # hostname:dir
         '.+', # username
-        '.+' # tty
+        '.+', # tty
     ) . '\n$/s',
     "Log contents OK after --random-mac",
 );
@@ -236,7 +236,7 @@ like(file_data($Outfile), # {{{
         '', # comment
         '.+?', # hostname:dir
         '.+', # username
-        '.+' # tty
+        '.+', # tty
     ) . '\n$/s',
     "Log contents OK after tag",
 );
@@ -260,7 +260,7 @@ like(file_data($Outfile), # {{{
         'Great test', # comment
         '.+?', # hostname:dir
         '.+', # username
-        '.+' # tty
+        '.+', # tty
     ) . '\n$/s',
     "Log contents OK after comment",
 );
@@ -284,7 +284,7 @@ like(file_data($Outfile), # {{{
         'Great test', # comment
         '.+?', # hostname:dir
         '.+', # username
-        '.+' # tty
+        '.+', # tty
     ) . '\n){5}$/s',
     "Log contents OK after count, comment and tag",
 );
