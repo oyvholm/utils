@@ -120,6 +120,8 @@ if (-e "/dungen.mrk") {
 } else {
     $Cmd = ($Opt{'version'} != 1) ? "uuidgen -r" : "uuidgen -t";
 }
+$Comment =~ s/^\s+//;
+$Comment =~ s/\s+$//;
 my $safe_comment = safe_tab($Comment);
 my $safe_tag = safe_tab($Tag);
 my $safe_currdir = "";
