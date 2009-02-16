@@ -59,7 +59,7 @@
 REPOS="$1"
 TXN="$2"
 
-# Make sure that the log message contains commit UUID.
+# Make sure that the log message contains a commit UUID.
 SVNLOOK=/usr/local/bin/svnlook
 LOG=`$SVNLOOK log -t "$TXN" "$REPOS"`
 echo "$LOG" | /home/sunny/bin/needuuid || { echo "No UUID specified" >&2; exit 1; }
