@@ -5,16 +5,18 @@
 # File ID: 8f73893a-fae1-11dd-aa9f-0001805bf4b1
 #
 # The pre-revprop-change hook is invoked before a revision property
-# is modified.  Subversion runs this hook by invoking a program
-# (script, executable, binary, etc.) named 'pre-revprop-change' (for which
-# this file is a template), with the following ordered arguments:
+# is added, modified or deleted.  Subversion runs this hook by invoking
+# a program (script, executable, binary, etc.) named 'pre-revprop-change'
+# (for which this file is a template), with the following ordered
+# arguments:
 #
 #   [1] REPOS-PATH   (the path to this repository)
 #   [2] REVISION     (the revision being tweaked)
 #   [3] USER         (the username of the person tweaking the property)
 #   [4] PROPNAME     (the property being set on the revision)
+#   [5] ACTION       (the property is being 'A'dded, 'M'odified, or 'D'eleted)
 #
-#   [STDIN] PROPVAL  ** the property value is passed via STDIN.
+#   [STDIN] PROPVAL  ** the new property value is passed via STDIN.
 #
 # If the hook program exits with success, the propchange happens; but
 # if it exits with failure (non-zero), the propchange doesn't happen.
@@ -40,16 +42,32 @@
 # 'pre-revprop-change.bat' or 'pre-revprop-change.exe',
 # but the basic idea is the same.
 #
-# Here is an example hook script, for a Unix /bin/sh interpreter:
+# The hook program typically does not inherit the environment of
+# its parent process.  For example, a common problem is for the
+# PATH environment variable to not be set to its usual value, so
+# that subprograms fail to launch unless invoked via absolute path.
+# If you're having unexpected problems with a hook program, the
+# culprit may be unusual (or missing) environment variables.
+# 
+# Here is an example hook script, for a Unix /bin/sh interpreter.
+# For more examples and pre-written hooks, see those in
+# the Subversion repository at
+# http://svn.collab.net/repos/svn/trunk/tools/hook-scripts/ and
+# http://svn.collab.net/repos/svn/trunk/contrib/hook-scripts/
+
 
 REPOS="$1"
 REV="$2"
 USER="$3"
 PROPNAME="$4"
+ACTION="$5"
 
-if [ "$PROPNAME" = "svn:log" ]; then
+if [ "$ACTION" = "M" -a "$PROPNAME" = "svn:log" ]; then
     export PATH=/home/sunny/bin:$PATH
-    suuid -t prerevpropchange -l /home/sunny/uuids -w n -c "Loggmelding forandres: $REPOS r$REV (`svnlook log $REPOS -r$REV | finduuid | tail -1`)"
+    suuid -t prerevpropchange \
+        -l /home/sunny/uuids \
+        -w n \
+        -c "Loggmelding forandres: $REPOS r$REV (`svnlook log $REPOS -r$REV | finduuid | tail -1`)"
     exit 0;
 fi
 exit 1
