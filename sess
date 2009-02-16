@@ -63,7 +63,7 @@ my @Cmd = @ARGV;
 my $cmd_str = join(" ", @ARGV);
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
 my $begin_cmd = sprintf(
-    "suuid -t sess -c \"Starting '%s'%s\"",
+    "suuid -t sess_begin -c \"Starting '%s'%s\"",
     $cmd_str,
     (length($Opt{'comment'}) ? " ($Opt{'comment'})" : "")
 );
@@ -72,7 +72,7 @@ print(STDERR "sess.begin:$uuid\n");
 $ENV{'SESS_UUID'} = $uuid;
 my $retval = system(@Cmd);
 my $end_cmd = sprintf(
-    "suuid -t sess -c \"Session %s (%s) finished, exit code = '$retval'.\"",
+    "suuid -t sess_end -c \"Session %s (%s) finished, exit code = '$retval'.\"",
     $uuid,
     $cmd_str
 );
