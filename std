@@ -114,8 +114,9 @@ $Mon += 1;
 my $URL = "$ENV{SR}/utils/trunk/Lib/std/$Type";
 my $tmpfile = "tmp.std." . time;
 
+my $is_svn_wc = -d ".svn/." ? 1 : 0;
+
 if ($Opt{'local'}) {
-    mysyst("$CMD_SVN update $dat_file");
     if (open(PipeFP, "$CMD_SVN stat $dat_file |")) {
         while (<PipeFP>) {
             if (/^M/) {
@@ -164,18 +165,19 @@ if (length($Dest)) {
         || die("$progname: $Dest: Cannot open file for write: $!\n");
     print(DestFP $Output);
     close(DestFP);
-    if (!is_added($Dest)) {
-        msg(1, "svn add");
-        mysyst("$CMD_SVN add $Dest");
+    if ($is_svn_wc) {
+        if (!is_added($Dest)) {
+            msg(1, "$CMD_SVN add");
+            mysyst("$CMD_SVN add $Dest");
+        }
+        msg(1, "mergesvn");
+        if (-f "Lib/std/$Type") {
+            mysyst("mergesvn -s Lib/std/$Type $Dest");
+        } else {
+            mysyst("mergesvn -s $URL $Dest");
+        }
+        mysyst("keyw $Dest");
     }
-    msg(1, "mergesvn");
-    if (-f "Lib/std/$Type") {
-        mysyst("svn up Lib/std");
-        mysyst("mergesvn -s Lib/std/$Type $Dest");
-    } else {
-        mysyst("mergesvn -s $URL $Dest");
-    }
-    mysyst("keyw $Dest");
 } else {
     print($Output);
 }
@@ -185,7 +187,7 @@ unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
 sub is_added {
     # Check if a file is already added with svn(1) {{{
     my $File = shift;
-    my $Res = `svn stat --xml $File`;
+    my $Res = `$CMD_SVN stat --xml $File`;
     my $Retval = $Res =~ /<wc-status.*?item="added".*?<\/wc-status>/s
         ? 1
         : 0;
