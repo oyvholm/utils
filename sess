@@ -27,6 +27,7 @@ our %Opt = (
     'comment' => "",
     'debug' => 0,
     'help' => 0,
+    'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -47,6 +48,7 @@ GetOptions(
     "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "quiet|q+" => \$Opt{'quiet'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -68,7 +70,7 @@ my $begin_cmd = sprintf(
     (length($Opt{'comment'}) ? " ($Opt{'comment'})" : "")
 );
 chomp(my $uuid = `$begin_cmd`);
-print(STDERR "sess.begin:$uuid\n");
+$Opt{'quiet'} < 2 && print(STDERR "sess.begin:$uuid\n");
 $ENV{'SESS_UUID'} = $uuid;
 my $begin_time = time;
 my $retval = system(@Cmd);
@@ -81,7 +83,10 @@ my $end_cmd = sprintf(
     $retval
 );
 chomp(my $end_uuid = `$end_cmd`);
-print(STDERR "sess.end:$end_uuid\n");
+$Opt{'quiet'} < 2 && print(STDERR "sess.end:$end_uuid");
+$Opt{'quiet'} < 1 && printf(STDERR " %s, exit code '%d'.",
+                            time_period($end_time - $begin_time), $retval);
+$Opt{'quiet'} < 2 && print(STDERR "\n");
 
 sub print_version {
     # Print program version {{{
@@ -114,6 +119,8 @@ Options:
     Specify X as comment.
   -h, --help
     Show this help.
+  -q, --quiet
+    Use less output. Can be repeated. -qq = totally quiet.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
