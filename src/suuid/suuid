@@ -193,7 +193,7 @@ if (open(LogFP, ">>", $Logfile)) {
                     $safe_comment,
                     $safe_currdir,
                     $safe_username,
-                    $safe_tty
+                    $safe_tty,
                 ) . "\n"
             );
             $Opt{'whereto'} =~ /o/ && print("$uuid\n");
