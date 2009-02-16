@@ -123,7 +123,7 @@ likecmd("$CMD --show-version", # {{{
 );
 
 # }}}
-my $Lh = "[0-9a-f]";
+my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";

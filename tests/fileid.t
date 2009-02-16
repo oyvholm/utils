@@ -67,7 +67,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my $Lh = "[0-9a-f]";
+my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 
 diag(sprintf("========== Executing \"%s%s%s\" ==========",

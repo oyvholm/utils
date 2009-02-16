@@ -67,7 +67,7 @@ if ($Opt{'version'}) {
 defined($ARGV[0]) || die("$progname: Filename not specified. Use -h for help.\n");
 my $file_name = $ARGV[0];
 
-my $Lh = "[0-9a-f]";
+my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 
 my $Comment = "_%uuid%_\n";
