@@ -70,11 +70,15 @@ my $begin_cmd = sprintf(
 chomp(my $uuid = `$begin_cmd`);
 print(STDERR "sess.begin:$uuid\n");
 $ENV{'SESS_UUID'} = $uuid;
+my $begin_time = time;
 my $retval = system(@Cmd);
+my $end_time = time;
 my $end_cmd = sprintf(
-    "suuid -t sess_end -c \"Session %s (%s) finished, exit code = '$retval'.\"",
+    "suuid -t sess_end -c \"Session %s (%s) finished after %s, exit code = '%s'.\"",
     $uuid,
-    $cmd_str
+    $cmd_str,
+    time_period($end_time - $begin_time),
+    $retval
 );
 chomp(my $end_uuid = `$end_cmd`);
 print(STDERR "sess.end:$end_uuid\n");
@@ -121,6 +125,31 @@ END
     exit($Retval);
     # }}}
 } # usage()
+
+sub time_period {
+	# {{{
+	my $secs = shift;
+	my ($Day, $Hour, $Min, $Sec) = (0, 0, 0, 0);
+
+	$Day = int($secs / 86400);
+	$secs -= $Day * 86400;
+
+	$Hour = int($secs / 3600);
+	$secs -= $Hour * 3600;
+
+	$Min = int($secs / 60);
+	$secs -= $Min * 60;
+
+	$Sec = $secs;
+
+	return(
+        ($Day
+            ? sprintf("%s day%s, ", $Day, $Day == 1 ? "" : "s")
+            : ""
+        ) . sprintf("%02u:%02u:%02u", $Hour, $Min, $Sec)
+    );
+	# }}}
+} # time_period()
 
 sub msg {
     # Print a status message to stderr based on verbosity level {{{
