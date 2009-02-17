@@ -24,6 +24,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'comment' => "",
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -43,6 +44,7 @@ push(@main::version_array, $rcs_id);
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -57,6 +59,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $comm_str = "";
+if (length($Opt{'comment'})) {
+    $comm_str = " ($Opt{'comment'})";
+}
 my @Fancy = ();
 for my $curr_arg (@ARGV) {
     if (-r $curr_arg) {
@@ -71,7 +77,7 @@ for my $curr_arg (@ARGV) {
     }
 }
 my $cmd_str = join(" ", @Fancy);
-chomp(my $uuid=`suuid -t c_v -w eo -c "v $cmd_str"`);
+chomp(my $uuid=`suuid -t c_v -w eo -c "v $cmd_str$comm_str"`);
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 $ENV{'SESS_UUID'} .= "$uuid,";
 system("vim", @ARGV);
@@ -100,6 +106,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -c X, --comment X
+    Session comment.
   -h, --help
     Show this help.
   -v, --verbose
