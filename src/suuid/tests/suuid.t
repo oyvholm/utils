@@ -109,19 +109,19 @@ likecmd("$CMD -h", # {{{
 
 # }}}
 ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
-diag("Testing --verbose option...");
-likecmd("$CMD -h --verbose", # {{{
+diag("Testing -v (--verbose) option...");
+likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',
     '/^$/',
-    "Option --verbose with -h returns Id string and help screen",
+    "Option --version with -h returns Id string and help screen",
 );
 
 # }}}
-diag("Testing --show-version option...");
-likecmd("$CMD --show-version", # {{{
+diag("Testing --version option...");
+likecmd("$CMD --version", # {{{
     '/\$Id: .*? \$/',
     '/^$/',
-    "Option --show-version returns Id string",
+    "Option --version returns Id string",
 );
 
 # }}}
@@ -129,7 +129,6 @@ my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
-my $v4_templ = "$Lh\{8}-$Lh\{4}-4$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $date_templ = "20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]Z";
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
