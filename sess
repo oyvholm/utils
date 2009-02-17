@@ -73,9 +73,11 @@ chomp(my $uuid = `$begin_cmd`);
 $Opt{'quiet'} < 2 && print(STDERR "sess.begin:$uuid\n");
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 $ENV{'SESS_UUID'} .= "$uuid,";
+
 my $begin_time = time;
 my $retval = system(@Cmd);
 my $end_time = time;
+
 my $end_cmd = sprintf(
     "suuid -t sess_end -c \"Session %s (%s) finished after %s, exit code = '%s'.\"",
     $uuid,
