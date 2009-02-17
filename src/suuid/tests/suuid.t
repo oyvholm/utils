@@ -67,6 +67,8 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+$ENV{'SESS_UUID'} = "";
+
 diag(sprintf("========== Executing \"%s%s%s\" ==========",
     $progname,
     scalar(@cmdline_array) ? " " : "",
