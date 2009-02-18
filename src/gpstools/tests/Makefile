@@ -2,7 +2,6 @@
 
 # $Id$
 # File ID: 676b0476-fafb-11dd-925c-000475e441b9
-# gpstools/tests/Makefile
 
 all:
 	./run-tests.pl 2>&1 | remove_perltestnumbers >log/tests.log

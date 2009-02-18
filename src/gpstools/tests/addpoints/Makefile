@@ -8,4 +8,5 @@ all:
 	./addpoints.t --todo 2>&1 | remove_perltestnumbers >log/todo-tests.log
 
 clean:
+	rm -vf addpoints-stderr.tmp
 	svn revert log/tests.log log/todo-tests.log
