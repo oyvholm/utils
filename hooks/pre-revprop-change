@@ -64,10 +64,13 @@ ACTION="$5"
 
 if [ "$ACTION" = "M" -a "$PROPNAME" = "svn:log" ]; then
     export PATH=/home/sunny/bin:$PATH
-    suuid -t prerevpropchange \
+    OLDLOG=`LC_CTYPE=en_GB.utf8 svnlook log $REPOS -r$REV`
+    OLDUUID=`echo "$OLDLOG" | finduuid | tail -1`
+    COMMUUID=`suuid -t prerevpropchange \
         -l /home/sunny/uuids \
-        -w n \
-        -c "Loggmelding forandres: $REPOS r$REV (`svnlook log $REPOS -r$REV | finduuid | tail -1`)"
+        -w o \
+        -c "svn:log modified: $REPOS r$REV ($OLDUUID)"`
+    echo "$OLDLOG" >$REPOS/Oldprops/log.r$REV.$COMMUUID.txt
     exit 0;
 fi
 exit 1
