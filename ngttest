@@ -7,16 +7,19 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+logdir=~/log/ngt
+[ -d $logdir/. ] || mkdir -p $logdir || { echo $logdir: Gikk på trynet å lage den. >&2; exit 1; }
+
 res=`sget http://nett.ba.no/ngt/test | tohex | rmspcall`
 
-logfile=~/ngt-fucked/logg.txt
-echo -n `u` "Fikk \"$res\". Det vil si at den er " >>$logfile
+logfile=$logdir/logg.txt
+echo -n `u -L` "Fikk \"$res\". " >>$logfile
 if [ "$res" = "0a 00 00 02" ]; then
-    echo OK. Fantastisk. >>$logfile
+    echo OK >>$logfile
     tail -1 $logfile
     exit 0
 else
-    echo herpa. Fuck you. >>$logfile
+    echo HERPA >>$logfile
     tail -1 $logfile
     exit 1
 fi
