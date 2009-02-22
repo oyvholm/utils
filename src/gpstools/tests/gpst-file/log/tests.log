@@ -1,0 +1,13 @@
+# ========== Executing "gpst-file.t" ==========
+# Testing -h (--help) option...
+ok - "../../gpst-file -h" - Option -h prints help screen
+ok - "../../gpst-file -h" - Option -h prints help screen (stderr)
+ok - "../../gpst-file -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../../gpst-file -hv" - Option --version with -h returns Id string and help screen
+ok - "../../gpst-file -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../../gpst-file --version" - Option --version returns Id string
+ok - "../../gpst-file --version" - Option --version returns Id string (stderr)
+# Testing finished.
+1..7
