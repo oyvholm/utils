@@ -109,6 +109,22 @@ END
 );
 
 # }}}
+testcmd("$CMD -a sunny -o xml files/DSC_4426.JPG", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstpic>
+  <img>
+    <filename>DSC_4426.JPG</filename>
+    <date>2008-09-18T17:02:27</date>
+    <author>sunny</author>
+  </img>
+</gpstpic>
+END
+    "",
+    "Author info is included with -o xml",
+);
+
+# }}}
 # diag("Testing --debug option...");
 diag("Testing --description option...");
 testcmd("$CMD -d 'Skumle til\\stander i Bergen.' files/DSC_4426.JPG", # {{{

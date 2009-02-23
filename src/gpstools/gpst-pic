@@ -155,6 +155,10 @@ sub print_entry {
                             ? sprintf("$Spc$Spc$Spc$Spc<date>%s</date>\n",
                                 txt_to_xml("$date$tz_str"))
                             : "",
+                        length($Opt{'author'})
+                            ? sprintf("$Spc$Spc$Spc$Spc<author>%s</author>\n",
+                                txt_to_xml($Opt{'author'}))
+                            : "",
                         "$Spc$Spc</img>\n",
                     );
                 }

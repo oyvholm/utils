@@ -7,6 +7,8 @@ ok - "exifprobe -V" - Check that exifprobe(1) is installed (stderr)
 # Testing --author option...
 ok - "../../gpst-pic -a sunny files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --author
 ok - "../../gpst-pic -a sunny files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --author (stderr)
+ok - "../../gpst-pic -a sunny -o xml files/DSC_4426.JPG" - Author info is included with -o xml
+ok - "../../gpst-pic -a sunny -o xml files/DSC_4426.JPG" - Author info is included with -o xml (stderr)
 # Testing --description option...
 ok - "../../gpst-pic -d 'Skumle til\stander i Bergen.' files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --description with backslash
 ok - "../../gpst-pic -d 'Skumle til\stander i Bergen.' files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --description with backslash (stderr)
@@ -53,4 +55,4 @@ ok - "../../gpst-pic --version" - Option --version returns Id string (stderr)
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options (stderr)
 # Testing finished.
-1..43
+1..45
