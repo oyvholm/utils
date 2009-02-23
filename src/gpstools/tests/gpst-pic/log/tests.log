@@ -33,6 +33,8 @@ ok - "../../gpst-pic -T-0600 files/DSC_4426.JPG" - Negative time zone
 ok - "../../gpst-pic -T-0600 files/DSC_4426.JPG" - Negative time zone (stderr)
 ok - "../../gpst-pic -T CET files/DSC_4426.JPG" - Time zone abbreviation
 ok - "../../gpst-pic -T CET files/DSC_4426.JPG" - Time zone abbreviation (stderr)
+ok - "../../gpst-pic -T cet files/DSC_4426.JPG" - Time zone is converted to upper case
+ok - "../../gpst-pic -T cet files/DSC_4426.JPG" - Time zone is converted to upper case (stderr)
 ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation
 ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation (stderr)
 ok - "../../gpst-pic -T erf324 files/DSC_4426.JPG" - Invalid time zone abbr, contains digits
@@ -47,4 +49,4 @@ ok - "../../gpst-pic --version" - Option --version returns Id string (stderr)
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options (stderr)
 # Testing finished.
-1..37
+1..39
