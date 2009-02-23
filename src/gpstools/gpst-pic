@@ -94,6 +94,7 @@ if (length($Opt{'timezone'})) {
     } else {
         die("$progname: $Opt{'timezone'}: Invalid time zone\n");
     }
+    $tz_str = uc($tz_str);
 }
 
 if ($Opt{'output-format'} eq "xml") {

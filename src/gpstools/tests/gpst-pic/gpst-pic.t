@@ -218,6 +218,15 @@ END
 );
 
 # }}}
+testcmd("$CMD -T cet files/DSC_4426.JPG", # {{{
+    <<END,
+1\t2008-09-18T17:02:27 CET\t\\N\t\\N\tDSC_4426.JPG\t\\N
+END
+    "",
+    "Time zone is converted to upper case",
+);
+
+# }}}
 testcmd("$CMD -T Z files/DSC_4426.JPG", # {{{
     <<END,
 1\t2008-09-18T17:02:27Z\t\\N\t\\N\tDSC_4426.JPG\t\\N
