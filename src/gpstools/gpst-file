@@ -94,6 +94,7 @@ if (length($Opt{'timezone'})) {
     } else {
         die("$progname: $Opt{'timezone'}: Invalid time zone\n");
     }
+    $tz_str = uc($tz_str);
 }
 
 if ($Opt{'output-format'} eq "xml") {
@@ -152,7 +153,11 @@ sub print_entry {
                             : "",
                         length($date)
                             ? sprintf("$Spc$Spc$Spc$Spc<date>%s</date>\n",
-                                txt_to_xml($date))
+                                txt_to_xml("$date$tz_str"))
+                            : "",
+                        length($Opt{'author'})
+                            ? sprintf("$Spc$Spc$Spc$Spc<author>%s</author>\n",
+                                txt_to_xml($Opt{'author'}))
                             : "",
                         "$Spc$Spc</img>\n",
                     );
