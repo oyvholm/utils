@@ -39,6 +39,10 @@ ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation
 ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation (stderr)
 ok - "../../gpst-pic -T erf324 files/DSC_4426.JPG" - Invalid time zone abbr, contains digits
 ok - "../../gpst-pic -T erf324 files/DSC_4426.JPG" - Invalid time zone abbr, contains digits (stderr)
+ok - "../../gpst-pic -T CET -o xml files/DSC_4426.JPG" - Time zone abbr. works with -o xml
+ok - "../../gpst-pic -T CET -o xml files/DSC_4426.JPG" - Time zone abbr. works with -o xml (stderr)
+ok - "../../gpst-pic -T Z -o xml files/DSC_4426.JPG" - Zulu time zone works with -o xml
+ok - "../../gpst-pic -T Z -o xml files/DSC_4426.JPG" - Zulu time zone works with -o xml (stderr)
 # Testing -v (--verbose) option...
 ok - "../../gpst-pic -hv" - Option --version with -h returns Id string and help screen
 ok - "../../gpst-pic -hv" - Option --version with -h returns Id string and help screen (stderr)
@@ -49,4 +53,4 @@ ok - "../../gpst-pic --version" - Option --version returns Id string (stderr)
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options
 ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options (stderr)
 # Testing finished.
-1..39
+1..43

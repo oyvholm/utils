@@ -153,7 +153,7 @@ sub print_entry {
                             : "",
                         length($date)
                             ? sprintf("$Spc$Spc$Spc$Spc<date>%s</date>\n",
-                                txt_to_xml($date))
+                                txt_to_xml("$date$tz_str"))
                             : "",
                         "$Spc$Spc</img>\n",
                     );

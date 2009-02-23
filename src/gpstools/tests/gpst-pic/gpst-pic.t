@@ -243,6 +243,36 @@ testcmd("$CMD -T erf324 files/DSC_4426.JPG", # {{{
 );
 
 # }}}
+testcmd("$CMD -T CET -o xml files/DSC_4426.JPG", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstpic>
+  <img>
+    <filename>DSC_4426.JPG</filename>
+    <date>2008-09-18T17:02:27 CET</date>
+  </img>
+</gpstpic>
+END
+    "",
+    "Time zone abbr. works with -o xml",
+);
+
+# }}}
+testcmd("$CMD -T Z -o xml files/DSC_4426.JPG", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstpic>
+  <img>
+    <filename>DSC_4426.JPG</filename>
+    <date>2008-09-18T17:02:27Z</date>
+  </img>
+</gpstpic>
+END
+    "",
+    "Zulu time zone works with -o xml",
+);
+
+# }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',
