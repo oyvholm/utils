@@ -128,7 +128,7 @@ COMMIT;
 COPY (SELECT '======== Antall i pictures etter rensking: ' || count(*) from pictures) to STDOUT;
 -- }}}
 
--- Fjern duplikater i pictures -- {{{
+-- Fjern duplikater i film -- {{{
 \echo
 \echo ================ Fjern duplikater i film ================
 
