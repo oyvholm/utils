@@ -132,6 +132,22 @@ CREATE OR REPLACE VIEW ev AS -- {{{
     ) AS u
     ORDER BY date; -- }}}
 
+CREATE OR REPLACE VIEW media AS -- {{{
+    SELECT 'film' AS what,
+        date,
+        filename,
+        clname(coor) AS name,
+        cldist(coor) AS dist,
+        coor
+        FROM film
+    UNION ALL
+    SELECT 'pic', date, filename, clname(coor), cldist(coor), coor
+        FROM pictures
+    UNION ALL
+    SELECT 'lyd', date, filename, clname(coor), cldist(coor), coor
+        FROM lyd
+    ORDER BY date;
+
 -- wp: Lister ut veipunktene, sortert nord → sør, vest → øst
 CREATE OR REPLACE VIEW wp AS -- {{{
     SELECT
