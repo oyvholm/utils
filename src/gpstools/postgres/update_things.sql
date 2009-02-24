@@ -79,9 +79,25 @@ UPDATE pictures SET coor = findpos(date)
     WHERE coor IS NULL;
 -- }}}
 
+-- Oppdater koordinater for filmer -- {{{
+\echo
+\echo ================ Oppdater koordinater for filmer ================
+
+UPDATE film SET coor = findpos(date)
+    WHERE coor IS NULL;
+-- }}}
+
 -- Rund av bildekoordinater -- {{{
 \echo ================ Rund av bildekoordinater ================
 UPDATE pictures SET coor = point(
+    round(coor[0]::numeric, 6),
+    round(coor[1]::numeric, 6)
+);
+-- }}}
+
+-- Rund av filmkoordinater -- {{{
+\echo ================ Rund av filmkoordinater ================
+UPDATE film SET coor = point(
     round(coor[0]::numeric, 6),
     round(coor[1]::numeric, 6)
 );
@@ -110,6 +126,31 @@ BEGIN ISOLATION LEVEL SERIALIZABLE;
 COMMIT;
 
 COPY (SELECT '======== Antall i pictures etter rensking: ' || count(*) from pictures) to STDOUT;
+-- }}}
+
+-- Fjern duplikater i pictures -- {{{
+\echo
+\echo ================ Fjern duplikater i film ================
+
+COPY (SELECT '======== Antall i film før rensking: ' || count(*) from film) to STDOUT;
+
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+    CREATE TEMPORARY TABLE dupfri
+    ON COMMIT DROP
+    AS (
+        SELECT
+            DISTINCT ON (date, coor[0], coor[1], descr, filename, author) *
+            FROM film
+    );
+    TRUNCATE film;
+    INSERT INTO film (
+        SELECT *
+            FROM dupfri
+            ORDER BY date
+    );
+COMMIT;
+
+COPY (SELECT '======== Antall i film etter rensking: ' || count(*) from film) to STDOUT;
 -- }}}
 
 \i distupdate.sql

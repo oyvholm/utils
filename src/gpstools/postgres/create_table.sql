@@ -78,6 +78,15 @@ CREATE TABLE pictures (
     author text
 );
 
+CREATE TABLE film (
+    version smallint,
+    date timestamptz,
+    coor point,
+    descr text,
+    filename text,
+    author text
+);
+
 CREATE TABLE stat (
     lastupdate timestamptz,
     lastname timestamptz
