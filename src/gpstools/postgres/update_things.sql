@@ -148,4 +148,43 @@ COMMIT;
 COPY (SELECT '======== Antall i film etter rensking: ' || count(*) from film) to STDOUT;
 -- }}}
 
+-- Oppdater koordinater for lyd -- {{{
+\echo
+\echo ================ Oppdater koordinater for lyd ================
+
+UPDATE lyd SET coor = findpos(date)
+    WHERE coor IS NULL;
+-- }}}
+-- Rund av lydkoordinater -- {{{
+\echo ================ Rund av lydkoordinater ================
+UPDATE lyd SET coor = point(
+    round(coor[0]::numeric, 6),
+    round(coor[1]::numeric, 6)
+);
+-- }}}
+-- Fjern duplikater i lyd -- {{{
+\echo
+\echo ================ Fjern duplikater i lyd ================
+
+COPY (SELECT '======== Antall i lyd før rensking: ' || count(*) from lyd) to STDOUT;
+
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+    CREATE TEMPORARY TABLE dupfri
+    ON COMMIT DROP
+    AS (
+        SELECT
+            DISTINCT ON (date, coor[0], coor[1], descr, filename, author) *
+            FROM lyd
+    );
+    TRUNCATE lyd;
+    INSERT INTO lyd (
+        SELECT *
+            FROM dupfri
+            ORDER BY date
+    );
+COMMIT;
+
+COPY (SELECT '======== Antall i lyd etter rensking: ' || count(*) from lyd) to STDOUT;
+-- }}}
+
 \i distupdate.sql

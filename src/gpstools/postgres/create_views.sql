@@ -126,6 +126,9 @@ CREATE OR REPLACE VIEW ev AS -- {{{
         UNION ALL
         SELECT    'film' AS flag, date, coor, filename, NULL, descr
             FROM film
+        UNION ALL
+        SELECT    'lyd' AS flag, date, coor, filename, NULL, descr
+            FROM lyd
     ) AS u
     ORDER BY date; -- }}}
 
