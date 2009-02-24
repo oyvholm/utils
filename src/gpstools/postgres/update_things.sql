@@ -10,7 +10,6 @@ UPDATE wayp SET coor = point(
     round(coor[1]::numeric, 6)
 );
 -- }}}
-
 -- Fjern duplikater i wayp -- {{{
 \echo
 \echo ================ Fjern duplikater i wayp ================
@@ -78,15 +77,6 @@ COPY (SELECT '======== Antall i events etter rensking: ' || count(*) from events
 UPDATE pictures SET coor = findpos(date)
     WHERE coor IS NULL;
 -- }}}
-
--- Oppdater koordinater for filmer -- {{{
-\echo
-\echo ================ Oppdater koordinater for filmer ================
-
-UPDATE film SET coor = findpos(date)
-    WHERE coor IS NULL;
--- }}}
-
 -- Rund av bildekoordinater -- {{{
 \echo ================ Rund av bildekoordinater ================
 UPDATE pictures SET coor = point(
@@ -94,15 +84,6 @@ UPDATE pictures SET coor = point(
     round(coor[1]::numeric, 6)
 );
 -- }}}
-
--- Rund av filmkoordinater -- {{{
-\echo ================ Rund av filmkoordinater ================
-UPDATE film SET coor = point(
-    round(coor[0]::numeric, 6),
-    round(coor[1]::numeric, 6)
-);
--- }}}
-
 -- Fjern duplikater i pictures -- {{{
 \echo
 \echo ================ Fjern duplikater i pictures ================
@@ -128,6 +109,20 @@ COMMIT;
 COPY (SELECT '======== Antall i pictures etter rensking: ' || count(*) from pictures) to STDOUT;
 -- }}}
 
+-- Oppdater koordinater for filmer -- {{{
+\echo
+\echo ================ Oppdater koordinater for filmer ================
+
+UPDATE film SET coor = findpos(date)
+    WHERE coor IS NULL;
+-- }}}
+-- Rund av filmkoordinater -- {{{
+\echo ================ Rund av filmkoordinater ================
+UPDATE film SET coor = point(
+    round(coor[0]::numeric, 6),
+    round(coor[1]::numeric, 6)
+);
+-- }}}
 -- Fjern duplikater i film -- {{{
 \echo
 \echo ================ Fjern duplikater i film ================
