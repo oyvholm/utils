@@ -72,6 +72,10 @@ diag(sprintf("========== Executing \"%s%s%s\" ==========",
     scalar(@cmdline_array) ? " " : "",
     join(" ", @cmdline_array)));
 
+chdir("files") || die("$progname: files/: Cannot chdir: $!\n");
+system("tar xzf testfile.tar.gz");
+chdir("..");
+
 if ($Opt{'todo'} && !$Opt{'all'}) {
     goto todo_section;
 }
@@ -90,6 +94,59 @@ END
 
 =cut
 
+diag("Testing --author option...");
+testcmd("$CMD -a sunny files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01\t\\N\t\\N\tfile.txt\tsunny
+END
+    "",
+    "--author option works",
+);
+
+# }}}
+testcmd("$CMD -a sunny -o xml files/testfile/file.txt", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstfile>
+  <file>
+    <filename>file.txt</filename>
+    <date>2009-02-23T21:58:01</date>
+    <author>sunny</author>
+  </file>
+</gpstfile>
+END
+    "",
+    "Author info is included with -o xml",
+);
+
+# }}}
+# diag("Testing --debug option...");
+diag("Testing --description option...");
+testcmd("$CMD -d 'Description stuff \\&<>' files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01\t\\N\tDescription stuff \\\\&<>\tfile.txt\t\\N
+END
+    "",
+    "--description with backslash and stuff",
+);
+
+# }}}
+testcmd("$CMD -o xml -d 'Description stuff \\&<>' files/testfile/file.txt", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstfile>
+  <file>
+    <filename>file.txt</filename>
+    <date>2009-02-23T21:58:01</date>
+    <desc>Description stuff \\&amp;&lt;&gt;</desc>
+  </file>
+</gpstfile>
+END
+    "",
+    "--description with backslash and stuff",
+);
+
+# }}}
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -99,6 +156,150 @@ likecmd("$CMD -h", # {{{
 
 # }}}
 ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
+diag("Testing --output-format option..."); # {{{
+# pgtab
+testcmd("$CMD -o pgtab files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "Output pgtab format from DSC_4426.JPG",
+);
+
+# }}}
+# xml
+testcmd("$CMD -o xml files/testfile/file.txt", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstfile>
+  <file>
+    <filename>file.txt</filename>
+    <date>2009-02-23T21:58:01</date>
+  </file>
+</gpstfile>
+END
+    "",
+    "Output XML information for DSC_4426.JPG",
+);
+
+# }}}
+# Unknown format
+testcmd("$CMD -o blurfl files/testfile/file.txt", # {{{
+    "",
+    "gpst-file: blurfl: Unknown output format\n",
+    "Unknown output format specified",
+);
+
+# }}}
+# }}} --output-format
+diag("Testing -w (--strip-whitespace) option...");
+testcmd("$CMD -w -o xml files/testfile/file.txt", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstfile>
+<file>
+<filename>file.txt</filename>
+<date>2009-02-23T21:58:01</date>
+</file>
+</gpstfile>
+END
+    "",
+    "Strip whitespace from XML",
+);
+
+# }}}
+diag("Testing -T (--timezone) option...");
+testcmd("$CMD --timezone +1234 files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01+1234\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "--timezone works",
+);
+
+# }}}
+testcmd("$CMD -T +0200 files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01+0200\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "Positive time zone",
+);
+
+# }}}
+testcmd("$CMD -T-0600 files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01-0600\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "Negative time zone",
+);
+
+# }}}
+testcmd("$CMD -T CET files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01 CET\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "Time zone abbreviation",
+);
+
+# }}}
+testcmd("$CMD -T cet files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01 CET\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "Time zone is converted to upper case",
+);
+
+# }}}
+testcmd("$CMD -T Z files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01Z\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "Zulu abbreviation",
+);
+
+# }}}
+testcmd("$CMD -T erf324 files/testfile/file.txt", # {{{
+    "",
+    "gpst-file: erf324: Invalid time zone\n",
+    "Invalid time zone abbr, contains digits",
+);
+
+# }}}
+testcmd("$CMD -T CET -o xml files/testfile/file.txt", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstfile>
+  <file>
+    <filename>file.txt</filename>
+    <date>2009-02-23T21:58:01 CET</date>
+  </file>
+</gpstfile>
+END
+    "",
+    "Time zone abbr. works with -o xml",
+);
+
+# }}}
+testcmd("$CMD -T Z -o xml files/testfile/file.txt", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<gpstfile>
+  <file>
+    <filename>file.txt</filename>
+    <date>2009-02-23T21:58:01Z</date>
+  </file>
+</gpstfile>
+END
+    "",
+    "Zulu time zone works with -o xml",
+);
+
+# }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/\$Id: .*? \$.*  Show this help\./s',
@@ -112,6 +313,25 @@ likecmd("$CMD --version", # {{{
     '/\$Id: .*? \$/',
     '/^$/',
     "Option --version returns Id string",
+);
+
+# }}}
+diag("Various...");
+testcmd("$CMD files/testfile/file.txt", # {{{
+    <<END,
+1\t2009-02-23T21:58:01\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "No options",
+);
+
+# }}}
+testcmd("echo files/testfile/file.txt | $CMD", # {{{
+    <<END,
+1\t2009-02-23T21:58:01\t\\N\t\\N\tfile.txt\t\\N
+END
+    "",
+    "Read filename from stdin",
 );
 
 # }}}
@@ -130,6 +350,9 @@ local $TODO = "";
     }
     # TODO tests }}}
 }
+
+unlink("files/testfile/file.txt") || warn("$progname: files/testfile/file.txt: Cannot remove file: $!\n");
+rmdir("files/testfile") || warn("$progname: files/testfile: Cannot remove directory: $!\n");
 
 diag("Testing finished.");
 

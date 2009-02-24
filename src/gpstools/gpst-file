@@ -3,10 +3,11 @@
 #=======================================================================
 # $Id$
 # File ID: 86736de4-00a1-11de-acc1-000475e441b9
-# Extract EXIF data from pictures for use with COPY in Postgres
+# Generate TAB streams of files with modification time for use with COPY 
+# in Postgres
 #
 # Character set: UTF-8
-# ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
@@ -98,7 +99,7 @@ if (length($Opt{'timezone'})) {
 }
 
 if ($Opt{'output-format'} eq "xml") {
-    print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpstpic>\n");
+    print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpstfile>\n");
 }
 
 if ($#ARGV < 0) {
@@ -113,93 +114,71 @@ if ($#ARGV < 0) {
 }
 
 if ($Opt{'output-format'} eq "xml") {
-    print("</gpstpic>\n");
+    print("</gpstfile>\n");
 }
 
 sub print_entry {
     # {{{
     my $filename = shift;
     my $Retval = 0;
-    my ($date, $coor) = 
-       ( '',  '');
-    my @Dates = ();
-    local *PicFP;
+    my ($date, $coor) =
+       ('', '');
     D("filename = '$filename'");
-    if (open(PicFP, "exifprobe -L \"$filename\" |")) { # FIXME: Quick & Dirty™
-        while (<PicFP>) {
-            if (/DateTime/) {
-                s/^.*'(.*?)'.*$/$1/;
-                chomp($date = $_);
-                $date =~ s/^(\d\d\d\d)(.)(\d\d)(.)(\d\d)(.)(\d\d:\d\d:\d\d)(.*)/$1-$3-${5}T$7$8/;
-                D("date = '$date'");
-                push(@Dates, $date);
-            }
-        }
-        close(PicFP);
-        @Dates = reverse sort @Dates;
-        $date = $Dates[0];
-        defined($date) || ($date = '');
-        D("final date = '$date'");
-        if ($date =~ /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d$/) {
-            $filename =~ s/^.*\/(.*?)$/$1/;
-            my $Output = "";
-            if ($Opt{'output-format'} eq "xml") {
-                if (length("$filename$date")) {
-                    $Output = join("",
-                        "$Spc$Spc<img>\n",
-                        length($filename)
-                            ? sprintf("$Spc$Spc$Spc$Spc<filename>%s</filename>\n",
-                                txt_to_xml($filename))
-                            : "",
-                        length($date)
-                            ? sprintf("$Spc$Spc$Spc$Spc<date>%s</date>\n",
-                                txt_to_xml("$date$tz_str"))
-                            : "",
-                        length($Opt{'author'})
-                            ? sprintf("$Spc$Spc$Spc$Spc<author>%s</author>\n",
-                                txt_to_xml($Opt{'author'}))
-                            : "",
-                        "$Spc$Spc</img>\n",
-                    );
-                }
-            } elsif ($Opt{'output-format'} eq "pgtab") {
-                # Version information {{{
-                # Without version field (same as version 1):
-                #   date \t
-                #   "(lat,lon)"-coordinates \t
-                #   description \t
-                #   filename \t
-                #   author \t
-                # Version 1:
-                #   "1" \t
-                #   date \t
-                #   "(lat,lon)"-coordinates \t
-                #   description \t
-                #   filename \t
-                #   author \n
-                # }}}
-                $Output = pgtab_entry(
-                    1, # Version number
-                    $date,
-                    $coor,
-                    $Opt{'description'},
-                    $filename,
-                    $Opt{'author'}
+    if (my @stat_array = stat($filename)) {
+        my @TA = localtime($stat_array[9]);
+        $date = sprintf("%04u-%02u-%02uT%02u:%02u:%02u%s",
+            $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0], $tz_str);
+        D("tz_str = '$tz_str'");
+        $filename =~ s/^.*\/(.*?)$/$1/;
+        my $Output = "";
+        if ($Opt{'output-format'} eq "xml") {
+            if (length("$filename$date")) {
+                $Output = join("",
+                    "$Spc$Spc<file>\n",
+                    length($filename)
+                        ? sprintf("$Spc$Spc$Spc$Spc<filename>%s</filename>\n",
+                            txt_to_xml($filename))
+                        : "",
+                    length($date)
+                        ? sprintf("$Spc$Spc$Spc$Spc<date>%s</date>\n",
+                            txt_to_xml($date))
+                        : "",
+                    length($Opt{'description'})
+                        ? sprintf("$Spc$Spc$Spc$Spc<desc>%s</desc>\n",
+                            txt_to_xml($Opt{'description'}))
+                        : "",
+                    length($Opt{'author'})
+                        ? sprintf("$Spc$Spc$Spc$Spc<author>%s</author>\n",
+                            txt_to_xml($Opt{'author'}))
+                        : "",
+                    "$Spc$Spc</file>\n",
                 );
-            } else {
-                die("$progname: $Opt{'output-format'}: Unknown output format\n");
             }
-            print($Output);
-            $Opt{'verbose'} && print(STDERR $Output);
+        } elsif ($Opt{'output-format'} eq "pgtab") {
+            # Version information {{{
+            # Version 1:
+            #   "1" \t
+            #   date \t
+            #   "(lat,lon)"-coordinates \t
+            #   description \t
+            #   filename \t
+            #   author \n
+            # }}}
+            $Output = pgtab_entry(
+                1, # Version number
+                $date,
+                $coor,
+                $Opt{'description'},
+                $filename,
+                $Opt{'author'}
+            );
         } else {
-            if (length($date)) {
-                warn("$filename: $date: Invalid date format");
-                $Retval = 2;
-            }
+            die("$progname: $Opt{'output-format'}: Unknown output format\n");
         }
+        print($Output);
+        $Opt{'verbose'} && print(STDERR $Output);
     } else {
-        warn("$filename: Cannot open exifprobe(1) pipe: $!");
-        $Retval = 1;
+        warn("$progname: $filename: Cannot stat file: $!\n");
     }
     return($Retval);
     # }}}
@@ -217,7 +196,7 @@ sub pgtab_entry {
     if ($Version == 1) {
         $Retval = join("\t",
             1, # Version number
-            postgresql_copy_safe($Date) . $tz_str,
+            postgresql_copy_safe($Date),
             length($Coor)
                 ? postgresql_copy_safe($Coor)
                 : $NA,
@@ -256,16 +235,16 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Extract EXIF info from pictures for use with PostgreSQL's COPY command. 
-If no filenames are specified on the command line, file names are read 
-from stdin.
+Generate TAB streams with filenames and file modification time for use 
+with PostgreSQL’s COPY command. If no filenames are specified on the 
+command line, file names are read from stdin.
 
 Options:
 
   -a, --author x
-    Specify author of picture.
+    Specify author of file.
   -d, --description x
-    Specify description for picture.
+    Specify description for file.
   -h, --help
     Show this help.
   -v, --verbose
