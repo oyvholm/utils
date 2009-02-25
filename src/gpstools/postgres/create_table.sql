@@ -4,7 +4,7 @@
 CREATE TABLE logg (
     date timestamptz,
     coor point,
-    ele numeric,
+    ele numeric(6, 1),
     name text,
     dist numeric(8, 5),
     description text,
