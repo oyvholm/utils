@@ -206,7 +206,7 @@ if (open(LogFP, ">>", $Logfile)) {
                     $safe_tty,
                     $sess_uuid,
                 ) . "\n"
-            );
+            ) || die("$progname: $Logfile: Unable to write to file: $!\n");
             $Opt{'whereto'} =~ /o/ && print("$uuid\n");
             $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
         }
