@@ -10,6 +10,7 @@
 cmd=$1
 shift
 for ff in "$@"; do
+    cp -p $ff $ff.filt-bck
     cat "$ff" | $cmd >filt.tmp
     mv -v filt.tmp "$ff"
 done
