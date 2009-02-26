@@ -50,5 +50,8 @@ ok - "../suuid -w n -l tmp-suuid-t-..." - Output goes nowhere (stderr)
 ok - "SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 ../suuid -t yess -l tmp-suuid-t-..." - -t (--tag) option
 ok - "SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 ../suuid -t yess -l tmp-suuid-t-..." - -t (--tag) option (stderr)
 ok - $SESS_UUID envariable is logged
+# Test behaviour when unable to write to the log file...
+ok - "../suuid -l tmp-suuid-t-..." - Unable to write to the log file
+ok - "../suuid -l tmp-suuid-t-..." - Unable to write to the log file (stderr)
 # Testing finished.
-1..38
+1..40

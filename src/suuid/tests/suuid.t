@@ -25,6 +25,8 @@ $| = 1;
 
 our $Debug = 0;
 our $CMD = "../suuid";
+our $cmdprogname = $CMD;
+$cmdprogname =~ s/^.*\/(.*?)$/$1/;
 
 our %Opt = (
 
@@ -352,6 +354,17 @@ like(file_data($Outfile), # {{{
     ) . '\n$/s',
     "\$SESS_UUID envariable is logged",
 );
+
+# }}}
+diag("Test behaviour when unable to write to the log file...");
+my @stat_array = stat($Outfile);
+chmod(0111, $Outfile); # Make the log file read-only
+likecmd("$CMD -l $Outdir", # {{{
+    '/^$/s',
+    "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
+    "Unable to write to the log file",
+);
+chmod($stat_array[2], $Outfile);
 
 # }}}
 todo_section:
