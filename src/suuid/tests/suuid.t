@@ -358,7 +358,7 @@ like(file_data($Outfile), # {{{
 # }}}
 diag("Test behaviour when unable to write to the log file...");
 my @stat_array = stat($Outfile);
-chmod(0111, $Outfile); # Make the log file read-only
+chmod(0444, $Outfile); # Make the log file read-only
 likecmd("$CMD -l $Outdir", # {{{
     '/^$/s',
     "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
