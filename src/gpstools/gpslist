@@ -9,7 +9,8 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-cat "$@" | gpst -o pgtab | psql -c "TRUNCATE logg; COPY logg FROM stdin;" tmpgps >/dev/null 2>&1
+cat "$@" | gpst -o pgtab | \
+    psql -c "TRUNCATE logg; COPY logg (date, coor, ele, name, dist, description) FROM stdin;" tmpgps
 cd ~/bin/src/gpstools/postgres
 psql -f "$HOME/bin/src/gpstools/postgres/allupdate.sql" tmpgps >/dev/null 2>&1
 psql -f "$HOME/bin/src/gpstools/postgres/distupdate.sql" tmpgps >/dev/null 2>&1
