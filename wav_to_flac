@@ -115,7 +115,7 @@ length($Opt{'releasedate'}) && push(@Params, tag_string("RELEASEDATE", $Opt{'rel
 length($Opt{'title'}) && push(@Params, tag_string("TITLE", $Opt{'title'}));
 length($Opt{'tracknumber'}) && push(@Params, tag_string("TRACKNUMBER", $Opt{'tracknumber'}));
 
-push(@Params, @ARGV);
+push(@Params, sprintf("%s", $wav_file));
 
 msg(1, join(" ", @Params));
 system(@Params);
@@ -158,7 +158,7 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [wav_file [wav_files [...]]]
+Usage: $progname [options] wav_file
 
 Convert .wav to .flac .
 
