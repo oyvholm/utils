@@ -10,6 +10,6 @@
 for f in `find -type d | ns | sort`; do
     echo "=========== $f ===========";
     (cd "$f" \
-        && (find . -maxdepth 1 -type f | xargs mergesvn) \
+        && (find . -maxdepth 1 -type f | xargs mergesvn "$@") \
         || echo "$f: cannot chdir");
 done
