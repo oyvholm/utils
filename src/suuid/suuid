@@ -140,9 +140,11 @@ if (defined($ENV{'SESS_UUID'})) {
     }
 }
 
-if (open(LogFP, ">>", $Logfile)) {
+if (open(LogFP, "+>>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
         for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
+            seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file: $!\n");
+            my $filepos = tell(LogFP);
             chomp(my $uuid = `$Cmd`);
             my $curr_time = time;
             if ($Opt{'random-mac'}) {
@@ -195,20 +197,30 @@ if (open(LogFP, ">>", $Logfile)) {
             #   tty \t
             #   sess_uuid \n
             # }}}
-            print(LogFP join("\t",
-                    5,
-                    $uuid,
-                    sec_to_string($curr_time),
-                    $safe_tag,
-                    $safe_comment,
-                    $safe_currdir,
-                    $safe_username,
-                    $safe_tty,
-                    $sess_uuid,
-                ) . "\n"
-            ) || die("$progname: $Logfile: Unable to write to file: $!\n");
-            $Opt{'whereto'} =~ /o/ && print("$uuid\n");
-            $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
+            my $out_str = join("\t",
+                5,
+                $uuid,
+                sec_to_string($curr_time),
+                $safe_tag,
+                $safe_comment,
+                $safe_currdir,
+                $safe_username,
+                $safe_tty,
+                $sess_uuid,
+            ) . "\n";
+            print(LogFP $out_str);
+            if (seek(LogFP, $filepos, 0)) {
+                my $check_str = <LogFP>;
+                if ($check_str eq $out_str) {
+                    $Opt{'whereto'} =~ /o/ && print("$uuid\n");
+                    $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
+                } else {
+                    die("$progname: $Logfile: Unable to write to file: $!\n");
+                    D("check_str = '$check_str', out_str = '$out_str'");
+                }
+            } else {
+                die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
+            }
         }
         close(LogFP);
     } else {
