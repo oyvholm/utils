@@ -13,5 +13,10 @@ export ENC=$HOME/bin/enc-mp4
 # FIXME: Dirty, men det funker foreløpig.
 export encver=`svn --xml info $ENC | xf | grep '<commit revision' | perl -pe 's/^.*"(\d+)".*$/$1/'`
 for f in "$@"; do
-    ~/bin/enc-mp4 -vv -o "mp4/$f.mp4" -c $(suuid -t n95film -w eo -c "enc-mp4 r$encver på $f ($(smsum -vv "$f" | cut -f 1))") "$f";
+    export uuid=$(suuid -t n95film -w eo -c "enc-mp4 r$encver på $f ($(smsum -vv "$f" | cut -f 1))")
+    if [ -z "$uuid" ]; then
+        echo n95film: suuid error >&2
+        exit 1
+    fi
+    ~/bin/enc-mp4 -vv -o "mp4/$f.mp4" -c $uuid "$f";
 done

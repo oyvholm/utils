@@ -96,6 +96,9 @@ if ($Opt{'new'}) {
 my $exec_str = "suuid -c '$progname $cmdline_str' -t '$progname'";
 msg(1, "Executing '$exec_str'...");
 chomp(my $uuid = `$exec_str`);
+if (!defined($uuid) || $uuid !~ /^$Templ$/) {
+    die("$progname: suuid error\n");
+}
 $Comment =~ s/_%uuid%_/$uuid/gs;
 print($Comment);
 
@@ -104,6 +107,9 @@ sub new_uuid {
     my $Old = shift;
     if (!length($new_uuid)) {
         chomp($new_uuid = `suuid -t "$progname" -c "Changing File ID of $file_name from $Old ($progname $cmdline_str)"`);
+        if (!defined($new_uuid) || $new_uuid !~ /^$Templ$/) {
+            die("$progname: new_uuid(): suuid error\n");
+        }
     }
     return($new_uuid);
     # }}}

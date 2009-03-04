@@ -1,11 +1,13 @@
 #!/bin/sh
 
 # $Id$
+# File ID: 27f00bc8-0903-11de-ac56-000475e441b9
 # Lister ut alle directoryene og sorterer dem etter størrelse
 
 DUFILE=du.dat
 
-echo \# `suuid -t upd -w eo -c "~/bin/upd in $(hostname):$(/bin/pwd)"` >$DUFILE
+echo \# `suuid -t upd -w o -c "~/bin/upd in $(hostname):$(/bin/pwd)"` >$DUFILE
+grep -q '^# ........-....-....-....-............$' $DUFILE || { echo upd: Error generating uuid, aborting. >&2; exit 1; }
 du -kx | sort -n | perl -e 'while (<>) { s/^(\d{3,})/commify($1)/ge; print; } sub commify { my $Str = reverse $_[0]; $Str =~ s/(\d\d\d)(?=\d)(?!\d*\,)/$1\./g; return scalar reverse $Str; }' >>$DUFILE
 echo -n "# smsum:" >>$DUFILE
 echo `smsum <$DUFILE` >>$DUFILE

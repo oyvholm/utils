@@ -6,7 +6,7 @@
 export LOGDIR=$HOME/log/script
 [ -d $LOGDIR/. ] || mkdir -p $LOGDIR || { echo logging: $LOGDIR: Cannot create log directory >&2; exit 1; }
 export LDATE=`u`
-uuid=`suuid -t logging -w eo -c "logging $*"`
+uuid=`suuid -t logging -w eo -c "logging $*"` || { echo logging: Error when generating UUID, logging not started >&2; exit 1; }
 if [ -z "$1" ]; then
     export LNAME="$LOGDIR/$LDATE.$uuid"
 else

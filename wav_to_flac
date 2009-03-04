@@ -71,6 +71,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 my $wav_file;
 
 if (defined($ARGV[0])) {
@@ -107,6 +110,9 @@ length($Opt{'artist'}) && push(@Params, tag_string("ARTIST", $Opt{'artist'}));
 
 my $esc_wav_file = shell_escape($wav_file);
 chomp(my $suuid_str = `suuid -m -t encode -w eo -c "$progname $esc_wav_file - $flac_version"`);
+if (!defined($suuid_str) || $suuid_str !~ /^$v1_templ$/) {
+    die("$progname: suuid error\n");
+}
 push(@Params, "-TENC_ID=$suuid_str");
 push(@Params, "-TENCODED_WITH=$flac_version");
 

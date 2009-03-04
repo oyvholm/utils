@@ -12,7 +12,7 @@
 # --big:
 # xterm -u8 -fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 -bg black -fg white -bc -geometry 140x48+0-8
 
-uuid=`suuid -w eo -t c_bigsh -c "bigsh $*"`
+uuid=`suuid -w eo -t c_bigsh -c "bigsh $*"` || { echo bigsh: suuid error >&2; xmessage -center "bigsh: suuid error" & exit 1; }
 smallfont=1
 [ -e /carmbb.mrk ] && { smallfont=1; }
 [ "$1" = "--small" ] && { smallfont=1; shift; }

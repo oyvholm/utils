@@ -61,6 +61,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 my @Cmd = @ARGV;
 my $cmd_str = join(" ", @ARGV);
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
@@ -70,6 +73,9 @@ my $begin_cmd = sprintf(
     (length($Opt{'comment'}) ? " ($Opt{'comment'})" : "")
 );
 chomp(my $uuid = `$begin_cmd`);
+if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
+    die("$progname: Error generating UUID, session not started\n");
+}
 $Opt{'quiet'} < 2 && print(STDERR "sess.begin:$uuid\n");
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 $ENV{'SESS_UUID'} .= "$uuid,";

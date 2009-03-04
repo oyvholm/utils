@@ -59,6 +59,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 my $comm_str = "";
 if (length($Opt{'comment'})) {
     $comm_str = " ($Opt{'comment'})";
@@ -78,6 +81,9 @@ for my $curr_arg (@ARGV) {
 }
 my $cmd_str = join(" ", @Fancy);
 chomp(my $uuid=`suuid -t c_v -w eo -c "v $cmd_str$comm_str"`);
+if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
+    die("$progname: suuid error\n");
+}
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 $ENV{'SESS_UUID'} .= "$uuid,";
 system("vim", @ARGV);

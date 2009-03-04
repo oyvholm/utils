@@ -66,6 +66,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 my $CMD_SVN = "svn";
 my $PROP_PREFIX = "getsvnfiles:";
 my %Prop = (
@@ -112,8 +115,14 @@ for my $curr_rev (@Revs) {
         my $log_msg = log_message($Opt{'source'}, $curr_rev);
         if (open(LogMsgFP, ">", $tmpfile_logmsg)) {
             print(LogMsgFP prepare_logmsg($log_msg));
-            print(LogMsgFP "\n" . `suuid -t $progname -w eo -c "Commit r$curr_rev of $Opt{'dest'} from $Opt{'source'}"`);
+            chomp(my $uuid = `suuid -t $progname -w eo -c "Commit r$curr_rev of $Opt{'dest'} from $Opt{'source'}"`);
+            print(LogMsgFP "\n$uuid");
             close(LogMsgFP);
+            if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
+                unlink($tmpfile_logmsg)
+                    || warn("$progname: $tmpfile_logmsg: Cannot delete temp file: $!\n");
+                die("$progname: suuid error, aborting.\n");
+            }
         } else {
             die("$progname: $tmpfile_logmsg: Cannot create file: $!\n");
         }

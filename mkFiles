@@ -2,6 +2,7 @@
 
 #=======================================================================
 # $Id$
+# File ID: 571d0be4-08ef-11de-8399-000475e441b9
 # Creates Files.smsum in current directory.
 #=======================================================================
 
@@ -11,7 +12,8 @@ until mkdir $lockname 2>/dev/null; do
 	sleep 5
 done
 
-echo \# `suuid -t mkfiles -w eo -c "mkFiles i $(hostname):$(/bin/pwd)"` >Files.smsum
+uuid=`suuid -t mkfiles -w eo -c "mkFiles i $(hostname):$(/bin/pwd)"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
+echo \# $uuid >Files.smsum
 find -type f -print0 | \
     grep -zv '/\.svn/' | \
     LC_COLLATE=C sort -z | \

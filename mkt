@@ -2,6 +2,7 @@
 
 # Creates a .tar.gz file of current directory
 # $Id$
+# File ID: dc74ffde-08f1-11de-a419-000475e441b9
 # (C)opyleft 1999- sunny@sunbase.org
 # License: GNU General Public License version 2 or later
 
@@ -86,7 +87,8 @@ fi
 HOSTN="`hostname`"
 CURRDIR="`/bin/pwd`"
 cd .. || { echo "$0: Cannot \"cd ..\"" >&2; exit 1; }
-tar cf $_prefix.tar --label=`suuid -t mkt -w eo -c "Created $_prefix.tar$_packext with mkt(1) of directory $HOSTN:$CURRDIR/"` $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\" in parent dir" >&2; exit 1; }
+uuid=`suuid -t mkt -w eo -c "Created $_prefix.tar$_packext with mkt(1) of directory $HOSTN:$CURRDIR/"` || { echo $0: suuid error >&2; exit 1; }
+tar cf $_prefix.tar --label=$uuid $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\" in parent dir" >&2; exit 1; }
 
 if [ "$_no_compress" -eq "1" ]; then
 	exit 0

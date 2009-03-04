@@ -72,6 +72,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 if (defined($ARGV[0])) {
     $Type = $ARGV[0];
 } else {
@@ -226,6 +229,9 @@ sub gen_uuid {
     my $Comment = "$progname " . join(" ", @bck_cmdline) . "";
     if (!length($session_uuid)) {
         chomp($session_uuid = `suuid --tag std --whereto o --comment "$Comment"`);
+        if (!defined($session_uuid) || $session_uuid !~ /^$v1_templ$/) {
+            die("$progname: suuid error\n");
+        }
         if (length($Dest)) {
             print("$session_uuid\n");
         }

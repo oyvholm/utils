@@ -5,7 +5,7 @@
 # Terminal Identification – for å identifisere skjermhøyde etc ved 
 # logging.
 
-[ -z "$*" ] || suuid -t ti -c "$*"
+[ -z "$*" ] || suuid -t ti -c "$*" || { echo ti: suuid error >&2; exit 1; }
 LC_ALL=C stty -a | grep speed
 echo -n "`date -Iseconds` "
 tty

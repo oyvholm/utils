@@ -11,7 +11,7 @@ kanal=$2
 lengde=$3
 
 dlfile=`u`.$navn.nrk_$kanal.mp3
-uuid=`suuid -t radiolagring -w eo -c "radiolagring $* ($dlfile)"`
+uuid=`suuid -t radiolagring -w eo -c "radiolagring $* ($dlfile)"` || { echo "radiolagring: IMPORTANT - suuid error, but will continue" >&2; }
 dldir=$HOME/dl/nettradio
 logdir=$HOME/log/radiolagring
 logfile=$logdir/$uuid.wgetlog
