@@ -215,8 +215,8 @@ if (open(LogFP, "+>>", $Logfile)) {
                     $Opt{'whereto'} =~ /o/ && print("$uuid\n");
                     $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
                 } else {
-                    die("$progname: $Logfile: Unable to write to file: $!\n");
                     D("check_str = '$check_str', out_str = '$out_str'");
+                    die("$progname: $Logfile: Unable to write to file: $!\n");
                 }
             } else {
                 die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
