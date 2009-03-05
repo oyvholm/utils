@@ -23,6 +23,10 @@ ok - The environment variable was read
 ok - "../suuid -m -l tmp-suuid-t-..." - --random-mac option works
 ok - "../suuid -m -l tmp-suuid-t-..." - --random-mac option works (stderr)
 ok - Log contents OK after --random-mac
+# Testing --raw option...
+ok - "../suuid --raw -c '<dingle><dangle>bær</dangle></dingle>' -l tmp-suuid-t-..." - --raw option works
+ok - "../suuid --raw -c '<dingle><dangle>bær</dangle></dingle>' -l tmp-suuid-t-..." - --raw option works (stderr)
+ok - Log contents after --raw is OK
 # Testing -t (--tag) option...
 ok - "../suuid -t snaddertag -l tmp-suuid-t-..." - -t (--tag) option
 ok - "../suuid -t snaddertag -l tmp-suuid-t-..." - -t (--tag) option (stderr)
@@ -54,4 +58,4 @@ ok - $SESS_UUID envariable is logged
 ok - "../suuid -l tmp-suuid-t-..." - Unable to write to the log file
 ok - "../suuid -l tmp-suuid-t-..." - Unable to write to the log file (stderr)
 # Testing finished.
-1..40
+1..43

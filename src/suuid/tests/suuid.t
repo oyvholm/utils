@@ -131,7 +131,7 @@ my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
-my $date_templ = "20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]Z";
+my $date_templ = '20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]\.\d+Z';
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -143,16 +143,12 @@ likecmd("$CMD -l $Outdir", # {{{
 my $Outfile = glob("$Outdir/*");
 like($Outfile, "/^$Outdir\\/$Lh\{12}\$/", "Filename of logfile OK");
 like(file_data($Outfile), # {{{
-    '/^' . join('\t',
-        '5',
-        $v1_templ, # uuid
-        $date_templ, # date
-        '', # tag
-        '', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '', # sess_uuid
+    '/^' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
     ) . '\n$/s',
     "Log contents OK after exec with no options",
 );
@@ -160,16 +156,12 @@ like(file_data($Outfile), # {{{
 # }}}
 system("$CMD -l $Outdir >/dev/null");
 like(file_data($Outfile), # {{{
-    '/^(' . join('\t',
-        '5',
-        $v1_templ, # uuid
-        $date_templ, # date
-        '', # tag
-        '', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '', # sess_uuid
+    '/^(' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
     ) . '\n){2}$/s',
     "Entries are added, not replacing",
 );
@@ -185,16 +177,12 @@ likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join('\t',
-        '5',
-        $v1_templ, # uuid
-        $date_templ, # date
-        '', # tag
-        '', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '', # sess_uuid
+    '/^' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
     ) . '\n$/s',
     "The environment variable was read",
 );
@@ -210,18 +198,36 @@ likecmd("$CMD -m -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join('\t',
-        '5',
-        $v1rand_templ, # uuid
-        $date_templ, # date
-        '', # tag
-        '', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '', # sess_uuid
+    '/^' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1rand_templ\">",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
     ) . '\n$/s',
     "Log contents OK after --random-mac",
+);
+
+# }}}
+unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+diag("Testing --raw option...");
+likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {{{
+    "/^$v1_templ\\n\$/s",
+    '/^$/s',
+    "--raw option works",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<txt><dingle><dangle>bær<\\/dangle><\\/dingle><\\/txt>",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
+    ) . '\n$/s',
+    "Log contents after --raw is OK",
 );
 
 # }}}
@@ -235,16 +241,13 @@ likecmd("$CMD -t snaddertag -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join('\t',
-        '5',
-        $v1_templ, # uuid
-        $date_templ, # date
-        'snaddertag', # tag
-        '', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '', # sess_uuid
+    '/^' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<tag>snaddertag<\\/tag>",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
     ) . '\n$/s',
     "Log contents OK after tag",
 );
@@ -260,16 +263,13 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join('\t',
-        '5',
-        $v1_templ, # uuid
-        $date_templ, # date
-        '', # tag
-        'Great test', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '', # sess_uuid
+    '/^' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<txt>Great test<\\/txt>",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
     ) . '\n$/s',
     "Log contents OK after comment",
 );
@@ -285,16 +285,14 @@ likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^(' . join('\t',
-        '5',
-        $v1_templ, # uuid
-        $date_templ, # date
-        'testeri', # tag
-        'Great test', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '', # sess_uuid
+    '/^(' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<tag>testeri<\\/tag>",
+            "<txt>Great test<\\/txt>",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
     ) . '\n){5}$/s',
     "Log contents OK after count, comment and tag",
 );
@@ -341,16 +339,14 @@ likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir"
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join('\t',
-        '5',
-        $v1_templ, # uuid
-        $date_templ, # date
-        'yess', # tag
-        '', # comment
-        '.+?', # hostname:dir
-        '.+', # username
-        '.+', # tty
-        '27538da4-fc68-11dd-996d-000475e441b9', # sess_uuid
+    '/^' . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<tag>yess<\\/tag>",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+            "<sess>27538da4-fc68-11dd-996d-000475e441b9<\\/sess>",
+        "<\\/suuid>",
     ) . '\n$/s',
     "\$SESS_UUID envariable is logged",
 );
