@@ -69,7 +69,8 @@ if [ "$ACTION" = "M" -a "$PROPNAME" = "svn:log" ]; then
     COMMUUID=`suuid -t prerevpropchange \
         -l /home/sunny/uuids \
         -w o \
-        -c "svn:log modified: $REPOS r$REV ($OLDUUID)"`
+        --raw \
+        -c "<prerevpropchange> <propname>svn:log</propname> <repos>$REPOS</repos> <rev>$REV</rev> <user>$USER</user> <uuid>$OLDUUID</uuid> </prerevpropchange>"`
     LC_CTYPE=en_GB.utf8 svnlook propget $REPOS svn:log -r$REV --revprop >$REPOS/Oldprops/log.r$REV.$COMMUUID.txt
     exit 0;
 fi

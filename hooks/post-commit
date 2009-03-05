@@ -50,7 +50,7 @@ REPOS="$1"
 REV="$2"
 
 export PATH=/home/sunny/bin:$PATH
-suuid -t postcommit -l /home/sunny/uuids -w n -c "$REPOS r$REV (`svnlook log $REPOS -r$REV | finduuid | tail -1`)"
+suuid -t postcommit -l /home/sunny/uuids -w n --raw -c "<postcommit> <repos>$REPOS</repos> <rev>$REV</rev> <uuid>`svnlook log $REPOS -r$REV | finduuid | tail -1`</uuid> </postcommit>"
 
 # commit-email.pl "$REPOS" "$REV" commit-watchers@example.org
 # log-commit.py --repository "$REPOS" --revision "$REV"
