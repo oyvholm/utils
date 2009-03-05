@@ -67,9 +67,13 @@ if (length($Opt{'comment'})) {
     $comm_str = " ($Opt{'comment'})";
 }
 my @Fancy = ();
+my @Files = ();
+my %smsum = ();
 for my $curr_arg (@ARGV) {
     if (-r $curr_arg) {
         chomp(my $file_id = `finduuid "$curr_arg" | head -1`);
+        chomp($smsum{"o.$curr_arg"} = `smsum <"$curr_arg"`);
+        push(@Files, $curr_arg);
         if (length($file_id)) {
             push(@Fancy, "$curr_arg ($file_id)");
         } else {
@@ -87,7 +91,20 @@ if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 $ENV{'SESS_UUID'} .= "$uuid,";
 system("vim", @ARGV);
-system("suuid -t c_v -c 'Vim-session $uuid ferdig.'");
+my $change_str = "";
+for my $Curr (@Files) {
+    chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
+    if ($smsum{"o.$Curr"} ne $smsum{"n.$Curr"}) {
+        chomp(my $file_id = `finduuid "$Curr" | head -1`);
+        $change_str .= sprintf(" %s (%s, old:%s, new:%s)",
+            $Curr, $file_id, $smsum{"o.$Curr"}, $smsum{"n.$Curr"});
+    }
+}
+
+if (length($change_str)) {
+    $change_str = " CHANGED:$change_str";
+}
+system("suuid -t c_v -c 'Vim-session $uuid finished.$change_str'");
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 sub print_version {
