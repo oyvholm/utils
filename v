@@ -74,19 +74,13 @@ for my $curr_arg (@ARGV) {
         chomp(my $file_id = `finduuid "$curr_arg" | head -1`);
         chomp($smsum{"o.$curr_arg"} = `smsum <"$curr_arg"`);
         push(@Files, $curr_arg);
-        if (length($file_id)) {
-            push(@Fancy,
-                join(" ",
-                    "<file>",
-                        "<name>$curr_arg</name>",
-                        "<fileid>$file_id</fileid>",
-                        "<smsum>" . $smsum{"o.$curr_arg"} . "</smsum>",
-                    "</file>"
-                )
-            );
-        } else {
-            push(@Fancy, "<option>" . suuid_xml($curr_arg) . "</option>");
-        }
+        push(@Fancy,
+            "<file> " .
+                "<name>$curr_arg</name> " .
+                (length($file_id) ? "<fileid>$file_id</fileid> " : "") .
+                "<smsum>" . $smsum{"o.$curr_arg"} . "</smsum> " .
+            "</file>"
+        );
     } else {
         push(@Fancy, $curr_arg);
     }
@@ -105,8 +99,10 @@ for my $Curr (@Files) {
     chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
     if ($smsum{"o.$Curr"} ne $smsum{"n.$Curr"}) {
         chomp(my $file_id = `finduuid "$Curr" | head -1`);
-        $change_str .= sprintf(" <file> <name>%s</name> <fileid>%s</fileid> <old>%s</old> <new>%s</new> </file>",
-            suuid_xml($Curr), $file_id, $smsum{"o.$Curr"}, $smsum{"n.$Curr"});
+        $change_str .= sprintf(" <file> <name>%s</name>%s <old>%s</old> <new>%s</new> </file>",
+            suuid_xml($Curr),
+            length($file_id) ? " <fileid>$file_id</fileid>" : "",
+            $smsum{"o.$Curr"}, $smsum{"n.$Curr"});
     }
 }
 
