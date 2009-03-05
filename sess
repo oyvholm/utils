@@ -3,7 +3,7 @@
 #=======================================================================
 # $Id$
 # File ID: a7bbac50-fb83-11dd-947c-000475e441b9
-# [Description]
+# Log execution of a specific program
 #
 # Character set: UTF-8
 # ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
@@ -68,9 +68,12 @@ my @Cmd = @ARGV;
 my $cmd_str = join(" ", @ARGV);
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
 my $begin_cmd = sprintf(
-    "suuid -t sess_begin -c \"Starting '%s'%s\"",
-    $cmd_str,
-    (length($Opt{'comment'}) ? " ($Opt{'comment'})" : "")
+    "suuid --raw -t sess_begin -c \"<c_sess w=\\\"begin\\\"> <cmd>%s</cmd>%s</c_sess>\"",
+    suuid_xml($cmd_str),
+    (length($Opt{'comment'})
+        ? sprintf(" <comment>%s</comment>", suuid_xml($Opt{'comment'}))
+        : ""
+    ),
 );
 chomp(my $uuid = `$begin_cmd`);
 if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
@@ -78,17 +81,22 @@ if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
 }
 $Opt{'quiet'} < 2 && print(STDERR "sess.begin:$uuid\n");
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
-$ENV{'SESS_UUID'} .= "$uuid,";
 
+$ENV{'SESS_UUID'} .= "$uuid,";
 my $begin_time = time;
 my $retval = system(@Cmd);
 my $end_time = time;
+$ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 my $end_cmd = sprintf(
-    "suuid -t sess_end -c \"Session %s (%s) finished after %s, exit code = '%s'.\"",
+    "suuid --raw -t sess_end -c \"<c_sess w=\\\"end\\\"> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration> <exit>%s</exit> </c_sess>\"",
     $uuid,
-    $cmd_str,
-    time_period($end_time - $begin_time),
+    suuid_xml($cmd_str),
+    (length($Opt{'comment'})
+        ? sprintf(" <comment>%s</comment>", suuid_xml($Opt{'comment'}))
+        : ""
+    ),
+    xml_time_period($end_time - $begin_time),
     $retval
 );
 chomp(my $end_uuid = `$end_cmd`);
@@ -97,6 +105,23 @@ $Opt{'quiet'} < 1 && printf(STDERR " -- %s, exit code '%d'.",
                             time_period($end_time - $begin_time), $retval);
 $Opt{'quiet'} < 2 && print(STDERR "\n");
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
+
+sub suuid_xml {
+    # {{{
+    my ($Str, $skip_xml) = @_;
+    defined($skip_xml) || ($skip_xml = 0);
+    if (!$skip_xml) {
+        $Str =~ s/&/&amp;/gs;
+        $Str =~ s/</&lt;/gs;
+        $Str =~ s/>/&gt;/gs;
+    }
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
+    # }}}
+} # suuid_xml()
 
 sub print_version {
     # Print program version {{{
@@ -167,6 +192,33 @@ sub time_period {
     );
 	# }}}
 } # time_period()
+
+sub xml_time_period {
+	# {{{
+	my $secs = shift;
+	my ($Day, $Hour, $Min, $Sec) = (0, 0, 0, 0);
+    my $totsecs = $secs;
+
+	$Day = int($secs / 86400);
+	$secs -= $Day * 86400;
+
+	$Hour = int($secs / 3600);
+	$secs -= $Hour * 3600;
+
+	$Min = int($secs / 60);
+	$secs -= $Min * 60;
+
+	$Sec = $secs;
+
+	return(
+        " <totsecs>$totsecs</totsecs>" .
+        ($Day ? " <days>$Day</days>" : "") .
+        ($Hour ? " <hours>$Hour</hours>" : "") .
+        ($Min ? " <minutes>$Min</minutes>" : "") .
+        ($Sec ? " <seconds>$Sec</seconds>" : "")
+    );
+	# }}}
+} # xml_time_period()
 
 sub msg {
     # Print a status message to stderr based on verbosity level {{{
