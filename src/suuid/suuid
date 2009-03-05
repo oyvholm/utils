@@ -264,6 +264,7 @@ sub random_mac {
 } # random_mac()
 
 sub uuid_time {
+    # {{{
     my $uuid = shift;
     my $Retval = "";
     if (open(UtFP, "uuid -d $uuid |")) {
@@ -278,6 +279,7 @@ sub uuid_time {
         warn("$progname: Cannot open uuid -d pipe: $!\n");
     }
     return($Retval);
+    # }}}
 } # uuid_time()
 
 sub suuid_xml {
