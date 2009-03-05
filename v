@@ -64,7 +64,7 @@ my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 
 my $comm_str = "";
 if (length($Opt{'comment'})) {
-    $comm_str = " ($Opt{'comment'})";
+    $comm_str = sprintf(" <comment>%s</comment>", $Opt{'comment'});
 }
 my @Fancy = ();
 my @Files = ();
@@ -75,37 +75,63 @@ for my $curr_arg (@ARGV) {
         chomp($smsum{"o.$curr_arg"} = `smsum <"$curr_arg"`);
         push(@Files, $curr_arg);
         if (length($file_id)) {
-            push(@Fancy, "$curr_arg ($file_id)");
+            push(@Fancy,
+                join(" ",
+                    "<file>",
+                        "<name>$curr_arg</name>",
+                        "<fileid>$file_id</fileid>",
+                        "<smsum>" . $smsum{"o.$curr_arg"} . "</smsum>",
+                    "</file>"
+                )
+            );
         } else {
-            push(@Fancy, $curr_arg);
+            push(@Fancy, "<option>" . suuid_xml($curr_arg) . "</option>");
         }
     } else {
         push(@Fancy, $curr_arg);
     }
 }
-my $cmd_str = join(" ", @Fancy);
-chomp(my $uuid=`suuid -t c_v -w eo -c "v $cmd_str$comm_str"`);
+my $cmd_str = suuid_xml(join(" ", @Fancy), 1);
+chomp(my $uuid=`suuid --raw -t c_v_begin -w eo -c '<c_v w="begin"> $cmd_str$comm_str</c_v>'`);
 if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
     die("$progname: suuid error\n");
 }
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 $ENV{'SESS_UUID'} .= "$uuid,";
 system("vim", @ARGV);
+$ENV{'SESS_UUID'} =~ s/$uuid,//;
 my $change_str = "";
 for my $Curr (@Files) {
     chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
     if ($smsum{"o.$Curr"} ne $smsum{"n.$Curr"}) {
         chomp(my $file_id = `finduuid "$Curr" | head -1`);
-        $change_str .= sprintf(" %s (%s, old:%s, new:%s)",
-            $Curr, $file_id, $smsum{"o.$Curr"}, $smsum{"n.$Curr"});
+        $change_str .= sprintf(" <file> <name>%s</name> <fileid>%s</fileid> <old>%s</old> <new>%s</new> </file>",
+            suuid_xml($Curr), $file_id, $smsum{"o.$Curr"}, $smsum{"n.$Curr"});
     }
 }
 
 if (length($change_str)) {
-    $change_str = " CHANGED:$change_str";
+    $change_str = " <changed>$change_str </changed>";
 }
-system("suuid -t c_v -c 'Vim-session $uuid finished.$change_str'");
+system("suuid --raw -t c_v_end -c '<c_v w=\"end\"> <finished>$uuid</finished>$change_str </c_v>'");
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
+
+sub suuid_xml {
+    # {{{
+    my ($Str, $skip_xml) = @_;
+    defined($skip_xml) || ($skip_xml = 0);
+    if (!$skip_xml) {
+        $Str =~ s/&/&amp;/gs;
+        $Str =~ s/</&lt;/gs;
+        $Str =~ s/>/&gt;/gs;
+    }
+    $Str =~ s/\\/\\\\/gs;
+    $Str =~ s/\n/\\n/gs;
+    $Str =~ s/\r/\\r/gs;
+    $Str =~ s/\t/\\t/gs;
+    return($Str);
+    # }}}
+} # suuid_xml()
 
 sub print_version {
     # Print program version {{{
