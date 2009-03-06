@@ -31,6 +31,7 @@ my $env_dir = defined($ENV{$suuid_env})
 
 our %Std = (
 
+    'editor' => "vi",
     'logdir' => $env_dir,
     'whereto' => "o",
 
@@ -45,6 +46,7 @@ our %Opt = (
     'logdir' => $Std{'logdir'},
     'quiet' => 0,
     'random-mac' => 0,
+    'raw' => 0,
     'tag' => "",
     'verbose' => 0,
     'version' => 0,
@@ -71,6 +73,7 @@ GetOptions(
     "logdir|l=s" => \$Opt{'logdir'},
     "quiet|q" => \$Opt{'quiet'},
     "random-mac|m" => \$Opt{'random-mac'},
+    "raw" => \$Opt{'raw'},
     "tag|t=s" => \$Opt{'tag'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -84,6 +87,11 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+my $Lh = "[0-9a-fA-F]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
 
 my $Host = host_id();
 
@@ -101,6 +109,9 @@ if (-e "/dungen.mrk") {
 }
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
+my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'vi'};
+D("cmd_editor = '$cmd_editor'");
+
 if ($Comment eq "-") {
     $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
     $Comment = "";
@@ -111,7 +122,7 @@ if ($Comment eq "-") {
 } elsif ($Comment eq "--") {
     my $tmpfile = "/tmp/" . `$Cmd`; # FIXME
     system("touch $tmpfile");
-    system("$ENV{'EDITOR'} $tmpfile");
+    system("$cmd_editor $tmpfile");
     $Comment = `cat $tmpfile`;
     unlink($tmpfile);
 }
@@ -123,16 +134,16 @@ chomp($curr_dir);
 
 $Comment =~ s/^\s+//;
 $Comment =~ s/\s+$//;
-my $safe_comment = safe_tab($Comment);
-my $safe_tag = safe_tab($Tag);
+my $safe_comment = suuid_xml($Comment, $Opt{'raw'});
+my $safe_tag = suuid_xml($Tag);
 my $safe_currdir = "";
 length($Hostname) && ($safe_currdir = "$Hostname:");
 $safe_currdir .= $curr_dir;
-$safe_currdir = safe_tab($safe_currdir);
+$safe_currdir = suuid_xml($safe_currdir);
 my $Username = getpwuid($<);
-my $safe_username = safe_tab($Username);
+my $safe_username = suuid_xml($Username);
 chomp(my $tty = `tty`);
-my $safe_tty = safe_tab($tty);
+my $safe_tty = suuid_xml($tty);
 
 my $sess_uuid = "";
 if (defined($ENV{'SESS_UUID'})) {
@@ -200,17 +211,22 @@ if (open(LogFP, "+>>", $Logfile)) {
             #   tty \t
             #   sess_uuid \n
             # }}}
-            my $out_str = join("\t",
-                5,
-                $uuid,
-                sec_to_string($curr_time),
-                $safe_tag,
-                $safe_comment,
-                $safe_currdir,
-                $safe_username,
-                $safe_tty,
-                $sess_uuid,
-            ) . "\n";
+            my @Xml = ();
+            if (length($safe_tag)) {
+                my $tmp_tag = $safe_tag;
+                $tmp_tag =~ s/([^,]+)/push(@Xml, sprintf("<tag>%s<\/tag>", suuid_xml($1)))/gse;
+            }
+            length($safe_comment) && push(@Xml, "<txt>$safe_comment</txt>");
+            length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
+            length($safe_username) && push(@Xml, "<user>$safe_username</user>");
+            length($safe_tty) && push(@Xml, "<tty>$safe_tty</tty>");
+            if (length($sess_uuid)) {
+                my $tmp_sess = $sess_uuid;
+                $tmp_sess =~ s/($Templ)/push(@Xml, sprintf("<sess>%s<\/sess>", suuid_xml($1)))/gse;
+            }
+            my $uuid_time = uuid_time($uuid);
+            length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
+            my $out_str = join(" ", "<suuid$uuid_time u=\"$uuid\">", @Xml, "</suuid>") . "\n";
             print(LogFP $out_str);
             if (seek(LogFP, $filepos, 0)) {
                 my $check_str = <LogFP>;
@@ -218,8 +234,8 @@ if (open(LogFP, "+>>", $Logfile)) {
                     $Opt{'whereto'} =~ /o/ && print("$uuid\n");
                     $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
                 } else {
-                    die("$progname: $Logfile: Unable to write to file: $!\n");
                     D("check_str = '$check_str', out_str = '$out_str'");
+                    die("$progname: $Logfile: Unable to write to file: $!\n");
                 }
             } else {
                 die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
@@ -256,16 +272,41 @@ sub random_mac {
     # }}}
 } # random_mac()
 
-sub safe_tab {
+sub uuid_time {
     # {{{
-    my $Str = shift;
-    $Str =~ s/\\/\\\\/gs;
-    $Str =~ s/\n/\\n/gs;
-    $Str =~ s/\r/\\r/gs;
-    $Str =~ s/\t/\\t/gs;
+    my $uuid = shift;
+    my $Retval = "";
+    if (open(UtFP, "uuid -d $uuid |")) {
+        while (my $Curr = <UtFP>) {
+            if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
+                $Retval = "${1}T$2${3}Z";
+                last;
+            }
+        }
+        close(UtFP);
+    } else {
+        warn("$progname: Cannot open uuid -d pipe: $!\n");
+    }
+    return($Retval);
+    # }}}
+} # uuid_time()
+
+sub suuid_xml {
+    # {{{
+    my ($Str, $skip_conv) = @_;
+    defined($skip_conv) || ($skip_conv = 0);
+    if (!$skip_conv) {
+        $Str =~ s/&/&amp;/gs;
+        $Str =~ s/</&lt;/gs;
+        $Str =~ s/>/&gt;/gs;
+        $Str =~ s/\\/\\\\/gs;
+        $Str =~ s/\n/\\n/gs;
+        $Str =~ s/\r/\\r/gs;
+        $Str =~ s/\t/\\t/gs;
+    }
     return($Str);
     # }}}
-} # safe_tab()
+} # suuid_xml()
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
@@ -307,8 +348,11 @@ Options:
   -c x, --comment x
     Store comment x in the log file. If "-" is specified as comment, the 
     program will read the comment from stdin. Two hyphens ("--") as a 
-    comment opens the default text editor (\$EDITOR) to edit the 
-    message.
+    comment opens the editor defined in the environment variable 
+    \$SUUID_EDITOR to edit the message. If \$SUUID_EDITOR is not 
+    defined, \$EDITOR is read, if not defined, "$Std{'editor'}" is 
+    called. Sorry, emacs, but vi(m) rules the street and exists 
+    everywhere.
   -h, --help
     Show this help.
   -l x, --logdir x
@@ -322,6 +366,10 @@ Options:
     Print and store x UUIDs.
   -q, --quiet
     Avoid unnecessary output.
+  --raw
+    Don’t convert <txt> element to XML. When using this option, it is 
+    expected that the value of the -c/--comment option is valid XML, 
+    otherwise it will create corrupted log files.
   -t x, --tag x
     Use x as tag (category).
   -v, --verbose
