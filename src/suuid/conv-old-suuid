@@ -60,6 +60,7 @@ if ($Opt{'version'}) {
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+my $v4_templ = "$Lh\{8}-$Lh\{4}-4$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
 
 # Version description {{{
@@ -119,7 +120,7 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
             "</suuid>\n",
-            uuid_time($Uuid), $Uuid,
+            uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
         );
@@ -132,7 +133,7 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
             "</suuid>\n",
-            uuid_time($Uuid), $Uuid,
+            uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
@@ -147,7 +148,7 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
             "</suuid>\n",
-            uuid_time($Uuid), $Uuid,
+            uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
@@ -164,7 +165,7 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
             "</suuid>\n",
-            uuid_time($Uuid), $Uuid,
+            uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
@@ -185,7 +186,7 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
             "</suuid>\n",
-            uuid_time($Uuid), $Uuid,
+            uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
@@ -214,18 +215,24 @@ sub txt_to_xml {
 
 sub uuid_time {
     # {{{
-    my $uuid = shift;
+    my ($uuid, $date) = @_;
     my $Retval = "";
-    if (open(UtFP, "uuid -d $uuid |")) {
-        while (my $Curr = <UtFP>) {
-            if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
-                $Retval = "${1}T$2${3}Z";
-                last;
+    if ($uuid =~ /^$v1_templ$/) {
+        if (open(UtFP, "uuid -d $uuid |")) {
+            while (my $Curr = <UtFP>) {
+                if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
+                    $Retval = "${1}T$2${3}Z";
+                    last;
+                }
             }
+            close(UtFP);
+        } else {
+            warn("$progname: Cannot open uuid -d pipe: $!\n");
         }
-        close(UtFP);
+    } elsif ($uuid =~ /^$v4_templ$/) {
+        $Retval = $date;
     } else {
-        warn("$progname: Cannot open uuid -d pipe: $!\n");
+        warn("$progname: uuid_time(): $uuid: Unknown UUID type\n");
     }
     return($Retval);
     # }}}
