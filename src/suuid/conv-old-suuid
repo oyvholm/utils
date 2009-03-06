@@ -194,6 +194,16 @@ while (my $Curr = <>) {
             length($Tty) ? "<tty>" . txt_to_xml($Tty) . "</tty> " : "",
             length($Sess) ? $Sess : "",
         );
+    } elsif ($Curr =~ /^($v1_templ)\t(.*?)$/) {
+        my ($Uuid, $Comment) =
+           (   $1,       $2);
+        printf(
+            "<suuid t=\"%s\" u=\"%s\"> " .
+                "%s" .
+            "</suuid>\n",
+            uuid_time($Uuid, ""), $Uuid,
+            length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+        );
     } else {
         print(STDERR $Curr);
     }
