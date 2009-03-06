@@ -86,7 +86,7 @@ for my $curr_arg (@ARGV) {
     }
 }
 my $cmd_str = suuid_xml(join(" ", @Fancy), 1);
-chomp(my $uuid=`suuid --raw -t c_v_begin -w eo -c '<c_v w="begin"> $cmd_str$comm_str</c_v>'`);
+chomp(my $uuid=`suuid --raw -t c_v_begin -w eo -c '<c_v w="begin"> $cmd_str$comm_str </c_v>'`);
 if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
     die("$progname: suuid error\n");
 }
@@ -99,10 +99,17 @@ for my $Curr (@Files) {
     chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
     if ($smsum{"o.$Curr"} ne $smsum{"n.$Curr"}) {
         chomp(my $file_id = `finduuid "$Curr" | head -1`);
-        $change_str .= sprintf(" <file> <name>%s</name>%s <old>%s</old> <new>%s</new> </file>",
+        $change_str .= sprintf(
+            " <file>" .
+                " <name>%s</name>" .
+                "%s" . # File ID, the first UUID in the file
+                " <old>%s</old>" .
+                " <new>%s</new>" .
+            " </file>",
             suuid_xml($Curr),
             length($file_id) ? " <fileid>$file_id</fileid>" : "",
-            $smsum{"o.$Curr"}, $smsum{"n.$Curr"});
+            $smsum{"o.$Curr"}, $smsum{"n.$Curr"},
+        );
     }
 }
 
