@@ -30,6 +30,7 @@ my $env_dir = defined($ENV{$suuid_env})
 
 our %Std = (
 
+    'editor' => "vi",
     'logdir' => $env_dir,
     'whereto' => "o",
 
@@ -107,6 +108,9 @@ if (-e "/dungen.mrk") {
 }
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
+my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'vi'};
+D("cmd_editor = '$cmd_editor'");
+
 if ($Comment eq "-") {
     $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
     $Comment = "";
@@ -117,7 +121,7 @@ if ($Comment eq "-") {
 } elsif ($Comment eq "--") {
     my $tmpfile = "/tmp/" . `$Cmd`; # FIXME
     system("touch $tmpfile");
-    system("$ENV{'EDITOR'} $tmpfile");
+    system("$cmd_editor $tmpfile");
     $Comment = `cat $tmpfile`;
     unlink($tmpfile);
 }
@@ -339,8 +343,11 @@ Options:
   -c x, --comment x
     Store comment x in the log file. If "-" is specified as comment, the 
     program will read the comment from stdin. Two hyphens ("--") as a 
-    comment opens the default text editor (\$EDITOR) to edit the 
-    message.
+    comment opens the editor defined in the environment variable 
+    \$SUUID_EDITOR to edit the message. If \$SUUID_EDITOR is not 
+    defined, \$EDITOR is read, if not defined, "$Std{'editor'}" is 
+    called. Sorry, emacs, but vi(m) rules the street and exists 
+    everywhere.
   -h, --help
     Show this help.
   -l x, --logdir x
