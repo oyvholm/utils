@@ -68,9 +68,15 @@ if (length($Opt{'comment'})) {
 }
 my @Fancy = ();
 my @Files = ();
+my @stat_array = ();
 my %smsum = ();
+my ($old_mdate, $new_mdate) = ("", "");
 for my $curr_arg (@ARGV) {
     if (-r $curr_arg) {
+        unless (@stat_array = stat($curr_arg)) {
+            die("$progname: $curr_arg: Cannot stat file: $!\n");
+        }
+        $old_mdate = sec_to_string($stat_array[9]);
         chomp(my $file_id = `finduuid "$curr_arg" | head -1`);
         chomp($smsum{"o.$curr_arg"} = `smsum <"$curr_arg"`);
         push(@Files, $curr_arg);
@@ -79,6 +85,7 @@ for my $curr_arg (@ARGV) {
                 "<name>$curr_arg</name> " .
                 (length($file_id) ? "<fileid>$file_id</fileid> " : "") .
                 "<smsum>" . $smsum{"o.$curr_arg"} . "</smsum> " .
+                "<mdate>$old_mdate</mdate> " . 
             "</file>"
         );
     } else {
@@ -99,16 +106,23 @@ for my $Curr (@Files) {
     chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
     if ($smsum{"o.$Curr"} ne $smsum{"n.$Curr"}) {
         chomp(my $file_id = `finduuid "$Curr" | head -1`);
+        unless (@stat_array = stat($Curr)) {
+            die("$progname: $Curr: Cannot stat file: $!\n");
+        }
+        $new_mdate = sec_to_string($stat_array[9]);
         $change_str .= sprintf(
             " <file>" .
                 " <name>%s</name>" .
                 "%s" . # File ID, the first UUID in the file
                 " <old>%s</old>" .
                 " <new>%s</new>" .
+                " <oldmdate>%s</oldmdate>" .
+                " <newmdate>%s</newmdate>" .
             " </file>",
             suuid_xml($Curr),
             length($file_id) ? " <fileid>$file_id</fileid>" : "",
             $smsum{"o.$Curr"}, $smsum{"n.$Curr"},
+            $old_mdate, $new_mdate,
         );
     }
 }
@@ -118,6 +132,18 @@ if (length($change_str)) {
 }
 system("suuid --raw -t c_v_end -c '<c_v w=\"end\"> <finished>$uuid</finished>$change_str </c_v>'");
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
+    my ($Seconds) = shift;
+
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0]);
+    return($DateString);
+    # }}}
+} # sec_to_string()
 
 sub suuid_xml {
     # {{{
