@@ -42,7 +42,6 @@ my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 push(@main::version_array, $rcs_id);
-my $cmdline_str = join(" ", @ARGV);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -93,20 +92,70 @@ if ($Opt{'new'}) {
         die("$progname: $Opt{'type'}: Unkown comment type. Use -h for help.\n");
     }
 }
-my $exec_str = "suuid -c '$progname $cmdline_str' -t '$progname'";
-msg(1, "Executing '$exec_str'...");
-chomp(my $uuid = `$exec_str`);
+my @exec_array = (
+    "suuid",
+    "--raw",
+    "-c",
+    # sprintf("\\<c_fileid\\> \\<filename\\>%s\\</filename\\>%s%s \\</c_fileid\\>",
+    sprintf("\"<c_fileid> <filename>%s</filename>%s%s </c_fileid>\"",
+        suuid_xml($file_name),
+        length($Opt{'type'})
+            ? " <type>" . suuid_xml($Opt{'type'}) . "</type>"
+            : "",
+        length($Opt{'comment'})
+            ? " <comment>" . suuid_xml($Opt{'comment'}) . "</comment>"
+            : "",
+    ),
+    "-t",
+    $progname,
+);
+msg(1, "Executing '" . join("', '", @exec_array) . "'...");
+chomp(my $uuid = `@exec_array`);
 if (!defined($uuid) || $uuid !~ /^$Templ$/) {
     die("$progname: suuid error\n");
 }
 $Comment =~ s/_%uuid%_/$uuid/gs;
 print($Comment);
 
+sub suuid_xml {
+    # {{{
+    my ($Str, $skip_xml) = @_;
+    defined($skip_xml) || ($skip_xml = 0);
+    if (!$skip_xml) {
+        $Str =~ s/&/&amp;/gs;
+        $Str =~ s/</&lt;/gs;
+        $Str =~ s/>/&gt;/gs;
+        $Str =~ s/\\/\\\\/gs;
+        $Str =~ s/\n/\\n/gs;
+        $Str =~ s/\r/\\r/gs;
+        $Str =~ s/\t/\\t/gs;
+    }
+    return($Str);
+    # }}}
+} # suuid_xml()
+
 sub new_uuid {
     # {{{
     my $Old = shift;
     if (!length($new_uuid)) {
-        chomp($new_uuid = `suuid -t "$progname" -c "Changing File ID of $file_name from $Old ($progname $cmdline_str)"`);
+        my @cmd_arr = (
+            "suuid",
+            "--raw",
+            "-t",
+            $progname,
+            "-c",
+            sprintf("\"<c_fileid> <change> <filename>%s</filename> <old>%s</old>%s%s </change> </c_fileid>\"",
+                suuid_xml($file_name),
+                suuid_xml($Old),
+                length($Opt{'type'})
+                    ? " <type>" . suuid_xml($Opt{'type'}) . "</type>"
+                    : "",
+                length($Opt{'comment'})
+                    ? " <comment>" . suuid_xml($Opt{'comment'}) . "</comment>"
+                    : "",
+            ),
+        );
+        chomp($new_uuid = `@cmd_arr`);
         if (!defined($new_uuid) || $new_uuid !~ /^$Templ$/) {
             die("$progname: new_uuid(): suuid error\n");
         }
