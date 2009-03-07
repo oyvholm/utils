@@ -40,6 +40,7 @@ my $id_date = $rcs_id;
 $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 push(@main::version_array, $rcs_id);
+my $cmdline_str = join(" ", @ARGV);
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -66,8 +67,9 @@ my $comm_str = "";
 if (length($Opt{'comment'})) {
     $comm_str = sprintf(" <comment>%s</comment>", $Opt{'comment'});
 }
-my @Fancy = ();
+my @Fancy = ("<cmdline>" . suuid_xml($cmdline_str) . "</cmdline>");
 my @Files = ();
+my @Other = ();
 my @stat_array = ();
 my %smsum = ();
 my ($old_mdate, $new_mdate) = ("", "");
@@ -88,8 +90,11 @@ for my $curr_arg (@ARGV) {
                 "<mdate>$old_mdate</mdate> " . 
             "</file>"
         );
+    } elsif ($curr_arg =~ /^-\S/) {
+        push(@Fancy, sprintf("<option>%s</option>", suuid_xml($curr_arg)));
     } else {
-        push(@Fancy, $curr_arg);
+        push(@Fancy, sprintf("<other>%s</other>", suuid_xml($curr_arg)));
+        push(@Other, $curr_arg);
     }
 }
 my $cmd_str = suuid_xml(join(" ", @Fancy), 1);
@@ -101,7 +106,7 @@ defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 $ENV{'SESS_UUID'} .= "$uuid,";
 system("vim", @ARGV);
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
-my $change_str = "";
+my ($change_str, $other_str) = ("", "");
 for my $Curr (@Files) {
     chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
     if ($smsum{"o.$Curr"} ne $smsum{"n.$Curr"}) {
@@ -126,11 +131,37 @@ for my $Curr (@Files) {
         );
     }
 }
-
 if (length($change_str)) {
     $change_str = " <changed>$change_str </changed>";
 }
-system("suuid --raw -t c_v_end -c '<c_v w=\"end\"> <finished>$uuid</finished>$change_str </c_v>'");
+
+for my $Curr (@Other) {
+    if (-r $Curr) {
+        chomp(my $file_id = `finduuid "$Curr" | head -1`);
+        unless (@stat_array = stat($Curr)) {
+            die("$progname: $Curr: Cannot stat file: $!\n");
+        }
+        my $mtime = sec_to_string($stat_array[9]);
+        chomp(my $smsum = `smsum <"$Curr"`);
+        $other_str .= sprintf(
+            " <file>" .
+                " <name>%s</name>" .
+                "%s" . # File ID, the first UUID in the file
+                " <smsum>%s</smsum>" .
+                " <mtime>%s</mtime>" .
+            " </file>",
+            suuid_xml($Curr),
+            length($file_id) ? " <fileid>$file_id</fileid>" : "",
+            $smsum,
+            $mtime,
+        );
+    }
+}
+if (length($other_str)) {
+    $other_str = " <created>$other_str </created>";
+}
+
+system("suuid --raw -t c_v_end -c '<c_v w=\"end\"> <finished>$uuid</finished>$change_str$other_str </c_v>'");
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
