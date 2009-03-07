@@ -77,6 +77,16 @@ my %smsum = ();
 my ($old_mdate, $new_mdate) = ("", "");
 for my $curr_arg (@ARGV) {
     if (-r $curr_arg) {
+        my $chk_swap = $curr_arg;
+        if ($chk_swap =~ /\//) {
+            $chk_swap =~ s/^(.*\/)(.+?)$/$1.$2.swp/;
+        } else {
+            $chk_swap = ".$curr_arg.swp";
+        }
+        D("\$chk_swap = '$chk_swap'");
+        if (-e $chk_swap) {
+            die("$progname: $curr_arg: Swap file $chk_swap exists, seems as the file is being edited already\n");
+        }
         unless (@stat_array = stat($curr_arg)) {
             die("$progname: $curr_arg: Cannot stat file: $!\n");
         }
