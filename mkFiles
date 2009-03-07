@@ -12,7 +12,7 @@ until mkdir $lockname 2>/dev/null; do
 	sleep 5
 done
 
-uuid=`suuid -t mkfiles -w eo -c "mkFiles i $(hostname):$(/bin/pwd)"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
+uuid=`suuid -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
 echo \# $uuid >Files.smsum
 find -type f -print0 | \
     grep -zv '/\.svn/' | \
