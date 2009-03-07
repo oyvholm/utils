@@ -131,7 +131,6 @@ if (length($change_str)) {
     $change_str = " <changed>$change_str </changed>";
 }
 system("suuid --raw -t c_v_end -c '<c_v w=\"end\"> <finished>$uuid</finished>$change_str </c_v>'");
-$ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
