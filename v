@@ -89,7 +89,7 @@ for my $curr_arg (@ARGV) {
                 "<name>$curr_arg</name> " .
                 (length($file_id) ? "<fileid>$file_id</fileid> " : "") .
                 "<smsum>" . $smsum{"o.$curr_arg"} . "</smsum> " .
-                "<mdate>$old_mdate</mdate> " . 
+                "<mdate>$old_mdate</mdate> " .
             "</file>"
         );
     } elsif ($curr_arg =~ /^-\S/) {
