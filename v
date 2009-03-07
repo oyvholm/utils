@@ -27,6 +27,7 @@ our %Opt = (
     'comment' => "",
     'debug' => 0,
     'help' => 0,
+    'tag' => "c_v",
     'verbose' => 0,
     'version' => 0,
 
@@ -48,6 +49,7 @@ GetOptions(
     "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "tag|t=s" => \$Opt{'tag'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -98,7 +100,7 @@ for my $curr_arg (@ARGV) {
     }
 }
 my $cmd_str = suuid_xml(join(" ", @Fancy), 1);
-chomp(my $uuid=`suuid --raw -t c_v_begin -w eo -c '<c_v w="begin"> $cmd_str$comm_str </c_v>'`);
+chomp(my $uuid=`suuid --raw -t $Opt{'tag'}_begin -w eo -c '<$Opt{'tag'} w="begin"> $cmd_str$comm_str </$Opt{'tag'}>'`);
 if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
     die("$progname: suuid error\n");
 }
@@ -161,7 +163,7 @@ if (length($other_str)) {
     $other_str = " <created>$other_str </created>";
 }
 
-system("suuid --raw -t c_v_end -c '<c_v w=\"end\"> <finished>$uuid</finished>$change_str$other_str </c_v>'");
+system("suuid --raw -t $Opt{'tag'}_end -c '<$Opt{'tag'} w=\"end\"> <finished>$uuid</finished>$change_str$other_str </$Opt{'tag'}>'");
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
