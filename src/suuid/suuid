@@ -99,13 +99,7 @@ if (!-d "$Opt{'logdir'}/.") {
 }
 my $Logfile = "$Opt{'logdir'}/$Host";
 
-my $Cmd;
-# FIXME: Hardkoding
-if (-e "/dungen.mrk") {
-    $Cmd = "uuid -v1";
-} else {
-    $Cmd = "uuidgen -t";
-}
+my $Cmd = "uuid -v1";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'vi'};
@@ -248,7 +242,7 @@ if (open(LogFP, "+>>", $Logfile)) {
 
 sub host_id {
     # {{{
-    chomp(my $Retval = `uuidgen -t`);
+    chomp(my $Retval = `uuid -v1`);
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
     # }}}
