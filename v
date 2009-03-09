@@ -115,9 +115,11 @@ if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
     die("$progname: suuid error\n");
 }
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
+
 $ENV{'SESS_UUID'} .= "$uuid,";
 system("vim", @ARGV);
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
+
 my ($change_str, $other_str) = ("", "");
 for my $Curr (@Files) {
     chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
