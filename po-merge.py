@@ -1,1 +1,1 @@
-/home/sunny/subversion/trunk/tools/dev/po-merge.py
+/home/sunny/subversion/svn-trunk/tools/dev/po-merge.py
