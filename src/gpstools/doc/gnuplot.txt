@@ -1,0 +1,8 @@
+$Id$
+File ID: 45564e5c-0e3a-11de-b84a-0001805bf4b1
+
+For å lage label-fil med veipunkter:
+
+psql gps -c \
+"COPY (SELECT 'set label \"' || name || '\" at ' || coor[1] || ', ' || coor[0] FROM wayp ORDER BY coor[0] DESC, coor[1]) TO STDOUT" \
+| iconv -f utf8 -t latin1 >label.gnuplot
