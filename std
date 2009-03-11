@@ -28,6 +28,7 @@ our %Opt = (
     'force' => 0,
     'help' => 0,
     'local' => 0,
+    'no-svn' => 0,
     'notag' => "",
     'tag' => 0,
     'verbose' => 0,
@@ -58,6 +59,7 @@ GetOptions(
     "force|f" => \$Opt{'force'},
     "help|h" => \$Opt{'help'},
     "local|l+" => \$Opt{'local'},
+    "no-svn|n" => \$Opt{'no-svn'},
     "notag|T=s" => \$Opt{'notag'},
     "tag|t=s" => \@Tags,
     "verbose|v+" => \$Opt{'verbose'},
@@ -117,7 +119,7 @@ $Mon += 1;
 my $URL = "$ENV{SR}/utils/trunk/Lib/std/$Type";
 my $tmpfile = "tmp.std." . time;
 
-my $is_svn_wc = -d ".svn/." ? 1 : 0;
+my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
 
 if ($Opt{'local'}) {
     if (open(PipeFP, "$CMD_SVN stat $dat_file |")) {
@@ -283,6 +285,8 @@ Options:
     Overwrite existing file.
   -l, --local
     Use local copy, don’t download.
+  -n, --no-svn
+    Don’t version control the file with Subversion.
   -t x, --tag x
     Replaces strings of the form "STDtagDTS" in the template file with 
     another string. Examples:
