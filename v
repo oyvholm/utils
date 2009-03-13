@@ -26,6 +26,7 @@ our %Opt = (
 
     'comment' => "",
     'debug' => 0,
+    'gvim' => 0,
     'help' => 0,
     'tag' => "c_v",
     'verbose' => 0,
@@ -48,6 +49,7 @@ GetOptions(
 
     "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
+    "gui|g" => \$Opt{'gui'},
     "help|h" => \$Opt{'help'},
     "tag|t=s" => \$Opt{'tag'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -116,8 +118,10 @@ if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
 }
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 
+my $vim_str = $Opt{'gui'} ? "gvim -f" : "vim";
+
 $ENV{'SESS_UUID'} .= "$uuid,";
-system("vim", @ARGV);
+system($vim_str, @ARGV);
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 my ($change_str, $other_str) = ("", "");
@@ -230,6 +234,8 @@ Options:
 
   -c X, --comment X
     Session comment.
+  -g, --gui
+    Use graphical (gui) version of Vim, i.e. gvim.
   -h, --help
     Show this help.
   -v, --verbose
