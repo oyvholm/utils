@@ -24,6 +24,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    '2d' => 0,
     'debug' => 0,
     'help' => 0,
     'time' => 0,
@@ -45,6 +46,7 @@ my @cmdl = @ARGV;
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "2d|2" => \$Opt{'2d'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "time|t" => \$Opt{'time'},
@@ -59,6 +61,8 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+($Opt{'2d'} && $Opt{'time'}) && die("$progname: Cannot mix --2d and --time options\n");
 
 my $cmdl_str = join(" ", @cmdl);
 
@@ -77,6 +81,22 @@ set zdata time
 # set timefmt "%Y-%m-%dT%H:%M:%SZ"
 set timefmt "%s"
 splot "$dat_file" using 2:3:1 w l palette
+pause -1 "Trykk Enter..."
+END
+    close(FP);
+    system("gnuplot -persist $cmd_file");
+} elsif ($Opt{'2d'}) {
+    my $dat_file = "/tmp/vg-2.tmp";
+    open(FP, ">$dat_file") || die("$progname: $dat_file: Cannot open file for write: $!\n");
+    my @gpst_array = ("gpst", "-o", "clean", "-rp", "-d", "-t", @ARGV, "|", "rmspcall", "|", "uniq");
+    print(FP `@gpst_array`);
+    close(FP);
+    my $cmd_file = "/tmp/vg-2-cmd.tmp";
+    open(FP, ">$cmd_file") || die("$progname: $cmd_file: Cannot open file for write: $!\n");
+    print(FP <<END);
+set mouse
+# load "/tmp/label.gnuplot"
+plot "$dat_file" using 1:2 w l
 pause -1 "Trykk Enter..."
 END
     close(FP);
@@ -121,6 +141,9 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -2, --2d
+    Create 2D plot instead of 3D. Bigger window by default in gnuplot, 
+    and it’s faster when plotting lots of data.
   -h, --help
     Show this help.
   -t, --time
