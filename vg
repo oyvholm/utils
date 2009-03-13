@@ -61,19 +61,16 @@ if ($Opt{'version'}) {
 }
 
 my $cmdl_str = join(" ", @cmdl);
-my $uuid=`suuid -w eo -t vg --raw -c "<c_vg> <cmdline>$cmdl_str</cmdline> </c_vg>"` || die("$progname: suuid error");
 
 if ($Opt{'time'}) {
     my $dat_file = "/tmp/vg-t.tmp";
     open(FP, ">$dat_file") || die("$progname: $dat_file: Cannot open file for write: $!\n");
-    print(FP "# Session ID: $uuid\n");
     my @gpst_array = ("gpst", "-o", "csv", "-rt", "-e", "-d", "-t", @ARGV, "|", "rmspcall", "|", "uniq");
     print(FP `@gpst_array`);
     close(FP);
     my $cmd_file = "/tmp/vg-t-cmd.tmp";
     open(FP, ">$cmd_file") || die("$progname: $cmd_file: Cannot open file for write: $!\n");
     print(FP <<END);
-# Session ID: $uuid
 set mouse
 # load "/tmp/label.gnuplot"
 set zdata time
@@ -87,14 +84,12 @@ END
 } else {
     my $dat_file = "/tmp/vg.tmp";
     open(FP, ">$dat_file") || die("$progname: $dat_file: Cannot open file for write: $!\n");
-    print(FP "# Session ID: $uuid\n");
     my @gpst_array = ("gpst", "-o", "clean", "-ret", "-d", "-t", @ARGV, "|", "rmspcall", "|", "uniq");
     print(FP `@gpst_array`);
     close(FP);
     my $cmd_file = "/tmp/vg-cmd.tmp";
     open(FP, ">$cmd_file") || die("$progname: $cmd_file: Cannot open file for write: $!\n");
     print(FP <<END);
-# Session ID: $uuid
 set mouse
 # load "/tmp/label.gnuplot"
 splot "$dat_file" w l palette
