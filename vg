@@ -25,6 +25,7 @@ our $Debug = 0;
 our %Std = (
 
     'label-file' => "$ENV{'HOME'}/gps/poi/labels.gnuplot",
+    'with' => 'l',
 
 );
 
@@ -37,6 +38,7 @@ our %Opt = (
     'time' => 0,
     'verbose' => 0,
     'version' => 0,
+    'with' => $Std{'with'},
 
 );
 
@@ -60,6 +62,7 @@ GetOptions(
     "time|t" => \$Opt{'time'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "with|w=s" => \$Opt{'with'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -71,6 +74,7 @@ if ($Opt{'version'}) {
 }
 
 ($Opt{'2d'} && $Opt{'time'}) && die("$progname: Cannot mix --2d and --time options\n");
+($Opt{'with'} =~ /^(d|l|lp|p)$/) || die("$progname: $Opt{'with'}: Invalid value of --with option, see $progname -h for help\n");
 
 my $cmdl_str = join(" ", @cmdl);
 
@@ -88,7 +92,7 @@ load "$Opt{'label-file'}"
 set zdata time
 # set timefmt "%Y-%m-%dT%H:%M:%SZ"
 set timefmt "%s"
-splot "$dat_file" using 2:3:1 w l palette
+splot "$dat_file" using 2:3:1 w $Opt{'with'} palette
 pause -1 "Trykk Enter..."
 END
     close(FP);
@@ -104,7 +108,7 @@ END
     print(FP <<END);
 set mouse
 load "$Opt{'label-file'}"
-plot "$dat_file" using 1:2 w l
+plot "$dat_file" using 1:2 w $Opt{'with'}
 pause -1 "Trykk Enter..."
 END
     close(FP);
@@ -120,7 +124,7 @@ END
     print(FP <<END);
 set mouse
 load "$Opt{'label-file'}"
-splot "$dat_file" w l palette
+splot "$dat_file" w $Opt{'with'} palette
 pause -1 "Trykk Enter..."
 END
     close(FP);
@@ -161,6 +165,13 @@ Options:
     Use time as Z axis instead of elevation.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -w X, --with X
+    Use line type X:
+      d  - dots
+      l  - lines
+      p  - points
+      lp - lines with points
+      Default: $Std{'with'}
   --version
     Print version information.
   --debug
