@@ -159,7 +159,7 @@ sub testcmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     # }}}
-}
+} # testcmd()
 
 sub likecmd {
     # {{{
@@ -187,7 +187,7 @@ sub likecmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     # }}}
-}
+} # likecmd()
 
 sub file_data {
     # Return file content as a string {{{
@@ -201,7 +201,7 @@ sub file_data {
         return undef;
     }
     # }}}
-}
+} # file_data()
 
 sub print_version {
     # Print program version {{{
