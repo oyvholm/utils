@@ -28,6 +28,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'new' => 0,
+    'random-mac' => 0,
     'type' => "",
     'verbose' => 0,
     'version' => 0,
@@ -50,6 +51,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "new|n" => \$Opt{'new'},
+    "random-mac|m" => \$Opt{'random-mac'},
     "type|t=s" => \$Opt{'type'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -109,6 +111,7 @@ my @exec_array = (
     "-t",
     $progname,
 );
+$Opt{'random-mac'} && push(@exec_array, "-m");
 msg(1, "Executing '" . join("', '", @exec_array) . "'...");
 chomp(my $uuid = `@exec_array`);
 if (!defined($uuid) || $uuid !~ /^$Templ$/) {
@@ -155,6 +158,7 @@ sub new_uuid {
                     : "",
             ),
         );
+        $Opt{'random-mac'} && push(@cmd_arr, "-m");
         chomp($new_uuid = `@cmd_arr`);
         if (!defined($new_uuid) || $new_uuid !~ /^$Templ$/) {
             die("$progname: new_uuid(): suuid error\n");
@@ -190,6 +194,9 @@ Options:
     Use X as additional comment.
   -h, --help
     Show this help.
+  -m, --random-mac
+    Generate a random MAC address field instead of using the hardware 
+    MAC address.
   -n, --new
     Replace all uuids from stdin with a new single uuid which is the new 
     File ID and log the change. Example in Vim:
