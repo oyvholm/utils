@@ -100,13 +100,7 @@ if (!-d "$Opt{'logdir'}/.") {
 }
 my $Logfile = "$Opt{'logdir'}/$Host";
 
-my $Cmd;
-# FIXME: Hardkoding
-if (-e "/dungen.mrk") {
-    $Cmd = "uuid -v1";
-} else {
-    $Cmd = "uuidgen -t";
-}
+my $Cmd = "uuid -v1";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'vi'};
@@ -136,10 +130,9 @@ $Comment =~ s/^\s+//;
 $Comment =~ s/\s+$//;
 my $safe_comment = suuid_xml($Comment, $Opt{'raw'});
 my $safe_tag = suuid_xml($Tag);
-my $safe_currdir = "";
-length($Hostname) && ($safe_currdir = "$Hostname:");
-$safe_currdir .= $curr_dir;
-$safe_currdir = suuid_xml($safe_currdir);
+my ($safe_host, $safe_currdir) = ("", "");
+length($Hostname) && ($safe_host = suuid_xml($Hostname));
+length($curr_dir) && ($safe_currdir = suuid_xml($curr_dir));
 my $Username = getpwuid($<);
 my $safe_username = suuid_xml($Username);
 chomp(my $tty = `tty`);
@@ -217,6 +210,7 @@ if (open(LogFP, "+>>", $Logfile)) {
                 $tmp_tag =~ s/([^,]+)/push(@Xml, sprintf("<tag>%s<\/tag>", suuid_xml($1)))/gse;
             }
             length($safe_comment) && push(@Xml, "<txt>$safe_comment</txt>");
+            length($safe_host) && push(@Xml, "<host>$safe_host</host>");
             length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
             length($safe_username) && push(@Xml, "<user>$safe_username</user>");
             length($safe_tty) && push(@Xml, "<tty>$safe_tty</tty>");
