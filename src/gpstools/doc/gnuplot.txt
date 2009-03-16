@@ -6,3 +6,16 @@ For å lage label-fil med veipunkter:
 psql gps -c \
 "COPY (SELECT 'set label \"' || name || '\" at ' || coor[1] || ', ' || coor[0] FROM wayp ORDER BY coor[0] DESC, coor[1]) TO STDOUT" \
 | iconv -f utf8 -t latin1 >label.gnuplot
+
+Etter å ha experimentert med farger, ser dette ut til å være tingen:
+
+Track: 3
+Kart: 6
+Bilder: 7
+Film: 1
+Lyd: 2
+
+set label "200807301468.mp4" at -6.26072, 53.351369 tc lt 1
+set label "Lydklipp_243.wav" at 5.319771, 60.390323 tc lt 2
+set label "DSC_7389.JPG" at 5.317221, 60.395483 tc lt 7
+plot "kart.tab" lt 6 w l, "logg.tab" w d lt 3
