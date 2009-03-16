@@ -102,7 +102,7 @@ my $Logfile = "$Opt{'logdir'}/$Host";
 my $Cmd = "uuid -v1";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
-my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'vi'};
+my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
 D("cmd_editor = '$cmd_editor'");
 
 if ($Comment eq "-") {
