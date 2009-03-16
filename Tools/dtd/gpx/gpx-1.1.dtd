@@ -76,7 +76,14 @@ them. Didn’t find any example GPX files which uses it.
 <!ELEMENT ageofdgpsdata (#PCDATA)>
 <!ELEMENT dgpsid (#PCDATA)>
 <!ELEMENT number (#PCDATA)>
-<!ELEMENT rtept (#PCDATA)>
+<!ELEMENT rtept (ele?,time?,magvar?,geoidheight?,name?,cmt?,desc?,src?,
+  link*,sym?,type?,fix?,sat?,hdop?,vdop?,pdop?,ageofdgpsdata?,dgpsid?,
+  extensions?)
+>
+<!ATTLIST rtept
+  lat CDATA #REQUIRED
+  lon CDATA #REQUIRED
+>
 <!ELEMENT trkseg (trkpt*,extensions?)>
 <!ELEMENT trkpt (ele?,time?,magvar?,geoidheight?,name?,cmt?,desc?,src?,
   link*,sym?,type?,fix?,sat?,hdop?,vdop?,pdop?,ageofdgpsdata?,dgpsid?,
