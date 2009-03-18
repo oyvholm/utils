@@ -132,6 +132,13 @@ my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
 my $date_templ = '20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]\.\d+Z';
+my $xml_header = join("",
+    '<\?xml version="1\.0" encoding="UTF-8"\?>\n',
+    '<!DOCTYPE suuids SYSTEM "dtd\/suuids\.dtd">\n',
+    '<!-- \$' . 'Id\$ -->\n',
+    '<suuids>\n',
+);
+
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -143,28 +150,28 @@ likecmd("$CMD -l $Outdir", # {{{
 my $Outfile = glob("$Outdir/*");
 like($Outfile, "/^$Outdir\\/$Lh\{12}\$/", "Filename of logfile OK");
 like(file_data($Outfile), # {{{
-    '/^' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<host>.+?<\\/host>",
             "<cwd>.+?<\\/cwd>",
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n$/s',
+    ) . '\n<\/suuids>\n$/s',
     "Log contents OK after exec with no options",
 );
 
 # }}}
 system("$CMD -l $Outdir >/dev/null");
 like(file_data($Outfile), # {{{
-    '/^(' . join(' ',
+    '/^' . $xml_header . "(" . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<host>.+?<\\/host>",
             "<cwd>.+?<\\/cwd>",
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n){2}$/s',
+    ) . '\n){2}<\/suuids>\n$/s',
     "Entries are added, not replacing",
 );
 
@@ -179,14 +186,14 @@ likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<host>.+?<\\/host>",
             "<cwd>.+?<\\/cwd>",
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n$/s',
+    ) . '\n<\/suuids>\n$/s',
     "The environment variable was read",
 );
 
@@ -201,14 +208,14 @@ likecmd("$CMD -m -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1rand_templ\">",
             "<host>.+?<\\/host>",
             "<cwd>.+?<\\/cwd>",
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n$/s',
+    ) . '\n<\/suuids>\n$/s',
     "Log contents OK after --random-mac",
 );
 
@@ -223,7 +230,7 @@ likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<txt><dingle><dangle>bær<\\/dangle><\\/dingle><\\/txt>",
             "<host>.+?<\\/host>",
@@ -231,7 +238,7 @@ like(file_data($Outfile), # {{{
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n$/s',
+    ) . '\n<\/suuids>\n$/s',
     "Log contents after --raw is OK",
 );
 
@@ -246,7 +253,7 @@ likecmd("$CMD -t snaddertag -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<tag>snaddertag<\\/tag>",
             "<host>.+?<\\/host>",
@@ -254,7 +261,7 @@ like(file_data($Outfile), # {{{
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n$/s',
+    ) . '\n<\/suuids>\n$/s',
     "Log contents OK after tag",
 );
 
@@ -269,7 +276,7 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<txt>Great test<\\/txt>",
             "<host>.+?<\\/host>",
@@ -277,7 +284,7 @@ like(file_data($Outfile), # {{{
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n$/s',
+    ) . '\n<\/suuids>\n$/s',
     "Log contents OK after comment",
 );
 
@@ -292,7 +299,7 @@ likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^(' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<tag>testeri<\\/tag>",
             "<txt>Great test<\\/txt>",
@@ -301,7 +308,7 @@ like(file_data($Outfile), # {{{
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
-    ) . '\n){5}$/s',
+    ) . '\n<\/suuids>\n$/s',
     "Log contents OK after count, comment and tag",
 );
 
@@ -347,7 +354,7 @@ likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir"
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . join(' ',
+    '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<tag>yess<\\/tag>",
             "<host>.+?<\\/host>",
@@ -356,7 +363,7 @@ like(file_data($Outfile), # {{{
             "<tty>.+<\\/tty>",
             "<sess>27538da4-fc68-11dd-996d-000475e441b9<\\/sess>",
         "<\\/suuid>",
-    ) . '\n$/s',
+    ) . '\n<\/suuids>\n$/s',
     "\$SESS_UUID envariable is logged",
 );
 

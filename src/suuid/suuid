@@ -144,8 +144,35 @@ if (defined($ENV{'SESS_UUID'})) {
     }
 }
 
+if (!-e $Logfile) {
+    open(LogFP, ">", $Logfile) || die("$progname: $Logfile: Cannot create file: $!\n");
+    flock(LogFP, LOCK_EX) || die("$progname: $Logfile: Cannot flock(): $!\n");
+    print(LogFP join("\n",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+        "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">",
+        "<!-- \$" . "Id\$ -->",
+        "<suuids>",
+        "</suuids>"
+    ) . "\n");
+    close(LogFP);
+}
+
 if (open(LogFP, "+>>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
+        # Seek to start of end tag
+        unless (seek(LogFP, -10, 2)) {
+            warn("$progname: Cannot seek to start of end tag, adding to file. Error: $!\n");
+        }
+        my $filepos = tell(LogFP);
+        my $check_end_tag = <LogFP>;
+        D("check_end_tag = '$check_end_tag'");
+        defined($check_end_tag) || ($check_end_tag = "");
+        if ($check_end_tag eq "</suuids>\n") {
+            D("check_end_tag is OK");
+            truncate(LogFP, $filepos) || die("$progname: $Logfile: Cannot truncate() to size $filepos: $!\n");
+        } else {
+            warn("$progname: $Logfile: Unknown end line, adding to end of file\n");
+        }
         for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
             seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file: $!\n");
             my $filepos = tell(LogFP);
@@ -232,6 +259,8 @@ if (open(LogFP, "+>>", $Logfile)) {
                 die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
             }
         }
+        seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file to write end tag: $!\n");
+        print(LogFP "</suuids>\n");
         close(LogFP);
     } else {
         die("$progname: $Logfile: Cannot lock file: $!\n");
