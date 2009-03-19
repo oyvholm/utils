@@ -232,7 +232,7 @@ likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {
 like(file_data($Outfile), # {{{
     '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<txt><dingle><dangle>bær<\\/dangle><\\/dingle><\\/txt>",
+            "<txt> <dingle><dangle>bær<\\/dangle><\\/dingle> <\\/txt>",
             "<host>.+?<\\/host>",
             "<cwd>.+?<\\/cwd>",
             "<user>.+<\\/user>",

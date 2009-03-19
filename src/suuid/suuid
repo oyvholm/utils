@@ -186,7 +186,8 @@ if (open(LogFP, "+>>", $Logfile)) {
                 my $tmp_tag = $safe_tag;
                 $tmp_tag =~ s/([^,]+)/push(@Xml, sprintf("<tag>%s<\/tag>", suuid_xml($1)))/gse;
             }
-            length($safe_comment) && push(@Xml, "<txt>$safe_comment</txt>");
+            my $txt_space = ($safe_comment =~ /^</) ? " " : "";
+            length($safe_comment) && push(@Xml, "<txt>$txt_space$safe_comment$txt_space</txt>");
             length($safe_host) && push(@Xml, "<host>$safe_host</host>");
             length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
             length($safe_username) && push(@Xml, "<user>$safe_username</user>");
