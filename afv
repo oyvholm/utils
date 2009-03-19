@@ -64,7 +64,6 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-
 unless (length($Opt{'directory'})) {
     defined($ENV{AFVROOT}) || die("AFVROOT er ikke definert");
 }
