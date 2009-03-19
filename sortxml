@@ -25,6 +25,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'element' => "",
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -44,6 +45,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "element|e=s" => \$Opt{'element'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -57,8 +59,26 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+my $ele = $Opt{'element'} || die("$progname: -e/--element not defined\n");
+my $buf = "";
+my @Data = ();
+
+while (my $Curr = <>) {
+    if ($Curr =~ /<$ele\b/) {
+        $buf = $Curr;
+        while ($Curr = <>) {
+            $buf .= $Curr;
+            if ($Curr =~ /<\/$ele>/) {
+                push(@Data, $buf);
+                $buf = "";
+            }
+        }
+        print(sort(@Data));
+        print($buf);
+        last;
+    } else {
+        print($Curr);
+    }
 }
 
 sub print_version {
@@ -79,10 +99,14 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] -e X [file [files [...]]]
+
+Sorts the X elements in an XML file.
 
 Options:
 
+  -e X, --element X
+    Sort file using element X.
   -h, --help
     Show this help.
   -v, --verbose
