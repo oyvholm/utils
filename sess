@@ -68,7 +68,7 @@ my @Cmd = @ARGV;
 my $cmd_str = join(" ", @ARGV);
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
 my $begin_cmd = sprintf(
-    "suuid --raw -t sess_begin -c \"<c_sess w=\\\"begin\\\"> <cmd>%s</cmd>%s</c_sess>\"",
+    "suuid --raw -t sess_begin -c \"<c_sess w=\\\"begin\\\"> <cmd>%s</cmd>%s </c_sess>\"",
     suuid_xml($cmd_str),
     (length($Opt{'comment'})
         ? sprintf(" <comment>%s</comment>", suuid_xml($Opt{'comment'}))
