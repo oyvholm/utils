@@ -59,16 +59,16 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my $ele = $Opt{'sort'} || die("$progname: -s/--sort not defined\n");
+my $sortele = $Opt{'sort'} || die("$progname: -s/--sort not defined\n");
 my $buf = "";
 my @Data = ();
 
 while (my $Curr = <>) {
-    if ($Curr =~ /<$ele\b/) {
+    if ($Curr =~ /<$sortele\b/) {
         $buf = $Curr;
         while ($Curr = <>) {
             $buf .= $Curr;
-            if ($Curr =~ /<\/$ele>/) {
+            if ($Curr =~ /<\/$sortele>/) {
                 push(@Data, $buf);
                 $buf = "";
             }
