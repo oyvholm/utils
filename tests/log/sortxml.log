@@ -10,8 +10,8 @@ ok - "../sortxml -hv" - Option --version with -h returns Id string and help scre
 ok - "../sortxml --version" - Option --version returns Id string
 ok - "../sortxml --version" - Option --version returns Id string (stderr)
 # Test sorting...
-ok - "../sortxml -e b sortxml-files/a.xml" - Sorting XML document
-ok - "../sortxml -e b sortxml-files/a.xml" - Sorting XML document (stderr)
+ok - "../sortxml -s b sortxml-files/a.xml" - Sorting XML document
+ok - "../sortxml -s b sortxml-files/a.xml" - Sorting XML document (stderr)
 # Running TODO tests...
 # Testing finished.
 1..9

@@ -3,7 +3,7 @@
 #=======================================================================
 # $Id$
 # File ID: 76c6f804-1463-11de-aecb-000475e441b9
-# [Description]
+# Sorts the X elements in an XML file.
 #
 # Character set: UTF-8
 # ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
@@ -25,8 +25,8 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
-    'element' => "",
     'help' => 0,
+    'sort' => "",
     'verbose' => 0,
     'version' => 0,
 
@@ -45,8 +45,8 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
-    "element|e=s" => \$Opt{'element'},
     "help|h" => \$Opt{'help'},
+    "sort|s=s" => \$Opt{'sort'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -59,7 +59,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my $ele = $Opt{'element'} || die("$progname: -e/--element not defined\n");
+my $ele = $Opt{'sort'} || die("$progname: -s/--sort not defined\n");
 my $buf = "";
 my @Data = ();
 
@@ -105,10 +105,10 @@ Sorts the X elements in an XML file.
 
 Options:
 
-  -e X, --element X
-    Sort file using element X.
   -h, --help
     Show this help.
+  -s X, --sort X
+    Sort file using element X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version

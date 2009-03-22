@@ -116,7 +116,7 @@ likecmd("$CMD --version", # {{{
 
 # }}}
 diag("Test sorting...");
-testcmd("$CMD -e b sortxml-files/a.xml", # {{{
+testcmd("$CMD -s b sortxml-files/a.xml", # {{{
     <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE a [
