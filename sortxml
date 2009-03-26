@@ -66,6 +66,10 @@ my @Data = ();
 while (my $Curr = <>) {
     if ($Curr =~ /<$sortele\b/) {
         $buf = $Curr;
+        if ($Curr =~ /<\/$sortele>/) {
+            push(@Data, $buf);
+            $buf = "";
+        }
         while ($Curr = <>) {
             $buf .= $Curr;
             if ($Curr =~ /<\/$sortele>/) {
