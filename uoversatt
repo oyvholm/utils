@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# File ID: f4118824-1b98-11de-a34d-000d56feca57
+# [Description]
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+LANG=en_GB pols "$@" | grep -e "untranslated message" -e "fuzzy message" -e "found .* fatal error"
