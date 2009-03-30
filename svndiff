@@ -128,6 +128,16 @@ $Opt{'help'} && usage(0);
 
 if ($Opt{'create-rc'}) {
     print(<<END);
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svndiffrc [
+  <!ELEMENT svndiffrc (diffprog, svnclient, reversediffs?)>
+  <!ELEMENT diffprog (#PCDATA)>
+  <!ELEMENT svnclient (#PCDATA)>
+  <!ELEMENT reversediffs (program)*>
+  <!ELEMENT program (name, reverse)>
+  <!ELEMENT name (#PCDATA)>
+  <!ELEMENT reverse (#PCDATA)>
+]>
 <svndiffrc>
   <diffprog>vimdiff</diffprog>
   <svnclient>svn</svnclient>
