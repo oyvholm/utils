@@ -82,7 +82,7 @@ if ($Opt{'new'}) {
 } elsif (length($Opt{'type'})) {
     if ($Opt{'type'} =~ /^(txt)$/) {
         $Comment = ("File ID: _%uuid%_\n");
-    } elsif ($Opt{'type'} =~ /^(perl|bash|sh)$/) {
+    } elsif ($Opt{'type'} =~ /^(perl|bash|sh|htaccess)$/) {
         $Comment = ("# File ID: _%uuid%_\n");
     } elsif ($Opt{'type'} =~ /^(html|xml)$/) {
         $Comment = ("  <!-- File ID: _%uuid%_ -->\n");
