@@ -70,7 +70,7 @@ my $is_svn_wc = -d ".svn/." ? 1 : 0;
 for my $Dir (qw{4288x2848 2144x1424 1072x712 536x356 thumbs}) {
     if (!-d "$Dir/.") {
         mkdir($Dir) || die("$progname: $Dir: mkdir() error: $!\n");
-        $is_svn_wc && system("svn", "add", $Dir);
+        $is_svn_wc && mysyst("svn", "add", $Dir);
     }
     if (!-e "$Dir/.htaccess") {
         open(OutFP, ">$Dir/.htaccess") || die("$progname: $Dir/.htaccess: Cannot create file: $!\n");
@@ -89,8 +89,8 @@ AddDefaultCharset UTF-8
 END
         close(OutFP);
         if ($is_svn_wc) {
-            system("svn", "add", "$Dir/.htaccess");
-            system("keyw", "$Dir/.htaccess");
+            mysyst("svn", "add", "$Dir/.htaccess");
+            mysyst("keyw", "$Dir/.htaccess");
         }
     }
 }
@@ -240,6 +240,15 @@ print(OutFP <<END);
 END
 
 close(OutFP);
+
+sub mysyst {
+    # {{{
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    msg(1, "Executing '$system_txt'...");
+    system(@_);
+    # }}}
+} # mysyst()
 
 sub txt_to_xml {
     # {{{
