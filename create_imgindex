@@ -26,6 +26,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'output-file' => "",
     'title' => "",
     'verbose' => 0,
     'version' => 0,
@@ -50,6 +51,7 @@ GetOptions(
 
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "output-file|o=s" => \$Opt{'output-file'},
     "title|t=s" => \$Opt{'title'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -57,6 +59,7 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 my $Title = txt_to_xml($Opt{'title'}) || die("$progname: -t/--title not specified\n");;
+my $Outfile = txt_to_xml($Opt{'output-file'}) || die("$progname: -o/--output-file not specified\n");;
 scalar(@ARGV) || die("$progname: No filenames specified\n");
 
 my $is_svn_wc = -d ".svn/." ? 1 : 0;
@@ -95,6 +98,8 @@ my $Year = $time_array[5] + 1900;
 my $files_str = "";
 my %smsum = ();
 
+open(OutFP, ">", $Outfile) || die("$progname: $Outfile: Cannot create file: $!\n");
+
 for my $t (@ARGV) {
     msg(0, "$t");
     chomp($smsum{$t} = `smsum <$t`);
@@ -102,7 +107,7 @@ for my $t (@ARGV) {
 }
 chomp(my $uuid = `suuid -t create_imgindex --raw -c "<c_create_imgindex> $files_str</c_create_imgindex>"`);
 
-print(<<END);
+print(OutFP <<END);
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" lang="no">
@@ -169,9 +174,9 @@ my $Count = 0;
 
 for my $Curr (@ARGV) {
     if (!$Count) {
-      print("      <tr>\n");
+      print(OutFP "      <tr>\n");
     }
-    print(<<END);
+    print(OutFP <<END);
         <td>
           <!-- $smsum{$Curr} -->
           <table width="100%" cellpadding="2" cellspacing="0" border="0">
@@ -195,12 +200,12 @@ for my $Curr (@ARGV) {
 END
     $Count++;
     if ($Count > 3) {
-        print("      </tr>\n");
+        print(OutFP "      </tr>\n");
         $Count = 0;
     }
 }
 
-print(<<END);
+print(OutFP <<END);
       </tr>
       <tr>
         <td colspan="4">
@@ -226,6 +231,8 @@ print(<<END);
 </html>
 END
 
+close(OutFP);
+
 sub txt_to_xml {
     # {{{
     my $Txt = shift;
@@ -246,12 +253,14 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] -t TITLE [images ...]
+Usage: $progname [options] -o OUTFILE -t TITLE [images ...]
 
 Options:
 
   -h, --help
     Show this help.
+  -o X, --output-file X
+    Store output in file X.
   -t X, --title X
     Use title and header X.
   -v, --verbose
