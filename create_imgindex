@@ -180,7 +180,7 @@ print(OutFP <<END);
       </tr>
 END
 
-my $Count = 0;
+my ($Count, $create_td) = (0, 0);
 
 for my $Curr (@ARGV) {
     if (!$Count) {
@@ -217,11 +217,16 @@ END
     if ($Count > 3) {
         print(OutFP "      </tr>\n");
         $Count = 0;
+        $create_td = 1;
     }
 }
 
+if ($Count) {
+    $create_td && printf(OutFP "        <td colspan=\"%u\">\n        </td>\n", 4-$Count);
+    print(OutFP "      </tr>\n");
+}
+
 print(OutFP <<END);
-      </tr>
       <tr>
         <td colspan="4">
           <table cellpadding="5" cellspacing="0" border="0">
