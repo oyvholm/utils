@@ -66,7 +66,7 @@ scalar(@ARGV) || die("$progname: No filenames specified\n");
 
 my $is_svn_wc = -d ".svn/." ? 1 : 0;
 
-for my $Dir (qw{4288x2848 2144x1424 1072x712 536x356}) {
+for my $Dir (qw{4288x2848 2144x1424 1072x712 536x356 thumbs}) {
     if (!-d "$Dir/.") {
         mkdir($Dir) || die("$progname: $Dir: mkdir() error: $!\n");
         $is_svn_wc && system("svn", "add", $Dir);
@@ -184,7 +184,7 @@ for my $Curr (@ARGV) {
           <table width="100%" cellpadding="2" cellspacing="0" border="0">
             <tr>
               <td class="image" colspan="2">
-                <img src="thumbs/$Curr" width="160" height="120" alt="$Curr" />
+                <img src="thumbs/$Curr" width="160" alt="$Curr" />
               </td>
             </tr>
             <tr>
@@ -195,6 +195,11 @@ for my $Curr (@ARGV) {
               <td class="text">
                 [<a href="2144x1424/$Curr">2144x1424</a>]<br />
                 [<a href="536x356/$Curr">536x356</a>]
+              </td>
+            </tr>
+            <tr>
+              <td class="text" colspan="2">
+                <b>$Curr</b>
               </td>
             </tr>
           </table>
