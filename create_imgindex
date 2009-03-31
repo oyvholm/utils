@@ -46,6 +46,7 @@ $id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 my $Author = txt_to_xml('Øyvind A. Holm <sunny@sunbase.org>'); # FIXME: Hardcoding
 
 push(@main::version_array, $rcs_id);
+my $cmdline_str = txt_to_xml(join(" ", @ARGV));
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -107,7 +108,7 @@ for my $t (@ARGV) {
     chomp($smsum{$t} = `smsum <$t`);
     $files_str .= sprintf("<file> <name>%s</name> <smsum>%s</smsum> </file> ", txt_to_xml($t), $smsum{$t});
 }
-chomp(my $uuid = `suuid -t create_imgindex --raw -c "<c_create_imgindex> $files_str</c_create_imgindex>"`);
+chomp(my $uuid = `suuid -t create_imgindex --raw -c "<c_create_imgindex> <cmdline>$cmdline_str</cmdline> <filename>$Outfile</filename> $files_str</c_create_imgindex>"`);
 
 print(OutFP <<END);
 <?xml version="1.0" encoding="UTF-8"?>
