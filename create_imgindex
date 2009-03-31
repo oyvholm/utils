@@ -61,6 +61,13 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
 my $Title = txt_to_xml($Opt{'title'}) || die("$progname: -t/--title not specified\n");;
 my $Outfile = txt_to_xml($Opt{'output-file'}) || die("$progname: -o/--output-file not specified\n");;
 scalar(@ARGV) || die("$progname: No filenames specified\n");
@@ -259,6 +266,14 @@ sub txt_to_xml {
     return($Txt);
     # }}}
 } # txt_to_xml()
+
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    # }}}
+} # print_version()
 
 sub usage {
     # Send the help message to stdout {{{
