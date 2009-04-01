@@ -25,6 +25,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'generate' => 0,
     'help' => 0,
     'language' => "en",
     'output-file' => "",
@@ -52,6 +53,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "generate|g" => \$Opt{'generate'},
     "help|h" => \$Opt{'help'},
     "language|l=s" => \$Opt{'language'},
     "output-file|o=s" => \$Opt{'output-file'},
@@ -107,15 +109,53 @@ my $Year = $time_array[5] + 1900;
 
 my $files_str = "";
 my %smsum = ();
+my @files_found = ();
 
 open(OutFP, ">", $Outfile) || die("$progname: $Outfile: Cannot create file: $!\n");
 
+chomp(my $uuid = `suuid -t create_imgindex --raw -c "<c_create_imgindex> <cmdline>$cmdline_str</cmdline> <filename>$Outfile</filename> $files_str</c_create_imgindex>"`)
+    || die("$progname: suuid error");
+
 for my $t (@ARGV) {
-    msg(0, "$t");
-    chomp($smsum{$t} = `smsum <$t`);
-    $files_str .= sprintf("<file> <name>%s</name> <smsum>%s</smsum> </file> ", txt_to_xml($t), $smsum{$t});
+    if (-r $t) {
+        msg(0, "$t");
+        chomp($smsum{$t} = `smsum <$t`);
+        $files_str .= sprintf("<file> <name>%s</name> <smsum>%s</smsum> </file> ", txt_to_xml($t), $smsum{$t});
+        if ($Opt{'generate'}) {
+            mysyst("cp -Lp $t 4288x2848/$t");
+            mysyst("convert -resize 2144 4288x2848/$t 2144x1424/$t");
+            mysyst("convert -resize 1072 2144x1424/$t 1072x712/$t");
+            mysyst("convert -resize 536 1072x712/$t 536x356/$t");
+            mysyst("convert -resize 160 536x356/$t thumbs/$t");
+        }
+        push(@files_found, $t);
+    } else {
+        warn("$progname: $t: Cannot open file for read: $!\n");
+    }
 }
-chomp(my $uuid = `suuid -t create_imgindex --raw -c "<c_create_imgindex> <cmdline>$cmdline_str</cmdline> <filename>$Outfile</filename> $files_str</c_create_imgindex>"`);
+
+my $ignorefile = ".$uuid.ignore.tmp";
+if ($is_svn_wc) {
+    if (open(TmpFP, ">", $ignorefile)) {
+        printf(TmpFP "%s\n", join("\n", @files_found));
+        close(TmpFP);
+    }
+}
+if ($Opt{'generate'}) {
+    for my $dir (qw{4288x2848 2144x1424 1072x712 536x356 thumbs}) {
+        if (chdir($dir)) {
+            mysyst("mkFiles");
+            if ($is_svn_wc) {
+                mysyst("svn add Files.smsum");
+            }
+            chdir("..");
+        } else {
+            warn("$progname: $dir: Cannot chdir(), mkFiles not executed: $!\n");
+        }
+        $is_svn_wc && mysyst("svn -F $ignorefile ps svn:ignore $dir");
+    }
+}
+$is_svn_wc && unlink($ignorefile);
 
 print(OutFP <<END);
 <?xml version="1.0" encoding="UTF-8"?>
@@ -294,6 +334,9 @@ Usage: $progname [options] -o OUTFILE -t TITLE [images ...]
 
 Options:
 
+  -g, --generate
+    Generate resized images in subdirectory tree. Needs convert(1) from 
+    the ImageMagick package.
   -h, --help
     Show this help.
   -l X, --language X
