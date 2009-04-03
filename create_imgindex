@@ -113,9 +113,6 @@ my @files_found = ();
 
 open(OutFP, ">", $Outfile) || die("$progname: $Outfile: Cannot create file: $!\n");
 
-chomp(my $uuid = `suuid -t create_imgindex --raw -c "<c_create_imgindex> <cmdline>$cmdline_str</cmdline> <filename>$Outfile</filename> $files_str</c_create_imgindex>"`)
-    || die("$progname: suuid error");
-
 for my $t (@ARGV) {
     if (-r $t) {
         msg(0, "$t");
@@ -133,6 +130,9 @@ for my $t (@ARGV) {
         warn("$progname: $t: Cannot open file for read: $!\n");
     }
 }
+
+chomp(my $uuid = `suuid -t create_imgindex --raw -c "<c_create_imgindex> <cmdline>$cmdline_str</cmdline> <filename>$Outfile</filename> $files_str</c_create_imgindex>"`)
+    || die("$progname: suuid error");
 
 my $ignorefile = ".$uuid.ignore.tmp";
 if ($is_svn_wc) {
