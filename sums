@@ -16,8 +16,8 @@ BEGIN {
 
 use strict;
 use Getopt::Long;
-use Digest::MD5;
-use Digest::SHA1;
+use Digest::MD5 qw{ md5_hex };
+use Digest::SHA1 qw{ sha1_hex };
 
 $| = 1;
 
@@ -53,13 +53,29 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 $Opt{'version'} && print_version();
 
-if ($#ARGV >= 0) {
-    for (@ARGV) {
-        print(process_file($_));
-    }
-} else {
-    print(process_file("-"));
+while (<>) {
+    chomp(my $Line = $_);
+    printf("INSERT INTO sums (string, md5, sha1) VALUES (E'%s', '%s', '%s');\n",
+    safe_sql($Line), md5_hex($Line), sha1_hex($Line));
 }
+
+sub safe_sql {
+    # {{{
+    my $Text = shift;
+    $Text =~ s/\\/\\\\\\\\/g; # I’m not kidding
+    $Text =~ s/'/''/g;
+    $Text =~ s/\n/\\n/g;
+    $Text =~ s/\r/\\r/g;
+    $Text =~ s/\t/\\t/g;
+    $Text =~ s/([\x00-\x1f\x7e-\xff])/escape_char($1)/ge;
+    return($Text);
+    # }}}
+} # safe_sql()
+
+sub escape_char {
+    my $Char = shift;
+    return(sprintf("\\\\%03o", ord($Char)));
+} # escape_char()
 
 sub process_file {
     # {{{
