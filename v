@@ -28,6 +28,7 @@ our %Opt = (
     'debug' => 0,
     'gvim' => 0,
     'help' => 0,
+    'last' => 0,
     'tag' => "c_v",
     'verbose' => 0,
     'version' => 0,
@@ -51,6 +52,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "gui|g" => \$Opt{'gui'},
     "help|h" => \$Opt{'help'},
+    "last|l" => \$Opt{'last'},
     "tag|t=s" => \$Opt{'tag'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -93,7 +95,8 @@ for my $curr_arg (@ARGV) {
             die("$progname: $curr_arg: Cannot stat file: $!\n");
         }
         $old_mdate = sec_to_string($stat_array[9]);
-        chomp(my $file_id = `finduuid "$curr_arg" | head -1`);
+        my $head_str = $Opt{'last'} ? "tail" : "head";
+        chomp(my $file_id = `finduuid "$curr_arg" | $head_str -1`);
         chomp($smsum{"o.$curr_arg"} = `smsum <"$curr_arg"`);
         push(@Files, $curr_arg);
         push(@Fancy,
@@ -238,6 +241,8 @@ Options:
     Use graphical (gui) version of Vim, i.e. gvim.
   -h, --help
     Show this help.
+  -l, --last
+    Use last File ID found in the file instead of first.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
