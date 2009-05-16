@@ -90,6 +90,8 @@ if ($Opt{'new'}) {
         $Comment = ("-- File ID: _%uuid%_\n");
     } elsif ($Opt{'type'} =~ /^(c|css)$/) {
         $Comment = ("/* File ID: _%uuid%_ */\n");
+    } elsif ($Opt{'type'} =~ /^(erlang)$/) {
+        $Comment = ("%% File ID: _%uuid%_\n");
     } else {
         die("$progname: $Opt{'type'}: Unkown comment type. Use -h for help.\n");
     }
@@ -203,7 +205,7 @@ Options:
       :%!fileid -n %
   -t X, --type X
     Create comment of type X:
-      c, css, bash, html, perl, sh, sql, xml
+      c, css, bash, erlang, html, perl, sh, sql, xml
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
