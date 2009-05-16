@@ -98,6 +98,7 @@ for my $curr_arg (@ARGV) {
         my $head_str = $Opt{'last'} ? "tail" : "head";
         chomp(my $file_id = `finduuid "$curr_arg" | $head_str -1`);
         chomp($smsum{"o.$curr_arg"} = `smsum <"$curr_arg"`);
+        length($smsum{"o.$curr_arg"}) || die("$progname: Error calculating smsum\n");
         push(@Files, $curr_arg);
         push(@Fancy,
             "<file> " .
