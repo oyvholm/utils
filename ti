@@ -10,4 +10,8 @@ LC_ALL=C stty -a | grep speed
 echo -n "`date -Iseconds` "
 tty
 [ -z "$SESS_UUID" ] || echo SESS_UUID = $SESS_UUID
-[ -z "$LOGGING_UUID" ] || echo LOGGING_UUID = $LOGGING_UUID
+[ -z "$LOGGING_UUID" ] || {
+    echo LOGGING_UUID = $LOGGING_UUID
+    cd $HOME/log/script || { echo ti: $HOME/log/script: Cannot chdir >&2; exit 1; }
+    ls | grep $LOGGING_UUID | grep scrlog
+}
