@@ -383,7 +383,7 @@ sub read_rcfile {
     if (open(RcFP, "<$File")) {
         my $all_rc = join("", <RcFP>);
         close(RcFP);
-        D("\$all_rc \x7B\x7B\x7B\n$all_rc\n\x7D\x7D\x7D");
+        # D("\$all_rc \x7B\x7B\x7B\n$all_rc\n\x7D\x7D\x7D");
 
         my $el_top = $all_rc;
         $el_top =~ s/<!--.*?-->//gsx;
@@ -394,15 +394,15 @@ sub read_rcfile {
         }
         {
             my $el_svndiffrc = $2;
-            D("Inside <svndiffrc></svndiffrc>");
-            D("\$el_svndiffrc \x7B\x7B\x7B\n$el_svndiffrc\n\x7D\x7D\x7D");
+            # D("Inside <svndiffrc></svndiffrc>");
+            # D("\$el_svndiffrc \x7B\x7B\x7B\n$el_svndiffrc\n\x7D\x7D\x7D");
             $el_svndiffrc =~
             s{
                 <diffprog\b(.*?)>(.*?)</diffprog>
             }
             {
                 $Cmd = xml_to_txt($2);
-                D("read_rcfile(): \$Cmd = \"$Cmd\"");
+                # D("read_rcfile(): \$Cmd = \"$Cmd\"");
                 "";
             }sex;
 
@@ -412,7 +412,7 @@ sub read_rcfile {
             }
             {
                 $CMD_SVN = xml_to_txt($2);
-                D("read_rcfile(): \$CMD_SVN = \"$CMD_SVN\"");
+                # D("read_rcfile(): \$CMD_SVN = \"$CMD_SVN\"");
                 "";
             }sex;
 
@@ -422,7 +422,7 @@ sub read_rcfile {
             }
             {
                 my $el_reversediffs = $2;
-                D("Inside <reversediffs></reversediffs>");
+                # D("Inside <reversediffs></reversediffs>");
 
                 $el_reversediffs =~
                 s{
@@ -430,7 +430,7 @@ sub read_rcfile {
                 }
                 {
                     my $el_program = $2;
-                    D("Inside <program></program>");
+                    # D("Inside <program></program>");
 
                     my ($Name, $Reverse) =
                        (   "",       "");
@@ -441,7 +441,7 @@ sub read_rcfile {
                     }
                     {
                         $Name = xml_to_txt($2);
-                        D("Name = \"$Name\"");
+                        # D("Name = \"$Name\"");
                         "";
                     }sex;
 
@@ -451,13 +451,13 @@ sub read_rcfile {
                     }
                     {
                         $Reverse = xml_to_txt($2);
-                        D("Reverse = \"$Reverse\"");
+                        # D("Reverse = \"$Reverse\"");
                         "";
                     }sex;
 
                     if (length($Name)) {
                         $rev_diff{$Name} = ($Reverse eq "1" ? 1 : 0);
-                        D("\$rev_diff{$Name} = \"$rev_diff{$Name}\"");
+                        # D("\$rev_diff{$Name} = \"$rev_diff{$Name}\"");
                     } else {
                         warn("$progname: $File: Found empty " .
                              "<name></name> element.\n");
