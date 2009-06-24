@@ -322,16 +322,16 @@ for $curr_file (@ARGV) {
                                    # blir udefinert.
                                    "\t\t\t\t\t\t\t\t\t\t"
                        );
-                D(join("",
-                    "Position_f=\"$Position_f\" \x7B\x7B\x7B\n",
-                    "Time_f=\"$Time_f\"\n",
-                    "Alt_f=\"$Alt_f\"\n",
-                    "Depth_f=\"$Depth_f\"\n",
-                    "Leglength_f=\"$Leglength_f\"\n",
-                    "Legtime_f=\"$Legtime_f\"\n",
-                    "Legspeed_f=\"$Legspeed_f\"\n",
-                    "Legcourse_f=\"$Legcourse_f\" \x7D\x7D\x7D\n",
-                ));
+                # D(join("",
+                #     "Position_f=\"$Position_f\" \x7B\x7B\x7B\n",
+                #     "Time_f=\"$Time_f\"\n",
+                #     "Alt_f=\"$Alt_f\"\n",
+                #     "Depth_f=\"$Depth_f\"\n",
+                #     "Leglength_f=\"$Leglength_f\"\n",
+                #     "Legtime_f=\"$Legtime_f\"\n",
+                #     "Legspeed_f=\"$Legspeed_f\"\n",
+                #     "Legcourse_f=\"$Legcourse_f\" \x7D\x7D\x7D\n",
+                # ));
                 my ($NS, $WE,
                     $Alt_unit,
                     $Leglength,
@@ -347,7 +347,7 @@ for $curr_file (@ARGV) {
                      $Dat{'hour'} = $4, $Dat{'min'} = $5, $Dat{'sec'} = $6);
                 ($Alt_f =~ /^($DIGIT+) (.*?)/) &&
                     ($Dat{'ele'} = $1, $Alt_unit = $2);
-                D("ele = \"$Dat{'ele'}\"");
+                # D("ele = \"$Dat{'ele'}\"");
                 ($NS eq "S") && ($Dat{'lat'} = 0-$Dat{'lat'});
                 ($WE eq "W") && ($Dat{'lon'} = 0-$Dat{'lon'});
                 # MapSource in win xp writes YYYY, but YY in win98se.
@@ -762,7 +762,7 @@ sub print_entry {
     my $print_ele = length($Dat{'ele'}) ? 1 : 0;
     my $print_desc = length($Dat{'desc'}) ? 1 : 0;
     my $Line = "";
-    D("print_entry(\"" . join("\", \"", @_) . "\");");
+    # D("print_entry(\"" . join("\", \"", @_) . "\");");
     my $ep_time;
 
     if ($Opt{'near'} && $print_pos) {
@@ -773,7 +773,7 @@ sub print_entry {
     if (length($Opt{'round'})) {
         for my $Tmp (qw{ lat lon ele }) {
             if (defined($Round{$Tmp}) && length($Dat{$Tmp})) {
-                D("Tmp = '$Tmp'");
+                # D("Tmp = '$Tmp'");
                 ($Dat{$Tmp} = 1.0 * sprintf("%.$Round{$Tmp}f", $Dat{$Tmp}));
             }
         }
@@ -794,9 +794,9 @@ sub print_entry {
             $Dat{'day'}, $Dat{'month'} - 1, $Dat{'year'}
         );
         if ($Opt{'time-shift'}) {
-            D("ep_time før: '$ep_time'");
+            # D("ep_time før: '$ep_time'");
             $ep_time += $Opt{'time-shift'};
-            D("ep_time etter: '$ep_time'");
+            # D("ep_time etter: '$ep_time'");
             ($Dat{'sec'}, $Dat{'min'},$Dat{'hour'}, $Dat{'day'},
              $Dat{'month'}, $Dat{'year'}) = gmtime($ep_time);
             $Dat{'year'} += 1900;
@@ -939,7 +939,7 @@ sub print_entry {
             && $last_time
         ) {
             $pause_len = $ep_time-$last_time;
-            D("pause_len set to '$pause_len'");
+            # D("pause_len set to '$pause_len'");
         }
 
         if ($pause_len) {
