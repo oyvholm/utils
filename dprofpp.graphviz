@@ -14,7 +14,7 @@
 #   perl -d:DProf test.pl
 #   dprofpp.graphviz tmon.out
 #
-# Will create a file tmon.png
+# Will create a file _tmon.png
 
 use strict;
 use lib '..';
@@ -104,7 +104,7 @@ sub traverse {
 }
 
 #print $g->_as_debug;
-open(FP, ">", "tmon.png") || die("$0: tmon.png: Cannot create file: $!\n");
+open(FP, ">", "_tmon.png") || die("$0: tmon.png: Cannot create file: $!\n");
 print(FP $g->as_png);
 close(FP);
 
