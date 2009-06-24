@@ -57,7 +57,7 @@ while (defined(my $line = <>)) {
   }
 }
 
-die "Stack not empty: (" . (join ', ', @stack) . ')!' if @stack > 1;
+warn "Stack not empty: (" . (join ', ', @stack) . ')!' if @stack > 1;
 
 my %time;
 my $maxtime;
