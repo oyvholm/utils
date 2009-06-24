@@ -57,9 +57,29 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+my $Lastlen = 0;
+my $last_subr = "";
+my $First = 1;
+
+print("digraph G{\n");
+while (my $Line = <>) {
+    if ($Line =~ /^(\s*)(\S+)/) {
+        my ($Indent, $Subr) = ($1, $2);
+        # $First && ($Subr = "START");
+        if (length($Indent) > $Lastlen) {
+            D("Indent > Lastlen");
+            print(" -> \"$Subr\"");
+        } else { #if (length($Indent) == $Lastlen) {
+            D("indent == lastlen");
+            $First || print(";\n");
+            print("\"$Subr\"");
+            $First = 0;
+        }
+        $Lastlen = length($Indent);
+        $last_subr = $Subr;
+    }
 }
+print(";\n}\n");
 
 sub print_version {
     # Print program version {{{
