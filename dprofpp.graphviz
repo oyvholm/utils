@@ -12,7 +12,9 @@
 #
 # Example usage:
 #   perl -d:DProf test.pl
-#   dprofpp.graphviz tmon.out > tmon.png
+#   dprofpp.graphviz tmon.out
+#
+# Will create a file tmon.png
 
 use strict;
 use lib '..';
@@ -102,7 +104,9 @@ sub traverse {
 }
 
 #print $g->_as_debug;
-print $g->as_png;
+open(FP, ">", "tmon.png") || die("$0: tmon.png: Cannot create file: $!\n");
+print(FP $g->as_png);
+close(FP);
 
 sub ignore {
   my $id = shift;
