@@ -72,70 +72,9 @@ sub trackpoint {
     if ($Dat{'what'} eq "tp") {
         my $err_str = length($Dat{'error'}) ? $Dat{'error'} : "";
         if ($Dat{'format'} eq "gpsml") {
-            # {{{
-            my $Elem = length($err_str) ? "etp" : "tp";
-            $Retval .= join("",
-                    $print_time
-                        ? sprintf("<time>%04u-%02u-%02uT" .
-                                  "%02u:%02u:%02gZ</time> ",
-                                   $Dat{'year'}, $Dat{'month'}, $Dat{'day'},
-                                   $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}*1.0
-                          )
-                        : "",
-                    (length($Dat{'lat'}))
-                        ? "<lat>" . $Dat{'lat'}*1.0 . "</lat> "
-                        : "",
-                    (length($Dat{'lon'}))
-                        ? "<lon>" . $Dat{'lon'}*1.0 . "</lon> "
-                        : "",
-                    (length($Dat{'ele'}))
-                        ? "<ele>" . $Dat{'ele'}*1.0 . "</ele> "
-                        : "",
-                    (length($Dat{'desc'}))
-                        ? sprintf("<desc>%s</desc> ",
-                                  $Dat{'desc'})
-                        : ""
-            );
-            length($Retval) &&
-                ($Retval = sprintf("<%s%s> %s</%s>\n",
-                                   $Elem,
-                                   length($err_str) ? " err=\"$err_str\"" : "",
-                                   $Retval,
-                                   $Elem)
-            );
-            # }}}
+            $Retval .= print_gpsml_entry(%Dat);
         } elsif($Dat{'format'} eq "gpx") {
-            # {{{
-            my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
-            my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
-            my ($estr_begin, $estr_ext, $estr_end) =
-               (         "",        "",        "");
-            if (length($err_str)) {
-                $estr_begin = "<!-- ";
-                $estr_ext = "<extensions>$Spc<error>$err_str</error>$Spc</extensions>$Spc";
-                $estr_end = " -->";
-            }
-            if (length("$lat_str$lon_str$Dat{'ele'}")) {
-                $Retval .=
-                join("",
-                    "$Spc$Spc$Spc$Spc$Spc$Spc",
-                    $estr_begin,
-                    "<trkpt$lat_str$lon_str>",
-                    "$Spc",
-                    length($Dat{'ele'})
-                        ? "<ele>$Dat{'ele'}</ele>$Spc"
-                        : "",
-                    $print_time
-                        ? "<time>" .
-                          "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
-                          "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
-                          "</time>$Spc"
-                        : "",
-                        $estr_ext,
-                    "</trkpt>$estr_end\n"
-                );
-            }
-            # }}}
+            $Retval .= print_gpx_entry(%Dat);
         } elsif($Dat{'format'} eq "clean") {
             $Retval .= "$Dat{'lon'}\t$Dat{'lat'}\t$Dat{'ele'}\n";
         } elsif($Dat{'format'} eq "xgraph") {
@@ -176,7 +115,81 @@ sub trackpoint {
     }
     return $Retval;
     # }}}
-}
+} # trackpoint()
+
+sub gen_gpx_entry {
+    # {{{
+    my %Dat = @_;
+    my $Retval = "";
+    my $lat_str = length($Dat{'lat'}) ? " lat=\"$Dat{'lat'}\"" : "";
+    my $lon_str = length($Dat{'lon'}) ? " lon=\"$Dat{'lon'}\"" : "";
+    my ($estr_begin, $estr_ext, $estr_end) =
+       (         "",        "",        "");
+    if (length($err_str)) {
+        $estr_begin = "<!-- ";
+        $estr_ext = "<extensions>$Spc<error>$err_str</error>$Spc</extensions>$Spc";
+        $estr_end = " -->";
+    }
+    if (length("$lat_str$lon_str$Dat{'ele'}")) {
+        $Retval .=
+        join("",
+            "$Spc$Spc$Spc$Spc$Spc$Spc",
+            $estr_begin,
+            "<trkpt$lat_str$lon_str>",
+            "$Spc",
+            length($Dat{'ele'})
+                ? "<ele>$Dat{'ele'}</ele>$Spc"
+                : "",
+            $print_time
+                ? "<time>" .
+                  "$Dat{'year'}-$Dat{'month'}-$Dat{'day'}T" .
+                  "$Dat{'hour'}:$Dat{'min'}:$Dat{'sec'}Z" .
+                  "</time>$Spc"
+                : "",
+                $estr_ext,
+            "</trkpt>$estr_end\n"
+        );
+    }
+    return($Retval);
+    # }}}
+} # gen_gpx_entry()
+
+sub gen_gpsml_entry {
+    # {{{
+    my %Dat = @_;
+    my $Elem = length($err_str) ? "etp" : "tp";
+    my $Retval = join("",
+            $print_time
+                ? sprintf("<time>%04u-%02u-%02uT" .
+                          "%02u:%02u:%02gZ</time> ",
+                           $Dat{'year'}, $Dat{'month'}, $Dat{'day'},
+                           $Dat{'hour'}, $Dat{'min'}, $Dat{'sec'}*1.0
+                  )
+                : "",
+            (length($Dat{'lat'}))
+                ? "<lat>" . $Dat{'lat'}*1.0 . "</lat> "
+                : "",
+            (length($Dat{'lon'}))
+                ? "<lon>" . $Dat{'lon'}*1.0 . "</lon> "
+                : "",
+            (length($Dat{'ele'}))
+                ? "<ele>" . $Dat{'ele'}*1.0 . "</ele> "
+                : "",
+            (length($Dat{'desc'}))
+                ? sprintf("<desc>%s</desc> ",
+                          $Dat{'desc'})
+                : ""
+    );
+    length($Retval) &&
+        ($Retval = sprintf("<%s%s> %s</%s>\n",
+                           $Elem,
+                           length($err_str) ? " err=\"$err_str\"" : "",
+                           $Retval,
+                           $Elem)
+    );
+    return($Retval);
+    # }}}
+} # gen_gpsml_entry()
 
 sub postgresql_copy_safe {
     # {{{
