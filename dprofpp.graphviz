@@ -60,7 +60,7 @@ while (defined(my $line = <>)) {
 warn "Stack not empty: (" . (join ', ', @stack) . ')!' if @stack > 1;
 
 my %time;
-my $maxtime;
+my $maxtime = 0.00000001; # To avoid division by zero in traverse() on fast machines
 
 my %id = reverse %name;
 
