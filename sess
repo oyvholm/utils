@@ -69,7 +69,7 @@ my @Cmd = @ARGV;
 my $cmd_str = join(" ", @ARGV);
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
 my $begin_cmd = sprintf(
-    "suuid --raw -t sess_begin -c \"<c_sess w=\\\"begin\\\"> <cmd>%s</cmd>%s </c_sess>\"",
+    "suuid --raw -c \"<sess_begin> <cmd>%s</cmd>%s </sess_begin>\"",
     suuid_xml($cmd_str),
     (length($Opt{'comment'})
         ? sprintf(" <comment>%s</comment>", suuid_xml($Opt{'comment'}))
@@ -90,7 +90,7 @@ my $end_time = Time::HiRes::time();
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 my $end_cmd = sprintf(
-    "suuid --raw -t sess_end -c \"<c_sess w=\\\"end\\\"> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration> <exit>%s</exit> </c_sess>\"",
+    "suuid --raw -c \"<sess_end> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration> <exit>%s</exit> </sess_end>\"",
     $uuid,
     suuid_xml($cmd_str),
     (length($Opt{'comment'})
