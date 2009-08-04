@@ -171,7 +171,6 @@ END
 sub time_period {
 	# {{{
 	my $secs = shift;
-    $secs = sprintf("%.7f", $secs);
 	my ($Day, $Hour, $Min, $Sec) = (0, 0, 0, 0);
 
 	$Day = int($secs / 86400);
@@ -183,7 +182,7 @@ sub time_period {
 	$Min = int($secs / 60);
 	$secs -= $Min * 60;
 
-	$Sec = $secs;
+	$Sec = sprintf("%.7f", $secs);
     $Sec =~ s/^(\d\..*)/0$1/; # WTF. %02.7f in sprintf() dosn’t work, so this is necessary ATM.
 
 	return(
@@ -198,7 +197,6 @@ sub time_period {
 sub xml_time_period {
 	# {{{
 	my $secs = shift;
-    $secs = sprintf("%.7f", $secs);
 	my ($Day, $Hour, $Min, $Sec) = (0, 0, 0, 0);
     my $totsecs = $secs * 1.0;
 
@@ -211,7 +209,7 @@ sub xml_time_period {
 	$Min = int($secs / 60);
 	$secs -= $Min * 60;
 
-	$Sec = $secs;
+    $Sec = sprintf("%.7f", $secs);
 
 	return(
         " <totsecs>$totsecs</totsecs>" .
