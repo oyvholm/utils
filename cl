@@ -40,9 +40,12 @@ if [ -d .svn/. ]; then
 elif [ -d CVS/. ]; then
     cvs log$stoponcopy "$@" | sortcvs | less
 else
-    if [ "$use_svk" = "1" ]; then
-        svk log$svk_cross "$@" | less
-    else
-        svn log$stoponcopy "$@" | less
-    fi
+    git log --name-status "$@"
 fi
+# else
+#     if [ "$use_svk" = "1" ]; then
+#         svk log$svk_cross "$@" | less
+#     else
+#         svn log$stoponcopy "$@" | less
+#     fi
+# fi
