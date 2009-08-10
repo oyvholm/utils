@@ -244,6 +244,8 @@ Options:
     Show this help.
   -l, --last
     Use last File ID found in the file instead of first.
+  -t X, --tag X
+    Use X as suuid tag.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
