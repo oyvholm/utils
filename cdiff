@@ -13,12 +13,14 @@
         else
             svn diff $* 2>/dev/null | grep -v '^\? '
         fi
-    else
+    elif [ -d CVS/. ]; then
         if [ "$1" = "-s" ]; then
             shift
             cvs -n diff -u $* 2>/dev/null | grep -v '^\? ' | egrep '^[+\-]'
         else
             cvs -n diff -u $* 2>/dev/null | grep -v '^\? '
         fi
+    else
+        git diff --color
     fi
 ) | less -S
