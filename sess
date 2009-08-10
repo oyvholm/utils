@@ -198,7 +198,7 @@ sub xml_time_period {
 	# {{{
 	my $secs = shift;
 	my ($Day, $Hour, $Min, $Sec) = (0, 0, 0, 0);
-    my $totsecs = $secs * 1.0;
+    my $totsecs = sprintf("%.7f", $secs);
 
 	$Day = int($secs / 86400);
 	$secs -= $Day * 86400;
