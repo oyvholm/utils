@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# File ID: 79505b44-1939-11de-82e7-000475e441b9
+# Konverterer PGP/GPG-armor fra stdin. Kan ta mange om gangen.
+
+use strict;
+
+my $pwd_str = `head -1 /dev/tty`;
+my $gpg_header = "-----BEGIN PGP MESSAGE-----";
+my $gpg_footer = "-----END PGP MESSAGE-----";
+
+$| = 1;
+
+while (<>) {
+	if (/^$gpg_header$/) {
+		open(gpgFP, "|gpg -q --passphrase-fd 0 2>/dev/null") || die("Kan ikke åpne gpg-pipe: $!");
+		print(gpgFP "$pwd_str\n$gpg_header\n");
+		while (<>) { # Satser på at GPG kun tar meldingen og at den ikke spiser opp hele stdin.
+			print(gpgFP "$_");
+			/^$gpg_footer$/ && (close(gpgFP), last);
+		}
+	} else {
+		print;
+	}
+}

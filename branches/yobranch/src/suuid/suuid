@@ -1,0 +1,477 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# File ID: 04c64336-f744-11dd-bddd-000475e441b9
+# Generate and store UUID with optional comment in a log file.
+#
+# Character set: UTF-8
+# ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+BEGIN {
+    our @version_array;
+}
+
+use strict;
+use Fcntl ':flock';
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+my $suuid_env = "SUUID_LOGDIR";
+my $env_dir = defined($ENV{$suuid_env})
+    ? $ENV{$suuid_env}
+    : "$ENV{'HOME'}/uuids";
+
+our %Std = (
+
+    'editor' => "vi",
+    'logdir' => $env_dir,
+    'whereto' => "o",
+
+);
+
+our %Opt = (
+
+    'comment' => "",
+    'count' => 1,
+    'debug' => 0,
+    'help' => 0,
+    'logdir' => $Std{'logdir'},
+    'quiet' => 0,
+    'random-mac' => 0,
+    'raw' => 0,
+    'tag' => "",
+    'verbose' => 0,
+    'version' => 0,
+    'whereto' => $Std{'whereto'},
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+
+    "comment|c=s" => \$Opt{'comment'},
+    "count|n=i" => \$Opt{'count'},
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "logdir|l=s" => \$Opt{'logdir'},
+    "quiet|q" => \$Opt{'quiet'},
+    "random-mac|m" => \$Opt{'random-mac'},
+    "raw" => \$Opt{'raw'},
+    "tag|t=s" => \$Opt{'tag'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+    "whereto|w=s" => \$Opt{'whereto'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+my $Lh = "[0-9a-fA-F]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
+
+my $Host = host_id();
+
+if (!-d "$Opt{'logdir'}/.") {
+    die("$progname: $Opt{'logdir'}: Log directory not found\n");
+}
+my $Logfile = "$Opt{'logdir'}/$Host";
+
+my $Cmd = "uuid -v1";
+
+my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
+my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
+D("cmd_editor = '$cmd_editor'");
+
+if ($Comment eq "-") {
+    $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
+    $Comment = "";
+    while (<STDIN>) {
+        $Comment .= $_;
+    }
+    chomp($Comment);
+} elsif ($Comment eq "--") {
+    my $tmpfile = "/tmp/" . `$Cmd`; # FIXME
+    system("touch $tmpfile");
+    system("$cmd_editor $tmpfile");
+    $Comment = `cat $tmpfile`;
+    unlink($tmpfile);
+}
+my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
+my $Hostname = `hostname`; # FIXME
+chomp($Hostname);
+my $curr_dir = `/bin/pwd`; # FIXME
+chomp($curr_dir);
+
+$Comment =~ s/^\s+//;
+$Comment =~ s/\s+$//;
+my $safe_comment = suuid_xml($Comment, $Opt{'raw'});
+my $safe_tag = suuid_xml($Tag);
+my ($safe_host, $safe_currdir) = ("", "");
+length($Hostname) && ($safe_host = suuid_xml($Hostname));
+length($curr_dir) && ($safe_currdir = suuid_xml($curr_dir));
+my $Username = getpwuid($<);
+my $safe_username = suuid_xml($Username);
+chomp(my $tty = `tty`);
+my $safe_tty = suuid_xml($tty);
+
+my $sess_uuid = "";
+if (defined($ENV{'SESS_UUID'})) {
+    if ($ENV{'SESS_UUID'} =~ /([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/) {
+        $sess_uuid = $ENV{'SESS_UUID'};
+    }
+}
+
+if (!-e $Logfile) {
+    open(LogFP, ">", $Logfile) || die("$progname: $Logfile: Cannot create file: $!\n");
+    flock(LogFP, LOCK_EX) || die("$progname: $Logfile: Cannot flock(): $!\n");
+    print(LogFP join("\n",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+        "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">",
+        "<!-- \$" . "Id\$ -->",
+        "<suuids>",
+        "</suuids>"
+    ) . "\n");
+    close(LogFP);
+}
+
+if (open(LogFP, "+>>", $Logfile)) {
+    if (flock(LogFP, LOCK_EX)) {
+        # Seek to start of end tag
+        unless (seek(LogFP, -10, 2)) {
+            warn("$progname: Cannot seek to start of end tag, adding to file. Error: $!\n");
+        }
+        my $filepos = tell(LogFP);
+        my $check_end_tag = <LogFP>;
+        D("check_end_tag = '$check_end_tag'");
+        defined($check_end_tag) || ($check_end_tag = "");
+        if ($check_end_tag eq "</suuids>\n") {
+            D("check_end_tag is OK");
+            truncate(LogFP, $filepos) || die("$progname: $Logfile: Cannot truncate() to size $filepos: $!\n");
+        } else {
+            warn("$progname: $Logfile: Unknown end line, adding to end of file\n");
+        }
+        for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
+            seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file: $!\n");
+            my $filepos = tell(LogFP);
+            chomp(my $uuid = `$Cmd`);
+            my $curr_time = time;
+            if ($Opt{'random-mac'}) {
+                $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
+            }
+            my @Xml = ();
+            if (length($safe_tag)) {
+                my $tmp_tag = $safe_tag;
+                $tmp_tag =~ s/([^,]+)/push(@Xml, sprintf("<tag>%s<\/tag>", suuid_xml($1)))/gse;
+            }
+            my $txt_space = ($safe_comment =~ /^</) ? " " : "";
+            length($safe_comment) && push(@Xml, "<txt>$txt_space$safe_comment$txt_space</txt>");
+            length($safe_host) && push(@Xml, "<host>$safe_host</host>");
+            length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
+            length($safe_username) && push(@Xml, "<user>$safe_username</user>");
+            length($safe_tty) && push(@Xml, "<tty>$safe_tty</tty>");
+            if (length($sess_uuid)) {
+                my $tmp_sess = $sess_uuid;
+                $tmp_sess =~ s/($Templ)/push(@Xml, sprintf("<sess>%s<\/sess>", suuid_xml($1)))/gse;
+            }
+            my $uuid_time = uuid_time($uuid);
+            length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
+            my $out_str = join(" ", "<suuid$uuid_time u=\"$uuid\">", @Xml, "</suuid>") . "\n";
+            print(LogFP $out_str);
+            if (seek(LogFP, $filepos, 0)) {
+                my $check_str = <LogFP>;
+                if ($check_str eq $out_str) {
+                    $Opt{'whereto'} =~ /o/ && print("$uuid\n");
+                    $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
+                } else {
+                    D("check_str = '$check_str', out_str = '$out_str'");
+                    die("$progname: $Logfile: Unable to write to file: $!\n");
+                }
+            } else {
+                die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
+            }
+        }
+        seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file to write end tag: $!\n");
+        print(LogFP "</suuids>\n");
+        close(LogFP);
+    } else {
+        die("$progname: $Logfile: Cannot lock file: $!\n");
+    }
+} else {
+    die("$progname: $Logfile: Cannot open file for append: $!\n");
+}
+
+sub host_id {
+    # {{{
+    chomp(my $Retval = `uuid -v1`);
+    $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
+    return($Retval);
+    # }}}
+} # host_id()
+
+sub random_mac {
+    # Return a random MAC address field {{{
+    my $Str = "";
+    for (1..6) {
+        $Str .= sprintf("%02x", int(rand(256)));
+    }
+    my @Arr = ("3", "7", "b", "f");
+    my $mc_val = @Arr[int(rand(4))];
+    $Str =~ s/^(.)(.)(..........)$/$1$mc_val$3/;
+    return($Str);
+    # }}}
+} # random_mac()
+
+sub uuid_time {
+    # {{{
+    my $uuid = shift;
+    my $Retval = "";
+    if (open(UtFP, "uuid -d $uuid |")) {
+        while (my $Curr = <UtFP>) {
+            if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
+                $Retval = "${1}T$2${3}Z";
+                last;
+            }
+        }
+        close(UtFP);
+    } else {
+        warn("$progname: Cannot open uuid -d pipe: $!\n");
+    }
+    return($Retval);
+    # }}}
+} # uuid_time()
+
+sub suuid_xml {
+    # {{{
+    my ($Str, $skip_conv) = @_;
+    defined($skip_conv) || ($skip_conv = 0);
+    if (!$skip_conv) {
+        $Str =~ s/&/&amp;/gs;
+        $Str =~ s/</&lt;/gs;
+        $Str =~ s/>/&gt;/gs;
+        $Str =~ s/\\/\\\\/gs;
+        $Str =~ s/\n/\\n/gs;
+        $Str =~ s/\r/\\r/gs;
+        $Str =~ s/\t/\\t/gs;
+    }
+    return($Str);
+    # }}}
+} # suuid_xml()
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
+    my ($Seconds) = shift;
+
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0]);
+    return($DateString);
+    # }}}
+} # sec_to_string()
+
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
+
+Usage: $progname [options]
+
+Generates one or more UUIDs and stores it to a log file with optional 
+comment or tag/category.
+
+Options:
+
+  -c x, --comment x
+    Store comment x in the log file. If "-" is specified as comment, the 
+    program will read the comment from stdin. Two hyphens ("--") as a 
+    comment opens the editor defined in the environment variable 
+    \$SUUID_EDITOR to edit the message. If \$SUUID_EDITOR is not 
+    defined, \$EDITOR is read, if not defined, "$Std{'editor'}" is 
+    called. Sorry, emacs, but vi(m) rules the street and exists 
+    everywhere.
+  -h, --help
+    Show this help.
+  -l x, --logdir x
+    Store log files in directory x.
+    If the $suuid_env environment variable is defined, that value is 
+    used. Otherwise the value "\$HOME/uuids" is used.
+    Current default: $Std{'logdir'}
+  -m, --random-mac
+    Don’t use the hardware MAC address, generate a random address field.
+  -n x, --count x
+    Print and store x UUIDs.
+  -q, --quiet
+    Avoid unnecessary output.
+  --raw
+    Don’t convert <txt> element to XML. When using this option, it is 
+    expected that the value of the -c/--comment option is valid XML, 
+    otherwise it will create corrupted log files.
+  -t x, --tag x
+    Use x as tag (category).
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  -w x, --whereto x
+    x is a string which decides where the UUID will be written:
+      The string contains 'e' - stderr
+      The string contains 'o' - stdout
+    All other characters will be ignored. Examples:
+      e
+        Send to stderr.
+      eo
+        Send to both stdout and stderr.
+      n
+        Don’t output anything.
+    Default: "$Std{'whereto'}"
+  --debug
+    Print debugging messages.
+
+If the \$SESS_UUID environment variable is defined by sess(1) or another 
+program, the value is logged if it is an UUID.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

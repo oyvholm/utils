@@ -1,0 +1,14 @@
+# ========== Executing "tohex.t --all" ==========
+# Testing -h (--help) option...
+ok - "../tohex -h" - Option -h prints help screen
+ok - "../tohex -h" - Option -h prints help screen (stderr)
+ok - "../tohex -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../tohex -hv" - Option --version with -h returns Id string and help screen
+ok - "../tohex -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../tohex --version" - Option --version returns Id string
+ok - "../tohex --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

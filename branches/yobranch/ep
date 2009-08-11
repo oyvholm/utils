@@ -1,0 +1,67 @@
+#!/usr/bin/perl -w
+
+#==========================================================================
+# $Id$
+#
+# Konverterer tekststrenger som ser ut som antall sekunder siden
+# 1970-01-01 00:00:00 GMT om til leselig datoformat. Konverterer alle tall
+# som har 9 og 10 siffer. Med andre ord funker det greit fra og med
+# 1973-03-03 09:46:40 GMT til 2286-11-20 17:46:39 GMT.
+#==========================================================================
+
+use strict;
+use Getopt::Std;
+
+our ($opt_D, $opt_d, $opt_h, $opt_l, $opt_s, $opt_t) =
+    (   "T",    "-",      0,      0,      0,    ":");
+getopts('D:d:hlst:');
+
+$| = 1;
+
+if ($opt_h) {
+	print(<<END);
+
+Syntax: $0 [valg] [filer [...]]
+
+Konverterer tekststrenger som ser ut som antall sekunder siden
+1970-01-01 00:00:00 GMT om til mer leselig datoformat. Konverterer alle
+tall som har 9 og 10 siffer. Med andre ord funker det greit fra og med
+1973-03-03 09:46:40 GMT til 2286-11-20 17:46:39 GMT.
+
+Standard format er "åååå-mm-ddTtt:mm:ssZ".
+
+Valg:
+
+-h  Hjelpings.
+-l  Skriv datoen som lokal tid istedenfor GMT.
+-s  Kortformat: "ååååmmddTttmmssZ" eller "ååååmmddTttmmss" alt ettersom
+    hvor lokal man skal være.
+
+Skilletegn kan spesifiseres: ååååAmmAddBttCmmCss
+
+-d A  (Standard: "$opt_d")
+-D B  (Standard: "$opt_D")
+-t C  (Standard: "$opt_t")
+
+END
+	exit(0);
+}
+
+my @TA;
+
+my ($d_sep, $D_sep, $t_sep) = $opt_s ? ("", "T", "") : ($opt_d, $opt_D, $opt_t);
+
+# Ligger dobbelt opp for å få opp farta litt.
+if ($opt_l) {
+	while (<>) {
+		s/\b(\d{9,10})\b/@TA = localtime($1),sprintf("%04u$d_sep%02u$d_sep%02u$D_sep%02u$t_sep%02u$t_sep%02u", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0])/ge;
+		print $_;
+	}
+} else {
+	while (<>) {
+		s/\b(\d{9,10})\b/@TA = gmtime($1),sprintf("%04u$d_sep%02u$d_sep%02u$D_sep%02u$t_sep%02u$t_sep%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0])/ge;
+		print $_;
+	}
+}
+
+# End of file $Id$

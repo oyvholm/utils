@@ -1,0 +1,38 @@
+$Id$
+File ID: 01befb00-fafb-11dd-bbff-000475e441b9
+
+Description of the “Mayko Xmap” format written by gpstrans(1). From the 
+C source.
+
+======== CUT ========
+xmaplog 1.0 Fri Nov  1 17:49:13 2002
+1 60.3907135 5.3303821 8.4 0 10/30/2002 15:13:21
+1 60.3906397 5.3304033 8.1 0 10/30/2002 15:13:23
+1 60.3902955 5.3304494 8.3 0 10/30/2002 15:13:32
+======== CUT ========
+
+<file>
+  <fileheader>
+    <header>xmaplog 1.0</header>
+    <spc> </spc>
+    <filetime>Fri Nov  1 17:49:13 2002</filetime>
+  </fileheader>
+  <nl/>
+  <body>
+    <line>
+      <header>1 </header>
+      <lat>60.3907135</lat> <spc> </spc> <lon>5.3303821</lon>
+      <spc> </spc>
+      <speed>8.4</speed>
+      <spc> </spc>
+      <ele>0</ele>
+      <spc> </spc>
+      <time>
+        <month>10</month> <slash>/</slash> <day>30</day> <slash>/</slash> <year>2002</year>
+        <spc> </spc>
+        <hour>15</hour> <colon>:</colon> <min>13</min> <colon>:</colon> <sec>21</sec>
+      </time>
+      <nl/>
+    </line>
+  </body>
+</file>

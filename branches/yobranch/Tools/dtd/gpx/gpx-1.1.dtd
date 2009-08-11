@@ -1,0 +1,95 @@
+<!-- $Id$ -->
+<!-- File ID: 7e233ba2-10a4-11de-8008-000475e441b9 -->
+
+<!--
+Unofficial Document Type Definition for GPX ver. 1.1
+Created by Øyvind A. Holm - sunny@sunbase.org
+License: GNU General Public License version 3 or later
+
+FIXME: ptseg and pt elements are not included, don’t know where to put 
+them. Didn’t find any example GPX files which uses it.
+-->
+
+<!ELEMENT gpx (metadata?,wpt*,rte*,trk*,extensions?)>
+<!ATTLIST gpx
+  version            CDATA #FIXED "1.1"
+  creator            CDATA #REQUIRED
+  xsi:schemaLocation CDATA #IMPLIED
+  xmlns              CDATA #IMPLIED
+  xmlns:xsi          CDATA #IMPLIED
+>
+
+<!ELEMENT metadata (name?,desc?,author?,copyright?,link*,time?,keywords?,
+  bounds?,extensions?)
+>
+<!ELEMENT wpt (ele?,time?,magvar?,geoidheight?,name?,cmt?,desc?,src?,
+  link*,sym?,type?,fix?,sat?,hdop?,vdop?,pdop?,ageofdgpsdata?,dgpsid?,
+  extensions?)
+>
+<!ATTLIST wpt
+  lat CDATA #REQUIRED
+  lon CDATA #REQUIRED
+>
+<!ELEMENT rte (name?,cmt?,desc?,src?,link*,number?,type?,extensions?,rtept*)>
+<!ELEMENT trk (name?,cmt?,desc?,src?,link*,number?,type?,extensions?,trkseg*)>
+<!ELEMENT extensions ANY>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT desc (#PCDATA)>
+<!ELEMENT author (name?,email?,link?)>
+<!ELEMENT email EMPTY>
+<!ATTLIST email
+  id     CDATA #REQUIRED
+  domain CDATA #REQUIRED
+>
+<!ELEMENT link (text?,type?)>
+<!ATTLIST link
+  href CDATA #REQUIRED
+>
+<!ELEMENT text (#PCDATA)>
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT copyright (year?,license?)>
+<!ATTLIST copyright
+  author CDATA #REQUIRED
+>
+<!ELEMENT year (#PCDATA)>
+<!ELEMENT license (#PCDATA)>
+<!ELEMENT time (#PCDATA)>
+<!ELEMENT keywords (#PCDATA)>
+<!ELEMENT bounds EMPTY>
+<!ATTLIST bounds
+  minlat CDATA #REQUIRED
+  minlon CDATA #REQUIRED
+  maxlat CDATA #REQUIRED
+  maxlon CDATA #REQUIRED
+>
+<!ELEMENT ele (#PCDATA)>
+<!ELEMENT magvar (#PCDATA)>
+<!ELEMENT geoidheight (#PCDATA)>
+<!ELEMENT cmt (#PCDATA)>
+<!ELEMENT src (#PCDATA)>
+<!ELEMENT sym (#PCDATA)>
+<!ELEMENT fix (#PCDATA)> <!-- none|2d|3d|dgps|pps -->
+<!ELEMENT sat (#PCDATA)>
+<!ELEMENT hdop (#PCDATA)>
+<!ELEMENT vdop (#PCDATA)>
+<!ELEMENT pdop (#PCDATA)>
+<!ELEMENT ageofdgpsdata (#PCDATA)>
+<!ELEMENT dgpsid (#PCDATA)>
+<!ELEMENT number (#PCDATA)>
+<!ELEMENT rtept (ele?,time?,magvar?,geoidheight?,name?,cmt?,desc?,src?,
+  link*,sym?,type?,fix?,sat?,hdop?,vdop?,pdop?,ageofdgpsdata?,dgpsid?,
+  extensions?)
+>
+<!ATTLIST rtept
+  lat CDATA #REQUIRED
+  lon CDATA #REQUIRED
+>
+<!ELEMENT trkseg (trkpt*,extensions?)>
+<!ELEMENT trkpt (ele?,time?,magvar?,geoidheight?,name?,cmt?,desc?,src?,
+  link*,sym?,type?,fix?,sat?,hdop?,vdop?,pdop?,ageofdgpsdata?,dgpsid?,
+  extensions?)
+>
+<!ATTLIST trkpt
+  lat CDATA #REQUIRED
+  lon CDATA #REQUIRED
+>

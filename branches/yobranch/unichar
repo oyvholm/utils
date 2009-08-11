@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# $Id$
+
+zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* | grep -Ei "$@"

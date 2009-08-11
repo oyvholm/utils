@@ -1,0 +1,625 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# File ID: 7a1ba190-f743-11dd-a70f-000475e441b9
+# Merges new changes into a file version controlled by Subversion.
+#
+# Character set: UTF-8
+# ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+# This file is part of the svnutils project — http://svnutils.tigris.org
+#=======================================================================
+
+BEGIN {
+    our @version_array;
+}
+
+use strict;
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+
+    'alias' => "",
+    'conflict' => 0,
+    'debug' => 0,
+    'diff' => 0,
+    'dry-run' => 0,
+    'help' => 0,
+    'log' => 0,
+    'set' => "",
+    'to' => "HEAD",
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+
+    "alias|a=s" => \$Opt{'alias'},
+    "conflict|C" => \$Opt{'conflict'},
+    "debug" => \$Opt{'debug'},
+    "diff|d" => \$Opt{'diff'},
+    "dry-run" => \$Opt{'dry-run'},
+    "help|h" => \$Opt{'help'},
+    "log|l" => \$Opt{'log'},
+    "set|s=s" => \$Opt{'set'},
+    "to|t=s" => \$Opt{'to'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+my $CMD_SVN = "svn";
+
+my $PROP_NAME = "mergesvn";
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+my @Files = @ARGV;
+
+if (!scalar(@Files)) {
+    while (<STDIN>) {
+        chomp;
+        push(@Files, $_);
+    }
+}
+
+LOOP:
+for (@Files) {
+    # {{{
+    my $File = $_;
+    if (length($Opt{'set'})) {
+        set_mergesvn_prop($File, $Opt{'set'});
+        next LOOP;
+    }
+    my $prop_val = `$CMD_SVN propget $PROP_NAME $File`;
+    if (!length($prop_val)) {
+        warn("$progname: $File: \"$PROP_NAME\" property not found, " .
+             "skipping file\n");
+        next LOOP;
+    }
+    my @new_prop = ();
+    my @Props = split(/\n/, $prop_val);
+    D("Props = (\"" . join("\", \"", @Props) . "\")");
+    for my $Curr (@Props) {
+        if ($Curr =~ /^(\d+) (.+)$/) {
+            my ($last_merge, $orig_master) =
+               (         $1,           $2);
+            $orig_master =~ s/[\r\n]+$//;
+            my $master_file = length($Opt{'alias'})
+                                ? $Opt{'alias'}
+                                : $orig_master;
+            my $curr_rev = highest_revision($master_file, $Opt{'to'});
+            if (!legal_revision($curr_rev)) {
+                warn("$progname: $master_file: " .
+                     "Unable to get newest revision\n");
+                next LOOP;
+            }
+            if ($Opt{'conflict'}) {
+                find_conflict($master_file, $File, $last_merge, $curr_rev);
+                next LOOP;
+            }
+            if ($Opt{'diff'}) {
+                my $Repos = repos_url($File);
+                mysyst(
+                    $CMD_SVN, "diff",
+                    repos_url($master_file) . "\@$last_merge",
+                    $Repos
+                );
+                next LOOP;
+            }
+            if ($Opt{'log'}) {
+                if ($last_merge == $curr_rev) {
+                    print(STDERR "No revisions found\n");
+                } else {
+                    log_range($master_file, $last_merge + 1, $curr_rev);
+                }
+                next LOOP;
+            }
+            if ($Opt{'dry-run'}) {
+                mysyst(
+                    $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
+                    "--dry-run",
+                    $master_file, $File
+                );
+            } else {
+                if ($last_merge == $curr_rev) {
+                    print(STDERR "$progname: $File: No new revisions available (r$last_merge)\n");
+                    next LOOP;
+                }
+                mysyst(
+                    $CMD_SVN, "merge", "-r$last_merge:$curr_rev",
+                    $master_file, $File
+                );
+            }
+            push(@new_prop, "$curr_rev $orig_master");
+            print(STDERR
+                "$progname: $File: Merged r$last_merge:$curr_rev (" .
+                join(", ", revisions($master_file, $last_merge, $curr_rev)) .
+                ")\n"
+            );
+        } else {
+            warn("$File: \"$Curr\": Invalid property line\n");
+            next LOOP;
+        }
+    }
+    $Opt{'dry-run'} ||
+        mysyst($CMD_SVN, "propset", $PROP_NAME, join("\n", @new_prop), $File);
+    # }}}
+}
+
+sub legal_revision {
+    # Check that a string is a legal revision number {{{
+    my $Rev = shift;
+    my $Retval = 1;
+
+    if ($Rev =~ /[^\d]/ || !length($Rev)) {
+        $Retval = 0;
+    }
+    return($Retval);
+    # }}}
+} # legal_revision()
+
+sub set_mergesvn_prop {
+    # Define the $PROP_NAME property for an element. Finds the highest 
+    # revision which had a change.
+    # {{{
+    my ($File, $Str) = @_;
+    my ($Source, $source_rev) = ("", "");
+
+    if ($Str =~ /^(\S+)\@(\d*)$/) {
+        $Source = $1;
+        $source_rev = $2;
+    } elsif ($Str =~ /^(\S+)$/) {
+        $Source = $1;
+        $source_rev = "HEAD";
+    } else {
+        warn("$progname: $Str: Invalid source URL\n");
+        return(undef);
+    }
+    if ($source_rev =~ /[^\d]/ && $source_rev !~ /^HEAD$/i) {
+        die("$progname: $source_rev: Invalid source revision\n");
+    }
+    D("set_mergesvn_prop(): Source = '$Source', source_rev = '$source_rev'");
+    my $work_source = length($Opt{'alias'}) ? $Opt{'alias'} : $Source;
+    my $highest_rev = highest_revision($work_source, $source_rev);
+    D("set_mergesvn_prop(): highest_rev = '$highest_rev'");
+    if (!length($highest_rev)) {
+        die("$progname: $work_source: Unable to locate source revision\n");
+    }
+    if ($highest_rev ne $source_rev) {
+        warn("$progname: $File: Using revision $highest_rev instead of $source_rev\n");
+    }
+    mysyst($CMD_SVN, "propset", $PROP_NAME, "$highest_rev $Source", $File);
+    # }}}
+} # set_mergesvn_prop()
+
+sub find_conflict {
+    # Scan a specific revision range for the first merge conflict and 
+    # return the revision number
+    # {{{
+    my ($Src, $Dest, $Start, $End) = @_;
+
+    D("find_conflict('$Src', '$Dest', '$Start', '$End')");
+    print(STDERR "$progname: $Dest: Scanning revision range r$Start:$End " .
+          "for conflicts\n");
+    my @Array = revisions($Src, $Start, $End);
+    if (!scalar(@Array)) {
+        print(STDERR "No revisions found.\n");
+        return undef;
+    }
+
+    my $rev_count = scalar(@Array);
+    printf(STDERR "$rev_count revision%s to check\n", $rev_count == 1 ? "" : "s");
+    print(STDERR "(" . join(", ", @Array) . ")\n");
+
+    my $min_block = 0;
+    my ($min_pos, $max_pos) = (0, $rev_count);
+
+    my $last_mid = 0;
+    my $first_conflict = 0;
+    my $last_good = 0;
+    my $has_checked = 0;
+
+    while (1) {
+        my $mid_pos = int(($min_pos + $max_pos) / 2);
+        last if ($has_checked && ($mid_pos == $last_mid));
+        my $Rev = $Array[$mid_pos];
+        printf(STDERR "Checking revision %lu (%lu/%lu)...",
+            $Rev, $mid_pos + 1, $rev_count);
+        if (!has_conflict($Src, $Dest, $Start, $Rev)) {
+            print(STDERR "No conflict\n");
+            $min_pos = $mid_pos;
+            D("min_pos set to '$mid_pos'");
+            if (!$last_good || ($Rev > $last_good)) {
+                $last_good = $Rev;
+            }
+        } else {
+            print(STDERR "Conflict\n");
+            $max_pos = $mid_pos;
+            D("max_pos set to '$mid_pos'");
+            if (!$first_conflict || ($Rev < $first_conflict)) {
+                $first_conflict = $Rev;
+            }
+        }
+        $has_checked = 1;
+        $last_mid = $mid_pos;
+    }
+    print(STDERR $first_conflict
+        ? "First conflict at r$first_conflict. "
+        : "No conflicts found. "
+    );
+    print(STDERR $last_good
+        ? "Last revision without conflict at r$last_good.\n"
+        : "No revisions without conflicts found.\n"
+    );
+
+    # }}}
+} # find_conflict()
+
+sub has_conflict {
+    # {{{
+    my ($Src, $Dest, $Start, $End) = @_;
+    my (            $safe_src,             $safe_dest) = 
+       (escape_filename($Src), escape_filename($Dest));
+    my $Retval = 0;
+    D("has_conflict('$Src', '$Dest', '$Start', '$End')");
+    if (open(ConflFP, "$CMD_SVN merge --dry-run " .
+                      "-r$Start:$End $safe_src $safe_dest |")) {
+        while (<ConflFP>) {
+            my $Stat = substr($_, 0, 2);
+            ($Stat =~ /C/) && ($Retval = 1);
+        }
+        close(ConflFP);
+    }
+    return($Retval);
+    # }}}
+} # has_conflict()
+
+sub revisions {
+    # Return an array of revision numbers from a specific revision range 
+    # for a version controlled element
+    # {{{
+    my ($File, $Start, $End) = @_;
+    D("revisions('$File', '$Start', '$End')");
+    my $safe_file = escape_filename($File);
+    my $Data = "";
+    my @Revs = ();
+
+    if (open(PipeFP, "$CMD_SVN log --xml -r$Start:$End $safe_file |")) {
+        $Data = join("", <PipeFP>);
+        close(PipeFP);
+        $Data =~ s/<logentry\b.*?\brevision="(\d+)".*?>/push(@Revs, "$1")/egs;
+    }
+    if ($Revs[0] eq $Start) {
+        splice(@Revs, 0, 1);
+    }
+    return(@Revs);
+    # }}}
+} # revisions()
+
+sub highest_revision {
+    # Return the newest revision of a versioned element inside a 
+    # specified revision range
+    # {{{
+    my ($Path, $max_rev) = @_;
+    my $safe_path = escape_filename($Path);
+    my $highest_rev = `$CMD_SVN log -r$max_rev:1 --limit 1 --xml $safe_path`; # FIXME
+    $highest_rev =~ s/^.*?<logentry.+?revision="(\d+)".*?>.*/$1/s;
+    legal_revision($highest_rev) || ($highest_rev = "");
+    return($highest_rev);
+    # }}}
+} # highest_revision()
+
+sub repos_url {
+    # Return the repository address of an element {{{
+    my $File = shift;
+    my $safe_file = escape_filename($File);
+    my $Retval = `$CMD_SVN info --xml $safe_file`;
+    $Retval =~ s/^.*<url>(.*?)<\/url>.*$/$1/s; # FIXME: Add XML parsing
+    return($Retval);
+    # }}}
+} # repos_url()
+
+sub mysyst {
+    # Customised system() {{{
+    my @Args = @_;
+    my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
+    D("$system_txt");
+    deb_wait();
+    msg(1, "Executing '@_'");
+    system(@_);
+    # }}}
+} # mysyst()
+
+sub escape_filename {
+    # Kludge for handling file names with spaces and characters that 
+    # trigger shell functions
+    # {{{
+    my $Name = shift;
+    # $Name =~ s/\\/\\\\/g;
+    # $Name =~ s/([ \t;\|!&"'`#\$\(\)<>\*\?])/\\$1/g;
+    $Name =~ s/'/\\'/g;
+    $Name = "'$Name'";
+    return($Name);
+    # }}}
+} # escape_filename()
+
+sub log_range {
+    # Show a revision log of the specified range {{{
+    my ($File, $Start, $End) = @_;
+
+    if ($Opt{'verbose'}) {
+        mysyst($CMD_SVN, "log", "-r$Start:$End", "-v", $File);
+    } else {
+        mysyst($CMD_SVN, "log", "-r$Start:$End", $File);
+    }
+    # }}}
+} # log_range()
+
+sub deb_wait {
+    # Wait until Enter is pressed if --debug {{{
+    $Debug || return;
+    print(STDERR "debug: Press ENTER...");
+    <STDIN>;
+    # }}}
+} # deb_wait()
+
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
+
+Merge changes between Subversion controlled files or directories. 
+Elements without the "$PROP_NAME" property will be ignored. If no 
+filenames are specified on the command line, it reads filenames from 
+stdin.
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -a x, --alias x
+    Use x as alias for the master URL. The old value will still be 
+    written to the $PROP_NAME property.
+  -C, --conflict
+    Do not merge, but search for the first revision a conflict will 
+    occur when a merge is done. After the search is finished, the first 
+    revision number of a troublesome patch is printed, and you can 
+    choose by using the -t option if you want to include the conflicting 
+    revision in the merge.
+  -d, --diff
+    Instead of merging, show a repository diff between the master URL 
+    and the versioned element.
+  --dry-run
+    Try operation without making any changes. Can be used to see if the 
+    merge will result in conflicts.
+  -h, --help
+    Show this help.
+  -l, --log
+    Show a revision log of the remaining merges.
+  -s x[\@y], --set x[\@y]
+    Set merge source for all filenames on the command line. If \@y is 
+    specified, revision y will be used as the merge source, otherwise 
+    HEAD is used. The revision number actually used is the newest 
+    revision the source changed.
+  -t x, --to x
+    Merge to revision x instead of HEAD.
+  -v, --verbose
+    Use the -v option together with svn commands that accepts it.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message if --debug {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+mergesvn
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+mergesvn [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+Merge changes between Subversion controlled files or directories.
+Elements without the "mergesvn" property will be ignored.
+If no filenames are specified on the command line, it reads filenames 
+from stdin.
+
+Files or directories to be controlled by mergesvn must have the 
+following property set:
+
+=over 4
+
+=item B<mergesvn>
+
+=back
+
+Contains one line for every place to merge from.
+The line consists of two elements, the revision in the master file the 
+last merge was done, and path or URL to the master file.
+These two fields are separated by exactly one space (U+0020).
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-a>, B<--alias> I<x>
+
+Use I<x> as alias for the master URL. The old value will still be 
+written to the mergesvn property.
+
+=item B<-C>, B<--conflict>
+
+Do not merge, but search for the first revision a conflict will occur 
+when a merge is done. After the search is finished, the first revision 
+number of a troublesome patch is printed, and you can choose by using 
+the -t option if you want to include the conflicting revision in the 
+merge.
+
+=item B<-d>, B<--diff>
+
+Instead of merging, show a repository diff between the master URL and 
+the versioned element.
+
+=item B<--dry-run>
+
+Try operation without making any changes.
+Can be used to see if the merge will result in conflicts.
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-l>, B<--log>
+
+Show a revision log of the remaining merges.
+
+=item B<-s>, B<--set> I<x>[@I<y>]
+
+Set merge source for all filenames on the command line.
+If I<@y> is specified, revision y will be used as the merge source, 
+otherwise HEAD is used.
+The revision number actually used is the newest revision the source 
+changed.
+
+=item B<-t>, B<--to> I<x>
+
+Merge to revision I<x> instead of HEAD.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<-v>, B<--verbose>
+
+Use the -v option together with svn commands that accepts it.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+=over 4
+
+=item The svn(1) client does not support diffs between different 
+repositories (yet), so the B<--diff> option will only work with elements 
+that has the master in the same repository.
+
+=back
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+svn(1)
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

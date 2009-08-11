@@ -1,0 +1,9 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $a;
+
+for ($a = 0; ; $a++) {
+    print(sin($a*$a) . "\n");
+}

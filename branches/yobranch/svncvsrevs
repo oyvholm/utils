@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#=======================================================================
+# $Id$
+# Lists the cvs2svn:cvs-rev property for every revision in a file. Needs 
+# the svnrevs script.
+#=======================================================================
+
+for f in `svnrevs -r1:HEAD $1 | tr -d ,`; do
+  curr=`svn pl -v -$f $1 | grep cvs2svn:cvs-rev | cut -c20-`
+  echo $f: $curr
+done
+
+# vim: set ts=2 sw=2 sts=2 et :

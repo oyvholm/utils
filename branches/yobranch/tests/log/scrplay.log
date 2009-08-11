@@ -1,0 +1,14 @@
+# ========== Executing "scrplay.t --all" ==========
+# Testing -h (--help) option...
+ok - "../scrplay -h" - Option -h prints help screen
+ok - "../scrplay -h" - Option -h prints help screen (stderr)
+ok - "../scrplay -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../scrplay -hv" - Option --version with -h returns Id string and help screen
+ok - "../scrplay -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../scrplay --version" - Option --version returns Id string
+ok - "../scrplay --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

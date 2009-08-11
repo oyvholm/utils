@@ -1,0 +1,39 @@
+
+% $Id$
+% File ID: STDuuidDTS
+
+\documentclass[a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[norsk]{babel}
+\usepackage{fancyhdr}
+
+\newcommand{\marg}[1]{\marginpar{\flushleft \footnotesize \textsf{#1}}} % Margkommentarer
+
+\frenchspacing
+
+% Ting til fancyhdr
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{}
+\cfoot{Side \thepage\ av \pageref{VeryLast}}
+\rfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\begin{document}
+\author{Øyvind A. Holm}
+\title{}
+
+Teksten kommer her.
+
+\vfill
+\hrule
+\vskip 1pt
+\noindent {\scriptsize \verb|$Id$|}
+\label{VeryLast}
+
+\end{document}
+
+% End of file $Id$

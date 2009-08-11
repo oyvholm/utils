@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+# $Id$
+
+while (<>) {
+	s/^[ \t\r]*//g;
+	print;
+}

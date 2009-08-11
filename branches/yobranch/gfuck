@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# gfuck — gnumeric fuck. Det er så forbanna irriterende at den skal 
+# drive og lagre fila i gzippa format, så det her scriptet pakker den 
+# ut.
+#=======================================================================
+
+for fil in "$@"; do
+    if [ -f "$fil" -o -e "$fil" ]; then
+        zcat -f "$fil" >gfuck.tmp || { echo "gfuck: gfuck.tmp: Feil under skriving til fila" >&2; exit 1; }
+        mv -v gfuck.tmp "$fil" || { echo "gfuck: gfuck.tmp: Klarte ikke å rename den til $fil" >&2; exit 1; }
+    fi
+done

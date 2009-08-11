@@ -1,0 +1,38 @@
+#!/bin/sh
+
+#=======================================================================
+# $Id$
+# Simple shortcut for editing Subversion log messages.
+#=======================================================================
+
+if [ "$1" = "" ]; then
+  cat <<END
+
+Syntax: svedit [-k] revnumber [additional svn/svk commands]
+
+Options:
+
+-k
+  Use svk instead of svn.
+
+END
+  exit 1;
+fi
+
+if [ "$1" = "-k" ]; then
+  use_svk=1
+  shift
+else
+  use_svk=0
+fi
+
+revnum=$1
+shift
+
+if [ "$use_svk" = "1" ]; then
+  svk pe svn:log -r$revnum --revprop "$@"
+else
+  svn pe svn:log -r$revnum --revprop "$@"
+fi
+
+# vim: set ts=2 sw=2 sts=2 expandtab :

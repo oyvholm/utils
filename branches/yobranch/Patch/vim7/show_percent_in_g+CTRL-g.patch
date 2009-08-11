@@ -1,0 +1,36 @@
+$Id$
+
+Index: src/ops.c
+===================================================================
+RCS file: /cvsroot/vim/vim7/src/ops.c,v
+retrieving revision 1.67
+diff -u -r1.67 ops.c
+--- src/ops.c	24 Jun 2008 21:59:55 -0000	1.67
++++ src/ops.c	30 Aug 2008 08:27:34 -0000
+@@ -6398,20 +6398,22 @@
+ 
+ 	    if (char_count_cursor == byte_count_cursor
+ 		    && char_count == byte_count)
+-		sprintf((char *)IObuff, _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Byte %ld of %ld"),
++		sprintf((char *)IObuff, _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Byte %ld of %ld (%.4f%%)"),
+ 		    (char *)buf1, (char *)buf2,
+ 		    (long)curwin->w_cursor.lnum,
+ 		    (long)curbuf->b_ml.ml_line_count,
+ 		    word_count_cursor, word_count,
+-		    byte_count_cursor, byte_count);
++		    byte_count_cursor, byte_count,
++		    byte_count ? (1.0*byte_count_cursor)/(1.0*byte_count)*100.0 : 100);
+ 	    else
+-		sprintf((char *)IObuff, _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Char %ld of %ld; Byte %ld of %ld"),
++		sprintf((char *)IObuff, _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Char %ld of %ld; Byte %ld of %ld (%.4f%%)"),
+ 		    (char *)buf1, (char *)buf2,
+ 		    (long)curwin->w_cursor.lnum,
+ 		    (long)curbuf->b_ml.ml_line_count,
+ 		    word_count_cursor, word_count,
+ 		    char_count_cursor, char_count,
+-		    byte_count_cursor, byte_count);
++		    byte_count_cursor, byte_count,
++		    char_count ? (1.0*char_count_cursor)/(1.0*char_count)*100.0 : 100);
+ 	}
+ 
+ #ifdef FEAT_MBYTE

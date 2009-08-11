@@ -1,0 +1,14 @@
+#!/usr/bin/gnuplot
+
+# $Id$
+# File ID: c819f2a6-fafa-11dd-b0ac-000475e441b9
+
+!./makemesh >x
+set pm3d
+splot "x" w l, "x" w pm3d
+pause -1
+
+splot "x" w l
+pause -1
+splot "x" w d
+pause -1

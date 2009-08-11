@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# $Id$
+
+if [ $# -le 1 ]; then
+	cat <<END
+
+Syntax: cvscat file revision [cvs options]
+
+END
+	exit 1
+fi
+
+cvsfile=$1
+shift
+revision=$1
+shift
+
+cvs -d $(cat CVS/Root) co -p -r $revision $* $(cat CVS/Repository)/$cvsfile

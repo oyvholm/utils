@@ -1,0 +1,94 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Konverterer fra cp865 til Unicode. Alternativ konverteringsfil 
+# spesifiseres med «-i»-parameteret, ellers brukes default filnavn. -p 
+# skriver ut en enkel HTML-header og -slutt.
+# Lisens: GNU GPL v2 eller seinere.
+#=======================================================================
+
+use strict;
+require 'getopts.pl';
+
+my $map_file = "$ENV{HOME}/src/svn/div/trunk/ibm2ent/cp865.txt";
+my %Table;
+
+$| = 1;
+
+Getopts('hi:pP');
+defined($main::opt_i) && ($map_file = $main::opt_i);
+
+for (my $a = 0; $a < 256; $a++) {
+	$Table{$a} = widechar($a);
+}
+
+open(MapFP, "<$map_file") || die("$map_file: Can’t open map file: $!");
+
+while (<MapFP>) {
+	(/^#/ || /^\s*$/) && next;
+	if (/^0x(..)\s+0x(....)/) {
+		my ($Cp, $Uni) = (hex($1), hex($2));
+		if ($Cp != $Uni) {
+			$Table{$Cp} = widechar($Uni);
+		}
+	} else {
+		print STDERR "Line $.: Invalid line: \"$_\"\n";
+	}
+}
+
+$main::opt_P && print("<html><head></head><body><pre>\n") ||
+$main::opt_p && print("<pre>\n");
+
+while(<>) {
+	s/(.)/$Table{ord($1)}/g;
+	print;
+}
+
+$main::opt_P && print("</pre></body></html>\n") ||
+$main::opt_p && print("</pre>\n");
+
+# Henta fra h2u,v 1.5 (r386) 2002/11/20 00:09:40
+sub widechar {
+	my $Val = shift;
+	my $allow_invalid = 0;
+	if ($Val < 0x80) {
+		return sprintf("%c", $Val);
+	} elsif ($Val < 0x800) {
+		return sprintf("%c%c", 0xC0 | ($Val >> 6),
+		                       0x80 | ($Val & 0x3F));
+	} elsif ($Val < 0x10000) {
+		unless ($allow_invalid) {
+			if  (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
+				$Val = 0xFFFD;
+			}
+		}
+		return sprintf("%c%c%c", 0xE0 |  ($Val >> 12),
+		                         0x80 | (($Val >>  6) & 0x3F),
+		                         0x80 |  ($Val        & 0x3F));
+	} elsif ($Val < 0x200000) {
+		return sprintf("%c%c%c%c", 0xF0 |  ($Val >> 18),
+		                           0x80 | (($Val >> 12) & 0x3F),
+		                           0x80 | (($Val >>  6) & 0x3F),
+		                           0x80 |  ($Val        & 0x3F));
+	} elsif ($Val < 0x4000000) {
+		return sprintf("%c%c%c%c%c", 0xF8 |  ($Val >> 24),
+		                             0x80 | (($Val >> 18) & 0x3F),
+		                             0x80 | (($Val >> 12) & 0x3F),
+		                             0x80 | (($Val >>  6) & 0x3F),
+		                             0x80 | ( $Val        & 0x3F));
+	} elsif ($Val < 0x80000000) {
+		return sprintf("%c%c%c%c%c%c", 0xFC |  ($Val >> 30),
+		                               0x80 | (($Val >> 24) & 0x3F),
+		                               0x80 | (($Val >> 18) & 0x3F),
+		                               0x80 | (($Val >> 12) & 0x3F),
+		                               0x80 | (($Val >>  6) & 0x3F),
+		                               0x80 | ( $Val        & 0x3F));
+	} else {
+		return widechar(0xFFFD);
+	}
+} # widechar()
+
+__END__
+
+#### End of file $Id$ ####

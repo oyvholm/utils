@@ -1,0 +1,41 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+#=======================================================================
+
+use strict;
+use POSIX qw{ strftime };
+use Time::HiRes qw{ gettimeofday };
+use Getopt::Long;
+
+my $Debug = 0;
+
+while (1) {
+    my $curr_time = sprintf("%.6f", 1.0 * Time::HiRes::time());
+    my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday) = gmtime(1.0 * $curr_time - 0.0);
+    $Sec = sprintf("%02u", $Sec);
+    $Min = sprintf("%02u", $Min);
+    $Hour = sprintf("%02u", $Hour);
+    $Day = sprintf("%02u", $Day);
+    $Mon = sprintf("%02u", $Mon + 1);
+    $Year = sprintf("%04u", $Year + 1900);
+    # D("curr_time = '$curr_time'");
+    my $Date = "$Year-$Mon-${Day}T$Hour:$Min:$Sec" .
+        ($curr_time =~ /^(\d+)(\.\d+)/ ? $2 : "") .
+        "Z";
+    print("$Date\n");
+}
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()

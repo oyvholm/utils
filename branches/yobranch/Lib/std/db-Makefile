@@ -1,0 +1,15 @@
+#!/usr/bin/make
+
+#=======================================================================
+# $Id$
+# File ID: STDuuidDTS
+#=======================================================================
+
+BOOKFILES = file.xml
+HTMLFILE = file.html
+
+$(HTMLFILE): $(BOOKFILES)
+	xsltproc --output $(HTMLFILE) ~/xsl/xhtml/docbook.xsl $(BOOKFILES)
+
+valid:
+	xmllint --valid --noout $(BOOKFILES)

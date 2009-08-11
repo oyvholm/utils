@@ -1,0 +1,52 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Do stuff with the .po files in Subversion.
+#=======================================================================
+
+if [ "$1" = "trunkmerge" ]; then
+    [ -e HACKING ] || { echo "Du må stå i toppen av arbeidskopien til 1.1.x eller 1.2.x ." >&2; exit 1; }
+    echo ======== svn update
+    svn up
+    cp -p subversion/po/nb.po subversion/po/.etter0_original
+    export HEADREV=`svnversion .|tr -d M`
+    echo ======== ./configure, etc...
+    ./autogen.sh && ./configure --prefix=/usr/local/varprg/subversion-1.1.x.r$HEADREV --enable-maintainer-mode --disable-shared --with-ssl && make locale-gnu-po-update PO=nb
+    cd subversion/po || { echo "cd subversion/po: Nehei." >&2; exit 1; }
+    cp -p nb.po .etter1_make
+    rm `ls | grep -v -e '^nb.po$' -e 'subversion.pot'`
+    svn up -r$HEADREV
+    echo ======== po-merge.py
+    svn cat http://svn.collab.net/repos/svn/trunk/subversion/po/nb.po | po-merge.py nb.po
+    cp -p nb.po .etter2_po-merge
+    cd ../..
+    [ -e HACKING ] || { echo "I alle dager. Skulle liksom være tilbake på toppen av AK-en, men er visst ikke det." >&2; exit 1; }
+    echo ======== make locale-gnu-po-update PO=nb
+    make locale-gnu-po-update PO=nb
+    cd subversion/po || { echo "cd subversion/po: Nehei II." >&2; exit 1; }
+    rm `ls | grep -v -e '^nb.po$' -e 'subversion.pot'`
+    cp -p nb.po .etter3_make
+    echo ======== svn up -r$HEADREV
+    svn up -r$HEADREV
+    echo ======== msgfmt
+    msgfmt -cv nb.po
+elif [ "$1" = "update" ]; then
+    ./autogen.sh && \
+    ./configure --prefix=/usr/local/varprg/subversion-trunk.r`svnversion .|tr -d M` \
+      --enable-maintainer-mode --disable-shared --with-ssl && \
+    make locale-gnu-po-update PO=nb
+else
+    cat <<END
+
+Syntax: svn-po [command]
+
+Commands:
+
+  trunkmerge
+    Merge all new messages from trunk to the current branch.
+  update
+    Update subversion/po/nb.po .
+
+END
+fi

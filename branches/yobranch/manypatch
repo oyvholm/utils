@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# $Id$
+# Legger til mange patcher til en fil og ordner opp i konflikter med wiggle. En
+# variasjon av den kommandoen som jeg kjørte under patchinga av nb.po for
+# Subversion før i dag.
+# Syntax: $0 fil_som_skal_patches patchfil [flere patchfiler [...]]
+
+fil=$1
+shift
+
+for f in $*; do
+	echo ============= $f
+	patch $fil <$f
+	if [ -e nb.po.rej ]; then
+		echo Kjører wiggle...
+		wiggle --replace $fil $fil.rej
+		rm -v $fil.{orig,porig,rej}
+	fi
+	echo Ferdig.
+	read
+done

@@ -1,0 +1,58 @@
+Version description of TAB-separated files. Only of historic interest 
+after it changed to XML.
+
+$Id$
+File ID: 1cc9b584-14cd-11de-bf85-000475e441b9
+
+Without version field, they have to be exterminated:
+  uuid \t
+  curr_time \t
+  tag \t
+  comment \n
+
+Version 1 (same as above, but with version field):
+  1 \t
+  uuid \t
+  curr_time \t
+  tag \t
+  comment \n
+
+Version 2
+  2 \t
+  uuid \t
+  curr_time \t
+  tag \t
+  comment \t
+  current_dir \n
+
+Version 3
+  3 \t
+  uuid \t
+  curr_time \t
+  tag \t
+  comment \t
+  current_dir \t
+  username \n
+
+Version 4
+  4 \t
+  uuid \t
+  curr_time \t
+  tag \t
+  comment \t
+  current_dir \t
+  username \t
+  tty \n
+
+Version 5
+  5 \t
+  uuid \t
+  curr_time \t
+  tag \t
+  comment \t
+  current_dir \t
+  username \t
+  tty \t
+  sess_uuid \n
+
+*** End of file $Id$ ***

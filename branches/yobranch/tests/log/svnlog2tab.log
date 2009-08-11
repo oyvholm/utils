@@ -1,0 +1,14 @@
+# ========== Executing "svnlog2tab.t --all" ==========
+# Testing -h (--help) option...
+ok - "../svnlog2tab -h" - Option -h prints help screen
+ok - "../svnlog2tab -h" - Option -h prints help screen (stderr)
+ok - "../svnlog2tab -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../svnlog2tab -hv" - Option --version with -h returns Id string and help screen
+ok - "../svnlog2tab -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../svnlog2tab --version" - Option --version returns Id string
+ok - "../svnlog2tab --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

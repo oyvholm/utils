@@ -1,0 +1,25 @@
+# ========== Executing "smsum.t" ==========
+# Testing -h (--help) option...
+ok - "../smsum -h" - Option -h prints help screen
+ok - "../smsum -h" - Option -h prints help screen (stderr)
+ok - "../smsum -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../smsum -hv" - Option --version with -h returns Id string and help screen
+ok - "../smsum -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../smsum --version" - Option --version returns Id string
+ok - "../smsum --version" - Option --version returns Id string (stderr)
+ok - "../smsum files/dir1.tar.gz" - Verify files/dir1.tar.gz
+ok - "../smsum files/dir1.tar.gz" - Verify files/dir1.tar.gz (stderr)
+# No options specified...
+ok - "../smsum files/dir1/*" - Read all files in dir1/
+ok - "../smsum files/dir1/*" - Read all files in dir1/ (stderr)
+ok - "cat files/dir1/random_2048 | ../smsum" - Read data from stdin
+ok - "cat files/dir1/random_2048 | ../smsum" - Read data from stdin (stderr)
+# Testing -m (--with-mtime) option...
+ok - "../smsum -m files/dir1/*" - Read files from dir1/ with mtime
+ok - "../smsum -m files/dir1/*" - Read files from dir1/ with mtime (stderr)
+ok - "cat files/dir1/random_2048 | ../smsum -m" - Read data from stdin with mtime
+ok - "cat files/dir1/random_2048 | ../smsum -m" - Read data from stdin with mtime (stderr)
+# Testing finished.
+1..17

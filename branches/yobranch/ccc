@@ -1,0 +1,38 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Mer oversiktlig cvs stat
+#=======================================================================
+
+use strict;
+
+my ($FileLine, $WorkLine, $RepLine) =
+   (       "",        "",       "");
+
+open(FP, "cvs -n stat 2>/dev/null |") || die("Cannot open cvs pipe");
+
+while (<FP>) {
+    chomp;
+    if (/^\?/) {
+        print "$_\n";
+    } else {
+        if (/^File: /) {
+            $FileLine = $_;
+        }
+        if (/^\s+Working/) {
+            $WorkLine = $_;
+        }
+        if (/^\s+Repository/) {
+            $RepLine = $_;
+            unless ($FileLine =~ /Up-to-date$/) {
+                print "----\n$FileLine\n$WorkLine\n$RepLine\n";
+                $FileLine = "";
+                $RepLine = "";
+                $WorkLine = "";
+            }
+        }
+    }
+}
+
+#### End of file $Id$ ####

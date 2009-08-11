@@ -1,0 +1,92 @@
+Index: create_funcs.sql
+===================================================================
+--- create_funcs.sql	(revision 2828)
++++ create_funcs.sql	(working copy)
+@@ -149,18 +149,23 @@
+         round(coor[0]::numeric, 6),
+         round(coor[1]::numeric, 6)
+     );
++    CREATE TEMPORARY TABLE tmpids (
++            id integer
++        ) ON COMMIT DROP;
+     LOOP
+         curr_id = first_wayp_new();
+         IF curr_id IS NOT NULL THEN
+             RAISE NOTICE 'curr_id er ikke null: %', curr_id;
+             currpoint = (SELECT coor FROM wayp_new WHERE id = curr_id);
+-            IF (SELECT coor FROM wayp WHERE coor[0] = currpoint[0] AND coor[1] = currpoint[1]) IS NOT NULL THEN
++            IF (SELECT coor FROM wayp WHERE coor[0] = currpoint[0] AND coor[1] = currpoint[1] LIMIT 1) IS NOT NULL THEN
+                 RAISE NOTICE '% finnes allerede i wayp', currpoint;
+                 INSERT INTO wayp_rej SELECT * FROM wayp_new WHERE id = curr_id;
+             ELSE
+                 RAISE NOTICE '% er ikke i wayp', currpoint;
+                 INSERT INTO wayp SELECT * FROM wayp_new WHERE id = curr_id;
+-                PERFORM update_trackpoint(currpoint);
++                RAISE NOTICE 'Før INSERT INTO tmpids...';
++                INSERT INTO tmpids SELECT id FROM logg WHERE coor <-> currpoint < 0.05;
++                RAISE NOTICE '...INSERT INTO tmpids er ferdig.';
+             END IF;
+             DELETE FROM wayp_new WHERE id = curr_id;
+             -- COPY (SELECT name FROM wayp WHERE coor::varchar = currpoint::varchar)
+@@ -170,17 +175,42 @@
+             EXIT;
+         END IF;
+     END LOOP;
++    RAISE NOTICE 'Før CREATE TABLE tmpsortid.';
++    CREATE TEMPORARY TABLE tmpsortid (
++           id integer
++       ) ON COMMIT DROP;
++    RAISE NOTICE 'Før INSERT INTO tmpsortid.';
++    INSERT INTO tmpsortid SELECT DISTINCT id FROM tmpids;
++    RAISE NOTICE 'Totalt %', (SELECT count(*) FROM tmpids);
++    RAISE NOTICE 'Unique %', (SELECT count(*) FROM tmpsortid);
++    RAISE NOTICE 'Etter INSERT INTO tmpsortid';
++    curr_id = 0;
++    CREATE INDEX tmp_idx ON tmpsortid (id);
++    LOOP
++        curr_id = (SELECT id FROM tmpsortid WHERE id > curr_id LIMIT 1);
++        IF curr_id IS NOT NULL THEN
++            RAISE NOTICE 'Skal modifisere id %', curr_id;
++            -- PERFORM update_trackpoint(curr_id);
++            UPDATE logg SET sted = clname(coor), dist = cldist(coor) WHERE id = curr_id;
++            -- DELETE FROM tmpsortid WHERE id = curr_id;
++        ELSE
++            RAISE NOTICE 'Ser ut som vi er ferdigtråla.';
++            EXIT;
++        END IF;
++    END LOOP;
++    -- PERFORM (SELECT DISTINCT id FROM tmpids);
++    -- PERFORM (SELECT * from tmpids);
++    ROLLBACK;
+ END;
+ $$ LANGUAGE plpgsql; -- }}}
+ 
+ -- update_trackpoint(): Oppdater alle feltene i en viss omkrets av punktet som spesifiseres.
+-CREATE OR REPLACE FUNCTION update_trackpoint(currpoint point) RETURNS void AS $$ -- {{{
++CREATE OR REPLACE FUNCTION update_trackpoint(currid integer) RETURNS void AS $$ -- {{{
+ BEGIN
+-    RAISE NOTICE 'starter update_trackpoint(%), %', currpoint, clname(currpoint);
++    RAISE NOTICE 'starter update_trackpoint(%)', currid;
+     -- Sted og dist
+-    UPDATE logg SET sted = clname(coor), dist = cldist(coor)
+-        WHERE ($1 <-> coor) < 0.05;
+-    RAISE NOTICE 'update_trackpoint(%) er ferdig', currpoint;
++    UPDATE logg SET sted = clname(coor), dist = cldist(coor) WHERE id = currid;
++    RAISE NOTICE 'update_trackpoint(%) er ferdig', currid;
+ END;
+ $$ LANGUAGE plpgsql;
+ -- }}}
+Index: create_table.sql
+===================================================================
+--- create_table.sql	(revision 2828)
++++ create_table.sql	(working copy)
+@@ -6,7 +6,8 @@
+     ele numeric,
+     sted text,
+     dist numeric(8, 5),
+-    description text
++    description text,
++    id serial
+ );
+ 
+ CREATE TABLE wayp (

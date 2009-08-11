@@ -1,0 +1,178 @@
+Index: fldb
+===================================================================
+--- fldb	(revisjon 2249)
++++ fldb	(arbeidskopi)
+@@ -22,12 +22,14 @@
+ use FLDButf;
+ use FLDBsum;
+ use FLDBdebug;
++use FLDBpg;
+ 
+ $| = 1;
+ 
+ our $Debug = 0;
+ my $STD_OUTPUT_FORMAT = "sql";
+ my $STD_DATABASE = "fldb";
++my $TAB_NULL = '\N';
+ 
+ our %Opt = (
+     'add' => 0,
+@@ -76,21 +78,50 @@
+ my $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
+     or die("connect: På trynet: $!");
+ 
++my ($char_count, $file_count) = (0, 0);
++
+ while (my $Filename = <>) {
+     chomp($Filename);
+     if ($Opt{'add'}) {
+         $Opt{'verbose'} && print("$Filename\n");
+-        my $Sql = add_entry($Filename);
+-        if (defined($Sql)) {
+-            $dbh->do($Sql) || warn("$Filename: Cannot INSERT\n");
++        if (!$char_count && !$file_count) {
++            D("COPY");
++            $dbh->do(
++                "COPY files (" .
++                "sha1, md5, crc32, " .
++                "size, filename, mtime, ctime, calctime, " .
++                "path, inode, device, hostname, " .
++                "uid, gid, perm, " .
++                "lastver, nextver, descr, " .
++                "latin1)" .
++                "FROM STDIN"
++            );
++        }
++        my $Line = add_entry($Filename);
++        if (defined($Line)) {
++            D("pg_putline()");
++            $dbh->pg_putline($Line);
++            # $dbh->do($Sql) || warn("$Filename: Cannot INSERT\n");
+         } else {
+             # warn("$Filename: Could not retrieve file data\n");
+         }
++        if ($char_count > 1_000_000 || $file_count > 1000) {
++            D("pg_endcopy()");
++            $dbh->pg_endcopy();
++            $char_count = $file_count = 0;
++        }
+     } else {
+-        print_entry($Filename);
++        print(add_entry($Filename));
+     }
+ }
++D("<> finished");
+ 
++D("file_count = '$file_count'");
++if ($file_count) {
++    D("pg_endcopy before exit(0)");
++    $dbh->pg_endcopy();
++}
++
+ exit 0;
+ 
+ sub add_entry {
+@@ -110,29 +141,30 @@
+         $Mode = sprintf("%04o", $Mode & 07777);
+         D("Mode etter: '$Mode'");
+         my %Sum = checksum($Filename, $Opt{'crc32'});
+-        my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
++        my $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : $TAB_NULL;
+         if (scalar(%Sum)) {
+             my $latin1_str;
+             if (valid_utf8($Filename)) {
+-                $latin1_str = "FALSE";
++                $latin1_str = "f";
+             } else {
+-                $latin1_str = "TRUE";
++                $latin1_str = "t";
+                 $safe_filename = latin1_to_utf8($Filename);
+             }
+             D("latin1_str = '$latin1_str'");
+             my $base_filename = $safe_filename;
+             $base_filename =~ s/^.*\/(.*?)$/$1/;
+             D("base_filename = '$base_filename'");
+-            $Retval = <<END;
+-INSERT INTO files (
+-    sha1, md5, crc32, size, filename, mtime, ctime, calctime, path,
+-    inode, device, hostname, uid, gid, perm, lastver, nextver, descr, latin1
+-) VALUES (
+-    '$Sum{sha1}', '$Sum{md5}', $crc32_str, $Size, '$base_filename', '$Mtime', '$Ctime', $Sum{calctime}, '$safe_filename',
+-    $Inode, '$Dev', '$Hostname', $Uid, $Gid, '$Mode', NULL, NULL, NULL, $latin1_str
+-);
+-END
+-            D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
++            $Retval = join("\t",
++                $Sum{sha1}, $Sum{md5}, $crc32_str,
++                $Size, safe_tab($base_filename), $Mtime, $Ctime, $Sum{calctime},
++                safe_tab($safe_filename), $Inode, safe_tab($Dev), safe_tab($Hostname),
++                $Uid, $Gid, safe_tab($Mode),
++                $TAB_NULL, $TAB_NULL, $TAB_NULL,
++                $latin1_str
++            ) . "\n";
++            $char_count += $Size;
++            $file_count++;
++            # D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
+         } else {
+             warn("$Filename: Cannot read file: $!\n");
+             $Retval = undef;
+@@ -141,6 +173,7 @@
+         warn("$progname: $Filename: Cannot stat file: $!\n");
+         $Retval = undef;
+     }
++    D("add_entry() returns " . (defined($Retval) ? "something" : "undef"));
+     return($Retval);
+     # }}}
+ } # add_entry()
+Index: FLDBpg.pm
+===================================================================
+--- FLDBpg.pm	(revisjon 0)
++++ FLDBpg.pm	(revisjon 0)
+@@ -0,0 +1,39 @@
++package FLDBpg;
++
++#=======================================================================
++# $Id$
++#
++# Character set: UTF-8
++# ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>
++# License: GNU General Public License, see end of file for legal stuff.
++#=======================================================================
++
++use strict;
++use warnings;
++
++BEGIN {
++    use Exporter ();
++    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
++
++    my $rcs_id = '$Id$';
++    push(@main::version_array, $rcs_id);
++    $VERSION = ($rcs_id =~ / (\d+) /, $1);
++
++    @ISA = qw(Exporter);
++    @EXPORT = qw(&safe_tab);
++    %EXPORT_TAGS = ();
++}
++our @EXPORT_OK;
++
++sub safe_tab {
++    # {{{
++    my $Str = shift;
++    $Str =~ s/\\/\\\\/gs;
++    $Str =~ s/\n/\\n/gs;
++    $Str =~ s/\r/\\r/gs;
++    $Str =~ s/\t/\\t/gs;
++    return($Str);
++    # }}}
++} # safe_tab()
++
++1;
+
+Egenskapsforandringer på: FLDBpg.pm
+___________________________________________________________________
+Navn: svn:keywords
+   + Id
+Navn: svn:eol-style
+   + native
+

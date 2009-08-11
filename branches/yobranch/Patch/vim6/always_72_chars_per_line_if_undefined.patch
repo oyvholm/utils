@@ -1,0 +1,41 @@
+$Id$
+
+Index: src/edit.c
+===================================================================
+RCS file: /cvsroot/vim/vim/src/edit.c,v
+retrieving revision 1.119
+diff -u -r1.119 edit.c
+--- src/edit.c	11 Apr 2005 18:22:55 -0000	1.119
++++ src/edit.c	3 Jul 2005 11:37:23 -0000
+@@ -4552,6 +4552,7 @@
+ 	textwidth = W_WIDTH(curwin) - 1;
+ 	if (textwidth > 79)
+ 	    textwidth = 79;
++	textwidth = 72; /* Added by sunny@sunbase.org -- always use 72 if not defined. */
+     }
+     return textwidth;
+ }
+Index: src/ex_cmds.c
+===================================================================
+RCS file: /cvsroot/vim/vim/src/ex_cmds.c,v
+retrieving revision 1.131
+diff -u -r1.131 ex_cmds.c
+--- src/ex_cmds.c	29 Jan 2005 15:40:49 -0000	1.131
++++ src/ex_cmds.c	3 Jul 2005 11:37:24 -0000
+@@ -164,14 +164,14 @@
+ 	/*
+ 	 * if 'textwidth' set, use it
+ 	 * else if 'wrapmargin' set, use it
+-	 * if invalid value, use 80
++	 * if invalid value, use 72
+ 	 */
+ 	if (width <= 0)
+ 	    width = curbuf->b_p_tw;
+ 	if (width == 0 && curbuf->b_p_wm > 0)
+ 	    width = W_WIDTH(curwin) - curbuf->b_p_wm;
+ 	if (width <= 0)
+-	    width = 80;
++	    width = 72; /* Changed from 80 to 72 by sunny@sunbase.org */
+     }
+ 
+     if (u_save((linenr_T)(eap->line1 - 1), (linenr_T)(eap->line2 + 1)) == FAIL)

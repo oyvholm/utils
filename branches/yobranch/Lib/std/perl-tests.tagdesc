@@ -1,0 +1,5 @@
+# $Id$
+# File ID: c4de37c6-fb5b-11dd-86dc-000475e441b9
+progname - program name. (name)
+exec - name of executable to test. (../name)
+testcmd - name of test script (this file). (name.t)
