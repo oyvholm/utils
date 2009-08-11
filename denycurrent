@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# File ID: a55fabb8-863f-11de-9299-000c6ed3978a
+# [Description]
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+git config receive.denyCurrentBranch refuse
