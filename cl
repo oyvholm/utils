@@ -13,6 +13,8 @@
 #   Bruk --stop-on-copy.
 #=======================================================================
 
+git log --name-status "$@"
+
 if [ "$1" = "-k" ]; then
     use_svk=1
     shift
@@ -40,12 +42,9 @@ if [ -d .svn/. ]; then
 elif [ -d CVS/. ]; then
     cvs log$stoponcopy "$@" | sortcvs | less
 else
-    git log --name-status "$@"
+    if [ "$use_svk" = "1" ]; then
+        svk log$svk_cross "$@" | less
+    else
+        svn log$stoponcopy "$@" | less
+    fi
 fi
-# else
-#     if [ "$use_svk" = "1" ]; then
-#         svk log$svk_cross "$@" | less
-#     else
-#         svn log$stoponcopy "$@" | less
-#     fi
-# fi
