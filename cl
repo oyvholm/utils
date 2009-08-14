@@ -44,7 +44,5 @@ elif [ -d CVS/. ]; then
 else
     if [ "$use_svk" = "1" ]; then
         svk log$svk_cross "$@" | less
-    else
-        svn log$stoponcopy "$@" | less
     fi
 fi
