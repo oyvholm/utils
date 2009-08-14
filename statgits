@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# File ID: 7824b88e-8804-11de-9386-0001805bf4b1
+# [Description]
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+for f in `find "$@" -name .git -type d`; do
+    a=`dirname $f`
+    echo ======================= $a =======================
+    (cd $a && git st)
+done
