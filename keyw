@@ -25,7 +25,6 @@ else
 fi
 
 for _k in "$@"; do
-    [ -f "$_k" ] && $CMD_SVN propset svn:keywords Id "$_k"
     $CMD_SVN propdel cvs2svn:cvs-rev "$_k"
     $CMD_SVN proplist -v "$_k"
 done
