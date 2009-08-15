@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=========================================================
-# $Id$
+# STDfilenameDTS
 # File ID: STDuuidDTS
 # Standardoppsett til index.cgi
 # (C)opyright STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>
@@ -39,9 +39,6 @@ $request_log_file = "$log_dir/request.log";
 $log_requests = 1;
 $WebMaster = 'sunny@sunbase.org';
 $doc_width = '95%';
-
-$main::rcs_id = '$Id$';
-unshift(@main::rcs_array, $main::rcs_id);
 
 $css_default = <<END;
 <style type="text/css">
@@ -84,5 +81,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 =cut
-
-#### End of file $Id$ ####

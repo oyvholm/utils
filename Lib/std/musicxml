@@ -3,7 +3,7 @@
   "-//Recordare//DTD MusicXML 1.0 Partwise//EN"
   "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise>
-  <!-- $Id$ -->
+  <!-- STDfilenameDTS -->
   <!-- File ID: STDuuidDTS -->
   <part-list>
     <score-part id="P1">

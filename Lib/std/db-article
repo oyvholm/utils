@@ -5,7 +5,6 @@
   <!-- File ID: STDuuidDTS -->
   <articleinfo>
     <title>Articletitle</title>
-    <releaseinfo><![CDATA[$Id$]]></releaseinfo>
     <author>
       <firstname>Øyvind</firstname>
       <othername>A.</othername>

@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# STDfilenameDTS
 # File ID: STDuuidDTS
 # [Description]
 #
@@ -10,10 +10,6 @@
 # License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
-
-BEGIN {
-    our @version_array;
-}
 
 use strict;
 use Getopt::Long;
@@ -33,12 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-
-my $rcs_id = '$Id$';
-my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
-
-push(@main::version_array, $rcs_id);
+our $VERSION = "0.00";
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -63,9 +54,7 @@ while (<>) {
 
 sub print_version {
     # Print program version {{{
-    for (@main::version_array) {
-        print("$_\n");
-    }
+    print("$progname v$VERSION\n");
     # }}}
 } # print_version()
 
@@ -129,10 +118,6 @@ __END__
 =head1 NAME
 
 
-
-=head1 REVISION
-
-$Id$
 
 =head1 SYNOPSIS
 
@@ -200,4 +185,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$

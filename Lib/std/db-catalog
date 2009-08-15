@@ -4,7 +4,7 @@
    "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
 
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-  <!-- $Id$ -->
+  <!-- STDfilenameDTS -->
   <!-- File ID: STDuuidDTS -->
 
   <!-- DTD and stylesheet files installed under /usr/share/xml -->

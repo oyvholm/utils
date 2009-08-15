@@ -1,5 +1,5 @@
 
-% $Id$
+% STDfilenameDTS
 % File ID: STDuuidDTS
 
 \documentclass[a4paper]{article}
@@ -31,9 +31,6 @@ Teksten kommer her.
 \vfill
 \hrule
 \vskip 1pt
-\noindent {\scriptsize \verb|$Id$|}
 \label{VeryLast}
 
 \end{document}
-
-% End of file $Id$
