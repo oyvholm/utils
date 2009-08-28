@@ -1,0 +1,21 @@
+Index: create_funcs.sql
+===================================================================
+--- create_funcs.sql	(revision 3188)
++++ create_funcs.sql	(working copy)
+@@ -132,6 +132,16 @@
+ END;
+ $$ LANGUAGE plpgsql; -- }}}
+ 
++CREATE OR REPLACE FUNCTION imginfo(text) RETURNS text AS $$ -- {{{
++DECLARE
++    retval text;
++BEGIN
++    -- SELECT date || '00' || chr(10) || coor[0]::numeric(8,5) FROM pictures where filename = $1;
++    retval = (SELECT date || '00' from pictures where filename = $1) || E'\n';
++    RETURN(retval);
++END;
++$$ LANGUAGE plpgsql;
++
+ -- loop_wayp_new(): Loop gjennom alle entryene i wayp_new og legg dem inn i systemet.
+ CREATE OR REPLACE FUNCTION loop_wayp_new() RETURNS void AS $$ -- {{{
+ DECLARE
