@@ -4,4 +4,6 @@
 
 guid=$1
 [ -z "$guid" ] && guid="-r sunny@sunbase.org"
-gpg $guid -z9 -a --comment "" -e 2>/dev/null
+echo '<encr>'
+gpg $guid -z9 -e 2>/dev/null | base64 - | commout l
+echo '</encr>'
