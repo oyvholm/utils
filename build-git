@@ -27,7 +27,7 @@ echo ================= git merge origin/master =================
 git merge origin/master
 vername=git.master-`git describe --abbrev=20`
 dest=/usr/local/varprg/$vername
-[ -d $dest/. ] && { echo $vername is already installed, you lucky bastard.; exit 0; }
+[ -d $dest/. ] && { echo; echo "Sorry, no new git(1) for you this time."; echo You’ll have to stick with `git describe` for now.; exit 0; }
 echo Compiling $vername
 echo ================= make =================
 make prefix=/usr/local/varprg/$vername all doc info || exit
