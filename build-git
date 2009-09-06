@@ -40,9 +40,13 @@ read choice
 echo ================= sudo make install =================
 sudo make prefix=/usr/local/varprg/$vername install install-doc install-html install-info
 echo ================= make install finished =================
+sudo mkdir -p /usr/local/{prg,varprg}
 sudo rm /usr/local/prg/git
 sudo ln -svf ../varprg/$vername /usr/local/prg/git
+cd /usr/local/bin || { echo build-git: /usr/local/bin: Cannot chdir, aborting >&2; exit 1; }
+sudo ln -svf ../prg/git/bin/* .
 echo ================= Check that the thing works =================
+hash -r
 localgit=`./git --version`
 globalgit=`git --version`
 if [ "$localgit" = "$globalgit" ]; then
