@@ -1,14 +1,14 @@
-# ========== Executing "suuid.t" ==========
+# ========== Executing suuid.t v0.50 ==========
 # Testing -h (--help) option...
 ok - "../suuid -h" - Option -h prints help screen
 ok - "../suuid -h" - Option -h prints help screen (stderr)
 ok - "../suuid -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../suuid -hv" - Option --version with -h returns Id string and help screen
-ok - "../suuid -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../suuid -hv" - Option --version with -h returns version number and help screen
+ok - "../suuid -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../suuid --version" - Option --version returns Id string
-ok - "../suuid --version" - Option --version returns Id string (stderr)
+ok - "../suuid --version" - Option --version returns version number
+ok - "../suuid --version" - Option --version returns version number (stderr)
 # No options (except --logfile)...
 ok - "../suuid -l tmp-suuid-t-..." - No options (except -l) sends UUID to stdout
 ok - "../suuid -l tmp-suuid-t-..." - No options (except -l) sends UUID to stdout (stderr)

@@ -1,4 +1,4 @@
-$Id$
+doc/format.txt
 File ID: 41085112-0924-11de-9598-000475e441b9
 
 Noen tilfeldige eksempler som er henta fra suuid-filene, og hvordan det 
@@ -91,3 +91,6 @@ kanskje kan XMLifiseres.
     <sess>7dcf58c4-091b-11de-aadb-000475e441b9</sess>
   </suuid>
 </suuids>
+
+vim: set ts=2 sw=2 sts=2 tw=72 et fo=tcqw fenc=utf8 :
+vim: set com=b\:#,fb\:-,fb\:*,n\:> :
