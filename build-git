@@ -70,4 +70,6 @@ done
 echo ================= svn commit the symlink =================
 commitmsg=`echo build-git installed $globalgit on $(hostname); echo; suuid -t commit,build-git`
 cd /usr/local/prg
+echo -n Press Enter to commit the symlink...
+read
 sudo svn ci -m "$commitmsg" git
