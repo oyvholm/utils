@@ -9,8 +9,10 @@ builddir=$HOME/src/git/other/build-git
 pref=/usr/local
 sudo=sudo
 
+rmdir $builddir
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || { echo build-git: $builddir: Cannot create directory; exit 1; }
+    rmdir $builddir
     echo ================= git clone =================
     git clone git://git.kernel.org/pub/scm/git/git.git $builddir
 fi
