@@ -7,6 +7,7 @@
 
 builddir=$HOME/src/git/other/build-git
 pref=/usr/local
+sudo=sudo
 
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || { echo build-git: $builddir: Cannot create directory; exit 1; }
@@ -38,14 +39,14 @@ echo
 echo -n If all tests succeeded, press y to continue...
 read choice
 [ "$choice" = "y" ] || { echo build-git: Aborted; exit 1; }
-echo ================= sudo make install =================
-sudo make prefix=$pref/varprg/$vername install install-doc install-html install-info
+echo ================= $sudo make install =================
+$sudo make prefix=$pref/varprg/$vername install install-doc install-html install-info
 echo ================= make install finished =================
-sudo mkdir -p $pref/{prg,varprg}
-sudo rm $pref/prg/git
-sudo ln -svf ../varprg/$vername $pref/prg/git
+$sudo mkdir -p $pref/{prg,varprg}
+$sudo rm $pref/prg/git
+$sudo ln -svf ../varprg/$vername $pref/prg/git
 cd $pref/bin || { echo build-git: $pref/bin: Cannot chdir, aborting >&2; exit 1; }
-sudo ln -svf ../prg/git/bin/* .
+$sudo ln -svf ../prg/git/bin/* .
 echo ================= Check that the thing works =================
 hash -r
 localgit=`./git --version`
@@ -62,15 +63,15 @@ echo ================= symlink manpages =================
 cd $pref/prg/git/share/man
 mansects=`ls`
 for f in $mansects; do
-    sudo mkdir -p $pref/share/man/$f
+    $sudo mkdir -p $pref/share/man/$f
     cd $pref/share/man/$f || { echo build-git: $pref/share/man/$f: Could not chdir, aborting >&2; exit 1; }
     pwd
-    sudo rm *
-    sudo ln -s ../../../prg/git/share/man/$f/* .
+    $sudo rm *
+    $sudo ln -s ../../../prg/git/share/man/$f/* .
 done
 echo ================= svn commit the symlink =================
 commitmsg=`echo build-git installed $globalgit on $(hostname); echo; suuid -t commit,build-git`
 cd $pref/prg
 echo -n Press Enter to commit the symlink...
 read
-sudo svn ci -m "$commitmsg" git
+$sudo svn ci -m "$commitmsg" git
