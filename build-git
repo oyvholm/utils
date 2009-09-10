@@ -44,7 +44,7 @@ read choice
 echo ================= $sudo make install =================
 $sudo make prefix=$pref/varprg/$vername install install-doc install-html install-info
 echo ================= make install finished =================
-$sudo mkdir -p $pref/{prg,varprg}
+$sudo mkdir -p $pref/{prg,varprg,bin}
 $sudo rm $pref/prg/git
 $sudo ln -svf ../varprg/$vername $pref/prg/git
 cd $pref/bin || { echo build-git: $pref/bin: Cannot chdir, aborting >&2; exit 1; }
