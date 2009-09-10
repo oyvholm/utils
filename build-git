@@ -9,7 +9,7 @@ builddir=$HOME/src/git/other/build-git
 pref=/usr/local
 sudo=sudo
 
-rmdir $builddir
+rmdir $builddir 2>/edv/null
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || { echo build-git: $builddir: Cannot create directory; exit 1; }
     rmdir $builddir
