@@ -6,6 +6,7 @@
 #=======================================================================
 
 builddir=$HOME/src/git/other/build-git
+pref=/usr/local
 
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || { echo build-git: $builddir: Cannot create directory; exit 1; }
@@ -26,11 +27,11 @@ git fetch
 echo ================= git merge origin/master =================
 git merge origin/master
 vername=git.master-`git describe --abbrev=20`
-dest=/usr/local/varprg/$vername
+dest=$pref/varprg/$vername
 [ -d $dest/. ] && { echo; echo "Sorry, no new git(1) for you this time."; echo You’ll have to stick with `git describe` for now.; exit 0; }
 echo Compiling $vername
 echo ================= make =================
-make prefix=/usr/local/varprg/$vername all doc info || exit
+make prefix=$pref/varprg/$vername all doc info || exit
 echo ================= make test =================
 make test
 echo
@@ -38,12 +39,12 @@ echo -n If all tests succeeded, press y to continue...
 read choice
 [ "$choice" = "y" ] || { echo build-git: Aborted; exit 1; }
 echo ================= sudo make install =================
-sudo make prefix=/usr/local/varprg/$vername install install-doc install-html install-info
+sudo make prefix=$pref/varprg/$vername install install-doc install-html install-info
 echo ================= make install finished =================
-sudo mkdir -p /usr/local/{prg,varprg}
-sudo rm /usr/local/prg/git
-sudo ln -svf ../varprg/$vername /usr/local/prg/git
-cd /usr/local/bin || { echo build-git: /usr/local/bin: Cannot chdir, aborting >&2; exit 1; }
+sudo mkdir -p $pref/{prg,varprg}
+sudo rm $pref/prg/git
+sudo ln -svf ../varprg/$vername $pref/prg/git
+cd $pref/bin || { echo build-git: $pref/bin: Cannot chdir, aborting >&2; exit 1; }
 sudo ln -svf ../prg/git/bin/* .
 echo ================= Check that the thing works =================
 hash -r
@@ -58,18 +59,18 @@ else
     exit 1
 fi
 echo ================= symlink manpages =================
-cd /usr/local/prg/git/share/man
+cd $pref/prg/git/share/man
 mansects=`ls`
 for f in $mansects; do
-    sudo mkdir -p /usr/local/share/man/$f
-    cd /usr/local/share/man/$f || { echo build-git: /usr/local/share/man/$f: Could not chdir, aborting >&2; exit 1; }
+    sudo mkdir -p $pref/share/man/$f
+    cd $pref/share/man/$f || { echo build-git: $pref/share/man/$f: Could not chdir, aborting >&2; exit 1; }
     pwd
     sudo rm *
     sudo ln -s ../../../prg/git/share/man/$f/* .
 done
 echo ================= svn commit the symlink =================
 commitmsg=`echo build-git installed $globalgit on $(hostname); echo; suuid -t commit,build-git`
-cd /usr/local/prg
+cd $pref/prg
 echo -n Press Enter to commit the symlink...
 read
 sudo svn ci -m "$commitmsg" git
