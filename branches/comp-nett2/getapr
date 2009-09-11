@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id
+# Download the newest apr+neon into the current directory.
+#=======================================================================
+
+svn co http://svn.apache.org/repos/asf/apr/apr/branches/0.9.x apr
+svn co http://svn.apache.org/repos/asf/apr/apr-util/branches/0.9.x apr-util
+if [ ! -d neon ]; then
+    sget http://www.webdav.org/neon/neon-0.25.5.tar.gz | tar xvz
+    mv -v neon-0.25.5 neon
+fi

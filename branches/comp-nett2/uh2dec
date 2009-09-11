@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Konverterer fra hex-entities til desimal.
+# Til ære for teite Netscape som ikke takler hex.
+
+use strict;
+
+while (<>) {
+	s/&#x([0-9a-f]{1,4});/sprintf("&#%u;", hex($1))/gei;
+	print;
+}

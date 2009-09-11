@@ -1,0 +1,55 @@
+Index: send_cvs
+===================================================================
+--- send_cvs	(revision 1617)
++++ send_cvs	(working copy)
+@@ -5,11 +5,8 @@
+ # Kopierer CVSROOT fram og tilbake
+ #=======================================================================
+ 
+-if [ ! -e /sunba.mrk ]; then
+-  echo "Hva pokkern er det du roter med? Du vet godt at dette scriptet bare skal" >&2
+-  echo "kjøres på sunba. Fjott." >&2
+-  exit 1
+-fi
++if [ -e /sunba.mrk ]; then
++  echo Det ser ut som vi er på BA. Nærmere bestemt sunba.
+ 
+ if [ "$1" = "carmbb" -a "$2" = "sunba" ]; then
+   echo Kopierer CVSROOT fra carmbb til sunba. Simulerer først...
+@@ -19,9 +16,10 @@
+   echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
+   read
+   ssh sunny@carmbb "echo \"\$(u) $*\" >>/home/badata/Cvs/CARMBB_TIL_SUNBA"
+-  rsync -avP --delete carmbb:/home/badata/Cvs /home/sunny
+-  rsync -avP --delete carmbb:/home/badata/Svn /home/sunny
+-  rsync -avP --delete carmbb:/home/badata/Svn.sunbase.org /home/sunny
++  # Her.
++  rsync -avnP --delete carmbb:/home/badata/Cvs /home/sunny
++  rsync -avnP --delete carmbb:/home/badata/Svn /home/sunny
++  rsync -avnP --delete carmbb:/home/badata/Svn.sunbase.org /home/sunny
+ elif [ "$1" = "sunba" -a "$2" = "carmbb" ]; then
+   echo Kopierer CVSROOT fra sunba til carmbb. Simulerer først...
+   rsync -avnzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn.sunbase.org/
+@@ -30,15 +28,18 @@
+   rsync -avnP --delete /home/sunny/Svn carmbb:/home/badata
+   echo -n "Hvis det ser greit ut, trykk ENTER..." >&2
+   read
+-  rsync -avzP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn.sunbase.org/
++  # Her.
++  rsync -avznP --delete www-data@nett2:/var/Svn/repos/* /home/sunny/Svn.sunbase.org/
+   echo "$(u) $*" >>/home/sunny/Cvs/SUNBA_TIL_CARMBB
+-  rsync -avzP --delete /home/sunny/Cvs carmbb:/home/badata
+-  rsync -avzP --delete /home/sunny/Svn.sunbase.org www-data@carmbb:/home/badata/
+-  rsync -avzP --delete /home/sunny/Svn carmbb:/home/badata
++  # Her.
++  rsync -avnzP --delete /home/sunny/Cvs carmbb:/home/badata
++  rsync -avnzP --delete /home/sunny/Svn.sunbase.org www-data@carmbb:/home/badata/
++  rsync -avnzP --delete /home/sunny/Svn carmbb:/home/badata
+ else
+   echo "Ukjente maskiner: \"$1\" \"$2\"" >&2
+   exit 1
+ fi
++fi
+ 
+ exit 0
+ 

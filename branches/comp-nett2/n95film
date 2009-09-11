@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# File ID: a24f4cb6-f743-11dd-b795-000475e441b9
+# Standardgenerering av filmer til Nokiaen.
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+[ "$1" = "-h" -o "$1" = "--help" ] && { echo; echo "n95film: No help available, but here's the source code:"; echo; cat $0; exit; }
+[ -d mp4/. ] || mkdir mp4 || { echo mp4: Cannot create directory; exit 1; }
+export ENC=$HOME/bin/enc-mp4
+# FIXME: Dirty, men det funker foreløpig.
+export encver=`svn --xml info $ENC | xf | grep '<commit revision' | perl -pe 's/^.*"(\d+)".*$/$1/'`
+for f in "$@"; do
+    export uuid=$(suuid --raw -t n95film -w eo -c "<c_n95film> <madeby> <progname>enc-mp4</progname> <revision>$encver</revision> </madeby> <file> <name>$f</name> <smsum>$(smsum -vv "$f" | cut -f 1)</smsum> </file> </c_n95film>")
+    if [ -z "$uuid" ]; then
+        echo n95film: suuid error >&2
+        exit 1
+    fi
+    ~/bin/enc-mp4 -vv -o "mp4/$f.mp4" -c $uuid "$f";
+done

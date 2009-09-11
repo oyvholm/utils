@@ -1,0 +1,57 @@
+$Id$
+File ID: 0529a718-fafb-11dd-b55f-000475e441b9
+
+Opprettelse av "gps"-databasen:
+
+  $ cd ~/bin/src/gpstools/postgres
+  $ createdb gps
+  $ psql gps
+  gps=# \i create_table.sql
+  gps=# \i create_funcs.sql
+  gps=# \i create_views.sql
+
+For å kopiere ting fra nye tracklogger inn i PostgreSQL:
+
+  1: cd til der de nye filene er.
+  1: Kjør svn update og slett de filene som allerede er lagt inn.
+  1: gpst -o pgtab -d -rpt *.gpx | psql -a -c "COPY logg FROM stdin" gps
+
+  2: cd ~/gps/div/postgres
+  2: psql gps
+  2: \i update_things.sql
+
+  Så kommer turen til stedsnavnene:
+
+  1: cd ~/gps/poi/trans
+  1: svn update osv
+  1: gpst -o pgwupd *.gpx | psql -a gps
+  1: cd ~/gps/unit
+  1: svn update osv
+  1: gpst -o pgwupd wpdata.gpx | psql -a gps
+
+For å legge til nye veipunkter:
+
+Kjør
+
+  gpst -o pgwtab *.gpx | psql -a -c "COPY wayp FROM stdin" gps
+
+For å renske opp i veipunktene:
+
+cd ~/bin/src/gpstools/postgres
+psql gps
+\i cleanup.sql
+
+For å synkronisere waypoints og POI:
+
+Her trengs Postgres. Må ha en database som heter "gps" og en tabell som 
+heter "tmpwayp". Ordnes med  ../postgres/create_table.sql . Deretter er 
+det bare å kjøre ../poisync og redigere .gpx-filene.
+
+En grei makro som kan brukes i vimdiff når wpdata.gpx er i venstre vindu 
+og den som veipunktet skal legges inn i er i høyre, er:
+
+:map <f1> y<C-w><C-w>GP?<type><cr>Y/<sym><cr>p<C-w><C-w>
+
+(Marker veipunktet i venstre vindu med Shift-V og trykk F1.)
+
+vim: set ts=2 sts=2 sw=2 et :

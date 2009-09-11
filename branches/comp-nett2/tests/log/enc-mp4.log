@@ -1,0 +1,14 @@
+# ========== Executing "enc-mp4.t --all" ==========
+# Testing -h (--help) option...
+ok - "../enc-mp4 -h" - Option -h prints help screen
+ok - "../enc-mp4 -h" - Option -h prints help screen (stderr)
+ok - "../enc-mp4 -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../enc-mp4 -hv" - Option --version with -h returns Id string and help screen
+ok - "../enc-mp4 -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../enc-mp4 --version" - Option --version returns Id string
+ok - "../enc-mp4 --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

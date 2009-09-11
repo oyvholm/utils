@@ -1,0 +1,14 @@
+# ========== Executing "manyfiles.t --all" ==========
+# Testing -h (--help) option...
+ok - "../manyfiles -h" - Option -h prints help screen
+ok - "../manyfiles -h" - Option -h prints help screen (stderr)
+ok - "../manyfiles -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../manyfiles -hv" - Option --version with -h returns Id string and help screen
+ok - "../manyfiles -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../manyfiles --version" - Option --version returns Id string
+ok - "../manyfiles --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

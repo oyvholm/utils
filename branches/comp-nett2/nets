@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id$
+# Moser Netscape- og Mozillalignende prosesser.
+
+killall -9 netscape-navigator netscape-communicator communicator-smotif.real navigator-smotif.real mozilla-bin

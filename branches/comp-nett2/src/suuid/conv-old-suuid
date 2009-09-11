@@ -1,0 +1,374 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# STDfilenameDTS
+# File ID: 3558c72c-0a80-11de-ae97-000475e441b9
+# Convert old TAB-separated suuid files to XML
+#
+# Character set: UTF-8
+# ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+
+    'debug' => 0,
+    'help' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = "0.00";
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+my $Lh = "[0-9a-fA-F]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+my $v4_templ = "$Lh\{8}-$Lh\{4}-4$Lh\{3}-$Lh\{4}-$Lh\{12}";
+my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
+
+# Version description {{{
+# Without version field, they have to be exterminated:
+#   uuid \t
+#   curr_time \t
+#   tag \t
+#   comment \n
+# Version 1 (same as above, but with version field):
+#   1 \t
+#   uuid \t
+#   curr_time \t
+#   tag \t
+#   comment \n
+# Version 2
+#   2 \t
+#   uuid \t
+#   curr_time \t
+#   tag \t
+#   comment \t
+#   current_dir \n
+# Version 3
+#   3 \t
+#   uuid \t
+#   curr_time \t
+#   tag \t
+#   comment \t
+#   current_dir \t
+#   username \n
+# Version 4
+#   4 \t
+#   uuid \t
+#   curr_time \t
+#   tag \t
+#   comment \t
+#   current_dir \t
+#   username \t
+#   tty \n
+# Version 5
+#   5 \t
+#   uuid \t
+#   curr_time \t
+#   tag \t
+#   comment \t
+#   current_dir \t
+#   username \t
+#   tty \t
+#   sess_uuid \n
+# }}}
+
+while (my $Curr = <>) {
+    if ($Curr =~ /^1\t($Templ)\t(.*?)\t(.*?)\t(.*?)$/) {
+        my ($Uuid, $Date, $Tag, $Comment) =
+           (   $1,    $2,   $3,       $4);
+        printf(
+            "<suuid t=\"%s\" u=\"%s\"> " .
+                "%s" .
+                "%s" .
+            "</suuid>\n",
+            uuid_time($Uuid, $Date), $Uuid,
+            length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
+            length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+        );
+    } elsif ($Curr =~ /^2\t($Templ)\t(.*?)\t(.*?)\t(.*?)\t(.*?)$/) {
+        my ($Uuid, $Date, $Tag, $Comment, $Currdir) =
+           (   $1,    $2,   $3,       $4,       $5);
+        printf(
+            "<suuid t=\"%s\" u=\"%s\"> " .
+                "%s" .
+                "%s" .
+                "%s" .
+            "</suuid>\n",
+            uuid_time($Uuid, $Date), $Uuid,
+            length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
+            length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
+        );
+    } elsif ($Curr =~ /^3\t($Templ)\t(.*?)\t(.*?)\t(.*?)\t(.*?)\t(.*?)$/) {
+        my ($Uuid, $Date, $Tag, $Comment, $Currdir, $User) =
+           (   $1,    $2,   $3,       $4,       $5,    $6);
+        printf(
+            "<suuid t=\"%s\" u=\"%s\"> " .
+                "%s" .
+                "%s" .
+                "%s" .
+                "%s" .
+            "</suuid>\n",
+            uuid_time($Uuid, $Date), $Uuid,
+            length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
+            length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
+            length($User) ? "<user>" . txt_to_xml($User) . "</user> " : "",
+        );
+    } elsif ($Curr =~ /^4\t($Templ)\t(.*?)\t(.*?)\t(.*?)\t(.*?)\t(.*?)\t(.*?)$/) {
+        my ($Uuid, $Date, $Tag, $Comment, $Currdir, $User, $Tty) =
+           (   $1,    $2,   $3,       $4,       $5,    $6,   $7);
+        printf(
+            "<suuid t=\"%s\" u=\"%s\"> " .
+                "%s" .
+                "%s" .
+                "%s" .
+                "%s" .
+                "%s" .
+            "</suuid>\n",
+            uuid_time($Uuid, $Date), $Uuid,
+            length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
+            length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
+            length($User) ? "<user>" . txt_to_xml($User) . "</user> " : "",
+            length($Tty) ? "<tty>" . txt_to_xml($Tty) . "</tty> " : "",
+        );
+    } elsif ($Curr =~ /^5\t($Templ)\t(.*?)\t(.*?)\t(.*?)\t(.*?)\t(.*?)\t(.*?)\t(.*?)$/) {
+        my ($Uuid, $Date, $Tag, $Comment, $Currdir, $User, $Tty, $Sess) =
+           (   $1,    $2,   $3,       $4,       $5,    $6,   $7,    $8);
+        $Sess =~ s/,//g;
+        $Sess =~ s/($Templ)/<sess>$1<\/sess> /g;
+        printf(
+            "<suuid t=\"%s\" u=\"%s\"> " .
+                "%s" .
+                "%s" .
+                "%s" .
+                "%s" .
+                "%s" .
+                "%s" .
+            "</suuid>\n",
+            uuid_time($Uuid, $Date), $Uuid,
+            length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
+            length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
+            length($User) ? "<user>" . txt_to_xml($User) . "</user> " : "",
+            length($Tty) ? "<tty>" . txt_to_xml($Tty) . "</tty> " : "",
+            length($Sess) ? $Sess : "",
+        );
+    } elsif ($Curr =~ /^($v1_templ)\t(.*?)$/) {
+        my ($Uuid, $Comment) =
+           (   $1,       $2);
+        printf(
+            "<suuid t=\"%s\" u=\"%s\"> " .
+                "%s" .
+            "</suuid>\n",
+            uuid_time($Uuid, ""), $Uuid,
+            length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+        );
+    } else {
+        print(STDERR $Curr);
+    }
+}
+
+sub txt_to_xml {
+    # {{{
+    my $Str = shift;
+    $Str =~ s/&/&amp;/gs;
+    $Str =~ s/</&lt;/gs;
+    $Str =~ s/>/&gt;/gs;
+    # $Str =~ s/\\/\\\\/gs;
+    # $Str =~ s/\n/\\n/gs;
+    # $Str =~ s/\r/\\r/gs;
+    # $Str =~ s/\t/\\t/gs;
+    return($Str);
+    # }}}
+} # txt_to_xml()
+
+sub uuid_time {
+    # {{{
+    my ($uuid, $date) = @_;
+    my $Retval = "";
+    if ($uuid =~ /^$v1_templ$/) {
+        if (open(UtFP, "uuid -d $uuid |")) {
+            while (my $Curr = <UtFP>) {
+                if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
+                    $Retval = "${1}T$2${3}Z";
+                    last;
+                }
+            }
+            close(UtFP);
+        } else {
+            warn("$progname: Cannot open uuid -d pipe: $!\n");
+        }
+    } elsif ($uuid =~ /^$v4_templ$/) {
+        $Retval = $date;
+    } else {
+        warn("$progname: uuid_time(): $uuid: Unknown UUID type\n");
+    }
+    return($Retval);
+    # }}}
+} # uuid_time()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :

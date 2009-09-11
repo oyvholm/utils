@@ -1,0 +1,4 @@
+#!/bin/sh
+
+. ~/.bashrc
+/home/sunny/bin/bigsh -ls -e vim "$@"

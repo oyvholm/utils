@@ -1,0 +1,255 @@
+#!/usr/bin/perl -w
+
+#===============================================================
+# $Id$
+# Backup of active Subversion repositories
+#
+# Character set:
+#   UTF-8
+# Project page:
+#   http://svnutils.tigris.org
+# Subversion repository:
+#   http://svn.sunbase.org/repos/svnutils
+# License:
+#   GNU General Public License
+# Authors:
+#   Use "svn blame" or "svn log" against the Subversion repository to
+#   nail the responsible guys. As of 2004-06-07, it is only:
+#     - sunny, Øyvind A. Holm <sunny@sunbase.org>
+#===============================================================
+
+use strict;
+# use utf8; # I don’t like this, it slows down Perl and tastes kludgy. If you are in a non-UTF-8 locale, it should probably be uncommented.
+use Env qw{HOME};
+use Getopt::Std;
+our ($opt_f, $opt_h) =
+    ("",     0     );
+
+$| = 1;
+
+getopts('f:h') || die("Option error. Use -h for help.");
+
+my $Simulate = 1;
+
+my $prog_name = $0;
+$prog_name =~ s/^(.*\/)(.*?)$/$2/;
+my $svn_Id = '$Id$';
+$svn_Id =~ s/^\$Id: (.*) \$/$1/;
+my ($rev_nr, $rev_date) =
+   ("",      ""       );
+if ($svn_Id =~ /^(\S+) (\d+) (\S+ \S+)/) {
+    $rev_nr = $2;
+    $rev_date = $3;
+}
+
+my @repos_array = ();
+
+$opt_h && usage(0);
+
+print("$prog_name r$rev_nr ($rev_date)\n");
+print("\nSorry ma, ain’t workin’ yet.\n");
+exit;
+
+defined($HOME) || die("$prog_name: The HOME environment variable is not defined. Aborting...\n");
+
+my $config_file = length($opt_f) ? $opt_f : "$HOME/.svnbckrc";
+
+my $rcs_id = '$Id$';
+$rcs_id =~ s/\$Id: (.*) \$/$1/;
+
+parse_config_file();
+
+sub mysystem {
+    # Wrapper around the system() call to enable simulation {{{
+    chomp(my $Cmd = shift);
+    if ($Simulate) {
+        print("Simulating \"$Cmd\"\n");
+    } else {
+        print("Executing \"$Cmd\"\n");
+        # system($Cmd);
+    }
+    # }}}
+} # mysystem()
+
+sub parse_config_file {
+    my $repos_found = 0;
+    if (open(ConfigFP, "<$config_file")) {
+        while (<ConfigFP>) {
+            chomp();
+            s/\s+$//g;
+            if (/^[repositories]/) {
+                $repos_found = 1;
+            } else {
+                if ($repos_found) {
+                    if (/^(.+)$/) {
+                        push(@repos_array, glob($1));
+                    }
+                } else {
+
+                }
+            }
+        }
+    } else {
+        die("$prog_name: $config_file: Unable to open configuration file for read\n");
+    }
+} # parse_config_file()
+
+sub usage {
+    # Prints a help screen {{{
+    my $Retval = shift;
+    print(<<END);
+
+$prog_name r$rev_nr ($rev_date)
+
+Syntac: $prog_name [options]
+
+Please refer to the POD (Plain Old Documentation) inside the $0 Perl script.
+You can create a man page from this documentation by executing
+
+  pod2man $0 >$0.1
+
+END
+    exit($Retval);
+    # }}}
+} usage()
+
+__END__
+
+# POD — Plain Old Documentation {{{
+
+=pod
+
+=head1 NAME
+
+svnbck -- Backup utility for Subversion repositories
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+svnbck [options]
+
+=head1 DESCRIPTION
+
+A frontend against svn that will create dumpfiles in various ways, based on configuration options in config files.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-f x>
+
+Use x as configuration file instead of F<~/.svnbckrc> .
+
+=item B<-h>
+
+Print a help message.
+
+=back
+
+=head1 FILES
+
+=over 4
+
+=item F<~/.svnbckrc>
+
+Default configuration file
+
+=back
+
+=head1 BUGS
+
+Well, it is unfinished at the moment.
+
+=head1 COPYRIGHT
+
+Copyright © 2004 Free Software Foundation, Inc.
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 AUTHOR
+
+Use "svn blame" or "svn log" against the Subversion repository to nail the responsible guys.
+
+As of 2004-06-07, it is only:
+
+=over 4
+
+=item sunny — Øyvind A. Holm <sunny@sunbase.org>
+
+=back
+
+=head1 LICENCE
+
+GNU General Public License.
+The greatest of them all.
+Thanks, RMS.
+
+=head1 SEE ALSO
+
+svn(1)
+
+=cut
+
+# }}}
+
+# Thoughts (POD) {{{
+
+=head1 THOUGHTS
+
+=head2 Format of the ~/.svnbckrc file
+
+All configuration options should be kept in this (or any other) config file.
+Several repositories can be specified under the [repositories] section, and exactly one is allowed/needed in the [destdir] section.
+
+The [blabla] format is used as section headers to follow the F<~/.subversion/config> style.
+
+  # This is a comment. The # has to be in the first column.
+
+  [repositories]
+
+  /full/path/to/repos1
+  /full/path/to/repos2
+  /full/path/to/repos3
+  /another/path/with/wildcards/*
+
+Only one destination dir is allowed at the moment.
+
+  [destdir]
+  # strftime(3) time specifiers can be inserted into the destination directory.
+  # Specifiers available:
+  #   %Y  Year with four digits
+  #   %m  Month (00..12)
+  #   %d  Day of month (00..31)
+  #   %H  Hour (00..23)
+  #   %M  Minutes (00..59)
+  #   %S  Seconds (00..61)
+  #   %%  Regular percent sign
+  # At the moment only GMT is used.
+  /home/user/reposbackup/%Y/%Y-%m-%d
+
+  [options]
+
+  # backup_format is B<dump> for regular dump files, or B<repository> for repository.
+  backup_format = dump
+
+  # incremental can be B<yes> or B<no> to enable/disable incremental backups.
+  # When backup_format = repository an error will be generated if incremental = yes.
+  incremental = yes
+
+  # The dump files can be compressed after backup. Available options are gzip, bzip2 or none.
+  compression = gzip
+
+  # notify_emails is where backup reports is sent
+  notify_emails = user1@example.com, user2@tigris.org, user3@example.com
+
+  # Logging of the backups is also available.
+  logfile = /foo/bar/logfiles/%Y/reposbackup.log
+
+=cut
+
+# }}}
+
+# vim: set et ts=4 sw=4 sts=4 fo+=w fenc=UTF-8 :
+# End of file $Id$

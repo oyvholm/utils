@@ -1,0 +1,28 @@
+Index: create_funcs.sql
+===================================================================
+--- create_funcs.sql	(revision 3000)
++++ create_funcs.sql	(working copy)
+@@ -31,6 +31,23 @@
+     ) AS s;
+ $$ LANGUAGE SQL; -- }}}
+ 
++-- prevpoint(): Returner id for forrige punkt i logg-tabellen.
++CREATE OR REPLACE FUNCTION prevpoint(currpoint integer) RETURNS integer -- {{{
++AS $$
++DECLARE
++    previd integer;
++BEGIN
++    previd = (
++        SELECT id FROM logg WHERE date < (
++            SELECT date FROM logg where id = currpoint
++                ORDER BY date DESC
++                LIMIT 1
++        ) LIMIT 1
++    );
++    RETURN(previd);
++END;
++$$ LANGUAGE plpgsql; -- }}}
++
+ -- findpos(): Beregn koordinater for et tidspunkt som ligger mellom to trackpunkter.
+ CREATE OR REPLACE FUNCTION findpos(currtime timestamptz) RETURNS point AS $$ -- {{{
+ DECLARE

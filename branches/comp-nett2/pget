@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Henter en webside. Kort og grei.
+# $Id$
+
+url=$1
+shift
+
+wget -m -p -k -l 1 $* $url

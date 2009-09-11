@@ -1,0 +1,324 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# File ID: db86c666-f938-11dd-9040-0001805bf4b1
+# Generate and change File IDs.
+#
+# Character set: UTF-8
+# ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+BEGIN {
+    our @version_array;
+}
+
+use strict;
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+
+    'comment' => "",
+    'debug' => 0,
+    'help' => 0,
+    'new' => 0,
+    'random-mac' => 0,
+    'type' => "",
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+
+    "comment|c=s" => \$Opt{'comment'},
+    "debug" => \$Opt{'debug'},
+    "help|h" => \$Opt{'help'},
+    "new|n" => \$Opt{'new'},
+    "random-mac|m" => \$Opt{'random-mac'},
+    "type|t=s" => \$Opt{'type'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+defined($ARGV[0]) || die("$progname: Filename not specified. Use -h for help.\n");
+my $file_name = $ARGV[0];
+
+my $Lh = "[0-9a-fA-F]";
+my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+
+my $Comment = "_%uuid%_\n";
+my $new_uuid = "";
+if ($Opt{'new'}) {
+    while (<STDIN>) {
+        s/($Templ)/new_uuid($1)/ge;
+        print;
+    }
+    exit(0);
+} elsif (length($Opt{'type'})) {
+    if ($Opt{'type'} =~ /^(txt)$/) {
+        $Comment = ("File ID: _%uuid%_\n");
+    } elsif ($Opt{'type'} =~ /^(perl|bash|sh|htaccess)$/) {
+        $Comment = ("# File ID: _%uuid%_\n");
+    } elsif ($Opt{'type'} =~ /^(html|xml)$/) {
+        $Comment = ("  <!-- File ID: _%uuid%_ -->\n");
+    } elsif ($Opt{'type'} =~ /^(sql)$/) {
+        $Comment = ("-- File ID: _%uuid%_\n");
+    } elsif ($Opt{'type'} =~ /^(c|css)$/) {
+        $Comment = ("/* File ID: _%uuid%_ */\n");
+    } elsif ($Opt{'type'} =~ /^(erlang)$/) {
+        $Comment = ("%% File ID: _%uuid%_\n");
+    } else {
+        die("$progname: $Opt{'type'}: Unkown comment type. Use -h for help.\n");
+    }
+}
+my @exec_array = (
+    "suuid",
+    "--raw",
+    "-c",
+    # sprintf("\\<c_fileid\\> \\<filename\\>%s\\</filename\\>%s%s \\</c_fileid\\>",
+    sprintf("\"<c_fileid> <filename>%s</filename>%s%s </c_fileid>\"",
+        suuid_xml($file_name),
+        length($Opt{'type'})
+            ? " <type>" . suuid_xml($Opt{'type'}) . "</type>"
+            : "",
+        length($Opt{'comment'})
+            ? " <comment>" . suuid_xml($Opt{'comment'}) . "</comment>"
+            : "",
+    ),
+    "-t",
+    $progname,
+);
+$Opt{'random-mac'} && push(@exec_array, "-m");
+msg(1, "Executing '" . join("', '", @exec_array) . "'...");
+chomp(my $uuid = `@exec_array`);
+if (!defined($uuid) || $uuid !~ /^$Templ$/) {
+    die("$progname: suuid error\n");
+}
+$Comment =~ s/_%uuid%_/$uuid/gs;
+print($Comment);
+
+sub suuid_xml {
+    # {{{
+    my ($Str, $skip_xml) = @_;
+    defined($skip_xml) || ($skip_xml = 0);
+    if (!$skip_xml) {
+        $Str =~ s/&/&amp;/gs;
+        $Str =~ s/</&lt;/gs;
+        $Str =~ s/>/&gt;/gs;
+        $Str =~ s/\\/\\\\/gs;
+        $Str =~ s/\n/\\n/gs;
+        $Str =~ s/\r/\\r/gs;
+        $Str =~ s/\t/\\t/gs;
+    }
+    return($Str);
+    # }}}
+} # suuid_xml()
+
+sub new_uuid {
+    # {{{
+    my $Old = shift;
+    if (!length($new_uuid)) {
+        my @cmd_arr = (
+            "suuid",
+            "--raw",
+            "-t",
+            $progname,
+            "-c",
+            sprintf("\"<c_fileid> <change> <filename>%s</filename> <old>%s</old>%s%s </change> </c_fileid>\"",
+                suuid_xml($file_name),
+                suuid_xml($Old),
+                length($Opt{'type'})
+                    ? " <type>" . suuid_xml($Opt{'type'}) . "</type>"
+                    : "",
+                length($Opt{'comment'})
+                    ? " <comment>" . suuid_xml($Opt{'comment'}) . "</comment>"
+                    : "",
+            ),
+        );
+        $Opt{'random-mac'} && push(@cmd_arr, "-m");
+        chomp($new_uuid = `@cmd_arr`);
+        if (!defined($new_uuid) || $new_uuid !~ /^$Templ$/) {
+            die("$progname: new_uuid(): suuid error\n");
+        }
+    }
+    return($new_uuid);
+    # }}}
+} # new_uuid()
+
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
+
+Usage: $progname file
+
+Options:
+
+  -c X, --comment X
+    Use X as additional comment.
+  -h, --help
+    Show this help.
+  -m, --random-mac
+    Generate a random MAC address field instead of using the hardware 
+    MAC address.
+  -n, --new
+    Replace all uuids from stdin with a new single uuid which is the new 
+    File ID and log the change. Example in Vim:
+      :%!fileid -n %
+  -t X, --type X
+    Create comment of type X:
+      c, css, bash, erlang, html, perl, sh, sql, xml
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

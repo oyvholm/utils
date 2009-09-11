@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#========================================================================
+# Lager symlinker i $prefix/man/man?/ og $prefix/{bin,sbin}/ til greier i
+# $prefix/prg/*/
+#========================================================================
+
+prefix=/usr/local
+
+[ "$1" = "" ] || { prefix=$1; }
+
+[ -e $prefix/prg ] || { echo "$0: $prefix/prg finnes ikke, så det er ikke så mye å gjøre her." >&2; exit 1; }
+[ -w $prefix ] || { echo -e "$0: Svake menneske, jeg sier: Du svake menneske, du har ikke skriveaksess i $prefix .\nSkaff deg litt flere muskler, du din veike laban. ;-)" >&2; exit 1; }
+
+# $prefix/man/*/
+for f in `seq 1 9`; do
+	currmandir=$prefix/man/man$f
+	echo "==== $currmandir ===="
+	[ -d $currmandir ] || mkdir $currmandir || { echo "$0: mkdir $currmandir: Gikk på trynet, kreperer." >&2; exit 1; }
+	cd $currmandir || { echo "$0: cd $currmandir: Klarte ikke å gå dit. Ytterst merkelig. Kreperer for sikkerhets skyld." >&2; exit 1; }
+	find ../../prg/*/. -type f | sed 's#/\./#/#' | grep /man/ | egrep "\\.$f.?\$" | sort | xargs -i% ln -svf % .
+done
+
+# $prefix/bin/
+echo
+echo ======== $prefix/bin ========
+cd $prefix/bin || { echo "$0: cd $prefix/bin: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
+ln -svf ../prg/*/bin/* .
+
+# $prefix/sbin/
+echo
+echo ======== $prefix/sbin ========
+cd $prefix/sbin || { echo "$0: cd $prefix/sbin: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
+ln -svf ../prg/*/sbin/* .
+
+echo
+echo "======== Leiter etter daue linker... ========"
+cd $prefix || { echo "$0: cd $prefix: Gikk rimelig dårlig. Avbryter." >&2; exit 1; }
+find -type l | xargs file | grep "broken symbolic"
+
+rm -fv sbin/\*

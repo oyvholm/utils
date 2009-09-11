@@ -1,0 +1,49 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Inserts fold marks in HTML source before and after stdin.
+# Select text in visual line mode and filter the block through this script.
+
+use strict;
+use Getopt::Std;
+our ($opt_c, $opt_h) =
+    (     0,      0);
+getopts('ch') || die("Option error, use -h for help.");
+
+$| = 1;
+
+$opt_h && usage(0);
+
+my $Line = <STDIN>;
+my ($Indent, $Title) =
+   (     "",     "");
+
+defined($ARGV[0]) && ($Title = join(" ", @ARGV) . " ");
+$Line =~ /^(\s+)/ && ($Indent = $1);
+my $c_S = $opt_c ? "" : " -->";
+my $c_E = $opt_c ? "" : "<!-- ";
+print("$Indent<!-- $Title\x7B\x7B\x7B$c_S\n$Line");
+
+while (<STDIN>) {
+	print($_);
+}
+
+print("$Indent$c_E$Title\x7D\x7D\x7D -->\n");
+
+sub usage {
+	my $Retval = shift;
+	print(<<END);
+
+Usage: $0 [options] [Fold_text]
+
+Adds Vim fold markers around text read from stdin, hidden by a HTML
+comment.
+
+Options:
+
+-c  Also comment out the text from stdin instead of creating folds only.
+-h  This help.
+
+END
+	exit($Retval);
+}

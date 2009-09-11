@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# File ID: b76283f2-33fc-11de-8bbf-000475e441b9
+# Play YouTube videos in mplayer. Found at 
+# <http://www.shell-fu.org/lister.php?id=701>.
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+function mtube {
+    video_id=$(curl -s $1 | sed -n "/watch_fullscreen/s;.*\(video_id.\+\)&title.*;\1;p");
+    mplayer -fs $(echo "http://youtube.com/get_video.php?$video_id");
+}
+
+mtube "$@"

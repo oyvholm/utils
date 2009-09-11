@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# $Id$
+# Som logg(1), men setter fonten til uleselig til ære for andre folk
+# i nærheten.
+
+kode 1
+logg $*
+kode 0

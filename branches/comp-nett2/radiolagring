@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# $Id$
+# File ID: 011d0820-fa5d-11dd-a357-0001805bf4b1
+# Syntax: radiolagring navn kanal lengde
+
+export PATH=$HOME/bin:$HOME/bin/basnakk:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/X11R6/bin:/sbin:/usr/sbin:/usr/games
+
+navn=$1
+kanal=$2
+lengde=$3
+
+dlfile=`u`.$navn.nrk_$kanal.mp3
+uuid=`suuid -t radiolagring_begin --raw -w eo -c "<c_radiolagring w=\"begin\"> <name>$navn</name> <channel>$kanal</channel> <length>$lengde</length> <filename>$dlfile</filename> </c_radiolagring>"` || { echo "radiolagring: IMPORTANT - suuid error, but will continue" >&2; }
+dldir=$HOME/dl/nettradio
+logdir=$HOME/log/radiolagring
+logfile=$logdir/$uuid.wgetlog
+
+[ -d $logdir/. ] || mkdir -p $logdir || { echo "$0: $logdir: Klarte ikke mkdir" >&2; exit 1; }
+timeout $[60*$lengde] wget -U "xmms/1.2.7" -o $logfile -O $dldir/$dlfile http://radio.hiof.no:8000/nrk-$kanal-128
+smsum=`smsum <$dldir/$dlfile`
+mtime=`TZ=UTC find "$dldir/$dlfile" -printf "%TY-%Tm-%TdT%TH:%TM:%TSZ"`
+suuid -w o -t radiolagring_end --raw -c "<c_radiolagring w=\"end\"> <finished>$uuid</finished> <file> <name>$dlfile</name> <smsum>$smsum</smsum> <mtime>$mtime</mtime> </file> </c_radiolagring>"
+gzip -q $logfile

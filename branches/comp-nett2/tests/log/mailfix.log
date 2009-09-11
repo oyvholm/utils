@@ -1,0 +1,14 @@
+# ========== Executing "mailfix.t --all" ==========
+# Testing -h (--help) option...
+ok - "../mailfix -h" - Option -h prints help screen
+ok - "../mailfix -h" - Option -h prints help screen (stderr)
+ok - "../mailfix -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../mailfix -hv" - Option --version with -h returns Id string and help screen
+ok - "../mailfix -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../mailfix --version" - Option --version returns Id string
+ok - "../mailfix --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

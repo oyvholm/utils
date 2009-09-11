@@ -1,0 +1,380 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# File ID: da340b94-f743-11dd-8d53-000475e441b9
+# Lists RCS-like keywords in files. Replacement for ident(1).
+#
+# Character set: UTF-8
+# ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+BEGIN {
+    our @version_array;
+}
+
+use strict;
+use Getopt::Long;
+
+$| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+
+    'debug' => 0,
+    'expanded' => 0,
+    'filesfrom' => "",
+    'help' => 0,
+    'known' => 0,
+    'namesonly' => 0,
+    'unique' => 0,
+    'verbose' => 0,
+    'version' => 0,
+    'xml' => 0
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+
+    "debug" => \$Opt{'debug'},
+    "expanded-only|e" => \$Opt{'expanded'},
+    "filenames-from|f=s" => \$Opt{'filesfrom'},
+    "filenames-only|l" => \$Opt{'namesonly'},
+    "help|h" => \$Opt{'help'},
+    "known-keywords-only|k" => \$Opt{'known'},
+    "unique-keywords|u" => \$Opt{'unique'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'}
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+my @Keywords = (
+                # List of recognised keywords {{{
+                "Id",
+                "Author", "LastChangedBy",
+                "Date", "LastChangedDate",
+                "LastChangedRevision", "Revision", "Rev",
+                "URL", "HeadURL",
+                "Header",
+                "Name",
+                "Locker",
+                "Log",
+                "RCSfile",
+                "Source",
+                "State"
+                # }}}
+               );
+my $Keyw = $Opt{'known'} ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
+
+if ($Opt{'xml'}) {
+    print(<<END);
+<?xml version="1.0"?>
+<sident>
+END
+}
+
+my @Files = @ARGV;
+
+if (length($Opt{'filesfrom'})) {
+    # {{{
+    if (open(FromFP, "<$Opt{'filesfrom'}")) {
+        while(<FromFP>) {
+            chomp;
+            push(@Files, $_);
+        }
+        close(FromFP);
+    } else {
+        die("$progname: $Opt{'filesfrom'}: Cannot read filenames from file: $!\n");
+    }
+    # }}}
+}
+
+for (@Files) {
+    # {{{
+    my @Out = ();
+    my $File = $_;
+    if (open(FromFP, "<$File")) {
+        while (<FromFP>) {
+            $Opt{'expanded'} || s/(\$($Keyw)\$)/push(@Out, $1)/ge;
+            s/(\$($Keyw)::? .*? \$)/push(@Out, $1)/ge;
+        }
+        if (scalar(@Out)) {
+
+            if ($Opt{'unique'}) {
+                my %Done = ();
+                my @Out2 = @Out;
+                @Out = ();
+                for my $Curr (@Out2) {
+                    if (!defined($Done{$Curr})) {
+                        push(@Out, $Curr);
+                        $Done{$Curr} = 1;
+                    }
+                }
+            }
+
+            $Opt{'xml'} && print("  <file>\n");
+            if ($Opt{'namesonly'}) {
+                if ($Opt{'xml'}) {
+                    printf("    <filename>%s</filename>\n",
+                        txt_to_xml($File)
+                    );
+                } else {
+                    print("$File\n");
+                }
+            } else {
+                if ($Opt{'xml'}) {
+                    printf("    <filename>%s</filename>\n",
+                        txt_to_xml($File)
+                    );
+                } else {
+                    print("\n$File:\n");
+                }
+                $Opt{'xml'} && print("    <keywords>\n");
+                for (@Out) {
+                    if ($Opt{'xml'}) {
+                        printf("      <keyword>%s</keyword>\n",
+                            txt_to_xml($_));
+                    } else {
+                        print("     $_\n");
+                    }
+                }
+                $Opt{'xml'} && print("    </keywords>\n");
+            }
+            $Opt{'xml'} && print("  </file>\n");
+        } else {
+            if ($Opt{'verbose'} && !-d $File) {
+                $Opt{'xml'} && print("  <file>\n");
+                if ($Opt{'xml'}) {
+                    printf("    <filename>%s</filename>\n",
+                        txt_to_xml($File)
+                    );
+                } else {
+                    print("\n$File:\n");
+                }
+                $Opt{'xml'} && print("  </file>\n");
+            }
+        }
+    } else {
+        warn("$progname: $File: Cannot read file: $!\n");
+    }
+    # }}}
+}
+
+$Opt{'xml'} && print("</sident>\n");
+
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
+
+Usage: $progname [options] [file [files [...]]]
+
+Lists RCS-like keywords in a file.
+
+Options:
+
+  -e, --expanded-only
+    List only expanded keywords.
+  -f, --filenames-from x
+    Read filenames from file x in addition to files specified on the 
+    command line.
+  -h, --help
+    Show this help.
+  -k, --known-keywords-only
+    Only list keywords known to Subversion and CVS.
+  -l, --filenames-only
+    Suppress normal output; only list names of files which contain 
+    keywords.
+  -u, --unique-keywords
+    List keywords only once per file, avoid duplicates.
+  -v, --verbose
+    Also list files without keywords.
+  --version
+    Print version information.
+  -x, --xml
+    Create XML output.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return("");
+    # }}}
+} # D()
+
+sub txt_to_xml {
+    # Return a XML-safe version of a string {{{
+    my $Txt = shift;
+
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+} # txt_to_xml()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+sident
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+sident [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+Replacement for ident(1), lists RCS-like keywords in a file.
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-e>, B<--expanded-only>
+
+List only expanded keywords.
+
+=item B<-f>, B<--filenames-from> x
+
+Read filenames from file F<x> in addition to files specified on the 
+command line.
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-k>, B<--known-keywords-only>
+
+Only list keywords known to Subversion and CVS.
+
+=item B<-l>, B<--filenames-only>
+
+Suppress normal output; only list names of files which contains 
+keywords.
+
+=item B<-u>, B<--unique-keywords>
+
+Only list keywords once per file, avoid duplicates.
+
+=item B<-v>, B<--verbose>
+
+In addition to list keywords, also list names of files without keywords.
+
+=item B<--version>
+
+Print version information.
+
+=item B<-x>, B<--xml>
+
+Create XML output.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+None that I know of.
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+ident(1)
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

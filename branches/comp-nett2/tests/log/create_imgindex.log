@@ -1,0 +1,14 @@
+# ========== Executing "create_imgindex.t --all" ==========
+# Testing -h (--help) option...
+ok - "../create_imgindex -h" - Option -h prints help screen
+ok - "../create_imgindex -h" - Option -h prints help screen (stderr)
+ok - "../create_imgindex -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../create_imgindex -hv" - Option --version with -h returns Id string and help screen
+ok - "../create_imgindex -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../create_imgindex --version" - Option --version returns Id string
+ok - "../create_imgindex --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

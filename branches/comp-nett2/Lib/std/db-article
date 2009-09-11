@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.3/docbookx.dtd">
+
+<article id="articleid" lang="en">
+  <!-- File ID: STDuuidDTS -->
+  <articleinfo>
+    <title>Articletitle</title>
+    <author>
+      <firstname>Øyvind</firstname>
+      <othername>A.</othername>
+      <surname>Holm</surname>
+      <email>sunny@sunbase.org</email>
+    </author>
+    <copyright>
+      <year>STDyearDTS</year>
+      <holder>Øyvind A. Holm</holder>
+    </copyright>
+    <keywordset>
+      <keyword></keyword>
+    </keywordset>
+  </articleinfo>
+
+  <section id="sectionid">
+    <title>Sectiontitle</title>
+
+    <para></para>
+
+  </section>
+  <!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
+</article>

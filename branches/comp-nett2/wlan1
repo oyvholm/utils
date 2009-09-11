@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Activates the network card.
+# Syntax: wlan1 [essid]
+#=======================================================================
+
+[ "`whoami`" = "root" ] || {
+    echo `basename $0`: Heh, you ain’t got root power. Gonna need that, mate. >&2
+    exit 1
+}
+
+unset accpoint
+if [ "$1" = "" ]; then
+    accpoint="$1"
+fi
+modprobe ath_pci
+modprobe wlan_scan_sta
+ifconfig ath0 up
+echo ==== Waiting for ath0... ====
+until grep ath0 /proc/net/wireless; do :; done
+sleep 1
+echo
+echo ==== Available networks: ====
+wlanconfig ath0 list scan
+echo
+if [ -z $accpoint ]; then
+    echo iwconfig ath0 ap any ap any
+    iwconfig ath0 ap any ap any
+else
+    echo iwconfig ath0 ap \"$accpoint\"
+    iwconfig ath0 ap "$accpoint"
+fi
+echo
+echo ======== BEGIN iwconfig ========
+iwconfig ath0
+echo ======== END iwconfig ========
+echo
+dhclient ath0

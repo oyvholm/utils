@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# Stopper nettverket på carmbb.
+#=======================================================================
+
+if [ -e /carmbb.mrk ]; then
+    killall ssh
+    /etc/init.d/networking stop
+else
+    echo "$0: Må være på carmbb" >&2
+    exit 1
+fi
