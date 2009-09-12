@@ -35,7 +35,7 @@ dest=$pref/varprg/$vername
 [ -d $dest/. ] && { echo; echo "Sorry, no new git(1) for you this time."; echo You’ll have to stick with `git describe` for now.; exit 0; }
 echo Compiling $vername
 echo ================= make $makeflags =================
-make prefix=$pref/varprg/$vername $makeflags all doc info || exit
+make prefix=$dest $makeflags all doc info || exit
 echo ================= make test =================
 make $makeflags test
 echo
@@ -43,7 +43,7 @@ echo -n If all tests succeeded, press y to continue...
 read choice
 [ "$choice" = "y" ] || { echo build-git: Aborted; exit 1; }
 echo ================= $sudo make install =================
-$sudo make prefix=$pref/varprg/$vername $makeflags install install-doc install-html install-info
+$sudo make prefix=$dest $makeflags install install-doc install-html install-info
 echo ================= make install finished =================
 $sudo mkdir -p $pref/{prg,varprg,bin}
 $sudo rm $pref/prg/git
