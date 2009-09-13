@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# $Id$
+# Fjerner spacer og konverterer ASCII-apostrofer til ’
+# Jokertegn må escapes, f.eks. '*' eller \*
+
+rename -v 's/ /_/g' $*
+rename -v "s/'/’/g" $*

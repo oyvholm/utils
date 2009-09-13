@@ -1,0 +1,512 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# File ID: 2285858a-f9f1-11dd-8b2b-000475e441b9
+# File Library Database
+#
+# Character set: UTF-8
+# ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+BEGIN {
+    our @version_array;
+}
+
+use strict;
+use Getopt::Long;
+use DBI;
+
+use lib "$ENV{'HOME'}/bin/src/fldb";
+use FLDButf;
+use FLDBsum;
+use FLDBdebug;
+use FLDBpg;
+
+$| = 1;
+
+our $Debug = 0;
+my $STD_DATABASE = "fldb";
+
+our %Opt = (
+
+    'add' => 0,
+    'crc32' => 0,
+    'database' => $STD_DATABASE,
+    'debug' => 0,
+    'description' => "",
+    'files-from' => "",
+    'help' => 0,
+    'short-format' => 0,
+    'verbose' => 0,
+    'version' => 0,
+    'xml' => 0,
+    'zero' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+
+my $rcs_id = '$Id$';
+my $id_date = $rcs_id;
+$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
+
+push(@main::version_array, $rcs_id);
+
+Getopt::Long::Configure("bundling");
+GetOptions(
+
+    "add|a" => \$Opt{'add'},
+    "crc32" => \$Opt{'crc32'},
+    "database|D=s" => \$Opt{'database'},
+    "debug" => \$Opt{'debug'},
+    "description|d=s" => \$Opt{'description'},
+    "files-from|f=s" => \$Opt{'files-from'},
+    "help|h" => \$Opt{'help'},
+    "short-format|s" => \$Opt{'short-format'},
+    "verbose|v+" => \$Opt{'verbose'},
+    "version" => \$Opt{'version'},
+    "xml|x" => \$Opt{'xml'},
+    "zero|z" => \$Opt{'zero'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+my $postgresql_database = $Opt{'database'};
+my $postgresql_host="localhost";
+my ($dbh, $sth);
+chomp(my $Hostname = `/bin/hostname`); # FIXME
+if (!valid_utf8($Hostname)) {
+    $Hostname = latin1_to_utf8($Hostname);
+}
+my $safe_hostname = safe_string($Hostname);
+
+if ($Opt{'add'}) {
+    $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
+        or die("connect: På trynet: $!");
+}
+
+my $Sql; # How ironic.
+
+$Opt{'zero'} && ($/ = "\x00");
+
+$Opt{'xml'} && print("<fldb>\n");
+if (length($Opt{'files-from'})) {
+    D("Opt{files-from} = '$Opt{'files-from'}'");
+    if (open(FP, "<", $Opt{'files-from'})) {
+        while (my $Filename = <FP>) {
+            chomp($Filename);
+            process_file($Filename);
+        }
+        close(FP);
+    } else {
+        warn("$progname: $Opt{'files-from'}: Cannot open file for read: $!\n");
+    }
+} else {
+    for (@ARGV) {
+        chomp;
+        process_file($_);
+    }
+}
+$Opt{'xml'} && print("</fldb>\n");
+
+exit 0;
+
+sub process_file {
+    # {{{
+    my $Filename = shift;
+    D("process_file('$Filename')");
+    if (!-f $Filename) {
+        warn("$progname: $Filename: Ignoring non-file\n");
+        return;
+    }
+    $Sql = add_entry($Filename);
+    if (defined($Sql)) {
+        if ($Opt{'add'}) {
+            $Opt{'verbose'} && print("$Filename\n");
+            $dbh->do($Sql) || warn("$progname: $Filename: Cannot INSERT\n");
+        } else {
+            print($Sql);
+        }
+    }
+    # }}}
+} # process_file()
+
+sub add_entry {
+    # {{{
+    my $Filename = shift;
+    if ($Filename =~ /\0/) {
+        warn("$progname: $Filename: Ignoring filename containing zero byte. Did you forget the --zero option?\n");
+        return(undef);
+    }
+    my $safe_filename = safe_string($Filename);
+    D("add_entry(\"$Filename\")");
+    my $Retval = "";
+    my @stat_array = ();
+    if (@stat_array = stat($Filename)) {
+        # {{{
+        my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
+            $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
+        $Mtime = sec_to_string($Mtime);
+        $Ctime = sec_to_string($Ctime);
+        D("Mode før: '$Mode'");
+        $Mode = sprintf("%04o", $Mode & 07777);
+        D("Mode etter: '$Mode'");
+        my %Sum = checksum($Filename, $Opt{'crc32'});
+        if (scalar(%Sum)) {
+            # {{{
+            my $crc32_str;
+            if ($Opt{'xml'}){
+                $crc32_str = $Opt{'crc32'} ? "<crc32>$Sum{crc32}</crc32> " : "";
+            } else {
+                $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
+            }
+            D("crc32_str = '$crc32_str'");
+            my $latin1_str;
+            if (valid_utf8($safe_filename)) {
+                $latin1_str = $Opt{'xml'} ? "" : "FALSE";
+            } else {
+                $latin1_str = $Opt{'xml'} ? "<latin1>1</latin1> " : "TRUE";
+                $safe_filename = latin1_to_utf8($safe_filename);
+            }
+            D("latin1_str = '$latin1_str'");
+            my $base_filename = $safe_filename;
+            $base_filename =~ s/^.*\/(.*?)$/$1/;
+            D("base_filename = '$base_filename'");
+            if ($Opt{'xml'}) {
+                my $descr_str = length($Opt{'description'})
+                    ? "<descr>" . txt_to_xml($Opt{'description'}) . "</descr> "
+                    : "";
+                D("descr_str = \"$descr_str\"");
+                if ($Opt{'short-format'}) {
+                    # {{{
+                    $Retval = sprintf(
+                        "<file> " .
+                            "<size>%u</size> " .
+                            "<sha1>%s</sha1> " .
+                            "<md5>%s</md5> " .
+                            "%s" . # $crc32_str
+                            "<name>%s</name> " .
+                            "<date>%s</date> " .
+                            "%s" . # $descr_str
+                            "%s" . # $latin_str
+                        "</file>\n",
+                        $Size,
+                        $Sum{'sha1'},
+                        $Sum{'md5'},
+                        $crc32_str,
+                        $safe_filename,
+                        $Mtime,
+                        $descr_str,
+                        $latin1_str,
+                    );
+                    # }}}
+                } else {
+                    # {{{
+                    $Retval = sprintf(
+                        "<file> " .
+                            "<size>%s</size> " .
+                            "<sha1>%s</sha1> " .
+                            "<md5>%s</md5> " .
+                            "%s" . # $crc32_str
+                            "<filename>%s</filename> " .
+                            "<mtime>%s</mtime> " .
+                            "%s" .
+                            "<ctime>%s</ctime> " .
+                            "<path>%s</path> " .
+                            "<inode>%s</inode> " .
+                            "<links>%s</links> " .
+                            "<device>%s</device> " .
+                            "<hostname>%s</hostname> " .
+                            "<uid>%s</uid> " .
+                            "<gid>%s</gid> " .
+                            "<perm>%s</perm> " .
+                            # "<lastver>%s</lastver> " .
+                            # "<nextver>%s</nextver> " .
+                            "%s" . # $latin1_str
+                        "</file>\n",
+                        $Size,
+                        $Sum{sha1},
+                        $Sum{md5},
+                        $crc32_str,
+                        $base_filename,
+                        $Mtime,
+                        $descr_str,
+                        $Ctime,
+                        $safe_filename,
+                        $Inode,
+                        $Nlinks,
+                        txt_to_xml($Dev),
+                        $safe_hostname,
+                        $Uid,
+                        $Gid,
+                        $Mode,
+                        # "",
+                        # "",
+                        $latin1_str,
+                    );
+                    # }}}
+                }
+            } else {
+                my $descr_str = length($Opt{'description'})
+                    ? "E'" . safe_sql($Opt{'description'}) . "'"
+                    : "NULL";
+                D("descr_str = \"$descr_str\"");
+                if ($Opt{'short-format'}) {
+                    # {{{
+                    $Retval = sprintf(<<END,
+INSERT INTO files (
+ sha1, md5, crc32,
+ size, filename, mtime,
+ descr,
+ latin1
+) VALUES (
+ '%s', '%s', %s,
+ %s, E'%s', '%s',
+ %s,
+ %s
+);
+END
+                        $Sum{sha1}, $Sum{md5}, $crc32_str,
+                        $Size, $base_filename, $Mtime,
+                        $descr_str,
+                        $latin1_str,
+                    );
+                    # }}}
+                } else {
+                    # {{{
+                    $Retval = sprintf(<<END,
+INSERT INTO files (
+ sha1, md5, crc32,
+ size, filename, mtime, descr, ctime,
+ path,
+ inode, links, device, hostname,
+ uid, gid, perm,
+ lastver, nextver,
+ latin1
+) VALUES (
+ '%s', '%s', %s,
+ %s, E'%s', '%s', %s, '%s',
+ E'%s',
+ %s, %s, E'%s', E'%s',
+ %s, %s, '%s',
+ %s, %s,
+ %s
+);
+END
+                        $Sum{sha1}, $Sum{md5}, $crc32_str,
+                        $Size, $base_filename, $Mtime, $descr_str, $Ctime,
+                        $safe_filename,
+                        $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
+                        $Uid, $Gid, $Mode,
+                        'NULL', 'NULL',
+                        $latin1_str,
+                    );
+                    # }}}
+                }
+            }
+            D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
+            # }}}
+        } else {
+            warn("$progname: $Filename: Cannot read file: $!\n");
+            $Retval = undef;
+        }
+        # }}}
+    } else {
+        warn("$progname: $Filename: Cannot stat file: $!\n");
+        $Retval = undef;
+    }
+    return($Retval);
+    # }}}
+} # add_entry()
+
+sub safe_string {
+    # {{{
+    my $Str = shift;
+
+    if ($Opt{'xml'}) {
+        $Str = txt_to_xml($Str);
+    } else {
+        $Str = safe_sql($Str);
+    }
+    return($Str);
+    # }}}
+} # safe_string()
+
+sub txt_to_xml {
+    # Convert plain text to XML {{{
+    my $Txt = shift;
+    $Txt =~ s/&/&amp;/gs;
+    $Txt =~ s/</&lt;/gs;
+    $Txt =~ s/>/&gt;/gs;
+    return($Txt);
+    # }}}
+} # txt_to_xml()
+
+sub print_version {
+    # Print program version {{{
+    for (@main::version_array) {
+        print("$_\n");
+    }
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<END);
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -a, --add
+    Add file information to database.
+  --crc32
+    Also calculate CRC32. Reads the whole file into memory, so it’s not 
+    suitable for big files. Maybe fixed in newer Perl versions.
+  -d x, --description x
+    Use x as file description.
+  -D x, --database x
+    Use database x.
+  -f x, --files-from x
+    Read filenames from x.
+  -h, --help
+    Show this help.
+  -s, --short-format
+    Output checksums, size, filname, mtime and latin1 fields only.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  -x, --xml
+    Use XML output.
+  -z, --zero
+    Filenames are separated by a zero byte (\\0x00) instead of newline 
+    (\\n). This makes it possible to read files containing newlines.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
+    my ($Seconds) = shift;
+    ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
+
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0]);
+    return($DateString);
+    # }}}
+} # sec_to_string()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    # }}}
+} # msg()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 REVISION
+
+$Id$
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# End of file $Id$

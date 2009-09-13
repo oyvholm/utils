@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#=======================================================================
+# $Id$
+# When calling this one-liner instead of svn, a comma-separated list of 
+# the revision numbers is generated. For use in log messages etc.
+#
+# Examples:
+# svnrevs -r1:HEAD
+# svnrevs -r512:798 blurfl.c
+# svnrevs http://svn.example.com/trunk/doc
+# for f in `svnrevs a.txt|tr -d ,`; do svn cat -$f a.txt >a.txt.$f; done
+#=======================================================================
+
+svn log --xml $* | perl -e '$a = join("", <>); $b = $c = ""; $a =~ s/<logentry\b.*?\brevision="(\d+)".*?>/($b .= "${c}r$1", $c = ", ")/egs; print "$b\n";'
+
+# vim: set ts=2 sw=2 sts=2 et :

@@ -1,0 +1,14 @@
+# ========== Executing "csv2gpx.t --all" ==========
+# Testing -h (--help) option...
+ok - "../csv2gpx -h" - Option -h prints help screen
+ok - "../csv2gpx -h" - Option -h prints help screen (stderr)
+ok - "../csv2gpx -h" - No Id with only -h
+# Testing -v (--verbose) option...
+ok - "../csv2gpx -hv" - Option --version with -h returns Id string and help screen
+ok - "../csv2gpx -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../csv2gpx --version" - Option --version returns Id string
+ok - "../csv2gpx --version" - Option --version returns Id string (stderr)
+# Running TODO tests...
+# Testing finished.
+1..7

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# $Id$
+
+svn sw $SR/utils/branches/$1 .

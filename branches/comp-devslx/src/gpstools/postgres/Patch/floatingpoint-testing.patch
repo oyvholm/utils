@@ -1,0 +1,48 @@
+Index: create_views.sql
+===================================================================
+--- create_views.sql	(revisjon 2221)
++++ create_views.sql	(arbeidskopi)
+@@ -122,8 +122,20 @@
+ -- Lister ut events sammen med loggen.
+ CREATE OR REPLACE VIEW ev AS
+     SELECT * FROM (
++        SELECT     'gps' AS flag, date, (coor[0]::numeric || ',' || coor[1]::numeric)::point as coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
++            FROM logg
++        -- UNION ALL
++        -- SELECT   'event' AS flag, date, coor[0] || ',' || coor[1], NULL, NULL, descr AS descr, NULL
++        --     FROM events
++        -- UNION ALL
++        -- SELECT     'pic' AS flag, date, coor[0] || ',' || coor[1], filename, NULL, NULL, NULL
++        --     FROM pictures
++    ) AS u
++    ORDER BY date;
++CREATE OR REPLACE VIEW flev AS
++    SELECT * FROM (
+         SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
+-            FROM logg
++            FROM rsflytting
+         UNION ALL
+         SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr, NULL
+             FROM events
+@@ -131,7 +143,21 @@
+         SELECT     'pic' AS flag, date, coor, filename, NULL, NULL, NULL
+             FROM pictures
+     ) AS u
++    WHERE date between '2007-11-01' and '2007-12-01'
+     ORDER BY date;
++CREATE OR REPLACE VIEW evmer AS
++    SELECT * FROM (
++        SELECT     'gps' AS flag, date, coor, sted || ' (' || dist || ')' AS sted, ele::numeric(8,1), NULL AS descr, avst
++            FROM rsmerete
++        UNION ALL
++        SELECT   'event' AS flag, date, coor, NULL, NULL, descr AS descr, NULL
++            FROM events
++        UNION ALL
++        SELECT     'pic' AS flag, date, coor, filename, NULL, NULL, NULL
++            FROM pictures
++    ) AS u
++    WHERE date between '2007-11-01' and '2007-12-01'
++    ORDER BY date;
+ 
+ CREATE OR REPLACE VIEW wp AS
+     SELECT

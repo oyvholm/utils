@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# $Id$
+# File ID: b834114a-fa6f-11dd-bf5e-000475e441b9
+# Fyrer opp en stor xterm i X
+
+# Det ender som oftest i
+#
+# --small:
+# xterm -u8 -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -bg black -fg white -bc -geometry 211x67+0+0
+#
+# --big:
+# xterm -u8 -fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 -bg black -fg white -bc -geometry 140x48+0-8
+
+uuid=`suuid -w eo -t c_bigsh -c "bigsh $*"` || { echo bigsh: suuid error >&2; xmessage -center "bigsh: suuid error" & exit 1; }
+smallfont=1
+[ -e /carmbb.mrk ] && { smallfont=1; }
+[ "$1" = "--small" ] && { smallfont=1; shift; }
+[ "$1" = "--big" ] && { smallfont=0; shift; }
+
+if [ -e /carmbb.mrk ]; then
+	if [ "$smallfont" = "1" ]; then
+		geom=131x40+0+0
+	else
+		geom=87x29+0+0
+	fi
+else
+	if [ "$smallfont" = "1" ]; then
+		geom=211x67+0+0
+	else
+		geom=140x48+0-8
+	fi
+fi
+
+if [ "$smallfont" = "1" ]; then
+	xterm \
+	-u8 \
+	-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+	-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+	-bg black \
+	-fg white \
+	-bc \
+	-geometry $geom $*
+else
+	xterm \
+	-u8 \
+	-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
+	-bg black \
+	-fg white \
+	-bc \
+	-geometry $geom $*
+fi
+
+suuid -t c_bigsh -c "Session $uuid ferdig."
+exit

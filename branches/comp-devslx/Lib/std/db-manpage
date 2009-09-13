@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4//EN" "http://docbook.org/xml/4.4/docbookx.dtd">
+<refentry id="__FNAME" lang="en">
+  <!-- File ID: STDuuidDTS -->
+  <refentryinfo>
+    <keywordset>
+      <keyword></keyword>
+    </keywordset>
+  </refentryinfo>
+  <refmeta>
+    <refentrytitle>__FNAME</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+  <refnamediv>
+    <refname>__FNAME</refname>
+    <refpurpose>__DESCRIPTION</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <cmdsynopsis>
+      <command>__FNAME</command>
+      <arg choice="opt">
+        <replaceable>options</replaceable>
+      </arg>
+      <arg choice="opt" rep="repeat">
+        <replaceable>file</replaceable>
+      </arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+  <refsect1 id="__FNAME.description">
+    <title>Description</title>
+
+    <variablelist>
+
+      <varlistentry>
+        <term><option>-h</option>, <option>--help</option></term>
+        <listitem>
+          <para>Send a brief help summary to stdout.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>-v</option>, <option>--verbose</option></term>
+        <listitem>
+          <para>Verbose output, can be repeated.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--version</option></term>
+        <listitem>
+          <para>Print version information.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><option>--debug</option></term>
+        <listitem>
+          <para>Print debugging messages.</para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </refsect1>
+  <refsect1 id="__FNAME.bugs">
+    <title>Bugs</title>
+
+    <para></para>
+
+  </refsect1>
+  <refsect1 id="__FNAME.author">
+    <title>Author</title>
+
+    <para>Made by <personname><firstname>Øyvind</firstname> 
+    <othername>A.</othername> <surname>Holm</surname></personname> 
+    <email>sunny@sunbase.org</email>.</para>
+
+  </refsect1>
+  <refsect1 id="__FNAME.copyright">
+    <title>Copyright</title>
+
+    <para>Copyleft © <personname><firstname>Øyvind</firstname> 
+    <othername>A.</othername> <surname>Holm</surname></personname> 
+    <email>sunny@sunbase.org</email>.
+    This is free software; see the file <filename>COPYING</filename> for 
+    legalese stuff.</para>
+
+  </refsect1>
+  <refsect1 id="__FNAME.license">
+    <title>License</title>
+
+    <para>This program is free software: you can redistribute it and/or 
+    modify it under the terms of the <citetitle>GNU General Public 
+    License</citetitle> as published by the <orgname 
+    class="nonprofit">Free Software Foundation</orgname>, either version 
+    3 of the License, or (at your option) any later version.</para>
+
+    <para>This program is distributed in the hope that it will be 
+    useful, but <emphasis>WITHOUT ANY WARRANTY</emphasis>; without even 
+    the implied warranty of <emphasis>MERCHANTABILITY</emphasis> or 
+    <emphasis>FITNESS FOR A PARTICULAR PURPOSE</emphasis>.
+    See the GNU General Public License for more details.</para>
+
+    <para>You should have received a copy of the GNU General Public 
+    License along with this program.
+    If not, see <ulink url="http://www.gnu.org/licenses/" />.</para>
+
+  </refsect1>
+  <refsect1 id="__FNAME.seealso">
+    <title>See also</title>
+
+    <para><citerefentry>
+      <refentrytitle></refentrytitle>
+      <manvolnum></manvolnum>
+    </citerefentry></para>
+
+  </refsect1>
+  <!-- vim: set tw=72 ts=2 sts=2 sw=2 et fo=tcqw fenc=UTF-8 : -->
+</refentry>

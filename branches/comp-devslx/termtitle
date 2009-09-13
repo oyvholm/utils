@@ -1,0 +1,6 @@
+#!/usr/bin/perl
+
+# $Id$
+# Setter tittel i xterm-vindu.
+
+print(chr(157), "2;", @ARGV, chr(7));

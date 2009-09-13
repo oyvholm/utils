@@ -1,0 +1,21 @@
+#!/usr/bin/perl -w
+
+#==========================================================================
+# $Id$
+#
+# Konverterer antall sekunder sia 1970-01-01T00:00:00Z i begynnelsen av
+# ei linje til ååååmmddTttmmssZ, det er mer oversiktlig. Tallene må ha 9
+# eller 10 siffer. Med andre ord funker det greit fra og med 1973-03-03
+# 09:46:40 GMT til 2286-11-20 17:46:39 GMT.
+#==========================================================================
+
+use strict;
+
+$| = 1;
+
+my @TA;
+
+while (<>) {
+	s/^(\d{9,10})\b/@TA = gmtime($1),sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0])/ge;
+	print $_;
+}

@@ -1,0 +1,25 @@
+#!/usr/bin/perl -w
+
+# $Id$
+
+$| = 1;
+
+use strict;
+use Fcntl ':flock';
+
+my ($curr_pos, $last_pos) = (0, 0);
+
+while(1) {
+	printf("curr-last = %u\n", $curr_pos-$last_pos);
+	# open(FP, "<$0") || die("$0: Lesing: $!");
+	my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,$atime,$mtime,$ctime,$blksize,$blocks) = stat($0);
+                                                   
+ 	# flock(FP, LOCK_SH);
+	# seek(FP, 0, 2) || warn("seek(): $!");
+	# $curr_pos = tell(FP);
+	$curr_pos = $size;
+	print("curr = $curr_pos.\n");
+	# close(FP);
+	$last_pos = $curr_pos;
+	sleep(5);
+}

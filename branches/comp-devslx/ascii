@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+# Avansert esse
+# $Id$
+
+for (32..255) {
+	printf("%03u 0x%02x %c\n", $_, $_, $_);
+}

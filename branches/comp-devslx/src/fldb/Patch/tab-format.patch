@@ -1,0 +1,73 @@
+Index: fldb
+===================================================================
+--- fldb	(revisjon 2336)
++++ fldb	(arbeidskopi)
+@@ -37,6 +37,7 @@
+     'debug' => 0,
+     'files-from' => "",
+     'help' => 0,
++    'tab' => 1,
+     'short-format' => 0,
+     'verbose' => 0,
+     'version' => 0,
+@@ -64,6 +65,7 @@
+     "files-from|f=s" => \$Opt{'files-from'},
+     "help|h" => \$Opt{'help'},
+     "short-format|s" => \$Opt{'short-format'},
++    "tab|t" => \$Opt{'tab'},
+     "verbose|v+" => \$Opt{'verbose'},
+     "version" => \$Opt{'version'},
+     "xml|x" => \$Opt{'xml'},
+@@ -176,7 +178,12 @@
+             my $base_filename = $safe_filename;
+             $base_filename =~ s/^.*\/(.*?)$/$1/;
+             D("base_filename = '$base_filename'");
+-            if ($Opt{'xml'}) {
++            if ($Opt{'tab'}) {
++                $Retval = sprintf(
++                    "%s-%s-%lu\t%s\n",
++                    $Sum{'sha1'}, $Sum{'md5'}, $Size, safe_tab($Filename)
++                );
++            } elsif ($Opt{'xml'}) {
+                 if ($Opt{'short-format'}) {
+                     # {{{
+                     $Retval = sprintf(
+@@ -369,6 +376,9 @@
+     Show this help.
+   -s, --short-format
+     Output checksums, size, filname, mtime and latin1 fields only.
++  -t, --tab
++    Use tab (in lack of better name) format: SHA1-MD5-SIZE\\tFILENAME\\n
++    This option is experimental and likely to change.
+   -v, --verbose
+     Increase level of verbosity. Can be repeated.
+   --version
+Index: FLDBpg.pm
+===================================================================
+--- FLDBpg.pm	(revisjon 2336)
++++ FLDBpg.pm	(arbeidskopi)
+@@ -23,7 +23,7 @@
+     $VERSION = ($rcs_id =~ / (\d+) /, $1);
+ 
+     @ISA = qw(Exporter);
+-    @EXPORT = qw(&safe_sql);
++    @EXPORT = qw(&safe_sql &safe_tab);
+     %EXPORT_TAGS = ();
+ }
+ our @EXPORT_OK;
+@@ -40,4 +40,15 @@
+     # }}}
+ } # safe_sql()
+ 
++sub safe_tab {
++    # {{{
++    my $Str = shift;
++    $Str =~ s/\\/\\\\/gs;
++    $Str =~ s/\n/\\n/gs;
++    $Str =~ s/\r/\\r/gs;
++    $Str =~ s/\t/\\t/gs;
++    return($Str);
++    # }}}
++} # safe_tab()
++
+ 1;

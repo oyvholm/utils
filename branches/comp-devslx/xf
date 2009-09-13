@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# $Id$
+
+fromfile=-
+
+if [ "$1" != "" ]; then
+    fromfile="$@"
+fi
+
+xmllint --format --encode UTF-8 --nocdata $fromfile

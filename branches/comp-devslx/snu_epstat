@@ -1,0 +1,15 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Snur outputen fra epstat,v 1.3 og tidlligere og plasserer datoen først.
+
+use strict;
+
+while (<>) {
+	if (/^\s+(\d+)\s+(.*)$/) {
+		# s/ /\t/;
+		print("$2\t$1\n");
+	} else {
+		print;
+	}
+}

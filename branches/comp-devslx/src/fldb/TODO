@@ -1,0 +1,7 @@
+$Id$
+File ID: ff697f9c-fa5a-11dd-a6c6-000475e441b9
+
+Få orden på stdin. Hvis ingenting spesifiseres på kommandolinja og -f 
+ikke er brukt, kjør checksum og currtime på den.
+
+vim: set tw=72 ts=2 sw=2 sts=2 fenc=UTF-8 et fo=tcqw2 :

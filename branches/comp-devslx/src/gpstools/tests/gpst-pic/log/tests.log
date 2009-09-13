@@ -1,0 +1,60 @@
+ok - use GPST;
+ok - use GPSTxml;
+# ========== Executing "gpst-pic.t" ==========
+# Checking dependencies...
+ok - "exifprobe -V" - Check that exifprobe(1) is installed
+ok - "exifprobe -V" - Check that exifprobe(1) is installed (stderr)
+# Testing --author option...
+ok - "../../gpst-pic -a sunny files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --author
+ok - "../../gpst-pic -a sunny files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --author (stderr)
+ok - "../../gpst-pic -a sunny -o xml files/DSC_4426.JPG" - Author info is included with -o xml
+ok - "../../gpst-pic -a sunny -o xml files/DSC_4426.JPG" - Author info is included with -o xml (stderr)
+# Testing --description option...
+ok - "../../gpst-pic -d 'Skumle til\stander i Bergen.' files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --description with backslash
+ok - "../../gpst-pic -d 'Skumle til\stander i Bergen.' files/DSC_4426.JPG" - Read date from DSC_4426.JPG and set --description with backslash (stderr)
+ok - "../../gpst-pic -d 'Skumle til\stander &<> i Bergen.' -o xml files/DSC_4426.JPG" - --description works witk XML output
+ok - "../../gpst-pic -d 'Skumle til\stander &<> i Bergen.' -o xml files/DSC_4426.JPG" - --description works witk XML output (stderr)
+# Testing -h (--help) option...
+ok - "../../gpst-pic -h" - Option -h prints help screen
+ok - "../../gpst-pic -h" - Option -h prints help screen (stderr)
+ok - "../../gpst-pic -h" - No Id with only -h
+# Testing --output-format option...
+ok - "../../gpst-pic -o pgtab files/DSC_4426.JPG" - Output pgtab format from DSC_4426.JPG
+ok - "../../gpst-pic -o pgtab files/DSC_4426.JPG" - Output pgtab format from DSC_4426.JPG (stderr)
+ok - "../../gpst-pic -o xml files/DSC_4426.JPG" - Output XML information for DSC_4426.JPG
+ok - "../../gpst-pic -o xml files/DSC_4426.JPG" - Output XML information for DSC_4426.JPG (stderr)
+ok - "../../gpst-pic -o blurfl files/DSC_4426.JPG" - Unknown output format specified
+ok - "../../gpst-pic -o blurfl files/DSC_4426.JPG" - Unknown output format specified (stderr)
+# Testing -w (--strip-whitespace) option...
+ok - "../../gpst-pic -w -o xml files/DSC_4426.JPG" - Strip whitespace from XML
+ok - "../../gpst-pic -w -o xml files/DSC_4426.JPG" - Strip whitespace from XML (stderr)
+# Testing -T (--timezone) option...
+ok - "../../gpst-pic --timezone +1234 files/DSC_4426.JPG" - --timezone works
+ok - "../../gpst-pic --timezone +1234 files/DSC_4426.JPG" - --timezone works (stderr)
+ok - "../../gpst-pic -T +0200 files/DSC_4426.JPG" - Positive time zone
+ok - "../../gpst-pic -T +0200 files/DSC_4426.JPG" - Positive time zone (stderr)
+ok - "../../gpst-pic -T-0600 files/DSC_4426.JPG" - Negative time zone
+ok - "../../gpst-pic -T-0600 files/DSC_4426.JPG" - Negative time zone (stderr)
+ok - "../../gpst-pic -T CET files/DSC_4426.JPG" - Time zone abbreviation
+ok - "../../gpst-pic -T CET files/DSC_4426.JPG" - Time zone abbreviation (stderr)
+ok - "../../gpst-pic -T cet files/DSC_4426.JPG" - Time zone is converted to upper case
+ok - "../../gpst-pic -T cet files/DSC_4426.JPG" - Time zone is converted to upper case (stderr)
+ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation
+ok - "../../gpst-pic -T Z files/DSC_4426.JPG" - Zulu abbreviation (stderr)
+ok - "../../gpst-pic -T erf324 files/DSC_4426.JPG" - Invalid time zone abbr, contains digits
+ok - "../../gpst-pic -T erf324 files/DSC_4426.JPG" - Invalid time zone abbr, contains digits (stderr)
+ok - "../../gpst-pic -T CET -o xml files/DSC_4426.JPG" - Time zone abbr. works with -o xml
+ok - "../../gpst-pic -T CET -o xml files/DSC_4426.JPG" - Time zone abbr. works with -o xml (stderr)
+ok - "../../gpst-pic -T Z -o xml files/DSC_4426.JPG" - Zulu time zone works with -o xml
+ok - "../../gpst-pic -T Z -o xml files/DSC_4426.JPG" - Zulu time zone works with -o xml (stderr)
+# Testing -v (--verbose) option...
+ok - "../../gpst-pic -hv" - Option --version with -h returns Id string and help screen
+ok - "../../gpst-pic -hv" - Option --version with -h returns Id string and help screen (stderr)
+# Testing --version option...
+ok - "../../gpst-pic --version" - Option --version returns Id string
+ok - "../../gpst-pic --version" - Option --version returns Id string (stderr)
+# Various...
+ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options
+ok - "../../gpst-pic files/DSC_4426.JPG" - Read date from DSC_4426.JPG, no options (stderr)
+# Testing finished.
+1..47

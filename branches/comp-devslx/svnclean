@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#=======================================================================
+# $Id$
+# File ID: 0f6706d6-f744-11dd-a790-000475e441b9
+# Clean up a subversion working copy
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+if [ ! -d .svn/. ]; then
+    echo "Current directory is not a svn working copy, aborting." >&2
+    exit 1
+fi
+
+echo Warning, this command will delete all files which is not versioned with >&2
+echo Subversion. The working copy will be reset. >&2
+echo -n "Press 'y' + Enter to continue..." >&2
+read choice
+if [ "$choice" = "y" ]; then
+    echo ==== svn cleanup...
+    svn cleanup .
+    echo ==== svn revert...
+    svn revert -R .
+    echo ==== Remove unknown files...
+    svn stat --no-ignore | grep -E '^[\?I]' | cut -c 8- | \
+        perl -pe 's/^/\.\//' | tr '\n' '\0' | xargs -0 -r rm -rfv
+    echo ==== svn stat --no-ignore...
+    svn stat --no-ignore
+fi

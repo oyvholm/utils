@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# $Id$
+# Recursive mkFiles
+
+if [ "$1" = "-c" ]; then
+	# Check the Files.md5 files instead of creating them
+	for f in `find -type d -depth`; do
+		echo "=== Directory $f"
+		cd $f && { md5sum -c Files.md5 ; cd - ; }
+	done
+else
+	# Create Files.md5
+	for f in `find -type d -depth`; do
+		echo $f
+		cd $f && { mkFiles ; cd - ; }
+	done
+fi
+
+# vim: set ts=4 sw=4 :

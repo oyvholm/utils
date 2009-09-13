@@ -1,0 +1,102 @@
+#!/usr/bin/perl
+
+# $Id$
+# (C)opyleft 1998 Oyvind A. Solheim <sunny@pils.kvarteret.uib.no>
+# License: GNU General Public License version 2 or later.
+
+$Debug = 1;
+$LastMd5 = substr(`md5sum /dev/null`,0,32);
+$Extension = ""; # To avoid "Use of uninitialized value" warning.
+$Prefix = "";
+
+print "md5sum /dev/null=\"$LastMd5\"\n" if $Debug;
+# Syntax: getpic url [prefix] [ext]
+
+print "argv = $#ARGV\n" if $Debug;
+
+if ($#ARGV < 1) {
+	print "\nSyntax: $0 url sleeptime_in_seconds [prefix] [ext]\n\n";
+	exit 1;
+}
+
+$Url = $ARGV[0];
+$SleepTime = $ARGV[1];
+$Prefix = $ARGV[2] if $#ARGV > 1;
+$Extension = $ARGV[3] if $#ARGV > 2;
+
+print "\$Url       = \"$Url\"\n" if $Debug;
+print "\$SleepTime = \"$SleepTime\"\n" if $Debug;
+print "\$Prefix    = \"$Prefix\"\n" if $Debug;
+print "\$Extension = \"$Extension\"\n" if $Debug;
+
+# die "Invalid sleeptime: $SleepTime" if ($SleepTime == 0);
+$LastFile = "last.$Prefix$Extension.dat";
+$| = 1 if $Debug;
+
+for (;;) {
+	$FileName = $Prefix . &Utc . $Extension;
+	$GetCommand = sprintf("wget -nv %s -O %s", $Url, $FileName);
+	# print "Executing \"$GetCommand\"..." if $Debug;
+	system($GetCommand);
+	# print "returned $?\n" if $Debug;
+	$FileMd5 = substr(`md5sum $FileName`,0,32);
+	if ("$FileMd5" eq "d41d8cd98f00b204e9800998ecf8427e") {
+		print "******* $FileName has zero size, removing it. ********\n";
+		unlink($FileName) || warn "$FileName: Can't unlink file: $!";
+		sleep 5;
+		next;
+	}
+	$LastMd5 = `cat $LastFile`;
+	# print "\$FileMd5=\"$FileMd5\"\n" if $Debug;
+	# print "\$LastMd5=\"$LastMd5\"\n" if $Debug;
+	if ("$FileMd5" eq "$LastMd5") {
+		print "Removing $FileName.\n" if $Debug;
+		unlink $FileName || warn "$FileName: Can't unlink file: $!";
+	} else {
+		print "********* KEEPING $FileName *********\n" if $Debug;
+		system("echo -n $FileMd5 >$LastFile");
+		# open(LastFP,">$LastFile") or die "$0: $LastFile: Cannot create file: $!";
+		# print LastFP "$FileMd5";
+		# close(LastFP) || warn "$0: $LastFile: Can't close file: $!";
+	}
+	last if (-e "stop");
+	if ($SleepTime) {
+		print "Sleeping for $SleepTime seconds..." if $Debug;
+		sleep $SleepTime;
+		print "continuing.\n" if $Debug;
+	}
+	print "------------------------------------------------------------------------\n";
+}
+unlink "stop";
+exit 0;
+
+sub Utc {
+	$FromSystem=time();
+	@TA=gmtime($FromSystem);
+	$UtcTime=sprintf("%04u%02u%02uT%02u%02u%02uZ", $TA[5]+1900, $TA[4]+1, $TA[3], $TA[2], $TA[1], $TA[0]);
+	return $UtcTime;
+}
+
+__END__
+
+=pod
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program; if not, write to the Free Software Foundation, Inc., 
+59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+=cut
+
+#### End of file $Id$ ####

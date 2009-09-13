@@ -1,0 +1,102 @@
+#!/usr/bin/perl -w
+
+#=======================================================================
+# $Id$
+# Samler en masse tidspunkter i epoch-format på for eksempel samme dag 
+# eller hver time. Forventer antall sekunder siden 19700101T000000Z 
+# først på linja.
+#=======================================================================
+
+use strict;
+use Getopt::Std;
+
+$| = 1;
+
+our ($opt_d, $opt_h, $opt_s, $opt_w) =
+    (     0,      0,      0,      0);
+
+getopts('d:hs:w:');
+
+my $Period = 0;
+my %Data = ();
+my $Lowest = 4_294_967_295; # Hm. Æ sei ikkje meir. 2³²-1
+my $Highest = 0;
+
+$opt_h && usage(0);
+
+if (defined($ARGV[0]) && !($ARGV[0] =~ /[^0-9]/)) {
+    $Period = $ARGV[0];
+    shift;
+}
+
+if ($opt_s =~ /^\d+$/) {
+    $Period += $opt_s;
+}
+
+if ($opt_d =~ /^\d+$/) {
+    $Period += $opt_d * 86400;
+}
+
+if ($opt_w =~ /^\d+$/) {
+    $Period += $opt_w * 7*86400;
+}
+
+$Period || ($Period = 86400);
+
+while (<>) {
+    if (/^(\d+)/) {
+        my $Curr = int($1/$Period);
+        $Lowest = $Curr if ($Curr < $Lowest);
+        $Highest = $Curr if ($Curr > $Highest);
+        $Data{$Curr}++;
+    } else {
+        warn("Line $.: Invalid line format");
+    }
+}
+
+for (my $Check = $Lowest; $Check < $Highest; $Check++) {
+    defined($Data{$Check}) || ($Data{$Check} = 0);
+}
+
+# @tmp_array-prosjektet er en nødløsning for å få sortert utdataene.
+
+my @tmp_array = ();
+
+while (my ($Num, $Val) = each %Data) {
+    push(@tmp_array, sprintf("%u\t%u\n",
+                             ($Num * $Period) + int($Period / 2),
+                             $Val
+                     )
+    );
+}
+
+if (open(TmpFP, "| sort -n")) {
+    for (@tmp_array) {
+        print(TmpFP $_);
+    }
+    close(TmpFP);
+} else {
+    die("Can’t open pipe: $!");
+}
+
+sub usage {
+    # {{{
+    my $Retval = shift;
+    print <<END;
+
+Syntax: $0 [options] [file [more files [even more [you get the point]]]]
+
+Options:
+
+  -d N  Use N days as period
+  -n    Generate data up to current time, guarantees complete periods, 
+        but data values may vary when executed at different timepoints.
+  -s N  Use N seconds as period
+  -w N  Use N weeks as period
+
+END
+    exit $Retval;
+    # }}}
+}
+
+# End of file $Id$
