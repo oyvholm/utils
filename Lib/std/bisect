@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#=======================================================================
+# STDfilenameDTS
+# File ID: STDuuidDTS
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+topdir=/home/directory_that_does_not_exist-STDuuidDTS
+
+function cleangit {
+    cd $topdir || { echo "STDfilenameDTS: $topdir: Cannot change directory, aborting." >&2; exit 150; }
+    if [ ! -d .git/. ]; then
+        echo "STDfilenameDTS: $topdir: Doesn’t contain a .git directory, aborting." >&2
+        exit 150
+    fi
+    git clean -fxd
+    git co -f
+}
+
+function inittest {
+    : Things like ./configure and make goes here
+}
+
+function runtest {
+    : The actual test goes here and should return !0 on error
+}
+
+cleangit
+cd $topdir
+inittest
+runtest || { cleangit; echo STDfilenameDTS: bad; exit 1; }
+cleangit
+echo STDfilenameDTS: good
+exit 0
