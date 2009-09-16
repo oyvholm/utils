@@ -9,6 +9,11 @@
 
 topdir=/home/directory_that_does_not_exist-STDuuidDTS
 
+# What the STDfilenameDTS script shall return, switch the values if the test 
+# returns 0 for error and !0 for success.
+good=0
+bad=1
+
 function cleangit {
     cd $topdir || { echo "STDfilenameDTS: $topdir: Cannot change directory, aborting." >&2; exit 150; }
     if [ ! -d .git/. ]; then
@@ -24,13 +29,13 @@ function inittest {
 }
 
 function runtest {
-    : The actual test goes here and should return !0 on error
+    : The actual test goes here and should return !$good on error
 }
 
 cleangit
 cd $topdir
 inittest
-runtest || { cleangit; echo STDfilenameDTS: bad; exit 1; }
+runtest || { cleangit; echo STDfilenameDTS: bad, returns $bad; exit $bad; }
 cleangit
-echo STDfilenameDTS: good
-exit 0
+echo STDfilenameDTS: good, returns $good
+exit $good
