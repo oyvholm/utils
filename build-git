@@ -17,11 +17,17 @@ pref=/usr/local
 sudo=sudo
 makeflags=
 
-[ -z "`git --version | grep '^git version '`" ] && { echo $0: You need to have git installed to use this script. >&2; exit 1; }
+[ -z "`git --version | grep '^git version '`" ] && {
+    echo $0: You need to have git installed to use this script. >&2;
+    exit 1;
+}
 
 rmdir $builddir 2>/dev/null
 if [ ! -d $builddir/. ]; then
-    mkdir -p $builddir || { echo build-git: $builddir: Cannot create directory; exit 1; }
+    mkdir -p $builddir || {
+        echo build-git: $builddir: Cannot create directory;
+        exit 1;
+    }
     rmdir $builddir
     echo ================= git clone =================
     git clone git://git.kernel.org/pub/scm/git/git.git $builddir
@@ -29,7 +35,7 @@ fi
 cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
 if [ ! -e GIT-VERSION-GEN ]; then
     # Paranoia check
-    echo build-git: Didn’t find GIT-VERSION-GEN. That’s incredibly strange, aborting.
+    echo build-git: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
     exit 1
 fi
 echo ================= git clean =================
@@ -41,7 +47,11 @@ echo ================= git merge origin/master =================
 git merge origin/master
 vername=git.master-`git describe --abbrev=20`
 dest=$pref/varprg/$vername
-[ -d $dest/. ] && { echo; echo "Sorry, no new git(1) for you this time."; echo You’ll have to stick with `git describe` for now.; exit 0; }
+[ -d $dest/. ] && {
+    echo; echo "Sorry, no new git(1) for you this time.";
+    echo You’ll have to stick with `git describe` for now.;
+    exit 0;
+}
 echo Compiling $vername
 echo ================= make $makeflags =================
 make prefix=$dest $makeflags all doc info || exit
@@ -57,7 +67,10 @@ echo ================= make install finished =================
 $sudo mkdir -p $pref/{prg,varprg,bin}
 $sudo rm $pref/prg/git
 $sudo ln -svf ../varprg/$vername $pref/prg/git
-cd $pref/bin || { echo build-git: $pref/bin: Cannot chdir, aborting >&2; exit 1; }
+cd $pref/bin || {
+    echo build-git: $pref/bin: Cannot chdir, aborting >&2;
+    exit 1;
+}
 $sudo ln -svf ../prg/git/bin/* .
 echo ================= Check that the thing works =================
 hash -r
@@ -76,7 +89,10 @@ cd $pref/prg/git/share/man
 mansects=`ls`
 for f in $mansects; do
     $sudo mkdir -p $pref/share/man/$f
-    cd $pref/share/man/$f || { echo build-git: $pref/share/man/$f: Could not chdir, aborting >&2; exit 1; }
+    cd $pref/share/man/$f || {
+        echo build-git: $pref/share/man/$f: Could not chdir, aborting >&2;
+        exit 1;
+    }
     pwd
     $sudo rm *
     $sudo ln -s ../../../prg/git/share/man/$f/* .
