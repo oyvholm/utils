@@ -38,6 +38,12 @@ if [ ! -e GIT-VERSION-GEN ]; then
     echo build-git: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
     exit 1
 fi
+echo ================= git status in `pwd` =================
+git status
+echo
+echo If that looks okay to you, press Enter to fetch newest git version
+echo -n and start the build, or press CTRL-C to abort.
+read
 echo ================= git clean =================
 git clean -fxd
 git checkout -f master
