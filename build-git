@@ -3,6 +3,8 @@
 #=======================================================================
 # build-git
 # File ID: 7075da30-98d2-11de-b3de-00248cd5cf1e
+# (C)opyleft 2009 Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later
 #=======================================================================
 
 builddir=$HOME/src/git/other/build-git
