@@ -45,7 +45,7 @@ echo ================= git fetch =================
 git fetch
 echo ================= git merge origin/master =================
 git merge origin/master
-vername=git.master-`git describe --abbrev=20`
+vername=git.master-`git describe --abbrev=8`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
     echo; echo "Sorry, no new git(1) for you this time.";
