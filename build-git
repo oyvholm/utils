@@ -7,8 +7,13 @@
 # License: GNU General Public License version 3 or later
 #=======================================================================
 
+# Directory where the git build happens
 builddir=$HOME/src/git/other/build-git
+# Prefix to directory tree where git will be installed. You can change it to 
+# for example $HOME/local if you don’t have root access.
 pref=/usr/local
+# If you don’t have sudo rights or you don’t need it at the location in the 
+# file system, clear the value of the $sudo variable
 sudo=sudo
 makeflags=
 
