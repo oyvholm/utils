@@ -17,6 +17,8 @@ pref=/usr/local
 sudo=sudo
 makeflags=
 
+[ -z "`git --version | grep '^git version '`" ] && { echo $0: You need to have git installed to use this script. >&2; exit 1; }
+
 rmdir $builddir 2>/dev/null
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || { echo build-git: $builddir: Cannot create directory; exit 1; }
