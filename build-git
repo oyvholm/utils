@@ -84,6 +84,7 @@ localgit=`./git --version`
 globalgit=`git --version`
 if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
+    git tag compiled-$(hostname)-$(u)
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
