@@ -15,6 +15,10 @@ pref=/usr/local
 # If you don’t have sudo rights or you don’t need it at the location in the 
 # file system, clear the value of the $sudo variable
 sudo=sudo
+# Local name of remote master
+local_master=master
+# Name of remote master
+remote_master=origin/master
 makeflags=
 
 [ -z "`git --version | grep '^git version '`" ] && {
@@ -46,12 +50,12 @@ echo -n and start the build, or press CTRL-C to abort.
 read
 echo ================= git clean =================
 git clean -fxd
-git checkout -f master
+git checkout -f $local_master
 echo ================= git fetch =================
 git fetch
-echo ================= git merge origin/master =================
-git merge origin/master
-vername=git.master-`git describe --abbrev=8`
+echo ================= git merge $remote_master =================
+git merge $remote_master
+vername=git.$local_master.`git describe --abbrev=8`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
     echo; echo "Sorry, no new git(1) for you this time.";
