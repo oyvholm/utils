@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# update
+# File ID: de593a72-abe4-11de-9c3c-00248cd5cf1e
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+svn co $SR/svnutils
