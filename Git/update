@@ -7,5 +7,9 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-[ -d build-git/. ] || git clone sunny@git.sunbase.org:/home/sunny/Git/build-git
+if [ ! -d build-git/. ]; then
+    git clone sunny@git.sunbase.org:/home/sunny/Git/build-git
+    cd build-git
+    git branch --track commit_symlink origin/commit_symlink
+fi
 cd build-git && git fetch && git checkout commit_symlink && git fetch && git merge origin/commit_symlink
