@@ -8,4 +8,4 @@
 #=======================================================================
 
 [ -d build-git/. ] || git clone sunny@git.sunbase.org:/home/sunny/Git/build-git
-cd build-git && git fetch && git checkout commit_symlink && git pull origin commit_symlink
+cd build-git && git fetch && git checkout commit_symlink && git fetch && git merge origin/commit_symlink
