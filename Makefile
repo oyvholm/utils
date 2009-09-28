@@ -6,6 +6,9 @@
 all:
 	@echo Syntax: make test
 
+update:
+	cd Git && ./update
+
 test:
 	cd tests; $(MAKE)
 	cd src/gpstools/tests; $(MAKE)

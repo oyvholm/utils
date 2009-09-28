@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#=======================================================================
+# update
+# File ID: f6345be0-abd5-11de-9791-00248cd5cf1e
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+[ -d build-git/. ] || git clone sunny@git.sunbase.org:/home/sunny/Git/build-git
+cd build-git && git fetch && git checkout commit_symlink && git pull origin commit_symlink
