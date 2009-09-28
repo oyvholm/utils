@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# $Id$
 # File ID: b834114a-fa6f-11dd-bf5e-000475e441b9
 # Fyrer opp en stor xterm i X
 
@@ -26,7 +25,7 @@ if [ -e /carmbb.mrk ]; then
 	fi
 else
 	if [ "$smallfont" = "1" ]; then
-		geom=211x67+0+0
+		geom=211x73+0+0
 	else
 		geom=140x48+0-8
 	fi
