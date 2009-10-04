@@ -19,12 +19,12 @@ pref=/usr/local
 sudo=sudo
 
 # Local name of remote master
-# local_master=master
-local_master=spearce-master
+local_master=master
+# local_master=spearce-master
 
 # Name of remote master
-# remote_master=origin/master
-remote_master=spearce/master
+remote_master=origin/master
+# remote_master=spearce/master
 
 makeflags=
 
