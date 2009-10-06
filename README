@@ -3,7 +3,7 @@ README for build-git
 
 This bash script builds, tests and installs the newest version of Git, 
 fetched from the master branch in the Git repository. Git is installed 
-under /usr/varprg/[version] by default, and creates symlinks in 
+under /usr/local/varprg/[version] by default, and creates symlinks in 
 /usr/local/prg/, /usr/local/bin/ and /usr/local/share/man/ to the 
 installed version. This makes it easy to revert to another version for 
 testing. These defaults can be changed by changing variables in the 
