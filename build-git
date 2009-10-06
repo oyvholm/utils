@@ -122,9 +122,11 @@ for f in $mansects; do
     $sudo rm *
     $sudo ln -s ../../../prg/git/share/man/$f/* .
 done
-echo ================= svn commit the symlink =================
-commitmsg=`echo build-git installed $globalgit on $(hostname); echo; suuid -t commit,build-git`
-cd $pref/prg
-echo -n Press Enter to commit the symlink...
-read
-$sudo svn ci -m "$commitmsg" git
+if [ -d $pref/prg/.svn/. ]; then
+    echo ================= svn commit the symlink =================
+    commitmsg=`echo build-git installed $globalgit on $(hostname); echo; suuid -t commit,build-git`
+    cd $pref/prg
+    echo -n Press Enter to commit the symlink...
+    read
+    $sudo svn ci -m "$commitmsg" git
+fi
