@@ -1,494 +1,292 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <properties>
-<target
-   path="personnr/branches/nogoto/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.3.2.10.2.2</property>
-</target>
-<target
-   path="personnr/branches/sunny/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.1.1.2</property>
-</target>
-<target
-   path="personnr/branches/sunny/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/branches/sunny/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/branches/utv/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.3.2.12</property>
-</target>
-<target
-   path="personnr/branches/utv/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.2.2.4</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_00/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_10/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.1.1.2</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_10/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_11/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.4</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_11/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_11/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.3</property>
-</target>
-<target
-   path="personnr/tags/last_cvs_sunbase-20031221/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.4</property>
-</target>
-<target
-   path="personnr/tags/last_cvs_sunbase-20031221/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/last_cvs_sunbase-20031221/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.3</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_10_rel/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.3</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_10_rel/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_10_rel/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_12/Files.md5">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_12/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.5</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_12/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/personnr-1_12/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.3</property>
-</target>
-<target
-   path="personnr/tags/til_efn-20030111T2040Z/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.3</property>
-</target>
-<target
-   path="personnr/tags/til_efn-20030111T2040Z/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/til_efn-20030111T2040Z/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="personnr/tags/gulag-20030416T0300Z/personnr.c">
-<property
-   name="cvs2svn:cvs-rev">1.3</property>
-</target>
-<target
-   path="personnr/tags/gulag-20030416T0300Z/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="personnr/tags/gulag-20030416T0300Z/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="perllib/trunk/Test/edc-test.pl">
-<property
-   name="svn:executable">*</property>
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="perllib/trunk/suncgi.pm">
-<property
-   name="svn:keywords">Id Date</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="perllib/trunk/tripwd.pm">
-<property
-   name="cvs2svn:cvs-rev">1.4</property>
-</target>
-<target
-   path="perllib/trunk/test.shtml">
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="perllib/trunk/index.cgi">
-<property
-   name="svn:executable">*</property>
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="perllib/trunk/tricgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.12</property>
-</target>
-<target
-   path="perllib/trunk/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="perllib/branches/public-bim/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.37</property>
-</target>
-<target
-   path="perllib/branches/suncgi-dvl-cookies/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.33.2.5</property>
-</target>
-<target
-   path="perllib/branches/suncgi-dvl-cookies2/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.36.2.1</property>
-</target>
-<target
-   path="perllib/branches/public-askoy_sv/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.29</property>
-</target>
-<target
-   path="perllib/branches/public-ba/suncgi.pm">
-<property
-   name="svn:keywords">Id Date</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="perllib/branches/utv/Test/edc-test.pl">
-<property
-   name="svn:executable">*</property>
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="perllib/branches/utv/suncgi.pm">
-<property
-   name="svn:keywords">Id Date</property>
-</target>
-<target
-   path="perllib/branches/utv/tripwd.pm">
-<property
-   name="cvs2svn:cvs-rev">1.4</property>
-</target>
-<target
-   path="perllib/branches/utv/test.shtml">
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="perllib/branches/utv/index.cgi">
-<property
-   name="svn:executable">*</property>
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="perllib/branches/utv/tricgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.12</property>
-</target>
-<target
-   path="perllib/branches/utv/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.2</property>
-</target>
-<target
-   path="perllib/tags/askoy_sv-server/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.29</property>
-</target>
-<target
-   path="perllib/tags/db+bim_marked-20020321/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.37</property>
-</target>
-<target
-   path="perllib/tags/FROM_CVS_TO_SVN/README.cvs_til_svn.txt">
-<property
-   name="svn:keywords">Id Date</property>
-</target>
-<target
-   path="perllib/tags/stable/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.37</property>
-</target>
-<target
-   path="perllib/tags/bim-server/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.37</property>
-</target>
-<target
-   path="perllib/tags/dinbaby-server/suncgi.pm">
-<property
-   name="cvs2svn:cvs-rev">1.33</property>
-</target>
-<target
-   path="std/hooks/pre-revprop-change">
-<property
-   name="svn:executable">*</property>
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/std.h">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/tailor.h">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/getopt.c">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/COPYING">
-<property
-   name="svn:mime-type">text/plain</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/getopt.h">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/std.c">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/version.h">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/c/Makefile">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="std/trunk/func/c/date2iso">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/trunk/latex/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/branches/sunny/c/std.h">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/branches/sunny/c/tailor.h">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/branches/sunny/c/getopt.c">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/branches/sunny/c/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/branches/sunny/c/getopt.h">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/branches/sunny/c/std.c">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/branches/sunny/c/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/tags/std-c-start/c/std.h">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/tags/std-c-start/c/tailor.h">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/tags/std-c-start/c/getopt.c">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/tags/std-c-start/c/COPYING">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/tags/std-c-start/c/getopt.h">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/tags/std-c-start/c/std.c">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="std/tags/std-c-start/c/Makefile">
-<property
-   name="cvs2svn:cvs-rev">1.1</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/div/postgres/create_funcs.sql">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/div/postgres/div.txt">
-<property
-   name="svn:mime-type">text/plain</property>
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/div/postgres/create_index.sql">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/div/postgres/create_table.sql">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/div/postgres/path.sql">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/div/postgres/update_things.sql">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/div/postgres/create_views.sql">
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/doc/til_postgres.txt">
-<property
-   name="svn:mime-type">text/plain</property>
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
-<target
-   path="gps-postgres/trunk/gps/bin/poisync">
-<property
-   name="svn:executable">*</property>
-<property
-   name="svn:keywords">Id</property>
-<property
-   name="svn:eol-style">native</property>
-</target>
+  <target path="personnr/branches/nogoto/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.3.2.10.2.2</property>
+  </target>
+  <target path="personnr/branches/sunny/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.1.1.2</property>
+  </target>
+  <target path="personnr/branches/sunny/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/branches/sunny/Makefile">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/branches/utv/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.3.2.12</property>
+  </target>
+  <target path="personnr/branches/utv/Makefile">
+    <property name="cvs2svn:cvs-rev">1.2.2.4</property>
+  </target>
+  <target path="personnr/tags/personnr-1_00/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/personnr-1_10/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.1.1.2</property>
+  </target>
+  <target path="personnr/tags/personnr-1_10/Makefile">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/personnr-1_11/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="personnr/tags/personnr-1_11/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/personnr-1_11/Makefile">
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="personnr/tags/last_cvs_sunbase-20031221/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="personnr/tags/last_cvs_sunbase-20031221/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/last_cvs_sunbase-20031221/Makefile">
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="personnr/tags/personnr-1_10_rel/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="personnr/tags/personnr-1_10_rel/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/personnr-1_10_rel/Makefile">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="personnr/tags/personnr-1_12/Files.md5">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/personnr-1_12/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.5</property>
+  </target>
+  <target path="personnr/tags/personnr-1_12/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/personnr-1_12/Makefile">
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="personnr/tags/til_efn-20030111T2040Z/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="personnr/tags/til_efn-20030111T2040Z/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/til_efn-20030111T2040Z/Makefile">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="personnr/tags/gulag-20030416T0300Z/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="personnr/tags/gulag-20030416T0300Z/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="personnr/tags/gulag-20030416T0300Z/Makefile">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="perllib/trunk/Test/edc-test.pl">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="perllib/trunk/suncgi.pm">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="perllib/trunk/tripwd.pm">
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="perllib/trunk/test.shtml">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="perllib/trunk/index.cgi">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="perllib/trunk/tricgi.pm">
+    <property name="cvs2svn:cvs-rev">1.12</property>
+  </target>
+  <target path="perllib/trunk/Makefile">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="perllib/branches/public-bim/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.37</property>
+  </target>
+  <target path="perllib/branches/suncgi-dvl-cookies/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.33.2.5</property>
+  </target>
+  <target path="perllib/branches/suncgi-dvl-cookies2/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.36.2.1</property>
+  </target>
+  <target path="perllib/branches/public-askoy_sv/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.29</property>
+  </target>
+  <target path="perllib/branches/public-ba/suncgi.pm">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="perllib/branches/utv/Test/edc-test.pl">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="perllib/branches/utv/suncgi.pm">
+    <property name="svn:keywords">Id Date</property>
+  </target>
+  <target path="perllib/branches/utv/tripwd.pm">
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="perllib/branches/utv/test.shtml">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="perllib/branches/utv/index.cgi">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="perllib/branches/utv/tricgi.pm">
+    <property name="cvs2svn:cvs-rev">1.12</property>
+  </target>
+  <target path="perllib/branches/utv/Makefile">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="perllib/tags/askoy_sv-server/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.29</property>
+  </target>
+  <target path="perllib/tags/db+bim_marked-20020321/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.37</property>
+  </target>
+  <target path="perllib/tags/FROM_CVS_TO_SVN/README.cvs_til_svn.txt">
+    <property name="svn:keywords">Id Date</property>
+  </target>
+  <target path="perllib/tags/stable/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.37</property>
+  </target>
+  <target path="perllib/tags/bim-server/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.37</property>
+  </target>
+  <target path="perllib/tags/dinbaby-server/suncgi.pm">
+    <property name="cvs2svn:cvs-rev">1.33</property>
+  </target>
+  <target path="std/hooks/pre-revprop-change">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/std.h">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/tailor.h">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/getopt.c">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/COPYING">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/getopt.h">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/std.c">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/version.h">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/c/Makefile">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="std/trunk/func/c/date2iso">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/trunk/latex/Makefile">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/branches/sunny/c/std.h">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/branches/sunny/c/tailor.h">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/branches/sunny/c/getopt.c">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/branches/sunny/c/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/branches/sunny/c/getopt.h">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/branches/sunny/c/std.c">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/branches/sunny/c/Makefile">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/tags/std-c-start/c/std.h">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/tags/std-c-start/c/tailor.h">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/tags/std-c-start/c/getopt.c">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/tags/std-c-start/c/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/tags/std-c-start/c/getopt.h">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/tags/std-c-start/c/std.c">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="std/tags/std-c-start/c/Makefile">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/div/postgres/create_funcs.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/div/postgres/div.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/div/postgres/create_index.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/div/postgres/create_table.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/div/postgres/path.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/div/postgres/update_things.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/div/postgres/create_views.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/doc/til_postgres.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="gps-postgres/trunk/gps/bin/poisync">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
 </properties>
