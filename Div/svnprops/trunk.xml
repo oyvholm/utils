@@ -1,2591 +1,3042 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
-  <target path=".">
+  <target path="trunk">
     <property name="svn:ignore">ibm2ent
 personnr
 </property>
     <property name="svk:merge">cd0ae2bf-db10-0410-bfb3-f794c9e73ac4:/local/utils/trunk:1020</property>
   </target>
-  <target path="Git">
+  <target path="trunk/Git">
     <property name="svn:ignore">*
 </property>
   </target>
-  <target path="Git/update">
+  <target path="trunk/Git/update">
     <property name="svn:executable">*</property>
     <property name="mergesvn">3231 svn+ssh://sunny@sunsvn.sunbase.org/home/sunny/Svn/utils/trunk/Lib/std/bash</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="fix_mailman">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="poisync">
+  <target path="trunk/poisync">
     <property name="svn:special">*</property>
   </target>
-  <target path="maileditor">
+  <target path="trunk/fix_mailman">
     <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gammelsvn">
+  <target path="trunk/gammelsvn">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="finn_nynett">
+  <target path="trunk/maileditor">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="v_difftool">
+  <target path="trunk/v_difftool">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/finn_nynett">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sunnyrights">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/wdiff">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/pget">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/BUGS">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sunnyrights">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="pget">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="wdiff">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="BUGS">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svnmimeset.sh">
+  <target path="trunk/svnmimeset.sh">
     <property name="svn:special">*</property>
   </target>
-  <target path="pgsafe">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="doc/git-init.txt">
+  <target path="trunk/doc/git-init.txt">
     <property name="svn:mime-type">text/plain</property>
   </target>
-  <target path="doc/index.xml">
+  <target path="trunk/doc/index.xml">
     <property name="mergesvn">1987 Lib/std/db-article</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="doc/index.html">
+  <target path="trunk/doc/index.html">
     <property name="svn:mime-type">text/html</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="doc/Makefile">
+  <target path="trunk/doc/Makefile">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="xml2html">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="perldeboff">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="addpoints">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="klokkesig-conv">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="isoname">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="kbd">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="charconv">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="primitiv_prompt">
+  <target path="trunk/pgsafe">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="hhi">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="wlan-list">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="STDexecDTS">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="afv">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="mailview">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="lag_vim">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="unik_df">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="keyw">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tarsize">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svncvsrevs">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="xml-to-lisp">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="wikipedia-export">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="cvs-rev">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/kbd.c">
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/check_utf8/utf8-locale">
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/check_utf8/check_utf8.c">
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/check_utf8/.cvsignore">
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/check_utf8/Makefile">
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/dbf2tab/dbf2tab.c">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/smsum/tests/files/dir1.tar.gz">
-    <property name="svn:mime-type">application/x-gzip</property>
-  </target>
-  <target path="src/smsum/tests/smsum.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">3084 ../../../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests:2896-3084</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/smsum/tests/Makefile">
-    <property name="mergesvn">3028 ../../../Lib/std/perl-tests-Makefile</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3028</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/smsum/smsum">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 ../../Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/personnr">
-    <property name="svn:ignore">personnr
-</property>
-  </target>
-  <target path="src/personnr/Files.md5">
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="src/personnr/personnr.c">
-    <property name="cvs2svn:cvs-rev">1.5</property>
-  </target>
-  <target path="src/personnr/COPYING">
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="src/personnr/Makefile">
-    <property name="cvs2svn:cvs-rev">1.3</property>
-  </target>
-  <target path="src/fldb/FLDButf.pm">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/tests/files/dir1.tar.gz">
-    <property name="svn:mime-type">application/x-gzip</property>
-  </target>
-  <target path="src/fldb/tests/fldb.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">3084 ../../../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests:2896-3084</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/tests/Makefile">
-    <property name="mergesvn">3028 ../../../Lib/std/perl-tests-Makefile</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3028</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/doc/fundering.txt">
-    <property name="svn:mime-type">text/plain</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/TODO">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/postgres/create_table.sql">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/FLDBsum.pm">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/fldb">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 ../../Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/FLDBdebug.pm">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/fldb/FLDBpg.pm">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/tests/suuid.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">3186 ../../../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
-/trunk/Lib/std/perl-tests:2896-3186</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/tests/Makefile">
-    <property name="mergesvn">3182 ../../../Lib/std/perl-tests-Makefile</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3182</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/doc/format.txt">
-    <property name="mergesvn">3187 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/txt</property>
-    <property name="svn:mime-type">text/plain</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/doc/versions.txt">
-    <property name="svn:mime-type">text/plain</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/conv-old-suuid">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">3185 ../../Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/suuid">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">3185 ../../Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/dtd/suuid.dtd">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/suuid/suuid-ossp">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">3086 suuid</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo">/trunk/src/suuid/suuid:2988-3086</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="src/gpstools">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="ccc">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="filtrer_access_log">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id URL</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="lag3d">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="log_df">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="t2h">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="hmsg">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="suntodofold">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="strip_msgstr">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="ep_day">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svnstat">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="nosvn">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="zeropad">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tab">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="spreadsheet/exponential_growth.ods">
-    <property name="svn:mime-type">application/octet-stream</property>
-  </target>
-  <target path="finduuid">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="ll">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="mangefiler">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="strip_english">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="sjekkrand">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="n0">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="reposbackup">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="n1">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="skipline">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Screen/utf8-mode">
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Screen/latin1-mode">
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="mk_local_links">
-    <property name="svn:executable">*</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="reset">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="xmlstrip">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="commout">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="view_df">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="icatf">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="gpsman2gpx">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="prearmor">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tohex">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Local/venus/venuslogg">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Local/vagabond/svnadmin2">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/vagabond/svn2">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/git-receive-pack">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/git-upload-pack">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/git">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/git-cvsserver">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/git-upload-archive">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/uuid">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/git-shell">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/dev-skolelinux/gitk">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/sjekk-brukerfiler">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/catbruker">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/sjekkfil">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/baname">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/basnakk-stat">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/besok">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/getbaname">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/makestat.pl">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/testside">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/convlog">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/membasnakk">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/konv-msg-til-ny">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/slett-gamle-brukere">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett/konv_basnakk-logg">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett2/konvskatt">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="Local/nett2/sorter_skattefil">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="l">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="m">
-    <property name="svn:executable">*</property>
-    <property name="svn:mergeinfo"/>
-  </target>
-  <target path="csv2gpx">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="linux-counter-machine-update">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="perlentity">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="mc">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svndiff">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="dbk">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="r">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="rmspcbak">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="activesvn">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="u">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="v">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="profgraf">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="find_8bit">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="kopier_bilder">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="h2chin">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="scrdump">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="sess">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="reposend">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="txtfold">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="create_imgindex">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo"/>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="upd">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="export_kde_svn">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="std">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="lsbranch">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="bigsh">
-    <property name="svn:executable">*</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="uoversatt">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="u2h">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="pakkut">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="split_md5">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="rm_backup">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="nf">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="gptrans_conv">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="afv_rename">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="enc-mp4">
+  <target path="trunk/xml2html">
     <property name="svn:executable">*</property>
     <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="flac_to_ogg">
+  <target path="trunk/perldeboff">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="nfs0">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="nfs1">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="mvdirnewest">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="lag_linker">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="stq">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="conv-old-suuid">
+  <target path="trunk/addpoints">
     <property name="svn:special">*</property>
   </target>
-  <target path="svnclean">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="statplot">
+  <target path="trunk/klokkesig-conv">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Makefile">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path=".cvsignore">
+  <target path="trunk/isoname">
+    <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="ns">
+  <target path="trunk/kbd">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/charconv">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/primitiv_prompt">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/hhi">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/wlan-list">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/STDexecDTS">
     <property name="svn:special">*</property>
   </target>
-  <target path="usedchars">
+  <target path="trunk/afv">
     <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tail-errorlog">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="still_klokka">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="snu_epstat">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="camu">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="encap">
+  <target path="trunk/mailview">
     <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mergesvn">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="todos">
+  <target path="trunk/lag_vim">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pingstat">
+  <target path="trunk/unik_df">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
+    <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sjekksommer">
+  <target path="trunk/keyw">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tarsize">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/svncvsrevs">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="findrev">
+  <target path="trunk/cvs-rev">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/wikipedia-export">
+    <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mp3_to_ogg">
+  <target path="trunk/xml-to-lisp">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/kbd.c">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/check_utf8/utf8-locale">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/check_utf8/check_utf8.c">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/check_utf8/.cvsignore">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/check_utf8/Makefile">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/dbf2tab/dbf2tab.c">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/smsum/tests/files/dir1.tar.gz">
+    <property name="svn:mime-type">application/x-gzip</property>
+  </target>
+  <target path="trunk/src/smsum/tests/smsum.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/smsum/tests/Makefile">
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests-Makefile</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/smsum/smsum">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/personnr">
+    <property name="svn:ignore">personnr
+</property>
+  </target>
+  <target path="trunk/src/personnr/Files.md5">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="trunk/src/personnr/personnr.c">
+    <property name="cvs2svn:cvs-rev">1.5</property>
+  </target>
+  <target path="trunk/src/personnr/COPYING">
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="trunk/src/personnr/Makefile">
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="trunk/src/fldb/FLDButf.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/tests/files/dir1.tar.gz">
+    <property name="svn:mime-type">application/x-gzip</property>
+  </target>
+  <target path="trunk/src/fldb/tests/fldb.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/tests/Makefile">
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests-Makefile</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/doc/fundering.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/TODO">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/postgres/create_table.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/FLDBsum.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/fldb">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/FLDBdebug.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/fldb/FLDBpg.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/tests/suuid.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/tests/Makefile">
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests-Makefile</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/doc/format.txt">
+    <property name="mergesvn">3231 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/txt</property>
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/doc/versions.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/conv-old-suuid">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/suuid">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/dtd/suuid.dtd">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/suuid/suuid-ossp">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3250 suuid</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231
+/trunk/src/suuid/suuid:2988-3250</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/GPSTgeo.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/poisync">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/addpoints">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/gpslist">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/GPSTdate.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/gpsman2gpx">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/gpst-pic">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/GPST.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/gpst-file">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/makemesh">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/GPSTdebug.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/BUGS">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/compact.gpx">
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/log.dos.mayko">
+    <property name="svn:eol-style">CRLF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/addpoints/addpoints.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/addpoints/Makefile">
+    <property name="mergesvn">3231 ../../../../Lib/std/perl-tests-Makefile</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/pause-noname.gpx">
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/gpst-pic/files/DSC_4426.JPG">
+    <property name="svn:mime-type">image/jpeg</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/gpst-pic/testcmd">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/gpst-pic/gpst-pic.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/gpst-pic/Makefile">
+    <property name="mergesvn">3231 ../../../../Lib/std/perl-tests-Makefile</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/no_signal.mayko">
+    <property name="svn:eol-style">LF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/log.mcsv">
+    <property name="svn:eol-style">CRLF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/gpst-file/files/testfile.tar.gz">
+    <property name="svn:mime-type">application/x-gzip</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/gpst-file/gpst-file.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/gpst-file/Makefile">
+    <property name="mergesvn">3231 ../../../../Lib/std/perl-tests-Makefile</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/missing.gpsml">
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/chronology-error.gpsml">
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/log.dos.gpstxt">
+    <property name="svn:eol-style">CRLF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/two-digit_year.mcsv">
+    <property name="svn:eol-style">CRLF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/testcmd">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/comments.mayko">
+    <property name="svn:eol-style">LF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/missing-noname.gpsml">
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/date_error.mayko">
+    <property name="svn:eol-style">LF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/log.unix.mcsv">
+    <property name="svn:eol-style">LF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/pause.gpx">
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/one_ele.dos.gpsml">
+    <property name="svn:eol-style">CRLF</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/multitrack.gpx">
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/Makefile">
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests-Makefile</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl-tests-Makefile:2994-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/tests/run-tests.pl">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/run">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/gpst.html">
+    <property name="svn:mime-type">text/html</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/currpos.ods">
+    <property name="svn:mime-type">application/vnd.oasis.opendocument.spreadsheet</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/gnuplot.txt">
+    <property name="mergesvn">3231 ../../../Lib/std/txt</property>
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/txt:2880-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/distance.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/gpst.1">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/gpst.xml">
+    <property name="mergesvn">3231 ../../../Lib/std/db-manpage</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/db-manpage:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/til_postgres.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/Makefile">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/doc/mayko.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/TODO">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/create_funcs.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/div.txt">
+    <property name="svn:mime-type">text/plain</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/init.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/distupdate.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/create_index.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/create_table.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/allupdate.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/path.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/init.sh">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../../Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/update_things.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/postgres/create_views.sql">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/GPSTxml.pm">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/renskescript">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/src/gpstools/gpst">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../../Lib/std/perl</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ccc">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sjekkhtmlindent">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="ww-backup">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="cvse">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svnsize">
+  <target path="trunk/filtrer_access_log">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id URL</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sommer">
+  <target path="trunk/log_df">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="needuuid">
+  <target path="trunk/lag3d">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sortcvs">
+  <target path="trunk/t2h">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="access_log2epstat">
+  <target path="trunk/hmsg">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rc.firewall-2.2">
+  <target path="trunk/strip_msgstr">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="filter_ep">
+  <target path="trunk/suntodofold">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mime2txt">
+  <target path="trunk/ep_day">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="nets">
+  <target path="trunk/svnstat">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/nosvn">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="slogg">
+  <target path="trunk/zeropad">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tab">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="fix_svn-dirs">
+  <target path="trunk/ll">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/finduuid">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/spreadsheet/exponential_growth.ods">
+    <property name="svn:mime-type">application/octet-stream</property>
+  </target>
+  <target path="trunk/mangefiler">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gpst">
+  <target path="trunk/strip_english">
     <property name="svn:special">*</property>
   </target>
-  <target path="avlegs">
+  <target path="trunk/sjekkrand">
     <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="wav_to_flac">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rmspc">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="pmsetdate">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="debugprompt">
+  <target path="trunk/n0">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="logg">
+  <target path="trunk/skipline">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="create_svn">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="cleansrc">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="zerosplit">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="unicode_htmlchart">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="impnet">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="rcs-extract">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svi">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="find_inv_utf8">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="urm">
+  <target path="trunk/n1">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mixline">
+  <target path="trunk/reposbackup">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="svnrevs">
+  <target path="trunk/Screen/utf8-mode">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Screen/latin1-mode">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/mk_local_links">
+    <property name="svn:executable">*</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/xmlstrip">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="hentfilm">
+  <target path="trunk/reset">
     <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
+    <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="personnr">
+  <target path="trunk/commout">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/view_df">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/icatf">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/gpsman2gpx">
     <property name="svn:special">*</property>
   </target>
-  <target path="purgewiki">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="sortxml">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="fix_filenames">
+  <target path="trunk/prearmor">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="fibonacci">
+  <target path="trunk/tohex">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Local/venus/venuslogg">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="access_log-date">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="sortuuid">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="rensk">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="gpslist">
+  <target path="trunk/Local/vagabond/svnadmin2">
     <property name="svn:special">*</property>
   </target>
-  <target path="l33t">
+  <target path="trunk/Local/vagabond/svn2">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/git-receive-pack">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/git-upload-pack">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/git">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/git-cvsserver">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/git-upload-archive">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/uuid">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/git-shell">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/dev-skolelinux/gitk">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/sjekk-brukerfiler">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/catbruker">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/sjekkfil">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/baname">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/basnakk-stat">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/besok">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/getbaname">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/makestat.pl">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/testside">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/convlog">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/membasnakk">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/konv-msg-til-ny">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/slett-gamle-brukere">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett/konv_basnakk-logg">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett2/konvskatt">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/Local/nett2/sorter_skattefil">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/l">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="eplog2date">
+  <target path="trunk/m">
+    <property name="svn:executable">*</property>
+    <property name="svn:mergeinfo"/>
+  </target>
+  <target path="trunk/csv2gpx">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/linux-counter-machine-update">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="trunk/perlentity">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="getsvnfiles">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="mailfix">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="fixtext">
+  <target path="trunk/mc">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="ustr">
+  <target path="trunk/svndiff">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/dbk">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/r">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/rmspcbak">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/activesvn">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Tools/dtd/docbook-4.4">
+  <target path="trunk/u">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/v">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/profgraf">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/find_8bit">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/kopier_bilder">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/h2chin">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/scrdump">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sess">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/reposend">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/txtfold">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/create_imgindex">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/upd">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/export_kde_svn">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/std">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/lsbranch">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/bigsh">
+    <property name="svn:executable">*</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/uoversatt">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/u2h">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/pakkut">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/split_md5">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/rm_backup">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/nf">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/gptrans_conv">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/afv_rename">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/enc-mp4">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/flac_to_ogg">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/nfs0">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/nfs1">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/mvdirnewest">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/lag_linker">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/stq">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/conv-old-suuid">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/svnclean">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/statplot">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Makefile">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/.cvsignore">
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ns">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/usedchars">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tail-errorlog">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/still_klokka">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/snu_epstat">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/camu">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/encap">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/mergesvn">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/todos">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/pingstat">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sjekksommer">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/mp3_to_ogg">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/findrev">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sjekkhtmlindent">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/cvse">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ww-backup">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/svnsize">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id URL</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/needuuid">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sommer">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sortcvs">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/access_log2epstat">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/rc.firewall-2.2">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/nets">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/mime2txt">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/filter_ep">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/fix_svn-dirs">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/slogg">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/gpst">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/avlegs">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/rmspc">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/wav_to_flac">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/pmsetdate">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/logg">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/debugprompt">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/create_svn">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/cleansrc">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/zerosplit">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/impnet">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/unicode_htmlchart">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/rcs-extract">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/svi">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/find_inv_utf8">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/urm">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/mixline">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/purgewiki">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/personnr">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/hentfilm">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/svnrevs">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sortxml">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/fix_filenames">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/access_log-date">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/fibonacci">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/sortuuid">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/rensk">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/l33t">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/gpslist">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/eplog2date">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/mailfix">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/getsvnfiles">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/fixtext">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ustr">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Tools/dtd/docbook-4.4">
     <property name="mergesvn">2596 http://svn.red-bean.com/svnbook/trunk/src/tools/dtd/docbook-4.4</property>
   </target>
-  <target path="Tools/dtd/gpx/gpx-1.1.dtd">
+  <target path="trunk/Tools/dtd/gpx/gpx-1.1.dtd">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="commify">
+  <target path="trunk/commify">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="TODO">
+  <target path="trunk/TODO">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="htmlfold">
+  <target path="trunk/htmlfold">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cp1252">
+  <target path="trunk/cp1252">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="deep">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="pols">
+  <target path="trunk/pols">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Utv/afv_move-selective_move">
+  <target path="trunk/deep">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Utv/afv_move-selective_move">
     <property name="svn:executable">*</property>
     <property name="mergesvn">1875 ../afv_move</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Utv/cvsssh-perl">
+  <target path="trunk/Utv/cvsssh-perl">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 ../Lib/std/perl</property>
+    <property name="mergesvn">3231 ../Lib/std/perl</property>
     <property name="svn:keywords">Id Date</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Utv/mvdirnewest-filerename">
+  <target path="trunk/Utv/mvdirnewest-filerename">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2860 ../mvdirnewest</property>
+    <property name="mergesvn">3255 ../mvdirnewest</property>
     <property name="svn:keywords">Id Date</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231
+/trunk/mvdirnewest:2861-3255</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="detab">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="fjerncvs">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="sunbassh">
+  <target path="trunk/detab">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cdlabel">
+  <target path="trunk/fjerncvs">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cfold">
+  <target path="trunk/cdlabel">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="ngttest">
+  <target path="trunk/sunbassh">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/cfold">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ngttest">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mixword">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="access-myf">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="utc">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="make_tags">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svup">
+  <target path="trunk/mixword">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="efnhtml">
+  <target path="trunk/access-myf">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="lsreadable">
+  <target path="trunk/make_tags">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="statgits">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tosec">
+  <target path="trunk/utc">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="oggname">
+  <target path="trunk/efnhtml">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="filmer">
+  <target path="trunk/svup">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cvs-editor">
+  <target path="trunk/lsreadable">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="klokke">
+  <target path="trunk/statgits">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="getapr">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="n95film">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="outl">
+  <target path="trunk/oggname">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="skjermhoyde">
+  <target path="trunk/tosec">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gpst-pic">
+  <target path="trunk/filmer">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/cvs-editor">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/klokke">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/getapr">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/outl">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/n95film">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/skjermhoyde">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/gpst-pic">
     <property name="svn:special">*</property>
   </target>
-  <target path="dings_vimtrans">
+  <target path="trunk/dings_vimtrans">
     <property name="svn:special">*</property>
   </target>
-  <target path="unichar">
+  <target path="trunk/nettradio">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="finddup">
+  <target path="trunk/finddup">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="nettradio">
+  <target path="trunk/unichar">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="html2db">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="ls-broken">
+  <target path="trunk/ls-broken">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gpsfold">
+  <target path="trunk/html2db">
     <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="cl">
-    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cryptit">
+  <target path="trunk/cryptit">
     <property name="svn:executable">*</property>
     <property name="mergesvn">45212 svn+ssh://sunny256@svn.skolelinux.no/repos/skolelinux/trunk/www/developer.skolelinux.no/scripts/cryptit</property>
   </target>
-  <target path="sget">
+  <target path="trunk/cl">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/gpsfold">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="getsite">
+  <target path="trunk/sget">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/perllib/Test/edc-test.pl">
+  <target path="trunk/getsite">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Lib/perllib/Test/edc-test.pl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="Lib/perllib/suncgi.pm">
+  <target path="trunk/Lib/perllib/suncgi.pm">
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/perllib/tripwd.pm">
+  <target path="trunk/Lib/perllib/tripwd.pm">
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="Lib/perllib/test.shtml">
+  <target path="trunk/Lib/perllib/test.shtml">
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="Lib/perllib/index.cgi">
+  <target path="trunk/Lib/perllib/index.cgi">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="Lib/perllib/tricgi.pm">
+  <target path="trunk/Lib/perllib/tricgi.pm">
     <property name="cvs2svn:cvs-rev">1.12</property>
   </target>
-  <target path="Lib/perllib/Makefile">
+  <target path="trunk/Lib/perllib/Makefile">
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="Lib/std/txt">
+  <target path="trunk/Lib/std/txt">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db5-manpage">
+  <target path="trunk/Lib/std/db5-manpage">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/html4">
+  <target path="trunk/Lib/std/html4">
     <property name="svn:mime-type">text/html</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db-manpage">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Lib/std/db5-article">
+  <target path="trunk/Lib/std/db5-article">
     <property name="svn:mime-type">text/xml</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/xhtml">
+  <target path="trunk/Lib/std/db-manpage">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Lib/std/xhtml">
     <property name="svn:mime-type">text/html</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db-catalog">
+  <target path="trunk/Lib/std/db-catalog">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/gpx">
+  <target path="trunk/Lib/std/latex-article">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/latex-article">
+  <target path="trunk/Lib/std/gpx">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/svg">
+  <target path="trunk/Lib/std/svg">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/xml">
+  <target path="trunk/Lib/std/db-Makefile">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db-Makefile">
+  <target path="trunk/Lib/std/xml">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/musicxml">
+  <target path="trunk/Lib/std/musicxml">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/perl-cgi">
+  <target path="trunk/Lib/std/perl">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/perl">
+  <target path="trunk/Lib/std/perl-cgi">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db5-book">
+  <target path="trunk/Lib/std/db5-book">
     <property name="svn:mime-type">text/xml</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/perl-tests">
+  <target path="trunk/Lib/std/perl-tests">
     <property name="svn:executable">*</property>
     <property name="mergesvn">3185 perl</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db-slides">
+  <target path="trunk/Lib/std/db-slides">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db-article">
+  <target path="trunk/Lib/std/db-article">
     <property name="svn:mime-type">text/xml</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/erlang">
+  <target path="trunk/Lib/std/erlang">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/COPYING">
+  <target path="trunk/Lib/std/COPYING">
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/bisect">
+  <target path="trunk/Lib/std/bisect">
     <property name="svn:executable">*</property>
   </target>
-  <target path="Lib/std/perl-tests.tagdesc">
+  <target path="trunk/Lib/std/perl-tests.tagdesc">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/db-book">
+  <target path="trunk/Lib/std/db-book">
     <property name="svn:mime-type">text/xml</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/bash">
+  <target path="trunk/Lib/std/bash">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Lib/std/perl-tests-Makefile">
+  <target path="trunk/Lib/std/perl-tests-Makefile">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rmspcforan">
+  <target path="trunk/rmspcforan">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="access_log2tab">
+  <target path="trunk/access_log2tab">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="geohashing">
+  <target path="trunk/geohashing">
     <property name="svn:executable">*</property>
   </target>
-  <target path="scrplay">
+  <target path="trunk/scrplay">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="emptydirs">
-    <property name="svn:executable">*</property>
-  </target>
-  <target path="log_load">
+  <target path="trunk/log_load">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Div/sinus">
+  <target path="trunk/emptydirs">
     <property name="svn:executable">*</property>
   </target>
-  <target path="Div/spamd-graph/plt">
+  <target path="trunk/Div/sinus">
+    <property name="svn:executable">*</property>
+  </target>
+  <target path="trunk/Div/spamd-graph/plt">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Div/nullgzip">
+  <target path="trunk/Div/nullgzip">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 ../Lib/std/perl</property>
+    <property name="mergesvn">3231 ../Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Div/ny.txt">
+  <target path="trunk/Div/ny.txt">
     <property name="svn:mime-type">text/plain</property>
   </target>
-  <target path="Div/HiRes-test">
+  <target path="trunk/Div/HiRes-test">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Div/looping">
+  <target path="trunk/Div/looping">
     <property name="svn:executable">*</property>
   </target>
-  <target path="Div/fileid-test">
+  <target path="trunk/Div/fileid-test">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/bash</property>
+    <property name="mergesvn">3231 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Div/mergeloop">
+  <target path="trunk/Div/mergeloop">
     <property name="svn:executable">*</property>
   </target>
-  <target path="Div/guieditor">
+  <target path="trunk/Div/guieditor">
     <property name="svn:executable">*</property>
   </target>
-  <target path="Div/unfinished/svnstat">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Div/unfinished/svnbck">
+  <target path="trunk/Div/unfinished/svnstat">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Div/compr-test">
+  <target path="trunk/Div/unfinished/svnbck">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 ../Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Div/svk-test.txt">
+  <target path="trunk/Div/compr-test">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Div/svk-test.txt">
     <property name="svn:mime-type">text/plain</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="dbllf">
+  <target path="trunk/mkFiles_rec">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mkFiles_rec">
+  <target path="trunk/dbllf">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gpgpakk">
+  <target path="trunk/gpgpakk">
     <property name="svn:executable">*</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pakkdir">
+  <target path="trunk/pakkdir">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pakk">
+  <target path="trunk/pakk">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="dumptrack">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="ampm">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="makemesh">
+  <target path="trunk/makemesh">
     <property name="svn:special">*</property>
   </target>
-  <target path="h2t">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="h2u">
+  <target path="trunk/ampm">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cvsvimdiff">
+  <target path="trunk/dumptrack">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/sortuuid.t">
+  <target path="trunk/h2t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/klokke.t">
+  <target path="trunk/h2u">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
+    <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/svnlog2tab.t">
+  <target path="trunk/cvsvimdiff">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
+    <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/sident-files/random">
+  <target path="trunk/po-merge.py">
+    <property name="svn:special">*</property>
+  </target>
+  <target path="trunk/afv_move">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/denycurrent">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/sortuuid.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/klokke.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/svnlog2tab.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/sident-files/random">
     <property name="svn:mime-type">application/octet-stream</property>
   </target>
-  <target path="tests/camu.t">
+  <target path="trunk/tests/camu.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/sident.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/mergesvn.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/tohex.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/pingstat.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/mailfix.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/getsvnfiles.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/csv2gpx.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/html2db.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/findrev.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/svndiff.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/dbk.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/fromhex.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/Genlog">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/wlan-list.t">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/tests/Makefile">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/sident.t">
+  <target path="trunk/tests/access_log2tab.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/mergesvn.t">
+  <target path="trunk/tests/afv.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/tohex.t">
+  <target path="trunk/tests/sess.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/pingstat.t">
+  <target path="trunk/tests/scrplay.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/mailfix.t">
+  <target path="trunk/tests/sumdup.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/getsvnfiles.t">
+  <target path="trunk/tests/wav_to_flac.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/csv2gpx.t">
+  <target path="trunk/tests/wn.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/html2db.t">
+  <target path="trunk/tests/Add_test">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/findrev.t">
+  <target path="trunk/tests/pmsetdate.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/svndiff.t">
+  <target path="trunk/tests/create_imgindex.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:3085-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/dbk.t">
+  <target path="trunk/tests/manyfiles.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/fromhex.t">
+  <target path="trunk/tests/std.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/Genlog">
+  <target path="trunk/tests/zerosplit.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 ../Lib/std/bash</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/wlan-list.t">
+  <target path="trunk/tests/fileid.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/access_log2tab.t">
+  <target path="trunk/tests/find_inv_utf8.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/Makefile">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/afv.t">
+  <target path="trunk/tests/svnstat.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/sumdup.t">
+  <target path="trunk/tests/enc-mp4.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/scrplay.t">
+  <target path="trunk/tests/svnfiledate.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/sess.t">
+  <target path="trunk/tests/zeropad.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/wn.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/wav_to_flac.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/Add_test">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 ../Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/pmsetdate.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/create_imgindex.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">3084 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/manyfiles.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/std.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/zerosplit.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/fileid.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 svn+ssh://sunny@svnhost/home/sunny/Svn/utils/trunk/Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/find_inv_utf8.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/svnstat.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/enc-mp4.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/svnfiledate.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/zeropad.t">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="tests/finduuid-files/std-random">
+  <target path="trunk/tests/finduuid-files/std-random">
     <property name="svn:mime-type">application/octet-stream</property>
   </target>
-  <target path="tests/sortxml-files/oneliners.xml">
+  <target path="trunk/tests/sortxml-files/oneliners.xml">
     <property name="svn:mergeinfo"/>
   </target>
-  <target path="tests/mvdirnewest.t">
+  <target path="trunk/tests/mvdirnewest.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/finduuid.t">
+  <target path="trunk/tests/finduuid.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/xml2html.t">
+  <target path="trunk/tests/xml2html.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/sortxml.t">
+  <target path="trunk/tests/sortxml.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">3084 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:3085-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tests/create_new.t">
+  <target path="trunk/tests/create_new.t">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2895 ../Lib/std/perl-tests</property>
+    <property name="mergesvn">3231 ../Lib/std/perl-tests</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3185
+/trunk/Lib/std/perl-tests:2896-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="denycurrent">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="afv_move">
+  <target path="trunk/mklist">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="po-merge.py">
+  <target path="trunk/svnfiledate">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/split_ep-logg">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/fldb">
     <property name="svn:special">*</property>
   </target>
-  <target path="mklist">
+  <target path="trunk/perldebon">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="svnfiledate">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="split_ep-logg">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="fldb">
+  <target path="trunk/suuid-ossp">
     <property name="svn:special">*</property>
   </target>
-  <target path="perldebon">
+  <target path="trunk/create_new">
     <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="suuid-ossp">
-    <property name="svn:special">*</property>
-  </target>
-  <target path="ti">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="create_new">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="log_df_pg">
+  <target path="trunk/ti">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/log_df_pg">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="svnlog2tab">
+  <target path="trunk/svnlog2tab">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cvscat">
+  <target path="trunk/cvscat">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="skiptoplines">
+  <target path="trunk/skiptoplines">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="logging">
+  <target path="trunk/logging">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sident">
+  <target path="trunk/sident">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="encr">
+  <target path="trunk/encr">
     <property name="svn:executable">*</property>
     <property name="svn:mergeinfo"/>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mkFiles">
+  <target path="trunk/mkFiles">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="tolower">
+  <target path="trunk/tolower">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="svedit">
+  <target path="trunk/svedit">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gfuck">
+  <target path="trunk/gfuck">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="radiolagring">
+  <target path="trunk/radiolagring">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="clean_files">
+  <target path="trunk/clean_files">
     <property name="svn:special">*</property>
   </target>
-  <target path="ep">
+  <target path="trunk/ep">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="fjern_here">
+  <target path="trunk/fjern_here">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rot13">
+  <target path="trunk/rot13">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sumdup">
+  <target path="trunk/sumdup">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="update_vim-clean">
+  <target path="trunk/update_vim-clean">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="uj">
+  <target path="trunk/uj">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="lag_gqv">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="avlytt">
+  <target path="trunk/lag_gqv">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="manypatch">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="urlstrip">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="ascii">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="inc_epstat">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="pri">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="fileid">
-    <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="growspeed">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="ferdig">
+  <target path="trunk/avlytt">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="togpx">
+  <target path="trunk/manypatch">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/urlstrip">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ascii">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/inc_epstat">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/pri">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/fileid">
+    <property name="svn:executable">*</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/growspeed">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ferdig">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gqfav">
+  <target path="trunk/togpx">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/gqfav">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="send_cvs">
+  <target path="trunk/send_cvs">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="make_svnlog">
+  <target path="trunk/make_svnlog">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="convkeyw">
+  <target path="trunk/convkeyw">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="h0">
+  <target path="trunk/h0">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="asvn">
+  <target path="trunk/asvn">
     <property name="svn:special">*</property>
   </target>
-  <target path="h1">
+  <target path="trunk/h1">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="xmlformat">
+  <target path="trunk/xmlformat">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rmheadtail">
+  <target path="trunk/rmheadtail">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="html2wiki">
+  <target path="trunk/html2wiki">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mtube">
+  <target path="trunk/mtube">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="vg">
+  <target path="trunk/vg">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rmspcall">
+  <target path="trunk/rmspcall">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="bom">
+  <target path="trunk/bom">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="afvctl">
+  <target path="trunk/afvctl">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="ep-pause">
+  <target path="trunk/ep-pause">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="degpg">
+  <target path="trunk/degpg">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rmdup">
+  <target path="trunk/rmdup">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="access_log-drops">
+  <target path="trunk/access_log-drops">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="svnbranchroot">
+  <target path="trunk/svnbranchroot">
     <property name="svn:special">*</property>
   </target>
-  <target path="access_log_ip">
+  <target path="trunk/access_log_ip">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pine">
+  <target path="trunk/pine">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="myf">
+  <target path="trunk/myf">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="vx">
+  <target path="trunk/vx">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="filt">
+  <target path="trunk/filt">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="vy">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Patch/vim6/modified_by-define.patch">
-    <property name="svn:keywords">Id</property>
-  </target>
-  <target path="Patch/vim6/always_72_chars_per_line_if_undefined.patch">
-    <property name="svn:keywords">Id</property>
-  </target>
-  <target path="Patch/vim6/php-syntax_error.patch">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Patch/vim6/show_percent_in_g+CTRL-g.patch">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="Patch/vim7/modified_by-define.patch">
-    <property name="svn:keywords">Id</property>
-  </target>
-  <target path="Patch/vim7/always_72_chars_per_line_if_undefined.patch">
-    <property name="svn:keywords">Id</property>
-  </target>
-  <target path="Patch/vim7/show_percent_in_g+CTRL-g.patch">
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="svksync">
+  <target path="trunk/vy">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="ivim">
+  <target path="trunk/Patch/vim6/modified_by-define.patch">
+    <property name="svn:keywords">Id</property>
+  </target>
+  <target path="trunk/Patch/vim6/always_72_chars_per_line_if_undefined.patch">
+    <property name="svn:keywords">Id</property>
+  </target>
+  <target path="trunk/Patch/vim6/php-syntax_error.patch">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Patch/vim6/show_percent_in_g+CTRL-g.patch">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/Patch/vim7/modified_by-define.patch">
+    <property name="svn:keywords">Id</property>
+  </target>
+  <target path="trunk/Patch/vim7/always_72_chars_per_line_if_undefined.patch">
+    <property name="svn:keywords">Id</property>
+  </target>
+  <target path="trunk/Patch/vim7/show_percent_in_g+CTRL-g.patch">
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/svksync">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/ivim">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cp865">
+  <target path="trunk/cp865">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cvsrootmd5">
+  <target path="trunk/cvsrootmd5">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="swbranch">
+  <target path="trunk/swbranch">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="fromhex">
+  <target path="trunk/fromhex">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cvsssh">
+  <target path="trunk/cvsssh">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="termtitle">
+  <target path="trunk/termtitle">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="date2iso">
+  <target path="trunk/date2iso">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="uh2dec">
+  <target path="trunk/uh2dec">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="remove_perltestnumbers">
+  <target path="trunk/remove_perltestnumbers">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="extract_mail">
+  <target path="trunk/extract_mail">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sub-mergesvn">
+  <target path="trunk/sub-mergesvn">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="center">
+  <target path="trunk/center">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="wdisk">
+  <target path="trunk/wdisk">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="svn-po">
+  <target path="trunk/svn-po">
     <property name="svn:executable">*</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="wn">
+  <target path="trunk/wn">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="manyfiles">
+  <target path="trunk/manyfiles">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2857-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="sums">
+  <target path="trunk/sums">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2339 Lib/std/perl</property>
+    <property name="mergesvn">3231 Lib/std/perl</property>
     <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/perl:2340-3231</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pynt">
+  <target path="trunk/pynt">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="gpst-file">
+  <target path="trunk/gpst-file">
     <property name="svn:special">*</property>
   </target>
-  <target path="hf">
+  <target path="trunk/hf">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cutfold">
+  <target path="trunk/cutfold">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="dings_it">
+  <target path="trunk/dings_it">
     <property name="svn:special">*</property>
   </target>
-  <target path="tilgps">
+  <target path="trunk/tilgps">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mkcvsbck">
+  <target path="trunk/mkcvsbck">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="hl">
+  <target path="trunk/hl">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="Externals">
+  <target path="trunk/Externals">
     <property name="svn:externals">svnutils svn+ssh://sunny@sunsvn.sunbase.org/home/sunny/Svn/svnutils
 </property>
   </target>
-  <target path="Externals/update">
+  <target path="trunk/Externals/update">
     <property name="svn:executable">*</property>
   </target>
-  <target path="perlfold">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id Date</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="mincvs_vim">
+  <target path="trunk/perlfold">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="mkd">
+  <target path="trunk/mincvs_vim">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="rmxmlcomm">
+  <target path="trunk/mkd">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id Date</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/rmxmlcomm">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="repofix">
+  <target path="trunk/repofix">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cunw">
+  <target path="trunk/cunw">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cdiffa">
+  <target path="trunk/cdiffa">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cdiffb">
+  <target path="trunk/cdiffb">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="split_access_log">
+  <target path="trunk/split_access_log">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="xf">
+  <target path="trunk/xf">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="findbom">
+  <target path="trunk/findbom">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="bajobb">
+  <target path="trunk/bajobb">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="icat">
+  <target path="trunk/icat">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="build-git">
+  <target path="trunk/build-git">
     <property name="svn:special">*</property>
   </target>
-  <target path="sjekk_iso">
+  <target path="trunk/sjekk_iso">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="wlan0">
+  <target path="trunk/wlan0">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="stpl">
+  <target path="trunk/stpl">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="v_mergetool">
+  <target path="trunk/v_mergetool">
     <property name="svn:executable">*</property>
-    <property name="mergesvn">2856 Lib/std/bash</property>
+    <property name="mergesvn">3231 Lib/std/bash</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo">/trunk/Lib/std/bash:2857-3231</property>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="trunk/wlan1">
+    <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="wlan1">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="batlf">
+  <target path="trunk/batlf">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="suuid">
+  <target path="trunk/suuid">
     <property name="svn:special">*</property>
   </target>
-  <target path="mkt">
+  <target path="trunk/mkt">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="xt">
+  <target path="trunk/xt">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="split_log">
+  <target path="trunk/split_log">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="hfa">
+  <target path="trunk/hfa">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="epstat">
+  <target path="trunk/epstat">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="ide">
+  <target path="trunk/ide">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="dprofpp.graphviz">
+  <target path="trunk/dprofpp.graphviz">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="smsum">
+  <target path="trunk/smsum">
     <property name="svn:special">*</property>
   </target>
-  <target path="allrevs">
+  <target path="trunk/allrevs">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="fromdos">
+  <target path="trunk/fromdos">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="cdiff">
+  <target path="trunk/cdiff">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="getpic">
+  <target path="trunk/getpic">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id Date</property>
     <property name="svn:eol-style">native</property>

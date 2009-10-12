@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
-  <target path=".">
+  <target path="hooks">
     <property name="mergesvn">7368 svn+ssh://sunny@svnhost/home/sunny/Svn/conf/hooks</property>
   </target>
-  <target path="pre-revprop-change.tmpl">
+  <target path="hooks/pre-revprop-change.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pre-revprop-change">
+  <target path="hooks/pre-revprop-change">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="post-commit.tmpl">
+  <target path="hooks/post-commit.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="post-lock.tmpl">
+  <target path="hooks/post-lock.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pre-commit.tmpl">
+  <target path="hooks/pre-commit.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pre-lock.tmpl">
+  <target path="hooks/pre-lock.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="post-unlock.tmpl">
+  <target path="hooks/post-unlock.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="pre-unlock.tmpl">
+  <target path="hooks/pre-unlock.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="post-commit">
-    <property name="svn:executable">*</property>
-    <property name="svn:keywords">Id</property>
-    <property name="svn:mergeinfo"/>
-    <property name="svn:eol-style">native</property>
-  </target>
-  <target path="pre-commit">
+  <target path="hooks/post-commit">
     <property name="svn:executable">*</property>
     <property name="svn:keywords">Id</property>
     <property name="svn:mergeinfo"/>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="post-revprop-change.tmpl">
+  <target path="hooks/pre-commit">
+    <property name="svn:executable">*</property>
+    <property name="svn:keywords">Id</property>
+    <property name="svn:mergeinfo"/>
+    <property name="svn:eol-style">native</property>
+  </target>
+  <target path="hooks/post-revprop-change.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>
-  <target path="start-commit.tmpl">
+  <target path="hooks/start-commit.tmpl">
     <property name="svn:keywords">Id</property>
     <property name="svn:eol-style">native</property>
   </target>

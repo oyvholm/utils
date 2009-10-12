@@ -1,1224 +1,1224 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
-  <target path="aughiimask-20021127T0120Z/detab">
+  <target path="tags/aughiimask-20021127T0120Z/detab">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/fjerncvs">
+  <target path="tags/aughiimask-20021127T0120Z/fjerncvs">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/kode">
+  <target path="tags/aughiimask-20021127T0120Z/kode">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/unicode-xterm">
+  <target path="tags/aughiimask-20021127T0120Z/unicode-xterm">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/sunbassh">
+  <target path="tags/aughiimask-20021127T0120Z/sunbassh">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cdlabel">
+  <target path="tags/aughiimask-20021127T0120Z/cdlabel">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/access-myf">
+  <target path="tags/aughiimask-20021127T0120Z/access-myf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/utc">
+  <target path="tags/aughiimask-20021127T0120Z/utc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/lsreadable">
+  <target path="tags/aughiimask-20021127T0120Z/lsreadable">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/pget">
+  <target path="tags/aughiimask-20021127T0120Z/pget">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/wdiff">
+  <target path="tags/aughiimask-20021127T0120Z/wdiff">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/perldeboff">
+  <target path="tags/aughiimask-20021127T0120Z/perldeboff">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/tosec">
+  <target path="tags/aughiimask-20021127T0120Z/tosec">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/outl">
+  <target path="tags/aughiimask-20021127T0120Z/outl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/skjermhoyde">
+  <target path="tags/aughiimask-20021127T0120Z/skjermhoyde">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/nettradio">
+  <target path="tags/aughiimask-20021127T0120Z/unichar">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/nettradio">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/unichar">
+  <target path="tags/aughiimask-20021127T0120Z/cl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cl">
+  <target path="tags/aughiimask-20021127T0120Z/kbd">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/kbd">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/sget">
+  <target path="tags/aughiimask-20021127T0120Z/sget">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/charconv">
+  <target path="tags/aughiimask-20021127T0120Z/charconv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/getsite">
+  <target path="tags/aughiimask-20021127T0120Z/getsite">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/hhi">
+  <target path="tags/aughiimask-20021127T0120Z/hhi">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/rmspcforan">
+  <target path="tags/aughiimask-20021127T0120Z/rmspcforan">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/afv">
+  <target path="tags/aughiimask-20021127T0120Z/afv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.13</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/tarsize">
+  <target path="tags/aughiimask-20021127T0120Z/tarsize">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/dbllf">
+  <target path="tags/aughiimask-20021127T0120Z/dbllf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/gpgpakk">
+  <target path="tags/aughiimask-20021127T0120Z/gpgpakk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/pakk">
+  <target path="tags/aughiimask-20021127T0120Z/pakk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/src/kbd.c">
+  <target path="tags/aughiimask-20021127T0120Z/src/kbd.c">
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/ccc">
+  <target path="tags/aughiimask-20021127T0120Z/ccc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/ampm">
+  <target path="tags/aughiimask-20021127T0120Z/ampm">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/dumptrack">
+  <target path="tags/aughiimask-20021127T0120Z/dumptrack">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/t2h">
+  <target path="tags/aughiimask-20021127T0120Z/t2h">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/h2u">
+  <target path="tags/aughiimask-20021127T0120Z/h2u">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/hmsg">
+  <target path="tags/aughiimask-20021127T0120Z/hmsg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/ep_day">
+  <target path="tags/aughiimask-20021127T0120Z/ep_day">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/mklist">
+  <target path="tags/aughiimask-20021127T0120Z/mklist">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/tab">
+  <target path="tags/aughiimask-20021127T0120Z/tab">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/perldebon">
+  <target path="tags/aughiimask-20021127T0120Z/perldebon">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/skipline">
+  <target path="tags/aughiimask-20021127T0120Z/skipline">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/reset">
+  <target path="tags/aughiimask-20021127T0120Z/reset">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cvscat">
+  <target path="tags/aughiimask-20021127T0120Z/cvscat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/commout">
+  <target path="tags/aughiimask-20021127T0120Z/commout">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.8</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/icatf">
+  <target path="tags/aughiimask-20021127T0120Z/icatf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/prearmor">
+  <target path="tags/aughiimask-20021127T0120Z/prearmor">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/mkFiles">
+  <target path="tags/aughiimask-20021127T0120Z/mkFiles">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/tolower">
+  <target path="tags/aughiimask-20021127T0120Z/tolower">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/perlentity">
+  <target path="tags/aughiimask-20021127T0120Z/perlentity">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/dbk">
+  <target path="tags/aughiimask-20021127T0120Z/dbk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.14</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/r">
+  <target path="tags/aughiimask-20021127T0120Z/r">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/rmspcbak">
+  <target path="tags/aughiimask-20021127T0120Z/rmspcbak">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/u">
+  <target path="tags/aughiimask-20021127T0120Z/u">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/ep">
+  <target path="tags/aughiimask-20021127T0120Z/ep">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/find_8bit">
+  <target path="tags/aughiimask-20021127T0120Z/find_8bit">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/rot13">
+  <target path="tags/aughiimask-20021127T0120Z/rot13">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/h2chin">
+  <target path="tags/aughiimask-20021127T0120Z/h2chin">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/urlstrip">
+  <target path="tags/aughiimask-20021127T0120Z/urlstrip">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/ascii">
+  <target path="tags/aughiimask-20021127T0120Z/ascii">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/upd">
+  <target path="tags/aughiimask-20021127T0120Z/upd">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.6</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/inc_epstat">
+  <target path="tags/aughiimask-20021127T0120Z/inc_epstat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/pri">
+  <target path="tags/aughiimask-20021127T0120Z/pri">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/bigsh">
+  <target path="tags/aughiimask-20021127T0120Z/bigsh">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/u2h">
+  <target path="tags/aughiimask-20021127T0120Z/u2h">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.7</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/pakkut">
+  <target path="tags/aughiimask-20021127T0120Z/pakkut">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/split_md5">
+  <target path="tags/aughiimask-20021127T0120Z/split_md5">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/gptrans_conv">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.2</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/flac_to_ogg">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/nf">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/rm_backup">
+  <target path="tags/aughiimask-20021127T0120Z/rm_backup">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/nfs0">
+  <target path="tags/aughiimask-20021127T0120Z/nf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/h0">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.10</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/mvdirnewest">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.4</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/nfs1">
+  <target path="tags/aughiimask-20021127T0120Z/flac_to_ogg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/h1">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.10</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/.cvsignore">
-    <property name="cvs2svn:cvs-rev">1.2</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/rmspcall">
+  <target path="tags/aughiimask-20021127T0120Z/gptrans_conv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/afvctl">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.4</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/usedchars">
+  <target path="tags/aughiimask-20021127T0120Z/nfs0">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/tail-errorlog">
+  <target path="tags/aughiimask-20021127T0120Z/nfs1">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/mvdirnewest">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/h0">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.10</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/h1">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.10</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/rmspcall">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/.cvsignore">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/afvctl">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/usedchars">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/tail-errorlog">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.16</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/still_klokka">
+  <target path="tags/aughiimask-20021127T0120Z/still_klokka">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/snu_epstat">
+  <target path="tags/aughiimask-20021127T0120Z/snu_epstat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/degpg">
+  <target path="tags/aughiimask-20021127T0120Z/degpg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/rmdup">
+  <target path="tags/aughiimask-20021127T0120Z/rmdup">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/todos">
+  <target path="tags/aughiimask-20021127T0120Z/todos">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/access_log_ip">
+  <target path="tags/aughiimask-20021127T0120Z/access_log_ip">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/myf">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.2</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/pine">
+  <target path="tags/aughiimask-20021127T0120Z/pine">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/mp3_to_ogg">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/sjekkhtmlindent">
+  <target path="tags/aughiimask-20021127T0120Z/myf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/ww-backup">
+  <target path="tags/aughiimask-20021127T0120Z/mp3_to_ogg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/sommer">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/sortcvs">
+  <target path="tags/aughiimask-20021127T0120Z/sjekkhtmlindent">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/access_log2epstat">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.3</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/cp865">
+  <target path="tags/aughiimask-20021127T0120Z/ww-backup">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cvsrootmd5">
+  <target path="tags/aughiimask-20021127T0120Z/sommer">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/sortcvs">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/cvsrootmd5">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cvsssh">
+  <target path="tags/aughiimask-20021127T0120Z/cp865">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/access_log2epstat">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.3</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/termtitle">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/nets">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/mime2txt">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/cvsssh">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/mime2txt">
+  <target path="tags/aughiimask-20021127T0120Z/uh2dec">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/nets">
+  <target path="tags/aughiimask-20021127T0120Z/date2iso">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/slogg">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/extract_mail">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/termtitle">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/date2iso">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/uh2dec">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/slogg">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/extract_mail">
+  <target path="tags/aughiimask-20021127T0120Z/center">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/center">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.2</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/wdisk">
+  <target path="tags/aughiimask-20021127T0120Z/wdisk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/rmspc">
+  <target path="tags/aughiimask-20021127T0120Z/rmspc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/logg">
+  <target path="tags/aughiimask-20021127T0120Z/logg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cleansrc">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/pynt">
+  <target path="tags/aughiimask-20021127T0120Z/pynt">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/unicode_htmlchart">
+  <target path="tags/aughiimask-20021127T0120Z/cleansrc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/impnet">
+  <target path="tags/aughiimask-20021127T0120Z/impnet">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/hf">
+  <target path="tags/aughiimask-20021127T0120Z/unicode_htmlchart">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/hf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.13</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/find_inv_utf8">
+  <target path="tags/aughiimask-20021127T0120Z/tilgps">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/tilgps">
+  <target path="tags/aughiimask-20021127T0120Z/find_inv_utf8">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/hl">
+  <target path="tags/aughiimask-20021127T0120Z/hl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/mixline">
+  <target path="tags/aughiimask-20021127T0120Z/mixline">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/mkd">
+  <target path="tags/aughiimask-20021127T0120Z/mkd">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cdiffa">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/cunw">
+  <target path="tags/aughiimask-20021127T0120Z/cunw">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.8</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cdiffb">
+  <target path="tags/aughiimask-20021127T0120Z/cdiffa">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/split_access_log">
+  <target path="tags/aughiimask-20021127T0120Z/split_access_log">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/icat">
+  <target path="tags/aughiimask-20021127T0120Z/cdiffb">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/rensk">
+  <target path="tags/aughiimask-20021127T0120Z/icat">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/rensk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/batlf">
+  <target path="tags/aughiimask-20021127T0120Z/batlf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/fixtext">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="aughiimask-20021127T0120Z/mkt">
+  <target path="tags/aughiimask-20021127T0120Z/mkt">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.7</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/hfa">
+  <target path="tags/aughiimask-20021127T0120Z/fixtext">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/aughiimask-20021127T0120Z/hfa">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/epstat">
+  <target path="tags/aughiimask-20021127T0120Z/epstat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.6</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/commify">
+  <target path="tags/aughiimask-20021127T0120Z/commify">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/TODO">
+  <target path="tags/aughiimask-20021127T0120Z/TODO">
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/fromdos">
+  <target path="tags/aughiimask-20021127T0120Z/fromdos">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cdiff">
+  <target path="tags/aughiimask-20021127T0120Z/cdiff">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/getpic">
+  <target path="tags/aughiimask-20021127T0120Z/getpic">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/cp1252">
+  <target path="tags/aughiimask-20021127T0120Z/cp1252">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="aughiimask-20021127T0120Z/deep">
+  <target path="tags/aughiimask-20021127T0120Z/deep">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="til_blug-20020527/h2u">
+  <target path="tags/til_blug-20020527/h2u">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="til_blug-20020527/u2h">
+  <target path="tags/til_blug-20020527/u2h">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="til_ragnar-20030428T1726Z/uj">
+  <target path="tags/til_ragnar-20030428T1726Z/uj">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="til_ragnar-20030214T1322Z/hhi">
+  <target path="tags/til_ragnar-20030214T1322Z/hhi">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="binstart/tail-errorlog">
+  <target path="tags/binstart/tail-errorlog">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/afvctl">
+  <target path="tags/last_cvs_sunbase-20031221/afvctl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/center">
+  <target path="tags/last_cvs_sunbase-20031221/center">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/ampm">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="last_cvs_sunbase-20031221/mkFiles">
+  <target path="tags/last_cvs_sunbase-20031221/mkFiles">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/mkt">
+  <target path="tags/last_cvs_sunbase-20031221/ampm">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/last_cvs_sunbase-20031221/mkt">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.7</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/hf">
+  <target path="tags/last_cvs_sunbase-20031221/mp3_to_ogg">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="tags/last_cvs_sunbase-20031221/hf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.15</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/mp3_to_ogg">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.4</property>
-  </target>
-  <target path="last_cvs_sunbase-20031221/u2h">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.8</property>
-  </target>
-  <target path="last_cvs_sunbase-20031221/gpsfold">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.3</property>
-  </target>
-  <target path="last_cvs_sunbase-20031221/h2u">
+  <target path="tags/last_cvs_sunbase-20031221/h2u">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/cvse">
+  <target path="tags/last_cvs_sunbase-20031221/gpsfold">
     <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.4</property>
+    <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/dbk">
+  <target path="tags/last_cvs_sunbase-20031221/u2h">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.8</property>
+  </target>
+  <target path="tags/last_cvs_sunbase-20031221/dbk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.16</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/gptrans_conv">
+  <target path="tags/last_cvs_sunbase-20031221/cvse">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="tags/last_cvs_sunbase-20031221/sortcvs">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="tags/last_cvs_sunbase-20031221/gptrans_conv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.12</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/sortcvs">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.2</property>
-  </target>
-  <target path="last_cvs_sunbase-20031221/mvdirnewest">
+  <target path="tags/last_cvs_sunbase-20031221/mvdirnewest">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/hhi">
+  <target path="tags/last_cvs_sunbase-20031221/hhi">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="last_cvs_sunbase-20031221/afv">
+  <target path="tags/last_cvs_sunbase-20031221/afv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.14</property>
   </target>
-  <target path="til_vim-liste_20030512T2246Z/perlfold">
+  <target path="tags/til_vim-liste_20030512T2246Z/perlfold">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="til_vim-liste_20030512T2246Z/htmlfold">
+  <target path="tags/til_vim-liste_20030512T2246Z/htmlfold">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="til_linux-utf8/h2u">
+  <target path="tags/til_linux-utf8/h2u">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="til_linux-utf8/u2h">
+  <target path="tags/til_linux-utf8/u2h">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/pine-editor">
+  <target path="tags/gulag-20030416T0300Z/pine-editor">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/detab">
+  <target path="tags/gulag-20030416T0300Z/detab">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/fjerncvs">
+  <target path="tags/gulag-20030416T0300Z/fjerncvs">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/kode">
+  <target path="tags/gulag-20030416T0300Z/kode">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/unicode-xterm">
+  <target path="tags/gulag-20030416T0300Z/unicode-xterm">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/sunbassh">
+  <target path="tags/gulag-20030416T0300Z/sunbassh">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/cdlabel">
+  <target path="tags/gulag-20030416T0300Z/cdlabel">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/access-myf">
+  <target path="tags/gulag-20030416T0300Z/access-myf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/utc">
+  <target path="tags/gulag-20030416T0300Z/utc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/efnhtml">
+  <target path="tags/gulag-20030416T0300Z/efnhtml">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/lsreadable">
+  <target path="tags/gulag-20030416T0300Z/lsreadable">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/pget">
+  <target path="tags/gulag-20030416T0300Z/pget">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/wdiff">
+  <target path="tags/gulag-20030416T0300Z/wdiff">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/perldeboff">
+  <target path="tags/gulag-20030416T0300Z/perldeboff">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/oggname">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="gulag-20030416T0300Z/tosec">
+  <target path="tags/gulag-20030416T0300Z/tosec">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/outl">
+  <target path="tags/gulag-20030416T0300Z/oggname">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/skjermhoyde">
+  <target path="tags/gulag-20030416T0300Z/outl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/unichar">
+  <target path="tags/gulag-20030416T0300Z/skjermhoyde">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/nettradio">
+  <target path="tags/gulag-20030416T0300Z/nettradio">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/cl">
+  <target path="tags/gulag-20030416T0300Z/unichar">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/kbd">
+  <target path="tags/gulag-20030416T0300Z/cl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/sget">
+  <target path="tags/gulag-20030416T0300Z/kbd">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/sget">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/charconv">
+  <target path="tags/gulag-20030416T0300Z/charconv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/getsite">
+  <target path="tags/gulag-20030416T0300Z/getsite">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/hhi">
+  <target path="tags/gulag-20030416T0300Z/hhi">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="gulag-20030416T0300Z/rmspcforan">
+  <target path="tags/gulag-20030416T0300Z/rmspcforan">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/afv">
+  <target path="tags/gulag-20030416T0300Z/afv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.14</property>
   </target>
-  <target path="gulag-20030416T0300Z/tarsize">
+  <target path="tags/gulag-20030416T0300Z/tarsize">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/dbllf">
+  <target path="tags/gulag-20030416T0300Z/dbllf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/gpgpakk">
+  <target path="tags/gulag-20030416T0300Z/gpgpakk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/pakk">
+  <target path="tags/gulag-20030416T0300Z/pakk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/src/kbd.c">
+  <target path="tags/gulag-20030416T0300Z/src/kbd.c">
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/ccc">
+  <target path="tags/gulag-20030416T0300Z/ccc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/ampm">
+  <target path="tags/gulag-20030416T0300Z/ampm">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/dumptrack">
+  <target path="tags/gulag-20030416T0300Z/dumptrack">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/t2h">
+  <target path="tags/gulag-20030416T0300Z/t2h">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/h2u">
+  <target path="tags/gulag-20030416T0300Z/h2u">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="gulag-20030416T0300Z/hmsg">
+  <target path="tags/gulag-20030416T0300Z/hmsg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/ep_day">
+  <target path="tags/gulag-20030416T0300Z/ep_day">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/mklist">
+  <target path="tags/gulag-20030416T0300Z/mklist">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="gulag-20030416T0300Z/tab">
+  <target path="tags/gulag-20030416T0300Z/tab">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/perldebon">
+  <target path="tags/gulag-20030416T0300Z/perldebon">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/ti">
+  <target path="tags/gulag-20030416T0300Z/ti">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/skipline">
+  <target path="tags/gulag-20030416T0300Z/skipline">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/reset">
+  <target path="tags/gulag-20030416T0300Z/reset">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/cvscat">
+  <target path="tags/gulag-20030416T0300Z/cvscat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/commout">
+  <target path="tags/gulag-20030416T0300Z/commout">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.8</property>
   </target>
-  <target path="gulag-20030416T0300Z/icatf">
+  <target path="tags/gulag-20030416T0300Z/icatf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/prearmor">
+  <target path="tags/gulag-20030416T0300Z/prearmor">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/mkFiles">
+  <target path="tags/gulag-20030416T0300Z/mkFiles">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/tolower">
+  <target path="tags/gulag-20030416T0300Z/tolower">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/linux-counter-machine-update">
+  <target path="tags/gulag-20030416T0300Z/linux-counter-machine-update">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/perlentity">
+  <target path="tags/gulag-20030416T0300Z/perlentity">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/dbk">
+  <target path="tags/gulag-20030416T0300Z/dbk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.14</property>
   </target>
-  <target path="gulag-20030416T0300Z/r">
+  <target path="tags/gulag-20030416T0300Z/r">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/rmspcbak">
+  <target path="tags/gulag-20030416T0300Z/rmspcbak">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/radiolagring">
+  <target path="tags/gulag-20030416T0300Z/radiolagring">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/ep">
+  <target path="tags/gulag-20030416T0300Z/ep">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/u">
+  <target path="tags/gulag-20030416T0300Z/u">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/find_8bit">
+  <target path="tags/gulag-20030416T0300Z/find_8bit">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/fjern_here">
+  <target path="tags/gulag-20030416T0300Z/fjern_here">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/rot13">
+  <target path="tags/gulag-20030416T0300Z/rot13">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/h2chin">
+  <target path="tags/gulag-20030416T0300Z/h2chin">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/uj">
+  <target path="tags/gulag-20030416T0300Z/uj">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/urlstrip">
+  <target path="tags/gulag-20030416T0300Z/urlstrip">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/upd">
+  <target path="tags/gulag-20030416T0300Z/ascii">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/upd">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.8</property>
   </target>
-  <target path="gulag-20030416T0300Z/ascii">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="gulag-20030416T0300Z/inc_epstat">
+  <target path="tags/gulag-20030416T0300Z/inc_epstat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/pri">
+  <target path="tags/gulag-20030416T0300Z/pri">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/bigsh">
+  <target path="tags/gulag-20030416T0300Z/bigsh">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/u2h">
+  <target path="tags/gulag-20030416T0300Z/u2h">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.7</property>
   </target>
-  <target path="gulag-20030416T0300Z/pakkut">
+  <target path="tags/gulag-20030416T0300Z/pakkut">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/split_md5">
+  <target path="tags/gulag-20030416T0300Z/split_md5">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/pinefilter">
+  <target path="tags/gulag-20030416T0300Z/pinefilter">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/gptrans_conv">
+  <target path="tags/gulag-20030416T0300Z/rm_backup">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/flac_to_ogg">
+  <target path="tags/gulag-20030416T0300Z/nf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/nf">
+  <target path="tags/gulag-20030416T0300Z/flac_to_ogg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/rm_backup">
+  <target path="tags/gulag-20030416T0300Z/gptrans_conv">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/nfs0">
+  <target path="tags/gulag-20030416T0300Z/nfs0">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/h0">
+  <target path="tags/gulag-20030416T0300Z/nfs1">
     <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.10</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/mvdirnewest">
+  <target path="tags/gulag-20030416T0300Z/mvdirnewest">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/nfs1">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="gulag-20030416T0300Z/h1">
+  <target path="tags/gulag-20030416T0300Z/h0">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.10</property>
   </target>
-  <target path="gulag-20030416T0300Z/.cvsignore">
-    <property name="cvs2svn:cvs-rev">1.2</property>
+  <target path="tags/gulag-20030416T0300Z/h1">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.10</property>
   </target>
-  <target path="gulag-20030416T0300Z/rmspcall">
+  <target path="tags/gulag-20030416T0300Z/rmspcall">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/afvctl">
+  <target path="tags/gulag-20030416T0300Z/.cvsignore">
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/afvctl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/usedchars">
+  <target path="tags/gulag-20030416T0300Z/usedchars">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/tail-errorlog">
+  <target path="tags/gulag-20030416T0300Z/tail-errorlog">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.16</property>
   </target>
-  <target path="gulag-20030416T0300Z/still_klokka">
+  <target path="tags/gulag-20030416T0300Z/still_klokka">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/snu_epstat">
+  <target path="tags/gulag-20030416T0300Z/snu_epstat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/degpg">
+  <target path="tags/gulag-20030416T0300Z/degpg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/rmdup">
+  <target path="tags/gulag-20030416T0300Z/rmdup">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/todos">
+  <target path="tags/gulag-20030416T0300Z/todos">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/access_log_ip">
+  <target path="tags/gulag-20030416T0300Z/access_log_ip">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/myf">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.2</property>
-  </target>
-  <target path="gulag-20030416T0300Z/pine">
+  <target path="tags/gulag-20030416T0300Z/pine">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/mp3_to_ogg">
+  <target path="tags/gulag-20030416T0300Z/myf">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.2</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/mp3_to_ogg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/sjekkhtmlindent">
+  <target path="tags/gulag-20030416T0300Z/sjekkhtmlindent">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/ww-backup">
+  <target path="tags/gulag-20030416T0300Z/ww-backup">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/sommer">
+  <target path="tags/gulag-20030416T0300Z/sommer">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/sortcvs">
+  <target path="tags/gulag-20030416T0300Z/sortcvs">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/access_log2epstat">
+  <target path="tags/gulag-20030416T0300Z/cvsrootmd5">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.4</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/cp865">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/access_log2epstat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/cp865">
+  <target path="tags/gulag-20030416T0300Z/termtitle">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/cvsrootmd5">
+  <target path="tags/gulag-20030416T0300Z/nets">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/cvsssh">
+  <target path="tags/gulag-20030416T0300Z/mime2txt">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/cvsssh">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/mime2txt">
+  <target path="tags/gulag-20030416T0300Z/date2iso">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/nets">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.4</property>
-  </target>
-  <target path="gulag-20030416T0300Z/termtitle">
+  <target path="tags/gulag-20030416T0300Z/uh2dec">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/uh2dec">
+  <target path="tags/gulag-20030416T0300Z/slogg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/date2iso">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="gulag-20030416T0300Z/slogg">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="gulag-20030416T0300Z/extract_mail">
+  <target path="tags/gulag-20030416T0300Z/extract_mail">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/center">
+  <target path="tags/gulag-20030416T0300Z/center">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/wdisk">
+  <target path="tags/gulag-20030416T0300Z/wdisk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/rmspc">
+  <target path="tags/gulag-20030416T0300Z/rmspc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/logg">
+  <target path="tags/gulag-20030416T0300Z/logg">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/cleansrc">
-    <property name="svn:executable">*</property>
-    <property name="cvs2svn:cvs-rev">1.1</property>
-  </target>
-  <target path="gulag-20030416T0300Z/pynt">
+  <target path="tags/gulag-20030416T0300Z/pynt">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.6</property>
   </target>
-  <target path="gulag-20030416T0300Z/unicode_htmlchart">
+  <target path="tags/gulag-20030416T0300Z/cleansrc">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/impnet">
+  <target path="tags/gulag-20030416T0300Z/impnet">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/hf">
+  <target path="tags/gulag-20030416T0300Z/unicode_htmlchart">
+    <property name="svn:executable">*</property>
+    <property name="cvs2svn:cvs-rev">1.1</property>
+  </target>
+  <target path="tags/gulag-20030416T0300Z/hf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.15</property>
   </target>
-  <target path="gulag-20030416T0300Z/find_inv_utf8">
+  <target path="tags/gulag-20030416T0300Z/tilgps">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/tilgps">
+  <target path="tags/gulag-20030416T0300Z/find_inv_utf8">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/hl">
+  <target path="tags/gulag-20030416T0300Z/hl">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/mixline">
+  <target path="tags/gulag-20030416T0300Z/mixline">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/mkd">
+  <target path="tags/gulag-20030416T0300Z/mkd">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/cunw">
+  <target path="tags/gulag-20030416T0300Z/cunw">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.8</property>
   </target>
-  <target path="gulag-20030416T0300Z/cdiffa">
+  <target path="tags/gulag-20030416T0300Z/cdiffa">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/split_access_log">
+  <target path="tags/gulag-20030416T0300Z/split_access_log">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.5</property>
   </target>
-  <target path="gulag-20030416T0300Z/cdiffb">
+  <target path="tags/gulag-20030416T0300Z/cdiffb">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/icat">
+  <target path="tags/gulag-20030416T0300Z/icat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/rensk">
+  <target path="tags/gulag-20030416T0300Z/rensk">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/batlf">
+  <target path="tags/gulag-20030416T0300Z/batlf">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/mkt">
+  <target path="tags/gulag-20030416T0300Z/mkt">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.7</property>
   </target>
-  <target path="gulag-20030416T0300Z/fixtext">
+  <target path="tags/gulag-20030416T0300Z/fixtext">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/hfa">
+  <target path="tags/gulag-20030416T0300Z/hfa">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.3</property>
   </target>
-  <target path="gulag-20030416T0300Z/epstat">
+  <target path="tags/gulag-20030416T0300Z/epstat">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.6</property>
   </target>
-  <target path="gulag-20030416T0300Z/commify">
+  <target path="tags/gulag-20030416T0300Z/commify">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/TODO">
+  <target path="tags/gulag-20030416T0300Z/TODO">
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/fromdos">
+  <target path="tags/gulag-20030416T0300Z/fromdos">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/cdiff">
+  <target path="tags/gulag-20030416T0300Z/cdiff">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.4</property>
   </target>
-  <target path="gulag-20030416T0300Z/getpic">
+  <target path="tags/gulag-20030416T0300Z/getpic">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.2</property>
   </target>
-  <target path="gulag-20030416T0300Z/cp1252">
+  <target path="tags/gulag-20030416T0300Z/cp1252">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
-  <target path="gulag-20030416T0300Z/deep">
+  <target path="tags/gulag-20030416T0300Z/deep">
     <property name="svn:executable">*</property>
     <property name="cvs2svn:cvs-rev">1.1</property>
   </target>
