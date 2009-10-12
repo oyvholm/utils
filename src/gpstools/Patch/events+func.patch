@@ -1,0 +1,39 @@
+Index: postgres/create_funcs.sql
+===================================================================
+--- postgres/create_funcs.sql	(revisjon 2218)
++++ postgres/create_funcs.sql	(arbeidskopi)
+@@ -124,7 +124,8 @@
+     currlon = currpos[1];
+     currsted = clname(currpos);
+     currdist = cldist(currpos);
+-    RETURN(currtime || ' - ' || currlat::text || ' ' || currlon::text || ' - ' || currsted || ' - ' || currdist);
++    RAISE NOTICE 'time = %, lat = %, lon = %, sted = %, dist = %', currtime::text, currlat::text, currlon::text, currsted::text, currdist::text;
++    RETURN(currtime::text || ' - ' || currlat::text || ' ' || currlon::text || ' - ' || currsted::text || ' - ' || currdist::text);
+ END;
+ $$ LANGUAGE plpgsql;
+ 
+Index: postgres/update_things.sql
+===================================================================
+--- postgres/update_things.sql	(revisjon 2218)
++++ postgres/update_things.sql	(arbeidskopi)
+@@ -71,6 +71,20 @@
+     FROM wayp;
+ 
+ \echo
++\echo ================ Oppdater koordinater for events ================
++
++UPDATE events SET coor = findpos(date)
++    WHERE coor IS NULL;
++
++\echo
++\echo ================ Rund av events til fem desimaler ================
++
++UPDATE events SET coor = point(
++    round(coor[0]::numeric, 5),
++    round(coor[1]::numeric, 5)
++);
++
++\echo
+ \echo ================ Fjern duplikater i events ================
+ 
+ SELECT count(*)
