@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<properties>
+<target
+   path=".">
+<property
+   name="mergesvn">7368 svn+ssh://sunny@svnhost/home/sunny/Svn/conf/hooks</property>
+</target>
+<target
+   path="pre-revprop-change.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="pre-revprop-change">
+<property
+   name="svn:executable">*</property>
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="post-commit.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="post-lock.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="pre-commit.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="pre-lock.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="post-unlock.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="pre-unlock.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="post-commit">
+<property
+   name="svn:executable">*</property>
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:mergeinfo"></property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="pre-commit">
+<property
+   name="svn:executable">*</property>
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:mergeinfo"></property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="post-revprop-change.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+<target
+   path="start-commit.tmpl">
+<property
+   name="svn:keywords">Id</property>
+<property
+   name="svn:eol-style">native</property>
+</target>
+</properties>
