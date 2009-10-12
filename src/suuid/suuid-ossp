@@ -1,19 +1,15 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# suuid-ossp
 # File ID: 11feca46-fd7a-11dd-80a3-000475e441b9
 # Generate and store UUID with optional comment in a log file.
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 2 or later, see end of 
+# License: GNU General Public License version 3 or later, see end of 
 # file for legal stuff.
 #=======================================================================
-
-BEGIN {
-    our @version_array;
-}
 
 use strict;
 use Fcntl ':flock';
@@ -56,12 +52,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-
-my $rcs_id = '$Id$';
-my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
-
-push(@main::version_array, $rcs_id);
+our $VERSION = "0.00";
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -103,7 +94,7 @@ my $Logfile = "$Opt{'logdir'}/$Host";
 my $Cmd = "uuid -v1";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
-my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'vi'};
+my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
 D("cmd_editor = '$cmd_editor'");
 
 if ($Comment eq "-") {
@@ -145,8 +136,35 @@ if (defined($ENV{'SESS_UUID'})) {
     }
 }
 
+if (!-e $Logfile) {
+    open(LogFP, ">", $Logfile) || die("$progname: $Logfile: Cannot create file: $!\n");
+    flock(LogFP, LOCK_EX) || die("$progname: $Logfile: Cannot flock(): $!\n");
+    print(LogFP join("\n",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+        "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">",
+        "<!-- \$" . "Id\$ -->",
+        "<suuids>",
+        "</suuids>"
+    ) . "\n");
+    close(LogFP);
+}
+
 if (open(LogFP, "+>>", $Logfile)) {
     if (flock(LogFP, LOCK_EX)) {
+        # Seek to start of end tag
+        unless (seek(LogFP, -10, 2)) {
+            warn("$progname: Cannot seek to start of end tag, adding to file. Error: $!\n");
+        }
+        my $filepos = tell(LogFP);
+        my $check_end_tag = <LogFP>;
+        D("check_end_tag = '$check_end_tag'");
+        defined($check_end_tag) || ($check_end_tag = "");
+        if ($check_end_tag eq "</suuids>\n") {
+            D("check_end_tag is OK");
+            truncate(LogFP, $filepos) || die("$progname: $Logfile: Cannot truncate() to size $filepos: $!\n");
+        } else {
+            warn("$progname: $Logfile: Unknown end line, adding to end of file\n");
+        }
         my $new_uuid = new OSSP::uuid;
         $new_uuid->make("v1");
         for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
@@ -157,59 +175,13 @@ if (open(LogFP, "+>>", $Logfile)) {
             if ($Opt{'random-mac'}) {
                 $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
             }
-            # Version description {{{
-            # Without version field, they have to be exterminated:
-            #   uuid \t
-            #   curr_time \t
-            #   tag \t
-            #   comment \n
-            # Version 1 (same as above, but with version field):
-            #   1 \t
-            #   uuid \t
-            #   curr_time \t
-            #   tag \t
-            #   comment \n
-            # Version 2
-            #   2 \t
-            #   uuid \t
-            #   curr_time \t
-            #   tag \t
-            #   comment \t
-            #   current_dir \n
-            # Version 3
-            #   3 \t
-            #   uuid \t
-            #   curr_time \t
-            #   tag \t
-            #   comment \t
-            #   current_dir \t
-            #   username \n
-            # Version 4
-            #   4 \t
-            #   uuid \t
-            #   curr_time \t
-            #   tag \t
-            #   comment \t
-            #   current_dir \t
-            #   username \t
-            #   tty \n
-            # Version 5
-            #   5 \t
-            #   uuid \t
-            #   curr_time \t
-            #   tag \t
-            #   comment \t
-            #   current_dir \t
-            #   username \t
-            #   tty \t
-            #   sess_uuid \n
-            # }}}
             my @Xml = ();
             if (length($safe_tag)) {
                 my $tmp_tag = $safe_tag;
                 $tmp_tag =~ s/([^,]+)/push(@Xml, sprintf("<tag>%s<\/tag>", suuid_xml($1)))/gse;
             }
-            length($safe_comment) && push(@Xml, "<txt>$safe_comment</txt>");
+            my $txt_space = ($safe_comment =~ /^</) ? " " : "";
+            length($safe_comment) && push(@Xml, "<txt>$txt_space$safe_comment$txt_space</txt>");
             length($safe_host) && push(@Xml, "<host>$safe_host</host>");
             length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
             length($safe_username) && push(@Xml, "<user>$safe_username</user>");
@@ -235,6 +207,8 @@ if (open(LogFP, "+>>", $Logfile)) {
                 die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
             }
         }
+        seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file to write end tag: $!\n");
+        print(LogFP "</suuids>\n");
         close(LogFP);
     } else {
         die("$progname: $Logfile: Cannot lock file: $!\n");
@@ -316,9 +290,7 @@ sub sec_to_string {
 
 sub print_version {
     # Print program version {{{
-    for (@main::version_array) {
-        print("$_\n");
-    }
+    print("$progname v$VERSION\n");
     # }}}
 } # print_version()
 
@@ -426,10 +398,6 @@ __END__
 
 
 
-=head1 REVISION
-
-$Id$
-
 =head1 SYNOPSIS
 
  [options] [file [files [...]]]
@@ -475,9 +443,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software; you can redistribute it and/or modify it 
+This program is free software: you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation; either version 2 of the License, or (at your 
+Free Software Foundation, either version 3 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 
@@ -486,8 +454,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along 
-with this program; if not, write to the Free Software Foundation, Inc., 
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
 
 =head1 SEE ALSO
 
@@ -496,4 +464,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$
