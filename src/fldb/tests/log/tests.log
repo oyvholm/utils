@@ -1,7 +1,7 @@
 ok - use FLDBpg;
 ok - use FLDBsum;
 ok - use FLDButf;
-# ========== Executing "fldb.t" ==========
+# ========== Executing fldb.t v0.00 ==========
 # Testing safe_sql()...
 ok - safe_sql("") - Empty string
 ok - safe_sql("abc") - Regular ASCII
@@ -31,11 +31,11 @@ ok - "../fldb -h" - Option -h prints help screen
 ok - "../fldb -h" - Option -h prints help screen (stderr)
 ok - "../fldb -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../fldb -hv" - Option --version with -h returns Id string and help screen
-ok - "../fldb -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../fldb -hv" - Option --version with -h returns version number and help screen
+ok - "../fldb -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../fldb --version" - Option --version returns Id string
-ok - "../fldb --version" - Option --version returns Id string (stderr)
+ok - "../fldb --version" - Option --version returns version number
+ok - "../fldb --version" - Option --version returns version number (stderr)
 ok - "../fldb files/dir1/random_2048" - Output SQL from random_2048
 ok - "../fldb files/dir1/random_2048" - Output SQL from random_2048 (stderr)
 # Testing -s (--short-format) option...
