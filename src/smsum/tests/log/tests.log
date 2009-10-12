@@ -1,14 +1,14 @@
-# ========== Executing "smsum.t" ==========
+# ========== Executing smsum.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../smsum -h" - Option -h prints help screen
 ok - "../smsum -h" - Option -h prints help screen (stderr)
 ok - "../smsum -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../smsum -hv" - Option --version with -h returns Id string and help screen
-ok - "../smsum -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../smsum -hv" - Option --version with -h returns version number and help screen
+ok - "../smsum -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../smsum --version" - Option --version returns Id string
-ok - "../smsum --version" - Option --version returns Id string (stderr)
+ok - "../smsum --version" - Option --version returns version number
+ok - "../smsum --version" - Option --version returns version number (stderr)
 ok - "../smsum files/dir1.tar.gz" - Verify files/dir1.tar.gz
 ok - "../smsum files/dir1.tar.gz" - Verify files/dir1.tar.gz (stderr)
 # No options specified...
