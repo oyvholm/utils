@@ -1,4 +1,4 @@
-$Id$
+doc/gnuplot.txt
 File ID: 45564e5c-0e3a-11de-b84a-0001805bf4b1
 
 For å lage label-fil med veipunkter:
@@ -19,3 +19,6 @@ set label "200807301468.mp4" at -6.26072, 53.351369 tc lt 1
 set label "Lydklipp_243.wav" at 5.319771, 60.390323 tc lt 2
 set label "DSC_7389.JPG" at 5.317221, 60.395483 tc lt 7
 plot "kart.tab" lt 6 w l, "logg.tab" w d lt 3
+
+vim: set ts=2 sw=2 sts=2 tw=72 et fo=tcqw fenc=utf8 :
+vim: set com=b\:#,fb\:-,fb\:*,n\:> :

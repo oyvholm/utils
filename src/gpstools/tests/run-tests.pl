@@ -1,19 +1,18 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# tests/run-tests.pl
 # File ID: b9e66fa2-f924-11dd-b57f-0001805bf4b1
 # Test suite for gpst(1).
 #
 # Character set: UTF-8
 # ©opyleft 2006– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 2 or later, see end of 
+# License: GNU General Public License version 3 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
 BEGIN {
     push(@INC, "$ENV{'HOME'}/bin/src/gpstools");
-    our @version_array;
     use Test::More qw{no_plan};
     use_ok(GPST);
     use_ok(GPSTdate);
@@ -43,14 +42,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-
-my $rcs_id = '$Id$';
-my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
-
-push(@main::version_array, $rcs_id);
-
-my @cmdline_array = @ARGV;
+our $VERSION = "0.00";
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -75,10 +67,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf("========== Executing \"%s%s%s\" ==========",
+diag(sprintf("========== Executing %s v%s ==========",
     $progname,
-    scalar(@cmdline_array) ? " " : "",
-    join(" ", @cmdline_array)));
+    $VERSION));
 
 chomp(my $gpx_header = <<END);
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -637,7 +628,7 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-ok(`$CMD -h` !~ /\$Id: /s, "\"$CMD -h\" - No Id with only -h");
+ok(`$CMD -h` !~ /^\n\S+ v\d\.\d\d\n/s, "\"$CMD -h\" - No Id with only -h");
 # --help option }}}
 diag("Testing --inside option..."); # {{{
 testcmd("../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx", # {{{
@@ -1741,17 +1732,17 @@ END
 # }}}
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
-    '/\$Id: .*? \$.*  Show this help\./s',
+    '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
-    "Option --version with -h returns Id string and help screen",
+    "Option --version with -h returns version number and help screen",
 );
 
 # }}}
 diag("Testing --version option...");
 likecmd("$CMD --version", # {{{
-    '/\$Id: .*? \$/',
+    '/^\S+ v\d\.\d\d\n/',
     '/^$/',
-    "Option --version returns Id string",
+    "Option --version returns version number",
 );
 
 # }}}
@@ -2203,9 +2194,7 @@ sub file_data {
 
 sub print_version {
     # Print program version {{{
-    for (@main::version_array) {
-        print("$_\n");
-    }
+    print("$progname v$VERSION\n");
     # }}}
 } # print_version()
 
@@ -2263,10 +2252,6 @@ __END__
 
 run-tests.pl
 
-=head1 REVISION
-
-$Id$
-
 =head1 SYNOPSIS
 
 run-tests.pl [options] [file [files [...]]]
@@ -2316,9 +2301,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software; you can redistribute it and/or modify it 
+This program is free software: you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation; either version 2 of the License, or (at your 
+Free Software Foundation, either version 3 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 
@@ -2327,8 +2312,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along 
-with this program; if not, write to the Free Software Foundation, Inc., 
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
 
 =head1 SEE ALSO
 
@@ -2339,4 +2324,3 @@ gpst(1)
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$

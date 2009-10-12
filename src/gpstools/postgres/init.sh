@@ -1,8 +1,9 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# postgres/init.sh
 # File ID: 372e8e36-fafb-11dd-8930-000475e441b9
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 DBASE=gps

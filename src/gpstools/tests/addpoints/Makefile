@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-# $Id$
+# tests/addpoints/Makefile
 # File ID: 72381b28-fafb-11dd-9a7e-000475e441b9
 
 all:

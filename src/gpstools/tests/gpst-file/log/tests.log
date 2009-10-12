@@ -1,4 +1,4 @@
-# ========== Executing "gpst-file.t" ==========
+# ========== Executing gpst-file.t v0.00 ==========
 # Testing --author option...
 ok - "../../gpst-file -a sunny files/testfile/file.txt" - --author option works
 ok - "../../gpst-file -a sunny files/testfile/file.txt" - --author option works (stderr)
@@ -43,11 +43,11 @@ ok - "../../gpst-file -T CET -o xml files/testfile/file.txt" - Time zone abbr. w
 ok - "../../gpst-file -T Z -o xml files/testfile/file.txt" - Zulu time zone works with -o xml
 ok - "../../gpst-file -T Z -o xml files/testfile/file.txt" - Zulu time zone works with -o xml (stderr)
 # Testing -v (--verbose) option...
-ok - "../../gpst-file -hv" - Option --version with -h returns Id string and help screen
-ok - "../../gpst-file -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../../gpst-file -hv" - Option --version with -h returns version number and help screen
+ok - "../../gpst-file -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../../gpst-file --version" - Option --version returns Id string
-ok - "../../gpst-file --version" - Option --version returns Id string (stderr)
+ok - "../../gpst-file --version" - Option --version returns version number
+ok - "../../gpst-file --version" - Option --version returns version number (stderr)
 # Various...
 ok - "../../gpst-file files/testfile/file.txt" - No options
 ok - "../../gpst-file files/testfile/file.txt" - No options (stderr)

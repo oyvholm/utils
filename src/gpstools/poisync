@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# poisync
 # File ID: a78bdf36-fafa-11dd-a4a9-000475e441b9
 # For synkronisering av POI og waypoints fra uniten.
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 gpst -o pgwtab ~/gps/unit/wpdata.gpx ~/gps/poi/trans/*.gpx | \

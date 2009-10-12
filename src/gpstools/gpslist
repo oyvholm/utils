@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# gpslist
 # File ID: 9cf16956-fafa-11dd-9073-000475e441b9
 # Read GPS data from stdin or file names at the command line and send a 
 # PostgreSQL table to stdout. Needs a database called "tmpgps" with the 
 # usual tables.
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 cat "$@" | gpst -o pgtab | \

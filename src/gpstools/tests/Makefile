@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-# $Id$
+# tests/Makefile
 # File ID: 676b0476-fafb-11dd-925c-000475e441b9
 
 all:

@@ -3,7 +3,7 @@ ok - use GPSTdate;
 ok - use GPSTdebug;
 ok - use GPSTgeo;
 ok - use GPSTxml;
-# ========== Executing "run-tests.pl" ==========
+# ========== Executing run-tests.pl v0.00 ==========
 # Testing conversion routines...
 ok - txt_to_xml("abc")
 ok - txt_to_xml("<&>")
@@ -93,175 +93,1959 @@ ok - trackpoint(): Missing {'what'}, return undef
 ok - trackpoint(): Missing {'error'}, return undef
 # Testing output from ../gpst
 # Read empty input (/dev/null)...
-ok - "../gpst </dev/null" - Read from /dev/null
-ok - "../gpst </dev/null" - Read from /dev/null (stderr)
-ok - "../gpst -o gpx </dev/null" - Output gpx from /dev/null
-ok - "../gpst -o gpx </dev/null" - Output gpx from /dev/null (stderr)
+not ok - "../gpst </dev/null" - Read from /dev/null
+#   Failed test '"../gpst </dev/null" - Read from /dev/null'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst </dev/null" - Read from /dev/null (stderr)
+#   Failed test '"../gpst </dev/null" - Read from /dev/null (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpx </dev/null" - Output gpx from /dev/null
+#   Failed test '"../gpst -o gpx </dev/null" - Output gpx from /dev/null'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst -o gpx </dev/null" - Output gpx from /dev/null (stderr)
+#   Failed test '"../gpst -o gpx </dev/null" - Output gpx from /dev/null (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Read empty files...
-ok - "echo '<tp> </tp>' | ../gpst" - Donâ€™t print empty trackpoints
-ok - "echo '<tp> </tp>' | ../gpst" - Donâ€™t print empty trackpoints (stderr)
+not ok - "echo '<tp> </tp>' | ../gpst" - Donâ€™t print empty trackpoints
+#   Failed test '"echo '<tp> </tp>' | ../gpst" - Donâ€™t print empty trackpoints'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# </track>
+# </gpsml>
+# '
+not ok - "echo '<tp> </tp>' | ../gpst" - Donâ€™t print empty trackpoints (stderr)
+#   Failed test '"echo '<tp> </tp>' | ../gpst" - Donâ€™t print empty trackpoints (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --chronology option...
-ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times
-ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times (stderr)
+not ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times
+#   Failed test '"../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Chronology errors</title>
+# <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+# <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+# <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+# <break/>
+# <tp> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </tp>
+# <break/>
+# <pause>0:00:37:54</pause>
+# <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+# <tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+# <tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times (stderr)
+#   Failed test '"../gpst --chronology chronology-error.gpsml" - Check for chronology errors and duplicated times (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: 'gpst: chronology-error.gpsml: "2006-05-02T09:46:46Z": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)
+# gpst: chronology-error.gpsml: "2006-05-02T10:18:09Z": Duplicated time
+# '
 # Testing --skip-dups option...
-ok - "../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml
-ok - "../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml (stderr)
-ok - "../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format
-ok - "../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format (stderr)
-ok - "../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format
-ok - "../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format (stderr)
-ok - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format
-ok - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format (stderr)
+not ok - "../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml
+#   Failed test '"../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <tp> <time>2002-12-22T21:42:24Z</time> <lat>70.6800486</lat> <lon>23.6746151</lon> </tp>
+# <tp> <time>2002-12-22T21:42:32Z</time> <lat>70.6799322</lat> <lon>23.6740038</lon> </tp>
+# <tp> <time>2002-12-22T21:42:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </tp>
+# <etp err="dup"> <time>2002-12-22T21:43:51Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <etp err="dup"> <time>2002-12-22T21:43:52Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <etp err="dup"> <time>2002-12-22T21:43:54Z</time> <lat>70.6796266</lat> <lon>23.6723991</lon> </etp>
+# <tp> <time>2002-12-22T21:44:45Z</time> <lat>70.6800774</lat> <lon>23.6757566</lon> </tp>
+# <tp> <time>2002-12-22T21:44:52Z</time> <lat>70.6801502</lat> <lon>23.6753442</lon> </tp>
+# <tp> <time>2002-12-22T21:45:04Z</time> <lat>70.6801905</lat> <lon>23.6757542</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml (stderr)
+#   Failed test '"../gpst -d no_signal.mayko" - Remove duplicated positions from gpsml (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format
+#   Failed test '"../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2002-12-22T21:42:24Z	23.6746151	70.6800486		
+# 2002-12-22T21:42:32Z	23.6740038	70.6799322		
+# 2002-12-22T21:42:54Z	23.6723991	70.6796266		
+# 2002-12-22T21:44:45Z	23.6757566	70.6800774		
+# 2002-12-22T21:44:52Z	23.6753442	70.6801502		
+# 2002-12-22T21:45:04Z	23.6757542	70.6801905		
+# '
+not ok - "../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format (stderr)
+#   Failed test '"../gpst -d -o csv no_signal.mayko" - Remove duplicated positions from csv output format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format
+#   Failed test '"../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '23.6746151	70.6800486	
+# 23.6740038	70.6799322	
+# 23.6723991	70.6796266	
+# 23.6757566	70.6800774	
+# 23.6753442	70.6801502	
+# 23.6757542	70.6801905	
+# '
+not ok - "../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format (stderr)
+#   Failed test '"../gpst -d -o clean no_signal.mayko" - Remove duplicated positions from clean output format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format
+#   Failed test '"../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2002-12-22T21:42:24Z	(70.6800486,23.6746151)	\N	\N	\N	\N
+# 2002-12-22T21:42:32Z	(70.6799322,23.6740038)	\N	\N	\N	\N
+# 2002-12-22T21:42:54Z	(70.6796266,23.6723991)	\N	\N	\N	\N
+# 2002-12-22T21:44:45Z	(70.6800774,23.6757566)	\N	\N	\N	\N
+# 2002-12-22T21:44:52Z	(70.6801502,23.6753442)	\N	\N	\N	\N
+# 2002-12-22T21:45:04Z	(70.6801905,23.6757542)	\N	\N	\N	\N
+# '
+not ok - "../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format (stderr)
+#   Failed test '"../gpst -d -o pgtab no_signal.mayko" - Remove duplicated positions from pgtab output format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --epoch option...
-ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
-ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
-ok - "../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output
-ok - "../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output (stderr)
+not ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output
+#   Failed test '"../gpst -e pause.gpx" - --epoch is ignored in gpsml output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>ACTIVE LOG164705</title>
+# <tp> <time>2006-05-21T16:49:11Z</time> <lat>60.425494</lat> <lon>5.299534</lon> <ele>25.26</ele> </tp>
+# <tp> <time>2006-05-21T16:49:46Z</time> <lat>60.425464</lat> <lon>5.29961</lon> <ele>24.931</ele> </tp>
+# <tp> <time>2006-05-21T16:52:04Z</time> <lat>60.425314</lat> <lon>5.299694</lon> <ele>27.975</ele> </tp>
+# <tp> <time>2006-05-21T16:56:36Z</time> <lat>60.425384</lat> <lon>5.299741</lon> <ele>31.017</ele> </tp>
+# <tp> <time>2006-05-21T16:56:47Z</time> <lat>60.425339</lat> <lon>5.299958</lon> <ele>30.98</ele> </tp>
+# <tp> <time>2006-05-21T16:56:56Z</time> <lat>60.425238</lat> <lon>5.29964</lon> <ele>30.538</ele> </tp>
+# <tp> <time>2006-05-21T16:57:03Z</time> <lat>60.425246</lat> <lon>5.299686</lon> <ele>30.515</ele> </tp>
+# <tp> <time>2006-05-21T16:59:08Z</time> <lat>60.425345</lat> <lon>5.299773</lon> <ele>31.936</ele> </tp>
+# <tp> <time>2006-05-21T17:00:54Z</time> <lat>60.425457</lat> <lon>5.299419</lon> <ele>31.794</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)
+#   Failed test '"../gpst -e pause.gpx" - --epoch is ignored in gpsml output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output
+#   Failed test '"../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="60.425494" lon="5.299534"> <ele>25.260</ele> <time>2006-05-21T16:49:11Z</time> </trkpt>
+#       <trkpt lat="60.425464" lon="5.299610"> <ele>24.931</ele> <time>2006-05-21T16:49:46Z</time> </trkpt>
+#       <trkpt lat="60.425314" lon="5.299694"> <ele>27.975</ele> <time>2006-05-21T16:52:04Z</time> </trkpt>
+#       <trkpt lat="60.425384" lon="5.299741"> <ele>31.017</ele> <time>2006-05-21T16:56:36Z</time> </trkpt>
+#       <trkpt lat="60.425339" lon="5.299958"> <ele>30.980</ele> <time>2006-05-21T16:56:47Z</time> </trkpt>
+#       <trkpt lat="60.425238" lon="5.299640"> <ele>30.538</ele> <time>2006-05-21T16:56:56Z</time> </trkpt>
+#       <trkpt lat="60.425246" lon="5.299686"> <ele>30.515</ele> <time>2006-05-21T16:57:03Z</time> </trkpt>
+#       <trkpt lat="60.425345" lon="5.299773"> <ele>31.936</ele> <time>2006-05-21T16:59:08Z</time> </trkpt>
+#       <trkpt lat="60.425457" lon="5.299419"> <ele>31.794</ele> <time>2006-05-21T17:00:54Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output (stderr)
+#   Failed test '"../gpst -e -o gpx pause-noname.gpx" - --epoch is ignored in gpx output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --fix option...
-ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
-ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
+not ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps
+#   Failed test '"../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Chronology errors</title>
+# <tp> <time>2006-05-02T09:46:37Z</time> <lat>60.45369</lat> <lon>5.31559</lon> <ele>95</ele> </tp>
+# <tp> <time>2006-05-02T09:46:42Z</time> <lat>60.45353</lat> <lon>5.31548</lon> <ele>94</ele> </tp>
+# <tp> <time>2006-05-02T09:46:46Z</time> <lat>60.45353</lat> <lon>5.31561</lon> <ele>94</ele> </tp>
+# <break/>
+# <etp err="chrono"> <time>2006-05-02T09:40:07Z</time> <lat>60.45369</lat> <lon>5.31597</lon> <desc>Out of chronology</desc> </etp>
+# <break/>
+# <pause>0:00:37:54</pause>
+# <tp> <time>2006-05-02T10:18:01Z</time> <lat>60.45418</lat> <lon>5.31517</lon> <ele>92</ele> </tp>
+# <tp> <time>2006-05-02T10:18:06Z</time> <lat>60.45407</lat> <lon>5.31542</lon> <ele>91</ele> </tp>
+# <tp> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </tp>
+# <etp err="duptime"> <time>2006-05-02T10:18:09Z</time> <lat>60.45401</lat> <lon>5.31543</lon> <ele>98</ele> </etp>
+# <tp> <time>2006-05-02T10:18:10Z</time> <lat>60.45395</lat> <lon>5.31544</lon> <ele>103</ele> </tp>
+# <tp> <time>2006-05-02T10:18:11Z</time> <lat>60.45391</lat> <lon>5.31545</lon> <ele>107</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)
+#   Failed test '"../gpst --fix --chronology chronology-error.gpsml" - Remove bad timestamps (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: 'gpst: chronology-error.gpsml: "2006-05-02T09:46:46Z": Next date is 0:00:06:39 in the past (2006-05-02T09:40:07Z)
+# gpst: chronology-error.gpsml: "2006-05-02T10:18:09Z": Duplicated time
+# '
 # Testing --from-date option...
 # Testing -h (--help) option...
-ok - "../gpst -h" - Option -h prints help screen
-ok - "../gpst -h" - Option -h prints help screen (stderr)
+not ok - "../gpst -h" - Option -h prints help screen
+#   Failed test '"../gpst -h" - Option -h prints help screen'
+#   at ./run-tests.pl line 2169.
+#                   ''
+#     doesn't match '/  Show this help\./'
+not ok - "../gpst -h" - Option -h prints help screen (stderr)
+#   Failed test '"../gpst -h" - Option -h prints help screen (stderr)'
+#   at ./run-tests.pl line 2172.
+#                   'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     doesn't match '/^$/'
+Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+Execution of ../gpst aborted due to compilation errors.
 ok - "../gpst -h" - No Id with only -h
 # Testing --inside option...
-ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
-ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst) (stderr)
+not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)
+#   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst)'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <break/>
+# <title>track2</title>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst) (stderr)
+#   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --inside multitrack-pause.gpx" - Check --inside option (gpx to gpst) (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --undefined option...
 # Testing --near option...
 # Testing --output option...
-ok - "../gpst log.mcsv" - Read Mapsource TAB-separated format
-ok - "../gpst log.mcsv" - Read Mapsource TAB-separated format (stderr)
-ok - "../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year
-ok - "../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year (stderr)
-ok - "../gpst log.gpstxt" - Read Garmin serial text format
-ok - "../gpst log.gpstxt" - Read Garmin serial text format (stderr)
-ok - "../gpst log.dos.mayko" - Read DOS-formatted Mayko format
-ok - "../gpst log.dos.mayko" - Read DOS-formatted Mayko format (stderr)
-ok - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format
-ok - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format (stderr)
-ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format
-ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format (stderr)
-ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks
-ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks (stderr)
-ok - "../gpst compact.gpx" - Read GPX one-liner
-ok - "../gpst compact.gpx" - Read GPX one-liner (stderr)
-ok - "../gpst missing.gpsml" - Read gpsml with various data missing
-ok - "../gpst missing.gpsml" - Read gpsml with various data missing (stderr)
-ok - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file
-ok - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file (stderr)
-ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml
-ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml (stderr)
-ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates
-ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates (stderr)
-ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines
-ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
-ok - "../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data
-ok - "../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data (stderr)
-ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
-ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX (stderr)
-ok - "../gpst -o pgtab compact.gpx" - Output pgtab from gpx format
-ok - "../gpst -o pgtab compact.gpx" - Output pgtab from gpx format (stderr)
-ok - "../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format
-ok - "../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format (stderr)
-ok - "../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml
-ok - "../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml (stderr)
-ok - "../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format
-ok - "../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format (stderr)
-ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format
-ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format (stderr)
-ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format
-ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format (stderr)
-ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks
-ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr)
+not ok - "../gpst log.mcsv" - Read Mapsource TAB-separated format
+#   Failed test '"../gpst log.mcsv" - Read Mapsource TAB-separated format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <break/>
+# <title>ACTIVE LOG 125</title>
+# <tp> <time>2006-03-04T11:12:30Z</time> <lat>54.96883</lat> <lon>-1.62439</lon> <ele>77</ele> </tp>
+# <tp> <time>2006-03-04T11:12:47Z</time> <lat>54.96878</lat> <lon>-1.62413</lon> <ele>77</ele> </tp>
+# <tp> <time>2006-03-04T11:12:55Z</time> <lat>54.96913</lat> <lon>-1.62616</lon> <ele>77</ele> </tp>
+# <tp> <time>2006-03-04T11:13:04Z</time> <lat>54.96934</lat> <lon>-1.62624</lon> <ele>77.5</ele> </tp>
+# <tp> <time>2006-03-04T11:13:33Z</time> <lat>54.96934</lat> <lon>-1.62596</lon> <ele>78</ele> </tp>
+# <tp> <time>2006-03-04T11:13:48Z</time> <lat>54.96931</lat> <lon>-1.62645</lon> <ele>78</ele> </tp>
+# <tp> <time>2006-03-04T11:14:05Z</time> <lat>54.96918</lat> <lon>-1.62603</lon> <ele>79</ele> </tp>
+# <tp> <time>2006-03-04T11:14:33Z</time> <lat>54.96901</lat> <lon>-1.62364</lon> <ele>76.1</ele> </tp>
+# <tp> <time>2006-03-04T11:15:02Z</time> <lat>54.96922</lat> <lon>-1.6254</lon> <ele>76.1</ele> </tp>
+# <tp> <time>2006-03-04T11:15:27Z</time> <lat>54.96914</lat> <lon>-1.62526</lon> <ele>75.1</ele> </tp>
+# <tp> <time>2006-03-04T11:15:50Z</time> <lat>54.96911</lat> <lon>-1.62494</lon> <ele>75.1</ele> </tp>
+# <tp> <time>2006-03-04T11:16:03Z</time> <lat>54.9693</lat> <lon>-1.62489</lon> <ele>75.1</ele> </tp>
+# <tp> <time>2006-03-04T11:16:19Z</time> <lat>54.96901</lat> <lon>-1.62496</lon> <ele>75.1</ele> </tp>
+# <tp> <time>2006-03-04T11:16:52Z</time> <lat>54.96871</lat> <lon>-1.62466</lon> <ele>74.6</ele> </tp>
+# <tp> <time>2006-03-04T11:17:25Z</time> <lat>54.96908</lat> <lon>-1.62488</lon> <ele>72.7</ele> </tp>
+# <break/>
+# <title>ACTIVE LOG 126</title>
+# <tp> <time>2006-03-04T11:18:32Z</time> <lat>54.96904</lat> <lon>-1.62482</lon> <ele>72.7</ele> </tp>
+# <tp> <time>2006-03-04T11:18:35Z</time> <lat>54.96913</lat> <lon>-1.62499</lon> <ele>71.3</ele> </tp>
+# <tp> <time>2006-03-04T11:18:38Z</time> <lat>54.96904</lat> <lon>-1.62497</lon> <ele>70.8</ele> </tp>
+# <tp> <time>2006-03-04T11:18:48Z</time> <lat>54.96913</lat> <lon>-1.62496</lon> <ele>71.8</ele> </tp>
+# <tp> <time>2006-03-04T11:18:55Z</time> <lat>54.96924</lat> <lon>-1.62501</lon> <ele>72.2</ele> </tp>
+# <tp> <time>2006-03-04T11:19:11Z</time> <lat>54.9694</lat> <lon>-1.62521</lon> <ele>71.8</ele> </tp>
+# <tp> <time>2006-03-04T11:19:30Z</time> <lat>54.96916</lat> <lon>-1.62515</lon> <ele>71.3</ele> </tp>
+# <tp> <time>2006-03-04T11:19:53Z</time> <lat>54.96921</lat> <lon>-1.625</lon> <ele>71.3</ele> </tp>
+# <tp> <time>2006-03-04T11:20:21Z</time> <lat>54.96801</lat> <lon>-1.62417</lon> <ele>71.8</ele> </tp>
+# <break/>
+# <title>ACTIVE LOG 127</title>
+# <tp> <time>2006-03-04T11:21:16Z</time> <lat>54.96887</lat> <lon>-1.62504</lon> <ele>70.8</ele> </tp>
+# <tp> <time>2006-03-04T11:21:18Z</time> <lat>54.96898</lat> <lon>-1.62476</lon> <ele>69.8</ele> </tp>
+# <tp> <time>2006-03-04T11:21:29Z</time> <lat>54.9691</lat> <lon>-1.62475</lon> <ele>69.4</ele> </tp>
+# <tp> <time>2006-03-04T11:21:46Z</time> <lat>54.96918</lat> <lon>-1.62468</lon> <ele>70.3</ele> </tp>
+# <tp> <time>2006-03-04T11:22:39Z</time> <lat>54.9692</lat> <lon>-1.62465</lon> <ele>69.4</ele> </tp>
+# <tp> <time>2006-03-04T11:22:43Z</time> <lat>54.96924</lat> <lon>-1.62462</lon> <ele>71.8</ele> </tp>
+# <tp> <time>2006-03-04T11:22:45Z</time> <lat>54.96928</lat> <lon>-1.62463</lon> <ele>71.8</ele> </tp>
+# <tp> <time>2006-03-04T11:23:00Z</time> <lat>54.96945</lat> <lon>-1.62466</lon> <ele>69.4</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst log.mcsv" - Read Mapsource TAB-separated format (stderr)
+#   Failed test '"../gpst log.mcsv" - Read Mapsource TAB-separated format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year
+#   Failed test '"../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <break/>
+# <title>ACTIVE LOG 032</title>
+# <tp> <time>2006-03-20T20:35:33Z</time> <lat>60.41324</lat> <lon>5.33352</lon> <ele>14</ele> </tp>
+# <tp> <time>2006-03-20T20:35:38Z</time> <lat>60.38802</lat> <lon>5.33845</lon> <ele>18</ele> </tp>
+# <tp> <time>2006-03-20T20:35:44Z</time> <lat>60.38709</lat> <lon>5.3379</lon> <ele>19</ele> </tp>
+# <tp> <time>2006-03-20T20:35:49Z</time> <lat>60.38641</lat> <lon>5.33732</lon> <ele>18</ele> </tp>
+# <tp> <time>2006-03-20T20:35:54Z</time> <lat>60.38581</lat> <lon>5.33647</lon> <ele>18</ele> </tp>
+# <tp> <time>2006-03-20T20:36:00Z</time> <lat>60.38516</lat> <lon>5.33528</lon> <ele>15</ele> </tp>
+# <tp> <time>2006-03-20T20:36:02Z</time> <lat>60.38495</lat> <lon>5.3349</lon> <ele>13</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year (stderr)
+#   Failed test '"../gpst two-digit_year.mcsv" - Read Mapsource TAB-separated format with two-digit year (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst log.gpstxt" - Read Garmin serial text format
+#   Failed test '"../gpst log.gpstxt" - Read Garmin serial text format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <tp> <time>2003-06-13T14:36:09Z</time> <lat>59.521517</lat> <lon>7.391867</lon> <ele>762</ele> </tp>
+# <tp> <time>2003-06-13T14:36:10Z</time> <lat>59.5214</lat> <lon>7.392133</lon> <ele>762</ele> </tp>
+# <tp> <time>2003-06-13T14:36:11Z</time> <lat>59.5213</lat> <lon>7.392417</lon> <ele>761</ele> </tp>
+# <tp> <time>2003-06-13T14:36:12Z</time> <lat>59.521183</lat> <lon>7.3927</lon> <ele>761</ele> </tp>
+# <etp err="nosignal"> <time>2003-06-13T14:36:13Z</time> </etp>
+# <tp> <time>2003-06-13T14:36:15Z</time> <lat>59.52085</lat> <lon>7.393517</lon> <ele>760</ele> </tp>
+# <tp> <time>2003-06-13T14:36:16Z</time> <lat>59.520733</lat> <lon>7.393783</lon> <ele>760</ele> </tp>
+# <tp> <time>2003-06-13T14:36:17Z</time> <lat>59.52065</lat> <lon>7.39405</lon> <ele>760</ele> </tp>
+# <tp> <time>2003-06-13T14:36:18Z</time> <lat>59.520583</lat> <lon>7.394333</lon> <ele>760</ele> </tp>
+# <tp> <time>2003-06-13T14:36:19Z</time> <lat>59.520533</lat> <lon>7.394633</lon> <ele>759</ele> </tp>
+# <tp> <time>2003-06-13T14:36:20Z</time> <lat>59.520483</lat> <lon>7.394917</lon> <ele>759</ele> </tp>
+# <tp> <time>2003-06-13T14:36:21Z</time> <lat>59.520433</lat> <lon>7.395233</lon> <ele>759</ele> </tp>
+# <etp err="nosignal"> <time>2003-06-13T14:36:22Z</time> </etp>
+# <tp> <time>2003-06-13T14:36:24Z</time> <lat>59.520283</lat> <lon>7.396233</lon> <ele>758</ele> </tp>
+# <tp> <time>2003-06-13T14:36:25Z</time> <lat>59.520233</lat> <lon>7.39655</lon> <ele>758</ele> </tp>
+# <tp> <time>2003-06-13T14:36:26Z</time> <lat>59.520183</lat> <lon>7.396883</lon> <ele>757</ele> </tp>
+# <tp> <time>2003-06-13T14:36:27Z</time> <lat>59.520133</lat> <lon>7.397217</lon> <ele>757</ele> </tp>
+# <tp> <time>2003-06-13T14:36:28Z</time> <lat>59.5201</lat> <lon>7.397567</lon> <ele>757</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst log.gpstxt" - Read Garmin serial text format (stderr)
+#   Failed test '"../gpst log.gpstxt" - Read Garmin serial text format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst log.dos.mayko" - Read DOS-formatted Mayko format
+#   Failed test '"../gpst log.dos.mayko" - Read DOS-formatted Mayko format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <tp> <time>2003-06-15T10:27:45Z</time> <lat>58.1818158</lat> <lon>8.1225077</lon> </tp>
+# <tp> <time>2003-06-15T10:27:53Z</time> <lat>58.1818712</lat> <lon>8.12532</lon> </tp>
+# <tp> <time>2003-06-15T10:27:57Z</time> <lat>58.1816347</lat> <lon>8.1266031</lon> </tp>
+# <tp> <time>2003-06-15T10:28:03Z</time> <lat>58.1812099</lat> <lon>8.1284612</lon> </tp>
+# <tp> <time>2003-06-15T10:28:06Z</time> <lat>58.1810315</lat> <lon>8.129395</lon> </tp>
+# <tp> <time>2003-06-15T10:28:10Z</time> <lat>58.1809621</lat> <lon>8.13074</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst log.dos.mayko" - Read DOS-formatted Mayko format (stderr)
+#   Failed test '"../gpst log.dos.mayko" - Read DOS-formatted Mayko format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format
+#   Failed test '"../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <tp> <time>2003-01-05T16:47:11Z</time> <lat>66.908167</lat> <lon>15.022983</lon> <ele>11472</ele> </tp>
+# <tp> <time>2003-01-05T16:47:12Z</time> <lat>66.90625</lat> <lon>15.020667</lon> <ele>11472</ele> </tp>
+# <tp> <time>2003-01-05T16:47:13Z</time> <lat>66.904317</lat> <lon>15.01835</lon> <ele>11472</ele> </tp>
+# <tp> <time>2003-01-05T16:47:14Z</time> <lat>66.9024</lat> <lon>15.016017</lon> <ele>11473</ele> </tp>
+# <tp> <time>2003-01-05T16:47:15Z</time> <lat>66.900483</lat> <lon>15.0137</lon> <ele>11474</ele> </tp>
+# <tp> <time>2003-01-05T16:47:16Z</time> <lat>66.898567</lat> <lon>15.011383</lon> <ele>11474</ele> </tp>
+# <tp> <time>2003-01-05T16:47:17Z</time> <lat>66.896633</lat> <lon>15.009067</lon> <ele>11475</ele> </tp>
+# <tp> <time>2003-01-05T16:47:18Z</time> <lat>66.894717</lat> <lon>15.006733</lon> <ele>11475</ele> </tp>
+# <tp> <time>2003-01-05T16:47:19Z</time> <lat>66.8928</lat> <lon>15.004417</lon> <ele>11475</ele> </tp>
+# <tp> <time>2003-01-05T16:47:20Z</time> <lat>66.890867</lat> <lon>15.0021</lon> <ele>11475</ele> </tp>
+# <tp> <time>2003-01-05T16:47:21Z</time> <lat>66.88895</lat> <lon>14.999783</lon> <ele>11475</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format (stderr)
+#   Failed test '"../gpst log.dos.gpstxt" - Read DOS-formatted Garmin serial text format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format
+#   Failed test '"../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <break/>
+# <title>ACTIVE LOG 058</title>
+# <tp> <time>2006-02-21T15:14:25Z</time> <lat>60.36662</lat> <lon>5.24885</lon> <ele>31.9</ele> </tp>
+# <tp> <time>2006-02-21T15:14:30Z</time> <lat>60.37057</lat> <lon>5.22956</lon> <ele>35.2</ele> </tp>
+# <tp> <time>2006-02-21T15:14:35Z</time> <lat>60.37019</lat> <lon>5.22817</lon> <ele>39.6</ele> </tp>
+# <tp> <time>2006-02-21T15:14:36Z</time> <lat>60.37012</lat> <lon>5.2279</lon> <ele>41</ele> </tp>
+# <tp> <time>2006-02-21T15:14:40Z</time> <lat>60.37009</lat> <lon>5.22682</lon> <ele>47.2</ele> </tp>
+# <tp> <time>2006-02-21T15:14:42Z</time> <lat>60.37011</lat> <lon>5.22641</lon> <ele>49.2</ele> </tp>
+# <tp> <time>2006-02-21T15:14:44Z</time> <lat>60.37011</lat> <lon>5.22607</lon> <ele>50.1</ele> </tp>
+# <tp> <time>2006-02-21T15:14:48Z</time> <lat>60.37002</lat> <lon>5.22568</lon> <ele>51.1</ele> </tp>
+# <tp> <time>2006-02-21T15:14:51Z</time> <lat>60.3701</lat> <lon>5.22548</lon> <ele>52.5</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format (stderr)
+#   Failed test '"../gpst log.unix.mcsv" - Read UNIX-formatted Garmin Mapsource TAB-separated format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks
+#   Failed test '"../gpst multitrack.gpx" - Read GPX file with multiple tracks'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Track 1</title>
+# <tp> <time>2003-02-11T23:35:39Z</time> <lat>51.4968266</lat> <lon>-0.1448824</lon> </tp>
+# <tp> <time>2003-02-11T23:35:49Z</time> <lat>51.4968227</lat> <lon>-0.1449938</lon> </tp>
+# <tp> <time>2003-02-11T23:36:14Z</time> <lat>51.496904</lat> <lon>-0.1453202</lon> </tp>
+# <break/>
+# <title>Track 2</title>
+# <tp> <time>2003-02-11T23:36:16Z</time> <lat>51.4969214</lat> <lon>-0.1453398</lon> </tp>
+# <tp> <time>2003-02-11T23:36:31Z</time> <lat>51.4969816</lat> <lon>-0.1455514</lon> </tp>
+# <tp> <time>2003-02-11T23:36:43Z</time> <lat>51.4970224</lat> <lon>-0.1457489</lon> <ele>1000</ele> </tp>
+# <tp> <time>2003-02-11T23:36:50Z</time> <lat>51.4970452</lat> <lon>-0.1457804</lon> </tp>
+# <break/>
+# <title>Track 3</title>
+# <tp> <time>2003-02-11T23:37:05Z</time> <lat>51.497068</lat> <lon>-0.1458608</lon> </tp>
+# <tp> <time>2003-02-11T23:37:22Z</time> <lat>51.4971658</lat> <lon>-0.1460047</lon> </tp>
+# <tp> <time>2003-02-11T23:37:36Z</time> <lat>51.4972469</lat> <lon>-0.1461614</lon> </tp>
+# <break/>
+# <title>Track 4</title>
+# <tp> <time>2003-02-11T23:37:43Z</time> <lat>51.4972731</lat> <lon>-0.1462394</lon> </tp>
+# <tp> <time>2003-02-11T23:38:04Z</time> <lat>51.4973437</lat> <lon>-0.1463232</lon> </tp>
+# <tp> <time>2003-02-11T23:38:28Z</time> <lat>51.4973337</lat> <lon>-0.1462949</lon> </tp>
+# <tp> <time>2003-02-11T23:38:34Z</time> <lat>51.4973218</lat> <lon>-0.1462825</lon> </tp>
+# <tp> <time>2003-02-11T23:38:35Z</time> <lat>51.4973145</lat> <lon>-0.1462732</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst multitrack.gpx" - Read GPX file with multiple tracks (stderr)
+#   Failed test '"../gpst multitrack.gpx" - Read GPX file with multiple tracks (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst compact.gpx" - Read GPX one-liner
+#   Failed test '"../gpst compact.gpx" - Read GPX one-liner'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>All whitespace stripped</title>
+# <tp> <time>2002-12-30T15:22:04Z</time> <lat>70.660932</lat> <lon>23.7028354</lon> </tp>
+# <tp> <time>2002-12-30T15:22:06Z</time> <lat>70.6609392</lat> <lon>23.7028468</lon> </tp>
+# <tp> <time>2002-12-30T15:22:08Z</time> <lat>70.6609429</lat> <lon>23.7028499</lon> </tp>
+# <tp> <time>2002-12-30T15:22:11Z</time> <lat>70.6609381</lat> <lon>23.702862</lon> </tp>
+# <tp> <time>2002-12-30T15:22:12Z</time> <lat>70.6609368</lat> <lon>23.7028648</lon> </tp>
+# <tp> <time>2002-12-30T15:22:13Z</time> <lat>70.6609344</lat> <lon>23.7028652</lon> </tp>
+# <tp> <time>2002-12-30T15:22:15Z</time> <lat>70.6609349</lat> <lon>23.7028707</lon> </tp>
+# <tp> <time>2002-12-30T15:22:17Z</time> <lat>70.6609348</lat> <lon>23.7028654</lon> </tp>
+# <tp> <time>2002-12-30T15:22:19Z</time> <lat>70.6609347</lat> <lon>23.7028599</lon> </tp>
+# <tp> <time>2002-12-30T15:22:20Z</time> <lat>70.6609348</lat> <lon>23.7028609</lon> </tp>
+# <tp> <time>2002-12-30T15:22:23Z</time> <lat>70.6609388</lat> <lon>23.7028653</lon> </tp>
+# <tp> <time>2002-12-30T15:22:25Z</time> <lat>70.6609426</lat> <lon>23.7028732</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst compact.gpx" - Read GPX one-liner (stderr)
+#   Failed test '"../gpst compact.gpx" - Read GPX one-liner (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst missing.gpsml" - Read gpsml with various data missing
+#   Failed test '"../gpst missing.gpsml" - Read gpsml with various data missing'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Missing various elements</title>
+# <tp> <time>2006-04-30T17:16:59Z</time> </tp>
+# <tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
+# <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
+# <tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
+# <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
+# <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+# <tp> <lon>5.34224</lon> <ele>484</ele> </tp>
+# <tp> <ele>486</ele> </tp>
+# <tp> <desc>Missing everything</desc> </tp>
+# <tp> <lat>60.42339</lat> </tp>
+# <tp> <lon>5.34262</lon> </tp>
+# <tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
+# <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst missing.gpsml" - Read gpsml with various data missing (stderr)
+#   Failed test '"../gpst missing.gpsml" - Read gpsml with various data missing (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file
+#   Failed test '"../gpst different_dateformats.gpsml" - Read different date formats from gpsml file'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Date format variations</title>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1</lat> <lon>1</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>2</lat> <lon>2</lon> </tp>
+# <tp> <time>2006-01-01T00:00:03Z</time> <lat>3</lat> <lon>3</lon> </tp>
+# <tp> <time>2006-01-01T00:00:04Z</time> <lat>4</lat> <lon>4</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst different_dateformats.gpsml" - Read different date formats from gpsml file (stderr)
+#   Failed test '"../gpst different_dateformats.gpsml" - Read different date formats from gpsml file (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml
+#   Failed test '"../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml (stderr)
+#   Failed test '"../gpst multitrack-pause.gpx" - Should be equal to multitrack-pause.gpsml (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates
+#   Failed test '"../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
+#       <trkpt lat="70.6799322" lon="23.6740038"> <time>2002-12-22T21:42:32Z</time> </trkpt>
+#       <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:42:54Z</time> </trkpt>
+#       <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:51Z</time> </trkpt>
+#       <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:52Z</time> </trkpt>
+#       <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:54Z</time> </trkpt>
+#       <trkpt lat="70.6800774" lon="23.6757566"> <time>2002-12-22T21:44:45Z</time> </trkpt>
+#       <trkpt lat="70.6801502" lon="23.6753442"> <time>2002-12-22T21:44:52Z</time> </trkpt>
+#       <trkpt lat="70.6801905" lon="23.6757542"> <time>2002-12-22T21:45:04Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates (stderr)
+#   Failed test '"../gpst -o gpx no_signal.mayko" - Output GPX from Mayko file with duplicates (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines
+#   Failed test '"../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="70.6800486" lon="23.6746151"> <time>2002-12-22T21:42:24Z</time> </trkpt>
+#       <trkpt lat="70.6799322" lon="23.6740038"> <time>2002-12-22T21:42:32Z</time> </trkpt>
+#       <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:42:54Z</time> </trkpt>
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:51Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:52Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <!-- <trkpt lat="70.6796266" lon="23.6723991"> <time>2002-12-22T21:43:54Z</time> <extensions> <error>desc</error> </extensions> </trkpt> -->
+#       <trkpt lat="70.6800774" lon="23.6757566"> <time>2002-12-22T21:44:45Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="70.6801502" lon="23.6753442"> <time>2002-12-22T21:44:52Z</time> </trkpt>
+#       <trkpt lat="70.6801905" lon="23.6757542"> <time>2002-12-22T21:45:04Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)
+#   Failed test '"../gpst -o gpx comments.mayko" - Output GPX from Mayko file with commented-out lines (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data
+#   Failed test '"../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="60.42353" lon="5.34185"> <time>2006-04-30T17:17:09Z</time> </trkpt>
+#       <trkpt> <ele>483</ele> <time>2006-04-30T17:17:11Z</time> </trkpt>
+#       <trkpt> <ele>485</ele> <time>2006-04-30T17:17:22Z</time> </trkpt>
+#       <trkpt lat="60.42347" lon="5.34212"> <ele>486</ele> </trkpt>
+#       <trkpt> <ele>484</ele> </trkpt>
+#       <trkpt> <ele>486</ele> </trkpt>
+#       <trkpt> <ele>490</ele> <time>2006-04-30T17:18:03Z</time> </trkpt>
+#       <trkpt lat="60.42338" lon="5.34269"> <ele>487</ele> <time>2006-04-30T17:18:05Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data (stderr)
+#   Failed test '"../gpst -o gpx missing-noname.gpsml" - Output GPX from gpsml with missing data (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX
+#   Failed test '"../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '-0.1448824 51.4968266
+# -0.1449938 51.4968227
+# -0.1453202 51.4969040
+# move -0.1453398 51.4969214
+# -0.1455514 51.4969816
+# -0.1457489 51.4970224
+# -0.1457804 51.4970452
+# move -0.1458608 51.4970680
+# -0.1460047 51.4971658
+# -0.1461614 51.4972469
+# move -0.1462394 51.4972731
+# -0.1463232 51.4973437
+# -0.1462949 51.4973337
+# -0.1462825 51.4973218
+# -0.1462732 51.4973145
+# '
+not ok - "../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX (stderr)
+#   Failed test '"../gpst -o xgraph multitrack.gpx" - Output xgraph format from GPX (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o pgtab compact.gpx" - Output pgtab from gpx format
+#   Failed test '"../gpst -o pgtab compact.gpx" - Output pgtab from gpx format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2002-12-30T15:22:04Z	(70.6609320,23.7028354)	\N	\N	\N	\N
+# 2002-12-30T15:22:06Z	(70.6609392,23.7028468)	\N	\N	\N	\N
+# 2002-12-30T15:22:08Z	(70.6609429,23.7028499)	\N	\N	\N	\N
+# 2002-12-30T15:22:11Z	(70.6609381,23.7028620)	\N	\N	\N	\N
+# 2002-12-30T15:22:12Z	(70.6609368,23.7028648)	\N	\N	\N	\N
+# 2002-12-30T15:22:13Z	(70.6609344,23.7028652)	\N	\N	\N	\N
+# 2002-12-30T15:22:15Z	(70.6609349,23.7028707)	\N	\N	\N	\N
+# 2002-12-30T15:22:17Z	(70.6609348,23.7028654)	\N	\N	\N	\N
+# 2002-12-30T15:22:19Z	(70.6609347,23.7028599)	\N	\N	\N	\N
+# 2002-12-30T15:22:20Z	(70.6609348,23.7028609)	\N	\N	\N	\N
+# 2002-12-30T15:22:23Z	(70.6609388,23.7028653)	\N	\N	\N	\N
+# 2002-12-30T15:22:25Z	(70.6609426,23.7028732)	\N	\N	\N	\N
+# '
+not ok - "../gpst -o pgtab compact.gpx" - Output pgtab from gpx format (stderr)
+#   Failed test '"../gpst -o pgtab compact.gpx" - Output pgtab from gpx format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format
+#   Failed test '"../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2002-12-22T21:42:24Z	(70.6800486,23.6746151)	\N	\N	\N	\N
+# 2002-12-22T21:42:32Z	(70.6799322,23.6740038)	\N	\N	\N	\N
+# 2002-12-22T21:42:54Z	(70.6796266,23.6723991)	\N	\N	\N	\N
+# 2002-12-22T21:43:51Z	(70.6796266,23.6723991)	\N	\N	\N	\N
+# 2002-12-22T21:43:52Z	(70.6796266,23.6723991)	\N	\N	\N	\N
+# 2002-12-22T21:43:54Z	(70.6796266,23.6723991)	\N	\N	\N	\N
+# 2002-12-22T21:44:45Z	(70.6800774,23.6757566)	\N	\N	\N	\N
+# 2002-12-22T21:44:52Z	(70.6801502,23.6753442)	\N	\N	\N	\N
+# 2002-12-22T21:45:04Z	(70.6801905,23.6757542)	\N	\N	\N	\N
+# '
+not ok - "../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format (stderr)
+#   Failed test '"../gpst -o pgtab no_signal.mayko" - Output pgtab from mayko format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml
+#   Failed test '"../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2006-04-30T17:17:09Z	(60.42353,5.34185)	\N	\N	\N	\N
+# \N	(60.42347,5.34212)	486	\N	\N	\N
+# 2006-04-30T17:18:05Z	(60.42338,5.34269)	487	\N	\N	\N
+# '
+not ok - "../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml (stderr)
+#   Failed test '"../gpst -o pgtab missing.gpsml" - Output pgtab from missing.gpsml (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format
+#   Failed test '"../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2003-06-15T10:27:45Z	8.1225077	58.1818158		
+# 2003-06-15T10:27:53Z	8.1253200	58.1818712		
+# 2003-06-15T10:27:57Z	8.1266031	58.1816347		
+# 2003-06-15T10:28:03Z	8.1284612	58.1812099		
+# 2003-06-15T10:28:06Z	8.1293950	58.1810315		
+# 2003-06-15T10:28:10Z	8.1307400	58.1809621		
+# '
+not ok - "../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format (stderr)
+#   Failed test '"../gpst -o csv log.dos.mayko" - Output csv from DOS-formatted Mayko format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format
+#   Failed test '"../gpst -o pgwtab multitrack.gpx" - Test pgwtab format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '(51.477880000,-0.001470000)	0-Meridian	\N	\N	\N	11-FEB-03 15:46	11-FEB-03 15:46	\N	\N
+# (51.532030,-0.177330)	Abbey Road	34.492798	\N	\N	Det hellige gangfeltet der Beatles valsa over.	26-FEB-06 17:29:46	\N	\N
+# (61.636684,8.312254)	GaldhÃ¸piggen med ', &, < og >. â˜º	2469.012939	mountain	2006-05-08T18:27:59Z	Her er det &, < og >. â˜º	SchwÃ¦ra greie	http://www.example.org/	Waypoint
+# (60.397460000,5.350610000)	Halfdan Griegs vei	\N	\N	\N	04-AUG-02 19:42	04-AUG-02 19:42	\N	\N
+# (51.510130000,-0.130410000)	Leicester Square	\N	\N	\N	11-FEB-03 18:00	11-FEB-03 18:00	\N	\N
+# (60.968540000,9.285350000)	Leira camping	\N	\N	\N	03-OKT-02 21:58	03-OKT-02 21:58	\N	\N
+# '
+not ok - "../gpst -o pgwtab multitrack.gpx" - Test pgwtab format (stderr)
+#   Failed test '"../gpst -o pgwtab multitrack.gpx" - Test pgwtab format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format
+#   Failed test '"../gpst -o pgwupd multitrack.gpx" - Test pgwupd format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: 'BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+# COMMIT;
+# '
+not ok - "../gpst -o pgwupd multitrack.gpx" - Test pgwupd format (stderr)
+#   Failed test '"../gpst -o pgwupd multitrack.gpx" - Test pgwupd format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks
+#   Failed test '"../gpst -t -o clean pause.gpx" - Output clean format with time breaks'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '5.299534	60.425494	25.260
+# 5.299610	60.425464	24.931
+# 
+# 5.299694	60.425314	27.975
+# 
+# 5.299741	60.425384	31.017
+# 5.299958	60.425339	30.980
+# 5.299640	60.425238	30.538
+# 5.299686	60.425246	30.515
+# 
+# 5.299773	60.425345	31.936
+# 5.299419	60.425457	31.794
+# '
+not ok - "../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr)
+#   Failed test '"../gpst -t -o clean pause.gpx" - Output clean format with time breaks (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --outside option...
-ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)
-ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst) (stderr)
+not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)
+#   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst)'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <break/>
+# <title>track3</title>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst) (stderr)
+#   Failed test '"../gpst --pos1 2.11,2.12 --pos2 3.31,3.32 --outside multitrack-pause.gpx" - Check --outside option (gpx to gpst) (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --pos1 and --pos2 options...
 # Testing --require option...
-ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data
-ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data (stderr)
-ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml
-ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml (stderr)
-ok - "../gpst -re missing.gpsml" - Require elevation
-ok - "../gpst -re missing.gpsml" - Require elevation (stderr)
-ok - "../gpst -rt missing.gpsml" - Require time
-ok - "../gpst -rt missing.gpsml" - Require time (stderr)
-ok - "../gpst -rp missing.gpsml" - Require position
-ok - "../gpst -rp missing.gpsml" - Require position (stderr)
-ok - "../gpst -ret missing.gpsml" - Require elevation and time
-ok - "../gpst -ret missing.gpsml" - Require elevation and time (stderr)
-ok - "../gpst -retp missing.gpsml" - Require elevation, time and position
-ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stderr)
-ok - "../gpst -rep missing.gpsml" - Require elevation and position
-ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr)
+not ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data
+#   Failed test '"../gpst -re multitrack.gpx" - Require elevation from GPX data'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Track 1</title>
+# <break/>
+# <title>Track 2</title>
+# <tp> <time>2003-02-11T23:36:43Z</time> <lat>51.4970224</lat> <lon>-0.1457489</lon> <ele>1000</ele> </tp>
+# <break/>
+# <title>Track 3</title>
+# <break/>
+# <title>Track 4</title>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -re multitrack.gpx" - Require elevation from GPX data (stderr)
+#   Failed test '"../gpst -re multitrack.gpx" - Require elevation from GPX data (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml
+#   Failed test '"../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Only one point has elevation</title>
+# <tp> <time>2006-05-21T16:52:04Z</time> <lat>60.425314</lat> <lon>5.299694</lon> <ele>27.975</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml (stderr)
+#   Failed test '"../gpst -re one_ele.dos.gpsml" - Require elevation from gpsml (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -re missing.gpsml" - Require elevation
+#   Failed test '"../gpst -re missing.gpsml" - Require elevation'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Missing various elements</title>
+# <tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
+# <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
+# <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+# <tp> <lon>5.34224</lon> <ele>484</ele> </tp>
+# <tp> <ele>486</ele> </tp>
+# <tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
+# <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -re missing.gpsml" - Require elevation (stderr)
+#   Failed test '"../gpst -re missing.gpsml" - Require elevation (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -rt missing.gpsml" - Require time
+#   Failed test '"../gpst -rt missing.gpsml" - Require time'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Missing various elements</title>
+# <tp> <time>2006-04-30T17:16:59Z</time> </tp>
+# <tp> <time>2006-04-30T17:17:00Z</time> <lat>60.42352</lat> </tp>
+# <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
+# <tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
+# <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
+# <tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
+# <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -rt missing.gpsml" - Require time (stderr)
+#   Failed test '"../gpst -rt missing.gpsml" - Require time (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -rp missing.gpsml" - Require position
+#   Failed test '"../gpst -rp missing.gpsml" - Require position'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Missing various elements</title>
+# <tp> <time>2006-04-30T17:17:09Z</time> <lat>60.42353</lat> <lon>5.34185</lon> </tp>
+# <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+# <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -rp missing.gpsml" - Require position (stderr)
+#   Failed test '"../gpst -rp missing.gpsml" - Require position (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -ret missing.gpsml" - Require elevation and time
+#   Failed test '"../gpst -ret missing.gpsml" - Require elevation and time'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Missing various elements</title>
+# <tp> <time>2006-04-30T17:17:11Z</time> <lon>5.34187</lon> <ele>483</ele> </tp>
+# <tp> <time>2006-04-30T17:17:22Z</time> <ele>485</ele> </tp>
+# <tp> <time>2006-04-30T17:18:03Z</time> <lat>60.42339</lat> <ele>490</ele> </tp>
+# <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -ret missing.gpsml" - Require elevation and time (stderr)
+#   Failed test '"../gpst -ret missing.gpsml" - Require elevation and time (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -retp missing.gpsml" - Require elevation, time and position
+#   Failed test '"../gpst -retp missing.gpsml" - Require elevation, time and position'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Missing various elements</title>
+# <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -retp missing.gpsml" - Require elevation, time and position (stderr)
+#   Failed test '"../gpst -retp missing.gpsml" - Require elevation, time and position (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -rep missing.gpsml" - Require elevation and position
+#   Failed test '"../gpst -rep missing.gpsml" - Require elevation and position'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>Missing various elements</title>
+# <tp> <lat>60.42347</lat> <lon>5.34212</lon> <ele>486</ele> </tp>
+# <tp> <time>2006-04-30T17:18:05Z</time> <lat>60.42338</lat> <lon>5.34269</lon> <ele>487</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -rep missing.gpsml" - Require elevation and position (stderr)
+#   Failed test '"../gpst -rep missing.gpsml" - Require elevation and position (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --round option...
-ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx
-ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx (stderr)
-ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele
-ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele (stderr)
-ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output
-ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output (stderr)
-ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx
-ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx (stderr)
+not ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx
+#   Failed test '"../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>ACTIVE LOG164705</title>
+# <tp> <time>2006-05-21T16:49:11Z</time> <lat>60.4255</lat> <lon>5.29953</lon> <ele>25.3</ele> </tp>
+# <tp> <time>2006-05-21T16:49:46Z</time> <lat>60.4255</lat> <lon>5.29961</lon> <ele>24.9</ele> </tp>
+# <tp> <time>2006-05-21T16:52:04Z</time> <lat>60.4253</lat> <lon>5.29969</lon> <ele>28</ele> </tp>
+# <tp> <time>2006-05-21T16:56:36Z</time> <lat>60.4254</lat> <lon>5.29974</lon> <ele>31</ele> </tp>
+# <tp> <time>2006-05-21T16:56:47Z</time> <lat>60.4253</lat> <lon>5.29996</lon> <ele>31</ele> </tp>
+# <tp> <time>2006-05-21T16:56:56Z</time> <lat>60.4252</lat> <lon>5.29964</lon> <ele>30.5</ele> </tp>
+# <tp> <time>2006-05-21T16:57:03Z</time> <lat>60.4252</lat> <lon>5.29969</lon> <ele>30.5</ele> </tp>
+# <tp> <time>2006-05-21T16:59:08Z</time> <lat>60.4253</lat> <lon>5.29977</lon> <ele>31.9</ele> </tp>
+# <tp> <time>2006-05-21T17:00:54Z</time> <lat>60.4255</lat> <lon>5.29942</lon> <ele>31.8</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx (stderr)
+#   Failed test '"../gpst -R lat=4,lon=5,ele=1 pause.gpx" - --round works with lat, lon, ele from gpx (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele
+#   Failed test '"../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2006-05-21T16:49:11Z	(60.425,5.3)	25.3	\N	\N	\N
+# 2006-05-21T16:49:46Z	(60.425,5.3)	24.9	\N	\N	\N
+# 2006-05-21T16:52:04Z	(60.425,5.3)	28	\N	\N	\N
+# 2006-05-21T16:56:36Z	(60.425,5.3)	31	\N	\N	\N
+# 2006-05-21T16:56:47Z	(60.425,5.3)	31	\N	\N	\N
+# 2006-05-21T16:56:56Z	(60.425,5.3)	30.5	\N	\N	\N
+# 2006-05-21T16:57:03Z	(60.425,5.3)	30.5	\N	\N	\N
+# 2006-05-21T16:59:08Z	(60.425,5.3)	31.9	\N	\N	\N
+# 2006-05-21T17:00:54Z	(60.425,5.299)	31.8	\N	\N	\N
+# '
+not ok - "../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele (stderr)
+#   Failed test '"../gpst -R lat=3,lon=3,ele=1 -o pgtab pause.gpx" - pgtab output from gpx works with --round lat, lon, ele (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output
+#   Failed test '"../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '(51.478,-0.001)	0-Meridian	\N	\N	\N	11-FEB-03 15:46	11-FEB-03 15:46	\N	\N
+# (51.532,-0.177)	Abbey Road	34.5	\N	\N	Det hellige gangfeltet der Beatles valsa over.	26-FEB-06 17:29:46	\N	\N
+# (61.637,8.312)	GaldhÃ¸piggen med ', &, < og >. â˜º	2469	mountain	2006-05-08T18:27:59Z	Her er det &, < og >. â˜º	SchwÃ¦ra greie	http://www.example.org/	Waypoint
+# (60.397,5.351)	Halfdan Griegs vei	\N	\N	\N	04-AUG-02 19:42	04-AUG-02 19:42	\N	\N
+# (51.51,-0.13)	Leicester Square	\N	\N	\N	11-FEB-03 18:00	11-FEB-03 18:00	\N	\N
+# (60.969,9.285)	Leira camping	\N	\N	\N	03-OKT-02 21:58	03-OKT-02 21:58	\N	\N
+# '
+not ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output (stderr)
+#   Failed test '"../gpst -R lat=3,lon=3,ele=1 -o pgwtab multitrack.gpx" - --round works with lat, lon, ele from gpx, pgwtab output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx
+#   Failed test '"../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: 'BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(51.478,-0.001) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(51.532,-0.177) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(61.637,8.312) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(60.397,5.351) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(51.51,-0.13) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+#   UPDATE logg SET name = clname(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
+#   UPDATE logg SET dist = cldist(coor) WHERE (point(60.969,9.285) <-> coor) < 0.05;
+# COMMIT;
+# '
+not ok - "../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx (stderr)
+#   Failed test '"../gpst -R lat=3,lon=3,ele=1 -o pgwupd multitrack.gpx" - pgwupd output and --round works with lat, lon, ele from gpx (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --short-date option...
 # Testing --save-to-file option...
 # Testing --create-breaks option...
-ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files
-ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files (stderr)
-ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
-ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
-ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
-ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
+not ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files
+#   Failed test '"../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>ACTIVE LOG164705</title>
+# <tp> <time>2006-05-21T16:49:11Z</time> <lat>60.425494</lat> <lon>5.299534</lon> <ele>25.26</ele> </tp>
+# <tp> <time>2006-05-21T16:49:46Z</time> <lat>60.425464</lat> <lon>5.29961</lon> <ele>24.931</ele> </tp>
+# <pause>0:00:02:18</pause>
+# <tp> <time>2006-05-21T16:52:04Z</time> <lat>60.425314</lat> <lon>5.299694</lon> <ele>27.975</ele> </tp>
+# <pause>0:00:04:32</pause>
+# <tp> <time>2006-05-21T16:56:36Z</time> <lat>60.425384</lat> <lon>5.299741</lon> <ele>31.017</ele> </tp>
+# <tp> <time>2006-05-21T16:56:47Z</time> <lat>60.425339</lat> <lon>5.299958</lon> <ele>30.98</ele> </tp>
+# <tp> <time>2006-05-21T16:56:56Z</time> <lat>60.425238</lat> <lon>5.29964</lon> <ele>30.538</ele> </tp>
+# <tp> <time>2006-05-21T16:57:03Z</time> <lat>60.425246</lat> <lon>5.299686</lon> <ele>30.515</ele> </tp>
+# <pause>0:00:02:05</pause>
+# <tp> <time>2006-05-21T16:59:08Z</time> <lat>60.425345</lat> <lon>5.299773</lon> <ele>31.936</ele> </tp>
+# <tp> <time>2006-05-21T17:00:54Z</time> <lat>60.425457</lat> <lon>5.299419</lon> <ele>31.794</ele> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files (stderr)
+#   Failed test '"../gpst -t pause.gpx" - Output gpsml with <pause> elements from GPX files (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks
+#   Failed test '"../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <pause>0:23:59:58</pause>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <pause>0:01:00:00</pause>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <pause>1:01:00:03</pause>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)
+#   Failed test '"../gpst -t multitrack-pause.gpx" - Insert <pause> between gpx tracks (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles
+#   Failed test '"../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T00:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T00:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T00:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <pause>0:23:59:58</pause>
+# <tp> <time>2006-01-02T00:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T00:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <pause>0:01:00:00</pause>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T01:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <pause>1:01:00:03</pause>
+# <tp> <time>2006-01-03T02:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T02:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T02:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T02:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T02:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T02:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T02:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T02:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)
+#   Failed test '"../gpst -t multitrack-pause.gpsml" - Insert <pause> between gpsml titles (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing -T (--time-shift) option...
-ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml
-ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml (stderr)
-ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml
-ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml (stderr)
-ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX
-ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX (stderr)
-ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option
-ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option (stderr)
-ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab
-ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab (stderr)
+not ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml
+#   Failed test '"../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2006-01-01T01:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2006-01-01T01:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2006-01-01T01:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <tp> <time>2006-01-02T01:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-02T01:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-02T01:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T02:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T02:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <tp> <time>2006-01-03T03:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T03:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T03:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T03:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T03:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T03:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T03:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T03:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml (stderr)
+#   Failed test '"../gpst -T 3600 multitrack-pause.gpx" - Add one hour to GPX input, output gpsml (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml
+#   Failed test '"../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <title>track1</title>
+# <tp> <time>2005-12-31T23:00:00Z</time> <lat>1.11</lat> <lon>1.12</lon> </tp>
+# <tp> <time>2005-12-31T23:00:01Z</time> <lat>1.21</lat> <lon>1.22</lon> </tp>
+# <tp> <time>2005-12-31T23:00:02Z</time> <lat>1.31</lat> <lon>1.32</lon> </tp>
+# <break/>
+# <title>track2</title>
+# <tp> <time>2006-01-01T23:00:00Z</time> <lat>2.11</lat> <lon>2.12</lon> </tp>
+# <tp> <time>2006-01-01T23:00:04Z</time> <lat>2.21</lat> <lon>2.22</lon> </tp>
+# <tp> <time>2006-01-01T23:00:16Z</time> <lat>2.31</lat> <lon>2.32</lon> </tp>
+# <tp> <time>2006-01-02T00:00:16Z</time> <lat>2.41</lat> <lon>2.42</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-02T00:00:17Z</time> <lat>2.451</lat> <lon>2.452</lon> </tp>
+# <break/>
+# <title>track3</title>
+# <tp> <time>2006-01-03T01:00:20Z</time> <lat>3.11</lat> <lon>3.12</lon> </tp>
+# <tp> <time>2006-01-03T01:00:21Z</time> <lat>3.21</lat> <lon>3.22</lon> </tp>
+# <tp> <time>2006-01-03T01:00:22Z</time> <lat>3.31</lat> <lon>3.32</lon> </tp>
+# <break/>
+# <tp> <time>2006-01-03T01:00:23Z</time> <lat>3.41</lat> <lon>3.42</lon> </tp>
+# <tp> <time>2006-01-03T01:00:24Z</time> <lat>3.51</lat> <lon>3.52</lon> </tp>
+# <tp> <time>2006-01-03T01:00:25Z</time> <lat>3.61</lat> <lon>3.62</lon> </tp>
+# <tp> <time>2006-01-03T01:00:26Z</time> <lat>3.71</lat> <lon>3.72</lon> </tp>
+# <tp> <time>2006-01-03T01:00:27Z</time> <lat>3.81</lat> <lon>3.82</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml (stderr)
+#   Failed test '"../gpst -T -3600 multitrack-pause.gpx" - Subtract one hour from GPX input, output gpsml (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX
+#   Failed test '"../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="1.11" lon="1.12"> <time>2006-01-01T00:00:01Z</time> </trkpt>
+#       <trkpt lat="1.21" lon="1.22"> <time>2006-01-01T00:00:02Z</time> </trkpt>
+#       <trkpt lat="1.31" lon="1.32"> <time>2006-01-01T00:00:03Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="2.11" lon="2.12"> <time>2006-01-02T00:00:01Z</time> </trkpt>
+#       <trkpt lat="2.21" lon="2.22"> <time>2006-01-02T00:00:05Z</time> </trkpt>
+#       <trkpt lat="2.31" lon="2.32"> <time>2006-01-02T00:00:17Z</time> </trkpt>
+#       <trkpt lat="2.41" lon="2.42"> <time>2006-01-02T01:00:17Z</time> </trkpt>
+#       <trkpt lat="2.451" lon="2.452"> <time>2006-01-02T01:00:18Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="3.11" lon="3.12"> <time>2006-01-03T02:00:21Z</time> </trkpt>
+#       <trkpt lat="3.21" lon="3.22"> <time>2006-01-03T02:00:22Z</time> </trkpt>
+#       <trkpt lat="3.31" lon="3.32"> <time>2006-01-03T02:00:23Z</time> </trkpt>
+#       <trkpt lat="3.41" lon="3.42"> <time>2006-01-03T02:00:24Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="3.51" lon="3.52"> <time>2006-01-03T02:00:25Z</time> </trkpt>
+#       <trkpt lat="3.61" lon="3.62"> <time>2006-01-03T02:00:26Z</time> </trkpt>
+#       <trkpt lat="3.71" lon="3.72"> <time>2006-01-03T02:00:27Z</time> </trkpt>
+#       <trkpt lat="3.81" lon="3.82"> <time>2006-01-03T02:00:28Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX (stderr)
+#   Failed test '"../gpst -T 1 -o gpx multitrack-pause.gpx" - Add one second to GPX input, output GPX (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option
+#   Failed test '"../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="1.11" lon="1.12"> <time>2005-12-31T23:59:59Z</time> </trkpt>
+#       <trkpt lat="1.21" lon="1.22"> <time>2006-01-01T00:00:00Z</time> </trkpt>
+#       <trkpt lat="1.31" lon="1.32"> <time>2006-01-01T00:00:01Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="2.11" lon="2.12"> <time>2006-01-01T23:59:59Z</time> </trkpt>
+#       <trkpt lat="2.21" lon="2.22"> <time>2006-01-02T00:00:03Z</time> </trkpt>
+#       <trkpt lat="2.31" lon="2.32"> <time>2006-01-02T00:00:15Z</time> </trkpt>
+#       <trkpt lat="2.41" lon="2.42"> <time>2006-01-02T01:00:15Z</time> </trkpt>
+#       <trkpt lat="2.451" lon="2.452"> <time>2006-01-02T01:00:16Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="3.11" lon="3.12"> <time>2006-01-03T02:00:19Z</time> </trkpt>
+#       <trkpt lat="3.21" lon="3.22"> <time>2006-01-03T02:00:20Z</time> </trkpt>
+#       <trkpt lat="3.31" lon="3.32"> <time>2006-01-03T02:00:21Z</time> </trkpt>
+#       <trkpt lat="3.41" lon="3.42"> <time>2006-01-03T02:00:22Z</time> </trkpt>
+#     </trkseg>
+#     <trkseg>
+#       <trkpt lat="3.51" lon="3.52"> <time>2006-01-03T02:00:23Z</time> </trkpt>
+#       <trkpt lat="3.61" lon="3.62"> <time>2006-01-03T02:00:24Z</time> </trkpt>
+#       <trkpt lat="3.71" lon="3.72"> <time>2006-01-03T02:00:25Z</time> </trkpt>
+#       <trkpt lat="3.81" lon="3.82"> <time>2006-01-03T02:00:26Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option (stderr)
+#   Failed test '"../gpst --time-shift -1 -o gpx multitrack-pause.gpsml" - Subtract one second from gpsml input, output GPX, use long option (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab
+#   Failed test '"../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2006-01-01T00:00:00Z	(1.11,1.12)	\N	\N	\N	\N
+# 2006-01-01T00:00:01Z	(1.21,1.22)	\N	\N	\N	\N
+# 2006-01-01T00:00:02Z	(1.31,1.32)	\N	\N	\N	\N
+# 2006-01-02T00:00:00Z	(2.11,2.12)	\N	\N	\N	\N
+# 2006-01-02T00:00:04Z	(2.21,2.22)	\N	\N	\N	\N
+# 2006-01-02T00:00:16Z	(2.31,2.32)	\N	\N	\N	\N
+# 2006-01-02T01:00:16Z	(2.41,2.42)	\N	\N	\N	\N
+# 2006-01-02T01:00:17Z	(2.451,2.452)	\N	\N	\N	\N
+# 2006-01-03T02:00:20Z	(3.11,3.12)	\N	\N	\N	\N
+# 2006-01-03T02:00:21Z	(3.21,3.22)	\N	\N	\N	\N
+# 2006-01-03T02:00:22Z	(3.31,3.32)	\N	\N	\N	\N
+# 2006-01-03T02:00:23Z	(3.41,3.42)	\N	\N	\N	\N
+# 2006-01-03T02:00:24Z	(3.51,3.52)	\N	\N	\N	\N
+# 2006-01-03T02:00:25Z	(3.61,3.62)	\N	\N	\N	\N
+# 2006-01-03T02:00:26Z	(3.71,3.72)	\N	\N	\N	\N
+# 2006-01-03T02:00:27Z	(3.81,3.82)	\N	\N	\N	\N
+# '
+not ok - "../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab (stderr)
+#   Failed test '"../gpst -T 0 -o pgtab multitrack-pause.gpx" - Read GPX, time-shift 0 seconds, output pgtab (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing -v (--verbose) option...
-ok - "../gpst -hv" - Option --version with -h returns Id string and help screen
-ok - "../gpst -hv" - Option --version with -h returns Id string and help screen (stderr)
+not ok - "../gpst -hv" - Option --version with -h returns version number and help screen
+#   Failed test '"../gpst -hv" - Option --version with -h returns version number and help screen'
+#   at ./run-tests.pl line 2169.
+#                   ''
+#     doesn't match '/^\n\S+ v\d\.\d\d\n/s'
+not ok - "../gpst -hv" - Option --version with -h returns version number and help screen (stderr)
+#   Failed test '"../gpst -hv" - Option --version with -h returns version number and help screen (stderr)'
+#   at ./run-tests.pl line 2172.
+#                   'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     doesn't match '/^$/'
 # Testing --version option...
-ok - "../gpst --version" - Option --version returns Id string
-ok - "../gpst --version" - Option --version returns Id string (stderr)
+not ok - "../gpst --version" - Option --version returns version number
+#   Failed test '"../gpst --version" - Option --version returns version number'
+#   at ./run-tests.pl line 2169.
+#                   ''
+#     doesn't match '/^\S+ v\d\.\d\d\n/'
+not ok - "../gpst --version" - Option --version returns version number (stderr)
+#   Failed test '"../gpst --version" - Option --version returns version number (stderr)'
+#   at ./run-tests.pl line 2172.
+#                   'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     doesn't match '/^$/'
 # Testing --strip-whitespace option...
-ok - "../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output
-ok - "../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output (stderr)
-ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines
-ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines (stderr)
-ok - "../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output
-ok - "../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output (stderr)
+not ok - "../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output
+#   Failed test '"../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+# version="1.1"
+# creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+# xmlns="http://www.topografix.com/GPX/1/1"
+# xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+# xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+# <trk>
+# <trkseg>
+# <trkpt lat="60.425494" lon="5.299534"><ele>25.260</ele><time>2006-05-21T16:49:11Z</time></trkpt>
+# <trkpt lat="60.425464" lon="5.299610"><ele>24.931</ele><time>2006-05-21T16:49:46Z</time></trkpt>
+# <trkpt lat="60.425314" lon="5.299694"><ele>27.975</ele><time>2006-05-21T16:52:04Z</time></trkpt>
+# <trkpt lat="60.425384" lon="5.299741"><ele>31.017</ele><time>2006-05-21T16:56:36Z</time></trkpt>
+# <trkpt lat="60.425339" lon="5.299958"><ele>30.980</ele><time>2006-05-21T16:56:47Z</time></trkpt>
+# <trkpt lat="60.425238" lon="5.299640"><ele>30.538</ele><time>2006-05-21T16:56:56Z</time></trkpt>
+# <trkpt lat="60.425246" lon="5.299686"><ele>30.515</ele><time>2006-05-21T16:57:03Z</time></trkpt>
+# <trkpt lat="60.425345" lon="5.299773"><ele>31.936</ele><time>2006-05-21T16:59:08Z</time></trkpt>
+# <trkpt lat="60.425457" lon="5.299419"><ele>31.794</ele><time>2006-05-21T17:00:54Z</time></trkpt>
+# </trkseg>
+# </trk>
+# </gpx>
+# '
+not ok - "../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output (stderr)
+#   Failed test '"../gpst -w -o gpx pause-noname.gpx" - Strip whitespace from GPX output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines
+#   Failed test '"../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+# version="1.1"
+# creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+# xmlns="http://www.topografix.com/GPX/1/1"
+# xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+# xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+# <trk>
+# <trkseg>
+# <trkpt lat="70.6800486" lon="23.6746151"><time>2002-12-22T21:42:24Z</time></trkpt>
+# <trkpt lat="70.6799322" lon="23.6740038"><time>2002-12-22T21:42:32Z</time></trkpt>
+# <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:42:54Z</time></trkpt>
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:51Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:52Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <!-- <trkpt lat="70.6796266" lon="23.6723991"><time>2002-12-22T21:43:54Z</time><extensions><error>desc</error></extensions></trkpt> -->
+# <trkpt lat="70.6800774" lon="23.6757566"><time>2002-12-22T21:44:45Z</time></trkpt>
+# </trkseg>
+# <trkseg>
+# <trkpt lat="70.6801502" lon="23.6753442"><time>2002-12-22T21:44:52Z</time></trkpt>
+# <trkpt lat="70.6801905" lon="23.6757542"><time>2002-12-22T21:45:04Z</time></trkpt>
+# </trkseg>
+# </trk>
+# </gpx>
+# '
+not ok - "../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines (stderr)
+#   Failed test '"../gpst -o gpx -w comments.mayko" - Output whitespace-stripped GPX from Mayko file with commented-out lines (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output
+#   Failed test '"../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: 'BEGIN;
+# UPDATE logg SET name = clname(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+# UPDATE logg SET dist = cldist(coor) WHERE (point(51.477880000,-0.001470000) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+# UPDATE logg SET name = clname(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+# UPDATE logg SET dist = cldist(coor) WHERE (point(51.532030,-0.177330) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+# UPDATE logg SET name = clname(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+# UPDATE logg SET dist = cldist(coor) WHERE (point(61.636684,8.312254) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+# UPDATE logg SET name = clname(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+# UPDATE logg SET dist = cldist(coor) WHERE (point(60.397460000,5.350610000) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+# UPDATE logg SET name = clname(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+# UPDATE logg SET dist = cldist(coor) WHERE (point(51.510130000,-0.130410000) <-> coor) < 0.05;
+# COMMIT;
+# BEGIN;
+# UPDATE logg SET name = clname(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+# UPDATE logg SET dist = cldist(coor) WHERE (point(60.968540000,9.285350000) <-> coor) < 0.05;
+# COMMIT;
+# '
+not ok - "../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output (stderr)
+#   Failed test '"../gpst -w -o pgwupd multitrack.gpx" - Strip whitespace from pgwupd output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --double-y-scale option...
-ok - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format
-ok - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format (stderr)
-ok - "../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format
-ok - "../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format (stderr)
+not ok - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format
+#   Failed test '"../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '5.299534	120.850988	25.260
+# 5.299610	120.850928	24.931
+# 5.299694	120.850628	27.975
+# 5.299741	120.850768	31.017
+# 5.299958	120.850678	30.980
+# 5.299640	120.850476	30.538
+# 5.299686	120.850492	30.515
+# 5.299773	120.85069	31.936
+# 5.299419	120.850914	31.794
+# '
+not ok - "../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format (stderr)
+#   Failed test '"../gpst -y -o clean pause.gpx" - Double y scale, clean output from gpx format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format
+#   Failed test '"../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '8.1225077	116.3636316	
+# 8.1253200	116.3637424	
+# 8.1266031	116.3632694	
+# 8.1284612	116.3624198	
+# 8.1293950	116.362063	
+# 8.1307400	116.3619242	
+# '
+not ok - "../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format (stderr)
+#   Failed test '"../gpst -y -o clean log.dos.mayko" - Double y scale, clean output from mayko format (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing --debug option...
 # Strip error from Mayko format...
-ok - "../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output
-ok - "../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output (stderr)
-ok - "../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output
-ok - "../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output (stderr)
-ok - "../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output
-ok - "../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output (stderr)
-ok - "../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output
-ok - "../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output (stderr)
-ok - "../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output
-ok - "../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output (stderr)
-ok - "../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output
-ok - "../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output (stderr)
-ok - "../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output
-ok - "../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output (stderr)
-ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output
-ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output (stderr)
-ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
-ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
+not ok - "../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output
+#   Failed test '"../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2003-06-13T09:12:36Z	5.5794667	60.4280897		
+# 2003-06-13T09:12:38Z	5.5802255	60.4281867		
+# 2003-06-13T09:12:41Z	5.5813636	60.4283320		
+# 2003-06-13T09:12:42Z	5.5817430	60.4283806		
+# '
+not ok - "../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output (stderr)
+#   Failed test '"../gpst -o csv date_error.mayko" - Strip error from mayko format in csv output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output
+#   Failed test '"../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '5.5794667	60.4280897	
+# 5.5802255	60.4281867	
+# 5.5813636	60.4283320	
+# 5.5817430	60.4283806	
+# '
+not ok - "../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output (stderr)
+#   Failed test '"../gpst -o clean date_error.mayko" - Strip error from mayko format in clean output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output
+#   Failed test '"../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8"?>
+# <gpsml>
+# <track>
+# <tp> <time>2003-06-13T09:12:36Z</time> <lat>60.4280897</lat> <lon>5.5794667</lon> </tp>
+# <tp> <time>2003-06-13T09:12:38Z</time> <lat>60.4281867</lat> <lon>5.5802255</lon> </tp>
+# <etp err="error"> <time>2037-06-25T17:19:22Z</time> <lat>103.4034054</lat> <lon>129.7271053</lon> </etp>
+# <tp> <time>2003-06-13T09:12:41Z</time> <lat>60.428332</lat> <lon>5.5813636</lon> </tp>
+# <tp> <time>2003-06-13T09:12:42Z</time> <lat>60.4283806</lat> <lon>5.581743</lon> </tp>
+# </track>
+# </gpsml>
+# '
+not ok - "../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output (stderr)
+#   Failed test '"../gpst -o gpsml date_error.mayko" - Strip error from mayko format in gpsml output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output
+#   Failed test '"../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+# <gpx
+#   version="1.1"
+#   creator="gpst - http://svn.sunbase.org/repos/utils/trunk/src/gpstools/"
+#   xmlns="http://www.topografix.com/GPX/1/1"
+#   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+#   xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+# >
+#   <trk>
+#     <trkseg>
+#       <trkpt lat="60.4280897" lon="5.5794667"> <time>2003-06-13T09:12:36Z</time> </trkpt>
+#       <trkpt lat="60.4281867" lon="5.5802255"> <time>2003-06-13T09:12:38Z</time> </trkpt>
+#       <!-- <trkpt lat="103.4034054" lon="129.7271053"> <time>2037-06-25T17:19:22Z</time> <extensions> <error>error</error> </extensions> </trkpt> -->
+#       <trkpt lat="60.4283320" lon="5.5813636"> <time>2003-06-13T09:12:41Z</time> </trkpt>
+#       <trkpt lat="60.4283806" lon="5.5817430"> <time>2003-06-13T09:12:42Z</time> </trkpt>
+#     </trkseg>
+#   </trk>
+# </gpx>
+# '
+not ok - "../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output (stderr)
+#   Failed test '"../gpst -o gpx date_error.mayko" - Strip error from mayko format in gpx output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output
+#   Failed test '"../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: 'Format: DMS  UTC Offset:   0.00 hrs  Datum[100]: WGS 84
+# T	06/13/2003 09:12:36	60°25'41.1"	5°34'46.1"
+# T	06/13/2003 09:12:38	60°25'41.5"	5°34'48.8"
+# T	06/13/2003 09:12:41	60°25'42.0"	5°34'52.9"
+# T	06/13/2003 09:12:42	60°25'42.2"	5°34'54.3"
+# '
+not ok - "../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output (stderr)
+#   Failed test '"../gpst -o gpstrans date_error.mayko" - Strip error from mayko format in gpstrans output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output
+#   Failed test '"../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '2003-06-13T09:12:36Z	(60.4280897,5.5794667)	\N	\N	\N	\N
+# 2003-06-13T09:12:38Z	(60.4281867,5.5802255)	\N	\N	\N	\N
+# 2003-06-13T09:12:41Z	(60.4283320,5.5813636)	\N	\N	\N	\N
+# 2003-06-13T09:12:42Z	(60.4283806,5.5817430)	\N	\N	\N	\N
+# '
+not ok - "../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output (stderr)
+#   Failed test '"../gpst -o pgtab date_error.mayko" - Strip error from mayko format in pgtab output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output
+#   Failed test '"../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '5.5802255	60.4281867	1
+# 5.5817430	60.4283806	1
+# 5.5813636	60.4283320	1
+# 5.5794667	60.4280897	1
+# '
+not ok - "../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output (stderr)
+#   Failed test '"../gpst -o poscount date_error.mayko" - Strip error from mayko format in poscount output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output
+#   Failed test '"../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '5.5794667 60.4280897
+# 5.5802255 60.4281867
+# 5.5813636 60.4283320
+# 5.5817430 60.4283806
+# '
+not ok - "../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output (stderr)
+#   Failed test '"../gpst -o xgraph date_error.mayko" - Strip error from mayko format in xgraph output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
+not ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output
+#   Failed test '"../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output'
+#   at ./run-tests.pl line 2141.
+#          got: ''
+#     expected: '"Time = 0.0
+# 5.5794667 60.4280897
+# 
+# "Time = 2.0
+# 5.5802255 60.4281867
+# 
+# "Time = 5.0
+# 5.5813636 60.4283320
+# 
+# "Time = 6.0
+# 5.5817430 60.4283806
+# 
+# '
+not ok - "../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)
+#   Failed test '"../gpst -o ygraph date_error.mayko" - Strip error from mayko format in ygraph output (stderr)'
+#   at ./run-tests.pl line 2144.
+#          got: 'Global symbol "$rcs_id" requires explicit package name at ../gpst line 1084.
+# Execution of ../gpst aborted due to compilation errors.
+# '
+#     expected: ''
 # Testing finished.
 1..233
+# Looks like you failed 144 tests of 233.

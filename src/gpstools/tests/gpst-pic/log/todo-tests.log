@@ -1,10 +1,10 @@
 ok - use GPST;
 ok - use GPSTxml;
-# ========== Executing "gpst-pic.t --todo" ==========
+# ========== Executing gpst-pic.t v0.00 ==========
 # Running TODO tests...
 not ok - "../../gpst-pic -o extxml files/DSC_4426.JPG" - Show extended XML information for DSC_4426.JPG
 #   Failed test '"../../gpst-pic -o extxml files/DSC_4426.JPG" - Show extended XML information for DSC_4426.JPG'
-#   at ./gpst-pic.t line 397.
+#   at ./gpst-pic.t line 388.
 #          got: ''
 #     expected: '<?xml version="1.0" encoding="UTF-8"?>
 # <gpstpic>
@@ -31,7 +31,7 @@ not ok - "../../gpst-pic -o extxml files/DSC_4426.JPG" - Show extended XML infor
 # '
 not ok - "../../gpst-pic -o extxml files/DSC_4426.JPG" - Show extended XML information for DSC_4426.JPG (stderr)
 #   Failed test '"../../gpst-pic -o extxml files/DSC_4426.JPG" - Show extended XML information for DSC_4426.JPG (stderr)'
-#   at ./gpst-pic.t line 400.
+#   at ./gpst-pic.t line 391.
 #          got: 'gpst-pic: extxml: Unknown output format
 # '
 #     expected: ''

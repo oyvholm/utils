@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-# $Id$
+# tests/gpst-file/Makefile
 # File ID: ceae878a-009f-11de-a87e-000475e441b9
 
 all:
