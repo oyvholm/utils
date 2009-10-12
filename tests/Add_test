@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# Add_test
 # File ID: 948f70c2-f989-11dd-be4a-000475e441b9
 # [Description]
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 [ -z "$1" ] && { echo Syntax: $0 testname >&2; exit 1; }

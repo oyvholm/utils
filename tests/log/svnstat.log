@@ -1,14 +1,14 @@
-# ========== Executing "svnstat.t --all" ==========
+# ========== Executing svnstat.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../svnstat -h" - Option -h prints help screen
 ok - "../svnstat -h" - Option -h prints help screen (stderr)
 ok - "../svnstat -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../svnstat -hv" - Option --version with -h returns Id string and help screen
-ok - "../svnstat -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../svnstat -hv" - Option --version with -h returns version number and help screen
+ok - "../svnstat -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../svnstat --version" - Option --version returns Id string
-ok - "../svnstat --version" - Option --version returns Id string (stderr)
+ok - "../svnstat --version" - Option --version returns version number
+ok - "../svnstat --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7

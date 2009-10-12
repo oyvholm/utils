@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# filt
 # File ID: aad4fde6-02e6-11de-acfb-000475e441b9
 # Kjører ei fil ($2 osv) gjennom et filter som spesifiseres som $1.
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 cmd=$1

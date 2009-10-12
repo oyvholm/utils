@@ -1,14 +1,14 @@
-# ========== Executing "zerosplit.t --all" ==========
+# ========== Executing zerosplit.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../zerosplit -h" - Option -h prints help screen
 ok - "../zerosplit -h" - Option -h prints help screen (stderr)
 ok - "../zerosplit -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../zerosplit -hv" - Option --version with -h returns Id string and help screen
-ok - "../zerosplit -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../zerosplit -hv" - Option --version with -h returns version number and help screen
+ok - "../zerosplit -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../zerosplit --version" - Option --version returns Id string
-ok - "../zerosplit --version" - Option --version returns Id string (stderr)
+ok - "../zerosplit --version" - Option --version returns version number
+ok - "../zerosplit --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7

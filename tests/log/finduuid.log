@@ -1,4 +1,4 @@
-# ========== Executing "finduuid.t --all" ==========
+# ========== Executing finduuid.t v0.00 ==========
 ok - "../finduuid </dev/null" - Read empty input
 ok - "../finduuid </dev/null" - Read empty input (stderr)
 ok - "../finduuid finduuid-files/std-random" - Find UUID inside random data
@@ -26,11 +26,11 @@ ok - "../finduuid -lf finduuid-files/textfile finduuid-files/text2" - Print file
 ok - "../finduuid -l finduuid-files/compact" - Print whole line containg many UUIDs
 ok - "../finduuid -l finduuid-files/compact" - Print whole line containg many UUIDs (stderr)
 # Testing -v (--verbose) option...
-ok - "../finduuid -hv" - Option --version with -h returns Id string and help screen
-ok - "../finduuid -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../finduuid -hv" - Option --version with -h returns version number and help screen
+ok - "../finduuid -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../finduuid --version" - Option --version returns Id string
-ok - "../finduuid --version" - Option --version returns Id string (stderr)
+ok - "../finduuid --version" - Option --version returns version number
+ok - "../finduuid --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..27

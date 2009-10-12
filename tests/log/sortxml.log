@@ -1,14 +1,14 @@
-# ========== Executing "sortxml.t --all" ==========
+# ========== Executing sortxml.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../sortxml -h" - Option -h prints help screen
 ok - "../sortxml -h" - Option -h prints help screen (stderr)
 ok - "../sortxml -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../sortxml -hv" - Option --version with -h returns Id string and help screen
-ok - "../sortxml -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../sortxml -hv" - Option --version with -h returns version number and help screen
+ok - "../sortxml -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../sortxml --version" - Option --version returns Id string
-ok - "../sortxml --version" - Option --version returns Id string (stderr)
+ok - "../sortxml --version" - Option --version returns version number
+ok - "../sortxml --version" - Option --version returns version number (stderr)
 # Test sorting...
 ok - "../sortxml -s b sortxml-files/a.xml" - Sorting XML document
 ok - "../sortxml -s b sortxml-files/a.xml" - Sorting XML document (stderr)

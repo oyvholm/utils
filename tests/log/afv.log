@@ -1,14 +1,14 @@
-# ========== Executing "afv.t --all" ==========
+# ========== Executing afv.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../afv -h" - Option -h prints help screen
 ok - "../afv -h" - Option -h prints help screen (stderr)
 ok - "../afv -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../afv -hv" - Option --version with -h returns Id string and help screen
-ok - "../afv -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../afv -hv" - Option --version with -h returns version number and help screen
+ok - "../afv -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../afv --version" - Option --version returns Id string
-ok - "../afv --version" - Option --version returns Id string (stderr)
+ok - "../afv --version" - Option --version returns version number
+ok - "../afv --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# mtube
 # File ID: b76283f2-33fc-11de-8bbf-000475e441b9
 # Play YouTube videos in mplayer. Found at 
 # <http://www.shell-fu.org/lister.php?id=701>.
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 function mtube {

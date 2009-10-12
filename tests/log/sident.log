@@ -1,4 +1,4 @@
-# ========== Executing "sident.t --all" ==========
+# ========== Executing sident.t v0.00 ==========
 # Testing without options...
 ok - "../sident sident-files/textfile" - Read textfile, no arguments
 ok - "../sident sident-files/textfile" - Read textfile, no arguments (stderr)
@@ -31,15 +31,15 @@ ok - "../sident -le sident-files/*" - Only list names of files with expanded key
 ok - "../sident -u sident-files/textfile" - Remove duplicates from textfile
 ok - "../sident -u sident-files/textfile" - Remove duplicates from textfile (stderr)
 # Testing -v (--verbose) option...
-ok - "../sident -hv" - Option --version with -h returns Id string and help screen
-ok - "../sident -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../sident -hv" - Option --version with -h returns version number and help screen
+ok - "../sident -hv" - Option --version with -h returns version number and help screen (stderr)
 ok - "../sident -v sident-files/*" - Also list files without keywords
 ok - "../sident -v sident-files/*" - Also list files without keywords (stderr)
 ok - "../sident -vx sident-files/*" - Output XML, including files without keywords
 ok - "../sident -vx sident-files/*" - Output XML, including files without keywords (stderr)
 # Testing --version option...
-ok - "../sident --version" - Option --version returns Id string
-ok - "../sident --version" - Option --version returns Id string (stderr)
+ok - "../sident --version" - Option --version returns version number
+ok - "../sident --version" - Option --version returns version number (stderr)
 # Testing -x (--xml) option...
 ok - "../sident -x sident-files/textfile" - Output XML from textfile
 ok - "../sident -x sident-files/textfile" - Output XML from textfile (stderr)

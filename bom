@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# bom
 # File ID: 3a4bea44-f742-11dd-8c5e-000475e441b9
 # [Description]
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 if [ -z "$1" ]; then

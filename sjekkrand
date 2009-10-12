@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# sjekkrand
 # File ID: e1ba85be-f743-11dd-85c0-000475e441b9
 # [Description]
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 cat "$@" | od -tu1 -An -v | lag3d >/tmp/sjekkrand.tmp

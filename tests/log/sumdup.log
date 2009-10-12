@@ -1,14 +1,14 @@
-# ========== Executing "sumdup.t --all" ==========
+# ========== Executing sumdup.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../sumdup -h" - Option -h prints help screen
 ok - "../sumdup -h" - Option -h prints help screen (stderr)
 ok - "../sumdup -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../sumdup -hv" - Option --version with -h returns Id string and help screen
-ok - "../sumdup -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../sumdup -hv" - Option --version with -h returns version number and help screen
+ok - "../sumdup -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../sumdup --version" - Option --version returns Id string
-ok - "../sumdup --version" - Option --version returns Id string (stderr)
+ok - "../sumdup --version" - Option --version returns version number
+ok - "../sumdup --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7

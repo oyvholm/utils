@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# n95film
 # File ID: a24f4cb6-f743-11dd-b795-000475e441b9
 # Standardgenerering av filmer til Nokiaen.
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 [ "$1" = "-h" -o "$1" = "--help" ] && { echo; echo "n95film: No help available, but here's the source code:"; echo; cat $0; exit; }

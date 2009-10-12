@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# Genlog
 # File ID: 20281518-f989-11dd-98ac-000475e441b9
 # Update files in log/
-# License: GNU General Public License version 2 or later.
+# License: GNU General Public License version 3 or later.
 #=======================================================================
 
 [ -z "$1" ] && { echo "Syntax: $0 testname [testname [...]]" >&2; exit 1; }

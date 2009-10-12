@@ -1,14 +1,14 @@
-# ========== Executing "create_new.t --all" ==========
+# ========== Executing create_new.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../create_new -h" - Option -h prints help screen
 ok - "../create_new -h" - Option -h prints help screen (stderr)
 ok - "../create_new -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../create_new -hv" - Option --version with -h returns Id string and help screen
-ok - "../create_new -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../create_new -hv" - Option --version with -h returns version number and help screen
+ok - "../create_new -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../create_new --version" - Option --version returns Id string
-ok - "../create_new --version" - Option --version returns Id string (stderr)
+ok - "../create_new --version" - Option --version returns version number
+ok - "../create_new --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7

@@ -1,14 +1,14 @@
-# ========== Executing "fromhex.t --all" ==========
+# ========== Executing fromhex.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../fromhex -h" - Option -h prints help screen
 ok - "../fromhex -h" - Option -h prints help screen (stderr)
 ok - "../fromhex -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../fromhex -hv" - Option --version with -h returns Id string and help screen
-ok - "../fromhex -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../fromhex -hv" - Option --version with -h returns version number and help screen
+ok - "../fromhex -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../fromhex --version" - Option --version returns Id string
-ok - "../fromhex --version" - Option --version returns Id string (stderr)
+ok - "../fromhex --version" - Option --version returns version number
+ok - "../fromhex --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7

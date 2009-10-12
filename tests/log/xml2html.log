@@ -1,14 +1,14 @@
-# ========== Executing "xml2html.t --all" ==========
+# ========== Executing xml2html.t v0.00 ==========
 # Testing -h (--help) option...
 ok - "../xml2html -h" - Option -h prints help screen
 ok - "../xml2html -h" - Option -h prints help screen (stderr)
 ok - "../xml2html -h" - No Id with only -h
 # Testing -v (--verbose) option...
-ok - "../xml2html -hv" - Option --version with -h returns Id string and help screen
-ok - "../xml2html -hv" - Option --version with -h returns Id string and help screen (stderr)
+ok - "../xml2html -hv" - Option --version with -h returns version number and help screen
+ok - "../xml2html -hv" - Option --version with -h returns version number and help screen (stderr)
 # Testing --version option...
-ok - "../xml2html --version" - Option --version returns Id string
-ok - "../xml2html --version" - Option --version returns Id string (stderr)
+ok - "../xml2html --version" - Option --version returns version number
+ok - "../xml2html --version" - Option --version returns version number (stderr)
 # Running TODO tests...
 # Testing finished.
 1..7
