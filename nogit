@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#=======================================================================
+# File ID: 0195ded2-918c-11de-873c-00248cd5cf1e
+# Reads a bunch of filenames from stdin or files specified on the 
+# command line and strips .git directories away. Examples:
+#
+#   Show the size of the working copy without the .git directories:
+#     cd /working/copy
+#     find . -type f | nogit | xargs wc -c
+#
+# Specifying -r (for reverse) as the first parameter lists only .git 
+# directories and their contents.
+#=======================================================================
+
+if [ "$1" = "-r" ]; then
+    shift
+    cat $* | egrep '/\.git(/|$)'
+else
+    cat $* | egrep -v '/\.git(/|$)'
+fi
