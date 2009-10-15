@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# $Id$
-
-if [ "`whoami`" = "root" -o ! -e /usr/local/bin/gvim ]; then
-	vim -X -f -c "set ft=svncommit" $*
-else
-	vim -X -f -c "set ft=svncommit" $*
-fi

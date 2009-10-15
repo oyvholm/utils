@@ -1,9 +1,0 @@
-testcmd("$GP command", # {{{
-    <<END,
-[expected stdin]
-END
-    "",
-    "description",
-);
-
-# }}}

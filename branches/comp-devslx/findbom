@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# $Id$
-
-files="$@"
-[ -z "$files" ] && files=.
-
-grep -r . $files | ns | grep '﻿'

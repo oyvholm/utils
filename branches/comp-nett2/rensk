@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# $Id$
-
-find -depth -type d -print0 | grep -zv '/\.svn/' | xargs -0 rmdir 2>/dev/null
-exit 0

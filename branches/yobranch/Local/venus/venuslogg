@@ -1,9 +1,0 @@
-#!/bin/bash
-
-#=======================================================================
-# $Id$
-# Sender ting fra venus til svnhost.
-# License: GNU General Public License version 2 or later.
-#=======================================================================
-
-rsync -avzP /home/sunny/log sunny@svnhost:/home/sunny/log/other/venus/

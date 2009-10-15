@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# $Id$
-# Konverterer fra IBMPC-tegnsett til latin1.
-# Samme som icat, men faker rammer.
-# Trenger programmene ibm2ent og entity.
-
-ibm2ent -qf $* | entity -ta

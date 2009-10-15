@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# $Id$
-
-svn ls -v $SR/utils/branches "$@"

@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# File ID: cb14649e-308f-11de-83cd-000475e441b9
-
-guid=$1
-[ -z "$guid" ] && guid="-r sunny@sunbase.org"
-echo '<encr>'
-gpg $guid -z9 -e 2>/dev/null | base64 - | commout l
-echo '</encr>'

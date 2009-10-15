@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# $Id$
-
-find `/bin/pwd` "$@" -type f | egrep -i '\.(jpg|png|gif|bmp)$' | sort >alt.gqv
-gqview alt.gqv &

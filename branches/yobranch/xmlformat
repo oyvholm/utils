@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# $Id$
-# Reformats XML files to show the structure. WARNING! The script may 
-# fuck up whitespaces, it’s only meant for examining the XML structure.
-
-cat $* | tr -d '\r' | rmspcall | tr '\n' ' ' | xmllint --format --encode UTF-8 -

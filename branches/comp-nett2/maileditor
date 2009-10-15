@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# $Id$
-# File ID: e7a46d48-fc82-11dd-9411-000475e441b9
-
-file=$1
-
-[ -z "$LC_CTYPE" ] && { export LC_CTYPE=en_GB.utf8; }
-v -l -- -X -f -c "set ft=mail" $file

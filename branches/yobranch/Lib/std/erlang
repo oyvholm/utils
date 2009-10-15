@@ -1,9 +1,0 @@
-%% $Id$
-%% File ID: STDuuidDTS
-%% [Description]
-%% License: GNU General Public License version 2 or later.
-
--module(STDmoduleDTS).
--export([]).
-
-

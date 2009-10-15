@@ -1,6 +1,0 @@
-
-# $Id$
-
-bind U encoding utf-8 utf-8
-echo "Skifta til UTF-8."
-sleep 2
