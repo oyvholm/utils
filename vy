@@ -1,5 +1,1 @@
-#!/bin/bash
-
-# $Id$
-
-gpst -rt -o ygraph "$@" | ygraph -l0 -
+Git/gpstools/vy
