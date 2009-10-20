@@ -18,9 +18,6 @@ if [ ! -d build-git/. ]; then
 fi
 (cd build-git && git fetch && git checkout commit_symlink && git fetch && git merge origin/commit_symlink)
 
-# Until the gpstools stuff is extracted to its own repo.
-exit 0
-
 if [ ! -d gpstools/. ]; then
     git clone sunny@git.sunbase.org:/home/sunny/Git/gpstools
     cd build-git
