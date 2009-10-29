@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# filenamelower
+# File ID: eb295092-badb-11de-a441-00248cd5cf1e
+# Renames files to lower case
+#=======================================================================
+
+for f in "$@"; do mv -vi "$f" "`echo $f | tolower`"; done
