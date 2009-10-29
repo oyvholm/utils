@@ -6,4 +6,8 @@
 # Renames files to lower case
 #=======================================================================
 
-for f in "$@"; do mv -vi "$f" "`echo $f | tolower`"; done
+# FIXME: Take care of those damn spaces, semicolons, etc in file names.
+
+for f in "$@"; do
+    mv -vi "$f" "`echo $f | tolower`";
+done
