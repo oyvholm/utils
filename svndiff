@@ -204,7 +204,11 @@ if (scalar(@ARGV)) {
         while (<PipeFP>) {
             chomp();
             D("<PipeFP> = \"$_\"\n");
-            if (/^([$stat_chars])......(.*)/) {
+            # FIXME: Various svn versions add space columns now and 
+            # then. Find a way to check current svn version and use the 
+            # appropriate number of columns. Or maybe better, use --xml, 
+            # but have to check how it works with older svn versions.
+            if (/^([$stat_chars]) +(.*)/) {
                 my ($Stat, $File) =
                    (   $1,    $2);
                 D("\$Stat = \"$Stat\", \$File = \"$File\"\n");
