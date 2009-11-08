@@ -3,7 +3,7 @@
 #=======================================================================
 # datefn
 # File ID: 4bec96e4-cc13-11de-a8a7-93dd800a3f5e
-# [Description]
+# Insert timestamp into file names
 #
 # Character set: UTF-8
 # ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
@@ -21,6 +21,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'dry-run' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,6 +36,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "dry-run|n" => \$Opt{'dry-run'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -48,9 +50,110 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+defined($ARGV[0]) || die("$progname: Missing filenames. Use -h for help.\n");
+
+for my $Curr (@ARGV) {
+    D("Curr = '$Curr'\n");
+    process_file($Curr);
 }
+
+sub process_file {
+    # {{{
+    my $File = shift;
+    unless (-f $File) {
+        warn("$progname: $File: Not a regular file\n");
+        return;
+    }
+    if ($File =~ /^\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ/) {
+        warn("$progname: $File: Filename already has date\n");
+        return;
+    }
+    D(sprintf("mod_date(%s) = '%s'\n", $File, mod_date($File)));
+    my $mod_date = mod_date($File);
+    my $start_date = start_date($File);
+    my $dates = sprintf("%s%s%s", $start_date, length($start_date) ? "-" : "", $mod_date);
+    if (length($dates)) {
+        my $new_name = "$dates.$File";
+        if ($Opt{'dry-run'}) {
+            print("$progname: '$File' would be renamed to '$new_name'\n");
+        } else {
+            if (rename($File, $new_name)) {
+                print("$progname: '$File' renamed to '$new_name'\n");
+            } else {
+                warn("$progname: $File: Cannot rename file to '$new_name': $!\n");
+            }
+        }
+    }
+    # }}}
+} # process_file()
+
+sub mod_date {
+    # Return file modification timestamp {{{
+    my $File = shift;
+    my $Retval = "";
+    my @stat_array = stat($File);
+    if (scalar(@stat_array)) {
+        $Retval = sec_to_string($stat_array[9]);
+    } else {
+        warn("$progname: $File: Cannot stat file: $!\n");
+    }
+    # }}}
+} # mod_date()
+
+sub start_date {
+    # Find start of recording {{{
+    my $File = shift;
+    my $Retval = "";
+    my $bwf_date = bwf_date($File);
+    if (length($bwf_date)) {
+        $Retval = $bwf_date;
+    }
+    D("start_date($File) returns '$Retval'");
+    return($Retval);
+    # }}}
+} # start_date()
+
+sub bwf_date {
+    # Find start of recording in Broadcast Wave Format files {{{
+    # This is based on examining .wav files from the Zoom H4n, and it 
+    # seems to work there. The file format may vary on other devices.
+    my $File = shift;
+    my $Retval = "";
+    unless (open(InFP, "<", $File)) {
+        warn("$progname: $File: Cannot open file to look for BWF data: $!\n");
+        return("");
+    }
+    my $buf;
+    my $numread = read(InFP, $buf, 358);
+    if ($numread != 358) {
+        warn("$progname: $File: Could not read 358 bytes, but continuing: $!\n");
+    }
+    if ($buf =~ /^.*(\d\d\d\d)-(\d\d)-(\d\d)(\d\d):(\d\d):(\d\d)$/s) {
+        $Retval = "$1$2${3}T$4$5${6}Z";
+    }
+    close(InFP);
+    D("bwf_date($File) returns '$Retval'\n");
+    return($Retval);
+    # }}}
+} # bwf_date()
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyymmddThhmmss[.frac]Z"
+    # {{{
+    my ($Seconds, $Sep) = @_;
+    length($Seconds) || return(undef);
+    ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
+    my $Secfrac = ($Seconds =~ /^([\-\d]*)(\.\d+)$/) ? 1.0*$2 : "";
+    $Secfrac =~ s/^0//;
+
+    defined($Sep) || ($Sep = " ");
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u%02u%02uT%02u%02u%02u%sZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0], $Secfrac);
+    return($DateString);
+    # }}}
+} # sec_to_string()
 
 sub print_version {
     # Print program version {{{
@@ -68,10 +171,23 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Insert filemod timestamp into filename, and start of recording if 
+available. At the moment only BWF (Broadcast Wave Format, standard .wav 
+with extra metadata) is supported.
+
+Format:
+
+  No timestamp for start of recording:
+    yyyymmddThhmmssZ.OLDFILENAME
+  With timestamp for start of recording:
+    yyyymmddThhmmssZ-yyyymmddThhmmssZ.OLDFILENAME
+
+Usage: $progname [options] file [files [...]]
 
 Options:
 
+  -n, --dry-run
+    Don’t rename files, but report what would happen.
   -h, --help
     Show this help.
   -v, --verbose
