@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# mkFiles
 # File ID: 571d0be4-08ef-11de-8399-000475e441b9
 # Creates Files.smsum in current directory.
 #=======================================================================
@@ -19,8 +19,8 @@ find -type f -print0 | \
     LC_COLLATE=C sort -z | \
     grep -zv -e '^\./Files\.smsum$' | \
     xargs -0 smsum -m >>Files.smsum
-    echo -n "# smsum:" >>Files.smsum
-    echo `smsum <Files.smsum` >>Files.smsum
+echo -n "# smsum:" >>Files.smsum
+echo `smsum <Files.smsum` >>Files.smsum
 echo mkFiles: Done.
 
 rmdir $lockname
