@@ -3,7 +3,7 @@
 #=======================================================================
 # mkFiles
 # File ID: 571d0be4-08ef-11de-8399-000475e441b9
-# Creates Files.smsum in current directory.
+# Creates Files.sha1 in current directory.
 #=======================================================================
 
 lockname=mkFiles.lock
@@ -13,14 +13,14 @@ until mkdir $lockname 2>/dev/null; do
 done
 
 uuid=`suuid -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
-echo \# $uuid >Files.smsum
+echo \# $uuid >Files.sha1
 find -type f -print0 | \
     grep -zv '/\.svn/' | \
     LC_COLLATE=C sort -z | \
     grep -zv -e '^\./Files\.smsum$' | \
-    xargs -0 smsum -m >>Files.smsum
-echo -n "# smsum:" >>Files.smsum
-echo `smsum <Files.smsum` >>Files.smsum
+    xargs -0 sha1sum -b >>Files.sha1
+echo -n "# smsum:" >>Files.sha1
+echo `smsum <Files.sha1` >>Files.sha1
 echo mkFiles: Done.
 
 rmdir $lockname
