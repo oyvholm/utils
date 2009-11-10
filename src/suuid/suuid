@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# STDfilenameDTS
+# suuid
 # File ID: 04c64336-f744-11dd-bddd-000475e441b9
 # Generate and store UUID with optional comment in a log file.
 #
@@ -71,6 +71,8 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+my $Cmd = "uuidgen -t";
+
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -89,8 +91,6 @@ if (!-d "$Opt{'logdir'}/.") {
     die("$progname: $Opt{'logdir'}: Log directory not found\n");
 }
 my $Logfile = "$Opt{'logdir'}/$Host";
-
-my $Cmd = "uuid -v1";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
@@ -216,7 +216,7 @@ if (open(LogFP, "+>>", $Logfile)) {
 
 sub host_id {
     # {{{
-    chomp(my $Retval = `uuid -v1`);
+    chomp(my $Retval = `$Cmd`);
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
     # }}}
