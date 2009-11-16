@@ -28,6 +28,10 @@ AsciiDoc
 DocBook conversion utility
   Package: docbook2x
 
+OpenSSL
+  Package: libssl-dev
+  Package: openssl
+
 
 f741de12-b199-11de-8dec-00248cd5cf1e
 vim: set ts=2 sw=2 sts=2 tw=72 et fo=tcqw fenc=utf8 :
