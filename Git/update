@@ -10,12 +10,11 @@
 if [ ! -d build-git/. ]; then
     git clone sunny@git.sunbase.org:/home/sunny/Git/build-git
     cd build-git
-    git branch --track commit_symlink origin/commit_symlink
     git remote add github git@github.com:sunny256/build-git.git
     git remote add gitorious git@gitorious.org:build-git/build-git.git
     cd ..
 fi
-(cd build-git && git fetch && git checkout commit_symlink && git fetch && git merge origin/commit_symlink)
+(cd build-git && git checkout master && git fetch && git merge origin/master)
 
 if [ ! -d gpstools/. ]; then
     git clone sunny@git.sunbase.org:/home/sunny/Git/gpstools
