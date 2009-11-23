@@ -3,6 +3,8 @@
 # File ID: 43e64d72-d26d-11de-a010-90e6ba3022ac
 
 dev=sdb1
+mountp=/media/q
 
 [ -z "$1" ] || dev=$1
+[ -d "$mountp/." ] || { mkdir $mountp || { echo $0: $mountp: Cannot create directory; exit 1; }; }
 mount /dev/$dev /media/q -o fmask=0111,uid=sunny,gid=sunny,tz=UTC,shortname=mixed
