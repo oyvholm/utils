@@ -5,6 +5,12 @@
 dev=sdb1
 mountp=/media/q
 
+if [ "$1" = "-l" ]; then
+    unset tzval
+    shift
+else
+    tzval="tz=UTC,"
+fi
 [ -z "$1" ] || dev=$1
 [ -d "$mountp/." ] || { mkdir $mountp || { echo $0: $mountp: Cannot create directory; exit 1; }; }
-mount /dev/$dev /media/q -o fmask=0111,uid=sunny,gid=sunny,tz=UTC,shortname=mixed
+mount /dev/$dev /media/q -o fmask=0111,uid=sunny,gid=sunny,${tzval}shortname=mixed
