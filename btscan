@@ -3,4 +3,5 @@
 while :; do
   date -u +"%Y-%m-%dT%H:%M:%SZ"
   hcitool scan
+  sleep 1
 done
