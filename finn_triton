@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id$
-# Finner nynett på BA-nettverket.
+# Finner triton på nettverket.
+# File ID: caee52ea-14a5-11df-9f20-000c6ed3978a
 
-nmap -p 22 32.10.69.* | grep -A0 -B2 open
+nmap -p 22 158.37.70.* | grep -A0 -B2 open
