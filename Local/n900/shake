@@ -1,0 +1,33 @@
+#!/usr/env/bin python2.5
+# -*- coding: utf-8 -*-
+# This script is in Public Domain. Use it however you like.
+# Niklas Tanskanen <niklas@iskuri.org>
+
+import os
+import dbus 
+def get_rotation():
+    f = open("/sys/class/i2c-adapter/i2c-3/3-001d/coord", 'r' )
+    coords = [int(w) for w in f.readline().split()]
+    f.close()
+    return coords
+def get_proximity():
+	f = open("/sys/devices/platform/gpio-switch/proximity/state", 'r' )
+	state = f.readline()
+	state = state.rstrip()
+	return state
+while True:
+	coor = get_rotation()
+	state = get_proximity()
+	x = coor[0]
+	y = coor[1]
+	z = coor[2]
+	if y<-1700 or y>1700 :
+				if state == "open" :
+					print "screen open"
+					bus = dbus.SystemBus()
+					tklock = bus.get_object('com.nokia.mce','/com/nokia/mce/request')
+					tklock.req_tklock_mode_change(dbus.String("unlocked"))
+				elif state == "closed" :
+					print "not going to open screen, i'm in a pocket :("
+				
+				print "Trigger: ", x, y, z, state
