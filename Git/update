@@ -7,15 +7,6 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-if [ ! -d build-git/. ]; then
-    git clone sunny@git.sunbase.org:/home/sunny/Git/build-git
-    cd build-git
-    git remote add github git@github.com:sunny256/build-git.git
-    git remote add gitorious git@gitorious.org:build-git/build-git.git
-    cd ..
-fi
-(cd build-git && git checkout master && git fetch && git merge origin/master)
-
 if [ ! -d gpstools/. ]; then
     git clone sunny@git.sunbase.org:/home/sunny/Git/gpstools
     cd gpstools
