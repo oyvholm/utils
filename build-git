@@ -88,7 +88,7 @@ read choice
 echo ================= $sudo make install =================
 $sudo make prefix=$dest $makeflags install install-doc install-html install-info
 echo ================= make install finished =================
-$sudo mkdir -p $pref/{prg,varprg,bin}
+$sudo mkdir -p $pref/{bin,prg,varprg}
 $sudo rm $pref/prg/git
 $sudo ln -svf ../varprg/$vername $pref/prg/git
 cd $pref/bin || {
@@ -102,7 +102,8 @@ localgit=`./git --version`
 globalgit=`git --version`
 if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
-    git tag compiled-$(hostname)-$(u)
+    cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
+    git tag compiled-$(hostname)-$(date -u +"%Y%m%dT%H%M%SZ")
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
