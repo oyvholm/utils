@@ -6,6 +6,8 @@
 # Creates Files.sha1 in current directory.
 #=======================================================================
 
+# FIXME: Why doesn’t the ^ (caret) work with "grep -z" ?
+
 lockname=mkFiles.lock
 until mkdir $lockname 2>/dev/null; do
 	echo $0: $lockname: Waiting for lock... >&2
@@ -17,7 +19,7 @@ echo \# $uuid >Files.sha1
 find -type f -print0 | \
     grep -zv '/\.svn/' | \
     LC_COLLATE=C sort -z | \
-    grep -zv -e '^\./Files\.smsum$' | \
+    grep -zv -e '\./Files\.sha1$' | \
     xargs -0 sha1sum -b >>Files.sha1
 echo -n "# smsum:" >>Files.sha1
 echo `smsum <Files.sha1` >>Files.sha1
