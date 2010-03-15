@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#=======================================================================
+# File ID: dd770008-300f-11df-b5fc-90e6ba3022ac
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+LC_ALL=C git status | grep "^nothing to commit" && { echo ciall: Nothing to do here.; exit 0; }
+
+git status
+echo
+echo -n Press y + Enter to commit all new changes in this directory tree...
+read besafe
+[ "$besafe" = "y" ] || { echo ciall: y not pressed, aborting; exit 1; }
+
+unset logmsg
+[ ! -z "$1" ] && logmsg="$*"
+
+LC_ALL=C git status | grep "^nothing to commit" || (git add . && git commit -a -m "$logmsg`echo; echo; suuid -t commit -c "$logmsg"`")
+echo ========== git status ==========
+git status
