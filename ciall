@@ -16,6 +16,6 @@ read besafe
 unset logmsg
 [ ! -z "$1" ] && logmsg="$*"
 
-LC_ALL=C git status | grep "^nothing to commit" || (git add . && git commit -a -m "$logmsg`echo; echo; suuid -t commit -c "$logmsg"`")
+LC_ALL=C git status | grep "^nothing to commit" || (git add . && git commit -a -m "$logmsg`echo; echo; suuid -t ciall -c "$logmsg"`")
 echo ========== git status ==========
 git status
