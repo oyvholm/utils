@@ -22,11 +22,12 @@ mount /dev/$dev $mountp $opts
 if [ -e $mountp/mntopts -o -e $mountp/MNTOPTS ]; then
     [ -e $mountp/MNTOPTS ] && mntopts=MNTOPTS
     [ -e $mountp/mntopts ] && mntopts=mntopts
-    opts="`cat $mountp/$mntopts`"
+    opts2="`cat $mountp/$mntopts`"
+    [ "$opts" = "$opts2" ] && { echo "mountusb: /mntopts contains standard options, remount not necessary"; exit 0; }
     sync
     sleep 1
     umount $mountp
     sync
-    echo "mountusb: Remount  /dev/$dev using \"$opts\""
-    mount /dev/$dev $mountp $opts
+    echo "mountusb: Remount  /dev/$dev using \"$opts2\""
+    mount /dev/$dev $mountp $opts2
 fi
