@@ -3,7 +3,7 @@
 # File ID: 43e64d72-d26d-11de-a010-90e6ba3022ac
 
 dev=sdb1
-mountp=/media/q
+mountp=/media/usb
 
 if [ "$1" = "-l" ]; then
     unset tzval
@@ -12,5 +12,21 @@ else
     tzval="tz=UTC,"
 fi
 [ -z "$1" ] || dev=$1
-[ -d "$mountp/." ] || { mkdir $mountp || { echo $0: $mountp: Cannot create directory; exit 1; }; }
-mount /dev/$dev /media/q -o fmask=0111,uid=sunny,gid=sunny,${tzval}shortname=mixed
+[ -d "$mountp/." ] || { mkdir $mountp || { echo mountusb: $mountp: Cannot create directory; exit 1; }; }
+opts="-o fmask=0111,uid=sunny,gid=sunny,${tzval}shortname=mixed"
+echo "mountusb: Mounting /dev/$dev using \"$opts\""
+mount /dev/$dev $mountp $opts
+
+# Check for existing /mntopts file in disk root. That file contains mount 
+# options used on the command line when mounting.
+if [ -e $mountp/mntopts -o -e $mountp/MNTOPTS ]; then
+    [ -e $mountp/MNTOPTS ] && mntopts=MNTOPTS
+    [ -e $mountp/mntopts ] && mntopts=mntopts
+    opts="`cat $mountp/$mntopts`"
+    sync
+    sleep 1
+    umount $mountp
+    sync
+    echo "mountusb: Remount  /dev/$dev using \"$opts\""
+    mount /dev/$dev $mountp $opts
+fi
