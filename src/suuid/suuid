@@ -239,7 +239,7 @@ sub uuid_time {
     # {{{
     my $uuid = shift;
     my $Retval = "";
-    if (open(UtFP, "uuid -d $uuid |")) {
+    if (open(UtFP, "uuid -d $uuid 2>/dev/null |")) {
         while (my $Curr = <UtFP>) {
             if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
                 $Retval = "${1}T$2${3}Z";
