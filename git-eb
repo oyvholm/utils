@@ -10,5 +10,5 @@
 [ -d ".git/." ] || { echo "git-eb: has to be executed from the top level of the tree" >&2; exit 1; }
 [ -e ".git/refs/heads/$1" ] && { echo "git-eb: ref \"$1\" already exists" >&2; exit 1; }
 git symbolic-ref HEAD refs/heads/"$1"
-rm .git/index || { echo "git-eb: cannot remove .git/index" >&2; exit 1; }
+rm -f .git/index
 git commit --allow-empty -m "Initial commit"
