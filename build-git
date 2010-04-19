@@ -43,6 +43,8 @@ if [ ! -d $builddir/. ]; then
     echo ================= git clone =================
     git clone git://git.kernel.org/pub/scm/git/git.git $builddir
     cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
+    git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
+    git fetch sunbase
     # git remote add spearce git://repo.or.cz/git/spearce.git
     # git fetch spearce
     # git branch --track spearce-master spearce/master
@@ -65,6 +67,8 @@ git checkout -f $local_master
 echo ================= git fetch =================
 echo ===== origin =====
 git fetch origin
+echo ===== sunbase =====
+git fetch sunbase
 # echo ===== spearce =====
 # git fetch spearce
 echo ================= git merge $remote_master =================
@@ -104,6 +108,7 @@ if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
     cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
     git tag compiled-$(hostname)-$(date -u +"%Y%m%dT%H%M%SZ")
+    git push --tags sunbase $local_master
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
