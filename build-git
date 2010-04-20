@@ -64,6 +64,7 @@ read
 echo ================= git clean =================
 git clean -fxd
 git checkout -f $local_master
+git remote | grep -q sunbase || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
 echo ================= git fetch =================
 echo ===== origin =====
 git fetch origin
