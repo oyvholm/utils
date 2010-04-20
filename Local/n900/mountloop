@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# File ID: 3e475550-4c6b-11df-adc3-fd0d0bffcbb2
+
+sudo mount /home/user/MyDocs/loop.ext3 /home/user/MyDocs/m -o loop
