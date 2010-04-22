@@ -28,6 +28,21 @@ remote_master=origin/master
 
 makeflags=
 
+fetch_remotes() {
+    git remote | grep -q '^origin$' || {
+        echo build-git: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
+        exit 1;
+    }
+    git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
+    git remote | grep -q '^spearce$' || git remote add spearce git://repo.or.cz/git/spearce.git
+    echo ================= git fetch =================
+    # git fetch --all arrived in v1.6.6, and that’s too recent to use.
+    for f in origin sunbase spearce; do
+        echo ===== $f =====
+        git fetch $f
+    done
+}
+
 [ -z "`git --version | grep '^git version '`" ] && {
     echo $0: You need to have git installed to use this script. >&2;
     exit 1;
@@ -43,10 +58,7 @@ if [ ! -d $builddir/. ]; then
     echo ================= git clone =================
     git clone git://git.kernel.org/pub/scm/git/git.git $builddir
     cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
-    git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
-    git fetch sunbase
-    git remote add spearce git://repo.or.cz/git/spearce.git
-    git fetch spearce
+    fetch_remotes
     # git branch --track spearce-master spearce/master
 fi
 cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
@@ -64,14 +76,7 @@ read
 echo ================= git clean =================
 git clean -fxd
 git checkout -f $local_master
-git remote | grep -q sunbase || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
-echo ================= git fetch =================
-echo ===== origin =====
-git fetch origin
-echo ===== sunbase =====
-git fetch sunbase
-echo ===== spearce =====
-git fetch spearce
+fetch_remotes
 echo ================= git merge $remote_master =================
 git merge $remote_master
 vername=git.$local_master.`git describe --match 'v1*'`
