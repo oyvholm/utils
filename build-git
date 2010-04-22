@@ -45,8 +45,8 @@ if [ ! -d $builddir/. ]; then
     cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
     git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
     git fetch sunbase
-    # git remote add spearce git://repo.or.cz/git/spearce.git
-    # git fetch spearce
+    git remote add spearce git://repo.or.cz/git/spearce.git
+    git fetch spearce
     # git branch --track spearce-master spearce/master
 fi
 cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
@@ -70,8 +70,8 @@ echo ===== origin =====
 git fetch origin
 echo ===== sunbase =====
 git fetch sunbase
-# echo ===== spearce =====
-# git fetch spearce
+echo ===== spearce =====
+git fetch spearce
 echo ================= git merge $remote_master =================
 git merge $remote_master
 vername=git.$local_master.`git describe --match 'v1*'`
