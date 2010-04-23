@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# git-pushall - Push to all remotes
+# File ID: f01c9ce6-4ec7-11df-adc3-41034058cb1c
+
+for f in $(git remote | cut -c 1-); do
+    echo ======== Pushing to \"$f\"
+    if [ "$f" = "sunbase" ]; then
+        git push --all sunbase
+        git push --tags sunbase "$@"
+    else
+        git push $f "$@"
+    fi
+done
