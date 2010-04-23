@@ -31,8 +31,8 @@ remotes:
 	git remote add sunbase sunny@sin1:/home/sunny/Git/utils; true
 
 pushall:
-	git push --all sunbase
-	git push --tags sunbase
-	git push github
-	git push gitorious
-	git push repoorcz
+	git push --all sunbase; true
+	git push --tags sunbase; true
+	git push github; true
+	git push gitorious; true
+	git push repoorcz; true
