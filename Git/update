@@ -8,10 +8,9 @@
 #=======================================================================
 
 if [ ! -d gpstools/. ]; then
-    git clone sunny@git.sunbase.org:/home/sunny/Git/gpstools
+    git clone -o sunbase sunny@git.sunbase.org:/home/sunny/Git/gpstools
     cd gpstools
-    git remote add github git@github.com:sunny256/gpstools.git
-    git remote add gitorious git@gitorious.org:sunny256/gpstools.git
+    make remotes
     cd ..
 fi
-(cd gpstools && git fetch && git merge origin/master)
+(cd gpstools && git fetch --all && git merge sunbase/master)
