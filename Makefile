@@ -29,10 +29,3 @@ remotes:
 	git remote add gitorious git@gitorious.org:sunny256/utils.git; true
 	git remote add repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
 	git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/utils; true
-
-pushall:
-	git push --all sunbase; true
-	git push --tags sunbase; true
-	git push github; true
-	git push gitorious; true
-	git push repoorcz; true
