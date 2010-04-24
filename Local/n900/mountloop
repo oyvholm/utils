@@ -2,8 +2,13 @@
 
 # File ID: 3e475550-4c6b-11df-adc3-fd0d0bffcbb2
 
-if [ "$1" = "-u" ]; then
-    sudo umount /home/user/MyDocs/m
+loop=/home/user/MyDocs/loop.ext3
+mp=/home/user/MyDocs/m
+
+if [ "$1" = "-c" ]; then
+    fsck.ext3 $loop
+elif [ "$1" = "-u" ]; then
+    sudo umount $mp
 else
-    sudo mount /home/user/MyDocs/loop.ext3 /home/user/MyDocs/m -o loop
+    sudo mount $loop $mp -o loop
 fi
