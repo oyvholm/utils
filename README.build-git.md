@@ -16,6 +16,15 @@ Dependencies
 The script uses the default `Makefile`, and needs the following packages 
 (Ubuntu/Debian, other distros may vary):
 
+- GNU make
+  - Package: `make`
+
+- GNU C Copiler
+  - Package: `gcc`
+
+- GNU gettext
+  - Package: `gettext`
+
 - curl-config
   - Package: `libcurl4-openssl-dev`
 
@@ -31,6 +40,16 @@ The script uses the default `Makefile`, and needs the following packages
 - OpenSSL
   - Package: `libssl-dev`
   - Package: `openssl`
+
+### Not essential, but nice to have
+
+- Tk toolkit for Tcl and X11
+  - Necessary to run gitk(1)
+  - Package: `tk`
+
+- Subversion
+  - Necessary for use with git-svn
+  - Package: `subversion`
 
 ---
 
