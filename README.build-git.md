@@ -19,7 +19,7 @@ The script uses the default `Makefile`, and needs the following packages
 - GNU make
   - Package: `make`
 
-- GNU C Copiler
+- GNU C Compiler
   - Package: `gcc`
 
 - GNU gettext
