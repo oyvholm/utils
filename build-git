@@ -7,6 +7,7 @@
 # License: GNU General Public License version 3 or later
 #=======================================================================
 
+rcfile=$HOME/.build-gitrc
 # Directory where the git build happens
 builddir=$HOME/src/git/other/build-git
 
@@ -27,6 +28,9 @@ remote_master=origin/master
 # remote_master=spearce/master
 
 makeflags=
+hname=$(hostname)
+
+[ -e $rcfile ] && . $rcfile
 
 fetch_remotes() {
     git remote | grep -q '^origin$' || {
@@ -113,7 +117,7 @@ globalgit=`git --version`
 if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
     cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
-    git tag compiled-$(hostname)-$(date -u +"%Y%m%dT%H%M%SZ")
+    git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
     git push --tags sunbase $local_master
 else
     echo Uhm, something went wrong.
