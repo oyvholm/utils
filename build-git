@@ -32,6 +32,8 @@ use_configure=0
 configure_opts=
 
 makeflags=
+make_doc=1
+make_info=1
 hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
@@ -46,6 +48,8 @@ echo "sudo           = \"$sudo\""
 echo "local_master   = \"$local_master\""
 echo "remote_master  = \"$remote_master\""
 echo "makeflags      = \"$makeflags\""
+echo "make_doc       = \"$make_doc\""
+echo "make_info      = \"$make_info\""
 echo "hname          = \"$hname\""
 echo "use_configure  = \"$use_configure\""
 echo "configure_opts = \"$use_configure\""
@@ -114,9 +118,23 @@ if [ "$use_configure" = "1" ]; then
     make configure
     ./configure --prefix=$dest $configure_opts
 fi
+if [ "$make_doc" = "1" ]; then
+    make_doc_str=doc
+    inst_doc_str="install-doc install-html"
+else
+    make_doc_str=
+    inst_doc_str=
+fi
+if [ "$make_info" = "1" ]; then
+    make_info_str=info
+    inst_info_str=install-info
+else
+    make_info_str=
+    inst_info_str=
+fi
 echo Compiling $vername
 echo ================= make $makeflags =================
-make prefix=$dest $makeflags all doc info || exit
+make prefix=$dest $makeflags all $make_doc_str $make_info_str || exit
 echo ================= make test =================
 make $makeflags test
 echo
@@ -124,7 +142,7 @@ echo -n If all tests succeeded, press y to continue...
 read choice
 [ "$choice" = "y" ] || { echo build-git: Aborted; exit 1; }
 echo ================= $sudo make install =================
-$sudo make prefix=$dest $makeflags install install-doc install-html install-info
+$sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
 $sudo mkdir -p $pref/{bin,prg,varprg}
 $sudo rm $pref/prg/git
