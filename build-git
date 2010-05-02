@@ -32,6 +32,19 @@ hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
 
+echo
+echo Variables:
+echo
+echo "rcfile        = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
+echo "builddir      = \"$builddir\""
+echo "pref          = \"$pref\""
+echo "sudo          = \"$sudo\""
+echo "local_master  = \"$local_master\""
+echo "remote_master = \"$remote_master\""
+echo "makeflags     = \"$makeflags\""
+echo "hname         = \"$hname\""
+echo
+
 fetch_remotes() {
     git remote | grep -q '^origin$' || {
         echo build-git: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
