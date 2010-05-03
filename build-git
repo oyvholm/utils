@@ -54,7 +54,7 @@ echo "make_doc       = \"$make_doc\""
 echo "make_info      = \"$make_info\""
 echo "hname          = \"$hname\""
 echo "use_configure  = \"$use_configure\""
-echo "configure_opts = \"$use_configure\""
+echo "configure_opts = \"$configure_opts\""
 echo
 
 fetch_remotes() {
