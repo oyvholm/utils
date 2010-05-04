@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# git-pushall - Push to all remotes
+# git-pa - Push to all remotes
 # File ID: f01c9ce6-4ec7-11df-adc3-41034058cb1c
 
 for f in $(git remote | cut -c 1-); do
