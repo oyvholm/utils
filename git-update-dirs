@@ -9,8 +9,8 @@ for f in *; do
         (cd $f && git f)
         echo ==== git pull ====
         (cd $f && git pull)
-        echo ==== git push ====
-        (cd $f && git push)
+        echo ==== git pa ====
+        (cd $f && git pa)
         echo
     fi
 done
