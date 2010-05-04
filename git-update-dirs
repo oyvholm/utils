@@ -4,7 +4,7 @@
 
 for f in *; do
     if [ -d "$f/.git/." ]; then
-        echo ======== $f ========
+        echo ================ $f ================
         echo ==== git f ====
         (cd $f && git f)
         echo ==== git pull ====
