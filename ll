@@ -7,6 +7,8 @@
 
 if [ -e /nett2.mrk ]; then
     ls -artl --color=auto "$@"
+elif [ -e $HOME/.n900.mrk ]; then
+    ls -artl "$@"
 else
     ls -artl --color=auto --time-style=+%F\ %T "$@"
 fi
