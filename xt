@@ -2,4 +2,15 @@
 
 # $Id$
 
-xmllint --valid --noout "$@"
+for f in "$@"; do
+    if echo $f | grep -qi '\.gpx$'; then
+        gpx_xsd=~/bin/Git/gpstools/Tools/xsd/gpx/gpx-1.1.xsd
+        if [ -e $gpx_xsd ]; then
+            xmllint --noout --schema $gpx_xsd $f
+        else
+            xmllint --noout --schema http://www.topografix.com/GPX/1/1/gpx.xsd $f
+        fi
+    else
+        xmllint --valid --noout "$f"
+    fi
+done
