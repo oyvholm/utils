@@ -4,11 +4,15 @@
 # File ID: f01c9ce6-4ec7-11df-adc3-41034058cb1c
 
 for f in $(git remote); do
-    echo ======== Pushing to \"$f\"
-    if [ "$f" = "sunbase" ]; then
-        git push --all sunbase
-        git push --tags sunbase "$@"
-    else
-        git push $f "$@"
-    fi
+    for ch in $(cat ~/.git-pa-remotes); do
+        if git remote -v | grep ^$f | cut -f 2 | grep -q $ch; then
+            echo ======== Pushing to \"$f\"
+            if [ "$f" = "sunbase" ]; then
+                git push --all sunbase
+                git push --tags sunbase "$@"
+            else
+                git push $f "$@"
+            fi
+        fi
+    done
 done
