@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# git-seq-rebase - Rebase by walking through all commits.
+# File ID: 1ee4f9c4-5a35-11df-b20a-90e6ba3022ac
+
+usage() {
+    cat <<END
+
+git-seq-rebase - Rebase by walking through all commits.
+
+This is useful if the branch is very old and there are lots of changes 
+between the branch and the rebase target.
+
+Usage: git-seq-rebase <newbase>
+
+END
+}
+
+[ -z "$1" ] && { usage; exit 1; }
+revs=$(git log --reverse --format=format:%h HEAD..$1)
+
+echo Running sequential rebase to $1, $(echo $revs | fmt -1 | wc -l) commits
+
+for f in $revs; do
+    echo
+    echo ================ rebase to $f ================
+    git rebase $f || {
+        echo git-seq-rebase: Error when rebasing to $f, aborting. >&2;
+        echo Run \"git mergetool\" to clean up, followed by \"git rebase --continue\" >&2;
+        exit 1;
+    }
+done
