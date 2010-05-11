@@ -17,26 +17,6 @@ Index: wlan-list
          print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<wlan>\n");
          my $curr_time = time();
          my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday) = gmtime($curr_time);
-Index: src/dbf2tab/dbf2tab.c
-===================================================================
---- src/dbf2tab/dbf2tab.c	(revision 2022)
-+++ src/dbf2tab/dbf2tab.c	(working copy)
-@@ -1,5 +1,5 @@
- #include <stdio.h>
--#include <strings.h>
-+#include <string.h>
- #define  MAXSTR 512
- #define  INTEL
- #define  min(x,y) (x < y ? x : y)
-@@ -109,7 +109,7 @@
- 
- /* ------------------------------------------------------------------------- */
- 
--fatal_err( msg)
-+void fatal_err( msg)
- char *msg;
- {
- 	fprintf(stderr,"\ndbf2tab: %s\n", msg);
 Index: view_df
 ===================================================================
 --- view_df	(revision 2022)
