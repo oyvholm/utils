@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# $Id$
+# prearmor
+# File ID: 90ae840c-5d42-11df-a554-90e6ba3022ac
 # Setter GPG-armor i <p><pre></pre>.
 
 while (<>) {

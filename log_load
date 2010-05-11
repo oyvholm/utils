@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# log_load
+# File ID: b74fcc82-5d3e-11df-b433-90e6ba3022ac
 # Logger maskinload til ~/log/load/ÅÅÅÅ/ÅÅÅÅ-MM-DD.load.log
 
 logdir=$HOME/log

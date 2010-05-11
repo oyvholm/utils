@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# flac_to_ogg
+# File ID: 5a4e814e-5d3a-11df-a4ca-90e6ba3022ac
 # Konverterer alle *.flac-filene til ogg i en egen katalog.
 
 KVAL=6

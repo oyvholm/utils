@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# primitiv_prompt
+# File ID: c11e5838-5d42-11df-b546-90e6ba3022ac
 # Primitiv prompt for screenlogger osv.
 
 export PS1='$(date +"%Y-%m-%d %T") \u@\h:\w$ '

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# date2iso
+# File ID: 35e0af3c-5d38-11df-8eb4-90e6ba3022ac
 # Konverterer obskure dataformater til ISO-8601.
 
 use strict;

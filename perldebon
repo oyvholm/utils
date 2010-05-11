@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
+# perldebon
+# File ID: 250bbb52-5d42-11df-87b1-90e6ba3022ac
 # Fjerner utkommenteringa på debuggingsmeldinger i Perl
-# $Id$
 
 while (<>) {
 	s/# (&deb_pr\(__LINE__)/$1/g;

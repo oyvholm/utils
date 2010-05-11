@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# ivim
+# File ID: c0e6625c-5d3d-11df-9685-90e6ba3022ac
 # Indent-Vim, viser indent i form av folder.
 
 ivimnavn=-

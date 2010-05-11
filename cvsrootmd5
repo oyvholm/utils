@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #======================================================
-# $Id$
+# cvsrootmd5
+# File ID: 006040ac-5d38-11df-9810-90e6ba3022ac
 # Lagrer md5sum o.l. av cvsroot. Paranoia.
 #======================================================
 
@@ -14,7 +15,7 @@ echo >>$cfil
 find -type f -printf "%TY-%Tm-%Td %TH:%TM:%TS %8s %p\n" | sort -k4 >>$cfil
 echo >>$cfil
 find -type f -print0 | sort -z | xargs -0 md5sum >>$cfil
-echo "\$Id\$" >$cfil.tmp
+suuid -t cvsrootmd5 >$cfil.tmp
 gpg --clearsign <$cfil >>$cfil.tmp || { echo $0: Feil under signering >&2; rm -f $cfil.tmp; exit 1; }
 mv $cfil.tmp $cfil
 popd >/dev/null

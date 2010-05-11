@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# efnhtml
+# File ID: d14d9dfe-5d38-11df-89d2-90e6ba3022ac
 # Filter for HTML levert til www.efn.no .
 
 u2h -d $* | hhi | hfa

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# sjekkhtmlindent
+# File ID: cff5d704-5d43-11df-a543-90e6ba3022ac
 # Sjekker at innrykkene på et webdokument er OK
 # Trenger sget og hfa .
 # Syntax: $0 url

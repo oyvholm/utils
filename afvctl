@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# afvctl
+# File ID: 0bd0b80a-5d37-11df-a6ed-90e6ba3022ac
 # Starter/stopper/viser status for alle afv’er
 # FIXME: Dette skulle egentlig vært integrert i afv(1).
 

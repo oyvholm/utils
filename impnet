@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #==================================================
-# $Id$
+# impnet
+# File ID: 959423fa-5d3d-11df-8ea8-90e6ba3022ac
 # Legger en website inn i Cvs/imp-net .
 # Syntax: impnet [webnavn] [dato]
 #==================================================

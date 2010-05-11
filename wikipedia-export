@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# wikipedia-export
+# File ID: a7ef1800-5d49-11df-a875-90e6ba3022ac
 # Exports a Wikipedia article as XML.
 #
 # Newest version available from 

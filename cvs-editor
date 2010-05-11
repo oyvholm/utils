@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# cvs-editor
+# File ID: dcfd2742-5d37-11df-ba3d-90e6ba3022ac
 
 if [ "`whoami`" = "root" -o ! -e /usr/local/bin/gvim ]; then
 	vim -X -f -c "set ft=svncommit" $*

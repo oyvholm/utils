@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
+# ascii
+# File ID: 1c7b6196-5d37-11df-b1f7-90e6ba3022ac
 # Avansert esse
-# $Id$
 
 for (32..255) {
 	printf("%03u 0x%02x %c\n", $_, $_, $_);

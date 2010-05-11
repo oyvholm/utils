@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# charconv
+# File ID: 6e32b188-5d37-11df-98d6-90e6ba3022ac
 # Konverterer fra cp865 til Unicode. Alternativ konverteringsfil 
 # spesifiseres med «-i»-parameteret, ellers brukes default filnavn. -p 
 # skriver ut en enkel HTML-header og -slutt.
@@ -91,4 +92,4 @@ sub widechar {
 
 __END__
 
-#### End of file $Id$ ####
+#### End of file charconv ####

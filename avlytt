@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# avlytt
+# File ID: 2814c376-5d37-11df-bff6-90e6ba3022ac
 
 if [ -e /ww.mrk ]; then
   ntpservs='(gps\.dix\.dk|swisstime\.ee\.ethz\.ch|ntp1-rz\.rrze\.uni-erlangen\.de|hora\.cs\.tu-berlin\.de|svn\.sunbase\.org|194\.248\.216\.3|nett\.ba\.no|194\.248\.216\.20|vagen|stein)'

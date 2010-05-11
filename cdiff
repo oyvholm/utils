@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id$
+# cdiff
 # File ID: 45f660ac-fa5f-11dd-9262-0001805bf4b1
 # Latskapen lenge leve. Kjører en svn eller cvs diff og stripper bort alle
 # ukjente filer.

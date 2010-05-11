@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# ls-broken
+# File ID: fe82548a-5d3e-11df-b882-90e6ba3022ac
 # Lists broken links. Hacky and has to be tuned for other environments.
 #=======================================================================
 

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# split_md5
+# File ID: c6346df6-5d44-11df-9981-90e6ba3022ac
 # Setter inn punktumer i MD5'er, gjør det mer leselig.
 
 use strict;

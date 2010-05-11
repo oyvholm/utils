@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# klokkesig-conv
+# File ID: f9ddfe94-5d3d-11df-b4d3-90e6ba3022ac
 # Konverterer obskure dataformater til ISO-8601.
 
 use Time::Local;

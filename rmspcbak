@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# rmspcbak
+# File ID: 8cf4d3ec-5d43-11df-b755-90e6ba3022ac
 
 while (<>) {
 	s/[ \t]*$//g;

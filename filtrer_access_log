@@ -1,8 +1,8 @@
 #!/bin/sh
 
 #=======================================================================
-# $URL$
-# $Id$
+# filtrer_access_log
+# File ID: 1f552aca-5d3a-11df-93f2-90e6ba3022ac
 # Filtrerer bort hits som jeg og søkemotorer har laget på sunbase.org .
 # Og andre steder for den saks skyld.
 #=======================================================================

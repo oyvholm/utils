@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #=======================================================================
-# $Id$
+# cdiffa
+# File ID: 4518413c-5d37-11df-a55a-90e6ba3022ac
 # Latskapen lenge leve. Funker på samme måten som cdiff, men behandler 
 # alle binærfiler som tekst.
 #

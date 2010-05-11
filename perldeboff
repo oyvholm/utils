@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
+# perldeboff
+# File ID: 13dbcd36-5d42-11df-9dfc-90e6ba3022ac
 # Kommenterer ut debuggingsmeldinger i Perl
-# $Id$
 
 while (<>) {
 	s/(&deb_pr\(__LINE__)/# $1/g;

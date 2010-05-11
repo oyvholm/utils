@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# access_log-drops
+# File ID: 94b18e7a-5d36-11df-9276-90e6ba3022ac
 # Finner drops (ikke sukkertøy, men pauser) i Apache-logger.
 #
 # Character set: UTF-8
@@ -23,10 +24,6 @@ my $VERSION = "0.0";
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
-
-my $rcs_id = '$Id$';
-my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 $opt_h && usage(0);
 
@@ -105,7 +102,7 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
     print(<<END);
-$progname v$VERSION -- $id_date
+$progname v$VERSION
 
 Usage: $progname [options] [file [...]]
 
@@ -130,10 +127,6 @@ __END__
 =head1 NAME
 
 access_log-drops — find pauses in Apache logs
-
-=head1 REVISION
-
-$Id$
 
 =head1 SYNOPSIS
 
@@ -193,4 +186,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$

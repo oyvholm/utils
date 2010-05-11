@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #=======================================================================
-# $Id$
+# nosvn
+# File ID: b45d981c-5d41-11df-ac4e-90e6ba3022ac
 # Reads a bunch of filenames from stdin or files specified on the 
 # command line and strips .svn directories away. Examples:
 # 

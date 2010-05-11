@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# svnsize
+# File ID: ed4bb18c-5d45-11df-9c60-90e6ba3022ac
 # Lister ut fildato og størrelse for revisjonene i en fil i svn.
 
 fil=$1

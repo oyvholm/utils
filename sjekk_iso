@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# sjekk_iso
+# File ID: c4313fee-5d43-11df-a93e-90e6ba3022ac
 # Sjekker at en CD er brent riktig. Leser en fil på dette formatet:
 # MD5 størrelse navn
 

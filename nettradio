@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# nettradio
+# File ID: 9488c962-5d41-11df-a2be-90e6ba3022ac
 # Spiller av nettradioer — eller rettere sagt sender en
 # .ogg-strøm som kan lagres og tailes eller trøkkes inn i ogg123.
 

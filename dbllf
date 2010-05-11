@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #==================================================
-# $Id$
+# dbllf
+# File ID: 3c283716-5d38-11df-b62c-90e6ba3022ac
 # Dobler LF så enkelte ting blir mer oversiktlig
 #==================================================
 
@@ -16,4 +17,4 @@ while (<>) {
 
 __END__
 
-# End of file $Id$
+# End of file dbllf

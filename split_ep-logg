@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id$
+# split_ep-logg
+# File ID: 91565ce8-5d44-11df-ab2c-90e6ba3022ac
 # Splitter opp filer med filer som begynner med sekunder sia 1970.
 # Legger delene som $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] .
 # Bruker bare verdier med 9 eller 10 siffer. Med andre ord funker det
@@ -141,4 +142,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 =cut
 
-# End of file $Id$
+# End of file split_ep-logg

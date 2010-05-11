@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# $Id$
+# dprofpp.graphviz
 # File ID: eee09f82-6069-11de-b30a-000475e441b9
 #
 # This is a replacement for Devel::DProf's dproffpp,

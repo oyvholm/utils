@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# skipline
+# File ID: dcd11fb0-5d43-11df-8525-90e6ba3022ac
 # Only prints every n'th line from stdin
 
 defined($ARGV[0]) || die("\nSyntax: $0 number_of_lines_to_skip [file [...]]\n\n");

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# inc_epstat
+# File ID: afd0e776-5d3d-11df-9265-90e6ba3022ac
 # Filter for å gjøre epstat-format brukbart i gnuplot.
 # -f skriver telleren foran istedenfor etter.
 

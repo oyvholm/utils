@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# hhi
+# File ID: 9f049aca-5d3b-11df-8f49-90e6ba3022ac
 # Html Header Indexer
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License, see end of file for legal stuff.
@@ -177,10 +178,6 @@ __END__
 
 hhi - Html Header Indexer
 
-=head1 REVISION
-
-$Id$
-
 =head1 SYNOPSIS
 
 hhi [options] [files [..]]
@@ -283,4 +280,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: ft=perl fdm=marker fdl=0 ts=4 sw=4 sts=4 et fenc=UTF-8 fo+=w2 :
-# End of file $Id$
+# End of file hhi

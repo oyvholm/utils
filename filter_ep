@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# filter_ep
+# File ID: ce8d78f4-5d39-11df-aedd-90e6ba3022ac
 # Slipper bare ting som ser ut som en gyldig ep igjennom. For å ta så 
 # mye drit som mulig, slipper den bare gjennom 9-sifrede nummer som 
 # begynner på 9, og 10-sifrede nummer som begynner på 1. -v skriver ut 
@@ -46,4 +47,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id$
+# End of file filter_ep

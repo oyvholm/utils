@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# myf
+# File ID: 6a019368-5d41-11df-abee-90e6ba3022ac
 # Nå er jeg lei av mankoen på skikkelig datoformat.
 
 if [ "$1" = "-e" ]; then

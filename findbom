@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# findbom
+# File ID: 2c533abe-5d3a-11df-8ac1-90e6ba3022ac
 
 files="$@"
 [ -z "$files" ] && files=.

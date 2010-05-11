@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# icatf
+# File ID: 3db68a38-5d3d-11df-aea7-90e6ba3022ac
 # Konverterer fra IBMPC-tegnsett til latin1.
 # Samme som icat, men faker rammer.
 # Trenger programmene ibm2ent og entity.

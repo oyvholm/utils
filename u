@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# u
+# File ID: c17003b4-5d46-11df-a067-90e6ba3022ac
 
 if [ "$1" = "-L" ]; then
 	date -u +"%Y-%m-%dT%H:%M:%SZ" | tr -d '\n'

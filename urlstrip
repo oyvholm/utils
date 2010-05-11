@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id$
+# urlstrip
+# File ID: d58ab23a-5d47-11df-a6aa-90e6ba3022ac
 # Plukker ut urler fra en fil til bruk for sjekking av linker med wget --spider
 #==============================================================================
 

@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# tarsize
+# File ID: 68aa6aee-5d46-11df-a094-90e6ba3022ac
 # Viser størrelsen på en tar-fil av en directory.
 
 if [ $# -eq 0 ]; then

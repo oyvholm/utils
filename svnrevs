@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #=======================================================================
-# $Id$
+# svnrevs
+# File ID: e4860822-5d45-11df-986c-90e6ba3022ac
 # When calling this one-liner instead of svn, a comma-separated list of 
 # the revision numbers is generated. For use in log messages etc.
 #

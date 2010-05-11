@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# perlfold
+# File ID: 5869cb92-5d42-11df-bb0e-90e6ba3022ac
 # Inserts fold marks in perl source before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 

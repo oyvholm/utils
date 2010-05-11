@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# mkcvsbck
+# File ID: ed0eac02-5d3f-11df-9313-90e6ba3022ac
 # I’m getting spoiled by having a text-base around when working in 
 # Subversion, CVS doesn’t have that. So if I’ve edited a file without 
 # making a copy of the original, a new version of the file has to be 

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# cutfold
+# File ID: d8de5ac8-5d37-11df-a137-90e6ba3022ac
 # Inserts “CUT” marks with Vim fold before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 

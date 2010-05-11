@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# t2h
+# File ID: 099f1bbc-5d46-11df-bb8a-90e6ba3022ac
 
 use strict;
 

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# urm
+# File ID: e32b9fb2-5d47-11df-a745-90e6ba3022ac
 # Ultraremove. En omvei for å fjerne kataloger i svn som har 
 # svn:externals som kødder seg ved update.
 #=======================================================================

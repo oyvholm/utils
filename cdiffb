@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id$
+# cdiffb
 # File ID: 8966d5d2-08de-11de-bfaa-000475e441b9
 # Latskapen lenge leve. Funker på samme måten som cdiff,
 # men driter i whitespace.

@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# pynt
+# File ID: c8c9aa74-5d42-11df-98b0-90e6ba3022ac
 
 killall xplanetbg
 xplanetbg -projection ortho-xplanet -latitude 60.39494 -longitude 5.33016 $* &

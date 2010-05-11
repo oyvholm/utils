@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# rmxmlcomm
+# File ID: 9b4b2a18-5d43-11df-b99c-90e6ba3022ac
 # Fjerner XML/HTML/SGML-kommentarer.
 # Skal vi GPL’e den? Åja, det gjør vi! ☺
 #=======================================================================

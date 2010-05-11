@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id$
+# stpl
 # File ID: 6ec57c36-0903-11de-951a-000475e441b9
 # Plot out data with gnuplot based on data type
 #
@@ -19,10 +19,6 @@ use Getopt::Std;
 our ($opt_f, $opt_h, $opt_k, $opt_L, $opt_l, $opt_o, $opt_s, $opt_t, $opt_x, $opt_y) =
     (    "",      0,      0,      0,     "",     "",     "",     "",     "",     "");
 getopts('f:hkLl:o:s:t:x:y:');
-
-my $rcs_id = '$Id$';
-my $rcs_id_strip = $rcs_id;
-$rcs_id_strip =~ s/\$\x49d: (.*) \$$/$1/;
 
 our $STD_TIMEFMT = "%Y-%m-%dT%H:%M:%SZ";
 our $time_fmt = length($opt_f) ? $opt_f : $STD_TIMEFMT;
@@ -99,7 +95,6 @@ sub process_file {
 
 # \$\x49d\$
 # Session ID: $uuid
-# Gnuplot script created by $rcs_id_strip
 
 END
 
@@ -244,4 +239,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id$
+# End of file stpl

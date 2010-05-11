@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# cvscat
+# File ID: e1b60c7c-5d37-11df-b6cd-90e6ba3022ac
 
 if [ $# -le 1 ]; then
 	cat <<END

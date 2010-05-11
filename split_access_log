@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id$
+# split_access_log
+# File ID: 56261aa0-5d44-11df-9a99-90e6ba3022ac
 # Splitter opp access_log fra httpd(8) på dato. Legger delene som 
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] .
 #
@@ -173,4 +174,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set ts=4 sw=4 sts=4 et fo+=w2 fo-=n fenc=utf8 :
-# End of file $Id$
+# End of file split_access_log

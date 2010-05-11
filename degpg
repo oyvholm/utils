@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# degpg
 # File ID: 79505b44-1939-11de-82e7-000475e441b9
 # Konverterer PGP/GPG-armor fra stdin. Kan ta mange om gangen.
 

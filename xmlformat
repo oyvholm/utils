@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# xmlformat
+# File ID: f302df20-5d49-11df-b987-90e6ba3022ac
 # Reformats XML files to show the structure. WARNING! The script may 
 # fuck up whitespaces, it’s only meant for examining the XML structure.
 

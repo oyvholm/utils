@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# $Id$
+# getpic
+# File ID: 8f4bbf9c-5d3a-11df-b794-90e6ba3022ac
 # (C)opyleft 1998 Oyvind A. Solheim <sunny@pils.kvarteret.uib.no>
 # License: GNU General Public License version 2 or later.
 
@@ -99,4 +100,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 =cut
 
-#### End of file $Id$ ####
+#### End of file getpic ####

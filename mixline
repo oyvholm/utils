@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# mixline
+# File ID: b1e95adc-5d3f-11df-b77c-90e6ba3022ac
 # Blander linjer tilfeldig.
 
 use strict;

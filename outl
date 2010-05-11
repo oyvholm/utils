@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# outl
+# File ID: e9ab7e9e-5d41-11df-92c4-90e6ba3022ac
 # Lager en outline over HTML-dokumenter.
 
 use strict;

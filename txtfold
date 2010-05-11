@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# txtfold
+# File ID: b984ea3e-5d46-11df-bedb-90e6ba3022ac
 # Inserts fold marks in perl source before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 

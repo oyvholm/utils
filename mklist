@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# $Id$
+# mklist
+# File ID: ff48cd30-5d3f-11df-a4bd-90e6ba3022ac
 # Made by Øyvind A. Holm <sunny@dataguard.no>
 
 use Fcntl ':flock';
@@ -40,7 +41,7 @@ unless (-d $af_dir) {
 }
 chdir $af_dir || die("$0: $af_dir: Can't chdir to directory: $!\n");
 
-$Result = system("(echo '# \$Id\$'; (find $find_path -xdev -type f -printf \"%TY%Tm%TdT%TH%TM%TS %p\\n\" | $stripgz_prog | $sort_prog)) >$af_file");
+$Result = system("(echo \"# $(suuid -t mklist)\"; (find $find_path -xdev -type f -printf \"%TY%Tm%TdT%TH%TM%TS %p\\n\" | $stripgz_prog | $sort_prog)) >$af_file");
 $> = $sunny_uid;
 $) = $sunny_gid;
 $ENV{CVSROOT} = "$cvs_root";
@@ -60,4 +61,4 @@ sub sec2str {
 	return($UtcTime);
 } # sec2str()
 
-#### End of file $Id$ ####
+#### End of file mklist ####

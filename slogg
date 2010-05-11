@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# slogg
+# File ID: 1af3d346-5d44-11df-adf5-90e6ba3022ac
 # Setter en entry med klokkeslett inn i dbk. Leser fra stdin.
 # Funker på samme måte som logg, men legger inn PATH.
 # Kan kjøres av root.

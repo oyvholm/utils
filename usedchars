@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# usedchars
+# File ID: 2b47bfdc-5d49-11df-83a7-90e6ba3022ac
 # Lister ut tegn som er brukt i en fil. Bruker HTML-entities
 # for enkelhets skyld. Kjør gjennom "h2u -l" eller recode(1).
 

@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id$
+# rcs-extract
+# File ID: 26d14f32-5d43-11df-8375-90e6ba3022ac
 # Extracts the last checkin from RCS files.
 # Reads file names of the ,v files from stdin and stores the
 # extracted data under Extracted/ with the same file structure
@@ -97,4 +98,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id$
+# End of file rcs-extract

@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #====================================================================
-# $Id$
+# access_log2epstat
+# File ID: af31d840-5d36-11df-aa67-90e6ba3022ac
 # Konverterer access_log fra Apache til fil som passer til epstat(1).
 # Langt og trasig navn, men nøye då.
 #====================================================================
@@ -47,5 +48,3 @@ while (<>) {
 }
 
 __END__
-
-#### End of file $Id$ ####

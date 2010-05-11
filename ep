@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #==========================================================================
-# $Id$
+# ep
+# File ID: e8bf0ac2-5d38-11df-bd44-90e6ba3022ac
 #
 # Konverterer tekststrenger som ser ut som antall sekunder siden
 # 1970-01-01 00:00:00 GMT om til leselig datoformat. Konverterer alle tall
@@ -64,4 +65,4 @@ if ($opt_l) {
 	}
 }
 
-# End of file $Id$
+# End of file ep

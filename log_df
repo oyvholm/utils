@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# log_df
+# File ID: 99575e5c-5d3e-11df-9eee-90e6ba3022ac
 
 logdir=$HOME/log
 

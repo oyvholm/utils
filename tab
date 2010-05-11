@@ -1,5 +1,7 @@
 #!/usr/bin/perl
-# $Id$
+
+# tab
+# File ID: 126a11d4-5d46-11df-950e-90e6ba3022ac
 
 $Tabs = $ARGV[0] ? $ARGV[0] : 1;
 
@@ -10,4 +12,4 @@ while (<STDIN>) {
 	print "$_";
 }
 
-#### End of file $Id$ ####
+#### End of file tab ####

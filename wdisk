@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# wdisk
+# File ID: 8945d66e-5d49-11df-8e4e-90e6ba3022ac
 # Overwrites fre space on a disk.
 # Should be run as root to overwrite super-user reserved space.
 

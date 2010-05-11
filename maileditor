@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id$
+# maileditor
 # File ID: e7a46d48-fc82-11dd-9411-000475e441b9
 
 file=$1

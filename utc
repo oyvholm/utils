@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# utc
+# File ID: 52f418aa-5d49-11df-8c58-90e6ba3022ac
 
 if [ "$1" = "-L" ]; then
 	date -u +"%Y-%m-%dT%H:%M:%SZ"

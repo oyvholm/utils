@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# htmlfold
+# File ID: 2c77e8de-5d3d-11df-8a6a-90e6ba3022ac
 # Inserts fold marks in HTML source before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 

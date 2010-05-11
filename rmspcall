@@ -1,5 +1,6 @@
 #!/bin/sh
 
-# $Id$
+# rmspcall
+# File ID: 8802d1b8-5d43-11df-a1d8-90e6ba3022ac
 
 rmspcforan | rmspcbak

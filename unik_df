@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id$
+# unik_df
+# File ID: 31d8d1e4-5d47-11df-8c23-90e6ba3022ac
 # Filtrerer bort duplikater i ~/log/df.log .
 # Character set: UTF-8
 # License: GNU General Public License versjon 2 eller nyere
@@ -47,4 +48,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id$
+# End of file unik_df

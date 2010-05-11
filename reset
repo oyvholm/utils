@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #=================================================
-# $Id$
+# reset
+# File ID: 54b2b8d2-5d43-11df-bfcb-90e6ba3022ac
 # Fjerner rot med tekstattributter i tillegg.
 # Pluss at den setter tastaturhastigheta hvis det
 # er nødvendig.

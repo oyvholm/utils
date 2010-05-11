@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #=======================================================
-# $Id$
+# epstat
+# File ID: 7b2b204e-5d39-11df-88e3-90e6ba3022ac
 # Lager enkel statistikk over hits osv i en loggfil.
 # Forventer antall sekunder siden 1970 etterfulgt av TAB
 # i begynnelsen av hver linje.

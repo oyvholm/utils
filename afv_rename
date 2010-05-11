@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id$
+# afv_rename
+# File ID: f7f4047c-5d36-11df-a766-90e6ba3022ac
 # Leser filnavn fra stdin og skifter navn på dem fra gammelt
 # afv-format (epoch) til ååååmmddTttmmssZ . Virker forsåvidt på
 # alle filer som begynner med et 9- eller 10-sifret nummer.
@@ -73,4 +74,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id$
+# End of file afv_rename

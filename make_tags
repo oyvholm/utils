@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# make_tags
+# File ID: 44a6ab8c-5d3f-11df-9f10-90e6ba3022ac
 # Kjører exuberant-ctags på C-source.
 
 find -type f | ns | egrep '\.(c|h|cpp|chh|cc)$' | ctags -L -

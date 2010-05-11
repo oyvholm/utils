@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=====================================================================
-# $Id$
+# access_log-date
+# File ID: 943dcc86-5d33-11df-9006-90e6ba3022ac
 # Leser første og siste datoen i access_log og skifter navn på den til
 # formatet NAVN.ååååmmddTttmmssZ-ååååmmddTttmmssZ.access_log
 #
@@ -96,4 +97,4 @@ END
 
 __END__
 
-# End of file $Id$
+# End of file access_log-date

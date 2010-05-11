@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# commify
+# File ID: 895db0b6-5d37-11df-92d4-90e6ba3022ac
 # Setter inn punktumer i nummer.
 
 use strict;

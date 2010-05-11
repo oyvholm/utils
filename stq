@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# stq
+# File ID: 69277184-5d45-11df-b4d7-90e6ba3022ac
 # Mer latskap. Rensker bort externals-kataloger i outputen. 
 # 2006-versjonen av ccc(1). :-D
 #=======================================================================

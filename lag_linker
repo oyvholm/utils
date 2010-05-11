@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# lag_linker
+# File ID: 578c1f6c-5d3e-11df-ba31-90e6ba3022ac
 # Lager symlinker i current dir til alle filer som ligger nedenfor i 
 # treet.
 #=======================================================================

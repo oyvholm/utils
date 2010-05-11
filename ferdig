@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# ferdig
+# File ID: a8f6fff2-5d39-11df-9627-90e6ba3022ac
 
 while :; do
     echo -ne \\a.

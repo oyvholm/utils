@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #==============================================================================
-# $Id$
+# rmdup
+# File ID: 6fc9b9b8-5d43-11df-ab40-90e6ba3022ac
 # Compares the files in directory $1 with existing files in directory $2
 # and removes the duplicates in directory $2.
 #==============================================================================

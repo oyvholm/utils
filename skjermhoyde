@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# $Id$
+# skjermhoyde
+# File ID: 14f5b6ee-5d44-11df-85f6-90e6ba3022ac
 # Brukes til å se hvor mange tegn det er på skjermen. Kanonavansert.
 
 for (my $a = 200; $a > 1; $a--) {

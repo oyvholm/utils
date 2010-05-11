@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #==============================================================================
-# $Id$
+# sortcvs
+# File ID: 440141ba-5d44-11df-8e85-90e6ba3022ac
 # Sorts the output from "cvs log" into chronological order.
 # Made by Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.

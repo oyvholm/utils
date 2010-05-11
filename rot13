@@ -1,5 +1,6 @@
 #!/bin/sh
 
-# $Id$
+# rot13
+# File ID: a6551720-5d43-11df-a95b-90e6ba3022ac
 
 tr a-mn-zA-MN-Z n-za-mN-ZA-M

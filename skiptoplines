@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id$
+# skiptoplines
+# File ID: 025415b2-5d44-11df-8367-90e6ba3022ac
 # Skips the first N lines from stdin or specified file(s).
 #
 # Character set: UTF-8
@@ -63,4 +64,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id$
+# End of file skiptoplines

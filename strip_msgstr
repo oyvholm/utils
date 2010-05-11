@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# strip_msgstr
+# File ID: 8806a55c-5d45-11df-8c3b-90e6ba3022ac
 # Stripper bort oversettelser i .po-filer for å se om det er noe grums 
 # som har oppstått der.
 #=======================================================================

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# mime2txt
+# File ID: 848c0aa8-5d3f-11df-9938-90e6ba3022ac
 # Konverterer tekst i MIME-format til vanlig tekst. Vet ikke hvor korrekt
 # den er, men det ser ut til å funke greit.
 

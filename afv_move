@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# afv_move
+# File ID: d4b6028a-5d36-11df-8bab-90e6ba3022ac
 # Reads file names from stdin or files and places them into a directory 
 # structure based on a date in the file name or the modification time.
 #
@@ -27,10 +28,6 @@ my $VERSION = "0.5";
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
-
-my $rcs_id = '$Id$';
-my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 my $DEFAULT_DIR = "%Y/%m/%d";
 my $skip_dirs = $opt_s ? 1 : 0;
@@ -161,7 +158,7 @@ sub usage {
 
     print(<<END);
 
-$progname v$VERSION -- $id_date
+$progname v$VERSION
 
 Syntax: $0 [options] [file_with_filenames [...]]
 
@@ -247,4 +244,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$
+# End of file afv_move

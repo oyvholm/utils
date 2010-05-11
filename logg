@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# logg
+# File ID: e3b0ac7e-5d3e-11df-9889-90e6ba3022ac
 # Setter en entry med klokkeslett inn i dbk. Leser fra stdin.
 
 dbk -t -b -i - $*

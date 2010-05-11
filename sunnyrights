@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# sunnyrights
+# File ID: 9b90e1dc-5d45-11df-8c34-90e6ba3022ac
 # Forandrer eierskap te han sunny og setter sticky bit på katalogene så 
 # han (jeg) fortsetter å eie dem. Beregnet på .svn-kataloger først og 
 # fremst.

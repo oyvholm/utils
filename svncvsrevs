@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #=======================================================================
-# $Id$
+# svncvsrevs
+# File ID: dd011f6a-5d45-11df-999a-90e6ba3022ac
 # Lists the cvs2svn:cvs-rev property for every revision in a file. Needs 
 # the svnrevs script.
 #=======================================================================

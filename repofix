@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# repofix
+# File ID: 398ae264-5d43-11df-ac76-90e6ba3022ac
 # Forandrer rettigheter og greier så et FSFS-depot i Subversion virker 
 # med svn+ssh:// med flere brukere hvis rettighetene er rota til. 
 # Beregna for bruk på developer.skolelinux.no . Kjøres flere ganger 

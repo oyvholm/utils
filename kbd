@@ -1,5 +1,6 @@
 #!/bin/sh
 
-# $Id$
+# kbd
+# File ID: d5a1493c-5d3d-11df-a377-90e6ba3022ac
 
 kbdrate -r 30 -d 250

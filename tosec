@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #===========================================================================
-# $Id$
+# tosec
+# File ID: b1b05618-5d46-11df-9330-90e6ba3022ac
 # Mottar datoer på kommandolinja og konverterer dem til sekunder siden 1970.
 # Format: ååååmmddTttmmss med valgfri Z på slutten for GMT
 #===========================================================================

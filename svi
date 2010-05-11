@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# svi
+# File ID: d7025d7c-5d45-11df-868e-90e6ba3022ac
 
 if [ -d .svn ]; then
     svn info $* | egrep "^(Nettadresse|URL): " | perl -pe 's#^(.*?)(/(?:trunk|branches|tags|hooks/(trunk|branches|tags)).*)#* $2/#';

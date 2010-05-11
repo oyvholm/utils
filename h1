@@ -1,7 +1,8 @@
 #!/bin/sh
 
+# h1
+# File ID: bcd3c590-5d3a-11df-958e-90e6ba3022ac
 # Fyrer i gang httpd(8)
-# $Id$
 
 if [ -e /nett.mrk -o -e /sunba.mrk ]; then
     /etc/init.d/apache2 start

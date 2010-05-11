@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# make_svnlog
+# File ID: 2549519a-5d3f-11df-941d-90e6ba3022ac
 
 unset LANG
 dest=/home/sunny/src/svn/svnlog/trunk

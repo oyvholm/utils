@@ -1,5 +1,6 @@
 #!/bin/sh
 
-# $Id$
+# unichar
+# File ID: 23f515ba-5d47-11df-bcb0-90e6ba3022ac
 
 zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* | grep -Ei "$@"

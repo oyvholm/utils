@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# gfuck
+# File ID: aebb39d4-5d3a-11df-8eb3-90e6ba3022ac
 # gfuck — gnumeric fuck. Det er så forbanna irriterende at den skal 
 # drive og lagre fila i gzippa format, så det her scriptet pakker den 
 # ut.

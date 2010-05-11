@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# cunw
+# File ID: d3b3f684-5d37-11df-854d-90e6ba3022ac
 # Lister ut alle filer som ikke er registrert i CVS (Cvs-UNWanted)
 
 # BUGS: Avhengig av utskriftsformatet til cvs(1)

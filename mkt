@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Creates a .tar.gz file of current directory
-# $Id$
+# mkt
 # File ID: dc74ffde-08f1-11de-a419-000475e441b9
 # (C)opyleft 1999- sunny@sunbase.org
 # License: GNU General Public License version 2 or later
@@ -121,4 +121,4 @@ fi
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  
 # USA
 
-#### End of file $Id$ ####
+#### End of file mkt ####

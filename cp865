@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# cp865
+# File ID: cf2386a2-5d37-11df-ae79-90e6ba3022ac
 # Konverterer cp865 til UTF-8. Latskap.
 
 iconv -f cp865 -t utf-8 $*

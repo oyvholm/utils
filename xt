@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# xt
+# File ID: 0c214154-5d4a-11df-940b-90e6ba3022ac
 
 for f in "$@"; do
     if echo $f | grep -qi '\.gpx$'; then

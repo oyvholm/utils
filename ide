@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# ide
+# File ID: 4cc58a88-5d3d-11df-9662-90e6ba3022ac
 
 cd $HOME/src/svn/div/trunk/txt || { echo "cd $HOME/src/svn/div/trunk/txt: På trynet." >&2; exit 1; }
 svn up ide.txt || { echo "svn update-feil" >&2; exit 1; }

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# $Id$
+# termtitle
+# File ID: 7f15b202-5d46-11df-b702-90e6ba3022ac
 # Setter tittel i xterm-vindu.
 
 print(chr(157), "2;", @ARGV, chr(7));

@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# cp1252
+# File ID: cba42a54-5d37-11df-8c61-90e6ba3022ac
 # Konverterer cp1252 til UTF-8. Et resultat av latskap.
 
 iconv -f cp1252 -t utf-8 $*

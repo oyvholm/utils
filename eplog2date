@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #==========================================================================
-# $Id$
+# eplog2date
+# File ID: 758b4ab0-5d39-11df-b823-90e6ba3022ac
 #
 # Konverterer antall sekunder sia 1970-01-01T00:00:00Z i begynnelsen av
 # ei linje til ååååmmddTttmmssZ, det er mer oversiktlig. Tallene må ha 9

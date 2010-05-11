@@ -1,6 +1,9 @@
 #!/usr/bin/perl -w
-# $Id$
+
+# fjern_here
+# File ID: 4b909a7a-5d3a-11df-bd13-90e6ba3022ac
 # Konverterer tekst i «here documents» til print()-lignende greier.
+
 print("join(\"\",\n");
 while (<>) {
 	s/\t//g;

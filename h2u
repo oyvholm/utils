@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
 #==============================================================================
-# $Id$
+# h2u
+# File ID: e93feb18-5d3a-11df-bda7-90e6ba3022ac
 # Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to UTF-8.
 #
 # Options:

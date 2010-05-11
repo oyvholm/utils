@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# xml-to-lisp
+# File ID: e6461d24-5d49-11df-8e5d-90e6ba3022ac
 # Converts an XML file to Lisp.
 # Created by Gene Michael Stover (gene at acm.org)
 # Tweaks by Øyvind A. Holm <sunny@sunbase.org>.

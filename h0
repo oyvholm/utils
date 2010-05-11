@@ -1,7 +1,8 @@
 #!/bin/sh
 
+# h0
+# File ID: b8705554-5d3a-11df-9ca9-90e6ba3022ac
 # Stopper httpd(8)
-# $Id$
 
 if [ -e /nett.mrk -o -e /sunba.mrk ]; then
     /etc/init.d/apache2 stop

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# uj
+# File ID: f8d8d376-5d46-11df-8ae0-90e6ba3022ac
 # Gjentar editering av filer som inneholder ulovlig UTF-8
 
 use strict;
@@ -124,4 +125,4 @@ sub decode_char {
 
 __END__
 
-# End of file $Id$
+# End of file uj

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# allrevs
+# File ID: 11dc9d90-5d37-11df-9afd-90e6ba3022ac
 # Lagrer alle versjoner av en fil eller katalogstruktur i en annen 
 # katalog.
 #=======================================================================

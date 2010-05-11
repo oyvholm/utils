@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# nfs0
+# File ID: a06532de-5d41-11df-b300-90e6ba3022ac
 # Kjører ned nfsd
 
 /etc/rc.d/init.d/nfs stop

@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# extract_mail
+# File ID: 953fa428-5d39-11df-8ca0-90e6ba3022ac
 # Extracts messages from a mailbox into separate files
 # ©opyleft 2002 Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
@@ -132,4 +133,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 =cut
 
-#### End of file $Id$ ####
+#### End of file extract_mail ####

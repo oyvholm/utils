@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# cleansrc
+# File ID: 84f7d86c-5d37-11df-bde1-90e6ba3022ac
 # Rensker opp i perlsource og gjør den klar for commit.
 
 perldebon|perldebon|perldebon|perldebon|perldeboff|rmspc

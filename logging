@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id$
+# logging
 # File ID: af318500-fb9b-11dd-bb0f-000475e441b9
 
 export LOGDIR=$HOME/log/script

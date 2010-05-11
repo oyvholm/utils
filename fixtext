@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# fixtext
+# File ID: 43fdfa28-5d3a-11df-ab1a-90e6ba3022ac
 # Enkel konvertering av tekst til entities og denslags.
 
 use strict;

@@ -1,7 +1,8 @@
 #!/bin/sh
 
+# pget
+# File ID: 62946280-5d42-11df-aee5-90e6ba3022ac
 # Henter en webside. Kort og grei.
-# $Id$
 
 url=$1
 shift

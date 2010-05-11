@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# $Id$
+# detab
+# File ID: 555c244a-5d38-11df-850a-90e6ba3022ac
 # Fjerner x antall TAB'er i begynnelsen av her linje.
 
 $Tabs = $ARGV[0] ? $ARGV[0] : 1;
@@ -13,4 +14,4 @@ while (<STDIN>) {
 	print "$Linje";
 }
 
-#### End of file $Id$ ####
+#### End of file detab ####

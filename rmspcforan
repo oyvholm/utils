@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
-# $Id$
+# rmspcforan
+# File ID: 961a0d2a-5d43-11df-ba1f-90e6ba3022ac
 
 while (<>) {
 	s/^[ \t\r]*//g;

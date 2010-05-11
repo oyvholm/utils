@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# cdlabel
+# File ID: 502cd7ae-5d37-11df-a883-90e6ba3022ac
 # Skriver ut volume label på CDROM’en som står i.
 
 device=/dev/cdrom

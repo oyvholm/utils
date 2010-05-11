@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# hf
+# File ID: 2a71fba8-5d3b-11df-b18b-90e6ba3022ac
 # Formatterer HTML-source med mellomrom eller tabulator.
 #
 # Laget av Øyvind A. Holm <sunny@sunbase.org>
@@ -165,4 +166,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set ft=perl sw=4 ts=4 sts=4 et fenc=utf8 :
-# End of file $Id$
+# End of file hf

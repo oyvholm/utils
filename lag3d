@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# lag3d
+# File ID: 0a5321d2-5d3e-11df-86cd-90e6ba3022ac
 # [Description]
 #
 # Character set: UTF-8
@@ -21,10 +22,6 @@ my $VERSION = "0.0";
 
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
-
-my $rcs_id = '$Id$';
-my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -56,7 +53,7 @@ sub usage {
     my $Retval = shift;
     print(<<END);
 
-$progname v$VERSION -- $id_date
+$progname v$VERSION
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -79,10 +76,6 @@ __END__
 =head1 NAME
 
 
-
-=head1 REVISION
-
-$Id$
 
 =head1 SYNOPSIS
 
@@ -142,4 +135,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$
+# End of file lag3d

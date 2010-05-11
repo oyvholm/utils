@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# rmspc
+# File ID: 84466d0a-5d43-11df-b89e-90e6ba3022ac
 # Latskapen lenge leve.
 
 rmspcbak $*

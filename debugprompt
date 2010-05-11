@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# debugprompt
+# File ID: 4477c08a-5d38-11df-9375-90e6ba3022ac
 # Primitiv prompt for screenlogger osv.
 
 export PS1='=== PROMPT $(date +"%T") \u@\h:\w$ '

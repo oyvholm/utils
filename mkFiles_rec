@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# mkFiles_rec
+# File ID: c3a7f1d4-5d3f-11df-8759-90e6ba3022ac
 # Recursive mkFiles
 
 if [ "$1" = "-c" ]; then

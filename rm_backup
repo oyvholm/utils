@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# rm_backup
+# File ID: 651094e2-5d43-11df-829b-90e6ba3022ac
 # Fjerner backupfiler i current dir og subdirs.
 
 echo "rm_backup: Fjerner alle med tilde på slutten..."

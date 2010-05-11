@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# h2chin
+# File ID: c9650f12-5d3a-11df-aa5c-90e6ba3022ac
 # Konverterer fra numeriske entities til oversatt kinesisk.
 
 use strict;

@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# access-myf
+# File ID: 8645016c-5d33-11df-9f74-90e6ba3022ac
 # Versjon av myf(1) som lister ut tidspunktet sist aksessert istedenfor modifisert.
 
 find $* -printf "%AY-%Am-%Ad %AH:%AM:%AS\t%6s\t%U.%G\t%p\n"

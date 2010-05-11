@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# manypatch
+# File ID: 6d82838c-5d3f-11df-8a25-90e6ba3022ac
 # Legger til mange patcher til en fil og ordner opp i konflikter med wiggle. En
 # variasjon av den kommandoen som jeg kjørte under patchinga av nb.po for
 # Subversion før i dag.

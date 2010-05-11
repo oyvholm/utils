@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# ampm
+# File ID: 18c94c16-5d37-11df-b31a-90e6ba3022ac
 # Konverterer fra helsikes am/pm til 24-timers klokke
 
 use strict;

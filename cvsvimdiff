@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# cvsvimdiff
+# File ID: 319e349e-5d38-11df-8642-90e6ba3022ac
 
 # Må gjøre det på den krøkkete måten her pga at vimdiff ikke klarer å
 # lese fifo’en i enkelte situasjoner av en eller annen grunn.

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #=======================================================================
-# $Id$
+# cl
 # File ID: 446af502-fa61-11dd-aef2-0001805bf4b1
 # Latskap. Lister ut loggen for Subversion, SVK eller CVS.
 #

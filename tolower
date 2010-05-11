@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# tolower
+# File ID: 95bbda86-5d46-11df-a4e0-90e6ba3022ac
 # Konverterer stdin til lower case
 
 tr A-Z a-z

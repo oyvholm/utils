@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# ep_day
+# File ID: 524e5f42-5d39-11df-a9d4-90e6ba3022ac
 # Samler en masse tidspunkter i epoch-format på for eksempel samme dag 
 # eller hver time. Forventer antall sekunder siden 19700101T000000Z 
 # først på linja.
@@ -99,4 +100,4 @@ END
     # }}}
 }
 
-# End of file $Id$
+# End of file ep_day

@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #===============================================================
-# $Id$
+# rmheadtail
+# File ID: 78b00000-5d43-11df-b7a6-90e6ba3022ac
 # Removes first and last line from stdin or specified files
 #
 # Character set: UTF-8
@@ -46,4 +47,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set fileencoding=UTF-8 filetype=perl foldmethod=marker foldlevel=0 :
-# End of file $Id$
+# End of file rmheadtail

@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# hfa
+# File ID: 86441ed4-5d3b-11df-b6c6-90e6ba3022ac
 # Samme som hf, men fjerner alle spacene i begynnelsen og slutten først
 
 hf -a $*

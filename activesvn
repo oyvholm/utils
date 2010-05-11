@@ -1,5 +1,6 @@
 #!/bin/bash
 
-# $Id$
+# activesvn
+# File ID: c3019e46-5d36-11df-9577-90e6ba3022ac
 
 svn log -v --xml $* | LC_ALL=C LC_CTYPE=C grep 'path>' | perl -pe 's/^.*?>(.*?)<.*$/$1/;' | sort | uniq -c | sort -rn

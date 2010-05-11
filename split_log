@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# split_log
+# File ID: a24fa3b0-5d44-11df-b03a-90e6ba3022ac
 # Splitter opp filer med filer som begynner med sekunder sia 1970 eller 
 # en dato på ISO 8601-format. Legger delene som 
 # $Dir/åååå/[NAVN.]åååå-mm-ddZ[.EXT] . Bruker bare verdier med 9 eller 
@@ -157,4 +158,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 =cut
 
 # vim: set ts=4 sw=4 sts=4 et fo+=w fenc=utf8 :
-# End of file $Id$
+# End of file split_log

@@ -1,5 +1,6 @@
 #!/bin/sh
 
-# $Id$
+# sget
+# File ID: b82e1dde-5d43-11df-95f1-90e6ba3022ac
 
 wget -O - -o /dev/null -U 'Mozilla/4.78 [en] (X11; U; Linux 2.4.9-31 i686)' $*

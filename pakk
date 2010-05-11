@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# pakk
+# File ID: f2eb0b0a-5d41-11df-9150-90e6ba3022ac
 
 if [ "x$1" = "x" ]; then
 	PACKNAME='-'

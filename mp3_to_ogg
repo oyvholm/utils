@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# $Id$
+# mp3_to_ogg
+# File ID: 5f192e02-5d41-11df-b8db-90e6ba3022ac
 #
 # Konverterer alle *.mp3-filene til ogg og legger dem i en egen "ogg"-katalog.
 # Hvis -r spesifiseres som første parameter, slettes mp3-filene etterhvert som

@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# $Id$
+# ustr
+# File ID: 3c899bbc-5d49-11df-b62a-90e6ba3022ac
 # Inserts a COMBINING LOW LINE (U+0332, "◌̲") after every character 
 # except newline (\n).
 #
@@ -23,10 +24,6 @@ my $VERSION = "0.0";
 our $progname = $0;
 $progname =~ s#^.*/(.*?)$#$1#;
 
-my $rcs_id = '$Id$';
-my $id_date = $rcs_id;
-$id_date =~ s/^.*?\d+ (\d\d\d\d-.*?\d\d:\d\d:\d\d\S+).*/$1/;
-
 $opt_h && usage(0);
 
 while (<>) {
@@ -38,7 +35,7 @@ sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
     print(<<END);
-$progname v$VERSION -- $id_date
+$progname v$VERSION
 
 Usage: $progname
 
@@ -56,10 +53,6 @@ __END__
 =head1 NAME
 
 
-
-=head1 REVISION
-
-$Id$
 
 =head1 SYNOPSIS
 
@@ -115,4 +108,4 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file $Id$
+# End of file ustr

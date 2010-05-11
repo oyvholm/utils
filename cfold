@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
-# $Id$
+# cfold
+# File ID: 602c35c8-5d37-11df-a51d-90e6ba3022ac
 # Inserts fold marks in C source before and after stdin.
 # Select text in visual line mode and filter the block through this script.
 

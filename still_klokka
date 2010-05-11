@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# still_klokka
+# File ID: df5938fc-5d44-11df-a1a9-90e6ba3022ac
 
 if [ -e /carmbb.mrk -o -e /nynett-ubuntu.mrk ]; then
 	# [ "`whoami`" = "root" ] || { echo $0: Må være root. >&2; exit 1; }

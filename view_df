@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# view_df
+# File ID: 57ae6cba-5d49-11df-ad7b-90e6ba3022ac
 
 logdir=$HOME/log
 vdtmpdir=/tmp/view_df

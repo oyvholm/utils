@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $Id$
+# pakkdir
 # File ID: 5818b856-0ba9-11de-b2c1-000475e441b9
 
 for f in $*; do

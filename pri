@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# pri
+# File ID: af1db854-5d42-11df-bfc8-90e6ba3022ac
 
 pri_dir=~sunny/etc
 

@@ -1,6 +1,7 @@
 #!/usr/bin/gnuplot -persist
 
-# $Id$
+# statplot
+# File ID: cd921c42-5d44-11df-8df0-90e6ba3022ac
 # Lager fin graf over ting som ligger i filen "data".
 
 set xdata time

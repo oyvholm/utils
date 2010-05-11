@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# $Id$
+# nets
+# File ID: 8d8cf0c0-5d41-11df-8574-90e6ba3022ac
 # Moser Netscape- og Mozillalignende prosesser.
 
 killall -9 netscape-navigator netscape-communicator communicator-smotif.real navigator-smotif.real mozilla-bin
