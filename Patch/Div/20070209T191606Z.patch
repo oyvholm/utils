@@ -1,22 +1,3 @@
-Index: wlan-list
-===================================================================
---- wlan-list	(revision 2022)
-+++ wlan-list	(working copy)
-@@ -49,10 +49,12 @@
- if ($Opt{'verbose'}) {
-     system("iwlist ath0 scan | less");
- } elsif ($Opt{'encrypted'}) {
--    system("iwlist ath0 scan | egrep '(Address:|ESSID:|Quality=|Encryption)' | perl -pe 's/(Encryption key:off)/\x1B[1m$1\x1B[m/g;'");
-+    # system("iwlist ath0 scan | egrep '(Address:|ESSID:|Quality=|Encryption)' | perl -pe 's/(Encryption key:off)/\x1B[1m$1\x1B[m/g;'");
-+    system("cat ~/bin/exemp | egrep '(Address:|ESSID:|Quality=|Encryption)' | perl -pe 's/(Encryption key:off)/\x1B[1m$1\x1B[m/g;'");
- } elsif ($Opt{'xml'}) {
-     my $found_cell = 0;
--    if (open(PipeFP, "iwlist ath0 scan |")) {
-+    # if (open(PipeFP, "iwlist ath0 scan |")) {
-+    if (open(PipeFP, "cat ~/bin/exemp |")) {
-         print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<wlan>\n");
-         my $curr_time = time();
-         my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday) = gmtime($curr_time);
 Index: view_df
 ===================================================================
 --- view_df	(revision 2022)
