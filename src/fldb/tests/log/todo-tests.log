@@ -1,7 +1,0 @@
-ok - use FLDBpg;
-ok - use FLDBsum;
-ok - use FLDButf;
-# ========== Executing fldb.t v0.00 ==========
-# Running TODO tests...
-# Testing finished.
-1..3
