@@ -9,6 +9,7 @@
 
 [ -z "$1" ] && { echo "Syntax: $0 testname [testname [...]]" >&2; exit 1; }
 
+mkdir -p log
 maxlen=0
 
 for gf in "$@"; do
