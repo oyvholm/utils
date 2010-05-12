@@ -6,4 +6,4 @@ all:
 	./Genlog *.t
 
 clean:
-	svn revert log/*
+	rm -rf log

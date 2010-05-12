@@ -9,5 +9,4 @@ all:
 	./suuid.t --todo 2>&1 | remove_perltestnumbers >log/todo-tests.log
 
 clean:
-	rm -vf suuid-stderr.tmp
-	svn revert log/tests.log log/todo-tests.log
+	rm -rf log

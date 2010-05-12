@@ -24,6 +24,8 @@ testclean:
 	cd src/smsum/tests; $(MAKE) clean
 	cd src/suuid/tests; $(MAKE) clean
 
+clean: testclean
+
 remotes:
 	git remote add github git@github.com:sunny256/utils.git; true
 	git remote add gitorious git@gitorious.org:sunny256/utils.git; true
