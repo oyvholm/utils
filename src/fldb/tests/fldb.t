@@ -231,7 +231,6 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-ok(`$CMD -h` !~ /^\n\S+ v\d\.\d\d\n/s, "\"$CMD -h\" - No Id with only -h");
 diag("Testing -v (--verbose) option...");
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',

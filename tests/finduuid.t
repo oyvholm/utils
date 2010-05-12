@@ -153,7 +153,6 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-ok(`$CMD -h` !~ /^\n\S+ v\d\.\d\d\n/s, "\"$CMD -h\" - No Id with only -h");
 diag("Testing -l (--line) option...");
 testcmd("$CMD -l finduuid-files/textfile", # {{{
     <<END,

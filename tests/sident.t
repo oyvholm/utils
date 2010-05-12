@@ -219,7 +219,6 @@ likecmd("$CMD -h", # {{{
 );
 
 # }}}
-ok(`$CMD -h` !~ /^\n\S+ v\d\.\d\d\n/s, "\"$CMD -h\" - No Id with only -h");
 diag("Testing -k (--known-keywords-only) option...");
 testcmd("$CMD -k sident-files/textfile", # {{{
     <<'END',
