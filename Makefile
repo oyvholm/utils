@@ -18,11 +18,11 @@ test:
 	cd src/suuid/tests; $(MAKE)
 
 testclean:
-	cd tests; $(MAKE) clean
-	cd src/gpstools/tests; $(MAKE) clean
-	cd src/fldb/tests; $(MAKE) clean
-	cd src/smsum/tests; $(MAKE) clean
-	cd src/suuid/tests; $(MAKE) clean
+	cd tests && $(MAKE) clean
+	cd src/gpstools/tests && $(MAKE) clean
+	cd src/fldb/tests && $(MAKE) clean
+	cd src/smsum/tests && $(MAKE) clean
+	cd src/suuid/tests && $(MAKE) clean
 
 clean: testclean
 
