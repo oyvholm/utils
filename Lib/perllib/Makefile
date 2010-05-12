@@ -1,6 +1,7 @@
 
+# Lib/perllib/Makefile
+# File ID: 143f5222-5d7c-11df-8a0c-90e6ba3022ac
 # Makefile for generering av *.3, *.dvi, *.ps og *.html
-# $Header: /home/sunny/tmp/cvs/perllib/Makefile,v 1.2 1999/07/05 14:06:14 sunny Exp $
 
 all: tricgi.dvi tricgi.ps tricgi.html
 

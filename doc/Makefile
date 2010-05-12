@@ -1,7 +1,8 @@
 #!/usr/bin/make
 
 #=======================================================================
-# $Id$
+# doc/Makefile
+# File ID: 26514a24-5d7c-11df-afe6-90e6ba3022ac
 #=======================================================================
 
 BOOKFILES = index.xml
@@ -27,5 +28,4 @@ ready:
 valid:
 	XML_CATALOG_FILES=catalog.xml $(XMLLINT) --noout --nonet --valid $(BOOKFILES)
 
-# $Id$
 # vim: set ts=4 sw=4 sts=4 noet :

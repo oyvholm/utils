@@ -1,6 +1,7 @@
 #!/usr/bin/make
 
-# $Id$
+# Makefile
+# File ID: 41723b1a-5d7c-11df-a35a-90e6ba3022ac
 
 CC = gcc
 EXEC = check_utf8
