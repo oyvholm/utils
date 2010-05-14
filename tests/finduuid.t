@@ -130,6 +130,7 @@ testcmd("$CMD -f finduuid-files/std-random finduuid-files/textfile", # {{{
 finduuid-files/std-random:2bd76352-88d5-11dd-8848-000475e441b9
 finduuid-files/textfile:9829c1a8-88d5-11dd-9a24-000475e441b9
 finduuid-files/textfile:fd5d1200-88da-11dd-b7cf-000475e441b9
+finduuid-files/textfile:9829C1A8-88D5-11DD-9A24-000475E441B9
 END
     "",
     "Option --filenames lists file name",
@@ -158,6 +159,7 @@ testcmd("$CMD -l finduuid-files/textfile", # {{{
     <<END,
 4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
 6 fd5d1200-88da-11dd-b7cf-000475e441b9
+8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
 END
     "",
     "Print whole line with UUID",
@@ -168,6 +170,7 @@ testcmd("$CMD -l <finduuid-files/textfile", # {{{
     <<END,
 4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
 6 fd5d1200-88da-11dd-b7cf-000475e441b9
+8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
 END
     "",
     "Read from stdin and print whole line with UUID",
@@ -178,6 +181,7 @@ testcmd("$CMD -lf finduuid-files/textfile finduuid-files/text2", # {{{
     <<END,
 finduuid-files/textfile:4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
 finduuid-files/textfile:6 fd5d1200-88da-11dd-b7cf-000475e441b9
+finduuid-files/textfile:8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
 finduuid-files/text2:here 08CCB59A-88E1-11DD-A80C-000475E441B9blabla
 END
     "",
@@ -191,6 +195,49 @@ daa9b45c-88d5-11dd-be73-000475e441b9c2680b68-144e-4f4e-9c1c-3fbb758a94d2db3b0506
 END
     "",
     "Print whole line containg many UUIDs",
+);
+
+# }}}
+diag("Testing -u (--unique) option...");
+testcmd("$CMD --unique -l finduuid-files/textfile", # {{{
+    <<END,
+4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
+6 fd5d1200-88da-11dd-b7cf-000475e441b9
+END
+    "",
+    "Print whole line with only one UUID + --unique works",
+);
+
+# }}}
+testcmd("$CMD -u -l <finduuid-files/textfile", # {{{
+    <<END,
+4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
+6 fd5d1200-88da-11dd-b7cf-000475e441b9
+END
+    "",
+    "Read from stdin and print unique uuids",
+);
+
+# }}}
+testcmd("$CMD -u -lf finduuid-files/textfile finduuid-files/text2", # {{{
+    <<END,
+finduuid-files/textfile:4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
+finduuid-files/textfile:6 fd5d1200-88da-11dd-b7cf-000475e441b9
+finduuid-files/text2:here 08CCB59A-88E1-11DD-A80C-000475E441B9blabla
+END
+    "",
+    "Print filename and whole line with unique uuids",
+);
+
+# }}}
+testcmd("$CMD -u finduuid-files/textfile finduuid-files/text2", # {{{
+    <<END,
+9829c1a8-88d5-11dd-9a24-000475e441b9
+fd5d1200-88da-11dd-b7cf-000475e441b9
+08CCB59A-88E1-11DD-A80C-000475E441B9
+END
+    "",
+    "Several files, -u only",
 );
 
 # }}}

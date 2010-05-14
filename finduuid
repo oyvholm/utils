@@ -24,6 +24,7 @@ our %Opt = (
     'filenames' => 0,
     'help' => 0,
     'line' => 0,
+    'unique' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -40,6 +41,7 @@ GetOptions(
     "filenames|f" => \$Opt{'filenames'},
     "help|h" => \$Opt{'help'},
     "line|l" => \$Opt{'line'},
+    "unique|u" => \$Opt{'unique'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -54,15 +56,20 @@ if ($Opt{'version'}) {
 
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+my %uuid_list = ();
 
 while (<>) {
     chomp(my $Line = $_);
     if (/($Templ)/) {
-        if ($Opt{'line'}) {
-            printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
-        } else {
-            $Line =~ s/($Templ)/printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $1)/ge;
+        my $Curr = $1;
+        if (!$Opt{'unique'} || !defined($uuid_list{lc($Curr)})) {
+            if ($Opt{'line'}) {
+                printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
+            } else {
+                $Line =~ s/($Templ)/printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $1)/ge;
+            }
         }
+        $Opt{'unique'} && ($uuid_list{lc($Curr)} = 1);
     }
 }
 
@@ -94,6 +101,8 @@ Options:
     Show this help.
   -l, --line
     Print the whole line where UUIDs are found.
+  -u, --unique
+    Print only the first occurence of every uuid.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
