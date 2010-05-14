@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# File ID: cb14649e-308f-11de-83cd-000475e441b9
+# File ID: 40788fae-5ef6-11df-a9dd-90e6ba3022ac
 
 guid=$1
 [ -z "$guid" ] && guid="-r sunny@sunbase.org"
