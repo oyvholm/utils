@@ -125,7 +125,6 @@ my $date_templ = '20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6]
 my $xml_header = join("",
     '<\?xml version="1\.0" encoding="UTF-8"\?>\n',
     '<!DOCTYPE suuids SYSTEM "dtd\/suuids\.dtd">\n',
-    '<!-- \$' . 'Id\$ -->\n',
     '<suuids>\n',
 );
 
