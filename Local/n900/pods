@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Search the gPodder database
+# File ID: 14c9cba2-5f32-11df-adc3-f58f5a0f2d8a
+
+dbfile=$HOME/.config/gpodder/database.sqlite
+sqlite3 -line $dbfile "\
+    SELECT title, filename, description \
+    FROM episodes WHERE description LIKE '%$@%'" | \
+    view -
