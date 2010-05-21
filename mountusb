@@ -12,9 +12,10 @@ else
     tzval="tz=UTC,"
 fi
 [ -z "$1" ] || dev=$1
+[ -z "$2" ] || mountp=$2
 [ -d "$mountp/." ] || { mkdir $mountp || { echo mountusb: $mountp: Cannot create directory; exit 1; }; }
 opts="-o fmask=0111,uid=sunny,gid=sunny,${tzval}shortname=mixed"
-echo "mountusb: Mounting /dev/$dev using \"$opts\""
+echo "mountusb: Mounting /dev/$dev on $mountp using \"$opts\""
 mount /dev/$dev $mountp $opts
 
 # Check for existing /mntopts file in disk root. That file contains mount 
@@ -28,6 +29,6 @@ if [ -e $mountp/mntopts -o -e $mountp/MNTOPTS ]; then
     sleep 2
     umount $mountp
     sync
-    echo "mountusb: Remount  /dev/$dev using \"$opts2\""
+    echo "mountusb: Remount  /dev/$dev on $mountp using \"$opts2\""
     mount /dev/$dev $mountp $opts2
 fi
