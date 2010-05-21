@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# File ID: 0d39c848-64ef-11df-adc3-fd3b335c3d69
+
+git log --all --author=sunbase --format=fuller | grep -i @ | sort -u
