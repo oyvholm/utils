@@ -2,13 +2,14 @@
 
 # File ID: 9e591bac-4e84-11df-b237-90e6ba3022ac
 
+pull=0
+test "$1" = "-p" && { pull=1; shift; }
 for f in *; do
     if [ -d "$f/.git/." ]; then
         echo ================ $f ================
         # echo ==== git f ====
         (cd $f && git remote -v update -p)
-        # echo ==== git pull ====
-        # (cd $f && git pull)
+        test "$pull" = "1" && { echo ==== git pull ====; (cd $f && git pull --all); }
         # echo ==== git pa ====
         # (cd $f && git pa)
         echo
