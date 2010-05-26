@@ -72,6 +72,11 @@ fetch_remotes() {
     done
 }
 
+push_sunbase() {
+    git push --tags sunbase
+    git push -f sunbase $local_master html maint man next pu todo
+}
+
 [ -z "`git --version | grep '^git version '`" ] && {
     echo $progname: You need to have git installed to use this script. >&2;
     exit 1;
@@ -118,6 +123,7 @@ dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
     echo; echo "Sorry, no new git(1) for you this time.";
     echo You’ll have to stick with `git --version` for now.;
+    push_sunbase
     exit 0;
 }
 if [ "$use_configure" = "1" ]; then
@@ -167,8 +173,7 @@ if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
     cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
     git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
-    git push --tags sunbase
-    git push -f sunbase $local_master html maint man next pu todo
+    push_sunbase
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
