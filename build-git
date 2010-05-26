@@ -7,6 +7,8 @@
 # License: GNU General Public License version 3 or later
 #=======================================================================
 
+progname=build-git
+
 rcfile=$HOME/.build-gitrc
 # Directory where the git build happens
 builddir=$HOME/src/git/other/build-git
@@ -57,7 +59,7 @@ echo
 
 fetch_remotes() {
     git remote | grep -q '^origin$' || {
-        echo build-git: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
+        echo $progname: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
         exit 1;
     }
     git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
@@ -71,27 +73,27 @@ fetch_remotes() {
 }
 
 [ -z "`git --version | grep '^git version '`" ] && {
-    echo $0: You need to have git installed to use this script. >&2;
+    echo $progname: You need to have git installed to use this script. >&2;
     exit 1;
 }
 
 rmdir $builddir 2>/dev/null
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || {
-        echo build-git: $builddir: Cannot create directory;
+        echo $progname: $builddir: Cannot create directory;
         exit 1;
     }
     rmdir $builddir
     echo ================= git clone =================
     git clone git://git.kernel.org/pub/scm/git/git.git $builddir
-    cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
+    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
     fetch_remotes
     # git branch --track spearce-master spearce/master
 fi
-cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
+cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
 if [ ! -e GIT-VERSION-GEN ]; then
     # Paranoia check
-    echo build-git: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
+    echo $progname: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
     exit 1
 fi
 echo ================= git status in `pwd` =================
@@ -114,7 +116,7 @@ dest=$pref/varprg/$vername
     exit 0;
 }
 if [ "$use_configure" = "1" ]; then
-    echo build-git: Creating ./configure
+    echo $progname: Creating ./configure
     make configure
     ./configure --prefix=$dest $configure_opts
 fi
@@ -140,7 +142,7 @@ make $makeflags test
 echo
 echo -n If all tests succeeded, press y to continue...
 read choice
-[ "$choice" = "y" ] || { echo build-git: Aborted; exit 1; }
+[ "$choice" = "y" ] || { echo $progname: Aborted; exit 1; }
 echo ================= $sudo make install =================
 $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
@@ -148,7 +150,7 @@ $sudo mkdir -p $pref/{bin,prg,varprg}
 $sudo rm $pref/prg/git
 $sudo ln -svf ../varprg/$vername $pref/prg/git
 cd $pref/bin || {
-    echo build-git: $pref/bin: Cannot chdir, aborting >&2;
+    echo $progname: $pref/bin: Cannot chdir, aborting >&2;
     exit 1;
 }
 $sudo ln -svf ../prg/git/bin/* .
@@ -158,7 +160,7 @@ localgit=`./git --version`
 globalgit=`git --version`
 if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
-    cd $builddir || { echo build-git: $builddir: Cannot chdir >&2; exit 1; }
+    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
     git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
     git push --tags sunbase $local_master
 else
@@ -173,7 +175,7 @@ mansects=`ls`
 for f in $mansects; do
     $sudo mkdir -p $pref/share/man/$f
     cd $pref/share/man/$f || {
-        echo build-git: $pref/share/man/$f: Could not chdir, aborting >&2;
+        echo $progname: $pref/share/man/$f: Could not chdir, aborting >&2;
         exit 1;
     }
     pwd
@@ -182,7 +184,7 @@ for f in $mansects; do
 done
 if [ -d $pref/prg/.svn/. ]; then
     echo ================= svn commit the symlink =================
-    commitmsg=`echo build-git installed $globalgit on $(hostname); echo; suuid -t commit,build-git`
+    commitmsg=`echo $progname installed $globalgit on $(hostname); echo; suuid -t commit,$progname`
     cd $pref/prg
     echo Commit message:
     echo $commitmsg
