@@ -33,7 +33,7 @@ fi
 
 git log HEAD..HEAD >/dev/null 2>&1
 if [ "$?" = "0" ]; then
-    git log --name-status "$@"
+    git log --name-status -C -M "$@"
     exit
 fi
 
