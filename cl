@@ -31,6 +31,12 @@ else
     svk_cross=' --cross'
 fi
 
+git log HEAD..HEAD >/dev/null 2>&1
+if [ "$?" = "0" ]; then
+    git log --name-status "$@"
+    exit
+fi
+
 if [ -d .svn/. ]; then
     if [ "$use_svk" = "1" ]; then
         svk log$svk_cross "$@" | less
@@ -40,7 +46,6 @@ if [ -d .svn/. ]; then
 elif [ -d CVS/. ]; then
     cvs log$stoponcopy "$@" | sortcvs | less
 else
-    git log --name-status "$@"
     if [ "$use_svk" = "1" ]; then
         svk log$svk_cross "$@" | less
     fi
