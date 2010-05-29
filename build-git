@@ -38,8 +38,6 @@ make_doc=1
 make_info=1
 hname=$(hostname)
 
-not_merged=
-
 [ -e $rcfile ] && . $rcfile
 
 echo
@@ -111,11 +109,10 @@ echo ================= Update all branches =================
 for f in html maint man next pu todo; do
     git branch | cut -c 3- | grep -q "^$f\$" || git branch -t $f origin/$f
     git checkout -f $f || { echo $progname: Cannot checkout \"$f\" branch >&2; exit 1; }
-    git merge --ff-only origin/$f || { echo $progname: The \"$f\" branch is rebased upstream. You must merge that later. >&2; not_merged="$not_merged $f"; }
+    git reset --hard origin/$f
 done
 git checkout -f $local_master
-echo ================= git merge $remote_master =================
-git merge --ff-only $remote_master || { echo $progname: WTF? Seems as the master branch is rebased upstream. Fix it and re-run this script. >&2; exit 1; }
+git reset --hard $remote_master
 vername=git.$local_master.`git describe --match 'v1*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
@@ -200,4 +197,3 @@ if [ -d $pref/prg/.svn/. ]; then
     read
     $sudo svn ci -m "$commitmsg" git
 fi
-test -z "$not_merged" || echo $progname: Remember: The following branches are not fully merged: $not_merged
