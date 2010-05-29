@@ -5,8 +5,8 @@
 
 all:
 	mkdir -p log
-	./suuid.t 2>&1 | remove_perltestnumbers >log/tests.log
-	./suuid.t --todo 2>&1 | remove_perltestnumbers >log/todo-tests.log
+	./suuid.t 2>&1 | remove_perltestnumbers >log/suuid.log
+	./suuid.t --todo 2>&1 | remove_perltestnumbers >log/suuid.todo.log
 	./sess.t 2>&1 | remove_perltestnumbers >log/sess.log
 	./sess.t --todo 2>&1 | remove_perltestnumbers >log/sess.todo.log
 
