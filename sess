@@ -25,6 +25,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'quiet' => 0,
+    'tag' => "",
     'verbose' => 0,
     'version' => 0,
 
@@ -41,6 +42,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "quiet|q+" => \$Opt{'quiet'},
+    "tag|t=s" => \$Opt{'tag'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -60,7 +62,11 @@ my @Cmd = @ARGV;
 my $cmd_str = join(" ", @ARGV);
 scalar(@Cmd) || die("$progname: No command specified. Use -h for help.\n");
 my $begin_cmd = sprintf(
-    "suuid --raw -c \"<sess_begin> <cmd>%s</cmd>%s </sess_begin>\"",
+    "suuid --raw%s -c \"<sess_begin> <cmd>%s</cmd>%s </sess_begin>\"",
+    (length($Opt{'tag'})
+        ? " --tag $Opt{'tag'}"
+        : ""
+    ),
     suuid_xml($cmd_str),
     (length($Opt{'comment'})
         ? sprintf(" <comment>%s</comment>", suuid_xml($Opt{'comment'}))
@@ -81,7 +87,11 @@ my $end_time = Time::HiRes::time();
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 my $end_cmd = sprintf(
-    "suuid --raw -c \"<sess_end> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration> <exit>%s</exit> </sess_end>\"",
+    "suuid --raw%s -c \"<sess_end> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration> <exit>%s</exit> </sess_end>\"",
+    (length($Opt{'tag'})
+        ? " --tag $Opt{'tag'}"
+        : ""
+    ),
     $uuid,
     suuid_xml($cmd_str),
     (length($Opt{'comment'})
@@ -145,6 +155,8 @@ Options:
     Show this help.
   -q, --quiet
     Use less output. Can be repeated. -qq = totally quiet.
+  -t X, --tag X
+    Use X as tag (category). Several tags are separated by comma.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
