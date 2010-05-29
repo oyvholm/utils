@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# git-svn-myclone
+# File ID: 95ad8790-664e-11df-8e85-90e6ba3022ac
+# Clone part of a svn repository
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git svn clone -A ~/src/svn/conf/trunk/home/sunny/gitusers.txt --localtime "$@"
