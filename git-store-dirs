@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# git-store-dirs
+# File ID: 8853c3a0-6be6-11df-8fcb-90e6ba3022ac
+# Store a list of all directories to $dirfile to be able to restore empty 
+# directories. The list is \0-separated in case there are some directory names 
+# containing (ugh) \n. Use git-restore-dirs(1) to recreate directories.
+
+dirfile=.emptydirs
+test -d .git/. || { echo $0: Has to be run from the toplevel of the working tree >&2; exit 1; }
+find -type d -empty -print0 | grep -E -v -z '/\.git(/|$)' | LC_ALL=C sort -z >$dirfile
+git add $dirfile

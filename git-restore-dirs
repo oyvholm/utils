@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# git-restore-dirs
+# File ID: 14434f48-6be7-11df-904a-90e6ba3022ac
+# Restore empty directories created by git-store-dirs(1)
+
+dirfile=.emptydirs
+test -d .git/. || { echo $0: Has to be run from the toplevel of the working tree >&2; exit 1; }
+test -e $dirfile || { echo $0: No $dirfile file found >&2; exit 1; }
+xargs -0 mkdir -p <$dirfile
