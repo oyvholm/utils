@@ -5,7 +5,13 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-git store-dirs || { echo ciall: git-store-dirs error >&2; exit 1; }
+test "$1" = "-d" && {
+    shift;
+    git store-dirs || {
+        echo ciall: git-store-dirs error >&2;
+        exit 1;
+    }
+}
 LC_ALL=C git status | grep "^nothing to commit" && { echo ciall: Nothing to do here.; exit 0; }
 
 git status
