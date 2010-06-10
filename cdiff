@@ -5,6 +5,12 @@
 # Latskapen lenge leve. Kjører en svn eller cvs diff og stripper bort alle
 # ukjente filer.
 
+git log HEAD..HEAD >/dev/null 2>&1
+if [ "$?" = "0" ]; then
+    git diff "$@"
+    exit
+fi
+
 if [ -d .svn/. ]; then
     if [ "$1" = "-s" ]; then
         shift
