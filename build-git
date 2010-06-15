@@ -11,7 +11,7 @@ progname=build-git
 
 rcfile=$HOME/.build-gitrc
 # Directory where the git build happens
-builddir=$HOME/src/git/other/build-git
+builddir=$HOME/src/other/git/build-git
 
 # Prefix to directory tree where git will be installed. You can change it to 
 # for example $HOME/local if you don’t have root access.
