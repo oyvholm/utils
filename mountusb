@@ -15,6 +15,13 @@ fi
 [ -z "$2" ] || mountp=$2
 [ -d "$mountp/." ] || { mkdir $mountp || { echo mountusb: $mountp: Cannot create directory; exit 1; }; }
 opts="-o fmask=0111,uid=sunny,gid=sunny,${tzval}shortname=mixed"
+
+mount | grep /dev/$dev && {
+    echo mountusb: Unmounting /dev/$dev
+    umount /dev/$dev || { echo mountusb: /dev/$dev: Cannot unmount >&2; exit 1; }
+    sleep 2
+}
+
 echo "mountusb: Mounting /dev/$dev on $mountp using \"$opts\""
 mount /dev/$dev $mountp $opts
 
