@@ -113,10 +113,10 @@ if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
 }
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 
-my $vim_str = $Opt{'gui'} ? "gvim -f" : "vim";
+my @vim_str = $Opt{'gui'} ? ("gvim", "-f") : ("vim");
 
 $ENV{'SESS_UUID'} .= "$uuid,";
-system($vim_str, @ARGV);
+system(@vim_str, @ARGV);
 $ENV{'SESS_UUID'} =~ s/$uuid,//;
 
 my ($change_str, $other_str) = ("", "");
