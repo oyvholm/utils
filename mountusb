@@ -18,12 +18,12 @@ opts="-o fmask=0111,uid=sunny,gid=sunny,${tzval}shortname=mixed"
 
 mount | grep /dev/$dev && {
     echo mountusb: Unmounting /dev/$dev
-    umount /dev/$dev || { echo mountusb: /dev/$dev: Cannot unmount >&2; exit 1; }
+    sudo umount /dev/$dev || { echo mountusb: /dev/$dev: Cannot unmount >&2; exit 1; }
     sleep 2
 }
 
 echo "mountusb: Mounting /dev/$dev on $mountp using \"$opts\""
-mount /dev/$dev $mountp $opts
+sudo mount /dev/$dev $mountp $opts
 
 # Check for existing /mntopts file in disk root. That file contains mount 
 # options used on the command line when mounting.
@@ -34,8 +34,8 @@ if [ -e $mountp/mntopts -o -e $mountp/MNTOPTS ]; then
     [ "$opts" = "$opts2" ] && { echo "mountusb: /mntopts contains standard options, remount not necessary"; exit 0; }
     sync
     sleep 2
-    umount $mountp
+    sudo umount $mountp
     sync
     echo "mountusb: Remount  /dev/$dev on $mountp using \"$opts2\""
-    mount /dev/$dev $mountp $opts2
+    sudo mount /dev/$dev $mountp $opts2
 fi
