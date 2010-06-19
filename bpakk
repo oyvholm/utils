@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# bpakk
+# File ID: 2a4e251e-7b6f-11df-b25f-00219bfade9b
+
+echo -n "<!-- "
+gzip -9 | base64 -w 0
+echo " -->"
