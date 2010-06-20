@@ -1,0 +1,122 @@
+#!/home/merlyn/bin/perl -Tw
+use strict;
+$|++;
+
+use HTML::TreeBuilder;
+use CGI "-no_debug";
+
+@ARGV = "-" unless @ARGV;
+
+my %SEEN = map { $_, 1 } qw(header comment :html);
+my %KNOWN = map { $_, 1 } CGI::expand_tags(":html"); # CHEAT
+
+{
+  my $h = HTML::TreeBuilder->new;
+  $h->parse_file(shift);
+  $h->traverse(\&walker);
+  $h->delete;
+  print "use CGI ", S("-no_debug", sort keys %SEEN), ";\nprint header,\n";
+  print getput();
+  print ";\n";
+}
+
+## subroutines
+
+sub S {
+  join ", ",
+  map {
+    local $_ = $_;
+    s/([^ !#%-?A-~])/sprintf "\\x%02x", ord $1/ge;
+    qq{"$_"};
+  } @_;
+}
+
+BEGIN {                         # scope for static local
+  my $put_buffer = "";
+
+  sub put {
+    for (@_) {
+      $put_buffer .= $_;
+    }
+  }
+
+  sub getput {
+    ($put_buffer."", $put_buffer = "")[0];
+  }
+}
+
+sub dumpattrs {
+  my ($open, $hr, $close) = @_;
+  my @attrs = sort grep !/^_/, keys %$hr;
+  if (@attrs) {
+    put
+      $open,
+      join(", ", map { S($_)." => ".S($hr->{$_}) } @attrs),
+      $close;
+  }
+}
+
+BEGIN {                         # scope for static local
+  my $head_attrs = {};
+
+  sub walker {
+    my ($node, $start, $depth) = @_;
+    if (ref $node) {
+      my $tag = $node->tag;
+      return 1 if $tag eq "html";
+      if ($tag eq "head") {
+        $head_attrs = get_attrs_from($node);
+        return 0;
+      }
+      $tag = ucfirst $tag if index(" select tr link delete ", " $tag ") >= 0;
+      put " " x $depth;
+      if ($tag eq "body") {
+        if ($start) {
+          put "start_html";
+          dumpattrs "(", $head_attrs, ")";
+          put ",\n";
+        } else {
+          put "end_html,\n";
+        }
+        return 1;
+      }
+      $SEEN{$tag}++ unless $KNOWN{$tag};
+      if ($start) {             # start
+        put "$tag (";
+        dumpattrs "{", $node, "}, "; # CHEAT
+      }
+      if (not $start or $HTML::Element::emptyElement{lc $tag}) { # CHEAT
+        put S(" ") if not $start and $node->is_empty;
+        put "), \"\\n\",";
+      }
+    } else {                    # text
+      put " " x $depth, S($node), ", ";
+    }
+    put "\n";
+    return 1;                           # yes, recurse
+  }
+}
+
+sub get_attrs_from {
+  my $node = shift;
+  my %return;
+  for my $first (@{$node->content}) {
+    next unless ref $first;     # invalid content
+    my $tag = $first->tag;
+    if ($tag eq "title") {
+      $return{"-title"} = join " ", @{$first->content};
+      next;
+    }
+    warn "## unknown head tag: ".($first->as_HTML);
+  }
+  return \%return;
+}
+
+sub HTML::TreeBuilder::comment { # CHEAT
+  my $self = shift;
+  my $pos = $self->{'_pos'};
+  $pos = $self unless defined($pos);
+  my $ele = HTML::Element->new('comment');
+  $ele->push_content(shift);
+  $pos->push_content($ele);
+}
