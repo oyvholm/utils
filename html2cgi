@@ -1,4 +1,8 @@
-#!/home/merlyn/bin/perl -Tw
+#!/usr/bin/perl -Tw
+
+# html2cgi
+# File ID: d7733f9c-7c0d-11df-aac0-90e6ba3022ac
+
 use strict;
 $|++;
 
