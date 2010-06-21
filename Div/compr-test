@@ -110,7 +110,15 @@ for my $File (@ARGV) {
         my $compr_xz = file_size("$tmp_prefix.xz");
         unlink("$tmp_prefix.xz");
 
-        my ($ratio_gzip, $ratio_bzip, $ratio_zip, $ratio_xz);
+        $Opt{'verbose'} && print("xz -e -$Comp\n");
+        my $xz_e_start = gettimeofday;
+        system("xz -e -$Comp <$File >$tmp_prefix.xz");
+        my $xz_e_end = gettimeofday;
+        my $xz_e_time = $xz_e_end-$xz_e_start;
+        my $compr_xz_e = file_size("$tmp_prefix.xz");
+        unlink("$tmp_prefix.xz");
+
+        my ($ratio_gzip, $ratio_bzip, $ratio_zip, $ratio_xz, $ratio_xz_e);
 
         if ($Opt{'time'}) {
             # $ratio_gzip = $gzip_time / ($compr_gzip/$orig_size);
@@ -120,14 +128,16 @@ for my $File (@ARGV) {
             $ratio_bzip = $bzip_time;
             $ratio_zip = $zip_time;
             $ratio_xz = $xz_time;
+            $ratio_xz_e = $xz_e_time;
         } else {
             $ratio_gzip = ($compr_gzip/$orig_size) * 100;
             $ratio_bzip = ($compr_bzip/$orig_size) * 100;
             $ratio_zip = ($compr_zip/$orig_size) * 100;
             $ratio_xz = ($compr_xz/$orig_size) * 100;
+            $ratio_xz_e = ($compr_xz_e/$orig_size) * 100;
         }
 
-        print(DatFP "$Comp\t$ratio_gzip\t$ratio_bzip\t$ratio_zip\t$ratio_xz\n");
+        print(DatFP "$Comp\t$ratio_gzip\t$ratio_bzip\t$ratio_zip\t$ratio_xz\t$ratio_xz_e\n");
     }
     close(DatFP);
     my $gnuplot_file = "$File.gnuplot";
@@ -139,7 +149,8 @@ set yrange $yrange
 plot "$File.compr" using 1:2 title "gzip" w lp pt 3, \\
 "$File.compr" using 1:3 title "bzip2" w lp pt 3, \\
 "$File.compr" using 1:4 title "zip" w lp pt 3, \\
-"$File.compr" using 1:5 title "xz" w lp pt 3
+"$File.compr" using 1:5 title "xz" w lp pt 3, \\
+"$File.compr" using 1:6 title "xz -e" w lp pt 3
 END
         close(GnuplFP);
     }
