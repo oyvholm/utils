@@ -12,6 +12,7 @@ logdir=$HOME/log
 
 df -P `cat $logdir/.disks` |
     grep / |
+    uniq |
     perl -pe 'chomp(my $a = `date -u +"%Y-%m-%dT%H:%M:%SZ"`); s/^/$a /;' |
     /usr/bin/cronolog -z 0 -S $logdir/curr_df $logdir/df/%Y/%Y-%m-%d.df.log
 ~/bin/log_df_pg
