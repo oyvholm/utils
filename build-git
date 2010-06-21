@@ -62,17 +62,20 @@ fetch_remotes() {
         echo $progname: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
         exit 1;
     }
+    git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
     git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
     git remote | grep -q '^spearce$' || git remote add spearce git://repo.or.cz/git/spearce.git
     echo ================= git fetch =================
     # git fetch --all arrived in v1.6.6, and that’s too recent to use.
-    for f in origin sunbase spearce; do
+    for f in origin github sunbase spearce; do
         echo ===== $f =====
         git fetch $f
     done
 }
 
-push_sunbase() {
+push_changes() {
+    git push --tags github
+    git push -f github $local_master html maint man next pu todo
     git push --tags sunbase
     git push -f sunbase $local_master html maint man next pu todo
 }
@@ -123,7 +126,7 @@ dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
     echo; echo "Sorry, no new git(1) for you this time.";
     echo You’ll have to stick with `git --version` for now.;
-    push_sunbase
+    push_changes
     exit 0;
 }
 if [ "$use_configure" = "1" ]; then
@@ -173,7 +176,7 @@ if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
     cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
     git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
-    push_sunbase
+    push_changes
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
