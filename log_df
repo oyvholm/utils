@@ -10,5 +10,8 @@ logdir=$HOME/log
 
 [ -r $logdir/.disks ] || { echo "$logdir/.disks finnes ikke, avbryter." >&2; exit 1; }
 
-df -P `cat $logdir/.disks` | grep / | perl -pe 'chomp(my $a = `date -u +"%Y-%m-%dT%H:%M:%SZ"`); s/^/$a /;' | /usr/bin/cronolog -z 0 -S $logdir/curr_df $logdir/df/%Y/%Y-%m-%d.df.log
+df -P `cat $logdir/.disks` |
+    grep / |
+    perl -pe 'chomp(my $a = `date -u +"%Y-%m-%dT%H:%M:%SZ"`); s/^/$a /;' |
+    /usr/bin/cronolog -z 0 -S $logdir/curr_df $logdir/df/%Y/%Y-%m-%d.df.log
 ~/bin/log_df_pg
