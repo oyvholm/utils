@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# File ID: 4dd0ecb6-6354-11df-9f20-000c6ed3978a
+
+git filter-branch --prune-empty --force --tree-filter "$@" HEAD
