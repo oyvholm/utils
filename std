@@ -207,7 +207,7 @@ sub replace_tags {
             $Opt{'notag'} =~ /\b$Curr\b/ || $Txt =~ s/STD${Curr}DTS/$Tag{$Curr}/g;
         }
     }
-    $Opt{'notag'} =~ /\bfilename\b/ || ($Txt =~ s/STDfilenameDTS/$Dest/g);
+    $Opt{'notag'} =~ /\bfilename\b/ || (length($Dest) && ($Txt =~ s/STDfilenameDTS/$Dest/g));
     $Opt{'notag'} =~ /\byear\b/ || ($Txt =~ s/STDyearDTS/$Year/g);
     $Opt{'notag'} =~ /\buuid\b/ || ($Txt =~ s/STDuuidDTS/gen_uuid()/ge);
     return($Txt);

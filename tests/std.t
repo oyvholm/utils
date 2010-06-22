@@ -128,7 +128,7 @@ chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
 mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
     '/GNU General Public License/s',
-    '/^$/s',
+    '/^std: Warning: Undefined tags: filename\n$/s',
     "One argument sends file to stdout",
 );
 
@@ -168,7 +168,7 @@ $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
 diag("Check for unused tags...");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
     '/^.*Contains tests for the.*$/s',
-    '/^std: Warning: Undefined tags: testcmd progname exec libdir\n$/s',
+    '/^std: Warning: Undefined tags: testcmd filename progname exec libdir\n$/s',
     "Report unused tags",
 );
 
@@ -212,7 +212,7 @@ $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
 diag("Testing -T (--notag) option...");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -T uuid,year perl", # {{{
     '/STDuuidDTS.*STDyearDTS/s',
-    '/^std: Warning: Undefined tags: uuid year\n.*$/s',
+    '/^std: Warning: Undefined tags: filename uuid year\n.*$/s',
     "Send perl script to stdout, don’t expand uuid and year tag",
 );
 
