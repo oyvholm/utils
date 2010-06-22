@@ -13,6 +13,7 @@
 
 use strict;
 use Getopt::Long;
+use Cwd;
 
 $| = 1;
 
@@ -101,10 +102,10 @@ if (length($Dest) && -e $Dest) {
 D(sprintf("\@Tags = \"%s", join("\", \"", @Tags) . "\""));
 D(sprintf("%%Tag = \"%s", join("\", \"", %Tag) . "\""));
 
-my $dat_file = $0;
-
-$dat_file =~ s/^(.+\/)(.+?)$/$1/;
-$dat_file .= "Lib/std/$Type";
+my $dat_dir = $0;
+$dat_dir =~ s/^(.+\/)(.+?)$/$1/;
+$dat_dir .= "Lib/std";
+my $dat_file = "$dat_dir/$Type";
 
 my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime();
 $Year += 1900;
@@ -116,7 +117,9 @@ my $tmpfile = "tmp.std." . time;
 my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
 
 if ($Opt{'local'}) {
-    if (open(PipeFP, "$CMD_GIT status $dat_file |")) {
+    my $orig_dir = getcwd();
+    chdir($dat_dir) || die("$progname: $dat_dir: Cannot chdir: $!\n");
+    if (open(PipeFP, "$CMD_GIT status $Type |")) {
         while (<PipeFP>) {
             if (/modified:\s+$dat_file/) {
                 warn("$progname: WARNING: $dat_file is modified\n");
@@ -124,6 +127,7 @@ if ($Opt{'local'}) {
             }
         }
         close(PipeFP);
+        chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original dir: $!\n");
         mysyst("cp", "-a", $dat_file, $tmpfile);
     } else {
         warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
