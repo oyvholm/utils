@@ -2,4 +2,7 @@
 
 # File ID: 4dd0ecb6-6354-11df-9f20-000c6ed3978a
 
+echo -n This script will change the history of the branch. Press y to continue...
+read cont
+test "$cont" = "y" || exit;
 git filter-branch --prune-empty --force --tree-filter "$@" HEAD
