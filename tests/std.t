@@ -25,6 +25,8 @@ $| = 1;
 our $Debug = 0;
 our $CMD = "../std";
 
+my $use_svn = 0;
+
 our %Opt = (
 
     'all' => 0,
@@ -111,11 +113,15 @@ likecmd("$CMD --version", # {{{
 
 my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
 diag("Creating tempdir...");
-likecmd("svn mkdir $Tmptop", # {{{
-    '/^A\s+tmp-std-t-.+$/s',
-    '/^$/s',
-    "Create svn-controlled directory",
-);
+if ($use_svn) {
+    likecmd("svn mkdir $Tmptop", # {{{
+        '/^A\s+tmp-std-t-.+$/s',
+        '/^$/s',
+        "Create svn-controlled directory",
+    );
+} else {
+    mkdir($Tmptop) || die("$progname: $Tmptop: Cannot create directory: $!\n");
+}
 
 # }}}
 chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
@@ -129,16 +135,30 @@ likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
 # }}}
 my $suuid_file = glob("tmpuuids/*");
 ok(-e $suuid_file, "suuid log file exists");
-likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
-    "/^$v1_templ\\nA\\s+bashfile.+\$/s",
-    '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
-    "Create bash script",
-);
+if ($use_svn) {
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
+        "/^$v1_templ\\nA\\s+bashfile.+\$/s",
+        '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
+        "Create bash script",
+    );
+} else {
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^$/',
+        "Create bash script",
+    );
+}
 
 # }}}
 ok(-e "bashfile", "bashfile exists");
+unlink("bashfile") || diag("WARNING: bashfile: Cannot delete file: $!\n");
+likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
+    "/^$v1_templ\\n\$/s",
+    '/^$/',
+    "Create bash script with -l (--local)",
+);
 ok(-x "bashfile", "bashfile is executable");
-likecmd("svn propget mergesvn bashfile", # {{{
+$use_svn && likecmd("svn propget mergesvn bashfile", # {{{
     '/^\d+ \S+Lib\/std\/bash\n$/s',
     '/^$/s',
     "mergesvn property is set to bash template",
@@ -161,11 +181,19 @@ likecmd("../$CMD bash bashfile", # {{{
 );
 
 # }}}
-likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
-    "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
-    '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
-    "Overwrite bashfile with perl script using --force",
-);
+if ($use_svn) {
+    likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
+        "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
+        '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+        "Overwrite bashfile with perl script using --force",
+    );
+} else {
+    likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+        "Overwrite bashfile with perl script using --force",
+    );
+}
 
 # }}}
 like(file_data("bashfile"), # {{{
@@ -174,7 +202,7 @@ like(file_data("bashfile"), # {{{
 );
 
 # }}}
-likecmd("svn propget mergesvn bashfile", # {{{
+$use_svn && likecmd("svn propget mergesvn bashfile", # {{{
     '/^\d+ \S+Lib\/std\/perl\n$/s',
     '/^$/s',
     "mergesvn property is replaced with perl template",
@@ -207,7 +235,7 @@ local $TODO = "";
 
 chdir("..") || warn("$progname: Cannot 'chdir ..': $!");
 diag("Cleaning up temp files...");
-likecmd("svn revert $Tmptop", # {{{
+$use_svn && likecmd("svn revert $Tmptop", # {{{
     '/tmp-std-t/s',
     '/^$/s',
     "svn revert tempdir",
