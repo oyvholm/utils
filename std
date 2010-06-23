@@ -41,6 +41,7 @@ our $VERSION = "0.00";
 my $CMD_GIT = "git";
 my $CMD_SVN = "svn";
 my $CMD_WGET = "wget";
+my $CMD_SUUID = "suuid";
 
 my $Type = "";
 my $Dest = "";
@@ -229,9 +230,9 @@ sub gen_uuid {
     my $Retval = "";
     my $Comment = "$progname " . join(" ", @bck_cmdline) . "";
     if (!length($session_uuid)) {
-        chomp($session_uuid = `suuid --tag std --whereto o --comment "$Comment"`);
+        chomp($session_uuid = `$CMD_SUUID --tag std --whereto o --comment "$Comment"`);
         if (!defined($session_uuid) || $session_uuid !~ /^$v1_templ$/) {
-            die("$progname: suuid error\n");
+            die("$progname: $CMD_SUUID error\n");
         }
         if (length($Dest)) {
             print("$session_uuid\n");
