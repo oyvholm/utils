@@ -63,7 +63,7 @@ fetch_remotes() {
         exit 1;
     }
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
-    git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git
+    git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git-other/git.git
     git remote | grep -q '^spearce$' || git remote add spearce git://repo.or.cz/git/spearce.git
     echo ================= git fetch =================
     # git fetch --all arrived in v1.6.6, and that’s too recent to use.
