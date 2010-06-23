@@ -37,7 +37,10 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = "0.00";
 
+my $CMD_GIT = "git";
 my $CMD_SVN = "svn";
+my $CMD_WGET = "wget";
+
 my $Type = "";
 my $Dest = "";
 my $session_uuid = "";
@@ -107,15 +110,15 @@ my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime();
 $Year += 1900;
 $Mon += 1;
 
-my $URL = "$ENV{SR}/utils/trunk/Lib/std/$Type";
+my $URL = "http://github.com/sunny256/utils/raw/master/Lib/std/$Type";
 my $tmpfile = "tmp.std." . time;
 
 my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
 
 if ($Opt{'local'}) {
-    if (open(PipeFP, "$CMD_SVN stat $dat_file |")) {
+    if (open(PipeFP, "$CMD_GIT status $dat_file |")) {
         while (<PipeFP>) {
-            if (/^M/) {
+            if (/modified:\s+$dat_file/) {
                 warn("$progname: WARNING: $dat_file is modified\n");
                 last;
             }
@@ -123,10 +126,10 @@ if ($Opt{'local'}) {
         close(PipeFP);
         mysyst("cp", "-a", $dat_file, $tmpfile);
     } else {
-        warn("$progname: Unable to open \"$CMD_SVN stat\" pipe\n");
+        warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
     }
 } else {
-    mysyst($CMD_SVN, "-q", "export", $URL, $tmpfile);
+    mysyst($CMD_WGET, "-O", $tmpfile, "-o", "/dev/null", $URL);
 }
 
 if (length($Dest)) {
