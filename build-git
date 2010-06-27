@@ -99,6 +99,7 @@ if [ ! -d $builddir/. ]; then
     # git branch --track spearce-master spearce/master
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
+git checkout $local_master || { echo Cannot check out branch >&2; exit 1; }
 if [ ! -e GIT-VERSION-GEN ]; then
     # Paranoia check
     echo $progname: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
