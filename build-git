@@ -112,13 +112,15 @@ echo ================= git clean =================
 git clean -fxd
 fetch_remotes
 echo ================= Update all branches =================
-for f in html maint man next pu todo; do
-    git branch | cut -c 3- | grep -q "^$f\$" || git branch -t $f origin/$f
-    git checkout -f $f || { echo $progname: Cannot checkout \"$f\" branch >&2; exit 1; }
-    git reset --hard origin/$f
+tmpbranch=tmpbuildgitbr
+git branch -D $tmpbranch 2>/dev/null
+git checkout -b $tmpbranch
+for f in master html maint man next pu todo; do
+    git branch -D $f
+    git branch -t $f origin/$f
 done
 git checkout -f $local_master
-git reset --hard $remote_master
+git branch -D $tmpbranch
 vername=git.$local_master.`git describe --match 'v1*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
