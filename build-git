@@ -63,11 +63,10 @@ fetch_remotes() {
         exit 1;
     }
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
-    git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git-other/git.git
     git remote | grep -q '^spearce$' || git remote add spearce git://repo.or.cz/git/spearce.git
     echo ================= git fetch =================
     # git fetch --all arrived in v1.6.6, and that’s too recent to use.
-    for f in origin github sunbase spearce; do
+    for f in origin github spearce; do
         echo ===== $f =====
         git fetch $f
     done
@@ -76,8 +75,6 @@ fetch_remotes() {
 push_changes() {
     git push --tags github
     git push -f github $local_master html maint man next pu todo
-    git push --tags sunbase
-    git push -f sunbase $local_master html maint man next pu todo
 }
 
 [ -z "`git --version | grep '^git version '`" ] && {
