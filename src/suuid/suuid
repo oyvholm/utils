@@ -90,7 +90,7 @@ my $Host = host_id();
 if (!-d "$Opt{'logdir'}/.") {
     die("$progname: $Opt{'logdir'}: Log directory not found\n");
 }
-my $Logfile = "$Opt{'logdir'}/$Host";
+my $Logfile = "$Opt{'logdir'}/$Host.xml";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
