@@ -24,6 +24,12 @@ read besafe
 unset logmsg
 [ ! -z "$1" ] && logmsg="$*"
 
+if [ "$logmsg" = "--" ]; then
+    tmpmsgfile=/tmp/$(date +%s)-$$.tmp
+    $EDITOR $tmpmsgfile
+    logmsg=$(cat $tmpmsgfile)
+fi
+
 LC_ALL=C git status | grep "^nothing to commit" || (git add . && git commit -a -m "$logmsg`echo; echo; suuid -t ciall -c "$logmsg"`")
 echo ========== git status ==========
 git status
