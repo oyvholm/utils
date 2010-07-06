@@ -73,8 +73,10 @@ fetch_remotes() {
 }
 
 push_changes() {
-    git push --tags github
+    echo ==== push changes to github ====
     git push -f github $local_master html maint man next pu todo
+    git push --tags github
+    echo ==== push finished ====
 }
 
 [ -z "`git --version | grep '^git version '`" ] && {
