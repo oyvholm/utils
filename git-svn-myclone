@@ -7,4 +7,4 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-git svn clone -A ~/src/svn/conf/trunk/home/sunny/gitusers.txt --localtime "$@"
+git svn clone -A ~/src/git/home-sunny/gitusers.txt --localtime "$@"
