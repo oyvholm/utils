@@ -119,11 +119,10 @@ if ($use_svn) {
         '/^$/s',
         "Create svn-controlled directory",
     );
+    # }}}
 } else {
     mkdir($Tmptop) || die("$progname: $Tmptop: Cannot create directory: $!\n");
 }
-
-# }}}
 chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
 mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
@@ -141,15 +140,15 @@ if ($use_svn) {
         '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
         "Create bash script",
     );
+    # }}}
 } else {
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^$/',
         "Create bash script",
     );
+    # }}}
 }
-
-# }}}
 ok(-e "bashfile", "bashfile exists");
 unlink("bashfile") || diag("WARNING: bashfile: Cannot delete file: $!\n");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
@@ -157,6 +156,8 @@ likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
     '/^$/',
     "Create bash script with -l (--local)",
 );
+
+# }}}
 ok(-x "bashfile", "bashfile is executable");
 $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
     '/^\d+ \S+Lib\/std\/bash\n$/s',
@@ -187,15 +188,15 @@ if ($use_svn) {
         '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
         "Overwrite bashfile with perl script using --force",
     );
+    # }}}
 } else {
     likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
         "Overwrite bashfile with perl script using --force",
     );
+    # }}}
 }
-
-# }}}
 like(file_data("bashfile"), # {{{
     qr/perl -w/s,
     "Contents of bashfile is replaced"
@@ -241,12 +242,11 @@ $use_svn && likecmd("svn revert $Tmptop", # {{{
     "svn revert tempdir",
 );
 
+# }}}
 unlink("$Tmptop/$suuid_file") || warn("$progname: $Tmptop/$suuid_file: Cannot delete file: $!");
 rmdir("$Tmptop/tmpuuids") || warn("$progname: rmdir('$Tmptop/tmpuuids'): $!");
 unlink("$Tmptop/bashfile") || warn("$progname: $Tmptop/bashfile: Cannot delete file: $!");
 rmdir($Tmptop) || warn("$progname: rmdir('$Tmptop'): $!");
-
-# }}}
 
 diag("Testing finished.");
 
