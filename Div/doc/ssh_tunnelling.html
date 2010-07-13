@@ -1,0 +1,512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+  
+  
+  
+  
+  
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+
+
+
+  
+  
+  
+  
+  
+  <title>ssh tunnelling</title></head>
+
+<body bgcolor="#ffffff">
+
+
+
+
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-7705594074093958";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_channel ="";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_url = "008000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<h2>ssh tunnelling</h2>
+
+
+
+
+
+<p>ssh tunnelling is an excellent way to tunnel insecure protocols
+through a secure communication channel. In this example, I'll tunnel
+POP3 traffic using ssh. Traditional POP3 traffic, including username
+and password information, travels clear-text across the network.</p>
+
+
+
+
+
+<p><a href="http://www.openssh.com/">OpenSSH</a> is used in the
+following examples.</p>
+
+
+
+
+
+<p> To tunnel POP3 traffic using ssh:<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+1. Make sure an ssh client is installed on your machine and an ssh
+server is installed on the POP3 server.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+2. Create a local ssh tunnel on your machine (port 1234 for this
+example) to the POP3 server's port 110. You will need to be the root
+user to bind to "privileged" ports (&lt; 1024).<br>
+
+
+
+
+
+<span style="font-weight: bold;"># ssh -f -N -L 1234:localhost:110 user@<span style="font-style: italic;">POP3_server</span></span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+3. Test the tunnel.<br>
+
+
+
+
+
+<span style="font-weight: bold;">$ telnet localhost 1234</span><br>
+
+
+
+
+
+You should see the POP3 server's banner information.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+4. Configure your mail client to access your mail via POP3 using mail
+server <span style="font-style: italic;">localhost</span> and port
+1234.<br>
+
+
+
+
+
+</p>
+
+
+
+
+
+<h3><br>
+
+
+
+
+
+"Reverse" ssh tunnel</h3>
+
+
+
+
+
+It is possible to create a "reverse" ssh tunnel. The reverse tunnel
+will allow you to create an ssh tunnel from your work computer to your
+home computer, for example, and then login to your work machine from
+your home machine <span style="font-style: italic;">even if your work
+firewall does not permit ssh traffic initiated from your home machine!</span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+For this to work, an ssh server must be installed on your work and home
+computer, and ssh (TCP port 22) must be allowed outbound from your work
+computer to your home computer.<br>
+
+
+
+
+
+<br>
+
+
+
+$ ssh -R <span style="font-style: italic;">remote_port</span>:localhost:22
+<span style="font-style: italic;">your_home_computer</span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+ex. <span style="font-weight: bold;">$</span> <span style="font-weight: bold;">ssh -R 2048:localhost:22
+home.computer.com</span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+At home, you would then run <span style="font-weight: bold;">ssh -p
+2048 localhost</span> to log into your work computer via ssh.<br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Here is a script I run every 5 minutes through the <span style="font-style: italic;">cron</span> facility on my work system to
+make sure the reverse ssh tunnel to my home system is up and running.
+It is useful in case <span style="font-style: italic;">my_home_system</span>
+is rebooted.<br>
+
+
+<br>
+
+
+2006-11-15 update:<br>
+
+
+<br>
+
+
+<span style="font-family: monospace;">#!/bin/sh</span><br style="font-family: monospace;">
+
+
+<br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;"># $REMOTE_HOST is the name of the remote system</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">REMOTE_HOST=my.home.system</span><br style="font-family: monospace;">
+
+
+<br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;"># $REMOTE_PORT is the remote port number that will be used to tunnel</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;"># back to this system</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">REMOTE_PORT=5000</span><br style="font-family: monospace;">
+
+
+<br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;"># $COMMAND is the command used to create the reverse ssh tunnel</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">COMMAND="ssh -q -N -R $REMOTE_PORT:localhost:22 $REMOTE_HOST"</span><br style="font-family: monospace;">
+
+
+<br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;"># Is the tunnel up? Perform two tests:</span><br style="font-family: monospace;">
+
+
+<br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;"># 1. Check for relevant process ($COMMAND)</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">pgrep -f -x "$COMMAND" &gt; /dev/null 2&gt;&amp;1 || $COMMAND</span><br style="font-family: monospace;">
+
+
+<br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;"># 2. Test tunnel by looking at "netstat" output on $REMOTE_HOST</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">ssh $REMOTE_HOST netstat -an | egrep "tcp.*:$REMOTE_PORT.*LISTEN" \</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">&nbsp;&nbsp; &gt; /dev/null 2&gt;&amp;1</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">if [ $? -ne 0 ] ; then</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">&nbsp;&nbsp; pkill -f -x "$COMMAND"</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">&nbsp;&nbsp; $COMMAND</span><br style="font-family: monospace;">
+
+
+<span style="font-family: monospace;">fi</span><br>
+
+
+
+
+
+<br>
+
+
+
+2006-09-20 update using <span style="font-family: monospace;">pgrep</span>:<br>
+
+
+
+<br>
+
+
+
+<span style="font-family: monospace;">#!/bin/sh</span><br style="font-family: monospace;">
+
+
+
+<br style="font-family: monospace;">
+
+
+
+<span style="font-family: monospace;"># REMOTE_HOST is the name of the remote system</span><br style="font-family: monospace;">
+
+
+
+<span style="font-family: monospace;">REMOTE_HOST=my.home.system</span><br style="font-family: monospace;">
+
+
+
+<br style="font-family: monospace;">
+
+
+
+<span style="font-family: monospace;"># $COMMAND is the command used to create the reverse ssh tunnel</span><br style="font-family: monospace;">
+
+
+
+<span style="font-family: monospace;">COMMAND="ssh -N -R 7437:localhost:22 $REMOTE_HOST"</span><br style="font-family: monospace;">
+
+
+
+<br style="font-family: monospace;">
+
+
+
+<span style="font-family: monospace;"># Is the tunnel up?</span><br style="font-family: monospace;">
+
+
+
+<span style="font-family: monospace;">pgrep -f -x "$COMMAND" &gt; /dev/null 2&gt;&amp;1 || $COMMAND</span><br>
+
+
+
+<br>
+
+
+
+Old script:<br>
+
+
+
+<br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;">#!/bin/sh</span><br style="font-family: monospace;">
+
+
+
+
+
+<br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;"># $COMMAND is the command used to
+create the reverse ssh tunnel</span><br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;">COMMAND='ssh -N -R
+31337:localhost:22 <span style="font-style: italic;">my_home_system</span>'</span><br style="font-family: monospace;">
+
+
+
+
+
+<br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;"># Is the tunnel up?</span><br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;">CHECK_TUNNEL=`ps -eo args | grep
+"$COMMAND" | grep -v grep`</span><br style="font-family: monospace;">
+
+
+
+
+
+<br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;"># If the tunnel is not up, create
+the tunnel</span><br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;">if [ -z "$CHECK_TUNNEL" ] ; then</span><br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;">&nbsp;&nbsp; $COMMAND</span><br style="font-family: monospace;">
+
+
+
+
+
+<span style="font-family: monospace;">fi</span><br>
+
+
+
+
+
+<br>
+
+
+
+
+
+Links:<br>
+
+
+
+
+
+<a href="http://www.akadia.com/services/ssh_port_forwarding.html">http://www.akadia.com/services/ssh_port_forwarding.html</a><a href="http://www.hackorama.com/pages/stunnell.shtml"><br>
+
+
+
+
+
+http://www.hackorama.com/pages/stunnell.shtml</a><br>
+
+
+
+
+
+<a href="http://proxytunnel.sourceforge.net/">http://proxytunnel.sourceforge.net/</a><br>
+
+
+
+
+
+<a href="http://proxytunnel.sourceforge.net/papers/muppet-200204.html">http://proxytunnel.sourceforge.net/papers/muppet-200204.html</a><br>
+
+
+
+
+
+<p>Back
+to <a href="http://www.brandonhutchinson.com/">brandonhutchinson.com</a>.
+</p>
+
+
+
+
+
+<h6>Last modified: 2006/10/23</h6>
+
+
+
+
+
+</body></html>
