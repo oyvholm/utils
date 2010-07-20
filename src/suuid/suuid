@@ -28,6 +28,7 @@ our %Std = (
 
     'editor' => "vi",
     'logdir' => $env_dir,
+    'rcfile' => "$ENV{'HOME'}/.suuidrc",
     'whereto' => "o",
 
 );
@@ -85,6 +86,7 @@ my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
 
+my %rc = read_rcfile();
 my $Host = host_id();
 
 if (!-d "$Opt{'logdir'}/.") {
@@ -215,10 +217,42 @@ if (open(LogFP, "+>>", $Logfile)) {
     die("$progname: $Logfile: Cannot open file for append: $!\n");
 }
 
+sub read_rcfile {
+    # {{{
+    my %Retval = ();
+    if (-e $Std{'rcfile'}) {
+        if (open(RcFP, "<", $Std{'rcfile'})) {
+            while (my $Line = <RcFP>) {
+                $Line =~ s/^\s*(.*?)\s*$/$1/;
+                if ($Line =~ /^hostname\s*=\s*(\S+)/) {
+                    $Retval{'hostname'} = $1;
+                }
+            }
+            close(RcFP);
+        } else {
+            warn("$progname: $Std{'rcfile'}: Cannot open file for read: $!\n");
+        }
+    }
+    return(%Retval);
+    # }}}
+} # read_rcfile()
+
 sub host_id {
     # {{{
-    chomp(my $Retval = `$Cmd`);
-    $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
+    my $Retval = "";
+    if (defined($rc{'hostname'})) {
+        $Retval = $rc{'hostname'};
+    } else {
+        chomp(my $Hostname = `hostname`);
+        if (length($Hostname) && $Hostname ne "localhost") {
+            $Retval = $Hostname;
+        } else {
+            warn("$progname: Warning: hostname not defined, using MAC value\n");
+            chomp($Retval = `$Cmd`);
+            $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
+        }
+    }
+    D("host_id() returns '$Retval'");
     return($Retval);
     # }}}
 } # host_id()
@@ -355,6 +389,9 @@ Options:
 
 If the \$SESS_UUID environment variable is defined by sess(1) or another 
 program, the value is logged if it is an UUID.
+
+A different hostname can be specified in the file $Std{'rcfile'}
+with the format "hostname = xxx".
 
 END
     exit($Retval);

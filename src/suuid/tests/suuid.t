@@ -137,7 +137,7 @@ likecmd("$CMD -l $Outdir", # {{{
 
 # }}}
 my $Outfile = glob("$Outdir/*");
-like($Outfile, "/^$Outdir\\/$Lh\{12}\.xml\$/", "Filename of logfile OK");
+like($Outfile, "/^$Outdir\\/\\S+\.xml\$/", "Filename of logfile OK");
 like(file_data($Outfile), # {{{
     '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
