@@ -240,7 +240,9 @@ sub read_rcfile {
 sub host_id {
     # {{{
     my $Retval = "";
-    if (defined($rc{'hostname'})) {
+    if (defined($ENV{'SUUID_HOSTNAME'})) {
+        $Retval = $ENV{'SUUID_HOSTNAME'};
+    } elsif (defined($rc{'hostname'})) {
         $Retval = $rc{'hostname'};
     } else {
         chomp(my $Hostname = `hostname`);
@@ -390,8 +392,9 @@ Options:
 If the \$SESS_UUID environment variable is defined by sess(1) or another 
 program, the value is logged if it is an UUID.
 
-A different hostname can be specified in the file $Std{'rcfile'}
-with the format "hostname = xxx".
+A different hostname can be specified in the environment variable 
+\$SUUID_HOSTNAME, or in the file $Std{'rcfile'} with the format 
+"hostname = xxx".
 
 END
     exit($Retval);

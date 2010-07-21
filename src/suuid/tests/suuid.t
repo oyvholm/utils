@@ -166,7 +166,7 @@ like(file_data($Outfile), # {{{
 
 # }}}
 unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
-diag("Read the environment variable...");
+diag("Read the SUUID_LOGDIR environment variable...");
 likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
@@ -183,11 +183,33 @@ like(file_data($Outfile), # {{{
             "<tty>.+<\\/tty>",
         "<\\/suuid>",
     ) . '\n<\/suuids>\n$/s',
-    "The environment variable was read",
+    "The SUUID_LOGDIR environment variable was read",
 );
 
 # }}}
 unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+diag("Read the SUUID_HOSTNAME environment variable...");
+likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    "Read environment variable",
+);
+
+# }}}
+like(file_data("$Outdir/urk13579kru.xml"), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>.+?<\\/host>",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "The SUUID_HOSTNAME environment variable was read",
+);
+
+# }}}
+unlink("$Outdir/urk13579kru.xml") || warn("$progname: $Outdir/urk13579kru.xml: Cannot delete file: $!\n");
 diag("Testing -m (--random-mac) option...");
 likecmd("$CMD -m -l $Outdir", # {{{
     "/^$v1rand_templ\\n\$/s",
