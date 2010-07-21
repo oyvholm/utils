@@ -72,8 +72,6 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-my $Cmd = "uuidgen -t";
-
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -87,6 +85,9 @@ my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
 
 my %rc = read_rcfile();
+my $Cmd = defined($rc{'uuidcmd'})
+    ? $rc{'uuidcmd'}
+    : "uuidgen -t";
 my $Host = host_id();
 
 if (!-d "$Opt{'logdir'}/.") {
@@ -226,6 +227,8 @@ sub read_rcfile {
                 $Line =~ s/^\s*(.*?)\s*$/$1/;
                 if ($Line =~ /^hostname\s*=\s*(\S+)/) {
                     $Retval{'hostname'} = $1;
+                } elsif ($Line =~ /^uuidcmd\s*=\s*(.+)\s*$/) {
+                    $Retval{'uuidcmd'} = $1;
                 }
             }
             close(RcFP);
