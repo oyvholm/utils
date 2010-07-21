@@ -2,7 +2,7 @@
 
 #=======================================================================
 # Local/dev-skolelinux/suuid
-# File ID: 04c64336-f744-11dd-bddd-000475e441b9
+# File ID: b21844b2-94ff-11df-a1a6-000d56feca57
 # Generate and store UUID with optional comment in a log file.
 #
 # Character set: UTF-8
