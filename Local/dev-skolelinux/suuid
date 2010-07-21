@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 #=======================================================================
-# STDfilenameDTS
+# Local/dev-skolelinux/suuid
 # File ID: 04c64336-f744-11dd-bddd-000475e441b9
 # Generate and store UUID with optional comment in a log file.
 #
@@ -71,6 +71,8 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+my $Cmd = "uuid -v1";
+
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -88,9 +90,7 @@ my $Host = host_id();
 if (!-d "$Opt{'logdir'}/.") {
     die("$progname: $Opt{'logdir'}: Log directory not found\n");
 }
-my $Logfile = "$Opt{'logdir'}/$Host";
-
-my $Cmd = "uuid -v1";
+my $Logfile = "$Opt{'logdir'}/$Host.xml";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
@@ -141,7 +141,6 @@ if (!-e $Logfile) {
     print(LogFP join("\n",
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
         "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">",
-        "<!-- \$" . "Id\$ -->",
         "<suuids>",
         "</suuids>"
     ) . "\n");
@@ -216,7 +215,7 @@ if (open(LogFP, "+>>", $Logfile)) {
 
 sub host_id {
     # {{{
-    chomp(my $Retval = `uuid -v1`);
+    chomp(my $Retval = `$Cmd`);
     $Retval =~ s/^.*-([[:xdigit:]]+)$/$1/;
     return($Retval);
     # }}}
@@ -239,7 +238,7 @@ sub uuid_time {
     # {{{
     my $uuid = shift;
     my $Retval = "";
-    if (open(UtFP, "uuid -d $uuid |")) {
+    if (open(UtFP, "uuid -d $uuid 2>/dev/null |")) {
         while (my $Curr = <UtFP>) {
             if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
                 $Retval = "${1}T$2${3}Z";
