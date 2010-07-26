@@ -2,8 +2,9 @@
 
 setxkbmap no
 sudo apt-get update
-sudo apt-get install vim git-core flashplugin-nonfree uuid
-cd /home/ubuntu
+sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
+sudo apt-get install vim git-core uuid
+cd /home/ubuntu || { echo /home/ubuntu: chdir error >&2; exit 1; }
 mkdir -p src/git
 cd src/git || { echo src/git: chdir error >&2; exit 1; }
 git clone git@github.com:sunny256/home-sunny.git
