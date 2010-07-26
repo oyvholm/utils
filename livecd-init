@@ -1,0 +1,16 @@
+#!/bin/bash
+
+setxkbmap no
+sudo apt-get update
+sudo apt-get install vim git-core flashplugin-nonfree uuid
+cd /home/ubuntu
+mkdir -p src/git
+cd src/git || { echo src/git: chdir error >&2; exit 1; }
+git clone git@github.com:sunny256/home-sunny.git
+git clone git@github.com:sunny256/utils.git
+cd
+ln -sv src/git/utils bin
+ln -svf src/git/home-sunny/.* .
+ln -svf src/git/home-sunny/* .
+rm .gitignore .git
+git clone git@github.com:sunny256/gen-uuids.git uuids
