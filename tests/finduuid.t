@@ -134,6 +134,8 @@ finduuid-files/textfile:9829C1A8-88D5-11DD-9A24-000475E441B9
 finduuid-files/textfile:9829C1A8-88D5-11DD-9A24-000475E441B9
 finduuid-files/textfile:4e4e8d08-9b38-11df-9954-3793b0cfdf88
 finduuid-files/textfile:9829C1A8-88D5-11DD-9A24-000475E441B9
+finduuid-files/textfile:fd5d1200-88da-11dd-b7cf-000475e441b9
+finduuid-files/textfile:ced8e04e-9b57-11df-9b37-d97f703ed9b7
 END
     "",
     "Option --filenames lists file name",
@@ -165,6 +167,7 @@ testcmd("$CMD -l finduuid-files/textfile", # {{{
 8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
 9 yet another one 9829C1A8-88D5-11DD-9A24-000475E441B9
 10 unique + dup 4e4e8d08-9b38-11df-9954-3793b0cfdf88 9829C1A8-88D5-11DD-9A24-000475E441B9
+11 dup + unique fd5d1200-88da-11dd-b7cf-000475e441b9 ced8e04e-9b57-11df-9b37-d97f703ed9b7
 END
     "",
     "Print whole line with UUID",
@@ -178,6 +181,7 @@ testcmd("$CMD -l <finduuid-files/textfile", # {{{
 8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
 9 yet another one 9829C1A8-88D5-11DD-9A24-000475E441B9
 10 unique + dup 4e4e8d08-9b38-11df-9954-3793b0cfdf88 9829C1A8-88D5-11DD-9A24-000475E441B9
+11 dup + unique fd5d1200-88da-11dd-b7cf-000475e441b9 ced8e04e-9b57-11df-9b37-d97f703ed9b7
 END
     "",
     "Read from stdin and print whole line with UUID",
@@ -191,6 +195,7 @@ finduuid-files/textfile:6 fd5d1200-88da-11dd-b7cf-000475e441b9
 finduuid-files/textfile:8 once more 9829C1A8-88D5-11DD-9A24-000475E441B9
 finduuid-files/textfile:9 yet another one 9829C1A8-88D5-11DD-9A24-000475E441B9
 finduuid-files/textfile:10 unique + dup 4e4e8d08-9b38-11df-9954-3793b0cfdf88 9829C1A8-88D5-11DD-9A24-000475E441B9
+finduuid-files/textfile:11 dup + unique fd5d1200-88da-11dd-b7cf-000475e441b9 ced8e04e-9b57-11df-9b37-d97f703ed9b7
 finduuid-files/text2:here 08CCB59A-88E1-11DD-A80C-000475E441B9blabla
 END
     "",
@@ -213,6 +218,7 @@ testcmd("$CMD --unique -l finduuid-files/textfile", # {{{
 4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
 6 fd5d1200-88da-11dd-b7cf-000475e441b9
 10 unique + dup 4e4e8d08-9b38-11df-9954-3793b0cfdf88 9829C1A8-88D5-11DD-9A24-000475E441B9
+11 dup + unique fd5d1200-88da-11dd-b7cf-000475e441b9 ced8e04e-9b57-11df-9b37-d97f703ed9b7
 END
     "",
     "Print whole line with only one UUID + --unique works",
@@ -224,6 +230,7 @@ testcmd("$CMD -u -l <finduuid-files/textfile", # {{{
 4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
 6 fd5d1200-88da-11dd-b7cf-000475e441b9
 10 unique + dup 4e4e8d08-9b38-11df-9954-3793b0cfdf88 9829C1A8-88D5-11DD-9A24-000475E441B9
+11 dup + unique fd5d1200-88da-11dd-b7cf-000475e441b9 ced8e04e-9b57-11df-9b37-d97f703ed9b7
 END
     "",
     "Read from stdin and print unique uuids",
@@ -235,6 +242,7 @@ testcmd("$CMD -u -lf finduuid-files/textfile finduuid-files/text2", # {{{
 finduuid-files/textfile:4 dfv dsf 9829c1a8-88d5-11dd-9a24-000475e441b9
 finduuid-files/textfile:6 fd5d1200-88da-11dd-b7cf-000475e441b9
 finduuid-files/textfile:10 unique + dup 4e4e8d08-9b38-11df-9954-3793b0cfdf88 9829C1A8-88D5-11DD-9A24-000475E441B9
+finduuid-files/textfile:11 dup + unique fd5d1200-88da-11dd-b7cf-000475e441b9 ced8e04e-9b57-11df-9b37-d97f703ed9b7
 finduuid-files/text2:here 08CCB59A-88E1-11DD-A80C-000475E441B9blabla
 END
     "",
@@ -247,6 +255,7 @@ testcmd("$CMD -u finduuid-files/textfile finduuid-files/text2", # {{{
 9829c1a8-88d5-11dd-9a24-000475e441b9
 fd5d1200-88da-11dd-b7cf-000475e441b9
 4e4e8d08-9b38-11df-9954-3793b0cfdf88
+ced8e04e-9b57-11df-9b37-d97f703ed9b7
 08CCB59A-88E1-11DD-A80C-000475E441B9
 END
     "",
