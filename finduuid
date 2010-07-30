@@ -60,18 +60,34 @@ my %uuid_list = ();
 
 while (<>) {
     chomp(my $Line = $_);
-    if (/($Templ)/) {
-        my $Curr = $1;
-        if (!$Opt{'unique'} || !defined($uuid_list{lc($Curr)})) {
-            if ($Opt{'line'}) {
+    if (/$Templ/) {
+        if ($Opt{'line'}) {
+            my $print_line = 0;
+            my $Scan = $Line;
+            $Scan =~ s/($Templ)/defined($uuid_list{lc($1)}) || ($print_line = 1), ""/ge;
+            if ($print_line) {
+                if ($Opt{'unique'}) {
+                    $Scan = $Line;
+                    $Scan =~ s/($Templ)/$uuid_list{lc($1)} = 1, ""/ge;
+                }
                 printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
-            } else {
-                $Line =~ s/($Templ)/printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $1)/ge;
             }
+        } else {
+            $Line =~ s/($Templ)/print_uuid($1)/ge;
         }
-        $Opt{'unique'} && ($uuid_list{lc($Curr)} = 1);
     }
 }
+
+sub print_uuid {
+    # {{{
+    my $uuid = shift;
+    my $lc_uuid = lc($uuid);
+    $Opt{'unique'} && defined($uuid_list{$lc_uuid}) && return("");
+    printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $uuid);
+    $uuid_list{$lc_uuid} = 1;
+    return("");
+    # }}}
+} # print_uuid()
 
 sub print_version {
     # Print program version {{{
