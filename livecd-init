@@ -1,0 +1,18 @@
+#!/bin/bash
+
+setxkbmap no
+gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
+sudo apt-get update
+sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
+sudo apt-get install vim git-core uuid
+cd /home/ubuntu || { echo /home/ubuntu: chdir error >&2; exit 1; }
+mkdir -p src/git
+cd src/git || { echo src/git: chdir error >&2; exit 1; }
+git clone -o github git@github.com:sunny256/home-sunny.git
+git clone -o github git@github.com:sunny256/utils.git
+cd
+ln -sv src/git/utils bin
+ln -svf src/git/home-sunny/.* .
+ln -svf src/git/home-sunny/* .
+rm .gitignore .git
+git clone -o github git@github.com:sunny256/gen-uuids.git uuids
