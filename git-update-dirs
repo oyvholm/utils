@@ -9,7 +9,7 @@ for f in *; do
         echo ================ $f ================
         # echo ==== git f ====
         (cd $f && git remote -v update -p)
-        test "$pull" = "1" && { echo ==== git pull ====; (cd $f && git pull); }
+        test "$pull" = "1" && { echo ==== git pull --ff-only ====; (cd $f && git pull --ff-only); }
         # echo ==== git pa ====
         # (cd $f && git pa)
         echo
