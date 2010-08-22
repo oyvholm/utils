@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#=======================================================================
+# git-safe-rm-remote
+# File ID: c01eca2e-add5-11df-a45d-3fc3287c8843
+# Check that nothing is lost by deleting a git remote
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=git-safe-rm-remote
+tmpgit=tmpgit.$$.$RANDOM.tmp
+cp -a .git $tmpgit || { echo $progname: .git: Error during copy >&2; exit 1; }
+before=$(git log --all | wc -l)
+git remote rm $1
+after=$(git log --all | wc -l)
+echo $progname: before = $before, after = $after
+test "$before" = "$after" && { echo $progname: $1 remote safely removed; rm -rf $tmpgit; exit 0; }
+echo $progname: Cannot remove remote \"$1\" without losing commits, restoring .git/ >&2
+rm -rf .git || { echo $progname: Cannot remove .git/, please restore it manually by replacing it with $tmpgit >&2; exit 1; }
+mv $tmpgit .git
