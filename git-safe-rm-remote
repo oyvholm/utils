@@ -9,6 +9,7 @@
 
 progname=git-safe-rm-remote
 tmpgit=tmpgit.$$.$RANDOM.tmp
+git remote | grep -q "^$1\$" || { echo $progname: \"$1\" remote not found >&2; exit 0; }
 cp -a .git $tmpgit || { echo $progname: .git: Error during copy >&2; exit 1; }
 before=$(git log --all | wc -l)
 git remote rm $1
