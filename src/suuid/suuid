@@ -16,6 +16,8 @@ use Fcntl ':flock';
 use Getopt::Long;
 use lib "$ENV{HOME}/bin/src/suuid";
 
+use suuid;
+
 $| = 1;
 
 our $Debug = 0;
@@ -276,42 +278,6 @@ sub random_mac {
     return($Str);
     # }}}
 } # random_mac()
-
-sub uuid_time {
-    # {{{
-    my $uuid = shift;
-    my $Retval = "";
-    if (open(UtFP, "uuid -d $uuid 2>/dev/null |")) {
-        while (my $Curr = <UtFP>) {
-            if ($Curr =~ /time:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d\.\d{6})\.(\d) UTC/) {
-                $Retval = "${1}T$2${3}Z";
-                last;
-            }
-        }
-        close(UtFP);
-    } else {
-        warn("$progname: Cannot open uuid -d pipe: $!\n");
-    }
-    return($Retval);
-    # }}}
-} # uuid_time()
-
-sub suuid_xml {
-    # {{{
-    my ($Str, $skip_conv) = @_;
-    defined($skip_conv) || ($skip_conv = 0);
-    if (!$skip_conv) {
-        $Str =~ s/&/&amp;/gs;
-        $Str =~ s/</&lt;/gs;
-        $Str =~ s/>/&gt;/gs;
-        $Str =~ s/\\/\\\\/gs;
-        $Str =~ s/\n/\\n/gs;
-        $Str =~ s/\r/\\r/gs;
-        $Str =~ s/\t/\\t/gs;
-    }
-    return($Str);
-    # }}}
-} # suuid_xml()
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
