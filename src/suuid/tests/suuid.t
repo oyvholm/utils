@@ -12,9 +12,9 @@
 #=======================================================================
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
-    # use_ok() goes here
+    use lib "$ENV{HOME}/bin/src/suuid";
+    use_ok("suuid");
 }
 
 use strict;
@@ -55,6 +55,7 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
+$Debug && print("\@INC = '" . join("', '", @INC) . "'\n");
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
