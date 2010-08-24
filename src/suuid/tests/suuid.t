@@ -129,6 +129,21 @@ my $xml_header = join("",
     '<suuids>\n',
 );
 
+diag("Testing uuid_time()..."); # {{{
+is(uuid_time("c7f54e5a-afae-11df-b4a3-dffbc1242a34"), "2010-08-24T18:38:25.8316890Z", "uuid_time() works");
+is(uuid_time("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time() returns \"\" if UUID version 4");
+is(uuid_time(""), "", "uuid_time() receives empty string, returns \"\"");
+is(uuid_time("rubbish"), "", "uuid_time() receives rubbish, returns \"\"");
+
+# }}}
+diag("Testing suuid_xml()..."); # {{{
+is(suuid_xml(""), "", "suuid_xml() receives empty string");
+is(suuid_xml("<&>\\"), "&lt;&amp;&gt;\\\\", "suuid_xml(\"<&>\\\\\")");
+is(suuid_xml("<&>\\\n\t", 1), "<&>\\\n\t", "suuid_xml(\"<&>\\\\\\n\\t\", 1) i,e. don’t convert");
+is(suuid_xml("<&>\n\r\t"), "&lt;&amp;&gt;\\n\\r\\t", "suuid_xml(\"<&>\\n\\r\\t\")");
+is(suuid_xml("\x00\x01\xFF"), "\x00\x01\xFF", "suuid_xml(\"\\x00\\x01\\xFF\")"); # FIXME: Should it behave like this?
+
+# }}}
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
