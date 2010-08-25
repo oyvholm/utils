@@ -136,6 +136,13 @@ is(uuid_time(""), "", "uuid_time() receives empty string, returns \"\"");
 is(uuid_time("rubbish"), "", "uuid_time() receives rubbish, returns \"\"");
 
 # }}}
+diag("Testing uuid_time2()..."); # {{{
+is(uuid_time2("2527c268-b024-11df-a05c-09f86a2af1d3"), "2010-08-25T08:38:33.3078120Z", "uuid_time2() works");
+is(uuid_time2("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time2() returns \"\" if UUID version 4");
+is(uuid_time2(""), "", "uuid_time2() receives empty string, returns \"\"");
+is(uuid_time2("rubbish"), "", "uuid_time2() receives rubbish, returns \"\"");
+
+# }}}
 diag("Testing suuid_xml()..."); # {{{
 is(suuid_xml(""), "", "suuid_xml() receives empty string");
 is(suuid_xml("<&>\\"), "&lt;&amp;&gt;\\\\", "suuid_xml(\"<&>\\\\\")");

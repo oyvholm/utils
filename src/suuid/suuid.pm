@@ -87,7 +87,7 @@ sub uuid_hex_date {
     # 000475e441b9 10-15 node (24-35)
     # }}}
     my $Retval = "$time_hi$time_mid$time_low";
-    D("uuid_hex_date('$uuid') returns '$Retval'");
+    # D("uuid_hex_date('$uuid') returns '$Retval'");
     return($Retval);
     # }}}
 } # uuid_hex_date()
