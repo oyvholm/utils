@@ -14,7 +14,6 @@
 use strict;
 use Fcntl ':flock';
 use Getopt::Long;
-use bigint;
 use lib "$ENV{HOME}/bin/src/suuid";
 
 use suuid;
@@ -279,55 +278,6 @@ sub random_mac {
     return($Str);
     # }}}
 } # random_mac()
-
-sub uuid_time2 {
-    # {{{
-    my $uuid = shift;
-    my $Retval = "";
-    my $hex_string = uuid_hex_date($uuid);
-    my $val = hex($hex_string);
-    my $nano = sprintf("%07u", $val % 10_000_000);
-    my $t = ($val / 10_000_000) - 12_219_292_800;
-    my @TA = gmtime($t);
-    $Retval = sprintf("%04u-%02u-%02uT%02u:%02u:%02u.%sZ",
-        $TA[5]+1900, $TA[4]+1, $TA[3],
-        $TA[2], $TA[1], $TA[0], $nano);
-    my $Verify = uuid_time($uuid);
-    if ($Verify ne $Retval) {
-        warn("$progname: uuid_time2(\"$uuid\") returns \"$Retval\", should return \"$Verify\"\n");
-        $Retval = $Verify;
-    }
-    return($Retval);
-    # }}}
-} # uuid_time2()
-
-sub uuid_hex_date {
-    # {{{
-    my $uuid = shift;
-    my $time_low = lc(substr($uuid, 0, 8));
-    my $time_mid = lc(substr($uuid, 9, 4));
-    my $time_hi = lc(substr($uuid, 15, 3));
-    # CO: Notes {{{
-    # 2639d59e-fa20-11dd-8aa6-000475e441b9
-    # 012345678901234567890123456789012345
-    # 000000000011111111112222222222333333
-    #
-    # 2639d59e 0-3 time_low (0-7)
-    # -
-    # fa20 4-5 time_mid (9-12)
-    # -
-    # 11dd 6-7 time_hi_and_version (15-17)
-    # -
-    # 8a  8 clock_seq_hi_and_reserved (19-20)
-    # a6  9 clock_seq_low (21-22)
-    # -
-    # 000475e441b9 10-15 node (24-35)
-    # }}}
-    my $Retval = "$time_hi$time_mid$time_low";
-    D("uuid_hex_date('$uuid') returns '$Retval'");
-    return($Retval);
-    # }}}
-} # uuid_hex_date()
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
