@@ -19,7 +19,7 @@ BEGIN {
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&uuid_time &suuid_xml);
+    @EXPORT = qw(&uuid_time &suuid_xml &bighex);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -51,7 +51,7 @@ sub uuid_time2 {
     my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}"; # FIXME: Should be global
     ($uuid =~ /^$v1_templ$/) || return("");
     my $hex_string = uuid_hex_date($uuid);
-    my $val = hex($hex_string);
+    my $val = bighex($hex_string);
     my $nano = sprintf("%07u", $val % 10_000_000);
     my $t = ($val / 10_000_000) - 12_219_292_800;
     my @TA = gmtime($t);
@@ -106,6 +106,23 @@ sub suuid_xml {
     return($Str);
     # }}}
 } # suuid_xml()
+
+sub bighex {
+    # {{{
+    my $Hex = scalar reverse shift;
+    my $Retval = 0;
+    my $Digit = 1;
+    $Hex =~ s{
+        ([0-9A-Fa-f])
+    } {
+        $Retval += hex($1) * $Digit;
+        $Digit *= 16;
+        "";
+    }gsex;
+    length($Hex) && ($Retval = NaN());
+    return($Retval);
+    # }}}
+} # bighex()
 
 1;
 
