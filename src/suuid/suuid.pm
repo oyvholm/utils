@@ -55,11 +55,6 @@ sub uuid_time2 {
     $Retval = sprintf("%04u-%02u-%02uT%02u:%02u:%02u.%sZ",
         $TA[5]+1900, $TA[4]+1, $TA[3],
         $TA[2], $TA[1], $TA[0], $nano);
-    my $Verify = uuid_time($uuid);
-    if ($Verify ne $Retval) {
-        warn("$main::progname: uuid_time2(\"$uuid\") returns \"$Retval\", should return \"$Verify\"\n");
-        $Retval = $Verify;
-    }
     return($Retval);
     # }}}
 } # uuid_time2()
