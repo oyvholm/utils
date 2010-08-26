@@ -18,6 +18,7 @@ BEGIN {
 }
 
 use strict;
+use bigint;
 use Getopt::Long;
 
 $| = 1;
@@ -136,12 +137,30 @@ is(uuid_time(""), "", "uuid_time() receives empty string, returns \"\"");
 is(uuid_time("rubbish"), "", "uuid_time() receives rubbish, returns \"\"");
 
 # }}}
+diag("Testing uuid_time2()..."); # {{{
+is(uuid_time2("2527c268-b024-11df-a05c-09f86a2af1d3"), "2010-08-25T08:38:33.3078120Z", "uuid_time2() works");
+is(uuid_time2("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time2() returns \"\" if UUID version 4");
+is(uuid_time2(""), "", "uuid_time2() receives empty string, returns \"\"");
+is(uuid_time2("rubbish"), "", "uuid_time2() receives rubbish, returns \"\"");
+
+# }}}
 diag("Testing suuid_xml()..."); # {{{
 is(suuid_xml(""), "", "suuid_xml() receives empty string");
 is(suuid_xml("<&>\\"), "&lt;&amp;&gt;\\\\", "suuid_xml(\"<&>\\\\\")");
 is(suuid_xml("<&>\\\n\t", 1), "<&>\\\n\t", "suuid_xml(\"<&>\\\\\\n\\t\", 1) i,e. don’t convert");
 is(suuid_xml("<&>\n\r\t"), "&lt;&amp;&gt;\\n\\r\\t", "suuid_xml(\"<&>\\n\\r\\t\")");
 is(suuid_xml("\x00\x01\xFF"), "\x00\x01\xFF", "suuid_xml(\"\\x00\\x01\\xFF\")"); # FIXME: Should it behave like this?
+
+# }}}
+diag("Testing bighex()..."); # {{{
+is(bighex(""), 0, "bighex() receives empty string");
+is(bighex("0000"), 0, "bighex(\"0000\")");
+is(bighex("00001"), 1, "bighex(\"00001\")");
+is(bighex("ff"), 255, "bighex(\"ff\")");
+is(bighex("DeadBeef"), 3735928559, "bighex(\"DeadBeef\")");
+is(bighex("EDC4E5813177A7457214F6B62C1CB1"), 1234567890987654321234567890987654321, "Big stuff to bighex()");
+is(bighex("!Amob=+[]CdE.-f0\n12\t345"), NaN(), "bighex() returns NaN()");
+is(bighex("AbCdEf012345\n"), "NaN", "bighex() also returns \"NaN\"");
 
 # }}}
 diag("No options (except --logfile)...");

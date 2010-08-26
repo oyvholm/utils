@@ -12,13 +12,14 @@
 
 use strict;
 use warnings;
+use bigint;
 
 BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
     @ISA = qw(Exporter);
-    @EXPORT = qw(&uuid_time &suuid_xml);
+    @EXPORT = qw(&uuid_time &suuid_xml &bighex);
     %EXPORT_TAGS = ();
 }
 our @EXPORT_OK;
@@ -42,6 +43,53 @@ sub uuid_time {
     # }}}
 } # uuid_time()
 
+sub uuid_time2 {
+    # {{{
+    my $uuid = shift;
+    my $Retval = "";
+    my $Lh = "[0-9a-fA-F]"; # FIXME: Should be global
+    my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}"; # FIXME: Should be global
+    ($uuid =~ /^$v1_templ$/) || return("");
+    my $hex_string = uuid_hex_date($uuid);
+    my $val = bighex($hex_string);
+    my $nano = sprintf("%07u", $val % 10_000_000);
+    my $t = ($val / 10_000_000) - 12_219_292_800;
+    my @TA = gmtime($t);
+    $Retval = sprintf("%04u-%02u-%02uT%02u:%02u:%02u.%sZ",
+        $TA[5]+1900, $TA[4]+1, $TA[3],
+        $TA[2], $TA[1], $TA[0], $nano);
+    return($Retval);
+    # }}}
+} # uuid_time2()
+
+sub uuid_hex_date {
+    # {{{
+    my $uuid = shift;
+    my $time_low = lc(substr($uuid, 0, 8));
+    my $time_mid = lc(substr($uuid, 9, 4));
+    my $time_hi = lc(substr($uuid, 15, 3));
+    # CO: Notes {{{
+    # 2639d59e-fa20-11dd-8aa6-000475e441b9
+    # 012345678901234567890123456789012345
+    # 000000000011111111112222222222333333
+    #
+    # 2639d59e 0-3 time_low (0-7)
+    # -
+    # fa20 4-5 time_mid (9-12)
+    # -
+    # 11dd 6-7 time_hi_and_version (15-17)
+    # -
+    # 8a  8 clock_seq_hi_and_reserved (19-20)
+    # a6  9 clock_seq_low (21-22)
+    # -
+    # 000475e441b9 10-15 node (24-35)
+    # }}}
+    my $Retval = "$time_hi$time_mid$time_low";
+    # D("uuid_hex_date('$uuid') returns '$Retval'");
+    return($Retval);
+    # }}}
+} # uuid_hex_date()
+
 sub suuid_xml {
     # {{{
     my ($Str, $skip_conv) = @_;
@@ -58,6 +106,23 @@ sub suuid_xml {
     return($Str);
     # }}}
 } # suuid_xml()
+
+sub bighex {
+    # {{{
+    my $Hex = scalar reverse shift;
+    my $Retval = 0;
+    my $Digit = 1;
+    $Hex =~ s{
+        ([0-9A-Fa-f])
+    } {
+        $Retval += hex($1) * $Digit;
+        $Digit *= 16;
+        "";
+    }gsex;
+    length($Hex) && ($Retval = NaN());
+    return($Retval);
+    # }}}
+} # bighex()
 
 1;
 

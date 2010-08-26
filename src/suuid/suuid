@@ -194,7 +194,7 @@ if (open(LogFP, "+>>", $Logfile)) {
                 my $tmp_sess = $sess_uuid;
                 $tmp_sess =~ s/($Templ)/push(@Xml, sprintf("<sess>%s<\/sess>", suuid_xml($1)))/gse;
             }
-            my $uuid_time = uuid_time($uuid);
+            my $uuid_time = uuid_time2($uuid);
             length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
             my $out_str = join(" ", "<suuid$uuid_time u=\"$uuid\">", @Xml, "</suuid>") . "\n";
             print(LogFP $out_str);
