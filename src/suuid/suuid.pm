@@ -47,6 +47,9 @@ sub uuid_time2 {
     # {{{
     my $uuid = shift;
     my $Retval = "";
+    my $Lh = "[0-9a-fA-F]"; # FIXME: Should be global
+    my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}"; # FIXME: Should be global
+    ($uuid =~ /^$v1_templ$/) || return("");
     my $hex_string = uuid_hex_date($uuid);
     my $val = hex($hex_string);
     my $nano = sprintf("%07u", $val % 10_000_000);
