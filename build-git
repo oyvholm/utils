@@ -131,6 +131,7 @@ dest=$pref/varprg/$vername
     push_changes
     exit 0;
 }
+push_changes
 if [ "$use_configure" = "1" ]; then
     echo $progname: Creating ./configure
     make configure
