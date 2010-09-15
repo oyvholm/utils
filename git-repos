@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# git-repos
+# File ID: e77ecfd8-ade9-11df-ac9c-81142c90f2a5
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+find -type d "$@" | grep '/\.git$' | perl -pe 's/\/\.git$//' | LC_ALL=C sort
