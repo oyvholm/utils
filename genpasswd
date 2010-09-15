@@ -46,7 +46,7 @@ example:
 
 import base64
 import optparse
-import sha
+import hashlib
 import sys
 import unittest
 from getpass import getpass
@@ -72,7 +72,7 @@ def parse_args(argv):
 def generate_password(salt, options):
     """Generate password(hash) from salt.
     """
-    digest = sha.new(':'.join(salt)).digest()
+    digest = hashlib.sha1(':'.join(salt)).digest()
     passwd = base64.encodestring(digest).replace('=', '').strip()
 
     if options.alphanum_mode:
