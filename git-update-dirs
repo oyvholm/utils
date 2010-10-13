@@ -12,8 +12,8 @@ for f in *; do
         # echo ==== git f ====
         (cd $f && git remote -v update -p) || err_fetch="$err_fetch $f"
         test "$pull" = "1" && { echo ==== git pull --ff-only ====; (cd $f && git pull --ff-only) || err_pull="$err_pull $f"; }
-        # echo ==== git pa ====
-        # (cd $f && git pa)
+        echo ==== git pa ====
+        (cd $f && git pa)
         echo
     fi
 done
