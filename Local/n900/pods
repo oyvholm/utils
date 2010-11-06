@@ -7,4 +7,4 @@ dbfile=$HOME/.config/gpodder/database.sqlite
 sqlite3 -line $dbfile "\
     SELECT title, filename, description \
     FROM episodes WHERE description LIKE '%$@%'" | \
-    view -
+    vim -R -
