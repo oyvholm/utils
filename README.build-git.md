@@ -37,6 +37,9 @@ The script uses the default `Makefile`, and needs the following packages
 - DocBook conversion utility
   - Package: `docbook2x`
 
+- XML-to-any converter
+  - Package: `xmlto`
+
 - OpenSSL
   - Package: `libssl-dev`
   - Package: `openssl`
@@ -50,6 +53,7 @@ The script uses the default `Makefile`, and needs the following packages
 - Subversion
   - Necessary for use with git-svn
   - Package: `subversion`
+  - Package: `libsvn-perl`
 
 ---
 
