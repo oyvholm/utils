@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# File ID: b8c0ee54-eb71-11df-a07a-fefdb24f8e10
+
+for f in $(git branch -a | grep remotes/origin/ | grep -v "remotes/origin/HEAD " | perl -pe 's!remotes/origin/(.*)$!$1!'); do
+    git branch -t $f origin/$f;
+done
