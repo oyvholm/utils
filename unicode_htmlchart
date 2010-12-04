@@ -6,7 +6,7 @@
 
 use strict;
 
-for (0..65599) {
+for ($ARGV[0]..$ARGV[1]) {
 	$_ % 32 || printf("<br>\n%04X ", $_);
 	print("&#$_;");
 }
