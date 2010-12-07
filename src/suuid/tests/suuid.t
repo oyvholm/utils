@@ -298,6 +298,13 @@ likecmd("$CMD -t snaddertag -l $Outdir", # {{{
 );
 
 # }}}
+testcmd("$CMD -t schn\xfcffelhund -l $Outdir", # {{{
+    "",
+    "suuid: Tags have to be in UTF-8\n",
+    "Refuse non-UTF-8 tags",
+);
+
+# }}}
 like(file_data($Outfile), # {{{
     '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
@@ -318,6 +325,13 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
     "-c (--comment) option",
+);
+
+# }}}
+testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
+    "",
+    "suuid: Text used with --comment has to be in UTF-8\n",
+    "Refuse non-UTF-8 text to --comment option",
 );
 
 # }}}

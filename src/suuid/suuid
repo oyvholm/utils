@@ -100,6 +100,7 @@ if (!-d "$Opt{'logdir'}/.") {
 my $Logfile = "$Opt{'logdir'}/$Host.xml";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
+valid_utf8($Comment) || die("$progname: Text used with --comment has to be in UTF-8\n");
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
 D("cmd_editor = '$cmd_editor'");
 
@@ -118,6 +119,7 @@ if ($Comment eq "-") {
     unlink($tmpfile);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
+valid_utf8($Tag) || die("$progname: Tags have to be in UTF-8\n");
 my $Hostname = `hostname`; # FIXME
 chomp($Hostname);
 my $curr_dir = `/bin/pwd`; # FIXME
@@ -221,6 +223,24 @@ if (open(LogFP, "+>>", $Logfile)) {
 } else {
     die("$progname: $Logfile: Cannot open file for append: $!\n");
 }
+
+sub valid_utf8 {
+    # {{{
+    my $Txt = shift;
+    my $Retval;
+    $Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+    $Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+    $Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+    $Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
+    $Txt =~ s/([\xC0-\xDF][\x80-\xBF])//g;
+    if ($Txt =~ /[\x80-\xFF]/) {
+        $Retval = 0;
+    } else {
+        $Retval = 1;
+    }
+    return($Retval);
+    # }}}
+} # valid_utf8()
 
 sub read_rcfile {
     # {{{
