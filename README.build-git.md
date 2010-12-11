@@ -55,6 +55,11 @@ The script uses the default `Makefile`, and needs the following packages
   - Package: `subversion`
   - Package: `libsvn-perl`
 
+In other words:
+
+    apt-get install asciidoc docbook2x gcc gettext libcurl4-openssl-dev \
+    libexpat1-dev libssl-dev libsvn-perl make openssl subversion tk xmlto
+
 ---
 
     f741de12-b199-11de-8dec-00248cd5cf1e
