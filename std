@@ -112,7 +112,7 @@ my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime();
 $Year += 1900;
 $Mon += 1;
 
-my $URL = "http://github.com/sunny256/utils/raw/master/Lib/std/$Type";
+my $URL = "https://github.com/sunny256/utils/raw/master/Lib/std/$Type";
 my $tmpfile = "tmp.std." . time;
 
 my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
