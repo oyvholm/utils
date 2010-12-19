@@ -134,7 +134,8 @@ if ($Opt{'local'}) {
         warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
     }
 } else {
-    mysyst($CMD_WGET, "-O", $tmpfile, "-o", "/dev/null", $URL);
+    # FIXME: Have to add --no-check-certificate to get around bug in wget(1) described at http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=409938
+    mysyst($CMD_WGET, "--no-check-certificate", "-O", $tmpfile, "-o", "/dev/null", $URL);
 }
 
 if (length($Dest)) {
