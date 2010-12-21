@@ -7,4 +7,7 @@
 dirfile=.emptydirs
 test -d .git/. || { echo $0: Has to be run from the toplevel of the working tree >&2; exit 1; }
 test -e $dirfile || { echo $0: No $dirfile file found >&2; exit 1; }
+emptydirs >/tmp/grd.before.tmp
 xargs -0 mkdir -p <$dirfile
+emptydirs >/tmp/grd.after.tmp
+diff -u /tmp/grd.before.tmp /tmp/grd.after.tmp | grep '^+\./' | cut -c 2-
