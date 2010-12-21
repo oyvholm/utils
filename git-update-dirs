@@ -5,6 +5,7 @@
 pull=0
 err_fetch=
 err_pull=
+err_push=
 test "$1" = "-p" && { pull=1; shift; }
 for f in *; do
     if [ -d "$f/.git/." ]; then
@@ -13,9 +14,10 @@ for f in *; do
         (cd $f && git remote -v update -p) || err_fetch="$err_fetch $f"
         test "$pull" = "1" && { echo ==== git pull --ff-only ====; (cd $f && git pull --ff-only) || err_pull="$err_pull $f"; }
         echo ==== git pa ====
-        (cd $f && git pa)
+        (cd $f && git pa) || err_push="$err_push $f"
         echo
     fi
 done
 test -z "$err_fetch" || echo git-update-dirs: Unable to fetch from: $err_fetch
 test -z "$err_pull" || echo git-update-dirs: Unable to pull from: $err_pull
+test -z "$err_push" || echo git-update-dirs: Unable to push to: $err_push
