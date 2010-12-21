@@ -3,16 +3,18 @@
 # git-pa - Push to all remotes
 # File ID: f01c9ce6-4ec7-11df-adc3-41034058cb1c
 
+retval=0
 for f in $(git remote); do
     for ch in $(cat ~/.git-pa-remotes); do
         if git remote -v | grep ^$f | cut -f 2 | grep -q $ch; then
             echo ======== Pushing to \"$f\"
             if [ "$f" = "sunbase" ]; then
-                git push --all sunbase
-                git push --tags sunbase "$@"
+                git push --all sunbase || retval=1
+                git push --tags sunbase "$@" || retval=1
             else
-                git push $f "$@"
+                git push $f "$@" || retval=1
             fi
         fi
     done
 done
+exit $retval
