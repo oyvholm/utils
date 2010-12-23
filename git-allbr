@@ -6,7 +6,7 @@ remote=origin
 test -z "$1" || remote=$1
 origbranch=$(git branch | grep ^\\* | cut -c 3-)
 for f in $(git branch -a | grep remotes/$remote/ | grep -v "remotes/$remote/HEAD " | perl -pe "s!remotes/$remote/(.*)\$!\$1!"); do
-    git branch -t $f $remote/$f;
+    git branch -t $f $remote/$f
     git checkout $f
     git merge --ff-only $remote/$f
 done
