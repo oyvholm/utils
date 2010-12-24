@@ -4,7 +4,7 @@
 # File ID: 2a4e251e-7b6f-11df-b25f-00219bfade9b
 
 if [ "$1" = "-d" ]; then
-    base64 -di | gunzip
+    base64 -di | gunzip --stdout --force
 else
     echo -n "<!-- "
     gzip -9 | base64 -w 0
