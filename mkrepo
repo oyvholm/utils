@@ -31,6 +31,9 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = "0.00";
 
+my $url = 'sunny@git.sunbase.org';
+my $dir = "/home/sunny/Git";
+
 Getopt::Long::Configure("bundling");
 GetOptions(
 
@@ -48,9 +51,12 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
-}
+defined($ARGV[0]) || die("$progname: No repo name specified, see --help\n");
+my $repo = $ARGV[0];
+$repo =~ s/(.*)\.git$/$1/i;
+my $rg = "$dir/$repo.git";
+$repo =~ /[^a-z0-9\-_\.]/ && die("$progname: $repo: Name contains invalid characters\n");
+system("ssh", $url, "mkdir $rg && git init --bare $rg");
 
 sub print_version {
     # Print program version {{{
