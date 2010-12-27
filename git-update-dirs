@@ -12,9 +12,12 @@ for f in *; do
         echo ================ $f ================
         # echo ==== git f ====
         (cd $f && git remote -v update -p) || err_fetch="$err_fetch $f"
-        test "$pull" = "1" && { echo ==== git pull --ff-only ====; (cd $f && git pull --ff-only) || err_pull="$err_pull $f"; }
-        echo ==== git pa ====
-        (cd $f && git pa) || err_push="$err_push $f"
+        if test "$pull" = "1"; then
+            echo ==== git pull --ff-only ====
+            (cd $f && git pull --ff-only) || err_pull="$err_pull $f";
+            echo ==== git pa ====
+            (cd $f && git pa) || err_push="$err_push $f"
+        fi
         echo
     fi
 done
