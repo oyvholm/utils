@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#=======================================================================
+# oldrepo
+# File ID: d4b8e930-0c56-11e0-b541-fefdb24f8e10
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+repo=$1
+[ -e $repo ] && { echo $repo finnes allerede; exit 1; }
+echo ======== $repo ========
+git init $repo || { echo git init $repo failed; exit 1; }
+cd $repo || { echo $repo: chdir error; exit 1; }
+git remote add origin /home/sunny/Git-old/Git/$repo.git
+git fetch origin
+git allbr
+git remote add sunbase $GR/$repo.git
+if [ ! -d /home/sunny/Git/$repo.git/. ]; then
+    echo ==== Creating repo $repo.git
+    sess -c "Laget av d4b8e930-0c56-11e0-b541-fefdb24f8e10" -- git init --bare /home/sunny/Git/$repo.git
+fi
+echo "-- git push --"
+git push --all sunbase
+git push --tags sunbase
