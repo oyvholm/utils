@@ -27,6 +27,7 @@ if [ "$logmsg" = "--" ]; then
     tmpmsgfile=/tmp/$(date +%s)-$$.tmp
     $EDITOR $tmpmsgfile
     logmsg=$(cat $tmpmsgfile)
+    test -z "$logmsg" && { echo ciall: No text entered in editor, aborting.; exit 1; }
 fi
 
 LC_ALL=C git status | grep "^nothing to commit" || (git add . && git commit -a -m "$logmsg`echo; echo; suuid -t ciall -c "$logmsg"`")
