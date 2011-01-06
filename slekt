@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#=======================================================================
+# slekt
+# File ID: ca3acea2-191b-11e0-ab4a-00023faf1383
+#=======================================================================
+
+lockdir=$HOME/.slekt.lock
+test -z "$(which gramps)" && { echo "slekt: gramps: Finnes ikke her." >&2; exit 1; }
+mkdir $lockdir || { echo slekt: $lockdir: Lockdir finnes allerede. Ka du håillpå me? >&2; exit 1; }
+(LC_ALL=nb_NO.utf8 sess gramps; rmdir $lockdir) &
