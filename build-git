@@ -23,11 +23,9 @@ sudo=sudo
 
 # Local name of remote master
 local_master=master
-# local_master=spearce-master
 
 # Name of remote master
 remote_master=origin/master
-# remote_master=spearce/master
 
 # Set to 1 to create and run ./configure
 use_configure=0
@@ -64,10 +62,9 @@ fetch_remotes() {
     }
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
     git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git.git
-    git remote | grep -q '^spearce$' || git remote add spearce git://repo.or.cz/git/spearce.git
     echo ================= git fetch =================
     # git fetch --all arrived in v1.6.6, and that’s too recent to use.
-    for f in origin github sunbase spearce; do
+    for f in origin github sunbase; do
         echo ===== $f =====
         git fetch $f
     done
@@ -99,7 +96,6 @@ if [ ! -d $builddir/. ]; then
     git clone git://git.kernel.org/pub/scm/git/git.git $builddir
     cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
     fetch_remotes
-    # git branch --track spearce-master spearce/master
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
 git checkout $local_master || { echo Cannot check out branch >&2; exit 1; }
