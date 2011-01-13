@@ -396,6 +396,13 @@ likecmd("$CMD -w eo -l $Outdir", # {{{
 );
 
 # }}}
+likecmd("$CMD -w a -l $Outdir", # {{{
+    "/^$v1_templ\\n\$/s",
+    "/^$v1_templ\\n\$/s",
+    "Option -wa sends output to stdout and stderr",
+);
+
+# }}}
 likecmd("$CMD -w n -l $Outdir", # {{{
     '/^$/s',
     '/^$/s',

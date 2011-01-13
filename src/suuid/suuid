@@ -203,8 +203,8 @@ if (open(LogFP, "+>>", $Logfile)) {
             if (seek(LogFP, $filepos, 0)) {
                 my $check_str = <LogFP>;
                 if ($check_str eq $out_str) {
-                    $Opt{'whereto'} =~ /o/ && print("$uuid\n");
-                    $Opt{'whereto'} =~ /e/ && print(STDERR "$uuid\n");
+                    $Opt{'whereto'} =~ /[ao]/ && print("$uuid\n");
+                    $Opt{'whereto'} =~ /[ae]/ && print(STDERR "$uuid\n");
                 } else {
                     D("check_str = '$check_str', out_str = '$out_str'");
                     die("$progname: $Logfile: Unable to write to file: $!\n");
@@ -374,6 +374,8 @@ Options:
         Send to stderr.
       eo
         Send to both stdout and stderr.
+      a
+        Synonym for eo.
       n
         Don’t output anything.
     Default: "$Std{'whereto'}"
