@@ -80,6 +80,10 @@ push_changes() {
     echo ==== push finished ====
 }
 
+print_timestamp() {
+    date +"%Y-%m-%d %H:%M:%S%z"
+}
+
 [ -z "`git --version | grep '^git version '`" ] && {
     echo $progname: You need to have git installed to use this script. >&2;
     exit 1;
@@ -107,6 +111,7 @@ fi
 echo ================= git status in `pwd` =================
 git status
 echo
+print_timestamp
 echo If that looks okay to you, press Enter to fetch newest git version
 echo -n and start the build, or press CTRL-C to abort.
 read
@@ -157,6 +162,7 @@ make prefix=$dest $makeflags all $make_doc_str $make_info_str || exit
 echo ================= make test =================
 make $makeflags test
 echo
+print_timestamp
 echo -n If all tests succeeded, press y to continue...
 read choice
 [ "$choice" = "y" ] || { echo $progname: Aborted; exit 1; }
@@ -205,6 +211,7 @@ if [ -d $pref/prg/.svn/. ]; then
     cd $pref/prg
     echo Commit message:
     echo $commitmsg
+    print_timestamp
     echo -n Press Enter to commit the symlink...
     read
     $sudo svn ci -m "$commitmsg" git
