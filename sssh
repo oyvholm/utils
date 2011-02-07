@@ -2,4 +2,5 @@
 
 # File ID: eb3159f8-5aaf-11df-9f20-000c6ed3978a
 
+reset
 sess -- ssh -Y "$@"
