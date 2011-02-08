@@ -11,6 +11,8 @@ for f in $(git remote); do
             if [ "$f" = "sunbase" ]; then
                 git push --all sunbase || retval=1
                 git push --tags sunbase "$@" || retval=1
+            elif [ "$f" = "all" ]; then
+                git push --all all || retval=1
             else
                 git push $f "$@" || retval=1
             fi
