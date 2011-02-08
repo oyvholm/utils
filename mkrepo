@@ -21,6 +21,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'directory' => "",
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -31,18 +32,22 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = "0.00";
 
-my $url = 'sunny@git.sunbase.org';
-my $dir = "/home/sunny/Git";
-
 Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "directory|d=s" => \$Opt{'directory'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'directory'} =~ /[^a-z0-9\-_\.]/ &&
+    die("$progname: $Opt{'directory'}: Invalid characters in --directory argument\n");
+
+my $url = 'sunny@git.sunbase.org';
+my $dir = $Opt{'directory'} ? "/home/sunny/Git-$Opt{'directory'}" : "/home/sunny/Git";
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
@@ -78,6 +83,8 @@ Usage: $progname [options] repo_name
 
 Options:
 
+  -d X, --directory X
+    Create a repo inside Git-X/ instead of Git/
   -h, --help
     Show this help.
   -v, --verbose
