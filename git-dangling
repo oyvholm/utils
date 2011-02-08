@@ -7,6 +7,13 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+if test "$1" = "-D"; then
+    branches=`git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$'`
+    test -z "$branches" && { echo "No commit-* branches found"; exit 0; }
+    git branch -D $branches
+    exit
+fi
+
 for f in `git fsck | grep "dangling commit" | cut -f 3 -d ' '`; do
     git branch commit-$f $f && echo created branch at $f
 done
