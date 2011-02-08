@@ -1,0 +1,12 @@
+#!/bin/sh
+
+#=======================================================================
+# git-dangling
+# File ID: 13613774-3334-11e0-bfdc-fefdb24f8e10
+# Create branches on every dangling commit
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+for f in `git fsck | grep "dangling commit" | cut -f 3 -d ' '`; do
+    git branch commit-$f $f && echo created branch at $f
+done
