@@ -20,6 +20,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'create-remote' => 0,
     'debug' => 0,
     'directory' => "",
     'help' => 0,
@@ -35,6 +36,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "create-remote|c" => \$Opt{'create-remote'},
     "debug" => \$Opt{'debug'},
     "directory|d=s" => \$Opt{'directory'},
     "help|h" => \$Opt{'help'},
@@ -62,6 +64,9 @@ $repo =~ s/(.*)\.git$/$1/i;
 my $rg = "$dir/$repo.git";
 $repo =~ /[^a-z0-9\-_\.]/ && die("$progname: $repo: Name contains invalid characters\n");
 system("ssh", $url, "mkdir $rg && git init --bare $rg");
+if ($Opt{'create-remote'}) {
+    system("git", "remote", "add", "sunbase", "$url:$rg");
+}
 
 sub print_version {
     # Print program version {{{
@@ -83,6 +88,8 @@ Usage: $progname [options] repo_name
 
 Options:
 
+  -c, --create-remote
+    Set up the sunbase remote
   -d X, --directory X
     Create a repo inside Git-X/ instead of Git/
   -h, --help
