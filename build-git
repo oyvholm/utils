@@ -206,14 +206,13 @@ for f in $mansects; do
     $sudo rm *
     $sudo ln -s ../../../prg/git/share/man/$f/* .
 done
-if [ -d $pref/prg/.svn/. ]; then
-    echo ================= svn commit the symlink =================
+if [ -d $pref/.git/. ]; then
+    echo ================= git commit the symlink =================
     commitmsg=`echo $progname installed $globalgit on $(hostname); echo; suuid -t commit,$progname`
     cd $pref/prg
+    git add git
     echo Commit message:
     echo $commitmsg
-    print_timestamp
-    echo -n Press Enter to commit the symlink...
-    read
-    $sudo svn ci -m "$commitmsg" git
+    git commit -m "$commitmsg"
+    git pa
 fi
