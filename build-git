@@ -162,11 +162,12 @@ echo ================= make $makeflags =================
 make prefix=$dest $makeflags all $make_doc_str $make_info_str || exit
 echo ================= make test =================
 make $makeflags test
-echo
-print_timestamp
-echo -n If all tests succeeded, press y to continue...
-read choice
-[ "$choice" = "y" ] || { echo $progname: Aborted; exit 1; }
+until test "$choice" = "y"; do
+    echo
+    print_timestamp
+    echo -n If all tests succeeded, press y to continue...
+    read choice
+done
 echo ================= $sudo make install =================
 $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
