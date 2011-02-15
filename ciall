@@ -16,9 +16,10 @@ LC_ALL=C git status | grep "^nothing to commit" && { echo ciall: Nothing to do h
 
 git status
 echo
-echo -n Press y + Enter to commit all new changes in this directory tree...
-read besafe
-[ "$besafe" = "y" ] || { echo ciall: y not pressed, aborting; exit 1; }
+until test "$besafe" = "y"; do
+    echo -n Press y + Enter to commit all new changes in this directory tree...
+    read besafe
+done
 
 unset logmsg
 [ ! -z "$1" ] && logmsg="$*"
