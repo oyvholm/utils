@@ -9,9 +9,9 @@
 dirfile=.emptydirs
 test -d .git/. || { echo $0: Has to be run from the toplevel of the working tree >&2; exit 1; }
 find -type d -empty -print0 | grep -E -v -z '/\.git(/|$)' | LC_ALL=C sort -z >$dirfile
-test "$(cat .emptydirs)" = "" &&
+test "$(cat $dirfile)" = "" &&
     (
-        git reset .emptydirs;
-        rm .emptydirs
+        git reset $dirfile
+        rm $dirfile
         echo "$0: No empty directories found, deleting $dirfile" >&2
     ) || git add $dirfile
