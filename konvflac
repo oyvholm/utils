@@ -7,7 +7,9 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-chkfile=/tmp/wavcheck.tmp
+tmpuuid=$(suuid -t c_konvflac -c "Starting conversion")
+test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
+chkfile=/tmp/konvflac.$tmpuuid.tmp
 for curr in "$@"; do
     echo
     echo ======== $(ls -l $curr)
