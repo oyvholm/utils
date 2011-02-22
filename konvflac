@@ -10,7 +10,7 @@
 chkfile=/tmp/wavcheck.tmp
 for curr in "$@"; do
     echo
-    echo ============================== $1 ==============================
+    echo ======== $(ls -l $curr)
     rm -f $chkfile
     noext=$(basename $curr .wav)
     wavfile=$noext.wav
