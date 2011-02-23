@@ -13,4 +13,4 @@ if [ ! -d gpstools/. ]; then
     make remotes
     cd ..
 fi
-(cd gpstools && git fetch --all && git merge sunbase/master)
+(cd gpstools && git fetch --all && git checkout master && git merge --ff-only sunbase/master)
