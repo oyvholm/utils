@@ -14,7 +14,7 @@
 
 use strict;
 use Getopt::Long;
-use Time::HiRes qw{ gettimeofday usleep };
+use Time::HiRes qw{ gettimeofday };
 
 $| = 1;
 
@@ -50,13 +50,18 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my ($Date, $Sec, $Fract);
+my ($Old, $Str) = ("", "");
 
 while (1) {
-    ($Sec, $Fract) = gettimeofday();
-    my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = gmtime($Sec);
-    printf("%02u:%02u:%02u\r", $Hour, $Min, $Sec);
-    usleep(1);
+    do {
+        my ($Epoch, $Fract) = gettimeofday();
+        my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
+            gmtime($Epoch);
+        $Str = sprintf("%04u-%02u-%02u %02u:%02u:%02uZ",
+            $Year+1900, $Mon, $Day, $Hour, $Min, $Sec);
+    } while ($Str eq $Old);
+    print("$Str\r");
+    $Old = $Str;
 }
 
 sub print_version {
