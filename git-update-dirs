@@ -64,12 +64,12 @@ LOOP: for my $f (@Dirs) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
         }
-        system("git", "remote", "-v", "update", "-p") && push(@err_fetch, $f);
+        system("git", "remote", "-v", "update", "-p") && (check_sig($?) || push(@err_fetch, $f));
         if ($Opt{'pull'}) {
             print("==== git pull --ff-only ====\n");
-            system("git", "pull", "--ff-only") && push(@err_pull, $f);
+            system("git", "pull", "--ff-only") && (check_sig($?) || push(@err_pull, $f));
             print("==== git pa ====\n");
-            system("git", "pa") && push(@err_push, $f);
+            system("git", "pa") && (check_sig($?) || push(@err_push, $f));
         }
         print("\n");
     }
@@ -78,6 +78,12 @@ LOOP: for my $f (@Dirs) {
 scalar(@err_fetch) && print("$progname: Unable to fetch from: " . join(" ", @err_fetch) . "\n");
 scalar(@err_pull) && print("$progname: Unable to pull from: " . join(" ", @err_pull) . "\n");
 scalar(@err_push) && print("$progname: Unable to push from: " . join(" ", @err_push) . "\n");
+
+sub check_sig {
+    my $retval = shift;
+    ($retval & 127) && die("\n$progname: Child process interrupted, aborting.\n");
+    return(0);
+} # check_sig()
 
 sub print_version {
     # Print program version {{{
