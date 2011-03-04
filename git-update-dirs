@@ -59,7 +59,7 @@ my @err_pull = ();
 my @err_push = ();
 
 if ($Opt{'recursive'}) {
-    my $repos = `find -type d | grep '/\\.git\$'`;
+    my $repos = `find -type d -name .git`;
     $repos =~ s/\/\.git\n/\n/g;
     @Dirs = sort split("\n", $repos);
 }
