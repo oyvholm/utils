@@ -24,6 +24,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'pull' => 0,
+    'recursive' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -39,6 +40,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "pull|p" => \$Opt{'pull'},
+    "recursive|r" => \$Opt{'recursive'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -51,10 +53,16 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my @Dirs = glob("*");
+my @Dirs = $Opt{'recursive'} ? glob("*") : ();
 my @err_fetch = ();
 my @err_pull = ();
 my @err_push = ();
+
+if ($Opt{'recursive'}) {
+    my $repos = `find -type d | grep '/\\.git\$'`;
+    $repos =~ s/\/\.git\n/\n/g;
+    @Dirs = sort split("\n", $repos);
+}
 
 my $orig_dir = getcwd();
 LOOP: for my $f (@Dirs) {
@@ -109,6 +117,8 @@ Options:
     Show this help.
   -p, --pull
     Also execute "git pull --ff-only" and "git pa"
+  -r, --recursive
+    Update all repositories recursively under the current directory
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
