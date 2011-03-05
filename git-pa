@@ -9,6 +9,7 @@ for f in $(git remote); do
         if git remote -v | grep ^$f | cut -f 2 | grep -q $ch; then
             echo ======== Pushing to \"$f\"
             if [ "$f" = "sunbase" ]; then
+                git push $f "$@" || retval=1
                 git push --tags sunbase "$@" || retval=1
             elif [ "$f" = "all" ]; then
                 git push --all all || retval=1
