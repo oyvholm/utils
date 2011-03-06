@@ -377,7 +377,7 @@ Options:
   -h, --help
     Show this help.
   -s, --short-format
-    Output checksums, size, filname, mtime and latin1 fields only.
+    Output checksums, size, filename, mtime and latin1 fields only.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
