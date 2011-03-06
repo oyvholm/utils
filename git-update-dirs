@@ -3,7 +3,7 @@
 #=======================================================================
 # git-update-dirs
 # File ID: f1ba77e4-444e-11e0-963c-00023faf1383
-# [Description]
+# Update many git local repositories at once
 #
 # Character set: UTF-8
 # ©opyleft 2011– Øyvind A. Holm <sunny@sunbase.org>
