@@ -57,6 +57,7 @@ my @Dirs = $Opt{'recursive'} ? glob("*") : ();
 my @err_fetch = ();
 my @err_pull = ();
 my @err_push = ();
+my @err_updsub = ();
 
 if ($Opt{'recursive'}) {
     my $repos = `find -type d -name .git`;
@@ -79,6 +80,10 @@ LOOP: for my $f (@Dirs) {
             print("==== git pa ====\n");
             system("git", "pa") && (check_sig($?) || push(@err_push, $f));
         }
+        if (-e ".gitmodules") {
+            system("git", "submodule", "init") && check_sig($?);
+            system("git", "submodule", "update") && (check_sig($?) || push(@err_updsub, $f));
+        }
         print("\n");
     }
     chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original directory: $!\n");
@@ -86,6 +91,7 @@ LOOP: for my $f (@Dirs) {
 scalar(@err_fetch) && print("$progname: Unable to fetch from: " . join(" ", @err_fetch) . "\n");
 scalar(@err_pull) && print("$progname: Unable to pull from: " . join(" ", @err_pull) . "\n");
 scalar(@err_push) && print("$progname: Unable to push from: " . join(" ", @err_push) . "\n");
+scalar(@err_updsub) && print("$progname: Unable to update submodules in: " . join(" ", @err_updsub) . "\n");
 
 sub check_sig {
     my $retval = shift;
