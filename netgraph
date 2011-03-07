@@ -20,6 +20,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'colour' => "",
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -34,6 +35,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "colour|c=s" => \$Opt{'colour'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -56,7 +58,10 @@ while (<>) {
         push(@Hosts, sprintf("\"%s\"", $1));
     }
 }
-print(join(" -> ", @Hosts), "\n");
+print(join(" -> ", @Hosts),
+    $Opt{'colour'} ? " [color=$Opt{'colour'}]" : "",
+    ";\n"
+);
 
 sub print_version {
     # Print program version {{{
@@ -78,6 +83,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -c X, --colour X
+    Use colour X on this graph.
   -h, --help
     Show this help.
   -v, --verbose
