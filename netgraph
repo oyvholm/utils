@@ -23,6 +23,7 @@ our %Opt = (
     'colour' => "",
     'debug' => 0,
     'help' => 0,
+    'style' => "",
     'verbose' => 0,
     'version' => 0,
 
@@ -38,6 +39,7 @@ GetOptions(
     "colour|c=s" => \$Opt{'colour'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "style|s=s" => \$Opt{'style'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -58,8 +60,13 @@ while (<>) {
         push(@Hosts, sprintf("\"%s\"", $1));
     }
 }
+my $attr = "";
+$attr .= $Opt{'colour'} ? " color=\"$Opt{'colour'}\"" : "";
+$attr .= $Opt{'style'} ? " style=\"$Opt{'style'}\"" : "";
+$attr =~ s/^\s+//;
+length($attr) && ($attr = " [$attr]");
 print(join(" -> ", @Hosts),
-    $Opt{'colour'} ? " [color=$Opt{'colour'}]" : "",
+    $attr,
     ";\n"
 );
 
@@ -87,6 +94,12 @@ Options:
     Use colour X on this graph.
   -h, --help
     Show this help.
+  -s X, --style X
+    Use line style X. Can contain the values
+      solid (default)
+      dashed
+      dotted
+      bold
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
