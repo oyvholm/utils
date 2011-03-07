@@ -3,7 +3,7 @@
 #=======================================================================
 # netgraph
 # File ID: d2d6c67a-48f9-11e0-a72d-c3b2f04a5e88
-# [Description]
+# Generate GraphViz DOT files from traceroute(1) output
 #
 # Character set: UTF-8
 # ©opyleft 2011– Øyvind A. Holm <sunny@sunbase.org>
@@ -48,9 +48,15 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my @Hosts = ();
+
 while (<>) {
-    print;
+    my $Line = $_;
+    if ($Line =~ /^\s*.*?(\d+\.\d+\.\d+\d+\.\d+)\s/) {
+        push(@Hosts, sprintf("\"%s\"", $1));
+    }
 }
+print(join(" -> ", @Hosts), "\n");
 
 sub print_version {
     # Print program version {{{
