@@ -22,6 +22,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'fetch' => 0,
     'help' => 0,
     'pull' => 0,
     'push' => 0,
@@ -39,6 +40,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "fetch|f" => \$Opt{'fetch'},
     "help|h" => \$Opt{'help'},
     "pull|p" => \$Opt{'pull'},
     "push|P" => \$Opt{'push'},
@@ -75,7 +77,10 @@ LOOP: for my $f (@Dirs) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
         }
-        system("git", "remote", "-v", "update", "-p") && (check_sig($?) || push(@err_fetch, $f));
+        if ($Opt{'fetch'}) {
+            print("==== git remote -v update -p ====\n");
+            system("git", "remote", "-v", "update", "-p") && (check_sig($?) || push(@err_fetch, $f));
+        }
         if ($Opt{'pull'}) {
             print("==== git pull --ff-only ====\n");
             system("git", "pull", "--ff-only") && (check_sig($?) || push(@err_pull, $f));
@@ -125,6 +130,8 @@ Options:
 
   -h, --help
     Show this help.
+  -f, --fetch
+    Fetch new commits from all remotes.
   -p, --pull
     Also execute "git pull --ff-only"
   -P, --push
