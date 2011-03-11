@@ -27,6 +27,7 @@ our %Opt = (
     'pull' => 0,
     'push' => 0,
     'recursive' => 0,
+    'submodule' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -45,6 +46,7 @@ GetOptions(
     "pull|p" => \$Opt{'pull'},
     "push|P" => \$Opt{'push'},
     "recursive|r" => \$Opt{'recursive'},
+    "submodule|s" => \$Opt{'submodule'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -89,7 +91,7 @@ LOOP: for my $f (@Dirs) {
             print("==== git pa ====\n");
             system("git", "pa") && (check_sig($?) || push(@err_push, $f));
         }
-        if (-e ".gitmodules") {
+        if ($Opt{'submodule'} && -e ".gitmodules") {
             system("git", "submodule", "init") && check_sig($?);
             system("git", "submodule", "update") && (check_sig($?) || push(@err_updsub, $f));
         }
@@ -138,6 +140,8 @@ Options:
     Also execute "git pa"
   -r, --recursive
     Update all repositories recursively under the current directory
+  -s, --submodule
+    Update submodules if .gitmodules is found.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
