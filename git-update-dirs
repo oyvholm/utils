@@ -92,6 +92,7 @@ LOOP: for my $f (@Dirs) {
             system("git", "pa") && (check_sig($?) || push(@err_push, $f));
         }
         if ($Opt{'submodule'} && -e ".gitmodules") {
+            print("==== update submodules ====\n");
             system("git", "submodule", "init") && check_sig($?);
             system("git", "submodule", "update") && (check_sig($?) || push(@err_updsub, $f));
         }
