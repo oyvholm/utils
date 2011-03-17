@@ -21,6 +21,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'compress' => 0,
     'debug' => 0,
     'fetch' => 0,
     'help' => 0,
@@ -40,6 +41,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "compress|c" => \$Opt{'compress'},
     "debug" => \$Opt{'debug'},
     "fetch|f" => \$Opt{'fetch'},
     "help|h" => \$Opt{'help'},
@@ -60,6 +62,7 @@ if ($Opt{'version'}) {
 }
 
 my @Dirs = $Opt{'recursive'} ? glob("*") : ();
+my @err_compress = ();
 my @err_fetch = ();
 my @err_pull = ();
 my @err_push = ();
@@ -96,6 +99,12 @@ LOOP: for my $f (@Dirs) {
             system("git", "submodule", "init") && check_sig($?);
             system("git", "submodule", "update") && (check_sig($?) || push(@err_updsub, $f));
         }
+        if ($Opt{'compress'}) {
+            print("==== git gc --prune=now ====\n");
+            system("du -h .git | tail -1") && check_sig($?);
+            system("git", "gc", "--prune=now") && (check_sig($?) || push(@err_compress, $f));
+            system("du -h .git | tail -1") && check_sig($?);
+        }
         print("\n");
     }
     chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original directory: $!\n");
@@ -104,6 +113,7 @@ scalar(@err_fetch) && print("$progname: Unable to fetch from: " . join(" ", @err
 scalar(@err_pull) && print("$progname: Unable to pull from: " . join(" ", @err_pull) . "\n");
 scalar(@err_push) && print("$progname: Unable to push from: " . join(" ", @err_push) . "\n");
 scalar(@err_updsub) && print("$progname: Unable to update submodules in: " . join(" ", @err_updsub) . "\n");
+scalar(@err_compress) && print("$progname: Unable to compress: " . join(" ", @err_compress) . "\n");
 
 sub check_sig {
     my $retval = shift;
@@ -131,6 +141,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -c, --compress
+    Compress local repositories to save space
   -h, --help
     Show this help.
   -f, --fetch
