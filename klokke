@@ -58,7 +58,7 @@ while (1) {
         my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
             gmtime($Epoch);
         $Str = sprintf("%04u-%02u-%02u %02u:%02u:%02uZ",
-            $Year+1900, $Mon, $Day, $Hour, $Min, $Sec);
+            $Year+1900, $Mon+1, $Day, $Hour, $Min, $Sec);
     } while ($Str eq $Old);
     print("$Str\r");
     $Old = $Str;
