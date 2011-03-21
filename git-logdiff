@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#=======================================================================
+# git-logdiff
+# File ID: b51c5d58-5406-11e0-a9ae-552d51fb27db
+# Compare two different Git histories. Syntax:
+# git logdiff <commit1> <commit2>
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+ext=.git-logdiff.tmp
+git log --raw --format=fuller --date=iso $1 >/tmp/$1$ext
+git log --raw --format=fuller --date=iso $2 >/tmp/$2$ext
+vimdiff /tmp/{$1,$2}$ext
+rm /tmp/{$1,$2}$ext
