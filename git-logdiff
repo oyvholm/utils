@@ -9,7 +9,9 @@
 #=======================================================================
 
 ext=.git-logdiff.tmp
-git log --raw --format=fuller --date=iso $1 >/tmp/$1$ext
-git log --raw --format=fuller --date=iso $2 >/tmp/$2$ext
-vimdiff /tmp/{$1,$2}$ext
-rm /tmp/{$1,$2}$ext
+c1=$(git log -1 --format=format:%h $1)
+c2=$(git log -1 --format=format:%h $2)
+git log --raw --format=fuller --date=iso $c1 >/tmp/$c1$ext
+git log --raw --format=fuller --date=iso $c2 >/tmp/$c2$ext
+vimdiff /tmp/{$c1,$c2}$ext
+rm /tmp/{$c1,$c2}$ext
