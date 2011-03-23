@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#=======================================================================
+# pakk_logg
+# File ID: 7bd794f8-5551-11e0-942f-b7ae6f27caa2
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+ps auxwOT | grep -v "grep logging" | grep logging &&
+    { echo $0: Logging in action, aborting >&2; exit 1; }
+cd ~/log/script || { echo $0: ~/log/script: Unable to chdir; exit 1; }
+gzip -v *
+ciall Created with pakk_logg
+git pa
