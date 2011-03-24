@@ -81,6 +81,30 @@ END
 
 =cut
 
+diag("Testing -h (--help) option...");
+likecmd("$CMD -h", # {{{
+    '/  Show this help\./',
+    '/^$/',
+    "Option -h prints help screen",
+);
+
+# }}}
+diag("Testing -v (--verbose) option...");
+likecmd("$CMD -hv", # {{{
+    '/^\n\S+ v\d\.\d\d\n/s',
+    '/^$/',
+    "Option --version with -h returns version number and help screen",
+);
+
+# }}}
+diag("Testing --version option...");
+likecmd("$CMD --version", # {{{
+    '/^\S+ v\d\.\d\d\n/',
+    '/^$/',
+    "Option --version returns version number",
+);
+
+# }}}
 testcmd("$CMD </dev/null", # {{{
     "",
     "",
@@ -156,14 +180,6 @@ testcmd("$CMD -f <finduuid-files/std-random", # {{{
 END
     "",
     "List file name when reading from stdin",
-);
-
-# }}}
-diag("Testing -h (--help) option...");
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    "Option -h prints help screen",
 );
 
 # }}}
@@ -281,22 +297,6 @@ ced8e04e-9b57-11df-9b37-d97f703ed9b7
 END
     "",
     "Several files, -u only",
-);
-
-# }}}
-diag("Testing -v (--verbose) option...");
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    "Option --version with -h returns version number and help screen",
-);
-
-# }}}
-diag("Testing --version option...");
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    "Option --version returns version number",
 );
 
 # }}}

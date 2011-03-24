@@ -81,6 +81,30 @@ END
 
 =cut
 
+diag("Testing -h (--help) option...");
+likecmd("$CMD -h", # {{{
+    '/  Show this help\./',
+    '/^$/',
+    "Option -h prints help screen",
+);
+
+# }}}
+diag("Testing -v (--verbose) option...");
+likecmd("$CMD -hv", # {{{
+    '/^\n\S+ v\d\.\d\d\n/s',
+    '/^$/',
+    "Option --version with -h returns version number and help screen",
+);
+
+# }}}
+diag("Testing --version option...");
+likecmd("$CMD --version", # {{{
+    '/^\S+ v\d\.\d\d\n/',
+    '/^$/',
+    "Option --version returns version number",
+);
+
+# }}}
 diag("Testing without options...");
 testcmd("$CMD sident-files/textfile", # {{{
     <<'END',
@@ -211,14 +235,6 @@ END
 );
 
 # }}}
-diag("Testing -h (--help) option...");
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    "Option -h prints help screen",
-);
-
-# }}}
 diag("Testing -k (--known-keywords-only) option...");
 testcmd("$CMD -k sident-files/textfile", # {{{
     <<'END',
@@ -263,14 +279,6 @@ sident-files/textfile:
 END
     "",
     "Remove duplicates from textfile",
-);
-
-# }}}
-diag("Testing -v (--verbose) option...");
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    "Option --version with -h returns version number and help screen",
 );
 
 # }}}
@@ -361,14 +369,6 @@ testcmd("$CMD -vx sident-files/*", # {{{
 END
     "",
     "Output XML, including files without keywords",
-);
-
-# }}}
-diag("Testing --version option...");
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    "Option --version returns version number",
 );
 
 # }}}

@@ -24,7 +24,8 @@ $| = 1;
 
 our $Debug = 0;
 our $CMD = "../std";
-
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $use_svn = 0;
 
 our %Opt = (
@@ -60,9 +61,6 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
-
-my $Lh = "[0-9a-fA-F]";
-my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 
 diag(sprintf("========== Executing %s v%s ==========",
     $progname,
@@ -261,7 +259,6 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
-    $Txt =~ s/(tmp-std-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "std-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
@@ -290,7 +287,6 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
-    $Txt =~ s/(tmp-std-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "std-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {

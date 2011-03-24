@@ -61,6 +61,7 @@ if ($Opt{'version'}) {
 
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+mkdir("tmpuuids") || die("$progname: Cannot create directory: $!");
 
 diag(sprintf("========== Executing %s v%s ==========",
     $progname,
@@ -84,7 +85,6 @@ END
 
 =cut
 
-mkdir("tmpuuids") || die("$progname: Cannot create directory: $!");
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',

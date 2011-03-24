@@ -81,17 +81,6 @@ END
 
 =cut
 
-testcmd("$CMD", # {{{
-    "",
-    <<END,
-getsvnfiles: --source option not defined
-getsvnfiles: --dest option not defined
-getsvnfiles: --revisions option not defined
-END
-    "Missing --source, --dest and --revisions arguments",
-);
-
-# }}}
 diag("Testing -h (--help) option...");
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
@@ -113,6 +102,17 @@ likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
     "Option --version returns version number",
+);
+
+# }}}
+testcmd("$CMD", # {{{
+    "",
+    <<END,
+getsvnfiles: --source option not defined
+getsvnfiles: --dest option not defined
+getsvnfiles: --revisions option not defined
+END
+    "Missing --source, --dest and --revisions arguments",
 );
 
 # }}}
