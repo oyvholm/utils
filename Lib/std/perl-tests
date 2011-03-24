@@ -188,7 +188,8 @@ sub file_data {
     my $File = shift;
     my $Txt;
     if (open(my $fp, "<", $File)) {
-        $Txt = join("", <$fp>);
+        local $/ = undef;
+        $Txt = <$fp>;
         close($fp);
         return($Txt);
     } else {
