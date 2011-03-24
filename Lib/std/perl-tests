@@ -22,7 +22,7 @@ BEGIN {
 
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
 our $CMD = "STDexecDTS";
