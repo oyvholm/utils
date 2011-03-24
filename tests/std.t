@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # std.t
@@ -11,18 +11,27 @@
 # file for legal stuff.
 #=======================================================================
 
+use strict;
+use warnings;
+
 BEGIN {
     # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
 
-use strict;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
+<<<<<<<
+=======
+our $CMD = 'STDexecDTS';
+
+our %Opt = (
+
+>>>>>>>
 our $CMD = "../std";
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
@@ -41,17 +50,17 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.00';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "all|a" => \$Opt{'all'},
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "todo|t" => \$Opt{'todo'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'all|a' => \$Opt{'all'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'todo|t' => \$Opt{'todo'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -62,7 +71,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf("========== Executing %s v%s ==========",
+diag(sprintf('========== Executing %s v%s ==========',
     $progname,
     $VERSION));
 
@@ -73,7 +82,7 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
 =pod
 
 testcmd("$CMD command", # {{{
-    <<END,
+    <<'END',
 [expected stdin]
 END
     "",
@@ -84,27 +93,27 @@ END
 
 =cut
 
-diag("Testing -h (--help) option...");
+diag('Testing -h (--help) option...');
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
     '/^$/',
-    "Option -h prints help screen",
+    'Option -h prints help screen',
 );
 
 # }}}
-diag("Testing -v (--verbose) option...");
+diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
-    "Option --version with -h returns version number and help screen",
+    'Option --version with -h returns version number and help screen',
 );
 
 # }}}
-diag("Testing --version option...");
+diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
-    "Option --version returns version number",
+    'Option --version returns version number',
 );
 
 # }}}
@@ -221,11 +230,11 @@ todo_section:
 ;
 
 if ($Opt{'all'} || $Opt{'todo'}) {
-    diag("Running TODO tests..."); # {{{
+    diag('Running TODO tests...'); # {{{
 
     TODO: {
 
-local $TODO = "";
+local $TODO = '';
 # Insert TODO tests here.
 
     }
@@ -240,6 +249,7 @@ $use_svn && likecmd("svn revert $Tmptop", # {{{
     "svn revert tempdir",
 );
 
+<<<<<<<
 # }}}
 unlink("$Tmptop/$suuid_file") || warn("$progname: $Tmptop/$suuid_file: Cannot delete file: $!");
 rmdir("$Tmptop/tmpuuids") || warn("$progname: rmdir('$Tmptop/tmpuuids'): $!");
@@ -247,19 +257,26 @@ unlink("$Tmptop/bashfile") || warn("$progname: $Tmptop/bashfile: Cannot delete f
 rmdir($Tmptop) || warn("$progname: rmdir('$Tmptop'): $!");
 
 diag("Testing finished.");
+=======
+diag('Testing finished.');
+>>>>>>>
 
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
+<<<<<<<
     my $TMP_STDERR = "std-stderr.tmp";
+=======
+    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
+>>>>>>>
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -273,21 +290,26 @@ sub testcmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    return;
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
+<<<<<<<
     my $TMP_STDERR = "std-stderr.tmp";
+=======
+    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
+>>>>>>>
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -301,6 +323,7 @@ sub likecmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    return;
     # }}}
 } # likecmd()
 
@@ -308,12 +331,13 @@ sub file_data {
     # Return file content as a string {{{
     my $File = shift;
     my $Txt;
-    if (open(FP, "<", $File)) {
-        $Txt = join("", <FP>);
-        close(FP);
+    if (open(my $fp, '<', $File)) {
+        local $/ = undef;
+        $Txt = <$fp>;
+        close($fp);
         return($Txt);
     } else {
-        return undef;
+        return;
     }
     # }}}
 } # file_data()
@@ -321,6 +345,7 @@ sub file_data {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -332,7 +357,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -365,6 +390,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
