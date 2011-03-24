@@ -72,7 +72,7 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
 =pod
 
 testcmd("$CMD command", # {{{
-    <<END,
+    <<'END',
 [expected stdin]
 END
     "",
@@ -212,7 +212,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
