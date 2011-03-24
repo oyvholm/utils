@@ -150,6 +150,7 @@ sub testcmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    return;
     # }}}
 } # testcmd()
 
@@ -178,6 +179,7 @@ sub likecmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    return;
     # }}}
 } # likecmd()
 
@@ -198,6 +200,7 @@ sub file_data {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -242,6 +245,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
