@@ -25,11 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-<<<<<<<
-our $CMD = "../fileid";
-=======
-our $CMD = 'STDexecDTS';
->>>>>>>
+our $CMD = '../fileid';
 
 our %Opt = (
 
@@ -65,15 +61,11 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-<<<<<<<
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 mkdir("tmpuuids") || die("$progname: Cannot create directory: $!");
 
-diag(sprintf("========== Executing %s v%s ==========",
-=======
 diag(sprintf('========== Executing %s v%s ==========',
->>>>>>>
     $progname,
     $VERSION));
 
@@ -145,14 +137,10 @@ local $TODO = '';
     # TODO tests }}}
 }
 
-<<<<<<<
 diag("Cleaning up...");
 unlink($uuid_tmpfile) || warn("$progname: $uuid_tmpfile: Cannot remove file: $!\n");
 rmdir("tmpuuids") || warn("$progname: Cannot rmdir(tmpuuids): $!\n");
-diag("Testing finished.");
-=======
 diag('Testing finished.');
->>>>>>>
 
 sub testcmd {
     # {{{
@@ -165,11 +153,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "fileid-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'fileid-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -198,11 +182,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "fileid-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'fileid-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";

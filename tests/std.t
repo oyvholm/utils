@@ -25,14 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-<<<<<<<
-=======
-our $CMD = 'STDexecDTS';
-
-our %Opt = (
-
->>>>>>>
-our $CMD = "../std";
+our $CMD = '../std';
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $use_svn = 0;
@@ -249,17 +242,13 @@ $use_svn && likecmd("svn revert $Tmptop", # {{{
     "svn revert tempdir",
 );
 
-<<<<<<<
 # }}}
 unlink("$Tmptop/$suuid_file") || warn("$progname: $Tmptop/$suuid_file: Cannot delete file: $!");
 rmdir("$Tmptop/tmpuuids") || warn("$progname: rmdir('$Tmptop/tmpuuids'): $!");
 unlink("$Tmptop/bashfile") || warn("$progname: $Tmptop/bashfile: Cannot delete file: $!");
 rmdir($Tmptop) || warn("$progname: rmdir('$Tmptop'): $!");
 
-diag("Testing finished.");
-=======
 diag('Testing finished.');
->>>>>>>
 
 sub testcmd {
     # {{{
@@ -272,11 +261,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "std-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'std-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -305,11 +290,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "std-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'std-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
