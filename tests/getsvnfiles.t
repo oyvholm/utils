@@ -126,6 +126,7 @@ getsvnfiles: --source option not defined
 getsvnfiles: --dest option not defined
 getsvnfiles: --revisions option not defined
 END
+    1,
     "Missing --source, --dest and --revisions arguments",
 );
 

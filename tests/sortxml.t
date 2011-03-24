@@ -158,6 +158,7 @@ testcmd("$CMD -s b sortxml-files/a.xml", # {{{
 </a>
 END
     "",
+    0,
     "Sorting XML document",
 );
 
@@ -182,6 +183,7 @@ testcmd("$CMD -s b sortxml-files/oneliners.xml", # {{{
 </a>
 END
     "",
+    0,
     "XML uses oneliners",
 );
 

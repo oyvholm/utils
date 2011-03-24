@@ -129,6 +129,7 @@ if ($use_svn) {
     likecmd("svn mkdir $Tmptop", # {{{
         '/^A\s+tmp-std-t-.+$/s',
         '/^$/s',
+        0,
         "Create svn-controlled directory",
     );
     # }}}
@@ -140,6 +141,7 @@ mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
     '/GNU General Public License/s',
     '/^std: Warning: Undefined tags: filename\n$/s',
+    0,
     "One argument sends file to stdout",
 );
 
@@ -150,6 +152,7 @@ if ($use_svn) {
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
         "/^$v1_templ\\nA\\s+bashfile.+\$/s",
         '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
+        0,
         "Create bash script",
     );
     # }}}
@@ -157,6 +160,7 @@ if ($use_svn) {
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^$/',
+        0,
         "Create bash script",
     );
     # }}}
@@ -166,6 +170,7 @@ unlink("bashfile") || diag("WARNING: bashfile: Cannot delete file: $!\n");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
     "/^$v1_templ\\n\$/s",
     '/^$/',
+    0,
     "Create bash script with -l (--local)",
 );
 
@@ -174,6 +179,7 @@ ok(-x "bashfile", "bashfile is executable");
 $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
     '/^\d+ \S+Lib\/std\/bash\n$/s',
     '/^$/s',
+    0,
     "mergesvn property is set to bash template",
 );
 
@@ -182,6 +188,7 @@ diag("Check for unused tags...");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
     '/^.*Contains tests for the.*$/s',
     '/^std: Warning: Undefined tags: testcmd filename progname exec libdir\n$/s',
+    0,
     "Report unused tags",
 );
 
@@ -190,6 +197,7 @@ diag("Testing -f (--force) option...");
 likecmd("../$CMD bash bashfile", # {{{
     '/^$/s',
     '/^std: bashfile: File already exists, will not overwrite\n$/s',
+    1,
     "Create bash script, file already exists, don’t use --force",
 );
 
@@ -198,6 +206,7 @@ if ($use_svn) {
     likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
         "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
         '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+        0,
         "Overwrite bashfile with perl script using --force",
     );
     # }}}
@@ -205,6 +214,7 @@ if ($use_svn) {
     likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+        0,
         "Overwrite bashfile with perl script using --force",
     );
     # }}}
@@ -218,6 +228,7 @@ like(file_data("bashfile"), # {{{
 $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
     '/^\d+ \S+Lib\/std\/perl\n$/s',
     '/^$/s',
+    0,
     "mergesvn property is replaced with perl template",
 );
 
@@ -226,6 +237,7 @@ diag("Testing -T (--notag) option...");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -T uuid,year perl", # {{{
     '/STDuuidDTS.*STDyearDTS/s',
     '/^std: Warning: Undefined tags: filename uuid year\n.*$/s',
+    0,
     "Send perl script to stdout, don’t expand uuid and year tag",
 );
 
@@ -251,6 +263,7 @@ diag("Cleaning up temp files...");
 $use_svn && likecmd("svn revert $Tmptop", # {{{
     '/tmp-std-t/s',
     '/^$/s',
+    0,
     "svn revert tempdir",
 );
 

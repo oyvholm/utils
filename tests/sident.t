@@ -135,6 +135,7 @@ sident-files/textfile:
      $Weirdo: blah blah $
 END
     "",
+    0,
     "Read textfile, no arguments",
 );
 
@@ -146,6 +147,7 @@ sident-files/random:
      $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
     "",
+    0,
     "Read random binary data, no arguments",
 );
 
@@ -158,6 +160,7 @@ testcmd("$CMD - <sident-files/random", # {{{
      $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
     "",
+    0,
     "Read random binary data from stdin with hyphen as filename",
 );
 
@@ -169,6 +172,7 @@ testcmd("cat sident-files/random | $CMD -", # {{{
      $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
     "",
+    0,
     "Read random binary through pipe, hyphen filename",
 );
 
@@ -189,6 +193,7 @@ sident-files/textfile:
      $Weirdo: blah blah $
 END
     "",
+    0,
     "List only expanded keywords",
 );
 
@@ -210,6 +215,7 @@ sident-files/textfile:
      $Weirdo: blah blah $
 END
     "",
+    0,
     "List only expanded keywords, plus list filename without expanded kw",
 );
 
@@ -245,6 +251,7 @@ sident-files/unexpanded:
      $RealLyuNKoWN$
 END
     "",
+    0,
     "Read filenames from file",
 );
 
@@ -264,6 +271,7 @@ sident-files/textfile:
      $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
 END
     "",
+    0,
     "List only known keywords",
 );
 
@@ -275,6 +283,7 @@ sident-files/random
 sident-files/textfile
 END
     "",
+    0,
     "Only list names of files with expanded keywords",
 );
 
@@ -292,6 +301,7 @@ sident-files/textfile:
      $Weirdo: blah blah $
 END
     "",
+    0,
     "Remove duplicates from textfile",
 );
 
@@ -330,6 +340,7 @@ sident-files/unexpanded:
      $RealLyuNKoWN$
 END
     "",
+    0,
     "Also list files without keywords",
 );
 
@@ -382,6 +393,7 @@ testcmd("$CMD -vx sident-files/*", # {{{
 </sident>
 END
     "",
+    0,
     "Output XML, including files without keywords",
 );
 
@@ -408,6 +420,7 @@ testcmd("$CMD -x sident-files/textfile", # {{{
 </sident>
 END
     "",
+    0,
     "Output XML from textfile",
 );
 
@@ -430,6 +443,7 @@ testcmd("$CMD -ux sident-files/textfile", # {{{
 </sident>
 END
     "",
+    0,
     "Output XML, remove duplicates",
 );
 
@@ -438,6 +452,7 @@ diag("Error conditions...");
 testcmd("$CMD sident-files", # {{{
     "",
     "",
+    0,
     "Ignore directories",
 );
 
@@ -445,6 +460,7 @@ testcmd("$CMD sident-files", # {{{
 testcmd("$CMD -v sident-files", # {{{
     "",
     "",
+    0,
     "Ignore directories, even with --verbose",
 );
 
@@ -452,6 +468,7 @@ testcmd("$CMD -v sident-files", # {{{
 likecmd("$CMD sident-files/shbvkdsvsdfv", # {{{
     '/^$/',
     '/^sident: sident-files/shbvkdsvsdfv: .*$/',
+    1,
     "File not found",
 );
 
@@ -459,6 +476,7 @@ likecmd("$CMD sident-files/shbvkdsvsdfv", # {{{
 likecmd("$CMD -x sident-files/shbvkdsvsdfv", # {{{
     '/^<\?xml version="1\.0"\?>\n<sident>\n<\/sident>$/',
     '/^sident: sident-files/shbvkdsvsdfv: .*$/',
+    1,
     "File not found, don’t break the XML",
 );
 
@@ -467,6 +485,7 @@ diag("Validate POD (Plain Old Documentation)");
 testcmd("podchecker $CMD", # {{{
     "",
     "$CMD pod syntax OK.\n",
+    0,
     "$CMD contains valid POD",
 );
 

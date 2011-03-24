@@ -127,6 +127,7 @@ diag("Testing -t/--type option...");
 likecmd("SUUID_LOGDIR=tmpuuids $CMD -t perl ohyes", # {{{
     "/^# File ID: $Templ\\n\$/",
     '/^$/',
+    0,
     "--type perl returns Perl comment",
 );
 
