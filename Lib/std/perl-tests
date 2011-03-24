@@ -185,9 +185,9 @@ sub file_data {
     # Return file content as a string {{{
     my $File = shift;
     my $Txt;
-    if (open(FP, "<", $File)) {
-        $Txt = join("", <FP>);
-        close(FP);
+    if (open(my $fp, "<", $File)) {
+        $Txt = join("", <$fp>);
+        close($fp);
         return($Txt);
     } else {
         return undef;
