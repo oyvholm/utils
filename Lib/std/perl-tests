@@ -190,7 +190,7 @@ sub file_data {
         close($fp);
         return($Txt);
     } else {
-        return undef;
+        return;
     }
     # }}}
 } # file_data()
