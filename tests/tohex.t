@@ -25,11 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-<<<<<<<
-our $CMD = "../tohex";
-=======
-our $CMD = 'STDexecDTS';
->>>>>>>
+our $CMD = '../tohex';
 
 our %Opt = (
 
@@ -140,11 +136,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "tohex-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'tohex-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -173,11 +165,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "tohex-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'tohex-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";

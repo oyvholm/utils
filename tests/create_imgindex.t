@@ -25,11 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-<<<<<<<
-our $CMD = "../create_imgindex";
-=======
-our $CMD = 'STDexecDTS';
->>>>>>>
+our $CMD = '../create_imgindex';
 
 our %Opt = (
 
@@ -140,11 +136,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "create_imgindex-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'create_imgindex-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -173,11 +165,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "create_imgindex-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'create_imgindex-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";

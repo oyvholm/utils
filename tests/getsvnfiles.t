@@ -25,11 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-<<<<<<<
-our $CMD = "../getsvnfiles";
-=======
-our $CMD = 'STDexecDTS';
->>>>>>>
+our $CMD = '../getsvnfiles';
 
 our %Opt = (
 
@@ -151,11 +147,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "getsvnfiles-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'getsvnfiles-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -184,11 +176,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "getsvnfiles-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'getsvnfiles-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
