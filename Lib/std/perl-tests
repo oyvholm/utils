@@ -11,13 +11,14 @@
 # file for legal stuff.
 #=======================================================================
 
+use strict;
+
 BEGIN {
     # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
 
-use strict;
 use Getopt::Long;
 
 $| = 1;
