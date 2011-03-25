@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # tests/suuid.t
@@ -11,22 +11,25 @@
 # file for legal stuff.
 #=======================================================================
 
+use strict;
+use warnings;
+
 BEGIN {
     use Test::More qw{no_plan};
     use lib "$ENV{HOME}/bin/src/suuid";
     use_ok("suuid");
 }
 
-use strict;
 use bigint;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
 our $CMD = "../suuid";
 our $cmdprogname = $CMD;
 $cmdprogname =~ s/^.*\/(.*?)$/$1/;
+$ENV{'SESS_UUID'} = "";
 
 our %Opt = (
 
@@ -41,17 +44,17 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.50";
+our $VERSION = '0.50';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "all|a" => \$Opt{'all'},
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "todo|t" => \$Opt{'todo'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'all|a' => \$Opt{'all'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'todo|t' => \$Opt{'todo'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -63,9 +66,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-$ENV{'SESS_UUID'} = "";
-
-diag(sprintf("========== Executing %s v%s ==========",
+diag(sprintf('========== Executing %s v%s ==========',
     $progname,
     $VERSION));
 
@@ -84,10 +85,11 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
 =pod
 
 testcmd("$CMD command", # {{{
-    <<END,
+    <<'END',
 [expected stdin]
 END
     "",
+    0,
     "description",
 );
 
@@ -95,28 +97,39 @@ END
 
 =cut
 
-diag("Testing -h (--help) option...");
+diag('Testing -h (--help) option...');
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
     '/^$/',
-    "Option -h prints help screen",
+    0,
+    'Option -h prints help screen',
 );
 
 # }}}
-diag("Testing -v (--verbose) option...");
+diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
-    "Option --version with -h returns version number and help screen",
+    0,
+    'Option --version with -h returns version number and help screen',
 );
 
 # }}}
-diag("Testing --version option...");
+diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
-    "Option --version returns version number",
+    0,
+    'Option --version returns version number',
 );
+
+diag("Testing return values...");
+likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
+likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
+likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
+testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
+testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
+testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 my $Lh = "[0-9a-fA-F]";
@@ -167,6 +180,7 @@ diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "No options (except -l) sends UUID to stdout",
 );
 
@@ -205,6 +219,7 @@ diag("Read the SUUID_LOGDIR environment variable...");
 likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "Read environment variable",
 );
 
@@ -227,6 +242,7 @@ diag("Read the SUUID_HOSTNAME environment variable...");
 likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "Read environment variable",
 );
 
@@ -249,6 +265,7 @@ diag("Testing -m (--random-mac) option...");
 likecmd("$CMD -m -l $Outdir", # {{{
     "/^$v1rand_templ\\n\$/s",
     '/^$/s',
+    0,
     "--random-mac option works",
 );
 
@@ -271,6 +288,7 @@ diag("Testing --raw option...");
 likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     '/^$/s',
+    0,
     "--raw option works",
 );
 
@@ -287,13 +305,13 @@ like(file_data($Outfile), # {{{
     ) . '\n<\/suuids>\n$/s',
     "Log contents after --raw is OK",
 );
-
 # }}}
 unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
 diag("Testing -t (--tag) option...");
 likecmd("$CMD -t snaddertag -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "-t (--tag) option",
 );
 
@@ -301,6 +319,7 @@ likecmd("$CMD -t snaddertag -l $Outdir", # {{{
 testcmd("$CMD -t schn\xfcffelhund -l $Outdir", # {{{
     "",
     "suuid: Tags have to be in UTF-8\n",
+    1,
     "Refuse non-UTF-8 tags",
 );
 
@@ -324,6 +343,7 @@ diag("Testing -c (--comment) option...");
 likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "-c (--comment) option",
 );
 
@@ -331,6 +351,7 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
     "",
     "suuid: Text used with --comment has to be in UTF-8\n",
+    1,
     "Refuse non-UTF-8 text to --comment option",
 );
 
@@ -354,6 +375,7 @@ diag("Testing -n (--count) option...");
 likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
     "/^($v1_templ\n){5}\$/s",
     '/^$/',
+    0,
     "-n (--count) option with comment and tag",
 );
 
@@ -373,11 +395,11 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-diag("Testing -v (--version) option...");
 diag("Testing -w (--whereto) option...");
 likecmd("$CMD -w o -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     '/^$/s',
+    0,
     "Output goes to stdout",
 );
 
@@ -385,6 +407,7 @@ likecmd("$CMD -w o -l $Outdir", # {{{
 likecmd("$CMD -w e -l $Outdir", # {{{
     '/^$/s',
     "/^$v1_templ\\n\$/s",
+    0,
     "Output goes to stderr",
 );
 
@@ -392,6 +415,7 @@ likecmd("$CMD -w e -l $Outdir", # {{{
 likecmd("$CMD -w eo -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     "/^$v1_templ\\n\$/s",
+    0,
     "Output goes to stdout and stderr",
 );
 
@@ -399,6 +423,7 @@ likecmd("$CMD -w eo -l $Outdir", # {{{
 likecmd("$CMD -w a -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     "/^$v1_templ\\n\$/s",
+    0,
     "Option -wa sends output to stdout and stderr",
 );
 
@@ -406,6 +431,7 @@ likecmd("$CMD -w a -l $Outdir", # {{{
 likecmd("$CMD -w n -l $Outdir", # {{{
     '/^$/s',
     '/^$/s',
+    0,
     "Output goes nowhere",
 );
 
@@ -416,6 +442,7 @@ unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
 likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "-t (--tag) option",
 );
 
@@ -441,27 +468,29 @@ chmod(0444, $Outfile); # Make the log file read-only
 likecmd("$CMD -l $Outdir", # {{{
     '/^$/s',
     "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
+    13,
     "Unable to write to the log file",
 );
 chmod($stat_array[2], $Outfile);
 
 # }}}
+
 todo_section:
 ;
 
 if ($Opt{'all'} || $Opt{'todo'}) {
-    diag("Running TODO tests..."); # {{{
+    diag('Running TODO tests...'); # {{{
 
     TODO: {
 
-local $TODO = "";
+local $TODO = '';
 # Insert TODO tests here.
 
     }
     # TODO tests }}}
 }
 
-diag("Testing finished.");
+diag('Testing finished.');
 
 if (defined($Outfile)) {
     unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
@@ -470,22 +499,22 @@ rmdir($Outdir) || warn("$progname: $Outdir: Cannot remove directory: $!\n");
 
 sub testcmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
-    $Txt =~ s/((-l |SUUID_LOGDIR=)tmp-suuid-t-)\d+-\d+/$1.../g;
-    my $TMP_STDERR = "suuid-stderr.tmp";
+    my $TMP_STDERR = 'suuid-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
@@ -494,27 +523,29 @@ sub testcmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return;
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
-    $Txt =~ s/((-l |SUUID_LOGDIR=)tmp-suuid-t-)\d+-\d+/$1.../g;
-    my $TMP_STDERR = "suuid-stderr.tmp";
+    my $TMP_STDERR = 'suuid-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
@@ -523,6 +554,8 @@ sub likecmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return;
     # }}}
 } # likecmd()
 
@@ -530,12 +563,13 @@ sub file_data {
     # Return file content as a string {{{
     my $File = shift;
     my $Txt;
-    if (open(FP, "<", $File)) {
-        $Txt = join("", <FP>);
-        close(FP);
+    if (open(my $fp, '<', $File)) {
+        local $/ = undef;
+        $Txt = <$fp>;
+        close($fp);
         return($Txt);
     } else {
-        return undef;
+        return;
     }
     # }}}
 } # file_data()
@@ -543,6 +577,7 @@ sub file_data {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -554,7 +589,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -587,6 +622,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
