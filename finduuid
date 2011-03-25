@@ -57,6 +57,7 @@ if ($Opt{'version'}) {
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my %uuid_list = ();
+my $exit_value = 1;
 
 while (<>) {
     chomp(my $Line = $_);
@@ -71,12 +72,15 @@ while (<>) {
                     $Scan =~ s/($Templ)/$uuid_list{lc($1)} = 1, ""/ge;
                 }
                 printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
+                $exit_value = 0;
             }
         } else {
             $Line =~ s/($Templ)/print_uuid($1)/ge;
         }
     }
 }
+
+exit($exit_value);
 
 sub print_uuid {
     # {{{
@@ -85,6 +89,7 @@ sub print_uuid {
     $Opt{'unique'} && defined($uuid_list{$lc_uuid}) && return("");
     printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $uuid);
     $uuid_list{$lc_uuid} = 1;
+    $exit_value = 0;
     return("");
     # }}}
 } # print_uuid()
@@ -105,7 +110,8 @@ sub usage {
     }
     print(<<END);
 
-Scan files for UUIDs.
+Scan files for UUIDs. Returns 0 if at least one UUID was found, 1 
+otherwise.
 
 Usage: $progname [options] [file [files [...]]]
 

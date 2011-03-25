@@ -122,7 +122,7 @@ testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 testcmd("$CMD </dev/null", # {{{
     "",
     "",
-    0,
+    1,
     "Read empty input",
 );
 
