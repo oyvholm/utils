@@ -33,6 +33,7 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = "0.00";
+my $exit_val = 0;
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -59,6 +60,8 @@ if ($#ARGV >= 0) {
 } else {
     print(process_file("-"));
 }
+
+exit($exit_val);
 
 sub process_file {
     # {{{
@@ -100,12 +103,14 @@ sub process_file {
                     . "\n";
             } else {
                 warn("$progname: $Filename: Cannot read file\n");
+                $exit_val = 1;
             }
         } else {
             msg(1, "$Filename: Ignoring non-file");
         }
     } else {
         warn("$progname: $Filename: Cannot read file status\n");
+        $exit_val = 1;
     }
     return($Retval);
     # }}}
