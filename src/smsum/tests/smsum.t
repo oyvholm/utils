@@ -25,11 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-<<<<<<<
-our $CMD = "../smsum";
-=======
-our $CMD = 'STDexecDTS';
->>>>>>>
+our $CMD = '../smsum';
 
 our %Opt = (
 
@@ -88,28 +84,39 @@ END
 
 =cut
 
-diag("Testing -h (--help) option...");
+diag('Testing -h (--help) option...');
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
     '/^$/',
-    "Option -h prints help screen",
+    0,
+    'Option -h prints help screen',
 );
 
 # }}}
-diag("Testing -v (--verbose) option...");
+diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
-    "Option --version with -h returns version number and help screen",
+    0,
+    'Option --version with -h returns version number and help screen',
 );
 
 # }}}
-diag("Testing --version option...");
+diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
-    "Option --version returns version number",
+    0,
+    'Option --version returns version number',
 );
+
+diag("Testing return values...");
+likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
+likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
+likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
+testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
+testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
+testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 
@@ -151,7 +158,6 @@ END
 diag("Testing -m (--with-mtime) option...");
 testcmd("$CMD -m files/dir1/*", # {{{
     <<END,
-<<<<<<<
 da39a3ee5e6b4b0d3255bfef95601890afd80709-d41d8cd98f00b204e9800998ecf8427e-0\tfiles/dir1/empty\t2008-09-22T00:10:24Z
 bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048\tfiles/dir1/random_2048\t2008-09-22T00:18:37Z
 1fffb088a74a48447ee612dcab91dacae86570ad-af6888a81369b7a1ecfbaf14791c5552-333\tfiles/dir1/random_333\t2008-09-22T00:10:06Z
@@ -161,64 +167,20 @@ c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfi
 END
     "smsum: files/dir1/chmod_0000: Cannot read file\n",
     "Read files from dir1/ with mtime",
-=======
-
-=cut
-
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
->>>>>>>
 );
 
 # }}}
-<<<<<<<
 likecmd("cat files/dir1/random_2048 | $CMD -m", # {{{
     '/^bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048\\t-\\t20\\d\\d-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-6]\\dZ\\n$/',
-=======
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
->>>>>>>
     '/^$/',
-<<<<<<<
     "Read data from stdin with mtime",
-=======
-    0,
-    'Option --version with -h returns version number and help screen',
->>>>>>>
 );
 
 # }}}
-<<<<<<<
-=======
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
->>>>>>>
 
-<<<<<<<
 chmod(0644, "files/dir1/chmod_0000") || warn("$progname: files/dir1/chmod_0000: Cannot chmod to 0644: $!\n");
 unlink(glob("files/dir1/*")) || warn("$progname: Cannot unlink() files in files/dir1/*: $!\n");
 rmdir("files/dir1") || warn("$progname: files/dir1: Cannot rmdir(): $!\n");
-=======
-diag("Testing return values...");
-likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
-likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
-likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
-testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
-testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
-testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
-
-# }}}
->>>>>>>
 
 todo_section:
 ;
@@ -248,11 +210,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "smsum-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'smsum-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -283,11 +241,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "smsum-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'smsum-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
