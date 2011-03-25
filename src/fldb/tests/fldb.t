@@ -83,6 +83,30 @@ END
 
 =cut
 
+diag("Testing -h (--help) option...");
+likecmd("$CMD -h", # {{{
+    '/  Show this help\./',
+    '/^$/',
+    "Option -h prints help screen",
+);
+
+# }}}
+diag("Testing -v (--verbose) option...");
+likecmd("$CMD -hv", # {{{
+    '/^\n\S+ v\d\.\d\d\n/s',
+    '/^$/',
+    "Option --version with -h returns version number and help screen",
+);
+
+# }}}
+diag("Testing --version option...");
+likecmd("$CMD --version", # {{{
+    '/^\S+ v\d\.\d\d\n/',
+    '/^$/',
+    "Option --version returns version number",
+);
+
+# }}}
 system("(cd files && tar xzf dir1.tar.gz 2>/dev/null)");
 
 diag("Testing safe_sql()...");
@@ -220,30 +244,6 @@ testcmd("$CMD -d \"Somewhat & weird < > yepp\" -xs files/dir1/random_2048", # {{
 END
     "",
     "Output short XML from random_2048 with weird description and mtime",
-);
-
-# }}}
-diag("Testing -h (--help) option...");
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    "Option -h prints help screen",
-);
-
-# }}}
-diag("Testing -v (--verbose) option...");
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    "Option --version with -h returns version number and help screen",
-);
-
-# }}}
-diag("Testing --version option...");
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    "Option --version returns version number",
 );
 
 # }}}
