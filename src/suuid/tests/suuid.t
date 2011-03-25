@@ -20,23 +20,12 @@ BEGIN {
     use_ok("suuid");
 }
 
-<<<<<<<
-use strict;
 use bigint;
-=======
->>>>>>>
 use Getopt::Long;
 
 local $| = 1;
 
 our $Debug = 0;
-<<<<<<<
-=======
-our $CMD = 'STDexecDTS';
-
-our %Opt = (
-
->>>>>>>
 our $CMD = "../suuid";
 our $cmdprogname = $CMD;
 $cmdprogname =~ s/^.*\/(.*?)$/$1/;
@@ -55,11 +44,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-<<<<<<<
-our $VERSION = "0.50";
-=======
-our $VERSION = '0.00';
->>>>>>>
+our $VERSION = '0.50';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -112,28 +97,39 @@ END
 
 =cut
 
-diag("Testing -h (--help) option...");
+diag('Testing -h (--help) option...');
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
     '/^$/',
-    "Option -h prints help screen",
+    0,
+    'Option -h prints help screen',
 );
 
 # }}}
-diag("Testing -v (--verbose) option...");
+diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
-    "Option --version with -h returns version number and help screen",
+    0,
+    'Option --version with -h returns version number and help screen',
 );
 
 # }}}
-diag("Testing --version option...");
+diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
-    "Option --version returns version number",
+    0,
+    'Option --version returns version number',
 );
+
+diag("Testing return values...");
+likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
+likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
+likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
+testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
+testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
+testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 my $Lh = "[0-9a-fA-F]";
@@ -446,32 +442,10 @@ like(file_data($Outfile), # {{{
             "<sess>27538da4-fc68-11dd-996d-000475e441b9<\\/sess>",
         "<\\/suuid>",
     ) . '\n<\/suuids>\n$/s',
-<<<<<<<
     "\$SESS_UUID envariable is logged",
-=======
-
-=cut
-
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
 );
 
 # }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
->>>>>>>
-);
-
-# }}}
-<<<<<<<
 diag("Test behaviour when unable to write to the log file...");
 my @stat_array = stat($Outfile);
 chmod(0444, $Outfile); # Make the log file read-only
@@ -479,24 +453,8 @@ likecmd("$CMD -l $Outdir", # {{{
     '/^$/s',
     "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
     "Unable to write to the log file",
-=======
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
->>>>>>>
 );
 chmod($stat_array[2], $Outfile);
-
-diag("Testing return values...");
-likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
-likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
-likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
-testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
-testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
-testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 
@@ -533,11 +491,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "suuid-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'suuid-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -568,11 +522,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-<<<<<<<
-    my $TMP_STDERR = "suuid-stderr.tmp";
-=======
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
->>>>>>>
+    my $TMP_STDERR = 'suuid-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
