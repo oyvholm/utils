@@ -79,6 +79,7 @@ testcmd("$CMD command", # {{{
 [expected stdin]
 END
     "",
+    0,
     "description",
 );
 
@@ -90,6 +91,7 @@ diag('Testing -h (--help) option...');
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
     '/^$/',
+    0,
     'Option -h prints help screen',
 );
 
@@ -98,6 +100,7 @@ diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
+    0,
     'Option --version with -h returns version number and help screen',
 );
 
@@ -106,8 +109,17 @@ diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
+    0,
     'Option --version returns version number',
 );
+
+diag("Testing return values...");
+likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
+likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
+likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
+testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
+testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
+testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 
@@ -117,6 +129,7 @@ if ($use_svn) {
     likecmd("svn mkdir $Tmptop", # {{{
         '/^A\s+tmp-std-t-.+$/s',
         '/^$/s',
+        0,
         "Create svn-controlled directory",
     );
     # }}}
@@ -128,6 +141,7 @@ mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
     '/GNU General Public License/s',
     '/^std: Warning: Undefined tags: filename\n$/s',
+    0,
     "One argument sends file to stdout",
 );
 
@@ -138,6 +152,7 @@ if ($use_svn) {
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
         "/^$v1_templ\\nA\\s+bashfile.+\$/s",
         '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
+        0,
         "Create bash script",
     );
     # }}}
@@ -145,6 +160,7 @@ if ($use_svn) {
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^$/',
+        0,
         "Create bash script",
     );
     # }}}
@@ -154,6 +170,7 @@ unlink("bashfile") || diag("WARNING: bashfile: Cannot delete file: $!\n");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
     "/^$v1_templ\\n\$/s",
     '/^$/',
+    0,
     "Create bash script with -l (--local)",
 );
 
@@ -162,6 +179,7 @@ ok(-x "bashfile", "bashfile is executable");
 $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
     '/^\d+ \S+Lib\/std\/bash\n$/s',
     '/^$/s',
+    0,
     "mergesvn property is set to bash template",
 );
 
@@ -170,6 +188,7 @@ diag("Check for unused tags...");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
     '/^.*Contains tests for the.*$/s',
     '/^std: Warning: Undefined tags: testcmd filename progname exec libdir\n$/s',
+    0,
     "Report unused tags",
 );
 
@@ -178,6 +197,7 @@ diag("Testing -f (--force) option...");
 likecmd("../$CMD bash bashfile", # {{{
     '/^$/s',
     '/^std: bashfile: File already exists, will not overwrite\n$/s',
+    1,
     "Create bash script, file already exists, don’t use --force",
 );
 
@@ -186,6 +206,7 @@ if ($use_svn) {
     likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
         "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
         '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+        0,
         "Overwrite bashfile with perl script using --force",
     );
     # }}}
@@ -193,6 +214,7 @@ if ($use_svn) {
     likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+        0,
         "Overwrite bashfile with perl script using --force",
     );
     # }}}
@@ -206,6 +228,7 @@ like(file_data("bashfile"), # {{{
 $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
     '/^\d+ \S+Lib\/std\/perl\n$/s',
     '/^$/s',
+    0,
     "mergesvn property is replaced with perl template",
 );
 
@@ -214,6 +237,7 @@ diag("Testing -T (--notag) option...");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -T uuid,year perl", # {{{
     '/STDuuidDTS.*STDyearDTS/s',
     '/^std: Warning: Undefined tags: filename uuid year\n.*$/s',
+    0,
     "Send perl script to stdout, don’t expand uuid and year tag",
 );
 
@@ -239,6 +263,7 @@ diag("Cleaning up temp files...");
 $use_svn && likecmd("svn revert $Tmptop", # {{{
     '/tmp-std-t/s',
     '/^$/s',
+    0,
     "svn revert tempdir",
 );
 
@@ -252,7 +277,7 @@ diag('Testing finished.');
 
 sub testcmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
     my $stderr_cmd = '';
     my $deb_str = $Opt{'debug'} ? ' --debug' : '';
     my $Txt = join('',
@@ -267,6 +292,7 @@ sub testcmd {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
@@ -275,13 +301,14 @@ sub testcmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
     return;
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
     my $stderr_cmd = '';
     my $deb_str = $Opt{'debug'} ? ' --debug' : '';
     my $Txt = join('',
@@ -296,6 +323,7 @@ sub likecmd {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
@@ -304,6 +332,7 @@ sub likecmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
     return;
     # }}}
 } # likecmd()

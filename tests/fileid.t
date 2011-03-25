@@ -80,6 +80,7 @@ testcmd("$CMD command", # {{{
 [expected stdin]
 END
     "",
+    0,
     "description",
 );
 
@@ -91,6 +92,7 @@ diag('Testing -h (--help) option...');
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
     '/^$/',
+    0,
     'Option -h prints help screen',
 );
 
@@ -99,6 +101,7 @@ diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
+    0,
     'Option --version with -h returns version number and help screen',
 );
 
@@ -107,14 +110,24 @@ diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
+    0,
     'Option --version returns version number',
 );
+
+diag("Testing return values...");
+likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
+likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
+likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
+testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
+testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
+testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 diag("Testing -t/--type option...");
 likecmd("SUUID_LOGDIR=tmpuuids $CMD -t perl ohyes", # {{{
     "/^# File ID: $Templ\\n\$/",
     '/^$/',
+    0,
     "--type perl returns Perl comment",
 );
 
@@ -144,7 +157,7 @@ diag('Testing finished.');
 
 sub testcmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
     my $stderr_cmd = '';
     my $deb_str = $Opt{'debug'} ? ' --debug' : '';
     my $Txt = join('',
@@ -159,6 +172,7 @@ sub testcmd {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
@@ -167,13 +181,14 @@ sub testcmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
     return;
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
     my $stderr_cmd = '';
     my $deb_str = $Opt{'debug'} ? ' --debug' : '';
     my $Txt = join('',
@@ -188,6 +203,7 @@ sub likecmd {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
@@ -196,6 +212,7 @@ sub likecmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
     return;
     # }}}
 } # likecmd()
