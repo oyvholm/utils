@@ -8,6 +8,8 @@
 #=======================================================================
 
 progname=build-git
+lockdir=$HOME/.Build-git.LOCK
+mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
 
 rcfile=$HOME/.build-gitrc
 # Directory where the git build happens
@@ -55,10 +57,15 @@ echo "use_configure  = \"$use_configure\""
 echo "configure_opts = \"$configure_opts\""
 echo
 
+myexit() {
+    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
+    exit $1
+}
+
 fetch_remotes() {
     git remote | grep -q '^origin$' || {
         echo $progname: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
-        exit 1;
+        myexit 1;
     }
     git remote | grep -q '^gitster$' || git remote add gitster git://github.com/gitster/git.git
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
@@ -87,27 +94,27 @@ print_timestamp() {
 
 [ -z "`git --version | grep '^git version '`" ] && {
     echo $progname: You need to have git installed to use this script. >&2;
-    exit 1;
+    myexit 1;
 }
 
 rmdir $builddir 2>/dev/null
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || {
         echo $progname: $builddir: Cannot create directory;
-        exit 1;
+        myexit 1;
     }
     rmdir $builddir
     echo ================= git clone =================
     git clone git://git.kernel.org/pub/scm/git/git.git $builddir
-    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
+    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
     fetch_remotes
 fi
-cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
-git checkout $local_master || { echo Cannot check out branch >&2; exit 1; }
+cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
+git checkout $local_master || { echo Cannot check out branch >&2; myexit 1; }
 if [ ! -e GIT-VERSION-GEN ]; then
     # Paranoia check
     echo $progname: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
-    exit 1
+    myexit 1
 fi
 echo ================= git status in `pwd` =================
 git status
@@ -135,7 +142,7 @@ dest=$pref/varprg/$vername
     echo; echo "Sorry, no new git(1) for you this time.";
     echo You’ll have to stick with `git --version` for now.;
     push_changes
-    exit 0;
+    myexit 0;
 }
 push_changes
 if [ "$use_configure" = "1" ]; then
@@ -159,7 +166,7 @@ else
 fi
 echo Compiling $vername
 echo ================= make $makeflags =================
-make prefix=$dest $makeflags all $make_doc_str $make_info_str || exit
+make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
 echo ================= make test =================
 make $makeflags test
 until test "$choice" = "y"; do
@@ -177,7 +184,7 @@ $sudo ln -svf ../varprg/$vername $pref/prg/git
 $sudo ln -sv /etc $pref/prg/git/etc
 cd $pref/bin || {
     echo $progname: $pref/bin: Cannot chdir, aborting >&2;
-    exit 1;
+    myexit 1;
 }
 $sudo ln -svf ../prg/git/bin/* .
 echo ================= Check that the thing works =================
@@ -186,14 +193,14 @@ localgit=`./git --version`
 globalgit=`git --version`
 if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
-    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; exit 1; }
+    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
     git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
     push_changes
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
     echo Expected version of git: $localgit
-    exit 1
+    myexit 1
 fi
 echo ================= symlink manpages =================
 cd $pref/prg/git/share/man
@@ -202,7 +209,7 @@ for f in $mansects; do
     $sudo mkdir -p $pref/share/man/$f
     cd $pref/share/man/$f || {
         echo $progname: $pref/share/man/$f: Could not chdir, aborting >&2;
-        exit 1;
+        myexit 1;
     }
     pwd
     $sudo ln -sf ../../../prg/git/share/man/$f/* .
@@ -217,3 +224,5 @@ if [ -d $pref/.git/. ]; then
     git commit -m "$commitmsg"
     git pa
 fi
+
+myexit 0
