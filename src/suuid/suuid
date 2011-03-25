@@ -100,7 +100,10 @@ if (!-d "$Opt{'logdir'}/.") {
 my $Logfile = "$Opt{'logdir'}/$Host.xml";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
-valid_utf8($Comment) || die("$progname: Text used with --comment has to be in UTF-8\n");
+if (!valid_utf8($Comment)) {
+    warn("$progname: Text used with --comment has to be in UTF-8\n");
+    exit(1);
+}
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
 D("cmd_editor = '$cmd_editor'");
 
@@ -119,7 +122,10 @@ if ($Comment eq "-") {
     unlink($tmpfile);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
-valid_utf8($Tag) || die("$progname: Tags have to be in UTF-8\n");
+if (!valid_utf8($Tag)) {
+    warn("$progname: Tags have to be in UTF-8\n");
+    exit(1);
+}
 my $Hostname = `hostname`; # FIXME
 chomp($Hostname);
 my $curr_dir = `/bin/pwd`; # FIXME
