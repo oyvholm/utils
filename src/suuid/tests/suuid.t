@@ -180,6 +180,7 @@ diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "No options (except -l) sends UUID to stdout",
 );
 
@@ -218,6 +219,7 @@ diag("Read the SUUID_LOGDIR environment variable...");
 likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "Read environment variable",
 );
 
@@ -240,6 +242,7 @@ diag("Read the SUUID_HOSTNAME environment variable...");
 likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "Read environment variable",
 );
 
@@ -262,6 +265,7 @@ diag("Testing -m (--random-mac) option...");
 likecmd("$CMD -m -l $Outdir", # {{{
     "/^$v1rand_templ\\n\$/s",
     '/^$/s',
+    0,
     "--random-mac option works",
 );
 
@@ -284,6 +288,7 @@ diag("Testing --raw option...");
 likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     '/^$/s',
+    0,
     "--raw option works",
 );
 
@@ -306,6 +311,7 @@ diag("Testing -t (--tag) option...");
 likecmd("$CMD -t snaddertag -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "-t (--tag) option",
 );
 
@@ -313,6 +319,7 @@ likecmd("$CMD -t snaddertag -l $Outdir", # {{{
 testcmd("$CMD -t schn\xfcffelhund -l $Outdir", # {{{
     "",
     "suuid: Tags have to be in UTF-8\n",
+    1,
     "Refuse non-UTF-8 tags",
 );
 
@@ -336,6 +343,7 @@ diag("Testing -c (--comment) option...");
 likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "-c (--comment) option",
 );
 
@@ -343,6 +351,7 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
     "",
     "suuid: Text used with --comment has to be in UTF-8\n",
+    1,
     "Refuse non-UTF-8 text to --comment option",
 );
 
@@ -366,6 +375,7 @@ diag("Testing -n (--count) option...");
 likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
     "/^($v1_templ\n){5}\$/s",
     '/^$/',
+    0,
     "-n (--count) option with comment and tag",
 );
 
@@ -389,6 +399,7 @@ diag("Testing -w (--whereto) option...");
 likecmd("$CMD -w o -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     '/^$/s',
+    0,
     "Output goes to stdout",
 );
 
@@ -396,6 +407,7 @@ likecmd("$CMD -w o -l $Outdir", # {{{
 likecmd("$CMD -w e -l $Outdir", # {{{
     '/^$/s',
     "/^$v1_templ\\n\$/s",
+    0,
     "Output goes to stderr",
 );
 
@@ -403,6 +415,7 @@ likecmd("$CMD -w e -l $Outdir", # {{{
 likecmd("$CMD -w eo -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     "/^$v1_templ\\n\$/s",
+    0,
     "Output goes to stdout and stderr",
 );
 
@@ -410,6 +423,7 @@ likecmd("$CMD -w eo -l $Outdir", # {{{
 likecmd("$CMD -w a -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
     "/^$v1_templ\\n\$/s",
+    0,
     "Option -wa sends output to stdout and stderr",
 );
 
@@ -417,6 +431,7 @@ likecmd("$CMD -w a -l $Outdir", # {{{
 likecmd("$CMD -w n -l $Outdir", # {{{
     '/^$/s',
     '/^$/s',
+    0,
     "Output goes nowhere",
 );
 
@@ -427,6 +442,7 @@ unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
 likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
+    0,
     "-t (--tag) option",
 );
 
@@ -452,6 +468,7 @@ chmod(0444, $Outfile); # Make the log file read-only
 likecmd("$CMD -l $Outdir", # {{{
     '/^$/s',
     "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
+    13,
     "Unable to write to the log file",
 );
 chmod($stat_array[2], $Outfile);
