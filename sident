@@ -86,6 +86,7 @@ END
 }
 
 my @Files = @ARGV;
+my $exit_val = 0;
 
 if (length($Opt{'filesfrom'})) {
     # {{{
@@ -168,11 +169,14 @@ for (@Files) {
         }
     } else {
         warn("$progname: $File: Cannot read file: $!\n");
+        $exit_val = 1;
     }
     # }}}
 }
 
 $Opt{'xml'} && print("</sident>\n");
+
+exit($exit_val);
 
 sub print_version {
     # Print program version {{{
