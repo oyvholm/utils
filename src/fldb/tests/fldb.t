@@ -216,6 +216,7 @@ INSERT INTO files (
 );
 END
     "",
+    0,
     "Output SQL with description",
 );
 
@@ -227,6 +228,7 @@ testcmd("$CMD -d Yess -xs files/dir1/random_2048", # {{{
 </fldb>
 END
     "",
+    0,
     "Output short XML from random_2048 with description and mtime",
 );
 
@@ -246,6 +248,7 @@ INSERT INTO files (
 );
 END
     "",
+    0,
     "Output SQL with description with space and apos",
 );
 
@@ -257,6 +260,7 @@ testcmd("$CMD -d \"Somewhat & weird < > yepp\" -xs files/dir1/random_2048", # {{
 </fldb>
 END
     "",
+    0,
     "Output short XML from random_2048 with weird description and mtime",
 );
 
@@ -281,6 +285,7 @@ likecmd("$CMD files/dir1/random_2048", # {{{
         '\);\n' .
         '$/',
     '/^$/',
+    0,
     "Output SQL from random_2048",
 );
 
@@ -301,6 +306,7 @@ INSERT INTO files (
 );
 END
     "",
+    0,
     "Output short SQL from dir1/random_2048",
 );
 
@@ -325,6 +331,7 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
         '<\/fldb>\n' .
         '$/',
     '/^$/',
+    0,
     "Output short XML from dir1/random_2048 with mtime",
 );
 
@@ -336,6 +343,7 @@ testcmd("$CMD -xs files/dir1/random_2048", # {{{
 </fldb>
 END
     "",
+    0,
     "Output short XML from dir1/random_2048 with mtime",
 );
 
