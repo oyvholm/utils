@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # tests/smsum.t
@@ -11,19 +11,21 @@
 # file for legal stuff.
 #=======================================================================
 
+use strict;
+use warnings;
+
 BEGIN {
     # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
 
-use strict;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
-our $CMD = "../smsum";
+our $CMD = '../smsum';
 
 our %Opt = (
 
@@ -38,17 +40,17 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.00';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "all|a" => \$Opt{'all'},
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "todo|t" => \$Opt{'todo'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'all|a' => \$Opt{'all'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'todo|t' => \$Opt{'todo'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -59,7 +61,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf("========== Executing %s v%s ==========",
+diag(sprintf('========== Executing %s v%s ==========',
     $progname,
     $VERSION));
 
@@ -70,10 +72,11 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
 =pod
 
 testcmd("$CMD command", # {{{
-    <<END,
+    <<'END',
 [expected stdin]
 END
     "",
+    0,
     "description",
 );
 
@@ -81,28 +84,39 @@ END
 
 =cut
 
-diag("Testing -h (--help) option...");
+diag('Testing -h (--help) option...');
 likecmd("$CMD -h", # {{{
     '/  Show this help\./',
     '/^$/',
-    "Option -h prints help screen",
+    0,
+    'Option -h prints help screen',
 );
 
 # }}}
-diag("Testing -v (--verbose) option...");
+diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
     '/^\n\S+ v\d\.\d\d\n/s',
     '/^$/',
-    "Option --version with -h returns version number and help screen",
+    0,
+    'Option --version with -h returns version number and help screen',
 );
 
 # }}}
-diag("Testing --version option...");
+diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
     '/^\S+ v\d\.\d\d\n/',
     '/^$/',
-    "Option --version returns version number",
+    0,
+    'Option --version returns version number',
 );
+
+diag("Testing return values...");
+likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
+likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
+likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
+testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
+testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
+testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 
@@ -111,6 +125,7 @@ testcmd("$CMD files/dir1.tar.gz", # {{{
 31226c9482573c4c323947858616ee174babdeb7-affeeed5dca3c6970e8a8eaf5277be90-3000\tfiles/dir1.tar.gz
 END
     "",
+    0,
     "Verify files/dir1.tar.gz",
 );
 
@@ -128,6 +143,7 @@ c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfi
 2113343435a9aadb458d576396d4f960071f8efd-6babaa47123f4f94ae59ed581a65090b-41\tfiles/dir1/year_2038
 END
     "smsum: files/dir1/chmod_0000: Cannot read file\n",
+    1,
     "Read all files in dir1/",
 );
 
@@ -137,6 +153,7 @@ testcmd("cat files/dir1/random_2048 | $CMD", # {{{
 bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048
 END
     "",
+    0,
     "Read data from stdin",
 );
 
@@ -152,6 +169,7 @@ c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfi
 2113343435a9aadb458d576396d4f960071f8efd-6babaa47123f4f94ae59ed581a65090b-41\tfiles/dir1/year_2038\t2038-01-19T03:14:07Z
 END
     "smsum: files/dir1/chmod_0000: Cannot read file\n",
+    1,
     "Read files from dir1/ with mtime",
 );
 
@@ -159,6 +177,7 @@ END
 likecmd("cat files/dir1/random_2048 | $CMD -m", # {{{
     '/^bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048\\t-\\t20\\d\\d-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-6]\\dZ\\n$/',
     '/^$/',
+    0,
     "Read data from stdin with mtime",
 );
 
@@ -172,36 +191,37 @@ todo_section:
 ;
 
 if ($Opt{'all'} || $Opt{'todo'}) {
-    diag("Running TODO tests..."); # {{{
+    diag('Running TODO tests...'); # {{{
 
     TODO: {
 
-local $TODO = "";
+local $TODO = '';
 # Insert TODO tests here.
 
     }
     # TODO tests }}}
 }
 
-diag("Testing finished.");
+diag('Testing finished.');
 
 sub testcmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
-    my $TMP_STDERR = "smsum-stderr.tmp";
+    my $TMP_STDERR = 'smsum-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
@@ -210,26 +230,29 @@ sub testcmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return;
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
-    my $TMP_STDERR = "smsum-stderr.tmp";
+    my $TMP_STDERR = 'smsum-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
@@ -238,6 +261,8 @@ sub likecmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return;
     # }}}
 } # likecmd()
 
@@ -245,12 +270,13 @@ sub file_data {
     # Return file content as a string {{{
     my $File = shift;
     my $Txt;
-    if (open(FP, "<", $File)) {
-        $Txt = join("", <FP>);
-        close(FP);
+    if (open(my $fp, '<', $File)) {
+        local $/ = undef;
+        $Txt = <$fp>;
+        close($fp);
         return($Txt);
     } else {
-        return undef;
+        return;
     }
     # }}}
 } # file_data()
@@ -258,6 +284,7 @@ sub file_data {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -269,7 +296,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -302,6 +329,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
