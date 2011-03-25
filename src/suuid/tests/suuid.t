@@ -27,6 +27,7 @@ our $Debug = 0;
 our $CMD = "../suuid";
 our $cmdprogname = $CMD;
 $cmdprogname =~ s/^.*\/(.*?)$/$1/;
+$ENV{'SESS_UUID'} = "";
 
 our %Opt = (
 
@@ -62,8 +63,6 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
-
-$ENV{'SESS_UUID'} = "";
 
 diag(sprintf("========== Executing %s v%s ==========",
     $progname,
@@ -287,7 +286,6 @@ like(file_data($Outfile), # {{{
     ) . '\n<\/suuids>\n$/s',
     "Log contents after --raw is OK",
 );
-
 # }}}
 unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
 diag("Testing -t (--tag) option...");
@@ -373,7 +371,6 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-diag("Testing -v (--version) option...");
 diag("Testing -w (--whereto) option...");
 likecmd("$CMD -w o -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
@@ -446,6 +443,7 @@ likecmd("$CMD -l $Outdir", # {{{
 chmod($stat_array[2], $Outfile);
 
 # }}}
+
 todo_section:
 ;
 
@@ -479,7 +477,6 @@ sub testcmd {
             ? " - $Desc"
             : ""
     );
-    $Txt =~ s/((-l |SUUID_LOGDIR=)tmp-suuid-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "suuid-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
@@ -508,7 +505,6 @@ sub likecmd {
             ? " - $Desc"
             : ""
     );
-    $Txt =~ s/((-l |SUUID_LOGDIR=)tmp-suuid-t-)\d+-\d+/$1.../g;
     my $TMP_STDERR = "suuid-stderr.tmp";
 
     if (defined($Exp_stderr) && !length($deb_str)) {
