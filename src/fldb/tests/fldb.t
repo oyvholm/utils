@@ -17,9 +17,9 @@ use warnings;
 BEGIN {
     push(@INC, "$ENV{'HOME'}/bin/src/fldb");
     use Test::More qw{no_plan};
-    use_ok(FLDBpg);
-    use_ok(FLDBsum);
-    use_ok(FLDButf);
+    use_ok('FLDBpg');
+    use_ok('FLDBsum');
+    use_ok('FLDButf');
 }
 
 use Getopt::Long;
