@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # tests/fldb.t
@@ -11,6 +11,9 @@
 # file for legal stuff.
 #=======================================================================
 
+use strict;
+use warnings;
+
 BEGIN {
     push(@INC, "$ENV{'HOME'}/bin/src/fldb");
     use Test::More qw{no_plan};
@@ -19,13 +22,16 @@ BEGIN {
     use_ok(FLDButf);
 }
 
-use strict;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
+<<<<<<<
 our $CMD = "../fldb";
+=======
+our $CMD = 'STDexecDTS';
+>>>>>>>
 
 our %Opt = (
 
@@ -40,17 +46,17 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.00';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "all|a" => \$Opt{'all'},
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "todo|t" => \$Opt{'todo'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'all|a' => \$Opt{'all'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'todo|t' => \$Opt{'todo'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -61,7 +67,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf("========== Executing %s v%s ==========",
+diag(sprintf('========== Executing %s v%s ==========',
     $progname,
     $VERSION));
 
@@ -72,10 +78,11 @@ if ($Opt{'todo'} && !$Opt{'all'}) {
 =pod
 
 testcmd("$CMD command", # {{{
-    <<END,
+    <<'END',
 [expected stdin]
 END
     "",
+    0,
     "description",
 );
 
@@ -306,15 +313,30 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
                 '<device>\d+<\/device> ' .
                 '<hostname>.*?<\/hostname> ' .
                 '<uid>\d+<\/uid> <gid>\d+<\/gid> ' .
+<<<<<<<
                 '<perm>0644<\/perm> ' .
             '<\/file>\n' .
         '<\/fldb>\n' .
         '$/',
+=======
+
+=cut
+
+diag('Testing -h (--help) option...');
+likecmd("$CMD -h", # {{{
+    '/  Show this help\./',
+>>>>>>>
     '/^$/',
+<<<<<<<
     "Output short XML from dir1/random_2048 with mtime",
+=======
+    0,
+    'Option -h prints help screen',
+>>>>>>>
 );
 
 # }}}
+<<<<<<<
 testcmd("$CMD -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>
@@ -323,48 +345,83 @@ testcmd("$CMD -xs files/dir1/random_2048", # {{{
 END
     "",
     "Output short XML from dir1/random_2048 with mtime",
+=======
+diag('Testing -v (--verbose) option...');
+likecmd("$CMD -hv", # {{{
+    '/^\n\S+ v\d\.\d\d\n/s',
+    '/^$/',
+    0,
+    'Option --version with -h returns version number and help screen',
+>>>>>>>
 );
 
 # }}}
+<<<<<<<
+=======
+diag('Testing --version option...');
+likecmd("$CMD --version", # {{{
+    '/^\S+ v\d\.\d\d\n/',
+    '/^$/',
+    0,
+    'Option --version returns version number',
+);
+>>>>>>>
 
+<<<<<<<
 chmod(0644, "files/dir1/chmod_0000") || warn("$progname: files/dir1/chmod_0000: Cannot chmod to 0644: $!\n");
 unlink(glob("files/dir1/*")) || warn("$progname: Cannot unlink() files in files/dir1/*: $!\n");
 rmdir("files/dir1") || warn("$progname: files/dir1: Cannot rmdir(): $!\n");
+=======
+diag("Testing return values...");
+likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
+likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
+likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
+testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
+testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
+testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
+
+# }}}
+>>>>>>>
 
 todo_section:
 ;
 
 if ($Opt{'all'} || $Opt{'todo'}) {
-    diag("Running TODO tests..."); # {{{
+    diag('Running TODO tests...'); # {{{
 
     TODO: {
 
-local $TODO = "";
+local $TODO = '';
 # Insert TODO tests here.
 
     }
     # TODO tests }}}
 }
 
-diag("Testing finished.");
+diag('Testing finished.');
 
 sub testcmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
+<<<<<<<
     my $TMP_STDERR = "fldb-stderr.tmp";
+=======
+    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
+>>>>>>>
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
@@ -373,26 +430,33 @@ sub testcmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return;
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
-    my ($Cmd, $Exp_stdout, $Exp_stderr, $Desc) = @_;
-    my $stderr_cmd = "";
-    my $deb_str = $Opt{'debug'} ? " --debug" : "";
-    my $Txt = join("",
+    my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    my $stderr_cmd = '';
+    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
+    my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
             ? " - $Desc"
-            : ""
+            : ''
     );
+<<<<<<<
     my $TMP_STDERR = "fldb-stderr.tmp";
+=======
+    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
+>>>>>>>
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
     like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
             like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
@@ -401,6 +465,8 @@ sub likecmd {
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
+    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return;
     # }}}
 } # likecmd()
 
@@ -408,12 +474,13 @@ sub file_data {
     # Return file content as a string {{{
     my $File = shift;
     my $Txt;
-    if (open(FP, "<", $File)) {
-        $Txt = join("", <FP>);
-        close(FP);
+    if (open(my $fp, '<', $File)) {
+        local $/ = undef;
+        $Txt = <$fp>;
+        close($fp);
         return($Txt);
     } else {
-        return undef;
+        return;
     }
     # }}}
 } # file_data()
@@ -421,6 +488,7 @@ sub file_data {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -432,7 +500,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -465,6 +533,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
