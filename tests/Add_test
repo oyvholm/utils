@@ -11,4 +11,4 @@
 
 name=$1
 std perl-tests $name.t -t progname=$name -t exec=../$name -t testcmd=$name.t
-mergesvn -s ../Lib/std/perl-tests $name.t
+chmod +x $name.t
