@@ -7,6 +7,9 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+lockdir=~/.pakk_log.lock
+mkdir $lockdir || { echo $0: $lockdir: Cannot create lockdir >&2; exit 1; }
+
 pakklogg() {
     echo Will commit: $(find $1 -printf "%TY-%Tm-%Td %TH:%TM size:%s %p")
     gzip -v $1
@@ -27,3 +30,4 @@ git commit --dry-run && {
     git commit -m "$logmsg$(echo; echo; suuid -t c_pakk_log,commit -c "$logmsg")"
 }
 git pa
+rmdir $lockdir || { echo $0: $lockdir: Cannot remove lockdir >&2; exit 1; }
