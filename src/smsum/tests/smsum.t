@@ -125,6 +125,7 @@ testcmd("$CMD files/dir1.tar.gz", # {{{
 31226c9482573c4c323947858616ee174babdeb7-affeeed5dca3c6970e8a8eaf5277be90-3000\tfiles/dir1.tar.gz
 END
     "",
+    0,
     "Verify files/dir1.tar.gz",
 );
 
@@ -142,6 +143,7 @@ c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfi
 2113343435a9aadb458d576396d4f960071f8efd-6babaa47123f4f94ae59ed581a65090b-41\tfiles/dir1/year_2038
 END
     "smsum: files/dir1/chmod_0000: Cannot read file\n",
+    1,
     "Read all files in dir1/",
 );
 
@@ -151,6 +153,7 @@ testcmd("cat files/dir1/random_2048 | $CMD", # {{{
 bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048
 END
     "",
+    0,
     "Read data from stdin",
 );
 
@@ -166,6 +169,7 @@ c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfi
 2113343435a9aadb458d576396d4f960071f8efd-6babaa47123f4f94ae59ed581a65090b-41\tfiles/dir1/year_2038\t2038-01-19T03:14:07Z
 END
     "smsum: files/dir1/chmod_0000: Cannot read file\n",
+    1,
     "Read files from dir1/ with mtime",
 );
 
@@ -173,6 +177,7 @@ END
 likecmd("cat files/dir1/random_2048 | $CMD -m", # {{{
     '/^bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048\\t-\\t20\\d\\d-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-6]\\dZ\\n$/',
     '/^$/',
+    0,
     "Read data from stdin with mtime",
 );
 
