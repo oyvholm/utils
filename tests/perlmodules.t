@@ -3,7 +3,7 @@
 #=======================================================================
 # perlmodules.t
 # File ID: a2e25ad4-56fe-11e0-8c2f-00023faf1383
-# Test suite for perlmodules(1).
+# Find missing Perl modules.
 #
 # Character set: UTF-8
 # ©opyleft 2011– Øyvind A. Holm <sunny@sunbase.org>
@@ -25,7 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-our $CMD = '../perlmodules';
+our $CMD = 'STDexecDTS';
 
 our %Opt = (
 
@@ -83,6 +83,70 @@ END
 # }}}
 
 =cut
+
+my %Modules = (
+
+    'CGI' => '',
+    'Cwd' => '',
+    'DBI' => 'libdbi-perl',
+    'Data::Dumper' => '',
+    'Date::Manip' => 'libdate-manip-perl',
+    'Digest::MD5' => '',
+    'Digest::SHA1' => 'libdigest-sha1-perl',
+    'Fcntl' => '',
+    'File::Copy' => '',
+    'File::Find' => '',
+    'File::Glob' => '',
+    'File::Path' => '',
+    'File::Spec' => '',
+    'File::Temp' => '',
+    'FileHandle' => '',
+    'Getopt::Long' => '',
+    'Getopt::Std' => '',
+    'GraphViz' => 'libgraphviz-perl',
+    'HTML::TreeBuilder' => 'libxml-treebuilder-perl libhtml-treebuilder-xpath-perl',
+    'HTML::WikiConverter' => 'libhtml-wikiconverter-mediawiki-perl',
+    'OSSP::uuid' => 'libossp-uuid-perl',
+    'POSIX' => '',
+    'Perl::Critic' => 'libtest-perl-critic-perl',
+    'Socket' => '',
+    'Time::HiRes' => '',
+    'Time::Local' => '',
+    'XML::Parser' => 'libxml-parser-perl',
+    'bigint' => '',
+    'constant' => '',
+    'vars' => '',
+
+);
+
+my @missing = ();
+my $outfile = './install-modules';
+
+unlink $outfile;
+for my $mod (keys %Modules) {
+    my $package = $Modules{$mod};
+    use_ok($mod) || length($package) && (push(@missing, $package));
+}
+
+if (scalar(@missing)) {
+    open(my $fp, '>', $outfile) || die("$progname: $outfile: Cannot create file: $!\n");
+    print($fp
+        join("\n",
+            '#!/bin/sh',
+            '',
+            '# Created by perlmodules.t',
+            '',
+            'sudo apt-get update',
+            'sudo apt-get install ',
+        )
+    );
+    print($fp join(' ', @missing));
+    print($fp "\n");
+    close($fp) or warn('close error');
+    chmod(0755, $outfile);
+    diag("\nExecute $outfile to install missing modules.\n\n");
+    diag("Contents of $outfile:\n==== BEGIN ====\n", file_data($outfile), "==== END ====\n\n");
+}
 
 todo_section:
 ;
@@ -197,7 +261,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the perlmodules(1) program.
+Find missing Perl modules.
 
 Options:
 
@@ -246,7 +310,7 @@ perlmodules.t [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Contains tests for the perlmodules(1) program.
+Find missing Perl modules.
 
 =head1 OPTIONS
 
