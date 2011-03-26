@@ -148,7 +148,7 @@ my $outfile = './install-modules';
 unlink $outfile;
 for my $mod (sort keys %Modules) {
     my $package = $Modules{$mod};
-    use_ok($mod) || length($package) && (push(@missing, $package));
+    use_ok($mod) || length($package) && push(@missing, $package);
 }
 
 if (scalar(@missing)) {
