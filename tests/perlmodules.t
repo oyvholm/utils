@@ -18,6 +18,12 @@ BEGIN {
     # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
+
+    use lib "$ENV{HOME}/bin/Lib/perllib";
+    use lib "$ENV{HOME}/bin/src/fldb";
+    use lib "$ENV{HOME}/bin/src/gpstools";
+    use lib "$ENV{HOME}/bin/src/suuid";
+
 }
 
 use Getopt::Long;
@@ -91,8 +97,15 @@ my %Modules = (
     'DBI' => 'libdbi-perl',
     'Data::Dumper' => '',
     'Date::Manip' => 'libdate-manip-perl',
-    'Digest::MD5' => '',
+    'Digest::CRC' => 'libdigest-crc-perl',
+    'Digest::MD5' => 'libdigest-md5-file-perl',
     'Digest::SHA1' => 'libdigest-sha1-perl',
+    'Env' => '',
+    'Exporter' => '',
+    'FLDBdebug' => '', # mine
+    'FLDBpg' => '', # mine
+    'FLDBsum' => '', # mine
+    'FLDButf' => '', # mine
     'Fcntl' => '',
     'File::Copy' => '',
     'File::Find' => '',
@@ -101,6 +114,11 @@ my %Modules = (
     'File::Spec' => '',
     'File::Temp' => '',
     'FileHandle' => '',
+    'GPST' => '', # mine
+    'GPSTdate' => '', # mine
+    'GPSTdebug' => '', # mine
+    'GPSTgeo' => '', # mine
+    'GPSTxml' => '', # mine
     'Getopt::Long' => '',
     'Getopt::Std' => '',
     'GraphViz' => 'libgraphviz-perl',
@@ -110,11 +128,16 @@ my %Modules = (
     'POSIX' => '',
     'Perl::Critic' => 'libtest-perl-critic-perl',
     'Socket' => '',
+    'Test::More' => '',
     'Time::HiRes' => '',
     'Time::Local' => '',
     'XML::Parser' => 'libxml-parser-perl',
     'bigint' => '',
     'constant' => '',
+    'strict' => '',
+    'suncgi' => '', # mine
+    'suuid' => '', # mine
+    'utf8' => '',
     'vars' => '',
 
 );
@@ -123,7 +146,7 @@ my @missing = ();
 my $outfile = './install-modules';
 
 unlink $outfile;
-for my $mod (keys %Modules) {
+for my $mod (sort keys %Modules) {
     my $package = $Modules{$mod};
     use_ok($mod) || length($package) && (push(@missing, $package));
 }
