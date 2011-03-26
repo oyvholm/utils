@@ -5,4 +5,4 @@
 for f in `sqlite3 $1 .tables`; do
   echo ==== $f
   sqlite3 -line $1 "SELECT * FROM $f"
-done
+done | less
