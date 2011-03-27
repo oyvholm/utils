@@ -165,8 +165,8 @@ if (scalar(@missing)) {
     );
     print($fp join(' ', @missing));
     print($fp "\n");
-    close($fp) or warn('close error');
-    chmod(0755, $outfile);
+    ok(close($fp), "Close $outfile");
+    ok(chmod(0755, $outfile), "Make $outfile executable");
     diag("\nExecute $outfile to install missing modules.\n\n");
     diag("Contents of $outfile:\n==== BEGIN ====\n", file_data($outfile), "==== END ====\n\n");
 }

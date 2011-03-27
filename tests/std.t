@@ -166,7 +166,7 @@ if ($use_svn) {
     # }}}
 }
 ok(-e "bashfile", "bashfile exists");
-unlink("bashfile") || diag("WARNING: bashfile: Cannot delete file: $!\n");
+ok(unlink('bashfile'), 'Remove bashfile');
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
     "/^$v1_templ\\n\$/s",
     '/^$/',
@@ -268,10 +268,10 @@ $use_svn && likecmd("svn revert $Tmptop", # {{{
 );
 
 # }}}
-unlink("$Tmptop/$suuid_file") || warn("$progname: $Tmptop/$suuid_file: Cannot delete file: $!");
-rmdir("$Tmptop/tmpuuids") || warn("$progname: rmdir('$Tmptop/tmpuuids'): $!");
-unlink("$Tmptop/bashfile") || warn("$progname: $Tmptop/bashfile: Cannot delete file: $!");
-rmdir($Tmptop) || warn("$progname: rmdir('$Tmptop'): $!");
+ok(unlink("$Tmptop/$suuid_file"), "unlink('$Tmptop/$suuid_file')");
+ok(rmdir("$Tmptop/tmpuuids"), "rmdir('$Tmptop/tmpuuids')");
+ok(unlink("$Tmptop/bashfile"), "unlink('$Tmptop/bashfile')");
+ok(rmdir($Tmptop), "rmdir('$Tmptop')");
 
 diag('Testing finished.');
 

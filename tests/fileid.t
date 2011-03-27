@@ -63,7 +63,6 @@ if ($Opt{'version'}) {
 
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
-mkdir("tmpuuids") || die("$progname: Cannot create directory: $!");
 
 diag(sprintf('========== Executing %s v%s ==========',
     $progname,
@@ -123,6 +122,7 @@ testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
 testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
+ok(mkdir("tmpuuids"), 'mkdir tmpuuids');
 diag("Testing -t/--type option...");
 likecmd("SUUID_LOGDIR=tmpuuids $CMD -t perl ohyes", # {{{
     "/^# File ID: $Templ\\n\$/",
@@ -151,8 +151,8 @@ local $TODO = '';
 }
 
 diag("Cleaning up...");
-unlink($uuid_tmpfile) || warn("$progname: $uuid_tmpfile: Cannot remove file: $!\n");
-rmdir("tmpuuids") || warn("$progname: Cannot rmdir(tmpuuids): $!\n");
+ok(unlink($uuid_tmpfile), "Remove $uuid_tmpfile");
+ok(rmdir("tmpuuids"), 'rmdir tmpuuids');
 diag('Testing finished.');
 
 sub testcmd {
