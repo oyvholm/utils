@@ -121,7 +121,16 @@ testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
 testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
-system("(cd files && tar xzf dir1.tar.gz 2>/dev/null)");
+chdir('files') or die("$progname: files: Cannot chdir(): $!\n");
+likecmd('tar xzf dir1.tar.gz', # {{{
+    '/^$/',
+    '/.*/',
+    0,
+    "Extract dir1.tar.gz",
+);
+
+# }}}
+chdir('..') or die("$progname: ..: Cannot chdir(): $!\n");
 
 diag("Testing safe_sql()...");
 is(safe_sql(""), # {{{
@@ -349,9 +358,9 @@ END
 
 # }}}
 
-chmod(0644, "files/dir1/chmod_0000") || warn("$progname: files/dir1/chmod_0000: Cannot chmod to 0644: $!\n");
-unlink(glob("files/dir1/*")) || warn("$progname: Cannot unlink() files in files/dir1/*: $!\n");
-rmdir("files/dir1") || warn("$progname: files/dir1: Cannot rmdir(): $!\n");
+ok(chmod(0644, "files/dir1/chmod_0000"), "chmod(0644, 'files/dir1/chmod_0000')");
+ok(unlink(glob("files/dir1/*")), 'Delete files in files/dir1/*');
+ok(rmdir("files/dir1"), 'rmdir files/dir1');
 
 todo_section:
 ;
