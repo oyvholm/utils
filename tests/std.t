@@ -258,7 +258,7 @@ local $TODO = '';
     # TODO tests }}}
 }
 
-chdir("..") || warn("$progname: Cannot 'chdir ..': $!");
+chdir("..") || die("$progname: Cannot 'chdir ..': $!");
 diag("Cleaning up temp files...");
 $use_svn && likecmd("svn revert $Tmptop", # {{{
     '/tmp-std-t/s',
