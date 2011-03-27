@@ -200,7 +200,14 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-system("$CMD -l $Outdir >/dev/null");
+testcmd("$CMD -l $Outdir >/dev/null", # {{{
+    '',
+    '',
+    0,
+    "Redirect stdout to /dev/null",
+);
+
+# }}}
 like(file_data($Outfile), # {{{
     '/^' . $xml_header . "(" . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
@@ -214,7 +221,7 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Read the SUUID_LOGDIR environment variable...");
 likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
     "/^$v1_templ\n\$/s",
@@ -237,7 +244,7 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Read the SUUID_HOSTNAME environment variable...");
 likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -260,7 +267,7 @@ like(file_data("$Outdir/urk13579kru.xml"), # {{{
 );
 
 # }}}
-unlink("$Outdir/urk13579kru.xml") || warn("$progname: $Outdir/urk13579kru.xml: Cannot delete file: $!\n");
+ok(unlink("$Outdir/urk13579kru.xml"), "Delete $Outdir/urk13579kru.xml");
 diag("Testing -m (--random-mac) option...");
 likecmd("$CMD -m -l $Outdir", # {{{
     "/^$v1rand_templ\\n\$/s",
@@ -283,7 +290,7 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Testing --raw option...");
 likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
@@ -306,7 +313,7 @@ like(file_data($Outfile), # {{{
     "Log contents after --raw is OK",
 );
 # }}}
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Testing -t (--tag) option...");
 likecmd("$CMD -t snaddertag -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -338,7 +345,7 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Testing -c (--comment) option...");
 likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -370,7 +377,7 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Testing -n (--count) option...");
 likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
     "/^($v1_templ\n){5}\$/s",
@@ -438,7 +445,7 @@ likecmd("$CMD -w n -l $Outdir", # {{{
 # }}}
 diag("Testing -q (--quiet) option...");
 diag("Test logging of \$SESS_UUID environment variable...");
-unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+ok(unlink($Outfile), "Delete $Outfile");
 likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
@@ -464,7 +471,7 @@ like(file_data($Outfile), # {{{
 # }}}
 diag("Test behaviour when unable to write to the log file...");
 my @stat_array = stat($Outfile);
-chmod(0444, $Outfile); # Make the log file read-only
+ok(chmod(0444, $Outfile), "Make $Outfile read-only");
 likecmd("$CMD -l $Outdir", # {{{
     '/^$/s',
     "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
@@ -493,9 +500,9 @@ local $TODO = '';
 diag('Testing finished.');
 
 if (defined($Outfile)) {
-    unlink($Outfile) || warn("$progname: $Outfile: Cannot delete file: $!\n");
+    ok(unlink($Outfile), "Delete $Outfile");
 }
-rmdir($Outdir) || warn("$progname: $Outdir: Cannot remove directory: $!\n");
+ok(rmdir($Outdir), "rmdir $Outdir");
 
 sub testcmd {
     # {{{
