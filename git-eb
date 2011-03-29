@@ -6,9 +6,11 @@
 # Create new and unconnected branch
 # usage: git eb <newbranch>
 
+logmsg="Initial empty commit"
+test -z "$2" || logmsg="$2"
 [ -z "$1" ] && { echo "usage: git eb <newbranch>" >&2; exit 1; }
 [ -d ".git/." ] || { echo "git-eb: has to be executed from the top level of the tree" >&2; exit 1; }
 [ -e ".git/refs/heads/$1" ] && { echo "git-eb: ref \"$1\" already exists" >&2; exit 1; }
 git symbolic-ref HEAD refs/heads/"$1"
 rm -f .git/index
-git commit --allow-empty -m "Initial empty commit`echo; echo; suuid -t commit,git-eb -c "Initial commit"`"
+git commit --allow-empty -m "$logmsg`echo; echo; suuid -t commit,git-eb -c "$logmsg"`"
