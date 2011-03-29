@@ -92,6 +92,7 @@ END
 
 my %Modules = (
 
+    'Authen::SASL' => 'libauthen-sasl-perl',
     'CGI' => '',
     'Cwd' => '',
     'DBI' => 'libdbi-perl',
@@ -125,8 +126,10 @@ my %Modules = (
     'HTML::Template' => 'libhtml-template-perl',
     'HTML::TreeBuilder' => 'libxml-treebuilder-perl libhtml-treebuilder-xpath-perl',
     'HTML::WikiConverter' => 'libhtml-wikiconverter-mediawiki-perl',
+    'MIME::Base64' => 'libmime-base64-urlsafe-perl',
     'Module::Starter' => 'libmodule-starter-perl',
     'Module::Starter::Plugin::CGIApp' => 'libmodule-starter-plugin-cgiapp-perl',
+    'Net::SMTP::SSL' => 'libnet-smtp-ssl-perl',
     'OSSP::uuid' => 'libossp-uuid-perl',
     'POSIX' => '',
     'Perl::Critic' => 'libtest-perl-critic-perl',
