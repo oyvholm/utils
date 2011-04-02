@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#=======================================================================
+# git-all-blobs
+# File ID: fcc2d334-5b41-11e0-a1bf-00023faf1383
+# Extract all blobs to blob-dir/
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+mkdir blob-dir
+rm bad-blobs.txt
+for f in $( \
+    git log --raw --abbrev=40 --all | \
+    grep ^: | \
+    cut -f 3-4 -d ' ' | \
+    fmt -1 | \
+    sort -u | \
+    grep -v 0000000000000000000000000000000000000000 \
+); do
+    echo $f
+    git show $f >blob-dir/$f || echo $f >>bad-blobs.txt
+done
