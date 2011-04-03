@@ -33,7 +33,7 @@ fi
 
 git log HEAD..HEAD >/dev/null 2>&1
 if [ "$?" = "0" ]; then
-    git log --name-status --decorate=short -C -C -M -M "$@"
+    git log --name-status --decorate=short -C -M "$@"
     exit
 fi
 
