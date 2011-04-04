@@ -11,7 +11,7 @@ cmd=$1
 shift
 for ff in "$@"; do
     if [ -f "$ff" ]; then
-        cp -p $ff $ff.filt-bck
+        # cp -p $ff $ff.filt-bck
         cat "$ff" | $cmd >filt.tmp
         chmod --reference "$ff" filt.tmp
         mv -v filt.tmp "$ff"
