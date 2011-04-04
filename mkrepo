@@ -45,7 +45,7 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'directory'} =~ /[^a-z0-9\-_\.]/ &&
+$Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
     die("$progname: $Opt{'directory'}: Invalid characters in --directory argument\n");
 
 my $url = 'sunny@git.sunbase.org';
@@ -62,7 +62,7 @@ defined($ARGV[0]) || die("$progname: No repo name specified, see --help\n");
 my $repo = $ARGV[0];
 $repo =~ s/(.*)\.git$/$1/i;
 my $rg = "$dir/$repo.git";
-$repo =~ /[^a-z0-9\-_\.]/ && die("$progname: $repo: Name contains invalid characters\n");
+$repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid characters\n");
 system("ssh", $url, "mkdir $rg && git init --bare $rg");
 if ($Opt{'create-remote'}) {
     system("git", "remote", "add", "sunbase", "$url:$rg");
