@@ -28,7 +28,7 @@ ls *.scrlog *.timing 2>/dev/null | grep -q . || { echo $0: No files found to pac
 for f in *.scrlog *.timing; do
     file=$f
     uuid=$(echo $f | finduuid)
-    ps auxwOT | grep -v "grep $uuid" | grep $uuid || pakklogg $file
+    ps auxwOT | grep -v "grep $uuid" | grep -q $uuid || pakklogg $file
 done
 
 git commit --dry-run && {
