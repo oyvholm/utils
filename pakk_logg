@@ -14,6 +14,7 @@ pakklogg() {
     echo Will commit: $(find $1 -printf "%TY-%Tm-%Td %TH:%TM size:%s %p")
     gzip -v $1
     git add $1.gz
+    echo
 }
 
 rm_lockdir() {
