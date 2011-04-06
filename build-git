@@ -67,18 +67,22 @@ fetch_remotes() {
         echo $progname: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
         myexit 1;
     }
+    git remote | grep -q '^Spread$' || git remote add Spread sunny@git.sunbase.org:/home/sunny/Git-spread/git.git
     git remote | grep -q '^gitster$' || git remote add gitster git://github.com/gitster/git.git
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
     git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git.git
     echo ================= git fetch =================
     # git fetch --all arrived in v1.6.6, and that’s too recent to use.
-    for f in origin gitster github sunbase; do
+    for f in origin gitster Spread github sunbase; do
         echo ===== $f =====
         git fetch $f
     done
 }
 
 push_changes() {
+    echo ==== push changes to Spread ====
+    git push -f Spread $local_master html maint man next pu todo
+    git push --tags Spread
     echo ==== push changes to github ====
     git push -f github $local_master html maint man next pu todo
     git push --tags github
