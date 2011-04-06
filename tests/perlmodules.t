@@ -159,12 +159,12 @@ if (scalar(@missing)) {
             '',
             '# Created by perlmodules.t',
             '',
-            'sudo apt-get update',
-            'sudo apt-get install ',
+            "sudo apt-get update\n",
         )
     );
-    print($fp join(' ', @missing));
-    print($fp "\n");
+    for my $m (@missing) {
+        print($fp "sudo apt-get install $m\n");
+    }
     ok(close($fp), "Close $outfile");
     ok(chmod(0755, $outfile), "Make $outfile executable");
     diag("\nExecute $outfile to install missing modules.\n\n");
