@@ -110,14 +110,6 @@ likecmd("$CMD --version", # {{{
     'Option --version returns version number',
 );
 
-diag("Testing return values...");
-likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
-likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
-likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
-testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
-testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
-testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
-
 # }}}
 
 todo_section:
