@@ -15,7 +15,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
 
