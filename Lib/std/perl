@@ -56,6 +56,7 @@ while (<>) {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -94,6 +95,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
