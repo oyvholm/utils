@@ -13,4 +13,3 @@
 /usr/bin/reset
 stty sane eof ^D
 printf "\x1b[0m"
-[ -x ~/bin/kbd ] && ~/bin/kbd
