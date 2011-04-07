@@ -128,6 +128,7 @@ my %Modules = (
     'HTML::Template' => 'libhtml-template-perl',
     'HTML::TreeBuilder' => 'libxml-treebuilder-perl libhtml-treebuilder-xpath-perl',
     'HTML::WikiConverter' => 'libhtml-wikiconverter-mediawiki-perl',
+    'IO::Handle' => '',
     'Image::ExifTool' => 'libimage-exiftool-perl',
     'MIME::Base64' => 'libmime-base64-urlsafe-perl',
     'Module::Starter' => 'libmodule-starter-perl',
