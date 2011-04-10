@@ -14,6 +14,6 @@ if test "$1" = "-D"; then
     exit
 fi
 
-for f in `git fsck --lost-found | grep "dangling commit" | cut -f 3 -d ' '`; do
+for f in `git fsck --lost-found | tee dangling-result.tmp | grep "dangling commit" | cut -f 3 -d ' '`; do
     git branch commit-$f $f && echo created branch at $f
 done
