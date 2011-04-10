@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# File ID: 30375978-63a4-11e0-9d08-00023faf1383
+
+test -e /surkle.mrk || { echo Skal kjøres på surkle. >&2; exit 1; }
+
+unset bw
+test -z "$1" || bw=" --bwlimit=$1"
+echo bw = \"$bw\"
+
+rsync -avP$bw sunny@sunbase.org:dl/til_surkle/ ~/dl/fra_linode/
