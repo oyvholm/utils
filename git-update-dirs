@@ -29,6 +29,7 @@ our %Opt = (
     'push' => 0,
     'recursive' => 0,
     'submodule' => 0,
+    'test' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -49,6 +50,7 @@ GetOptions(
     "push|P" => \$Opt{'push'},
     "recursive|r" => \$Opt{'recursive'},
     "submodule|s" => \$Opt{'submodule'},
+    "test|t" => \$Opt{'test'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -66,6 +68,7 @@ my @err_compress = ();
 my @err_fetch = ();
 my @err_pull = ();
 my @err_push = ();
+my @err_test = ();
 my @err_updsub = ();
 
 if ($Opt{'recursive'}) {
@@ -81,6 +84,16 @@ LOOP: for my $f (@Dirs) {
         if (!chdir($f)) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
+        }
+        if ($Opt{'test'}) {
+            print("==== git fsck ====\n");
+            system("git", "fsck") && (
+                check_sig($?) || (
+                    push(@err_test, $f),
+                    warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
+                    next LOOP
+                )
+            );
         }
         if ($Opt{'fetch'}) {
             print("==== git remote -v update -p ====\n");
@@ -114,6 +127,7 @@ scalar(@err_pull) && print("$progname: Unable to pull from: " . join(" ", @err_p
 scalar(@err_push) && print("$progname: Unable to push from: " . join(" ", @err_push) . "\n");
 scalar(@err_updsub) && print("$progname: Unable to update submodules in: " . join(" ", @err_updsub) . "\n");
 scalar(@err_compress) && print("$progname: Unable to compress: " . join(" ", @err_compress) . "\n");
+scalar(@err_test) && print("$progname: Error in git fsck: " . join(" ", @err_test) . "\n");
 
 sub check_sig {
     my $retval = shift;
@@ -155,6 +169,8 @@ Options:
     Update all repositories recursively under the current directory
   -s, --submodule
     Update submodules if .gitmodules is found.
+  -t, --test
+    Test integrity of local repositories by running "git fsck".
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
