@@ -82,10 +82,8 @@ fetch_remotes() {
 push_changes() {
     echo ==== push changes to Spread ====
     git push -f Spread $local_master html maint man next pu todo
-    git push --tags Spread
     echo ==== push changes to github ====
     git push -f github $local_master html maint man next pu todo
-    git push --tags github
     echo ==== push changes to sunbase ====
     git push -f sunbase $local_master html maint man next pu todo
     git push --tags sunbase
