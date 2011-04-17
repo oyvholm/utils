@@ -49,9 +49,23 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+my $json = '';
+
+if (scalar(@ARGV)) {
+    $json = `curl http://github.com/api/v2/json/repos/show/$ARGV[0]/network`;
+} else {
+    local $/ = undef;
+    $json = <STDIN>;
 }
+
+$json =~ s{
+    "url":"([^"]+?)"
+    .*?
+    "owner":"([^"]+?)"
+}{
+    my ($url, $owner) = ($1, $2);
+    printf("git remote add github/%s %s\n", $owner, $url);
+}gsex;
 
 sub print_version {
     # Print program version {{{
@@ -70,7 +84,10 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] [user/repository]
+
+If user/repository is specified, get info from GitHub, otherwise read 
+JSON from stdin. Needs curl(1).
 
 Options:
 
