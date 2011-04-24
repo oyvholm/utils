@@ -8,10 +8,11 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+test "$1" = "-p" && { p_str=-p; shift; }
 ext=.git-logdiff.tmp
 c1=$(git log -1 --format=format:%h $1)
 c2=$(git log -1 --format=format:%h $2)
-git log --raw --format=fuller --date=iso $c1 >/tmp/$c1$ext
-git log --raw --format=fuller --date=iso $c2 >/tmp/$c2$ext
+git log --raw --format=fuller --date=iso $p_str $c1 >/tmp/$c1$ext
+git log --raw --format=fuller --date=iso $p_str $c2 >/tmp/$c2$ext
 vimdiff /tmp/{$c1,$c2}$ext
 rm /tmp/{$c1,$c2}$ext
