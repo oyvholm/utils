@@ -4,7 +4,7 @@
 
 test -d /n900/. && sudo=sudo || unset sudo
 while :; do
-    $sudo ping 193.212.1.10
+    $sudo ping 178.79.142.16
     sleep 1
     echo ============================================
 done
