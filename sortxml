@@ -22,6 +22,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'reverse' => 0,
     'sort' => "",
     'verbose' => 0,
     'version' => 0,
@@ -37,6 +38,7 @@ GetOptions(
 
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "reverse|r" => \$Opt{'reverse'},
     "sort|s=s" => \$Opt{'sort'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -68,7 +70,7 @@ while (my $Curr = <>) {
                 $buf = "";
             }
         }
-        print(sort(@Data));
+        print($Opt{'reverse'} ? reverse sort(@Data) : sort(@Data));
         print($buf);
         last;
     } else {
@@ -100,6 +102,8 @@ Options:
 
   -h, --help
     Show this help.
+  -r, --reverse
+    Sort in reverse order.
   -s X, --sort X
     Sort file using element X.
   -v, --verbose

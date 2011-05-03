@@ -188,6 +188,75 @@ END
 );
 
 # }}}
+diag("Test reverse sorting...");
+testcmd("$CMD -s b -r sortxml-files/a.xml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE a [
+<!ELEMENT a (b)+>
+<!ELEMENT b (c , d?)>
+<!ELEMENT c (#PCDATA)>
+<!ELEMENT d (#PCDATA)>
+]>
+<a>
+  <b>
+    <c>zsd</c>
+  </b>
+  <b>
+    <c>ggg</c>
+    <d>pdfg</d>
+  </b>
+  <b>
+    <c>ggg</c>
+    <d>fgh</d>
+  </b>
+  <b>
+    <c>bbb</c>
+    <d>gurgle</d>
+  </b>
+  <b>
+    <c>ba</c>
+  </b>
+  <b>
+    <c>add</c>
+  </b>
+  <b>
+    <c>abc</c>
+    <d>dsfv</d>
+  </b>
+</a>
+END
+    "",
+    0,
+    "Reverse sort XML document",
+);
+
+# }}}
+testcmd("$CMD -s b -r sortxml-files/oneliners.xml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE a [
+<!ELEMENT a (b)+>
+<!ELEMENT b (c , d?)>
+<!ELEMENT c (#PCDATA)>
+<!ELEMENT d (#PCDATA)>
+]>
+<a>
+  <b> <c>zsd</c> </b>
+  <b> <c>ggg</c> <d>pdfg</d> </b>
+  <b> <c>ggg</c> <d>fgh</d> </b>
+  <b> <c>bbb</c> <d>gurgle</d> </b>
+  <b> <c>ba</c> </b>
+  <b> <c>add</c> </b>
+  <b> <c>abc</c> <d>dsfv</d> </b>
+</a>
+END
+    "",
+    0,
+    "Reverse sort onelined XML",
+);
+
+# }}}
 
 todo_section:
 ;
