@@ -220,7 +220,7 @@ if ($use_svn) {
     # }}}
 }
 like(file_data("bashfile"), # {{{
-    qr/perl -w/s,
+    qr/use Getopt::Long/s,
     "Contents of bashfile is replaced"
 );
 
