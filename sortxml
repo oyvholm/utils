@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # sortxml
@@ -12,9 +12,10 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
 
@@ -23,7 +24,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'reverse' => 0,
-    'sort' => "",
+    'sort' => '',
     'verbose' => 0,
     'version' => 0,
 
@@ -31,17 +32,17 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.00';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "reverse|r" => \$Opt{'reverse'},
-    "sort|s=s" => \$Opt{'sort'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'reverse|r' => \$Opt{'reverse'},
+    'sort|s=s' => \$Opt{'sort'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -53,7 +54,7 @@ if ($Opt{'version'}) {
 }
 
 my $sortele = $Opt{'sort'} || die("$progname: -s/--sort not defined\n");
-my $buf = "";
+my $buf = '';
 my @Data = ();
 
 while (my $Curr = <>) {
@@ -81,6 +82,7 @@ while (my $Curr = <>) {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -92,7 +94,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] -e X [file [files [...]]]
 
@@ -125,6 +127,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
@@ -137,7 +140,7 @@ sub D {
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
     print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
+    return('');
     # }}}
 } # D()
 
