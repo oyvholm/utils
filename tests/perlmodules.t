@@ -81,9 +81,9 @@ testcmd("$CMD command", # {{{
     <<'END',
 [expected stdin]
 END
-    "",
+    '',
     0,
-    "description",
+    'description',
 );
 
 # }}}
