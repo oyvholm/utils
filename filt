@@ -14,7 +14,7 @@ for ff in "$@"; do
         # cp -p $ff $ff.filt-bck
         cat "$ff" | $cmd >filt.tmp
         chmod --reference "$ff" filt.tmp
-        mv -v filt.tmp "$ff"
+        mv filt.tmp "$ff"
     else
         echo filt: $ff: Not a regular file >&2
     fi
