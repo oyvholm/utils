@@ -3,10 +3,4 @@
 # poiformat
 # File ID: bcf111dc-7683-11e0-9799-01b466beaad8
 
-for poi in $*; do
-    echo poiformat: Formatting $poi
-    filt xf $poi
-    filt "sortxml -r -s wpt" $poi
-    filt roundgpx $poi
-    filt latlon $poi
-done
+cat "$@" | xf | sortxml -r -s wpt | roundgpx | latlon
