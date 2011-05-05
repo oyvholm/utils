@@ -9,6 +9,13 @@
 
 progname=build-git
 lockdir=$HOME/.Build-git.LOCK
+
+myexit() {
+    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
+    exit $1
+}
+
+trap "myexit 1" INT TERM
 mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
 
 rcfile=$HOME/.build-gitrc
@@ -56,11 +63,6 @@ echo "hname          = \"$hname\""
 echo "use_configure  = \"$use_configure\""
 echo "configure_opts = \"$configure_opts\""
 echo
-
-myexit() {
-    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
-    exit $1
-}
 
 fetch_remotes() {
     git remote | grep -q '^origin$' || {
