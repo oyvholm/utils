@@ -3,7 +3,7 @@
 #=======================================================================
 # add-missing-dates
 # File ID: c1887594-7766-11e0-b24b-6fbd5c06de00
-# [Description]
+# Insert missing t="" values
 #
 # Character set: UTF-8
 # ©opyleft 2011– Øyvind A. Holm <sunny@sunbase.org>
@@ -14,6 +14,9 @@
 use strict;
 use warnings;
 use Getopt::Long;
+
+use lib "$ENV{HOME}/bin/src/suuid";
+use suuid;
 
 local $| = 1;
 
@@ -49,8 +52,19 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 while (<>) {
-    print;
+    my $line = $_;
+    if ($line =~ /^<suuid u="($v1_templ)"(.*)$/) {
+        my ($uuid, $rest) = ($1, $2);
+        printf("<suuid t=\"%s\" u=\"%s\"%s\n",
+            uuid_time2($uuid), $uuid, $rest
+        );
+    } else {
+        print($line);
+    }
 }
 
 sub print_version {
