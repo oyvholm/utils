@@ -64,6 +64,8 @@ $json =~ s{
     "owner":"([^"]+?)"
 }{
     my ($url, $owner) = ($1, $2);
+    $url =~ s/^https:/git:/;
+    $url .= '.git';
     printf("git remote add github/%s %s\n", $owner, $url);
 }gsex;
 
