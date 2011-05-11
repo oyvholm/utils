@@ -147,7 +147,7 @@ for my $Line (@Data) {
                 } elsif ($Old) {
                     print("$Indent$Ex</li>\n");
                 }
-                print("$Indent$Ex<li>$Txt\n");
+                print("$Indent$Ex<li><span>$Txt</span>\n");
                 $Old = $Cnt;
             }
             # }}}
