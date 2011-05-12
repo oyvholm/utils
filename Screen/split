@@ -3,6 +3,7 @@
 
 only
 split
+select 0
 resize 15
 split -v
 split
@@ -13,6 +14,6 @@ select 22
 focus
 select 21
 focus
-select 0
+select 1
 
 # vim: set ts=2 sw=2 sts=2 tw=0 et fo=tcqw fenc=utf8 :
