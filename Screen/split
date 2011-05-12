@@ -8,11 +8,11 @@ resize 15
 split -v
 split
 resize 3
-select 20
-focus
 select 21
 focus
 select 22
+focus
+select 23
 focus
 select 1
 
