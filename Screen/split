@@ -1,0 +1,18 @@
+# split
+# File ID: b785d050-7c7a-11e0-90c2-00023faf1383
+
+only
+split
+resize 15
+split -v
+split
+resize 3
+select 20
+focus
+select 22
+focus
+select 21
+focus
+select 0
+
+# vim: set ts=2 sw=2 sts=2 tw=0 et fo=tcqw fenc=utf8 :
