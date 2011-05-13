@@ -10,6 +10,12 @@
 lockdir=~/.pakk_log.lock
 mkdir $lockdir || { echo $0: $lockdir: Cannot create lockdir >&2; exit 1; }
 
+myexit() {
+    rmdir $lockdir || { echo $0: $lockdir: Cannot remove lockdir >&2; exit 1; }
+    exit $1
+}
+trap "myexit 1" INT TERM
+
 pakklogg() {
     echo Will commit: $(find $1 -printf "%TY-%Tm-%Td %TH:%TM size:%s %p")
     gzip -v $1
@@ -17,15 +23,11 @@ pakklogg() {
     echo
 }
 
-rm_lockdir() {
-    rmdir $lockdir || { echo $0: $lockdir: Cannot remove lockdir >&2; exit 1; }
-}
-
 unset logmsg
 [ ! -z "$1" ] && logmsg="$*"
 
 cd ~/log/script || { echo $0: ~/log/script: Unable to chdir; exit 1; }
-ls *.scrlog *.timing 2>/dev/null | grep -q . || { echo $0: No files found to pack; rm_lockdir; exit 0; }
+ls *.scrlog *.timing 2>/dev/null | grep -q . || { echo $0: No files found to pack; myexit 0; }
 for f in *.scrlog *.timing; do
     file=$f
     uuid=$(echo $f | finduuid)
@@ -36,4 +38,4 @@ git commit --dry-run && {
     git commit -m "$logmsg$(echo; echo; suuid -t c_pakk_log,commit -c "$logmsg")"
 }
 git pa
-rm_lockdir
+myexit 0
