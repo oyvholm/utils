@@ -3,16 +3,24 @@
 
 only
 split
+# cursor in upper win
 resize 15
+# top win is 15 high
 split -v
+# top win split vert, cursor in left
 split
+# top left win split hor, cursor at the top
 resize 3
+# top left win is 3 high
 select 21
 focus
+# cursor in small win below
 select 22
 focus
+# cursor in upper right
 select 23
 focus
+# cursor at the bottom
 select 1
 
 # vim: set ts=2 sw=2 sts=2 tw=0 et fo=tcqw fenc=utf8 :
