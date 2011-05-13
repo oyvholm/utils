@@ -3,7 +3,6 @@
 
 only
 split
-select 0
 resize 15
 split -v
 split
