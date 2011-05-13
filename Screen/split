@@ -1,6 +1,7 @@
 # split
 # File ID: b785d050-7c7a-11e0-90c2-00023faf1383
 
+select -
 only
 split
 # cursor in upper win
