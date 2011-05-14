@@ -74,7 +74,7 @@ if ($Opt{'skip-invalid'}) {
         my $Orig = $_;
         if (!is_utf8($Orig)) {
             $Retval = 1;
-            $Opt{'quiet'} || print $Orig;
+            $Opt{'quiet'} && last || print $Orig;
         }
     }
 }
