@@ -63,32 +63,32 @@ $Opt{'zero'} && ($/ = "\x00");
 # Dobbelt opp for å få opp farta.
 
 if ($Opt{'skip-invalid'}) {
-	while (<>) {
-		my $Orig = $_;
-		s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xC0-\xDF][\x80-\xBF])//g;
-		unless (/[\x80-\xFF]/) {
+    while (<>) {
+        my $Orig = $_;
+        s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xC0-\xDF][\x80-\xBF])//g;
+        unless (/[\x80-\xFF]/) {
             $Opt{'quiet'} || print $Orig;
         } else {
             $Retval = 1;
         }
-	}
+    }
 } else {
-	while (<>) {
-		my $Orig = $_;
-		s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
-		s/([\xC0-\xDF][\x80-\xBF])//g;
-		if (/[\x80-\xFF]/) {
+    while (<>) {
+        my $Orig = $_;
+        s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
+        s/([\xC0-\xDF][\x80-\xBF])//g;
+        if (/[\x80-\xFF]/) {
             $Retval = 1;
             $Opt{'quiet'} || print $Orig;
         }
-	}
+    }
 }
 
 exit($Retval);
