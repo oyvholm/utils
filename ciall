@@ -17,8 +17,9 @@ LC_ALL=C git status | grep "^nothing to commit" && { echo ciall: Nothing to do h
 git status
 echo
 until test "$besafe" = "y"; do
-    echo -n Press y + Enter to commit all new changes in this directory tree...
+    echo -n Press \'y\' + Enter to commit all new changes or \'n\' to abort...
     read besafe
+    test "$besafe" = "n" && exit 0;
 done
 
 unset logmsg
