@@ -87,9 +87,11 @@ sub is_utf8 {
     # UTF-8 regexp copied from linux-2.6.git/scripts/checkpatch.pl in 
     # commit ddb503b42960792f3be580f98959add669241a04. Originally from 
     # http://www.w3.org/International/questions/qa-forms-utf-8.en.php .
+    # Modified by me to include U+007F and everything below U+0020, not 
+    # only \t, \n and \r.
 
     my $UTF8 = qr {
-        [\x09\x0A\x0D\x20-\x7E]              # ASCII
+        [\x00-\x7F]                          # ASCII
         | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
         |  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
         | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
