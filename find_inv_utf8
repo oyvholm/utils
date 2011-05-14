@@ -82,6 +82,7 @@ if ($Opt{'skip-invalid'}) {
 exit($Retval);
 
 sub is_utf8 {
+    # {{{
     my $text = shift;
     # UTF-8 regexp copied from linux-2.6.git/scripts/checkpatch.pl in 
     # commit ddb503b42960792f3be580f98959add669241a04. Originally from 
@@ -100,6 +101,7 @@ sub is_utf8 {
 
     my $retval = ($text !~ m/^$UTF8*$/x) ? 0 : 1;
     return($retval);
+    # }}}
 } # is_utf8()
 
 sub print_version {
