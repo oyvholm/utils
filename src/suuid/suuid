@@ -100,10 +100,6 @@ if (!-d "$Opt{'logdir'}/.") {
 my $Logfile = "$Opt{'logdir'}/$Host.xml";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
-if (!valid_xml_chars($Comment)) {
-    warn("$progname: Text used with --comment has to be in UTF-8\n");
-    exit(1);
-}
 my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
 D("cmd_editor = '$cmd_editor'");
 
@@ -120,6 +116,10 @@ if ($Comment eq "-") {
     system("$cmd_editor $tmpfile");
     $Comment = `cat $tmpfile`;
     unlink($tmpfile);
+}
+if (!valid_xml_chars($Comment)) {
+    warn("$progname: Comment contains illegal characters or is not valid UTF-8\n");
+    exit(1);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
 if (!valid_xml_chars($Tag)) {

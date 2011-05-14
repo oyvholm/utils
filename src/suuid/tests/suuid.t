@@ -357,7 +357,7 @@ likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
 # }}}
 testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
     "",
-    "suuid: Text used with --comment has to be in UTF-8\n",
+    "suuid: Comment contains illegal characters or is not valid UTF-8\n",
     1,
     "Refuse non-UTF-8 text to --comment option",
 );
@@ -365,9 +365,33 @@ testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
 # }}}
 testcmd("$CMD -c \"Ctrl-d: \x04\" -l $Outdir", # {{{
     "",
-    "suuid: Text used with --comment has to be in UTF-8\n",
+    "suuid: Comment contains illegal characters or is not valid UTF-8\n",
     1,
     "Reject Ctrl-d in comment",
+);
+
+# }}}
+likecmd("echo \"Great test\" | $CMD -c - -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^suuid: Enter uuid comment: $/',
+    0,
+    "Read comment from stdin",
+);
+
+# }}}
+testcmd("echo \"F\xf8kka \xf8pp\" | $CMD -c - -l $Outdir", # {{{
+    "",
+    "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
+    1,
+    "Reject non-UTF-8 comment from stdin",
+);
+
+# }}}
+testcmd("echo \"Ctrl-d: \x04\" | $CMD -c - -l $Outdir", # {{{
+    "",
+    "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
+    1,
+    "Reject Ctrl-d in comment from stdin",
 );
 
 # }}}
