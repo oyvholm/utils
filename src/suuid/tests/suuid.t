@@ -363,6 +363,14 @@ testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
 );
 
 # }}}
+testcmd("$CMD -c \"Ctrl-d: \x04\" -l $Outdir", # {{{
+    "",
+    "suuid: Text used with --comment has to be in UTF-8\n",
+    1,
+    "Reject Ctrl-d in comment",
+);
+
+# }}}
 like(file_data($Outfile), # {{{
     '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",

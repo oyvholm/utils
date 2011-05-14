@@ -100,7 +100,7 @@ if (!-d "$Opt{'logdir'}/.") {
 my $Logfile = "$Opt{'logdir'}/$Host.xml";
 
 my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
-if (!valid_utf8($Comment)) {
+if (!valid_xml_chars($Comment)) {
     warn("$progname: Text used with --comment has to be in UTF-8\n");
     exit(1);
 }
@@ -122,7 +122,7 @@ if ($Comment eq "-") {
     unlink($tmpfile);
 }
 my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
-if (!valid_utf8($Tag)) {
+if (!valid_xml_chars($Tag)) {
     warn("$progname: Tags have to be in UTF-8\n");
     exit(1);
 }
@@ -230,23 +230,28 @@ if (open(LogFP, "+>>", $Logfile)) {
     die("$progname: $Logfile: Cannot open file for append: $!\n");
 }
 
-sub valid_utf8 {
+sub valid_xml_chars {
     # {{{
-    my $Txt = shift;
-    my $Retval;
-    $Txt =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-    $Txt =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-    $Txt =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-    $Txt =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
-    $Txt =~ s/([\xC0-\xDF][\x80-\xBF])//g;
-    if ($Txt =~ /[\x80-\xFF]/) {
-        $Retval = 0;
-    } else {
-        $Retval = 1;
-    }
-    return($Retval);
+    my $text = shift;
+    # UTF-8 regexp copied from linux-2.6.git/scripts/checkpatch.pl in 
+    # commit ddb503b42960792f3be580f98959add669241a04. Originally from 
+    # http://www.w3.org/International/questions/qa-forms-utf-8.en.php .
+
+    my $UTF8 = qr {
+        [\x09\x0A\x0D\x20-\x7E]              # ASCII
+        | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
+        |  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
+        | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
+        |  \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
+        |  \xF0[\x90-\xBF][\x80-\xBF]{2}     # planes 1-3
+        | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
+        |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
+    }x;
+
+    my $retval = ($text !~ m/^$UTF8*$/x) ? 0 : 1;
+    return($retval);
     # }}}
-} # valid_utf8()
+} # valid_xml_chars()
 
 sub read_rcfile {
     # {{{
