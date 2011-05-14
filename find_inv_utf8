@@ -56,8 +56,6 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-# Warning: Does not barf on overlong sequences.
-
 $Opt{'zero'} && ($/ = "\x00");
 
 # Dobbelt opp for å få opp farta.
@@ -65,12 +63,7 @@ $Opt{'zero'} && ($/ = "\x00");
 if ($Opt{'skip-invalid'}) {
     while (<>) {
         my $Orig = $_;
-        s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xC0-\xDF][\x80-\xBF])//g;
-        unless (/[\x80-\xFF]/) {
+        if (is_utf8($Orig)) {
             $Opt{'quiet'} || print $Orig;
         } else {
             $Retval = 1;
@@ -79,12 +72,7 @@ if ($Opt{'skip-invalid'}) {
 } else {
     while (<>) {
         my $Orig = $_;
-        s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
-        s/([\xC0-\xDF][\x80-\xBF])//g;
-        if (/[\x80-\xFF]/) {
+        if (!is_utf8($Orig)) {
             $Retval = 1;
             $Opt{'quiet'} || print $Orig;
         }
@@ -92,6 +80,27 @@ if ($Opt{'skip-invalid'}) {
 }
 
 exit($Retval);
+
+sub is_utf8 {
+    my $text = shift;
+    # UTF-8 regexp copied from linux-2.6.git/scripts/checkpatch.pl in 
+    # commit ddb503b42960792f3be580f98959add669241a04. Originally from 
+    # http://www.w3.org/International/questions/qa-forms-utf-8.en.php .
+
+    my $UTF8 = qr {
+        [\x09\x0A\x0D\x20-\x7E]              # ASCII
+        | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
+        |  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
+        | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
+        |  \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
+        |  \xF0[\x90-\xBF][\x80-\xBF]{2}     # planes 1-3
+        | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
+        |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
+    }x;
+
+    my $retval = ($text !~ m/^$UTF8*$/x) ? 0 : 1;
+    return($retval);
+} # is_utf8()
 
 sub print_version {
     # Print program version {{{
