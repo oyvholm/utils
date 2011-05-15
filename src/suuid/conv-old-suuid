@@ -102,6 +102,12 @@ my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
 #   sess_uuid \n
 # }}}
 
+print(<<'END');
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suuids SYSTEM "dtd/suuids.dtd">
+<suuids>
+END
+
 while (my $Curr = <>) {
     if ($Curr =~ /^1\t($Templ)\t(.*?)\t(.*?)\t(.*?)$/) {
         my ($Uuid, $Date, $Tag, $Comment) =
@@ -199,6 +205,8 @@ while (my $Curr = <>) {
         print(STDERR $Curr);
     }
 }
+
+print("</suuids>\n");
 
 sub txt_to_xml {
     # {{{
