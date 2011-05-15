@@ -22,6 +22,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'host' => '',
     'verbose' => 0,
     'version' => 0,
 
@@ -36,6 +37,7 @@ GetOptions(
 
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "host=s" => \$Opt{'host'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -102,6 +104,8 @@ my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
 #   sess_uuid \n
 # }}}
 
+length($Opt{'host'}) || die("$progname: --host option not specified\n");
+
 print(<<'END');
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suuids SYSTEM "dtd/suuids.dtd">
@@ -116,10 +120,12 @@ while (my $Curr = <>) {
             "<suuid t=\"%s\" u=\"%s\"> " .
                 "%s" .
                 "%s" .
+                "%s" .
             "</suuid>\n",
             uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            "<host>$Opt{'host'}</host> ",
         );
     } elsif ($Curr =~ /^2\t($Templ)\t(.*?)\t(.*?)\t(.*?)\t(.*?)$/) {
         my ($Uuid, $Date, $Tag, $Comment, $Currdir) =
@@ -129,10 +135,12 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
                 "%s" .
+                "%s" .
             "</suuid>\n",
             uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            "<host>$Opt{'host'}</host> ",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
         );
     } elsif ($Curr =~ /^3\t($Templ)\t(.*?)\t(.*?)\t(.*?)\t(.*?)\t(.*?)$/) {
@@ -144,10 +152,12 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
                 "%s" .
+                "%s" .
             "</suuid>\n",
             uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            "<host>$Opt{'host'}</host> ",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
             length($User) ? "<user>" . txt_to_xml($User) . "</user> " : "",
         );
@@ -161,10 +171,12 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
                 "%s" .
+                "%s" .
             "</suuid>\n",
             uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            "<host>$Opt{'host'}</host> ",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
             length($User) ? "<user>" . txt_to_xml($User) . "</user> " : "",
             length($Tty) ? "<tty>" . txt_to_xml($Tty) . "</tty> " : "",
@@ -182,10 +194,12 @@ while (my $Curr = <>) {
                 "%s" .
                 "%s" .
                 "%s" .
+                "%s" .
             "</suuid>\n",
             uuid_time($Uuid, $Date), $Uuid,
             length($Tag) ? "<tag>" . txt_to_xml($Tag) . "</tag> " : "",
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            "<host>$Opt{'host'}</host> ",
             length($Currdir) ? "<cwd>" . txt_to_xml($Currdir) . "</cwd> " : "",
             length($User) ? "<user>" . txt_to_xml($User) . "</user> " : "",
             length($Tty) ? "<tty>" . txt_to_xml($Tty) . "</tty> " : "",
@@ -197,9 +211,11 @@ while (my $Curr = <>) {
         printf(
             "<suuid t=\"%s\" u=\"%s\"> " .
                 "%s" .
+                "%s" .
             "</suuid>\n",
             uuid_time($Uuid, ""), $Uuid,
             length($Comment) ? "<txt>" . txt_to_xml($Comment) . "</txt> " : "",
+            "<host>$Opt{'host'}</host> ",
         );
     } else {
         print(STDERR $Curr);
@@ -263,12 +279,14 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname --host=HOSTNAME [options] [file [files [...]]]
 
 Options:
 
   -h, --help
     Show this help.
+  --host X
+    Use X as <host> value. This option is mandatory.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
