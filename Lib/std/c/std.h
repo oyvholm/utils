@@ -1,10 +1,7 @@
 
 /*
-
-   NB! Husk å forandre navn på rcs_id_std_h til det den skal være.
-
  * Main header file
- * $Id$
+ * File ID: STDuuidDTS
  *
  * (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
  *
@@ -99,11 +96,9 @@ extern void usage(int);
  * Global variables
  */
 
-static char rcs_id_std_h[] = "$Id$";
 extern char *progname;
 extern int  debug;
 
 #endif /* ifndef _STD_H */
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
-/***** End of file $Id$ *****/

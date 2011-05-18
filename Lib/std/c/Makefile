@@ -1,11 +1,11 @@
 
 # Makefile for std.c
-# $Id$
+# File ID: STDuuidDTS
 
 OBJS = std.o getopt.o
 CC = gcc
 LD = gcc
-CCFLAGS = -Wall -O2 -c -g -ansi -Wno-unused
+CCFLAGS = -Wall -O2 -c -g -ansi
 LDFLAGS = -Wall
 EXEC = std
 

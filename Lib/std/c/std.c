@@ -1,7 +1,7 @@
 
 /*
  * [Beskrivelse]
- * $Id$
+ * File ID: STDuuidDTS
  *
  * (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
  *
@@ -41,7 +41,6 @@ void usage(int);
  * Global variables
  */
 
-static char rcs_id[] = "$Id$";
 char *progname;
 int  debug = 0;
 
@@ -217,4 +216,3 @@ void usage(int retval)
 } /* usage() */
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
-/***** End of file $Id$ *****/

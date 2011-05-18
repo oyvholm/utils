@@ -1,5 +1,4 @@
 /* Declarations for getopt.
-   $Id$
    Copyright (C) 1989, 1990, 1991, 1992, 1993 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify it
@@ -22,9 +21,6 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
-/* Added by sunny@sunbase.org */
-static char svn_id_getopt_h[] = "$Id$";
 
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,

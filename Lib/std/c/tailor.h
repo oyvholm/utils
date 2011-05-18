@@ -1,5 +1,4 @@
 /* tailor.h -- target dependent definitions
- * $Id$
  * Copyright (C) 1992-1993 Jean-loup Gailly.
  * This is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License, see the file COPYING.
@@ -10,12 +9,6 @@
  */
 
 /* Id: tailor.h,v 0.18 1993/06/14 19:32:20 jloup Exp */
-
-/* Added by sunny@sunbase.org */
-#ifndef _TAILOR_H
-#  define _TAILOR_H
-static char svn_id_tailor_h[] = "$Id$";
-#endif
 
 #if defined(__MSDOS__) && !defined(MSDOS)
 #  define MSDOS
