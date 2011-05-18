@@ -105,5 +105,5 @@ extern int  debug;
 
 #endif /* ifndef _STD_H */
 
-/* vim: set ts=4 sw=4 sts=4 et fo+=w fenc=UTF-8 : */
+/* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
 /***** End of file $Id$ *****/
