@@ -3,7 +3,7 @@
  * [Beskrivelse]
  * File ID: STDuuidDTS
  *
- * (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
+ * (C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 				else if (!strcmp(long_options[option_index].name, "license"))
 				{
 					fprintf(stdout,
-						"(C)opyleft Øyvind A. Holm <sunny@sunbase.org>\n"
+						"(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n"
 						"\n"
 						"This program is free software: you can redistribute it and/or modify\n"
 						"it under the terms of the GNU General Public License as published by\n"

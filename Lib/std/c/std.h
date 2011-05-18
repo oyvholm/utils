@@ -3,7 +3,7 @@
  * Main header file
  * File ID: STDuuidDTS
  *
- * (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
+ * (C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
