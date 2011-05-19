@@ -12,7 +12,7 @@ EXEC = std
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS)
 
-std.o: std.c std.h getopt.h Makefile
+std.o: std.c std.h version.h getopt.h Makefile
 	$(CC) $(CCFLAGS) std.c
 
 getopt.o: getopt.c getopt.h tailor.h Makefile
