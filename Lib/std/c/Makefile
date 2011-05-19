@@ -2,7 +2,7 @@
 # Makefile for std.c
 # File ID: STDuuidDTS
 
-OBJS = std.o getopt.o
+OBJS = std.o
 CC = gcc
 LD = gcc
 CCFLAGS = -Wall -O2 -c -g -ansi
@@ -12,11 +12,8 @@ EXEC = std
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS)
 
-std.o: std.c std.h version.h getopt.h Makefile
+std.o: std.c std.h version.h Makefile
 	$(CC) $(CCFLAGS) std.c
-
-getopt.o: getopt.c getopt.h tailor.h Makefile
-	$(CC) $(CCFLAGS) getopt.c
 
 clean:
 	rm -f $(EXEC) $(OBJS) *~ core core.$(EXEC)
