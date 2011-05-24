@@ -59,9 +59,7 @@ int main(int argc, char *argv[])
 		static struct option long_options[] = {
 			{  "debug", 0, 0,   0},
 			{   "help", 0, 0, 'h'},
-#ifdef C_LICENSE
 			{"license", 0, 0,   0},
-#endif
 			{"version", 0, 0, 'V'},
 			{        0, 0, 0,   0}
 		};
@@ -87,7 +85,6 @@ int main(int argc, char *argv[])
 				if (!strcmp(long_options[option_index].name, "debug"))
 					debug = 1;
 
-#ifdef C_LICENSE
 				else if (!strcmp(long_options[option_index].name, "license"))
 				{
 					fprintf(stdout,
@@ -108,7 +105,6 @@ int main(int argc, char *argv[])
 					);
 					return(EXIT_OK);
 				}
-#endif /* ifdef C_LICENSE */
 
 #if 0
 				fprintf(stddebug, "option %s", long_options[option_index].name);
@@ -192,10 +188,8 @@ void usage(int retval)
 			"\n"
 			"  -h, --help\n"
 			"    Show this help.\n"
-#ifdef C_LICENSE
 			"  --license\n"
 			"    Print the software license\n"
-#endif
 			"  -v, --verbose\n"
 			"    Increase level of verbosity. Can be repeated.\n"
 			"  --version\n"

@@ -42,14 +42,6 @@
 #  define NDEBUG  1
 #endif              /* ifdef C_ASSERT else */
 
-#ifdef C_SKIP_LICENSE /* If C_SKIP_LICENSE, the --license option is disabled. */
-#  ifdef C_LICENSE
-#    undef C_LICENSE
-#  endif
-#else
-#  define C_LICENSE  1
-#endif
-
 /*
  * Macros
  */
