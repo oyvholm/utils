@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 
 void  print_version(void)
 {
-	fprintf(stdout, "%s version %s - %s\n", progname, VERSION, RELEASE_DATE);
+	fprintf(stdout, "%s v%s\n", progname, VERSION);
 } /* print_version() */
 
 /*
@@ -186,20 +186,22 @@ void usage(int retval)
 		fprintf(stdout, "\n");
 		print_version();
 		fprintf(stdout,
-			"\n"
-			"Usage: %s [options]\n"
+			"Usage: %s [options] [file [files [...]]]\n"
 			"\n"
 			"Options:\n"
 			"\n"
-			"-h, --help	 Show this help screen and exit gracefully\n"
-			"-V, --version  Display version information\n"
+			"  -h, --help\n"
+			"    Show this help.\n"
 #ifdef C_LICENSE
-			"    --license  Print the software license\n"
+			"  --license\n"
+			"    Print the software license\n"
 #endif
-			"\n"
-			"Undocumented options (May disappear in future versions):\n"
-			"\n"
-			"    --debug    Print lots of annoying debug information\n"
+			"  -v, --verbose\n"
+			"    Increase level of verbosity. Can be repeated.\n"
+			"  --version\n"
+			"    Print version information.\n"
+			"  --debug\n"
+			"    Print debugging messages.\n"
 			"\n", progname
 		);
 	}
