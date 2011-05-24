@@ -126,10 +126,6 @@ int main(int argc, char *argv[])
 				print_version();
 				return(EXIT_OK);
 
-			case '?' :
-				usage(EXIT_ERROR);
-				break;
-
 			default :
 				debpr1("getopt_long() returned character code %d\n", c);
 				break;
