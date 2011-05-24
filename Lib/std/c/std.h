@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _STD_H
-#define _STD_H
+#ifndef _STDexecDTS_H
+#define _STDexecDTS_H
 
 /*
  * Defines
@@ -77,6 +77,6 @@ extern void usage(int);
 extern char *progname;
 extern int  debug;
 
-#endif /* ifndef _STD_H */
+#endif /* ifndef _STDexecDTS_H */
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */

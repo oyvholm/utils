@@ -1,6 +1,6 @@
 
 /*
- * [Beskrivelse]
+ * STDexecDTS.c
  * File ID: STDuuidDTS
  *
  * (C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>
@@ -25,7 +25,7 @@
 #include <string.h>
 #include <getopt.h>
 
-#include "std.h"
+#include "STDexecDTS.h"
 #include "version.h"
 
 /*
