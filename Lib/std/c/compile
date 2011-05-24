@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#=======================================================================
+# compile
+# File ID: f3c9e59e-8605-11e0-9e54-fefdb24f8e10
+# Check that the files compile
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+tmpdir=./compile.tmp
+rm -rf $tmpdir
+mkdir $tmpdir
+cd $tmpdir || { echo $0: $tmpdir: cannot chdir >&2; exit 1; }
+SUUID_LOGDIR=$(pwd)/uuids
+mkdir $SUUID_LOGDIR
+echo ==== std ====
+std -l -t exec=jada c/std.c jada.c
+std -l -t exec=jada c/std.h jada.h
+std -l -t exec=jada c/version.h version.h
+std -l -t exec=jada c/Makefile Makefile
+echo ==== make clean ====
+make clean
+echo ==== make ====
+make
