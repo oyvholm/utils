@@ -34,18 +34,6 @@
 
 #define stddebug  stderr
 
-#define ENGLISH    1
-
-#ifndef C_LANG
-#  define C_LANG  ENGLISH
-#endif
-
-#if C_LANG == ENGLISH
-#  define MSG_LANGUAGE  "English"
-#else
-#  error C_LANG is not correctly defined
-#endif
-
 #ifdef C_ASSERT
 #  ifdef NDEBUG
 #    undef NDEBUG
