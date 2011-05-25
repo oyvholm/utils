@@ -1,31 +1,26 @@
 
 /*
-
-   NB! Husk å forandre navn på rcs_id_std_h til det den skal være.
-
  * Main header file
- * $Id$
+ * File ID: STDuuidDTS
  *
- * (C)opyleft Øyvind A. Holm <sunny@sunbase.org>
+ * (C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>
  *
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 2 of the License, or (at 
- * your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  
- * USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _STD_H
-#define _STD_H
+#ifndef _STDexecDTS_H
+#define _STDexecDTS_H
 
 /*
  * Defines
@@ -39,18 +34,6 @@
 
 #define stddebug  stderr
 
-#define ENGLISH    1
-
-#ifndef C_LANG
-#  define C_LANG  ENGLISH
-#endif
-
-#if C_LANG == ENGLISH
-#  define MSG_LANGUAGE  "English"
-#else
-#  error C_LANG is not correctly defined
-#endif
-
 #ifdef C_ASSERT
 #  ifdef NDEBUG
 #    undef NDEBUG
@@ -58,14 +41,6 @@
 #else               /* ifdef C_ASSERT      */
 #  define NDEBUG  1
 #endif              /* ifdef C_ASSERT else */
-
-#ifdef C_SKIP_LICENSE /* If C_SKIP_LICENSE, the --license option is disabled. */
-#  ifdef C_LICENSE
-#    undef C_LICENSE
-#  endif
-#else
-#  define C_LICENSE  1
-#endif
 
 /*
  * Macros
@@ -99,11 +74,9 @@ extern void usage(int);
  * Global variables
  */
 
-static char rcs_id_std_h[] = "$Id$";
 extern char *progname;
 extern int  debug;
 
-#endif /* ifndef _STD_H */
+#endif /* ifndef _STDexecDTS_H */
 
-/* vim: set ts=4 sw=4 sts=4 et fo+=w fenc=UTF-8 : */
-/***** End of file $Id$ *****/
+/* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
