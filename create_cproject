@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# create_cproject
+# File ID: 0aa2560c-8683-11e0-bc0d-00023faf1383
+# Create skeleton for new C project
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+name=$1
+test -z "$name" && { echo $0: Name not specified as arg 1 >&2; exit 1; }
+echo -n "Makefile: "; std -l -t exec=$name c/Makefile Makefile
+echo -n "$name.c: "; std -l -t exec=$name c/std.c $name.c
+echo -n "$name.h: "; std -l -t exec=$name c/std.h $name.h
+echo -n "version.h: "; std -l -t exec=$name c/version.h version.h
+echo -n "COPYING: "; std -l COPYING COPYING && echo OK || echo ERROR
