@@ -59,7 +59,7 @@ if (scalar(@shas)) {
         system("git lpar `git branch -a --contains=\"$curr\" | cut -c3- | grep -v -- '->'` >>~/src/git/lpar/$repo.lpar");
     }
 } else {
-    system("git lpar --all | sort -u >>~/src/git/lpar/$repo.lpar");
+    system("git lpar --all >>~/src/git/lpar/$repo.lpar");
 }
 
 sub print_version {
