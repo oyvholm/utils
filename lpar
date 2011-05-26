@@ -3,7 +3,7 @@
 #=======================================================================
 # lpar
 # File ID: 5915171c-8768-11e0-9a68-00023faf1383
-# [Description]
+# Add lpar info of current repo to lpar.git/$1.lpar
 #
 # Character set: UTF-8
 # ©opyleft 2011– Øyvind A. Holm <sunny@sunbase.org>
@@ -49,9 +49,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
-}
+defined($ARGV[0]) || die("$progname: Repo not specified\n");
+my $repo = $ARGV[0];
+
+system("git lpar --all | sort -u >>~/src/git/lpar/$repo.lpar");
 
 sub print_version {
     # Print program version {{{
@@ -70,7 +71,7 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] repo
 
 Options:
 
