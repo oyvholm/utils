@@ -56,7 +56,7 @@ shift;
 my @shas = scalar(@ARGV) ? @ARGV : ();
 if (scalar(@shas)) {
     for my $curr (@shas) {
-        system("git lpar `git branch -a --contains=\"$curr\" | cut -c3-` >>~/src/git/lpar/$repo.lpar");
+        system("git lpar `git branch -a --contains=\"$curr\" | cut -c3- | grep -v -- '->'` >>~/src/git/lpar/$repo.lpar");
     }
 } else {
     system("git lpar --all | sort -u >>~/src/git/lpar/$repo.lpar");
