@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#=======================================================================
+# git-lc
+# File ID: 81eb015e-87fb-11e0-9674-fefdb24f8e10
+# List all Git branches where all the specified refs exists
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+urevs=$*
+count=0
+unset revs
+for u in $urevs; do
+    git log -1 $u &>/dev/null || { echo $u: Invalid ref >&2; exit 1; }
+    revs="$revs $(git branch -a --contains=$u | cut -c3- | grep -v -- '->')"
+    count=$[$count + 1]
+done
+echo $revs | fmt -1 | tr -d ' ' | sort | uniq -c | tr -s ' ' \
+    | grep "^ $count " | cut -f 3 -d ' ' | sort
