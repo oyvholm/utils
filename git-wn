@@ -8,7 +8,10 @@
 #=======================================================================
 
 unset branches
-for f in $(git lc HEAD); do
-    branches="$branches HEAD..$f"
+from="$*"
+test -z "$from" && from=HEAD
+
+for f in $(git lc $from); do
+    branches="$branches $from..$f"
 done
 git lg --date-order $branches
