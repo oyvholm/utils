@@ -10,6 +10,7 @@
 unset branches
 from="$*"
 test -z "$from" && from=HEAD
+git log -1 $from &>/dev/null || { echo $from: Invalid ref >&2; exit 1; }
 
 for f in $(git lc $from); do
     branches="$branches $from..$f"
