@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# git-wn
+# File ID: 149ce758-8aca-11e0-afed-37ea9f2067e0
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+unset branches
+for f in $(git lc HEAD); do
+    branches="$branches HEAD..$f"
+done
+git lg --date-order $branches
