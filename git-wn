@@ -8,11 +8,13 @@
 #=======================================================================
 
 unset branches
-from="$*"
+from="$1"
+shift
 test -z "$from" && from=HEAD
 git log -1 $from &>/dev/null || { echo $from: Invalid ref >&2; exit 1; }
+lg_args="$@"
 
 for f in $(git lc $from); do
     branches="$branches $from..$f"
 done
-git lg --date-order $branches
+git lg --date-order $lg_args $branches
