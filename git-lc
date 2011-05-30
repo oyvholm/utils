@@ -8,6 +8,7 @@
 #=======================================================================
 
 urevs=$*
+test -z "$urevs" && urevs=HEAD
 count=0
 unset revs
 for u in $urevs; do
