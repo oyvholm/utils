@@ -15,7 +15,7 @@ git "what's new"
 Syntax: git wn [commit] [git-lg_args]
 
 If commit is not specified, use HEAD. To use lg_args, a 
-commit/branch/tag/whatever has to be spcified as $1.
+commit/branch/tag/whatever has to be specified as $1.
 
 HELP_END
     exit 0
