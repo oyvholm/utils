@@ -7,6 +7,19 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<'HELP_END'
+
+git "what's new"
+
+Syntax: git wn [commit] [git-lg_args]
+
+If commit is not specified, use HEAD. To use lg_args, a 
+commit/branch/tag/whatever has to be spcified as $1.
+
+HELP_END
+    exit 0
+fi
 unset branches
 from="$1"
 shift
