@@ -12,6 +12,10 @@ while(<>) {
         while($Cnt--) {
             print("\t");
         }
+        $Txt =~ s/<a name=.+?>//g;
+        $Txt =~ s/<\/a>//g;
+        $Txt =~ s/^\s+//;
+        $Txt =~ s/\s+$//;
         print "$Txt\n";
     }
 }
