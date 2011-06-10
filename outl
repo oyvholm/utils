@@ -7,11 +7,11 @@
 use strict;
 
 while(<>) {
-	if (/<h([1-6]).*?>(.*)<\/h[1-6]>/i) {
-		my ($Cnt, $Txt) = ($1, $2);
-		while($Cnt--) {
-			print("\t");
-		}
-		print "$Txt\n";
-	}
+    if (/<h([1-6]).*?>(.*)<\/h[1-6]>/i) {
+        my ($Cnt, $Txt) = ($1, $2);
+        while($Cnt--) {
+            print("\t");
+        }
+        print "$Txt\n";
+    }
 }
