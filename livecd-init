@@ -2,6 +2,7 @@
 
 setxkbmap no
 gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
+gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
 sudo apt-get update
 sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
 sudo apt-get install vim git-core uuid
