@@ -23,6 +23,12 @@ if [ -e /carmbb.mrk ]; then
 	else
 		geom=87x29+0+0
 	fi
+elif [ -e /dundre.mrk ]; then
+	if [ "$smallfont" = "1" ]; then
+		geom=211x55+0+0
+	else
+		geom=87x29+0+0
+	fi
 else
 	if [ "$smallfont" = "1" ]; then
 		geom=211x73+0+0
