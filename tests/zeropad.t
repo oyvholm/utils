@@ -112,6 +112,39 @@ likecmd("$CMD --version", # {{{
 
 # }}}
 
+testcmd("echo 1 5 12 156 1024 | $CMD", # {{{
+    "0001 0005 0012 0156 1024\n",
+    '',
+    0,
+    '1 5 12 156 1024 with LF',
+);
+
+# }}}
+testcmd("echo -n 1 5 12 156 1024 | $CMD", # {{{
+    '0001 0005 0012 0156 1024',
+    '',
+    0,
+    'No terminating LF',
+);
+
+# }}}
+testcmd("echo -n 0 jada 1234567 e 345 - 23477 æøå | $CMD", # {{{
+    '0000000 jada 1234567 e 0000345 - 0023477 æøå',
+    '',
+    0,
+    'Contains non-numbers',
+);
+
+# }}}
+testcmd("echo -n 0 12345 -4 1000 | $CMD", # {{{
+    '00000 12345 -00004 01000',
+    '',
+    0,
+    'Contains negative number',
+);
+
+# }}}
+
 todo_section:
 ;
 
