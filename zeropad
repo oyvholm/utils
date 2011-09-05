@@ -59,7 +59,7 @@ while (<>) {
 }
 
 for my $Curr (@Array) {
-    $Curr =~ s/(\d+)/sprintf("%0${max_length}lu", $1)/ge;
+    $Curr =~ s/(\d+)/pad_number($1)/ge;
     print($Curr);
 }
 
@@ -70,6 +70,11 @@ sub check_max {
     }
     return("");
 } # check_max()
+
+sub pad_number {
+    my $Num = shift;
+    return('0' x ($max_length - length($Num)) . $Num);
+} # pad_number()
 
 sub print_version {
     # Print program version {{{
