@@ -19,6 +19,6 @@ mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1;
 trap "myexit 1" INT TERM
 
 task "$@"
-cd ~/src/git/task || { echo t: Cannot chdir >&2; exit 1; }
+cd ~/src/git/task || { echo $progname: Cannot chdir >&2; exit 1; }
 yes | ciall -d t "$@" >/dev/null 2>&1
 myexit 0
