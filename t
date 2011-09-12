@@ -20,5 +20,5 @@ trap "myexit 1" INT TERM
 
 task "$@"
 cd ~/src/git/task || { echo $progname: Cannot chdir >&2; exit 1; }
-yes | ciall -d t "$@" >/dev/null 2>&1
+yes | ciall -d t "$@" >/dev/null 2>&1 || { echo $progname: git commit error >&2; exit 1; }
 myexit 0
