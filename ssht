@@ -20,6 +20,8 @@ if test "$1" = "-c"; then
 elif test "$1" = "-k"; then
     test -n "$PID" || { echo $progname: No tunnel found >&2; exit 1; }
     kill $PID
+elif test "$1" = "-l"; then
+    test -n "$PID" && echo $PID
 elif test "$1" = "-t"; then
     test -n "$PID" && { echo $progname: Tunnel already active at PID $PID >&2; exit 1; }
     sess -t c_ssht.t -- $CMD &
