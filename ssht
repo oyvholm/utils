@@ -26,5 +26,5 @@ elif test "$1" = "-t"; then
     test -n "$PID" && { echo $progname: Tunnel already active at PID $PID >&2; exit 1; }
     sess -t c_ssht.t -- $CMD &
 else
-    echo Syntax: $progname \[-c\|-t\]
+    echo Syntax: $progname \[ -c \| -k \| -l \| -t \]
 fi
