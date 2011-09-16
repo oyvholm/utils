@@ -10,11 +10,12 @@
 progname=ssht
 PORT=9141
 HOST=sunbase.org
+CMD="ssh -Y -q -N -R $PORT:localhost:22 $HOST"
 
 if test "$1" = "-c"; then
     sess -t c_ssht.c -- ssh -Y -p $PORT localhost
 elif test "$1" = "-t"; then
-    sess -t c_ssht.t -- ssh -Y -q -N -R $PORT:localhost:22 $HOST &
+    sess -t c_ssht.t -- $CMD &
 else
     echo Syntax: $progname \[-c\|-t\]
 fi
