@@ -16,7 +16,9 @@ unset PID
 PID=$(pgrep -f -x "$CMD")
 
 if test "$1" = "-c"; then
-    sess -t c_ssht.c -- ssh -Y -p $PORT localhost
+    USERNAME=$2
+    test -z "$2" && USERNAME=sunny
+    sess -t c_ssht.c -- ssh -Y -p $PORT -l $USERNAME localhost
 elif test "$1" = "-k"; then
     test -n "$PID" || { echo $progname: No tunnel found >&2; exit 1; }
     kill $PID
