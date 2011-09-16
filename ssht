@@ -12,10 +12,14 @@ PORT=9141
 HOST=sunbase.org
 CMD="ssh -Y -q -N -R $PORT:localhost:22 $HOST"
 
+unset PID
+PID=$(pgrep -f -x "$CMD")
+
 if test "$1" = "-c"; then
     sess -t c_ssht.c -- ssh -Y -p $PORT localhost
 elif test "$1" = "-k"; then
-    pkill -f -x "$CMD"
+    test -n "$PID" || { echo $progname: No tunnel found >&2; exit 1; }
+    kill $PID
 elif test "$1" = "-t"; then
     sess -t c_ssht.t -- $CMD &
 else
