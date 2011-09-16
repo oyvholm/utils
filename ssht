@@ -9,7 +9,7 @@
 
 progname=ssht
 PORT=9141
-HOST=sunbase.org
+HOST=sunny@sunbase.org
 CMD="ssh -Y -q -N -R $PORT:localhost:22 $HOST"
 
 unset PID
