@@ -19,7 +19,7 @@ myexit() {
 mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
 trap "myexit 1" INT TERM
 
-task "$@"
 cd $taskdir || { echo $progname: $taskdir: Cannot chdir >&2; myexit 1; }
+task "$@"
 yes | ciall t "$@" >/dev/null 2>&1 || { echo $progname: git commit error >&2; exit 1; }
 myexit 0
