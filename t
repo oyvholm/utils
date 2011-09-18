@@ -9,6 +9,7 @@
 
 progname=t
 lockdir=$HOME/.t-task.LOCK
+taskdir=$HOME/src/git/task
 
 myexit() {
     rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
@@ -19,6 +20,6 @@ mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1;
 trap "myexit 1" INT TERM
 
 task "$@"
-cd ~/src/git/task || { echo $progname: Cannot chdir >&2; myexit 1; }
+cd $taskdir || { echo $progname: $taskdir: Cannot chdir >&2; myexit 1; }
 yes | ciall t "$@" >/dev/null 2>&1 || { echo $progname: git commit error >&2; exit 1; }
 myexit 0
