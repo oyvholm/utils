@@ -25,5 +25,5 @@ if [ ! -f $taskdir/.taskrc -o ! -d $taskdir/.task ]; then
     myexit 1
 fi
 task "$@"
-yes | ciall t "$@" >/dev/null 2>&1 || { echo $progname: git commit error >&2; exit 1; }
+yes | ciall t "$@" >/tmp/t-output.txt 2>&1 || { echo $progname: git commit error >&2; exit 1; }
 myexit 0
