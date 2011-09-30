@@ -13,7 +13,7 @@ count=0
 unset revs
 for u in $urevs; do
     git log -1 $u &>/dev/null || { echo $u: Invalid ref >&2; exit 1; }
-    revs="$revs $(git branch -a --contains=$u | cut -c3- | grep -v -- '->')"
+    revs="$revs $(git branch -a --contains=$u | cut -c3- | grep -v -e '(no branch)' -e '->')"
     count=$[$count + 1]
 done
 echo $revs | fmt -1 | tr -d ' ' | sort | uniq -c | tr -s ' ' \
