@@ -7,7 +7,7 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-git remote set-url origin    git://repo.or.cz/alt-git.git
+git remote set-url origin    git://git.kernel.org/pub/scm/git/git.git
 git remote add o-github      https://github.com/gitster/git.git
 git remote add o-googlecode  https://code.google.com/p/git-core/
 git remote add o-repoorcz    git://repo.or.cz/alt-git.git
