@@ -21,6 +21,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'create' => 0,
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -35,6 +36,7 @@ our $VERSION = '0.00';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'create|c' => \$Opt{'create'},
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -66,7 +68,14 @@ $json =~ s{
     my ($url, $owner) = ($1, $2);
     $url =~ s/^https:/git:/;
     $url .= '.git';
-    printf("git remote add github/%s %s\n", $owner, $url);
+    my $cmdstr = sprintf("git remote add github/%s %s", $owner, $url);
+    if ($Opt{'create'}) {
+        system($cmdstr)
+            && print("Error creating remote github/$owner\n")
+            || print("Created remote github/$owner\n");
+    } else {
+        print("$cmdstr\n");
+    }
 }gsex;
 
 sub print_version {
@@ -93,6 +102,9 @@ JSON from stdin. Needs curl(1).
 
 Options:
 
+  -c, --create
+    Create remotes in current repoisitory instead of merely printing 
+    them to stdout.
   -h, --help
     Show this help.
   -v, --verbose
