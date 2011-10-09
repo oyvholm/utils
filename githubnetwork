@@ -52,7 +52,7 @@ if ($Opt{'version'}) {
 my $json = '';
 
 if (scalar(@ARGV)) {
-    $json = `curl http://github.com/api/v2/json/repos/show/$ARGV[0]/network`;
+    $json = `curl -s http://github.com/api/v2/json/repos/show/$ARGV[0]/network`;
 } else {
     local $/ = undef;
     $json = <STDIN>;
