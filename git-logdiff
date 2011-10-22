@@ -4,7 +4,7 @@
 # git-logdiff
 # File ID: b51c5d58-5406-11e0-a9ae-552d51fb27db
 # Compare two different Git histories. Syntax:
-# git logdiff <commit1> <commit2>
+# git logdiff <commit1> <commit2> [rootcommit]
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
@@ -12,6 +12,10 @@ test "$1" = "-p" && { p_str=-p; shift; }
 ext=.git-logdiff.tmp
 c1=$(git log -1 --format=format:%h $1)
 c2=$(git log -1 --format=format:%h $2)
+if test -n "$3"; then
+    c1=$3..$c1
+    c2=$3..$c2
+fi
 git log --raw --format=fuller --date=iso $p_str $c1 >/tmp/$c1$ext
 git log --raw --format=fuller --date=iso $p_str $c2 >/tmp/$c2$ext
 vimdiff /tmp/{$c1,$c2}$ext
