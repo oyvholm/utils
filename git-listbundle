@@ -3,8 +3,25 @@
 #=======================================================================
 # git-listbundle
 # File ID: 8ae2b66c-fcd1-11e0-a4c9-65862771f905
-# [Description]
+# List all heads that the required heads of a bundle are members of.
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-
+progname=git-listbundle
+bundle=$1
+grepfilter=
+test -z "$bundle" && { echo "Syntax: $progname bundlefile [grepfilter [...]]"; exit 1; }
+if test -n "$2"; then
+    shift
+    for f in $*; do
+        grepfilter="$grepfilter -e $f"
+    done
+fi
+for f in $(LC_ALL=C git bundle verify $bundle | grep -A 9999999 "^The bundle requires these" | grep -E "^[0-9a-f]{40} " | cut -f 1 -d ' '); do
+    echo ======== $f;
+    if test -n "$grepfilter"; then
+        git lc $f | grep $grepfilter;
+    else
+        git lc $f
+    fi
+done
