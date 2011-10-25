@@ -10,6 +10,18 @@
 progname=git-listbundle
 bundle=$1
 grepfilter=
+
+listbundle() {
+    for f in $(LC_ALL=C git bundle verify $bundle | grep -$1 9999999 "^The bundle requires these" | grep -E "^[0-9a-f]{40} " | cut -f 1 -d ' '); do
+        echo ======== $(git log -1 --format="%H %d %s" $f);
+        if test -n "$grepfilter"; then
+            git lc $f | grep $grepfilter;
+        else
+            git lc $f
+        fi
+    done
+}
+
 test -z "$bundle" && { echo "Syntax: $progname bundlefile [grepfilter [...]]"; exit 1; }
 if test -n "$2"; then
     shift
@@ -18,21 +30,7 @@ if test -n "$2"; then
     done
 fi
 echo ================ Included refs:
-for f in $(LC_ALL=C git bundle verify $bundle | grep -B 9999999 "^The bundle requires these" | grep -E "^[0-9a-f]{40} " | cut -f 1 -d ' '); do
-    echo ======== $(git log -1 --format="%H %d %s" $f);
-    if test -n "$grepfilter"; then
-        git lc $f | grep $grepfilter;
-    else
-        git lc $f
-    fi
-done
+listbundle B
 echo
 echo ================ Required refs:
-for f in $(LC_ALL=C git bundle verify $bundle | grep -A 9999999 "^The bundle requires these" | grep -E "^[0-9a-f]{40} " | cut -f 1 -d ' '); do
-    echo ======== $(git log -1 --format="%H %d %s" $f);
-    if test -n "$grepfilter"; then
-        git lc $f | grep $grepfilter;
-    else
-        git lc $f
-    fi
-done
+listbundle A
