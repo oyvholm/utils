@@ -17,6 +17,17 @@ if test -n "$2"; then
         grepfilter="$grepfilter -e $f"
     done
 fi
+echo ================ Included refs:
+for f in $(LC_ALL=C git bundle verify $bundle | grep -B 9999999 "^The bundle requires these" | grep -E "^[0-9a-f]{40} " | cut -f 1 -d ' '); do
+    echo ======== $f;
+    if test -n "$grepfilter"; then
+        git lc $f | grep $grepfilter;
+    else
+        git lc $f
+    fi
+done
+echo
+echo ================ Required refs:
 for f in $(LC_ALL=C git bundle verify $bundle | grep -A 9999999 "^The bundle requires these" | grep -E "^[0-9a-f]{40} " | cut -f 1 -d ' '); do
     echo ======== $f;
     if test -n "$grepfilter"; then
