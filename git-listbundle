@@ -13,7 +13,7 @@ grepfilter=
 
 listbundle() {
     for f in $(LC_ALL=C git bundle verify $bundle | grep -$1 9999999 "^The bundle requires these" | grep -E "^[0-9a-f]{40} " | cut -f 1 -d ' '); do
-        echo ======== $(git log -1 --format="%H %d %s" $f);
+        git log -1 --format="=== %H%n   %d%n    %s" $f | cat
         if test -n "$grepfilter"; then
             git lc $f | grep $grepfilter;
         else
@@ -29,8 +29,8 @@ if test -n "$2"; then
         grepfilter="$grepfilter -e $f"
     done
 fi
-echo ================ Included refs:
+echo ======== Included refs:
 listbundle B
 echo
-echo ================ Required refs:
+echo ======== Required refs:
 listbundle A
