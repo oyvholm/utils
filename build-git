@@ -47,6 +47,10 @@ hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
 
+if [ -n "$1" ]; then
+    local_master=$1
+fi
+
 echo
 echo Variables:
 echo
@@ -83,11 +87,11 @@ fetch_remotes() {
 
 push_changes() {
     echo ==== push changes to Spread ====
-    git push -f Spread $local_master html maint man next pu todo
+    git push -f Spread $local_master master html maint man next pu todo
     echo ==== push changes to github ====
-    git push -f github $local_master html maint man next pu todo
+    git push -f github $local_master master html maint man next pu todo
     echo ==== push changes to sunbase ====
-    git push -f sunbase $local_master html maint man next pu todo
+    git push -f sunbase $local_master master html maint man next pu todo
     git push --tags sunbase
     echo ==== push finished ====
 }
