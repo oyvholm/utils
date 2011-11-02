@@ -37,5 +37,5 @@ done
 git commit --dry-run && {
     git commit -m "$logmsg$(echo; echo; suuid -t c_pakk_log,commit -c "$logmsg")"
 }
-git pa
+# git pa
 myexit 0
