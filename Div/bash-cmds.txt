@@ -5,5 +5,8 @@ Create tags and branches in repos created by git-svn:
   for f in $(git branch -a | grep /tags/); do echo $f; git tag $(echo -n $f | perl -pe 's/remotes\/tags\///') $(git log -1 --format=%H $f); done
   for f in $(git branch -a | grep -v /tags/ | grep '^  '); do echo $f; git branch $(echo -n $f | perl -pe 's/^remotes\///') $(git log -1 --format=%H $f); done
 
+Remove the origin stuff after git filter-branch:
+  git update-ref -d refs/original/refs/heads/master
+
 vim: set ts=2 sw=2 sts=2 tw=0 et fo=tcqw fenc=utf8 :
 vim: set com=b\:#,fb\:-,fb\:*,n\:> :
