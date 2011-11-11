@@ -103,7 +103,7 @@ JSON from stdin. Needs curl(1).
 Options:
 
   -c, --create
-    Create remotes in current repoisitory instead of merely printing 
+    Create remotes in current repository instead of merely printing 
     them to stdout.
   -h, --help
     Show this help.
