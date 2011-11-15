@@ -5,7 +5,7 @@
 if test "$1" = "space"; then
     while :; do
         df -h . | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
-        sleep 5
+        sleep 1
         echo -n ' '
     done
 else
