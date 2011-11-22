@@ -8,6 +8,7 @@
 #=======================================================================
 
 if test "$1" = "-D"; then
+    # Delete all commit-* branches
     branches=`git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$'`
     test -z "$branches" && { echo "No commit-* branches found"; exit 0; }
     git branch -D $branches
@@ -15,6 +16,7 @@ if test "$1" = "-D"; then
 fi
 
 if test "$1" = "-c"; then
+    # Check if commit-* branches are part of any other branch
     for f in $(git branch | cut -c 3- | grep '^commit-'); do
         echo ============ $f
         git branch -a --contains=$f
