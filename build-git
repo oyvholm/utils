@@ -86,13 +86,13 @@ fetch_remotes() {
 }
 
 push_changes() {
-    echo -n $local_master | grep -Eq '^(master|html|maint|man|next|pu|todo)$' && push_local= || push_local=$local_master
+    echo -n $local_master | grep -Eq '^(master|maint|next|pu|todo)$' && push_local= || push_local=$local_master
     echo ==== push changes to Spread ====
-    git push -f Spread $push_local master html maint man next pu todo
+    git push -f Spread $push_local master maint next pu todo
     echo ==== push changes to github ====
-    git push -f github $push_local master html maint man next pu todo
+    git push -f github $push_local master maint next pu todo
     echo ==== push changes to sunbase ====
-    git push -f sunbase $push_local master html maint man next pu todo
+    git push -f sunbase $push_local master maint next pu todo
     git push --tags sunbase
     echo ==== push finished ====
 }
@@ -139,7 +139,7 @@ echo ================= Update all branches =================
 tmpbranch=tmpbuildgitbr
 git branch -D $tmpbranch 2>/dev/null
 git checkout -b $tmpbranch
-for f in master html maint man next pu todo; do
+for f in master maint next pu todo; do
     git branch -D $f
     git branch -t $f origin/$f
 done
