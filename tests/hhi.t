@@ -265,6 +265,52 @@ END
 );
 
 # }}}
+testcmd("$CMD hhi-files/nohhi.html", # {{{
+    <<'END',
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" lang="no">
+  <!-- nohhi.html -->
+  <!-- File ID: 1d10f504-17f2-11e1-8054-b5f0f6e1e052 -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>nohhi.html</title>
+  </head>
+  <body>
+
+    <!-- hhitoc -->
+    <ul>
+    <!-- {{{ -->
+    <li><span><b><a href="#h-1">1.</a></b> Secondary header</span>
+    </li>
+    <li><span><b><a href="#h-2">2.</a></b> Another h2</span>
+    </li>
+    <li><span><b><a href="#h-3">3.</a></b> Yet another h2</span>
+    <ul>
+    <li><span><b><a href="#h-3.1">3.1</a></b> Last h3</span>
+    </li>
+    </ul>
+    </li>
+    <!-- }}} -->
+    </ul>
+    <!-- /hhitoc -->
+
+    <h1>Top header</h1>
+    <h2><a id="h-1">1.</a> Secondary header</h2>
+    <h3>Tertiary header</h3> <!-- nohhi -->
+    <h2><a id="h-2">2.</a> Another h2</h2>
+    <h2><a id="h-3">3.</a> Yet another h2</h2>
+    <h3><a id="h-3.1">3.1</a> Last h3</h3>
+
+  </body>
+</html>
+END
+    '',
+    0,
+    'Skip header marked with <!-- nohhi -->',
+);
+
+# }}}
 todo_section:
 ;
 
