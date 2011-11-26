@@ -112,6 +112,58 @@ likecmd("$CMD --version", # {{{
 
 # }}}
 
+diag('Testing --no-number option...');
+testcmd("$CMD -n hhi-files/file.html", # {{{
+    <<'END',
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" lang="no">
+  <!-- file.html -->
+  <!-- File ID: 5920dcf0-17e1-11e1-8cf3-5730346fba47 -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>file.html</title>
+  </head>
+  <body>
+
+    <!-- hhitoc -->
+    <ul>
+    <!-- {{{ -->
+    <li><span>Secondary header</span>
+    <ul>
+    <li><span>Tertiary header</span>
+    </li>
+    </ul>
+    </li>
+    <li><span>Another h2</span>
+    </li>
+    <li><span>Yet another h2</span>
+    <ul>
+    <li><span>Last h3</span>
+    </li>
+    </ul>
+    </li>
+    <!-- }}} -->
+    </ul>
+    <!-- /hhitoc -->
+
+    <h1>Top header</h1>
+    <h2>Secondary header</h2>
+    <h3>Tertiary header</h3>
+    <h2>Another h2</h2>
+    <h2>Yet another h2</h2>
+    <h3>Last h3</h3>
+
+  </body>
+</html>
+END
+    '',
+    0,
+    'Use -n option',
+);
+
+# }}}
+
 diag("Use no options...");
 testcmd("$CMD hhi-files/file.html", # {{{
     <<'END',
