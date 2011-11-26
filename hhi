@@ -1,21 +1,59 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # hhi
 # File ID: 9f049aca-5d3b-11df-8f49-90e6ba3022ac
 # Html Header Indexer
-# Made by Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+#
+# Character set: UTF-8
+# ©opyleft STDyearDTS– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later, see end of 
+# file for legal stuff.
 #=======================================================================
 
 use strict;
+use warnings;
+use Getopt::Long;
 
-use Getopt::Std;
-our ($opt_a, $opt_h, $opt_l, $opt_n) =
-    (     0,      0,      2,      0);
-getopts('ahl:n');
+local $| = 1;
 
-my $Debug = 0; # 0 = Standard, 1 = Send debug msgs to stderr
+our $Debug = 0;
+
+our %Opt = (
+
+    'all' => 0,
+    'debug' => 0,
+    'help' => 0,
+    'no-number' => 0,
+    'startlevel' => 2,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'all|a' => \$Opt{'help'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'no-number|n' => \$Opt{'no-number'},
+    'startlevel|l=i' => "",
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
 
 my $last_level = 1;
 my $start_level = 2;
@@ -24,35 +62,14 @@ my @Data = ();
 my @Toc = ();
 my %name_used = ();
 
-if ($opt_h) {
-    print(<<END);
-
-Syntax: $0 [options] [file [...]]
-
-Parses HTML source and creates section numbers in headers and inserts a 
-table of contents in a defined area. Refer to the POD at the end of the 
-Perl file for complete info.
-
-Options:
-
-  -a  Include all headers in the table of contents, even those marked 
-      with "<!-- nohhitoc -->"
-  -h  This help message
-  -l  Start indexing at this level number. Default: $start_level
-  -n  Don't number headers
-
-END
-    exit(0);
-}
-
-if ($opt_l =~ /^\d+$/) {
-    if ($opt_l < 1) {
-        die("$0: Number passed to -l has to be bigger than zero\n");
+if ($Opt{'startlevel'} =~ /^\d+$/) {
+    if ($Opt{'startlevel'} < 1) {
+        die("$progname: Number passed to -l has to be bigger than zero\n");
     } else {
-        $start_level = $opt_l;
+        $start_level = $Opt{'startlevel'};
     }
 } else {
-    die("$0: -l wants a number\n")
+    die("$progname: -l wants a number\n")
 }
 
 while (<>) {
@@ -65,7 +82,7 @@ while (<>) {
             my $skip_num = 0;
             splice(@header_num, $header_level-1) if ($header_level < $last_level);
             if ($header_level - $last_level > 1) {
-                warn("$0: Line $.: Header skip ($last_level to $header_level)\n");
+                warn("$progname: Line $.: Header skip ($last_level to $header_level)\n");
                 for (my $Tmp = 0; $Tmp < $header_level-2; $Tmp++) {
                     defined($header_num[$Tmp]) || ($header_num[$Tmp] = "");
                 }
@@ -75,7 +92,7 @@ while (<>) {
             my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i) ? $1 : "h-$tall_str";
 
             if (defined($name_used{$name_str})) {
-                warn("$0: Line $.: \"$name_str\": Section name already used\n");
+                warn("$progname: Line $.: \"$name_str\": Section name already used\n");
             }
             $name_used{$name_str} = 1;
 
@@ -85,13 +102,13 @@ while (<>) {
                 $Rest = $2;
             }
             ($tall_str .= ".") if ($header_level == 2);
-            if ($opt_n || $Rest =~ /<!-- nohhinum -->/i) {
+            if ($Opt{'no-number'} || $Rest =~ /<!-- nohhinum -->/i) {
                 $skip_num = 1;
                 $_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
             } else {
                 $_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
             }
-            if (!/<!-- nohhitoc -->/i || $opt_a) {
+            if (!/<!-- nohhitoc -->/i || $Opt{'all'}) {
                 push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
                                      : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
             }
@@ -113,7 +130,7 @@ while (<>) {
                 last;
             }
         }
-        $Found && die("$0: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
+        $Found && die("$progname: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
         # }}}
     } else {
         push(@Data, "$_");
@@ -164,13 +181,79 @@ for my $Line (@Data) {
     # }}}
 }
 
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] [file [files [...]]]
+
+Parses HTML source and creates section numbers in headers and inserts a 
+table of contents in a defined area. Refer to the POD at the end of the 
+Perl file for complete info.
+
+Options:
+
+  -a, --all
+    Include all headers in the table of contents, even those marked with 
+    "<!-- nohhitoc -->"
+  -h, --help
+    Show this help.
+  -l, --startlevel
+    Start indexing at this level number. Default: 2.
+  -n, --no-number
+    Don't number headers
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
 sub D {
-    print(STDERR @_) if $Debug;
-}
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
 
 __END__
 
-# POD {{{
+# Plain Old Documentation (POD) {{{
 
 =pod
 
@@ -180,7 +263,7 @@ hhi - Html Header Indexer
 
 =head1 SYNOPSIS
 
-hhi [options] [files [..]]
+hhi [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
@@ -241,29 +324,40 @@ E<lt>h3E<gt> in between.
 
 =over 4
 
-=item B<-a>
+=item B<-a>, B<--all>
 
 Include all headers in the contents, even those marked with S<E<lt>!-- 
 nohhitoc --E<gt>>.
 
-=item B<-l x>
+=item B<-l x>, B<--startlevel x>
 
 Start indexing at level x.
 Default value is 2, leaving E<lt>h1E<gt> headers untouched.
 
-==item B<-n>
+==item B<-n>, B<--no-number>
 
 Don’t insert section numbers into headers.
 
 =back
 
+=head1 BUGS
+
+
+
 =head1 AUTHOR
 
-Copyleft 2002E<8211> E<216>yvind A. Holm E<lt>sunny@sunbase.orgE<gt>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
-This program is free software; you can redistribute it and/or modify it 
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software: you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation; either version 2 of the License, or (at your 
+Free Software Foundation, either version 3 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 
@@ -272,12 +366,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along 
-with this program; if not, write to the Free Software Foundation, Inc., 
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
 
 =cut
 
 # }}}
 
-# vim: ft=perl fdm=marker fdl=0 ts=4 sw=4 sts=4 et fenc=UTF-8 fo+=w2 :
-# End of file hhi
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
