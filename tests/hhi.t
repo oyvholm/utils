@@ -112,6 +112,57 @@ likecmd("$CMD --version", # {{{
 
 # }}}
 
+diag("Use no options...");
+testcmd("$CMD hhi-files/file.html", # {{{
+    <<'END',
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" lang="no">
+  <!-- file.html -->
+  <!-- File ID: 5920dcf0-17e1-11e1-8cf3-5730346fba47 -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>file.html</title>
+  </head>
+  <body>
+
+    <!-- hhitoc -->
+    <ul>
+    <!-- {{{ -->
+    <li><span><b><a href="#h-1">1.</a></b> Secondary header</span>
+    <ul>
+    <li><span><b><a href="#h-1.1">1.1</a></b> Tertiary header</span>
+    </li>
+    </ul>
+    </li>
+    <li><span><b><a href="#h-2">2.</a></b> Another h2</span>
+    </li>
+    <li><span><b><a href="#h-3">3.</a></b> Yet another h2</span>
+    <ul>
+    <li><span><b><a href="#h-3.1">3.1</a></b> Last h3</span>
+    </li>
+    </ul>
+    </li>
+    <!-- }}} -->
+    </ul>
+    <!-- /hhitoc -->
+
+    <h1>Top header</h1>
+    <h2><a id="h-1">1.</a> Secondary header</h2>
+    <h3><a id="h-1.1">1.1</a> Tertiary header</h3>
+    <h2><a id="h-2">2.</a> Another h2</h2>
+    <h2><a id="h-3">3.</a> Yet another h2</h2>
+    <h3><a id="h-3.1">3.1</a> Last h3</h3>
+
+  </body>
+</html>
+END
+    '',
+    0,
+    'Without options',
+);
+
+# }}}
 todo_section:
 ;
 

@@ -96,8 +96,8 @@ while (<>) {
             }
             $name_used{$name_str} = 1;
 
-            if ($Rest =~ m#^(<a name=".*?">[\d\.]+</a>\s+)(.*?)$#i) {
-                $Rest = $2;
+            if ($Rest =~ m#^(<a (name|id)=".*?">[\d\.]+</a>\s+)(.*?)$#i) {
+                $Rest = $3;
             } elsif ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
                 $Rest = $2;
             }
@@ -106,7 +106,7 @@ while (<>) {
                 $skip_num = 1;
                 $_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
             } else {
-                $_ = "${Pref}<${H}${header_level}${Elem}><a name=\"$name_str\">$tall_str</a> $Rest\n";
+                $_ = "${Pref}<${H}${header_level}${Elem}><a id=\"$name_str\">$tall_str</a> $Rest\n";
             }
             if (!/<!-- nohhitoc -->/i || $Opt{'all'}) {
                 push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
@@ -310,11 +310,11 @@ will be changed to
     </li>
     </ul>
     <!-- /hhitoc -->
-    <h2><a name="h-1">1.</a> Subsection #1</h2>
-      <h3><a name="h-1.1">1.1</a> Subsubsection #1.1</h3>
-        <h4><a name="h-1.1.1">1.1.1</a> Header excluded from the index</h4> <!-- nohhitoc -->
-    <h2><a name="h-2">2.</a> Subsection #2</h2>
-    <h2><a name="secname">3.</a> Section with specified name</h2> <!-- hhiname secname -->
+    <h2><a id="h-1">1.</a> Subsection #1</h2>
+      <h3><a id="h-1.1">1.1</a> Subsubsection #1.1</h3>
+        <h4><a id="h-1.1.1">1.1.1</a> Header excluded from the index</h4> <!-- nohhitoc -->
+    <h2><a id="h-2">2.</a> Subsection #2</h2>
+    <h2><a id="secname">3.</a> Section with specified name</h2> <!-- hhiname secname -->
 
 To avoid creation of names like I<1.2..4>, header levels should not be 
 skipped, do not let a E<lt>h4E<gt> follow a E<lt>h2E<gt> without a 
