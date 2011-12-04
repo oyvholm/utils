@@ -96,8 +96,8 @@ LOOP: for my $f (@Dirs) {
             );
         }
         if ($Opt{'fetch'}) {
-            print("==== git remote -v update -p ====\n");
-            system("git", "remote", "-v", "update", "-p") && (check_sig($?) || push(@err_fetch, $f));
+            print("==== git fetch --all ====\n");
+            system("git", "fetch", "--all") && (check_sig($?) || push(@err_fetch, $f));
         }
         if ($Opt{'pull'}) {
             print("==== git pull --ff-only ====\n");
