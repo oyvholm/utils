@@ -111,6 +111,15 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
+diag('Checking dependencies...');
+likecmd("curl --version", # {{{
+    '/^curl [0-9]/',
+    '/^$/',
+    0,
+    'curl(1) is installed',
+);
+
+# }}}
 
 todo_section:
 ;
