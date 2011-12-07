@@ -184,6 +184,9 @@ until test "$choice" = "y"; do
     echo -n If all tests succeeded, press y to continue...
     read choice
 done
+until $sudo echo Password OK | grep -q "Password OK"; do
+    :
+done
 echo ================= $sudo make install =================
 $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
