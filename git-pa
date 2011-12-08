@@ -6,7 +6,7 @@
 retval=0
 for f in $(git remote); do
     for ch in $(cat ~/.git-pa-remotes); do
-        if git remote -v | grep ^$f | cut -f 2 | grep -q $ch; then
+        if git remote -v | grep ^$f | grep -q $ch; then
             echo ======== Pushing to \"$f\"
             if [ "$f" = "sunbase" ]; then
                 git push $f "$@" || retval=1
