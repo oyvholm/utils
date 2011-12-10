@@ -4,10 +4,14 @@
 # File ID: 14434f48-6be7-11df-904a-90e6ba3022ac
 # Restore empty directories created by git-store-dirs(1)
 
+tmppref=$(date -u +"%Y%m%dT%H%M%SZ").$$
+bef_file=/tmp/grd.$tmppref.before.tmp
+aft_file=/tmp/grd.$tmppref.after.tmp
 dirfile=.emptydirs
 test -d .git/. || { echo $0: Has to be run from the toplevel of the working tree >&2; exit 1; }
 test -e $dirfile || { echo $0: No $dirfile file found >&2; exit 1; }
-emptydirs >/tmp/grd.before.tmp
+emptydirs >$bef_file
 xargs -0 mkdir -p <$dirfile
-emptydirs >/tmp/grd.after.tmp
-diff -u /tmp/grd.before.tmp /tmp/grd.after.tmp | grep '^+\./' | cut -c 2-
+emptydirs >$aft_file
+diff -u $bef_file $aft_file | grep '^+\./' | cut -c 2-
+rm $bef_file $aft_file
