@@ -7,13 +7,17 @@
 
 test "$1" = "-d" && {
     shift;
+    echo -n ciall: Executing git-store-dirs... >&2
     git store-dirs || {
-        echo ciall: git-store-dirs error >&2;
+        echo git-store-dirs error >&2;
         exit 1;
     }
+    echo DONE >&2
 }
+echo ciall: git status 1... >&2
 LC_ALL=C git status | grep "^nothing to commit" && { echo ciall: Nothing to do here.; exit 0; }
 
+echo ciall: git status 2... >&2
 git status
 echo
 until test "$besafe" = "y"; do
@@ -32,6 +36,7 @@ if [ "$logmsg" = "--" ]; then
     test -z "$logmsg" && { echo ciall: No text entered in editor, aborting.; exit 1; }
 fi
 
+echo ciall: git status 3... >&2
 LC_ALL=C git status | grep "^nothing to commit" || (git add . && git commit -a -m "$logmsg`echo; echo; suuid -t ciall -c "$logmsg"`")
 echo ========== git status ==========
 git status
