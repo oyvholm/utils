@@ -17,6 +17,7 @@ done
 uuid=`suuid -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
 echo \# $uuid >Files.sha1
 find -type f -print0 | \
+    grep -zv '/\.git/' | \
     LC_COLLATE=C sort -z | \
     grep -zv -e '\./Files\.sha1$' | \
     xargs -0 sha1sum -b >>Files.sha1
