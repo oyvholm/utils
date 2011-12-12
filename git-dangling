@@ -19,7 +19,7 @@ if test "$1" = "-c"; then
     # Check if commit-* branches are part of any other branch
     for f in $(git branch | cut -c 3- | grep '^commit-'); do
         echo ============ $f
-        git branch -a --contains=$f
+        git branch -a --contains=$f | grep -v "^  $f\$"
     done
     exit
 fi
