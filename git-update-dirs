@@ -113,9 +113,9 @@ LOOP: for my $f (@Dirs) {
             system("git", "submodule", "update") && (check_sig($?) || push(@err_updsub, $f));
         }
         if ($Opt{'compress'}) {
-            print("==== git gc --prune=now ====\n");
+            print("==== git gc --no-prune ====\n");
             system("du -h .git | tail -1") && check_sig($?);
-            system("git", "gc", "--prune=now") && (check_sig($?) || push(@err_compress, $f));
+            system("git", "gc", "--no-prune") && (check_sig($?) || push(@err_compress, $f));
             system("du -h .git | tail -1") && check_sig($?);
         }
         print("\n");
