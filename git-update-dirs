@@ -22,6 +22,7 @@ our $Debug = 0;
 our %Opt = (
 
     'compress' => 0,
+    'dangling' => 0,
     'debug' => 0,
     'fetch' => 0,
     'help' => 0,
@@ -43,6 +44,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "compress|c" => \$Opt{'compress'},
+    "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
     "fetch|f" => \$Opt{'fetch'},
     "help|h" => \$Opt{'help'},
@@ -65,6 +67,7 @@ if ($Opt{'version'}) {
 
 my @Dirs = $Opt{'recursive'} ? glob("*") : ();
 my @err_compress = ();
+my @err_dangling = ();
 my @err_fetch = ();
 my @err_pull = ();
 my @err_push = ();
@@ -84,6 +87,10 @@ LOOP: for my $f (@Dirs) {
         if (!chdir($f)) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
+        }
+        if ($Opt{'dangling'}) {
+            print("==== git dangling ====\n");
+            system("git", "dangling") && (check_sig($?) || push(@err_dangling, $f));
         }
         if ($Opt{'test'}) {
             print("==== git fsck ====\n");
@@ -123,6 +130,7 @@ LOOP: for my $f (@Dirs) {
     chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original directory: $!\n");
 }
 scalar(@err_fetch) && print("$progname: Unable to fetch from: " . join(" ", @err_fetch) . "\n");
+scalar(@err_dangling) && print("$progname: Unable to run git dangling: " . join(" ", @err_dangling) . "\n");
 scalar(@err_pull) && print("$progname: Unable to pull from: " . join(" ", @err_pull) . "\n");
 scalar(@err_push) && print("$progname: Unable to push from: " . join(" ", @err_push) . "\n");
 scalar(@err_updsub) && print("$progname: Unable to update submodules in: " . join(" ", @err_updsub) . "\n");
@@ -155,6 +163,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -d, --dangling
+    Execute "git dangling", i.e. turn all dangling commits into branches
   -c, --compress
     Compress local repositories to save space
   -h, --help
