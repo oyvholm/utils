@@ -7,7 +7,7 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-tmpuuid=$(suuid -t c_konvflac -c "Starting conversion")
+tmpuuid=$(suuid -t c_konvflac -wa -c "Starting conversion")
 test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
 chkfile=/tmp/konvflac.$tmpuuid.tmp
 for curr in "$@"; do
@@ -20,7 +20,7 @@ for curr in "$@"; do
     test -e $flacfile && { echo $flacfile: File already exists >&2; continue; }
     wavsha=$(sha1sum $wavfile | cut -f1 -d ' ')
     # FIXME: Kludgy grep
-    flac -T FILEID=$(suuid -t encode,c_konvflac -c "Converting $wavfile to flac") --keep-foreign-metadata $wavfile 2>&1 | grep -v -e "keep-foreign-metadata is a new feature" -e "2000,2001,2002,2003,2004,2005,2006,2007" -e "flac comes with ABSOLUTELY NO WARRANTY" -e "welcome to redistribute it under certain conditions" -e '^$'
+    flac -T FILEID=$(suuid -t encode,c_konvflac -wa -c "Converting $wavfile to flac") --keep-foreign-metadata $wavfile 2>&1 | grep -v -e "keep-foreign-metadata is a new feature" -e "2000,2001,2002,2003,2004,2005,2006,2007" -e "flac comes with ABSOLUTELY NO WARRANTY" -e "welcome to redistribute it under certain conditions" -e '^$'
     flac -d -o $chkfile --keep-foreign-metadata $flacfile 2>&1 | grep -v -e "keep-foreign-metadata is a new feature" -e "2000,2001,2002,2003,2004,2005,2006,2007" -e "flac comes with ABSOLUTELY NO WARRANTY" -e "welcome to redistribute it under certain conditions" -e '^$'
     flacsha=$(sha1sum $chkfile | cut -f 1 -d ' ')
     if test "$wavsha" = "$flacsha"; then
