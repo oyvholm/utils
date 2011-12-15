@@ -109,6 +109,10 @@ LOOP: for my $f (@Dirs) {
         if ($Opt{'pull'}) {
             print("==== git pull --ff-only ====\n");
             system("git", "pull", "--ff-only") && (check_sig($?) || push(@err_pull, $f));
+            if (-e '.emptydirs') {
+                print("==== git restore-dirs ====\n");
+                system('git', 'restore-dirs');
+            }
         }
         if ($Opt{'push'}) {
             print("==== git pa ====\n");
