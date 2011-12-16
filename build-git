@@ -36,8 +36,8 @@ local_master=master
 # Name of remote master
 remote_master=origin/master
 
-# Set to 1 to create and run ./configure
-use_configure=0
+# Set to 0 to skip ./configure and use Makefile in git.git instead
+use_configure=1
 configure_opts=
 
 makeflags=
