@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# wi
+# File ID: afcf3af0-27a5-11e1-b643-4b2592583869
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+grep -hi $@ ~/src/git/uuids/*.xml | sortuuid | encap suuids | xf | less
