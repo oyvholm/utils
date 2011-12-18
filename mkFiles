@@ -14,7 +14,13 @@ until mkdir $lockname 2>/dev/null; do
 	sleep 5
 done
 
-uuid=`suuid -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
+unset suuid_m
+if test "$1" = "-m"; then
+    shift
+    suuid_m=" -m"
+fi
+
+uuid=`suuid$suuid_m -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
 echo \# $uuid >Files.sha1
 find -type f -print0 | \
     grep -zv '/\.git/' | \
