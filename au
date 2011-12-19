@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#=======================================================================
+# au
+# File ID: 3c212296-2a91-11e1-a6ba-77ff51cfb7ce
+# Edit all kind of files in Audacity
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=au
+lockdir=$HOME/.au.LOCK
+
+myexit() {
+    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
+    exit $1
+}
+
+trap "myexit 1" INT TERM
+mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
+
+file="$1"
+test -e "$file" || { echo $progname: $file: File not found >&2; myexit 1; }
+audir=$HOME/tmp/au
+mkdir -p $audir
+wavfile=$audir/$file.wav
+mplayer -novideo -ao pcm:file=$wavfile $file
+(sess -t c_au audacity "$wavfile"; myexit 0) &
