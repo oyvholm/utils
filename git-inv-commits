@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# check-inv-commits
+# File ID: 5aace112-2a7a-11e1-9e13-e5b87d4d5e10
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+echo ==== git.git:html
+git lc 1a4e841b439ba014b365999c3a6b9e2be3740bd8
+
+echo ==== git.git:man
+git lc d4bcd183760072d974bb977b7388615a92677704
