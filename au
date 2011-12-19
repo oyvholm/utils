@@ -23,5 +23,6 @@ test -e "$file" || { echo $progname: $file: File not found >&2; myexit 1; }
 audir=$HOME/tmp/au
 mkdir -p $audir
 wavfile=$audir/$file.wav
-mplayer -novideo -ao pcm:file=$wavfile $file
+# FIXME: Need a way to check that the .wav file isn't truncated or edited
+test -e "$wavfile" || mplayer -novideo -ao pcm:file=$wavfile $file
 (sess -t c_au audacity "$wavfile"; myexit 0) &
