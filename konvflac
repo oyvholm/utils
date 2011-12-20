@@ -7,6 +7,10 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+if test -z "$1"; then
+    echo 'Syntax: konvflac wav_file [...]' >&2
+    exit 1
+fi
 tmpuuid=$(suuid -t c_konvflac -wa -c "Starting conversion")
 test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
 chkfile=/tmp/konvflac.$tmpuuid.tmp
