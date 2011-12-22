@@ -26,6 +26,9 @@ testclean:
 	cd src/suuid/tests && $(MAKE) clean
 	cd src/gpstools/tests && $(MAKE) clean
 
+unmerged:
+	git br -a --no-merged | grep -v /all/ | cut -f 3- -d / | rmspcall | sort -u | grep -v ^commit-
+
 clean: testclean
 
 remotes:
