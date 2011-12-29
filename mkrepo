@@ -20,6 +20,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'backup-remote' => 0,
     'create-remote' => 0,
     'debug' => 0,
     'directory' => "",
@@ -36,6 +37,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "backup-remote|b" => \$Opt{'backup-remote'},
     "create-remote|c" => \$Opt{'create-remote'},
     "debug" => \$Opt{'debug'},
     "directory|d=s" => \$Opt{'directory'},
@@ -50,6 +52,7 @@ $Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
 
 my $url = 'sunny@git.sunbase.org';
 my $dir = $Opt{'directory'} ? "/home/sunny/Git-$Opt{'directory'}" : "/home/sunny/Git";
+my $backup_dir = '/home/sunny/div/Git-backup';
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
@@ -66,6 +69,10 @@ $repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid char
 if ($Opt{'create-remote'}) {
     system("ssh", $url, "mkdir $rg && git init --bare $rg");
     system("git", "remote", "add", "sunbase", "$url:$rg");
+}
+if ($Opt{'backup-remote'}) {
+    -d "$backup_dir/$repo.git/." || system("git", "init", "--bare", "$backup_dir/$repo.git");
+    system("git", "remote", "add", "backup", "sunny\@localhost:$backup_dir/$repo.git");
 }
 
 sub print_version {
@@ -88,6 +95,8 @@ Usage: $progname [options] repo_name
 
 Options:
 
+  -b, --backup-remote
+    Set up the backup remote
   -c, --create-remote
     Set up the sunbase remote
   -d X, --directory X
