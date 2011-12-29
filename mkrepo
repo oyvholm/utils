@@ -63,8 +63,8 @@ my $repo = $ARGV[0];
 $repo =~ s/(.*)\.git$/$1/i;
 my $rg = "$dir/$repo.git";
 $repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid characters\n");
-system("ssh", $url, "mkdir $rg && git init --bare $rg");
 if ($Opt{'create-remote'}) {
+    system("ssh", $url, "mkdir $rg && git init --bare $rg");
     system("git", "remote", "add", "sunbase", "$url:$rg");
 }
 
