@@ -7,4 +7,8 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-grep -hi $@ ~/src/git/uuids/*.xml ~/uuids/*.xml | sort -u | sortuuid | encap suuids | xf | less
+search_str=
+for f in "$@"; do
+    search_str="$search_str -e $f"
+done
+grep -hi $search_str ~/src/git/uuids/*.xml ~/uuids/*.xml | sort -u | sortuuid | encap suuids | xf | less
