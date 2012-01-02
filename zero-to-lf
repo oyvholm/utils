@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# zero-to-lf
+# File ID: 6c8112ec-3546-11e1-b46b-fefdb24f8e10
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+cat "$@" | tr '\0' '\n'
