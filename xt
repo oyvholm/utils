@@ -3,15 +3,19 @@
 # xt
 # File ID: 0c214154-5d4a-11df-940b-90e6ba3022ac
 
+retval=0
+
 for f in "$@"; do
     if echo $f | grep -qi '\.gpx$'; then
         gpx_xsd=~/bin/Git/gpstools/Tools/xsd/gpx/gpx-1.1.xsd
         if [ -e $gpx_xsd ]; then
-            xmllint --noout --schema $gpx_xsd $f
+            xmllint --noout --schema $gpx_xsd $f || retval=1
         else
-            xmllint --noout --schema http://www.topografix.com/GPX/1/1/gpx.xsd $f
+            xmllint --noout --schema http://www.topografix.com/GPX/1/1/gpx.xsd $f || retval=1
         fi
     else
-        xmllint --valid --noout "$f"
+        xmllint --valid --noout "$f" || retval=1
     fi
 done
+
+exit $retval
