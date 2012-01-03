@@ -11,8 +11,5 @@
 komm=$1
 shift
 filer="$@"
-echo komm=$komm
 komm=$(echo $komm | tr ' ' _)
-echo komm=$komm
-echo filer=$filer
 rename -v "s/^(.*?Z)\.(z.*?)\.(.*)/\$1.$komm.\$3/" $filer
