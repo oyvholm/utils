@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#=======================================================================
+# q3r
+# File ID: 20788d16-364b-11e1-b503-f129211fd7d1
+# Rename files created by the Zoom Q3HD to something useful.
+# Syntax: q3r "text here" [files]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+komm=$1
+shift
+filer="$@"
+echo komm=$komm
+komm=$(echo $komm | tr ' ' _)
+echo komm=$komm
+echo filer=$filer
+rename -v "s/^(.*?Z)\.(z.*?)\.(.*)/\$1.$komm.\$3/" $filer
