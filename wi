@@ -16,4 +16,10 @@ grep -hi $search_str ~/src/git/uuids/*.xml ~/uuids/*.xml |
     sortuuid |
     encap suuids |
     xf |
+    perl -pe '
+        s/\\n/\n/g;
+        s/\\t/\t/g;
+        s/\\r/\r/g;
+        s/\\\\/\\/g;
+    ' |
     less
