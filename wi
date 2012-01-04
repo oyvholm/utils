@@ -11,4 +11,9 @@ search_str=
 for f in "$@"; do
     search_str="$search_str -e $f"
 done
-grep -hi $search_str ~/src/git/uuids/*.xml ~/uuids/*.xml | sort -u | sortuuid | encap suuids | xf | less
+grep -hi $search_str ~/src/git/uuids/*.xml ~/uuids/*.xml |
+    sort -u |
+    sortuuid |
+    encap suuids |
+    xf |
+    less
