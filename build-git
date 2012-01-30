@@ -68,6 +68,10 @@ echo "use_configure  = \"$use_configure\""
 echo "configure_opts = \"$configure_opts\""
 echo
 
+is_official_branch() {
+    echo -n $1 | grep -Eq '^(master|maint|next|pu|todo)$' && return 0 || return 1
+}
+
 fetch_remotes() {
     git remote | grep -q '^origin$' || {
         echo $progname: The \"origin\" remote doesn\'t exist. Something is wrong here. >&2;
@@ -91,7 +95,7 @@ fetch_remotes() {
 }
 
 push_changes() {
-    echo -n $local_master | grep -Eq '^(master|maint|next|pu|todo)$' && push_local= || push_local=$local_master
+    is_official_branch $local_master && push_local= || push_local=$local_master
     echo ==== push changes to Spread ====
     git push -f Spread $push_local master maint next pu todo
     echo ==== push changes to github ====
