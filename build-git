@@ -46,6 +46,7 @@ make_info=1
 hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
+curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
 
 if [ -n "$1" ]; then
     local_master=$1
@@ -54,6 +55,7 @@ fi
 echo
 echo Variables:
 echo
+echo "curr_git_ver   = \"$curr_git_ver\""
 echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
 echo "builddir       = \"$builddir\""
 echo "pref           = \"$pref\""
@@ -154,6 +156,9 @@ for f in master maint next pu todo; do
 done
 git checkout -f $local_master
 git branch -D $tmpbranch
+echo ================= New changes: =================
+git log --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $curr_git_ver.. | cat
+echo
 vername=git.$local_master.`git describe --match 'v1*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
