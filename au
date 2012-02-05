@@ -18,11 +18,11 @@ myexit() {
 trap "myexit 1" INT TERM
 mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
 
-file="$1"
+file="$@"
 test -e "$file" || { echo $progname: $file: File not found >&2; myexit 1; }
 audir=$HOME/tmp/au
 mkdir -p $audir
-wavfile=$audir/$file.wav
+wavfile="$audir/$file.wav"
 # FIXME: Need a way to check that the .wav file isn't truncated or edited
-test -e "$wavfile" || mplayer -novideo -ao pcm:file=$wavfile $file
+test -e "$wavfile" || mplayer -novideo -ao "pcm:file=$wavfile" "$file"
 (sess -t c_au audacity "$wavfile"; myexit 0) &
