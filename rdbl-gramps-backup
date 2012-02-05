@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# rdbl-gramps-backup
+# File ID: 31770f78-4f61-11e1-b296-adf966f3b111
+# Helper script for [diff "gramps-backup"] in .gitconfig
+#=======================================================================
+
+tar xOzf $* | zcat
