@@ -137,8 +137,9 @@ if [ ! -e GIT-VERSION-GEN ]; then
     myexit 1
 fi
 fetch_remotes
-echo ================= New changes: =================
-git log --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $curr_git_ver.. | cat
+is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
+echo ================= New changes: $curr_git_ver..$destbranch =================
+git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $curr_git_ver..$destbranch | cat
 echo
 echo ================= git status in `pwd` =================
 git status
