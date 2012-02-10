@@ -137,6 +137,9 @@ if [ ! -e GIT-VERSION-GEN ]; then
     myexit 1
 fi
 fetch_remotes
+echo ================= New changes: =================
+git log --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $curr_git_ver.. | cat
+echo
 echo ================= git status in `pwd` =================
 git status
 echo
@@ -156,9 +159,6 @@ for f in master maint next pu todo; do
 done
 git checkout -f $local_master
 git branch -D $tmpbranch
-echo ================= New changes: =================
-git log --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $curr_git_ver.. | cat
-echo
 vername=git.$local_master.`git describe --match 'v1*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
