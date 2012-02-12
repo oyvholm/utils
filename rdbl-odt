@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#=======================================================================
+# rdbl-odt
+# File ID: a424a3c8-55ba-11e1-a76a-fb64b6725555
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+unzip -p "$@" content.xml | xf
+true
