@@ -193,6 +193,8 @@ echo ================= make $makeflags =================
 make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
 echo ================= make test =================
 make $makeflags test
+echo
+echo Ready to install $(./git --version) from branch \"$local_master\"
 until test "$choice" = "y"; do
     echo
     print_timestamp
