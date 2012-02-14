@@ -84,6 +84,20 @@ END
 
 =cut
 
+my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
+my $repo = "$Tmptop/repo";
+
+ok(mkdir($Tmptop), "mkdir $Tmptop") || die("$progname: Unable to continue\n");
+testcmd("rm -rf $Tmptop", # {{{
+    '',
+    '',
+    0,
+    'Remove tempdir',
+);
+
+# }}}
+ok(!-e $Tmptop, 'Tempdir is gone');
+
 todo_section:
 ;
 
