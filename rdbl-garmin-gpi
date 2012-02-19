@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# rdbl-garmin-gpi
+# File ID: 08b66f42-5af2-11e1-835d-17b2066c51a9
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+gpsbabel -r -t -w -i garmin_gpi -f "$@" -o gpx -F - | poiformat
