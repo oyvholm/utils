@@ -40,4 +40,4 @@ remotes:
 	git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/utils; true
 
 lgd:
-	git lg --date-order $$(git branch -a | cut -c3- | grep -E -e 'remotes/(Spread|bitbucket|github|gitorious|repoorcz|sunbase)/') $$(git branch | cut -c3-)
+	git lg --date-order $$(git branch -a | cut -c3- | grep -E -e 'remotes/(Spread|bitbucket|github|gitorious|repoorcz|sunbase)/' | grep -v 'HEAD -> ') $$(git branch | cut -c3-)
