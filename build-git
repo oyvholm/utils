@@ -90,7 +90,7 @@ fetch_remotes() {
         sleep 2
     done
     # git fetch --all arrived in v1.6.6, and that’s too recent to use.
-    for f in gitster Spread github sunbase; do
+    for f in $(git remote | grep -v '^origin$'); do
         echo ===== $f =====
         git fetch $f
     done
