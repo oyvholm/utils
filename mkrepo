@@ -24,6 +24,7 @@ our %Opt = (
     'create-remote' => 0,
     'debug' => 0,
     'directory' => "",
+    'github-remote' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -41,6 +42,7 @@ GetOptions(
     "create-remote|c" => \$Opt{'create-remote'},
     "debug" => \$Opt{'debug'},
     "directory|d=s" => \$Opt{'directory'},
+    "github-remote|g" => \$Opt{'github-remote'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -74,6 +76,9 @@ if ($Opt{'backup-remote'}) {
     -d "$backup_dir/$repo.git/." || system("git", "init", "--bare", "$backup_dir/$repo.git");
     system("git", "remote", "add", "backup", "sunny\@localhost:$backup_dir/$repo.git");
 }
+if ($Opt{'github-remote'}) {
+    system("git", "remote", "add", "github", "git\@github.com:sunny256/$repo.git");
+}
 
 sub print_version {
     # Print program version {{{
@@ -101,6 +106,8 @@ Options:
     Set up the sunbase remote
   -d X, --directory X
     Create a repo inside Git-X/ instead of Git/
+  -g, --github-remote
+    Define the github remote
   -h, --help
     Show this help.
   -v, --verbose
