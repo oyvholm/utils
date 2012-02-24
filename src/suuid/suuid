@@ -183,7 +183,6 @@ if (open(LogFP, "+>>", $Logfile)) {
             seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file: $!\n");
             my $filepos = tell(LogFP);
             chomp(my $uuid = `$Cmd`);
-            my $curr_time = time;
             if ($Opt{'random-mac'}) {
                 $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
             }
