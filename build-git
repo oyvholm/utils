@@ -151,15 +151,12 @@ read
 echo ================= git clean =================
 git clean -fxd
 echo ================= Update all branches =================
-tmpbranch=tmpbuildgitbr
-git branch -D $tmpbranch 2>/dev/null
-git checkout -b $tmpbranch
+git checkout $(git log -1 --format=%H) 2>/dev/null
 for f in master maint next pu todo; do
     git branch -D $f
     git branch -t $f origin/$f
 done
 git checkout -f $local_master
-git branch -D $tmpbranch
 vername=git.$local_master.`git describe --match 'v1*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
