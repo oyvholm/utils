@@ -7,11 +7,22 @@ retval=0
 
 for f in "$@"; do
     if echo $f | grep -qi '\.gpx$'; then
-        gpx_xsd=~/bin/Git/gpstools/Tools/xsd/gpx/gpx-1.1.xsd
-        if [ -e $gpx_xsd ]; then
-            xmllint --noout --schema $gpx_xsd $f || retval=1
+        unset gpxver
+        if [ -n "$(grep http://www.topografix.com/GPX/1/0 $f)" ]; then
+            gpxver=1.0
+        elif [ -n "$(grep http://www.topografix.com/GPX/1/1 $f)" ]; then
+            gpxver=1.1
         else
-            xmllint --noout --schema http://www.topografix.com/GPX/1/1/gpx.xsd $f || retval=1
+            echo "xt: $f: Unknwon GPX version" >&2
+            retval=1
+        fi
+        if [ -n "$gpxver" ]; then
+            gpx_xsd=~/bin/Git/gpstools/Tools/xsd/gpx/gpx-$gpxver.xsd
+            if [ -e $gpx_xsd ]; then
+                xmllint --noout --schema $gpx_xsd $f || retval=1
+            else
+                xmllint --noout --schema http://www.topografix.com/GPX/1/1/gpx.xsd $f || retval=1
+            fi
         fi
     else
         xmllint --valid --noout "$f" || retval=1
