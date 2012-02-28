@@ -125,9 +125,10 @@ LOOP: for my $f (@Dirs) {
         }
         if ($Opt{'compress'}) {
             if (!-e ".no-git-gc") {
-                print("==== git gc --no-prune ====\n");
+                my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
+                print("==== git gc $dang_str ====\n");
                 system("du -h .git | tail -1") && check_sig($?);
-                system("git", "gc", "--no-prune") && (check_sig($?) || push(@err_compress, $f));
+                system("git", "gc", $dang_str) && (check_sig($?) || push(@err_compress, $f));
                 system("du -h .git | tail -1") && check_sig($?);
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
