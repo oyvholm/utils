@@ -3,4 +3,4 @@
 # poiformat
 # File ID: bcf111dc-7683-11e0-9799-01b466beaad8
 
-cat "$@" | xf | roundgpx | latlon | sortxml -r -s wpt
+cat "$@" | xf | roundgpx | latlon | wpt-dupdesc | xf | sortxml -r -s wpt
