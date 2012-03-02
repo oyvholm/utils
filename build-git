@@ -219,6 +219,7 @@ echo ================= make test =================
 make $makeflags test
 echo
 echo Ready to install $(./git --version) from branch \"$local_master\"
+unset choice
 until test "$choice" = "y"; do
     echo
     print_timestamp
