@@ -161,8 +161,7 @@ print_timestamp
 unset choice
 until [ "$choice" = "y" ]; do
     unset choice
-    echo If that looks okay to you, press \'y\' to fetch newest git version
-    echo and start the build, or:
+    echo If that looks okay to you, press \'y\' to start the build, or:
     echo \'d\' to diff
     echo \'dw\' to word-diff
     echo \'l\' to list log
