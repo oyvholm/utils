@@ -116,6 +116,15 @@ print_timestamp() {
     date +"%Y-%m-%d %H:%M:%S%z"
 }
 
+update_branches() {
+    git checkout $(git log -1 --format=%H) 2>/dev/null
+    for f in master maint next pu todo; do
+        git branch -D $f
+        git branch -t $f origin/$f
+    done
+    git checkout -f $local_master
+}
+
 [ -z "`git --version | grep '^git version '`" ] && {
     echo $progname: You need to have git installed to use this script. >&2;
     myexit 1;
@@ -169,12 +178,7 @@ done
 echo ================= git clean =================
 git clean -fxd
 echo ================= Update all branches =================
-git checkout $(git log -1 --format=%H) 2>/dev/null
-for f in master maint next pu todo; do
-    git branch -D $f
-    git branch -t $f origin/$f
-done
-git checkout -f $local_master
+update_branches
 vername=git.$local_master.`git describe --match 'v1*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
