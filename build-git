@@ -96,6 +96,10 @@ fetch_remotes() {
     done
 }
 
+commit_tree() {
+    git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $1
+}
+
 push_changes() {
     is_official_branch $local_master && push_local= || push_local=$local_master
     echo ==== push changes to Spread ====
@@ -139,7 +143,7 @@ fi
 fetch_remotes
 is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
 echo ================= New changes: $curr_git_ver..$destbranch =================
-git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $curr_git_ver..$destbranch | cat
+commit_tree $curr_git_ver..$destbranch | cat
 echo
 echo ================= git status in `pwd` =================
 git status
