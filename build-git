@@ -158,11 +158,13 @@ until [ "$choice" = "y" ]; do
     echo \'dw\' to word-diff
     echo \'l\' to list log
     echo \'n\' to abort
+    echo \'t\' to show commit tree
     read choice
     [ "$choice" = "d" ] && git diff $curr_git_ver $destbranch
     [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
     [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
     [ "$choice" = "n" ] && myexit 0
+    [ "$choice" = "t" ] && commit_tree $curr_git_ver..$destbranch
 done
 echo ================= git clean =================
 git clean -fxd
