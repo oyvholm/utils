@@ -151,8 +151,8 @@ if [ ! -e GIT-VERSION-GEN ]; then
 fi
 fetch_remotes
 is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
-echo ================= New changes: $curr_git_ver..$destbranch =================
-commit_tree $curr_git_ver..$destbranch | cat
+echo
+echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
 echo
 echo ================= git status in `pwd` =================
 git status
