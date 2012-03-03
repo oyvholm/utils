@@ -19,6 +19,8 @@ trap "myexit 1" INT TERM
 mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
 
 rcfile=$HOME/.build-gitrc
+origin_url=git://git.kernel.org/pub/scm/git/git.git
+
 # Directory where the git build happens
 builddir=$HOME/src/other/git/build-git
 
@@ -138,7 +140,7 @@ if [ ! -d $builddir/. ]; then
     }
     rmdir $builddir
     echo ================= git clone =================
-    git clone git://git.kernel.org/pub/scm/git/git.git $builddir
+    git clone $origin_url $builddir
     cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
     fetch_remotes
 fi
