@@ -251,7 +251,7 @@ if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
     cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
     git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
-    push_changes
+    git push --tags sunbase
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
