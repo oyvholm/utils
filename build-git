@@ -55,7 +55,7 @@ fi
 echo
 echo Variables:
 echo
-echo "curr_git_ver   = \"$curr_git_ver\""
+echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --match 'v1*' $curr_git_ver))"
 echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
 echo "builddir       = \"$builddir\""
 echo "pref           = \"$pref\""
