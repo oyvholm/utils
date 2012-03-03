@@ -166,6 +166,7 @@ until [ "$choice" = "y" ]; do
     echo \'dw\' to word-diff
     echo \'l\' to list log
     echo \'lp\' to list log with patch
+    echo \'lt\' to list log with commit tree
     echo \'lw\' to list log with patch using word diff
     echo \'n\' to abort
     echo \'p\' to push new commits
@@ -175,6 +176,7 @@ until [ "$choice" = "y" ]; do
     [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
     [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
     [ "$choice" = "lp" ] && git log --patch $curr_git_ver..$destbranch
+    [ "$choice" = "lt" ] && git log --graph --stat $curr_git_ver..$destbranch
     [ "$choice" = "lw" ] && git log --patch --word-diff $curr_git_ver..$destbranch
     [ "$choice" = "n" ] && myexit 0
     [ "$choice" = "p" ] && { update_branches; push_changes; }
