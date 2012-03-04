@@ -48,29 +48,10 @@ make_info=1
 hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
-curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
 
 if [ -n "$1" ]; then
     local_master=$1
 fi
-
-echo
-echo Variables:
-echo
-echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --match 'v1*' $curr_git_ver))"
-echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
-echo "builddir       = \"$builddir\""
-echo "pref           = \"$pref\""
-echo "sudo           = \"$sudo\""
-echo "local_master   = \"$local_master\""
-echo "remote_master  = \"$remote_master\""
-echo "makeflags      = \"$makeflags\""
-echo "make_doc       = \"$make_doc\""
-echo "make_info      = \"$make_info\""
-echo "hname          = \"$hname\""
-echo "use_configure  = \"$use_configure\""
-echo "configure_opts = \"$configure_opts\""
-echo
 
 is_official_branch() {
     echo -n $1 | grep -Eq '^(master|maint|next|pu|todo)$' && return 0 || return 1
@@ -141,10 +122,28 @@ if [ ! -d $builddir/. ]; then
     rmdir $builddir
     echo ================= git clone =================
     git clone $origin_url $builddir
-    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
-    fetch_remotes
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
+curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
+
+echo
+echo Variables:
+echo
+echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --match 'v1*' $curr_git_ver))"
+echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
+echo "builddir       = \"$builddir\""
+echo "pref           = \"$pref\""
+echo "sudo           = \"$sudo\""
+echo "local_master   = \"$local_master\""
+echo "remote_master  = \"$remote_master\""
+echo "makeflags      = \"$makeflags\""
+echo "make_doc       = \"$make_doc\""
+echo "make_info      = \"$make_info\""
+echo "hname          = \"$hname\""
+echo "use_configure  = \"$use_configure\""
+echo "configure_opts = \"$configure_opts\""
+echo
+
 git checkout $local_master || { echo Cannot check out branch >&2; myexit 1; }
 if [ ! -e GIT-VERSION-GEN ]; then
     # Paranoia check
@@ -154,36 +153,47 @@ fi
 fetch_remotes
 is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
 echo
-echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
-echo
-echo ================= git status in `pwd` =================
-git status
-echo
-print_timestamp
-unset choice
-until [ "$choice" = "y" ]; do
+if [ -n "$curr_git_ver" ]; then
+    echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
+    echo
+    echo ================= git status in `pwd` =================
+    git status
+    echo
+    print_timestamp
     unset choice
-    echo If that looks okay to you, press \'y\' to start the build, or:
-    echo \'d\' to diff
-    echo \'dw\' to word-diff
-    echo \'l\' to list log
-    echo \'lp\' to list log with patch
-    echo \'lt\' to list log with commit tree
-    echo \'lw\' to list log with patch using word diff
-    echo \'n\' to abort
-    echo \'p\' to push new commits
-    echo \'t\' to show commit tree
-    read choice
-    [ "$choice" = "d" ] && git diff $curr_git_ver $destbranch
-    [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
-    [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
-    [ "$choice" = "lp" ] && git log --patch $curr_git_ver..$destbranch
-    [ "$choice" = "lt" ] && git log --graph --stat $curr_git_ver..$destbranch
-    [ "$choice" = "lw" ] && git log --patch --word-diff $curr_git_ver..$destbranch
-    [ "$choice" = "n" ] && myexit 0
-    [ "$choice" = "p" ] && { update_branches; push_changes; }
-    [ "$choice" = "t" ] && commit_tree $curr_git_ver..$destbranch
-done
+    until [ "$choice" = "y" ]; do
+        echo
+        unset choice
+        echo If that looks okay to you, press \'y\' to start the build, or:
+        echo \'d\' to diff
+        echo \'dw\' to word-diff
+        echo \'l\' to list log
+        echo \'lp\' to list log with patch
+        echo \'lt\' to list log with commit tree
+        echo \'lw\' to list log with patch using word diff
+        echo \'n\' to abort
+        echo \'p\' to push new commits
+        echo \'t\' to show commit tree
+        read choice
+        [ "$choice" = "d" ] && git diff $curr_git_ver $destbranch
+        [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
+        [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
+        [ "$choice" = "lp" ] && git log --patch $curr_git_ver..$destbranch
+        [ "$choice" = "lt" ] && git log --graph --stat $curr_git_ver..$destbranch
+        [ "$choice" = "lw" ] && git log --patch --word-diff $curr_git_ver..$destbranch
+        [ "$choice" = "n" ] && myexit 0
+        [ "$choice" = "p" ] && { update_branches; push_changes; }
+        [ "$choice" = "t" ] && commit_tree $curr_git_ver..$destbranch
+    done
+else
+    unset choice
+    until [ "$choice" = "y" ]; do
+        echo -n Press \'y\' to start the build, or \'n\' to abort...
+        read choice
+        [ "$choice" = "n" ] && myexit 0
+    done
+fi
+
 echo ================= git clean =================
 git clean -fxd
 echo ================= Update all branches =================
