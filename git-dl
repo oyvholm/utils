@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#=======================================================================
+# git-dl
+# File ID: a4693388-6575-11e1-96df-8000600fe800
+# Clone to a remote repo, create bundle, and download it via rsync(1). 
+# Temporary solution until Git gets resumable clone/fetch.
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+login=sunny@sunbase.org
+
+remote() {
+    ssh $login "$@"
+}
+
+url=$1
+dl_dir=/home/sunny/src/dl
+bundle_dir=/home/sunny/dl/git-dl
+clonename=$(echo $url | perl -pe 's/^.*\/(.+?)$/$1/')
+clonename=$(basename $clonename .git)
+
+remote "mkdir -p $dl_dir $bundle_dir"
+echo Clone $url into $dl_dir/$clonename.git
+remote "cd $dl_dir && git clone --bare $url $clonename.git"
+echo Creating remote bundle $bundle_dir/$clonename.bundle
+remote "cd $dl_dir/$clonename.git && git bundle create $bundle_dir/$clonename.bundle --all"
+mkdir -p $bundle_dir
+rsync -avP $login:$bundle_dir/$clonename.bundle $bundle_dir/
