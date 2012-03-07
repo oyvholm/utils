@@ -3,4 +3,42 @@
 # poiformat
 # File ID: bcf111dc-7683-11e0-9799-01b466beaad8
 
-cat "$@" | xf | roundgpx | latlon | wpt-dupdesc | xf | sortxml -r -s wpt
+progname=poiformat
+
+if [ "$1" = "-g" ]; then
+    shift
+else
+    cat "$@" | xf | roundgpx | latlon | wpt-dupdesc | xf | sortxml -r -s wpt
+    exit
+fi
+
+files="$@"
+branch=$progname.$(date -u +"%Y%m%dT%H%M%SZ")
+
+commit() {
+    msg="$*"
+    stat1=$(git status --short $files)
+    if [ -z "$stat1" ]; then
+        echo $progname: No changes, skipping commit \"$msg\"
+        return;
+    fi
+    git add $files
+    git commit -m "$msg"
+}
+
+git checkout -b $branch
+filt xf $files
+commit "$progname filtered files through xf"
+filt roundgpx $files
+commit "$progname filtered files through roundgpx"
+filt latlon $files
+commit "$progname filtered files through latlon"
+filt wpt-dupdesc $files
+commit "$progname filtered files through wpt-dupdesc"
+filt xf $files
+commit "$progname filtered files through xf"
+filt "sortxml -r -s wpt" $files
+commit "$progname filtered files through sortxml -r -s wpt"
+git checkout -
+git merge --no-ff -m "Merge branch '$branch' created by $progname" $branch
+git branch -d $branch
