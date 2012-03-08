@@ -40,5 +40,5 @@ commit "$progname filtered files through xf"
 filt "sortxml -r -s wpt" $files
 commit "$progname filtered files through sortxml -r -s wpt"
 git checkout -
-git merge --no-ff -m "Merge branch '$branch' created by $progname" $branch
+git merge --no-ff --edit -m "Merge branch '$branch' created by $progname" $branch
 git branch -d $branch
