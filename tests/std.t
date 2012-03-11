@@ -260,7 +260,7 @@ $use_svn && likecmd("svn revert $Tmptop", # {{{
 );
 
 # }}}
-ok(unlink("$Tmptop/$suuid_file"), "unlink('$Tmptop/$suuid_file')");
+ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob $Tmptop/tmpuuids/*')");
 ok(rmdir("$Tmptop/tmpuuids"), "rmdir('$Tmptop/tmpuuids')");
 ok(unlink("$Tmptop/bashfile"), "unlink('$Tmptop/bashfile')");
 ok(rmdir($Tmptop), "rmdir('$Tmptop')");
