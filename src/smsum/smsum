@@ -13,8 +13,6 @@
 
 use strict;
 use Getopt::Long;
-use Digest::MD5;
-use Digest::SHA1;
 
 $| = 1;
 
@@ -71,30 +69,35 @@ sub process_file {
     D("process_file('$Filename')");
     my $use_stdin = ($Filename eq "-") ? 1 : 0;
     my @stat_array = ();
-    if ($use_stdin || (@stat_array = stat($Filename))) {
+    my $displayed_filename = $Filename;
+    my $tmpfile = "/tmp/$progname." . time . ".$$.tmp";
+    if ($use_stdin) {
+        open(my $tmpfp, '>', $tmpfile) or die("$progname: $tmpfile: Cannot create tempfile: $!\n");
+        unless (print($tmpfp join('', <STDIN>))) {
+            my $errmsg = $!;
+            close($tmpfp);
+            unlink($tmpfile);
+            die("$progname: $tmpfile: Cannot write to tempfile: $errmsg\n");
+        }
+        close($tmpfp);
+        $Filename = $tmpfile;
+    }
+    if (@stat_array = stat($Filename)) {
         my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
             $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
         if ($use_stdin || -f $Filename) {
             local *FP;
             if ($use_stdin || open(FP, "<", $Filename)) {
-                my $sha1 = Digest::SHA1->new;
-                my $md5 = Digest::MD5->new;
-                $use_stdin && (*FP = *STDIN, $Size = 0, $Mtime = time);
                 msg(2, sprintf("Reading %s...", safe_tab($Filename)));
-                while (my $Curr = <FP>) {
-                    $sha1->add($Curr);
-                    $md5->add($Curr);
-                    $use_stdin && ($Size += length($Curr));
-                }
-                $Sum{'sha1'} = $sha1->hexdigest;
-                $Sum{'md5'} = $md5->hexdigest;
+                $Sum{'sha1'} = sha1sum($Filename);
+                $Sum{'md5'} = md5sum($Filename);
                 $Retval =
                     $Sum{'sha1'} . "-" .
                     $Sum{'md5'} . "-" .
                     $Size . (
                         $use_stdin && !$Opt{'with-mtime'}
                             ? ""
-                            : "\t" . safe_tab($Filename) . (
+                            : "\t" . safe_tab($displayed_filename) . (
                                   $Opt{'with-mtime'}
                                       ? "\t" . sec_to_string($Mtime)
                                       : ""
@@ -112,9 +115,24 @@ sub process_file {
         warn("$progname: $Filename: Cannot read file status\n");
         $exit_val = 1;
     }
+    unlink($tmpfile);
     return($Retval);
     # }}}
 } # process_file()
+
+sub sha1sum {
+    my $file = shift;
+    my $retval = `sha1sum "$file"`;
+    $retval =~ s/^(\S+)\b.*/$1/s;
+    return($retval);
+}
+
+sub md5sum {
+    my $file = shift;
+    chomp(my $retval = `md5sum "$file"`);
+    $retval =~ s/^(\S+)\b.*/$1/s;
+    return($retval);
+}
 
 sub safe_tab {
     # {{{
