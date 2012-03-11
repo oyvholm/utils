@@ -1,3 +1,4 @@
+*.swp
 /Git/gpstools/
 /Git/svnutils/
 /Lib/std/c/compile.tmp/
