@@ -261,7 +261,7 @@ testcmd("$CMD hhi-files/file.html | $CMD", # {{{
 END
     '',
     0,
-    "Filter though an additional $CMD",
+    "Filter through an additional $CMD",
 );
 
 # }}}
