@@ -14,11 +14,14 @@ remote() {
     ssh $login "$@"
 }
 
-url=$1
+clonename=$1
+url=$2
+if [ -z "$url" ]; then
+    echo Syntax: git-dl DIRNAME URL >&2
+    exit 1
+fi
 dl_dir=/home/sunny/src/dl
 bundle_dir=/home/sunny/dl/git-dl
-clonename=$(echo $url | perl -pe 's/^.*\/(.+?)$/$1/')
-clonename=$(basename $clonename .git)
 
 remote "mkdir -p $dl_dir $bundle_dir"
 echo Clone $url into $dl_dir/$clonename.git
