@@ -11,7 +11,7 @@
 login=sunny@sunbase.org
 
 remote() {
-    ssh $login "$@"
+    ssh -A $login "$@"
 }
 
 clonename=$1
