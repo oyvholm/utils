@@ -94,15 +94,27 @@ def clipboard_command():
     elif sys.platform == 'darwin':
         return 'pbcopy'
     else:
-        return None
+        raise Exception('I do not know your clipboard command.')
+
+def windows_put_clipboard(string):
+    """Put string to clipboard on Windows.
+
+    Requires pywin32.
+    """
+    import win32clipboard
+    win32clipboard.OpenClipboard()
+    win32clipboard.SetClipboardText(string)
+    win32clipboard.CloseClipboard()
 
 def put_clipboard(string):
     """Put string to clipboard.
     """
-    cmd = clipboard_command()
-    if not cmd:
-        raise Exception('I do not know your clipboard command.')
+    try:
+        windows_put_clipboard(string)
         return
+    except ImportError:
+        pass
+    cmd = clipboard_command()
     pipe = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
     pipe.stdin.write(string)
     pipe.stdin.close()
