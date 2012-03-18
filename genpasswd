@@ -84,12 +84,25 @@ def generate_password(salt, options):
 
     return passwd
 
+def clipboard_command():
+    """Select clipboard command for platform.
+    """
+    if sys.platform.startswith('linux'):
+        return 'xsel --input --clipboard'
+    elif sys.platform == 'cygwin':
+        return 'putclip'
+    elif sys.platform == 'darwin':
+        return 'pbcopy'
+    else:
+        return None
+
 def put_clipboard(string):
     """Put string to clipboard.
     """
-    cmd = 'putclip'
-    # cmd = 'xsel --input --clipboard'
-    # cmd = 'pbcopy'
+    cmd = clipboard_command()
+    if not cmd:
+        raise Exception('I do not know your clipboard command.')
+        return
     pipe = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
     pipe.stdin.write(string)
     pipe.stdin.close()
