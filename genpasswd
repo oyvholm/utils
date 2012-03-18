@@ -17,7 +17,7 @@ example:
     /+/G4MzuaiSo9dHE/c0+GgPi6Nc     # got your password for example.net
 """
 #
-# Copyright (c) 2009 Satoshi Fukutomi <info@fuktommy.com>.
+# Copyright (c) 2009,2012 Satoshi Fukutomi <info@fuktommy.com>.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,12 +41,11 @@ example:
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 #
-# $Id$
-#
 
 import base64
 import optparse
 import hashlib
+import subprocess
 import sys
 import unittest
 from getpass import getpass
@@ -60,6 +59,9 @@ def parse_args(argv):
     parser.add_option('-a', '--alphanum', dest='alphanum_mode',
                       default=False, action='store_true',
                       help='password includes alphabet and number only')
+    parser.add_option('-c', '--clipboard', dest='clipboard_mode',
+                      default=False, action='store_true',
+                      help='copy password to clipboard (require putclip command)')
     parser.add_option('-f', '--file', dest='saltfile', metavar='FILE',
                       help='additional salt file')
     parser.add_option('-s', '--size', type='int', dest='size',
@@ -82,6 +84,16 @@ def generate_password(salt, options):
 
     return passwd
 
+def put_clipboard(string):
+    """Put string to clipboard.
+    """
+    cmd = 'putclip'
+    # cmd = 'xsel --input --clipboard'
+    # cmd = 'pbcopy'
+    pipe = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
+    pipe.stdin.write(string)
+    pipe.stdin.close()
+    pipe.wait()
 
 class GeneratePasswordTest(unittest.TestCase):
     def test_generate(self):
@@ -136,7 +148,11 @@ def main():
     passphrase = getpass('Passphrase:')
     salt.append(passphrase)
     passwd = generate_password(salt, options)
-    print passwd
+    if options.clipboard_mode:
+        print 'put password to clipboard.'
+        put_clipboard(passwd)
+    else:
+        print passwd
 
 
 if __name__ == '__main__':
