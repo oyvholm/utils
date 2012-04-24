@@ -154,8 +154,6 @@ fetch_remotes
 is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
 echo
 if [ -n "$curr_git_ver" ]; then
-    echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
-    echo
     echo ================= git status in `pwd` =================
     git status
     echo
@@ -164,6 +162,8 @@ if [ -n "$curr_git_ver" ]; then
     until [ "$choice" = "y" ]; do
         echo
         unset choice
+        echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
+        echo
         echo If that looks okay to you, press \'y\' to start the build, or:
         echo \'d\' to diff
         echo \'dw\' to word-diff
