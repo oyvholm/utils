@@ -7,19 +7,10 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-# cd ~/build-git || exit 1
-# git clean -qfxd
-# git checkout -f
-# echo $(git bisect visualize --format=oneline | wc -l) commits left:
-# git lb --color | cat
-# echo
-# make
-rev=HEAD
-echo "testfail: $rev"
-cd ~/src/other/perl/ || exit 1
-# GIT_DIR=~/src/other/perl-old/.git ./git-bundle create p.bundle --all
-git br -D wtffail
-git br wtffail $rev
-rm p.bundle
-git bundle create p.bundle wtffail
-head -3 p.bundle | grep "work around mangled archname" && exit 1 || exit 0
+cd ~/build-git || exit 1
+git clean -qfxd
+git checkout -f
+echo $(git bisect visualize --format=oneline | wc -l) commits left:
+git lb --color | cat
+echo
+make
