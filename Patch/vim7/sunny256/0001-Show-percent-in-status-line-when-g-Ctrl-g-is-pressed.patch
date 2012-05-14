@@ -1,0 +1,50 @@
+From 8b2b02800c8a2d69d81457ee843a3192c5ef69d7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?"=C3=98yvind=20A.=20Holm"?= <sunny@sunbase.org>
+Date: Mon, 14 May 2012 18:28:59 +0200
+Subject: [PATCH] Show percent in status line when g + Ctrl-g is pressed
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+5caf9562-9de4-11e1-8f11-00c0a8deee11
+
+Signed-off-by: Øyvind A. Holm <sunny@sunbase.org>
+---
+ src/ops.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/src/ops.c b/src/ops.c
+index bccac77..6a3d7f9 100644
+--- a/src/ops.c
++++ b/src/ops.c
+@@ -6545,21 +6545,23 @@ cursor_pos_info()
+ 	    if (char_count_cursor == byte_count_cursor
+ 		    && char_count == byte_count)
+ 		vim_snprintf((char *)IObuff, IOSIZE,
+-		    _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Byte %ld of %ld"),
++		    _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Byte %ld of %ld (%.4f%%)"),
+ 		    (char *)buf1, (char *)buf2,
+ 		    (long)curwin->w_cursor.lnum,
+ 		    (long)curbuf->b_ml.ml_line_count,
+ 		    word_count_cursor, word_count,
+-		    byte_count_cursor, byte_count);
++		    byte_count_cursor, byte_count,
++		    byte_count ? (1.0*byte_count_cursor)/(1.0*byte_count)*100.0 : 100);
+ 	    else
+ 		vim_snprintf((char *)IObuff, IOSIZE,
+-		    _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Char %ld of %ld; Byte %ld of %ld"),
++		    _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Char %ld of %ld; Byte %ld of %ld (%.4f%%)"),
+ 		    (char *)buf1, (char *)buf2,
+ 		    (long)curwin->w_cursor.lnum,
+ 		    (long)curbuf->b_ml.ml_line_count,
+ 		    word_count_cursor, word_count,
+ 		    char_count_cursor, char_count,
+-		    byte_count_cursor, byte_count);
++		    byte_count_cursor, byte_count,
++		    char_count ? (1.0*char_count_cursor)/(1.0*char_count)*100.0 : 100);
+ 	}
+ 
+ #ifdef FEAT_MBYTE
+-- 
+1.7.10.2.484.gcd07cc5
+
