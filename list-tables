@@ -2,7 +2,7 @@
 
 # List the contents of all tables in a sqlite3 database
 
-for f in `sqlite3 $1 .tables`; do
+for f in `sqlite3 "$1" .tables`; do
   echo ==== $f
-  sqlite3 -line $1 "SELECT * FROM $f"
+  sqlite3 -line "$1" "SELECT * FROM $f"
 done | less
