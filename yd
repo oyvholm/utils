@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# yd
+# File ID: d01bb3d8-c764-11e1-8e09-00c0a8deee11
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+youtube-dl -t --write-description --write-info-json "$@"
