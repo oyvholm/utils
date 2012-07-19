@@ -5,10 +5,10 @@
 remote=origin
 test -z "$1" || remote=$1
 origbranch=$(git branch | grep ^\\* | cut -c 3-)
+git checkout $(git log -1 --format=%H)
 for f in $(git branch -a | grep remotes/$remote/ | grep -v "remotes/$remote/HEAD " | perl -pe "s!remotes/$remote/(.*)\$!\$1!"); do
     git branch -t $f $remote/$f 2>&1 | grep -v '^fatal: A branch named .* already exists.'
-    git checkout $f
-    git merge --ff-only $remote/$f | grep -v '^Already up-to-date\.'
-    echo
+    echo ======== git push . $remote/$f:$f
+    git push . $remote/$f:$f
 done
 git checkout $origbranch
