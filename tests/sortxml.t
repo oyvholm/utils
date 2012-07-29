@@ -137,6 +137,10 @@ testcmd("$CMD -s b sortxml-files/a.xml", # {{{
     <d>gurgle</d>
   </b>
   <b>
+    <c>bbb</c>
+    <d>gurgle</d>
+  </b>
+  <b>
     <c>ggg</c>
     <d>fgh</d>
   </b>
@@ -201,6 +205,10 @@ testcmd("$CMD -s b -r sortxml-files/a.xml", # {{{
   <b>
     <c>ggg</c>
     <d>fgh</d>
+  </b>
+  <b>
+    <c>bbb</c>
+    <d>gurgle</d>
   </b>
   <b>
     <c>bbb</c>
