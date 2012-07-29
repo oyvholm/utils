@@ -25,6 +25,7 @@ our %Opt = (
     'help' => 0,
     'reverse' => 0,
     'sort' => '',
+    'unique' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -41,6 +42,7 @@ GetOptions(
     'help|h' => \$Opt{'help'},
     'reverse|r' => \$Opt{'reverse'},
     'sort|s=s' => \$Opt{'sort'},
+    'unique|u' => \$Opt{'unique'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -56,22 +58,31 @@ if ($Opt{'version'}) {
 my $sortele = $Opt{'sort'} || die("$progname: -s/--sort not defined\n");
 my $buf = '';
 my @Data = ();
+my %dupfree = ();
 
 while (my $Curr = <>) {
     if ($Curr =~ /<$sortele\b/) {
         $buf = $Curr;
         if ($Curr =~ /<\/$sortele>/) {
-            push(@Data, $buf);
+            $Opt{'unique'}
+                ? ($dupfree{$buf} = 1)
+                : push(@Data, $buf);
             $buf = "";
         }
         while ($Curr = <>) {
             $buf .= $Curr;
             if ($Curr =~ /<\/$sortele>/) {
-                push(@Data, $buf);
+                $Opt{'unique'}
+                    ? ($dupfree{$buf} = 1)
+                    : push(@Data, $buf);
                 $buf = "";
             }
         }
-        print($Opt{'reverse'} ? reverse sort(@Data) : sort(@Data));
+        if ($Opt{'unique'}) {
+            print($Opt{'reverse'} ? reverse sort(keys %dupfree) : sort(keys %dupfree));
+        } else {
+            print($Opt{'reverse'} ? reverse sort(@Data) : sort(@Data));
+        }
         print($buf);
         last;
     } else {
@@ -108,6 +119,8 @@ Options:
     Sort in reverse order.
   -s X, --sort X
     Sort file using element X.
+  -u, --unique
+    Remove duplicated elements X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
