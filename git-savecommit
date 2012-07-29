@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# git-savecommit
+# File ID: eb111220-d914-11e1-baa5-00c0a8deee11
+# Create "commit-*" branches on the specified refs
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=git-savecommit
+
+for f in $*; do
+    unset s
+    s=$(git log -1 --format=%H $f)
+    git branch --no-track commit-$s $f && echo $progname: saved $f to commit-$s
+done
