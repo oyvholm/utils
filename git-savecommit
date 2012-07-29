@@ -8,8 +8,10 @@
 #=======================================================================
 
 progname=git-savecommit
+revs=$*
+test -z "$revs" && revs=HEAD
 
-for f in $*; do
+for f in $revs; do
     unset s
     s=$(git log -1 --format=%H $f)
     git branch --no-track commit-$s $f && echo $progname: saved $f to commit-$s
