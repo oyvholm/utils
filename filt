@@ -8,14 +8,18 @@
 #=======================================================================
 
 cmd=$1
+retval=0
 shift
 for ff in "$@"; do
     if [ -f "$ff" ]; then
         # cp -p $ff $ff.filt-bck
         cat "$ff" | $cmd >filt.tmp
+        retval=$[$retval | $?];
         chmod --reference "$ff" filt.tmp
         mv filt.tmp "$ff"
     else
         echo filt: $ff: Not a regular file >&2
+        retval=$[$retval | 1];
     fi
 done
+exit $retval
