@@ -8,7 +8,7 @@ progname=poiformat
 if [ "$1" = "-g" ]; then
     shift
 else
-    cat "$@" | xf | roundgpx | latlon | wpt-dupdesc | xf | sortxml -r -s wpt
+    cat "$@" | xf | roundgpx | latlon | wpt-dupdesc | xf | sortxml -r -s wpt -u
     exit
 fi
 
@@ -39,6 +39,8 @@ filt xf $files
 commit "$progname filtered files through xf"
 filt "sortxml -r -s wpt" $files
 commit "$progname filtered files through sortxml -r -s wpt"
+filt "sortxml -r -s wpt -u" $files
+commit "$progname removed duplicate waypoints"
 git checkout -
 git merge --no-ff --edit -m "Merge branch '$branch' created by $progname" $branch
 git branch -d $branch
