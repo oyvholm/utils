@@ -27,7 +27,12 @@ commit() {
 }
 
 git checkout -b $branch
-filt xf $files
+filt xf $files || {
+    echo $progname: XML error >&2;
+    git checkout -;
+    git branch -d $branch;
+    exit 1;
+}
 commit "$progname filtered files through xf"
 filt roundgpx $files
 commit "$progname filtered files through roundgpx"
