@@ -137,6 +137,10 @@ testcmd("$CMD -s b sortxml-files/a.xml", # {{{
     <d>gurgle</d>
   </b>
   <b>
+    <c>bbb</c>
+    <d>gurgle</d>
+  </b>
+  <b>
     <c>ggg</c>
     <d>fgh</d>
   </b>
@@ -207,6 +211,10 @@ testcmd("$CMD -s b -r sortxml-files/a.xml", # {{{
     <d>gurgle</d>
   </b>
   <b>
+    <c>bbb</c>
+    <d>gurgle</d>
+  </b>
+  <b>
     <c>ba</c>
   </b>
   <b>
@@ -246,6 +254,50 @@ END
     "",
     0,
     "Reverse sort onelined XML",
+);
+
+# }}}
+diag('Testing -u (--unique) option...');
+testcmd("$CMD -s b -u sortxml-files/a.xml", # {{{
+    <<END,
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE a [
+<!ELEMENT a (b)+>
+<!ELEMENT b (c , d?)>
+<!ELEMENT c (#PCDATA)>
+<!ELEMENT d (#PCDATA)>
+]>
+<a>
+  <b>
+    <c>abc</c>
+    <d>dsfv</d>
+  </b>
+  <b>
+    <c>add</c>
+  </b>
+  <b>
+    <c>ba</c>
+  </b>
+  <b>
+    <c>bbb</c>
+    <d>gurgle</d>
+  </b>
+  <b>
+    <c>ggg</c>
+    <d>fgh</d>
+  </b>
+  <b>
+    <c>ggg</c>
+    <d>pdfg</d>
+  </b>
+  <b>
+    <c>zsd</c>
+  </b>
+</a>
+END
+    "",
+    0,
+    "Duplicated <b> removed",
 );
 
 # }}}
