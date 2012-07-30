@@ -61,6 +61,7 @@ if (scalar(@shas)) {
 } else {
     system("git lpar --all >>~/src/git/lpar/$repo.lpar");
 }
+system("git for-each-ref >>~/src/git/lpar/$repo.lpar");
 
 sub print_version {
     # Print program version {{{
