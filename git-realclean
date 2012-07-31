@@ -19,5 +19,5 @@ gitsize
 echo ==== git reflog expire
 git reflog expire --expire=now --expire-unreachable=now --all
 echo ==== git gc
-git gc --prune=now --aggressive
+git gc --prune=now
 gitsize
