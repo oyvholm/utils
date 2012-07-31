@@ -7,7 +7,17 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+gitsize() {
+    if [ -d .git/. ]; then
+        du -hs .git
+    else
+        du -hs
+    fi
+}
+
+gitsize
 echo ==== git reflog expire
 git reflog expire --expire=now --expire-unreachable=now --all
 echo ==== git gc
 git gc --prune=now --aggressive
+gitsize
