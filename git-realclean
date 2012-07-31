@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=======================================================================
+# git-realclean
+# File ID: a0e45088-d9f3-11e1-b9d0-00c0a8deee11
+# Compress a Git repo really good
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+echo ==== git reflog expire
+git reflog expire --expire=now --expire-unreachable=now --all
+echo ==== git gc
+git gc --prune=now --aggressive
