@@ -24,4 +24,4 @@ saved=$(echo "$tot_before-$tot_after" | bc)
 echo -----------
 echo tot_before: $(echo $tot_before | commify)
 echo tot_after: $(echo $tot_after | commify)
-[ "$tot_before" != "0" ] && echo "Totally saved: $(echo $saved | commify) ($(echo "scale=2; 100*$saved/$tot_before" | bc -l) %)"
+[ "$tot_before" != "0" ] && echo "Totally saved: $(echo $saved | commify) ($(echo "scale=4; 100*$saved/$tot_before" | bc -l)%)"
