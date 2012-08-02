@@ -25,5 +25,5 @@ if test "$1" = "-c"; then
 fi
 
 for f in `git fsck --lost-found | tee dangling-result.tmp | grep "dangling commit" | cut -f 3 -d ' '`; do
-    git branch commit-$f $f && echo created branch at $f
+    git branch commit-$f $f && echo commit-$f
 done
