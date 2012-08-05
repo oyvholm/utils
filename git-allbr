@@ -4,6 +4,7 @@
 
 remotes=origin
 test -z "$1" || remotes="$@"
+test "$remotes" = "-a" && { remotes=$(git remote | grep -v '^\*'); shift; }
 origbranch=$(git branch | grep ^\\* | cut -c 3-)
 git checkout $(git log -1 --format=%H)
 echo
