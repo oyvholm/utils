@@ -18,7 +18,7 @@ echo tot_before: $(echo $tot_before | commify)
 echo ==== git reflog expire
 git reflog expire --expire=now --expire-unreachable=now --all
 echo ==== git gc
-git gc --prune=now
+git gc --prune=now "$@"
 tot_after=$((find $dudir -type f -printf '%s+' ; echo 0) | bc)
 saved=$(echo "$tot_before-$tot_after" | bc)
 echo -----------
