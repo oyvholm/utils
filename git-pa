@@ -12,11 +12,11 @@ for f in $(git remote); do
                 git push $f "$@" || retval=1
                 git push --tags sunbase "$@" || retval=1
             elif [ ! -z "$(echo "$f" | grep -E '(^|-)all$')" ]; then
-                git push --all $f || retval=1
+                git push --all $f "$@" || retval=1
                 if [ -n "$1" ]; then
                     git push $f "$@"
                 fi
-                git push --tags $f || retval=1
+                git push --tags $f "$@" || retval=1
             else
                 git push $f "$@" || retval=1
             fi
