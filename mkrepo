@@ -24,6 +24,7 @@ our %Opt = (
     'create-remote' => 0,
     'debug' => 0,
     'directory' => "",
+    'exthd-remote' => 0,
     'github-remote' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -42,6 +43,7 @@ GetOptions(
     "create-remote|c" => \$Opt{'create-remote'},
     "debug" => \$Opt{'debug'},
     "directory|d=s" => \$Opt{'directory'},
+    "exthd-remote|e" => \$Opt{'exthd-remote'},
     "github-remote|g" => \$Opt{'github-remote'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -55,6 +57,7 @@ $Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
 my $url = 'sunny@git.sunbase.org';
 my $dir = $Opt{'directory'} ? "/home/sunny/Git-$Opt{'directory'}" : "/home/sunny/Git";
 my $backup_dir = '/home/sunny/div/Git-backup';
+my $exthd_dir = '/media/exthd/alt/Git';
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
@@ -78,6 +81,10 @@ if ($Opt{'backup-remote'}) {
 }
 if ($Opt{'github-remote'}) {
     system("git", "remote", "add", "github", "git\@github.com:sunny256/$repo.git");
+}
+if ($Opt{'exthd-remote'}) {
+    -d "$exthd_dir/$repo.git/." || system("git", "init", "--bare", "$exthd_dir/$repo.git");
+    system("git", "remote", "add", "exthd", "sunny\@localhost:$exthd_dir/$repo.git");
 }
 
 sub print_version {
@@ -106,6 +113,8 @@ Options:
     Set up the sunbase remote
   -d X, --directory X
     Create a repo inside Git-X/ instead of Git/
+  -e, --exthd-remote
+    Create and set up the exthd remote
   -g, --github-remote
     Define the github remote
   -h, --help
