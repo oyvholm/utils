@@ -286,10 +286,10 @@ if [ -d $pref/.git/. ]; then
     echo ================= git commit the symlink =================
     commitmsg=`echo $progname installed $globalgit on $(hostname); echo; suuid -t commit,$progname`
     cd $pref/prg
-    git add git
+    $sudo git add git
     echo Commit message:
     echo $commitmsg
-    git commit -m "$commitmsg"
+    $sudo git commit -m "$commitmsg"
     git pa
 fi
 
