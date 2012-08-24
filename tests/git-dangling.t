@@ -123,7 +123,7 @@ likecmd("git remote rm origin", # {{{
 
 # }}}
 testcmd("$CMD", # {{{
-    "created branch at d5d64eb0e240a25134a2222586d0c76252e89d8c\n",
+    "commit-d5d64eb0e240a25134a2222586d0c76252e89d8c\n",
     '',
     0,
     'Restore origin/expbranch',
