@@ -90,20 +90,6 @@ LOOP: for my $f (@Dirs) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
         }
-        if ($Opt{'dangling'}) {
-            print("==== git dangling ====\n");
-            system("git", "dangling") && (check_sig($?) || push(@err_dangling, $f));
-        }
-        if ($Opt{'test'}) {
-            print("==== git fsck ====\n");
-            system("git", "fsck") && (
-                check_sig($?) || (
-                    push(@err_test, $f),
-                    warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
-                    next LOOP
-                )
-            );
-        }
         if ($Opt{'fetch-prune'}) {
             print("==== git fetch --all --prune ====\n");
             system("git", "fetch", "--all", "--prune") && (check_sig($?) || push(@err_fetch, $f));
@@ -118,6 +104,20 @@ LOOP: for my $f (@Dirs) {
                 print("==== git restore-dirs ====\n");
                 system('git', 'restore-dirs');
             }
+        }
+        if ($Opt{'dangling'}) {
+            print("==== git dangling ====\n");
+            system("git", "dangling") && (check_sig($?) || push(@err_dangling, $f));
+        }
+        if ($Opt{'test'}) {
+            print("==== git fsck ====\n");
+            system("git", "fsck") && (
+                check_sig($?) || (
+                    push(@err_test, $f),
+                    warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
+                    next LOOP
+                )
+            );
         }
         if ($Opt{'push'}) {
             print("==== git pa ====\n");
