@@ -4,9 +4,9 @@
 
 if test "$1" = "space"; then
     while :; do
-        df -h . | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+        df --block-size=1M . | commify | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
         sleep 1
-        echo -n ' '
+        echo -n '  '
     done
 else
     test -d /n900/. && sudo=sudo || unset sudo
