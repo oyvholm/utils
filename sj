@@ -8,6 +8,8 @@ if test "$1" = "space"; then
         sleep 1
         echo -n '  '
     done
+elif test "$1" = "date"; then
+    ntpdate -q pool.ntp.org
 else
     test -d /n900/. && sudo=sudo || unset sudo
     while :; do
