@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#=======================================================================
+# firefox
+# File ID: 0316b300-fd9d-11e1-9afa-080027314cc1
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+cd ~/div/firefox/firefox || { echo "$0: Cannot chdir" >&2; exit 1; }
+sess ./firefox &
