@@ -16,6 +16,9 @@ Dependencies
 The script uses the default `Makefile`, and needs the following packages 
 (Ubuntu/Debian, other distros may vary):
 
+- Autoconf
+  - Package: `autoconf`
+
 - GNU make
   - Package: `make`
 
@@ -57,7 +60,7 @@ The script uses the default `Makefile`, and needs the following packages
 
 In other words:
 
-    apt-get install asciidoc docbook2x gcc gettext libcurl4-openssl-dev \
+    apt-get install autoconf asciidoc docbook2x gcc gettext libcurl4-openssl-dev \
     libexpat1-dev libssl-dev libsvn-perl make openssl subversion tk xmlto
 
 ---
