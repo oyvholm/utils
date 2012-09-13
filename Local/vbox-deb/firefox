@@ -8,4 +8,4 @@
 #=======================================================================
 
 cd ~/div/firefox/firefox || { echo "$0: Cannot chdir" >&2; exit 1; }
-sess ./firefox &
+sess ./firefox
