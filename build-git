@@ -93,6 +93,7 @@ push_changes() {
     git push -f sunbase $push_local master maint next pu todo
     git push --tags sunbase
     echo ==== push finished ====
+    lpar_git
 }
 
 print_timestamp() {
@@ -106,6 +107,10 @@ update_branches() {
         git branch -t $f origin/$f
     done
     git checkout -f $local_master
+}
+
+lpar_git() {
+    [ -f $HOME/src/git/lpar/git.lpar ] && lpar git
 }
 
 [ -z "`git --version | grep '^git version '`" ] && {
@@ -125,6 +130,7 @@ if [ ! -d $builddir/. ]; then
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
 curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
+lpar_git
 
 echo
 echo Variables:
@@ -270,6 +276,7 @@ else
     echo Expected version of git: $localgit
     myexit 1
 fi
+lpar_git
 echo ================= symlink manpages =================
 cd $pref/prg/git/share/man
 mansects=`ls`
