@@ -102,9 +102,14 @@ print_timestamp() {
 
 update_branches() {
     git checkout $(git log -1 --format=%H) 2>/dev/null
-    for f in master maint next pu todo; do
-        git branch -D $f
-        git branch -t $f origin/$f
+    echo -n "master: " >&2
+    git push . origin/master:master || {
+        echo $progname: master branch did not fast-forward, aborting >&2;
+        myexit 1;
+    }
+    for f in maint next pu todo; do
+        echo -n "$f: " >&2
+        git push -f . origin/$f:$f
     done
     git checkout -f $local_master
 }
@@ -127,6 +132,13 @@ if [ ! -d $builddir/. ]; then
     rmdir $builddir
     echo ================= git clone =================
     git clone $origin_url $builddir
+    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
+    for f in maint next pu todo; do
+        git branch -t $f origin/$f || {
+            echo $progname: $f: Could not create branch >&2;
+            myexit 1;
+        }
+    done
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
 curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
