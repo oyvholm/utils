@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#=======================================================================
+# age
+# File ID: 9b034192-0a68-11e2-98ae-fefdb24f8e10
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+psql -c "COPY (SELECT age(now(),'$*')) TO STDOUT;"
