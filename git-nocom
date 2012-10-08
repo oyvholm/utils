@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#=======================================================================
+# git-nocom
+# File ID: 6553a34c-1194-11e2-97b0-fefdb24f8e10
+#
+# List all branches except those containing "commit-[0-9a-f]{40}" .
+# Can be used for things like this:
+#
+#   git log `git nocom`
+#
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git branch -a | cut -c3- | grep -E -v -e ' ' -e 'commit-[0-9a-f]{40}'
