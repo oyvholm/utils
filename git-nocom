@@ -12,4 +12,6 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-git branch -a | cut -c3- | grep -E -v -e ' ' -e 'commit-[0-9a-f]{40}'
+v_str=
+test "$1" = "-r" || v_str=-v
+git branch -a | cut -c3- | grep -v ' ' | grep -E $v_str 'commit-[0-9a-f]{40}'
