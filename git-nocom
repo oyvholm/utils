@@ -7,11 +7,11 @@
 # List all branches except those containing "commit-[0-9a-f]{40}" .
 # Can be used for things like this:
 #
-#   git log `git nocom`
+#   git log `git branch -a | git nocom`
 #
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
 v_str=
 test "$1" = "-r" || v_str=-v
-git branch -a | cut -c3- | grep -v ' ' | grep -E $v_str 'commit-[0-9a-f]{40}'
+cut -c3- | grep -v ' ' | grep -E $v_str 'commit-[0-9a-f]{40}'
