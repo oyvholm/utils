@@ -147,7 +147,7 @@ lpar_git
 echo
 echo Variables:
 echo
-echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --match 'v1*' $curr_git_ver))"
+echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --long --match 'v1*' $curr_git_ver))"
 echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
 echo "builddir       = \"$builddir\""
 echo "pref           = \"$pref\""
@@ -216,7 +216,7 @@ echo ================= git clean =================
 git clean -fxd
 echo ================= Update all branches =================
 update_branches
-vername=git.$local_master.`git describe --match 'v1*'`
+vername=git.$local_master.`git describe --long --match 'v1*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
     echo; echo "Sorry, no new git(1) for you this time.";
