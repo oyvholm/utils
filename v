@@ -69,6 +69,7 @@ my @Files = ();
 my @Other = ();
 my @stat_array = ();
 my %smsum = ();
+my %gitsum = ();
 my ($old_mdate, $new_mdate) = ("", "");
 for my $curr_arg (@ARGV) {
     if (-r $curr_arg) {
@@ -90,12 +91,15 @@ for my $curr_arg (@ARGV) {
         chomp(my $file_id = `finduuid "$curr_arg" | $head_str -1`);
         chomp($smsum{"o.$curr_arg"} = `smsum <"$curr_arg"`);
         length($smsum{"o.$curr_arg"}) || die("$progname: Error calculating smsum\n");
+        chomp($gitsum{"o.$curr_arg"} = `git hash-object "$curr_arg"`);
+        length($gitsum{"o.$curr_arg"}) || die("$progname: Error calculating gitsum\n");
         push(@Files, $curr_arg);
         push(@Fancy,
             "<file> " .
                 "<name>$curr_arg</name> " .
                 (length($file_id) ? "<fileid>$file_id</fileid> " : "") .
                 "<smsum>" . $smsum{"o.$curr_arg"} . "</smsum> " .
+                "<gitsum>" . $gitsum{"o.$curr_arg"} . "</gitsum> " .
                 "<mdate>$old_mdate</mdate> " .
             "</file>"
         );
@@ -122,6 +126,7 @@ $ENV{'SESS_UUID'} =~ s/$uuid,//;
 my ($change_str, $other_str) = ("", "");
 for my $Curr (@Files) {
     chomp($smsum{"n.$Curr"} = `smsum <"$Curr"`);
+    chomp($gitsum{"n.$Curr"} = `git hash-object "$Curr"`);
     if ($smsum{"o.$Curr"} ne $smsum{"n.$Curr"}) {
         chomp(my $file_id = `finduuid "$Curr" | head -1`);
         unless (@stat_array = stat($Curr)) {
@@ -134,12 +139,15 @@ for my $Curr (@Files) {
                 "%s" . # File ID, the first UUID in the file
                 " <old>%s</old>" .
                 " <new>%s</new>" .
+                " <oldgitsum>%s</oldgitsum> " .
+                " <newgitsum>%s</newgitsum>" .
                 " <oldmdate>%s</oldmdate>" .
                 " <newmdate>%s</newmdate>" .
             " </file>",
             suuid_xml($Curr),
             length($file_id) ? " <fileid>$file_id</fileid>" : "",
             $smsum{"o.$Curr"}, $smsum{"n.$Curr"},
+            $gitsum{"o.$Curr"}, $gitsum{"n.$Curr"},
             $old_mdate, $new_mdate,
         );
     }
@@ -156,16 +164,19 @@ for my $Curr (@Other) {
         }
         my $mtime = sec_to_string($stat_array[9]);
         chomp(my $smsum = `smsum <"$Curr"`);
+        chomp(my $gitsum = `git hash-object "$Curr"`);
         $other_str .= sprintf(
             " <file>" .
                 " <name>%s</name>" .
                 "%s" . # File ID, the first UUID in the file
                 " <smsum>%s</smsum>" .
+                " <gitsum>%s</gitsum>" .
                 " <mtime>%s</mtime>" .
             " </file>",
             suuid_xml($Curr),
             length($file_id) ? " <fileid>$file_id</fileid>" : "",
             $smsum,
+            $gitsum,
             $mtime,
         );
     }
