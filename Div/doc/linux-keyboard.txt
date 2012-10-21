@@ -1,0 +1,34 @@
+linux-keyboard.txt
+File ID: 6d9df1f0-1bb8-11e2-b5cb-00c0a8deee11
+
+AltGr + various keys in Linux:
+
+AltGr only:
+
+  @ł€®þ←↓→œπ
+  qwertyuiop
+
+  ªßðđŋħjĸł
+  asdfghjkl
+
+  «»©“”nµ– (U+2013, EN DASH)
+  zxcvbnm-
+
+Shift+AltGr:
+
+  ΩŁ¢™Þ¥↑ıŒΠ
+  QWERTYUIOP
+
+  º§ÐªŊĦJ&Ł
+  ASDFGHJKL
+
+  <>©‘’Nº— (U+2014, EM DASH)
+  ZXCVBNM_
+
+AltGr+Space:
+
+    (U+00A0, NO-BREAK SPACE)
+
+Shift+AltGr+space:
+
+    (U+202F, NARROW NO-BREAK SPACE)
