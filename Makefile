@@ -37,7 +37,7 @@ remotes:
 	git remote add github git@github.com:sunny256/utils.git; true
 	git remote add gitorious git@gitorious.org:sunny256/utils.git; true
 	git remote add repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
-	git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/utils; true
+	git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/utils.git; true
 
 lgd:
 	git lg --date-order $$(git branch -a | cut -c3- | grep -E -e 'remotes/(Spread|bitbucket|github|gitorious|repoorcz|sunbase)/' | grep -v 'HEAD -> ') $$(git branch | cut -c3-)
