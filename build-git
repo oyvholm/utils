@@ -65,6 +65,7 @@ fetch_remotes() {
     git remote | grep -q '^Spread$' || git remote add Spread sunny@git.sunbase.org:/home/sunny/Git-spread/git.git
     git remote | grep -q '^gitster$' || git remote add gitster git://github.com/gitster/git.git
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
+    git remote | grep -q '^peff$' || git remote add peff git://github.com/peff/git.git
     git remote | grep -q '^sunbase$' || git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/git.git
     echo ================= git fetch =================
     echo ===== origin =====
