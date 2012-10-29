@@ -106,6 +106,7 @@ update_branches() {
     echo -n "master: " >&2
     git push . origin/master:master || {
         echo $progname: master branch did not fast-forward, aborting >&2;
+        git checkout -
         myexit 1;
     }
     for f in maint next pu todo; do
