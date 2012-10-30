@@ -14,15 +14,23 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Fcntl ':flock';
 
 local $| = 1;
 
 our $Debug = 0;
 
+our %Std = (
+
+    'sumfile' => 'Files.sha1',
+
+);
+
 our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'sumfile' => $Std{'sumfile'},
     'text' => '',
     'verbose' => 0,
     'version' => 0,
@@ -38,6 +46,7 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
+    'sumfile|s=s' => \$Opt{'sumfile'},
     'text|t=s' => \$Opt{'text'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -70,11 +79,36 @@ for my $curr (@files) {
     -e $new && die("$progname: $new: File already exists, aborting. No files renamed.\n");
 }
 
+my ($use_sumfile, $sumfp, $sumdata);
+
+if (-f $Opt{'sumfile'}) {
+    $use_sumfile = 1;
+    open($sumfp, '+<', $Opt{'sumfile'})
+        or die("$progname: $Opt{'sumfile'}: Cannot open file for read+write: $!\n");
+    flock($sumfp, LOCK_EX)
+        or die("$progname: $Opt{'sumfile'}: Cannot flock(): $!\n");
+    $sumdata = join('', <$sumfp>);
+} else {
+    $use_sumfile = 0;
+    $sumdata = '';
+}
+
 for my $curr (@files) {
     my $new = $curr;
     $new = new_name($text, $new);
+    $sumdata =~ s/$curr/$new/;
     -e $new || rename($curr, $new) || die("$progname: $curr: Cannot rename file to '$new': $!\n");
     $Opt{'verbose'} && printf("%s renamed to %s\n", $curr, $new);
+}
+
+if ($use_sumfile) {
+    seek($sumfp, 0, 0)
+        or die("$progname: $Opt{'sumfile'}: Cannot seek(): $!\n");
+    truncate($sumfp, 0)
+        or warn("$progname: $Opt{'sumfile'}: Cannot truncate file: $!\n");
+
+    print($sumfp $sumdata);
+    $use_sumfile && close($sumfp);
 }
 
 sub valid_filename {
@@ -135,6 +169,9 @@ Options:
 
   -h, --help
     Show this help.
+  -s X, --sumfile X
+    Specify name of file containing file checksums.
+    Default: '$Std{'sumfile'}'.
   -t X, --text X
     Insert X into file name.
   -v, --verbose
