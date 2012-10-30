@@ -128,10 +128,9 @@ sub valid_filename {
         [0-5]\d # Seconds
         Z
         \.
-        zo(om|\d\d) # "zoom" or "zo\d\d"
-        \d\d\d\d # Counter
+        .*?
         \.
-        ... # Extension
+        [^\.]*? # Extension
     $/x) && 1 || 0;
     # }}}
 } # valid_filename()
@@ -139,7 +138,7 @@ sub valid_filename {
 sub new_name {
     # Return new file name {{{
     my ($text, $filename) = @_;
-    $filename =~ s/^(.*?Z)\.(z.*?)\.(.*)/$1.$text.$3/;
+    $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$text.$3/;
     return($filename);
     # }}}
 } # new_name()
