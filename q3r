@@ -28,6 +28,8 @@ our %Std = (
 
 our %Opt = (
 
+    'after' => 0,
+    'before' => 0,
     'debug' => 0,
     'help' => 0,
     'sumfile' => $Std{'sumfile'},
@@ -44,6 +46,8 @@ our $VERSION = '0.00';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'after|a' => \$Opt{'after'},
+    'before|b' => \$Opt{'before'},
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'sumfile|s=s' => \$Opt{'sumfile'},
@@ -63,6 +67,8 @@ if ($Opt{'version'}) {
 my $text = $Opt{'text'};
 length($text) || die("$progname: Filename text not specified (-t option)\n");
 $text =~ s/ /_/g;
+
+$Opt{'after'} && $Opt{'before'} && die("$progname: Cannot combine --after and --before\n");
 
 my @files = @ARGV;
 
@@ -138,7 +144,13 @@ sub valid_filename {
 sub new_name {
     # Return new file name {{{
     my ($text, $filename) = @_;
-    $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$text.$3/;
+    if ($Opt{'after'}) {
+        $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$2.$text.$3/;
+    } elsif ($Opt{'before'}) {
+        $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$text.$2.$3/;
+    } else {
+        $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$text.$3/;
+    }
     return($filename);
     # }}}
 } # new_name()
@@ -166,6 +178,10 @@ Usage: $progname -t "Text for file names" [options] [files [...]]
 
 Options:
 
+  -a, --after
+    Place text after existing text.
+  -b, --before
+    Place text before existing text.
   -h, --help
     Show this help.
   -s X, --sumfile X
