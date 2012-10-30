@@ -23,6 +23,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'text' => '',
     'verbose' => 0,
     'version' => 0,
 
@@ -37,6 +38,7 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
+    'text|t=s' => \$Opt{'text'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -49,9 +51,38 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+my $text = $Opt{'text'};
+length($text) || die("$progname: Filename text not specified (-t option)\n");
+$text =~ s/ /_/g;
+
+my @files = @ARGV;
+
+for (@files) {
+    -f $_ || die("$progname: $_: File not found, aborting. No files renamed.\n");
 }
+
+# Better safe than sorry, check that no files with the same name already 
+# exist before renaming.
+for my $curr (@files) {
+    my $new = $curr;
+    $new = new_name($text, $new);
+    -e $new && die("$progname: $new: File already exists, aborting. No files renamed.\n");
+}
+
+for my $curr (@files) {
+    my $new = $curr;
+    $new = new_name($text, $new);
+    -e $new || rename($curr, $new) || die("$progname: $curr: Cannot rename file to '$new': $!\n");
+    $Opt{'verbose'} && printf("%s renamed to %s\n", $curr, $new);
+}
+
+sub new_name {
+    # Return new file name {{{
+    my ($text, $filename) = @_;
+    $filename =~ s/^(.*?Z)\.(z.*?)\.(.*)/$1.$text.$3/;
+    return($filename);
+    # }}}
+} # new_name()
 
 sub print_version {
     # Print program version {{{
@@ -70,12 +101,16 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Rename files created by the Zoom Q3HD to something useful.
+
+Usage: $progname -t "Text for file names" [options] [files [...]]
 
 Options:
 
   -h, --help
     Show this help.
+  -t X, --text X
+    Insert X into file name.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
