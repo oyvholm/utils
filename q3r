@@ -59,6 +59,7 @@ my @files = @ARGV;
 
 for (@files) {
     -f $_ || die("$progname: $_: File not found, aborting. No files renamed.\n");
+    valid_filename($_) || die("$progname: $_: Invalid file name, aborting. No files renamed.\n");
 }
 
 # Better safe than sorry, check that no files with the same name already 
@@ -75,6 +76,31 @@ for my $curr (@files) {
     -e $new || rename($curr, $new) || die("$progname: $curr: Cannot rename file to '$new': $!\n");
     $Opt{'verbose'} && printf("%s renamed to %s\n", $curr, $new);
 }
+
+sub valid_filename {
+    # Check that source filenames are formatted properly {{{
+    my $filename = shift;
+    # Examples of valid file names:
+    # 20110313T231244Z.zoom0084.m4a
+    # 20110405T223726Z.zo010013.mov
+    # I.e. standard Zoom file names processed by datefn(1)
+    return($filename =~ /^
+        20\d\d # Year
+        [0-1]\d # Month
+        [0-3]\d # Day
+        T
+        [0-2]\d # Hours
+        [0-5]\d # Minutes
+        [0-5]\d # Seconds
+        Z
+        \.
+        zo(om|\d\d) # "zoom" or "zo\d\d"
+        \d\d\d\d # Counter
+        \.
+        ... # Extension
+    $/x) && 1 || 0;
+    # }}}
+} # valid_filename()
 
 sub new_name {
     # Return new file name {{{
