@@ -1,15 +1,303 @@
-#!/bin/bash
+#!/usr/bin/perl
 
 #=======================================================================
 # q3r
-# File ID: 20788d16-364b-11e1-b503-f129211fd7d1
-# Rename files created by the Zoom Q3HD to something useful.
-# Syntax: q3r "text here" [files]
-# License: GNU General Public License version 3 or later.
+# File ID: ba028ba2-2287-11e2-b260-00c0a8deee11
+# [Description]
+#
+# Character set: UTF-8
+# ©opyleft 2012– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later, see end of 
+# file for legal stuff.
 #=======================================================================
 
-komm=$1
-shift
-filer="$@"
-komm=$(echo $komm | tr ' ' _)
-rename -v "s/^(.*?Z)\.(z.*?)\.(.*)/\$1.$komm.\$3/" $filer
+use strict;
+use warnings;
+use Getopt::Long;
+use Fcntl ':flock';
+
+local $| = 1;
+
+our $Debug = 0;
+
+our %Std = (
+
+    'sumfile' => 'Files.sha1',
+
+);
+
+our %Opt = (
+
+    'after' => 0,
+    'before' => 0,
+    'debug' => 0,
+    'help' => 0,
+    'sumfile' => $Std{'sumfile'},
+    'text' => '',
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'after|a' => \$Opt{'after'},
+    'before|b' => \$Opt{'before'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'sumfile|s=s' => \$Opt{'sumfile'},
+    'text|t=s' => \$Opt{'text'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+my $text = $Opt{'text'};
+length($text) || die("$progname: Filename text not specified (-t option)\n");
+$text =~ s/ /_/g;
+
+$Opt{'after'} && $Opt{'before'} && die("$progname: Cannot combine --after and --before\n");
+
+my @files = @ARGV;
+
+for (@files) {
+    -f $_ || die("$progname: $_: File not found, aborting. No files renamed.\n");
+    valid_filename($_) || die("$progname: $_: Invalid file name, aborting. No files renamed.\n");
+}
+
+# Better safe than sorry, check that no files with the same name already 
+# exist before renaming.
+for my $curr (@files) {
+    my $new = $curr;
+    $new = new_name($text, $new);
+    -e $new && die("$progname: $new: File already exists, aborting. No files renamed.\n");
+}
+
+my ($use_sumfile, $sumfp, $sumdata);
+
+if (-f $Opt{'sumfile'}) {
+    $use_sumfile = 1;
+    open($sumfp, '+<', $Opt{'sumfile'})
+        or die("$progname: $Opt{'sumfile'}: Cannot open file for read+write: $!\n");
+    flock($sumfp, LOCK_EX)
+        or die("$progname: $Opt{'sumfile'}: Cannot flock(): $!\n");
+    $sumdata = join('', <$sumfp>);
+} else {
+    $use_sumfile = 0;
+    $sumdata = '';
+}
+
+for my $curr (@files) {
+    my $new = $curr;
+    $new = new_name($text, $new);
+    $sumdata =~ s/$curr/$new/;
+    -e $new || rename($curr, $new) || die("$progname: $curr: Cannot rename file to '$new': $!\n");
+    $Opt{'verbose'} && printf("%s renamed to %s\n", $curr, $new);
+}
+
+if ($use_sumfile) {
+    seek($sumfp, 0, 0)
+        or die("$progname: $Opt{'sumfile'}: Cannot seek(): $!\n");
+    truncate($sumfp, 0)
+        or warn("$progname: $Opt{'sumfile'}: Cannot truncate file: $!\n");
+
+    print($sumfp $sumdata);
+    $use_sumfile && close($sumfp);
+}
+
+sub valid_filename {
+    # Check that source filenames are formatted properly {{{
+    my $filename = shift;
+    # Examples of valid file names:
+    # 20110313T231244Z.zoom0084.m4a
+    # 20110405T223726Z.zo010013.mov
+    # I.e. standard Zoom file names processed by datefn(1)
+    return($filename =~ /^
+        20\d\d # Year
+        [0-1]\d # Month
+        [0-3]\d # Day
+        T
+        [0-2]\d # Hours
+        [0-5]\d # Minutes
+        [0-5]\d # Seconds
+        Z
+        \.
+        .*?
+        \.
+        [^\.]*? # Extension
+    $/x) && 1 || 0;
+    # }}}
+} # valid_filename()
+
+sub new_name {
+    # Return new file name {{{
+    my ($text, $filename) = @_;
+    if ($Opt{'after'}) {
+        $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$2.$text.$3/;
+    } elsif ($Opt{'before'}) {
+        $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$text.$2.$3/;
+    } else {
+        $filename =~ s/^(.*?Z)\.(.*?)\.([^\.]*?)$/$1.$text.$3/;
+    }
+    return($filename);
+    # }}}
+} # new_name()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Rename files created by the Zoom Q3HD to something useful.
+
+Usage: $progname -t "Text for file names" [options] [files [...]]
+
+Options:
+
+  -a, --after
+    Place text after existing text.
+  -b, --before
+    Place text before existing text.
+  -h, --help
+    Show this help.
+  -s X, --sumfile X
+    Specify name of file containing file checksums.
+    Default: '$Std{'sumfile'}'.
+  -t X, --text X
+    Insert X into file name.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
