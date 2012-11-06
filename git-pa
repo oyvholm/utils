@@ -106,7 +106,7 @@ exit;
 sub mysystem {
     # {{{
     my @args = @_;
-    msg(1, "Executing '" . join(' ', @args)  . "'");
+    msg(0, "Executing '" . join(' ', @args)  . "'");
     system(@args);
     return;
     # }}}
