@@ -19,10 +19,16 @@ local $| = 1;
 
 our $Debug = 0;
 
+our %Std = (
+
+    'regexpfile' => "$ENV{'HOME'}/.git-pa-remotes",
+
+);
 our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'regexpfile' => $Std{'regexpfile'},
     'verbose' => 0,
     'version' => 0,
 
@@ -37,6 +43,7 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
+    'regexpfile=s' => \$Opt{'regexpfile'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -49,9 +56,76 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
+=pod
+
+For every remote
+    For every regexp in ~/.git-pa-remotes
+        List remotes | grep ^remote | grep current regexp
+            Push with args
+            If it's sunbase
+                Push all
+                Push tags
+
+=cut
+
+my @pushremotes = read_regexpfile($Opt{'regexpfile'});
+
+my @cmdline_args = @ARGV;
+msg(3, "cmdline_args = '" . join('|', @cmdline_args) . "'");
+
+for my $f (`git remote`) {
+    chomp($f);
+    my $do_push = 0;
+    for my $ch (@pushremotes) {
+        chomp($ch);
+        msg(3, "ch = '$ch'");
+        my $pipefp;
+        open($pipefp, 'git remote -v |') or die("$progname: git remote -v: Cannot open pipe: $!\n");
+        while (my $curr = <$pipefp>) {
+            chomp($curr);
+            msg(4, "curr = '$curr'");
+            if ($curr =~ /$ch/) {
+                msg(2, "Found ('$curr' =~ /$ch/)");
+                $do_push = 1;
+            }
+        }
+        close($pipefp);
+    }
+    if ($do_push) {
+        msg(0, "Pushing to remote $f");
+        mysystem('git', 'push', $f, @ARGV);
+        if ($f eq 'sunbase') {
+            mysystem('git', 'push', '--all', $f);
+            mysystem('git', 'push', '--tags', $f);
+        }
+    }
 }
+
+exit;
+
+sub mysystem {
+    # {{{
+    my @args = @_;
+    msg(1, "Executing '" . join(' ', @args)  . "'");
+    system(@args);
+    return;
+    # }}}
+} # mysystem()
+
+sub read_regexpfile {
+    # {{{
+    my $regexpfile = shift;
+    my $fp;
+    my @Retval = ();
+    open($fp, '<', $regexpfile) || die("$progname: $regexpfile: Could not read regexp file: $!\n");
+    while (my $curr = <$fp>) {
+        chomp($curr);
+        push(@Retval, $curr);
+        msg(2, "regexp: $curr");
+    }
+    return(@Retval);
+    # }}}
+} # read_regexpfile()
 
 sub print_version {
     # Print program version {{{
@@ -76,6 +150,9 @@ Options:
 
   -h, --help
     Show this help.
+  --regexpfile X
+    Use regexpfile X instead of the default
+    '$Std{'regexpfile'}'.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
