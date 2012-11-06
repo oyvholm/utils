@@ -49,9 +49,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    print;
-}
+exit(0);
 
 sub print_version {
     # Print program version {{{
