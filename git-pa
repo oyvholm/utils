@@ -1,21 +1,267 @@
-#!/bin/sh
+#!/usr/bin/perl
 
-# git-pa - Push to all remotes
-# File ID: f01c9ce6-4ec7-11df-adc3-41034058cb1c
+#=======================================================================
+# git-pa
+# File ID: ee782996-282c-11e2-9c05-00c0a8deee11
+# [Description]
+#
+# Character set: UTF-8
+# ©opyleft 2012– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later, see end of 
+# file for legal stuff.
+#=======================================================================
 
-retval=0
-for f in $(git remote); do
-    for ch in $(cat ~/.git-pa-remotes); do
-        if git remote -v | grep ^$f | grep -q $ch; then
-            echo ======== Pushing to \"$f\"
-            if [ "$f" = "sunbase" ]; then
-                git push $f "$@" || retval=1
-                git push --tags sunbase "$@" || retval=1
-                git push --all $f "$@" || retval=1
-            else
-                git push $f "$@" || retval=1
-            fi
-        fi
-    done
-done
-exit $retval
+use strict;
+use warnings;
+use Getopt::Long;
+
+local $| = 1;
+
+our $Debug = 0;
+
+our %Std = (
+
+    'regexpfile' => "$ENV{'HOME'}/.git-pa-remotes",
+
+);
+our %Opt = (
+
+    'debug' => 0,
+    'help' => 0,
+    'regexpfile' => $Std{'regexpfile'},
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'regexpfile=s' => \$Opt{'regexpfile'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+=pod
+
+For every remote
+    For every regexp in ~/.git-pa-remotes
+        List remotes | grep ^remote | grep current regexp
+            Push with args
+            If it's sunbase
+                Push all
+                Push tags
+
+=cut
+
+my @pushremotes = read_regexpfile($Opt{'regexpfile'});
+
+my @cmdline_args = @ARGV;
+msg(3, "cmdline_args = '" . join('|', @cmdline_args) . "'");
+
+for my $f (`git remote`) {
+    chomp($f);
+    my $do_push = 0;
+    for my $ch (@pushremotes) {
+        chomp($ch);
+        msg(3, "ch = '$ch'");
+        my $pipefp;
+        open($pipefp, 'git remote -v |') or die("$progname: git remote -v: Cannot open pipe: $!\n");
+        while (my $curr = <$pipefp>) {
+            chomp($curr);
+            msg(4, "curr = '$curr'");
+            if ($curr =~ /$ch/) {
+                msg(2, "Found ('$curr' =~ /$ch/)");
+                $do_push = 1;
+            }
+        }
+        close($pipefp);
+    }
+    if ($do_push) {
+        msg(0, "Pushing to remote $f");
+        mysystem('git', 'push', $f, @ARGV);
+        if ($f eq 'sunbase') {
+            mysystem('git', 'push', '--all', $f);
+            mysystem('git', 'push', '--tags', $f);
+        }
+    }
+}
+
+exit;
+
+sub mysystem {
+    # {{{
+    my @args = @_;
+    msg(1, "Executing '" . join(' ', @args)  . "'");
+    system(@args);
+    return;
+    # }}}
+} # mysystem()
+
+sub read_regexpfile {
+    # {{{
+    my $regexpfile = shift;
+    my $fp;
+    my @Retval = ();
+    open($fp, '<', $regexpfile) || die("$progname: $regexpfile: Could not read regexp file: $!\n");
+    while (my $curr = <$fp>) {
+        chomp($curr);
+        push(@Retval, $curr);
+        msg(2, "regexp: $curr");
+    }
+    return(@Retval);
+    # }}}
+} # read_regexpfile()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --regexpfile X
+    Use regexpfile X instead of the default
+    '$Std{'regexpfile'}'.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
