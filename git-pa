@@ -92,6 +92,7 @@ for my $f (`git remote`) {
         close($pipefp);
     }
     if ($do_push) {
+        print(STDERR "\n");
         msg(0, "Pushing to remote $f");
         mysystem('git', 'push', $f, @ARGV);
         if ($f eq 'sunbase') {
