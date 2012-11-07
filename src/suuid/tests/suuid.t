@@ -88,9 +88,9 @@ testcmd("$CMD command", # {{{
     <<'END',
 [expected stdin]
 END
-    "",
+    '',
     0,
-    "description",
+    'description',
 );
 
 # }}}
@@ -122,14 +122,6 @@ likecmd("$CMD --version", # {{{
     0,
     'Option --version returns version number',
 );
-
-diag("Testing return values...");
-likecmd("perl -e 'exit(0)'", '/^$/', '/^$/', 0, "likecmd(): return 0");
-likecmd("perl -e 'exit(1)'", '/^$/', '/^$/', 1, "likecmd(): return 1");
-likecmd("perl -e 'exit(255)'", '/^$/', '/^$/', 255, "likecmd(): return 255");
-testcmd("perl -e 'exit(0)'", '', '', 0, "testcmd(): return 0");
-testcmd("perl -e 'exit(1)'", '', '', 1, "testcmd(): return 1");
-testcmd("perl -e 'exit(255)'", '', '', 255, "testcmd(): return 255");
 
 # }}}
 my $Lh = "[0-9a-fA-F]";
@@ -552,7 +544,7 @@ sub testcmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
+    is(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
@@ -583,7 +575,7 @@ sub likecmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
