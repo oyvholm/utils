@@ -154,7 +154,7 @@ sub testcmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    is(`$Cmd$deb_str$stderr_cmd`, $Exp_stdout, $Txt);
+    is(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
@@ -185,7 +185,7 @@ sub likecmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", $Txt);
+    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
         if (!length($deb_str)) {
