@@ -27,6 +27,7 @@ our %Std = (
 our %Opt = (
 
     'debug' => 0,
+    'dry-run' => 0,
     'help' => 0,
     'regexpfile' => $Std{'regexpfile'},
     'verbose' => 0,
@@ -42,6 +43,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'debug' => \$Opt{'debug'},
+    'dry-run|n' => \$Opt{'dry-run'},
     'help|h' => \$Opt{'help'},
     'regexpfile=s' => \$Opt{'regexpfile'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -55,6 +57,8 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+$Opt{'dry-run'} && msg(0, "Note: This is just a simulation.");
 
 =pod
 
@@ -108,7 +112,7 @@ sub mysystem {
     # {{{
     my @args = @_;
     msg(0, "Executing '" . join(' ', @args)  . "'");
-    system(@args);
+    $Opt{'dry-run'} || system(@args);
     return;
     # }}}
 } # mysystem()
@@ -151,6 +155,8 @@ Options:
 
   -h, --help
     Show this help.
+  -n, --dry-run
+    Don't really push the branches, simulate only.
   --regexpfile X
     Use regexpfile X instead of the default
     '$Std{'regexpfile'}'.
