@@ -28,6 +28,7 @@ our %Opt = (
 
     'debug' => 0,
     'dry-run' => 0,
+    'force' => 0,
     'help' => 0,
     'regexpfile' => $Std{'regexpfile'},
     'verbose' => 0,
@@ -44,6 +45,7 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'dry-run|n' => \$Opt{'dry-run'},
+    'force|f' => \$Opt{'force'},
     'help|h' => \$Opt{'help'},
     'regexpfile=s' => \$Opt{'regexpfile'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -96,7 +98,11 @@ for my $f (`git remote`) {
         close($pipefp);
     }
     if ($do_push) {
-        mysystem('git', 'push', $f, @ARGV);
+        if ($Opt{'force'}) {
+            mysystem('git', 'push', '--force', $f, @ARGV);
+        } else {
+            mysystem('git', 'push', $f, @ARGV);
+        }
         if ($f eq 'sunbase') {
             mysystem('git', 'push', '--all', $f);
             mysystem('git', 'push', '--tags', $f);
@@ -151,6 +157,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -f, --force
+    Use --force when pushing. Overwrites remote branches, be careful.
   -h, --help
     Show this help.
   -n, --dry-run
