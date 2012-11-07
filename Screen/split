@@ -22,10 +22,13 @@ resize 3
 select 22
 focus
 # cursor in win23
+split -v
 select 23
 focus
-# cursor upper right
 select 24
+focus
+# cursor upper right
+select 25
 focus
 # cursor at the bottom
 select 1
