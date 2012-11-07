@@ -88,7 +88,7 @@ for my $f (`git remote`) {
         while (my $curr = <$pipefp>) {
             chomp($curr);
             msg(3, "curr = '$curr'");
-            if ($curr =~ /$ch/) {
+            if ($curr =~ /^$f\s/ && $curr =~ /$ch/) {
                 msg(1, "Found ('$curr' =~ /$ch/)");
                 $do_push = 1;
             }
