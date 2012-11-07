@@ -23,8 +23,10 @@ select 22
 focus
 # cursor in win23
 split -v
+# cursor in left empty window
 select 23
 focus
+# cursor moved to the window on the right side
 select 24
 focus
 # cursor upper right
