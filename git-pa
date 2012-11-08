@@ -112,11 +112,17 @@ for my $f (`git remote`) {
 
 exit;
 
+sub check_sig {
+    my $retval = shift;
+    ($retval & 127) && die("\n$progname: Child process interrupted, aborting.\n");
+    return(0);
+} # check_sig()
+
 sub mysystem {
     # {{{
     my @args = @_;
     msg(0, "Executing '" . join(' ', @args)  . "'");
-    $Opt{'dry-run'} || system(@args);
+    $Opt{'dry-run'} || system(@args) && check_sig($?);
     return;
     # }}}
 } # mysystem()
