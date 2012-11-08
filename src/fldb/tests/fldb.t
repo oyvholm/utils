@@ -233,7 +233,7 @@ END
 testcmd("$CMD -d Yess -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Yess</descr> </file>
+<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Yess</descr> </file>
 </fldb>
 END
     "",
@@ -265,7 +265,7 @@ END
 testcmd("$CMD -d \"Somewhat & weird < > yepp\" -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
+<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
 </fldb>
 END
     "",
@@ -326,6 +326,7 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
             '<file> ' .
                 '<size>2048<\/size> ' .
                 '<sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d<\/sha1> ' .
+                '<gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59<\/gitsum> ' .
                 '<md5>4a3074b2aae565f8558b7ea707ca48d2<\/md5> ' .
                 '<filename>random_2048<\/filename> ' .
                 '<mtime>2008-09-22T00:18:37Z<\/mtime> ' .
@@ -348,7 +349,7 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
 testcmd("$CMD -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> </file>
+<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> </file>
 </fldb>
 END
     "",

@@ -184,6 +184,7 @@ sub add_entry {
                         "<file> " .
                             "<size>%u</size> " .
                             "<sha1>%s</sha1> " .
+                            "<gitsum>%s</gitsum> " .
                             "<md5>%s</md5> " .
                             "%s" . # $crc32_str
                             "<name>%s</name> " .
@@ -193,6 +194,7 @@ sub add_entry {
                         "</file>\n",
                         $Size,
                         $Sum{'sha1'},
+                        $Sum{'gitsum'},
                         $Sum{'md5'},
                         $crc32_str,
                         $safe_filename,
@@ -207,6 +209,7 @@ sub add_entry {
                         "<file> " .
                             "<size>%s</size> " .
                             "<sha1>%s</sha1> " .
+                            "<gitsum>%s</gitsum> " .
                             "<md5>%s</md5> " .
                             "%s" . # $crc32_str
                             "<filename>%s</filename> " .
@@ -227,6 +230,7 @@ sub add_entry {
                         "</file>\n",
                         $Size,
                         $Sum{sha1},
+                        $Sum{gitsum},
                         $Sum{md5},
                         $crc32_str,
                         $base_filename,
