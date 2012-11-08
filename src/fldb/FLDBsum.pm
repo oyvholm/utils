@@ -53,6 +53,7 @@ sub checksum {
         $Sum{'sha1'} = $sha1->hexdigest;
         $Sum{'md5'} = $md5->hexdigest;
         $use_crc32 && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
+        chomp($Sum{'gitsum'} = `git hash-object "$Filename" | head -c40`); # FIXME
     } else {
         %Sum = ();
     }
