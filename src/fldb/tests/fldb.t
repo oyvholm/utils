@@ -213,12 +213,12 @@ diag("Testing -d (--description) option...");
 testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha1, md5, crc32,
+ sha1, gitsum, md5, crc32,
  size, filename, mtime,
  descr,
  latin1
 ) VALUES (
- 'bd91a93ca0462da03f2665a236d7968b0fd9455d', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
  2048, E'random_2048', '2008-09-22T00:18:37Z',
  E'Groovy',
  FALSE
@@ -245,12 +245,12 @@ END
 testcmd("$CMD -d \"This is a description with spaces\" -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha1, md5, crc32,
+ sha1, gitsum, md5, crc32,
  size, filename, mtime,
  descr,
  latin1
 ) VALUES (
- 'bd91a93ca0462da03f2665a236d7968b0fd9455d', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
  2048, E'random_2048', '2008-09-22T00:18:37Z',
  E'This is a description with spaces',
  FALSE
@@ -276,7 +276,7 @@ END
 # }}}
 likecmd("$CMD files/dir1/random_2048", # {{{
     '/^INSERT INTO files \(\n' .
-        ' sha1, md5, crc32,\n' .
+        ' sha1, gitsum, md5, crc32,\n' .
         ' size, filename, mtime, descr, ctime,\n' .
         ' path,\n' .
         ' inode, links, device, hostname,\n' .
@@ -284,7 +284,7 @@ likecmd("$CMD files/dir1/random_2048", # {{{
         ' lastver, nextver,\n' .
         ' latin1\n' .
         '\) VALUES \(\n' .
-        ' \'bd91a93ca0462da03f2665a236d7968b0fd9455d\', \'4a3074b2aae565f8558b7ea707ca48d2\', NULL,\n' .
+        ' \'bd91a93ca0462da03f2665a236d7968b0fd9455d\', \'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59\', \'4a3074b2aae565f8558b7ea707ca48d2\', NULL,\n' .
         ' 2048, E\'random_2048\', \'2008-09-22T00:18:37Z\', NULL, \'\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ\',\n' .
         ' E\'files\/dir1\/random_2048\',\n' .
         ' \d+, 1, E\'\d+\', E\'.+\',\n' .
@@ -303,12 +303,12 @@ diag("Testing -s (--short-format) option...");
 testcmd("$CMD -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha1, md5, crc32,
+ sha1, gitsum, md5, crc32,
  size, filename, mtime,
  descr,
  latin1
 ) VALUES (
- 'bd91a93ca0462da03f2665a236d7968b0fd9455d', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
  2048, E'random_2048', '2008-09-22T00:18:37Z',
  NULL,
  FALSE
