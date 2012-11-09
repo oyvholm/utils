@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# ga-repofix
+# File ID: 9d53a4b6-2ab4-11e2-9ceb-00c0a8deee11
+# Clean up in some git-annex repo issues
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git config annex.sshcaching false
