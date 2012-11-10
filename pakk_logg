@@ -3,7 +3,7 @@
 #=======================================================================
 # pakk_logg
 # File ID: 7bd794f8-5551-11e0-942f-b7ae6f27caa2
-# Compress and store logs in Git and push it to the server
+# Compress script logs
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
@@ -19,7 +19,6 @@ trap "myexit 1" INT TERM
 pakklogg() {
     echo Will commit: $(find $1 -printf "%TY-%Tm-%Td %TH:%TM size:%s %p")
     gzip -v $1
-    git add $1.gz
     echo
 }
 
@@ -34,8 +33,4 @@ for f in *.scrlog *.timing; do
     ps auxwOT | grep -v "grep $uuid" | grep $uuid | grep -q . || pakklogg $file
 done
 
-git commit --dry-run && {
-    git commit -m "$logmsg$(echo; echo; suuid -t c_pakk_log,commit -c "$logmsg")"
-}
-# git pa
 myexit 0
