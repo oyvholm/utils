@@ -8,3 +8,4 @@
 #=======================================================================
 
 git config annex.sshcaching false
+git branch --unset-upstream master
