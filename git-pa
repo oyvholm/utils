@@ -68,7 +68,7 @@ For every remote
     For every regexp in ~/.git-pa-remotes
         List remotes | grep ^remote | grep current regexp
             Push with args
-            If the remote ends in -all
+            If the remote is specified in git-pa.allremotes
                 Push all
                 Push tags
 
@@ -78,6 +78,16 @@ my @pushremotes = read_regexpfile($Opt{'regexpfile'});
 
 my @cmdline_args = @ARGV;
 msg(2, "cmdline_args = '" . join('|', @cmdline_args) . "'");
+
+my $config_allremotes = `git config --get git-pa.allremotes`;
+chomp($config_allremotes);
+my @allremotes_elem = split(' ', $config_allremotes);
+msg(1, 'Will use --all and --tags with the following remotes: ' . join(', ', @allremotes_elem));
+
+my %allremotes = ();
+for (@allremotes_elem) {
+    $allremotes{$_} = 1;
+}
 
 for my $f (`git remote`) {
     chomp($f);
@@ -103,7 +113,7 @@ for my $f (`git remote`) {
         } else {
             mysystem('git', 'push', $f, @ARGV);
         }
-        if ($f =~ /-all$/) {
+        if (defined($allremotes{$f})) {
             mysystem('git', 'push', '--all', $f);
             mysystem('git', 'push', '--tags', $f);
         }
@@ -178,6 +188,10 @@ Options:
     Print version information.
   --debug
     Print debugging messages.
+
+The 'git-pa.allremotes' configuration option can contain a 
+space-separated list of remotes which will also get pushed to using 
+'--all' and '--tags'.
 
 END
     exit($Retval);
