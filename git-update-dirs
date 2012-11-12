@@ -183,10 +183,10 @@ Usage: $progname [options] [directories [...]]
 
 Options:
 
-  -d, --dangling
-    Execute "git dangling", i.e. turn all dangling commits into branches
   -c, --compress
-    Compress local repositories to save space
+    Compress local repositories to save space.
+  -d, --dangling
+    Execute "git dangling", i.e. turn all dangling commits into branches.
   -e X, --exec X
     Execute command X in every repo.
   -h, --help
@@ -196,11 +196,11 @@ Options:
   -F, --fetch-prune
     Fetch new commits from all remotes and prune deleted remote branches.
   -p, --pull
-    Also execute "git pull --ff-only"
+    Also execute "git pull --ff-only".
   -P, --push
-    Also execute "git pa"
+    Also execute "git pa".
   -r, --recursive
-    Update all repositories recursively under the current directory
+    Update all repositories recursively under the current directory.
   -s, --submodule
     Update submodules if .gitmodules is found.
   -t, --test
