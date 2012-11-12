@@ -68,7 +68,7 @@ For every remote
     For every regexp in ~/.git-pa-remotes
         List remotes | grep ^remote | grep current regexp
             Push with args
-            If it's sunbase
+            If the remote ends in -all
                 Push all
                 Push tags
 
@@ -103,7 +103,7 @@ for my $f (`git remote`) {
         } else {
             mysystem('git', 'push', $f, @ARGV);
         }
-        if ($f eq 'sunbase') {
+        if ($f =~ /-all$/) {
             mysystem('git', 'push', '--all', $f);
             mysystem('git', 'push', '--tags', $f);
         }
