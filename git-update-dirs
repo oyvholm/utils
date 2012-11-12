@@ -67,7 +67,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my @Dirs = $Opt{'recursive'} ? glob("*") : ();
+my @Dirs = $Opt{'recursive'} ? () : @ARGV;
 my @err_compress = ();
 my @err_dangling = ();
 my @err_fetch = ();
@@ -173,7 +173,7 @@ sub usage {
     }
     print(<<END);
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] [directories [...]]
 
 Options:
 
