@@ -131,6 +131,7 @@ sub check_sig {
 sub mysystem {
     # {{{
     my @args = @_;
+    print(STDERR "\n");
     msg(0, "Executing '" . join(' ', @args)  . "'");
     $Opt{'dry-run'} || system(@args) && check_sig($?);
     return;
