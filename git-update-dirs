@@ -105,7 +105,7 @@ LOOP: for my $f (@Dirs) {
             system("git", "pull", "--ff-only") && (check_sig($?) || push(@err_pull, $f));
             if (-e '.emptydirs') {
                 print("==== git restore-dirs ====\n");
-                system('git', 'restore-dirs');
+                system('git', 'restore-dirs') && check_sig($?);
             }
         }
         if ($Opt{'dangling'}) {
@@ -143,7 +143,7 @@ LOOP: for my $f (@Dirs) {
             }
         }
         if (length($Opt{'exec'})) {
-            system($Opt{'exec'});
+            system($Opt{'exec'}) && check_sig($?);
         }
         print("\n");
     }
