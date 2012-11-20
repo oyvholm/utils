@@ -23,10 +23,12 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'host' => `hostname`,
     'verbose' => 0,
     'version' => 0,
 
 );
+chomp($Opt{'host'});
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
@@ -37,6 +39,7 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
+    'host|H=s' => \$Opt{'host'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -48,6 +51,18 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+defined($ARGV[0]) || die("$progname: Missing project name\n");
+
+my $project = $ARGV[0];
+msg(2, "\$project = '$project'");
+
+my $host = $Opt{'host'};
+msg(2, "\$host = '$host'");
+
+my $projdir = "$ENV{'HOME'}/annex/log/$project/$host";
+msg(2, "\$projdir = '$projdir'");
+
+-d $projdir || die("$progname: $projdir: Directory not found\n");
 
 exit(0);
 
@@ -68,12 +83,14 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] project_name
 
 Options:
 
   -h, --help
     Show this help.
+  -H X, --host X
+    Specify as host X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
