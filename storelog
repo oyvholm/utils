@@ -24,6 +24,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'host' => `hostname`,
+    'spec' => '',
     'verbose' => 0,
     'version' => 0,
 
@@ -40,6 +41,7 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'host|H=s' => \$Opt{'host'},
+    'spec|s=s' => \$Opt{'spec'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -62,9 +64,64 @@ msg(2, "\$host = '$host'");
 my $projdir = "$ENV{'HOME'}/annex/log/$project/$host";
 msg(2, "\$projdir = '$projdir'");
 
--d $projdir || die("$progname: $projdir: Directory not found\n");
+msg(0, "dirstruct('$Opt{'spec'}') = '" . dirstruct($Opt{'spec'}) . "'");
 
 exit(0);
+
+sub dirstruct {
+    # {{{
+    my $gran = shift;
+    msg(2, "dirstruct('$gran')'");
+
+    my $count;
+    my $period;
+    if ($gran =~ /^(\d+)\.(.*)$/) {
+        $count = $1;
+        $period = $2;
+        $period =~ s/^(...).*/$1/;
+    } else {
+        die("$progname: $gran: Wrong --spec format.\n");
+    }
+    msg(2, "\$gran = '$gran'");
+    msg(2, "\$count = '$count'");
+    msg(2, "\$period = '$period'");
+
+    my $retval;
+
+    my %mult = (
+        'yea' => 1,
+        'mon' => 12,
+        'wee' => 52,
+        'day' => 365,
+        'hou' => 365 * 24,
+        'min' => 365 * 24 * 60,
+        'sec' => 365 * 24 * 60 * 60,
+    );
+    my $pryear;
+    defined($mult{"$period"}) || die("$progname: $period: Unknown period\n");
+    $pryear = $count * $mult{"$period"};
+    msg(0, "\$pryear = '$pryear'");
+
+    my $maxfiles = 500;
+    if ($pryear < $maxfiles) {
+        $retval = '%Y';
+    } elsif ($pryear < $maxfiles * $mult{'mon'}) {
+        $retval = '%Y/%m';
+    } elsif ($pryear < $maxfiles * $mult{'day'}) {
+        $retval = '%Y/%m/%d';
+    } elsif ($pryear < $maxfiles * $mult{'hou'}) {
+        $retval = '%Y/%m/%d/%H';
+    } elsif ($pryear < $maxfiles * $mult{'min'}) {
+        $retval = '%Y/%m/%d/%H/%M';
+    } else {
+        $retval = '%Y/%m/%d/%H/%M/%S';
+    }
+
+    msg(2, "dirstruct('$gran') returns '$retval'");
+    return($retval);
+
+    # }}}
+} # dirstruct()
 
 sub print_version {
     # Print program version {{{
@@ -91,6 +148,15 @@ Options:
     Show this help.
   -H X, --host X
     Specify as host X.
+  -s X, --spec X
+    Create directory structure, use specification X. Format: "x.y" where 
+    x is number of expected log entries, and y is a period. Example:
+      100.day - 100 entries per day
+      1.sec - 1 entry per second
+      20.week - 20 entries per week
+    Only the first three letters are used. These periods are available:
+      year, month, week, day, hour, minute, second,
+      yea, mon, wee, day, hou, min, sec.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
