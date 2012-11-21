@@ -164,11 +164,11 @@ while (my $entry = <STDIN>) {
                 }
             }
             if (!-e $logfile) {
-                msg(0, "Create '$logfile'");
+                msg(1, "Create '$logfile'");
                 open($logfp, '>', $logfile) or die("$progname: $logfile: Cannot create file: $!\n");
                 flock($logfp, LOCK_EX) || die("$progname: $logfile: Cannot flock(): $!\n");
             } else {
-                msg(0, "Append to '$logfile'");
+                msg(1, "Append to '$logfile'");
                 open($logfp, '+>>', $logfile) or die("$progname: $logfile: Cannot open file for append: $!\n");
                 flock($logfp, LOCK_EX) || die("$progname: $logfile: Cannot flock(): $!\n");
                 seek($logfp, 0, 2) || die("$progname: $logfile: Cannot seek() to EOF: $!\n");
