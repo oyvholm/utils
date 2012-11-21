@@ -31,10 +31,12 @@ our %Opt = (
 
     'debug' => 0,
     'force' => 0,
+    'gid' => '',
     'help' => 0,
     'host' => `hostname`,
     'maxfiles' => $Std{'maxfiles'},
     'spec' => '',
+    'uid' => '',
     'verbose' => 0,
     'version' => 0,
 
@@ -50,10 +52,12 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'force' => \$Opt{'force'},
+    'gid|g=s' => \$Opt{'gid'},
     'help|h' => \$Opt{'help'},
     'host|H=s' => \$Opt{'host'},
     'maxfiles|m=i' => \$Opt{'maxfiles'},
     'spec|s=s' => \$Opt{'spec'},
+    'uid|u=s' => \$Opt{'uid'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -152,6 +156,14 @@ while (my $entry = <STDIN>) {
                 open($logfp, '+>>', $logfile) or die("$progname: $logfile: Cannot open file for append: $!\n");
                 flock($logfp, LOCK_EX) || die("$progname: $logfile: Cannot flock(): $!\n");
                 seek($logfp, 0, 2) || die("$progname: $logfile: Cannot seek() to EOF: $!\n");
+            }
+            if (length($Opt{'uid'})) {
+                msg(1, "chown $Opt{'uid'} $logfile");
+                system('chown', $Opt{'uid'}, $logfile);
+            }
+            if (length($Opt{'gid'})) {
+                msg(1, "chgrp $Opt{'gid'} $logfile");
+                system('chgrp', $Opt{'gid'}, $logfile);
             }
             $old_logfile = $logfile;
         }
@@ -253,6 +265,8 @@ Options:
 
   --force
     Force operation to run, overwrite spec file.
+  -g X, --gid X
+    Set logfile groupid to X.
   -h, --help
     Show this help.
   -H X, --host X
@@ -269,6 +283,8 @@ Options:
     Only the first three letters are used. These periods are available:
       year, month, week, day, hour, minute, second,
       yea, mon, wee, day, hou, min, sec.
+  -u X, --uid X
+    Set logfile userid to X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
