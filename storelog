@@ -19,11 +19,18 @@ local $| = 1;
 
 our $Debug = 0;
 
+our %Std = (
+
+    'maxfiles' => 500,
+
+);
+
 our %Opt = (
 
     'debug' => 0,
     'help' => 0,
     'host' => `hostname`,
+    'maxfiles' => $Std{'maxfiles'},
     'spec' => '',
     'verbose' => 0,
     'version' => 0,
@@ -41,6 +48,7 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'host|H=s' => \$Opt{'host'},
+    'maxfiles|m=i' => \$Opt{'maxfiles'},
     'spec|s=s' => \$Opt{'spec'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -64,6 +72,7 @@ msg(2, "\$host = '$host'");
 my $projdir = "$ENV{'HOME'}/annex/log/$project/$host";
 msg(2, "\$projdir = '$projdir'");
 
+msg(0, "maxfiles = '$Opt{'maxfiles'}'");
 msg(0, "dirstruct('$Opt{'spec'}') = '" . dirstruct($Opt{'spec'}) . "'");
 
 exit(0);
@@ -102,7 +111,7 @@ sub dirstruct {
     $pryear = $count * $mult{"$period"};
     msg(0, "\$pryear = '$pryear'");
 
-    my $maxfiles = 500;
+    my $maxfiles = $Opt{'maxfiles'};
     if ($pryear < $maxfiles) {
         $retval = '%Y';
     } elsif ($pryear < $maxfiles * $mult{'mon'}) {
@@ -148,6 +157,9 @@ Options:
     Show this help.
   -H X, --host X
     Specify as host X.
+  -m X, --maxfiles X
+    Store maximum X files per directory.
+    Default: $Std{'maxfiles'}.
   -s X, --spec X
     Create directory structure, use specification X. Format: "x.y" where 
     x is number of expected log entries, and y is a period. Example:
