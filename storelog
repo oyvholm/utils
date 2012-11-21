@@ -108,15 +108,21 @@ if (length($Opt{'spec'})) {
         system("mkdir -p $hostdir"); # FIXME
         -d $hostdir || die("$progname: $hostdir: Directory still doesn't exist\n");
         open(my $specfp, '>', $specfile) or die("$progname: $specfile: Cannot create file: $!\n");
-        print($specfp "$Opt{'spec'}\n");
+        print($specfp "spec $Opt{'spec'}\n");
         close($specfp);
     }
     exit(0);
 }
 
-my $spec = `cat $specfile`;
-$spec =~ s/^(.*?)(\n|$)/$1/;
-msg(1, "\$spec = '$spec'");
+open(my $specfp, '<', $specfile) or die("$progname: $specfile: Cannot open file for read: $!\n");
+
+my $spec = '';
+while (my $curr = <$specfp>) {
+    chomp $curr;
+    $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
+    msg(1, "\$spec = '$spec'");
+}
+close($specfp);
 
 my $templ = dirstruct($spec);
 
