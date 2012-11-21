@@ -92,8 +92,6 @@ msg(1, "\$projdir = '$projdir'");
 my $hostdir = "$projdir/$host";
 msg(1, "\$hostdir = '$hostdir'");
 
-msg(1, "maxfiles = '$Opt{'maxfiles'}'");
-
 my $specfile = "$projdir/.spec";
 if (!-e $specfile && !$Opt{'spec'}) {
     die("$progname: $specfile: File not found, initialise with -s\n");
@@ -108,15 +106,41 @@ if (length($Opt{'spec'})) {
         system("mkdir -p $hostdir"); # FIXME
         -d $hostdir || die("$progname: $hostdir: Directory still doesn't exist\n");
         open(my $specfp, '>', $specfile) or die("$progname: $specfile: Cannot create file: $!\n");
-        print($specfp "$Opt{'spec'}\n");
+
+        print_rc($specfp, 'gid');
+        print_rc($specfp, 'gzip');
+        print_rc($specfp, 'maxfiles');
+        print_rc($specfp, 'spec');
+        print_rc($specfp, 'uid');
+        print_rc($specfp, 'where');
+
         close($specfp);
     }
     exit(0);
 }
 
-my $spec = `cat $specfile`;
-$spec =~ s/^(.*?)(\n|$)/$1/;
-msg(1, "\$spec = '$spec'");
+open(my $specfp, '<', $specfile) or die("$progname: $specfile: Cannot open file for read: $!\n");
+
+my $spec = '';
+while (my $curr = <$specfp>) {
+    chomp $curr;
+
+    $curr =~ /^gid\s+(.*)$/ && ($Opt{'gid'} = $1);
+    $curr =~ /^gzip\s+(.*)$/ && ($Opt{'gzip'} = $1);
+    $curr =~ /^maxfiles\s+(.*)$/ && ($Opt{'maxfiles'} = $1);
+    $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
+    $curr =~ /^uid\s+(.*)$/ && ($Opt{'uid'} = $1);
+    $curr =~ /^where\s+(.*)$/ && ($Opt{'where'} = $1);
+
+}
+close($specfp);
+
+msg(1, ".spec: gid = '$Opt{'gid'}'");
+msg(1, ".spec: gzip = '$Opt{'gzip'}'");
+msg(1, ".spec: maxfiles = '$Opt{'maxfiles'}'");
+msg(1, ".spec: spec = '$spec'");
+msg(1, ".spec: uid = '$Opt{'uid'}'");
+msg(1, ".spec: where = '$Opt{'where'}'");
 
 my $templ = dirstruct($spec);
 
@@ -194,6 +218,17 @@ while (my $entry = <STDIN>) {
 length($old_logfile) && close($logfp);
 
 exit(0);
+
+sub print_rc {
+    # {{{
+    my ($fp, $keyw) = @_;
+    if (length($Opt{$keyw})) {
+        msg(0, ".spec: $keyw $Opt{$keyw}");
+        print($fp "$keyw $Opt{$keyw}\n");
+    }
+    return;
+    # }}}
+} # print_rc()
 
 sub logtempl {
     # {{{
