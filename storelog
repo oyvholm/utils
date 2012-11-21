@@ -121,9 +121,11 @@ open(my $specfp, '<', $specfile) or die("$progname: $specfile: Cannot open file 
 my $spec = '';
 while (my $curr = <$specfp>) {
     chomp $curr;
+
     $curr =~ /^gzip\s+(.*)$/ && ($Opt{'gzip'} = $1);
     $curr =~ /^maxfiles\s+(.*)$/ && ($Opt{'maxfiles'} = $1);
     $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
+
 }
 close($specfp);
 
