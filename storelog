@@ -39,7 +39,7 @@ our %Opt = (
     'host' => $Std{'host'},
     'maxfiles' => $Std{'maxfiles'},
     'spec' => '',
-    'uid' => '',
+    'userid' => '',
     'verbose' => 0,
     'version' => 0,
     'where' => '',
@@ -62,7 +62,7 @@ GetOptions(
     'host|H=s' => \$Opt{'host'},
     'maxfiles|m=i' => \$Opt{'maxfiles'},
     'spec|s=s' => \$Opt{'spec'},
-    'uid|u=s' => \$Opt{'uid'},
+    'userid|u=s' => \$Opt{'userid'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
     'where|w=s' => \$Opt{'where'},
@@ -111,7 +111,7 @@ if (length($Opt{'spec'})) {
         print_rc($specfp, 'gzip');
         print_rc($specfp, 'maxfiles');
         print_rc($specfp, 'spec');
-        print_rc($specfp, 'uid');
+        print_rc($specfp, 'userid');
         print_rc($specfp, 'where');
 
         close($specfp);
@@ -129,7 +129,7 @@ while (my $curr = <$specfp>) {
     $curr =~ /^gzip\s+(.*)$/ && ($Opt{'gzip'} = $1);
     $curr =~ /^maxfiles\s+(.*)$/ && ($Opt{'maxfiles'} = $1);
     $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
-    $curr =~ /^uid\s+(.*)$/ && ($Opt{'uid'} = $1);
+    $curr =~ /^userid\s+(.*)$/ && ($Opt{'userid'} = $1);
     $curr =~ /^where\s+(.*)$/ && ($Opt{'where'} = $1);
 
 }
@@ -139,7 +139,7 @@ msg(1, ".spec: gid = '$Opt{'gid'}'");
 msg(1, ".spec: gzip = '$Opt{'gzip'}'");
 msg(1, ".spec: maxfiles = '$Opt{'maxfiles'}'");
 msg(1, ".spec: spec = '$spec'");
-msg(1, ".spec: uid = '$Opt{'uid'}'");
+msg(1, ".spec: userid = '$Opt{'userid'}'");
 msg(1, ".spec: where = '$Opt{'where'}'");
 
 my $templ = dirstruct($spec);
@@ -197,9 +197,9 @@ while (my $entry = <STDIN>) {
                 flock($logfp, LOCK_EX) || die("$progname: $logfile: Cannot flock(): $!\n");
                 seek($logfp, 0, 2) || die("$progname: $logfile: Cannot seek() to EOF: $!\n");
             }
-            if (length($Opt{'uid'})) {
-                msg(1, "chown $Opt{'uid'} $logfile");
-                system('chown', $Opt{'uid'}, $logfile);
+            if (length($Opt{'userid'})) {
+                msg(1, "chown $Opt{'userid'} $logfile");
+                system('chown', $Opt{'userid'}, $logfile);
             }
             if (length($Opt{'gid'})) {
                 msg(1, "chgrp $Opt{'gid'} $logfile");
@@ -338,7 +338,7 @@ Options:
     Only the first three letters are used. These periods are available:
       year, month, week, day, hour, minute, second,
       yea, mon, wee, day, hou, min, sec.
-  -u X, --uid X
+  -u X, --userid X
     Set logfile userid to X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
