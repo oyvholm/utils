@@ -42,6 +42,7 @@ our %Opt = (
     'uid' => '',
     'verbose' => 0,
     'version' => 0,
+    'where' => '',
 
 );
 chomp($Opt{'host'});
@@ -64,6 +65,7 @@ GetOptions(
     'uid|u=s' => \$Opt{'uid'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
+    'where|w=s' => \$Opt{'where'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -74,6 +76,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 defined($ARGV[0]) || die("$progname: Missing project name\n");
+if (length($Opt{'where'})) {
+    $Opt{'where'} =~ /[^aeo]/ && die("$progname: $Opt{'where'}: Invalid character in -w/--where argument\n");
+}
 
 my $project = $ARGV[0];
 msg(1, "\$project = '$project'");
@@ -180,6 +185,8 @@ while (my $entry = <STDIN>) {
         }
     }
     print($logfp $entry);
+    ($Opt{'where'} =~ /[ae]/) && print(STDERR $entry);
+    ($Opt{'where'} =~ /[ao]/) && print(STDOUT $entry);
     $old = $Epoch;
     # }}}
 }
@@ -300,6 +307,11 @@ Options:
     Set logfile userid to X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -w X, --where X
+    Send output to stdout and/or stderr. If X contains any of these letters:
+      a - Send to both stdout and stderr
+      e - Send to stderr
+      o - Send to stdout
   -z, --gzip
     When a new file is created, compress the old one with gzip(1).
   --version
