@@ -40,6 +40,7 @@ our %Opt = (
     'maxfiles' => $Std{'maxfiles'},
     'spec' => '',
     'userid' => '',
+    'uuid' => 0,
     'verbose' => 0,
     'version' => 0,
     'where' => '',
@@ -63,6 +64,7 @@ GetOptions(
     'maxfiles|m=i' => \$Opt{'maxfiles'},
     'spec|s=s' => \$Opt{'spec'},
     'userid|U=s' => \$Opt{'userid'},
+    'uuid|u' => \$Opt{'uuid'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
     'where|w=s' => \$Opt{'where'},
@@ -112,6 +114,7 @@ if (length($Opt{'spec'})) {
         print_rc($specfp, 'maxfiles');
         print_rc($specfp, 'spec');
         print_rc($specfp, 'userid');
+        print_rc($specfp, 'uuid');
         print_rc($specfp, 'where');
 
         close($specfp);
@@ -130,6 +133,7 @@ while (my $curr = <$specfp>) {
     $curr =~ /^maxfiles\s+(.*)$/ && ($Opt{'maxfiles'} = $1);
     $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
     $curr =~ /^userid\s+(.*)$/ && ($Opt{'userid'} = $1);
+    $curr =~ /^uuid\s+(.*)$/ && ($Opt{'uuid'} = $1);
     $curr =~ /^where\s+(.*)$/ && ($Opt{'where'} = $1);
 
 }
@@ -140,6 +144,7 @@ msg(1, ".spec: gzip = '$Opt{'gzip'}'");
 msg(1, ".spec: maxfiles = '$Opt{'maxfiles'}'");
 msg(1, ".spec: spec = '$spec'");
 msg(1, ".spec: userid = '$Opt{'userid'}'");
+msg(1, ".spec: uuid = '$Opt{'uuid'}'");
 msg(1, ".spec: where = '$Opt{'where'}'");
 
 my $templ = dirstruct($spec);
@@ -207,6 +212,11 @@ while (my $entry = <STDIN>) {
             }
             $old_logfile = $logfile;
         }
+    }
+    if ($Opt{'uuid'}) {
+        my $uuid_str = `uuid`;
+        chomp($uuid_str);
+        $entry = "$uuid_str $entry";
     }
     print($logfp $entry);
     ($Opt{'where'} =~ /[ae]/) && print(STDERR $entry);
@@ -338,6 +348,8 @@ Options:
     Only the first three letters are used. These periods are available:
       year, month, week, day, hour, minute, second,
       yea, mon, wee, day, hou, min, sec.
+  -u, --uuid
+    Prefix every logged line with time-based UUID (v1).
   -U X, --userid X
     Set logfile userid to X.
   -v, --verbose
