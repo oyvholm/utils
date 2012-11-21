@@ -237,7 +237,7 @@ sub dirstruct {
     );
     my $pryear;
     defined($mult{"$period"}) || die("$progname: $period: Unknown period\n");
-    $pryear = $count * $mult{"$period"};
+    $pryear = int($count * $mult{"$period"} / 60);
     msg(1, "\$pryear = '$pryear'");
 
     my $maxfiles = $Opt{'maxfiles'};
