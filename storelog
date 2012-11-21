@@ -23,9 +23,11 @@ our $Debug = 0;
 
 our %Std = (
 
+    'host' => `hostname`,
     'maxfiles' => 500,
 
 );
+chomp($Std{'host'});
 
 our %Opt = (
 
@@ -34,7 +36,7 @@ our %Opt = (
     'gid' => '',
     'gzip' => 0,
     'help' => 0,
-    'host' => `hostname`,
+    'host' => $Std{'host'},
     'maxfiles' => $Std{'maxfiles'},
     'spec' => '',
     'uid' => '',
@@ -281,6 +283,7 @@ Options:
     Show this help.
   -H X, --host X
     Specify as host X.
+    Default: '$Std{'host'}'.
   -m X, --maxfiles X
     Store maximum X files per directory.
     Default: $Std{'maxfiles'}.
