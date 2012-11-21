@@ -211,8 +211,10 @@ exit(0);
 sub print_rc {
     # {{{
     my ($fp, $keyw) = @_;
-    msg(0, ".spec: $keyw $Opt{$keyw}");
-    print($fp "$keyw $Opt{$keyw}\n");
+    if (length($Opt{$keyw})) {
+        msg(0, ".spec: $keyw $Opt{$keyw}");
+        print($fp "$keyw $Opt{$keyw}\n");
+    }
     return;
     # }}}
 } # print_rc()
