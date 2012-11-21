@@ -107,9 +107,11 @@ if (length($Opt{'spec'})) {
         -d $hostdir || die("$progname: $hostdir: Directory still doesn't exist\n");
         open(my $specfp, '>', $specfile) or die("$progname: $specfile: Cannot create file: $!\n");
 
+        print_rc($specfp, 'gid');
         print_rc($specfp, 'gzip');
         print_rc($specfp, 'maxfiles');
         print_rc($specfp, 'spec');
+        print_rc($specfp, 'uid');
 
         close($specfp);
     }
@@ -122,16 +124,20 @@ my $spec = '';
 while (my $curr = <$specfp>) {
     chomp $curr;
 
+    $curr =~ /^gid\s+(.*)$/ && ($Opt{'gid'} = $1);
     $curr =~ /^gzip\s+(.*)$/ && ($Opt{'gzip'} = $1);
     $curr =~ /^maxfiles\s+(.*)$/ && ($Opt{'maxfiles'} = $1);
     $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
+    $curr =~ /^uid\s+(.*)$/ && ($Opt{'uid'} = $1);
 
 }
 close($specfp);
 
+msg(1, ".spec: gid = '$Opt{'gid'}'");
 msg(1, ".spec: gzip = '$Opt{'gzip'}'");
 msg(1, ".spec: maxfiles = '$Opt{'maxfiles'}'");
 msg(1, ".spec: spec = '$spec'");
+msg(1, ".spec: uid = '$Opt{'uid'}'");
 
 my $templ = dirstruct($spec);
 
