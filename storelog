@@ -108,7 +108,13 @@ if (length($Opt{'spec'})) {
         system("mkdir -p $hostdir"); # FIXME
         -d $hostdir || die("$progname: $hostdir: Directory still doesn't exist\n");
         open(my $specfp, '>', $specfile) or die("$progname: $specfile: Cannot create file: $!\n");
+
+        msg(0, ".spec: gzip $Opt{'gzip'}");
+        print($specfp "gzip $Opt{'gzip'}\n");
+
+        msg(0, ".spec: spec $Opt{'spec'}");
         print($specfp "spec $Opt{'spec'}\n");
+
         close($specfp);
     }
     exit(0);
@@ -119,6 +125,7 @@ open(my $specfp, '<', $specfile) or die("$progname: $specfile: Cannot open file 
 my $spec = '';
 while (my $curr = <$specfp>) {
     chomp $curr;
+    $curr =~ /^gzip\s+(.*)$/ && ($Opt{'gzip'} = $1);
     $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
     msg(1, "\$spec = '$spec'");
 }
