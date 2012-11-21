@@ -32,6 +32,7 @@ our %Opt = (
     'debug' => 0,
     'force' => 0,
     'gid' => '',
+    'gzip' => 0,
     'help' => 0,
     'host' => `hostname`,
     'maxfiles' => $Std{'maxfiles'},
@@ -53,6 +54,7 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'force' => \$Opt{'force'},
     'gid|g=s' => \$Opt{'gid'},
+    'gzip|z' => \$Opt{'gzip'},
     'help|h' => \$Opt{'help'},
     'host|H=s' => \$Opt{'host'},
     'maxfiles|m=i' => \$Opt{'maxfiles'},
@@ -146,6 +148,12 @@ while (my $entry = <STDIN>) {
 
             if (length($old_logfile)) {
                 close($logfp);
+                if ($Opt{'gzip'}) {
+                    msg(1, "gzip $old_logfile");
+                    system('gzip', '-S', '.tmpgz', $old_logfile);
+                    rename("$old_logfile.tmpgz", "$old_logfile.gz")
+                        or warn("$progname: $old_logfile.tmpgz: Cannot rename to *.gz: $!\n");
+                }
             }
             if (!-e $logfile) {
                 msg(0, "Create '$logfile'");
@@ -287,6 +295,8 @@ Options:
     Set logfile userid to X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -z, --gzip
+    When a new file is created, compress the old one with gzip(1).
   --version
     Print version information.
   --debug
