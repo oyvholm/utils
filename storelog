@@ -109,11 +109,8 @@ if (length($Opt{'spec'})) {
         -d $hostdir || die("$progname: $hostdir: Directory still doesn't exist\n");
         open(my $specfp, '>', $specfile) or die("$progname: $specfile: Cannot create file: $!\n");
 
-        msg(0, ".spec: gzip $Opt{'gzip'}");
-        print($specfp "gzip $Opt{'gzip'}\n");
-
-        msg(0, ".spec: spec $Opt{'spec'}");
-        print($specfp "spec $Opt{'spec'}\n");
+        print_rc($specfp, 'gzip');
+        print_rc($specfp, 'spec');
 
         close($specfp);
     }
@@ -207,6 +204,15 @@ while (my $entry = <STDIN>) {
 length($old_logfile) && close($logfp);
 
 exit(0);
+
+sub print_rc {
+    # {{{
+    my ($fp, $keyw) = @_;
+    msg(0, ".spec: $keyw $Opt{$keyw}");
+    print($fp "$keyw $Opt{$keyw}\n");
+    return;
+    # }}}
+} # print_rc()
 
 sub logtempl {
     # {{{
