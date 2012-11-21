@@ -33,7 +33,7 @@ our %Opt = (
 
     'debug' => 0,
     'force' => 0,
-    'gid' => '',
+    'groupid' => '',
     'gzip' => 0,
     'help' => 0,
     'host' => $Std{'host'},
@@ -56,7 +56,7 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'force' => \$Opt{'force'},
-    'gid|g=s' => \$Opt{'gid'},
+    'groupid|g=s' => \$Opt{'groupid'},
     'gzip|z' => \$Opt{'gzip'},
     'help|h' => \$Opt{'help'},
     'host|H=s' => \$Opt{'host'},
@@ -107,7 +107,7 @@ if (length($Opt{'spec'})) {
         -d $hostdir || die("$progname: $hostdir: Directory still doesn't exist\n");
         open(my $specfp, '>', $specfile) or die("$progname: $specfile: Cannot create file: $!\n");
 
-        print_rc($specfp, 'gid');
+        print_rc($specfp, 'groupid');
         print_rc($specfp, 'gzip');
         print_rc($specfp, 'maxfiles');
         print_rc($specfp, 'spec');
@@ -125,7 +125,7 @@ my $spec = '';
 while (my $curr = <$specfp>) {
     chomp $curr;
 
-    $curr =~ /^gid\s+(.*)$/ && ($Opt{'gid'} = $1);
+    $curr =~ /^groupid\s+(.*)$/ && ($Opt{'groupid'} = $1);
     $curr =~ /^gzip\s+(.*)$/ && ($Opt{'gzip'} = $1);
     $curr =~ /^maxfiles\s+(.*)$/ && ($Opt{'maxfiles'} = $1);
     $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
@@ -135,7 +135,7 @@ while (my $curr = <$specfp>) {
 }
 close($specfp);
 
-msg(1, ".spec: gid = '$Opt{'gid'}'");
+msg(1, ".spec: groupid = '$Opt{'groupid'}'");
 msg(1, ".spec: gzip = '$Opt{'gzip'}'");
 msg(1, ".spec: maxfiles = '$Opt{'maxfiles'}'");
 msg(1, ".spec: spec = '$spec'");
@@ -201,9 +201,9 @@ while (my $entry = <STDIN>) {
                 msg(1, "chown $Opt{'userid'} $logfile");
                 system('chown', $Opt{'userid'}, $logfile);
             }
-            if (length($Opt{'gid'})) {
-                msg(1, "chgrp $Opt{'gid'} $logfile");
-                system('chgrp', $Opt{'gid'}, $logfile);
+            if (length($Opt{'groupid'})) {
+                msg(1, "chgrp $Opt{'groupid'} $logfile");
+                system('chgrp', $Opt{'groupid'}, $logfile);
             }
             $old_logfile = $logfile;
         }
@@ -319,7 +319,7 @@ Options:
 
   --force
     Force operation to run, overwrite spec file.
-  -g X, --gid X
+  -g X, --groupid X
     Set logfile groupid to X.
   -h, --help
     Show this help.
