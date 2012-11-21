@@ -118,6 +118,7 @@ my $old_logfile = '';
 my $logfp;
 
 while (my $entry = <STDIN>) {
+    # {{{
     my ($Epoch, $Fract) = gettimeofday();
 
     if ($Epoch ne $old) {
@@ -178,6 +179,7 @@ while (my $entry = <STDIN>) {
     }
     print($logfp $entry);
     $old = $Epoch;
+    # }}}
 }
 
 length($old_logfile) && close($logfp);
