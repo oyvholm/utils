@@ -56,13 +56,13 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'force' => \$Opt{'force'},
-    'groupid|g=s' => \$Opt{'groupid'},
+    'groupid|G=s' => \$Opt{'groupid'},
     'gzip|z' => \$Opt{'gzip'},
     'help|h' => \$Opt{'help'},
     'host|H=s' => \$Opt{'host'},
     'maxfiles|m=i' => \$Opt{'maxfiles'},
     'spec|s=s' => \$Opt{'spec'},
-    'userid|u=s' => \$Opt{'userid'},
+    'userid|U=s' => \$Opt{'userid'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
     'where|w=s' => \$Opt{'where'},
@@ -319,7 +319,7 @@ Options:
 
   --force
     Force operation to run, overwrite spec file.
-  -g X, --groupid X
+  -G X, --groupid X
     Set logfile groupid to X.
   -h, --help
     Show this help.
@@ -338,7 +338,7 @@ Options:
     Only the first three letters are used. These periods are available:
       year, month, week, day, hour, minute, second,
       yea, mon, wee, day, hou, min, sec.
-  -u X, --userid X
+  -U X, --userid X
     Set logfile userid to X.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
