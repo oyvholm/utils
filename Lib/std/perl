@@ -49,7 +49,16 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-exit(0);
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    return($Retval);
+    # }}}
+} # main()
 
 sub print_version {
     # Print program version {{{
