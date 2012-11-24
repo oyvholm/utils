@@ -23,11 +23,21 @@ pakklogg() {
 }
 
 cd ~/log/script || { echo $0: ~/log/script: Unable to chdir >&2; exit 1; }
-ls *.scrlog *.timing 2>/dev/null | grep -q . || { echo $0: No files found to pack; myexit 0; }
-for f in *.scrlog *.timing; do
-    file="$f"
-    uuid=$(echo "$f" | finduuid)
-    ps auxwOT | grep -v "grep $uuid" | grep $uuid | grep -q . || pakklogg "$file"
-done
+ls *.scrlog *.timing 2>/dev/null | grep -q .
+if test "$?" = "0"; then
+    for f in *.scrlog *.timing; do
+        file="$f"
+        uuid=$(echo "$f" | finduuid)
+        ps auxwOT | grep -v "grep $uuid" | grep $uuid | grep -q . || pakklogg "$file"
+    done
+fi
+
+ircdir=$HOME/log/irc
+
+if test -d "$ircdir/."; then
+    cd "$ircdir" || { echo $0: $ircdir: Unable to chdir >&2; exit 1; }
+    currdate=`date +"%Y-%m-%d"`
+    find -type f -name '*.log' -print0 | grep -vz "$currdate" | xargs -0r gzip -v
+fi
 
 myexit 0
