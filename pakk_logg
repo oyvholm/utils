@@ -22,9 +22,6 @@ pakklogg() {
     echo
 }
 
-unset logmsg
-[ ! -z "$1" ] && logmsg="$*"
-
 cd ~/log/script || { echo $0: ~/log/script: Unable to chdir; exit 1; }
 ls *.scrlog *.timing 2>/dev/null | grep -q . || { echo $0: No files found to pack; myexit 0; }
 for f in *.scrlog *.timing; do
