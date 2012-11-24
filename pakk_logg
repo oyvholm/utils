@@ -30,4 +30,12 @@ if test -d "$ircdir/."; then
     find -type f -name '*.log' -print0 | grep -vz "$currdate" | xargs -0r gzip -v
 fi
 
+dfdir=$HOME/log/df
+
+if test -d "$dfdir/."; then
+    cd "$dfdir" || { echo $0: $dfdir: Unable to chdir >&2; exit 1; }
+    currdate=`date -u +"%Y-%m-%d"`
+    find -type f -name '*.log' -print0 | grep -vz "$currdate" | xargs -0r gzip -v
+fi
+
 myexit 0
