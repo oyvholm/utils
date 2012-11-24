@@ -3,7 +3,7 @@
 # logging
 # File ID: af318500-fb9b-11dd-bb0f-000475e441b9
 
-export LOGDIR=$HOME/log/script
+export LOGDIR=$HOME/log/script/`date -u +"%Y/%m"`
 [ -d $LOGDIR/. ] || mkdir -p $LOGDIR || { echo logging: $LOGDIR: Cannot create log directory >&2; exit 1; }
 export LDATE=`u`
 uuid=`suuid -t logging -w eo -c "logging $*"` || { echo logging: Error when generating UUID, logging not started >&2; exit 1; }
