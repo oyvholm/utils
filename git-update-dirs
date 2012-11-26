@@ -92,7 +92,6 @@ LOOP: for my $f (@Dirs) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
         }
-        my $has_annex = -e ".git/annex/objects" ? 1 : 0;
         if ($Opt{'fetch-prune'}) {
             print("==== git fetch --all --prune ====\n");
             system("git", "fetch", "--all", "--prune") && (check_sig($?) || push(@err_fetch, $f));
@@ -135,9 +134,9 @@ LOOP: for my $f (@Dirs) {
             if (!-e ".no-git-gc") {
                 my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
                 print("==== git gc $dang_str ====\n");
-                $has_annex || system("du -h .git | tail -1") && check_sig($?);
+                system("du -h .git | tail -1") && check_sig($?);
                 system("git", "gc", $dang_str) && (check_sig($?) || push(@err_compress, $f));
-                $has_annex || system("du -h .git | tail -1") && check_sig($?);
+                system("du -h .git | tail -1") && check_sig($?);
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
