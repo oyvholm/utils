@@ -13,6 +13,7 @@ else
     dudir=.
 fi
 
+test -d $dudir/objects/. || { echo git-realclean: .git/objects/ or objects/ not found >&2; exit 1; }
 tot_before=$((find $dudir/objects -type f -printf '%s+' ; echo 0) | bc)
 echo tot_before: $(echo $tot_before | commify)
 echo ==== git reflog expire
