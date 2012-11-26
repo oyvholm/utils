@@ -134,9 +134,13 @@ LOOP: for my $f (@Dirs) {
             if (!-e ".no-git-gc") {
                 my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
                 print("==== git gc $dang_str ====\n");
-                system("du -h .git | tail -1") && check_sig($?);
+                chomp(my $before = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
+                msg(0, "size before = " . commify($before));
                 system("git", "gc", $dang_str) && (check_sig($?) || push(@err_compress, $f));
-                system("du -h .git | tail -1") && check_sig($?);
+                chomp(my $after = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
+                msg(0, "size after = " . commify($after));
+                my $saved = $before - $after;
+                $before && printf("\nSaved: %s (%.4f%%)\n", commify($saved), 100.0 * $saved / $before);
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
@@ -161,6 +165,14 @@ sub check_sig {
     ($retval & 127) && die("\n$progname: Child process interrupted, aborting.\n");
     return(0);
 } # check_sig()
+
+sub commify {
+	# {{{
+	my $Str = reverse $_[0];
+	$Str =~ s/(\d\d\d)(?=\d)(?!\d*\,)/$1,/g;
+	return scalar reverse $Str;
+	# }}}
+} # commify()
 
 sub print_version {
     # Print program version {{{
