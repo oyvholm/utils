@@ -85,6 +85,7 @@ if ($Opt{'recursive'}) {
 }
 
 my $orig_dir = getcwd();
+my ($total_before, $total_after, $total_saved) = (0, 0, 0);
 LOOP: for my $f (@Dirs) {
     if (-d "$f/.git/.") {
         print("================ $f ================\n");
@@ -135,9 +136,11 @@ LOOP: for my $f (@Dirs) {
                 my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
                 print("==== git gc $dang_str ====\n");
                 chomp(my $before = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
+                $total_before += $before;
                 msg(0, "size before = " . commify($before));
                 system("git", "gc", $dang_str) && (check_sig($?) || push(@err_compress, $f));
                 chomp(my $after = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
+                $total_after += $after;
                 msg(0, "size after = " . commify($after));
                 my $saved = $before - $after;
                 $before && printf("\nSaved: %s (%.4f%%)\n", commify($saved), 100.0 * $saved / $before);
@@ -159,6 +162,12 @@ scalar(@err_push) && print("$progname: Unable to push from: " . join(" ", @err_p
 scalar(@err_updsub) && print("$progname: Unable to update submodules in: " . join(" ", @err_updsub) . "\n");
 scalar(@err_compress) && print("$progname: Unable to compress: " . join(" ", @err_compress) . "\n");
 scalar(@err_test) && print("$progname: Error in git fsck: " . join(" ", @err_test) . "\n");
+
+if ($Opt{'compress'}) {
+    my $total_saved = $total_before - $total_after;
+    $total_before && printf("Total saved: %s (%.4f%%)\n",
+        commify($total_saved), 100.0 * $total_saved / $total_before);
+}
 
 sub check_sig {
     my $retval = shift;
