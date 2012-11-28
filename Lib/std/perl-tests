@@ -71,26 +71,26 @@ sub main {
     diag(sprintf('========== Executing %s v%s ==========',
         $progname,
         $VERSION));
-    
+
     if ($Opt{'todo'} && !$Opt{'all'}) {
         goto todo_section;
     }
-    
+
 =pod
-    
+
     testcmd("$CMD command", # {{{
         <<'END',
-    [expected stdin]
+[expected stdin]
 END
         '',
         0,
         'description',
     );
-    
+
     # }}}
-    
+
 =cut
-    
+
     diag('Testing -h (--help) option...');
     likecmd("$CMD -h", # {{{
         '/  Show this help\./',
@@ -98,7 +98,7 @@ END
         0,
         'Option -h prints help screen',
     );
-    
+
     # }}}
     diag('Testing -v (--verbose) option...');
     likecmd("$CMD -hv", # {{{
@@ -107,7 +107,7 @@ END
         0,
         'Option --version with -h returns version number and help screen',
     );
-    
+
     # }}}
     diag('Testing --version option...');
     likecmd("$CMD --version", # {{{
@@ -116,24 +116,24 @@ END
         0,
         'Option --version returns version number',
     );
-    
+
     # }}}
-    
+
     todo_section:
     ;
-    
+
     if ($Opt{'all'} || $Opt{'todo'}) {
         diag('Running TODO tests...'); # {{{
-    
+
         TODO: {
-    
+
     local $TODO = '';
     # Insert TODO tests here.
-    
+
         }
         # TODO tests }}}
     }
-    
+
     diag('Testing finished.');
     # }}}
 } # main()
