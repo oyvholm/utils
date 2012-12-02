@@ -423,14 +423,14 @@ testcmd("echo \"Ctrl-d: \x04\" | $CMD -c - -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+        "(<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<txt>Great test<\\/txt>",
-            "<host>.+?<\\/host>",
-            "<cwd>.+?<\\/cwd>",
-            "<user>.+<\\/user>",
-            "<tty>.+<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+        "<\\/suuid>\\n){2}",
+    ) . '<\/suuids>\n$/s',
     "Log contents OK after comment",
 );
 
