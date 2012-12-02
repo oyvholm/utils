@@ -306,6 +306,39 @@ like(file_data($Outfile), # {{{
 );
 # }}}
 ok(unlink($Outfile), "Delete $Outfile");
+diag("Testing --rcfile option...");
+likecmd("$CMD --rcfile rcfile1 -l $Outdir", # {{{
+    "/^$v1_templ\\n\$/s",
+    '/^$/s',
+    0,
+    "--rcfile option works",
+);
+
+# }}}
+like(file_data("$Outdir/altrc1.xml"), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>altrc1<\\/host>",
+            "<cwd>.+?<\\/cwd>",
+            "<user>.+<\\/user>",
+            "<tty>.+<\\/tty>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "hostname from rcfile1 is stored in the file",
+);
+
+# }}}
+ok(unlink("$Outdir/altrc1.xml"), "Delete $Outdir/altrc1.xml");
+ok(!-e 'nosuchrc', "'nosuchrc' doesn't exist");
+likecmd("$CMD --rcfile nosuchrc -l $Outdir", # {{{
+    "/^$v1_templ\\n\$/s",
+    '/^$/s',
+    0,
+    "--rcfile with non-existing file",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Testing -t (--tag) option...");
 likecmd("$CMD -t snaddertag -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",

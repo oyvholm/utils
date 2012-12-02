@@ -46,6 +46,7 @@ our %Opt = (
     'quiet' => 0,
     'random-mac' => 0,
     'raw' => 0,
+    'rcfile' => $Std{'rcfile'},
     'tag' => "",
     'verbose' => 0,
     'version' => 0,
@@ -68,6 +69,7 @@ GetOptions(
     "quiet|q" => \$Opt{'quiet'},
     "random-mac|m" => \$Opt{'random-mac'},
     "raw" => \$Opt{'raw'},
+    "rcfile=s" => \$Opt{'rcfile'},
     "tag|t=s" => \$Opt{'tag'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -255,8 +257,8 @@ sub valid_xml_chars {
 sub read_rcfile {
     # {{{
     my %Retval = ();
-    if (-e $Std{'rcfile'}) {
-        if (open(RcFP, "<", $Std{'rcfile'})) {
+    if (-e $Opt{'rcfile'}) {
+        if (open(RcFP, "<", $Opt{'rcfile'})) {
             while (my $Line = <RcFP>) {
                 $Line =~ s/^\s*(.*?)\s*$/$1/;
                 if ($Line =~ /^hostname\s*=\s*(\S+)/) {
@@ -267,7 +269,7 @@ sub read_rcfile {
             }
             close(RcFP);
         } else {
-            warn("$progname: $Std{'rcfile'}: Cannot open file for read: $!\n");
+            warn("$progname: $Opt{'rcfile'}: Cannot open file for read: $!\n");
         }
     }
     return(%Retval);
@@ -369,6 +371,8 @@ Options:
     Don’t convert <txt> element to XML. When using this option, it is 
     expected that the value of the -c/--comment option is valid XML, 
     otherwise it will create corrupted log files.
+  --rcfile X
+    Use file X instead of '$Std{'rcfile'}'.
   -t x, --tag x
     Use x as tag (category).
   -v, --verbose
