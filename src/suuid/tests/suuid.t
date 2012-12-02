@@ -249,7 +249,7 @@ likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
 like(file_data("$Outdir/urk13579kru.xml"), # {{{
     '/^' . $xml_header . join(' ',
         "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>.+?<\\/host>",
+            "<host>urk13579kru<\\/host>",
             "<cwd>.+?<\\/cwd>",
             "<user>.+<\\/user>",
             "<tty>.+<\\/tty>",

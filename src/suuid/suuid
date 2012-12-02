@@ -126,7 +126,7 @@ if (!valid_xml_chars($Tag)) {
     warn("$progname: Tags have to be in UTF-8\n");
     exit(1);
 }
-my $Hostname = `hostname`; # FIXME
+my $Hostname = host_id();
 chomp($Hostname);
 my $curr_dir = `/bin/pwd`; # FIXME
 chomp($curr_dir);
