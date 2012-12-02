@@ -501,9 +501,9 @@ likecmd("$CMD -w n -l $Outdir", # {{{
 );
 
 # }}}
+ok(unlink($Outfile), "Delete $Outfile");
 diag("Testing -q (--quiet) option...");
 diag("Test logging of \$SESS_UUID environment variable...");
-ok(unlink($Outfile), "Delete $Outfile");
 likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
     '/^$/',
