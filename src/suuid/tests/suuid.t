@@ -124,6 +124,7 @@ likecmd("$CMD --version", # {{{
 );
 
 # }}}
+my $cdata = '[^<]+';
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
@@ -446,15 +447,15 @@ likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
 # }}}
 like(file_data($Outfile), # {{{
     '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+        "(<suuid t=\"$date_templ\" u=\"$v1_templ\">",
             "<tag>testeri<\\/tag>",
             "<txt>Great test<\\/txt>",
-            "<host>.+?<\\/host>",
-            "<cwd>.+?<\\/cwd>",
-            "<user>.+<\\/user>",
-            "<tty>.+<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+        "<\\/suuid>\\n){5}",
+    ) . '<\/suuids>\n$/s',
     "Log contents OK after count, comment and tag",
 );
 
