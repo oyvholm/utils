@@ -215,6 +215,20 @@ like(file_data($Outfile), # {{{
 
 # }}}
 ok(unlink($Outfile), "Delete $Outfile");
+testcmd("$CMD --rcfile rcfile-inv-uuidcmd -l $Outdir", # {{{
+    '',
+    "suuid: '': Generated UUID is not in the expected format\n",
+    1,
+    "uuidcmd does not generate valid UUID",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . '<\/suuids>\n$/s',
+    "suuid file is empty",
+);
+
+# }}}
 diag("Read the SUUID_LOGDIR environment variable...");
 likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
     "/^$v1_templ\n\$/s",
