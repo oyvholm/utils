@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # suuid
@@ -12,13 +12,14 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Fcntl ':flock';
 use Getopt::Long;
 use lib "$ENV{HOME}/bin/src/suuid";
 
 use suuid;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
 
@@ -56,24 +57,24 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.00';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "comment|c=s" => \$Opt{'comment'},
-    "count|n=i" => \$Opt{'count'},
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "logdir|l=s" => \$Opt{'logdir'},
-    "quiet|q" => \$Opt{'quiet'},
-    "random-mac|m" => \$Opt{'random-mac'},
-    "raw" => \$Opt{'raw'},
-    "rcfile=s" => \$Opt{'rcfile'},
-    "tag|t=s" => \$Opt{'tag'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
-    "whereto|w=s" => \$Opt{'whereto'},
+    'comment|c=s' => \$Opt{'comment'},
+    'count|n=i' => \$Opt{'count'},
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'logdir|l=s' => \$Opt{'logdir'},
+    'quiet|q' => \$Opt{'quiet'},
+    'random-mac|m' => \$Opt{'random-mac'},
+    'raw' => \$Opt{'raw'},
+    'rcfile=s' => \$Opt{'rcfile'},
+    'tag|t=s' => \$Opt{'tag'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+    'whereto|w=s' => \$Opt{'whereto'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -326,6 +327,7 @@ sub sec_to_string {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -337,7 +339,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options]
 
@@ -415,6 +417,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
@@ -427,7 +430,7 @@ sub D {
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
     print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
+    return('');
     # }}}
 } # D()
 
