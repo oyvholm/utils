@@ -95,142 +95,152 @@ my %rc = read_rcfile();
 my $Cmd = defined($rc{'uuidcmd'})
     ? $rc{'uuidcmd'}
     : "uuidgen -t";
-my $Host = host_id();
 
-if (!-d "$Opt{'logdir'}/.") {
-    die("$progname: $Opt{'logdir'}: Log directory not found\n");
-}
-my $Logfile = "$Opt{'logdir'}/$Host.xml";
+exit(main(%Opt));
 
-my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
-my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
-D("cmd_editor = '$cmd_editor'");
-
-if ($Comment eq "-") {
-    $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
-    $Comment = "";
-    while (<STDIN>) {
-        $Comment .= $_;
-    }
-    chomp($Comment);
-} elsif ($Comment eq "--") {
-    my $tmpfile = "/tmp/" . `$Cmd`; # FIXME
-    system("touch $tmpfile");
-    system("$cmd_editor $tmpfile");
-    $Comment = `cat $tmpfile`;
-    unlink($tmpfile);
-}
-if (!valid_xml_chars($Comment)) {
-    warn("$progname: Comment contains illegal characters or is not valid UTF-8\n");
-    exit(1);
-}
-my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
-if (!valid_xml_chars($Tag)) {
-    warn("$progname: Tags have to be in UTF-8\n");
-    exit(1);
-}
-my $Hostname = host_id();
-chomp($Hostname);
-my $curr_dir = `/bin/pwd`; # FIXME
-chomp($curr_dir);
-
-$Comment =~ s/^\s+//;
-$Comment =~ s/\s+$//;
-my $safe_comment = suuid_xml($Comment, $Opt{'raw'});
-my $safe_tag = suuid_xml($Tag);
-my ($safe_host, $safe_currdir) = ("", "");
-length($Hostname) && ($safe_host = suuid_xml($Hostname));
-length($curr_dir) && ($safe_currdir = suuid_xml($curr_dir));
-my $Username = getpwuid($<);
-my $safe_username = suuid_xml($Username);
-chomp(my $tty = `tty`);
-my $safe_tty = suuid_xml($tty);
-
-my $sess_uuid = "";
-if (defined($ENV{'SESS_UUID'})) {
-    if ($ENV{'SESS_UUID'} =~ /([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/) {
-        $sess_uuid = $ENV{'SESS_UUID'};
-    }
-}
-
-if (!-e $Logfile) {
-    open(LogFP, ">", $Logfile) || die("$progname: $Logfile: Cannot create file: $!\n");
-    flock(LogFP, LOCK_EX) || die("$progname: $Logfile: Cannot flock(): $!\n");
-    print(LogFP join("\n",
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-        "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">",
-        "<suuids>",
-        "</suuids>"
-    ) . "\n");
-    close(LogFP);
-}
-
-if (open(LogFP, "+>>", $Logfile)) {
+sub main {
     # {{{
-    if (flock(LogFP, LOCK_EX)) {
-        # Seek to start of end tag
-        unless (seek(LogFP, -10, 2)) {
-            warn("$progname: Cannot seek to start of end tag, adding to file. Error: $!\n");
-        }
-        my $filepos = tell(LogFP);
-        my $check_end_tag = <LogFP>;
-        D("check_end_tag = '$check_end_tag'");
-        defined($check_end_tag) || ($check_end_tag = "");
-        if ($check_end_tag eq "</suuids>\n") {
-            D("check_end_tag is OK");
-            truncate(LogFP, $filepos) || die("$progname: $Logfile: Cannot truncate() to size $filepos: $!\n");
-        } else {
-            warn("$progname: $Logfile: Unknown end line, adding to end of file\n");
-        }
-        for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
-            seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file: $!\n");
-            my $filepos = tell(LogFP);
-            chomp(my $uuid = `$Cmd`);
-            if ($Opt{'random-mac'}) {
-                $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
-            }
-            my @Xml = ();
-            if (length($safe_tag)) {
-                my $tmp_tag = $safe_tag;
-                $tmp_tag =~ s/([^,]+)/push(@Xml, sprintf("<tag>%s<\/tag>", suuid_xml($1)))/gse;
-            }
-            my $txt_space = ($safe_comment =~ /^</) ? " " : "";
-            length($safe_comment) && push(@Xml, "<txt>$txt_space$safe_comment$txt_space</txt>");
-            length($safe_host) && push(@Xml, "<host>$safe_host</host>");
-            length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
-            length($safe_username) && push(@Xml, "<user>$safe_username</user>");
-            length($safe_tty) && push(@Xml, "<tty>$safe_tty</tty>");
-            if (length($sess_uuid)) {
-                my $tmp_sess = $sess_uuid;
-                $tmp_sess =~ s/($Templ)/push(@Xml, sprintf("<sess>%s<\/sess>", suuid_xml($1)))/gse;
-            }
-            my $uuid_time = uuid_time2($uuid);
-            length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
-            my $out_str = join(" ", "<suuid$uuid_time u=\"$uuid\">", @Xml, "</suuid>") . "\n";
-            print(LogFP $out_str);
-            if (seek(LogFP, $filepos, 0)) {
-                my $check_str = <LogFP>;
-                if ($check_str eq $out_str) {
-                    $Opt{'whereto'} =~ /[ao]/ && print("$uuid\n");
-                    $Opt{'whereto'} =~ /[ae]/ && print(STDERR "$uuid\n");
-                } else {
-                    D("check_str = '$check_str', out_str = '$out_str'");
-                    die("$progname: $Logfile: Unable to write to file: $!\n");
-                }
-            } else {
-                die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
-            }
-        }
-        seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file to write end tag: $!\n");
-        print(LogFP "</suuids>\n");
-        close(LogFP);
-    } else {
-        die("$progname: $Logfile: Cannot lock file: $!\n");
+    my %Opt = @_;
+    my $Retval = 0;
+    my $Host = host_id();
+
+    if (!-d "$Opt{'logdir'}/.") {
+        die("$progname: $Opt{'logdir'}: Log directory not found\n");
     }
+    my $Logfile = "$Opt{'logdir'}/$Host.xml";
+
+    my $Comment = length($Opt{'comment'}) ? $Opt{'comment'} : "";
+    my $cmd_editor = $ENV{'SUUID_EDITOR'} || $ENV{'EDITOR'} || $Std{'editor'};
+    D("cmd_editor = '$cmd_editor'");
+
+    if ($Comment eq "-") {
+        $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
+        $Comment = "";
+        while (<STDIN>) {
+            $Comment .= $_;
+        }
+        chomp($Comment);
+    } elsif ($Comment eq "--") {
+        my $tmpfile = "/tmp/" . `$Cmd`; # FIXME
+        system("touch $tmpfile");
+        system("$cmd_editor $tmpfile");
+        $Comment = `cat $tmpfile`;
+        unlink($tmpfile);
+    }
+    if (!valid_xml_chars($Comment)) {
+        warn("$progname: Comment contains illegal characters or is not valid UTF-8\n");
+        exit(1);
+    }
+    my $Tag = length($Opt{'tag'}) ? $Opt{'tag'} : "";
+    if (!valid_xml_chars($Tag)) {
+        warn("$progname: Tags have to be in UTF-8\n");
+        exit(1);
+    }
+    my $Hostname = host_id();
+    chomp($Hostname);
+    my $curr_dir = `/bin/pwd`; # FIXME
+    chomp($curr_dir);
+
+    $Comment =~ s/^\s+//;
+    $Comment =~ s/\s+$//;
+    my $safe_comment = suuid_xml($Comment, $Opt{'raw'});
+    my $safe_tag = suuid_xml($Tag);
+    my ($safe_host, $safe_currdir) = ("", "");
+    length($Hostname) && ($safe_host = suuid_xml($Hostname));
+    length($curr_dir) && ($safe_currdir = suuid_xml($curr_dir));
+    my $Username = getpwuid($<);
+    my $safe_username = suuid_xml($Username);
+    chomp(my $tty = `tty`);
+    my $safe_tty = suuid_xml($tty);
+
+    my $sess_uuid = "";
+    if (defined($ENV{'SESS_UUID'})) {
+        if ($ENV{'SESS_UUID'} =~ /([[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12})/) {
+            $sess_uuid = $ENV{'SESS_UUID'};
+        }
+    }
+
+    if (!-e $Logfile) {
+        open(LogFP, ">", $Logfile) || die("$progname: $Logfile: Cannot create file: $!\n");
+        flock(LogFP, LOCK_EX) || die("$progname: $Logfile: Cannot flock(): $!\n");
+        print(LogFP join("\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+            "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">",
+            "<suuids>",
+            "</suuids>"
+        ) . "\n");
+        close(LogFP);
+    }
+
+    if (open(LogFP, "+>>", $Logfile)) {
+        # {{{
+        if (flock(LogFP, LOCK_EX)) {
+            # Seek to start of end tag
+            unless (seek(LogFP, -10, 2)) {
+                warn("$progname: Cannot seek to start of end tag, adding to file. Error: $!\n");
+            }
+            my $filepos = tell(LogFP);
+            my $check_end_tag = <LogFP>;
+            D("check_end_tag = '$check_end_tag'");
+            defined($check_end_tag) || ($check_end_tag = "");
+            if ($check_end_tag eq "</suuids>\n") {
+                D("check_end_tag is OK");
+                truncate(LogFP, $filepos) || die("$progname: $Logfile: Cannot truncate() to size $filepos: $!\n");
+            } else {
+                warn("$progname: $Logfile: Unknown end line, adding to end of file\n");
+            }
+            for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
+                seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file: $!\n");
+                my $filepos = tell(LogFP);
+                chomp(my $uuid = `$Cmd`);
+                if ($Opt{'random-mac'}) {
+                    $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
+                }
+                my @Xml = ();
+                if (length($safe_tag)) {
+                    my $tmp_tag = $safe_tag;
+                    $tmp_tag =~ s/([^,]+)/push(@Xml, sprintf("<tag>%s<\/tag>", suuid_xml($1)))/gse;
+                }
+                my $txt_space = ($safe_comment =~ /^</) ? " " : "";
+                length($safe_comment) && push(@Xml, "<txt>$txt_space$safe_comment$txt_space</txt>");
+                length($safe_host) && push(@Xml, "<host>$safe_host</host>");
+                length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
+                length($safe_username) && push(@Xml, "<user>$safe_username</user>");
+                length($safe_tty) && push(@Xml, "<tty>$safe_tty</tty>");
+                if (length($sess_uuid)) {
+                    my $tmp_sess = $sess_uuid;
+                    $tmp_sess =~ s/($Templ)/push(@Xml, sprintf("<sess>%s<\/sess>", suuid_xml($1)))/gse;
+                }
+                my $uuid_time = uuid_time2($uuid);
+                length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
+                my $out_str = join(" ", "<suuid$uuid_time u=\"$uuid\">", @Xml, "</suuid>") . "\n";
+                print(LogFP $out_str);
+                if (seek(LogFP, $filepos, 0)) {
+                    my $check_str = <LogFP>;
+                    if ($check_str eq $out_str) {
+                        $Opt{'whereto'} =~ /[ao]/ && print("$uuid\n");
+                        $Opt{'whereto'} =~ /[ae]/ && print(STDERR "$uuid\n");
+                    } else {
+                        D("check_str = '$check_str', out_str = '$out_str'");
+                        die("$progname: $Logfile: Unable to write to file: $!\n");
+                    }
+                } else {
+                    die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
+                }
+            }
+            seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file to write end tag: $!\n");
+            print(LogFP "</suuids>\n");
+            close(LogFP);
+        } else {
+            die("$progname: $Logfile: Cannot lock file: $!\n");
+        }
+        # }}}
+    } else {
+        die("$progname: $Logfile: Cannot open file for append: $!\n");
+    }
+    return($Retval);
     # }}}
-} else {
-    die("$progname: $Logfile: Cannot open file for append: $!\n");
-}
+} # main()
 
 sub valid_xml_chars {
     # {{{
