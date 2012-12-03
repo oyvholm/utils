@@ -460,6 +460,18 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
+diag("Check for randomness in the MAC address field...");
+cmp_ok(unique_macs($Outfile), '==', 1, 'MAC adresses does not change');
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("$CMD -m -n 5 -l $Outdir", # {{{
+    "/^($v1_templ\n){5}\$/s",
+    '/^$/',
+    0,
+    "-n (--count) option with -m (--random-mac)",
+);
+
+# }}}
+cmp_ok(unique_macs($Outfile), '==', 5, 'MAC adresses are random');
 diag("Testing -w (--whereto) option...");
 likecmd("$CMD -w o -l $Outdir", # {{{
     "/^$v1_templ\\n\$/s",
@@ -561,6 +573,19 @@ if (defined($Outfile)) {
     ok(unlink($Outfile), "Delete $Outfile");
 }
 ok(rmdir($Outdir), "rmdir $Outdir");
+
+sub unique_macs {
+    # {{{
+    my $file = shift;
+    my %mac = ();
+    open(my $fp, '<', $file) or die("$progname: $file: Cannot open file for read: $!\n");
+    while (<$fp>) {
+        /^<suuid t="[^"]+" u="$Lh{8}-$Lh{4}-1$Lh{3}-$Lh{4}-($Lh{12})".*/ && ($mac{$1} = 1);
+    }
+    close($fp);
+    return(scalar(keys %mac));
+    # }}}
+} # unique_macs()
 
 sub testcmd {
     # {{{
