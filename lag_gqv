@@ -3,5 +3,5 @@
 # lag_gqv
 # File ID: 52e98396-5d3e-11df-9e82-90e6ba3022ac
 
-find `/bin/pwd` "$@" -type f | egrep -i '\.(jpg|png|gif|bmp)$' | sort >alt.gqv
+find `/bin/pwd` "$@" -printf '"%p"\n' | grep -Ei '\.(jpg|png|gif|bmp)"$' | sort >alt.gqv
 gqview alt.gqv &
