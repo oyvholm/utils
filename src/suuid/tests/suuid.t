@@ -223,7 +223,8 @@ testcmd("$CMD --rcfile rcfile-inv-uuidcmd -l $Outdir", # {{{
 );
 
 # }}}
-like(file_data($Outfile), # {{{
+my $host_outfile = glob("$Outdir/*");
+like(file_data($host_outfile), # {{{
     '/^' . $xml_header . '<\/suuids>\n$/s',
     "suuid file is empty",
 );
@@ -353,7 +354,7 @@ likecmd("$CMD --rcfile nosuchrc -l $Outdir", # {{{
 );
 
 # }}}
-ok(unlink($Outfile), "Delete $Outfile");
+ok(unlink($host_outfile), "Delete $host_outfile");
 diag("Testing -t (--tag) option...");
 likecmd("$CMD -t snaddertag -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
