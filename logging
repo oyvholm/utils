@@ -12,6 +12,6 @@ if [ -z "$1" ]; then
 else
     export LNAME="$LOGDIR/$LDATE.$uuid.$1"
 fi
-SESS_UUID="$SESS_UUID$uuid," script -ft $LNAME.scrlog 2>$LNAME.timing
+SESS_UUID="${SESS_UUID}logging/$uuid," script -ft $LNAME.scrlog 2>$LNAME.timing
 suuid -w e -t logging -c "Loggsession $uuid ferdig."
 echo "Loggsession $uuid ferdig." >&2
