@@ -23,6 +23,7 @@ our %Opt = (
 
     'comment' => "",
     'debug' => 0,
+    'description' => "",
     'help' => 0,
     'quiet' => 0,
     'tag' => "",
@@ -40,6 +41,7 @@ GetOptions(
 
     "comment|c=s" => \$Opt{'comment'},
     "debug" => \$Opt{'debug'},
+    "description|d=s" => \$Opt{'description'},
     "help|h" => \$Opt{'help'},
     "quiet|q+" => \$Opt{'quiet'},
     "tag|t=s" => \$Opt{'tag'},
@@ -49,6 +51,16 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
+my $legal_descchars = join('',
+    '\x2d-\x2e', # -.
+    '\x30-\x39', # 0-9
+    '\x41-\x5a', # A-Z
+    '\x5f',      # _
+    '\x61-\x7a', # a-z
+    '\x80-\xbf', # Valid UTF-8 bytes
+    '\xc2-\xef', # Valid UTF-8 bytes
+);
+
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -80,11 +92,19 @@ if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
 $Opt{'quiet'} < 2 && print(STDERR "sess.begin:$uuid\n");
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 
-$ENV{'SESS_UUID'} .= "$uuid,";
+my $descname = $Opt{'description'};
+($descname =~ /[^$legal_descchars]/) && die("$progname: $descname: Invalid characters in description\n");
+(!length($Opt{'description'}) && $cmd_str =~ /^[^$legal_descchars]*([$legal_descchars]+).*/)
+    && ($descname = $1);
+msg(1, "descname = '$descname'");
+
+$ENV{'SESS_UUID'} .= "$descname/$uuid,";
 my $begin_time = Time::HiRes::time();
 my $retval = system(@Cmd);
 my $end_time = Time::HiRes::time();
-$ENV{'SESS_UUID'} =~ s/$uuid,//;
+msg(2, "SESS_UUID before s: '$ENV{'SESS_UUID'}'");
+$ENV{'SESS_UUID'} =~ s/$descname\/$uuid,//;
+msg(2, "SESS_UUID after s : '$ENV{'SESS_UUID'}'");
 
 my $end_cmd = sprintf(
     "suuid --raw%s -c \"<sess_end> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration> <exit>%s</exit> </sess_end>\"",
@@ -151,6 +171,11 @@ Options:
 
   -c X, --comment X
     Specify X as comment.
+  -d X, --description X
+    Use X as descriptive name in \$SESS_UUID. If not specified, the 
+    first characters in the regexp range
+      [$legal_descchars]
+    will be used.
   -h, --help
     Show this help.
   -q, --quiet
