@@ -214,7 +214,15 @@ sub main {
                 length($safe_tty) && push(@Xml, "<tty>$safe_tty</tty>");
                 if (length($sess_uuid)) {
                     my $tmp_sess = $sess_uuid;
-                    $tmp_sess =~ s/($Templ)/push(@Xml, sprintf("<sess>%s<\/sess>", suuid_xml($1)))/gse;
+                    if ($tmp_sess =~ /$Templ/) {
+                        $tmp_sess =~ s{
+                            ($Templ)
+                        } {
+                            my $str = $1;
+                            push(@Xml, sprintf("<sess>%s</sess>", suuid_xml($str)));
+                            '';
+                        }egsx;
+                    }
                 }
                 my $uuid_time = uuid_time2($uuid);
                 length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
