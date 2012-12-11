@@ -212,18 +212,7 @@ sub main {
                 length($safe_currdir) && push(@Xml, "<cwd>$safe_currdir</cwd>");
                 length($safe_username) && push(@Xml, "<user>$safe_username</user>");
                 length($safe_tty) && push(@Xml, "<tty>$safe_tty</tty>");
-                if (length($sess_uuid)) {
-                    my $tmp_sess = $sess_uuid;
-                    if ($tmp_sess =~ /$Templ/) {
-                        $tmp_sess =~ s{
-                            ($Templ)
-                        } {
-                            my $str = $1;
-                            push(@Xml, sprintf("<sess>%s</sess>", suuid_xml($str)));
-                            '';
-                        }egsx;
-                    }
-                }
+                length($sess_uuid) && push(@Xml, parse_sess_uuid($sess_uuid));
                 my $uuid_time = uuid_time2($uuid);
                 length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
                 my $out_str = join(" ", "<suuid$uuid_time u=\"$uuid\">", @Xml, "</suuid>") . "\n";
@@ -254,6 +243,24 @@ sub main {
     return($Retval);
     # }}}
 } # main()
+
+sub parse_sess_uuid {
+    # {{{
+    my $sess_uuid = shift;
+    my @Xml = ();
+    my $tmp_sess = $sess_uuid;
+    if ($tmp_sess =~ /$Templ/) {
+        $tmp_sess =~ s{
+            ($Templ)
+        } {
+            my $str = $1;
+            push(@Xml, sprintf("<sess>%s</sess>", suuid_xml($str)));
+            '';
+        }egsx;
+    }
+    return(@Xml);
+    # }}}
+} # parse_sess_uuid()
 
 sub valid_xml_chars {
     # {{{
