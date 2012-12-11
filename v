@@ -119,9 +119,9 @@ defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 
 my @vim_str = $Opt{'gui'} ? ("gvim", "-f") : ("vim");
 
-$ENV{'SESS_UUID'} .= "$uuid,";
+$ENV{'SESS_UUID'} .= "v/$uuid,";
 system(@vim_str, @ARGV);
-$ENV{'SESS_UUID'} =~ s/$uuid,//;
+$ENV{'SESS_UUID'} =~ s/v\/$uuid,//;
 
 my ($change_str, $other_str) = ("", "");
 for my $Curr (@Files) {
