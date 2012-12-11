@@ -1,0 +1,473 @@
+#!/usr/bin/perl
+
+#=======================================================================
+# storelog
+# File ID: 8044b360-3365-11e2-a80a-00c0a8deee11
+# [Description]
+#
+# Character set: UTF-8
+# ©opyleft 2012– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use warnings;
+use Fcntl ':flock';
+use Getopt::Long;
+use Time::HiRes qw{ gettimeofday };
+
+local $| = 1;
+
+our $Debug = 0;
+
+our %Std = (
+
+    'host' => `hostname`,
+    'maxfiles' => 500,
+
+);
+chomp($Std{'host'});
+
+our %Opt = (
+
+    'debug' => 0,
+    'force' => 0,
+    'groupid' => '',
+    'gzip' => 0,
+    'help' => 0,
+    'host' => $Std{'host'},
+    'maxfiles' => $Std{'maxfiles'},
+    'spec' => '',
+    'userid' => '',
+    'uuid' => 0,
+    'verbose' => 0,
+    'version' => 0,
+    'where' => '',
+
+);
+chomp($Opt{'host'});
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'debug' => \$Opt{'debug'},
+    'force' => \$Opt{'force'},
+    'groupid|G=s' => \$Opt{'groupid'},
+    'gzip|z' => \$Opt{'gzip'},
+    'help|h' => \$Opt{'help'},
+    'host|H=s' => \$Opt{'host'},
+    'maxfiles|m=i' => \$Opt{'maxfiles'},
+    'spec|s=s' => \$Opt{'spec'},
+    'userid|U=s' => \$Opt{'userid'},
+    'uuid|u' => \$Opt{'uuid'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+    'where|w=s' => \$Opt{'where'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+defined($ARGV[0]) || die("$progname: Missing project name\n");
+if (length($Opt{'where'})) {
+    $Opt{'where'} =~ /[^aeo]/ && die("$progname: $Opt{'where'}: Invalid character in -w/--where argument\n");
+}
+
+my $project = $ARGV[0];
+msg(1, "\$project = '$project'");
+
+my $host = $Opt{'host'};
+msg(1, "\$host = '$host'");
+
+my $projdir = "$ENV{'HOME'}/annex/log/$project";
+msg(1, "\$projdir = '$projdir'");
+
+my $hostdir = "$projdir/$host";
+msg(1, "\$hostdir = '$hostdir'");
+
+my $specfile = "$projdir/.spec";
+if (!-e $specfile && !$Opt{'spec'}) {
+    die("$progname: $specfile: File not found, initialise with -s\n");
+}
+
+if (length($Opt{'spec'})) {
+    if (-e $specfile && !$Opt{'force'}) {
+        die("$progname: $specfile: File already exists, use --force to overwrite\n");
+    } else {
+        msg(0, "dirstruct = '" . dirstruct($Opt{'spec'}) . "'");
+        msg(0, "logtempl = '" . logtempl($Opt{'spec'}));
+        system("mkdir -p $hostdir"); # FIXME
+        -d $hostdir || die("$progname: $hostdir: Directory still doesn't exist\n");
+        open(my $specfp, '>', $specfile) or die("$progname: $specfile: Cannot create file: $!\n");
+
+        print_rc($specfp, 'groupid');
+        print_rc($specfp, 'gzip');
+        print_rc($specfp, 'maxfiles');
+        print_rc($specfp, 'spec');
+        print_rc($specfp, 'userid');
+        print_rc($specfp, 'uuid');
+        print_rc($specfp, 'where');
+
+        close($specfp);
+    }
+    exit(0);
+}
+
+open(my $specfp, '<', $specfile) or die("$progname: $specfile: Cannot open file for read: $!\n");
+
+my $spec = '';
+while (my $curr = <$specfp>) {
+    chomp $curr;
+
+    $curr =~ /^groupid\s+(.*)$/ && ($Opt{'groupid'} = $1);
+    $curr =~ /^gzip\s+(.*)$/ && ($Opt{'gzip'} = $1);
+    $curr =~ /^maxfiles\s+(.*)$/ && ($Opt{'maxfiles'} = $1);
+    $curr =~ /^spec\s+(.*)$/ && ($spec = $1);
+    $curr =~ /^userid\s+(.*)$/ && ($Opt{'userid'} = $1);
+    $curr =~ /^uuid\s+(.*)$/ && ($Opt{'uuid'} = $1);
+    $curr =~ /^where\s+(.*)$/ && ($Opt{'where'} = $1);
+
+}
+close($specfp);
+
+msg(1, ".spec: groupid = '$Opt{'groupid'}'");
+msg(1, ".spec: gzip = '$Opt{'gzip'}'");
+msg(1, ".spec: maxfiles = '$Opt{'maxfiles'}'");
+msg(1, ".spec: spec = '$spec'");
+msg(1, ".spec: userid = '$Opt{'userid'}'");
+msg(1, ".spec: uuid = '$Opt{'uuid'}'");
+msg(1, ".spec: where = '$Opt{'where'}'");
+
+my $templ = dirstruct($spec);
+
+my $old = '';
+my $old_logfile = '';
+my $logfp;
+
+while (my $entry = <STDIN>) {
+    # {{{
+    my ($Epoch, $Fract) = gettimeofday();
+
+    if ($Epoch ne $old) {
+        my ($Sec, $Min, $Hour,
+            $Day, $Mon, $Year,
+            $Wday, $Yday,
+            $is_dst) = gmtime($Epoch);
+        $Year += 1900;
+        $Mon = sprintf("%02u", $Mon + 1);
+        $Hour = sprintf("%02u", $Hour);
+        $Min = sprintf("%02u", $Min);
+        $Sec = sprintf("%02u", $Sec);
+
+        my $filedate = $templ;
+        $filedate =~ s/%Y/$Year/g;
+        $filedate =~ s/%m/$Mon/g;
+        $filedate =~ s/%d/$Day/g;
+        $filedate =~ s/%H/$Hour/g;
+        $filedate =~ s/%M/$Min/g;
+        $filedate =~ s/%S/$Sec/g;
+
+        my $logfile = "$hostdir/${filedate}Z.$project.log";
+        if ($logfile ne $old_logfile) {
+            msg(2, "logfile ne old_logfile");
+            my $logdir = $logfile;
+            $logdir =~ s/^(.*)\/(.*?)$/$1/;
+            -d $logdir || system("mkdir -p $logdir"); # FIXME
+
+            if (length($old_logfile)) {
+                close($logfp);
+                if ($Opt{'gzip'}) {
+                    msg(1, "gzip $old_logfile");
+                    system('gzip', '-S', '.tmpgz', $old_logfile);
+                    rename("$old_logfile.tmpgz", "$old_logfile.gz")
+                        or warn("$progname: $old_logfile.tmpgz: Cannot rename to *.gz: $!\n");
+                }
+            }
+            if (!-e $logfile) {
+                msg(1, "Create '$logfile'");
+                open($logfp, '>', $logfile) or die("$progname: $logfile: Cannot create file: $!\n");
+                flock($logfp, LOCK_EX) || die("$progname: $logfile: Cannot flock(): $!\n");
+            } else {
+                msg(1, "Append to '$logfile'");
+                open($logfp, '+>>', $logfile) or die("$progname: $logfile: Cannot open file for append: $!\n");
+                flock($logfp, LOCK_EX) || die("$progname: $logfile: Cannot flock(): $!\n");
+                seek($logfp, 0, 2) || die("$progname: $logfile: Cannot seek() to EOF: $!\n");
+            }
+            if (length($Opt{'userid'})) {
+                msg(1, "chown $Opt{'userid'} $logfile");
+                system('chown', $Opt{'userid'}, $logfile);
+            }
+            if (length($Opt{'groupid'})) {
+                msg(1, "chgrp $Opt{'groupid'} $logfile");
+                system('chgrp', $Opt{'groupid'}, $logfile);
+            }
+            $old_logfile = $logfile;
+        }
+    }
+    if ($Opt{'uuid'}) {
+        my $uuid_str = `uuid`;
+        chomp($uuid_str);
+        $entry = "$uuid_str $entry";
+    }
+    print($logfp $entry);
+    ($Opt{'where'} =~ /[ae]/) && print(STDERR $entry);
+    ($Opt{'where'} =~ /[ao]/) && print(STDOUT $entry);
+    $old = $Epoch;
+    # }}}
+}
+
+length($old_logfile) && close($logfp);
+
+exit(0);
+
+sub print_rc {
+    # {{{
+    my ($fp, $keyw) = @_;
+    if (length($Opt{$keyw})) {
+        msg(0, ".spec: $keyw $Opt{$keyw}");
+        print($fp "$keyw $Opt{$keyw}\n");
+    }
+    return;
+    # }}}
+} # print_rc()
+
+sub logtempl {
+    # {{{
+    my $spec = shift;
+    my $datedirs = dirstruct($spec);
+    my $retval = "$hostdir/${datedirs}Z.$project.log";
+    msg(2, "project in logtempl: '$project'");
+    msg(2, "logtempl('$spec') = '$retval'");
+    return($retval);
+    # }}}
+} # logtempl()
+
+sub dirstruct {
+    # {{{
+    my $gran = shift;
+    msg(2, "dirstruct('$gran')'");
+
+    my $count;
+    my $period;
+    if ($gran =~ /^(\d+)\.(.*)$/) {
+        $count = $1;
+        $period = $2;
+        $period =~ s/^(...).*/$1/;
+    } else {
+        die("$progname: $gran: Wrong --spec format.\n");
+    }
+    msg(2, "\$gran = '$gran'");
+    msg(2, "\$count = '$count'");
+    msg(2, "\$period = '$period'");
+
+    my $retval;
+
+    my %mult = (
+        'yea' => 1,
+        'mon' => 12,
+        'wee' => 52,
+        'day' => 365,
+        'hou' => 365 * 24,
+        'min' => 365 * 24 * 60,
+        'sec' => 365 * 24 * 60 * 60,
+    );
+    my $pryear;
+    defined($mult{"$period"}) || die("$progname: $period: Unknown period\n");
+    $pryear = int($count * $mult{"$period"} / 60);
+    msg(1, "\$pryear = '$pryear'");
+
+    my $maxfiles = $Opt{'maxfiles'};
+    if ($pryear < $maxfiles) {
+        $retval = '%Y';
+    } elsif ($pryear < $maxfiles * $mult{'mon'}) {
+        $retval = '%Y/%Y%m';
+    } elsif ($pryear < $maxfiles * $mult{'day'}) {
+        $retval = '%Y/%m/%Y%m%d';
+    } elsif ($pryear < $maxfiles * $mult{'hou'}) {
+        $retval = '%Y/%m/%d/%Y%m%dT%H';
+    } elsif ($pryear < $maxfiles * $mult{'min'}) {
+        $retval = '%Y/%m/%d/%H/%Y%m%dT%H%M';
+    } else {
+        $retval = '%Y/%m/%d/%H/%M/%Y%m%dT%H%M%S';
+    }
+
+    msg(2, "dirstruct('$gran') returns '$retval'");
+    return($retval);
+
+    # }}}
+} # dirstruct()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] project_name
+
+Options:
+
+  --force
+    Force operation to run, overwrite spec file.
+  -G X, --groupid X
+    Set logfile groupid to X.
+  -h, --help
+    Show this help.
+  -H X, --host X
+    Specify as host X.
+    Default: '$Std{'host'}'.
+  -m X, --maxfiles X
+    Store maximum X files per directory.
+    Default: $Std{'maxfiles'}.
+  -s X, --spec X
+    Create directory structure, use specification X. Format: "x.y" where 
+    x is number of expected log entries, and y is a period. Example:
+      100.day - 100 entries per day
+      1.sec - 1 entry per second
+      20.week - 20 entries per week
+    Only the first three letters are used. These periods are available:
+      year, month, week, day, hour, minute, second,
+      yea, mon, wee, day, hou, min, sec.
+  -u, --uuid
+    Prefix every logged line with time-based UUID (v1).
+  -U X, --userid X
+    Set logfile userid to X.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  -w X, --where X
+    Send output to stdout and/or stderr. If X contains any of these letters:
+      a - Send to both stdout and stderr
+      e - Send to stderr
+      o - Send to stdout
+  -z, --gzip
+    When a new file is created, compress the old one with gzip(1).
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
