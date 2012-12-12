@@ -678,6 +678,130 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066cda700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID with two UUIDs smashed together",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
+            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "Still separates them into two UUIDs",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabcee5db39a-43f7-11e2-a975-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID with two UUIDs, only separated by 'abc'",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "Separated the two UUIDs, discards 'abc'",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabc/ee5db39a-43f7-11e2-a975-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID with two UUIDs, separated by 'abc/'",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "The two UUIDs are separated, 'abc/' is discarded",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066c5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID contains four UUIDs, no separators",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess>5f650dac-4404-11e2-8e0e-0016d364066c<\\/sess>",
+            "<sess>5f660e28-4404-11e2-808e-0016d364066c<\\/sess>",
+            "<sess>5f66ef14-4404-11e2-8b45-0016d364066c<\\/sess>",
+            "<sess>5f67e266-4404-11e2-a6f8-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "All four UUIDs are separated",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066cabc5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c,nmap/5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID contains four UUIDs, 'abc' separates the first two, last one has desc",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess>5f650dac-4404-11e2-8e0e-0016d364066c<\\/sess>",
+            "<sess>5f660e28-4404-11e2-808e-0016d364066c<\\/sess>",
+            "<sess>5f66ef14-4404-11e2-8b45-0016d364066c<\\/sess>",
+            "<sess desc=\"nmap\">5f67e266-4404-11e2-a6f8-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "All four UUIDs separated, 'abc' discarded, 'nmap' kept",
+);
+
+# }}}
 diag("Test behaviour when unable to write to the log file...");
 my @stat_array = stat($Outfile);
 ok(chmod(0444, $Outfile), "Make $Outfile read-only");

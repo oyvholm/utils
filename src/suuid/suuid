@@ -252,11 +252,16 @@ sub parse_sess_uuid {
     if ($tmp_sess =~ /$Templ/) {
         my $descname = '';
         $tmp_sess =~ s{
-            ([^,/]*)
-            /?
+            ([^,/]*/)?
             ($Templ)
         } {
             my ($desc, $str) = ($1, $2);
+            defined($desc) || ($desc = '');
+            $desc =~ s/\/$//;
+            if ($desc =~ /$Templ/) {
+                push(@Xml, parse_sess_uuid($desc));
+                $desc = '';
+            }
             push(@Xml,
                 sprintf("<sess%s>%s</sess>",
                     length($desc)
