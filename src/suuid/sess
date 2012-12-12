@@ -94,7 +94,9 @@ defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 
 my $descname = $Opt{'description'};
 ($descname =~ /[^$legal_descchars]/) && die("$progname: $descname: Invalid characters in description\n");
-(!length($Opt{'description'}) && $cmd_str =~ /^[^$legal_descchars]*([$legal_descchars]+).*/)
+my $stripstr = $cmd_str;
+$stripstr =~ s/^\.+//;
+(!length($Opt{'description'}) && $stripstr =~ /^[^$legal_descchars]*([$legal_descchars]+).*/)
     && ($descname = $1);
 msg(1, "descname = '$descname'");
 
