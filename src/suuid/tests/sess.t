@@ -15,9 +15,9 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
-    # use_ok() goes here
+    use lib "$ENV{HOME}/bin/src/suuid";
+    use_ok("suuid");
 }
 
 use Getopt::Long;
@@ -25,7 +25,6 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-our $CMD = '../sess';
 
 our %Opt = (
 
@@ -61,73 +60,158 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+    my $logdir = "logdir";
+    my $CMD = "SUUID_LOGDIR=$logdir ../sess";
+    $ENV{'SESS_UUID'} = '';
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
+    testcmd("$CMD command", # {{{
+        <<'END',
 [expected stdin]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
 
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
 
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
 
-# }}}
+    # }}}
+    my $cdata = '[^<]+';
+    my $Lh = "[0-9a-fA-F]";
+    my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+    my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+    my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
+    my $date_templ = '20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]\.\d+Z';
+    my $xml_header = join("",
+        '<\?xml version="1\.0" encoding="UTF-8"\?>\n',
+        '<!DOCTYPE suuids SYSTEM "dtd\/suuids\.dtd">\n',
+        '<suuids>\n',
+    );
 
-todo_section:
-;
+    ok(!-d $logdir, "$logdir doesn't exist");
+    ok(mkdir($logdir), "mkdir $logdir") or die("$progname: $logdir: Cannot create directory, skipping tests");
+    testcmd("$CMD", # {{{
+        '',
+        "sess: No command specified. Use -h for help.\n",
+        9, # FIXME: check if it's correct
+        'Invoked with no arguments',
+    );
 
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
+    # }}}
+    likecmd("$CMD echo yess mainn", # {{{
+        "/^yess mainn\\n\$/",
+        "/^sess.begin:$v1_templ\\n" .
+            "sess.end:$v1_templ -- 00:00:\\d\\d.\\d+, exit code '0'\\.\\n\$/",
+        0,
+        'Execute "echo yess mainn"',
+    );
 
-    TODO: {
+    # }}}
+    my $logfile = glob("$logdir/*");
+    like(file_data($logfile), # {{{
+        '/^' . $xml_header .
+        join(' ',
+              "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+                "<txt>",
+                  "<sess_begin>",
+                    "<cmd>echo yess mainn<\/cmd>",
+                  "<\/sess_begin>",
+                "<\/txt>",
+                "<host>$cdata<\/host>",
+                "<cwd>$cdata<\/cwd>",
+                "<user>$cdata<\/user>",
+                "<tty>$cdata<\/tty>",
+              "<\/suuid>",
+        ) . '\n' . join(' ',
+              "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+                "<txt>",
+                  "<sess_end>",
+                    "<finished>$v1_templ<\/finished>",
+                    "<cmd>echo yess mainn<\/cmd>",
+                    "<duration>",
+                      "<totsecs>\\d.\\d+<\/totsecs>",
+                      "<seconds>\\d.\\d+<\/seconds>",
+                    "<\/duration>",
+                    "<exit>0<\/exit>",
+                  "<\/sess_end>",
+                "<\/txt>",
+                "<host>$cdata<\/host>",
+                "<cwd>$cdata<\/cwd>",
+                "<user>$cdata<\/user>",
+                "<tty>$cdata<\/tty>",
+              "<\/suuid>",
+        ) . '\n<\/suuids>\n$/s',
+        "$logfile looks OK"
+    );
 
-local $TODO = '';
-# Insert TODO tests here.
+    # }}}
 
+    ok(unlink($logfile), "rm $logfile");
+    ok(rmdir($logdir), "rmdir $logdir");
+    ok(!-d $logdir, "$logdir is gone");
+
+    todo_section:
+    ;
+
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+            local $TODO = '';
+            # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
     }
-    # TODO tests }}}
-}
 
-diag('Testing finished.');
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
