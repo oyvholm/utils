@@ -802,6 +802,32 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=ssh-agent/fea9315a-43d6-11e2-8294-0016d364066c,logging/febfd0f4-43d6-11e2-9117-0016d364066c,screen/0e144c10-43d7-11e2-9833-0016d364066c,ti/152d8f16-4409-11e2-be17-0016d364066c, $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID is OK and contains four UUIDs, all with desc",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess desc=\"ssh-agent\">fea9315a-43d6-11e2-8294-0016d364066c<\\/sess>",
+            "<sess desc=\"logging\">febfd0f4-43d6-11e2-9117-0016d364066c<\\/sess>",
+            "<sess desc=\"screen\">0e144c10-43d7-11e2-9833-0016d364066c<\\/sess>",
+            "<sess desc=\"ti\">152d8f16-4409-11e2-be17-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "The four UUIDs are separated, all four descs kept",
+);
+
+# }}}
 diag("Test behaviour when unable to write to the log file...");
 my @stat_array = stat($Outfile);
 ok(chmod(0444, $Outfile), "Make $Outfile read-only");
