@@ -137,13 +137,11 @@ LOOP: for my $f (@Dirs) {
                 print("==== git gc $dang_str ====\n");
                 chomp(my $before = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
                 $total_before += $before;
-                msg(0, "size before = " . commify($before));
                 system("git", "gc", $dang_str) && (check_sig($?) || push(@err_compress, $f));
                 chomp(my $after = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
                 $total_after += $after;
-                msg(0, "size after = " . commify($after));
                 my $saved = $before - $after;
-                $before && printf("\nSaved: %s (%.4f%%)\n", commify($saved), 100.0 * $saved / $before);
+                $before && printf("\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n", commify($before), commify($after), commify($saved), 100.0 * $saved / $before);
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
@@ -165,7 +163,8 @@ scalar(@err_test) && print("$progname: Error in git fsck: " . join(" ", @err_tes
 
 if ($Opt{'compress'}) {
     my $total_saved = $total_before - $total_after;
-    $total_before && printf("Total saved: %s (%.4f%%)\n",
+    printf("Before: %s\nAfter : %s\n", commify($total_before), commify($total_after));
+    $total_before && printf("Total : %s (%.4f%%)\n",
         commify($total_saved), 100.0 * $total_saved / $total_before);
 }
 
