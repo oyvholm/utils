@@ -25,7 +25,6 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-our $CMD = '../sess';
 
 our %Opt = (
 
@@ -67,6 +66,9 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+    my $logdir = "logdir";
+    my $CMD = "SUUID_LOGDIR=$logdir ../sess";
+    $ENV{'SESS_UUID'} = '';
 
     diag(sprintf('========== Executing %s v%s ==========',
         $progname,
@@ -118,6 +120,17 @@ END
     );
 
     # }}}
+    my $cdata = '[^<]+';
+    my $Lh = "[0-9a-fA-F]";
+    my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+    my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+    my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
+    my $date_templ = '20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-5][0-9]:[0-6][0-9]\.\d+Z';
+    my $xml_header = join("",
+        '<\?xml version="1\.0" encoding="UTF-8"\?>\n',
+        '<!DOCTYPE suuids SYSTEM "dtd\/suuids\.dtd">\n',
+        '<suuids>\n',
+    );
 
     todo_section:
     ;
