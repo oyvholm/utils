@@ -554,6 +554,130 @@ like(file_data($Outfile), # {{{
 );
 
 # }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c, $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID with 'ssh-agent/'-prefix and comma at the end",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "<sess> contains desc attribute",
+);
+
+# }}}
+likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,dingle©/4c66b03a-43f4-11e2-b70d-0016d364066c, $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID with 'ssh-agent' and 'dingle©'",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . "\n" . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+            "<sess desc=\"dingle©\">4c66b03a-43f4-11e2-b70d-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "<sess> contains both desc attributes, one with ©",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID with 'ssh-agent', missing comma",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "<sess> is correct without comma",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID missing name and comma, but has slash",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "<sess> is OK without name and comma",
+);
+
+# }}}
+ok(unlink($Outfile), "Delete $Outfile");
+likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+    "/^$v1_templ\n\$/s",
+    '/^$/',
+    0,
+    "SESS_UUID with two UUIDs, latter missing name and comma, but has slash",
+);
+
+# }}}
+like(file_data($Outfile), # {{{
+    '/^' . $xml_header . join(' ',
+        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+            "<host>$cdata<\\/host>",
+            "<cwd>$cdata<\\/cwd>",
+            "<user>$cdata<\\/user>",
+            "<tty>$cdata<\\/tty>",
+            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
+            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
+        "<\\/suuid>",
+    ) . '\n<\/suuids>\n$/s',
+    "Second <sess> is correct without comma",
+);
+
+# }}}
 diag("Test behaviour when unable to write to the log file...");
 my @stat_array = stat($Outfile);
 ok(chmod(0444, $Outfile), "Make $Outfile read-only");
