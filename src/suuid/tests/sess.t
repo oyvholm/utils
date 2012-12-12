@@ -15,9 +15,9 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
-    # use_ok() goes here
+    use lib "$ENV{HOME}/bin/src/suuid";
+    use_ok("suuid");
 }
 
 use Getopt::Long;
