@@ -132,6 +132,68 @@ END
         '<suuids>\n',
     );
 
+    ok(!-d $logdir, "$logdir doesn't exist");
+    ok(mkdir($logdir), "mkdir $logdir") or die("$progname: $logdir: Cannot create directory, skipping tests");
+    testcmd("$CMD", # {{{
+        '',
+        "sess: No command specified. Use -h for help.\n",
+        9, # FIXME: check if it's correct
+        'Invoked with no arguments',
+    );
+
+    # }}}
+    likecmd("$CMD echo yess mainn", # {{{
+        "/^yess mainn\\n\$/",
+        "/^sess.begin:$v1_templ\\n" .
+            "sess.end:$v1_templ -- 00:00:\\d\\d.\\d+, exit code '0'\\.\\n\$/",
+        0,
+        'Execute "echo yess mainn"',
+    );
+
+    # }}}
+    my $logfile = glob("$logdir/*");
+    like(file_data($logfile), # {{{
+        '/^' . $xml_header .
+        join(' ',
+              "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+                "<txt>",
+                  "<sess_begin>",
+                    "<cmd>echo yess mainn<\/cmd>",
+                  "<\/sess_begin>",
+                "<\/txt>",
+                "<host>$cdata<\/host>",
+                "<cwd>$cdata<\/cwd>",
+                "<user>$cdata<\/user>",
+                "<tty>$cdata<\/tty>",
+              "<\/suuid>",
+        ) . '\n' . join(' ',
+              "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
+                "<txt>",
+                  "<sess_end>",
+                    "<finished>$v1_templ<\/finished>",
+                    "<cmd>echo yess mainn<\/cmd>",
+                    "<duration>",
+                      "<totsecs>\\d.\\d+<\/totsecs>",
+                      "<seconds>\\d.\\d+<\/seconds>",
+                    "<\/duration>",
+                    "<exit>0<\/exit>",
+                  "<\/sess_end>",
+                "<\/txt>",
+                "<host>$cdata<\/host>",
+                "<cwd>$cdata<\/cwd>",
+                "<user>$cdata<\/user>",
+                "<tty>$cdata<\/tty>",
+              "<\/suuid>",
+        ) . '\n<\/suuids>\n$/s',
+        "$logfile looks OK"
+    );
+
+    # }}}
+
+    ok(unlink($logfile), "rm $logfile");
+    ok(rmdir($logdir), "rmdir $logdir");
+    ok(!-d $logdir, "$logdir is gone");
+
     todo_section:
     ;
 
