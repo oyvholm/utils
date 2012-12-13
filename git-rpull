@@ -56,6 +56,32 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    open(my $pipefp, 'git remote -v |') or die("$progname: git remote -v: Cannot open pipe: $!\n");
+    my %done = ();
+    while (my $curr = <$pipefp>) {
+        if ($curr =~ /^(\S+)\s+(\S+)\s/) {
+            my ($remote, $url) = ($1, $2);
+            if ($url =~ /^(\S+)\@(\S+):(\S+)$/) {
+                # The URL looks SSHish
+                my ($username, $host, $userdir) = ($1, $2, $3);
+                next if ($userdir =~ /\.git$/); # Avoid bare repos
+                if (!defined($done{"$username$host$userdir"})) {
+                    my @cmd = (
+                        'ssh',
+                        '-A',
+                        '-Y',
+                        "$username\@$host",
+                        "cd $userdir && git pull --ff-only",
+                    );
+                    msg(0, "Executing '" . join(' ', @cmd) . "'");
+                    system(@cmd);
+                    $done{"$username$host$userdir"} = 1;
+                }
+            }
+        }
+    }
+    close($pipefp);
+
     return($Retval);
     # }}}
 } # main()
@@ -77,7 +103,11 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options]
+
+Update remote repositories via ssh. Scans all available remotes and 
+checks if it looks SSHish. If it does, it logs in and executes 
+"git pull --ff-only" in the directory.
 
 Options:
 
