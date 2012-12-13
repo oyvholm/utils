@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# tjah
+# File ID: 79f9fe38-44d2-11e2-a6e3-0016d364066c
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+tr '\t ,' '\n' |
+fmt -1 |
+finduuid -lu |
+sortuuid |
+tr '\n' ,
