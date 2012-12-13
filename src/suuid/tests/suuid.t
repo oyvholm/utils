@@ -190,6 +190,82 @@ is(s_suuid_tag('test,lixom,på en måte'), '<tag>test</tag> <tag>lixom</tag> <ta
 is(s_suuid_tag('test,lixom, space '), '<tag>test</tag> <tag>lixom</tag> <tag> space </tag> ', "s_suuid_tag('test,lixom, space ')");
 
 # }}}
+diag("Testing s_suuid_sess()..."); # {{{
+is(s_suuid_sess(''), '', "s_suuid_sess('') returns ''");
+
+for my $l_desc ('deschere', '') {
+    for my $l_slash ('/', '') {
+        for my $l_uuid ('ff529c20-4522-11e2-8c4a-0016d364066c', '') {
+            for my $l_comma (',', '') {
+                my $fail = 0;
+                my $str = "$l_desc$l_slash$l_uuid$l_comma";
+                my $humstr = sprintf(
+                    "s_suuid_sess() %s desc, %s slash, %s uuid, %s comma",
+                    length($l_desc)  ? "with" : "without",
+                    length($l_slash) ? "with" : "without",
+                    length($l_uuid)  ? "with" : "without",
+                    length($l_comma) ? "with" : "without",
+                );
+                length($l_slash) || ($fail = 1);
+                length($l_comma) || ($fail = 1);
+                length($l_uuid)  || ($fail = 1);
+                if ($fail) {
+                    if (length("$l_desc$l_slash$l_uuid$l_comma")) {
+                        is(s_suuid_sess($str), undef, $humstr);
+                    }
+                } else {
+                    like(s_suuid_sess($str), '/^<sess( desc="deschere")?>ff529c20-4522-11e2-8c4a-0016d364066c<\/sess> $/', $humstr)
+                }
+            }
+        }
+    }
+}
+
+is(
+    s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c'),
+    undef,
+    "s_suuid_sess() without comma and slash returns undef",
+);
+is(
+    s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c,'),
+    undef,
+    "s_suuid_sess() with comma but missing slash returns undef",
+);
+is(
+    s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c'),
+    undef,
+    "s_suuid_sess() with desc, but missing comma returns undef",
+);
+is(
+    s_suuid_sess('/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+    '<sess>ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+    "s_suuid_sess() without desc, but with slash and comma",
+);
+is(
+    s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+    '<sess desc="xterm">ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+    "s_suuid_sess() with desc and comma",
+);
+is(
+    s_suuid_sess(
+        'xfce/bbd272a0-44e0-11e2-bcdb-0016d364066c,' .
+        'xterm/c1986406-44e0-11e2-af23-0016d364066c,' .
+        'screen/e7f897b0-44e0-11e2-b5a0-0016d364066c,'
+    ),
+    (
+        '<sess desc="xfce">bbd272a0-44e0-11e2-bcdb-0016d364066c</sess> ' .
+        '<sess desc="xterm">c1986406-44e0-11e2-af23-0016d364066c</sess> ' .
+        '<sess desc="screen">e7f897b0-44e0-11e2-b5a0-0016d364066c</sess> ',
+    ),
+    's_suuid_sess() receives string with three with desc',
+);
+is(
+    s_suuid_sess('/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,'),
+    '<sess>ee5db39a-43f7-11e2-a975-0016d364066c</sess> <sess>da700fd8-43eb-11e2-889a-0016d364066c</sess> ',
+    "s_suuid_sess() receives two without desc",
+);
+
+# }}}
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -913,6 +989,42 @@ sub s_suuid_tag {
     return($retval);
     # }}}
 } # s_suuid_tag()
+
+sub s_suuid_sess {
+    # {{{
+    my $txt = shift;
+    my @arr = ();
+    $txt =~ s{
+        ([^/]+?)?
+        /
+        ($v1_templ)
+        ,
+    } {
+        my ($desc, $uuid) = ($1, $2);
+        defined($desc) || ($desc = '');
+        push(@arr,
+            join('',
+                '<sess',
+                length($desc)
+                    ? " desc=\"$desc\""
+                    : '',
+                '>',
+                $uuid,
+                '</sess>',
+            ),
+        );
+        '';
+    }egx;
+    length($txt) && return(undef);
+    $txt =~ s/,+$//;
+    $txt .= ',';
+    my $retval = '';
+    for (@arr) {
+        $retval .= "$_ ";
+    }
+    return($retval);
+    # }}}
+} # s_suuid_sess()
 
 sub unique_macs {
     # {{{
