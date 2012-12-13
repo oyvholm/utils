@@ -100,7 +100,10 @@ $stripstr =~ s/^\.+//;
     && ($descname = $1);
 msg(1, "descname = '$descname'");
 
-$ENV{'SESS_UUID'} .= "$descname/$uuid,";
+my $env_str = $ENV{'SESS_UUID'};
+$env_str =~ s/,+$//;
+$env_str .= ",$descname/$uuid,";
+$ENV{'SESS_UUID'} = $env_str;
 my $begin_time = Time::HiRes::time();
 my $retval = system(@Cmd);
 my $end_time = Time::HiRes::time();
