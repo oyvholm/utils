@@ -7,7 +7,9 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+echo -n ,$(
 tr '\t ,' '\n' |
 finduuid -lu |
 sortuuid |
 tr '\n' ,
+)
