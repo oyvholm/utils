@@ -89,7 +89,6 @@ chomp(my $uuid = `$begin_cmd`);
 if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
     die("$progname: Error generating UUID, session not started\n");
 }
-$Opt{'quiet'} < 2 && print(STDERR "sess.begin:$uuid\n");
 defined($ENV{'SESS_UUID'}) || ($ENV{'SESS_UUID'} = "");
 
 my $descname = $Opt{'description'};
@@ -99,6 +98,8 @@ $stripstr =~ s/^\.+//;
 (!length($Opt{'description'}) && $stripstr =~ /^[^$legal_descchars]*([$legal_descchars]+).*/)
     && ($descname = $1);
 msg(1, "descname = '$descname'");
+
+$Opt{'quiet'} < 2 && print(STDERR "sess.begin:$descname/$uuid\n");
 
 my $env_str = $ENV{'SESS_UUID'};
 $env_str =~ s/,+$//;
@@ -127,7 +128,7 @@ my $end_cmd = sprintf(
     $retval
 );
 chomp(my $end_uuid = `$end_cmd`);
-$Opt{'quiet'} < 2 && print(STDERR "sess.end:$end_uuid");
+$Opt{'quiet'} < 2 && print(STDERR "sess.end:$descname/$end_uuid");
 $Opt{'quiet'} < 1 && printf(STDERR " -- %s, exit code '%d'.",
                             time_period($end_time - $begin_time), $retval);
 $Opt{'quiet'} < 2 && print(STDERR "\n");

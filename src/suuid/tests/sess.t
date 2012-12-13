@@ -144,8 +144,8 @@ END
     # }}}
     likecmd("$CMD echo yess mainn", # {{{
         "/^yess mainn\\n\$/",
-        "/^sess.begin:$v1_templ\\n" .
-            "sess.end:$v1_templ -- 00:00:\\d\\d.\\d+, exit code '0'\\.\\n\$/",
+        "/^sess.begin:echo/$v1_templ\\n" .
+            "sess.end:echo/$v1_templ -- 00:00:\\d\\d.\\d+, exit code '0'\\.\\n\$/",
         0,
         'Execute "echo yess mainn"',
     );
