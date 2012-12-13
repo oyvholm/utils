@@ -160,6 +160,8 @@ sub main {
         }
     }
 
+    # If the log file doesn't exist, create an empty one.
+
     if (!-e $Logfile) {
         open(LogFP, ">", $Logfile) || die("$progname: $Logfile: Cannot create file: $!\n");
         flock(LogFP, LOCK_EX) || die("$progname: $Logfile: Cannot flock(): $!\n");
@@ -172,10 +174,14 @@ sub main {
         close(LogFP);
     }
 
+    # Open the log file for read+write and use exclusive lock.
+
     if (open(LogFP, "+>>", $Logfile)) {
         # {{{
         if (flock(LogFP, LOCK_EX)) {
-            # Seek to start of end tag
+
+            # Seek to start of the end tag, read it to be sure it's OK.
+
             unless (seek(LogFP, -10, 2)) {
                 warn("$progname: Cannot seek to start of end tag, adding to file. Error: $!\n");
             }
@@ -183,24 +189,42 @@ sub main {
             my $check_end_tag = <LogFP>;
             D("check_end_tag = '$check_end_tag'");
             defined($check_end_tag) || ($check_end_tag = "");
+
+            # If the end tag was read correctly, truncate log file 
+            # there, otherwise just add new entries to the end.
+
             if ($check_end_tag eq "</suuids>\n") {
                 D("check_end_tag is OK");
                 truncate(LogFP, $filepos) || die("$progname: $Logfile: Cannot truncate() to size $filepos: $!\n");
             } else {
                 warn("$progname: $Logfile: Unknown end line, adding to end of file\n");
             }
+
+            # Generate $Count UUIDs and write them to the log file.
+
             for (my $Count = 0; $Count < $Opt{'count'}; $Count++) {
                 seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file: $!\n");
                 my $filepos = tell(LogFP);
+
+                # Generate the UUID
+
                 chomp(my $uuid = `$Cmd`);
                 if ($uuid !~ /^$v1_templ$/) {
                     warn("$progname: '$uuid': Generated UUID is not in the expected format\n");
                     $Retval = 1;
                     last;
                 }
+
+                # If -m/--random-mac is specified, replace the last 
+                # field with random data specified by the standard.
+
                 if ($Opt{'random-mac'}) {
                     $uuid =~ s/^(........................)(............)$/sprintf("%s%s", $1, random_mac())/e;
                 }
+
+                # Generate XML based on what we have and push it to an 
+                # array.
+
                 my @Xml = ();
                 if (length($safe_tag)) {
                     my $tmp_tag = $safe_tag;
@@ -216,6 +240,9 @@ sub main {
                 my $uuid_time = uuid_time2($uuid);
                 length($uuid_time) && ($uuid_time = " t=\"$uuid_time\"");
                 my $out_str = join(" ", "<suuid$uuid_time u=\"$uuid\">", @Xml, "</suuid>") . "\n";
+
+                # Print the entry to the log file.
+
                 print(LogFP $out_str);
                 if (seek(LogFP, $filepos, 0)) {
                     my $check_str = <LogFP>;
@@ -230,6 +257,9 @@ sub main {
                     die("$progname: $Logfile: Cannot seek to position $filepos: $!\n");
                 }
             }
+
+            # Done writing the entries, add end tag and close the file.
+
             seek(LogFP, 0, 2) || die("$progname: Cannot seek to end of file to write end tag: $!\n");
             print(LogFP "</suuids>\n");
             close(LogFP);
@@ -245,7 +275,7 @@ sub main {
 } # main()
 
 sub parse_sess_uuid {
-    # {{{
+    # Parse a $SESS_UUID variable and return an array with <sess> elements {{{
     my $sess_uuid = shift;
     my @Xml = ();
     my $tmp_sess = $sess_uuid;
@@ -278,7 +308,7 @@ sub parse_sess_uuid {
 } # parse_sess_uuid()
 
 sub valid_xml_chars {
-    # {{{
+    # Check that the string is valid UTF-8 {{{
     my $text = shift;
     # UTF-8 regexp copied from linux-2.6.git/scripts/checkpatch.pl in 
     # commit ddb503b42960792f3be580f98959add669241a04. Originally from 
@@ -301,7 +331,7 @@ sub valid_xml_chars {
 } # valid_xml_chars()
 
 sub read_rcfile {
-    # {{{
+    # Read userdefined data in $Opt{'rcfile'} {{{
     my %Retval = ();
     if (-e $Opt{'rcfile'}) {
         if (open(RcFP, "<", $Opt{'rcfile'})) {
@@ -323,7 +353,7 @@ sub read_rcfile {
 } # read_rcfile()
 
 sub host_id {
-    # {{{
+    # Decide which hostname to use {{{
     my $Retval = "";
     if (defined($ENV{'SUUID_HOSTNAME'})) {
         $Retval = $ENV{'SUUID_HOSTNAME'};
