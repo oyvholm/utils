@@ -169,6 +169,19 @@ is(bighex("!Amob=+[]CdE.-f0\n12\t345"), NaN(), "bighex() returns NaN()");
 is(bighex("AbCdEf012345\n"), "NaN", "bighex() also returns \"NaN\"");
 
 # }}}
+diag("Testing s_top()..."); # {{{
+like(
+    (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
+        "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">\n" .
+        "<suuids>\n" .
+        "</suuids>\n"
+    ),
+    s_top(''),
+    "s_top('') returns empty file"
+);
+
+# }}}
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -862,6 +875,22 @@ if (defined($Outfile)) {
     ok(unlink($Outfile), "Delete $Outfile");
 }
 ok(rmdir($Outdir), "rmdir $Outdir");
+
+sub s_top {
+    # {{{
+    my $xml = shift;
+    my @Ret = ();
+
+    push(@Ret,
+        '/^',
+        $xml_header,
+        $xml,
+        '<\/suuids>\n',
+        '$/s',
+    );
+    return(join('', @Ret));
+    # }}}
+} # s_top()
 
 sub unique_macs {
     # {{{
