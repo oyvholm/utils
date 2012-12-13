@@ -182,6 +182,14 @@ like(
 );
 
 # }}}
+diag("Testing s_suuid_tag()..."); # {{{
+is(s_suuid_tag(''), '', "s_suuid_tag('') returns ''");
+is(s_suuid_tag('test'), '<tag>test</tag> ', "s_suuid_tag('test')");
+is(s_suuid_tag('test,lixom'), '<tag>test</tag> <tag>lixom</tag> ', "s_suuid_tag('test,lixom')");
+is(s_suuid_tag('test,lixom,på en måte'), '<tag>test</tag> <tag>lixom</tag> <tag>på en måte</tag> ', "s_suuid_tag('test,lixom,på en måte')");
+is(s_suuid_tag('test,lixom, space '), '<tag>test</tag> <tag>lixom</tag> <tag> space </tag> ', "s_suuid_tag('test,lixom, space ')");
+
+# }}}
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -891,6 +899,20 @@ sub s_top {
     return(join('', @Ret));
     # }}}
 } # s_top()
+
+sub s_suuid_tag {
+    # {{{
+    my $txt = shift;
+    $txt =~ s/,+$//;
+    $txt .= ',';
+    my @arr = split(/,/, $txt);
+    my $retval = '';
+    for (@arr) {
+        $retval .= "<tag>$_</tag> ";
+    }
+    return($retval);
+    # }}}
+} # s_suuid_tag()
 
 sub unique_macs {
     # {{{
