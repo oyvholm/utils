@@ -976,6 +976,47 @@ sub s_top {
     # }}}
 } # s_top()
 
+sub s_suuid {
+    # {{{
+    my %d = @_;
+    my @Ret = ();
+
+    defined($d{suuid_t}) || ($d{suuid_t} = $date_templ);
+    defined($d{suuid_u}) || ($d{suuid_u} = $v1_templ);
+    defined($d{tag}) || ($d{tag} = '');
+    defined($d{txt}) || ($d{txt} = '');
+    defined($d{host}) || ($d{host} = $cdata);
+    defined($d{cwd}) || ($d{cwd} = $cdata);
+    defined($d{user}) || ($d{user} = $cdata);
+    defined($d{tty}) || ($d{tty} = $cdata);
+    defined($d{sess}) || ($d{sess} = '');
+
+    push(@Ret,
+        "<suuid t=\"$d{suuid_t}\" u=\"$d{suuid_u}\">",
+        ' ',
+        length($d{tag})
+            ? s_suuid_tag($d{tag})
+            : '',
+        length($d{txt})
+            ? "<txt>$d{txt}</txt> "
+            : '',
+        "<host>$d{host}<\\/host>",
+        ' ',
+        "<cwd>$d{cwd}<\\/cwd>",
+        ' ',
+        "<user>$d{user}<\\/user>",
+        ' ',
+        "<tty>$d{tty}<\\/tty>",
+        ' ' ,
+        length($d{sess})
+            ? s_suuid_sess($d{sess})
+            : '',
+        "<\\/suuid>\\n",
+    );
+    return(join('', @Ret));
+    # }}}
+} # s_suuid()
+
 sub s_suuid_tag {
     # {{{
     my $txt = shift;
