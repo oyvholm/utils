@@ -6,7 +6,7 @@
 
 DUFILE=du.dat
 
-echo \# `suuid -t upd -w o --raw -c "<c_upd> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_upd>"` >$DUFILE
+echo \# `suuid -m -t upd -w o --raw -c "<c_upd> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_upd>"` >$DUFILE
 grep -q '^# ........-....-....-....-............$' $DUFILE || { echo upd: Error generating uuid, aborting. >&2; exit 1; }
 du -kx | sort -n | perl -e 'while (<>) { s/^(\d{3,})/commify($1)/ge; print; } sub commify { my $Str = reverse $_[0]; $Str =~ s/(\d\d\d)(?=\d)(?!\d*\,)/$1\./g; return scalar reverse $Str; }' >>$DUFILE
 echo -n "# smsum:" >>$DUFILE
