@@ -169,6 +169,103 @@ is(bighex("!Amob=+[]CdE.-f0\n12\t345"), NaN(), "bighex() returns NaN()");
 is(bighex("AbCdEf012345\n"), "NaN", "bighex() also returns \"NaN\"");
 
 # }}}
+diag("Testing s_top()..."); # {{{
+like(
+    (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
+        "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">\n" .
+        "<suuids>\n" .
+        "</suuids>\n"
+    ),
+    s_top(''),
+    "s_top('') returns empty file"
+);
+
+# }}}
+diag("Testing s_suuid_tag()..."); # {{{
+is(s_suuid_tag(''), '', "s_suuid_tag('') returns ''");
+is(s_suuid_tag('test'), '<tag>test</tag> ', "s_suuid_tag('test')");
+is(s_suuid_tag('test,lixom'), '<tag>test</tag> <tag>lixom</tag> ', "s_suuid_tag('test,lixom')");
+is(s_suuid_tag('test,lixom,på en måte'), '<tag>test</tag> <tag>lixom</tag> <tag>på en måte</tag> ', "s_suuid_tag('test,lixom,på en måte')");
+is(s_suuid_tag('test,lixom, space '), '<tag>test</tag> <tag>lixom</tag> <tag> space </tag> ', "s_suuid_tag('test,lixom, space ')");
+
+# }}}
+diag("Testing s_suuid_sess()..."); # {{{
+is(s_suuid_sess(''), '', "s_suuid_sess('') returns ''");
+
+for my $l_desc ('deschere', '') {
+    for my $l_slash ('/', '') {
+        for my $l_uuid ('ff529c20-4522-11e2-8c4a-0016d364066c', '') {
+            for my $l_comma (',', '') {
+                my $fail = 0;
+                my $str = "$l_desc$l_slash$l_uuid$l_comma";
+                my $humstr = sprintf(
+                    "s_suuid_sess() %s desc, %s slash, %s uuid, %s comma",
+                    length($l_desc)  ? "with" : "without",
+                    length($l_slash) ? "with" : "without",
+                    length($l_uuid)  ? "with" : "without",
+                    length($l_comma) ? "with" : "without",
+                );
+                length($l_slash) || ($fail = 1);
+                length($l_comma) || ($fail = 1);
+                length($l_uuid)  || ($fail = 1);
+                if ($fail) {
+                    if (length("$l_desc$l_slash$l_uuid$l_comma")) {
+                        is(s_suuid_sess($str), undef, $humstr);
+                    }
+                } else {
+                    like(s_suuid_sess($str), '/^<sess( desc="deschere")?>ff529c20-4522-11e2-8c4a-0016d364066c<\/sess> $/', $humstr)
+                }
+            }
+        }
+    }
+}
+
+is(
+    s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c'),
+    undef,
+    "s_suuid_sess() without comma and slash returns undef",
+);
+is(
+    s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c,'),
+    undef,
+    "s_suuid_sess() with comma but missing slash returns undef",
+);
+is(
+    s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c'),
+    undef,
+    "s_suuid_sess() with desc, but missing comma returns undef",
+);
+is(
+    s_suuid_sess('/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+    '<sess>ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+    "s_suuid_sess() without desc, but with slash and comma",
+);
+is(
+    s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+    '<sess desc="xterm">ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+    "s_suuid_sess() with desc and comma",
+);
+is(
+    s_suuid_sess(
+        'xfce/bbd272a0-44e0-11e2-bcdb-0016d364066c,' .
+        'xterm/c1986406-44e0-11e2-af23-0016d364066c,' .
+        'screen/e7f897b0-44e0-11e2-b5a0-0016d364066c,'
+    ),
+    (
+        '<sess desc="xfce">bbd272a0-44e0-11e2-bcdb-0016d364066c</sess> ' .
+        '<sess desc="xterm">c1986406-44e0-11e2-af23-0016d364066c</sess> ' .
+        '<sess desc="screen">e7f897b0-44e0-11e2-b5a0-0016d364066c</sess> ',
+    ),
+    's_suuid_sess() receives string with three with desc',
+);
+is(
+    s_suuid_sess('/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,'),
+    '<sess>ee5db39a-43f7-11e2-a975-0016d364066c</sess> <sess>da700fd8-43eb-11e2-889a-0016d364066c</sess> ',
+    "s_suuid_sess() receives two without desc",
+);
+
+# }}}
 diag("No options (except --logfile)...");
 likecmd("$CMD -l $Outdir", # {{{
     "/^$v1_templ\n\$/s",
@@ -181,14 +278,9 @@ likecmd("$CMD -l $Outdir", # {{{
 my $Outfile = glob("$Outdir/*");
 like($Outfile, "/^$Outdir\\/\\S+\.xml\$/", "Filename of logfile OK");
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(),
+    ),
     "Log contents OK after exec with no options",
 );
 
@@ -202,14 +294,10 @@ testcmd("$CMD -l $Outdir >/dev/null", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . "(" . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n){2}<\/suuids>\n$/s',
+    s_top(
+         s_suuid() .
+         s_suuid(),
+    ),
     "Entries are added, not replacing",
 );
 
@@ -225,7 +313,7 @@ testcmd("$CMD --rcfile rcfile-inv-uuidcmd -l $Outdir", # {{{
 # }}}
 my $host_outfile = glob("$Outdir/*");
 like(file_data($host_outfile), # {{{
-    '/^' . $xml_header . '<\/suuids>\n$/s',
+    s_top(''),
     "suuid file is empty",
 );
 
@@ -240,14 +328,9 @@ likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(),
+    ),
     "The SUUID_LOGDIR environment variable was read",
 );
 
@@ -263,14 +346,11 @@ likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
 
 # }}}
 like(file_data("$Outdir/urk13579kru.xml"), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>urk13579kru<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'host' => 'urk13579kru',
+        ),
+    ),
     "The SUUID_HOSTNAME environment variable was read",
 );
 
@@ -286,14 +366,9 @@ likecmd("$CMD -m -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1rand_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(),
+    ),
     "Log contents OK after --random-mac",
 );
 
@@ -309,15 +384,9 @@ likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<txt> <dingle><dangle>bær<\\/dangle><\\/dingle> <\\/txt>",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid('txt' => ' <dingle><dangle>bær<\/dangle><\/dingle> '),
+    ),
     "Log contents after --raw is OK",
 );
 # }}}
@@ -332,14 +401,9 @@ likecmd("$CMD --rcfile rcfile1 -l $Outdir", # {{{
 
 # }}}
 like(file_data("$Outdir/altrc1.xml"), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>altrc1<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid('host' => 'altrc1'),
+    ),
     "hostname from rcfile1 is stored in the file",
 );
 
@@ -373,15 +437,9 @@ testcmd("$CMD -t schn\xfcffelhund -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<tag>snaddertag<\\/tag>",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid('tag' => 'snaddertag'),
+    ),
     "Log contents OK after tag",
 );
 
@@ -437,15 +495,9 @@ testcmd("echo \"Ctrl-d: \x04\" | $CMD -c - -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "(<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<txt>Great test<\\/txt>",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>\\n){2}",
-    ) . '<\/suuids>\n$/s',
+    s_top(
+        s_suuid('txt' => 'Great test') x 2,
+    ),
     "Log contents OK after comment",
 );
 
@@ -461,16 +513,12 @@ likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "(<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<tag>testeri<\\/tag>",
-            "<txt>Great test<\\/txt>",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-        "<\\/suuid>\\n){5}",
-    ) . '<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'tag' => 'testeri',
+            'txt' => 'Great test',
+        ) x 5,
+    ),
     "Log contents OK after count, comment and tag",
 );
 
@@ -540,16 +588,12 @@ likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir"
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<tag>yess<\\/tag>",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>27538da4-fc68-11dd-996d-000475e441b9<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'tag' => 'yess',
+            'sess' => '/27538da4-fc68-11dd-996d-000475e441b9,',
+        ),
+    ),
     "\$SESS_UUID envariable is logged",
 );
 
@@ -564,15 +608,11 @@ likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c, $CMD -l $Outd
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
+        ),
+    ),
     "<sess> contains desc attribute",
 );
 
@@ -586,24 +626,15 @@ likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,dingle©/4c66b
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . "\n" . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-            "<sess desc=\"dingle©\">4c66b03a-43f4-11e2-b70d-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
+        ) .
+        s_suuid(
+            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,' .
+                      'dingle©/4c66b03a-43f4-11e2-b70d-0016d364066c,',
+        ),
+    ),
     "<sess> contains both desc attributes, one with ©",
 );
 
@@ -618,15 +649,11 @@ likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdi
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess desc=\"ssh-agent\">da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
+        ),
+    ),
     "<sess> is correct without comma",
 );
 
@@ -641,15 +668,11 @@ likecmd("SESS_UUID=/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,',
+        ),
+    ),
     "<sess> is OK without name and comma",
 );
 
@@ -664,16 +687,11 @@ likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
-            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => '/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,',
+        ),
+    ),
     "Second <sess> is correct without comma",
 );
 
@@ -688,16 +706,11 @@ likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066cda700fd8-43eb-11e2-889a-0
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
-            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => '/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,',
+        ),
+    ),
     "Still separates them into two UUIDs",
 );
 
@@ -712,16 +725,11 @@ likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabcee5db39a-43f7-11e2-a97
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
+        ),
+    ),
     "Separated the two UUIDs, discards 'abc'",
 );
 
@@ -736,16 +744,11 @@ likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabc/ee5db39a-43f7-11e2-a9
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>da700fd8-43eb-11e2-889a-0016d364066c<\\/sess>",
-            "<sess>ee5db39a-43f7-11e2-a975-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
+        ),
+    ),
     "The two UUIDs are separated, 'abc/' is discarded",
 );
 
@@ -760,18 +763,14 @@ likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066c5f660e28-4404-11e2-808e-0
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>5f650dac-4404-11e2-8e0e-0016d364066c<\\/sess>",
-            "<sess>5f660e28-4404-11e2-808e-0016d364066c<\\/sess>",
-            "<sess>5f66ef14-4404-11e2-8b45-0016d364066c<\\/sess>",
-            "<sess>5f67e266-4404-11e2-a6f8-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => '/5f650dac-4404-11e2-8e0e-0016d364066c,' .
+                      '/5f660e28-4404-11e2-808e-0016d364066c,' .
+                      '/5f66ef14-4404-11e2-8b45-0016d364066c,' .
+                      '/5f67e266-4404-11e2-a6f8-0016d364066c,',
+        ),
+    ),
     "All four UUIDs are separated",
 );
 
@@ -786,18 +785,14 @@ likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066cabc5f660e28-4404-11e2-808
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess>5f650dac-4404-11e2-8e0e-0016d364066c<\\/sess>",
-            "<sess>5f660e28-4404-11e2-808e-0016d364066c<\\/sess>",
-            "<sess>5f66ef14-4404-11e2-8b45-0016d364066c<\\/sess>",
-            "<sess desc=\"nmap\">5f67e266-4404-11e2-a6f8-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => '/5f650dac-4404-11e2-8e0e-0016d364066c,' .
+                      '/5f660e28-4404-11e2-808e-0016d364066c,' .
+                      '/5f66ef14-4404-11e2-8b45-0016d364066c,' .
+                      'nmap/5f67e266-4404-11e2-a6f8-0016d364066c,',
+        ),
+    ),
     "All four UUIDs separated, 'abc' discarded, 'nmap' kept",
 );
 
@@ -812,18 +807,14 @@ likecmd("SESS_UUID=ssh-agent/fea9315a-43d6-11e2-8294-0016d364066c,logging/febfd0
 
 # }}}
 like(file_data($Outfile), # {{{
-    '/^' . $xml_header . join(' ',
-        "<suuid t=\"$date_templ\" u=\"$v1_templ\">",
-            "<host>$cdata<\\/host>",
-            "<cwd>$cdata<\\/cwd>",
-            "<user>$cdata<\\/user>",
-            "<tty>$cdata<\\/tty>",
-            "<sess desc=\"ssh-agent\">fea9315a-43d6-11e2-8294-0016d364066c<\\/sess>",
-            "<sess desc=\"logging\">febfd0f4-43d6-11e2-9117-0016d364066c<\\/sess>",
-            "<sess desc=\"screen\">0e144c10-43d7-11e2-9833-0016d364066c<\\/sess>",
-            "<sess desc=\"ti\">152d8f16-4409-11e2-be17-0016d364066c<\\/sess>",
-        "<\\/suuid>",
-    ) . '\n<\/suuids>\n$/s',
+    s_top(
+        s_suuid(
+            'sess' => 'ssh-agent/fea9315a-43d6-11e2-8294-0016d364066c,' .
+                      'logging/febfd0f4-43d6-11e2-9117-0016d364066c,' .
+                      'screen/0e144c10-43d7-11e2-9833-0016d364066c,' .
+                      'ti/152d8f16-4409-11e2-be17-0016d364066c,',
+        ),
+    ),
     "The four UUIDs are separated, all four descs kept",
 );
 
@@ -862,6 +853,113 @@ if (defined($Outfile)) {
     ok(unlink($Outfile), "Delete $Outfile");
 }
 ok(rmdir($Outdir), "rmdir $Outdir");
+
+sub s_top {
+    # {{{
+    my $xml = shift;
+    my @Ret = ();
+
+    push(@Ret,
+        '/^',
+        $xml_header,
+        $xml,
+        '<\/suuids>\n',
+        '$/s',
+    );
+    return(join('', @Ret));
+    # }}}
+} # s_top()
+
+sub s_suuid {
+    # {{{
+    my %d = @_;
+    my @Ret = ();
+
+    defined($d{suuid_t}) || ($d{suuid_t} = $date_templ);
+    defined($d{suuid_u}) || ($d{suuid_u} = $v1_templ);
+    defined($d{tag}) || ($d{tag} = '');
+    defined($d{txt}) || ($d{txt} = '');
+    defined($d{host}) || ($d{host} = $cdata);
+    defined($d{cwd}) || ($d{cwd} = $cdata);
+    defined($d{user}) || ($d{user} = $cdata);
+    defined($d{tty}) || ($d{tty} = $cdata);
+    defined($d{sess}) || ($d{sess} = '');
+
+    push(@Ret,
+        "<suuid t=\"$d{suuid_t}\" u=\"$d{suuid_u}\">",
+        ' ',
+        length($d{tag})
+            ? s_suuid_tag($d{tag})
+            : '',
+        length($d{txt})
+            ? "<txt>$d{txt}</txt> "
+            : '',
+        "<host>$d{host}<\\/host>",
+        ' ',
+        "<cwd>$d{cwd}<\\/cwd>",
+        ' ',
+        "<user>$d{user}<\\/user>",
+        ' ',
+        "<tty>$d{tty}<\\/tty>",
+        ' ' ,
+        length($d{sess})
+            ? s_suuid_sess($d{sess})
+            : '',
+        "<\\/suuid>\\n",
+    );
+    return(join('', @Ret));
+    # }}}
+} # s_suuid()
+
+sub s_suuid_tag {
+    # {{{
+    my $txt = shift;
+    $txt =~ s/,+$//;
+    $txt .= ',';
+    my @arr = split(/,/, $txt);
+    my $retval = '';
+    for (@arr) {
+        $retval .= "<tag>$_</tag> ";
+    }
+    return($retval);
+    # }}}
+} # s_suuid_tag()
+
+sub s_suuid_sess {
+    # {{{
+    my $txt = shift;
+    my @arr = ();
+    $txt =~ s{
+        ([^/]+?)?
+        /
+        ($v1_templ)
+        ,
+    } {
+        my ($desc, $uuid) = ($1, $2);
+        defined($desc) || ($desc = '');
+        push(@arr,
+            join('',
+                '<sess',
+                length($desc)
+                    ? " desc=\"$desc\""
+                    : '',
+                '>',
+                $uuid,
+                '</sess>',
+            ),
+        );
+        '';
+    }egx;
+    length($txt) && return(undef);
+    $txt =~ s/,+$//;
+    $txt .= ',';
+    my $retval = '';
+    for (@arr) {
+        $retval .= "$_ ";
+    }
+    return($retval);
+    # }}}
+} # s_suuid_sess()
 
 sub unique_macs {
     # {{{
