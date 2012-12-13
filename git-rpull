@@ -69,7 +69,6 @@ sub main {
                     my @cmd = (
                         'ssh',
                         '-A',
-                        '-Y',
                         "$username\@$host",
                         "cd $userdir && git pull --ff-only",
                     );
