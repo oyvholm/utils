@@ -124,6 +124,7 @@ END
 } # main()
 
 sub test_standard_options {
+    # {{{
     diag('Testing -h (--help) option...');
     likecmd("$CMD -h", # {{{
         '/  Show this help\./',
@@ -152,9 +153,11 @@ sub test_standard_options {
 
     # }}}
     return;
+    # }}}
 } # test_standard_options()
 
 sub test_test_functions {
+    # {{{
     diag("Testing uuid_time()..."); # {{{
     is(uuid_time("c7f54e5a-afae-11df-b4a3-dffbc1242a34"), "2010-08-24T18:38:25.8316890Z", "uuid_time() works");
     is(uuid_time("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time() returns \"\" if UUID version 4");
@@ -286,9 +289,11 @@ sub test_test_functions {
 
     # }}}
     return;
+    # }}}
 } # test_test_functions()
 
 sub test_suuid_executable {
+    # {{{
     my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
     if (-e $Outdir) {
         die("$progname: $Outdir: WTF?? Directory element already exists.");
@@ -568,9 +573,11 @@ sub test_suuid_executable {
     ok(unlink($Outfile), "Delete $Outfile");
     ok(rmdir($Outdir), "rmdir $Outdir");
     return;
+    # }}}
 } # test_suuid_executable()
 
 sub test_suuid_comment {
+    # {{{
     my ($Outdir, $Outfile) = @_;
     diag("Testing -c (--comment) option...");
     likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
@@ -631,9 +638,11 @@ sub test_suuid_comment {
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
     return;
+    # }}}
 } # test_suuid_comment()
 
 sub test_suuid_environment {
+    # {{{
     my ($Outdir, $Outfile) = @_;
     diag("Test logging of \$SESS_UUID environment variable...");
     likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
@@ -877,9 +886,11 @@ sub test_suuid_environment {
 
     # }}}
     return;
+    # }}}
 } # test_suuid_environment()
 
 sub test_todo {
+    # {{{
     if ($Opt{'all'} || $Opt{'todo'}) {
         diag('Running TODO tests...'); # {{{
 
@@ -892,6 +903,7 @@ sub test_todo {
         # TODO tests }}}
     }
     return;
+    # }}}
 } # test_todo()
 
 sub s_top {
