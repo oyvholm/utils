@@ -66,64 +66,6 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
-
-my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
-if (-e $Outdir) {
-    die("$progname: $Outdir: WTF?? Directory element already exists.");
-}
-unless (mkdir($Outdir)) {
-    die("$progname: $Outdir: Cannot mkdir(): $!\n");
-}
-
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
-
-=pod
-
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
-END
-    '',
-    0,
-    'description',
-);
-
-# }}}
-
-=cut
-
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
-
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
-
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
-
-# }}}
 my $cdata = '[^<]+';
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
@@ -136,723 +78,792 @@ my $xml_header = join("",
     '<suuids>\n',
 );
 
-diag("Testing uuid_time()..."); # {{{
-is(uuid_time("c7f54e5a-afae-11df-b4a3-dffbc1242a34"), "2010-08-24T18:38:25.8316890Z", "uuid_time() works");
-is(uuid_time("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time() returns \"\" if UUID version 4");
-is(uuid_time(""), "", "uuid_time() receives empty string, returns \"\"");
-is(uuid_time("rubbish"), "", "uuid_time() receives rubbish, returns \"\"");
+exit(main(%Opt));
 
-# }}}
-diag("Testing uuid_time2()..."); # {{{
-is(uuid_time2("2527c268-b024-11df-a05c-09f86a2af1d3"), "2010-08-25T08:38:33.3078120Z", "uuid_time2() works");
-is(uuid_time2("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time2() returns \"\" if UUID version 4");
-is(uuid_time2(""), "", "uuid_time2() receives empty string, returns \"\"");
-is(uuid_time2("rubbish"), "", "uuid_time2() receives rubbish, returns \"\"");
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
 
-# }}}
-diag("Testing suuid_xml()..."); # {{{
-is(suuid_xml(""), "", "suuid_xml() receives empty string");
-is(suuid_xml("<&>\\"), "&lt;&amp;&gt;\\\\", "suuid_xml(\"<&>\\\\\")");
-is(suuid_xml("<&>\\\n\t", 1), "<&>\\\n\t", "suuid_xml(\"<&>\\\\\\n\\t\", 1) i,e. don’t convert");
-is(suuid_xml("<&>\n\r\t"), "&lt;&amp;&gt;\\n\\r\\t", "suuid_xml(\"<&>\\n\\r\\t\")");
-is(suuid_xml("\x00\x01\xFF"), "\x00\x01\xFF", "suuid_xml(\"\\x00\\x01\\xFF\")"); # FIXME: Should it behave like this?
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
 
-# }}}
-diag("Testing bighex()..."); # {{{
-is(bighex(""), 0, "bighex() receives empty string");
-is(bighex("0000"), 0, "bighex(\"0000\")");
-is(bighex("00001"), 1, "bighex(\"00001\")");
-is(bighex("ff"), 255, "bighex(\"ff\")");
-is(bighex("DeadBeef"), 3735928559, "bighex(\"DeadBeef\")");
-is(bighex("EDC4E5813177A7457214F6B62C1CB1"), 1234567890987654321234567890987654321, "Big stuff to bighex()");
-is(bighex("!Amob=+[]CdE.-f0\n12\t345"), NaN(), "bighex() returns NaN()");
-is(bighex("AbCdEf012345\n"), "NaN", "bighex() also returns \"NaN\"");
+    my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
+    if (-e $Outdir) {
+        die("$progname: $Outdir: WTF?? Directory element already exists.");
+    }
+    unless (mkdir($Outdir)) {
+        die("$progname: $Outdir: Cannot mkdir(): $!\n");
+    }
 
-# }}}
-diag("Testing s_top()..."); # {{{
-like(
-    (
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
-        "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">\n" .
-        "<suuids>\n" .
-        "</suuids>\n"
-    ),
-    s_top(''),
-    "s_top('') returns empty file"
-);
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
-# }}}
-diag("Testing s_suuid_tag()..."); # {{{
-is(s_suuid_tag(''), '', "s_suuid_tag('') returns ''");
-is(s_suuid_tag('test'), '<tag>test</tag> ', "s_suuid_tag('test')");
-is(s_suuid_tag('test,lixom'), '<tag>test</tag> <tag>lixom</tag> ', "s_suuid_tag('test,lixom')");
-is(s_suuid_tag('test,lixom,på en måte'), '<tag>test</tag> <tag>lixom</tag> <tag>på en måte</tag> ', "s_suuid_tag('test,lixom,på en måte')");
-is(s_suuid_tag('test,lixom, space '), '<tag>test</tag> <tag>lixom</tag> <tag> space </tag> ', "s_suuid_tag('test,lixom, space ')");
+=pod
 
-# }}}
-diag("Testing s_suuid_sess()..."); # {{{
-is(s_suuid_sess(''), '', "s_suuid_sess('') returns ''");
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdin]
+END
+        '',
+        0,
+        'description',
+    );
 
-for my $l_desc ('deschere', '') {
-    for my $l_slash ('/', '') {
-        for my $l_uuid ('ff529c20-4522-11e2-8c4a-0016d364066c', '') {
-            for my $l_comma (',', '') {
-                my $fail = 0;
-                my $str = "$l_desc$l_slash$l_uuid$l_comma";
-                my $humstr = sprintf(
-                    "s_suuid_sess() %s desc, %s slash, %s uuid, %s comma",
-                    length($l_desc)  ? "with" : "without",
-                    length($l_slash) ? "with" : "without",
-                    length($l_uuid)  ? "with" : "without",
-                    length($l_comma) ? "with" : "without",
-                );
-                length($l_slash) || ($fail = 1);
-                length($l_comma) || ($fail = 1);
-                length($l_uuid)  || ($fail = 1);
-                if ($fail) {
-                    if (length($str)) {
-                        is(s_suuid_sess($str), undef, $humstr);
+    # }}}
+
+=cut
+
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
+
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
+
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
+
+    # }}}
+    diag("Testing uuid_time()..."); # {{{
+    is(uuid_time("c7f54e5a-afae-11df-b4a3-dffbc1242a34"), "2010-08-24T18:38:25.8316890Z", "uuid_time() works");
+    is(uuid_time("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time() returns \"\" if UUID version 4");
+    is(uuid_time(""), "", "uuid_time() receives empty string, returns \"\"");
+    is(uuid_time("rubbish"), "", "uuid_time() receives rubbish, returns \"\"");
+
+    # }}}
+    diag("Testing uuid_time2()..."); # {{{
+    is(uuid_time2("2527c268-b024-11df-a05c-09f86a2af1d3"), "2010-08-25T08:38:33.3078120Z", "uuid_time2() works");
+    is(uuid_time2("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time2() returns \"\" if UUID version 4");
+    is(uuid_time2(""), "", "uuid_time2() receives empty string, returns \"\"");
+    is(uuid_time2("rubbish"), "", "uuid_time2() receives rubbish, returns \"\"");
+
+    # }}}
+    diag("Testing suuid_xml()..."); # {{{
+    is(suuid_xml(""), "", "suuid_xml() receives empty string");
+    is(suuid_xml("<&>\\"), "&lt;&amp;&gt;\\\\", "suuid_xml(\"<&>\\\\\")");
+    is(suuid_xml("<&>\\\n\t", 1), "<&>\\\n\t", "suuid_xml(\"<&>\\\\\\n\\t\", 1) i,e. don’t convert");
+    is(suuid_xml("<&>\n\r\t"), "&lt;&amp;&gt;\\n\\r\\t", "suuid_xml(\"<&>\\n\\r\\t\")");
+    is(suuid_xml("\x00\x01\xFF"), "\x00\x01\xFF", "suuid_xml(\"\\x00\\x01\\xFF\")"); # FIXME: Should it behave like this?
+
+    # }}}
+    diag("Testing bighex()..."); # {{{
+    is(bighex(""), 0, "bighex() receives empty string");
+    is(bighex("0000"), 0, "bighex(\"0000\")");
+    is(bighex("00001"), 1, "bighex(\"00001\")");
+    is(bighex("ff"), 255, "bighex(\"ff\")");
+    is(bighex("DeadBeef"), 3735928559, "bighex(\"DeadBeef\")");
+    is(bighex("EDC4E5813177A7457214F6B62C1CB1"), 1234567890987654321234567890987654321, "Big stuff to bighex()");
+    is(bighex("!Amob=+[]CdE.-f0\n12\t345"), NaN(), "bighex() returns NaN()");
+    is(bighex("AbCdEf012345\n"), "NaN", "bighex() also returns \"NaN\"");
+
+    # }}}
+    diag("Testing s_top()..."); # {{{
+    like(
+        (
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
+            "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">\n" .
+            "<suuids>\n" .
+            "</suuids>\n"
+        ),
+        s_top(''),
+        "s_top('') returns empty file"
+    );
+
+    # }}}
+    diag("Testing s_suuid_tag()..."); # {{{
+    is(s_suuid_tag(''), '', "s_suuid_tag('') returns ''");
+    is(s_suuid_tag('test'), '<tag>test</tag> ', "s_suuid_tag('test')");
+    is(s_suuid_tag('test,lixom'), '<tag>test</tag> <tag>lixom</tag> ', "s_suuid_tag('test,lixom')");
+    is(s_suuid_tag('test,lixom,på en måte'), '<tag>test</tag> <tag>lixom</tag> <tag>på en måte</tag> ', "s_suuid_tag('test,lixom,på en måte')");
+    is(s_suuid_tag('test,lixom, space '), '<tag>test</tag> <tag>lixom</tag> <tag> space </tag> ', "s_suuid_tag('test,lixom, space ')");
+
+    # }}}
+    diag("Testing s_suuid_sess()..."); # {{{
+    is(s_suuid_sess(''), '', "s_suuid_sess('') returns ''");
+
+    for my $l_desc ('deschere', '') {
+        for my $l_slash ('/', '') {
+            for my $l_uuid ('ff529c20-4522-11e2-8c4a-0016d364066c', '') {
+                for my $l_comma (',', '') {
+                    my $fail = 0;
+                    my $str = "$l_desc$l_slash$l_uuid$l_comma";
+                    my $humstr = sprintf(
+                        "s_suuid_sess() %s desc, %s slash, %s uuid, %s comma",
+                        length($l_desc)  ? "with" : "without",
+                        length($l_slash) ? "with" : "without",
+                        length($l_uuid)  ? "with" : "without",
+                        length($l_comma) ? "with" : "without",
+                    );
+                    length($l_slash) || ($fail = 1);
+                    length($l_comma) || ($fail = 1);
+                    length($l_uuid)  || ($fail = 1);
+                    if ($fail) {
+                        if (length($str)) {
+                            is(s_suuid_sess($str), undef, $humstr);
+                        }
+                    } else {
+                        like(s_suuid_sess($str), '/^<sess( desc="deschere")?>ff529c20-4522-11e2-8c4a-0016d364066c<\/sess> $/', $humstr)
                     }
-                } else {
-                    like(s_suuid_sess($str), '/^<sess( desc="deschere")?>ff529c20-4522-11e2-8c4a-0016d364066c<\/sess> $/', $humstr)
                 }
             }
         }
     }
-}
 
-is(
-    s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c'),
-    undef,
-    "s_suuid_sess() without comma and slash returns undef",
-);
-is(
-    s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c,'),
-    undef,
-    "s_suuid_sess() with comma but missing slash returns undef",
-);
-is(
-    s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c'),
-    undef,
-    "s_suuid_sess() with desc, but missing comma returns undef",
-);
-is(
-    s_suuid_sess('/ff529c20-4522-11e2-8c4a-0016d364066c,'),
-    '<sess>ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
-    "s_suuid_sess() without desc, but with slash and comma",
-);
-is(
-    s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c,'),
-    '<sess desc="xterm">ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
-    "s_suuid_sess() with desc and comma",
-);
-is(
-    s_suuid_sess(
-        'xfce/bbd272a0-44e0-11e2-bcdb-0016d364066c,' .
-        'xterm/c1986406-44e0-11e2-af23-0016d364066c,' .
-        'screen/e7f897b0-44e0-11e2-b5a0-0016d364066c,'
-    ),
-    (
-        '<sess desc="xfce">bbd272a0-44e0-11e2-bcdb-0016d364066c</sess> ' .
-        '<sess desc="xterm">c1986406-44e0-11e2-af23-0016d364066c</sess> ' .
-        '<sess desc="screen">e7f897b0-44e0-11e2-b5a0-0016d364066c</sess> ',
-    ),
-    's_suuid_sess() receives string with three with desc',
-);
-is(
-    s_suuid_sess('/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,'),
-    '<sess>ee5db39a-43f7-11e2-a975-0016d364066c</sess> <sess>da700fd8-43eb-11e2-889a-0016d364066c</sess> ',
-    "s_suuid_sess() receives two without desc",
-);
-
-# }}}
-diag("No options (except --logfile)...");
-likecmd("$CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "No options (except -l) sends UUID to stdout",
-);
-
-# }}}
-my $Outfile = glob("$Outdir/*");
-like($Outfile, "/^$Outdir\\/\\S+\.xml\$/", "Filename of logfile OK");
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(),
-    ),
-    "Log contents OK after exec with no options",
-);
-
-# }}}
-testcmd("$CMD -l $Outdir >/dev/null", # {{{
-    '',
-    '',
-    0,
-    "Redirect stdout to /dev/null",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-         s_suuid() .
-         s_suuid(),
-    ),
-    "Entries are added, not replacing",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-testcmd("$CMD --rcfile rcfile-inv-uuidcmd -l $Outdir", # {{{
-    '',
-    "suuid: '': Generated UUID is not in the expected format\n",
-    1,
-    "uuidcmd does not generate valid UUID",
-);
-
-# }}}
-my $host_outfile = glob("$Outdir/*");
-like(file_data($host_outfile), # {{{
-    s_top(''),
-    "suuid file is empty",
-);
-
-# }}}
-diag("Read the SUUID_LOGDIR environment variable...");
-likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "Read environment variable",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(),
-    ),
-    "The SUUID_LOGDIR environment variable was read",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-diag("Read the SUUID_HOSTNAME environment variable...");
-likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "Read environment variable",
-);
-
-# }}}
-like(file_data("$Outdir/urk13579kru.xml"), # {{{
-    s_top(
-        s_suuid(
-            'host' => 'urk13579kru',
+    is(
+        s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c'),
+        undef,
+        "s_suuid_sess() without comma and slash returns undef",
+    );
+    is(
+        s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c,'),
+        undef,
+        "s_suuid_sess() with comma but missing slash returns undef",
+    );
+    is(
+        s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c'),
+        undef,
+        "s_suuid_sess() with desc, but missing comma returns undef",
+    );
+    is(
+        s_suuid_sess('/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+        '<sess>ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+        "s_suuid_sess() without desc, but with slash and comma",
+    );
+    is(
+        s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+        '<sess desc="xterm">ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+        "s_suuid_sess() with desc and comma",
+    );
+    is(
+        s_suuid_sess(
+            'xfce/bbd272a0-44e0-11e2-bcdb-0016d364066c,' .
+            'xterm/c1986406-44e0-11e2-af23-0016d364066c,' .
+            'screen/e7f897b0-44e0-11e2-b5a0-0016d364066c,'
         ),
-    ),
-    "The SUUID_HOSTNAME environment variable was read",
-);
-
-# }}}
-ok(unlink("$Outdir/urk13579kru.xml"), "Delete $Outdir/urk13579kru.xml");
-diag("Testing -m (--random-mac) option...");
-likecmd("$CMD -m -l $Outdir", # {{{
-    "/^$v1rand_templ\\n\$/s",
-    '/^$/s',
-    0,
-    "--random-mac option works",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(),
-    ),
-    "Log contents OK after --random-mac",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-diag("Testing --raw option...");
-likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {{{
-    "/^$v1_templ\\n\$/s",
-    '/^$/s',
-    0,
-    "--raw option works",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid('txt' => ' <dingle><dangle>bær<\/dangle><\/dingle> '),
-    ),
-    "Log contents after --raw is OK",
-);
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-diag("Testing --rcfile option...");
-likecmd("$CMD --rcfile rcfile1 -l $Outdir", # {{{
-    "/^$v1_templ\\n\$/s",
-    '/^$/s',
-    0,
-    "--rcfile option works",
-);
-
-# }}}
-like(file_data("$Outdir/altrc1.xml"), # {{{
-    s_top(
-        s_suuid('host' => 'altrc1'),
-    ),
-    "hostname from rcfile1 is stored in the file",
-);
-
-# }}}
-ok(unlink("$Outdir/altrc1.xml"), "Delete $Outdir/altrc1.xml");
-ok(!-e 'nosuchrc', "'nosuchrc' doesn't exist");
-likecmd("$CMD --rcfile nosuchrc -l $Outdir", # {{{
-    "/^$v1_templ\\n\$/s",
-    '/^$/s',
-    0,
-    "--rcfile with non-existing file",
-);
-
-# }}}
-ok(unlink($host_outfile), "Delete $host_outfile");
-diag("Testing -t (--tag) option...");
-likecmd("$CMD -t snaddertag -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "-t (--tag) option",
-);
-
-# }}}
-testcmd("$CMD -t schn\xfcffelhund -l $Outdir", # {{{
-    "",
-    "suuid: Tags have to be in UTF-8\n",
-    1,
-    "Refuse non-UTF-8 tags",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid('tag' => 'snaddertag'),
-    ),
-    "Log contents OK after tag",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-diag("Testing -c (--comment) option...");
-likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "-c (--comment) option",
-);
-
-# }}}
-testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
-    "",
-    "suuid: Comment contains illegal characters or is not valid UTF-8\n",
-    1,
-    "Refuse non-UTF-8 text to --comment option",
-);
-
-# }}}
-testcmd("$CMD -c \"Ctrl-d: \x04\" -l $Outdir", # {{{
-    "",
-    "suuid: Comment contains illegal characters or is not valid UTF-8\n",
-    1,
-    "Reject Ctrl-d in comment",
-);
-
-# }}}
-likecmd("echo \"Great test\" | $CMD -c - -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^suuid: Enter uuid comment: $/',
-    0,
-    "Read comment from stdin",
-);
-
-# }}}
-testcmd("echo \"F\xf8kka \xf8pp\" | $CMD -c - -l $Outdir", # {{{
-    "",
-    "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
-    1,
-    "Reject non-UTF-8 comment from stdin",
-);
-
-# }}}
-testcmd("echo \"Ctrl-d: \x04\" | $CMD -c - -l $Outdir", # {{{
-    "",
-    "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
-    1,
-    "Reject Ctrl-d in comment from stdin",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid('txt' => 'Great test') x 2,
-    ),
-    "Log contents OK after comment",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-diag("Testing -n (--count) option...");
-likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
-    "/^($v1_templ\n){5}\$/s",
-    '/^$/',
-    0,
-    "-n (--count) option with comment and tag",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'tag' => 'testeri',
-            'txt' => 'Great test',
-        ) x 5,
-    ),
-    "Log contents OK after count, comment and tag",
-);
-
-# }}}
-diag("Check for randomness in the MAC address field...");
-cmp_ok(unique_macs($Outfile), '==', 1, 'MAC adresses does not change');
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("$CMD -m -n 5 -l $Outdir", # {{{
-    "/^($v1_templ\n){5}\$/s",
-    '/^$/',
-    0,
-    "-n (--count) option with -m (--random-mac)",
-);
-
-# }}}
-cmp_ok(unique_macs($Outfile), '==', 5, 'MAC adresses are random');
-diag("Testing -w (--whereto) option...");
-likecmd("$CMD -w o -l $Outdir", # {{{
-    "/^$v1_templ\\n\$/s",
-    '/^$/s',
-    0,
-    "Output goes to stdout",
-);
-
-# }}}
-likecmd("$CMD -w e -l $Outdir", # {{{
-    '/^$/s',
-    "/^$v1_templ\\n\$/s",
-    0,
-    "Output goes to stderr",
-);
-
-# }}}
-likecmd("$CMD -w eo -l $Outdir", # {{{
-    "/^$v1_templ\\n\$/s",
-    "/^$v1_templ\\n\$/s",
-    0,
-    "Output goes to stdout and stderr",
-);
-
-# }}}
-likecmd("$CMD -w a -l $Outdir", # {{{
-    "/^$v1_templ\\n\$/s",
-    "/^$v1_templ\\n\$/s",
-    0,
-    "Option -wa sends output to stdout and stderr",
-);
-
-# }}}
-likecmd("$CMD -w n -l $Outdir", # {{{
-    '/^$/s',
-    '/^$/s',
-    0,
-    "Output goes nowhere",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-diag("Testing -q (--quiet) option...");
-diag("Test logging of \$SESS_UUID environment variable...");
-likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "-t (--tag) option",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'tag' => 'yess',
-            'sess' => '/27538da4-fc68-11dd-996d-000475e441b9,',
+        (
+            '<sess desc="xfce">bbd272a0-44e0-11e2-bcdb-0016d364066c</sess> ' .
+            '<sess desc="xterm">c1986406-44e0-11e2-af23-0016d364066c</sess> ' .
+            '<sess desc="screen">e7f897b0-44e0-11e2-b5a0-0016d364066c</sess> ',
         ),
-    ),
-    "\$SESS_UUID envariable is logged",
-);
+        's_suuid_sess() receives string with three with desc',
+    );
+    is(
+        s_suuid_sess('/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,'),
+        '<sess>ee5db39a-43f7-11e2-a975-0016d364066c</sess> <sess>da700fd8-43eb-11e2-889a-0016d364066c</sess> ',
+        "s_suuid_sess() receives two without desc",
+    );
 
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c, $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID with 'ssh-agent/'-prefix and comma at the end",
-);
+    # }}}
+    diag("No options (except --logfile)...");
+    likecmd("$CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "No options (except -l) sends UUID to stdout",
+    );
 
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
+    # }}}
+    my $Outfile = glob("$Outdir/*");
+    like($Outfile, "/^$Outdir\\/\\S+\.xml\$/", "Filename of logfile OK");
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(),
         ),
-    ),
-    "<sess> contains desc attribute",
-);
+        "Log contents OK after exec with no options",
+    );
 
-# }}}
-likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,dingle©/4c66b03a-43f4-11e2-b70d-0016d364066c, $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID with 'ssh-agent' and 'dingle©'",
-);
+    # }}}
+    testcmd("$CMD -l $Outdir >/dev/null", # {{{
+        '',
+        '',
+        0,
+        "Redirect stdout to /dev/null",
+    );
 
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
-        ) .
-        s_suuid(
-            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,' .
-                      'dingle©/4c66b03a-43f4-11e2-b70d-0016d364066c,',
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+             s_suuid() .
+             s_suuid(),
         ),
-    ),
-    "<sess> contains both desc attributes, one with ©",
-);
+        "Entries are added, not replacing",
+    );
 
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID with 'ssh-agent', missing comma",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
-        ),
-    ),
-    "<sess> is correct without comma",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID missing name and comma, but has slash",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,',
-        ),
-    ),
-    "<sess> is OK without name and comma",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID with two UUIDs, latter missing name and comma, but has slash",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => '/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,',
-        ),
-    ),
-    "Second <sess> is correct without comma",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066cda700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID with two UUIDs smashed together",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => '/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,',
-        ),
-    ),
-    "Still separates them into two UUIDs",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabcee5db39a-43f7-11e2-a975-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID with two UUIDs, only separated by 'abc'",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
-        ),
-    ),
-    "Separated the two UUIDs, discards 'abc'",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabc/ee5db39a-43f7-11e2-a975-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID with two UUIDs, separated by 'abc/'",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
-        ),
-    ),
-    "The two UUIDs are separated, 'abc/' is discarded",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066c5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID contains four UUIDs, no separators",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => '/5f650dac-4404-11e2-8e0e-0016d364066c,' .
-                      '/5f660e28-4404-11e2-808e-0016d364066c,' .
-                      '/5f66ef14-4404-11e2-8b45-0016d364066c,' .
-                      '/5f67e266-4404-11e2-a6f8-0016d364066c,',
-        ),
-    ),
-    "All four UUIDs are separated",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066cabc5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c,nmap/5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID contains four UUIDs, 'abc' separates the first two, last one has desc",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => '/5f650dac-4404-11e2-8e0e-0016d364066c,' .
-                      '/5f660e28-4404-11e2-808e-0016d364066c,' .
-                      '/5f66ef14-4404-11e2-8b45-0016d364066c,' .
-                      'nmap/5f67e266-4404-11e2-a6f8-0016d364066c,',
-        ),
-    ),
-    "All four UUIDs separated, 'abc' discarded, 'nmap' kept",
-);
-
-# }}}
-ok(unlink($Outfile), "Delete $Outfile");
-likecmd("SESS_UUID=ssh-agent/fea9315a-43d6-11e2-8294-0016d364066c,logging/febfd0f4-43d6-11e2-9117-0016d364066c,screen/0e144c10-43d7-11e2-9833-0016d364066c,ti/152d8f16-4409-11e2-be17-0016d364066c, $CMD -l $Outdir", # {{{
-    "/^$v1_templ\n\$/s",
-    '/^$/',
-    0,
-    "SESS_UUID is OK and contains four UUIDs, all with desc",
-);
-
-# }}}
-like(file_data($Outfile), # {{{
-    s_top(
-        s_suuid(
-            'sess' => 'ssh-agent/fea9315a-43d6-11e2-8294-0016d364066c,' .
-                      'logging/febfd0f4-43d6-11e2-9117-0016d364066c,' .
-                      'screen/0e144c10-43d7-11e2-9833-0016d364066c,' .
-                      'ti/152d8f16-4409-11e2-be17-0016d364066c,',
-        ),
-    ),
-    "The four UUIDs are separated, all four descs kept",
-);
-
-# }}}
-diag("Test behaviour when unable to write to the log file...");
-my @stat_array = stat($Outfile);
-ok(chmod(0444, $Outfile), "Make $Outfile read-only");
-likecmd("$CMD -l $Outdir", # {{{
-    '/^$/s',
-    "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
-    13,
-    "Unable to write to the log file",
-);
-chmod($stat_array[2], $Outfile);
-
-# }}}
-
-todo_section:
-;
-
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
-
-    TODO: {
-
-local $TODO = '';
-# Insert TODO tests here.
-
-    }
-    # TODO tests }}}
-}
-
-diag('Testing finished.');
-
-if (defined($Outfile)) {
+    # }}}
     ok(unlink($Outfile), "Delete $Outfile");
-}
-ok(rmdir($Outdir), "rmdir $Outdir");
+    testcmd("$CMD --rcfile rcfile-inv-uuidcmd -l $Outdir", # {{{
+        '',
+        "suuid: '': Generated UUID is not in the expected format\n",
+        1,
+        "uuidcmd does not generate valid UUID",
+    );
+
+    # }}}
+    my $host_outfile = glob("$Outdir/*");
+    like(file_data($host_outfile), # {{{
+        s_top(''),
+        "suuid file is empty",
+    );
+
+    # }}}
+    diag("Read the SUUID_LOGDIR environment variable...");
+    likecmd("SUUID_LOGDIR=$Outdir $CMD", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "Read environment variable",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(),
+        ),
+        "The SUUID_LOGDIR environment variable was read",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    diag("Read the SUUID_HOSTNAME environment variable...");
+    likecmd("SUUID_HOSTNAME=urk13579kru $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "Read environment variable",
+    );
+
+    # }}}
+    like(file_data("$Outdir/urk13579kru.xml"), # {{{
+        s_top(
+            s_suuid(
+                'host' => 'urk13579kru',
+            ),
+        ),
+        "The SUUID_HOSTNAME environment variable was read",
+    );
+
+    # }}}
+    ok(unlink("$Outdir/urk13579kru.xml"), "Delete $Outdir/urk13579kru.xml");
+    diag("Testing -m (--random-mac) option...");
+    likecmd("$CMD -m -l $Outdir", # {{{
+        "/^$v1rand_templ\\n\$/s",
+        '/^$/s',
+        0,
+        "--random-mac option works",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(),
+        ),
+        "Log contents OK after --random-mac",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    diag("Testing --raw option...");
+    likecmd("$CMD --raw -c '<dingle><dangle>bær</dangle></dingle>' -l $Outdir", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^$/s',
+        0,
+        "--raw option works",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid('txt' => ' <dingle><dangle>bær<\/dangle><\/dingle> '),
+        ),
+        "Log contents after --raw is OK",
+    );
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    diag("Testing --rcfile option...");
+    likecmd("$CMD --rcfile rcfile1 -l $Outdir", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^$/s',
+        0,
+        "--rcfile option works",
+    );
+
+    # }}}
+    like(file_data("$Outdir/altrc1.xml"), # {{{
+        s_top(
+            s_suuid('host' => 'altrc1'),
+        ),
+        "hostname from rcfile1 is stored in the file",
+    );
+
+    # }}}
+    ok(unlink("$Outdir/altrc1.xml"), "Delete $Outdir/altrc1.xml");
+    ok(!-e 'nosuchrc', "'nosuchrc' doesn't exist");
+    likecmd("$CMD --rcfile nosuchrc -l $Outdir", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^$/s',
+        0,
+        "--rcfile with non-existing file",
+    );
+
+    # }}}
+    ok(unlink($host_outfile), "Delete $host_outfile");
+    diag("Testing -t (--tag) option...");
+    likecmd("$CMD -t snaddertag -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "-t (--tag) option",
+    );
+
+    # }}}
+    testcmd("$CMD -t schn\xfcffelhund -l $Outdir", # {{{
+        "",
+        "suuid: Tags have to be in UTF-8\n",
+        1,
+        "Refuse non-UTF-8 tags",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid('tag' => 'snaddertag'),
+        ),
+        "Log contents OK after tag",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    diag("Testing -c (--comment) option...");
+    likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "-c (--comment) option",
+    );
+
+    # }}}
+    testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
+        "",
+        "suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Refuse non-UTF-8 text to --comment option",
+    );
+
+    # }}}
+    testcmd("$CMD -c \"Ctrl-d: \x04\" -l $Outdir", # {{{
+        "",
+        "suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Reject Ctrl-d in comment",
+    );
+
+    # }}}
+    likecmd("echo \"Great test\" | $CMD -c - -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^suuid: Enter uuid comment: $/',
+        0,
+        "Read comment from stdin",
+    );
+
+    # }}}
+    testcmd("echo \"F\xf8kka \xf8pp\" | $CMD -c - -l $Outdir", # {{{
+        "",
+        "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Reject non-UTF-8 comment from stdin",
+    );
+
+    # }}}
+    testcmd("echo \"Ctrl-d: \x04\" | $CMD -c - -l $Outdir", # {{{
+        "",
+        "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Reject Ctrl-d in comment from stdin",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid('txt' => 'Great test') x 2,
+        ),
+        "Log contents OK after comment",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    diag("Testing -n (--count) option...");
+    likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
+        "/^($v1_templ\n){5}\$/s",
+        '/^$/',
+        0,
+        "-n (--count) option with comment and tag",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'tag' => 'testeri',
+                'txt' => 'Great test',
+            ) x 5,
+        ),
+        "Log contents OK after count, comment and tag",
+    );
+
+    # }}}
+    diag("Check for randomness in the MAC address field...");
+    cmp_ok(unique_macs($Outfile), '==', 1, 'MAC adresses does not change');
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("$CMD -m -n 5 -l $Outdir", # {{{
+        "/^($v1_templ\n){5}\$/s",
+        '/^$/',
+        0,
+        "-n (--count) option with -m (--random-mac)",
+    );
+
+    # }}}
+    cmp_ok(unique_macs($Outfile), '==', 5, 'MAC adresses are random');
+    diag("Testing -w (--whereto) option...");
+    likecmd("$CMD -w o -l $Outdir", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^$/s',
+        0,
+        "Output goes to stdout",
+    );
+
+    # }}}
+    likecmd("$CMD -w e -l $Outdir", # {{{
+        '/^$/s',
+        "/^$v1_templ\\n\$/s",
+        0,
+        "Output goes to stderr",
+    );
+
+    # }}}
+    likecmd("$CMD -w eo -l $Outdir", # {{{
+        "/^$v1_templ\\n\$/s",
+        "/^$v1_templ\\n\$/s",
+        0,
+        "Output goes to stdout and stderr",
+    );
+
+    # }}}
+    likecmd("$CMD -w a -l $Outdir", # {{{
+        "/^$v1_templ\\n\$/s",
+        "/^$v1_templ\\n\$/s",
+        0,
+        "Option -wa sends output to stdout and stderr",
+    );
+
+    # }}}
+    likecmd("$CMD -w n -l $Outdir", # {{{
+        '/^$/s',
+        '/^$/s',
+        0,
+        "Output goes nowhere",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    diag("Testing -q (--quiet) option...");
+    diag("Test logging of \$SESS_UUID environment variable...");
+    likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "-t (--tag) option",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'tag' => 'yess',
+                'sess' => '/27538da4-fc68-11dd-996d-000475e441b9,',
+            ),
+        ),
+        "\$SESS_UUID envariable is logged",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c, $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with 'ssh-agent/'-prefix and comma at the end",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
+            ),
+        ),
+        "<sess> contains desc attribute",
+    );
+
+    # }}}
+    likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,dingle©/4c66b03a-43f4-11e2-b70d-0016d364066c, $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with 'ssh-agent' and 'dingle©'",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
+            ) .
+            s_suuid(
+                'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,' .
+                          'dingle©/4c66b03a-43f4-11e2-b70d-0016d364066c,',
+            ),
+        ),
+        "<sess> contains both desc attributes, one with ©",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with 'ssh-agent', missing comma",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => 'ssh-agent/da700fd8-43eb-11e2-889a-0016d364066c,',
+            ),
+        ),
+        "<sess> is correct without comma",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID missing name and comma, but has slash",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,',
+            ),
+        ),
+        "<sess> is OK without name and comma",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with two UUIDs, latter missing name and comma, but has slash",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => '/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,',
+            ),
+        ),
+        "Second <sess> is correct without comma",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=ee5db39a-43f7-11e2-a975-0016d364066cda700fd8-43eb-11e2-889a-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with two UUIDs smashed together",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => '/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,',
+            ),
+        ),
+        "Still separates them into two UUIDs",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabcee5db39a-43f7-11e2-a975-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with two UUIDs, only separated by 'abc'",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
+            ),
+        ),
+        "Separated the two UUIDs, discards 'abc'",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=da700fd8-43eb-11e2-889a-0016d364066cabc/ee5db39a-43f7-11e2-a975-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with two UUIDs, separated by 'abc/'",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
+            ),
+        ),
+        "The two UUIDs are separated, 'abc/' is discarded",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066c5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID contains four UUIDs, no separators",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => '/5f650dac-4404-11e2-8e0e-0016d364066c,' .
+                          '/5f660e28-4404-11e2-808e-0016d364066c,' .
+                          '/5f66ef14-4404-11e2-8b45-0016d364066c,' .
+                          '/5f67e266-4404-11e2-a6f8-0016d364066c,',
+            ),
+        ),
+        "All four UUIDs are separated",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066cabc5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c,nmap/5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID contains four UUIDs, 'abc' separates the first two, last one has desc",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => '/5f650dac-4404-11e2-8e0e-0016d364066c,' .
+                          '/5f660e28-4404-11e2-808e-0016d364066c,' .
+                          '/5f66ef14-4404-11e2-8b45-0016d364066c,' .
+                          'nmap/5f67e266-4404-11e2-a6f8-0016d364066c,',
+            ),
+        ),
+        "All four UUIDs separated, 'abc' discarded, 'nmap' kept",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=ssh-agent/fea9315a-43d6-11e2-8294-0016d364066c,logging/febfd0f4-43d6-11e2-9117-0016d364066c,screen/0e144c10-43d7-11e2-9833-0016d364066c,ti/152d8f16-4409-11e2-be17-0016d364066c, $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID is OK and contains four UUIDs, all with desc",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' => 'ssh-agent/fea9315a-43d6-11e2-8294-0016d364066c,' .
+                          'logging/febfd0f4-43d6-11e2-9117-0016d364066c,' .
+                          'screen/0e144c10-43d7-11e2-9833-0016d364066c,' .
+                          'ti/152d8f16-4409-11e2-be17-0016d364066c,',
+            ),
+        ),
+        "The four UUIDs are separated, all four descs kept",
+    );
+
+    # }}}
+    diag("Test behaviour when unable to write to the log file...");
+    my @stat_array = stat($Outfile);
+    ok(chmod(0444, $Outfile), "Make $Outfile read-only");
+    likecmd("$CMD -l $Outdir", # {{{
+        '/^$/s',
+        "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
+        13,
+        "Unable to write to the log file",
+    );
+    chmod($stat_array[2], $Outfile);
+
+    # }}}
+
+    todo_section:
+    ;
+
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+    local $TODO = '';
+    # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
+    }
+
+    diag('Testing finished.');
+
+    if (defined($Outfile)) {
+        ok(unlink($Outfile), "Delete $Outfile");
+    }
+    ok(rmdir($Outdir), "rmdir $Outdir");
+
+    return($Retval);
+    # }}}
+} # main()
 
 sub s_top {
     # {{{
