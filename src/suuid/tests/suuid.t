@@ -116,33 +116,7 @@ END
 
 =cut
 
-    diag('Testing -h (--help) option...');
-    likecmd("$CMD -h", # {{{
-        '/  Show this help\./',
-        '/^$/',
-        0,
-        'Option -h prints help screen',
-    );
-
-    # }}}
-    diag('Testing -v (--verbose) option...');
-    likecmd("$CMD -hv", # {{{
-        '/^\n\S+ v\d\.\d\d\n/s',
-        '/^$/',
-        0,
-        'Option --version with -h returns version number and help screen',
-    );
-
-    # }}}
-    diag('Testing --version option...');
-    likecmd("$CMD --version", # {{{
-        '/^\S+ v\d\.\d\d\n/',
-        '/^$/',
-        0,
-        'Option --version returns version number',
-    );
-
-    # }}}
+    test_standard_options();
     diag("Testing uuid_time()..."); # {{{
     is(uuid_time("c7f54e5a-afae-11df-b4a3-dffbc1242a34"), "2010-08-24T18:38:25.8316890Z", "uuid_time() works");
     is(uuid_time("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time() returns \"\" if UUID version 4");
@@ -861,6 +835,37 @@ END
     return($Retval);
     # }}}
 } # main()
+
+sub test_standard_options {
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
+
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
+
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
+
+    # }}}
+    return;
+} # test_standard_options()
 
 sub s_top {
     # {{{
