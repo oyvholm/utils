@@ -559,6 +559,14 @@ sub test_suuid_executable {
     diag("Testing -q (--quiet) option...");
     test_suuid_environment($Outdir, $Outfile);
     diag("Test behaviour when unable to write to the log file...");
+    likecmd("$CMD -l $Outdir", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^$/s',
+        0,
+        "Create logfile with one entry",
+    );
+
+    # }}}
     my @stat_array = stat($Outfile);
     ok(chmod(0444, $Outfile), "Make $Outfile read-only");
     likecmd("$CMD -l $Outdir", # {{{
@@ -885,6 +893,7 @@ sub test_suuid_environment {
     );
 
     # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
     return;
     # }}}
 } # test_suuid_environment()
