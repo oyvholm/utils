@@ -114,7 +114,6 @@ sub main {
     D("cmd_editor = '$cmd_editor'");
 
     if ($Comment eq "-") {
-        $Opt{'quiet'} || print(STDERR "$progname: Enter uuid comment: ");
         $Comment = "";
         while (<STDIN>) {
             $Comment .= $_;
