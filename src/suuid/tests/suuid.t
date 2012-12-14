@@ -618,6 +618,25 @@ sub test_suuid_executable {
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
     diag("Testing -q (--quiet) option...");
+    test_suuid_environment($Outdir, $Outfile);
+    diag("Test behaviour when unable to write to the log file...");
+    my @stat_array = stat($Outfile);
+    ok(chmod(0444, $Outfile), "Make $Outfile read-only");
+    likecmd("$CMD -l $Outdir", # {{{
+        '/^$/s',
+        "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
+        13,
+        "Unable to write to the log file",
+    );
+    chmod($stat_array[2], $Outfile);
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    ok(rmdir($Outdir), "rmdir $Outdir");
+} # test_suuid_executable()
+
+sub test_suuid_environment {
+    my ($Outdir, $Outfile) = @_;
     diag("Test logging of \$SESS_UUID environment variable...");
     likecmd("SESS_UUID=27538da4-fc68-11dd-996d-000475e441b9 $CMD -t yess -l $Outdir", # {{{
         "/^$v1_templ\n\$/s",
@@ -859,21 +878,7 @@ sub test_suuid_executable {
     );
 
     # }}}
-    diag("Test behaviour when unable to write to the log file...");
-    my @stat_array = stat($Outfile);
-    ok(chmod(0444, $Outfile), "Make $Outfile read-only");
-    likecmd("$CMD -l $Outdir", # {{{
-        '/^$/s',
-        "/^$cmdprogname: $Outfile: Cannot open file for append: .*\$/s",
-        13,
-        "Unable to write to the log file",
-    );
-    chmod($stat_array[2], $Outfile);
-
-    # }}}
-    ok(unlink($Outfile), "Delete $Outfile");
-    ok(rmdir($Outdir), "rmdir $Outdir");
-} # test_suuid_executable()
+} # test_suuid_environment()
 
 sub s_top {
     # {{{
