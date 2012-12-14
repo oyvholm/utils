@@ -575,7 +575,7 @@ sub test_suuid_executable {
         13,
         "Unable to write to the log file",
     );
-    chmod($stat_array[2], $Outfile);
+    ok(chmod($stat_array[2], $Outfile), "Make $Outfile writable again");
 
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
