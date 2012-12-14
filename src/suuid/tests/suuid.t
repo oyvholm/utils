@@ -115,17 +115,7 @@ END
     todo_section:
     ;
 
-    if ($Opt{'all'} || $Opt{'todo'}) {
-        diag('Running TODO tests...'); # {{{
-
-        TODO: {
-
-    local $TODO = '';
-    # Insert TODO tests here.
-
-        }
-        # TODO tests }}}
-    }
+    test_todo();
 
     diag('Testing finished.');
 
@@ -888,6 +878,21 @@ sub test_suuid_environment {
     # }}}
     return;
 } # test_suuid_environment()
+
+sub test_todo {
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+    local $TODO = '';
+    # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
+    }
+    return;
+} # test_todo()
 
 sub s_top {
     # {{{
