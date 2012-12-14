@@ -6,6 +6,8 @@
 /src/personnr/personnr
 /src/smsum/tests/log/
 /src/suuid/tests/log/
+/src/suuid/tests/sess-stderr.tmp
+/src/suuid/tests/suuid-stderr.tmp
 /src/suuid/tests/tmp-suuid-t-*/
 /tests/install-modules
 /tests/log/
