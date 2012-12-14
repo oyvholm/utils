@@ -485,64 +485,7 @@ sub test_suuid_executable {
 
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
-    diag("Testing -c (--comment) option...");
-    likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
-        "/^$v1_templ\n\$/s",
-        '/^$/',
-        0,
-        "-c (--comment) option",
-    );
-
-    # }}}
-    testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
-        "",
-        "suuid: Comment contains illegal characters or is not valid UTF-8\n",
-        1,
-        "Refuse non-UTF-8 text to --comment option",
-    );
-
-    # }}}
-    testcmd("$CMD -c \"Ctrl-d: \x04\" -l $Outdir", # {{{
-        "",
-        "suuid: Comment contains illegal characters or is not valid UTF-8\n",
-        1,
-        "Reject Ctrl-d in comment",
-    );
-
-    # }}}
-    likecmd("echo \"Great test\" | $CMD -c - -l $Outdir", # {{{
-        "/^$v1_templ\n\$/s",
-        '/^suuid: Enter uuid comment: $/',
-        0,
-        "Read comment from stdin",
-    );
-
-    # }}}
-    testcmd("echo \"F\xf8kka \xf8pp\" | $CMD -c - -l $Outdir", # {{{
-        "",
-        "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
-        1,
-        "Reject non-UTF-8 comment from stdin",
-    );
-
-    # }}}
-    testcmd("echo \"Ctrl-d: \x04\" | $CMD -c - -l $Outdir", # {{{
-        "",
-        "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
-        1,
-        "Reject Ctrl-d in comment from stdin",
-    );
-
-    # }}}
-    like(file_data($Outfile), # {{{
-        s_top(
-            s_suuid('txt' => 'Great test') x 2,
-        ),
-        "Log contents OK after comment",
-    );
-
-    # }}}
-    ok(unlink($Outfile), "Delete $Outfile");
+    test_suuid_comment($Outdir, $Outfile);
     diag("Testing -n (--count) option...");
     likecmd("$CMD -n 5 -c \"Great test\" -t testeri -l $Outdir", # {{{
         "/^($v1_templ\n){5}\$/s",
@@ -634,6 +577,68 @@ sub test_suuid_executable {
     ok(unlink($Outfile), "Delete $Outfile");
     ok(rmdir($Outdir), "rmdir $Outdir");
 } # test_suuid_executable()
+
+sub test_suuid_comment {
+    my ($Outdir, $Outfile) = @_;
+    diag("Testing -c (--comment) option...");
+    likecmd("$CMD -c \"Great test\" -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "-c (--comment) option",
+    );
+
+    # }}}
+    testcmd("$CMD -c \"F\xf8kka \xf8pp\" -l $Outdir", # {{{
+        "",
+        "suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Refuse non-UTF-8 text to --comment option",
+    );
+
+    # }}}
+    testcmd("$CMD -c \"Ctrl-d: \x04\" -l $Outdir", # {{{
+        "",
+        "suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Reject Ctrl-d in comment",
+    );
+
+    # }}}
+    likecmd("echo \"Great test\" | $CMD -c - -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^suuid: Enter uuid comment: $/',
+        0,
+        "Read comment from stdin",
+    );
+
+    # }}}
+    testcmd("echo \"F\xf8kka \xf8pp\" | $CMD -c - -l $Outdir", # {{{
+        "",
+        "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Reject non-UTF-8 comment from stdin",
+    );
+
+    # }}}
+    testcmd("echo \"Ctrl-d: \x04\" | $CMD -c - -l $Outdir", # {{{
+        "",
+        "suuid: Enter uuid comment: suuid: Comment contains illegal characters or is not valid UTF-8\n",
+        1,
+        "Reject Ctrl-d in comment from stdin",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid('txt' => 'Great test') x 2,
+        ),
+        "Log contents OK after comment",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+} # test_suuid_comment()
 
 sub test_suuid_environment {
     my ($Outdir, $Outfile) = @_;
