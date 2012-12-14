@@ -838,6 +838,8 @@ END
     chmod($stat_array[2], $Outfile);
 
     # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    ok(rmdir($Outdir), "rmdir $Outdir");
 
     todo_section:
     ;
@@ -855,11 +857,6 @@ END
     }
 
     diag('Testing finished.');
-
-    if (defined($Outfile)) {
-        ok(unlink($Outfile), "Delete $Outfile");
-    }
-    ok(rmdir($Outdir), "rmdir $Outdir");
 
     return($Retval);
     # }}}
