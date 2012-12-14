@@ -210,7 +210,7 @@ for my $l_desc ('deschere', '') {
                 length($l_comma) || ($fail = 1);
                 length($l_uuid)  || ($fail = 1);
                 if ($fail) {
-                    if (length("$l_desc$l_slash$l_uuid$l_comma")) {
+                    if (length($str)) {
                         is(s_suuid_sess($str), undef, $humstr);
                     }
                 } else {
