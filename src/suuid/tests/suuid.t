@@ -89,14 +89,6 @@ sub main {
         $progname,
         $VERSION));
 
-    my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
-    if (-e $Outdir) {
-        die("$progname: $Outdir: WTF?? Directory element already exists.");
-    }
-    unless (mkdir($Outdir)) {
-        die("$progname: $Outdir: Cannot mkdir(): $!\n");
-    }
-
     if ($Opt{'todo'} && !$Opt{'all'}) {
         goto todo_section;
     }
@@ -118,6 +110,202 @@ END
 
     test_standard_options();
     test_test_functions();
+    test_suuid_executable();
+
+    todo_section:
+    ;
+
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+    local $TODO = '';
+    # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
+    }
+
+    diag('Testing finished.');
+
+    return($Retval);
+    # }}}
+} # main()
+
+sub test_standard_options {
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
+
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
+
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
+
+    # }}}
+    return;
+} # test_standard_options()
+
+sub test_test_functions {
+    diag("Testing uuid_time()..."); # {{{
+    is(uuid_time("c7f54e5a-afae-11df-b4a3-dffbc1242a34"), "2010-08-24T18:38:25.8316890Z", "uuid_time() works");
+    is(uuid_time("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time() returns \"\" if UUID version 4");
+    is(uuid_time(""), "", "uuid_time() receives empty string, returns \"\"");
+    is(uuid_time("rubbish"), "", "uuid_time() receives rubbish, returns \"\"");
+
+    # }}}
+    diag("Testing uuid_time2()..."); # {{{
+    is(uuid_time2("2527c268-b024-11df-a05c-09f86a2af1d3"), "2010-08-25T08:38:33.3078120Z", "uuid_time2() works");
+    is(uuid_time2("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time2() returns \"\" if UUID version 4");
+    is(uuid_time2(""), "", "uuid_time2() receives empty string, returns \"\"");
+    is(uuid_time2("rubbish"), "", "uuid_time2() receives rubbish, returns \"\"");
+
+    # }}}
+    diag("Testing suuid_xml()..."); # {{{
+    is(suuid_xml(""), "", "suuid_xml() receives empty string");
+    is(suuid_xml("<&>\\"), "&lt;&amp;&gt;\\\\", "suuid_xml(\"<&>\\\\\")");
+    is(suuid_xml("<&>\\\n\t", 1), "<&>\\\n\t", "suuid_xml(\"<&>\\\\\\n\\t\", 1) i,e. don’t convert");
+    is(suuid_xml("<&>\n\r\t"), "&lt;&amp;&gt;\\n\\r\\t", "suuid_xml(\"<&>\\n\\r\\t\")");
+    is(suuid_xml("\x00\x01\xFF"), "\x00\x01\xFF", "suuid_xml(\"\\x00\\x01\\xFF\")"); # FIXME: Should it behave like this?
+
+    # }}}
+    diag("Testing bighex()..."); # {{{
+    is(bighex(""), 0, "bighex() receives empty string");
+    is(bighex("0000"), 0, "bighex(\"0000\")");
+    is(bighex("00001"), 1, "bighex(\"00001\")");
+    is(bighex("ff"), 255, "bighex(\"ff\")");
+    is(bighex("DeadBeef"), 3735928559, "bighex(\"DeadBeef\")");
+    is(bighex("EDC4E5813177A7457214F6B62C1CB1"), 1234567890987654321234567890987654321, "Big stuff to bighex()");
+    is(bighex("!Amob=+[]CdE.-f0\n12\t345"), NaN(), "bighex() returns NaN()");
+    is(bighex("AbCdEf012345\n"), "NaN", "bighex() also returns \"NaN\"");
+
+    # }}}
+    diag("Testing s_top()..."); # {{{
+    like(
+        (
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
+            "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">\n" .
+            "<suuids>\n" .
+            "</suuids>\n"
+        ),
+        s_top(''),
+        "s_top('') returns empty file"
+    );
+
+    # }}}
+    diag("Testing s_suuid_tag()..."); # {{{
+    is(s_suuid_tag(''), '', "s_suuid_tag('') returns ''");
+    is(s_suuid_tag('test'), '<tag>test</tag> ', "s_suuid_tag('test')");
+    is(s_suuid_tag('test,lixom'), '<tag>test</tag> <tag>lixom</tag> ', "s_suuid_tag('test,lixom')");
+    is(s_suuid_tag('test,lixom,på en måte'), '<tag>test</tag> <tag>lixom</tag> <tag>på en måte</tag> ', "s_suuid_tag('test,lixom,på en måte')");
+    is(s_suuid_tag('test,lixom, space '), '<tag>test</tag> <tag>lixom</tag> <tag> space </tag> ', "s_suuid_tag('test,lixom, space ')");
+
+    # }}}
+    diag("Testing s_suuid_sess()..."); # {{{
+    is(s_suuid_sess(''), '', "s_suuid_sess('') returns ''");
+
+    for my $l_desc ('deschere', '') {
+        for my $l_slash ('/', '') {
+            for my $l_uuid ('ff529c20-4522-11e2-8c4a-0016d364066c', '') {
+                for my $l_comma (',', '') {
+                    my $fail = 0;
+                    my $str = "$l_desc$l_slash$l_uuid$l_comma";
+                    my $humstr = sprintf(
+                        "s_suuid_sess() %s desc, %s slash, %s uuid, %s comma",
+                        length($l_desc)  ? "with" : "without",
+                        length($l_slash) ? "with" : "without",
+                        length($l_uuid)  ? "with" : "without",
+                        length($l_comma) ? "with" : "without",
+                    );
+                    length($l_slash) || ($fail = 1);
+                    length($l_comma) || ($fail = 1);
+                    length($l_uuid)  || ($fail = 1);
+                    if ($fail) {
+                        if (length($str)) {
+                            is(s_suuid_sess($str), undef, $humstr);
+                        }
+                    } else {
+                        like(s_suuid_sess($str), '/^<sess( desc="deschere")?>ff529c20-4522-11e2-8c4a-0016d364066c<\/sess> $/', $humstr)
+                    }
+                }
+            }
+        }
+    }
+
+    is(
+        s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c'),
+        undef,
+        "s_suuid_sess() without comma and slash returns undef",
+    );
+    is(
+        s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c,'),
+        undef,
+        "s_suuid_sess() with comma but missing slash returns undef",
+    );
+    is(
+        s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c'),
+        undef,
+        "s_suuid_sess() with desc, but missing comma returns undef",
+    );
+    is(
+        s_suuid_sess('/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+        '<sess>ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+        "s_suuid_sess() without desc, but with slash and comma",
+    );
+    is(
+        s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c,'),
+        '<sess desc="xterm">ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
+        "s_suuid_sess() with desc and comma",
+    );
+    is(
+        s_suuid_sess(
+            'xfce/bbd272a0-44e0-11e2-bcdb-0016d364066c,' .
+            'xterm/c1986406-44e0-11e2-af23-0016d364066c,' .
+            'screen/e7f897b0-44e0-11e2-b5a0-0016d364066c,'
+        ),
+        (
+            '<sess desc="xfce">bbd272a0-44e0-11e2-bcdb-0016d364066c</sess> ' .
+            '<sess desc="xterm">c1986406-44e0-11e2-af23-0016d364066c</sess> ' .
+            '<sess desc="screen">e7f897b0-44e0-11e2-b5a0-0016d364066c</sess> ',
+        ),
+        's_suuid_sess() receives string with three with desc',
+    );
+    is(
+        s_suuid_sess('/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,'),
+        '<sess>ee5db39a-43f7-11e2-a975-0016d364066c</sess> <sess>da700fd8-43eb-11e2-889a-0016d364066c</sess> ',
+        "s_suuid_sess() receives two without desc",
+    );
+
+    # }}}
+} # test_test_functions()
+
+sub test_suuid_executable {
+    my $Outdir = "tmp-suuid-t-$$-" . substr(rand, 2, 8);
+    if (-e $Outdir) {
+        die("$progname: $Outdir: WTF?? Directory element already exists.");
+    }
+    unless (mkdir($Outdir)) {
+        die("$progname: $Outdir: Cannot mkdir(): $!\n");
+    }
+
     diag("No options (except --logfile)...");
     likecmd("$CMD -l $Outdir", # {{{
         "/^$v1_templ\n\$/s",
@@ -685,191 +873,7 @@ END
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
     ok(rmdir($Outdir), "rmdir $Outdir");
-
-    todo_section:
-    ;
-
-    if ($Opt{'all'} || $Opt{'todo'}) {
-        diag('Running TODO tests...'); # {{{
-
-        TODO: {
-
-    local $TODO = '';
-    # Insert TODO tests here.
-
-        }
-        # TODO tests }}}
-    }
-
-    diag('Testing finished.');
-
-    return($Retval);
-    # }}}
-} # main()
-
-sub test_standard_options {
-    diag('Testing -h (--help) option...');
-    likecmd("$CMD -h", # {{{
-        '/  Show this help\./',
-        '/^$/',
-        0,
-        'Option -h prints help screen',
-    );
-
-    # }}}
-    diag('Testing -v (--verbose) option...');
-    likecmd("$CMD -hv", # {{{
-        '/^\n\S+ v\d\.\d\d\n/s',
-        '/^$/',
-        0,
-        'Option --version with -h returns version number and help screen',
-    );
-
-    # }}}
-    diag('Testing --version option...');
-    likecmd("$CMD --version", # {{{
-        '/^\S+ v\d\.\d\d\n/',
-        '/^$/',
-        0,
-        'Option --version returns version number',
-    );
-
-    # }}}
-    return;
-} # test_standard_options()
-
-sub test_test_functions {
-    diag("Testing uuid_time()..."); # {{{
-    is(uuid_time("c7f54e5a-afae-11df-b4a3-dffbc1242a34"), "2010-08-24T18:38:25.8316890Z", "uuid_time() works");
-    is(uuid_time("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time() returns \"\" if UUID version 4");
-    is(uuid_time(""), "", "uuid_time() receives empty string, returns \"\"");
-    is(uuid_time("rubbish"), "", "uuid_time() receives rubbish, returns \"\"");
-
-    # }}}
-    diag("Testing uuid_time2()..."); # {{{
-    is(uuid_time2("2527c268-b024-11df-a05c-09f86a2af1d3"), "2010-08-25T08:38:33.3078120Z", "uuid_time2() works");
-    is(uuid_time2("3cbf9480-16fb-409f-98cc-bdfb02bf0e30"), "", "uuid_time2() returns \"\" if UUID version 4");
-    is(uuid_time2(""), "", "uuid_time2() receives empty string, returns \"\"");
-    is(uuid_time2("rubbish"), "", "uuid_time2() receives rubbish, returns \"\"");
-
-    # }}}
-    diag("Testing suuid_xml()..."); # {{{
-    is(suuid_xml(""), "", "suuid_xml() receives empty string");
-    is(suuid_xml("<&>\\"), "&lt;&amp;&gt;\\\\", "suuid_xml(\"<&>\\\\\")");
-    is(suuid_xml("<&>\\\n\t", 1), "<&>\\\n\t", "suuid_xml(\"<&>\\\\\\n\\t\", 1) i,e. don’t convert");
-    is(suuid_xml("<&>\n\r\t"), "&lt;&amp;&gt;\\n\\r\\t", "suuid_xml(\"<&>\\n\\r\\t\")");
-    is(suuid_xml("\x00\x01\xFF"), "\x00\x01\xFF", "suuid_xml(\"\\x00\\x01\\xFF\")"); # FIXME: Should it behave like this?
-
-    # }}}
-    diag("Testing bighex()..."); # {{{
-    is(bighex(""), 0, "bighex() receives empty string");
-    is(bighex("0000"), 0, "bighex(\"0000\")");
-    is(bighex("00001"), 1, "bighex(\"00001\")");
-    is(bighex("ff"), 255, "bighex(\"ff\")");
-    is(bighex("DeadBeef"), 3735928559, "bighex(\"DeadBeef\")");
-    is(bighex("EDC4E5813177A7457214F6B62C1CB1"), 1234567890987654321234567890987654321, "Big stuff to bighex()");
-    is(bighex("!Amob=+[]CdE.-f0\n12\t345"), NaN(), "bighex() returns NaN()");
-    is(bighex("AbCdEf012345\n"), "NaN", "bighex() also returns \"NaN\"");
-
-    # }}}
-    diag("Testing s_top()..."); # {{{
-    like(
-        (
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" .
-            "<!DOCTYPE suuids SYSTEM \"dtd/suuids.dtd\">\n" .
-            "<suuids>\n" .
-            "</suuids>\n"
-        ),
-        s_top(''),
-        "s_top('') returns empty file"
-    );
-
-    # }}}
-    diag("Testing s_suuid_tag()..."); # {{{
-    is(s_suuid_tag(''), '', "s_suuid_tag('') returns ''");
-    is(s_suuid_tag('test'), '<tag>test</tag> ', "s_suuid_tag('test')");
-    is(s_suuid_tag('test,lixom'), '<tag>test</tag> <tag>lixom</tag> ', "s_suuid_tag('test,lixom')");
-    is(s_suuid_tag('test,lixom,på en måte'), '<tag>test</tag> <tag>lixom</tag> <tag>på en måte</tag> ', "s_suuid_tag('test,lixom,på en måte')");
-    is(s_suuid_tag('test,lixom, space '), '<tag>test</tag> <tag>lixom</tag> <tag> space </tag> ', "s_suuid_tag('test,lixom, space ')");
-
-    # }}}
-    diag("Testing s_suuid_sess()..."); # {{{
-    is(s_suuid_sess(''), '', "s_suuid_sess('') returns ''");
-
-    for my $l_desc ('deschere', '') {
-        for my $l_slash ('/', '') {
-            for my $l_uuid ('ff529c20-4522-11e2-8c4a-0016d364066c', '') {
-                for my $l_comma (',', '') {
-                    my $fail = 0;
-                    my $str = "$l_desc$l_slash$l_uuid$l_comma";
-                    my $humstr = sprintf(
-                        "s_suuid_sess() %s desc, %s slash, %s uuid, %s comma",
-                        length($l_desc)  ? "with" : "without",
-                        length($l_slash) ? "with" : "without",
-                        length($l_uuid)  ? "with" : "without",
-                        length($l_comma) ? "with" : "without",
-                    );
-                    length($l_slash) || ($fail = 1);
-                    length($l_comma) || ($fail = 1);
-                    length($l_uuid)  || ($fail = 1);
-                    if ($fail) {
-                        if (length($str)) {
-                            is(s_suuid_sess($str), undef, $humstr);
-                        }
-                    } else {
-                        like(s_suuid_sess($str), '/^<sess( desc="deschere")?>ff529c20-4522-11e2-8c4a-0016d364066c<\/sess> $/', $humstr)
-                    }
-                }
-            }
-        }
-    }
-
-    is(
-        s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c'),
-        undef,
-        "s_suuid_sess() without comma and slash returns undef",
-    );
-    is(
-        s_suuid_sess('ff529c20-4522-11e2-8c4a-0016d364066c,'),
-        undef,
-        "s_suuid_sess() with comma but missing slash returns undef",
-    );
-    is(
-        s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c'),
-        undef,
-        "s_suuid_sess() with desc, but missing comma returns undef",
-    );
-    is(
-        s_suuid_sess('/ff529c20-4522-11e2-8c4a-0016d364066c,'),
-        '<sess>ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
-        "s_suuid_sess() without desc, but with slash and comma",
-    );
-    is(
-        s_suuid_sess('xterm/ff529c20-4522-11e2-8c4a-0016d364066c,'),
-        '<sess desc="xterm">ff529c20-4522-11e2-8c4a-0016d364066c</sess> ',
-        "s_suuid_sess() with desc and comma",
-    );
-    is(
-        s_suuid_sess(
-            'xfce/bbd272a0-44e0-11e2-bcdb-0016d364066c,' .
-            'xterm/c1986406-44e0-11e2-af23-0016d364066c,' .
-            'screen/e7f897b0-44e0-11e2-b5a0-0016d364066c,'
-        ),
-        (
-            '<sess desc="xfce">bbd272a0-44e0-11e2-bcdb-0016d364066c</sess> ' .
-            '<sess desc="xterm">c1986406-44e0-11e2-af23-0016d364066c</sess> ' .
-            '<sess desc="screen">e7f897b0-44e0-11e2-b5a0-0016d364066c</sess> ',
-        ),
-        's_suuid_sess() receives string with three with desc',
-    );
-    is(
-        s_suuid_sess('/ee5db39a-43f7-11e2-a975-0016d364066c,/da700fd8-43eb-11e2-889a-0016d364066c,'),
-        '<sess>ee5db39a-43f7-11e2-a975-0016d364066c</sess> <sess>da700fd8-43eb-11e2-889a-0016d364066c</sess> ',
-        "s_suuid_sess() receives two without desc",
-    );
-
-    # }}}
-} # test_test_functions()
+} # test_suuid_executable()
 
 sub s_top {
     # {{{
