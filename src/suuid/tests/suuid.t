@@ -828,6 +828,69 @@ sub test_suuid_environment {
 
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=" . "da700fd8-43eb-11e2-889a-0016d364066c" . "ee5db39a-43f7-11e2-a975-0016d364066c" . "abc" . " $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with two UUIDs together, 'abc' at EOS",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' =>
+                    '/da700fd8-43eb-11e2-889a-0016d364066c,' .
+                    '/ee5db39a-43f7-11e2-a975-0016d364066c,',
+            ),
+        ),
+        "The two UUIDs are found, 'abc' at EOS is discarded",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=" . "da700fd8-43eb-11e2-889a-0016d364066c" . ",,ee5db39a-43f7-11e2-a975-0016d364066c" . " $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with two UUIDs separated by two commas",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' =>
+                    '/da700fd8-43eb-11e2-889a-0016d364066c,' .
+                    '/ee5db39a-43f7-11e2-a975-0016d364066c,',
+            ),
+        ),
+        "The two UUIDs are found, ignoring useless commas",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID='" . ",,,,," . "abc/da700fd8-43eb-11e2-889a-0016d364066c" . ",,,,,,,,,," . "def/ee5db39a-43f7-11e2-a975-0016d364066c" . ",,%..¤¤¤%¤,,,'" . " $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID, lots of commas+punctuation and two UUIDS with descs",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' =>
+                    'abc/da700fd8-43eb-11e2-889a-0016d364066c,' .
+                    'def/ee5db39a-43f7-11e2-a975-0016d364066c,',
+            ),
+        ),
+        "The two UUIDs with desc are found, ignore garbage",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
     likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066c5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
         "/^$v1_templ\n\$/s",
         '/^$/',
