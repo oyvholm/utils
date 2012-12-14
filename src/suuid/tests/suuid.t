@@ -295,6 +295,7 @@ sub test_test_functions {
     );
 
     # }}}
+    return;
 } # test_test_functions()
 
 sub test_suuid_executable {
@@ -576,6 +577,7 @@ sub test_suuid_executable {
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
     ok(rmdir($Outdir), "rmdir $Outdir");
+    return;
 } # test_suuid_executable()
 
 sub test_suuid_comment {
@@ -638,6 +640,7 @@ sub test_suuid_comment {
 
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
+    return;
 } # test_suuid_comment()
 
 sub test_suuid_environment {
@@ -883,6 +886,7 @@ sub test_suuid_environment {
     );
 
     # }}}
+    return;
 } # test_suuid_environment()
 
 sub s_top {
