@@ -276,12 +276,22 @@ sub main {
 sub parse_sess_uuid {
     # Parse a $SESS_UUID variable and return an array with <sess> elements {{{
     my $sess_uuid = shift;
+    # FIXME: Copied from ./sess
+    my $legal_descchars = join('',
+        '\x2d-\x2e', # -.
+        '\x30-\x39', # 0-9
+        '\x41-\x5a', # A-Z
+        '\x5f',      # _
+        '\x61-\x7a', # a-z
+        '\x80-\xbf', # Valid UTF-8 bytes
+        '\xc2-\xef', # Valid UTF-8 bytes
+    );
     my @Xml = ();
     my $tmp_sess = $sess_uuid;
     if ($tmp_sess =~ /$Templ/) {
         my $descname = '';
         $tmp_sess =~ s{
-            ([^,/]*/)?
+            ([$legal_descchars]*?/?)
             ($Templ)
         } {
             my ($desc, $str) = ($1, $2);

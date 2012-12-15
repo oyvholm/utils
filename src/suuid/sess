@@ -51,6 +51,7 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
+# FIXME: Duplicated in ./suuid
 my $legal_descchars = join('',
     '\x2d-\x2e', # -.
     '\x30-\x39', # 0-9

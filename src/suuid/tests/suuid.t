@@ -801,10 +801,10 @@ sub test_suuid_environment {
     like(file_data($Outfile), # {{{
         s_top(
             s_suuid(
-                'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
+                'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,abc/ee5db39a-43f7-11e2-a975-0016d364066c,',
             ),
         ),
-        "Separated the two UUIDs, discards 'abc'",
+        "Separated the two UUIDs, keeps 'abc'",
     );
 
     # }}}
@@ -820,10 +820,10 @@ sub test_suuid_environment {
     like(file_data($Outfile), # {{{
         s_top(
             s_suuid(
-                'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,/ee5db39a-43f7-11e2-a975-0016d364066c,',
+                'sess' => '/da700fd8-43eb-11e2-889a-0016d364066c,abc/ee5db39a-43f7-11e2-a975-0016d364066c,',
             ),
         ),
-        "The two UUIDs are separated, 'abc/' is discarded",
+        "The two UUIDs are separated, 'abc/' is kept",
     );
 
     # }}}
@@ -891,6 +891,27 @@ sub test_suuid_environment {
 
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
+    likecmd("SESS_UUID=" . "da700fd8-43eb-11e2-889a-0016d364066c" . "def/ee5db39a-43f7-11e2-a975-0016d364066c" . " $CMD -l $Outdir", # {{{
+        "/^$v1_templ\n\$/s",
+        '/^$/',
+        0,
+        "SESS_UUID with two UUIDs separated by 'def/'",
+    );
+
+    # }}}
+    like(file_data($Outfile), # {{{
+        s_top(
+            s_suuid(
+                'sess' =>
+                    '/da700fd8-43eb-11e2-889a-0016d364066c,' .
+                    'def/ee5db39a-43f7-11e2-a975-0016d364066c,',
+            ),
+        ),
+        "The two UUIDs are found, 'def/' is kept with second UUID",
+    );
+
+    # }}}
+    ok(unlink($Outfile), "Delete $Outfile");
     likecmd("SESS_UUID=5f650dac-4404-11e2-8e0e-0016d364066c5f660e28-4404-11e2-808e-0016d364066c5f66ef14-4404-11e2-8b45-0016d364066c5f67e266-4404-11e2-a6f8-0016d364066c $CMD -l $Outdir", # {{{
         "/^$v1_templ\n\$/s",
         '/^$/',
@@ -925,12 +946,12 @@ sub test_suuid_environment {
         s_top(
             s_suuid(
                 'sess' => '/5f650dac-4404-11e2-8e0e-0016d364066c,' .
-                          '/5f660e28-4404-11e2-808e-0016d364066c,' .
+                          'abc/5f660e28-4404-11e2-808e-0016d364066c,' .
                           '/5f66ef14-4404-11e2-8b45-0016d364066c,' .
                           'nmap/5f67e266-4404-11e2-a6f8-0016d364066c,',
             ),
         ),
-        "All four UUIDs separated, 'abc' discarded, 'nmap' kept",
+        "All four UUIDs separated, 'abc' and 'nmap' kept",
     );
 
     # }}}
