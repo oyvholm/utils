@@ -14,15 +14,4 @@ done
 grep -hi $search_str ~/src/git/uuids/*.xml ~/uuids/*.xml |
     sort -u |
     sortuuid |
-    encap suuids |
-    xf |
-    perl -pe '
-        s/\\n/\n/g;
-        s/\\t/\t/g;
-        s/\\r/\r/g;
-        s/\\\\/\\/g;
-        s/&lt;/</g;
-        s/&gt;/>/g;
-        s/&amp;/&/g;
-    ' |
     less
