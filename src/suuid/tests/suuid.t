@@ -556,7 +556,6 @@ sub test_suuid_executable {
 
     # }}}
     ok(unlink($Outfile), "Delete $Outfile");
-    diag("Testing -q (--quiet) option...");
     test_suuid_environment($Outdir, $Outfile);
     diag("Test behaviour when unable to write to the log file...");
     likecmd("$CMD -l $Outdir", # {{{

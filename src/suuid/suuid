@@ -44,7 +44,6 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'logdir' => $Std{'logdir'},
-    'quiet' => 0,
     'random-mac' => 0,
     'raw' => 0,
     'rcfile' => $Std{'rcfile'},
@@ -67,7 +66,6 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'logdir|l=s' => \$Opt{'logdir'},
-    'quiet|q' => \$Opt{'quiet'},
     'random-mac|m' => \$Opt{'random-mac'},
     'raw' => \$Opt{'raw'},
     'rcfile=s' => \$Opt{'rcfile'},
@@ -451,8 +449,6 @@ Options:
     Don’t use the hardware MAC address, generate a random address field.
   -n x, --count x
     Print and store x UUIDs.
-  -q, --quiet
-    Avoid unnecessary output.
   --raw
     Don’t convert <txt> element to XML. When using this option, it is 
     expected that the value of the -c/--comment option is valid XML, 
