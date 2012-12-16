@@ -16,8 +16,6 @@ use warnings;
 
 BEGIN {
     use Test::More qw{no_plan};
-    use lib "$ENV{HOME}/bin/src/suuid";
-    use_ok("suuid");
 }
 
 use Getopt::Long;
