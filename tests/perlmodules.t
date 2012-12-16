@@ -22,7 +22,6 @@ BEGIN {
     use lib "$ENV{HOME}/bin/Lib/perllib";
     use lib "$ENV{HOME}/bin/src/fldb";
     use lib "$ENV{HOME}/bin/src/gpstools";
-    use lib "$ENV{HOME}/bin/src/suuid";
 
 }
 
@@ -150,7 +149,6 @@ my %Modules = (
     'constant' => '',
     'strict' => '',
     'suncgi' => '', # mine
-    'suuid' => '', # mine
     'utf8' => '',
     'vars' => '',
 
