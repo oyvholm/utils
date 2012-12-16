@@ -12,10 +12,13 @@
 #=======================================================================
 
 use strict;
+use sigtrap handler => \&handle_signal, 'normal-signals';
 use Getopt::Long;
 use Time::HiRes;
 
 $| = 1;
+
+$SIG{'TERM'} = 'handle_signal';
 
 our $Debug = 0;
 
@@ -110,29 +113,58 @@ my $begin_time = Time::HiRes::time();
 my $retval = system(@Cmd);
 my $end_time = Time::HiRes::time();
 msg(2, "SESS_UUID before s: '$ENV{'SESS_UUID'}'");
-$ENV{'SESS_UUID'} =~ s/$descname\/$uuid,//;
+$ENV{'SESS_UUID'} = remove_last_uuid($ENV{'SESS_UUID'});
 msg(2, "SESS_UUID after s : '$ENV{'SESS_UUID'}'");
 
-my $end_cmd = sprintf(
-    "suuid --raw%s -c \"<sess_end> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration> <exit>%s</exit> </sess_end>\"",
-    (length($Opt{'tag'})
-        ? " --tag $Opt{'tag'}"
-        : ""
-    ),
-    $uuid,
-    suuid_xml($cmd_str),
-    (length($Opt{'comment'})
-        ? sprintf(" <comment>%s</comment>", suuid_xml($Opt{'comment'}))
-        : ""
-    ),
-    xml_time_period($end_time - $begin_time),
-    $retval
-);
-chomp(my $end_uuid = `$end_cmd`);
-$Opt{'quiet'} < 2 && print(STDERR "sess.end:$descname/$end_uuid");
-$Opt{'quiet'} < 1 && printf(STDERR " -- %s, exit code '%d'.",
-                            time_period($end_time - $begin_time), $retval);
-$Opt{'quiet'} < 2 && print(STDERR "\n");
+write_end_entry();
+
+sub remove_last_uuid {
+    # {{{
+    my $txt = shift;
+    $txt =~ s/$descname\/$uuid,?//;
+    return($txt);
+    # }}}
+} # remove_last_uuid()
+
+sub write_end_entry {
+    # {{{
+    my $end_cmd = sprintf(
+        "suuid --raw%s -c \"<sess_end> <finished>%s</finished> <cmd>%s</cmd>%s <duration>%s </duration>%s </sess_end>\"",
+        (length($Opt{'tag'})
+            ? " --tag $Opt{'tag'}"
+            : ""
+        ),
+        $uuid,
+        suuid_xml($cmd_str),
+        (length($Opt{'comment'})
+            ? sprintf(" <comment>%s</comment>", suuid_xml($Opt{'comment'}))
+            : ""
+        ),
+        xml_time_period($end_time - $begin_time),
+        length($retval)
+            ? " <exit>$retval</exit>"
+            : "",
+    );
+    $ENV{'SESS_UUID'} = remove_last_uuid($ENV{'SESS_UUID'});
+    chomp(my $end_uuid = `$end_cmd`);
+    $Opt{'quiet'} < 2 && print(STDERR "sess.end:$descname/$end_uuid");
+    $Opt{'quiet'} < 1 && printf(STDERR " -- %s, exit code '%s'.",
+                                time_period($end_time - $begin_time), $retval);
+    $Opt{'quiet'} < 2 && print(STDERR "\n");
+    return;
+    # }}}
+} # write_end_entry()
+
+sub handle_signal {
+    # {{{
+    my $sig = shift;
+    msg(0, "Received $sig signal, aborting");
+    defined($end_time) || ($end_time = Time::HiRes::time());
+    defined($retval) || ($retval = '');
+    write_end_entry();
+    exit(1);
+    # }}}
+} # handle_signal()
 
 sub suuid_xml {
     # {{{
