@@ -1,5 +1,6 @@
 *.swp
 /Git/gpstools/
+/Git/suuid/
 /Git/svnutils/
 /Lib/std/c/compile.tmp/
 /src/fldb/tests/log/
