@@ -19,7 +19,7 @@ if test "$1" = "-c"; then
 fi
 
 # Delete all commit-* branches
-branches=`git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$'`
+branches=`git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$' | grep -Ev commit-0{40}`
 test -n "$branches" && git branch -D $branches
 
 test "$1" = "-D" && exit
