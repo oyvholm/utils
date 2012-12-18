@@ -15,7 +15,7 @@ test:
 	cd Lib/std/c; ./compile
 	cd src/fldb/tests; $(MAKE)
 	cd src/smsum/tests; $(MAKE)
-	cd src/suuid/tests; $(MAKE)
+	cd Git/suuid/tests; $(MAKE)
 	cd src/gpstools/tests; $(MAKE)
 
 testclean:
@@ -23,7 +23,7 @@ testclean:
 	cd tests && $(MAKE) clean
 	cd src/fldb/tests && $(MAKE) clean
 	cd src/smsum/tests && $(MAKE) clean
-	cd src/suuid/tests && $(MAKE) clean
+	cd Git/suuid/tests && $(MAKE) clean
 	cd src/gpstools/tests && $(MAKE) clean
 
 unmerged:
