@@ -29,7 +29,9 @@ elif test "$1" = "-t"; then
     sess -t c_ssht.t -- $CMD &
 elif test "$1" = "-v"; then
     sess -d ssh_tunnel -- ssh -L 590$2:localhost:590$2 -C -N -f $HOST
-    sess -- xtightvncviewer -encodings tight localhost:$2
+    quality_str=
+    test -n "$3" && quality_str="-quality $3"
+    sess -- xtightvncviewer -encodings tight $quality_str localhost:$2
 else
     echo Syntax: $progname \[ -c \| -k \| -l \| -t \| -v \]
 fi
