@@ -27,6 +27,7 @@ if [ ! -d suuid/. ]; then
     cd suuid
     git remote add github git@github.com:sunny256/suuid.git
     git remote add gitorious git@gitorious.org:suuid/suuid.git
+    git remote add bitbucket git@bitbucket.org:sunny256/suuid.git
     cd ..
 fi
 (cd suuid && git fetch --all && git checkout master && git merge --ff-only sunbase/master)
