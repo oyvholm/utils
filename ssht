@@ -27,6 +27,9 @@ elif test "$1" = "-l"; then
 elif test "$1" = "-t"; then
     test -n "$PID" && { echo $progname: Tunnel already active at PID $PID >&2; exit 1; }
     sess -t c_ssht.t -- $CMD &
+elif test "$1" = "-v"; then
+    sess -d ssh_tunnel -- ssh -L 590$2:localhost:590$2 -C -N -f $HOST
+    sess -- xtightvncviewer -encodings tight localhost:$2
 else
-    echo Syntax: $progname \[ -c \| -k \| -l \| -t \]
+    echo Syntax: $progname \[ -c \| -k \| -l \| -t \| -v \]
 fi
