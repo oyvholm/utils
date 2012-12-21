@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # finduuid
@@ -12,9 +12,10 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
 
@@ -32,18 +33,18 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.00';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "debug" => \$Opt{'debug'},
-    "filenames|f" => \$Opt{'filenames'},
-    "help|h" => \$Opt{'help'},
-    "line|l" => \$Opt{'line'},
-    "unique|u" => \$Opt{'unique'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'debug' => \$Opt{'debug'},
+    'filenames|f' => \$Opt{'filenames'},
+    'help|h' => \$Opt{'help'},
+    'line|l' => \$Opt{'line'},
+    'unique|u' => \$Opt{'unique'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -54,33 +55,42 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my $Lh = "[0-9a-fA-F]";
-my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my %uuid_list = ();
 my $exit_value = 1;
 
-while (<>) {
-    chomp(my $Line = $_);
-    if (/$Templ/) {
-        if ($Opt{'line'}) {
-            my $print_line = 0;
-            my $Scan = $Line;
-            $Scan =~ s/($Templ)/defined($uuid_list{lc($1)}) || ($print_line = 1), ""/ge;
-            if ($print_line) {
-                if ($Opt{'unique'}) {
-                    $Scan = $Line;
-                    $Scan =~ s/($Templ)/$uuid_list{lc($1)} = 1, ""/ge;
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+    my $Lh = "[0-9a-fA-F]";
+    my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+
+    while (<>) {
+        chomp(my $Line = $_);
+        if (/$Templ/) {
+            if ($Opt{'line'}) {
+                my $print_line = 0;
+                my $Scan = $Line;
+                $Scan =~ s/($Templ)/defined($uuid_list{lc($1)}) || ($print_line = 1), ""/ge;
+                if ($print_line) {
+                    if ($Opt{'unique'}) {
+                        $Scan = $Line;
+                        $Scan =~ s/($Templ)/$uuid_list{lc($1)} = 1, ""/ge;
+                    }
+                    printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
+                    $exit_value = 0;
                 }
-                printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
-                $exit_value = 0;
+            } else {
+                $Line =~ s/($Templ)/print_uuid($1)/ge;
             }
-        } else {
-            $Line =~ s/($Templ)/print_uuid($1)/ge;
         }
     }
-}
 
-exit($exit_value);
+    exit($exit_value);
+    # }}}
+} # main()
 
 sub print_uuid {
     # {{{
@@ -97,6 +107,7 @@ sub print_uuid {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -108,7 +119,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Scan files for UUIDs. Returns 0 if at least one UUID was found, 1 
 otherwise.
@@ -144,6 +155,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
@@ -156,7 +168,7 @@ sub D {
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
     print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
+    return('');
     # }}}
 } # D()
 
