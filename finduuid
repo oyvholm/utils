@@ -55,33 +55,42 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my $Lh = "[0-9a-fA-F]";
-my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 my %uuid_list = ();
 my $exit_value = 1;
 
-while (<>) {
-    chomp(my $Line = $_);
-    if (/$Templ/) {
-        if ($Opt{'line'}) {
-            my $print_line = 0;
-            my $Scan = $Line;
-            $Scan =~ s/($Templ)/defined($uuid_list{lc($1)}) || ($print_line = 1), ""/ge;
-            if ($print_line) {
-                if ($Opt{'unique'}) {
-                    $Scan = $Line;
-                    $Scan =~ s/($Templ)/$uuid_list{lc($1)} = 1, ""/ge;
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+    my $Lh = "[0-9a-fA-F]";
+    my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+
+    while (<>) {
+        chomp(my $Line = $_);
+        if (/$Templ/) {
+            if ($Opt{'line'}) {
+                my $print_line = 0;
+                my $Scan = $Line;
+                $Scan =~ s/($Templ)/defined($uuid_list{lc($1)}) || ($print_line = 1), ""/ge;
+                if ($print_line) {
+                    if ($Opt{'unique'}) {
+                        $Scan = $Line;
+                        $Scan =~ s/($Templ)/$uuid_list{lc($1)} = 1, ""/ge;
+                    }
+                    printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
+                    $exit_value = 0;
                 }
-                printf("%s%s\n", ($Opt{'filenames'} ? "$ARGV:" : ""), $Line);
-                $exit_value = 0;
+            } else {
+                $Line =~ s/($Templ)/print_uuid($1)/ge;
             }
-        } else {
-            $Line =~ s/($Templ)/print_uuid($1)/ge;
         }
     }
-}
 
-exit($exit_value);
+    exit($exit_value);
+    # }}}
+} # main()
 
 sub print_uuid {
     # {{{
