@@ -87,7 +87,10 @@ if ($Opt{'recursive'}) {
 my $orig_dir = getcwd();
 my ($total_before, $total_after, $total_saved) = (0, 0, 0);
 LOOP: for my $f (@Dirs) {
-    if (-d "$f/.git/.") {
+    my $object_dir = '';
+    -d "$f/.git/." && ($object_dir = ".git/objects");
+    -d "$f/objects/." && ($object_dir = "objects");
+    if (length($object_dir)) {
         print("================ $f ================\n");
         if (!chdir($f)) {
             warn("$progname: $f: Cannot chdir: $!\n");
@@ -135,10 +138,10 @@ LOOP: for my $f (@Dirs) {
             if (!-e ".no-git-gc") {
                 my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
                 print("==== git gc $dang_str ====\n");
-                chomp(my $before = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
+                chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_before += $before;
                 system("git", "gc", $dang_str) && (check_sig($?) || push(@err_compress, $f));
-                chomp(my $after = `(find .git/objects -type f -printf '%s+' ; echo 0) | bc`);
+                chomp(my $after = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_after += $after;
                 my $saved = $before - $after;
                 $before && printf("\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n", commify($before), commify($after), commify($saved), 100.0 * $saved / $before);
