@@ -8,6 +8,7 @@
 
 # FIXME: Why doesn’t the ^ (caret) work with "grep -z" ?
 
+test -w /tmp/. || { echo mkFiles: /tmp/: Directory not writable or not found >&2; exit 1; };
 lockname=mkFiles.lock
 until mkdir $lockname 2>/dev/null; do
 	echo $0: $lockname: Waiting for lock... >&2
@@ -21,14 +22,15 @@ if test "$1" = "-m"; then
 fi
 
 uuid=`suuid$suuid_m -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
-echo \# $uuid >Files.sha1
+tmpsha1=/tmp/.mkFiles.$uuid.tmp
+echo \# $uuid >$tmpsha1
 find -type f -print0 | \
     grep -zv '/\.git/' | \
     LC_COLLATE=C sort -z | \
-    grep -zv -e '\./Files\.sha1$' | \
-    xargs -0 sha1sum -b >>Files.sha1
-echo -n "# smsum:" >>Files.sha1
-echo `smsum <Files.sha1` >>Files.sha1
+    xargs -0 sha1sum -b >>$tmpsha1
+echo -n "# smsum:" >>$tmpsha1
+echo `smsum <$tmpsha1` >>$tmpsha1
+mv $tmpsha1 Files.sha1
 echo mkFiles: Done.
 
 rmdir $lockname
