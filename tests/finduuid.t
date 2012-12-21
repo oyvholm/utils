@@ -158,6 +158,23 @@ END
 );
 
 # }}}
+diag("Testing -d (--date) option...");
+testcmd("$CMD -d finduuid-files/text2", # {{{
+    "08CCB59A-88E1-11DD-A80C-000475E441B9(2008-09-22T19:59:58.7635610Z)\n",
+    "",
+    0,
+    "Option --date lists timestamp after UUID",
+);
+
+# }}}
+testcmd("$CMD -dl finduuid-files/text2", # {{{
+    "here 08CCB59A-88E1-11DD-A80C-000475E441B9(2008-09-22T19:59:58.7635610Z)blabla\n",
+    "",
+    0,
+    "Option --date works witk --line",
+);
+
+# }}}
 diag("Testing -f (--file) option...");
 testcmd("$CMD -f finduuid-files/std-random finduuid-files/textfile", # {{{
     <<END,
