@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # finduuid
@@ -12,9 +12,10 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
 our $Debug = 0;
 
@@ -32,18 +33,18 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.00';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "debug" => \$Opt{'debug'},
-    "filenames|f" => \$Opt{'filenames'},
-    "help|h" => \$Opt{'help'},
-    "line|l" => \$Opt{'line'},
-    "unique|u" => \$Opt{'unique'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'debug' => \$Opt{'debug'},
+    'filenames|f' => \$Opt{'filenames'},
+    'help|h' => \$Opt{'help'},
+    'line|l' => \$Opt{'line'},
+    'unique|u' => \$Opt{'unique'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -97,6 +98,7 @@ sub print_uuid {
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -108,7 +110,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Scan files for UUIDs. Returns 0 if at least one UUID was found, 1 
 otherwise.
@@ -144,6 +146,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
@@ -156,7 +159,7 @@ sub D {
     $File =~ s#\\#/#g;
     $File =~ s#^.*/(.*?)$#$1#;
     print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
+    return('');
     # }}}
 } # D()
 
