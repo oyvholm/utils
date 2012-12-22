@@ -75,7 +75,12 @@ sub main {
 sub readable_uuid {
     # {{{
     my $uuid = shift;
-    return(sprintf("%s(%s)", $uuid, uuid_time2($uuid)));
+    $uuid =~ s/
+        ($Lh{8}-$Lh{4}-1$Lh{3}-$Lh{4})(-$Lh{12})
+    /
+        sprintf("(UUID:%s%s)", uuid_time2("$1$2"), $2)
+    /egx;
+    return($uuid);
     # }}}
 } # readable_uuid()
 
