@@ -27,9 +27,19 @@ while (<>) {
 		(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+
 		(\d+)\s+
 		(\d\d:\d\d:\d\d)\s+
+		([A-Za-c]+\s+)?
 		(\d\d\d\d)
 	/
-		sprintf("%s %04u-%s-%02u %s", $1, $5, $mnd_str{$2}, $3, $4)
+		sprintf("%s %04u-%s-%02u %s%s",
+			$1,
+			$6,
+			$mnd_str{$2},
+			$3,
+			$4,
+			defined($5)
+				? " $5"
+				: "",
+		)
 	/eix;
 	s/
 		(Mon|Tue|Wed|Thu|Fri|Sat|Sun),\s+
