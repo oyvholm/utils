@@ -52,3 +52,5 @@ while (<>) {
 	/eix;
 	print;
 }
+
+# vim: set noet :
