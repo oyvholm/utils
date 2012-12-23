@@ -3,8 +3,8 @@
 # File ID: b8c0ee54-eb71-11df-a07a-fefdb24f8e10
 
 remotes=origin
+test "$1" = "-a" && { remotes=$(git remote); shift; }
 test -z "$1" || remotes="$@"
-test "$remotes" = "-a" && { remotes=$(git remote); shift; }
 echo
 for remote in $remotes; do
     echo ==== remote $remote
