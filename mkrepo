@@ -74,6 +74,26 @@ $repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid char
 if ($Opt{'create-remote'}) {
     system("ssh", $url, "mkdir $rg && git init --bare $rg");
     system("git", "remote", "add", "sunbase", "$url:$rg");
+    if (-d "$dir/.") {
+        msg(1, "'$dir' exists, check for local repo...");
+        if (!-d "$rg/.") {
+            msg(1, "'$rg' doesn't exist, create local repo");
+            system("git", "init", "--bare", $rg);
+        } else {
+            msg(1, "$rg: Repo already exists, that's good");
+        }
+        system("git", "remote", "add", "loc-repo", "sunny\@localhost:$rg");
+        chomp(my $origdir = `pwd`);
+        if (chdir($rg)) {
+            system("git", "remote", "add", "sunbase", "$url:$rg");
+            chdir($origdir) ||
+                warn("$progname: $origdir: Cannot chdir to original directory: $!\n");
+        } else {
+            warn("$progname: $rg: chdir error: $!\n");
+        }
+    } else {
+        msg(1, "'$dir' doesn't exist, skipping check for local repo");
+    }
 }
 if ($Opt{'backup-remote'}) {
     -d "$backup_dir/$repo.git/." || system("git", "init", "--bare", "$backup_dir/$repo.git");
