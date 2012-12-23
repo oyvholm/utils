@@ -5,8 +5,6 @@
 remotes=origin
 test -z "$1" || remotes="$@"
 test "$remotes" = "-a" && { remotes=$(git remote); shift; }
-origbranch=$(git branch | grep ^\\* | grep -v '(no branch)' | cut -c 3-)
-git checkout $(git log -1 --format=%H)
 echo
 for remote in $remotes; do
     echo ==== remote $remote
@@ -16,4 +14,3 @@ for remote in $remotes; do
     done
     echo
 done
-test -n "$origbranch" && git checkout $origbranch
