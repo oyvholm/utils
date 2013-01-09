@@ -32,7 +32,7 @@ elif test "$1" = "-v"; then
     sess -d ssh_tunnel -- ssh -L 590$2:localhost:590$2 -C -N -f $HOST
     quality_str=
     test -n "$3" && quality_str="-quality $3"
-    sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 $quality_str localhost:$2
+    sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 -nocursorshape $quality_str localhost:$2
     pkill -f "ssh -L 590$2:localhost:590$2"
 else
     echo Syntax: $progname \[ -c \| -k \| -l \| -t \| -v \]
