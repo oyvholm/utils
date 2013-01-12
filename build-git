@@ -183,6 +183,7 @@ if [ -n "$curr_git_ver" ]; then
         echo
         unset choice
         echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
+        echo Going to compile git $(git describe --long --match 'v1*' origin/master)
         echo
         echo If that looks okay to you, press \'y\' to start the build, or:
         echo \'d\' to diff
