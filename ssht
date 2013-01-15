@@ -33,7 +33,7 @@ elif test "$1" = "-t"; then
     sess -t c_ssht.t -- $CMD &
 elif test "$1" = "-v"; then
     msg Running pkill...
-    pkill -f "ssh -L 590$2:localhost:590$2"
+    pkill -9 -f "ssh -L 590$2:localhost:590$2"
     msg Creating ssh tunnel...
     sess -d ssh_tunnel -- ssh -L 590$2:localhost:590$2 -C -N -f $HOST
     quality_str=
@@ -41,7 +41,7 @@ elif test "$1" = "-v"; then
     msg Starting xtightvncviewer...
     sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 -nocursorshape $quality_str localhost:$2
     msg Destroying ssh tunnel...
-    pkill -f "ssh -L 590$2:localhost:590$2"
+    pkill -9 -f "ssh -L 590$2:localhost:590$2"
 else
     echo Syntax: $progname \[ -c \| -k \| -l \| -t \| -v \]
 fi
