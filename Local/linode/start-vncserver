@@ -7,4 +7,6 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+vncserver -kill :1
+rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
 sess -- vncserver -depth 16 -geometry 1260x720 :1
