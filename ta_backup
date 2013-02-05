@@ -3,7 +3,32 @@
 #=======================================================================
 # ta_backup
 # File ID: 923caf7a-6fa9-11e2-a5bc-0016d364066c
-# [Description]
+# Backup stuff to the external harddisk
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+progname=ta_backup
+lockdir=$HOME/.$progname.LOCK
+
+myexit() {
+    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
+    exit $1
+}
+
+msg() {
+    echo $progname: "$*"
+}
+
+trap "myexit 1" INT TERM
+mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
+
+test -d /media/seagate-3tb/backup || { echo $progname: seagate-3tb is not mounted >&2; myexit 1; }
+
+if test -e /dundre.mrk; then
+    desthome=/media/seagate-3tb/backup/dundre/home
+    test -d $desthome || { echo $progname: $desthome: Directory not found >&2; myexit 1; }
+    msg Backup dundre:/home/ to $desthome/
+    sess -t c_ta_backup -- sudo rsync -avP --delete /home/ $desthome/
+fi
+
+myexit
