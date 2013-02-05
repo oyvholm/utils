@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# ga-tree
+# File ID: 9aa77afc-3550-11e2-9816-00c0a8deee11
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+tree --charset UTF-8 -N "$@" | perl -pe 's/^(.*)( -> \.\..*)/$1/' | less
