@@ -6,7 +6,7 @@
 # Html Header Indexer
 #
 # Character set: UTF-8
-# ©opyleft STDyearDTS– Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2002– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 3 or later, see end of 
 # file for legal stuff.
 #=======================================================================
@@ -350,7 +350,7 @@ Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+Copyleft ©2002- Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
