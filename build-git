@@ -231,6 +231,7 @@ push_changes
 if [ "$use_configure" = "1" ]; then
     echo $progname: Creating ./configure
     make configure
+    echo ==== ./configure --prefix=$dest $configure_opts
     ./configure --prefix=$dest $configure_opts
 fi
 if [ "$make_doc" = "1" ]; then
@@ -248,9 +249,9 @@ else
     inst_info_str=
 fi
 echo Compiling $vername
-echo ================= make $makeflags =================
+echo ==== make prefix=$dest $makeflags all $make_doc_str $make_info_str \|\| myexit
 make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
-echo ================= make test =================
+echo ==== make $makeflags test
 make $makeflags test
 echo
 echo Ready to install $(./git --version) from branch \"$local_master\"
@@ -264,7 +265,7 @@ done
 until $sudo echo Password OK | grep -q "Password OK"; do
     :
 done
-echo ================= $sudo make install =================
+echo ==== $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
 $sudo mkdir -p $pref/{bin,prg,varprg}
