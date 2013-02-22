@@ -89,6 +89,8 @@ for (@allremotes_elem) {
     $allremotes{$_} = 1;
 }
 
+mysystem('git', 'push');
+
 for my $f (`git remote`) {
     chomp($f);
     my $do_push = 0;
