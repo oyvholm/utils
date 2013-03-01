@@ -7,3 +7,8 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+wavfile="$1"
+tmpfile="$1.tmp.wav"
+cp -p "$wavfile" "$wavfile.bck"
+mplayer -novideo -af format=s16le -ao "pcm:file=$tmpfile" "$wavfile"
+mv "$tmpfile" "$wavfile"
