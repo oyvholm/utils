@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# irssi
+# File ID: 8e00c630-8d1d-11e2-ab91-fefdb24f8e10
+# Start irssi(1) using the only acceptable time zone ever
+# (Han som oppfant sommertid skulle hatt i ræven.)
+#=======================================================================
+
+TZ=UTC sess -d irssi -- /usr/bin/irssi "$@"
