@@ -75,6 +75,9 @@ fetch_remotes() {
         echo ===== $f =====
         git fetch $f
     done
+    for f in maint master next pu todo; do
+        git branch | cut -c 3- | grep -q ^$f\$ || git branch $f origin/$f
+    done
 }
 
 commit_tree() {
