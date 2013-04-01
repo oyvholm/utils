@@ -60,9 +60,26 @@ sub main {
 
     $Opt{'zero'} && ($/ = "\x00");
 
+    while (my $fname = <>) {
+        chomp($fname);
+        printf("<a href=\"%s\">%s</a><br />\n",
+            txt2html($fname), txt2html($fname));
+    }
+
     return($Retval);
     # }}}
 } # main()
+
+sub txt2html {
+    # {{{
+    my $str = shift;
+    $str =~ s/&/&amp;/g;
+    $str =~ s/</&lt;/g;
+    $str =~ s/>/&gt;/g;
+    $str =~ s/"/&quot;/g;
+    return($str);
+    # }}}
+} # txt2html()
 
 sub print_version {
     # Print program version {{{
