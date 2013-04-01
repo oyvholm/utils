@@ -98,6 +98,9 @@ sub usage {
     }
     print(<<"END");
 
+Read filenames from stdin or files specified on the command line and 
+turn them into <a href="FILE">FILE</a><br />.
+
 Usage: $progname [options] [file [files [...]]]
 
 Options:
