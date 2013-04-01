@@ -25,6 +25,7 @@ our %Opt = (
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
+    'zero' => 0,
 
 );
 
@@ -39,6 +40,7 @@ GetOptions(
     'help|h' => \$Opt{'help'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
+    'zero|z' => \$Opt{'zero'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -55,6 +57,8 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+
+    $Opt{'zero'} && ($/ = "\x00");
 
     return($Retval);
     # }}}
@@ -85,6 +89,8 @@ Options:
     Show this help.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -z, --zero
+    Filenames are separated with a null byte instead of linefeed.
   --version
     Print version information.
   --debug
