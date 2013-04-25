@@ -12,11 +12,11 @@
       a:active { color: fuchsia; background-color: white; }
       -->
     </style>
-    <meta charset="utf-8">
-    <meta name="author" content="Øyvind A. Holm — sunny@sunbase.org">
+    <meta charset="utf-8" />
+    <meta name="author" content="Øyvind A. Holm — sunny@sunbase.org" />
   </head>
   <body>
     <p><a href="http://validator.w3.org/check?uri=referer">[Valid HTML5]</a>
-    <a href="http://jigsaw.w3.org/css-validator/check/referer">[Valid CSS]</a>
+    <a href="http://jigsaw.w3.org/css-validator/check/referer">[Valid CSS]</a></p>
   </body>
 </html>
