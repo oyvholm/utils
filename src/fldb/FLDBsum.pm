@@ -54,6 +54,7 @@ sub checksum {
         $Sum{'md5'} = $md5->hexdigest;
         $use_crc32 && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
         chomp($Sum{'gitsum'} = `git hash-object "$Filename" | head -c40`); # FIXME
+        chomp($Sum{'sha256'} = `sha256sum "$Filename" | head -c64`); # FIXME
     } else {
         %Sum = ();
     }

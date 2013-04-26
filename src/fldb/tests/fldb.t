@@ -213,12 +213,12 @@ diag("Testing -d (--description) option...");
 testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha1, gitsum, md5, crc32,
+ sha256, sha1, gitsum, md5, crc32,
  size, filename, mtime,
  descr,
  latin1
 ) VALUES (
- 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ '7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034', 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
  2048, E'random_2048', '2008-09-22T00:18:37Z',
  E'Groovy',
  FALSE
@@ -233,7 +233,7 @@ END
 testcmd("$CMD -d Yess -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Yess</descr> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Yess</descr> </file>
 </fldb>
 END
     "",
@@ -245,12 +245,12 @@ END
 testcmd("$CMD -d \"This is a description with spaces\" -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha1, gitsum, md5, crc32,
+ sha256, sha1, gitsum, md5, crc32,
  size, filename, mtime,
  descr,
  latin1
 ) VALUES (
- 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ '7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034', 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
  2048, E'random_2048', '2008-09-22T00:18:37Z',
  E'This is a description with spaces',
  FALSE
@@ -265,7 +265,7 @@ END
 testcmd("$CMD -d \"Somewhat & weird < > yepp\" -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
 </fldb>
 END
     "",
@@ -276,7 +276,7 @@ END
 # }}}
 likecmd("$CMD files/dir1/random_2048", # {{{
     '/^INSERT INTO files \(\n' .
-        ' sha1, gitsum, md5, crc32,\n' .
+        ' sha256, sha1, gitsum, md5, crc32,\n' .
         ' size, filename, mtime, descr, ctime,\n' .
         ' path,\n' .
         ' inode, links, device, hostname,\n' .
@@ -284,7 +284,7 @@ likecmd("$CMD files/dir1/random_2048", # {{{
         ' lastver, nextver,\n' .
         ' latin1\n' .
         '\) VALUES \(\n' .
-        ' \'bd91a93ca0462da03f2665a236d7968b0fd9455d\', \'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59\', \'4a3074b2aae565f8558b7ea707ca48d2\', NULL,\n' .
+        ' \'7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034\', \'bd91a93ca0462da03f2665a236d7968b0fd9455d\', \'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59\', \'4a3074b2aae565f8558b7ea707ca48d2\', NULL,\n' .
         ' 2048, E\'random_2048\', \'2008-09-22T00:18:37Z\', NULL, \'\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ\',\n' .
         ' E\'files\/dir1\/random_2048\',\n' .
         ' \d+, 1, E\'\d+\', E\'.+\',\n' .
@@ -303,12 +303,12 @@ diag("Testing -s (--short-format) option...");
 testcmd("$CMD -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha1, gitsum, md5, crc32,
+ sha256, sha1, gitsum, md5, crc32,
  size, filename, mtime,
  descr,
  latin1
 ) VALUES (
- 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
+ '7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034', 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
  2048, E'random_2048', '2008-09-22T00:18:37Z',
  NULL,
  FALSE
@@ -325,6 +325,7 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
     '/^<fldb>\n' .
             '<file> ' .
                 '<size>2048<\/size> ' .
+                '<sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> ' .
                 '<sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d<\/sha1> ' .
                 '<gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59<\/gitsum> ' .
                 '<md5>4a3074b2aae565f8558b7ea707ca48d2<\/md5> ' .
@@ -349,7 +350,7 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
 testcmd("$CMD -xs files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> </file>
 </fldb>
 END
     "",

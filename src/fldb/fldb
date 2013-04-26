@@ -183,6 +183,7 @@ sub add_entry {
                     $Retval = sprintf(
                         "<file> " .
                             "<size>%u</size> " .
+                            "<sha256>%s</sha256> " .
                             "<sha1>%s</sha1> " .
                             "<gitsum>%s</gitsum> " .
                             "<md5>%s</md5> " .
@@ -193,6 +194,7 @@ sub add_entry {
                             "%s" . # $latin_str
                         "</file>\n",
                         $Size,
+                        $Sum{'sha256'},
                         $Sum{'sha1'},
                         $Sum{'gitsum'},
                         $Sum{'md5'},
@@ -208,6 +210,7 @@ sub add_entry {
                     $Retval = sprintf(
                         "<file> " .
                             "<size>%s</size> " .
+                            "<sha256>%s</sha256> " .
                             "<sha1>%s</sha1> " .
                             "<gitsum>%s</gitsum> " .
                             "<md5>%s</md5> " .
@@ -229,6 +232,7 @@ sub add_entry {
                             "%s" . # $latin1_str
                         "</file>\n",
                         $Size,
+                        $Sum{sha256},
                         $Sum{sha1},
                         $Sum{gitsum},
                         $Sum{md5},
@@ -260,18 +264,18 @@ sub add_entry {
                     # {{{
                     $Retval = sprintf(<<END,
 INSERT INTO files (
- sha1, gitsum, md5, crc32,
+ sha256, sha1, gitsum, md5, crc32,
  size, filename, mtime,
  descr,
  latin1
 ) VALUES (
- '%s', '%s', '%s', %s,
+ '%s', '%s', '%s', '%s', %s,
  %s, E'%s', '%s',
  %s,
  %s
 );
 END
-                        $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
+                        $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
                         $Size, $base_filename, $Mtime,
                         $descr_str,
                         $latin1_str,
@@ -281,7 +285,7 @@ END
                     # {{{
                     $Retval = sprintf(<<END,
 INSERT INTO files (
- sha1, gitsum, md5, crc32,
+ sha256, sha1, gitsum, md5, crc32,
  size, filename, mtime, descr, ctime,
  path,
  inode, links, device, hostname,
@@ -289,7 +293,7 @@ INSERT INTO files (
  lastver, nextver,
  latin1
 ) VALUES (
- '%s', '%s', '%s', %s,
+ '%s', '%s', '%s', '%s', %s,
  %s, E'%s', '%s', %s, '%s',
  E'%s',
  %s, %s, E'%s', E'%s',
@@ -298,7 +302,7 @@ INSERT INTO files (
  %s
 );
 END
-                        $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
+                        $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
                         $Size, $base_filename, $Mtime, $descr_str, $Ctime,
                         $safe_filename,
                         $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
