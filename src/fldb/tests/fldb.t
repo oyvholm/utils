@@ -320,6 +320,49 @@ END
 );
 
 # }}}
+diag("Testing -j (--json) option...");
+likecmd("$CMD -j files/dir1/random_2048", # {{{
+    '/^\{"files":\[\{' .
+        '"size":"2048",' .
+        '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
+        '"sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d",' .
+        '"gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
+        '"md5":"4a3074b2aae565f8558b7ea707ca48d2",' .
+        '"filename":"random_2048",' .
+        '"mtime":"2008-09-22T00:18:37Z",' .
+        '"ctime":"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ",' .
+        '"path":"files\/dir1\/random_2048",' .
+        '"inode":"\d+",' .
+        '"links":"\d+",' .
+        '"device":"\d+",' .
+        '"hostname":".*?",' .
+        '"uid":"\d+",' .
+        '"gid":"\d+",' .
+        '"perm":"0644"' .
+        '\}\]\}\n' .
+        '$/',
+    '/^$/',
+    0,
+    "Output JSON of dir1/random_2048",
+);
+
+# }}}
+testcmd("$CMD -js files/dir1/random_2048", # {{{
+    '{"files":[{' .
+    '"size":"2048",' .
+    '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
+    '"sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d",' .
+    '"gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
+    '"md5":"4a3074b2aae565f8558b7ea707ca48d2",' .
+    '"filename":"files/dir1/random_2048",' .
+    '"mtime":"2008-09-22T00:18:37Z"' .
+    '}]}' . "\n",
+    "",
+    0,
+    "Output short JSON of dir1/random_2048",
+);
+
+# }}}
 diag("Testing -x (--xml) option...");
 likecmd("$CMD -x files/dir1/random_2048", # {{{
     '/^<fldb>\n' .

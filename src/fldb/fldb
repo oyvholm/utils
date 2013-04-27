@@ -35,6 +35,7 @@ our %Opt = (
     'description' => "",
     'files-from' => "",
     'help' => 0,
+    'json' => 0,
     'short-format' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -57,6 +58,7 @@ GetOptions(
     "description|d=s" => \$Opt{'description'},
     "files-from|f=s" => \$Opt{'files-from'},
     "help|h" => \$Opt{'help'},
+    "json|j" => \$Opt{'json'},
     "short-format|s" => \$Opt{'short-format'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -66,6 +68,7 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
+($Opt{'json'} && $Opt{'xml'}) && die("$progname: Cannot mix --json and --xml options\n");
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -80,6 +83,7 @@ if (!valid_utf8($Hostname)) {
     $Hostname = latin1_to_utf8($Hostname);
 }
 my $safe_hostname = safe_string($Hostname);
+my $has_printed = 0;
 
 if ($Opt{'add'}) {
     $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
@@ -90,6 +94,7 @@ my $Sql; # How ironic.
 
 $Opt{'zero'} && ($/ = "\x00");
 
+$Opt{'json'} && print('{"files":[');
 $Opt{'xml'} && print("<fldb>\n");
 if (length($Opt{'files-from'})) {
     D("Opt{files-from} = '$Opt{'files-from'}'");
@@ -108,6 +113,7 @@ if (length($Opt{'files-from'})) {
         process_file($_);
     }
 }
+$Opt{'json'} && print("]}\n");
 $Opt{'xml'} && print("</fldb>\n");
 
 exit 0;
@@ -126,7 +132,9 @@ sub process_file {
             $Opt{'verbose'} && print("$Filename\n");
             $dbh->do($Sql) || warn("$progname: $Filename: Cannot INSERT\n");
         } else {
+            $Opt{'json'} && $has_printed && print(',');
             print($Sql);
+            $has_printed = 1;
         }
     }
     # }}}
@@ -158,15 +166,23 @@ sub add_entry {
             my $crc32_str;
             if ($Opt{'xml'}){
                 $crc32_str = $Opt{'crc32'} ? "<crc32>$Sum{crc32}</crc32> " : "";
+            } elsif ($Opt{'json'}) {
+                $crc32_str = $Opt{'crc32'} ? "\"crc32\":\"$Sum{crc32}\"" : "";
             } else {
                 $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
             }
             D("crc32_str = '$crc32_str'");
             my $latin1_str;
             if (valid_utf8($safe_filename)) {
-                $latin1_str = $Opt{'xml'} ? "" : "FALSE";
+                $latin1_str = ($Opt{'json'} || $Opt{'xml'}) ? "" : "FALSE";
             } else {
-                $latin1_str = $Opt{'xml'} ? "<latin1>1</latin1> " : "TRUE";
+                if ($Opt{'xml'}) {
+                    $latin1_str = '<latin1>1</latin1>';
+                } elsif ($Opt{'json'}) {
+                    $latin1_str = '"latin1":"1"';
+                } else {
+                    $latin1_str = 'TRUE';
+                }
                 $safe_filename = latin1_to_utf8($safe_filename);
             }
             D("latin1_str = '$latin1_str'");
@@ -255,6 +271,65 @@ sub add_entry {
                     );
                     # }}}
                 }
+            } elsif ($Opt{'json'}) {
+                my @json = ();
+                my $descr_str = length($Opt{'description'})
+                    ? '"descr":"' . txt_to_json($Opt{'description'}) . '"'
+                    : "";
+                push(@json,
+                    sprintf(
+                        '"size":"%u",' .
+                        '"sha256":"%s",' .
+                        '"sha1":"%s",' .
+                        '"gitsum":"%s",' .
+                        '"md5":"%s"',
+                        $Size,
+                        $Sum{'sha256'},
+                        $Sum{'sha1'},
+                        $Sum{'gitsum'},
+                        $Sum{'md5'},
+                    )
+                );
+                length($crc32_str) && push(@json, $crc32_str);
+                push(@json,
+                    sprintf(
+                        '"filename":"%s",' .
+                        '"mtime":"%s"',
+                        $Opt{'short-format'}
+                            ? $safe_filename
+                            : $base_filename,
+                        $Mtime,
+                    )
+                );
+                length($descr_str) && push(@json, $descr_str);
+                if (!$Opt{'short-format'}) {
+                    # {{{
+                    push(@json,
+                        sprintf(
+                            '"ctime":"%s",' .
+                            '"path":"%s",' .
+                            '"inode":"%s",' .
+                            '"links":"%s",' .
+                            '"device":"%s",' .
+                            '"hostname":"%s",' .
+                            '"uid":"%s",' .
+                            '"gid":"%s",' .
+                            '"perm":"%s"',
+                            $Ctime,
+                            $safe_filename,
+                            $Inode,
+                            $Nlinks,
+                            txt_to_json($Dev),
+                            $safe_hostname,
+                            $Uid,
+                            $Gid,
+                            $Mode,
+                        )
+                    );
+                    # }}}
+                }
+                length($latin1_str) && push(@json, $latin1_str);
+                $Retval = '{' . join(',', @json) . '}',
             } else {
                 my $descr_str = length($Opt{'description'})
                     ? "E'" . safe_sql($Opt{'description'}) . "'"
@@ -334,12 +409,29 @@ sub safe_string {
 
     if ($Opt{'xml'}) {
         $Str = txt_to_xml($Str);
+    } elsif ($Opt{'json'}) {
+        $Str = txt_to_json($Str);
     } else {
         $Str = safe_sql($Str);
     }
     return($Str);
     # }}}
 } # safe_string()
+
+sub txt_to_json {
+    # Convert plain text to JSON {{{
+    my $Txt = shift;
+    $Txt =~ s/\\/\\\\/gs;
+    $Txt =~ s/"/\\"/gs;
+    $Txt =~ s/\x08/\\b/gs;
+    $Txt =~ s/\x09/\\t/gs;
+    $Txt =~ s/\x0a/\\n/gs;
+    $Txt =~ s/\x0c/\\f/gs;
+    $Txt =~ s/\x0d/\\r/gs;
+    $Txt =~ s/([\x00-\x1f])/sprintf('\u%04X', ord($1))/gse;
+    return($Txt);
+    # }}}
+} # txt_to_json()
 
 sub txt_to_xml {
     # Convert plain text to XML {{{
@@ -384,6 +476,8 @@ Options:
     Read filenames from x.
   -h, --help
     Show this help.
+  -j, --json
+    Generate JSON output.
   -s, --short-format
     Output checksums, size, filename, mtime and latin1 fields only.
   -v, --verbose
