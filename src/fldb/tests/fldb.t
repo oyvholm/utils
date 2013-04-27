@@ -419,6 +419,26 @@ testcmd("$CMD -js files/dir1/year_1969", # {{{
 );
 
 # }}}
+testcmd("$CMD -xs files/dir1/year_2038", # {{{
+    "<fldb>\n" .
+        join(' ',
+            '<file>',
+                '<size>41</size>',
+                '<sha256>0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b</sha256>',
+                '<sha1>2113343435a9aadb458d576396d4f960071f8efd</sha1>',
+                '<gitsum>052a58773edb46b2d494a23718cac040fb38c741</gitsum>',
+                '<md5>6babaa47123f4f94ae59ed581a65090b</md5>',
+                '<name>files/dir1/year_2038</name>',
+                '<date>2038-01-19T03:14:07Z</date>',
+            '</file>',
+        ) .
+    "\n</fldb>\n",
+    "",
+    0,
+    "Display mtime from 2038 correctly",
+);
+
+# }}}
 diag("Clean up...");
 ok(chmod(0644, "files/dir1/chmod_0000"), "chmod(0644, 'files/dir1/chmod_0000')");
 ok(unlink(glob("files/dir1/*")), 'Delete files in files/dir1/*');
