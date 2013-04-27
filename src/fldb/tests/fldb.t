@@ -403,6 +403,7 @@ END
 
 # }}}
 
+diag("Clean up...");
 ok(chmod(0644, "files/dir1/chmod_0000"), "chmod(0644, 'files/dir1/chmod_0000')");
 ok(unlink(glob("files/dir1/*")), 'Delete files in files/dir1/*');
 ok(rmdir("files/dir1"), 'rmdir files/dir1');
