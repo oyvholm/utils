@@ -386,7 +386,7 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
         '$/',
     '/^$/',
     0,
-    "Output short XML from dir1/random_2048 with mtime",
+    "Output XML from dir1/random_2048",
 );
 
 # }}}
@@ -398,7 +398,7 @@ testcmd("$CMD -xs files/dir1/random_2048", # {{{
 END
     "",
     0,
-    "Output short XML from dir1/random_2048 with mtime",
+    "Output short XML from dir1/random_2048",
 );
 
 # }}}
