@@ -500,7 +500,7 @@ END
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
     my ($Seconds) = shift;
-    ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
+    ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return(undef);
 
     my @TA = gmtime($Seconds);
     my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",

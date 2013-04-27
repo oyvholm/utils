@@ -402,7 +402,23 @@ END
 );
 
 # }}}
+diag("Test strange mtimes...");
+testcmd("$CMD -js files/dir1/year_1969", # {{{
+    '{"files":[{' .
+    '"size":"41",' .
+    '"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d",' .
+    '"sha1":"07b8074463668967f6030016d719ef326eb6382d",' .
+    '"gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b",' .
+    '"md5":"6dce58e78b13dab939de6eef142b7543",' .
+    '"filename":"files/dir1/year_1969",' .
+    '"mtime":"1969-01-21T17:12:15Z"' .
+    '}]}' . "\n",
+    "",
+    0,
+    "Display mtime from 1969 correctly",
+);
 
+# }}}
 diag("Clean up...");
 ok(chmod(0644, "files/dir1/chmod_0000"), "chmod(0644, 'files/dir1/chmod_0000')");
 ok(unlink(glob("files/dir1/*")), 'Delete files in files/dir1/*');
