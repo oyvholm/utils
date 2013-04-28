@@ -56,9 +56,27 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    while (<>) {
+        print(txt_to_json($_));
+    }
     return($Retval);
     # }}}
 } # main()
+
+sub txt_to_json {
+    # Convert plain text to JSON {{{
+    my $Txt = shift;
+    $Txt =~ s/\\/\\\\/gs;
+    $Txt =~ s/"/\\"/gs;
+    $Txt =~ s/\x08/\\b/gs;
+    $Txt =~ s/\x09/\\t/gs;
+    $Txt =~ s/\x0a/\\n/gs;
+    $Txt =~ s/\x0c/\\f/gs;
+    $Txt =~ s/\x0d/\\r/gs;
+    $Txt =~ s/([\x00-\x1f])/sprintf('\u%04X', ord($1))/gse;
+    return($Txt);
+    # }}}
+} # txt_to_json()
 
 sub print_version {
     # Print program version {{{
@@ -76,6 +94,8 @@ sub usage {
         print_version();
     }
     print(<<"END");
+
+Escape plain text for use in JSON.
 
 Usage: $progname [options] [file [files [...]]]
 
