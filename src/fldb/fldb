@@ -207,8 +207,8 @@ sub add_entry {
                             "<gitsum>%s</gitsum> " .
                             "<md5>%s</md5> " .
                             "%s" . # $crc32_str
-                            "<name>%s</name> " .
-                            "<date>%s</date> " .
+                            "<filename>%s</filename> " .
+                            "<mtime>%s</mtime> " .
                             "%s" . # $descr_str
                             "%s" . # $latin_str
                         "</file>\n",
