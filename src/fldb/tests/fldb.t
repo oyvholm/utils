@@ -323,12 +323,12 @@ END
 diag("Testing -j (--json) option...");
 likecmd("$CMD -jl files/dir1/random_2048", # {{{
     '/^\{"files":\[\n\{' .
+        '"filename":"random_2048",' .
         '"size":"2048",' .
         '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
         '"sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d",' .
         '"gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
         '"md5":"4a3074b2aae565f8558b7ea707ca48d2",' .
-        '"filename":"random_2048",' .
         '"mtime":"2008-09-22T00:18:37Z",' .
         '"ctime":"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ",' .
         '"path":"files\/dir1\/random_2048",' .
@@ -349,12 +349,12 @@ likecmd("$CMD -jl files/dir1/random_2048", # {{{
 # }}}
 testcmd("$CMD -j files/dir1/random_2048", # {{{
     "{\"files\":[\n{" .
+    '"filename":"files/dir1/random_2048",' .
     '"size":"2048",' .
     '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
     '"sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d",' .
     '"gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
     '"md5":"4a3074b2aae565f8558b7ea707ca48d2",' .
-    '"filename":"files/dir1/random_2048",' .
     '"mtime":"2008-09-22T00:18:37Z"' .
     "}\n]}\n",
     "",
@@ -405,12 +405,12 @@ END
 diag("Test strange mtimes...");
 testcmd("$CMD -j files/dir1/year_1969", # {{{
     "{\"files\":[\n{" .
+    '"filename":"files/dir1/year_1969",' .
     '"size":"41",' .
     '"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d",' .
     '"sha1":"07b8074463668967f6030016d719ef326eb6382d",' .
     '"gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b",' .
     '"md5":"6dce58e78b13dab939de6eef142b7543",' .
-    '"filename":"files/dir1/year_1969",' .
     '"mtime":"1969-01-21T17:12:15Z"' .
     "}\n]}\n",
     "",

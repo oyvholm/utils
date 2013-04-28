@@ -281,11 +281,15 @@ sub add_entry {
                     : "";
                 push(@json,
                     sprintf(
+                        '"filename":"%s",' .
                         '"size":"%u",' .
                         '"sha256":"%s",' .
                         '"sha1":"%s",' .
                         '"gitsum":"%s",' .
                         '"md5":"%s"',
+                        $Opt{'long'}
+                            ? $base_filename
+                            : $safe_filename,
                         $Size,
                         $Sum{'sha256'},
                         $Sum{'sha1'},
@@ -296,11 +300,7 @@ sub add_entry {
                 length($crc32_str) && push(@json, $crc32_str);
                 push(@json,
                     sprintf(
-                        '"filename":"%s",' .
                         '"mtime":"%s"',
-                        $Opt{'long'}
-                            ? $base_filename
-                            : $safe_filename,
                         $Mtime,
                     )
                 );
