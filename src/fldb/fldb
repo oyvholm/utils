@@ -97,7 +97,7 @@ my $Sql; # How ironic.
 
 $Opt{'zero'} && ($/ = "\x00");
 
-$Opt{'json'} && print('{"files":[');
+$Opt{'json'} && print("{\"files\":[");
 $Opt{'xml'} && print("<fldb>\n");
 if (length($Opt{'files-from'})) {
     D("Opt{files-from} = '$Opt{'files-from'}'");
@@ -116,7 +116,7 @@ if (length($Opt{'files-from'})) {
         process_file($_);
     }
 }
-$Opt{'json'} && print("]}\n");
+$Opt{'json'} && print("\n]}\n");
 $Opt{'xml'} && print("</fldb>\n");
 
 exit 0;
@@ -332,7 +332,7 @@ sub add_entry {
                     # }}}
                 }
                 length($latin1_str) && push(@json, $latin1_str);
-                $Retval = '{' . join(',', @json) . '}',
+                $Retval = "\n{" . join(',', @json) . "}";
             } elsif ($Opt{'sql'}) {
                 my $descr_str = length($Opt{'description'})
                     ? "E'" . safe_sql($Opt{'description'}) . "'"
