@@ -1,0 +1,8 @@
+files/dir1
+files/dir1/chmod_0000
+files/dir1/empty
+files/dir1/random_2048
+files/dir1/random_333
+files/dir1/textfile
+files/dir1/year_1969
+files/dir1/year_2038
