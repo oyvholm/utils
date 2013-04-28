@@ -36,7 +36,7 @@ our %Opt = (
     'files-from' => "",
     'help' => 0,
     'json' => 0,
-    'short-format' => 0,
+    'long' => 0,
     'verbose' => 0,
     'version' => 0,
     'xml' => 0,
@@ -59,7 +59,7 @@ GetOptions(
     "files-from|f=s" => \$Opt{'files-from'},
     "help|h" => \$Opt{'help'},
     "json|j" => \$Opt{'json'},
-    "short-format|s" => \$Opt{'short-format'},
+    "long|l" => \$Opt{'long'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'},
@@ -194,7 +194,7 @@ sub add_entry {
                     ? "<descr>" . txt_to_xml($Opt{'description'}) . "</descr> "
                     : "";
                 D("descr_str = \"$descr_str\"");
-                if ($Opt{'short-format'}) {
+                if (!$Opt{'long'}) {
                     # {{{
                     $Retval = sprintf(
                         "<file> " .
@@ -295,14 +295,14 @@ sub add_entry {
                     sprintf(
                         '"filename":"%s",' .
                         '"mtime":"%s"',
-                        $Opt{'short-format'}
-                            ? $safe_filename
-                            : $base_filename,
+                        $Opt{'long'}
+                            ? $base_filename
+                            : $safe_filename,
                         $Mtime,
                     )
                 );
                 length($descr_str) && push(@json, $descr_str);
-                if (!$Opt{'short-format'}) {
+                if ($Opt{'long'}) {
                     # {{{
                     push(@json,
                         sprintf(
@@ -335,7 +335,7 @@ sub add_entry {
                     ? "E'" . safe_sql($Opt{'description'}) . "'"
                     : "NULL";
                 D("descr_str = \"$descr_str\"");
-                if ($Opt{'short-format'}) {
+                if (!$Opt{'long'}) {
                     # {{{
                     $Retval = sprintf(<<END,
 INSERT INTO files (
@@ -478,8 +478,8 @@ Options:
     Show this help.
   -j, --json
     Generate JSON output.
-  -s, --short-format
-    Output checksums, size, filename, mtime and latin1 fields only.
+  -l, --long
+    Use long format, include local information.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version

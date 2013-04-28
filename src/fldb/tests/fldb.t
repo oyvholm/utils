@@ -210,7 +210,7 @@ is(valid_utf8("\xF8"), # {{{
 diag("Testing widechar()...");
 diag("Testing latin1_to_utf8()...");
 diag("Testing -d (--description) option...");
-testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
+testcmd("$CMD -d Groovy files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
@@ -230,7 +230,7 @@ END
 );
 
 # }}}
-testcmd("$CMD -d Yess -xs files/dir1/random_2048", # {{{
+testcmd("$CMD -d Yess -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
 <file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Yess</descr> </file>
@@ -242,7 +242,7 @@ END
 );
 
 # }}}
-testcmd("$CMD -d \"This is a description with spaces\" -s files/dir1/random_2048", # {{{
+testcmd("$CMD -d \"This is a description with spaces\" files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
@@ -262,7 +262,7 @@ END
 );
 
 # }}}
-testcmd("$CMD -d \"Somewhat & weird < > yepp\" -xs files/dir1/random_2048", # {{{
+testcmd("$CMD -d \"Somewhat & weird < > yepp\" -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
 <file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
@@ -274,7 +274,7 @@ END
 );
 
 # }}}
-likecmd("$CMD files/dir1/random_2048", # {{{
+likecmd("$CMD -l files/dir1/random_2048", # {{{
     '/^INSERT INTO files \(\n' .
         ' sha256, sha1, gitsum, md5, crc32,\n' .
         ' size, filename, mtime, descr, ctime,\n' .
@@ -299,8 +299,8 @@ likecmd("$CMD files/dir1/random_2048", # {{{
 );
 
 # }}}
-diag("Testing -s (--short-format) option...");
-testcmd("$CMD -s files/dir1/random_2048", # {{{
+diag("Use default short format...");
+testcmd("$CMD files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
@@ -321,7 +321,7 @@ END
 
 # }}}
 diag("Testing -j (--json) option...");
-likecmd("$CMD -j files/dir1/random_2048", # {{{
+likecmd("$CMD -jl files/dir1/random_2048", # {{{
     '/^\{"files":\[\{' .
         '"size":"2048",' .
         '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
@@ -343,11 +343,11 @@ likecmd("$CMD -j files/dir1/random_2048", # {{{
         '$/',
     '/^$/',
     0,
-    "Output JSON of dir1/random_2048",
+    "Output long format JSON of dir1/random_2048",
 );
 
 # }}}
-testcmd("$CMD -js files/dir1/random_2048", # {{{
+testcmd("$CMD -j files/dir1/random_2048", # {{{
     '{"files":[{' .
     '"size":"2048",' .
     '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
@@ -364,7 +364,7 @@ testcmd("$CMD -js files/dir1/random_2048", # {{{
 
 # }}}
 diag("Testing -x (--xml) option...");
-likecmd("$CMD -x files/dir1/random_2048", # {{{
+likecmd("$CMD -xl files/dir1/random_2048", # {{{
     '/^<fldb>\n' .
             '<file> ' .
                 '<size>2048<\/size> ' .
@@ -386,11 +386,11 @@ likecmd("$CMD -x files/dir1/random_2048", # {{{
         '$/',
     '/^$/',
     0,
-    "Output XML from dir1/random_2048",
+    "Output long XML from dir1/random_2048",
 );
 
 # }}}
-testcmd("$CMD -xs files/dir1/random_2048", # {{{
+testcmd("$CMD -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
 <file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <name>files/dir1/random_2048</name> <date>2008-09-22T00:18:37Z</date> </file>
@@ -403,7 +403,7 @@ END
 
 # }}}
 diag("Test strange mtimes...");
-testcmd("$CMD -js files/dir1/year_1969", # {{{
+testcmd("$CMD -j files/dir1/year_1969", # {{{
     '{"files":[{' .
     '"size":"41",' .
     '"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d",' .
@@ -419,7 +419,7 @@ testcmd("$CMD -js files/dir1/year_1969", # {{{
 );
 
 # }}}
-testcmd("$CMD -xs files/dir1/year_2038", # {{{
+testcmd("$CMD -x files/dir1/year_2038", # {{{
     "<fldb>\n" .
         join(' ',
             '<file>',
