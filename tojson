@@ -23,6 +23,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'reverse' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -37,6 +38,7 @@ GetOptions(
 
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
+    'reverse|r' => \$Opt{'reverse'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -56,8 +58,16 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
-    while (<>) {
-        print(txt_to_json($_));
+    if ($Opt{'reverse'}) {
+        my $slurp = join('', <>);
+        $slurp =~ s/^\s*"(.*)"\s*/json_to_txt($1)/se;
+        print($slurp);
+    } else {
+        print('"');
+        while (<>) {
+            print(txt_to_json($_));
+        }
+        print('"');
     }
     return($Retval);
     # }}}
@@ -77,6 +87,21 @@ sub txt_to_json {
     return($Txt);
     # }}}
 } # txt_to_json()
+
+sub json_to_txt {
+    # Convert JSON back to plain text {{{
+    my $Txt = shift;
+    $Txt =~ s/\\\\/\\/gs;
+    $Txt =~ s/\\r/\x0d/gs;
+    $Txt =~ s/\\f/\x0c/gs;
+    $Txt =~ s/\\n/\x0a/gs;
+    $Txt =~ s/\\t/\x09/gs;
+    $Txt =~ s/\\b/\x08/gs;
+    $Txt =~ s/\\"/"/gs;
+    # $Txt =~ s/([\x00-\x1f])/sprintf('\u%04X', ord($1))/gse;
+    return($Txt);
+    # }}}
+} # json_to_txt()
 
 sub print_version {
     # Print program version {{{
@@ -103,6 +128,8 @@ Options:
 
   -h, --help
     Show this help.
+  -r, --reverse
+    Convert from JSON to text.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
