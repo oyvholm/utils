@@ -210,7 +210,7 @@ is(valid_utf8("\xF8"), # {{{
 diag("Testing widechar()...");
 diag("Testing latin1_to_utf8()...");
 diag("Testing -d (--description) option...");
-testcmd("$CMD -d Groovy files/dir1/random_2048", # {{{
+testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
@@ -242,7 +242,7 @@ END
 );
 
 # }}}
-testcmd("$CMD -d \"This is a description with spaces\" files/dir1/random_2048", # {{{
+testcmd("$CMD --sql -d \"This is a description with spaces\" files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
@@ -274,7 +274,7 @@ END
 );
 
 # }}}
-likecmd("$CMD -l files/dir1/random_2048", # {{{
+likecmd("$CMD -sl files/dir1/random_2048", # {{{
     '/^INSERT INTO files \(\n' .
         ' sha256, sha1, gitsum, md5, crc32,\n' .
         ' size, filename, mtime, descr, ctime,\n' .
@@ -300,7 +300,7 @@ likecmd("$CMD -l files/dir1/random_2048", # {{{
 
 # }}}
 diag("Use default short format...");
-testcmd("$CMD files/dir1/random_2048", # {{{
+testcmd("$CMD files/dir1/random_2048 --sql", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,

@@ -35,8 +35,9 @@ our %Opt = (
     'description' => "",
     'files-from' => "",
     'help' => 0,
-    'json' => 0,
+    'json' => 1,
     'long' => 0,
+    'sql' => 0,
     'verbose' => 0,
     'version' => 0,
     'xml' => 0,
@@ -60,6 +61,7 @@ GetOptions(
     "help|h" => \$Opt{'help'},
     "json|j" => \$Opt{'json'},
     "long|l" => \$Opt{'long'},
+    "sql|s" => \$Opt{'sql'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'},
@@ -68,7 +70,8 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
-($Opt{'json'} && $Opt{'xml'}) && die("$progname: Cannot mix --json and --xml options\n");
+($Opt{'sql'} || $Opt{'xml'}) && ($Opt{'json'} = 0);
+($Opt{'json'}+$Opt{'sql'}+$Opt{'xml'} > 1) && die("$progname: Cannot mix --json, --sql and --xml options\n");
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -85,7 +88,7 @@ if (!valid_utf8($Hostname)) {
 my $safe_hostname = safe_string($Hostname);
 my $has_printed = 0;
 
-if ($Opt{'add'}) {
+if ($Opt{'sql'} && $Opt{'add'}) {
     $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
         or die("connect: På trynet: $!");
 }
@@ -168,19 +171,19 @@ sub add_entry {
                 $crc32_str = $Opt{'crc32'} ? "<crc32>$Sum{crc32}</crc32> " : "";
             } elsif ($Opt{'json'}) {
                 $crc32_str = $Opt{'crc32'} ? "\"crc32\":\"$Sum{crc32}\"" : "";
-            } else {
+            } elsif ($Opt{'sql'}) {
                 $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
             }
             D("crc32_str = '$crc32_str'");
             my $latin1_str;
             if (valid_utf8($safe_filename)) {
-                $latin1_str = ($Opt{'json'} || $Opt{'xml'}) ? "" : "FALSE";
+                $latin1_str = $Opt{'sql'} ? "FALSE" : "";
             } else {
                 if ($Opt{'xml'}) {
                     $latin1_str = '<latin1>1</latin1>';
                 } elsif ($Opt{'json'}) {
                     $latin1_str = '"latin1":"1"';
-                } else {
+                } elsif ($Opt{'sql'}) {
                     $latin1_str = 'TRUE';
                 }
                 $safe_filename = latin1_to_utf8($safe_filename);
@@ -330,7 +333,7 @@ sub add_entry {
                 }
                 length($latin1_str) && push(@json, $latin1_str);
                 $Retval = '{' . join(',', @json) . '}',
-            } else {
+            } elsif ($Opt{'sql'}) {
                 my $descr_str = length($Opt{'description'})
                     ? "E'" . safe_sql($Opt{'description'}) . "'"
                     : "NULL";
@@ -411,7 +414,7 @@ sub safe_string {
         $Str = txt_to_xml($Str);
     } elsif ($Opt{'json'}) {
         $Str = txt_to_json($Str);
-    } else {
+    } elsif ($Opt{'sql'}) {
         $Str = safe_sql($Str);
     }
     return($Str);
@@ -477,9 +480,11 @@ Options:
   -h, --help
     Show this help.
   -j, --json
-    Generate JSON output.
+    Generate JSON output. This is the default output format.
   -l, --long
     Use long format, include local information.
+  -s, --sql
+    Generate SQL (Postgres) output.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
