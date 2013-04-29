@@ -97,7 +97,7 @@ my $Sql; # How ironic.
 
 $Opt{'zero'} && ($/ = "\x00");
 
-$Opt{'json'} && print("{\"files\":[");
+$Opt{'json'} && print("[");
 $Opt{'xml'} && print("<fldb>\n");
 if (length($Opt{'files-from'})) {
     D("Opt{files-from} = '$Opt{'files-from'}'");
@@ -116,7 +116,7 @@ if (length($Opt{'files-from'})) {
         process_file($_);
     }
 }
-$Opt{'json'} && print("\n]}\n");
+$Opt{'json'} && print("\n]\n");
 $Opt{'xml'} && print("</fldb>\n");
 
 exit 0;
