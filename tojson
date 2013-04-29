@@ -59,9 +59,15 @@ sub main {
     my $Retval = 0;
 
     if ($Opt{'reverse'}) {
-        my $slurp = join('', <>);
-        $slurp =~ s/^\s*"(.*)"\s*/json_to_txt($1)/se;
-        print($slurp);
+        while (my $curr = <>) {
+            chomp($curr);
+            if ($curr =~ /"/) {
+                msg(2, "curr bef: '$curr'");
+                $curr =~ s/^.*?"(.*)".*?$/json_to_txt($1)/e;
+                msg(2, "curr aft: '$curr'");
+                print($curr);
+            }
+        }
     } else {
         print('"');
         while (<>) {
