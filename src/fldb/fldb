@@ -87,6 +87,7 @@ if (!valid_utf8($Hostname)) {
 }
 my $safe_hostname = safe_string($Hostname);
 my $has_printed = 0;
+my $use_stdin = ($Opt{'files-from'} eq '-') ? 1 : 0;
 
 if ($Opt{'sql'} && $Opt{'add'}) {
     $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
@@ -101,8 +102,8 @@ $Opt{'json'} && print("[");
 $Opt{'xml'} && print("<fldb>\n");
 if (length($Opt{'files-from'})) {
     D("Opt{files-from} = '$Opt{'files-from'}'");
-    if (open(FP, "<", $Opt{'files-from'})) {
-        while (my $Filename = <FP>) {
+    if ($use_stdin || open(FP, "<", $Opt{'files-from'})) {
+        while (my $Filename = $use_stdin ? <STDIN> : <FP>) {
             chomp($Filename);
             process_file($Filename);
         }
@@ -476,7 +477,7 @@ Options:
   -D x, --database x
     Use database x.
   -f x, --files-from x
-    Read filenames from x.
+    Read filenames from x. Use - (hyphen) to read list from stdin.
   -h, --help
     Show this help.
   -j, --json
