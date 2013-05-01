@@ -214,12 +214,12 @@ testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
- size, filename, mtime,
+ size, filename, mtime, perm,
  descr,
  latin1
 ) VALUES (
  '7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034', 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
- 2048, E'random_2048', '2008-09-22T00:18:37Z',
+ 2048, E'random_2048', '2008-09-22T00:18:37Z', '0644',
  E'Groovy',
  FALSE
 );
@@ -246,12 +246,12 @@ testcmd("$CMD --sql -d \"This is a description with spaces\" files/dir1/random_2
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
- size, filename, mtime,
+ size, filename, mtime, perm,
  descr,
  latin1
 ) VALUES (
  '7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034', 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
- 2048, E'random_2048', '2008-09-22T00:18:37Z',
+ 2048, E'random_2048', '2008-09-22T00:18:37Z', '0644',
  E'This is a description with spaces',
  FALSE
 );
@@ -359,12 +359,12 @@ testcmd("$CMD files/dir1/random_2048 --sql", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
- size, filename, mtime,
+ size, filename, mtime, perm,
  descr,
  latin1
 ) VALUES (
  '7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034', 'bd91a93ca0462da03f2665a236d7968b0fd9455d', 'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59', '4a3074b2aae565f8558b7ea707ca48d2', NULL,
- 2048, E'random_2048', '2008-09-22T00:18:37Z',
+ 2048, E'random_2048', '2008-09-22T00:18:37Z', '0644',
  NULL,
  FALSE
 );

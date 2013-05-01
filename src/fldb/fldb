@@ -346,18 +346,18 @@ sub add_entry {
                     $Retval = sprintf(<<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
- size, filename, mtime,
+ size, filename, mtime, perm,
  descr,
  latin1
 ) VALUES (
  '%s', '%s', '%s', '%s', %s,
- %s, E'%s', '%s',
+ %s, E'%s', '%s', '%s',
  %s,
  %s
 );
 END
                         $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
-                        $Size, $base_filename, $Mtime,
+                        $Size, $base_filename, $Mtime, $Perm,
                         $descr_str,
                         $latin1_str,
                     );
