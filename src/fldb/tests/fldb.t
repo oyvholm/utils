@@ -233,7 +233,7 @@ END
 testcmd("$CMD -d Yess -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <descr>Yess</descr> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> <descr>Yess</descr> </file>
 </fldb>
 END
     "",
@@ -265,7 +265,7 @@ END
 testcmd("$CMD -d \"Somewhat & weird < > yepp\" -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
 </fldb>
 END
     "",
@@ -446,13 +446,13 @@ likecmd("$CMD -xl files/dir1/random_2048", # {{{
                 '<md5>4a3074b2aae565f8558b7ea707ca48d2<\/md5> ' .
                 '<filename>random_2048<\/filename> ' .
                 '<mtime>2008-09-22T00:18:37Z<\/mtime> ' .
+                '<perm>0644<\/perm> ' .
                 '<ctime>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ<\/ctime> ' .
                 '<path>files\/dir1\/random_2048<\/path> ' .
                 '<inode>\d+<\/inode> <links>1<\/links> ' .
                 '<device>\d+<\/device> ' .
                 '<hostname>.*?<\/hostname> ' .
                 '<uid>\d+<\/uid> <gid>\d+<\/gid> ' .
-                '<perm>0644<\/perm> ' .
             '<\/file>\n' .
         '<\/fldb>\n' .
         '$/',
@@ -465,7 +465,7 @@ likecmd("$CMD -xl files/dir1/random_2048", # {{{
 testcmd("$CMD -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> </file>
 </fldb>
 END
     "",
@@ -502,6 +502,7 @@ testcmd("$CMD -x files/dir1/year_2038", # {{{
                 '<md5>6babaa47123f4f94ae59ed581a65090b</md5>',
                 '<filename>files/dir1/year_2038</filename>',
                 '<mtime>2038-01-19T03:14:07Z</mtime>',
+                '<perm>0644</perm>',
             '</file>',
         ) .
     "\n</fldb>\n",

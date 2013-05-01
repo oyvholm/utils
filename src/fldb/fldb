@@ -210,6 +210,7 @@ sub add_entry {
                             "%s" . # $crc32_str
                             "<filename>%s</filename> " .
                             "<mtime>%s</mtime> " .
+                            "<perm>%s</perm> " .
                             "%s" . # $descr_str
                             "%s" . # $latin_str
                         "</file>\n",
@@ -221,6 +222,7 @@ sub add_entry {
                         $crc32_str,
                         $safe_filename,
                         $Mtime,
+                        $Perm,
                         $descr_str,
                         $latin1_str,
                     );
@@ -237,6 +239,7 @@ sub add_entry {
                             "%s" . # $crc32_str
                             "<filename>%s</filename> " .
                             "<mtime>%s</mtime> " .
+                            "<perm>%s</perm> " .
                             "%s" .
                             "<ctime>%s</ctime> " .
                             "<path>%s</path> " .
@@ -246,7 +249,6 @@ sub add_entry {
                             "<hostname>%s</hostname> " .
                             "<uid>%s</uid> " .
                             "<gid>%s</gid> " .
-                            "<perm>%s</perm> " .
                             # "<lastver>%s</lastver> " .
                             # "<nextver>%s</nextver> " .
                             "%s" . # $latin1_str
@@ -259,6 +261,7 @@ sub add_entry {
                         $crc32_str,
                         $base_filename,
                         $Mtime,
+                        $Perm,
                         $descr_str,
                         $Ctime,
                         $safe_filename,
@@ -268,7 +271,6 @@ sub add_entry {
                         $safe_hostname,
                         $Uid,
                         $Gid,
-                        $Perm,
                         # "",
                         # "",
                         $latin1_str,
