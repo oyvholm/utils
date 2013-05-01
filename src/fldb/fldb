@@ -157,13 +157,13 @@ sub add_entry {
     my @stat_array = ();
     if (@stat_array = stat($Filename)) {
         # {{{
-        my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
+        my ($Dev, $Inode, $Perm, $Nlinks, $Uid, $Gid, $Rdev, $Size,
             $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
         $Mtime = sec_to_string($Mtime);
         $Ctime = sec_to_string($Ctime);
-        D("Mode før: '$Mode'");
-        $Mode = sprintf("%04o", $Mode & 07777);
-        D("Mode etter: '$Mode'");
+        D("Perm før: '$Perm'");
+        $Perm = sprintf("%04o", $Perm & 07777);
+        D("Perm etter: '$Perm'");
         my %Sum = checksum($Filename, $Opt{'crc32'});
         if (scalar(%Sum)) {
             # {{{
@@ -268,7 +268,7 @@ sub add_entry {
                         $safe_hostname,
                         $Uid,
                         $Gid,
-                        $Mode,
+                        $Perm,
                         # "",
                         # "",
                         $latin1_str,
@@ -327,7 +327,7 @@ sub add_entry {
                             $safe_hostname,
                             $Uid,
                             $Gid,
-                            $Mode,
+                            $Perm,
                         )
                     );
                     # }}}
@@ -385,7 +385,7 @@ END
                         $Size, $base_filename, $Mtime, $descr_str, $Ctime,
                         $safe_filename,
                         $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
-                        $Uid, $Gid, $Mode,
+                        $Uid, $Gid, $Perm,
                         'NULL', 'NULL',
                         $latin1_str,
                     );
