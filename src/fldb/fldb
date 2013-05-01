@@ -303,8 +303,10 @@ sub add_entry {
                 length($crc32_str) && push(@json, $crc32_str);
                 push(@json,
                     sprintf(
-                        '"mtime":"%s"',
+                        '"mtime":"%s",' .
+                        '"perm":"%s"',
                         $Mtime,
+                        $Perm,
                     )
                 );
                 length($descr_str) && push(@json, $descr_str);
@@ -319,8 +321,7 @@ sub add_entry {
                             '"device":"%s",' .
                             '"hostname":"%s",' .
                             '"uid":"%s",' .
-                            '"gid":"%s",' .
-                            '"perm":"%s"',
+                            '"gid":"%s"',
                             $Ctime,
                             $safe_filename,
                             $Inode,
@@ -329,7 +330,6 @@ sub add_entry {
                             $safe_hostname,
                             $Uid,
                             $Gid,
-                            $Perm,
                         )
                     );
                     # }}}
