@@ -367,27 +367,27 @@ END
                     $Retval = sprintf(<<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
- size, filename, mtime, descr, ctime,
+ size, filename, mtime, perm, descr, ctime,
  path,
  inode, links, device, hostname,
- uid, gid, perm,
+ uid, gid,
  lastver, nextver,
  latin1
 ) VALUES (
  '%s', '%s', '%s', '%s', %s,
- %s, E'%s', '%s', %s, '%s',
+ %s, E'%s', '%s', '%s', %s, '%s',
  E'%s',
  %s, %s, E'%s', E'%s',
- %s, %s, '%s',
+ %s, %s,
  %s, %s,
  %s
 );
 END
                         $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
-                        $Size, $base_filename, $Mtime, $descr_str, $Ctime,
+                        $Size, $base_filename, $Mtime, $Perm, $descr_str, $Ctime,
                         $safe_filename,
                         $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
-                        $Uid, $Gid, $Perm,
+                        $Uid, $Gid,
                         'NULL', 'NULL',
                         $latin1_str,
                     );

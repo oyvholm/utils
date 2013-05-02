@@ -277,18 +277,18 @@ END
 likecmd("$CMD -sl files/dir1/random_2048", # {{{
     '/^INSERT INTO files \(\n' .
         ' sha256, sha1, gitsum, md5, crc32,\n' .
-        ' size, filename, mtime, descr, ctime,\n' .
+        ' size, filename, mtime, perm, descr, ctime,\n' .
         ' path,\n' .
         ' inode, links, device, hostname,\n' .
-        ' uid, gid, perm,\n' .
+        ' uid, gid,\n' .
         ' lastver, nextver,\n' .
         ' latin1\n' .
         '\) VALUES \(\n' .
         ' \'7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034\', \'bd91a93ca0462da03f2665a236d7968b0fd9455d\', \'ddf7d5a5e7a7b493368c2761faddb20a58bfbd59\', \'4a3074b2aae565f8558b7ea707ca48d2\', NULL,\n' .
-        ' 2048, E\'random_2048\', \'2008-09-22T00:18:37Z\', NULL, \'\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ\',\n' .
+        ' 2048, E\'random_2048\', \'2008-09-22T00:18:37Z\', \'0644\', NULL, \'\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ\',\n' .
         ' E\'files\/dir1\/random_2048\',\n' .
         ' \d+, 1, E\'\d+\', E\'.+\',\n' .
-        ' \d+, \d+, \'0644\',\n' .
+        ' \d+, \d+,\n' .
         ' NULL, NULL,\n' .
         ' FALSE\n' .
         '\);\n' .
