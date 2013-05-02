@@ -157,13 +157,13 @@ sub add_entry {
     my @stat_array = ();
     if (@stat_array = stat($Filename)) {
         # {{{
-        my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
+        my ($Dev, $Inode, $Perm, $Nlinks, $Uid, $Gid, $Rdev, $Size,
             $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
         $Mtime = sec_to_string($Mtime);
         $Ctime = sec_to_string($Ctime);
-        D("Mode før: '$Mode'");
-        $Mode = sprintf("%04o", $Mode & 07777);
-        D("Mode etter: '$Mode'");
+        D("Perm før: '$Perm'");
+        $Perm = sprintf("%04o", $Perm & 07777);
+        D("Perm etter: '$Perm'");
         my %Sum = checksum($Filename, $Opt{'crc32'});
         if (scalar(%Sum)) {
             # {{{
@@ -210,6 +210,7 @@ sub add_entry {
                             "%s" . # $crc32_str
                             "<filename>%s</filename> " .
                             "<mtime>%s</mtime> " .
+                            "<perm>%s</perm> " .
                             "%s" . # $descr_str
                             "%s" . # $latin_str
                         "</file>\n",
@@ -221,6 +222,7 @@ sub add_entry {
                         $crc32_str,
                         $safe_filename,
                         $Mtime,
+                        $Perm,
                         $descr_str,
                         $latin1_str,
                     );
@@ -237,6 +239,7 @@ sub add_entry {
                             "%s" . # $crc32_str
                             "<filename>%s</filename> " .
                             "<mtime>%s</mtime> " .
+                            "<perm>%s</perm> " .
                             "%s" .
                             "<ctime>%s</ctime> " .
                             "<path>%s</path> " .
@@ -246,7 +249,6 @@ sub add_entry {
                             "<hostname>%s</hostname> " .
                             "<uid>%s</uid> " .
                             "<gid>%s</gid> " .
-                            "<perm>%s</perm> " .
                             # "<lastver>%s</lastver> " .
                             # "<nextver>%s</nextver> " .
                             "%s" . # $latin1_str
@@ -259,6 +261,7 @@ sub add_entry {
                         $crc32_str,
                         $base_filename,
                         $Mtime,
+                        $Perm,
                         $descr_str,
                         $Ctime,
                         $safe_filename,
@@ -268,7 +271,6 @@ sub add_entry {
                         $safe_hostname,
                         $Uid,
                         $Gid,
-                        $Mode,
                         # "",
                         # "",
                         $latin1_str,
@@ -301,8 +303,10 @@ sub add_entry {
                 length($crc32_str) && push(@json, $crc32_str);
                 push(@json,
                     sprintf(
-                        '"mtime":"%s"',
+                        '"mtime":"%s",' .
+                        '"perm":"%s"',
                         $Mtime,
+                        $Perm,
                     )
                 );
                 length($descr_str) && push(@json, $descr_str);
@@ -317,8 +321,7 @@ sub add_entry {
                             '"device":"%s",' .
                             '"hostname":"%s",' .
                             '"uid":"%s",' .
-                            '"gid":"%s",' .
-                            '"perm":"%s"',
+                            '"gid":"%s"',
                             $Ctime,
                             $safe_filename,
                             $Inode,
@@ -327,7 +330,6 @@ sub add_entry {
                             $safe_hostname,
                             $Uid,
                             $Gid,
-                            $Mode,
                         )
                     );
                     # }}}
@@ -344,18 +346,18 @@ sub add_entry {
                     $Retval = sprintf(<<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
- size, filename, mtime,
+ size, filename, mtime, perm,
  descr,
  latin1
 ) VALUES (
  '%s', '%s', '%s', '%s', %s,
- %s, E'%s', '%s',
+ %s, E'%s', '%s', '%s',
  %s,
  %s
 );
 END
                         $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
-                        $Size, $base_filename, $Mtime,
+                        $Size, $base_filename, $Mtime, $Perm,
                         $descr_str,
                         $latin1_str,
                     );
@@ -365,27 +367,27 @@ END
                     $Retval = sprintf(<<END,
 INSERT INTO files (
  sha256, sha1, gitsum, md5, crc32,
- size, filename, mtime, descr, ctime,
+ size, filename, mtime, perm, descr, ctime,
  path,
  inode, links, device, hostname,
- uid, gid, perm,
+ uid, gid,
  lastver, nextver,
  latin1
 ) VALUES (
  '%s', '%s', '%s', '%s', %s,
- %s, E'%s', '%s', %s, '%s',
+ %s, E'%s', '%s', '%s', %s, '%s',
  E'%s',
  %s, %s, E'%s', E'%s',
- %s, %s, '%s',
+ %s, %s,
  %s, %s,
  %s
 );
 END
                         $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
-                        $Size, $base_filename, $Mtime, $descr_str, $Ctime,
+                        $Size, $base_filename, $Mtime, $Perm, $descr_str, $Ctime,
                         $safe_filename,
                         $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,
-                        $Uid, $Gid, $Mode,
+                        $Uid, $Gid,
                         'NULL', 'NULL',
                         $latin1_str,
                     );
