@@ -42,19 +42,21 @@ sub checksum {
 
     D("checksum(\"$Filename\"");
     if (open(FP, "<", "$Filename")) {
+        my $sha256 = Digest::SHA->new(256);
         my $sha1 = Digest::SHA->new(1);
         my $md5 = Digest::MD5->new;
         my $crc32 = Digest::CRC->new(type => "crc32");
         while (my $Curr = <FP>) {
+            $sha256->add($Curr);
             $sha1->add($Curr);
             $md5->add($Curr);
             $crc32->add($Curr) if $use_crc32;
         }
+        $Sum{'sha256'} = $sha256->hexdigest;
         $Sum{'sha1'} = $sha1->hexdigest;
         $Sum{'md5'} = $md5->hexdigest;
         $use_crc32 && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
         chomp($Sum{'gitsum'} = `git hash-object "$Filename" | head -c40`); # FIXME
-        chomp($Sum{'sha256'} = `sha256sum "$Filename" | head -c64`); # FIXME
     } else {
         %Sum = ();
     }
