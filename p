@@ -5,5 +5,5 @@
 # Latskap.
 #=======================================================================
 
-slow=" -lavdopts fast:skiploopfilter=all"
+test "$1" = "-s" && { slow=" -lavdopts fast:skiploopfilter=all"; shift; }
 mplayer -fs -osdlevel 3$slow "$@"
