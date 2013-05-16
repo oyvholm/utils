@@ -12,7 +12,7 @@ package FLDBsum;
 use strict;
 use warnings;
 use Digest::MD5;
-use Digest::SHA1;
+use Digest::SHA;
 use Digest::CRC;
 
 use lib "$ENV{'HOME'}/bin/src/fldb";
@@ -42,7 +42,7 @@ sub checksum {
 
     D("checksum(\"$Filename\"");
     if (open(FP, "<", "$Filename")) {
-        my $sha1 = Digest::SHA1->new;
+        my $sha1 = Digest::SHA->new(1);
         my $md5 = Digest::MD5->new;
         my $crc32 = Digest::CRC->new(type => "crc32");
         while (my $Curr = <FP>) {
