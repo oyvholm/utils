@@ -11,6 +11,6 @@ cd ~/build-git || exit 1
 git clean -qfxd
 git checkout -f
 echo $(git bisect visualize --format=oneline | wc -l) commits left:
-git lb --color | cat
+git lb --color | head -200
 echo
 make
