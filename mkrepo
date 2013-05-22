@@ -72,20 +72,20 @@ $repo =~ s/(.*)\.git$/$1/i;
 my $rg = "$dir/$repo.git";
 $repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid characters\n");
 if ($Opt{'create-remote'}) {
-    system("ssh", $url, "mkdir $rg && git init --bare $rg");
-    system("git", "remote", "add", "sunbase", "$url:$rg");
+    mysystem("ssh", $url, "mkdir $rg && git init --bare $rg");
+    mysystem("git", "remote", "add", "sunbase", "$url:$rg");
     if (-d "$dir/.") {
         msg(1, "'$dir' exists, check for local repo...");
         if (!-d "$rg/.") {
             msg(1, "'$rg' doesn't exist, create local repo");
-            system("git", "init", "--bare", $rg);
+            mysystem("git", "init", "--bare", $rg);
         } else {
             msg(1, "$rg: Repo already exists, that's good");
         }
-        system("git", "remote", "add", "loc-repo", "sunny\@localhost:$rg");
+        mysystem("git", "remote", "add", "loc-repo", "sunny\@localhost:$rg");
         chomp(my $origdir = `pwd`);
         if (chdir($rg)) {
-            system("git", "remote", "add", "sunbase", "$url:$rg");
+            mysystem("git", "remote", "add", "sunbase", "$url:$rg");
             chdir($origdir) ||
                 warn("$progname: $origdir: Cannot chdir to original directory: $!\n");
         } else {
@@ -96,16 +96,25 @@ if ($Opt{'create-remote'}) {
     }
 }
 if ($Opt{'backup-remote'}) {
-    -d "$backup_dir/$repo.git/." || system("git", "init", "--bare", "$backup_dir/$repo.git");
-    system("git", "remote", "add", "backup", "sunny\@localhost:$backup_dir/$repo.git");
+    -d "$backup_dir/$repo.git/." || mysystem("git", "init", "--bare", "$backup_dir/$repo.git");
+    mysystem("git", "remote", "add", "backup", "sunny\@localhost:$backup_dir/$repo.git");
 }
 if ($Opt{'github-remote'}) {
-    system("git", "remote", "add", "github", "git\@github.com:sunny256/$repo.git");
+    mysystem("git", "remote", "add", "github", "git\@github.com:sunny256/$repo.git");
 }
 if ($Opt{'exthd-remote'}) {
-    -d "$exthd_dir/$repo.git/." || system("git", "init", "--bare", "$exthd_dir/$repo.git");
-    system("git", "remote", "add", "exthd", "sunny\@localhost:$exthd_dir/$repo.git");
+    -d "$exthd_dir/$repo.git/." || mysystem("git", "init", "--bare", "$exthd_dir/$repo.git");
+    mysystem("git", "remote", "add", "exthd", "sunny\@localhost:$exthd_dir/$repo.git");
 }
+
+sub mysystem {
+    # {{{
+    my @cmd = @_;
+    msg(0, "Executing '" . join(" ", @cmd) . "'");
+    system(@cmd);
+    return;
+    # }}}
+} # mysystem()
 
 sub print_version {
     # Print program version {{{
