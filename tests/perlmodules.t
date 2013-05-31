@@ -101,6 +101,7 @@ my %Modules = (
     'Devel::ptkdb' => 'libdevel-ptkdb-perl',
     'Digest::CRC' => 'libdigest-crc-perl',
     'Digest::MD5' => 'libdigest-md5-file-perl',
+    'Digest::SHA' => 'libdigest-sha-perl',
     'Digest::SHA1' => 'libdigest-sha1-perl',
     'Env' => '',
     'Exporter' => '',
