@@ -86,7 +86,7 @@ sub process_file {
     }
     if (open(GnupFP, ">$gnuplot_script")) {
         # {{{
-        chomp(my $uuid = `suuid -t stpl -w eo -c "stpl $data_file"`);
+        chomp(my $uuid = `suuid -t c_stpl -w eo -c "stpl $data_file"`);
         if (!defined($uuid) || $uuid !~ /^$v1_templ$/) {
             die("$0: suuid error\n");
         }
