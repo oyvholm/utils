@@ -37,6 +37,7 @@ our %Opt = (
     'help' => 0,
     'json' => 1,
     'long' => 0,
+    'quiet' => 0,
     'sql' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -61,6 +62,7 @@ GetOptions(
     "help|h" => \$Opt{'help'},
     "json|j" => \$Opt{'json'},
     "long|l" => \$Opt{'long'},
+    "quiet|q+" => \$Opt{'quiet'},
     "sql|s" => \$Opt{'sql'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -70,6 +72,7 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 ($Opt{'sql'} || $Opt{'xml'}) && ($Opt{'json'} = 0);
 ($Opt{'json'}+$Opt{'sql'}+$Opt{'xml'} > 1) && die("$progname: Cannot mix --json, --sql and --xml options\n");
 $Opt{'help'} && usage(0);
@@ -109,7 +112,7 @@ if (length($Opt{'files-from'})) {
         }
         close(FP);
     } else {
-        warn("$progname: $Opt{'files-from'}: Cannot open file for read: $!\n");
+        msg(-1, "$Opt{'files-from'}: Cannot open file for read: $!");
     }
 } else {
     for (@ARGV) {
@@ -127,14 +130,14 @@ sub process_file {
     my $Filename = shift;
     D("process_file('$Filename')");
     if (!-f $Filename || -l $Filename) {
-        warn("$progname: $Filename: Ignoring non-file\n");
+        msg(0, "$Filename: Ignoring non-file");
         return;
     }
     $Sql = add_entry($Filename);
     if (defined($Sql)) {
         if ($Opt{'add'}) {
             $Opt{'verbose'} && print("$Filename\n");
-            $dbh->do($Sql) || warn("$progname: $Filename: Cannot INSERT\n");
+            $dbh->do($Sql) || msg(-1, "$Filename: Cannot INSERT");
         } else {
             $Opt{'json'} && $has_printed && print(',');
             print($Sql);
@@ -148,7 +151,7 @@ sub add_entry {
     # {{{
     my $Filename = shift;
     if ($Filename =~ /\0/) {
-        warn("$progname: $Filename: Ignoring filename containing zero byte. Did you forget the --zero option?\n");
+        msg(-1, "$Filename: Ignoring filename containing zero byte. Did you forget the --zero option?");
         return(undef);
     }
     my $safe_filename = safe_string($Filename);
@@ -397,12 +400,12 @@ END
             D("=== \$Retval \x7B\x7B\x7B\n$Retval=== \x7D\x7D\x7D");
             # }}}
         } else {
-            warn("$progname: $Filename: Cannot read file: $!\n");
+            msg(-1, "$Filename: Cannot read file: $!");
             $Retval = undef;
         }
         # }}}
     } else {
-        warn("$progname: $Filename: Cannot stat file: $!\n");
+        msg(-1, "$Filename: Cannot stat file: $!");
         $Retval = undef;
     }
     return($Retval);
@@ -486,6 +489,8 @@ Options:
     Generate JSON output. This is the default output format.
   -l, --long
     Use long format, include local information.
+  -q, --quiet
+    Be quiet, suppress messages. Can be repeated.
   -s, --sql
     Generate SQL (Postgres) output.
   -v, --verbose
