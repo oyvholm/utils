@@ -162,7 +162,7 @@ END
             print(GnupFP "set title \"$opt_t\"\n");
         }
 
-        my $line_type = "line 1";
+        my $line_type = "line";
 
         if (length($opt_l)) {
             if ($opt_l eq "p") {
@@ -188,7 +188,7 @@ END
 
         print(GnupFP <<END);
 plot \\
-"$data_file" using 1:2 title " " with $line_type, \\
+"$data_file" using 1:2 title " " with $line_type linetype 1, \\
 "$data_file" using 1:2 smooth bezier title " " with line linetype -1$line_str
 
 pause -1 "stpl: Press Enter..."
