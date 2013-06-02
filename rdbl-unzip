@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# rdbl-unzip
+# File ID: 4c351082-cbb9-11e2-a4e5-001f3b596ec9
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+unzip -p "$@"; true
