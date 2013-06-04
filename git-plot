@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#=======================================================================
+# git-plot
+# File ID: 815ee2b8-c99a-11e2-b66c-001f3b596ec9
+# Plot a curve to show the Git commit activity
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+tmpfile=$(mktemp --tmpdir=/tmp git-plot.$(date +"%s").$$.XXXXXX.tmp)
+git log --pretty="%ct" "$@" | ep | sort | inc_epstat >$tmpfile
+stpl $tmpfile
