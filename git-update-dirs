@@ -97,50 +97,39 @@ LOOP: for my $f (@Dirs) {
             next LOOP;
         }
         if ($Opt{'fetch-prune'}) {
-            print("==== git fetch --all --prune ====\n");
-            system("git", "fetch", "--all", "--prune") && (check_sig($?) || push(@err_fetch, $f));
+            mysystem("git", "fetch", "--all", "--prune") && push(@err_fetch, $f);
         } elsif ($Opt{'fetch'}) {
-            print("==== git fetch --all ====\n");
-            system("git", "fetch", "--all") && (check_sig($?) || push(@err_fetch, $f));
+            mysystem("git", "fetch", "--all") && push(@err_fetch, $f);
         }
         if ($Opt{'pull'}) {
-            print("==== git pull --ff-only ====\n");
-            system("git", "pull", "--ff-only") && (check_sig($?) || push(@err_pull, $f));
+            mysystem("git", "pull", "--ff-only") && push(@err_pull, $f);
             if (-e '.emptydirs') {
-                print("==== git restore-dirs ====\n");
-                system('git', 'restore-dirs') && check_sig($?);
+                mysystem('git', 'restore-dirs');
             }
         }
         if ($Opt{'dangling'}) {
-            print("==== git dangling ====\n");
-            system("git", "dangling") && (check_sig($?) || push(@err_dangling, $f));
+            mysystem("git", "dangling") && push(@err_dangling, $f);
         }
         if ($Opt{'test'}) {
-            print("==== git fsck ====\n");
-            system("git", "fsck") && (
-                check_sig($?) || (
-                    push(@err_test, $f),
-                    warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
-                    next LOOP
-                )
+            mysystem("git", "fsck") && (
+                push(@err_test, $f),
+                warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
+                next LOOP
             );
         }
         if ($Opt{'push'}) {
-            print("==== git pa ====\n");
-            system("git", "pa") && (check_sig($?) || push(@err_push, $f));
+            mysystem("git", "pa") && push(@err_push, $f);
         }
         if ($Opt{'submodule'} && -e ".gitmodules") {
-            print("==== update submodules ====\n");
-            system("git", "submodule", "init") && check_sig($?);
-            system("git", "submodule", "update") && (check_sig($?) || push(@err_updsub, $f));
+            mysystem("git", "submodule", "init");
+            mysystem("git", "submodule", "update") && push(@err_updsub, $f);
         }
         if ($Opt{'compress'}) {
             if (!-e ".no-git-gc") {
                 my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
-                print("==== git gc $dang_str ====\n");
                 chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_before += $before;
-                system("git", "gc", $dang_str) && (check_sig($?) || push(@err_compress, $f));
+                mysystem("git", "gc", $dang_str) && push(@err_compress, $f);
                 chomp(my $after = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_after += $after;
                 my $saved = $before - $after;
@@ -150,7 +139,7 @@ LOOP: for my $f (@Dirs) {
             }
         }
         if (length($Opt{'exec'})) {
-            system($Opt{'exec'}) && check_sig($?);
+            mysystem($Opt{'exec'});
         }
         print("\n");
     }
@@ -184,6 +173,15 @@ sub commify {
 	return scalar reverse $Str;
 	# }}}
 } # commify()
+
+sub mysystem {
+    # {{{
+    my @cmd = @_;
+    msg(0, "Executing '" . join(" ", @cmd) . "'...");
+    system(@cmd) && check_sig($?);
+    return $?;
+    # }}}
+} # mysystem()
 
 sub print_version {
     # Print program version {{{
