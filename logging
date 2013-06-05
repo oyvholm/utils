@@ -6,12 +6,10 @@
 export LOGDIR=$HOME/log/script/`date -u +"%Y/%m"`
 [ -d $LOGDIR/. ] || mkdir -p $LOGDIR || { echo logging: $LOGDIR: Cannot create log directory >&2; exit 1; }
 export LDATE=`u`
-uuid=`suuid -t logging -w eo -c "logging $*"` || { echo logging: Error when generating UUID, logging not started >&2; exit 1; }
-if [ -z "$1" ]; then
-    export LNAME="$LOGDIR/$LDATE.$uuid"
-else
-    export LNAME="$LOGDIR/$LDATE.$uuid.$1"
-fi
+host=$1
+test -z "$host" && host=$(hostname)
+uuid=`suuid -t logging -w eo -c "logging $host"` || { echo logging: Error when generating UUID, logging not started >&2; exit 1; }
+export LNAME="$LOGDIR/$LDATE.$uuid.$host"
 SESS_UUID="${SESS_UUID}logging/$uuid," script -ft $LNAME.scrlog 2>$LNAME.timing
 suuid -w e -t logging -c "Loggsession $uuid ferdig."
 echo "Loggsession $uuid ferdig." >&2
