@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#=======================================================================
+# pkg-to-pavi
+# File ID: a32ca570-d128-11e2-8afd-08002702aff2
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+test -e /arch-vbox.mrk || { echo $0: Not on arch-vbox >&2; exit 1; }
+rsync -avP /var/cache/pacman/pkg/ root@pavi:/home/sunny/tmp/pac/var/cache/pacman/pkg/
