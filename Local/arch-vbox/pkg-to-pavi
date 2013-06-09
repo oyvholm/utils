@@ -8,4 +8,4 @@
 #=======================================================================
 
 test -e /arch-vbox.mrk || { echo $0: Not on arch-vbox >&2; exit 1; }
-rsync -avP /var/cache/pacman/pkg/ root@pavi:/home/sunny/tmp/pac/var/cache/pacman/pkg/
+rsync -avP /var/cache/pacman/pkg/*.tar.xz root@pavi:/home/sunny/tmp/pac/var/cache/pacman/pkg/
