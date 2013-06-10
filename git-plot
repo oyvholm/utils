@@ -7,6 +7,6 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-tmpfile=$(mktemp --tmpdir=/tmp git-plot.$(date +"%s").$$.XXXXXX.tmp)
+tmpfile=/tmp/git-plot.$(date +"%s").$$.tmp
 git log --pretty="%ct" "$@" | ep | sort | inc_epstat >$tmpfile
 stpl $tmpfile
