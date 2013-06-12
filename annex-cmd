@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# annex-cmd
+# File ID: f1ca60b4-d33a-11e2-a3c0-0800274013ad
+# Execute command in all local git-annex repositories
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git update-dirs $HOME/annex/* /media/*/annex/* -e "$@"
