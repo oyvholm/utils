@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#=======================================================================
-# STDfilenameDTS
-# File ID: STDuuidDTS
-# [Description]
-# License: GNU General Public License version 3 or later.
-#=======================================================================
+"""STDfilenameDTS - STDdescDTS
+
+File ID: STDuuidDTS
+License: GNU General Public License version 3 or later.
+
+"""
 
