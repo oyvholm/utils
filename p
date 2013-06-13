@@ -6,4 +6,5 @@
 #=======================================================================
 
 test "$1" = "-s" && { slow=" -lavdopts fast:skiploopfilter=all"; shift; }
-mplayer -fs -osdlevel 3$slow "$@"
+test -e /dg-vbox.mrk && vo_str=" -vo x11 -zoom"
+mplayer -fs -osdlevel 3$slow$vo_str "$@"
