@@ -24,7 +24,7 @@ our %Opt = (
     'compress' => 0,
     'dangling' => 0,
     'debug' => 0,
-    'exec' => '',
+    'exec-after' => '',
     'fetch' => 0,
     'fetch-prune' => 0,
     'help' => 0,
@@ -49,7 +49,7 @@ GetOptions(
     "compress|c" => \$Opt{'compress'},
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
-    "exec|e=s" => \$Opt{'exec'},
+    "exec-after|e=s" => \$Opt{'exec-after'},
     "fetch-prune|F" => \$Opt{'fetch-prune'},
     "fetch|f" => \$Opt{'fetch'},
     "help|h" => \$Opt{'help'},
@@ -141,8 +141,8 @@ LOOP: for my $f (@Dirs) {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
         }
-        if (length($Opt{'exec'})) {
-            mysystem($Opt{'exec'});
+        if (length($Opt{'exec-after'})) {
+            mysystem($Opt{'exec-after'});
         }
         $Opt{'verbose'} >= -1 && print("\n");
     }
@@ -210,8 +210,8 @@ Options:
     Compress local repositories to save space.
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into branches.
-  -e X, --exec X
-    Execute command X in every repo.
+  -e X, --exec-after X
+    Execute command X in every repo after all other commands.
   -h, --help
     Show this help.
   -f, --fetch
