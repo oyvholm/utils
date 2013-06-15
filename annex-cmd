@@ -7,4 +7,4 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-git update-dirs $HOME/annex/* /media/*/annex/* -e "$@"
+git update-dirs $HOME/annex/* /media/*/annex/* "$@"
