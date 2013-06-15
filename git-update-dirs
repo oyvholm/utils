@@ -25,6 +25,7 @@ our %Opt = (
     'dangling' => 0,
     'debug' => 0,
     'exec-after' => '',
+    'exec-before' => '',
     'fetch' => 0,
     'fetch-prune' => 0,
     'help' => 0,
@@ -50,6 +51,7 @@ GetOptions(
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
     "exec-after|e=s" => \$Opt{'exec-after'},
+    "exec-before|E=s" => \$Opt{'exec-before'},
     "fetch-prune|F" => \$Opt{'fetch-prune'},
     "fetch|f" => \$Opt{'fetch'},
     "help|h" => \$Opt{'help'},
@@ -98,6 +100,9 @@ LOOP: for my $f (@Dirs) {
         if (!chdir($f)) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
+        }
+        if (length($Opt{'exec-before'})) {
+            mysystem($Opt{'exec-before'});
         }
         if ($Opt{'fetch-prune'}) {
             mysystem("git", "fetch", "--all", "--prune") && push(@err_fetch, $f);
@@ -210,6 +215,8 @@ Options:
     Compress local repositories to save space.
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into branches.
+  -E X, --exec-before X
+    Execute command X in every repo before all other commands.
   -e X, --exec-after X
     Execute command X in every repo after all other commands.
   -h, --help
