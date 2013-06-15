@@ -29,6 +29,7 @@ our %Opt = (
     'exec-before' => '',
     'fetch' => 0,
     'fetch-prune' => 0,
+    'ga-sync' => 0,
     'help' => 0,
     'pull' => 0,
     'push' => 0,
@@ -56,6 +57,7 @@ GetOptions(
     "exec-before|E=s" => \$Opt{'exec-before'},
     "fetch-prune|F" => \$Opt{'fetch-prune'},
     "fetch|f" => \$Opt{'fetch'},
+    "ga-sync|g" => \$Opt{'ga-sync'},
     "help|h" => \$Opt{'help'},
     "pull|p" => \$Opt{'pull'},
     "push|P" => \$Opt{'push'},
@@ -80,6 +82,7 @@ my @Dirs = $Opt{'recursive'} ? () : @ARGV;
 my @err_compress = ();
 my @err_dangling = ();
 my @err_fetch = ();
+my @err_gasync = ();
 my @err_pull = ();
 my @err_push = ();
 my @err_test = ();
@@ -115,6 +118,12 @@ LOOP: for my $f (@Dirs) {
             mysystem("git", "pull", "--ff-only") && push(@err_pull, $f);
             if (-e '.emptydirs') {
                 mysystem('git', 'restore-dirs');
+            }
+        }
+        if ($Opt{'ga-sync'}) {
+            my $check_annex = `git config -l | grep annex\\.uuid`;
+            if ($check_annex =~ /annex\.uuid/) {
+                mysystem("ga", "sync") && push(@err_gasync, $f);
             }
         }
         if ($Opt{'dangling'}) {
@@ -156,6 +165,7 @@ LOOP: for my $f (@Dirs) {
     chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original directory: $!\n");
 }
 scalar(@err_fetch) && print("$progname: Unable to fetch from: " . join(" ", @err_fetch) . "\n");
+scalar(@err_gasync) && print("$progname: Unable to run ga sync: " . join(" ", @err_gasync) . "\n");
 scalar(@err_dangling) && print("$progname: Unable to run git dangling: " . join(" ", @err_dangling) . "\n");
 scalar(@err_pull) && print("$progname: Unable to pull from: " . join(" ", @err_pull) . "\n");
 scalar(@err_push) && print("$progname: Unable to push from: " . join(" ", @err_push) . "\n");
@@ -222,6 +232,8 @@ Options:
     Execute command X in every repo before all other commands.
   -e X, --exec-after X
     Execute command X in every repo after all other commands.
+  -g, --ga-sync
+    If the repo is used by git-annex, run "ga sync".
   -h, --help
     Show this help.
   -f, --fetch
