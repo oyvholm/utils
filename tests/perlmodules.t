@@ -130,6 +130,7 @@ my %Modules = (
     'HTML::WikiConverter' => 'libhtml-wikiconverter-mediawiki-perl',
     'IO::Handle' => '',
     'Image::ExifTool' => 'libimage-exiftool-perl',
+    'JSON::XS' => 'libjson-xs-perl',
     'MIME::Base64' => 'libmime-base64-urlsafe-perl',
     'Module::Starter' => 'libmodule-starter-perl',
     'Module::Starter::Plugin::CGIApp' => 'libmodule-starter-plugin-cgiapp-perl',
