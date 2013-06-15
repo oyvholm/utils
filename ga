@@ -5,11 +5,4 @@
 # File ID: e89047ce-29d1-11e2-bb6f-00c0a8deee11
 #=======================================================================
 
-test -e /linode.mrk && export LD_LIBRARY_PATH=/opt/git-annex/usr/lib/i386-linux-gnu/i686/cmov:/opt/git-annex/usr/lib/i386-linux-gnu:/opt/git-annex/usr/lib:/opt/git-annex/lib/i386-linux-gnu
-export PATH=/opt/git-annex/bin:$PATH
-if test "$1" = "git"; then
-    shift
-    git "$@"
-else
-    git annex "$@"
-fi
+/opt/git-annex/runshell /opt/git-annex/git-annex "$@"
