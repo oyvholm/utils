@@ -24,6 +24,7 @@ our %Opt = (
     'compress' => 0,
     'dangling' => 0,
     'debug' => 0,
+    'dry-run' => 0,
     'exec-after' => '',
     'exec-before' => '',
     'fetch' => 0,
@@ -50,6 +51,7 @@ GetOptions(
     "compress|c" => \$Opt{'compress'},
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
+    "dry-run|n" => \$Opt{'dry-run'},
     "exec-after|e=s" => \$Opt{'exec-after'},
     "exec-before|E=s" => \$Opt{'exec-before'},
     "fetch-prune|F" => \$Opt{'fetch-prune'},
@@ -185,8 +187,9 @@ sub commify {
 sub mysystem {
     # {{{
     my @cmd = @_;
-    msg(0, "Executing '" . join(" ", @cmd) . "'...");
-    system(@cmd) && check_sig($?);
+    msg(0, sprintf("%s '", $Opt{'dry-run'} ? "Simulating" : "Executing") .
+        join(" ", @cmd) . "'...");
+    !$Opt{'dry-run'} && system(@cmd) && check_sig($?);
     return $?;
     # }}}
 } # mysystem()
@@ -225,6 +228,8 @@ Options:
     Fetch new commits from all remotes.
   -F, --fetch-prune
     Fetch new commits from all remotes and prune deleted remote branches.
+  -n, --dry-run
+    Simulate, don't actually execute any git commands.
   -p, --pull
     Also execute "git pull --ff-only".
   -P, --push
