@@ -94,7 +94,7 @@ LOOP: for my $f (@Dirs) {
     -d "$f/.git/." && ($object_dir = ".git/objects");
     -d "$f/objects/." && ($object_dir = "objects");
     if (length($object_dir)) {
-        print("================ $f ================\n");
+        $Opt{'verbose'} >= -1 && print("================ $f ================\n");
         if (!chdir($f)) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
@@ -144,7 +144,7 @@ LOOP: for my $f (@Dirs) {
         if (length($Opt{'exec'})) {
             mysystem($Opt{'exec'});
         }
-        print("\n");
+        $Opt{'verbose'} >= -1 && print("\n");
     }
     chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original directory: $!\n");
 }
