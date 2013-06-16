@@ -9,4 +9,4 @@
 
 tmpfile=/tmp/git-plot.$(date +"%s").$$.tmp
 git log --pretty="%ct" "$@" | ep | sort | inc_epstat >$tmpfile
-stpl $tmpfile
+stpl -lp $tmpfile
