@@ -181,9 +181,11 @@ if ($Opt{'compress'}) {
 }
 
 sub check_sig {
+    # {{{
     my $retval = shift;
     ($retval & 127) && die("\n$progname: Child process interrupted, aborting.\n");
     return(0);
+    # }}}
 } # check_sig()
 
 sub commify {
