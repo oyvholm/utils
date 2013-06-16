@@ -21,6 +21,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'allbr' => 0,
     'compress' => 0,
     'dangling' => 0,
     'debug' => 0,
@@ -49,6 +50,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "allbr|a" => \$Opt{'allbr'},
     "compress|c" => \$Opt{'compress'},
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
@@ -135,6 +137,11 @@ LOOP: for my $f (@Dirs) {
                 warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
                 next LOOP
             );
+        }
+        if ($Opt{'allbr'}) {
+                mysystem("git", "nobr");
+                mysystem("git", "allbr", "-a");
+                mysystem("git", "checkout", "-");
         }
         if ($Opt{'push'}) {
             mysystem("git", "pa") && push(@err_push, $f);
@@ -226,6 +233,8 @@ Usage: $progname [options] [directories [...]]
 
 Options:
 
+  -a, --allbr
+    Execute "git nobr", "git allbr -a" and "git commit -".
   -c, --compress
     Compress local repositories to save space.
   -d, --dangling
