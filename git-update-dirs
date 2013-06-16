@@ -233,38 +233,39 @@ Usage: $progname [options] [directories [...]]
 
 Options:
 
-  -a, --allbr
-    Execute "git nobr", "git allbr -a" and "git commit -".
-  -c, --compress
-    Compress local repositories to save space.
-  -d, --dangling
-    Execute "git dangling", i.e. turn all dangling commits into branches.
   -E X, --exec-before X
     Execute command X in every repo before all other commands.
-  -e X, --exec-after X
-    Execute command X in every repo after all other commands.
-  -g, --ga-sync
-    If the repo is used by git-annex, run "ga sync".
-  -h, --help
-    Show this help.
-  -f, --fetch
-    Fetch new commits from all remotes.
   -F, --fetch-prune
     Fetch new commits from all remotes and prune deleted remote branches.
-  -n, --dry-run
-    Simulate, don't actually execute any git commands.
+  -f, --fetch
+    Fetch new commits from all remotes.
   -p, --pull
     Also execute "git pull --ff-only".
+  -g, --ga-sync
+    If the repo is used by git-annex, run "ga sync".
+  -d, --dangling
+    Execute "git dangling", i.e. turn all dangling commits into branches.
+  -t, --test
+    Test integrity of local repositories by running "git fsck".
+  -a, --allbr
+    Execute "git nobr", "git allbr -a" and "git commit -".
   -P, --push
     Also execute "git pa".
+  -s, --submodule
+    Update submodules if .gitmodules is found.
+  -c, --compress
+    Compress local repositories to save space.
+  -e X, --exec-after X
+    Execute command X in every repo after all other commands.
+
+  -h, --help
+    Show this help.
+  -n, --dry-run
+    Simulate, don't actually execute any git commands.
   -q, --quiet
     Be less verbose. Can be repeated.
   -r, --recursive
     Update all repositories recursively under the current directory.
-  -s, --submodule
-    Update submodules if .gitmodules is found.
-  -t, --test
-    Test integrity of local repositories by running "git fsck".
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
