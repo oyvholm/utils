@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# fixskjerm
+# File ID: 1958dc9e-d798-11e2-b0a1-0800274013ad
+# Use correct screen setup in Xfce on dg-vbox
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+xrandr --output VBOX1 --right-of VBOX0
