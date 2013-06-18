@@ -21,6 +21,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'all-options' => 0,
     'allbr' => 0,
     'compress' => 0,
     'dangling' => 0,
@@ -50,6 +51,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "all-options|A" => \$Opt{'all-options'},
     "allbr|a" => \$Opt{'allbr'},
     "compress|c" => \$Opt{'compress'},
     "dangling|d" => \$Opt{'dangling'},
@@ -78,6 +80,15 @@ $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
+}
+
+if ($Opt{'all-options'}) {
+    $Opt{'allbr'} = 1;
+    $Opt{'dangling'} = 1;
+    $Opt{'fetch-prune'} = 1;
+    $Opt{'pull'} = 1;
+    $Opt{'push'} = 1;
+    $Opt{'submodule'} = 1;
 }
 
 my @Dirs = $Opt{'recursive'} ? () : @ARGV;
@@ -258,6 +269,8 @@ Options:
   -e X, --exec-after X
     Execute command X in every repo after all other commands.
 
+  -A, --all-options
+    Run the program as if "-FpdaPs" had been specified.
   -h, --help
     Show this help.
   -n, --dry-run
