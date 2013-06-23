@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# hvor
+# File ID: 450313a6-22cf-11e2-866b-fefdb24f8e10
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+psql gps -c "select wherepos('$1');"
