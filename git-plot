@@ -7,6 +7,32 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-tmpfile=/tmp/git-plot.$(date +"%s").$$.tmp
-git log --pretty="%ct" "$@" | ep | sort | inc_epstat >$tmpfile
-stpl -lp $tmpfile
+if test "$1" = "-2"; then
+    shift
+    tmpname=$(date +"%s").$$
+    authorfile=/tmp/git-plot.$(date +"%s").$$.author.tmp
+    commitfile=/tmp/git-plot.$(date +"%s").$$.commit.tmp
+    git log --pretty="%at" "$@" | sort -n | inc_epstat >$authorfile
+    git log --pretty="%ct" "$@" | sort -n | inc_epstat >$commitfile
+    cat <<END | gnuplot --persist
+    #!/usr/bin/gnuplot --persist
+
+    set xdata time
+    set grid
+    set timefmt "%s"
+    set format x "%Y-%m-%d %H:%M:%S"
+    set yrange [0.1:]
+    set linetype 1 lc rgb "blue"
+    set linetype 2 lc rgb "red"
+    set linetype 3 lw 2 lc rgb "blue"
+    set linetype 4 lw 2 lc rgb "red"
+    plot "$commitfile" using 1:2 title "commit" w l lt 2, \
+    "$authorfile" using 1:2 title "author" w l lt 1, \
+    "$commitfile" using 1:2 title "bezier commit" s b w l lt 4, \
+    "$authorfile" using 1:2 title "bezier author" s b w l lt 3
+END
+else
+    tmpfile=/tmp/git-plot.$(date +"%s").$$.tmp
+    git log --pretty="%ct" "$@" | ep | sort | inc_epstat >$tmpfile
+    stpl -lp $tmpfile
+fi
