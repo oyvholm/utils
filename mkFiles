@@ -21,13 +21,14 @@ if test "$1" = "-m"; then
     suuid_m=" -m"
 fi
 
-uuid=`suuid$suuid_m -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
 tmpjson=/tmp/.mkFiles.$uuid.tmp
 find -type f -print0 | \
     grep -zv '/\.git/' | \
     LC_COLLATE=C sort -z | \
     fldb -z -f - >>$tmpjson
 mv $tmpjson Files.json
+fileinfo="$(fldb Files.json | json_reformat -m)"
+uuid=`suuid$suuid_m -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> <fileinfo>$fileinfo</fileinfo> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
 echo mkFiles: Done.
 
 rmdir $lockname
