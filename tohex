@@ -21,6 +21,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'decimal' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,6 +36,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "decimal|d" => \$Opt{'decimal'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -48,8 +50,9 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $print_str = $Opt{'decimal'} ? "%u " : "%02x ";
 while (<>) {
-    s/(.)/sprintf("%02x ", ord($1))/gse;
+    s/(.)/sprintf($print_str, ord($1))/gse;
     print;
 }
 print "\n";
@@ -74,6 +77,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -d, --decimal
+    Use decimal (10 base) output instead of hex.
   -h, --help
     Show this help.
   -v, --verbose
