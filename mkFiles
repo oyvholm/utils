@@ -3,7 +3,7 @@
 #=======================================================================
 # mkFiles
 # File ID: 571d0be4-08ef-11de-8399-000475e441b9
-# Creates Files.sha1 in current directory.
+# Creates Files.json in current directory.
 #=======================================================================
 
 # FIXME: Why doesn’t the ^ (caret) work with "grep -z" ?
@@ -22,15 +22,12 @@ if test "$1" = "-m"; then
 fi
 
 uuid=`suuid$suuid_m -t mkfiles --raw -w eo -c "<c_mkfiles> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_mkfiles>"` || { echo mkFiles: suuid error >&2; rmdir $lockname; exit 1; }
-tmpsha1=/tmp/.mkFiles.$uuid.tmp
-echo \# $uuid >$tmpsha1
+tmpjson=/tmp/.mkFiles.$uuid.tmp
 find -type f -print0 | \
     grep -zv '/\.git/' | \
     LC_COLLATE=C sort -z | \
-    xargs -0 sha1sum -b >>$tmpsha1
-echo -n "# smsum:" >>$tmpsha1
-echo `smsum <$tmpsha1` >>$tmpsha1
-mv $tmpsha1 Files.sha1
+    fldb -z -f - >>$tmpjson
+mv $tmpjson Files.json
 echo mkFiles: Done.
 
 rmdir $lockname
