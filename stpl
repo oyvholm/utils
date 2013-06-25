@@ -154,8 +154,6 @@ END
             } else {
                 die("Unkonwn outfile type, has to be .ps, .png, .fig or .svg\n");
             }
-        } else {
-            print(GnupFP "set terminal x11\n");
         }
 
         if (length($opt_t)) {
