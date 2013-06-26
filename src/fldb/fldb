@@ -288,7 +288,7 @@ sub add_entry {
                 push(@json,
                     sprintf(
                         '"filename":"%s",' .
-                        '"size":"%u",' .
+                        '"size":%u,' .
                         '"sha256":"%s",' .
                         '"sha1":"%s",' .
                         '"gitsum":"%s",' .
@@ -319,12 +319,12 @@ sub add_entry {
                         sprintf(
                             '"ctime":"%s",' .
                             '"path":"%s",' .
-                            '"inode":"%s",' .
-                            '"links":"%s",' .
-                            '"device":"%s",' .
+                            '"inode":%u,' .
+                            '"links":%u,' .
+                            '"device":%u,' .
                             '"hostname":"%s",' .
-                            '"uid":"%s",' .
-                            '"gid":"%s"',
+                            '"uid":%u,' .
+                            '"gid":%u',
                             $Ctime,
                             $safe_filename,
                             $Inode,
