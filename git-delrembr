@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#=======================================================================
+# git-delrembr
+# File ID: bb8f9564-dfd3-11e2-b044-0800274013ad
+# Delete the specified Git branches locally and from all remotes
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+branches="$@"
+br_str=
+for f in $branches; do
+    br_str="$br_str :$f"
+done
+
+for f in . $(git remote); do
+    echo
+    echo git-delrembr: Executing \"git push $f $br_str\"...
+    git push $f $br_str
+done
