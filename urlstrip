@@ -13,6 +13,6 @@ while(<>) {
 	if (/(http\S+?)"/i) {
 		my $Curr = $1;
 		$Curr =~ s/&amp;/&/g;
-		print("$1\n");
+		print("$Curr\n");
 	}
 }
