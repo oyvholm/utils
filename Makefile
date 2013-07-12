@@ -42,3 +42,6 @@ remotes:
 
 lgd:
 	git lg --date-order $$(git branch -a | cut -c3- | grep -E -e 'remotes/(Spread|bitbucket|github|gitorious|repoorcz|sunbase)/' | grep -v 'HEAD -> ') $$(git branch | cut -c3-)
+
+obsolete:
+	git delrembr $$(cat Div/obsolete-refs.txt); true

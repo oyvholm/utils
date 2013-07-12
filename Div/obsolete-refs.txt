@@ -1,0 +1,17 @@
+add-git-plot
+add-git-wip
+add-homeo
+add-std-python.wip
+add-tojson
+fldb.no-quotes-around-numbers.wip
+fldb.use-suuid
+git-annex
+git-can-ff.add
+hhi.markdown
+hhi.markdown.wip
+mob
+testfail.t5800.dg-vbox
+testfail.t9500-hang
+tohex.add-json
+tohex.add-json.wip
+tohex.decimal.wip
