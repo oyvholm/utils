@@ -54,7 +54,7 @@ GetOptions(
 $Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
     die("$progname: $Opt{'directory'}: Invalid characters in --directory argument\n");
 
-my $url = 'sunny@git.sunbase.org';
+my $url = 'sunny@sunbase.org';
 my $dir = $Opt{'directory'} ? "/home/sunny/Git-$Opt{'directory'}" : "/home/sunny/Git";
 my $backup_dir = '/home/sunny/div/Git-backup';
 my $exthd_dir = '/media/exthd/alt/Git';
