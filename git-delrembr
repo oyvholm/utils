@@ -7,6 +7,13 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+progname=git-delrembr
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    echo Syntax: $progname ref [...]
+    exit 0
+fi
+
 branches="$@"
 remotes=". $(git remote)"
 for r in $remotes; do
