@@ -13,5 +13,4 @@ mob
 testfail.t5800.dg-vbox
 testfail.t9500-hang
 tohex.add-json
-tohex.add-json.wip
 tohex.decimal.wip
