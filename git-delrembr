@@ -8,13 +8,11 @@
 #=======================================================================
 
 branches="$@"
-br_str=
-for f in $branches; do
-    br_str="$br_str :$f"
-done
-
-for f in . $(git remote); do
+remotes=". $(git remote)"
+for r in $remotes; do
     echo
-    echo git-delrembr: Executing \"git push $f $br_str\"...
-    git push $f $br_str
+    echo ==== remote \"$r\" ====
+    for b in $branches; do
+        git push $r :$b
+    done
 done
