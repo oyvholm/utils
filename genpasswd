@@ -1,0 +1,184 @@
+#!/usr/bin/python
+"""Generate Password from Salts and Passphrase.
+
+The salts come from command line option and the passphrase from stdin.
+Print ``hash(salts + passphrase)'' for your password.
+You can generate different passwords for many domains from one passphrase.
+
+usage: genpasswd [options] [string...]
+
+example:
+    $ genpasswd example.com         # domain to login
+    Passphrase:My Passphrase        # without echoback
+    Vn/aHPNgXbieJCkSGYiAA7y9GwM     # got your password for example.com
+
+    $ genpasswd example.net         # domain to login
+    Passphrase:My Passphrase        # without echoback
+    /+/G4MzuaiSo9dHE/c0+GgPi6Nc     # got your password for example.net
+"""
+#
+# Copyright (c) 2009,2012 Satoshi Fukutomi <info@fuktommy.com>.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHORS AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+import base64
+import optparse
+import hashlib
+import subprocess
+import sys
+import unittest
+from getpass import getpass
+
+
+def parse_args(argv):
+    """Parse command line argments.
+    """
+    usage = 'usage: %prog [options] [string...]'
+    parser = optparse.OptionParser(usage=usage)
+    parser.add_option('-a', '--alphanum', dest='alphanum_mode',
+                      default=False, action='store_true',
+                      help='password includes alphabet and number only')
+    parser.add_option('-c', '--clipboard', dest='clipboard_mode',
+                      default=False, action='store_true',
+                      help='copy password to clipboard (require putclip command)')
+    parser.add_option('-f', '--file', dest='saltfile', metavar='FILE',
+                      help='additional salt file')
+    parser.add_option('-s', '--size', type='int', dest='size',
+                      help='password size')
+    parser.add_option('--test', action='callback', callback=_test,
+                      help='run test and exit')
+    return parser.parse_args(argv)
+
+
+def generate_password(salt, options):
+    """Generate password(hash) from salt.
+    """
+    digest = hashlib.sha1(':'.join(salt)).digest()
+    passwd = base64.encodestring(digest).replace('=', '').strip()
+
+    if options.alphanum_mode:
+        passwd = passwd.replace('+', '').replace('/', '')
+    if options.size is not None:
+        passwd = passwd[:options.size]
+
+    return passwd
+
+def clipboard_command():
+    """Select clipboard command for platform.
+    """
+    if sys.platform.startswith('linux'):
+        return 'xsel --input --clipboard'
+    elif sys.platform == 'cygwin':
+        return 'putclip'
+    elif sys.platform == 'darwin':
+        return 'pbcopy'
+    else:
+        raise Exception('I do not know your clipboard command.')
+
+def windows_put_clipboard(string):
+    """Put string to clipboard on Windows.
+
+    Requires pywin32.
+    """
+    import win32clipboard
+    win32clipboard.OpenClipboard()
+    win32clipboard.SetClipboardText(string)
+    win32clipboard.CloseClipboard()
+
+def put_clipboard(string):
+    """Put string to clipboard.
+    """
+    try:
+        windows_put_clipboard(string)
+        return
+    except ImportError:
+        pass
+    cmd = clipboard_command()
+    pipe = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
+    pipe.stdin.write(string)
+    pipe.stdin.close()
+    pipe.wait()
+
+class GeneratePasswordTest(unittest.TestCase):
+    def test_generate(self):
+        """Default.
+        """
+        argv = ['foo', 'bar']
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
+        self.assertEquals('VNy+Z9IdXrOUk9Rtia4fQS071t4', result)
+
+    def test_generate_alpha(self):
+        """Set alpha_num_mode on.
+        """
+        argv = ['foo', 'bar', '-a']
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
+        self.assertEquals('VNyZ9IdXrOUk9Rtia4fQS071t4', result)
+
+    def test_generate_size(self):
+        """Set Size.
+        """
+        argv = ['foo', 'bar', '-s', '6']
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
+        self.assertEquals('VNy+Z9', result)
+
+    def test_generate_alpha_size(self):
+        """Set size and alpha_num_mode.
+
+        Password size is set size.
+        """
+        argv = ['foo', 'bar', '-a', '-s', '6']
+        options, salt = parse_args(argv)
+        result = generate_password(salt, options)
+        self.assertEquals('VNyZ9I', result)
+
+
+def _test(option, opt_str, value, parser, *args, **kwargs):
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(GeneratePasswordTest))
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    if result.errors or result.failures:
+        sys.exit(1)
+    else:
+        sys.exit()
+
+
+def main():
+    options, salt = parse_args(sys.argv[1:])
+    if options.saltfile:
+        salt.append(open(options.saltfile, 'rb').read())
+    passphrase = getpass('Passphrase:')
+    salt.append(passphrase)
+    passwd = generate_password(salt, options)
+    if options.clipboard_mode:
+        print 'put password to clipboard.'
+        put_clipboard(passwd)
+    else:
+        print passwd
+
+
+if __name__ == '__main__':
+    main()
