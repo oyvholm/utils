@@ -110,6 +110,14 @@ for my $File (@ARGV) {
         my $compr_lzip = file_size("$tmp_prefix.lz");
         unlink("$tmp_prefix.lz");
 
+        $Opt{'verbose'} && print("lrzip -L $Comp\n");
+        my $lrzip_start = gettimeofday;
+        system("lrzip -L $Comp <$File >$tmp_prefix.lrz");
+        my $lrzip_end = gettimeofday;
+        my $lrzip_time = $lrzip_end-$lrzip_start;
+        my $compr_lrzip = file_size("$tmp_prefix.lrz");
+        unlink("$tmp_prefix.lrz");
+
         $Opt{'verbose'} && print("xz -$Comp\n");
         my $xz_start = gettimeofday;
         system("xz -$Comp <$File >$tmp_prefix.xz");
@@ -126,7 +134,7 @@ for my $File (@ARGV) {
         my $compr_xz_e = file_size("$tmp_prefix.xz");
         unlink("$tmp_prefix.xz");
 
-        my ($ratio_gzip, $ratio_bzip, $ratio_zip, $ratio_lzip, $ratio_xz, $ratio_xz_e);
+        my ($ratio_gzip, $ratio_bzip, $ratio_zip, $ratio_lzip, $ratio_lrzip, $ratio_xz, $ratio_xz_e);
 
         if ($Opt{'time'}) {
             # $ratio_gzip = $gzip_time / ($compr_gzip/$orig_size);
@@ -136,6 +144,7 @@ for my $File (@ARGV) {
             $ratio_bzip = $bzip_time;
             $ratio_zip = $zip_time;
             $ratio_lzip = $lzip_time;
+            $ratio_lrzip = $lrzip_time;
             $ratio_xz = $xz_time;
             $ratio_xz_e = $xz_e_time;
         } else {
@@ -143,11 +152,12 @@ for my $File (@ARGV) {
             $ratio_bzip = ($compr_bzip/$orig_size) * 100;
             $ratio_zip = ($compr_zip/$orig_size) * 100;
             $ratio_lzip = ($compr_lzip/$orig_size) * 100;
+            $ratio_lrzip = ($compr_lrzip/$orig_size) * 100;
             $ratio_xz = ($compr_xz/$orig_size) * 100;
             $ratio_xz_e = ($compr_xz_e/$orig_size) * 100;
         }
 
-        print(DatFP "$Comp\t$ratio_gzip\t$ratio_bzip\t$ratio_zip\t$ratio_lzip\t$ratio_xz\t$ratio_xz_e\n");
+        print(DatFP "$Comp\t$ratio_gzip\t$ratio_bzip\t$ratio_zip\t$ratio_lzip\t$ratio_lrzip\t$ratio_xz\t$ratio_xz_e\n");
     }
     close(DatFP);
     my $gnuplot_file = "$File.gnuplot";
@@ -160,8 +170,9 @@ plot "$File.compr" using 1:2 title "gzip" w lp pt 3, \\
 "$File.compr" using 1:3 title "bzip2" w lp pt 3, \\
 "$File.compr" using 1:4 title "zip" w lp pt 3, \\
 "$File.compr" using 1:5 title "lzip" w lp pt 3, \\
-"$File.compr" using 1:6 title "xz" w lp pt 3, \\
-"$File.compr" using 1:7 title "xz -e" w lp pt 3
+"$File.compr" using 1:6 title "lrzip" w lp pt 3, \\
+"$File.compr" using 1:7 title "xz" w lp pt 3, \\
+"$File.compr" using 1:8 title "xz -e" w lp pt 3
 END
         close(GnuplFP);
     }
