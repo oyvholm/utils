@@ -20,6 +20,7 @@ def exec_line(line, args):
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (stdout, stderr) = pipe.communicate(line)
         sys.stdout.write(stdout)
+        sys.stderr.write(stderr)
 
 def main(args = None):
     from optparse import OptionParser
