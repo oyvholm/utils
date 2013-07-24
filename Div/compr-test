@@ -181,9 +181,9 @@ plot "$File.compr" using 1:2 title "gzip" w lp pt 3, \\
 "$File.compr" using 1:4 title "zip" w lp pt 3, \\
 "$File.compr" using 1:5 title "lzip" w lp pt 3, \\
 "$File.compr" using 1:6 title "lrzip" w lp pt 3, \\
-"$File.compr" using 1:6 title "lrzip -z" w lp pt 3, \\
-"$File.compr" using 1:7 title "xz" w lp pt 3, \\
-"$File.compr" using 1:8 title "xz -e" w lp pt 3
+"$File.compr" using 1:7 title "lrzip -z" w lp pt 3, \\
+"$File.compr" using 1:8 title "xz" w lp pt 3, \\
+"$File.compr" using 1:9 title "xz -e" w lp pt 3
 END
         close(GnuplFP);
     }
