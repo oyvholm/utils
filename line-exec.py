@@ -25,12 +25,22 @@ def exec_line(line, args):
 def main(args = None):
     from optparse import OptionParser
     parser = OptionParser()
+    parser.add_option("-A", "--after", type="string", dest="after",
+                    default='',
+                    help="Text string to add after every line output",
+                    metavar="TEXT")
+    parser.add_option("-B", "--before", type="string", dest="before",
+                    default='',
+                    help="Text string to add before every line output",
+                    metavar="TEXT")
     (opt, args) = parser.parse_args()
 
     fp = sys.__stdin__
     line = fp.readline()
     while line:
+        sys.stdout.write(opt.before)
         exec_line(line, args)
+        sys.stdout.write(opt.after)
         line = fp.readline()
 
 if __name__ == "__main__":
