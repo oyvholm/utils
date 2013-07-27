@@ -1,9 +1,12 @@
 [submodule "Git/gpstools"]
 	path = Git/gpstools
 	url = https://github.com/sunny256/gpstools.git
+	branch = master
 [submodule "Git/suuid"]
 	path = Git/suuid
 	url = https://github.com/sunny256/suuid.git
+	branch = master
 [submodule "Git/svnutils"]
 	path = Git/svnutils
 	url = https://github.com/sunny256/svnutils.git
+	branch = master
