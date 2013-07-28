@@ -43,24 +43,24 @@ if ($opt_u) {
 	if ($opt_w) {
 		while (<>) {
 			chomp;
-			-w $_ || print("$_\n");
+			-w $_ || ! -l $_ && print("$_\n");
 		}
 	} else {
 		while (<>) {
 			chomp;
-			-r $_ || print("$_\n");
+			-r $_ || ! -l $_ && print("$_\n");
 		}
 	}
 } else {
 	if ($opt_w) {
 		while (<>) {
 			chomp;
-			-w $_ && print("$_\n");
+			-w $_ && ! -l $_ && print("$_\n");
 		}
 	} else {
 		while (<>) {
 			chomp;
-			-r $_ && print("$_\n");
+			-r $_ && ! -l $_ && print("$_\n");
 		}
 	}
 }
