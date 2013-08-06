@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#=======================================================================
+# list-youtube
+# File ID: c5f8c456-f24a-11e2-a3f1-001f3b596ec9
+# Sort videos downloaded by youtube-dl in chronological order
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+ls *.info.json | while read f; do
+    echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"');
+done | grep . | sort
