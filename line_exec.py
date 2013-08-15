@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""line-exec.py - Send all lines from stdin to specified programs
+"""line_exec.py - Send all lines from stdin to specified programs
 
 Reads from stdin and sends every line to the program(s) specified on the 
 command line.
