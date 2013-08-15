@@ -1,3 +1,4 @@
+*.pyc
 *.swp
 /Lib/std/c/compile.tmp/
 /src/fldb/tests/log/
