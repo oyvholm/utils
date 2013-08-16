@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #=======================================================================
-# konvflac
-# File ID: dde2fab8-3dfd-11e0-9b12-1b57187fd9d3
-# Convert .wav files to .flac and keep metadata
+# wav_to_mp3
+# File ID: ffabc804-0665-11e3-a941-a088b4ddef28
+# Convert .wav files to .mp3
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
