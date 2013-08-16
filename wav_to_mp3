@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#=======================================================================
+# wav_to_mp3
+# File ID: ffabc804-0665-11e3-a941-a088b4ddef28
+# Convert .wav files to .mp3
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=wav_to_mp3
+
+if test -z "$1"; then
+    echo 'Syntax: $progname wav_file [...]' >&2
+    exit 1
+fi
+tmpuuid=$(suuid -m -t c_wav_to_mp3 -wa -c "Starting conversion")
+test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
+for curr in "$@"; do
+    echo
+    echo ======== $(ls -l "$curr")
+    noext=$(basename "$curr" .wav)
+    wavfile="$noext.wav"
+    mp3file="$noext.mp3"
+    test -e "$mp3file" && { echo $mp3file: File already exists >&2; continue; }
+    wavid=$(finduuid "$wavfile")
+    wavid_str=
+    test -n "$wavid" && wavid_str=" (File ID $wavid)"
+    lame -h --tc $(suuid -m -t encode,c_wav_to_mp3 -wa -c "Converting $wavfile$wavid_str to mp3") "$wavfile" "$mp3file"
+done
