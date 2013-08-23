@@ -37,9 +37,14 @@ elif test "$1" = "-v"; then
     msg Creating ssh tunnel...
     sess -d ssh_tunnel -- ssh -L 590$2:localhost:590$2 -C -N -f $HOST
     quality_str=
-    test -n "$3" && quality_str="-quality $3"
-    msg Starting xtightvncviewer...
-    sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 -nocursorshape $quality_str localhost:$2
+    if test -n "$3"; then
+        quality_str="-quality $3"
+        msg Starting xtightvncviewer with quality $3...
+        sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 -nocursorshape $quality_str localhost:$2
+    else
+        msg Starting xtightvncviewer with top quality...
+        sess -- xtightvncviewer -encodings tight -truecolour -nojpeg -nocursorshape localhost:$2
+    fi
     msg Destroying ssh tunnel...
     pkill -9 -f "ssh -L 590$2:localhost:590$2"
 else
