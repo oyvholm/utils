@@ -5,6 +5,8 @@
 # Latskap.
 #=======================================================================
 
+ao_str=
+pgrep jackd && ao_str=" -ao jack"
 test "$1" = "-s" && { slow=" -lavdopts fast:skiploopfilter=all"; shift; }
 test -e /dg-vbox.mrk && vo_str=" -vo x11 -zoom"
-mplayer -fs -osdlevel 3$slow$vo_str "$@"
+mplayer -fs -osdlevel 3$slow$vo_str$ao_str "$@"
