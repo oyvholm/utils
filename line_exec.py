@@ -21,6 +21,8 @@ def exec_line(line, args):
         (stdout, stderr) = pipe.communicate(line)
         sys.stdout.write(stdout)
         sys.stderr.write(stderr)
+        sys.stdout.flush()
+        sys.stderr.flush()
 
 def main(args = None):
     from optparse import OptionParser
