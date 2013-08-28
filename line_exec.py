@@ -20,8 +20,8 @@ def exec_line(line, args):
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (stdout, stderr) = pipe.communicate(line)
         sys.stdout.write(stdout)
-        sys.stderr.write(stderr)
         sys.stdout.flush()
+        sys.stderr.write(stderr)
         sys.stderr.flush()
 
 def main(args = None):
