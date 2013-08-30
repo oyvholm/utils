@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# ydd
+# File ID: 7989fb04-1193-11e3-9433-a088b4ddef28
+# Download YouTube videoes with preferred quality and format
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+yd -f 22/45/44/18 "$@"
