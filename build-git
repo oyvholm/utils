@@ -143,6 +143,10 @@ if [ ! -d $builddir/. ]; then
     done
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
+git status --porcelain | grep . && {
+    echo $progname: $builddir is not clean, aborting >&2;
+    myexit 1;
+}
 curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
 lpar_git
 
