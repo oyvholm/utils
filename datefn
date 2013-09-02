@@ -22,6 +22,7 @@ our %Opt = (
 
     'debug' => 0,
     'dry-run' => 0,
+    'force' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -37,6 +38,7 @@ GetOptions(
 
     "debug" => \$Opt{'debug'},
     "dry-run|n" => \$Opt{'dry-run'},
+    "force|f" => \$Opt{'force'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -77,7 +79,9 @@ sub process_file {
         if ($Opt{'dry-run'}) {
             print("$progname: '$File' would be renamed to '$new_name'\n");
         } else {
-            if (rename($File, $new_name)) {
+            if (-e $new_name && !$Opt{'force'}) {
+                warn("$progname: $new_name: File already exists, use --force to overwrite\n");
+            } elsif (rename($File, $new_name)) {
                 print("$progname: '$File' renamed to '$new_name'\n");
             } else {
                 warn("$progname: $File: Cannot rename file to '$new_name': $!\n");
@@ -186,6 +190,9 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
+  -f, --force
+    If a file with the new name already exists, allow the program to 
+    overwrite the file.
   -n, --dry-run
     Don’t rename files, but report what would happen.
   -h, --help
