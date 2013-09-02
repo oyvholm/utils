@@ -135,6 +135,23 @@ END
         "Sånn går now the days.\n",
         "file.txt was properly renamed",
     );
+    ok(chdir(".."), "chdir ..");
+    testcmd("tar xzf dir.tar.gz", "", "", 0);
+    ok(chdir("dir"), "chdir dir");
+    testcmd("../../$CMD file.txt",
+        "",
+        "datefn: file.txt: Could not read 358 bytes, but continuing: \n" .
+            "datefn: 20121224T002858Z.file.txt: File already exists, use --force to overwrite\n",
+        0,
+        "Don't overwrite file without --force",
+    );
+    testcmd("../../$CMD -f file.txt",
+        "datefn: 'file.txt' renamed to '20121224T002858Z.file.txt'\n",
+        "datefn: file.txt: Could not read 358 bytes, but continuing: \n",
+        0,
+        "File is overwritten with --force",
+    );
+
     ok(unlink($newname), "unlink $newname");
     ok(chdir("../.."), "chdir ../..");
     ok(rmdir($dir), "rmdir $dir");
