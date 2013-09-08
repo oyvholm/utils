@@ -120,8 +120,6 @@ for my $f (`git remote`) {
     }
 }
 
-mysystem('git', 'push');
-
 exit;
 
 sub check_sig {
