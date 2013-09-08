@@ -18,17 +18,18 @@ test "$1" = "-d" && {
 echo ciall: git status 1... >&2
 LC_ALL=C git status | grep "^nothing to commit" && { echo ciall: Nothing to do here.; exit 0; }
 
+unset logmsg
+[ ! -z "$1" ] && logmsg="$*"
+
 echo ciall: git status 2... >&2
 git status
 echo
+echo "Log message: '$logmsg'"
 until test "$besafe" = "y"; do
     echo -n Press \'y\' + Enter to commit all new changes or \'n\' to abort...
     read besafe
     test "$besafe" = "n" && exit 0;
 done
-
-unset logmsg
-[ ! -z "$1" ] && logmsg="$*"
 
 if [ "$logmsg" = "--" ]; then
     tmpmsgfile=/tmp/$(date +%s)-$$.tmp
