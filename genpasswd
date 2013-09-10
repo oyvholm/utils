@@ -90,7 +90,7 @@ def clipboard_command():
     if sys.platform.startswith('linux'):
         return 'xsel --input --clipboard'
     elif sys.platform == 'cygwin':
-        return 'putclip'
+        return 'cat > /dev/clipboard'
     elif sys.platform == 'darwin':
         return 'pbcopy'
     else:
