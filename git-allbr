@@ -10,7 +10,7 @@ for remote in $remotes; do
     echo ==== remote $remote
     for f in $(git branch -a | grep remotes/$remote/ | grep -v "remotes/$remote/HEAD " | perl -pe "s!remotes/$remote/(.*)\$!\$1!"); do
         (git branch --no-track $f $remote/$f 2>&1 && echo Created $f) | grep -v '^fatal: A branch named .* already exists.'
-        git push . $remote/$f:$f 2>&1 | grep -v '^Everything up-to-date'
+        git push . $remote/$f:refs/heads/$f 2>&1 | grep -v '^Everything up-to-date'
     done
     echo
 done
