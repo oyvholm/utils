@@ -7,4 +7,31 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+# Available formats:
+# 37      :       mp4     [1080x1920]
+# 46      :       webm    [1080x1920]
+# 22      :       mp4     [720x1280]
+# 45      :       webm    [720x1280]
+# 35      :       flv     [480x854]
+# 44      :       webm    [480x854]
+# 34      :       flv     [360x640]
+# 18      :       mp4     [360x640]
+# 43      :       webm    [360x640]
+# 5       :       flv     [240x400]
+# 36      :       3gp     [240x320]
+# 17      :       3gp     [144x176]
+# 84      :       mp4     [720p] (3D)
+# 102     :       webm    [720p] (3D)
+# 82      :       mp4     [360p] (3D)
+# 100     :       webm    [360p] (3D)
+# 137     :       mp4     [1080p] (DASH Video)
+# 136     :       mp4     [720p] (DASH Video)
+# 135     :       mp4     [480p] (DASH Video)
+# 134     :       mp4     [360p] (DASH Video)
+# 133     :       mp4     [240p] (DASH Video)
+# 160     :       mp4     [192p] (DASH Video)
+# 141     :       mp4     [256k] (DASH Audio)
+# 140     :       mp4     [128k] (DASH Audio)
+# 139     :       mp4     [48k] (DASH Audio)
+
 yd -f 37/46/22/45/44/18/43 "$@"
