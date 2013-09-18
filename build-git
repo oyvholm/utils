@@ -86,13 +86,18 @@ commit_tree() {
 
 push_changes() {
     is_official_branch $local_master && push_local= || push_local=$local_master
-    echo ==== push changes to Spread ====
-    git push -f Spread $push_local master maint next pu todo
-    echo ==== push changes to github ====
-    git push -f github $push_local master maint next pu todo
-    echo ==== push changes to sunbase ====
-    git push -f sunbase $push_local master maint next pu todo
-    git push --tags sunbase
+    for f in Spread loc-repo passp sunbase github rsync-net; do
+        git remote | grep -q "^$f\$" && {
+            echo ==== push changes to $f ====
+            git push -f $f $push_local master maint next pu todo
+        }
+    done
+    for f in loc-repo passp sunbase rsync-net; do
+        git remote | grep -q "^$f\$" && {
+            echo ==== push tags to $f ====
+            git push --tags $f
+        }
+    done
     echo ==== push finished ====
     lpar_git
 }
