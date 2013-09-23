@@ -11,7 +11,7 @@ if test "$1" = "space"; then
 elif test "$1" = "date"; then
     ntpdate -q pool.ntp.org
 elif test "$1" = "kern"; then
-    tail -f /var/log/kern.log
+    tail -F /var/log/kern.log
 else
     test -d /n900/. && sudo=sudo || unset sudo
     while :; do
