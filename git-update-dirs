@@ -104,7 +104,8 @@ my @err_updsub = ();
 if ($Opt{'recursive'}) {
     my $repos = `find -type d -name .git`;
     $repos =~ s/\/\.git\n/\n/g;
-    @Dirs = sort(@Dirs, split("\n", $repos));
+    my %dupdir;
+    @Dirs = sort(grep { !$dupdir{$_}++ } (@Dirs, split("\n", $repos)));
 }
 
 my $orig_dir = getcwd();
