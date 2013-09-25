@@ -7,4 +7,6 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-youtube-dl -t --write-description --write-info-json "$@"
+youtube-dl -t \
+  --write-description --write-info-json \
+  "$@"
