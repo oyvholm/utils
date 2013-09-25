@@ -9,4 +9,5 @@
 
 youtube-dl -t \
   --write-description --write-info-json \
+  --write-sub --sub-lang en,no,nb \
   "$@"
