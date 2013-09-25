@@ -123,6 +123,13 @@ LOOP: for my $f (@Dirs) {
         if (length($Opt{'exec-before'})) {
             mysystem($Opt{'exec-before'});
         }
+        if ($Opt{'test'}) {
+            mysystem("git", "fsck") && (
+                push(@err_test, $f),
+                warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
+                next LOOP
+            );
+        }
         if ($Opt{'fetch-prune'}) {
             mysystem("git", "fetch", "--all", "--prune") && push(@err_fetch, $f);
         } elsif ($Opt{'fetch'}) {
@@ -142,13 +149,6 @@ LOOP: for my $f (@Dirs) {
         }
         if ($Opt{'dangling'}) {
             mysystem("git", "dangling") && push(@err_dangling, $f);
-        }
-        if ($Opt{'test'}) {
-            mysystem("git", "fsck") && (
-                push(@err_test, $f),
-                warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
-                next LOOP
-            );
         }
         if ($Opt{'allbr'}) {
                 mysystem("git", "nobr");
@@ -247,6 +247,8 @@ Options:
 
   -E X, --exec-before X
     Execute command X in every repo before all other commands.
+  -t, --test
+    Test integrity of local repositories by running "git fsck".
   -F, --fetch-prune
     Fetch new commits from all remotes and prune deleted remote branches.
   -f, --fetch
@@ -257,8 +259,6 @@ Options:
     If the repo is used by git-annex, run "ga sync".
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into branches.
-  -t, --test
-    Test integrity of local repositories by running "git fsck".
   -a, --allbr
     Execute "git nobr", "git allbr -a" and "git commit -".
   -P, --push
