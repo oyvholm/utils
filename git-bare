@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#=======================================================================
+# git-bare
+# File ID: 8959f7a6-2961-11e3-bf45-001f3b596ec9
+# Set config values in bare/non-bare Git repositories
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+mode=$1
+
+if test "$mode" = "yes"; then
+    echo git-bare: Setting $(pwd) to bare
+    git config core.bare true
+    git config --unset core.logallrefupdates
+elif test "$mode" = "no"; then
+    echo git-bare: Setting $(pwd) to non-bare
+    git config core.bare false
+    git config core.logallrefupdates true
+else
+    echo 'Syntax: git-bare [yes|no]'
+fi
