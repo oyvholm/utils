@@ -27,6 +27,7 @@ our %Opt = (
     'exthd-remote' => 0,
     'github-remote' => 0,
     'help' => 0,
+    'rsyncnet-remote' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -46,6 +47,7 @@ GetOptions(
     "exthd-remote|e" => \$Opt{'exthd-remote'},
     "github-remote|g" => \$Opt{'github-remote'},
     "help|h" => \$Opt{'help'},
+    "rsyncnet-remote|r" => \$Opt{'rsyncnet-remote'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -55,6 +57,7 @@ $Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
     die("$progname: $Opt{'directory'}: Invalid characters in --directory argument\n");
 
 my $url = 'sunny@sunbase.org';
+my $rsyncnet_url = $ENV{RN};
 my $dir = $Opt{'directory'} ? "/home/sunny/Git-$Opt{'directory'}" : "/home/sunny/Git";
 my $backup_dir = '/home/sunny/div/Git-backup';
 my $exthd_dir = '/media/exthd/alt/Git';
@@ -106,6 +109,13 @@ if ($Opt{'exthd-remote'}) {
     -d "$exthd_dir/$repo.git/." || mysystem("git", "init", "--bare", "$exthd_dir/$repo.git");
     mysystem("git", "remote", "add", "exthd", "sunny\@localhost:$exthd_dir/$repo.git");
 }
+if ($Opt{'rsyncnet-remote'}) {
+    my $repodir = sprintf("repos/Git%s/$repo.git",
+        length($Opt{'directory'}) ? "-$Opt{'directory'}" : "",
+    );
+    mysystem("git", "remote", "add", "rsync-net", "$rsyncnet_url:$repodir");
+    mysystem("ssh", $rsyncnet_url, "git", "init", "--bare", "$repodir");
+}
 
 sub mysystem {
     # {{{
@@ -148,6 +158,8 @@ Options:
     Define the github remote
   -h, --help
     Show this help.
+  -r, --rsyncnet-remote
+    Create the rsync-net remote and initialize it.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
