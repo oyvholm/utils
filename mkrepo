@@ -56,8 +56,8 @@ $Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
 
 my $url = 'sunny@sunbase.org';
 my $rsyncnet_url = $ENV{RN};
-my $dir = $Opt{'directory'} ? "/home/sunny/Git-$Opt{'directory'}" : "/home/sunny/Git";
-my $exthd_dir = '/media/exthd/alt/Git';
+my $dir = $Opt{'directory'} ? "/home/sunny/repos/Git-$Opt{'directory'}" : "/home/sunny/repos/Git";
+my $exthd_dir = '/media/exthd/alt/repos/Git';
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
