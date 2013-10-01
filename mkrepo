@@ -20,7 +20,6 @@ our $Debug = 0;
 
 our %Opt = (
 
-    'backup-remote' => 0,
     'create-remote' => 0,
     'debug' => 0,
     'directory' => "",
@@ -40,7 +39,6 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
-    "backup-remote|b" => \$Opt{'backup-remote'},
     "create-remote|c" => \$Opt{'create-remote'},
     "debug" => \$Opt{'debug'},
     "directory|d=s" => \$Opt{'directory'},
@@ -59,7 +57,6 @@ $Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
 my $url = 'sunny@sunbase.org';
 my $rsyncnet_url = $ENV{RN};
 my $dir = $Opt{'directory'} ? "/home/sunny/Git-$Opt{'directory'}" : "/home/sunny/Git";
-my $backup_dir = '/home/sunny/div/Git-backup';
 my $exthd_dir = '/media/exthd/alt/Git';
 
 $Opt{'debug'} && ($Debug = 1);
@@ -97,10 +94,6 @@ if ($Opt{'create-remote'}) {
     } else {
         msg(1, "'$dir' doesn't exist, skipping check for local repo");
     }
-}
-if ($Opt{'backup-remote'}) {
-    -d "$backup_dir/$repo.git/." || mysystem("git", "init", "--bare", "$backup_dir/$repo.git");
-    mysystem("git", "remote", "add", "backup", "sunny\@localhost:$backup_dir/$repo.git");
 }
 if ($Opt{'github-remote'}) {
     mysystem("git", "remote", "add", "github", "git\@github.com:sunny256/$repo.git");
@@ -146,8 +139,6 @@ Usage: $progname [options] repo_name
 
 Options:
 
-  -b, --backup-remote
-    Set up the backup remote
   -c, --create-remote
     Set up the sunbase remote
   -d X, --directory X
