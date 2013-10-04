@@ -9,4 +9,4 @@ if test "$1" = "sync"; then
     stat_output="$(git status --porcelain | grep -v '^??')"
     test -n "$stat_output" && { echo ga: Repo has modifications, will not git-annex sync >&2; exit 1; }
 fi
-/opt/git-annex/runshell /opt/git-annex/git-annex "$@"
+/opt/git-annex/git-annex "$@"
