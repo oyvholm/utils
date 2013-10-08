@@ -71,6 +71,7 @@ my $repo = $ARGV[0];
 $repo =~ s/(.*)\.git$/$1/i;
 my $rg = "$dir/$repo.git";
 $repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid characters\n");
+chomp(my $hname = `hostname`); # FIXME: Should probably use $HNAME
 if ($Opt{'create-remote'}) {
     mysystem("ssh", $url, "mkdir $rg && git init --bare $rg");
     mysystem("git", "remote", "add", "sunbase", "$url:$rg");
@@ -82,7 +83,7 @@ if ($Opt{'create-remote'}) {
         } else {
             msg(1, "$rg: Repo already exists, that's good");
         }
-        mysystem("git", "remote", "add", "loc-repo", "sunny\@localhost:$rg");
+        mysystem("git", "remote", "add", $hname, "sunny\@localhost:$rg");
         chomp(my $origdir = `pwd`);
         if (chdir($rg)) {
             mysystem("git", "remote", "add", "sunbase", "$url:$rg");
