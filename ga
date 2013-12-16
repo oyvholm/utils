@@ -9,4 +9,7 @@ if test "$1" = "sync"; then
     stat_output="$(git status --porcelain | grep -v '^??')"
     test -n "$stat_output" && { echo ga: Repo has modifications, will not git-annex sync >&2; exit 1; }
 fi
+if test "$1" = "init"; then
+    git config --get annex.uuid | grep -q . || git config annex.uuid $(suuid -wa -t ga_init)
+fi
 /opt/git-annex/git-annex "$@"
