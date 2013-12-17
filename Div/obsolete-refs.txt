@@ -5,7 +5,6 @@ add-std-python.wip
 add-tojson
 fldb.no-quotes-around-numbers.wip
 fldb.use-suuid
-git-annex
 git-can-ff.add
 hhi.markdown
 hhi.markdown.wip
