@@ -7,4 +7,4 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-find -name '*.git' -print0 | xargs -0 git update-dirs -E "lpar -a" -F -e "lpar -a"
+find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -E "lpar -a" -F -e "lpar -a"
