@@ -3,8 +3,12 @@
 #=======================================================================
 # all-lpar
 # File ID: d96bacfe-6dda-11e3-8559-001f3b596ec9
-# Execute "lpar -a" and git fetch in all subdirs
+# Execute "lpar -a" in all subdirs
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -E "lpar -a" -F -e "lpar -a"
+if [ "$1" = "-f" ]; then
+    find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -E "lpar -a" -F -e "lpar -a"
+else
+    find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -E "lpar -a"
+fi
