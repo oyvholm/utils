@@ -88,7 +88,7 @@ HOSTN="`hostname`"
 CURRDIR="`/bin/pwd`"
 cd .. || { echo "$0: Cannot \"cd ..\"" >&2; exit 1; }
 uuid=`suuid -m -t mkt --raw -w eo -c "<c_mkt> <filename>$_prefix.tar$_packext</filename> <host>$HOSTN</host> <directory>$CURRDIR</directory> </c_mkt>"` || { echo $0: suuid error >&2; exit 1; }
-tar cf $_prefix.tar --label=$uuid $_prefix || { echo "$0: Error running \"tar cf $_prefix.tar $_prefix\" in parent dir" >&2; exit 1; }
+find $_prefix -print0 | LC_COLLATE=C sort -z | tar cf $_prefix.tar --null -T - --no-recursion --label=$uuid $_prefix || { echo "$0: Error running tar in parent dir" >&2; exit 1; }
 
 if [ "$_no_compress" -eq "1" ]; then
 	exit 0
