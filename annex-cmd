@@ -14,4 +14,4 @@ if [ "$1" = "-D" ]; then
     wildc="$2"
     shift 2
 fi
-git update-dirs $HOME/annex/$wildc /media/*/annex/$wildc "$@"
+git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc "$@"
