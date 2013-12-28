@@ -65,6 +65,7 @@ if (scalar(@shas)) {
     system("git lpar --all >>$lpar_dir/$repo.lpar");
 }
 system("git for-each-ref >>$lpar_dir/$repo.lpar");
+$Opt{'all'} || system("lpar -a");
 
 sub print_version {
     # Print program version {{{
