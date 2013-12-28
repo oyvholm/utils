@@ -7,4 +7,11 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-git update-dirs $HOME/annex/* /media/*/annex/* "$@"
+wildc='*'
+
+if [ "$1" = "-D" ]; then
+    test -z "$2" && { echo annex-cmd: Missing argument for -D >&2; exit 1; }
+    wildc="$2"
+    shift 2
+fi
+git update-dirs $HOME/annex/$wildc /media/*/annex/$wildc "$@"
