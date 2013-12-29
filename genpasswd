@@ -89,8 +89,6 @@ def clipboard_command():
     """
     if sys.platform.startswith('linux'):
         return 'xsel --input --clipboard'
-    elif sys.platform == 'cygwin':
-        return 'cat > /dev/clipboard'
     elif sys.platform == 'darwin':
         return 'pbcopy'
     else:
@@ -114,6 +112,9 @@ def put_clipboard(string):
         return
     except ImportError:
         pass
+    if sys.platform == 'cygwin':
+        open('/dev/clipboard', 'wb').write(string)
+        return
     cmd = clipboard_command()
     pipe = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE)
     pipe.stdin.write(string)
