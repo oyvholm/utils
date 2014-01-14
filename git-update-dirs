@@ -21,6 +21,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'aggressive-compress' => 0,
     'all-options' => 0,
     'allbr' => 0,
     'compress' => 0,
@@ -51,6 +52,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "aggressive-compress|C" => \$Opt{'aggressive-compress'},
     "all-options|A" => \$Opt{'all-options'},
     "allbr|a" => \$Opt{'allbr'},
     "compress|c" => \$Opt{'compress'},
@@ -162,12 +164,16 @@ LOOP: for my $f (@Dirs) {
             mysystem("git", "submodule", "init");
             mysystem("git", "submodule", "update") && push(@err_updsub, $f);
         }
-        if ($Opt{'compress'}) {
+        if ($Opt{'compress'} || $Opt{'aggressive-compress'}) {
             if (!-e ".no-git-gc") {
                 my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
                 chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_before += $before;
-                mysystem("git", "gc", $dang_str) && push(@err_compress, $f);
+                if ($Opt{'aggressive-compress'}) {
+                    mysystem("git", "gc", "--aggressive", $dang_str) && push(@err_compress, $f);
+                } else {
+                    mysystem("git", "gc", $dang_str) && push(@err_compress, $f);
+                }
                 chomp(my $after = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_after += $after;
                 my $saved = $before - $after;
@@ -267,6 +273,8 @@ Options:
     Update submodules if .gitmodules is found.
   -c, --compress
     Compress local repositories to save space.
+  -C, --aggressive-compress
+    Use --aggressive when compressing the repository.
   -e X, --exec-after X
     Execute command X in every repo after all other commands.
 
