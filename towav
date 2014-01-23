@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=======================================================================
+# towav
+# File ID: 9b6c4410-82be-11e3-921e-001f3b596ec9
+# Convert some kind of media file (film or sound) to .wav
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+for f in "$@"; do
+    echo "==== $f"
+    mplayer -novideo -ao "pcm:file=tw-$f.wav" "$f"
+done
