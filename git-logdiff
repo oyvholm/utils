@@ -16,7 +16,7 @@ if test -n "$3"; then
     c1=$3..$c1
     c2=$3..$c2
 fi
-git log --raw --format=fuller --date=iso $p_str $c1 >/tmp/$c1$ext
-git log --raw --format=fuller --date=iso $p_str $c2 >/tmp/$c2$ext
+git log --raw --format=raw $p_str $c1 >/tmp/$c1$ext
+git log --raw --format=raw $p_str $c2 >/tmp/$c2$ext
 vimdiff /tmp/{$c1,$c2}$ext
 rm /tmp/{$c1,$c2}$ext
