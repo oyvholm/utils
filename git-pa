@@ -26,6 +26,7 @@ our %Std = (
 );
 our %Opt = (
 
+    'all-remotes' => 0,
     'debug' => 0,
     'dry-run' => 0,
     'force' => 0,
@@ -43,6 +44,7 @@ our $VERSION = '0.00';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'all-remotes|a' => \$Opt{'all-remotes'},
     'debug' => \$Opt{'debug'},
     'dry-run|n' => \$Opt{'dry-run'},
     'force|f' => \$Opt{'force'},
@@ -107,6 +109,7 @@ for my $f (`git remote`) {
         }
         close($pipefp);
     }
+    $Opt{'all-remotes'} && ($do_push = 1);
     if ($do_push) {
         if ($Opt{'force'}) {
             mysystem('git', 'push', '--force', $f, @ARGV);
@@ -174,6 +177,8 @@ Usage: $progname [options] [args for git push]
 
 Options:
 
+  -a, --all-remotes
+    Push to all local remotes.
   -f, --force
     Use --force when pushing. Overwrites remote branches, be careful.
   -h, --help
