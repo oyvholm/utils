@@ -60,13 +60,43 @@ shift;
 my @shas = scalar(@ARGV) ? @ARGV : ();
 if (scalar(@shas)) {
     for my $curr (@shas) {
+        lock_file($lpar_file);
         system("git lpar `git branch -a --contains=\"$curr\" | cut -c3- | grep -v -e '->' -e '(no branch)'` >>$lpar_file");
+        unlock_file($lpar_file);
     }
 } else {
+    lock_file($lpar_file);
     system("git lpar --all >>$lpar_file");
+    unlock_file($lpar_file);
 }
+lock_file($lpar_file);
 system("git for-each-ref >>$lpar_file");
+unlock_file($lpar_file);
 $Opt{'all'} || system("lpar -a");
+
+sub lock_file {
+    # {{{
+    my $file = shift;
+    my $lockdir = "$file.lock";
+    my $did_lock = 0;
+    until (mkdir($lockdir)) {
+        print(STDERR "$progname: $file: File is locked, waiting for access...\n");
+        $did_lock = 1;
+        sleep(2);
+    }
+    $did_lock && print(STDERR "$progname: $file: Obtained lock\n");
+    return;
+    # }}}
+} # lock_file()
+
+sub unlock_file {
+    # {{{
+    my $file = shift;
+    my $lockdir = "$file.lock";
+    rmdir($lockdir) || warn("$progname: $lockdir: Lockdir unexpectedly disappeared");
+    return;
+    # }}}
+} # unlock_file()
 
 sub print_version {
     # Print program version {{{
