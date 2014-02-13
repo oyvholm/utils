@@ -53,7 +53,7 @@ if ($Opt{'version'}) {
 
 defined($ARGV[0]) || $Opt{'all'} || die("$progname: Repo not specified\n");
 my $repo = $Opt{'all'} ? 'all' : $ARGV[0];
-my $lpar_dir = $Opt{'all'} ? '~/src/git/all-lpar' : '~/src/git/lpar';
+my $lpar_dir = $Opt{'all'} ? "$ENV{'HOME'}/src/git/all-lpar" : "$ENV{'HOME'}/src/git/lpar";
 shift;
 
 my @shas = scalar(@ARGV) ? @ARGV : ();
