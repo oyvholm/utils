@@ -24,7 +24,8 @@ test -n "$branches" && git branch -D $branches
 
 test "$1" = "-D" && exit
 
-for f in `git fsck --no-reflogs | tee dangling-result.tmp | grep "dangling commit" | cut -f 3 -d ' '`; do
+git fsck --no-reflogs >dangling-result.tmp
+for f in `grep "dangling commit" dangling-result.tmp | cut -f 3 -d ' '`; do
     skip=0
     if test -e $bannedfile; then
         for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
