@@ -13,10 +13,10 @@ shift
 for ff in "$@"; do
     if [ -f "$ff" ]; then
         # cp -p $ff $ff.filt-bck
-        cat "$ff" | $cmd >filt.tmp
+        cat "$ff" | $cmd >"$ff.filt.tmp"
         retval=$[$retval | $?];
-        chmod --reference "$ff" filt.tmp
-        mv filt.tmp "$ff"
+        chmod --reference "$ff" "$ff.filt.tmp"
+        mv "$ff.filt.tmp" "$ff"
     else
         echo filt: $ff: Not a regular file >&2
         retval=$[$retval | 1];
