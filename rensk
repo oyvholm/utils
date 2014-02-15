@@ -3,6 +3,6 @@
 # Remove empty directories under current dir
 
 find -depth -type d -print0 | \
-  grep -azv -e '/\.svn/' -e '/\.git/' | \
+  grep -azv -e '/\.svn/' -e '/\.git/' -e '\.lock$' -e '\.LOCK$' | \
   xargs -0 rmdir 2>/dev/null
 exit 0
