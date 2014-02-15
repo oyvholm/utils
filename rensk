@@ -2,5 +2,7 @@
 
 # Remove empty directories under current dir
 
-find -depth -type d -print0 | grep -azv -e '/\.svn/' -e '/\.git/' | xargs -0 rmdir 2>/dev/null
+find -depth -type d -print0 | \
+  grep -azv -e '/\.svn/' -e '/\.git/' | \
+  xargs -0 rmdir 2>/dev/null
 exit 0
