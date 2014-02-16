@@ -17,7 +17,7 @@ for ff in "$@"; do
         until mkdir "$ff.lock"; do
             echo filt: $ff: Waiting for lock... >&2
             lock_wait=1
-            sleep 2
+            sleep 1
         done
         test "$lock_wait" = "1" && { echo filt: $ff: Obtained lock >&2; }
         cat "$ff" | $cmd >"$ff.filt.tmp"
