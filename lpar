@@ -82,7 +82,7 @@ sub lock_file {
     until (mkdir($lockdir)) {
         print(STDERR "$progname: $file: File is locked, waiting for access...\n");
         $did_lock = 1;
-        sleep(2);
+        sleep(1);
     }
     $did_lock && print(STDERR "$progname: $file: Obtained lock\n");
     return;
