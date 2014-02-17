@@ -148,7 +148,7 @@ if [ ! -d $builddir/. ]; then
     done
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
-git status --porcelain | grep . && {
+GIT_PAGER=cat git status --porcelain | grep . && {
     echo $progname: $builddir is not clean, aborting >&2;
     myexit 1;
 }
@@ -184,7 +184,7 @@ is_official_branch $local_master && destbranch=origin/$local_master || destbranc
 echo
 if [ -n "$curr_git_ver" ]; then
     echo ================= git status in `pwd` =================
-    git status
+    GIT_PAGER=cat git status
     echo
     print_timestamp
     unset choice
