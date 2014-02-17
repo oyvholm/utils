@@ -24,10 +24,10 @@ mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1;
 
 test -d /media/seagate-3tb/backup || { echo $progname: seagate-3tb is not mounted >&2; myexit 1; }
 
-if test -e /pavi.mrk; then
-    desthome=/media/seagate-3tb/backup/pavi/home
+if test -e /ubstud.mrk; then
+    desthome=/media/seagate-3tb/backup/ubstud/home
     test -d $desthome || { echo $progname: $desthome: Directory not found >&2; myexit 1; }
-    msg Backup pavi:/home/ to $desthome/
+    msg Backup ubstud:/home/ to $desthome/
     sess -t c_ta_backup -- sudo rsync -avP --delete /home/ $desthome/
 fi
 
