@@ -12,7 +12,7 @@ Go through previous versions of repos in Git.git:
   git log --format=%H -- gps.git | while read f; do echo ========== $f; git lg -- gps.git | cat; git co -f $f; git clean -fxd; (cd gps.git && (git dangling; git push --all /home/sunny/Git-all/gps.git)); done
 
 Plot activity graph of Git repos:
-  git log --format=%ct | ep_day -w 4 | ep | head -n -1 >/tmp/stpl.tmp; stpl -lp /tmp/stpl.tmp
+  git log --format=%ct | ep_day -w 1 | ep | head -n -1 >/tmp/stpl.tmp; stpl -lp /tmp/stpl.tmp
 
 Format USB sticks:
   sess -- mkfs.ext3 -m 0 -L LABEL_MAX_16_BYTES -U `suuid -t mkfs,ext3 -c "TEXT" -wa` /dev/DEVICE
