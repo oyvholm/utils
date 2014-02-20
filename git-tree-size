@@ -58,8 +58,10 @@ sub treesize {
     my $Retval = 0;
     open(PipeFP, "git ls-tree --full-tree -l -r $commit | cut -f 1 |") or die("$progname: Cannot open git ls-tree pipe: $!");
     while (<PipeFP>) {
-        s/^.*?(\d+)$/$1/;
-        $Retval += $_;
+        if (/ blob /) {
+            s/^.*?(\d+)$/$1/;
+            $Retval += $_;
+        }
     }
     return($Retval);
     # }}}
