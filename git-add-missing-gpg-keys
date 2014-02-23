@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#=======================================================================
+# git-add-missing-gpg-keys
+# File ID: e53738b0-9caa-11e3-a01a-001f3b596ec9
+# Add missing GPG keys used for signed Git tags and commits
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=git-add-missing-gpg-keys
+LC_ALL=C git log --show-signature | \
+grep "^gpg: Can't check signature: public key not found" -B1 | \
+grep "key ID" | \
+rev | cut -f 1 -d ' ' | rev | \
+sort -u | \
+while read f; do
+    (
+        cd ~/.gnupg || { echo $progname: ~/.gnupg: Cannot chdir >&2; exit 1; }
+        gpg --recv-keys $f
+        shopt -s nullglob
+        files_gone=0
+        until test "$files_gone" = "1"; do
+            array=('.#lk'*)
+            if (( ${#array[@]} > 0 )); then
+                echo $progname: Waiting for tmpfiles to disappear...
+                sleep 1
+            else
+                files_gone=1
+            fi
+        done
+        ciall -y "gpg --recv-keys $f"
+    )
+done
