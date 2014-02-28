@@ -7,7 +7,7 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-git nobr
+git checkout $(git rev-parse HEAD)
 git commit -a
-git savecommit HEAD
+git branch commit-$(git rev-parse HEAD)
 git checkout -
