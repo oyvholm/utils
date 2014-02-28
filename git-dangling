@@ -9,6 +9,12 @@
 
 bannedfile=$HOME/.git-dangling-banned
 
+store_blobs=0
+if test "$1" = "-b"; then
+    store_blobs=1
+    shift
+fi
+
 if test "$1" = "-c"; then
     # Check if commit-* branches are part of any other branch
     for f in $(git branch | cut -c 3- | grep '^commit-'); do
@@ -48,12 +54,14 @@ for f in `grep "^dangling tag" dangling-result.tmp | cut -f 3 -d ' '`; do
     fi
     test "$skip" = "0" && git tag tag-$f $f && echo tag-$f
 done
-for f in `grep "^dangling blob" dangling-result.tmp | cut -f 3 -d ' '`; do
-    skip=0
-    if test -e $bannedfile; then
-        for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
-            echo $f | grep -q $ban && skip=1
-        done
-    fi
-    test "$skip" = "0" && git show $f >blob-$f && echo blob-$f
-done
+if test "$store_blobs" = "1"; then
+    for f in `grep "^dangling blob" dangling-result.tmp | cut -f 3 -d ' '`; do
+        skip=0
+        if test -e $bannedfile; then
+            for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
+                echo $f | grep -q $ban && skip=1
+            done
+        fi
+        test "$skip" = "0" && git show $f >blob-$f && echo blob-$f
+    done
+fi
