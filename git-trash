@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=======================================================================
+# git-trash
+# File ID: 7994342c-a02f-11e3-867b-001f3b596ec9
+# Get rid of local changes by committing them to a headless branch
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git nobr
+git commit -a
+git savecommit HEAD
+git checkout -
