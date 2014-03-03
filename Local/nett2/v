@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Local/nett2/v
-# Slapp versjon for bruk på nett2.
-# File ID: 27eca4f2-2fd5-11df-983f-0050043b833f
-
-vim "$@"

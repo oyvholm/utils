@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# Local/sin1/firefox
-# File ID: 94e46e6e-2d64-11df-9f20-000c6ed3978a
-
-/usr/bin/firefox -no-remote "$@"
