@@ -13,4 +13,4 @@ git checkout -f
 echo $(git bisect visualize --format=oneline | wc -l) commits left:
 git lb --color | head -200
 echo
-make
+make || { echo testfail: exit SKIP >&2; exit 125; }
