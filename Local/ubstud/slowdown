@@ -7,6 +7,7 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+test -e /ubstud.mrk || { echo slowdown: This is not ubstud >&2; exit 1; }
 tmp_bef=/tmp/slowdown_bef.tmp
 tmp_aft=/tmp/slowdown_aft.tmp
 until sudo echo Password OK | grep -q "Password OK"; do
