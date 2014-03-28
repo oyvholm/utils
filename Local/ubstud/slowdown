@@ -7,9 +7,17 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+tmp_bef=/tmp/slowdown_bef.tmp
+tmp_aft=/tmp/slowdown_aft.tmp
 until sudo echo Password OK | grep -q "Password OK"; do
     :
 done
+sudo cpufreq-info >$tmp_bef
 sudo cpufreq-set --cpu 0 --max "800MHz"
 sudo cpufreq-set --cpu 1 --max "800MHz"
 sudo cpufreq-info
+echo
+echo ==== diff between before and after execution:
+echo
+sudo cpufreq-info >$tmp_aft
+diff -U0 $tmp_bef $tmp_aft
