@@ -53,11 +53,11 @@ if ($Opt{'version'}) {
 
 $Opt{'all'} || system("lpar -a");
 
-defined($ARGV[0]) || $Opt{'all'} || die("$progname: Repo not specified\n");
-my $repo = $Opt{'all'} ? 'all' : $ARGV[0];
+my $repo = $Opt{'all'} ? 'all' : get_config_value("lpar.name");
+length($repo) || die("$progname: lpar.name not defined\n");
+
 my $lpar_dir = $Opt{'all'} ? "$ENV{'HOME'}/src/git/all-lpar" : "$ENV{'HOME'}/src/git/lpar";
 my $lpar_file = "$lpar_dir/$repo.lpar";
-shift;
 
 my @shas = scalar(@ARGV) ? @ARGV : ();
 if (scalar(@shas)) {
@@ -99,6 +99,15 @@ sub unlock_file {
     # }}}
 } # unlock_file()
 
+sub get_config_value {
+    # {{{
+    my $name = shift;
+    my $retval = '';
+    chomp($retval = `git config --get "$name"`);
+    return($retval);
+    # }}}
+} # get_config_value()
+
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
@@ -116,7 +125,7 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] repo [included SHA]
+Usage: $progname [options] [included_SHA [...]]
 
 Options:
 
