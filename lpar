@@ -65,8 +65,10 @@ my $lpar_file = "$lpar_dir/$repo.lpar";
 my @shas = scalar(@ARGV) ? @ARGV : ();
 if (scalar(@shas)) {
     for my $curr (@shas) {
+        chomp(my $sha1 = `git log -1 --format=%H "$curr" 2>/dev/null`);
+        length($sha1) || die("$progname: $curr: Invalid ref, must point to a commit\n");
         lock_file($lpar_file);
-        system("git lpar `git branch -a --contains=\"$curr\" | cut -c3- | grep -v -e '->' -e '(no branch)'` >>$lpar_file");
+        system("git lpar `git branch -a --contains=\"$sha1\" | cut -c3- | grep -v -e '->' -e '(no branch)'` >>$lpar_file");
         unlock_file($lpar_file);
     }
 } else {
