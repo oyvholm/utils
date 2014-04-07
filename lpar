@@ -53,17 +53,22 @@ if ($Opt{'version'}) {
 
 $Opt{'all'} || system("lpar -a");
 
-defined($ARGV[0]) || $Opt{'all'} || die("$progname: Repo not specified\n");
-my $repo = $Opt{'all'} ? 'all' : $ARGV[0];
+my $repo = $Opt{'all'} ? 'all' : get_config_value("lpar.name");
+length($repo) || die("$progname: lpar.name not defined\n");
+if ($repo =~ /[^\-\.\/0-9A-Z_a-z]/) {
+    die("$progname: lpar.name contains illegal character\n");
+}
+
 my $lpar_dir = $Opt{'all'} ? "$ENV{'HOME'}/src/git/all-lpar" : "$ENV{'HOME'}/src/git/lpar";
 my $lpar_file = "$lpar_dir/$repo.lpar";
-shift;
 
 my @shas = scalar(@ARGV) ? @ARGV : ();
 if (scalar(@shas)) {
     for my $curr (@shas) {
+        chomp(my $sha1 = `git log -1 --format=%H "$curr" 2>/dev/null`);
+        length($sha1) || die("$progname: $curr: Invalid ref, must point to a commit\n");
         lock_file($lpar_file);
-        system("git lpar `git branch -a --contains=\"$curr\" | cut -c3- | grep -v -e '->' -e '(no branch)'` >>$lpar_file");
+        system("git lpar `git branch -a --contains=\"$sha1\" | cut -c3- | grep -v -e '->' -e '(no branch)'` >>$lpar_file");
         unlock_file($lpar_file);
     }
 } else {
@@ -99,6 +104,15 @@ sub unlock_file {
     # }}}
 } # unlock_file()
 
+sub get_config_value {
+    # {{{
+    my $name = shift;
+    my $retval = '';
+    chomp($retval = `git config --get "$name"`);
+    return($retval);
+    # }}}
+} # get_config_value()
+
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
@@ -116,7 +130,7 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] repo [included SHA]
+Usage: $progname [options] [included_SHA [...]]
 
 Options:
 

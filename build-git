@@ -123,7 +123,7 @@ update_branches() {
 }
 
 lpar_git() {
-    [ -f $HOME/src/git/lpar/git.lpar ] && lpar git
+    [ -f $HOME/src/git/lpar/git.lpar ] && lpar
 }
 
 [ -z "`git --version | grep '^git version '`" ] && {
