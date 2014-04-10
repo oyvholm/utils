@@ -34,6 +34,7 @@ our %Opt = (
     'fetch-prune' => 0,
     'ga-sync' => 0,
     'help' => 0,
+    'lpar' => 0,
     'pull' => 0,
     'push' => 0,
     'quiet' => 0,
@@ -65,6 +66,7 @@ GetOptions(
     "fetch|f" => \$Opt{'fetch'},
     "ga-sync|g" => \$Opt{'ga-sync'},
     "help|h" => \$Opt{'help'},
+    "lpar|l" => \$Opt{'lpar'},
     "pull|p" => \$Opt{'pull'},
     "push|P" => \$Opt{'push'},
     "quiet|q+" => \$Opt{'quiet'},
@@ -126,6 +128,9 @@ LOOP: for my $f (@Dirs) {
         if (length($Opt{'exec-before'})) {
             mysystem($Opt{'exec-before'});
         }
+        if ($Opt{'lpar'}) {
+            mysystem("lpar");
+        }
         if ($Opt{'test'}) {
             mysystem("git", "fsck") && (
                 push(@err_test, $f),
@@ -182,6 +187,9 @@ LOOP: for my $f (@Dirs) {
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
+        }
+        if ($Opt{'lpar'}) {
+            mysystem("lpar");
         }
         if (length($Opt{'exec-after'})) {
             mysystem($Opt{'exec-after'});
@@ -256,6 +264,8 @@ Options:
     Execute command X in every repo before all other commands.
   -t, --test
     Test integrity of local repositories by running "git fsck".
+  -l, --lpar
+    Execute lpar before and after fetch/pull and push
   -F, --fetch-prune
     Fetch new commits from all remotes and prune deleted remote branches.
   -f, --fetch
