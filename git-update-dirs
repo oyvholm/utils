@@ -90,6 +90,7 @@ if ($Opt{'all-options'}) {
     $Opt{'allbr'} = 1;
     $Opt{'dangling'} = 1;
     $Opt{'fetch-prune'} = 1;
+    $Opt{'ga-sync'} = 1;
     $Opt{'lpar'} = 1;
     $Opt{'pull'} = 1;
     $Opt{'push'} = 1;
@@ -291,7 +292,7 @@ Options:
     Execute command X in every repo after all other commands.
 
   -A, --all-options
-    Run the program as if "-lFpdaPs" had been specified.
+    Run the program as if "-lFpgdaPs" had been specified.
   -h, --help
     Show this help.
   -n, --dry-run
