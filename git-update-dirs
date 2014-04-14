@@ -127,6 +127,11 @@ LOOP: for my $f (@Dirs) {
             next LOOP;
         }
         my $is_bare = (`git config --get core.bare` =~ /^true/) ? 1 : 0;
+
+        my $Lh = "[0-9a-fA-F]";
+        my $uuid_templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+        my $is_annex = (`git config -l | grep '^annex\.uuid'` =~ /annex\.uuid=$uuid_templ/) ? 1 : 0;
+
         if (length($Opt{'exec-before'})) {
             mysystem($Opt{'exec-before'});
         }
@@ -152,8 +157,7 @@ LOOP: for my $f (@Dirs) {
             }
         }
         if ($Opt{'ga-sync'}) {
-            my $check_annex = `git config -l | grep annex\\.uuid`;
-            if ($check_annex =~ /annex\.uuid/) {
+            if ($is_annex) {
                 mysystem("ga", "sync") && push(@err_gasync, $f);
             }
         }
