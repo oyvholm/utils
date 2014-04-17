@@ -8,7 +8,7 @@ progname=poiformat
 if [ "$1" = "-g" ]; then
     shift
 else
-    cat "$@" | xf | roundgpx | latlon | wpt-dupdesc | xf | sortxml -r -s wpt -u
+    cat "$@" | xf | roundgpx | latlon | wpt-dupdesc | wpt-rmsym | xf | sortxml -r -s wpt -u
     exit
 fi
 
@@ -40,6 +40,8 @@ filt latlon $files
 commit "$progname filtered files through latlon"
 filt wpt-dupdesc $files
 commit "$progname filtered files through wpt-dupdesc"
+filt wpt-rmsym $files
+commit "$progname filtered files through wpt-rmsym"
 filt xf $files
 commit "$progname filtered files through xf"
 filt "sortxml -r -s wpt" $files
