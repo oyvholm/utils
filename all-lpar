@@ -7,8 +7,4 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-if [ "$1" = "-f" ]; then
-    find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -E "lpar" -F -e "lpar"
-else
-    find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -E "lpar"
-fi
+find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -l "$@"
