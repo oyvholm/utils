@@ -193,6 +193,7 @@ LOOP: for my $f (@Dirs) {
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
+            $is_annex && mysystem("ga", "repair");
         }
         if ($Opt{'lpar'}) {
             mysystem("lpar");
