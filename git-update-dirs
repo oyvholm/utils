@@ -135,56 +135,56 @@ LOOP: for my $f (@Dirs) {
         my $is_annex = (get_config('annex.uuid') =~ /^$uuid_templ/) ? 1 : 0;
         msg(2, "is_annex = '$is_annex'");
 
-        if (length($Opt{'exec-before'})) {
+        if (should('exec-before')) {
             mysystem($Opt{'exec-before'});
         }
-        if ($Opt{'lpar'}) {
+        if (should('lpar')) {
             mysystem("lpar");
         }
-        if ($Opt{'test'}) {
+        if (should('test')) {
             mysystem("git", "fsck") && (
                 push(@err_test, $f),
                 warn("$progname: $f: ERRORS FOUND! Skipping other actions for this repo.\n"),
                 next LOOP
             );
         }
-        if ($Opt{'fetch-prune'}) {
+        if (should('fetch-prune')) {
             mysystem("git", "fetch", "--all", "--prune") && push(@err_fetch, $f);
-        } elsif ($Opt{'fetch'}) {
+        } elsif (should('fetch')) {
             mysystem("git", "fetch", "--all") && push(@err_fetch, $f);
         }
-        if ($Opt{'pull'} && !$is_bare) {
+        if (should('pull') && !$is_bare) {
             mysystem("git", "pull", "--ff-only") && push(@err_pull, $f);
             if (-e '.emptydirs') {
                 mysystem('git', 'restore-dirs');
             }
         }
-        if ($Opt{'ga-sync'}) {
+        if (should('ga-sync')) {
             if ($is_annex) {
                 mysystem("ga", "sync") && push(@err_gasync, $f);
             }
         }
-        if ($Opt{'dangling'}) {
+        if (should('dangling')) {
             mysystem("git", "dangling") && push(@err_dangling, $f);
         }
-        if ($Opt{'allbr'}) {
+        if (should('allbr')) {
                 $is_bare || mysystem("git", "nobr");
                 mysystem("git", "allbr", "-a");
                 $is_bare || mysystem("git", "checkout", "-");
         }
-        if ($Opt{'push'}) {
+        if (should('push')) {
             mysystem("git", "pa") && push(@err_push, $f);
         }
-        if ($Opt{'submodule'} && -e ".gitmodules") {
+        if (should('submodule') && -e ".gitmodules") {
             mysystem("git", "submodule", "init");
             mysystem("git", "submodule", "update") && push(@err_updsub, $f);
         }
-        if ($Opt{'compress'} || $Opt{'aggressive-compress'}) {
+        if (should('compress') || should('aggressive-compress')) {
             if (!-e ".no-git-gc") {
-                my $dang_str = $Opt{'dangling'} ? "--prune=now" : "--no-prune";
+                my $dang_str = should('dangling') ? "--prune=now" : "--no-prune";
                 chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_before += $before;
-                if ($Opt{'aggressive-compress'}) {
+                if (should('aggressive-compress')) {
                     mysystem("git", "gc", "--aggressive", $dang_str) && push(@err_compress, $f);
                 } else {
                     mysystem("git", "gc", $dang_str) && push(@err_compress, $f);
@@ -198,10 +198,10 @@ LOOP: for my $f (@Dirs) {
             }
             $is_annex && mysystem("ga", "repair");
         }
-        if ($Opt{'lpar'}) {
+        if (should('lpar')) {
             mysystem("lpar");
         }
-        if (length($Opt{'exec-after'})) {
+        if (should('exec-after')) {
             mysystem($Opt{'exec-after'});
         }
         $Opt{'verbose'} >= -1 && print("\n");
@@ -265,6 +265,14 @@ sub print_version {
     # }}}
 } # print_version()
 
+sub should {
+    # {{{
+    my $name = shift;
+    my $retval = $Opt{$name} && (get_config("git-update-dirs.no-$name") ne 'true');
+    return($retval);
+    # }}}
+} # should()
+
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
@@ -281,32 +289,46 @@ Options:
 
   -E X, --exec-before X
     Execute command X in every repo before all other commands.
+    To disable: git config git-update-dirs.no-exec-before true
   -t, --test
     Test integrity of local repositories by running "git fsck".
+    To disable: git config git-update-dirs.no-test true
   -l, --lpar
     Execute lpar before and after fetch/pull and push
+    To disable: git config git-update-dirs.no-lpar true
   -F, --fetch-prune
     Fetch new commits from all remotes and prune deleted remote branches.
+    To disable: git config git-update-dirs.no-fetch-prune true
   -f, --fetch
     Fetch new commits from all remotes.
+    To disable: git config git-update-dirs.no-fetch true
   -p, --pull
     Also execute "git pull --ff-only".
+    To disable: git config git-update-dirs.no-pull true
   -g, --ga-sync
     If the repo is used by git-annex, run "ga sync".
+    To disable: git config git-update-dirs.no-ga-sync true
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into branches.
+    To disable: git config git-update-dirs.no-dangling true
   -a, --allbr
     Execute "git nobr", "git allbr -a" and "git commit -".
+    To disable: git config git-update-dirs.no-allbr true
   -P, --push
     Also execute "git pa".
+    To disable: git config git-update-dirs.no-push true
   -s, --submodule
     Update submodules if .gitmodules is found.
+    To disable: git config git-update-dirs.no-submodule true
   -c, --compress
     Compress local repositories to save space.
+    To disable: git config git-update-dirs.no-compress true
   -C, --aggressive-compress
     Use --aggressive when compressing the repository.
+    To disable: git config git-update-dirs.no-aggressive-compress true
   -e X, --exec-after X
     Execute command X in every repo after all other commands.
+    To disable: git config git-update-dirs.no-exec-after true
 
   -A, --all-options
     Run the program as if "-lFpgdaPs" had been specified.
@@ -324,6 +346,22 @@ Options:
     Print version information.
   --debug
     Print debugging messages.
+
+To disable some of these commands in a specific repository, set the git 
+config variable git-update-dirs.no-OPTION to "true". For example, to 
+disable push:
+
+  git config git-update-dirs.no-push true
+
+Or disable aggressive compression:
+
+  git config git-update-dirs.no-aggressive-compress true
+
+In this case aggressive compression will be disabled, and it will fall 
+back to regular compression.
+
+Only the value "true" (with lower case letters) is recognised, any other 
+value will allow the command to run.
 
 END
     exit($Retval);
