@@ -217,7 +217,7 @@ scalar(@err_updsub) && print("$progname: Unable to update submodules in: " . joi
 scalar(@err_compress) && print("$progname: Unable to compress: " . join(" ", @err_compress) . "\n");
 scalar(@err_test) && print("$progname: Error in git fsck: " . join(" ", @err_test) . "\n");
 
-if ($Opt{'compress'}) {
+if ($Opt{'compress'} || $Opt{'aggressive-compress'}) {
     my $total_saved = $total_before - $total_after;
     printf("Before: %s\nAfter : %s\n", commify($total_before), commify($total_after));
     $total_before && printf("Total : %s (%.4f%%)\n",
