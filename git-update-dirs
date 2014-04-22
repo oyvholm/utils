@@ -290,12 +290,12 @@ Options:
   -E X, --exec-before X
     Execute command X in every repo before all other commands.
     To disable: git config git-update-dirs.no-exec-before true
-  -t, --test
-    Test integrity of local repositories by running "git fsck".
-    To disable: git config git-update-dirs.no-test true
   -l, --lpar
     Execute lpar before and after fetch/pull and push
     To disable: git config git-update-dirs.no-lpar true
+  -t, --test
+    Test integrity of local repositories by running "git fsck".
+    To disable: git config git-update-dirs.no-test true
   -F, --fetch-prune
     Fetch new commits from all remotes and prune deleted remote branches.
     To disable: git config git-update-dirs.no-fetch-prune true
