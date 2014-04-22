@@ -120,6 +120,7 @@ LOOP: for my $f (@Dirs) {
     my $object_dir = '';
     -d "$f/.git/." && ($object_dir = ".git/objects");
     -d "$f/objects/." && ($object_dir = "objects");
+    msg(2, "object_dir = '$object_dir'");
     if (length($object_dir)) {
         $Opt{'verbose'} >= -1 && print("================ $f ================\n");
         if (!chdir($f)) {
@@ -127,10 +128,12 @@ LOOP: for my $f (@Dirs) {
             next LOOP;
         }
         my $is_bare = (get_config('core.bare') =~ /^true/) ? 1 : 0;
+        msg(2, "is_bare = '$is_bare'");
 
         my $Lh = "[0-9a-fA-F]";
         my $uuid_templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
         my $is_annex = (get_config('annex.uuid') =~ /^$uuid_templ/) ? 1 : 0;
+        msg(2, "is_annex = '$is_annex'");
 
         if (length($Opt{'exec-before'})) {
             mysystem($Opt{'exec-before'});
