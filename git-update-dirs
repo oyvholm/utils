@@ -126,11 +126,11 @@ LOOP: for my $f (@Dirs) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
         }
-        my $is_bare = (`git config --get core.bare` =~ /^true/) ? 1 : 0;
+        my $is_bare = (get_config('core.bare') =~ /^true/) ? 1 : 0;
 
         my $Lh = "[0-9a-fA-F]";
         my $uuid_templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
-        my $is_annex = (`git config -l | grep '^annex\.uuid'` =~ /annex\.uuid=$uuid_templ/) ? 1 : 0;
+        my $is_annex = (get_config('annex.uuid') =~ /^$uuid_templ/) ? 1 : 0;
 
         if (length($Opt{'exec-before'})) {
             mysystem($Opt{'exec-before'});
@@ -236,6 +236,15 @@ sub commify {
 	return scalar reverse $Str;
 	# }}}
 } # commify()
+
+sub get_config {
+    # {{{
+    my $name = shift;
+    my $retval = '';
+    chomp($retval = `git config --get "$name"`);
+    return($retval);
+    # }}}
+} # get_config()
 
 sub mysystem {
     # {{{
