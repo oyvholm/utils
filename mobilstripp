@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#=======================================================================
+# mobilstripp
+# File ID: 81a4b5e0-cb0b-11e3-8632-000df06acc56
+# Strip irrelevant stuff from nf list of mobile files
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+grep -i -E '\.(flac|gz|jpeg|jpg|m4a|mp3|mp4|pdf|png|wav)' | \
+grep -v \
+-e /Actionmemo/ \
+-e /Android/data/com\\.bambuna\\.podcastaddict/files/podcast/thumbnails/ \
+-e /Android/data/com\\.evernote/files/announcements/ \
+-e /Android/data/com\\.google\\.android\\.apps\\.docs/files/pinned_docs_files_do_not_edit/ \
+-e /Android/data/com\\.google\\.earth/cache/ \
+-e /Android/data/com\\.gopro\\.smarty/cache/ \
+-e /Android/data/com\\.samsung\\.android\\.app\\.episodes/files/album/ \
+-e /Android/data/com\\.samsung\\.android\\.snote/cache/sstream_cache/ \
+-e /Android/data/com\\.sec\\.android\\.app\\.sbrowser/TabManager/ \
+-e /Android/data/com\\.sec\\.everglades/Files/icons/ \
+-e /Android/data/dentex\\.youtube\\.downloader/files/cache/ \
+-e /Android/data/reddit\\.news/cache/ \
+-e /BeyondPod/Podcasts/ \
+-e /Camera360/TempData/ \
+-e /Camera360/www/demo/ \
+-e /Camera360/www/images/ \
+-e /Camera360/www/scene/ \
+-e /Camera360/www/skin/ \
+-e /DoggCatcher/EpisodeEnclosures/ \
+-e /DoggCatcher/PodcastImages/ \
+-e /QrDroid/tmp/ \
+-e /\\.ActionMemo/ \
+-e /annex/mobile/gtd-lydbok/ \
+-e /foursquare/cache/ \
+-e /foursquare/category_cache/ \
+-e /foursquare/photo_cache/ \
+-e \\.pcg\$ \
+-e ☠_her_har_vi_slutten
