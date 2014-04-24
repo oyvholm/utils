@@ -12,8 +12,9 @@
 #=======================================================================
 
 use strict;
-use Cwd;
+use Cwd qw{ abs_path getcwd };
 use Getopt::Long;
+use File::Basename;
 
 $| = 1;
 
@@ -127,6 +128,7 @@ LOOP: for my $f (@Dirs) {
             warn("$progname: $f: Cannot chdir: $!\n");
             next LOOP;
         }
+        inside_git_dir() && (chdir('..'), $object_dir = ".git/objects");
         my $is_bare = (get_config('core.bare') =~ /^true/) ? 1 : 0;
         msg(2, "is_bare = '$is_bare'");
 
@@ -248,6 +250,14 @@ sub get_config {
     return($retval);
     # }}}
 } # get_config()
+
+sub inside_git_dir {
+    # {{{
+    my $basename = basename(abs_path(getcwd()));
+    my $retval = ($basename eq '.git') ? 1 : 0;
+    return($retval);
+    # }}}
+} # inside_git_dir()
 
 sub mysystem {
     # {{{
