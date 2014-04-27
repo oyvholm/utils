@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#=======================================================================
+# git-bs
+# File ID: 94f27342-c5f9-11e3-849b-fefdb24f8e10
+# Wrapper script for git-bisect to allow it to run in subdirectories.
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+cd $(git rev-parse --show-toplevel)
+git bisect "$@"
