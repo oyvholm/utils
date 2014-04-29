@@ -24,6 +24,7 @@ our %Opt = (
     'all' => 0,
     'debug' => 0,
     'help' => 0,
+    'set' => undef,
     'verbose' => 0,
     'version' => 0,
 
@@ -32,6 +33,9 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.00';
+my $MAX_NAME_LENGTH = 245;
+my $allowed_str = "Allowed characters: A-Z, a-z, 0-9, '-', '.', '/' and '_'.\n" .
+                  "Maximum length: $MAX_NAME_LENGTH chars.\n";
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -39,6 +43,7 @@ GetOptions(
     'all|a' => \$Opt{'all'},
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
+    'set|s=s' => \$Opt{'set'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -53,10 +58,34 @@ if ($Opt{'version'}) {
 
 $Opt{'all'} || system("lpar -a");
 
+if (defined($Opt{'set'})) {
+    my $name = $Opt{'set'};
+    my $prev = get_config_value('lpar.name');
+    if (length($name)) {
+        if ($name eq '?') {
+            print("$prev\n");
+            exit(0);
+        } elsif (valid_repo_name($name)) {
+            if ($name eq $prev) {
+                msg(0, "Value of lpar.name is already '$name', doing nothing");
+                exit(1);
+            } else {
+                msg(0, "Changing value of lpar.name from '$prev' to '$name'");
+                exec("git", "config", "lpar.name", $name);
+            }
+        } else {
+            die("$progname: Invalid value in -s/--set argument\n$allowed_str");
+        }
+    } else {
+        msg(0, "Deleting lpar.name config variable, previous value was '$prev'");
+        exec("git", "config", "--unset", "lpar.name");
+    }
+}
+
 my $repo = $Opt{'all'} ? 'all' : get_config_value("lpar.name");
 length($repo) || die("$progname: lpar.name not defined\n");
-if ($repo =~ /[^\-\.\/0-9A-Z_a-z]/) {
-    die("$progname: lpar.name contains illegal character\n");
+if (!valid_repo_name($repo)) {
+    die("$progname: lpar.name contains illegal value\n$allowed_str");
 }
 
 my $lpar_dir = $Opt{'all'} ? "$ENV{'HOME'}/src/git/all-lpar" : "$ENV{'HOME'}/src/git/lpar";
@@ -104,6 +133,15 @@ sub unlock_file {
     # }}}
 } # unlock_file()
 
+sub valid_repo_name {
+    # {{{
+    my $repo = shift;
+    my $retval = ($repo =~ /[^\-\.\/0-9A-Z_a-z]/) ? 0 : 1;
+    (!length($repo) || length($repo) > $MAX_NAME_LENGTH) && ($retval = 0);
+    return($retval);
+    # }}}
+} # valid_repo_name()
+
 sub get_config_value {
     # {{{
     my $name = shift;
@@ -138,6 +176,11 @@ Options:
     Dump everything into a single file, ~/src/git/all-lpar/all.lpar .
   -h, --help
     Show this help.
+  -s X, --set X
+    Set the lpar.name variable to X in git config.
+    To delete, specify "". A value of "?" will print the current value. 
+    To avoid shell expansion, prefix the question mark with a backslash 
+    ("\\") or specify it as "-s?" or "--set=?".
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
