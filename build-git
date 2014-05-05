@@ -38,12 +38,6 @@ local_master=master
 # Name of remote master
 remote_master=origin/master
 
-# Owner of $dest
-destowner=$(id -un)
-
-# Group of $dest
-destgroup=$(id -gn)
-
 # Set to 0 to skip ./configure and use Makefile in git.git instead
 use_configure=1
 configure_opts=
@@ -176,7 +170,6 @@ echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
 echo "builddir       = \"$builddir\""
 echo "pref           = \"$pref\""
 echo "sudo           = \"$sudo\""
-echo "owner:group    = \"$destowner:$destgroup\""
 echo "local_master   = \"$local_master\""
 echo "remote_master  = \"$remote_master\""
 echo "makeflags      = \"$makeflags\""
@@ -250,22 +243,6 @@ dest=$pref/varprg/$vername
     push_changes
     myexit 0;
 }
-echo $progname: mkdir $dest ...
-until $sudo mkdir $dest; do
-    echo $progname: $dest: Directory already exists >&2
-    echo -n Remove it and press Enter to continue... >&2
-    read
-done
-touch $dest/testcreate 2>/dev/null || {
-    enable_sudo
-    $sudo chown $destowner:$destgroup $dest
-}
-until touch $dest/testcreate 2>/dev/null; do
-    echo $progname: $dest: Cannot write to directory >&2
-    echo -n Please fix that and press Enter to continue... >&2
-    read
-done
-rm $dest/testcreate
 push_changes
 if [ "$use_configure" = "1" ]; then
     echo $progname: Creating ./configure
@@ -301,11 +278,10 @@ until test "$choice" = "y"; do
     echo -n If all tests succeeded, press y to continue...
     read choice
 done
-echo ==== make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
-make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
-echo ================= make install finished =================
-echo $progname: Creating directories under $pref/ ...
 enable_sudo
+echo ==== $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
+$sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
+echo ================= make install finished =================
 $sudo mkdir -p $pref/{bin,prg,varprg}
 $sudo rm $pref/prg/git
 $sudo ln -svf ../varprg/$vername $pref/prg/git
