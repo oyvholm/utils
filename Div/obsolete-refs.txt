@@ -4,7 +4,6 @@ add-git-wip
 add-homeo
 add-std-python.wip
 add-tojson
-build-git.install-as-user
 build-git.installfix
 fldb.no-quotes-around-numbers.wip
 fldb.use-suuid
