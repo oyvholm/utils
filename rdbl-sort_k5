@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# rdbl-sort_k5
+# File ID: f3cbebf8-db77-11e3-8a72-c80aa9e67bbd
+# Git external diff driver, sort input on field 5
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+sort -k5 "$@"; true
