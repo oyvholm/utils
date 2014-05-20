@@ -195,7 +195,7 @@ LOOP: for my $f (@Dirs) {
                 $total_after += $after;
                 my $saved = $before - $after;
                 $before && printf("\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n", commify($before), commify($after), commify($saved), 100.0 * $saved / $before);
-                $is_annex && mysystem("ga", "repair");
+                $is_annex && should('dangling') && mysystem("ga", "repair");
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
