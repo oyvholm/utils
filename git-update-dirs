@@ -28,6 +28,7 @@ our %Opt = (
     'compress' => 0,
     'dangling' => 0,
     'debug' => 0,
+    'delete-dangling' => 0,
     'dry-run' => 0,
     'exec-after' => '',
     'exec-before' => '',
@@ -60,6 +61,7 @@ GetOptions(
     "compress|c" => \$Opt{'compress'},
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
+    "delete-dangling|D" => \$Opt{'delete-dangling'},
     "dry-run|n" => \$Opt{'dry-run'},
     "exec-after|e=s" => \$Opt{'exec-after'},
     "exec-before|E=s" => \$Opt{'exec-before'},
@@ -90,6 +92,7 @@ if ($Opt{'version'}) {
 if ($Opt{'all-options'}) {
     $Opt{'allbr'} = 1;
     $Opt{'dangling'} = 1;
+    $Opt{'delete-dangling'} = 1;
     $Opt{'fetch-prune'} = 1;
     $Opt{'ga-sync'} = 1;
     $Opt{'lpar'} = 1;
@@ -199,6 +202,9 @@ LOOP: for my $f (@Dirs) {
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
+        }
+        if (should('delete-dangling') && !$is_bare) {
+            mysystem("git", "dangling", "-D");
         }
         if (should('lpar')) {
             mysystem("lpar");
@@ -336,12 +342,16 @@ Options:
   -C, --aggressive-compress
     Use --aggressive when compressing the repository.
     To disable: git config git-update-dirs.no-aggressive-compress true
+  -D, --delete-dangling
+    Execute "git dangling -D" after execution to remove local commit-* 
+    branches and tag-* tags. This option is ignored in bare repos.
+    To disable: git config git-update-dirs.no-delete-dangling true
   -e X, --exec-after X
     Execute command X in every repo after all other commands.
     To disable: git config git-update-dirs.no-exec-after true
 
   -A, --all-options
-    Run the program as if "-lFpgdaPs" had been specified.
+    Run the program as if "-lFpgdaPsD" had been specified.
   -h, --help
     Show this help.
   -n, --dry-run
