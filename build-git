@@ -59,7 +59,6 @@ is_official_branch() {
 
 fetch_remotes() {
     git remote | grep -q '^origin$' || git remote add origin $origin_url
-    git remote | grep -q '^Spread$' || git remote add Spread sunny@git.sunbase.org:/home/sunny/Git-spread/git.git
     git remote | grep -q '^kernelorg$' || git remote add kernelorg git://git.kernel.org/pub/scm/git/git.git
     git remote | grep -q '^gitster$' || git remote add gitster git://github.com/gitster/git.git
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
@@ -93,7 +92,7 @@ enable_sudo() {
 
 push_changes() {
     is_official_branch $local_master && push_local= || push_local=$local_master
-    for f in Spread ubstud loc-repo passp sunbase github rsync-net; do
+    for f in ubstud loc-repo passp sunbase github rsync-net; do
         git remote | grep -q "^$f\$" && {
             echo ==== push changes to $f ====
             git push -f $f $push_local master maint next pu todo
