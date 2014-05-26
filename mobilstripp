@@ -12,6 +12,7 @@ grep -v \
 -e /Actionmemo/ \
 -e /Android/data/com\\.andrewshu\\.android\\.redditdonation/cache/prefetch/ \
 -e /Android/data/com\\.bambuna\\.podcastaddict/files/podcast/thumbnails/ \
+-e /Android/data/com\\.dropbox\\.android/cache/thumbs/ \
 -e /Android/data/com\\.evernote/files/announcements/ \
 -e /Android/data/com\\.google\\.android\\.apps\\.docs/files/pinned_docs_files_do_not_edit/ \
 -e /Android/data/com\\.google\\.earth/cache/ \
