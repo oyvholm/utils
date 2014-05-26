@@ -65,3 +65,4 @@ if test "$store_blobs" = "1"; then
         test "$skip" = "0" && git show $f >blob-$f && echo blob-$f
     done
 fi
+rm dangling-result.tmp
