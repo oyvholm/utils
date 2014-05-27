@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# push-annex-sunbase
+# File ID: a729a2de-e5f1-11e3-9bb4-c80aa9e67bbd
+# Push all annexes to sunbase
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+annex-cmd -g -e 'git dangling; git push --all $GR/annex-$(basename $(pwd)).git; git dangling -D'
