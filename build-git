@@ -164,7 +164,7 @@ lpar_git
 echo
 echo Variables:
 echo
-echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --long --match 'v1*' $curr_git_ver))"
+echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --long --match 'v[12]*' $curr_git_ver))"
 echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
 echo "builddir       = \"$builddir\""
 echo "pref           = \"$pref\""
@@ -198,7 +198,7 @@ if [ -n "$curr_git_ver" ]; then
         echo
         unset choice
         echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
-        echo Going to compile git $(git describe --long --match 'v1*' $destbranch)
+        echo Going to compile git $(git describe --long --match 'v[12]*' $destbranch)
         echo
         echo If that looks okay to you, press \'y\' to start the build, or:
         echo \'d\' to diff
@@ -234,7 +234,7 @@ echo ================= git clean =================
 git clean -fxd
 echo ================= Update all branches =================
 update_branches
-vername=git.$local_master.`git describe --long --match 'v1*'`
+vername=git.$local_master.`git describe --long --match 'v[12]*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
     echo; echo "Sorry, no new git(1) for you this time.";
