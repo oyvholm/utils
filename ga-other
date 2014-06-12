@@ -10,5 +10,5 @@
 
 while read f; do
     key=$(git annex lookupkey "$f")
-    test -n "$key" && echo "$key $f"
+    test -n "$key" && echo "$key"
 done
