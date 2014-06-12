@@ -7,4 +7,4 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-annex-cmd -g -e 'git dangling; git push --all $GR/annex-$(basename $(pwd)).git; git dangling -D'
+annex-cmd -g -e 'git remote add sunbase $GR/annex-$(basename $(pwd)).git; git fetch --all --prune; git dangling; git push --all sunbase; git dangling -D; git remote rm sunbase'
