@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# ga-other
+# File ID: 8ccdcd38-f1c3-11e3-96ba-c80aa9e67bbd
+# Read filenames from stdin and output lines on the format
+# KEY FILENAME
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+while read f; do
+    key=$(git annex lookupkey "$f")
+    test -n "$key" && echo "$key $f"
+done
