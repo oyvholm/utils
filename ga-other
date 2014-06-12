@@ -8,7 +8,20 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+progname=ga-other
+
+test -z "$1" && { echo $progname: Name not specified >&2; exit 1; }
+topdir="$(git rev-parse --show-toplevel)"
+kopidir="$topdir/kopiert-annex"
+test -d "$kopidir" || mkdir "$kopidir" || \
+    { echo $progname: $kopidir: Cannot create directory >&2; exit 1; }
+filename="$1.txt"
+destfile="$kopidir/$filename"
+
 while read f; do
     key=$(git annex lookupkey "$f")
-    test -n "$key" && echo "$key"
+    test -n "$key" && echo "$key" >>"$destfile"
 done
+
+sort -u "$destfile" >"$destfile.tmp"
+mv "$destfile.tmp" "$destfile"
