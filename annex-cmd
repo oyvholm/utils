@@ -14,6 +14,11 @@ fi
 
 wildc='*'
 
+if [ "$1" = "--annex" ]; then
+    unset wildc
+    shift
+fi
+
 if [ "$1" = "-D" ]; then
     test -z "$2" && { echo annex-cmd: Missing argument for -D >&2; exit 1; }
     wildc="$2"
