@@ -7,6 +7,11 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+if [ "$1" = "--gadu" ]; then
+    git update-dirs ~/annex /media/*/annex -e "ga sync; sess ./lag_gadu-local *; git add .gadu-local; git ci -av; ga sync"
+    exit
+fi
+
 wildc='*'
 
 if [ "$1" = "-D" ]; then
