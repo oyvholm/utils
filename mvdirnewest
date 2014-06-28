@@ -76,7 +76,7 @@ sub process_dir {
 	my $newest_file = "";
 
 	# FIXME: Dette med find er midlertidig (og kommer sikkert til å forbli her :)
-	my @Files = `find $dir_name -type f`;
+	my @Files = `find "$dir_name" -type f`;
 	unless (scalar @Files) {
 		warn("$progname: $dir_name: No files found in directory\n");
 		return;
