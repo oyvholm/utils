@@ -3,7 +3,6 @@
 # fix_filenames
 # File ID: 368543a6-5d3a-11df-91ac-90e6ba3022ac
 # Fjerner spacer og konverterer ASCII-apostrofer til ’
-# Jokertegn må escapes, f.eks. '*' eller \*
 
-rename -v 's/ /_/g' $*
-rename -v "s/'/’/g" $*
+rename -v 's/ /_/g' "$@"
+rename -v "s/'/’/g" "$@"
