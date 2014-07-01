@@ -154,6 +154,25 @@ END
 
     ok(unlink($newname), "unlink $newname");
 
+    diag('Testing --skew option...');
+    testcmd("tar xzf file.tar.gz", "", "", 0);
+    testcmd("../$CMD -s 86400 file.txt",
+        "datefn: 'file.txt' renamed to '20121225T002858Z.file.txt'\n",
+        "datefn: file.txt: Could not read 358 bytes, but continuing: \n",
+        0,
+        "Test -s (--skew) with positive integer",
+    );
+    ok(unlink('20121225T002858Z.file.txt'), "unlink '20121225T002858Z.file.txt'");
+
+    testcmd("tar xzf file.tar.gz", "", "", 0);
+    testcmd("../$CMD --skew -86400 file.txt",
+        "datefn: 'file.txt' renamed to '20121223T002858Z.file.txt'\n",
+        "datefn: file.txt: Could not read 358 bytes, but continuing: \n",
+        0,
+        "--skew with negative integer",
+    );
+    ok(unlink('20121223T002858Z.file.txt'), "unlink '20121223T002858Z.file.txt'");
+
     todo_section:
     ;
 

@@ -24,6 +24,7 @@ our %Opt = (
     'dry-run' => 0,
     'force' => 0,
     'help' => 0,
+    'skew' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -40,6 +41,7 @@ GetOptions(
     "dry-run|n" => \$Opt{'dry-run'},
     "force|f" => \$Opt{'force'},
     "help|h" => \$Opt{'help'},
+    "skew|s=i" => \$Opt{'skew'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -97,7 +99,7 @@ sub mod_date {
     my $Retval = "";
     my @stat_array = stat($File);
     if (scalar(@stat_array)) {
-        $Retval = sec_to_string($stat_array[9]);
+        $Retval = sec_to_string($stat_array[9] + $Opt{'skew'});
     } else {
         warn("$progname: $File: Cannot stat file: $!\n");
     }
@@ -147,7 +149,7 @@ sub sec_to_string {
     # {{{
     my ($Seconds, $Sep) = @_;
     length($Seconds) || return(undef);
-    ($Seconds =~ /^(\d*)(\.\d+)?$/) || return(undef);
+    ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return(undef);
     my $Secfrac = ($Seconds =~ /^([\-\d]*)(\.\d+)$/) ? 1.0*$2 : "";
     $Secfrac =~ s/^0//;
 
@@ -198,6 +200,9 @@ Options:
     Don’t rename files, but report what would happen.
   -h, --help
     Show this help.
+  -s X, --skew X
+    Adjust clock skew by adding X seconds to the timestamp. A negative 
+    integer can also be specified.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
