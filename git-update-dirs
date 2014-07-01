@@ -140,6 +140,19 @@ LOOP: for my $f (@Dirs) {
         my $is_annex = (get_config('annex.uuid') =~ /^$uuid_templ/) ? 1 : 0;
         msg(2, "is_annex = '$is_annex'");
 
+        my $is_modified = 0;
+        open(my $fh, "git status --porcelain |") or
+            die("$progname: Cannot open 'git status --porcelain' pipe: $!\n");
+        while (<$fh>) {
+            /^\?\?/ && next;
+            $is_modified = 1;
+        }
+        close($fh);
+
+        if ($is_modified) {
+            $Opt{'ga-sync'} = 0;
+        }
+
         if (should('exec-before')) {
             mysystem($Opt{'exec-before'});
         }
