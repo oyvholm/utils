@@ -101,6 +101,7 @@ sub mod_date {
     } else {
         warn("$progname: $File: Cannot stat file: $!\n");
     }
+    return($Retval);
     # }}}
 } # mod_date()
 
