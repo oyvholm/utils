@@ -135,6 +135,7 @@ END
         "file.txt was properly renamed",
     );
 
+    diag('Testing --force option...');
     testcmd("tar xzf file.tar.gz", "", "", 0);
     testcmd("../$CMD file.txt",
         "",
