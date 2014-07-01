@@ -313,7 +313,8 @@ Options:
     Test integrity of local repositories by running "git fsck".
     To disable: git config git-update-dirs.no-test true
   -F, --fetch-prune
-    Fetch new commits from all remotes and prune deleted remote branches.
+    Fetch new commits from all remotes and prune deleted remote 
+    branches.
     To disable: git config git-update-dirs.no-fetch-prune true
   -f, --fetch
     Fetch new commits from all remotes.
@@ -325,7 +326,8 @@ Options:
     If the repo is used by git-annex, run "ga sync".
     To disable: git config git-update-dirs.no-ga-sync true
   -d, --dangling
-    Execute "git dangling", i.e. turn all dangling commits into branches.
+    Execute "git dangling", i.e. turn all dangling commits into 
+    branches.
     To disable: git config git-update-dirs.no-dangling true
   -a, --allbr
     Execute "git nobr", "git allbr -a" and "git commit -".
