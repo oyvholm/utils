@@ -34,6 +34,7 @@ our %Opt = (
     'exec-before' => '',
     'fetch' => 0,
     'fetch-prune' => 0,
+    'ga-dropget' => 0,
     'ga-sync' => 0,
     'help' => 0,
     'lpar' => 0,
@@ -52,6 +53,8 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = "0.00";
 
+my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
+
 Getopt::Long::Configure("bundling");
 GetOptions(
 
@@ -67,6 +70,7 @@ GetOptions(
     "exec-before|E=s" => \$Opt{'exec-before'},
     "fetch-prune|F" => \$Opt{'fetch-prune'},
     "fetch|f" => \$Opt{'fetch'},
+    "ga-dropget|G" => \$Opt{'ga-dropget'},
     "ga-sync|g" => \$Opt{'ga-sync'},
     "help|h" => \$Opt{'help'},
     "lpar|l" => \$Opt{'lpar'},
@@ -100,6 +104,7 @@ if ($Opt{'all-options'}) {
     $Opt{'push'} = 1;
     $Opt{'submodule'} = 1;
 }
+$Opt{'ga-dropget'} && ($Opt{'ga-sync'} = 1);
 
 my @Dirs = @ARGV;
 my @err_compress = ();
@@ -150,6 +155,7 @@ LOOP: for my $f (@Dirs) {
         close($fh);
 
         if ($is_modified) {
+            $Opt{'ga-dropget'} = 0;
             $Opt{'ga-sync'} = 0;
         }
 
@@ -177,9 +183,27 @@ LOOP: for my $f (@Dirs) {
                 mysystem('git', 'restore-dirs');
             }
         }
-        if (should('ga-sync')) {
-            if ($is_annex) {
-                mysystem("ga", "sync") && push(@err_gasync, $f);
+        if ($is_annex && should('ga-sync')) {
+            mysystem("ga", "sync") && push(@err_gasync, $f);
+            if (should('ga-dropget')) {
+                mysystem("ga", "drop", "--auto");
+                mysystem("ga", "sync");
+                if (open(my $fh, "git remote |")) {
+                    my $found = 0;
+                    while (my $curr_remote = <$fh>) {
+                        if ($curr_remote =~ /^$archive_disk$/) {
+                            mysystem("ga", "unused");
+                            mysystem("ga", "move", "--unused", "--to", $archive_disk);
+                            mysystem("ga", "sync");
+                            last;
+                        }
+                    }
+                    close($fh);
+                } else {
+                    warn("$progname: Cannot open 'git remote' pipe: $!\n");
+                }
+                mysystem("ga", "get", "--auto");
+                mysystem("ga", "sync");
             }
         }
         if (should('dangling')) {
@@ -338,6 +362,11 @@ Options:
   -g, --ga-sync
     If the repo is used by git-annex, run "ga sync".
     To disable: git config git-update-dirs.no-ga-sync true
+  -G, --ga-dropget
+    Drop annex files having more copies than necessary, get files with 
+    fewer copies than necessary and move unused files to the 
+    '$archive_disk' remote.
+    To disable: git config git-update-dirs.no-ga-dropget true
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into 
     branches.
