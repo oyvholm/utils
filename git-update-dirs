@@ -35,6 +35,7 @@ our %Opt = (
     'fetch' => 0,
     'fetch-prune' => 0,
     'ga-dropget' => 0,
+    'ga-dropunused' => 0,
     'ga-moveunused' => 0,
     'ga-sync' => 0,
     'help' => 0,
@@ -72,6 +73,7 @@ GetOptions(
     "fetch-prune|F" => \$Opt{'fetch-prune'},
     "fetch|f" => \$Opt{'fetch'},
     "ga-dropget|G" => \$Opt{'ga-dropget'},
+    "ga-dropunused|u" => \$Opt{'ga-dropunused'},
     "ga-moveunused|U" => \$Opt{'ga-moveunused'},
     "ga-sync|g" => \$Opt{'ga-sync'},
     "help|h" => \$Opt{'help'},
@@ -95,6 +97,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+($Opt{'ga-dropunused'} && $Opt{'ga-moveunused'}) &&
+    die("$progname: Can't use -u/--ga-dropunused and -U/--ga-moveunused " .
+        "at the same time\n");
+
 if ($Opt{'all-options'}) {
     $Opt{'allbr'} = 1;
     $Opt{'dangling'} = 1;
@@ -106,7 +112,7 @@ if ($Opt{'all-options'}) {
     $Opt{'push'} = 1;
     $Opt{'submodule'} = 1;
 }
-($Opt{'ga-dropget'} || $Opt{'ga-moveunused'}) &&
+($Opt{'ga-dropget'} || $Opt{'ga-dropunused'} || $Opt{'ga-moveunused'}) &&
     ($Opt{'ga-sync'} = 1);
 
 my @Dirs = @ARGV;
@@ -159,6 +165,7 @@ LOOP: for my $f (@Dirs) {
 
         if ($is_modified) {
             $Opt{'ga-dropget'} = 0;
+            $Opt{'ga-dropunused'} = 0;
             $Opt{'ga-moveunused'} = 0;
             $Opt{'ga-sync'} = 0;
         }
@@ -191,6 +198,11 @@ LOOP: for my $f (@Dirs) {
             mysystem("ga", "sync") && push(@err_gasync, $f);
             if (should('ga-dropget')) {
                 mysystem("ga", "drop", "--auto");
+                mysystem("ga", "sync");
+            }
+            if (should('ga-dropunused')) {
+                mysystem("ga", "unused");
+                mysystem("ga", "dropunused", "all");
                 mysystem("ga", "sync");
             }
             if (should('ga-moveunused')) {
@@ -374,8 +386,13 @@ Options:
     Drop annex files having more copies than necessary, get files with 
     fewer copies than necessary.
     To disable: git config git-update-dirs.no-ga-dropget true
+  -u, --ga-dropunused
+    In a git-annex repo, run "ga unused" followed by "ga dropunused 
+    all". Can't be used together with -U/--ga-moveunused.
+    To disable: git config git-update-dirs.no-ga-dropunused true
   -U, --ga-moveunused
-    Move unused git-annex contents to the '$archive_disk' remote.
+    Move unused git-annex contents to the '$archive_disk' remote. Can't 
+    be used together with -u/--ga-dropunused.
     To disable: git config git-update-dirs.no-ga-moveunused true
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into 
