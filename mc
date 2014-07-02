@@ -7,7 +7,7 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-sess_str="sess -d mc --"
+sess_str="sess -d mc -t c_mc --"
 test "$HISTFILE" = "/dev/null" && unset sess_str
 if test -x /usr/local/bin/mc; then
     $sess_str /usr/local/bin/mc -d "$@"
