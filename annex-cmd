@@ -7,12 +7,6 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-if [ "$1" = "--find-extra" ]; then
-    git update-dirs ~/annex/* \
-        -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
-    exit
-fi
-
 if [ "$1" = "--gadu" ]; then
     git update-dirs ~/annex /media/*/annex \
         -e "ga sync; sess ./lag_gadu-local *; git add .gadu-local; git ci -av; ga sync"
@@ -20,15 +14,20 @@ if [ "$1" = "--gadu" ]; then
 fi
 
 wildc='*'
-
 if [ "$1" = "--annex" ]; then
     unset wildc
     shift
 fi
-
 if [ "$1" = "-D" ]; then
     test -z "$2" && { echo annex-cmd: Missing argument for -D >&2; exit 1; }
     wildc="$2"
     shift 2
 fi
+
+if [ "$1" = "--find-extra" ]; then
+    git update-dirs ~/annex/$wildc \
+        -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
+    exit
+fi
+
 git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc "$@"
