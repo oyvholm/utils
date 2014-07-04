@@ -2,9 +2,13 @@
 
 # File ID: 29dba898-4962-11df-adc3-d5e071bed206
 
+free_space() {
+    df --block-size=1M "$1" | commify | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+}
+
 if test "$1" = "space"; then
     while :; do
-        df --block-size=1M . | commify | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+        free_space .
         sleep 1
         echo -n '  '
     done
