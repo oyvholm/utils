@@ -6,7 +6,26 @@ free_space() {
     df --block-size=1M "$1" | commify | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
 }
 
-if test "$1" = "space"; then
+all_free_space() {
+    mount | grep ^/dev/ | cut -f 3 -d ' ' | sort | while read f; do
+        if test "$f" = "/"; then
+            echo -n "/ ";
+            free_space /
+        else
+            echo "$f " | rev | cut -f 1 -d / | rev | tr -d '\n'
+            free_space "$f"
+        fi
+        echo -n "  "
+    done
+    echo
+}
+
+if test "$1" = "allspace"; then
+    while :; do
+        all_free_space
+        sleep 5
+    done
+elif test "$1" = "space"; then
     while :; do
         free_space .
         sleep 1
