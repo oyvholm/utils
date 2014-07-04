@@ -8,12 +8,14 @@
 #=======================================================================
 
 if [ "$1" = "--find-extra" ]; then
-    git update-dirs ~/annex/* -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
+    git update-dirs ~/annex/* \
+        -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
     exit
 fi
 
 if [ "$1" = "--gadu" ]; then
-    git update-dirs ~/annex /media/*/annex -e "ga sync; sess ./lag_gadu-local *; git add .gadu-local; git ci -av; ga sync"
+    git update-dirs ~/annex /media/*/annex \
+        -e "ga sync; sess ./lag_gadu-local *; git add .gadu-local; git ci -av; ga sync"
     exit
 fi
 
