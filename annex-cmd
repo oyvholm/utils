@@ -26,6 +26,8 @@ fi
 
 if [ "$1" = "--find-extra" ]; then
     git update-dirs ~/annex/$wildc \
+        -q \
+        -E 'pwd >&2' \
         -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
     exit
 fi
