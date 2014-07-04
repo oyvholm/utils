@@ -27,6 +27,7 @@ fi
 if [ "$1" = "--count-loose" ]; then
     git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc \
         -qq \
+        -E 'pwd >&2' \
         -e 'echo $(find .git/objects -type f | grep -v -e pack -e info | wc -l) $(pwd)' \
         | sort -n
     exit
