@@ -25,16 +25,16 @@ if test "$1" = "allspace"; then
         all_free_space
         sleep 5
     done
+elif test "$1" = "date"; then
+    ntpdate -q pool.ntp.org
+elif test "$1" = "kern"; then
+    tail -F /var/log/kern.log
 elif test "$1" = "space"; then
     while :; do
         free_space .
         sleep 1
         echo -n '  '
     done
-elif test "$1" = "date"; then
-    ntpdate -q pool.ntp.org
-elif test "$1" = "kern"; then
-    tail -F /var/log/kern.log
 else
     test -d /n900/. && sudo=sudo || unset sudo
     while :; do
