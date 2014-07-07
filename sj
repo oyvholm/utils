@@ -30,10 +30,15 @@ elif test "$1" = "date"; then
 elif test "$1" = "kern"; then
     tail -F /var/log/kern.log
 elif test "$1" = "space"; then
+    unset prevlast
     while :; do
-        free_space .
-        sleep 1
-        echo -n '  '
+        lastspace=$(free_space .)
+        if test "$lastspace" != "$prevlast"; then
+            echo -n $lastspace
+            echo -n '  '
+            prevlast=$lastspace
+            sleep 1
+        fi
     done
 else
     test -d /n900/. && sudo=sudo || unset sudo
