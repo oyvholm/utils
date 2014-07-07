@@ -24,7 +24,7 @@ if test "$1" = "allspace"; then
     while :; do
         all_free_space
         sleep 5
-    done
+    done | uniq
 elif test "$1" = "date"; then
     ntpdate -q pool.ntp.org
 elif test "$1" = "kern"; then
