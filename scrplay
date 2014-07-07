@@ -55,7 +55,7 @@ if ($#ARGV >= 0) {
         my $fname = $_;
         $fname =~ s/(^.*)\.(scrlog|timing)/$1/;
         system("reset");
-        system("scriptreplay", "$fname.timing", "$fname.scrlog", $Opt{'speed'});
+        system("scriptreplay", "-m", "0.5", "$fname.timing", "$fname.scrlog", $Opt{'speed'});
     }
 }
 
