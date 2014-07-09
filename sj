@@ -21,10 +21,13 @@ all_free_space() {
 }
 
 if test "$1" = "allspace"; then
+    unset prev
     while :; do
-        all_free_space
+        curr="$(all_free_space)"
+        test "$curr" != "$prev" && (echo; echo -n "$curr")
+        prev="$curr"
         sleep 2
-    done | uniq
+    done
 elif test "$1" = "date"; then
     ntpdate -q pool.ntp.org
 elif test "$1" = "kern"; then
