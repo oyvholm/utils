@@ -90,8 +90,8 @@ chomp(my $origdir = `pwd`);
 
 ok(mkdir($Tmptop), "mkdir $Tmptop") || die("$progname: Unable to continue\n");
 likecmd("git clone git-dangling-files/repo.bundle $repo", # {{{
-    '/^(Cloning into.*tmp-git-dangling-t-|Initialized empty Git repository in ).*/',
-    '/^$/',
+    '/.*/',
+    '/.*/',
     0,
     'Clone repo.bundle',
 );
