@@ -3,7 +3,7 @@
 # File ID: 29dba898-4962-11df-adc3-d5e071bed206
 
 free_space() {
-    df -h "$1" | commify | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+    df -h "$1" | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
 }
 
 all_free_space() {
