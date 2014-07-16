@@ -189,7 +189,7 @@ diag("Testing -f (--force) option...");
 likecmd("../$CMD bash bashfile", # {{{
     '/^$/s',
     '/^std: bashfile: File already exists, will not overwrite\n$/s',
-    9,
+    2,
     "Create bash script, file already exists, don’t use --force",
 );
 
