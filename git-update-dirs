@@ -155,13 +155,15 @@ LOOP: for my $f (@Dirs) {
         msg(2, "is_annex = '$is_annex'");
 
         my $is_modified = 0;
-        open(my $fh, "git status --porcelain |") or
-            die("$progname: Cannot open 'git status --porcelain' pipe: $!\n");
-        while (<$fh>) {
-            /^\?\?/ && next;
-            $is_modified = 1;
+        if (!$is_bare) {
+            open(my $fh, "git status --porcelain |") or
+                die("$progname: Cannot open 'git status --porcelain' pipe: $!\n");
+            while (<$fh>) {
+                /^\?\?/ && next;
+                $is_modified = 1;
+            }
+            close($fh);
         }
-        close($fh);
 
         if ($is_modified) {
             $Opt{'ga-dropget'} = 0;
