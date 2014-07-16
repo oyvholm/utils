@@ -14,7 +14,7 @@
 use strict;
 use Getopt::Long;
 use Digest::MD5 qw{ md5_hex };
-use Digest::SHA1 qw{ sha1_hex };
+use Digest::SHA qw{ sha1_hex };
 
 $| = 1;
 
@@ -90,7 +90,7 @@ sub process_file {
         if ($use_stdin || -f $Filename) {
             local *FP;
             if ($use_stdin || open(FP, "<", $Filename)) {
-                my $sha1 = Digest::SHA1->new;
+                my $sha1 = Digest::SHA->new;
                 my $md5 = Digest::MD5->new;
                 $use_stdin && (*FP = *STDIN, $Size = 0, $Mtime = time);
                 msg(2, sprintf("Reading %s...", safe_tab($Filename)));
