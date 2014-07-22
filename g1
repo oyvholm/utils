@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# g1
+# File ID: fe137bc4-0397-11e4-baa6-c80aa9e67bbd
+# Enable git prompt in current repository
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git config --unset ps1.disable
