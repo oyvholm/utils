@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#=======================================================================
+# act
+# File ID: 6723d974-0b9f-11e4-87ab-c80aa9e67bbd
+#
+# Read seconds since the Epoch from stdin and create a plot with Bézier curve 
+# showing how many timestamps there are per time period. Default period is one 
+# week, but this can be changed on the command line. See ep_day(1) for command 
+# line syntax.
+#
+# For example, to create a plot with commit activity per week in a Git 
+# repository:
+#
+#   git log --format=%ct | act
+#
+# To create a plot from Apache logs showing daily visits:
+#
+#   access_log2epstat access.log | act -d 1
+#
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+time_str="-w 1"
+test -n "$1" && time_str="$@"
+tmpfile="/tmp/act.$(date -u +"%Y%m%dT%H%M%SZ").$$.tmp"
+ep_day $time_str | ep >"$tmpfile"; stpl -lp -samp1000 "$tmpfile"
