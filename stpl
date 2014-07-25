@@ -25,7 +25,7 @@ our $time_fmt = length($opt_f) ? $opt_f : $STD_TIMEFMT;
 
 $opt_h && usage(0);
 
-my $gnuplot_script = join(".", "tmp.stpl", $$, substr(rand(), 2, 5), "plt");
+my $gnuplot_script = join(".", "/tmp/tmp.stpl", $$, substr(rand(), 2, 5), "plt");
 
 if (-e $gnuplot_script) {
     die("$gnuplot_script: Strange indeed — file already exists. Spooky.\n");
