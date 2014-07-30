@@ -1,3 +1,0 @@
-#!/bin/sh
-
-tail -f /usr/local/apache-ssl/logs/k9_error_log

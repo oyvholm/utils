@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id$
-# Setter en entry med klokkeslett inn i dbk. Leser fra stdin.
-
-dbk -t -b -i - $*
