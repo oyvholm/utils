@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# $Id: lsreadable,v 1.3.2.1 2001/06/02 15:39:16 sunny Exp $
-
-find -print0 | xargs -0 -i% /bin/bash -c 'if [ -r % ]; then echo %; fi'

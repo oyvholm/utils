@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# $Id: rot13,v 1.1 1999/04/20 17:16:53 sunny Exp $
-
-tr a-mn-zA-MN-Z n-za-mN-ZA-M

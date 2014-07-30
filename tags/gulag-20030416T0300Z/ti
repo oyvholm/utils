@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# $Id: ti,v 1.1 2003/03/11 23:37:38 sunny Exp $
-# Terminal Identification ’ for å identifisere skjermhøyde etc ved
-# logging.
-
-date -Iseconds
-stty -a

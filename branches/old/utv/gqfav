@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# $Id$
-# Favorittgreie i gqview
-# Må fikses litt på.
-
-cp -p $* /home/sunny/s/fav
-chmod +w /home/sunny/s/fav/$(basename $1)
-echo -ne \\a

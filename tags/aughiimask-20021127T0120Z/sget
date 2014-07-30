@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# $Id: sget,v 1.3 2002/03/26 09:16:46 sunny Exp $
-
-wget -O - -o /dev/null -U 'Mozilla/4.78 [en] (X11; U; Linux 2.4.9-31 i686)' $*
