@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id: cp865,v 1.1 2001/08/27 04:27:32 sunny Exp $
-# Konverterer cp865 til Latin1 og HTML-entities.
-
-iconv -f cp865 -t utf-8 $* | u2h -l

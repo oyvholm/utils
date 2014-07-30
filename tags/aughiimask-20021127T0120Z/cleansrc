@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id: cleansrc,v 1.1 1999/10/04 00:51:52 sunny Exp $
-# Rensker opp i perlsource og gjør den klar for commit.
-
-perldebon|perldebon|perldebon|perldebon|perldeboff|rmspc

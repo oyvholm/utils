@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id: hmsg,v 1.2 2002/09/26 08:38:47 sunny Exp $
-# Midlertidig iom at ikke parameterparsing i h2u ikke funker foreløpig.
-
-echo "$*" | h2u -l

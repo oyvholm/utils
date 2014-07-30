@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id: cdiff,v 1.4 2002/11/16 14:53:19 sunny Exp $
-# Latskapen lenge leve.
-
-cvs -n diff -u $* 2>/dev/null | less -S

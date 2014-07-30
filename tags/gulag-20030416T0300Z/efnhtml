@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id: efnhtml,v 1.3 2003/03/22 00:22:11 sunny Exp $
-# Filter for HTML levert til www.efn.no .
-
-u2h -d $* | hhi | hfa

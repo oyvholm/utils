@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# $Id: tolower,v 1.1 1999/04/29 08:51:48 sunny Exp $
-# Konverterer stdin til lower case
-
-tr A-Z a-z

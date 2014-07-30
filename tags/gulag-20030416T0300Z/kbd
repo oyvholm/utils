@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# $Id: kbd,v 1.1 2002/04/15 07:56:01 sunny Exp $
-
-kbdrate -r 30 -d 250

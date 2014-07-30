@@ -1,6 +1,0 @@
-#!/usr/bin/perl
-
-# $Id: termtitle,v 1.1 2001/04/11 04:27:37 sunny Exp $
-# Setter tittel i xterm-vindu.
-
-print(chr(157), "2;", @ARGV, chr(7));
