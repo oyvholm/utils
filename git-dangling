@@ -38,32 +38,21 @@ test "$1" = "-D" && exit
 
 git fsck --no-reflogs >dangling-result.tmp
 for f in `grep "^dangling commit" dangling-result.tmp | cut -f 3 -d ' '`; do
-    skip=0
-    if test -e $bannedfile; then
-        for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
-            echo $f | grep -q $ban && skip=1
-        done
-    fi
-    test "$skip" = "0" && git branch commit-$f $f && echo $progname: Creating commit-$f
+    git branch commit-$f $f && echo $progname: Creating commit-$f
 done
 for f in `grep "^dangling tag" dangling-result.tmp | cut -f 3 -d ' '`; do
-    skip=0
-    if test -e $bannedfile; then
-        for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
-            echo $f | grep -q $ban && skip=1
-        done
-    fi
-    test "$skip" = "0" && git tag tag-$f $f && echo $progname: Creating tag-$f
+    git tag tag-$f $f && echo $progname: Creating tag-$f
 done
 if test "$store_blobs" = "1"; then
     for f in `grep "^dangling blob" dangling-result.tmp | cut -f 3 -d ' '`; do
-        skip=0
-        if test -e $bannedfile; then
-            for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
-                echo $f | grep -q $ban && skip=1
-            done
-        fi
-        test "$skip" = "0" && git show $f >blob-$f && echo $progname: Creating blob-$f
+        git show $f >blob-$f && echo $progname: Creating blob-$f
+    done
+fi
+if test -e $bannedfile; then
+    for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
+        git br -D commit-$ban 2>/dev/null
+        git tag -d commit-$ban 2>/dev/null
+        test -e "blob-$ban" && rm "blob-$ban"
     done
 fi
 rm dangling-result.tmp
