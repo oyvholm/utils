@@ -4,11 +4,13 @@
 # File ID: 49d2c2ba-2402-11e4-9039-fefdb24f8e10
 
 setxkbmap no
-gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
-gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
-sudo apt-get update
-sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
-sudo apt-get install vim git-core uuid
+if test -d "/home/ubuntu"; then
+    gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
+    gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
+    sudo apt-get update
+    sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
+    sudo apt-get install vim git-core uuid
+fi
 cd /home/ubuntu || { echo /home/ubuntu: chdir error >&2; exit 1; }
 mkdir -p src/git
 cd src/git || { echo src/git: chdir error >&2; exit 1; }
