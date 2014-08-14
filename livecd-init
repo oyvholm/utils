@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# livecd-init
+# File ID: 49d2c2ba-2402-11e4-9039-fefdb24f8e10
+
 setxkbmap no
 gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
 gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
