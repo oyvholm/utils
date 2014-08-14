@@ -14,11 +14,12 @@ fi
 cd || { echo Could not chdir to $HOME >&2; exit 1; }
 mkdir -p src/git
 cd src/git || { echo src/git: chdir error >&2; exit 1; }
-git clone -o github git@github.com:sunny256/home-sunny.git
-git clone -o github git@github.com:sunny256/utils.git
+export GR=sunny@sunbase.org:/home/sunny/repos/Git
+git clone -o sunbase $GR/home-sunny.git
+git clone -o sunbase $GR/utils.git
 cd
 ln -sv src/git/utils bin
 ln -svf src/git/home-sunny/.* .
 ln -svf src/git/home-sunny/* .
 rm .gitignore .git
-git clone -o github git@github.com:sunny256/gen-uuids.git uuids
+git clone -o sunbase $GR/gen-uuids.git uuids
