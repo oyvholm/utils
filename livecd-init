@@ -14,6 +14,7 @@ elif test -d "/home/ubuntu"; then
     sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
     sudo apt-get install vim git-core uuid
 fi
+sudo ntpdate pool.ntp.org
 cd || { echo Could not chdir to $HOME >&2; exit 1; }
 mkdir -p src/git
 cd src/git || { echo src/git: chdir error >&2; exit 1; }
