@@ -29,3 +29,8 @@ rm .gitignore .git
 rm -rf .config/mc
 ln -sv ../src/git/home-sunny/.config/mc .config/mc
 git clone -b gen-uuids -o sunbase $GR/gen-uuids.git uuids
+git clone -o sunbase $GR/comp-livecd.git
+mv comp-livecd/.git .
+rm -rf comp-livecd
+git checkout -f
+chmod 600 ~/.ssh/id_rsa
