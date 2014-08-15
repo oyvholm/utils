@@ -4,7 +4,10 @@
 # File ID: 49d2c2ba-2402-11e4-9039-fefdb24f8e10
 
 setxkbmap no
-if test -d "/home/ubuntu"; then
+if test -d "/home/knoppix"; then
+    sudo apt-get update
+    sudo apt-get install flashplugin-nonfree ntpdate tmux uuid
+elif test -d "/home/ubuntu"; then
     gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
     gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
     sudo apt-get update
