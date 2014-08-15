@@ -25,4 +25,6 @@ ln -sv src/git/utils bin
 ln -svf src/git/home-sunny/.* .
 ln -svf src/git/home-sunny/* .
 rm .gitignore .git
+rm -rf .config/mc
+ln -sv ../src/git/home-sunny/.config/mc .config/mc
 git clone -b gen-uuids -o sunbase $GR/gen-uuids.git uuids
