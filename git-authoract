@@ -1,0 +1,47 @@
+#!/bin/bash
+
+#=======================================================================
+# git-authoract
+# File ID: 6d9eb5a8-2526-11e4-be0d-c80aa9e67bbd
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+outfile=/tmp/git-authors.txt
+
+git log --format="%ci %aN" | \
+    cut -c 1-7,26- | \
+    sort | \
+    uniq | \
+    cut -c -7 | \
+    uniq -c | \
+    rmspcall | \
+    perl -pe 's/^(\d+)\s(\S+)/$2 $1/' >$outfile
+
+firstyear=$(head -1 $outfile | cut -f 1 -d -)
+curryear=$(date +%Y)
+for y in $firstyear $curryear; do
+    for m in $(seq -w 1 12); do
+        grep -q ^$y-$m $outfile || echo $y-$m 0 >>$outfile
+    done
+done
+sort $outfile >${outfile}.tmp
+mv ${outfile}.tmp $outfile
+
+headzero="$(cut -f 2 -d ' ' $outfile | uniq -c | rmspcall | head -1 | grep ' 0$')"
+if test -n "$headzero"; then
+    numhead=$(echo $headzero | cut -f 1 -d ' ')
+    linecount=$(wc -l <$outfile)
+    tail -n -$[$linecount - $numhead] $outfile >${outfile}.tmp
+    mv ${outfile}.tmp $outfile
+fi
+
+tailzero="$(cut -f 2 -d ' ' $outfile | uniq -c | rmspcall | tail -1 | grep ' 0$')"
+if test -n "$tailzero"; then
+    numtail=$(echo $tailzero | cut -f 1 -d ' ')
+    linecount=$(wc -l <$outfile)
+    head -n $[$linecount - $numtail] $outfile >${outfile}.tmp
+    mv ${outfile}.tmp $outfile
+fi
+
+stpl -f %Y-%m $outfile
