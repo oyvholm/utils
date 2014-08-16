@@ -4,19 +4,33 @@
 # File ID: 49d2c2ba-2402-11e4-9039-fefdb24f8e10
 
 setxkbmap no
-gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
-gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
-sudo apt-get update
-sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
-sudo apt-get install vim git-core uuid
-cd /home/ubuntu || { echo /home/ubuntu: chdir error >&2; exit 1; }
+if test -d "/home/knoppix"; then
+    sudo apt-get update
+    sudo apt-get install flashplugin-nonfree ntpdate tmux uuid
+elif test -d "/home/ubuntu"; then
+    gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
+    gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
+    sudo apt-get update
+    sudo apt-get install flashplugin-nonfree || { echo Du må redigere /etc/apt/sources.list >&2; exit 1; }
+    sudo apt-get install vim git-core uuid
+fi
+sudo ntpdate pool.ntp.org
+cd || { echo Could not chdir to $HOME >&2; exit 1; }
 mkdir -p src/git
 cd src/git || { echo src/git: chdir error >&2; exit 1; }
-git clone -o github git@github.com:sunny256/home-sunny.git
-git clone -o github git@github.com:sunny256/utils.git
+export GR=sunny@sunbase.org:/home/sunny/repos/Git
+git clone -o sunbase --recursive $GR/home-sunny.git
+git clone -o sunbase --recursive $GR/utils.git
 cd
 ln -sv src/git/utils bin
 ln -svf src/git/home-sunny/.* .
 ln -svf src/git/home-sunny/* .
 rm .gitignore .git
-git clone -o github git@github.com:sunny256/gen-uuids.git uuids
+rm -rf .config/mc
+ln -sv ../src/git/home-sunny/.config/mc .config/mc
+git clone -b gen-uuids -o sunbase $GR/gen-uuids.git uuids
+git clone -o sunbase $GR/comp-livecd.git
+mv comp-livecd/.git .
+rm -rf comp-livecd
+git checkout -f
+chmod 600 ~/.ssh/id_rsa
