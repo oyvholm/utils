@@ -15,6 +15,7 @@ elif test -d "/home/ubuntu"; then
     sudo apt-get install vim git-core uuid
 fi
 sudo ntpdate pool.ntp.org
+sudo service ntp start
 cd || { echo Could not chdir to $HOME >&2; exit 1; }
 mkdir -p src/git
 cd src/git || { echo src/git: chdir error >&2; exit 1; }
@@ -34,3 +35,4 @@ mv comp-livecd/.git .
 rm -rf comp-livecd
 git checkout -f
 chmod 600 ~/.ssh/id_rsa
+ntpdate -q pool.ntp.org
