@@ -7,6 +7,8 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+outfile=/tmp/git-authors.txt
+
 git log --format="%ci %aN" | \
     cut -c 1-7,26- | \
     sort | \
@@ -14,5 +16,5 @@ git log --format="%ci %aN" | \
     cut -c -7 | \
     uniq -c | \
     rmspcall | \
-    perl -pe 's/^(\d+)\s(\S+)/$2 $1/' >/tmp/git-authors.txt
-stpl -f %Y-%m /tmp/git-authors.txt
+    perl -pe 's/^(\d+)\s(\S+)/$2 $1/' >$outfile
+stpl -f %Y-%m $outfile
