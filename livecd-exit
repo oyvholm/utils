@@ -24,5 +24,5 @@ echo $SESS_UUID | grep -q logging/ && {
 test -d ~/afvroot && rsync -avzP ~/afvroot/ sunny@sunbase.org:livecd-afvroot
 test -d ~/log/script && rsync -avzP ~/log/script/ sunny@sunbase.org:annex/log/script/livecd/
 cd && git commit -a
-git pa
+git update-dirs -rP
 cd ~/uuids/ && make
