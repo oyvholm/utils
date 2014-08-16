@@ -28,4 +28,20 @@ done
 sort $outfile >${outfile}.tmp
 mv ${outfile}.tmp $outfile
 
+headzero="$(cut -f 2 -d ' ' $outfile | uniq -c | rmspcall | head -1 | grep ' 0$')"
+if test -n "$headzero"; then
+    numhead=$(echo $headzero | cut -f 1 -d ' ')
+    linecount=$(wc -l <$outfile)
+    tail -n -$[$linecount - $numhead] $outfile >${outfile}.tmp
+    mv ${outfile}.tmp $outfile
+fi
+
+tailzero="$(cut -f 2 -d ' ' $outfile | uniq -c | rmspcall | tail -1 | grep ' 0$')"
+if test -n "$tailzero"; then
+    numtail=$(echo $tailzero | cut -f 1 -d ' ')
+    linecount=$(wc -l <$outfile)
+    head -n $[$linecount - $numtail] $outfile >${outfile}.tmp
+    mv ${outfile}.tmp $outfile
+fi
+
 stpl -f %Y-%m $outfile
