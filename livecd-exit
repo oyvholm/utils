@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#=======================================================================
+# livecd-exit
+# File ID: 9aba4898-253c-11e4-a238-0800272e22d2
+#
+# Execute this before logout from a livecd session to make sure 
+# everything is committed, pushed and saved elsewhere.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=livecd-exit
+
+cd ~/src && git update-dirs -rqq -e "git status --porcelain" | grep . && {
+    echo $progname: Dirty repos under ~/src/ >&2
+    exit 1
+}
+echo $SESS_UUID | grep -q logging/ && {
+    echo $progname: Terminate logging first >&2
+    exit 1
+}
+test -d ~/afvroot && rsync -avzP ~/afvroot/ sunny@sunbase.org:livecd-afvroot
+test -d ~/log/script && rsync -avzP ~/log/script/ sunny@sunbase.org:annex/log/script/livecd/
+cd && git commit -a
+git pa
+cd ~/uuids/ && make
