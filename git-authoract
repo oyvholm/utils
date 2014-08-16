@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#=======================================================================
+# git-authoract
+# File ID: 6d9eb5a8-2526-11e4-be0d-c80aa9e67bbd
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git log --format="%ci %aN" | \
+    cut -c 1-7,26- | \
+    sort | \
+    uniq | \
+    cut -c -7 | \
+    uniq -c | \
+    rmspcall | \
+    perl -pe 's/^(\d+)\s(\S+)/$2 $1/' >/tmp/git-authors.txt
+stpl -f %Y-%m /tmp/git-authors.txt
