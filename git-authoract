@@ -17,4 +17,15 @@ git log --format="%ci %aN" | \
     uniq -c | \
     rmspcall | \
     perl -pe 's/^(\d+)\s(\S+)/$2 $1/' >$outfile
+
+firstyear=$(head -1 $outfile | cut -f 1 -d -)
+curryear=$(date +%Y)
+for y in $firstyear $curryear; do
+    for m in $(seq -w 1 12); do
+        grep -q ^$y-$m $outfile || echo $y-$m 0 >>$outfile
+    done
+done
+sort $outfile >${outfile}.tmp
+mv ${outfile}.tmp $outfile
+
 stpl -f %Y-%m $outfile
