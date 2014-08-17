@@ -29,7 +29,7 @@ ln -svf src/git/home-sunny/* .
 rm .gitignore .git
 rm -rf .config/mc
 ln -sv ../src/git/home-sunny/.config/mc .config/mc
-git clone -b gen-uuids -o sunbase $GR/gen-uuids.git uuids
+git clone -b livecd-uuids -o sunbase $GR/livecd-uuids.git uuids
 git clone -o sunbase $GR/comp-livecd.git
 mv comp-livecd/.git .
 rm -rf comp-livecd
