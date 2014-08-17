@@ -9,7 +9,7 @@
 
 outfile=/tmp/git-authors.txt
 
-git log --format="%ci %aN" | \
+git log --format="%ci %aN" "$@" | \
     cut -c 1-7,26- | \
     sort | \
     uniq | \
@@ -20,7 +20,7 @@ git log --format="%ci %aN" | \
 
 firstyear=$(head -1 $outfile | cut -f 1 -d -)
 curryear=$(date +%Y)
-for y in $firstyear $curryear; do
+for y in $(seq $firstyear $curryear); do
     for m in $(seq -w 1 12); do
         grep -q ^$y-$m $outfile || echo $y-$m 0 >>$outfile
     done
