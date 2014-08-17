@@ -9,7 +9,7 @@
 
 outfile=/tmp/git-authors.txt
 
-git log --format="%ci %aN" | \
+git log --format="%ci %aN" "$@" | \
     cut -c 1-7,26- | \
     sort | \
     uniq | \
