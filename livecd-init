@@ -7,6 +7,9 @@ setxkbmap no
 if test -d "/home/knoppix"; then
     sudo apt-get update
     sudo apt-get install flashplugin-nonfree ntpdate tmux uuid
+elif test -d "/home/mint"; then
+    sudo apt-get update
+    sudo apt-get install git tmux uuid vim
 elif test -d "/home/ubuntu"; then
     gconftool-2 --set /apps/metacity/general/button_layout --type string menu:minimize,maximize,close
     gconftool-2 --set /apps/update-notifier/auto_launch --type bool false
