@@ -176,7 +176,7 @@ if (scalar(@missing)) {
         )
     );
     for my $m (@missing) {
-        print($fp "sudo apt-get install $m\n");
+        print($fp "sudo apt-get --assume-yes install $m\n");
     }
     ok(close($fp), "Close $outfile");
     ok(chmod(0755, $outfile), "Make $outfile executable");
