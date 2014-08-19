@@ -8,7 +8,6 @@ all:
 
 update:
 	cd Git && ./update
-	cd Externals && ./update
 
 test:
 	cd tests; $(MAKE)
