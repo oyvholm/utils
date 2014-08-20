@@ -149,6 +149,7 @@ if [ ! -d $builddir/. ]; then
     echo ================= git clone =================
     git clone $origin_url $builddir
     cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
+    git config lpar.name git
     for f in maint next pu todo; do
         git branch -t $f origin/$f || {
             echo $progname: $f: Could not create branch >&2;
