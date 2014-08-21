@@ -95,7 +95,7 @@ enable_sudo() {
 
 push_changes() {
     is_official_branch $local_master && push_local= || push_local=$local_master
-    for f in ubstud loc-repo passp sunbase github rsync-net; do
+    for f in bellmann loc-repo passp sunbase github rsync-net; do
         git remote | grep -q "^$f\$" && {
             echo ==== push changes to $f ====
             git push -f $f $push_local master maint next pu todo
