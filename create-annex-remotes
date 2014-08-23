@@ -1,0 +1,91 @@
+#!/bin/bash
+
+#=======================================================================
+# create-annex-remotes
+# File ID: c925d0fe-2a9a-11e4-9f76-c80aa9e67bbd
+#
+# Create remotes in local git-annex repositories. Example usages:
+#   annex-cmd -e create-annex-remotes
+#   annex-cmd -e "create-annex-remotes -r"
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=create-annex-remotes
+
+# Set to "echo" to simulate
+simul=
+
+comp="$(hostname)"
+test "$comp" = "bellmann" -o "$comp" = "linode" || {
+    echo $progname: $comp: Unknown computer, should be \"bellmann\" or \"linode\" >&2
+    exit 1
+}
+
+test -d .git/annex || { echo $progname: $(pwd) is not a git-annex repository >&2; exit 1; }
+
+unset remove_remotes
+test "$1" = "-r" && { remove_remotes=1; shift; }
+
+base="$(basename $(pwd))"
+
+if test "$base" = "annex" -a -f ".disk" -a -d ".gadu-local"; then
+    is_top=1
+elif test -f "../.disk" -a -d "../.gadu-local"; then
+    unset is_top
+else
+    echo $progname: Didn\'t find .disk or .gadu-local in current or parent directory >&2
+    exit 1
+fi
+
+define_remote() {
+    local remote="$1"
+    local url="$2"
+    if test -z "$(git remote | grep "^$remote\$")"; then
+        $simul git remote add $remote $url
+    else
+        $simul git config remote.$remote.url $url
+    fi
+}
+
+create() {
+    local remote="$1"
+    local dir="$2"
+    test "$comp" = "bellmann" || host_str="sunny@bellmann:"
+    test -n "$remove_remotes" && $simul git remote rm $remote 2>/dev/null
+    if test -n "$is_top"; then
+        define_remote $remote $host_str$dir
+    else
+        test "$(cat ../.disk)" = "$remote" && return
+        if test -z "$host_str"; then
+            test -d $dir/$base/.git/annex && define_remote $remote $host_str$dir/$base
+        else
+            ssh sunny@bellmann "ls -a $dir/$base/.git/annex 2>/dev/null" | grep -q . &&
+                define_remote $remote $host_str$dir/$base
+        fi
+    fi
+}
+
+create bellmann /bellmann/home/annex
+create passp /media/passp-1tb-annex/annex
+create seagate-3tb /media/seagate-3tb/annex
+
+if test "$comp" != "linode"; then
+    create cruzer /media/cruzer/annex
+    create exthd /media/exthd/annex
+    create pavi /media/pavi/annex
+    create ubstud /media/ubstud-annex/annex
+    create usb32g-1 /media/usb32g-1/annex
+    create usb32g-2 /media/usb32g-2/annex
+
+    test -n "$remove_remotes" && $simul git remote rm linode 2>/dev/null
+    if test -n "$is_top"; then
+        define_remote linode sunny@sunbase.org:/home/sunny/annex
+    else
+        ssh sunny@sunbase.org "ls -a /home/sunny/annex/$base/.git/annex 2>/dev/null" | grep -q . &&
+            define_remote linode sunny@sunbase.org:/home/sunny/annex/$base
+    fi
+fi
+
+$simul git remote -v
