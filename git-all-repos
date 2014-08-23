@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #=======================================================================
-# all-lpar
-# File ID: d96bacfe-6dda-11e3-8559-001f3b596ec9
-# Execute "lpar" in all subdirs
+# git-all-repos
+# File ID: 3cadebac-2a90-11e4-90d7-c80aa9e67bbd
+# Execute git update-dirs in all subdirs, including bare repos
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -l "$@"
+find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs "$@"
