@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#=======================================================================
+# git-all-repos
+# File ID: 3cadebac-2a90-11e4-90d7-c80aa9e67bbd
+# Execute git update-dirs in all subdirs, including bare repos
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs "$@"
