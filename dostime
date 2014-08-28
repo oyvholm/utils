@@ -29,6 +29,7 @@ our %Opt = (
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
+    'zero' => 0,
 
 );
 
@@ -44,6 +45,7 @@ GetOptions(
     'help|h' => \$Opt{'help'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
+    'zero|z' => \$Opt{'zero'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -60,6 +62,8 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+
+    $Opt{'zero'} && ($/ = "\x00");
 
     for my $curr (@ARGV) {
         $Retval |= process_file($curr);
@@ -157,6 +161,8 @@ Options:
     Simulate what would be done, don't actually change the timestamps.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -z, --zero
+    Filenames from stdin are separated by zero (NULL) bytes.
   --version
     Print version information.
   --debug
