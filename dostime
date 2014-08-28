@@ -1,0 +1,275 @@
+#!/usr/bin/perl
+
+#=======================================================================
+# dostime
+# File ID: 0b7a06a0-2e6a-11e4-a319-c80aa9e67bbd
+# Change file modification time from odd to even seconds because some 
+# file systems are too damn stupid to cope with them. Used to get rid of 
+# differences between timestamps of files in *NIX filesystems and DOSish 
+# ones.
+#
+# Character set: UTF-8
+# ©opyleft 2014– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use warnings;
+use Getopt::Long;
+
+local $| = 1;
+
+our $Debug = 0;
+
+our %Opt = (
+
+    'debug' => 0,
+    'dry-run' => 0,
+    'help' => 0,
+    'verbose' => 0,
+    'version' => 0,
+    'zero' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'debug' => \$Opt{'debug'},
+    'dry-run|n' => \$Opt{'dry-run'},
+    'help|h' => \$Opt{'help'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+    'zero|z' => \$Opt{'zero'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    $Opt{'zero'} && ($/ = "\x00");
+
+    for my $curr (@ARGV) {
+        $Retval |= process_file($curr);
+    }
+    if (!-t STDIN) {
+        while (my $curr = <STDIN>) {
+            chomp($curr);
+            $Retval |= process_file($curr);
+        }
+    }
+
+    return($Retval);
+    # }}}
+} # main()
+
+sub process_file {
+    # {{{
+    my $curr = shift;
+
+    if (-e $curr) {
+        my ($atime, $mtime) = (stat($curr))[8,9];
+        defined($mtime)
+            or (warn("$progname: $curr: Could not stat file: $!\n"), return 1);
+        my $origtime = $mtime;
+
+        $mtime = $mtime >> 1;
+        $mtime = $mtime << 1;
+
+        if ($mtime != $origtime) {
+            if (!$Opt{'dry-run'}) {
+                utime($atime, $mtime, $curr)
+                    or (warn("$progname: $curr: Could not set file time: $!\n"), return 1);
+            }
+            $Opt{'verbose'} && printf("%s: %s: mtime changed from %s to %s%s\n",
+                $progname, $curr, sec_to_string($origtime), sec_to_string($mtime),
+                $Opt{'dry-run'} ? " (SIMULATING)" : "",
+            );
+        }
+    } else {
+        warn("$progname: $curr: File not found\n");
+        return 1;
+    }
+
+    return 0;
+    # }}}
+} # process_file()
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyymmddThhmmss[.frac]Z"
+    # {{{
+    my ($Seconds) = @_;
+    length($Seconds) || return(undef);
+    ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return(undef);
+    my $Secfrac = ($Seconds =~ /^([\-\d]*)(\.\d+)$/) ? 1.0*$2 : "";
+    $Secfrac =~ s/^0//;
+
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02u%sZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0], $Secfrac);
+    return($DateString);
+    # }}}
+} # sec_to_string()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] [file [files [...]]]
+
+Change file modification time from odd to even seconds because some file 
+systems are too damn stupid to cope with them. Used to get rid of 
+differences between timestamps of files in *NIX filesystems and DOSish 
+ones. Files can be specified on the command line and/or be read from 
+stdin.
+
+Options:
+
+  -h, --help
+    Show this help.
+  -n, --dry-run
+    Simulate what would be done, don't actually change the timestamps.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  -z, --zero
+    Filenames from stdin are separated by zero (NULL) bytes.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software: you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
