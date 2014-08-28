@@ -97,7 +97,7 @@ sub process_file {
                 utime($atime, $mtime, $curr)
                     or (warn("$progname: $curr: Could not set file time: $!\n"), return 1);
             }
-            printf("%s: %s: mtime changed from %s to %s%s\n",
+            $Opt{'verbose'} && printf("%s: %s: mtime changed from %s to %s%s\n",
                 $progname, $curr, sec_to_string($origtime), sec_to_string($mtime),
                 $Opt{'dry-run'} ? " (SIMULATING)" : "",
             );
