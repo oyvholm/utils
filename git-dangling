@@ -61,4 +61,4 @@ if test -e $bannedfile; then
         test -e "blob-$ban" && rm "blob-$ban"
     done
 fi
-rm $dangfile
+test "$dangfile" = "$(basename $dangfile)" && rm $dangfile
