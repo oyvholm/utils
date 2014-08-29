@@ -30,8 +30,6 @@ our %Opt = (
     'debug' => 0,
     'delete-dangling' => 0,
     'dry-run' => 0,
-    'exec-after' => '',
-    'exec-before' => '',
     'fetch' => 0,
     'fetch-prune' => 0,
     'ga-dropget' => 0,
@@ -50,6 +48,8 @@ our %Opt = (
     'version' => 0,
 
 );
+our @opt_exec_after = ();
+our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
@@ -68,8 +68,8 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "delete-dangling|D" => \$Opt{'delete-dangling'},
     "dry-run|n" => \$Opt{'dry-run'},
-    "exec-after|e=s" => \$Opt{'exec-after'},
-    "exec-before|E=s" => \$Opt{'exec-before'},
+    "exec-after|e=s" => \@opt_exec_after,
+    "exec-before|E=s" => \@opt_exec_before,
     "fetch-prune|F" => \$Opt{'fetch-prune'},
     "fetch|f" => \$Opt{'fetch'},
     "ga-dropget|G" => \$Opt{'ga-dropget'},
@@ -173,7 +173,9 @@ LOOP: for my $f (@Dirs) {
         }
 
         if (should('exec-before')) {
-            mysystem($Opt{'exec-before'});
+            for my $arg (@opt_exec_before) {
+                mysystem($arg);
+            }
         }
         if (should('lpar')) {
             mysystem("lpar");
@@ -269,7 +271,9 @@ LOOP: for my $f (@Dirs) {
             mysystem("lpar");
         }
         if (should('exec-after')) {
-            mysystem($Opt{'exec-after'});
+            for my $arg (@opt_exec_after) {
+                mysystem($arg);
+            }
         }
         $Opt{'verbose'} >= -1 && print("\n");
     }
@@ -343,7 +347,13 @@ sub print_version {
 sub should {
     # {{{
     my $name = shift;
-    my $retval = $Opt{$name} && (get_config("git-update-dirs.no-$name") ne 'true');
+    get_config("git-update-dirs.no-$name") eq 'true' && return 0;
+    my $retval = 0;
+    if ($name =~ /^exec-(before|after)$/) {
+        scalar($1 eq "before" ? @opt_exec_before : @opt_exec_after) && ($retval = 1);
+    } else {
+        $Opt{$name} && ($retval = 1);
+    }
     return($retval);
     # }}}
 } # should()
@@ -363,7 +373,8 @@ Usage: $progname [options] [directories [...]]
 Options:
 
   -E X, --exec-before X
-    Execute command X in every repo before all other commands.
+    Execute command X in every repo before all other commands. This 
+    option can be specified multiple times to run several commands.
     To disable: git config git-update-dirs.no-exec-before true
   -l, --lpar
     Execute lpar before and after fetch/pull and push
@@ -420,7 +431,8 @@ Options:
     branches and tag-* tags. This option is ignored in bare repos.
     To disable: git config git-update-dirs.no-delete-dangling true
   -e X, --exec-after X
-    Execute command X in every repo after all other commands.
+    Execute command X in every repo after all other commands. This 
+    option can be specified multiple times to run several commands.
     To disable: git config git-update-dirs.no-exec-after true
 
   -A, --all-options
