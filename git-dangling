@@ -9,7 +9,7 @@
 
 progname=git-dangling
 bannedfile=$HOME/.git-dangling-banned
-dangfile=dangling-result.tmp
+dangfile=.git/dangling-result.tmp
 
 store_blobs=0
 if test "$1" = "-b"; then
@@ -35,6 +35,12 @@ git tag | grep -E '^tag-[0-9a-f]{40}$' | while read f; do
 done
 
 test "$1" = "-D" && exit
+
+cd "$(git rev-parse --show-toplevel)" || {
+    echo $progname: Could not chdir to top level of repo >&2
+    exit 1
+}
+test -d .git/. || dangfile=$(basename $dangfile)
 
 git fsck --no-reflogs >$dangfile
 for f in `grep "^dangling commit" $dangfile | cut -f 3 -d ' '`; do
