@@ -9,6 +9,7 @@
 
 progname=git-dangling
 bannedfile=$HOME/.git-dangling-banned
+dangfile=dangling-result.tmp
 
 store_blobs=0
 if test "$1" = "-b"; then
@@ -35,15 +36,15 @@ done
 
 test "$1" = "-D" && exit
 
-git fsck --no-reflogs >dangling-result.tmp
-for f in `grep "^dangling commit" dangling-result.tmp | cut -f 3 -d ' '`; do
+git fsck --no-reflogs >$dangfile
+for f in `grep "^dangling commit" $dangfile | cut -f 3 -d ' '`; do
     git branch commit-$f $f && echo $progname: Creating commit-$f
 done
-for f in `grep "^dangling tag" dangling-result.tmp | cut -f 3 -d ' '`; do
+for f in `grep "^dangling tag" $dangfile | cut -f 3 -d ' '`; do
     git tag tag-$f $f && echo $progname: Creating tag-$f
 done
 if test "$store_blobs" = "1"; then
-    for f in `grep "^dangling blob" dangling-result.tmp | cut -f 3 -d ' '`; do
+    for f in `grep "^dangling blob" $dangfile | cut -f 3 -d ' '`; do
         git show $f >blob-$f && echo $progname: Creating blob-$f
     done
 fi
@@ -54,4 +55,4 @@ if test -e $bannedfile; then
         test -e "blob-$ban" && rm "blob-$ban"
     done
 fi
-rm dangling-result.tmp
+rm $dangfile
