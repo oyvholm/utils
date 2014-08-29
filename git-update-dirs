@@ -333,6 +333,7 @@ sub mysystem {
     my @cmd = @_;
     msg(0, sprintf("%s '", $Opt{'dry-run'} ? "Simulating" : "Executing") .
         join(" ", @cmd) . "'...");
+    $? = 0;
     !$Opt{'dry-run'} && system(@cmd) && check_sig($?);
     return $?;
     # }}}
