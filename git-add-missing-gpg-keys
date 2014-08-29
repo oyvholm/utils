@@ -8,7 +8,7 @@
 #=======================================================================
 
 progname=git-add-missing-gpg-keys
-LC_ALL=C git log --show-signature | \
+LC_ALL=C git log --show-signature "$@" | \
 grep "^gpg: Can't check signature: public key not found" -B1 | \
 grep "key ID" | \
 rev | cut -f 1 -d ' ' | rev | \
