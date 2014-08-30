@@ -31,6 +31,7 @@ if test "$1" = "allspace"; then
 elif test "$1" = "date"; then
     ntpdate -q pool.ntp.org
 elif test "$1" = "df"; then
+    df -h | grep ^Filesystem
     df -h | grep /dev/ | sort -h -k4
 elif test "$1" = "kern"; then
     tail -F /var/log/kern.log
