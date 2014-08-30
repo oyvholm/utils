@@ -247,13 +247,12 @@ LOOP: for my $f (@Dirs) {
         }
         if (should('compress') || should('aggressive-compress')) {
             if (!-e ".no-git-gc") {
-                my $dang_str = should('dangling') ? " --prune=now" : "";
                 chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_before += $before;
                 if (should('aggressive-compress')) {
-                    mysystem("git gc --aggressive$dang_str") && push(@err_compress, $f);
+                    mysystem("git gc --aggressive") && push(@err_compress, $f);
                 } else {
-                    mysystem("git gc$dang_str") && push(@err_compress, $f);
+                    mysystem("git gc") && push(@err_compress, $f);
                 }
                 chomp(my $after = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
                 $total_after += $after;
