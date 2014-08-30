@@ -259,7 +259,12 @@ LOOP: for my $f (@Dirs) {
                 $total_after += $after;
                 my $saved = $before - $after;
                 $before && printf("\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n", commify($before), commify($after), commify($saved), 100.0 * $saved / $before);
-                $is_annex && should('dangling') && mysystem("ga", "repair");
+                # Temporarily (?) disabled, it takes a heck of a long 
+                # time and uses loads of CPU and memory. If the 
+                # git-annex repo gets corrupted it's in most cases good 
+                # enough to delete .git/annex/index anyway, and that can 
+                # be done manually.
+                # $is_annex && should('dangling') && mysystem("ga", "repair");
             } else {
                 print("$progname: .no-git-gc exists, skipping git gc\n");
             }
