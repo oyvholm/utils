@@ -7,6 +7,8 @@ remotes=origin
 test "$1" = "-a" && { remotes=$(git remote); shift; }
 unset create_dangling
 test "$1" = "-c" && { create_dangling=1; shift; }
+unset force_str
+test "$1" = "-f" && { force_str="--force"; shift; }
 test -z "$1" || remotes="$@"
 echo
 is_bare=1
@@ -16,7 +18,7 @@ for remote in $remotes; do
     for f in $(git branch -a | grep remotes/$remote/ | grep -v -E "remotes/$remote/HEAD( |\$)" | perl -pe "s!remotes/$remote/(.*)\$!\$1!"); do
         test "$create_dangling" != "1" && echo $f | grep -qE '^commit-[0-9a-f]{40}$' && test "$is_bare" = "0" && continue
         (git branch --no-track $f $remote/$f 2>&1 && echo $progname: Created $f) | grep -v '^fatal: A branch named .* already exists.'
-        git push . $remote/$f:refs/heads/$f 2>&1 | grep -v '^Everything up-to-date'
+        git push . $remote/$f:refs/heads/$f $force_str 2>&1 | grep -v '^Everything up-to-date'
     done
     echo
 done
