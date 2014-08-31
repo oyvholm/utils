@@ -22,3 +22,4 @@ done
 
 sort -u "$gitignore" >"$gitignore.tmp"
 mv "$gitignore.tmp" "$gitignore"
+git add "$gitignore"
