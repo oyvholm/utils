@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#=======================================================================
+# git-ignore
+# File ID: e95d1ab0-30ff-11e4-a73e-fefdb24f8e10
+#
+# Add entries to the top-level .gitignore . Wildcards can be used, and 
+# if any of the arguments is a directory, a trailing slash will be added 
+# if it doesn't exist already.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+gitignore="$(git rev-parse --show-toplevel)/.gitignore"
+
+for f in "$@"; do
+    unset termslash
+    test -d "$f" && { echo "$f" | grep -q '/$' || termslash=/; }
+    echo /$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
+done
+
+sort -u "$gitignore" >"$gitignore.tmp"
+mv "$gitignore.tmp" "$gitignore"
