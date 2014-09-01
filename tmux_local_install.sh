@@ -3,6 +3,8 @@
 # Script for installing tmux on systems where you don't have root access.
 # tmux will be installed in $HOME/local/bin.
 # It's assumed that wget and a C/C++ compiler are installed.
+#
+# File ID: 65a017ec-321f-11e4-aebb-0026b9848456
 
 # exit on error
 set -e
