@@ -7,14 +7,11 @@
 # exit on error
 set -e
 
-TMUX_VERSION=1.8
-
 # create our directories
 mkdir -p $HOME/local $HOME/tmux_tmp
 cd $HOME/tmux_tmp
 
 # download source files for tmux, libevent, and ncurses
-wget -O tmux-${TMUX_VERSION}.tar.gz http://sourceforge.net/projects/tmux/files/tmux/tmux-${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz/download
 curl -L https://github.com/downloads/libevent/libevent/libevent-2.0.19-stable.tar.gz >libevent-2.0.19-stable.tar.gz
 wget ftp://ftp.gnu.org/gnu/ncurses/ncurses-5.9.tar.gz
 
@@ -43,8 +40,9 @@ cd ..
 ############
 # tmux     #
 ############
-tar xvzf tmux-${TMUX_VERSION}.tar.gz
-cd tmux-${TMUX_VERSION}
+git clone git://git.code.sf.net/p/tmux/tmux-code tmux
+cd tmux
+./autogen.sh
 ./configure CFLAGS="-I$HOME/local/include -I$HOME/local/include/ncurses" LDFLAGS="-L$HOME/local/lib -L$HOME/local/include/ncurses -L$HOME/local/include"
 CPPFLAGS="-I$HOME/local/include -I$HOME/local/include/ncurses" LDFLAGS="-static -L$HOME/local/include -L$HOME/local/include/ncurses -L$HOME/local/lib" make
 cp tmux $HOME/local/bin
