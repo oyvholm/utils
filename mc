@@ -9,7 +9,9 @@
 
 sess_str="sess -d mc -t c_mc --"
 test "$HISTFILE" = "/dev/null" && unset sess_str
-if test -x /usr/local/bin/mc; then
+if test -x ~/local/bin/mc; then
+    $sess_str ~/local/bin/mc -d "$@"
+elif test -x /usr/local/bin/mc; then
     $sess_str /usr/local/bin/mc -d "$@"
 elif test -x /usr/bin/mc; then
     $sess_str /usr/bin/mc -d "$@"
