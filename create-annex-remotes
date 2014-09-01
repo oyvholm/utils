@@ -55,6 +55,7 @@ create() {
     test "$comp" = "bellmann" || host_str="sunny@bellmann:"
     test -n "$remove_remotes" && $simul git remote rm $remote 2>/dev/null
     if test -n "$is_top"; then
+        test "$(cat .disk)" = "$remote" && return
         define_remote $remote $host_str$dir
     else
         test "$(cat ../.disk)" = "$remote" && return
