@@ -17,6 +17,7 @@ gitignore="$(git rev-parse --show-toplevel)/.gitignore"
 for f in "$@"; do
     unset termslash
     test -d "$f" && { echo "$f" | grep -q '/$' || termslash=/; }
+    git log -1 -- "$f" | grep -q . && git rm --cached "$f"
     echo /$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
 done
 
