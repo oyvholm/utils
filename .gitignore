@@ -1,5 +1,6 @@
 *.pyc
 *.swp
+/.ignore/
 /Lib/std/c/compile.tmp/
 /src/fldb/tests/log/
 /src/personnr/personnr
