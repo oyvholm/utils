@@ -14,6 +14,7 @@
 
 v_str=
 test "$1" = "-r" || v_str=-v
-cut -c3- |
-grep -v ' ' |
+fmt -1 |
+tr -d '\t ' |
+grep -v -E '^(->|\*)$' |
 grep -E $v_str 'commit-[0-9a-f]{40}'
