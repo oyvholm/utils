@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#=======================================================================
+# git-allfiles
+# File ID: a51e903a-3457-11e4-a2e4-c80aa9e67bbd
+#
+# List all tree members (files and symlinks) in the whole Git history. 
+# Command line arguments are delivered to "git log".
+#
+# Author: Øyvind A. Holm
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+git log --raw "$@" | grep ^: | cut -f 2 | sort -u
