@@ -14,7 +14,7 @@ if test -z "$1"; then
     exit 1
 fi
 tmpuuid=$(suuid -m -t c_wav_to_mp3 -wa -c "Starting conversion")
-test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
+test -z "$tmpuuid" && { echo "$progname: Broken suuid(1)" >&2; exit 1; }
 for curr in "$@"; do
     echo
     echo ======== $(ls -l "$curr")
