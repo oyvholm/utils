@@ -7,7 +7,7 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-grep -i -E -e '\.(flac|gz|jpeg|jpg|m4a|mp3|mp4|pdf|png|wav)' \
+grep -i -E -e '\.(flac|gz|jpeg|jpg|m4a|mp3|mp4|pdf|pgn|png|wav)' \
 -e /SMSBackupRestore/ | \
 grep -v \
 -e /Actionmemo/ \
