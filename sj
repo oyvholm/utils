@@ -43,8 +43,8 @@ elif test "$1" = "space"; then
             echo -n $lastspace
             echo -n '  '
             prevlast=$lastspace
-            sleep 1
         fi
+        sleep 1
     done
 else
     test -d /n900/. && sudo=sudo || unset sudo
