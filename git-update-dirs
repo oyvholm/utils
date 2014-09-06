@@ -252,27 +252,23 @@ LOOP: for my $f (@Dirs) {
             mysystem("git", "submodule", "update") && push(@err_updsub, $f);
         }
         if (should('compress') || should('aggressive-compress')) {
-            if (!-e ".no-git-gc") {
-                chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
-                $total_before += $before;
-                if (should('aggressive-compress')) {
-                    mysystem("git gc --aggressive") && push(@err_compress, $f);
-                } else {
-                    mysystem("git gc") && push(@err_compress, $f);
-                }
-                chomp(my $after = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
-                $total_after += $after;
-                my $saved = $before - $after;
-                $before && printf("\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n", commify($before), commify($after), commify($saved), 100.0 * $saved / $before);
-                # Temporarily (?) disabled, it takes a heck of a long 
-                # time and uses loads of CPU and memory. If the 
-                # git-annex repo gets corrupted it's in most cases good 
-                # enough to delete .git/annex/index anyway, and that can 
-                # be done manually.
-                # $is_annex && should('dangling') && mysystem("ga", "repair");
+            chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
+            $total_before += $before;
+            if (should('aggressive-compress')) {
+                mysystem("git gc --aggressive") && push(@err_compress, $f);
             } else {
-                print("$progname: .no-git-gc exists, skipping git gc\n");
+                mysystem("git gc") && push(@err_compress, $f);
             }
+            chomp(my $after = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
+            $total_after += $after;
+            my $saved = $before - $after;
+            $before && printf("\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n", commify($before), commify($after), commify($saved), 100.0 * $saved / $before);
+            # Temporarily (?) disabled, it takes a heck of a long 
+            # time and uses loads of CPU and memory. If the 
+            # git-annex repo gets corrupted it's in most cases good 
+            # enough to delete .git/annex/index anyway, and that can 
+            # be done manually.
+            # $is_annex && should('dangling') && mysystem("ga", "repair");
         }
         if (should('delete-dangling') && !$is_bare) {
             mysystem("git", "dangling", "-D");
