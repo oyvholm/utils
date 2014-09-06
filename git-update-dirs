@@ -155,7 +155,13 @@ LOOP: for my $f (@Dirs) {
         msg(2, "is_annex = '$is_annex'");
 
         my $is_modified = 0;
-        if (!$is_bare) {
+        if (!$is_bare && (
+                $Opt{'ga-dropget'} ||
+                $Opt{'ga-dropunused'} ||
+                $Opt{'ga-moveunused'} ||
+                $Opt{'ga-sync'}
+            )
+        ) {
             open(my $fh, "git status --porcelain |") or
                 die("$progname: Cannot open 'git status --porcelain' pipe: $!\n");
             while (<$fh>) {
