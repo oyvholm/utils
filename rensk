@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# rensk
+# File ID: d938bc4c-3691-11e4-bdd6-c80aa9e67bbd
 # Remove empty directories under current dir
 
 find -depth -type d -print0 | \
