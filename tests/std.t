@@ -179,7 +179,7 @@ $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
 diag("Check for unused tags...");
 likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
     '/^.*Contains tests for the.*$/s',
-    '/^std: Warning: Undefined tags: testcmd filename progname exec libdir\n$/s',
+    '/^std: Warning: Undefined tags: exec filename libdir progname testcmd\n$/s',
     0,
     "Report unused tags",
 );
@@ -189,7 +189,7 @@ diag("Testing -f (--force) option...");
 likecmd("../$CMD bash bashfile", # {{{
     '/^$/s',
     '/^std: bashfile: File already exists, will not overwrite\n$/s',
-    2,
+    1,
     "Create bash script, file already exists, don’t use --force",
 );
 

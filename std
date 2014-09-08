@@ -96,7 +96,8 @@ if (length($Dest) && -e $Dest) {
     if ($Opt{'force'}) {
         msg(1, "Overwriting '$Dest'...");
     } else {
-        die("$progname: $Dest: File already exists, will not overwrite\n");
+        warn("$progname: $Dest: File already exists, will not overwrite\n");
+        exit(1);
     }
 }
 
@@ -155,7 +156,7 @@ if (open(FromFP, "<$tmpfile")) {
         my ($tmp, $tmp2) = ($Output, "");
         my %Ha = ();
         $tmp =~ s/STD(\S+?)DTS/($Ha{$1} = 1)/gse;
-        for my $key (keys %Ha) {
+        for my $key (sort keys %Ha) {
             defined($Ha{$key}) && ($tmp2 .= "$key ");
         }
         $tmp2 =~ s/ $//;

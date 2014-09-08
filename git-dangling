@@ -62,3 +62,4 @@ if test -e $bannedfile; then
     done
 fi
 test "$dangfile" = "$(basename $dangfile)" && rm $dangfile
+exit 0
