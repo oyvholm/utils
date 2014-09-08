@@ -96,7 +96,8 @@ if (length($Dest) && -e $Dest) {
     if ($Opt{'force'}) {
         msg(1, "Overwriting '$Dest'...");
     } else {
-        die("$progname: $Dest: File already exists, will not overwrite\n");
+        warn("$progname: $Dest: File already exists, will not overwrite\n");
+        exit(1);
     }
 }
 
