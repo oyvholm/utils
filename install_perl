@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#=======================================================================
+# install_perl
+# File ID: e11bba20-382d-11e4-a75c-c80aa9e67bbd
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+cd /home/sunny/src/other/perl || exit 1
+export perldir="perl-$(git desc --long)"
+export destdir="/usr/local/varprg/$perldir"
+sudo rmdir $destdir
+sudo mkdir $destdir &&
+sudo chown sunny.sunny $destdir &&
+git clean -fxd &&
+git co -f &&
+./Configure -de -Dusedevel -Dprefix=$destdir &&
+make &&
+make install &&
+cd /usr/local/prg &&
+sudo rm perl &&
+sudo ln -sv ../varprg/$perldir perl &&
+cd ../varprg/$perldir/bin &&
+(test -x perl || ln -sv perl5.* perl) &&
+/usr/local/prg/perl/bin/perl --version
