@@ -6,7 +6,7 @@
 # Skjermdump i X.
 #=======================================================================
 
-scrdumpdir=$HOME/screendumps
+scrdumpdir=$HOME/annex/opptak/alt/$(date -u +"%Y/%m")
 
 [ -d $scrdumpdir/. ] || mkdir $scrdumpdir || { echo "$0: $scrdumpdir: Cannot create directory" >&2; exit 1; }
 
