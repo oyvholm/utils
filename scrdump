@@ -10,4 +10,4 @@ scrdumpdir=$HOME/annex/opptak/alt/$(date -u +"%Y/%m")
 
 [ -d $scrdumpdir/. ] || mkdir $scrdumpdir || { echo "$0: $scrdumpdir: Cannot create directory" >&2; exit 1; }
 
-TZ=UTC shutter -e --full -o $scrdumpdir/%Y%m%dT%H%M%SZ.$(hostname)-screendump.\$wx\$h.png
+TZ=UTC shutter -e --full -o $scrdumpdir/%Y%m%dT%H%M%SZ.$(hostname)-screendump.\$wx\$h.png 2>/dev/null
