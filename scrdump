@@ -10,4 +10,4 @@ scrdumpdir=$HOME/screendumps
 
 [ -d $scrdumpdir/. ] || mkdir $scrdumpdir || { echo "$0: $scrdumpdir: Cannot create directory" >&2; exit 1; }
 
-shutter --full
+TZ=UTC shutter -e --full -o $scrdumpdir/%Y%m%dT%H%M%SZ.$(hostname)-screendump.\$wx\$h.png
