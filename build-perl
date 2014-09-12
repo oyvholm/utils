@@ -19,7 +19,7 @@ git co -f &&
 make &&
 make install &&
 cd /usr/local/prg &&
-sudo rm perl &&
+(test -L perl && sudo rm perl || true) &&
 sudo ln -sv ../varprg/$perldir perl &&
 cd ../varprg/$perldir/bin &&
 (test -x perl || ln -sv perl5.* perl) &&
