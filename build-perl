@@ -17,6 +17,7 @@ git clean -fxd &&
 git co -f &&
 ./Configure -de -Dusedevel -Dprefix=$destdir &&
 make &&
+make test &&
 make install &&
 cd /usr/local/prg &&
 (test -L perl && sudo rm perl || true) &&
