@@ -10,7 +10,7 @@
 cd /home/sunny/src/other/perl || exit 1
 export perldir="perl-$(git desc --long)"
 export destdir="/usr/local/varprg/$perldir"
-sudo rmdir $destdir
+sudo rmdir $destdir 2>/dev/null
 sudo mkdir $destdir &&
 sudo chown sunny.sunny $destdir &&
 git clean -fxd &&
