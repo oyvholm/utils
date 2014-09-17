@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#=======================================================================
+# multiapt
+# File ID: ffa9a0ac-28af-11e4-9136-c80aa9e67bbd
+# [Description]
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=multiapt
+cd /etc || { echo $progname: Cannot chdir to /etc >&2; exit 1; }
+for f in "$@"; do
+    echo
+    echo apt-get install $f
+    apt-get install "$f"
+    ciall -d apt-get install $f
+done
