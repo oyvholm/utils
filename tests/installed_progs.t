@@ -25,7 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-our $CMD = '../installed_progs';
+our $CMD = '';
 
 our %Opt = (
 
@@ -91,33 +91,7 @@ END
 
 =cut
 
-    diag('Testing -h (--help) option...');
-    likecmd("$CMD -h", # {{{
-        '/  Show this help\./',
-        '/^$/',
-        0,
-        'Option -h prints help screen',
-    );
-
-    # }}}
-    diag('Testing -v (--verbose) option...');
-    likecmd("$CMD -hv", # {{{
-        '/^\n\S+ v\d\.\d\d\n/s',
-        '/^$/',
-        0,
-        'Option --version with -h returns version number and help screen',
-    );
-
-    # }}}
-    diag('Testing --version option...');
-    likecmd("$CMD --version", # {{{
-        '/^\S+ v\d\.\d\d\n/',
-        '/^$/',
-        0,
-        'Option --version returns version number',
-    );
-
-    # }}}
+    ok(1);
 
     todo_section:
     ;
