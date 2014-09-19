@@ -7,24 +7,30 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+use_lock=1
+test "$1" = "-u" && { use_lock=0; shift; }
 cmd=$1
 retval=0
 shift
 for ff in "$@"; do
     if [ -f "$ff" ]; then
         # cp -p $ff $ff.filt-bck
-        lock_wait=0
-        until mkdir "$ff.lock"; do
-            echo filt: $ff: Waiting for lock... >&2
-            lock_wait=1
-            sleep 1
-        done
-        test "$lock_wait" = "1" && { echo filt: $ff: Obtained lock >&2; }
+        if test "$use_lock" = "1"; then
+            lock_wait=0
+            until mkdir "$ff.lock"; do
+                echo filt: $ff: Waiting for lock... >&2
+                lock_wait=1
+                sleep 1
+            done
+            test "$lock_wait" = "1" && { echo filt: $ff: Obtained lock >&2; }
+        fi
         cat "$ff" | $cmd >"$ff.filt.tmp"
         retval=$[$retval | $?];
         chmod --reference "$ff" "$ff.filt.tmp"
         mv "$ff.filt.tmp" "$ff"
-        rmdir "$ff.lock" || { echo filt: $ff.lock: Lockdir unexpectedly disappeared >&2; }
+        if test "$use_lock" = "1"; then
+            rmdir "$ff.lock" || { echo filt: $ff.lock: Lockdir unexpectedly disappeared >&2; }
+        fi
     else
         echo filt: $ff: Not a regular file >&2
         retval=$[$retval | 1];
