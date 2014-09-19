@@ -90,7 +90,7 @@ if (!valid_repo_name($repo)) {
 }
 
 my $lpar_dir = $Opt{'all'} ? "$ENV{'HOME'}/src/git/all-lpar" : "$ENV{'HOME'}/src/git/lpar";
-my $lpar_file = "$lpar_dir/$repo.lpar";
+my $lpar_file = "$lpar_dir/$repo.lpar.new";
 -d $lpar_dir || make_path($lpar_dir);
 
 my @shas = scalar(@ARGV) ? @ARGV : ();
