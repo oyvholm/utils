@@ -87,7 +87,18 @@ sub main {
 
 =cut
 
-    ok(1);
+    installed('autoconf --version', '/GNU Autoconf/');
+    installed('curl --version', '/^curl /');
+    installed('gcc --version', '/^gcc /');
+    installed('git --version', '/git version/');
+    installed('make --version', '/GNU Make/');
+    installed('mc --version', '/GNU Midnight Commander/');
+    installed('perl --version', '/This is perl( |, v)5/');
+    installed('python --version', '/Python (2|3)/');
+    installed('ssh -V', '/OpenSSH/');
+    installed('uuidgen --version', '/uuidgen from util-linux/');
+    installed('vim --version', '/VIM - Vi IMproved 7\../');
+    installed('wget --version', '/GNU Wget/');
 
     todo_section:
     ;
