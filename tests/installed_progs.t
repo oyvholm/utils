@@ -112,6 +112,22 @@ END
     # }}}
 } # main()
 
+sub installed {
+    # {{{
+    my ($Cmd, $Exp, $Desc) = @_;
+    my $stderr_cmd = '';
+    my $Txt = join('',
+        "\"$Cmd\"",
+        defined($Desc)
+            ? " - $Desc"
+            : ''
+    );
+
+    like(`$Cmd 2>&1`, $Exp, $Txt);
+    return;
+    # }}}
+} # installed()
+
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
