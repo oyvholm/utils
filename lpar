@@ -94,20 +94,16 @@ my $lpar_file = "$lpar_dir/$repo.lpar";
 -d $lpar_dir || make_path($lpar_dir);
 
 my @shas = scalar(@ARGV) ? @ARGV : ();
+lock_file($lpar_file);
 if (scalar(@shas)) {
     for my $curr (@shas) {
         chomp(my $sha1 = `git log -1 --format=%H "$curr" 2>/dev/null`);
         length($sha1) || die("$progname: $curr: Invalid ref, must point to a commit\n");
-        lock_file($lpar_file);
         system("git lpar `git branch -a --contains=\"$sha1\" | cut -c3- | grep -v -e '->' -e '(no branch)'` >>$lpar_file");
-        unlock_file($lpar_file);
     }
 } else {
-    lock_file($lpar_file);
     system("git lpar --all >>$lpar_file");
-    unlock_file($lpar_file);
 }
-lock_file($lpar_file);
 system("git for-each-ref >>$lpar_file");
 unlock_file($lpar_file);
 
