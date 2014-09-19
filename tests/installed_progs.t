@@ -100,6 +100,48 @@ sub main {
     installed('vim --version', '/VIM - Vi IMproved 7\../');
     installed('wget --version', '/GNU Wget/');
 
+    if ($Opt{'all'}) {
+
+        installed('abiword --version', '/^\d\.\d+\.\d+/');
+        installed('cronolog --version', '/^cronolog version \d/');
+        installed('ctags --version', '/^Exuberant Ctags \d/');
+        installed('dict --version', '/^dict \d/');
+        installed('dot -V', '/graphviz version \d/');
+        installed('echo "[{ }]" | json_reformat -m', '/^\[{}+]$/', 'json_reformat');
+        installed('exifprobe -V', '/Program: \'exifprobe\' version \d/');
+        installed('fdupes --version', '/^fdupes \d\./');
+        installed('flac --version', '/^flac /', 'FLAC');
+        installed('geeqie --version', '/^Geeqie \d\./');
+        installed('gettext --version', '/GNU gettext/');
+        installed('gnucash --version', '/GnuCash \d\./');
+        installed('gnumeric --version', '/^gnumeric version /');
+        installed('gnuplot --version', '/^gnuplot /', 'Gnuplot');
+        installed('gource --help', '/Gource v\d/');
+        installed('gpsbabel --version', '/GPSBabel Version \d/', 'GPSBabel');
+        installed('lame --version', '/LAME .* version /', 'LAME');
+        installed('mosh --version', '/^mosh \d/', 'mosh');
+        installed('mplayer -V', '/^MPlayer2 /', 'Mplayer 2');
+        installed('ncdu -v', '/^ncdu \d/');
+        installed('nmap --version', '/Nmap version /');
+        installed('pandoc --version', '/^pandoc \d\./');
+        installed('psql --version', '/psql \(PostgreSQL\)/', 'Postgres');
+        installed('pv --version', '/^pv \d/', 'pv');
+        installed('qemu-system-i386 --version', '/QEMU emulator version \d/');
+        installed('rtorrent -h', '/BitTorrent client version /', 'rtorrent');
+        installed('sqlite3 --version', '/^\d\.\d/', 'SQLite 3');
+        installed('sshfs --version', '/SSHFS version \d/');
+        installed('strace -V', '/^strace -- version \d/');
+        installed('svn --version', '/svn, version /', 'Apache Subversion');
+        installed('tig --version', '/^tig version /');
+        installed('tmux -V', '/^tmux \d\./');
+        installed('tree --version', '/^tree v\d\./');
+        installed('uprecords -v', '/^uprecords \d/');
+        installed('vlc --version', '/^VLC version \d/');
+        installed('whois --version', '/^Version \d/');
+        installed('xmlto --version', '/^xmlto version \d/');
+
+    }
+
     todo_section:
     ;
 
