@@ -3,7 +3,7 @@
 #=======================================================================
 # installed_progs.t
 # File ID: 3d0e23bc-400e-11e4-a184-c80aa9e67bbd
-# Test suite for installed_progs(1).
+# Check that some necessary programs are installed.
 #
 # Character set: UTF-8
 # ©opyleft 2014– Øyvind A. Holm <sunny@sunbase.org>
@@ -78,12 +78,8 @@ sub main {
 
 =pod
 
-    testcmd("$CMD command", # {{{
-        <<'END',
-[expected stdin]
-END
-        '',
-        0,
+    installed('prog --version', # {{{
+        '//',
         'description',
     );
 
@@ -224,7 +220,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the installed_progs(1) program.
+Check for missing necessary programs needed by some scripts.
 
 Options:
 
@@ -273,7 +269,7 @@ installed_progs.t [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Contains tests for the installed_progs(1) program.
+
 
 =head1 OPTIONS
 
