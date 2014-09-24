@@ -18,13 +18,13 @@ test "$1" = "-d" && {
 besafe=n
 test "$1" = "-y" && { besafe=y; shift; }
 echo ciall: git status 1... >&2
-LC_ALL=C git status | grep "^nothing to commit" && { echo ciall: Nothing to do here.; exit 0; }
+LC_ALL=C git status . | grep "^nothing to commit" && { echo ciall: Nothing to do here.; exit 0; }
 
 unset logmsg
 [ ! -z "$1" ] && logmsg="$*"
 
 echo ciall: git status 2... >&2
-git status
+git status .
 echo
 echo "Log message: '$logmsg'"
 until test "$besafe" = "y"; do
@@ -41,7 +41,7 @@ if [ "$logmsg" = "--" ]; then
 fi
 
 echo ciall: git status 3... >&2
-LC_ALL=C git status | grep "^nothing to commit" || (git add --all . && git commit -m "$logmsg`echo; echo; suuid -t ciall -c "$logmsg"`")
+LC_ALL=C git status . | grep "^nothing to commit" || (git add --all . && git commit -m "$logmsg`echo; echo; suuid -t ciall -c "$logmsg"`")
 echo ========== git status ==========
 git status
 exit 0
