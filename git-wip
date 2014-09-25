@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#=======================================================================
+# git-wip
+# File ID: fe636b92-445c-11e4-940c-c80aa9e67bbd
+#
+# Create subbranches using '.' as level delimiter.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+curr="$(git rev-parse --abbrev-ref HEAD)"
+
+ext="wip"
+test -n "$1" && { ext="$1"; shift; }
+
+git checkout -b "$curr.$ext"
