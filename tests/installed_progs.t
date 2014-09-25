@@ -89,16 +89,23 @@ sub main {
 
     installed('autoconf --version', '/GNU Autoconf/');
     installed('bash --version', '/^GNU bash/');
+    installed('bc --version', '/^bc \d.*Free Software Foundation/s');
     installed('curl --version', '/^curl /');
     installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n$/', 'Use C sorting order');
+    installed('find --version', '/GNU findutils/');
     installed('gcc --version', '/^gcc /');
     installed('git --version', '/git version/');
     installed('git-annex version', '/^git-annex version: /');
+    installed('gzip --version', '/^gzip \d/');
     installed('make --version', '/GNU Make/');
     installed('mc --version', '/GNU Midnight Commander/');
     installed('perl --version', '/This is perl( |, v)5/');
     installed('python --version', '/Python (2|3)/');
+    installed('rsync --version', '/^rsync\s+version \d/');
+    installed('screen --version', '/^Screen version \d/');
+    installed('script --version', '/^script from util-linux \d/');
     installed('ssh -V', '/OpenSSH/');
+    installed('tar --version', '/GNU tar\b/');
     installed('uuidgen --version', '/uuidgen from util-linux/');
     installed('vim --version', '/VIM - Vi IMproved 7\../');
     installed('wget --version', '/GNU Wget/');
@@ -151,6 +158,7 @@ sub main {
         installed('tree --version', '/^tree v\d\./');
         installed('ufraw --version', '/^ufraw \d/');
         installed('unrar --version', '/UNRAR \d/');
+        installed('unzip -v', '/^UnZip \d.*Info-ZIP/');
         installed('uprecords -v', '/^uprecords \d/');
         installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'OSSP uuid');
         installed('vlc --version', '/^VLC version \d/');
@@ -159,6 +167,7 @@ sub main {
         installed('x264 --version', '/^x264 \d/');
         installed('xmlto --version', '/^xmlto version \d/');
         installed('xtightvncviewer -h', '/^TightVNC Viewer /');
+        installed('zip -v', '/This is Zip \d.*Info-ZIP/');
 
     }
 
