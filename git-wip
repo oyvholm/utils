@@ -18,7 +18,7 @@ test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
 ext="wip"
 test -n "$1" && { ext="$1"; shift; }
 
-if test "$ext" = "-d" -o "$ext" = "-m"; then
+if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
     echo "$curr" | grep -q '\.' || {
         echo $progname: No periods found in branch name \"$curr\", cannot merge >&2
         exit 1
@@ -27,10 +27,13 @@ if test "$ext" = "-d" -o "$ext" = "-m"; then
     git checkout $parent &&
     if test "$ext" = "-d"; then
         git merge $curr
+        git branch -d $curr
+    elif test "$ext" = "-s"; then
+        git merge --squash $curr
     else
         git merge --no-ff $curr
+        git branch -d $curr
     fi
-    git branch -d $curr
     exit
 fi
 
