@@ -89,6 +89,7 @@ sub main {
 
     installed('autoconf --version', '/GNU Autoconf/');
     installed('curl --version', '/^curl /');
+    installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n$/', 'Use C sorting order');
     installed('gcc --version', '/^gcc /');
     installed('git --version', '/git version/');
     installed('make --version', '/GNU Make/');
