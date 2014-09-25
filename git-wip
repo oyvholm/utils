@@ -28,4 +28,8 @@ if test "$ext" = "-m"; then
     exit
 fi
 
-git checkout -b "$curr.$ext"
+if test "$curr" = "master"; then
+    git checkout -b "$ext"
+else
+    git checkout -b "$curr.$ext"
+fi
