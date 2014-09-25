@@ -109,7 +109,6 @@ sub main {
         installed('asciidoc --version', '/^asciidoc \d/');
         installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/');
         installed('cdparanoia --version', '/^cdparanoia III/');
-        installed('colordiff --version', '/GNU diffutils/');
         installed('cronolog --version', '/^cronolog version \d/');
         installed('ctags --version', '/^Exuberant Ctags \d/');
         installed('dict --version', '/^dict \d/');
