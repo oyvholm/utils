@@ -72,6 +72,7 @@ sub main {
     my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
     my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
     my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
+    my $v4_templ = "$Lh\{8}-$Lh\{4}-4$Lh\{3}-[89ab]$Lh\{3}-$Lh\{12}";
 
     diag(sprintf('========== Executing %s v%s ==========',
         $progname,
@@ -123,9 +124,10 @@ sub main {
     installed('script --version', '/^script .+\butil-linux\b/');
     installed('ssh -V', '/OpenSSH/');
     installed('tar --version', '/GNU tar\b/');
-    installed('uuidgen -t', "/$v1_templ/");
     installed('vim --version', '/VIM - Vi IMproved 7\../');
     installed('wget --version', '/GNU Wget/');
+    repeat_test('uuidgen -r', 100, "^$v4_templ\$");
+    repeat_test('uuidgen -t', 100, "^$v1_templ\$");
 
     if ($Opt{'all'}) {
 
@@ -233,6 +235,22 @@ sub coreutils {
     return($retval);
     # }}}
 } # coreutils()
+
+sub repeat_test {
+    # {{{
+    my ($cmd, $count, $regexp) = @_;
+    my $retval = 0;
+    my $erruuid = '';
+
+    for (my $t = $count; $t && ($retval < 10); $t--) {
+        my $uuid = `$cmd`;
+        $uuid =~ /$regexp/s || ($retval++, $erruuid .= $uuid);
+    }
+
+    is($erruuid, '', "$cmd: Repeat test $count times");
+    return($retval);
+    # }}}
+} # repeat_test()
 
 sub testcmd {
     # {{{
