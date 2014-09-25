@@ -103,6 +103,7 @@ sub main {
     if ($Opt{'all'}) {
 
         installed('abiword --version', '/^\d\.\d+\.\d+/');
+        installed('colordiff --version', '/GNU diffutils/');
         installed('cronolog --version', '/^cronolog version \d/');
         installed('ctags --version', '/^Exuberant Ctags \d/');
         installed('dict --version', '/^dict \d/');
