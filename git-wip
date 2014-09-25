@@ -16,14 +16,18 @@ curr="$(git rev-parse --abbrev-ref HEAD)"
 ext="wip"
 test -n "$1" && { ext="$1"; shift; }
 
-if test "$ext" = "-m"; then
+if test "$ext" = "-d" -o "$ext" = "-m"; then
     echo "$curr" | grep -q '\.' || {
         echo $progname: No periods found in branch name \"$curr\", cannot merge >&2
         exit 1
     }
     parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
     git checkout $parent &&
-    git merge --no-ff $curr &&
+    if test "$ext" = "-d"; then
+        git merge $curr
+    else
+        git merge --no-ff $curr
+    fi
     git branch -d $curr
     exit
 fi
