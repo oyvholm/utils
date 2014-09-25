@@ -68,6 +68,11 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    my $Lh = "[0-9a-fA-F]";
+    my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+    my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+    my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
+
     diag(sprintf('========== Executing %s v%s ==========',
         $progname,
         $VERSION));
@@ -115,10 +120,10 @@ sub main {
     installed('python --version', '/Python (2|3)/');
     installed('rsync --version', '/^rsync\s+version \d/');
     installed('screen --version', '/^Screen version \d/');
-    installed('script --version', '/^script from util-linux \d/');
+    installed('script --version', '/^script .+\butil-linux\b/');
     installed('ssh -V', '/OpenSSH/');
     installed('tar --version', '/GNU tar\b/');
-    installed('uuidgen --version', '/uuidgen from util-linux/');
+    installed('uuidgen -t', "/$v1_templ/");
     installed('vim --version', '/VIM - Vi IMproved 7\../');
     installed('wget --version', '/GNU Wget/');
 
@@ -129,7 +134,7 @@ sub main {
         installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/');
         installed('cdparanoia --version', '/^cdparanoia III/');
         installed('cronolog --version', '/^cronolog version \d/');
-        installed('ctags --version', '/^Exuberant Ctags \d/');
+        installed('ctags --version', '/^(Exuberant Ctags|ctags \(GNU Emacs) \d/');
         installed('dict --version', '/^dict \d/');
         installed('dot -V', '/graphviz version \d/');
         installed('echo "[{ }]" | json_reformat -m', '/^\[{}+]$/', 'json_reformat');
