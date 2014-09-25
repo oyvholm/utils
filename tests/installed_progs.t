@@ -88,10 +88,12 @@ sub main {
 =cut
 
     installed('autoconf --version', '/GNU Autoconf/');
+    installed('bash --version', '/^GNU bash/');
     installed('curl --version', '/^curl /');
     installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n$/', 'Use C sorting order');
     installed('gcc --version', '/^gcc /');
     installed('git --version', '/git version/');
+    installed('git-annex version', '/^git-annex version: /');
     installed('make --version', '/GNU Make/');
     installed('mc --version', '/GNU Midnight Commander/');
     installed('perl --version', '/This is perl( |, v)5/');
@@ -104,6 +106,9 @@ sub main {
     if ($Opt{'all'}) {
 
         installed('abiword --version', '/^\d\.\d+\.\d+/');
+        installed('asciidoc --version', '/^asciidoc \d/');
+        installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/');
+        installed('cdparanoia --version', '/^cdparanoia III/');
         installed('colordiff --version', '/GNU diffutils/');
         installed('cronolog --version', '/^cronolog version \d/');
         installed('ctags --version', '/^Exuberant Ctags \d/');
@@ -111,6 +116,7 @@ sub main {
         installed('dot -V', '/graphviz version \d/');
         installed('echo "[{ }]" | json_reformat -m', '/^\[{}+]$/', 'json_reformat');
         installed('exifprobe -V', '/Program: \'exifprobe\' version \d/');
+        installed('exiftool -ver', '/^\d+\.\d/');
         installed('fdupes --version', '/^fdupes \d\./');
         installed('flac --version', '/^flac /', 'FLAC');
         installed('geeqie --version', '/^Geeqie \d\./');
@@ -120,14 +126,21 @@ sub main {
         installed('gnuplot --version', '/^gnuplot /');
         installed('gource --help', '/Gource v\d/');
         installed('gpsbabel --version', '/GPSBabel Version \d/');
+        installed('inkscape -V', '/^Inkscape \d/');
+        installed('iotop --version', '/^iotop \d/');
         installed('lame --version', '/LAME .* version /');
         installed('mosh --version', '/^mosh \d/');
         installed('mplayer -V', '/^MPlayer2 /');
+        installed('mutt -h', '/^Mutt \d/');
         installed('ncdu -v', '/^ncdu \d/');
+        installed('ncftp -v', '/Program version:\s+NcFTP /');
         installed('nmap --version', '/Nmap version /');
+        installed('okular --version', '/Okular: \d/');
         installed('pandoc --version', '/^pandoc \d\./');
+        installed('pinfo --version', '/^Przemek\'s Info Viewer /');
         installed('psql --version', '/psql \(PostgreSQL\)/');
         installed('pv --version', '/^pv \d/');
+        installed('pylint --version', '/^pylint \d/');
         installed('qemu-system-i386 --version', '/QEMU emulator version \d/');
         installed('rtorrent -h', '/BitTorrent client version /');
         installed('sqlite3 --version', '/^\d\.\d/');
@@ -137,10 +150,16 @@ sub main {
         installed('tig --version', '/^tig version /');
         installed('tmux -V', '/^tmux \d\./');
         installed('tree --version', '/^tree v\d\./');
+        installed('ufraw --version', '/^ufraw \d/');
+        installed('unrar --version', '/UNRAR \d/');
         installed('uprecords -v', '/^uprecords \d/');
+        installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'OSSP uuid');
         installed('vlc --version', '/^VLC version \d/');
         installed('whois --version', '/^Version \d/');
+        installed('wireshark --version', '/^wireshark \d/');
+        installed('x264 --version', '/^x264 \d/');
         installed('xmlto --version', '/^xmlto version \d/');
+        installed('xtightvncviewer -h', '/^TightVNC Viewer /');
 
     }
 
