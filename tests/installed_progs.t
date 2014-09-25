@@ -117,7 +117,7 @@ sub main {
         installed('exifprobe -V', '/Program: \'exifprobe\' version \d/');
         installed('exiftool -ver', '/^\d+\.\d/');
         installed('fdupes --version', '/^fdupes \d\./');
-        installed('flac --version', '/^flac /', 'FLAC');
+        installed('flac --version', '/^flac /');
         installed('geeqie --version', '/^Geeqie \d\./');
         installed('gettext --version', '/GNU gettext/');
         installed('gnucash --version', '/GnuCash \d\./');
