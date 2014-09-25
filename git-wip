@@ -12,6 +12,8 @@
 
 progname=git-wip
 curr="$(git rev-parse --abbrev-ref HEAD)"
+use_new_branch=0
+test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
 
 ext="wip"
 test -n "$1" && { ext="$1"; shift; }
@@ -32,7 +34,7 @@ if test "$ext" = "-d" -o "$ext" = "-m"; then
     exit
 fi
 
-if test "$curr" = "master"; then
+if test "$use_new_branch" = "1"; then
     git checkout -b "$ext"
 else
     git checkout -b "$curr.$ext"
