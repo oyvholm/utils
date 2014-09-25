@@ -68,6 +68,11 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    my $Lh = "[0-9a-fA-F]";
+    my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
+    my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+    my $v1rand_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\[37bf]$Lh\{10}";
+
     diag(sprintf('========== Executing %s v%s ==========',
         $progname,
         $VERSION));
@@ -118,7 +123,7 @@ sub main {
     installed('script --version', '/^script .+\butil-linux\b/');
     installed('ssh -V', '/OpenSSH/');
     installed('tar --version', '/GNU tar\b/');
-    installed('uuidgen --version', '/uuidgen from util-linux/');
+    installed('uuidgen -t', "/$v1_templ/");
     installed('vim --version', '/VIM - Vi IMproved 7\../');
     installed('wget --version', '/GNU Wget/');
 
