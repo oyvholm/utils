@@ -2,6 +2,7 @@
 
 # STDfilenameDTS
 # File ID: STDuuidDTS
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 
 all:
 	STDtestcmdDTS 2>&1 | remove_perltestnumbers >log/tests.log

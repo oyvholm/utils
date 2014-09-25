@@ -3,7 +3,10 @@
 #=======================================================================
 # compile
 # File ID: f3c9e59e-8605-11e0-9e54-fefdb24f8e10
+#
 # Check that the files compile
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 

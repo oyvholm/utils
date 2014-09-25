@@ -1,6 +1,9 @@
 %% STDfilenameDTS
 %% File ID: STDuuidDTS
+%%
 %% [Description]
+%%
+%% Author: Øyvind A. Holm <sunny@sunbase.org>
 %% License: GNU General Public License version 3 or later.
 
 -module(STDmoduleDTS).
