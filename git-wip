@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#=======================================================================
+# git-wip
+# File ID: fe636b92-445c-11e4-940c-c80aa9e67bbd
+#
+# Create subbranches using '.' as level delimiter.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 3 or later.
+#=======================================================================
+
+progname=git-wip
+curr="$(git rev-parse --abbrev-ref HEAD)"
+use_new_branch=0
+test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
+
+ext="wip"
+test -n "$1" && { ext="$1"; shift; }
+
+if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
+    echo "$curr" | grep -q '\.' || {
+        echo $progname: No periods found in branch name \"$curr\", cannot merge >&2
+        exit 1
+    }
+    parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
+    git checkout $parent &&
+    if test "$ext" = "-d"; then
+        git merge $curr
+        git branch -d $curr
+    elif test "$ext" = "-s"; then
+        git merge --squash $curr
+    else
+        git merge --no-ff $curr
+        git branch -d $curr
+    fi
+    exit
+fi
+
+if test "$use_new_branch" = "1"; then
+    git checkout -b "$ext"
+else
+    git checkout -b "$curr.$ext"
+fi
