@@ -115,7 +115,7 @@ sub main {
     installed('python --version', '/Python (2|3)/');
     installed('rsync --version', '/^rsync\s+version \d/');
     installed('screen --version', '/^Screen version \d/');
-    installed('script --version', '/^script from util-linux \d/');
+    installed('script --version', '/^script .+\butil-linux\b/');
     installed('ssh -V', '/OpenSSH/');
     installed('tar --version', '/GNU tar\b/');
     installed('uuidgen --version', '/uuidgen from util-linux/');
