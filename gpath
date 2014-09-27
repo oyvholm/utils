@@ -24,6 +24,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'count' => 1,
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -38,6 +39,7 @@ our $VERSION = '0.00';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'count|c=i' => \$Opt{'count'},
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -51,6 +53,7 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+$Opt{'count'} < 1 && die("$progname: -c/--count argument must be higher than zero\n");
 
 exit(main(%Opt));
 
@@ -68,10 +71,12 @@ sub main {
         $line =~ s/\s+$//;
         if ($line =~ /^(.+)$/) {
             $curr = $1;
-            !$used{"$prev $curr"} && length($prev) && $prev ne $curr && (
-                print("\"$prev\" -> \"$curr\";\n"),
-                $used{"$prev $curr"} = 1
-            );
+            if (length($prev) && $prev ne $curr) {
+                $used{"$prev $curr"}++;
+                ($used{"$prev $curr"} == $Opt{'count'}) && (
+                    print("\"$prev\" -> \"$curr\";\n")
+                );
+            }
             $prev = $curr;
         } else {
             $prev = '';
@@ -107,6 +112,8 @@ in the graph, an empty line splits the graph.
 
 Options:
 
+  -c X, --count X
+    Only display connections that have been repeated at least X times.
   -h, --help
     Show this help.
   -v, --verbose
