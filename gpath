@@ -3,7 +3,10 @@
 #=======================================================================
 # gpath
 # File ID: acd2d3a2-4610-11e4-9bb4-c80aa9e67bbd
-# [Description]
+#
+# Create a directed graph for Graphviz by reading plain text lines from 
+# files or stdin, each line is a node label. Adjacent lines are 
+# connected in the graph, an empty line splits the graph.
 #
 # Character set: UTF-8
 # ©opyleft 2014– Øyvind A. Holm <sunny@sunbase.org>
@@ -55,7 +58,26 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+    my ($curr, $prev) = ('', '');
+    my %used = ();
 
+    print("digraph g {\n");
+    while (my $line = <>) {
+        $line =~ s/"/\\"/g;
+        $line =~ s/^\s+//;
+        $line =~ s/\s+$//;
+        if ($line =~ /^(.+)$/) {
+            $curr = $1;
+            !$used{"$prev $curr"} && length($prev) && $prev ne $curr && (
+                print("\"$prev\" -> \"$curr\";\n"),
+                $used{"$prev $curr"} = 1
+            );
+            $prev = $curr;
+        } else {
+            $prev = '';
+        }
+    }
+    print("}\n");
     return($Retval);
     # }}}
 } # main()
@@ -78,6 +100,10 @@ sub usage {
     print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
+
+Create a directed graph for Graphviz by reading plain text lines from 
+files or stdin, each line is a node label. Adjacent lines are connected 
+in the graph, an empty line splits the graph.
 
 Options:
 
