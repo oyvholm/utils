@@ -93,6 +93,7 @@ sub main {
 
 =cut
 
+    diag("Checking coreutils...");
     coreutils(qw{
         arch base64 basename cat chcon chgrp chmod chown chroot cksum 
         comm cp csplit cut date dd df dir dircolors dirname du echo env 
@@ -105,6 +106,7 @@ sub main {
         unexpand uniq unlink users vdir wc who whoami yes
     });
 
+    diag("Checking important software...");
     installed('autoconf --version', '/GNU Autoconf/');
     installed('bash --version', '/^GNU bash/');
     installed('bc --version', '/^bc \d.*Free Software Foundation/s');
@@ -114,6 +116,7 @@ sub main {
     installed('gcc --version', '/^gcc /');
     installed('git --version', '/git version/');
     installed('git-annex version', '/^git-annex version: /');
+    installed('gpg --version', '/^gpg.+GnuPG\b/');
     installed('gzip --version', '/^gzip \d/');
     installed('make --version', '/GNU Make/');
     installed('mc --version', '/GNU Midnight Commander/');
@@ -124,6 +127,7 @@ sub main {
     installed('script --version', '/^script .+\butil-linux\b/');
     installed('ssh -V', '/OpenSSH/');
     installed('tar --version', '/GNU tar\b/');
+    installed('top -v', '/procps-ng version \d/');
     installed('vim --version', '/VIM - Vi IMproved 7\../');
     installed('wget --version', '/GNU Wget/');
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
@@ -131,10 +135,12 @@ sub main {
 
     if ($Opt{'all'}) {
 
+        diag("Checking other software...");
         installed('abiword --version', '/^\d\.\d+\.\d+/');
         installed('asciidoc --version', '/^asciidoc \d/');
         installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/');
         installed('cdparanoia --version', '/^cdparanoia III/');
+        installed('cpio --version', '/GNU cpio/');
         installed('cronolog --version', '/^cronolog version \d/');
         installed('ctags --version', '/^(Exuberant Ctags|ctags \(GNU Emacs) \d/');
         installed('dict --version', '/^dict \d/');
@@ -151,9 +157,11 @@ sub main {
         installed('gnuplot --version', '/^gnuplot /');
         installed('gource --help', '/Gource v\d/');
         installed('gpsbabel --version', '/GPSBabel Version \d/');
+        installed('htop --version', '/^htop \d/');
         installed('inkscape -V', '/^Inkscape \d/');
         installed('iotop --version', '/^iotop \d/');
         installed('lame --version', '/LAME .* version /');
+        installed('lynx --version', '/^Lynx Version \d/');
         installed('mosh --version', '/^mosh \d/');
         installed('mplayer -V', '/^MPlayer2 /');
         installed('mutt -h', '/^Mutt \d/');
