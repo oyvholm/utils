@@ -127,7 +127,7 @@ END
 set xdata time
 set grid
 set timefmt "$time_fmt"
-set format x "%Y-%m-%d %H:%M:%S"
+set format x "%Y-%m-%d"
 set yrange [0.1:]
 END
 
