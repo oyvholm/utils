@@ -98,6 +98,7 @@ my %Modules = (
     'Data::Dumper' => '',
     'Date::Manip' => 'libdate-manip-perl',
     'Devel::GDB' => 'libdevel-gdb-perl',
+    'Devel::NYTProf' => 'libdevel-nytprof-perl',
     'Devel::ptkdb' => 'libdevel-ptkdb-perl',
     'Digest::CRC' => 'libdigest-crc-perl',
     'Digest::MD5' => 'libdigest-md5-file-perl',
