@@ -127,7 +127,7 @@ sub main {
     installed('script --version', '/^script .+\butil-linux\b/');
     installed('ssh -V', '/OpenSSH/');
     installed('tar --version', '/GNU tar\b/');
-    installed('top -v', '/procps-ng version \d/');
+    installed('top -v', '/procps(-ng)? version \d/');
     installed('vim --version', '/VIM - Vi IMproved 7\../');
     installed('wget --version', '/GNU Wget/');
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
