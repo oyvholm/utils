@@ -117,6 +117,7 @@ sub main {
     installed('git --version', '/git version/');
     installed('git-annex version', '/^git-annex version: /');
     installed('gpg --version', '/^gpg.+GnuPG\b/');
+    installed('grep --version', '/GNU grep/');
     installed('gzip --version', '/^gzip \d/');
     installed('make --version', '/GNU Make/');
     installed('mc --version', '/GNU Midnight Commander/');
@@ -137,9 +138,11 @@ sub main {
 
         diag("Checking other software...");
         installed('abiword --version', '/^\d\.\d+\.\d+/');
+        installed('arj', '/^ARJ\S*? v \d/');
         installed('asciidoc --version', '/^asciidoc \d/');
         installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/');
         installed('cdparanoia --version', '/^cdparanoia III/');
+        installed('celestia --help', '/Usage:.*\bcelestia\b.+OPTION/s');
         installed('cpio --version', '/GNU cpio/');
         installed('cronolog --version', '/^cronolog version \d/');
         installed('ctags --version', '/^(Exuberant Ctags|ctags \(GNU Emacs) \d/');
@@ -161,6 +164,7 @@ sub main {
         installed('inkscape -V', '/^Inkscape \d/');
         installed('iotop --version', '/^iotop \d/');
         installed('lame --version', '/LAME .* version /');
+        installed('lftp --version', '/^LFTP .+Version \d/');
         installed('lynx --version', '/^Lynx Version \d/');
         installed('mosh --version', '/^mosh \d/');
         installed('mplayer -V', '/^MPlayer2 /');
@@ -175,6 +179,7 @@ sub main {
         installed('pv --version', '/^pv \d/');
         installed('pylint --version', '/^pylint \d/');
         installed('qemu-system-i386 --version', '/QEMU emulator version \d/');
+        installed('recode --version', '/^Free recode \d/');
         installed('rtorrent -h', '/BitTorrent client version /');
         installed('sqlite3 --version', '/^\d\.\d/');
         installed('sshfs --version', '/SSHFS version \d/');
@@ -192,8 +197,11 @@ sub main {
         installed('whois --version', '/^Version \d/');
         installed('wireshark --version', '/^wireshark \d/');
         installed('x264 --version', '/^x264 \d/');
+        installed('xdot --help', '/Usage:.*\bxdot\b/s');
+        installed('xmllint --version', '/^xmllint: using libxml version /');
         installed('xmlto --version', '/^xmlto version \d/');
         installed('xtightvncviewer -h', '/^TightVNC Viewer /');
+        installed('youtube-dl --version', '/^20\d\d\.\d\d\.\d\d/');
         installed('zip -v', '/This is Zip \d.*Info-ZIP/');
 
     }
