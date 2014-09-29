@@ -205,6 +205,7 @@ if [ -n "$curr_git_ver" ]; then
         echo
         echo If that looks okay to you, press \'y\' to start the build, or:
         echo \'d\' to diff
+        echo \'ds\' to diff --stat
         echo \'dw\' to word-diff
         echo \'l\' to list log
         echo \'lp\' to list log with patch
@@ -215,6 +216,7 @@ if [ -n "$curr_git_ver" ]; then
         echo \'t\' to show commit tree
         read choice
         [ "$choice" = "d" ] && git diff $curr_git_ver $destbranch
+        [ "$choice" = "ds" ] && git diff --stat $curr_git_ver $destbranch
         [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
         [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
         [ "$choice" = "lp" ] && git log --patch $curr_git_ver..$destbranch
