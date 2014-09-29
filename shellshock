@@ -94,6 +94,7 @@ function cleanup
 	clear						# clear the screen
 	tput cnorm					# show the cursor
 	stty echo					# show input
+	stty sane					# reset terminal
 	! $saved_term || tput rmcup	# restore the terminal view
 	case "$uname" in
 		Darwin)
