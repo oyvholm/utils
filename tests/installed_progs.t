@@ -182,6 +182,7 @@ sub main {
         installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
         installed('recode --version', '/^Free recode \d/', 'stdout');
         installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
+        installed('shutter -v', '/^\d+\.\d+\.\d+ Rev\.\d+/', 'stdout');
         installed('sqlite3 --version', '/^\d\.\d/', 'stdout');
         installed('sshfs --version', '/SSHFS version \d/', 'stdout');
         installed('strace -V', '/^strace -- version \d/', 'stdout');
