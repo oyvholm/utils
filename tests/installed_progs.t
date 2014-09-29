@@ -142,6 +142,7 @@ sub main {
         installed('arj', '/^ARJ\S*? v \d/', 'stdout');
         installed('asciidoc --version', '/^asciidoc \d/', 'stdout');
         installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/', 'stdout');
+        installed('bison --version', '/^bison\b.+GNU Bison\b/', 'stdout');
         installed('cdparanoia --version', '/^cdparanoia III/', 'stderr');
         installed('celestia --help', '/Usage:.*\bcelestia\b.+OPTION/s', 'stdout');
         installed('cpio --version', '/GNU cpio/', 'stdout');
@@ -154,6 +155,8 @@ sub main {
         installed('exiftool -ver', '/^\d+\.\d/', 'stdout');
         installed('fdupes --version', '/^fdupes \d\./', 'stdout');
         installed('flac --version', '/^flac /', 'stdout');
+        installed('flex --version', '/^flex \d/', 'stdout');
+        installed('gadu --version', '/git-annex-utils \d/', 'stdout');
         installed('geeqie --version', '/^Geeqie \d\./', 'stderr');
         installed('gettext --version', '/GNU gettext/', 'stdout');
         installed('gnucash --version', '/GnuCash \d\./', 'stdout');
