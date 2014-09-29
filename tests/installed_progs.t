@@ -228,7 +228,6 @@ sub main {
 sub installed {
     # {{{
     my ($Cmd, $Exp, $Desc) = @_;
-    my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
