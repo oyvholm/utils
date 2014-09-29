@@ -108,102 +108,102 @@ sub main {
     });
 
     diag("Checking important software...");
-    installed('autoconf --version', '/GNU Autoconf/');
-    installed('bash --version', '/^GNU bash/');
-    installed('bc --version', '/^bc \d.*Free Software Foundation/s');
-    installed('curl --version', '/^curl /');
-    installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n$/', 'Use C sorting order');
-    installed('find --version', '/GNU findutils/');
-    installed('gcc --version', '/^gcc /');
-    installed('git --version', '/git version/');
-    installed('git-annex version', '/^git-annex version: /');
-    installed('gpg --version', '/^gpg.+GnuPG\b/');
-    installed('grep --version', '/GNU grep/');
-    installed('gzip --version', '/^gzip \d/');
-    installed('make --version', '/GNU Make/');
-    installed('mc --version', '/GNU Midnight Commander/');
-    installed('perl --version', '/This is perl( |, v)5/');
-    installed('python --version', '/Python (2|3)/');
-    installed('rsync --version', '/^rsync\s+version \d/');
-    installed('screen --version', '/^Screen version \d/');
-    installed('script --version', '/^script .+\butil-linux\b/');
-    installed('ssh -V', '/OpenSSH/');
-    installed('tar --version', '/GNU tar\b/');
-    installed('top -v', '/procps(-ng)? version \d/');
-    installed('vim --version', '/VIM - Vi IMproved 7\../');
-    installed('wget --version', '/GNU Wget/');
+    installed('autoconf --version', '/GNU Autoconf/', 'stdout');
+    installed('bash --version', '/^GNU bash/', 'stdout');
+    installed('bc --version', '/^bc \d.*Free Software Foundation/s', 'stdout');
+    installed('curl --version', '/^curl /', 'stdout');
+    installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n$/', 'stdout', 'Use C sorting order');
+    installed('find --version', '/GNU findutils/', 'stdout');
+    installed('gcc --version', '/^gcc /', 'stdout');
+    installed('git --version', '/git version/', 'stdout');
+    installed('git-annex version', '/^git-annex version: /', 'stdout');
+    installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
+    installed('grep --version', '/GNU grep/', 'stdout');
+    installed('gzip --version', '/^gzip \d/', 'stdout');
+    installed('make --version', '/GNU Make/', 'stdout');
+    installed('mc --version', '/GNU Midnight Commander/', 'stdout');
+    installed('perl --version', '/This is perl( |, v)5/', 'stdout');
+    installed('python --version', '/Python (2|3)/', 'stderr');
+    installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
+    installed('screen --version', '/^Screen version \d/', 'stdout');
+    installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
+    installed('ssh -V', '/OpenSSH/', 'stderr');
+    installed('tar --version', '/GNU tar\b/', 'stdout');
+    installed('top -v', '/procps(-ng)? version \d/', 'stdout');
+    installed('vim --version', '/VIM - Vi IMproved 7\../', 'stdout');
+    installed('wget --version', '/GNU Wget/', 'stdout');
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
     repeat_test('uuidgen -t', 100, "^$v1_templ\$");
 
     if ($Opt{'all'}) {
 
         diag("Checking other software...");
-        installed('abiword --version', '/^\d\.\d+\.\d+/');
-        installed('arj', '/^ARJ\S*? v \d/');
-        installed('asciidoc --version', '/^asciidoc \d/');
-        installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/');
-        installed('cdparanoia --version', '/^cdparanoia III/');
-        installed('celestia --help', '/Usage:.*\bcelestia\b.+OPTION/s');
-        installed('cpio --version', '/GNU cpio/');
-        installed('cronolog --version', '/^cronolog version \d/');
-        installed('ctags --version', '/^(Exuberant Ctags|ctags \(GNU Emacs) \d/');
-        installed('dict --version', '/^dict \d/');
-        installed('dot -V', '/graphviz version \d/');
-        installed('echo "[{ }]" | json_reformat -m', '/^\[{}+]$/', 'json_reformat');
-        installed('exifprobe -V', '/Program: \'exifprobe\' version \d/');
-        installed('exiftool -ver', '/^\d+\.\d/');
-        installed('fdupes --version', '/^fdupes \d\./');
-        installed('flac --version', '/^flac /');
-        installed('geeqie --version', '/^Geeqie \d\./');
-        installed('gettext --version', '/GNU gettext/');
-        installed('gnucash --version', '/GnuCash \d\./');
-        installed('gnumeric --version', '/^gnumeric version /');
-        installed('gnuplot --version', '/^gnuplot /');
-        installed('gource --help', '/Gource v\d/');
-        installed('gpsbabel --version', '/GPSBabel Version \d/');
-        installed('htop --version', '/^htop \d/');
-        installed('inkscape -V', '/^Inkscape \d/');
-        installed('iotop --version', '/^iotop \d/');
-        installed('lame --version', '/LAME .* version /');
-        installed('lftp --version', '/^LFTP .+Version \d/');
-        installed('lynx --version', '/^Lynx Version \d/');
-        installed('mosh --version', '/^mosh \d/');
-        installed('mplayer -V', '/^MPlayer2 /');
-        installed('mutt -h', '/^Mutt \d/');
-        installed('ncdu -v', '/^ncdu \d/');
-        installed('ncftp -v', '/Program version:\s+NcFTP /');
-        installed('nmap --version', '/Nmap version /');
-        installed('okular --version', '/Okular: \d/');
-        installed('pandoc --version', '/^pandoc \d\./');
-        installed('pinfo --version', '/^Przemek\'s Info Viewer /');
-        installed('psql --version', '/psql \(PostgreSQL\)/');
-        installed('pv --version', '/^pv \d/');
-        installed('pylint --version', '/^pylint \d/');
-        installed('qemu-system-i386 --version', '/QEMU emulator version \d/');
-        installed('recode --version', '/^Free recode \d/');
-        installed('rtorrent -h', '/BitTorrent client version /');
-        installed('sqlite3 --version', '/^\d\.\d/');
-        installed('sshfs --version', '/SSHFS version \d/');
-        installed('strace -V', '/^strace -- version \d/');
-        installed('svn --version', '/svn, version /');
-        installed('tig --version', '/^tig version /');
-        installed('tmux -V', '/^tmux \d\./');
-        installed('tree --version', '/^tree v\d\./');
-        installed('ufraw --version', '/^ufraw \d/');
-        installed('unrar --version', '/UNRAR \d/');
-        installed('unzip -v', '/^UnZip \d.*Info-ZIP/');
-        installed('uprecords -v', '/^uprecords \d/');
-        installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'OSSP uuid');
-        installed('vlc --version', '/^VLC version \d/');
-        installed('whois --version', '/^Version \d/');
-        installed('wireshark --version', '/^wireshark \d/');
-        installed('x264 --version', '/^x264 \d/');
-        installed('xdot --help', '/Usage:.*\bxdot\b/s');
-        installed('xmllint --version', '/^xmllint: using libxml version /');
-        installed('xmlto --version', '/^xmlto version \d/');
-        installed('xtightvncviewer -h', '/^TightVNC Viewer /');
-        installed('youtube-dl --version', '/^20\d\d\.\d\d\.\d\d/');
-        installed('zip -v', '/This is Zip \d.*Info-ZIP/');
+        installed('abiword --version', '/^\d\.\d+\.\d+/', 'stdout');
+        installed('arj', '/^ARJ\S*? v \d/', 'stdout');
+        installed('asciidoc --version', '/^asciidoc \d/', 'stdout');
+        installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/', 'stdout');
+        installed('cdparanoia --version', '/^cdparanoia III/', 'stderr');
+        installed('celestia --help', '/Usage:.*\bcelestia\b.+OPTION/s', 'stdout');
+        installed('cpio --version', '/GNU cpio/', 'stdout');
+        installed('cronolog --version', '/^cronolog version \d/', 'stderr');
+        installed('ctags --version', '/^(Exuberant Ctags|ctags \(GNU Emacs) \d/', 'stdout');
+        installed('dict --version', '/^dict \d/', 'stdout');
+        installed('dot -V', '/graphviz version \d/', 'stderr');
+        installed('echo "[{ }]" | json_reformat -m', '/^\[{}+]$/', 'stdout', 'json_reformat');
+        installed('exifprobe -V', '/Program: \'exifprobe\' version \d/', 'stdout');
+        installed('exiftool -ver', '/^\d+\.\d/', 'stdout');
+        installed('fdupes --version', '/^fdupes \d\./', 'stdout');
+        installed('flac --version', '/^flac /', 'stdout');
+        installed('geeqie --version', '/^Geeqie \d\./', 'stderr');
+        installed('gettext --version', '/GNU gettext/', 'stdout');
+        installed('gnucash --version', '/GnuCash \d\./', 'stdout');
+        installed('gnumeric --version', '/^gnumeric version /', 'stdout');
+        installed('gnuplot --version', '/^gnuplot /', 'stdout');
+        installed('gource --help', '/Gource v\d/', 'stdout');
+        installed('gpsbabel --version', '/GPSBabel Version \d/', 'stdout');
+        installed('htop --version', '/^htop \d/', 'stdout');
+        installed('inkscape -V', '/^Inkscape \d/', 'stdout');
+        installed('iotop --version', '/^iotop \d/', 'stdout');
+        installed('lame --version', '/LAME .* version /', 'stdout');
+        installed('lftp --version', '/^LFTP .+Version \d/', 'stdout');
+        installed('lynx --version', '/^Lynx Version \d/', 'stdout');
+        installed('mosh --version', '/^mosh \d/', 'stderr');
+        installed('mplayer -V', '/^MPlayer2 /', 'stdout');
+        installed('mutt -h', '/^Mutt \d/', 'stdout');
+        installed('ncdu -v', '/^ncdu \d/', 'stdout');
+        installed('ncftp -v', '/Program version:\s+NcFTP /', 'stderr');
+        installed('nmap --version', '/Nmap version /', 'stdout');
+        installed('okular --version', '/Okular: \d/', 'stdout');
+        installed('pandoc --version', '/^pandoc \d\./', 'stdout');
+        installed('pinfo --version', '/^Przemek\'s Info Viewer /', 'stdout');
+        installed('psql --version', '/psql \(PostgreSQL\)/', 'stdout');
+        installed('pv --version', '/^pv \d/', 'stdout');
+        installed('pylint --version', '/^pylint \d/', 'stdout');
+        installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
+        installed('recode --version', '/^Free recode \d/', 'stdout');
+        installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
+        installed('sqlite3 --version', '/^\d\.\d/', 'stdout');
+        installed('sshfs --version', '/SSHFS version \d/', 'stdout');
+        installed('strace -V', '/^strace -- version \d/', 'stdout');
+        installed('svn --version', '/svn, version /', 'stdout');
+        installed('tig --version', '/^tig version /', 'stdout');
+        installed('tmux -V', '/^tmux \d\./', 'stdout');
+        installed('tree --version', '/^tree v\d\./', 'stdout');
+        installed('ufraw --version', '/^ufraw \d/', 'stderr');
+        installed('unrar --version', '/UNRAR \d/', 'stdout');
+        installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
+        installed('uprecords -v', '/^uprecords \d/', 'stdout');
+        installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'stdout', 'OSSP uuid');
+        installed('vlc --version', '/^VLC version \d/', 'stdout');
+        installed('whois --version', '/^Version \d/', 'stdout');
+        installed('wireshark --version', '/^wireshark \d/', 'stdout');
+        installed('x264 --version', '/^x264 \d/', 'stdout');
+        installed('xdot --help', '/Usage:.*\bxdot\b/s', 'stdout');
+        installed('xmllint --version', '/^xmllint: using libxml version /', 'stderr');
+        installed('xmlto --version', '/^xmlto version \d/', 'stdout');
+        installed('xtightvncviewer -h', '/^TightVNC Viewer /', 'stderr');
+        installed('youtube-dl --version', '/^20\d\d\.\d\d\.\d\d/', 'stdout');
+        installed('zip -v', '/This is Zip \d.*Info-ZIP/', 'stdout');
 
     }
 
@@ -228,7 +228,8 @@ sub main {
 
 sub installed {
     # {{{
-    my ($Cmd, $Exp, $Desc) = @_;
+    my ($Cmd, $Exp, $Std, $Desc) = @_;
+    $Std =~ /^(both|stderr|stdout)$/ || BAIL_OUT("installed(): $Cmd: Invalid stream: '$Std'");
     my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
@@ -236,7 +237,13 @@ sub installed {
             : ''
     );
 
-    like(`$Cmd 2>&1`, $Exp, $Txt);
+    if ($Std eq 'stdout') {
+        like(`$Cmd 2>/dev/null`, $Exp, $Txt);
+    } elsif ($Std eq 'stderr') {
+        like(`$Cmd 2>&1 >/dev/null`, $Exp, $Txt);
+    } else {
+        like(`$Cmd 2>&1`, $Exp, $Txt);
+    }
     return;
     # }}}
 } # installed()
@@ -248,7 +255,7 @@ sub coreutils {
     for my $curr (@progs) {
         my $name = $curr;
         $name =~ s/.*\/([^\/]+)$/$1/;
-        installed("$curr --version", "/^$name .*?\\bcoreutils\\b/") || ($retval = 1);
+        installed("$curr --version", "/^$name .*?\\bcoreutils\\b/", 'stdout') || ($retval = 1);
     }
     return($retval);
     # }}}
