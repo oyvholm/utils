@@ -114,6 +114,11 @@ Options:
   --debug
     Print debugging messages.
 
+Examples:
+  irc-conn irc/2014/09/*.log | xdot
+  zcat irc/2014/09/*.log.gz | irc-conn -c 50 | dot -o conn.svg -Tsvg
+  zcat irc/2014/09/*.log.gz | irc-conn -c 50 | dot -Tx11
+
 END
     exit($Retval);
     # }}}
