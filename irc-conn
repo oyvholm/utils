@@ -62,8 +62,13 @@ sub main {
     while (my $curr = <>) {
         # 20140829T003022Z < HisaoNakai> marmalodak: wat o_
         if ($curr =~ /^\S+ <.(\S+)> (\S+):/) {
-            $used{"$1 $2"} || print("\"$1\" -> \"$2\"\n");
-            $used{"$1 $2"} = 1;
+            my ($from, $to) = ($1, $2);
+            $from =~ s/\\/&#92;/g;
+            $from =~ s/"/\\"/g;
+            $to =~ s/\\/&#92;/g;
+            $to =~ s/"/\\"/g;
+            $used{"$from $to"} || print("\"$from\" -> \"$to\";\n");
+            $used{"$from $to"} = 1;
         }
     }
     print("}\n");
