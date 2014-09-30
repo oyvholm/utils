@@ -15,6 +15,12 @@
 
 # Copyright 2012 - Øyvind 'bolt' Hvidsten   <bolt@dhampir.no>
 
+# Applied patches:
+#
+# v1.07, 2012.03.26 - Steve McMurphy
+# v1.11, 2014.09.30 - Øyvind A. Holm
+#
+
 # Description:
 #
 # ShellShock is a top-down space shooter written for Bash 3 / Bash 4
@@ -48,7 +54,7 @@
 #                   * Added simple high score storage
 #                   * Runs on Bash 3 again
 #
-# v1.07, 2012.03.26 - Steve
+# v1.07, 2012.03.26 - OSX
 #                   * Added rudimentary support for Mac OS X
 #
 # v1.08, 2012.03.26 - Cleanup
@@ -59,6 +65,9 @@
 #
 # v1.10, 2012.03.29 - Pause
 #                   * Improved the pause function to avoid problems with timers
+#
+# v1.11, 2014.09.30 - Better cleanup
+#                   * Using "stty sane" to clean up terminal settings on exit
 #
 
 # get uname
