@@ -22,6 +22,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'count' => 1,
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -36,6 +37,7 @@ our $VERSION = '0.00';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'count|c=i' => \$Opt{'count'},
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -49,6 +51,7 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+$Opt{'count'} < 1 && die("$progname: -c/--count value has to be at least 1\n");
 
 exit(main(%Opt));
 
@@ -67,8 +70,8 @@ sub main {
             $from =~ s/"/\\"/g;
             $to =~ s/\\/&#92;/g;
             $to =~ s/"/\\"/g;
-            $used{"$from $to"} || print("\"$from\" -> \"$to\";\n");
-            $used{"$from $to"} = 1;
+            $used{"$from $to"}++;
+            ($used{"$from $to"} == $Opt{'count'}) && print("\"$from\" -> \"$to\";\n");
         }
     }
     print("}\n");
@@ -100,6 +103,8 @@ Create Graphviz data from IRC logs.
 
 Options:
 
+  -c X, --count X
+    Show only connections that have been repeated at least X times.
   -h, --help
     Show this help.
   -v, --verbose
