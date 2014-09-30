@@ -3,11 +3,12 @@
 #=======================================================================
 # irc-conn
 # File ID: 421f1a82-483d-11e4-9469-c80aa9e67bbd
-# [Description]
+#
+# Show IRC connections, output Graphviz data
 #
 # Character set: UTF-8
 # ©opyleft 2014– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -55,6 +56,17 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+    my %used = ();
+
+    print("digraph g {\n");
+    while (my $curr = <>) {
+        # 20140829T003022Z < HisaoNakai> marmalodak: wat o_
+        if ($curr =~ /^\S+ <.(\S+)> (\S+):/) {
+            $used{"$1 $2"} || print("\"$1\" -> \"$2\"\n");
+            $used{"$1 $2"} = 1;
+        }
+    }
+    print("}\n");
 
     return($Retval);
     # }}}
@@ -78,6 +90,8 @@ sub usage {
     print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
+
+Create Graphviz data from IRC logs.
 
 Options:
 
