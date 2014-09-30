@@ -1,0 +1,384 @@
+#!/usr/bin/env bash
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Copyright 2014 - Øyvind 'bolt' Hvidsten   <bolt@dhampir.no>
+
+# Description:
+#
+# telenorsms is a script that connects to the Norwegian cell operator Telenor and sends SMS messages
+#
+# It requires wget, xxd, tr, cat and sed. "tempfile" is also recommended, though the script should manage
+# to generate tempfiles itself.
+#
+# Your username (email) and password for your Telenor account need to be stored in ~/.telenorsms on two
+# separate lines:
+# ------------------------------------------
+# username=me@provider.com
+# password=awesome1
+# ------------------------------------------
+#
+# You must have sent at least one message through the online interface, as it will as you to verify your
+# cell phone number by entering a code received by SMS, the first time you use it.
+#
+# telenorsms supports using numbers and names stored in your online address book in the SMS section of
+# Telenor's pages. Messages can be sent to stored numbers using complete names or partial numbers.
+#
+# Examples:
+#   ./telenorsms Joe Hey man, how's it going?
+#   ./telenorsms +4711223344 This is a message.
+#   ./telenorsms 1122 This is a message.
+#
+# Comments welcome, improvements/patches twice as welcome.
+#
+
+# Version history:
+#
+# 2009-02-03: Initial version - ivc
+# 2009-08-19: Support for local phonebook and various bug fixes - Håvard Gulldahl
+# 2012-07-29: Rewrite for Bash 4 with support for new "MineSider" setup and online phonebook - Øyvind 'bolt' Hvidsten
+# 2013-04-07: Minor style changes and comment cleanup - Øyvind 'bolt' Hvidsten
+# 2013-04-20: Updated to comply with changes on Telenor's website
+# 2013-06-15: Retry 3 times because of random cases of Ubuntu bug #965371 occuring on Telenor's server:
+#                 GnuTLS: A TLS packet with unexpected length was received.
+#                 Unable to establish SSL connection.
+# 2014-04-04: Updated to comply with changes on Telenor's website
+# 2014-08-26: Support for complaining about "technical error" on Telenor's website
+# 2014-08-27: Support for the -d (dry run) option, testing most of the script without sending a message
+# 2014-08-28: Support for the -a (force address book) option, used during debugging
+#
+
+
+_scriptname="telenorsms"
+set -e
+set -u
+
+
+# Check bash version
+if ((BASH_VERSINFO[0] < 4)); then
+	echo "$_scriptname uses features only found in bash 4 or above. Unable to continue execution." >&2
+	exit 1
+fi
+
+
+# Check for required programs
+if
+	! type "wget" &>/dev/null ||
+	! type "xxd" &>/dev/null ||
+	! type "tr" &>/dev/null ||
+	! type "cat" &>/dev/null ||
+	! type "sed" &>/dev/null
+then
+	echo 'One or more required programs are missing!' >&2
+	echo 'Please ensure wget, xxd, tr, cat and sed are all installed and in $PATH' >&2
+	exit 1
+fi
+
+
+# How to wget
+function wget
+{
+	>"$out"
+	local i
+	for ((i=0; i<3; i++)); do
+		if command wget -O- --quiet --no-check-certificate --save-cookies=$cookies --keep-session-cookies -T $timeout -t $retries "$@" >"$out"; then
+			return 0
+		fi
+	done
+	fail
+}
+
+
+# Check for string in output
+function found
+{
+	grep -q "$@" "$out"
+}
+function assert
+{
+	if found "$@"; then
+		echo "OK"
+	else
+		echo "Failed!"
+		echo "Exiting due to failed assertion (${@})" >&2
+		exit 1
+	fi
+}
+
+
+# Simple URL encoding - just encode everything
+function encode
+{
+	local encoded=$(xxd -plain <<<"${@:-$(cat)}" | tr -d '\n' | sed 's/\(..\)/%\1/g')
+	echo "${encoded%\%0a}"
+}
+
+
+# Make a temporary file
+type "tempfile" &>/dev/null && tempfile=true || tempfile=false
+function tempfile
+{(
+	umask 0077
+	if $tempfile; then
+		command tempfile
+	else
+		file="/tmp/${_scriptname}-$RANDOM"
+		set -o noclobber
+		{ >"$file"; } &>/dev/null &&
+		echo "$file"
+	fi
+)}
+
+
+# Options
+dryrun=false
+forceaddressbook=false
+OPTIND=1
+while getopts ":ad" opt; do
+	case "$opt" in
+		a) forceaddressbook=true ;;
+		d) dryrun=true ;;
+		[?])
+			echo "Unknown option -${OPTARG}" >&2
+			exit 1
+		;;
+		:) 
+			echo "Option -${OPTARG} requires an argument" >&2
+			exit 1
+		;;
+	esac
+done
+shift $((OPTIND-1))
+if [[ "${1:-}" = "--" ]]; then shift; fi
+
+
+# Settings
+config="$HOME/.${_scriptname}"
+username=$(grep -m 1 "^username=" $config 2>/dev/null | cut -d = -f 2 | encode);
+password=$(grep -m 1 "^password=" $config 2>/dev/null | cut -d = -f 2 | encode);
+agent="Mozilla/5.0 (X11; Linux i686; rv:6.0) Gecko/20100101 Firefox/6.0"
+[[ -z "${1:-}" ]] || { recipient=$1 && shift; }
+[[ -z "${1:-}" ]] || { message=$(encode "$@"); }
+timeout=30
+retries=1
+cookies=""
+
+
+# Sanity
+if [[ -z "${username:-}" ]] || [[ -z "${password:-}" ]]; then
+	echo "Username or password unset. please put both in $config!" >&2
+	exit 1
+fi
+
+if [[ -z "${recipient:-}" ]] || [[ -z "${message:-}" ]]; then
+	echo -e "Missing required arguments!\nUsage: $_scriptname [-d] <name|number> <text message>" >&2
+	exit 0
+fi
+
+
+# Feedback
+function task
+{
+	echo -n "$@... "
+}
+function ok
+{
+	echo "OK"
+}
+function fail
+{
+	echo "Failed!"
+	if [[ -n "$@" ]]; then
+		echo "$@" >&2
+	else
+		echo "General failure" >&2
+	fi
+	exit 1
+}
+
+
+# Temp file generation and cleanup
+function cleanup
+{
+	task "Cleanup"
+	if
+		[[ -n "$cookies" ]] && [[ -e "$cookies" ]] && rm "$cookies" &&
+		[[ -n "$out" ]] && [[ -e "$out" ]] && rm "$out"
+	then
+		ok
+	else
+		fail
+	fi
+}
+trap cleanup EXIT
+task "Generating cookie file"
+if cookies=$(tempfile) && [[ -n "$cookies" ]] && [[ -e "$cookies" ]]; then
+	echo "$cookies"
+else
+	fail
+fi
+task "Generating wget output file"
+if out=$(tempfile) && [[ -n "$out" ]] && [[ -e "$out" ]]; then
+	echo "$out"
+else
+	fail
+fi
+
+
+# Get cookie
+task "Getting cookie"
+wget \
+	"https://www.telenor.no/privat/minesider/logginnfelles.cms"
+assert 'action="/privat/minesider/logginnfelles.cms"'
+
+
+# Login
+task "Logging in"
+up=false
+while true; do
+	postdata="usr_name=$username&usr_password=$password&lbAction=Logg+inn"
+	wget \
+		--load-cookies=$cookies \
+		--post-data="$postdata" \
+		--referer "https://www.telenor.no/privat/minesider/logginnfelles.cms" \
+		"https://www.telenor.no/privat/minesider/logginnfelles.cms"
+	if found 'SEND_SMS'; then
+		echo "OK"
+		break
+	elif found 'action="/privat/minesider/minprofil/oppdatereMinProfil.cms"'; then
+		if ! $up; then
+			echo "Profile update needed!"
+			task "Updating profile"
+			postdata="confirmProfile=true&lbAction=Bekreft"
+			wget \
+				--load-cookies=$cookies \
+				--post-data="$postdata" \
+				--referer "https://www.telenor.no/privat/minesider/minprofil/oppdatereMinProfil.cms" \
+				"https://www.telenor.no/privat/minesider/minprofil/oppdatereMinProfil.cms"
+			up=true
+		else
+			fail
+		fi
+	else
+		fail
+	fi
+done
+
+
+# Mandatory SMS page get...
+task "SMS page get"
+wget \
+	--load-cookies=$cookies \
+	--referer "https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
+	"https://www.telenor.no/privat/minesider/norm/win/sms/send.do"
+if found '<h1>Teknisk feil</h1>'; then
+	fail '"Teknisk feil" - Have you activated SMS from Web yet?'
+fi
+assert 'action="/norm/win/sms/send/process.do"'
+
+
+# Get the address list
+task "Getting address list"
+wget \
+--load-cookies=$cookies \
+--referer "https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
+"https://telenormobil.no/norm/sms/async/addresslist.do"
+ok
+task "Parsing..."
+names=()
+numbers=()
+i=0
+while read -r line; do
+	# begin stupid address book format
+	[[ "$line" = *'<option value="'* ]] || continue
+	line=${line#*'<option value="'}
+	number=${line%%\"*}
+	line=${line#*'>'}
+	name=${line%(*}
+	# end stupid address book format
+	read -r number <<<"$number"
+	read -r name <<<"$name"
+	if [[ -n "$name" ]] && [[ -n "$number" ]]; then
+		names[i]=$name
+		numbers[i]=$number
+		(( ++i ))
+	fi
+done <"$out"
+ok
+echo "Read ${#names[@]:-} entries from address list."
+
+
+# Translate recipients given as names to numbers in the address list
+for (( i=0; i<${#names[@]:-}; i++ )); do
+	if [[ "${recipient,,}" = "${names[i],,}" ]]; then
+		recipient=${numbers[i]}
+		break
+	fi
+done
+
+
+# Translate recipients given as partial numbers (or translated above) to full numbers and announce
+match=false
+for (( i=0; i<${#numbers[@]:-}; i++ )); do
+	if
+		[[ "$recipient" = *"${numbers[i]}"* ]] ||
+		[[ "${numbers[i]}" = *"$recipient"* ]]
+	then
+		recipient=${numbers[i]}
+		echo "Recipient recognized as ${names[i]} (${numbers[i]})"
+		match=true
+		break
+	fi
+done
+if ! $match; then
+	echo "Recipient not in address book: $recipient"
+	if $forceaddressbook; then
+		fail "Address book broken?"
+	fi
+fi
+
+
+# Send SMS
+if ! $dryrun; then
+	task "Sending SMS"
+	wget \
+		--load-cookies=$cookies \
+		--header="Content-Type: application/x-www-form-urlencoded; charset=utf-8" \
+		--post-data="toAddress=$(encode "$recipient")&message=$message&b_send=b_send" \
+		"https://telenormobil.no/norm/win/sms/send/process.do"
+	if found '<td>Sendt</td>'; then
+		echo "Sent!"
+	else
+		fail
+	fi
+fi
+
+
+# SMS left count
+task "Getting number of free messages remaining"
+wget \
+	--load-cookies=$cookies \
+	--referer "https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
+	"https://telenormobil.no/norm/win/sms/send/popup/counter.do"
+if
+	free=$(grep 'Antall gjenstående SMS: ' "$out") &&
+	free=${free#*'Antall gjenstående SMS: '} &&
+	free=${free%% *} &&
+	[[ -n "$free" ]]
+then
+	echo "$free"
+	echo "Telenor updates the number of free messages remaining every 10 minutes."
+else
+	fail
+fi
