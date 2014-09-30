@@ -64,7 +64,7 @@ sub main {
     print("digraph g {\n");
     while (my $curr = <>) {
         # 20140829T003022Z < HisaoNakai> marmalodak: wat o_
-        if ($curr =~ /^\S+ <.(\S+)> (\S+):/) {
+        if ($curr =~ /^\S+ <.(\S+?)> (\S+?):\s/) {
             my ($from, $to) = ($1, $2);
             $from =~ s/\\/&#92;/g;
             $from =~ s/"/\\"/g;
