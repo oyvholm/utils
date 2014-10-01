@@ -13,12 +13,16 @@ grep -v \
 -e /Actionmemo/ \
 -e /Android/data/com\\.andrewshu\\.android\\.redditdonation/cache/prefetch/ \
 -e /Android/data/com\\.bambuna\\.podcastaddict/files/podcast/thumbnails/ \
+-e /Android/data/com\\.dropbox\\.android/cache/ \
 -e /Android/data/com\\.dropbox\\.android/cache/thumbs/ \
 -e /Android/data/com\\.dropbox\\.android/files/scratch/ \
 -e /Android/data/com\\.evernote/files/announcements/ \
 -e /Android/data/com\\.google\\.android\\.apps\\.docs/files/pinned_docs_files_do_not_edit/ \
+-e /Android/data/com\\.google\\.android\\.gms/files/ \
 -e /Android/data/com\\.google\\.earth/cache/ \
 -e /Android/data/com\\.gopro\\.smarty/cache/ \
+-e /Android/data/com\\.handmark\\.tweetcaster/cache/ \
+-e /Android/data/com\\.nianticproject\\.ingress/cache/ \
 -e /Android/data/com\\.samsung\\.android\\.app\\.episodes/files/album/ \
 -e /Android/data/com\\.samsung\\.android\\.snote/cache/sstream_cache/ \
 -e /Android/data/com\\.sec\\.android\\.app\\.sbrowser/TabManager/ \
