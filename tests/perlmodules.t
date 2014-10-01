@@ -164,6 +164,7 @@ for my $mod (sort keys %Modules) {
     my $package = $Modules{$mod};
     use_ok($mod) || length($package) && push(@missing, $package);
 }
+-e "nytprof.out" && ok(unlink("nytprof.out"), "Remove nytprof.out");
 
 if (scalar(@missing)) {
     open(my $fp, '>', $outfile) || die("$progname: $outfile: Cannot create file: $!\n");
