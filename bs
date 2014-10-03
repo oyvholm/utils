@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=======================================================================
+# bs
+# File ID: ece6a8e2-4683-11e4-b4d0-c80aa9e67bbd
+#
+# Search for commands in ~/.bash_history
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+grep "$@" ~/.bash_history
