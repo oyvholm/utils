@@ -40,7 +40,9 @@ def main():
     args = parser.parse_args()
 
     try:
-        print(format_json(''.join(sys.stdin.readlines()), indent=args.indent))
+        print(format_json(''.join(sys.stdin.readlines()),
+            indent=args.indent,
+            ))
     except ValueError:
         sys.stderr.write("%s: Invalid JSON\n" % progname)
 
