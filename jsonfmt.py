@@ -9,14 +9,14 @@ Author: Øyvind A. Holm <sunny@sunbase.org>
 
 """
 
-def format_json(text):
+def format_json(text, indent=4):
     """Return formatted JSON"""
     import json
 
     return json.dumps(
         json.loads(text),
         ensure_ascii=False,
-        indent=4,
+        indent=indent,
         sort_keys=True,
         )
 
@@ -30,10 +30,17 @@ def main():
     parser = argparse.ArgumentParser(
         description='JSON formatter',
         )
+    parser.add_argument(
+        '-i', '--indent',
+        default=4,
+        help='Use X spaces as indent',
+        metavar='X',
+        type=int,
+        )
     args = parser.parse_args()
 
     try:
-        print(format_json(''.join(sys.stdin.readlines())))
+        print(format_json(''.join(sys.stdin.readlines()), indent=args.indent))
     except ValueError:
         sys.stderr.write("%s: Invalid JSON\n" % progname)
 
