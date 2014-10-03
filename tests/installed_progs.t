@@ -176,6 +176,8 @@ sub main {
         installed('ncdu -v', '/^ncdu \d/', 'stdout');
         installed('ncftp -v', '/Program version:\s+NcFTP /', 'stderr');
         installed('nmap --version', '/Nmap version /', 'stdout');
+        installed('nodejs --version', '/^v\d+\.\d+\.\d+$/', 'stdout');
+        installed('npm --version', '/^\d+\.\d+\.\d+$/', 'stdout');
         installed('okular --version', '/Okular: \d/', 'stdout');
         installed('pandoc --version', '/^pandoc \d\./', 'stdout');
         installed('pinfo --version', '/^Przemek\'s Info Viewer /', 'stdout');
