@@ -23,6 +23,7 @@ our %Opt = (
 
     'debug' => 0,
     'help' => 0,
+    'hex' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -37,6 +38,7 @@ GetOptions(
 
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "hex|x" => \$Opt{'hex'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -52,14 +54,16 @@ if ($Opt{'version'}) {
 my @Array = ();
 my $max_length = 0;
 
+my $DIGITS = $Opt{'hex'} ? '0-9A-Fa-f' : '0-9';
+
 while (<>) {
     my $Line = $_;
     push(@Array, $Line);
-    $Line =~ s/(\d+)/check_max($1)/ge;
+    $Line =~ s/([$DIGITS]+)/check_max($1)/ge;
 }
 
 for my $Curr (@Array) {
-    $Curr =~ s/(\d+)/pad_number($1)/ge;
+    $Curr =~ s/([$DIGITS]+)/pad_number($1)/ge;
     print($Curr);
 }
 
@@ -107,6 +111,8 @@ Options:
     Show this help.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -x, --hex
+    Include hexadecimal digits a-f and A-F.
   --version
     Print version information.
   --debug
