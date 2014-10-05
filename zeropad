@@ -64,16 +64,20 @@ for my $Curr (@Array) {
 }
 
 sub check_max {
+    # {{{
     my $Str = shift;
     if (length($Str) > $max_length) {
         $max_length = length($Str);
     }
     return("");
+    # }}}
 } # check_max()
 
 sub pad_number {
+    # {{{
     my $Num = shift;
     return('0' x ($max_length - length($Num)) . $Num);
+    # }}}
 } # pad_number()
 
 sub print_version {
