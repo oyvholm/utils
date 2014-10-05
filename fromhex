@@ -21,6 +21,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'decimal' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,6 +36,7 @@ Getopt::Long::Configure("bundling");
 GetOptions(
 
     "debug" => \$Opt{'debug'},
+    "decimal|d" => \$Opt{'decimal'},
     "help|h" => \$Opt{'help'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -48,10 +50,16 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-while (<>) {
-    s/[^\da-f]//sig;
-    s/([\da-f][\da-f])/chr(hex($1))/seig;
-    print;
+if ($Opt{'decimal'}) {
+    while (<>) {
+        s/(\d+)/print(chr($1))/seig;
+    }
+} else {
+    while (<>) {
+        s/[^\da-f]//sig;
+        s/([\da-f][\da-f])/chr(hex($1))/seig;
+        print;
+    }
 }
 
 sub print_version {
@@ -76,6 +84,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -d, --decimal
+    Create bytes from decimal (base 10) numbers.
   -h, --help
     Show this help.
   -v, --verbose
