@@ -181,7 +181,7 @@ testcmd("echo -n 0 12345 -4 1000 | $CMD -x", # {{{
     '00000 12345 -00004 01000',
     '',
     0,
-    'Contains negative number',
+    '-x: Contains negative number',
 );
 
 # }}}
