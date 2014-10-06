@@ -177,8 +177,8 @@ testcmd("echo -n 0 jada 1234567 e 345 - 23477 æøå | $CMD -x", # {{{
 );
 
 # }}}
-testcmd("echo -n 0 12345 -4 1000 | $CMD -x", # {{{
-    '00000 12345 -00004 01000',
+testcmd("echo -n 0 12345 -a4 1000 | $CMD -x", # {{{
+    '00000 12345 -000a4 01000',
     '',
     0,
     '-x: Contains negative number',
