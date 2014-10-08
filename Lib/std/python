@@ -11,6 +11,7 @@ Author: Øyvind A. Holm <sunny@sunbase.org>
 
 import argparse
 import os
+import sys
 
 progname = os.path.basename(__file__)
 
@@ -24,4 +25,5 @@ def main():
     return retval
 
 if __name__ == "__main__":
-    main()
+    main_result = main()
+    sys.exit(main_result)
