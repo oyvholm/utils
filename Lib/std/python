@@ -18,6 +18,8 @@ progname = os.path.basename(__file__)
 parser = argparse.ArgumentParser(
     description='',
     )
+parser.add_argument('-v', '--verbose', action='count',
+                    default=0, help='verbose level, can be repeated')
 args = parser.parse_args()
 
 def main():
