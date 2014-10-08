@@ -9,16 +9,23 @@ Author: Øyvind A. Holm <sunny@sunbase.org>
 
 """
 
+import argparse
+import os
+import sys
+
+progname = os.path.basename(__file__)
+
+parser = argparse.ArgumentParser(
+    description='',
+    )
+parser.add_argument('-v', '--verbose', action='count',
+                    default=0, help='verbose level, can be repeated')
+args = parser.parse_args()
+
 def main():
-    import argparse
-    import os
-
-    progname = os.path.basename(__file__)
-
-    parser = argparse.ArgumentParser(
-        description='',
-        )
-    args = parser.parse_args()
+    retval = 0
+    return retval
 
 if __name__ == "__main__":
-    main()
+    main_result = main()
+    sys.exit(main_result)
