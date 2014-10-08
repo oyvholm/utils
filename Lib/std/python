@@ -9,16 +9,19 @@ Author: Øyvind A. Holm <sunny@sunbase.org>
 
 """
 
+import argparse
+import os
+
+progname = os.path.basename(__file__)
+
+parser = argparse.ArgumentParser(
+    description='',
+    )
+args = parser.parse_args()
+
 def main():
-    import argparse
-    import os
-
-    progname = os.path.basename(__file__)
-
-    parser = argparse.ArgumentParser(
-        description='',
-        )
-    args = parser.parse_args()
+    retval = 0
+    return retval
 
 if __name__ == "__main__":
     main()
