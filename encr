@@ -3,7 +3,7 @@
 # File ID: 40788fae-5ef6-11df-a9dd-90e6ba3022ac
 
 if test "$1" = "-d"; then
-    perl -pe 's/^.*?<l>(.*?)<\/l>.*$/$1/g' | base64 -d | gpg 2>/dev/null
+    grep '<l>' | perl -pe 's/^.*?<l>(.*?)<\/l>.*$/$1/g' | base64 -d | gpg 2>/dev/null
     exit
 fi
 
