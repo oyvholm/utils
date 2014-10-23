@@ -1,35 +1,77 @@
 #!/usr/bin/perl
 
-#==============================================================================
+#=======================================================================
 # h2u
 # File ID: e93feb18-5d3a-11df-bda7-90e6ba3022ac
 # Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to UTF-8.
 #
-# Options:
-#   -i  allow Invalid character range U+D800 through U+DFFF, U+FFFE and U+FFFF.
-#   -l  also convert Latin-1 characters.
-#
-# Created by &#xD8;yvind A. Holm <sunny@sunbase.org>.
-# License: GNU General Public License version 2 or later.
-#==============================================================================
+# Character set: UTF-8
+# ©opyleft STDyearDTS– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
 
 use strict;
-require 'getopts.pl'; # FIXME: Generates a warning when command line option is used and -w is specified in the shebang.
+use warnings;
+use Getopt::Long;
 
-($main::opt_i, $main::opt_l) = (0, 0);
+local $| = 1;
 
-$| = 1;
+our $Debug = 0;
 
-&Getopts('il');
+our %Opt = (
 
-while (<>) {
-	$main::opt_l && s/([\x80-\xFF])/widechar(ord($1))/ge;
-	s/&#(\d{1,10});/widechar($1)/ge;
-	s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
-	print;
+    'debug' => 0,
+    'help' => 0,
+    'invalid' => 0,
+    'latin1' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'invalid|i' => \$Opt{'invalid'},
+    'latin1|l' => \$Opt{'latin1'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
 }
 
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    while (<>) {
+        $Opt{'latin1'} && s/([\x80-\xFF])/widechar(ord($1))/ge;
+        s/&#(\d{1,10});/widechar($1)/ge;
+        s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
+        print;
+    }
+    return($Retval);
+    # }}}
+} # main()
+
 sub widechar {
+	# {{{
 	my $Val = shift;
 	if ($Val < 0x80) {
 		return sprintf("%c", $Val);
@@ -37,7 +79,7 @@ sub widechar {
 		return sprintf("%c%c", 0xC0 | ($Val >> 6),
 		                       0x80 | ($Val & 0x3F));
 	} elsif ($Val < 0x10000) {
-		unless ($main::opt_i) {
+		unless ($Opt{'invalid'}) {
 			if  (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
 				$Val = 0xFFFD;
 			}
@@ -66,7 +108,76 @@ sub widechar {
 	} else {
 		return widechar(0xFFFD);
 	}
+	# }}}
 } # widechar()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -i
+    Allow invalid character range U+D800 through U+DFFF, U+FFFE and 
+    U+FFFF.
+  -l
+    Also convert Latin-1 characters.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
 
 =pod
 
@@ -83,9 +194,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along 
-with this program; if not, write to the Free Software Foundation, Inc., 
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
 
 =cut
 
-__END__
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
