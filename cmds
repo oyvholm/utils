@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# cmds
+# File ID: 35e27b98-5ab6-11e4-831d-000df06acc56
+#
+# Send a list of all available commands and aliases to stdout. Argument 
+# $1 on the command line is delivered to grep(1).
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+grep_arg=.
+test -n "$1" && { grep_arg="$1"; shift; }
+compgen -ac | grep -i "$grep_arg" | less
