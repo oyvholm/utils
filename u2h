@@ -84,6 +84,7 @@ sub main {
 } # main()
 
 sub decode_char {
+	# {{{
 	my $Msg = shift;
 	my $Val = "";
 	if ($Msg =~ /^([\x20-\x7F])$/) {
@@ -139,6 +140,7 @@ sub decode_char {
 		}
 	}
 	return ($Opt{'latin1'} && ($Val <= 0xFF)) ? chr($Val) : sprintf(($Opt{'decimal'} ? "&#%u;" : "&#x%X;"), $Val);
+	# }}}
 } # decode_char()
 
 sub print_version {

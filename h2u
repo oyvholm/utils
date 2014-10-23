@@ -71,6 +71,7 @@ sub main {
 } # main()
 
 sub widechar {
+	# {{{
 	my $Val = shift;
 	if ($Val < 0x80) {
 		return sprintf("%c", $Val);
@@ -107,6 +108,7 @@ sub widechar {
 	} else {
 		return widechar(0xFFFD);
 	}
+	# }}}
 } # widechar()
 
 sub print_version {
