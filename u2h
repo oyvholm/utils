@@ -1,41 +1,87 @@
 #!/usr/bin/perl
 
-#==============================================================================
+#=======================================================================
 # u2h
 # File ID: cab2ee1e-5d46-11df-8988-90e6ba3022ac
 # Converts from UTF-8 charset to HTML numeric entities (&#x263A; and &#9786;).
 #
-# Options:
-#   -a  convert Ampersand into entity
-#   -d  use Decimal values
-#   -i  accept Invalid sequences (overlong sequences and surrogates)
-#   -l  convert U+0080 through U+00FF to Latin-1 instead of entities
-#   -s  also convert Standard ascii U+0020 through U+007F
-#
-# Created by Øyvind A. Holm <sunny@sunbase.org>.
-# License: GNU General Public License version 2 or later
-#==============================================================================
+# Character set: UTF-8
+# ©opyleft STDyearDTS– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
 
 use strict;
-require 'getopts.pl'; # FIXME: Generates a warning when command line option is used and -w is specified in the shebang.
+use warnings;
+use Getopt::Long;
 
-$| = 1;
+local $| = 1;
 
-($main::opt_a, $main::opt_d, $main::opt_i, $main::opt_l, $main::opt_s) = (0, 0, 0, 0, 0);
-&Getopts('adils');
+our $Debug = 0;
 
-my $amp_ent = $main::opt_d ? "&#38;" : "&#x26;";
+our %Opt = (
 
-while (<>) {
-	$main::opt_a && s/&/$amp_ent/g;
-	$main::opt_s && s/([\x20-\x7F])/decode_char($1)/ge;
-	s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
-	s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
-	s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
-	s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
-	s/([\xC0-\xDF][\x80-\xBF])/decode_char($1)/ge;
-	print;
+    'ampersand' => 0,
+    'debug' => 0,
+    'decimal' => 0,
+    'help' => 0,
+    'invalid' => 0,
+    'latin1' => 0,
+    'standard' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'ampersand|a' => \$Opt{'ampersand'},
+    'debug' => \$Opt{'debug'},
+    'decimal|d' => \$Opt{'decimal'},
+    'help|h' => \$Opt{'help'},
+    'invalid|i' => \$Opt{'invalid'},
+    'latin1|l' => \$Opt{'latin1'},
+    'standard|s' => \$Opt{'standard'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
 }
+
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    my $amp_ent = $Opt{'decimal'} ? "&#38;" : "&#x26;";
+
+    while (<>) {
+        $Opt{'ampersand'} && s/&/$amp_ent/g;
+        $Opt{'standard'} && s/([\x20-\x7F])/decode_char($1)/ge;
+        s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+        s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+        s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+        s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])/decode_char($1)/ge;
+        s/([\xC0-\xDF][\x80-\xBF])/decode_char($1)/ge;
+        print;
+    }
+
+    return($Retval);
+    # }}}
+} # main()
 
 sub decode_char {
 	my $Msg = shift;
@@ -43,13 +89,13 @@ sub decode_char {
 	if ($Msg =~ /^([\x20-\x7F])$/) {
 		$Val = ord($1);
 	} elsif ($Msg =~ /^([\xC0-\xDF])([\x80-\xBF])/) {
-		if (!$main::opt_i && $Msg =~ /^[\xC0-\xC1]/) {
+		if (!$Opt{'invalid'} && $Msg =~ /^[\xC0-\xC1]/) {
 			$Val = 0xFFFD;
 		} else {
 			$Val = ((ord($1) & 0x1F) << 6) | (ord($2) & 0x3F);
 		}
 	} elsif ($Msg =~ /^([\xE0-\xEF])([\x80-\xBF])([\x80-\xBF])/) {
-		if (!$main::opt_i && $Msg =~ /^\xE0[\x80-\x9F]/) {
+		if (!$Opt{'invalid'} && $Msg =~ /^\xE0[\x80-\x9F]/) {
 			$Val = 0xFFFD;
 		} else {
 			$Val = ((ord($1) & 0x0F) << 12) |
@@ -57,7 +103,7 @@ sub decode_char {
 			       ( ord($3) & 0x3F);
 		}
 	} elsif ($Msg =~ /^([\xF0-\xF7])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
-		if (!$main::opt_i && $Msg =~ /^\xF0[\x80-\x8F]/) {
+		if (!$Opt{'invalid'} && $Msg =~ /^\xF0[\x80-\x8F]/) {
 			$Val = 0xFFFD;
 		} else {
 			$Val = ((ord($1) & 0x07) << 18) |
@@ -66,7 +112,7 @@ sub decode_char {
 			       ( ord($4) & 0x3F);
 		}
 	} elsif ($Msg =~ /^([\xF8-\xFB])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
-		if (!$main::opt_i && $Msg =~ /^\xF8[\x80-\x87]/) {
+		if (!$Opt{'invalid'} && $Msg =~ /^\xF8[\x80-\x87]/) {
 			$Val = 0xFFFD;
 		} else {
 			$Val = ((ord($1) & 0x03) << 24) |
@@ -76,7 +122,7 @@ sub decode_char {
 			       ( ord($5) & 0x3F);
 		}
 	} elsif ($Msg =~ /^([\xFC-\xFD])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])([\x80-\xBF])/) {
-		if (!$main::opt_i && $Msg =~ /^\xFC[\x80-\x83]/) {
+		if (!$Opt{'invalid'} && $Msg =~ /^\xFC[\x80-\x83]/) {
 			$Val = 0xFFFD;
 		} else {
 			$Val = ((ord($1) & 0x01) << 30) |
@@ -87,15 +133,86 @@ sub decode_char {
 			       ( ord($6) & 0x3F);
 		}
 	}
-	unless ($main::opt_i) {
+	unless ($Opt{'invalid'}) {
 		if (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
 			$Val = 0xFFFD;
 		}
 	}
-	return ($main::opt_l && ($Val <= 0xFF)) ? chr($Val) : sprintf(($main::opt_d ? "&#%u;" : "&#x%X;"), $Val);
+	return ($Opt{'latin1'} && ($Val <= 0xFF)) ? chr($Val) : sprintf(($Opt{'decimal'} ? "&#%u;" : "&#x%X;"), $Val);
 } # decode_char()
 
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -a, --ampersand
+    Convert Ampersand into entity.
+  -d, --decimal
+    Use decimal values.
+  -h, --help
+    Show this help.
+  -i, --invalid
+    Accept invalid sequences (overlong sequences and surrogates).
+  -l, --latin1
+    Convert U+0080 through U+00FF to latin-1 instead of entities.
+  -s, --standard
+    Also convert standard ascii U+0020 through U+007F.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
+
 __END__
+
+# Plain Old Documentation (POD) {{{
 
 =pod
 
@@ -112,7 +229,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along 
-with this program; if not, write to the Free Software Foundation, Inc., 
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
 
 =cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
