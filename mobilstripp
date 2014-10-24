@@ -44,6 +44,7 @@ grep -v \
 -e /QrDroid/tmp/ \
 -e /\\.ActionMemo/ \
 -e /\\.cgeo/ \
+-e /\\.samsungvideohub/cache/ \
 -e /annex/mobile/ \
 -e /foursquare/cache/ \
 -e /foursquare/category_cache/ \
