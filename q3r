@@ -73,7 +73,7 @@ $Opt{'after'} && $Opt{'before'} && die("$progname: Cannot combine --after and --
 my @files = @ARGV;
 
 for (@files) {
-    -f $_ || die("$progname: $_: File not found, aborting. No files renamed.\n");
+    (-f $_ || -l $_) || die("$progname: $_: File not found, aborting. No files renamed.\n");
     valid_filename($_) || die("$progname: $_: Invalid file name, aborting. No files renamed.\n");
 }
 
