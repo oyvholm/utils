@@ -124,6 +124,7 @@ sub main {
     installed('mc --version', '/GNU Midnight Commander/', 'stdout');
     installed('perl --version', '/This is perl( |, v)5/', 'stdout');
     installed('python --version', '/Python (2|3)/', 'stderr');
+    installed('python3 --version', '/^Python 3/', 'stdout');
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
     installed('screen --version', '/^Screen version \d/', 'stdout');
     installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
@@ -170,6 +171,7 @@ sub main {
         installed('lame --version', '/LAME .* version /', 'stdout');
         installed('lftp --version', '/^LFTP .+Version \d/', 'stdout');
         installed('lynx --version', '/^Lynx Version \d/', 'stdout');
+        installed('lzip --version', '/^Lzip \d/', 'stdout');
         installed('mosh --version', '/^mosh \d/', 'stderr');
         installed('mplayer -V', '/^MPlayer2 /', 'stdout');
         installed('mutt -h', '/^Mutt \d/', 'stdout');
@@ -181,12 +183,15 @@ sub main {
         installed('okular --version', '/Okular: \d/', 'stdout');
         installed('pandoc --version', '/^pandoc \d\./', 'stdout');
         installed('pinfo --version', '/^Przemek\'s Info Viewer /', 'stdout');
+        installed('pip --version', '/^pip \d/', 'stdout');
+        installed('pip3 --version', '/^pip \d/', 'stdout');
         installed('psql --version', '/psql \(PostgreSQL\)/', 'stdout');
         installed('pv --version', '/^pv \d/', 'stdout');
         installed('pylint --version', '/^pylint \d/', 'stdout');
         installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
         installed('recode --version', '/^Free recode \d/', 'stdout');
         installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
+        installed('rzip --version', '/^rzip version \d/', 'stdout');
         installed('shutter -v', '/^\d+\.\d+\.\d+ Rev\.\d+/', 'stdout');
         installed('sqlite3 --version', '/^\d\.\d/', 'stdout');
         installed('sshfs --version', '/SSHFS version \d/', 'stdout');
@@ -208,6 +213,7 @@ sub main {
         installed('xmllint --version', '/^xmllint: using libxml version /', 'stderr');
         installed('xmlto --version', '/^xmlto version \d/', 'stdout');
         installed('xtightvncviewer -h', '/^TightVNC Viewer /', 'stderr');
+        installed('xz --version', '/^xz \(XZ Utils\) \d/s', 'stdout');
         installed('youtube-dl --version', '/^20\d\d\.\d\d\.\d\d/', 'stdout');
         installed('zip -v', '/This is Zip \d.*Info-ZIP/', 'stdout');
 
