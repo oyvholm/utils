@@ -2,10 +2,11 @@
 
 # File ID: 30375978-63a4-11e0-9d08-00023faf1383
 
-test -e /bellmann.mrk || { echo Skal kjøres på bellmann. >&2; exit 1; }
+progname=fra_linode
+test -e /bellmann.mrk || { echo $progname: Skal kjøres på bellmann. >&2; exit 1; }
 lockdir=~/.fra_linode.LOCK
 mkdir $lockdir || {
-    echo $0: Ser ut som det kjører en allerede, klarte ikke å mekke lockdir $lockdir >&2;
+    echo $progname: Ser ut som det kjører en allerede, klarte ikke å mekke lockdir $lockdir >&2;
     exit 1;
 }
 
