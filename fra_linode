@@ -2,7 +2,7 @@
 
 # File ID: 30375978-63a4-11e0-9d08-00023faf1383
 
-test -e /surkle.mrk || { echo Skal kjøres på surkle. >&2; exit 1; }
+test -e /bellmann.mrk || { echo Skal kjøres på bellmann. >&2; exit 1; }
 lockdir=~/.fra_linode.LOCK
 mkdir $lockdir || {
     echo $0: Ser ut som det kjører en allerede, klarte ikke å mekke lockdir $lockdir >&2;
@@ -13,5 +13,5 @@ unset bw
 test -z "$1" || bw=" --bwlimit=$1"
 echo bw = \"$bw\"
 
-rsync -avP$bw sunny@sunbase.org:dl/til_surkle/ ~/dl/fra_linode/
+rsync -avP$bw sunny@sunbase.org:dl/til_bellmann/ ~/dl/fra_linode/
 rmdir $lockdir
