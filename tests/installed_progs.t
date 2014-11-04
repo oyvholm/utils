@@ -200,6 +200,7 @@ sub main {
         installed('tig --version', '/^tig version /', 'stdout');
         installed('tmux -V', '/^tmux \d\./', 'stdout');
         installed('tree --version', '/^tree v\d\./', 'stdout');
+        installed('trickle -V', '/^trickle: version \d/', 'stderr');
         installed('ufraw --version', '/^ufraw \d/', 'stderr');
         installed('unrar --version', '/UNRAR \d/', 'stdout');
         installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
