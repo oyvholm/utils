@@ -14,5 +14,8 @@ unset bw
 test -z "$1" || bw=" --bwlimit=$1"
 echo bw = \"$bw\"
 
-rsync -avP$bw sunny@sunbase.org:dl/til_bellmann/ ~/dl/fra_linode/
+until rsync -avP$bw --timeout=120 sunny@sunbase.org:dl/til_bellmann/ ~/dl/fra_linode/; do
+    echo $progname: rsync failed, retrying...
+    sleep 2
+done
 rmdir $lockdir
