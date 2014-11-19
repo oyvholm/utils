@@ -102,6 +102,7 @@ if ($Opt{'version'}) {
         "at the same time\n");
 
 if ($Opt{'all-options'}) {
+    $Opt{'allbr'} = 1;
     $Opt{'dangling'} = 1;
     $Opt{'delete-dangling'} = 1;
     $Opt{'fetch-prune'} = 1;
@@ -442,7 +443,7 @@ Options:
     To disable: git config git-update-dirs.no-exec-after true
 
   -A, --all-options
-    Run the program as if "-lFpgdPsD" had been specified.
+    Run the program as if "-lFpgdaPsD" had been specified.
   -h, --help
     Show this help.
   -n, --dry-run
