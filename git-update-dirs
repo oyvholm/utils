@@ -62,7 +62,7 @@ GetOptions(
 
     "aggressive-compress|C" => \$Opt{'aggressive-compress'},
     "all-options|A" => \$Opt{'all-options'},
-    "allbr|a" => \$Opt{'allbr'},
+    "allbr|a+" => \$Opt{'allbr'},
     "compress|c" => \$Opt{'compress'},
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
@@ -241,7 +241,7 @@ LOOP: for my $f (@Dirs) {
         }
         if (should('allbr')) {
                 $is_bare || mysystem("git", "nobr");
-                mysystem("git", "allbr", "-a");
+                ($is_bare || $Opt{'allbr'} > 1) && mysystem("git", "allbr", "-a");
                 $is_bare || mysystem("git", "checkout", "-");
         }
         if (should('push')) {
@@ -419,7 +419,9 @@ Options:
     branches.
     To disable: git config git-update-dirs.no-dangling true
   -a, --allbr
-    Execute "git nobr", "git allbr -a" and "git commit -".
+    Execute "git nobr", "git allbr -a" and "git commit -". If this 
+    option is specified once, it's only executed in bare repos. To also 
+    execute it in non-bare repos, it must be specified twice.
     To disable: git config git-update-dirs.no-allbr true
   -P, --push
     Also execute "git pa".
