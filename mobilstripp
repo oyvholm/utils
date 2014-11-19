@@ -31,6 +31,7 @@ grep -v \
 -e /Android/data/com\\.touchtype\\.swiftkey/files/ \
 -e /Android/data/com\\.tripadvisor\\.tripadvisor/files/MapResources/ \
 -e /Android/data/dentex\\.youtube\\.downloader/files/cache/ \
+-e /Android/data/org\\.videolan\\.vlc/cache/art/ \
 -e /Android/data/reddit\\.news/cache/ \
 -e /BeyondPod/Podcasts/ \
 -e /Camera360/TempData/ \
