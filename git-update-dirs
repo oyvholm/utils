@@ -62,7 +62,7 @@ GetOptions(
 
     "aggressive-compress|C" => \$Opt{'aggressive-compress'},
     "all-options|A" => \$Opt{'all-options'},
-    "allbr|a" => \$Opt{'allbr'},
+    "allbr|a+" => \$Opt{'allbr'},
     "compress|c" => \$Opt{'compress'},
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
@@ -102,6 +102,7 @@ if ($Opt{'version'}) {
         "at the same time\n");
 
 if ($Opt{'all-options'}) {
+    $Opt{'allbr'} = 1;
     $Opt{'dangling'} = 1;
     $Opt{'delete-dangling'} = 1;
     $Opt{'fetch-prune'} = 1;
@@ -240,7 +241,7 @@ LOOP: for my $f (@Dirs) {
         }
         if (should('allbr')) {
                 $is_bare || mysystem("git", "nobr");
-                mysystem("git", "allbr", "-a");
+                ($is_bare || $Opt{'allbr'} > 1) && mysystem("git", "allbr", "-a");
                 $is_bare || mysystem("git", "checkout", "-");
         }
         if (should('push')) {
@@ -418,7 +419,9 @@ Options:
     branches.
     To disable: git config git-update-dirs.no-dangling true
   -a, --allbr
-    Execute "git nobr", "git allbr -a" and "git commit -".
+    Execute "git nobr", "git allbr -a" and "git commit -". If this 
+    option is specified once, it's only executed in bare repos. To also 
+    execute it in non-bare repos, it must be specified twice.
     To disable: git config git-update-dirs.no-allbr true
   -P, --push
     Also execute "git pa".
@@ -442,7 +445,7 @@ Options:
     To disable: git config git-update-dirs.no-exec-after true
 
   -A, --all-options
-    Run the program as if "-lFpgdPsD" had been specified.
+    Run the program as if "-lFpgdaPsD" had been specified.
   -h, --help
     Show this help.
   -n, --dry-run
