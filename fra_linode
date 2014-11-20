@@ -5,6 +5,13 @@
 progname=fra_linode
 test -e /bellmann.mrk || { echo $progname: Skal kjøres på bellmann. >&2; exit 1; }
 lockdir=~/.fra_linode.LOCK
+
+myexit() {
+    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
+    exit $1
+}
+
+trap "myexit 1" INT TERM
 mkdir $lockdir || {
     echo $progname: Ser ut som det kjører en allerede, klarte ikke å mekke lockdir $lockdir >&2;
     exit 1;
