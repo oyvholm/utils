@@ -12,4 +12,4 @@ fi
 if test "$1" = "init"; then
     git config --get annex.uuid | grep -q . || git config annex.uuid $(suuid -wa -t ga_init)
 fi
-/opt/git-annex/git-annex "$@"
+git-annex "$@"
