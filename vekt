@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# vekt
+# File ID: 5058c2e0-8250-11e4-b29f-fefdb24f8e10
+#
+# Update vekt.dat
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=vekt
+
+test -z "$1" && { echo $progname: No value specified >&2; exit 1; }
+echo $(date -u +"%Y-%m-%dT%H:%M:%SZ") $1 >>~/src/git/conf/div/vekt/vekt.dat
