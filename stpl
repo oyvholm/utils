@@ -187,8 +187,6 @@ END
 plot \\
 "$data_file" using 1:2 title " " with $line_type linetype 1, \\
 "$data_file" using 1:2 smooth bezier title " " with line linetype -1 linewidth 2$line_str
-
-pause -1 "stpl: Press Enter..."
 END
 
         close(GnupFP);
