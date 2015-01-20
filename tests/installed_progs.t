@@ -124,7 +124,7 @@ sub main {
     installed('mc --version', '/GNU Midnight Commander/', 'stdout');
     installed('perl --version', '/This is perl( |, v)5/', 'stdout');
     installed('python --version', '/Python (2|3)/', 'stderr');
-    installed('python3 --version', '/^Python 3/', 'stdout');
+    installed('python3 --version', '/^Python 3/', 'both');
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
     installed('screen --version', '/^Screen version \d/', 'stdout');
     installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
