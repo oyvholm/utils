@@ -143,6 +143,7 @@ sub main {
     installed('top -v', '/procps(-ng)? version \d/', 'stdout');
     installed('tree --version', '/^tree v\d\./', 'stdout');
     installed('uprecords -v', '/^uprecords \d/', 'stdout');
+    installed('uuencode --version', '/^uuencode \(GNU sharutils\)/', 'stdout');
     installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'stdout', 'OSSP uuid');
     installed('vim --version', '/VIM - Vi IMproved 7\../', 'stdout');
     installed('wget --version', '/GNU Wget/', 'stdout');
