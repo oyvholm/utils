@@ -76,6 +76,7 @@ if test "$comp" != "linode"; then
     create cruzer /media/cruzer/annex
     create exthd /media/exthd/annex
     create pavi /media/pavi/annex
+    create softsell-32g /media/softsell-32g/annex
     create ubstud /media/ubstud-annex/annex
     create usb32g-1 /media/usb32g-1/annex
     create usb32g-2 /media/usb32g-2/annex
