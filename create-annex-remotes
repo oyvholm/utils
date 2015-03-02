@@ -81,6 +81,7 @@ if test "$comp" != "linode"; then
     create ubstud /media/ubstud-annex/annex
     create usb32g-1 /media/usb32g-1/annex
     create usb32g-2 /media/usb32g-2/annex
+    create usb32g-3 /media/usb32g-3/annex
 
     test -n "$remove_remotes" && $simul git remote rm linode 2>/dev/null
     if test -n "$is_top"; then
