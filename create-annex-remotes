@@ -17,6 +17,9 @@ progname=create-annex-remotes
 # Set to "echo" to simulate
 simul=
 
+tmp_begin_file=/tmp/.$progname.beg.tmp
+tmp_end_file=/tmp/.$progname.end.tmp
+
 comp="$(hostname)"
 test "$comp" = "bellmann" -o "$comp" = "linode" || {
     echo $progname: $comp: Unknown computer, should be \"bellmann\" or \"linode\" >&2
@@ -68,6 +71,8 @@ create() {
     fi
 }
 
+git remote -v | cut -f 1 | sort -u >$tmp_begin_file
+
 create bellmann /bellmann/home/annex
 create passp /media/passp-1tb-annex/annex
 create seagate-3tb /media/seagate-3tb/annex
@@ -92,4 +97,5 @@ if test "$comp" != "linode"; then
     fi
 fi
 
-$simul git remote -v
+git remote -v | cut -f 1 | sort -u >$tmp_end_file
+diff -U0 $tmp_begin_file $tmp_end_file | grep -E '^[+\-][^+\-]'
