@@ -2,7 +2,7 @@
 
 # commify
 # File ID: 895db0b6-5d37-11df-92d4-90e6ba3022ac
-# Setter inn punktumer i nummer.
+# Setter inn understrek i nummer.
 
 use strict;
 use Getopt::Std;
@@ -11,7 +11,7 @@ our $opt_s;
 
 getopts('s:');
 
-defined($opt_s) || ($opt_s = ".");
+defined($opt_s) || ($opt_s = "_");
 
 while (<>) {
 	s/(\d{3,})/commify($1)/ge;
