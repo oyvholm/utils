@@ -75,13 +75,13 @@ git remote -v | cut -f 1 | sort -u >$tmp_begin_file
 
 create bellmann /bellmann/home/annex
 create passp /media/passp-1tb-annex/annex
+create pavi /media/pavi/annex
 create seagate-3tb /media/seagate-3tb/annex
 
 if test "$comp" != "linode"; then
     create cruzer /media/cruzer/annex
     create dennis-32g-1 /media/dennis-32g-1/annex
     create exthd /media/exthd/annex
-    create pavi /media/pavi/annex
     create softsell-32g /media/softsell-32g/annex
     create ubstud /media/ubstud-annex/annex
     create usb32g-1 /media/usb32g-1/annex
