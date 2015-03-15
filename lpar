@@ -57,16 +57,18 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+if (defined($Opt{'set'}) && $Opt{'set'} eq '?') {
+    printf("%s\n", get_config_value('lpar.name'));
+    exit(0);
+}
+
 $Opt{'all'} || system("lpar -a");
 
 if (defined($Opt{'set'})) {
     my $name = $Opt{'set'};
     my $prev = get_config_value('lpar.name');
     if (length($name)) {
-        if ($name eq '?') {
-            print("$prev\n");
-            exit(0);
-        } elsif (valid_repo_name($name)) {
+        if (valid_repo_name($name)) {
             if ($name eq $prev) {
                 msg(0, "Value of lpar.name is already '$name', doing nothing");
                 exit(1);
