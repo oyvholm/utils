@@ -73,6 +73,16 @@ create() {
 
 git remote -v | cut -f 1 | sort -u >$tmp_begin_file
 
+if test -n "$is_top"; then
+    if test "$(lpar -s?)" != "annex"; then
+        lpar -s annex
+    fi
+else
+    if test "$(lpar -s?)" != "annex-$base"; then
+        lpar -s "annex-$base"
+    fi
+fi
+
 create bellmann /bellmann/home/annex
 create passp /media/passp-1tb-annex/annex
 create pavi /media/pavi/annex
