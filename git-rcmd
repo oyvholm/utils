@@ -3,7 +3,7 @@
 #=======================================================================
 # git-rpull
 # File ID: 8ed5e844-cf09-11e4-b7ff-000df06acc56
-# [Description]
+# Execute command in remote Git repositories
 #
 # Character set: UTF-8
 # ©opyleft 2012– Øyvind A. Holm <sunny@sunbase.org>
@@ -21,6 +21,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'cmd' => '',
     'debug' => 0,
     'help' => 0,
     'verbose' => 0,
@@ -35,6 +36,7 @@ our $VERSION = '0.00';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'cmd|c=s' => \$Opt{'cmd'},
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -47,6 +49,10 @@ $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
+}
+
+if (!length($Opt{'cmd'})) {
+    die("$progname: -c/--cmd option not specified\n");
 }
 
 exit(main(%Opt));
@@ -70,7 +76,7 @@ sub main {
                         'ssh',
                         '-A',
                         "$username\@$host",
-                        "cd $userdir && git pull --ff-only",
+                        "cd $userdir && $Opt{'cmd'}",
                     );
                     msg(0, "Executing '" . join(' ', @cmd) . "'");
                     system(@cmd);
@@ -102,14 +108,17 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options]
+Usage: $progname [options] -c COMMAND
 
-Update remote repositories via ssh. Scans all available remotes and 
-checks if it looks SSHish. If it does, it logs in and executes 
-"git pull --ff-only" in the directory.
+Execute commands in remote repositories via ssh. Scans all available 
+remotes and checks if it looks SSHish. If it does, it logs in and 
+executes the command specified with the -c/--cmd option in the 
+directory.
 
 Options:
 
+  -c COMMAND, --cmd COMMAND
+    Execute COMMAND in remote repositories.
   -h, --help
     Show this help.
   -v, --verbose
