@@ -82,6 +82,7 @@ sub main {
                     );
                     mysystem(@cmd);
                     $done{"$username$host$userdir"} = 1;
+                    print("\n");
                 }
             } elsif (-d "$url/.") {
                 if (!defined($done{"$url"}) && chdir($url)) {
@@ -89,6 +90,7 @@ sub main {
                     msg(0, "chdir $url");
                     mysystem($Opt{'cmd'});
                     $done{"$url"} = 1;
+                    print("\n");
                 }
             }
         }
