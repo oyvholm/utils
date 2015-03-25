@@ -26,6 +26,7 @@ our %Opt = (
     'dry-run' => 0,
     'help' => 0,
     'local' => 0,
+    'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -43,12 +44,14 @@ GetOptions(
     'dry-run|n' => \$Opt{'dry-run'},
     'help|h' => \$Opt{'help'},
     'local|l' => \$Opt{'local'},
+    'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -85,7 +88,7 @@ sub main {
                     );
                     mysystem(@cmd);
                     $done{"$username$host$userdir"} = 1;
-                    print("\n");
+                    $Opt{'verbose'} >= 0 && print("\n");
                 }
             } elsif (-d "$url/.") {
                 if (!defined($done{"$url"}) && chdir($url)) {
@@ -93,7 +96,7 @@ sub main {
                     msg(0, "chdir $url");
                     mysystem($Opt{'cmd'});
                     $done{"$url"} = 1;
-                    print("\n");
+                    $Opt{'verbose'} >= 0 && print("\n");
                 }
             }
         }
@@ -157,6 +160,8 @@ Options:
     Also execute the command in the local repository.
   -n, --dry-run
     Simulate, don't actually execute any commands.
+  -q, --quiet
+    Get less noisy. Can be repeated to increase quietness.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
