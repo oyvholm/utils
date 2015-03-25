@@ -5,10 +5,12 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+progname=ciall
+
 test "$1" = "-d" && {
-    test "$(git config --get ciall.noemptydirs)" = "true" && { echo ciall: -d option not allowed here >&2; exit 1; }
+    test "$(git config --get ciall.noemptydirs)" = "true" && { echo $progname: -d option not allowed here >&2; exit 1; }
     shift;
-    echo -n ciall: Executing git-store-dirs... >&2
+    echo -n $progname: Executing git-store-dirs... >&2
     git store-dirs || {
         echo git-store-dirs error >&2;
         exit 1;
@@ -17,13 +19,13 @@ test "$1" = "-d" && {
 }
 besafe=n
 test "$1" = "-y" && { besafe=y; shift; }
-echo ciall: git status 1... >&2
-LC_ALL=C git status . | grep "^nothing to commit" && { echo ciall: Nothing to do here.; exit 0; }
+echo $progname: git status 1... >&2
+LC_ALL=C git status . | grep "^nothing to commit" && { echo $progname: Nothing to do here.; exit 0; }
 
 unset logmsg
 [ ! -z "$1" ] && logmsg="$*"
 
-echo ciall: git status 2... >&2
+echo $progname: git status 2... >&2
 git status .
 echo
 echo "Log message: '$logmsg'"
@@ -37,10 +39,10 @@ if [ "$logmsg" = "--" ]; then
     tmpmsgfile=/tmp/$(date +%s)-$$.tmp
     $EDITOR $tmpmsgfile
     logmsg=$(cat $tmpmsgfile)
-    test -z "$logmsg" && { echo ciall: No text entered in editor, aborting.; exit 1; }
+    test -z "$logmsg" && { echo $progname: No text entered in editor, aborting.; exit 1; }
 fi
 
-echo ciall: git status 3... >&2
+echo $progname: git status 3... >&2
 LC_ALL=C git status . | grep "^nothing to commit" || (git add --all . && git commit -m "$logmsg`echo; echo; suuid -t ciall -c "$logmsg"`")
 echo ========== git status ==========
 git status
