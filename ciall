@@ -43,7 +43,7 @@ if [ "$logmsg" = "--" ]; then
 fi
 
 echo $progname: git status 3... >&2
-LC_ALL=C git status . | grep "^nothing to commit" || (git add --all . && git commit -m "$logmsg`echo; echo; suuid -t $progname -c "$logmsg"`")
+LC_ALL=C git status . | grep "^nothing to commit" || (echo $progname: git add --all .; git add --all . && (echo $progname: git commit; git commit -m "$logmsg`echo; echo; suuid -t $progname -c "$logmsg"`"))
 echo ========== git status ==========
 git status
 exit 0
