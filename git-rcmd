@@ -25,6 +25,7 @@ our %Opt = (
     'debug' => 0,
     'dry-run' => 0,
     'help' => 0,
+    'local' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -41,6 +42,7 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'dry-run|n' => \$Opt{'dry-run'},
     'help|h' => \$Opt{'help'},
+    'local|l' => \$Opt{'local'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -64,6 +66,7 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    $Opt{'local'} && mysystem($Opt{'cmd'});
     open(my $pipefp, 'git remote -v |') or die("$progname: git remote -v: Cannot open pipe: $!\n");
     my %done = ();
     while (my $curr = <$pipefp>) {
@@ -150,6 +153,8 @@ Options:
     Execute COMMAND in remote repositories.
   -h, --help
     Show this help.
+  -l, --local
+    Also execute the command in the local repository.
   -n, --dry-run
     Simulate, don't actually execute any commands.
   -v, --verbose
