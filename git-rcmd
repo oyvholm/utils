@@ -84,7 +84,7 @@ sub main {
                         'ssh',
                         '-A',
                         "$username\@$host",
-                        "cd $userdir && $Opt{'cmd'}",
+                        "cd $userdir && ($Opt{'cmd'})",
                     );
                     mysystem(@cmd);
                     $done{"$username$host$userdir"} = 1;
