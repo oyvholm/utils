@@ -69,7 +69,10 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
-    $Opt{'local'} && mysystem($Opt{'cmd'});
+    if ($Opt{'local'}) {
+        mysystem($Opt{'cmd'});
+        $Opt{'verbose'} >= 0 && print("\n");
+    }
     open(my $pipefp, 'git remote -v |') or die("$progname: git remote -v: Cannot open pipe: $!\n");
     my %done = ();
     while (my $curr = <$pipefp>) {
