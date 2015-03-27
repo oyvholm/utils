@@ -1,3 +1,0 @@
-#!/bin/bash
-
-git bundle create /media/n900/bundle/$1.bundle --all --since=1.month

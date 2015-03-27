@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# avlegs
-# File ID: 23cd55ee-5d37-11df-b849-90e6ba3022ac
-# Extrem latskap. Brukes for å spare diskplass og få oversikt over uryddige
-# greier.
-
-cvs -q upd -dAP -D "1972-01-01" $*
