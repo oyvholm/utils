@@ -36,6 +36,9 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.00';
 
+our $hostname = `hostname`;
+chomp($hostname);
+
 Getopt::Long::Configure('bundling');
 GetOptions(
 
@@ -96,7 +99,7 @@ sub main {
             } elsif (-d "$url/.") {
                 if (!defined($done{"$url"}) && chdir($url)) {
                     next if (!-d ".git/."); # Avoid bare repos
-                    msg(0, "chdir $url");
+                    msg(0, "($hostname) chdir $url");
                     mysystem($Opt{'cmd'});
                     $done{"$url"} = 1;
                     $Opt{'verbose'} >= 0 && print("\n");
@@ -121,7 +124,7 @@ sub check_sig {
 sub mysystem {
     # {{{
     my @cmd = @_;
-    msg(0, sprintf("%s '", $Opt{'dry-run'} ? "Simulating" : "Executing") .
+    msg(0, sprintf("(%s) %s '", $hostname, $Opt{'dry-run'} ? "Simulating" : "Executing") .
         join(" ", @cmd) . "'...");
     $? = 0;
     !$Opt{'dry-run'} && system(@cmd) && check_sig($?);
