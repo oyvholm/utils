@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#=======================================================================
+# git-wait-until-clean
+# File ID: 92d46e22-d5a1-11e4-9769-000df06acc56
+#
+# [Description]
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+while test "$(git status --porcelain)" != ""; do
+    echo Waiting for $(hostname):$(pwd) to be cleaned up... \($(date)\);
+    sleep 5;
+done;
+echo $(hostname):$(pwd) is clean. Continuing...
