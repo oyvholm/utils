@@ -4,7 +4,7 @@
 # git-wait-until-clean
 # File ID: 92d46e22-d5a1-11e4-9769-000df06acc56
 #
-# [Description]
+# Wait until the current Git repository is clean before continuing.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
