@@ -142,11 +142,13 @@ sub main {
     installed('tar --version', '/GNU tar\b/', 'stdout');
     installed('top -v', '/procps(-ng)? version \d/', 'stdout');
     installed('tree --version', '/^tree v\d\./', 'stdout');
+    installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
     installed('uprecords -v', '/^uprecords \d/', 'stdout');
     installed('uuencode --version', '/^uuencode \(GNU sharutils\)/', 'stdout');
     installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'stdout', 'OSSP uuid');
     installed('vim --version', '/VIM - Vi IMproved 7\../', 'stdout');
     installed('wget --version', '/GNU Wget/', 'stdout');
+    installed('zip -v', '/This is Zip \d.*Info-ZIP/', 'stdout');
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
     repeat_test('uuidgen -t', 100, "^$v1_templ\$");
 
@@ -206,7 +208,6 @@ sub main {
         installed('trickle -V', '/^trickle: version \d/', 'stderr');
         installed('ufraw --version', '/^ufraw \d/', 'stderr');
         installed('unrar --version', '/UNRAR \d/', 'stdout');
-        installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
         installed('vlc --version', '/^VLC version \d/', 'stdout');
         installed('whois --version', '/^Version \d/', 'stdout');
         installed('wireshark --version', '/^wireshark \d/', 'stdout');
@@ -217,7 +218,6 @@ sub main {
         installed('xtightvncviewer -h', '/^TightVNC Viewer /', 'stderr');
         installed('xz --version', '/^xz \(XZ Utils\) \d/s', 'stdout');
         installed('youtube-dl --version', '/^20\d\d\.\d\d\.\d\d/', 'stdout');
-        installed('zip -v', '/This is Zip \d.*Info-ZIP/', 'stdout');
 
     }
 
