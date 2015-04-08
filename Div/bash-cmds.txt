@@ -18,5 +18,8 @@ Format USB sticks:
   sess -- mkfs.ext3 -m 0 -L LABEL_MAX_16_BYTES -U `suuid -t mkfs,ext3 -c "TEXT" -wa` /dev/DEVICE
   sess -- mkfs.vfat -n NAME_11_CHARS_MAX -i `suuid -t mkfs,vfat -c "TEXT" -wa | head -c8` /dev/DEVICE
 
+Run fsck on ext* filesystems with progress bar:
+  sess -c "COMMENT" -t fsck -- fsck.extVER -C 0 -p -v /dev/PARTITION
+
 vim: set ts=2 sw=2 sts=2 tw=0 et fo=tcqw fenc=utf8 :
 vim: set com=b\:#,fb\:-,fb\:*,n\:> :
