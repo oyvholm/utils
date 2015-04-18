@@ -8,10 +8,20 @@
 #=======================================================================
 
 progname=multiapt
-cd /etc || { echo $progname: Cannot chdir to /etc >&2; exit 1; }
+
+if test -e "/gitrepos.txt"; then
+    cd /
+    git update-dirs $(cat gitrepos.txt) -q -e "git wait-until-clean"
+fi
+
 for f in "$@"; do
+    cd /etc || { echo $progname: Cannot chdir to /etc >&2; exit 1; }
     echo
     echo apt-get install $f
     apt-get install "$f"
     ciall -d -y apt-get install $f
+    if test -e "/gitrepos.txt"; then
+        cd /
+        git update-dirs $(cat gitrepos.txt) -e "ciall -y apt-get install $f"
+    fi
 done
