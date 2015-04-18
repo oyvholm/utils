@@ -13,5 +13,5 @@ for f in "$@"; do
     echo
     echo apt-get install $f
     apt-get install "$f"
-    ciall -d apt-get install $f
+    ciall -d -y apt-get install $f
 done
