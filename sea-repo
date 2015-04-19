@@ -38,7 +38,11 @@ for f in $*; do
             )
             (
                 $simul cd $searepo && (
-                    test -L /bellmann && test -z "$(git config --get remote.bellmann.url)" && $simul git remote add bellmann /bellmann/home/sunny/src/other/$f
+                    test -L /bellmann && (
+                        test -z "$(git config --get remote.bellmann-src.url)" &&
+                        test -d /bellmann/home/sunny/src/other/$f &&
+                        $simul git remote add bellmann-src /bellmann/home/sunny/src/other/$f
+                    )
                     test -z "$(git config --get remote.origin.url)" && test -n "$origin" && $simul git remote add origin $origin
                     true
                 )
