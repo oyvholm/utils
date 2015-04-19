@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#=======================================================================
+# sea-repo
+# File ID: 0ecaab8c-e677-11e4-8c39-000df06acc56
+#
+# Create repositories in /media/seagate-3tb/repos/Git-other/
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=sea-repo
+
+# Set to "echo" to simulate things
+simul=
+
+for f in $*; do
+    f="$(echo -n $f | sed 's/\/$//')"
+    test -d $f/.git && (
+        cd $f && (
+            echo
+            echo ========== $f ==========
+            searepo=/media/seagate-3tb/repos/Git-other/$f.git
+            origin="$(git config --get remote.origin.url)"
+            test -d $searepo || $simul git init --bare $searepo || {
+                echo $progname: $searepo: cannot initialise repository >&2
+                exit 1
+            }
+            test -z "$(git config --get remote.seagate-3tb.url)" && $simul git remote add seagate-3tb $searepo
+            $simul git merge --ff-only
+            $simul git allbr -a
+            $simul git push --all seagate-3tb
+            $simul git push --tags seagate-3tb
+            test -z "$simul" && (
+                git remote -v >>$searepo/remotes.txt
+                sort -u $searepo/remotes.txt >$searepo/remotes.txt.tmp
+                mv $searepo/remotes.txt.tmp $searepo/remotes.txt
+            )
+            (
+                $simul cd $searepo && (
+                    test -L /bellmann && (
+                        test -z "$(git config --get remote.bellmann.url)" &&
+                        test -d /bellmann/home/sunny/repos/Git-other/$f.git &&
+                        $simul git remote add bellmann /bellmann/home/sunny/repos/Git-other/$f.git
+
+                        test -z "$(git config --get remote.bellmann-src.url)" &&
+                        test -d /bellmann/home/sunny/src/other/$f &&
+                        $simul git remote add bellmann-src /bellmann/home/sunny/src/other/$f
+                    )
+                    test -z "$(git config --get remote.origin.url)" && test -n "$origin" && $simul git remote add origin $origin
+                    true
+                )
+            )
+        )
+    ) || echo $progname: $f/.git: directory not found >&2
+done
