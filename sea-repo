@@ -4,7 +4,7 @@
 # sea-repo
 # File ID: 0ecaab8c-e677-11e4-8c39-000df06acc56
 #
-# [Description]
+# Create repositories in /media/seagate-3tb/repos/Git-other/
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
@@ -12,18 +12,37 @@
 
 progname=sea-repo
 
+# Set to "echo" to simulate things
 simul=
 
 for f in $*; do
     test -d $f/.git && (
-        cd $f &&
-        (
-            echo ========== $f =========
+        cd $f && (
+            echo
+            echo ========== $f ==========
             searepo=/media/seagate-3tb/repos/Git-other/$f.git
-            test -d $searepo || $simul git init --bare $searepo
-            $simul git remote add seagate-3tb $searepo
+            origin="$(git config --get remote.origin.url)"
+            test -d $searepo || $simul git init --bare $searepo || {
+                echo $progname: $searepo: cannot initialise repository >&2
+                exit 1
+            }
+            test -z "$(git config --get remote.seagate-3tb.url)" && $simul git remote add seagate-3tb $searepo
+            $simul git merge --ff-only
+            $simul git allbr -a
             $simul git push --all seagate-3tb
             $simul git push --tags seagate-3tb
+            test -z "$simul" && (
+                git remote -v >>$searepo/remotes.txt
+                sort -u $searepo/remotes.txt >$searepo/remotes.txt.tmp
+                mv $searepo/remotes.txt.tmp $searepo/remotes.txt
+            )
+            (
+                cd $searepo && (
+                    test -L /bellmann && test -z "$(git config --get remote.bellmann.url)" && $simul git remote add bellmann /bellmann/home/sunny/src/other/$f
+                    test -z "$(git config --get remote.origin.url)" && test -n "$origin" && $simul git remote add origin $origin
+                    true
+                )
+            )
         )
-    ) || echo $progname: $f mangler .git >&2
+    ) || echo $progname: $f/.git: directory not found >&2
 done
