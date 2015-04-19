@@ -16,6 +16,7 @@ progname=sea-repo
 simul=
 
 for f in $*; do
+    f="$(echo -n $f | sed 's/\/$//')"
     test -d $f/.git && (
         cd $f && (
             echo
