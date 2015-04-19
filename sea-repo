@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#=======================================================================
+# sea-repo
+# File ID: 0ecaab8c-e677-11e4-8c39-000df06acc56
+#
+# [Description]
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=sea-repo
+
+simul=
+
+for f in $*; do
+    test -d $f/.git && (
+        cd $f &&
+        (
+            echo ========== $f =========
+            searepo=/media/seagate-3tb/repos/Git-other/$f.git
+            test -d $searepo || $simul git init --bare $searepo
+            $simul git remote add seagate-3tb $searepo
+            $simul git push --all seagate-3tb
+            $simul git push --tags seagate-3tb
+        )
+    ) || echo $progname: $f mangler .git >&2
+done
