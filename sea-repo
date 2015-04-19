@@ -37,7 +37,7 @@ for f in $*; do
                 mv $searepo/remotes.txt.tmp $searepo/remotes.txt
             )
             (
-                cd $searepo && (
+                $simul cd $searepo && (
                     test -L /bellmann && test -z "$(git config --get remote.bellmann.url)" && $simul git remote add bellmann /bellmann/home/sunny/src/other/$f
                     test -z "$(git config --get remote.origin.url)" && test -n "$origin" && $simul git remote add origin $origin
                     true
