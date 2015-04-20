@@ -10,6 +10,9 @@ progname=ga
 if test "$1" = "init"; then
     if test -z "$(git config --get annex.uuid)"; then
         git config annex.uuid $(suuid -wa -t ga_init)
+    else
+        echo $progname: Repository is already initialised for git-annex >&2
+        exit 1
     fi
 else
     test -z "$(git config --get annex.uuid)" && { echo $progname: annex.uuid is not defined, aborting >&2; exit 1; }
