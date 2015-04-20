@@ -117,6 +117,7 @@ sub main {
     installed('dict --version', '/^dict \d/', 'stdout');
     installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n$/', 'stdout', 'Use C sorting order');
     installed('find --version', '/GNU findutils/', 'stdout');
+    installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
     installed('git --version', '/git version/', 'stdout');
     installed('git-annex version', '/^git-annex version: /', 'stdout');
@@ -170,7 +171,6 @@ sub main {
         installed('fdupes --version', '/^fdupes \d\./', 'stdout');
         installed('flac --version', '/^flac /', 'stdout');
         installed('flex --version', '/^flex \d/', 'stdout');
-        installed('gadu --version', '/git-annex-utils \d/', 'stdout');
         installed('geeqie --version', '/^Geeqie \d\./', 'stderr');
         installed('gettext --version', '/GNU gettext/', 'stdout');
         installed('gnucash --version', '/GnuCash \d\./', 'stdout');
