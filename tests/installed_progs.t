@@ -200,6 +200,7 @@ sub main {
         installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
         installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
         installed('rzip --version', '/^rzip version \d/', 'stdout');
+        installed('scriptreplay --help', '/-m, --maxdelay/', 'stdout', 'scriptreplay has -m/--maxdelay');
         installed('shutter -v', '/^\d+\.\d+\.\d+ Rev\.\d+/', 'stdout');
         installed('strace -V', '/^strace -- version \d/', 'stdout');
         installed('svn --version', '/svn, version /', 'stdout');
