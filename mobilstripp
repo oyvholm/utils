@@ -51,4 +51,4 @@ grep -v \
 -e /foursquare/category_cache/ \
 -e /foursquare/photo_cache/ \
 -e \\.pcg\$ \
--e ☠_her_har_vi_slutten
+-e ☠_her_har_vi_slutten | less
