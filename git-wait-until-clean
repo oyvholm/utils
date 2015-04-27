@@ -10,7 +10,10 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-while test "$(git status --porcelain)" != ""; do
+unset u_str
+test "$1" = "-u" && { u_str=" --untracked-files=no"; shift; }
+
+while test "$(git status --porcelain$u_str)" != ""; do
     echo Waiting for $(hostname):$(pwd) to be cleaned up... \($(date)\);
     sleep 5;
 done;
