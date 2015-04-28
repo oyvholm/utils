@@ -9,6 +9,9 @@
 
 progname=multiapt
 
+cmd_str=install
+test "$1" = "-u" && { cmd_str=upgrade; shift; }
+
 if test -e "/gitrepos.txt"; then
     cd /
     git update-dirs $(cat gitrepos.txt) -q -e "git wait-until-clean"
@@ -19,9 +22,20 @@ for f in "$@"; do
     echo
     echo apt-get install $f
     apt-get install "$f"
-    ciall -d -y apt-get install $f
+    if test "$cmd_str" = "install"; then
+        ciall -d -y apt-get install $f
+    elif test "$cmd_str" = "upgrade"; then
+        ciall -d -y upgrade package $f
+    else
+        echo $progname: invalid \$cmd_str value: \"$cmd_str\" >&2
+        exit 1
+    fi
     if test -e "/gitrepos.txt"; then
         cd /
-        git update-dirs $(cat gitrepos.txt) -e "ciall -y apt-get install $f"
+        if test "$cmd_str" = "install"; then
+            git update-dirs $(cat gitrepos.txt) -e "ciall -y apt-get install $f"
+        elif test "$cmd_str" = "upgrade"; then
+            git update-dirs $(cat gitrepos.txt) -e "ciall -y upgrade package $f"
+        fi
     fi
 done
