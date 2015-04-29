@@ -33,6 +33,7 @@ our %Opt = (
     'debug' => 0,
     'gui' => 0,
     'help' => 0,
+    'other' => 0,
     'todo' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -50,6 +51,7 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'gui|g' => \$Opt{'gui'},
     'help|h' => \$Opt{'help'},
+    'other|o' => \$Opt{'other'},
     'todo|t' => \$Opt{'todo'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -155,7 +157,7 @@ sub main {
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
     repeat_test('uuidgen -t', 100, "^$v1_templ\$");
 
-    if ($Opt{'all'}) {
+    if ($Opt{'other'} || $Opt{'all'}) {
 
         diag("Checking other software...");
         installed('arj', '/^ARJ\S*? v \d/', 'stdout');
@@ -406,6 +408,9 @@ Options:
     Also check for programs that need a graphical environment.
   -h, --help
     Show this help.
+  -o/--other
+    Check for other software, programs that aren't essential for a 
+    wonderful life.
   -t, --todo
     Run only the TODO tests.
   -v, --verbose
