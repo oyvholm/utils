@@ -125,6 +125,7 @@ sub main {
     installed('gcc --version', '/^gcc /', 'stdout');
     installed('git --version', '/git version/', 'stdout');
     installed('git-annex version', '/^git-annex version: /', 'stdout');
+    installed('gnuplot --version', '/^gnuplot /', 'stdout');
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
     installed('grep --version', '/GNU grep/', 'stdout');
     installed('gzip --version', '/^gzip \d/', 'stdout');
@@ -216,7 +217,6 @@ sub main {
         installed('geeqie --version', '/^Geeqie \d\./', 'stderr');
         installed('gnucash --version', '/GnuCash \d\./', 'stdout');
         installed('gnumeric --version', '/^gnumeric version /', 'stdout');
-        installed('gnuplot --version', '/^gnuplot /', 'stdout');
         installed('gource --help', '/Gource v\d/', 'stdout');
         installed('inkscape -V', '/^Inkscape \d/', 'stdout');
         installed('mplayer -V', '/^MPlayer2 /', 'stdout');
