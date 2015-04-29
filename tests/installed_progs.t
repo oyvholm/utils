@@ -99,7 +99,7 @@ sub main {
         comm cp csplit cut date dd df dir dircolors dirname du /bin/echo 
         env expand expr factor /bin/false fmt fold groups head hostid id 
         install join link ln logname ls md5sum mkdir mkfifo mknod mktemp 
-        mv nice nl nohup nproc od paste pathchk pinky pr printenv 
+        mv nice nl nohup nproc numfmt od paste pathchk pinky pr printenv 
         /usr/bin/printf ptx /bin/pwd readlink rm rmdir runcon seq 
         sha1sum sha224sum sha256sum sha384sum sha512sum shred sleep sort 
         split stat stty sum sync tac tail tee timeout touch tr /bin/true 
