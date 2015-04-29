@@ -31,6 +31,7 @@ our %Opt = (
 
     'all' => 0,
     'debug' => 0,
+    'gui' => 0,
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
@@ -47,6 +48,7 @@ GetOptions(
 
     'all|a' => \$Opt{'all'},
     'debug' => \$Opt{'debug'},
+    'gui|g' => \$Opt{'gui'},
     'help|h' => \$Opt{'help'},
     'todo|t' => \$Opt{'todo'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -156,13 +158,10 @@ sub main {
     if ($Opt{'all'}) {
 
         diag("Checking other software...");
-        installed('abiword --version', '/^\d\.\d+\.\d+/', 'stdout');
         installed('arj', '/^ARJ\S*? v \d/', 'stdout');
         installed('asciidoc --version', '/^asciidoc \d/', 'stdout');
-        installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/', 'stdout');
         installed('bison --version', '/^bison\b.+GNU Bison\b/', 'stdout');
         installed('cdparanoia --version', '/^cdparanoia III/', 'stderr');
-        installed('celestia --help', '/Usage:.*\bcelestia\b.+OPTION/s', 'stdout');
         installed('cpio --version', '/GNU cpio/', 'stdout');
         installed('dot -V', '/graphviz version \d/', 'stderr');
         installed('echo "[{ }]" | json_reformat -m', '/^\[{}+]$/', 'stdout', 'json_reformat');
@@ -171,54 +170,63 @@ sub main {
         installed('fdupes --version', '/^fdupes \d\./', 'stdout');
         installed('flac --version', '/^flac /', 'stdout');
         installed('flex --version', '/^flex \d/', 'stdout');
-        installed('geeqie --version', '/^Geeqie \d\./', 'stderr');
         installed('gettext --version', '/GNU gettext/', 'stdout');
-        installed('gnucash --version', '/GnuCash \d\./', 'stdout');
-        installed('gnumeric --version', '/^gnumeric version /', 'stdout');
-        installed('gnuplot --version', '/^gnuplot /', 'stdout');
-        installed('gource --help', '/Gource v\d/', 'stdout');
         installed('gpsbabel --version', '/GPSBabel Version \d/', 'stdout');
         installed('htop --version', '/^htop \d/', 'stdout');
-        installed('inkscape -V', '/^Inkscape \d/', 'stdout');
         installed('iotop --version', '/^iotop \d/', 'stdout');
         installed('lame --version', '/LAME .* version /', 'stdout');
         installed('lftp --version', '/^LFTP .+Version \d/', 'stdout');
         installed('lynx --version', '/^Lynx Version \d/', 'stdout');
         installed('lzip --version', '/^Lzip \d/', 'stdout');
         installed('mosh --version', '/^mosh \d/', 'stderr');
-        installed('mplayer -V', '/^MPlayer2 /', 'stdout');
         installed('mutt -h', '/^Mutt \d/', 'stdout');
         installed('ncdu -v', '/^ncdu \d/', 'stdout');
         installed('ncftp -v', '/Program version:\s+NcFTP /', 'stderr');
         installed('nmap --version', '/Nmap version /', 'stdout');
         installed('nodejs --version', '/^v\d+\.\d+\.\d+$/', 'stdout');
         installed('npm --version', '/^\d+\.\d+\.\d+$/', 'stdout');
-        installed('okular --version', '/Okular: \d/', 'stdout');
         installed('pandoc --version', '/^pandoc \d\./', 'stdout');
         installed('pip3 --version', '/^pip \d/', 'stdout');
         installed('psql --version', '/psql \(PostgreSQL\)/', 'stdout');
-        installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
         installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
         installed('rzip --version', '/^rzip version \d/', 'stdout');
         installed('scriptreplay --help', '/-m, --maxdelay/', 'stdout', 'scriptreplay has -m/--maxdelay');
-        installed('shutter -v', '/^\d+\.\d+\.\d+ Rev\.\d+/', 'stdout');
         installed('strace -V', '/^strace -- version \d/', 'stdout');
         installed('svn --version', '/svn, version /', 'stdout');
         installed('tig --version', '/^tig version /', 'stdout');
         installed('tmux -V', '/^tmux \d\./', 'stdout');
         installed('trickle -V', '/^trickle: version \d/', 'stderr');
-        installed('ufraw --version', '/^ufraw \d/', 'stderr');
         installed('unrar --version', '/UNRAR \d/', 'stdout');
-        installed('vlc --version', '/^VLC version \d/', 'stdout');
         installed('whois --version', '/^Version \d/', 'stdout');
+        installed('xmllint --version', '/^xmllint: using libxml version /', 'stderr');
+        installed('xmlto --version', '/^xmlto version \d/', 'stdout');
+        installed('xz --version', '/^xz \(XZ Utils\) \d/s', 'stdout');
+        installed('youtube-dl --version', '/^20\d\d\.\d\d\.\d\d/', 'stdout');
+
+    }
+
+    if ($Opt{'gui'} || $Opt{'all'}) {
+
+        diag("Checking graphical software...");
+        installed('abiword --version', '/^\d\.\d+\.\d+/', 'stdout');
+        installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/', 'stdout');
+        installed('celestia --help', '/Usage:.*\bcelestia\b.+OPTION/s', 'stdout');
+        installed('geeqie --version', '/^Geeqie \d\./', 'stderr');
+        installed('gnucash --version', '/GnuCash \d\./', 'stdout');
+        installed('gnumeric --version', '/^gnumeric version /', 'stdout');
+        installed('gnuplot --version', '/^gnuplot /', 'stdout');
+        installed('gource --help', '/Gource v\d/', 'stdout');
+        installed('inkscape -V', '/^Inkscape \d/', 'stdout');
+        installed('mplayer -V', '/^MPlayer2 /', 'stdout');
+        installed('okular --version', '/Okular: \d/', 'stdout');
+        installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
+        installed('shutter -v', '/^\d+\.\d+\.\d+ Rev\.\d+/', 'stdout');
+        installed('ufraw --version', '/^ufraw \d/', 'stderr');
+        installed('vlc --version', '/^VLC version \d/', 'stdout');
         installed('wireshark --version', '/^wireshark \d/', 'stdout');
         installed('x264 --version', '/^x264 \d/', 'stdout');
         installed('xdot --help', '/Usage:.*\bxdot\b/s', 'stdout');
-        installed('xmllint --version', '/^xmllint: using libxml version /', 'stderr');
-        installed('xmlto --version', '/^xmlto version \d/', 'stdout');
         installed('xtightvncviewer -h', '/^TightVNC Viewer /', 'stderr');
-        installed('xz --version', '/^xz \(XZ Utils\) \d/s', 'stdout');
-        installed('youtube-dl --version', '/^20\d\d\.\d\d\.\d\d/', 'stdout');
 
     }
 
@@ -394,6 +402,8 @@ Options:
 
   -a, --all
     Run all tests, also TODOs.
+  -g, --gui
+    Also check for programs that need a graphical environment.
   -h, --help
     Show this help.
   -t, --todo
