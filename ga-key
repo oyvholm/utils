@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#=======================================================================
+# ga-key
+# File ID: 027211a6-f115-11e4-9e02-000df06acc56
+#
+# Calculate SHA256 key used by git-annex.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=ga-key
+
+test -z "$1" && { echo $progname: Missing filename >&2; exit 1; }
+test -n "$2" && {
+    echo $progname: Takes exactly one argument, and that must be a filename >&2
+    exit 1
+}
+
+file="$1"
+
+test -f "$file" || { echo $progname: $file: File not found or is not a readable file >&2; exit 1; }
+
+echo SHA256-s$(wc -c "$file" | cut -f 1 -d ' ')--$(sha256sum "$file" | head -c 64)
