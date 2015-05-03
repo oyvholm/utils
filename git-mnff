@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#=======================================================================
+# git-mnff
+# File ID: b72aedb2-f178-11e4-a17f-000df06acc56
+#
+# [Description]
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+git wait-until-clean -u
+
+branch=$1
+if test -n "$2"; then
+    reset="$2"
+    git branch $branch
+    git reset --hard $reset
+fi
+
+git merge --no-ff $branch
+git branch -d $branch
