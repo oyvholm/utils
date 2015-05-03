@@ -4,9 +4,34 @@
 # ga-sjekk
 # File ID: 4d412868-f13b-11e4-be3f-000df06acc56
 #
-# [Description]
+# Check if the specified files are already archived in git-annex. Files 
+# that are already archived are moved to ".ga-found/$base/".
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+for f in "$@"; do
+    key=$(ga-key -q "$f")
+    test -n "$key" && {
+        echo ======== $f $key
+        # FIXME: Hardcoding
+        for dir in /media/seagate-3tb/annex/{musikk,opptak,usortert}; do
+            (
+                cd "$dir" && {
+                    result="$(ga whereis --key "$key" 2>/dev/null | grep -v '(0 copies) failed$')"
+                    test -n "$result" && {
+                        echo
+                        echo $dir
+                        base=$(basename "$dir")
+                        ga whereis --key "$key"
+                        cd -
+                        dest=".ga-found/$base"
+                        mkdir -p "$dest"
+                        mv -vi "$f" "$dest"
+                    }
+                }
+            )
+        done
+    }
+done
