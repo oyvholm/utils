@@ -12,6 +12,9 @@
 
 progname=ga-key
 
+unset opt_quiet
+test "$1" = "-q" && { opt_quiet=1; shift; }
+
 test -z "$1" && { echo $progname: Missing filename >&2; exit 1; }
 test -n "$2" && {
     echo $progname: Takes exactly one argument, and that must be a filename >&2
@@ -20,6 +23,9 @@ test -n "$2" && {
 
 file="$1"
 
-test -f "$file" || { echo $progname: $file: File not found or is not a readable file >&2; exit 1; }
+test -f "$file" || {
+    test "$opt_quiet" = "1" || echo $progname: $file: File not found or is not a readable file >&2
+    exit 1
+}
 
 echo SHA256-s$(wc -c "$file" | cut -f 1 -d ' ')--$(sha256sum "$file" | head -c 64)
