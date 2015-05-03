@@ -4,9 +4,18 @@
 # git-fuckit
 # File ID: 2a3efbbe-f1a0-11e4-9228-fefdb24f8e10
 #
-# [Description]
+# Throw away changes that are just utter shit. But instead of just 
+# removing the changes like "git checkout -f" does, commit to a junk
+# branch and reset HEAD to the previous commit or a revision, branch or 
+# tag specified on the command line.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+dest="HEAD^"
+test -n "$1" && dest="$1"
+
+git commit -a &&
+git branch commit-$(git rev-parse HEAD) &&
+git reset --hard "$dest"
