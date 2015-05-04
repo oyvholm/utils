@@ -4,7 +4,13 @@
 # git-mnff
 # File ID: b72aedb2-f178-11e4-a17f-000df06acc56
 #
-# [Description]
+# Perform Git merges without fast-forwarding. Useful for visualising 
+# related commits.
+#
+# Syntax:
+#
+#   git mnff BRANCHNAME
+#   git mnff BRANCHNAME STARTREVISION_OF_BRANCH
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
