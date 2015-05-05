@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#=======================================================================
+# unz
+# File ID: ec739fc4-e254-11e4-82d7-2394dd2564f8
+#
+# Unzip a .zip file into its own directory to avoid zipbombs and 
+# zipfiles that doesn't follow good behaviour as they do in the .tar 
+# world.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+unzip -d "$(basename "$1" .zip)" "$1"
