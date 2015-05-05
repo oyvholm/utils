@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#=======================================================================
+# strip-nonexisting
+# File ID: 89302bf2-f33a-11e4-a2d5-000df06acc56
+#
+# Read a stream of \n-separated filenames from stdin and remove 
+# everything that's not plain files or symlinks that exist locally.
+#
+# Can be used with git-annex, for example:
+#
+#   git log --raw --since=1.week "$@" | grep ^: | cut -f 2 | sort -u | \
+#     strip-nonexisting | xargs -d \\n git annex fsck --quiet
+#
+# will run a "git annex fsck --quiet" on every file added less than one 
+# week ago. git annex will refuse to run if it receives any invalid 
+# paths, and that's ok.
+#
+# Only files or symlinks will be listed. Everything else (directories, 
+# fifos, device files, etc) is removed.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+while read f; do
+    test -f "$f" -o -L "$f" && echo "$f"
+done
