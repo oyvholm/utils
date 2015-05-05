@@ -2,6 +2,7 @@
 *.swp
 /.ignore/
 /Lib/std/c/compile.tmp/
+/days
 /du.dat
 /src/fldb/tests/log/
 /src/personnr/personnr
