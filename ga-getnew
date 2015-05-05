@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#=======================================================================
+# ga-getnew
+# File ID: 8af4d956-f358-11e4-b717-000df06acc56
+#
+# Get new files from the last month that haven't got enough copies in 
+# git-annex yet, then execute a fast fsck to check that the files have 
+# enough copies.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=ga-getnew
+
+msg() {
+    echo
+    echo ==== $progname: $*
+}
+
+git wait-until-clean -u
+msg ga sync
+ga sync
+msg ga get --auto
+git allfiles --since=1.month | strip-nonexisting | xargs -d \\n ga get --auto
+msg ga fsck --fast --quiet
+git allfiles --since=1.month | strip-nonexisting | xargs -d \\n ga fsck --fast --quiet
+msg ga sync
+ga sync
