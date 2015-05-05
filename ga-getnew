@@ -4,9 +4,16 @@
 # ga-getnew
 # File ID: 8af4d956-f358-11e4-b717-000df06acc56
 #
-# [Description]
+# Get new files from the last month that haven't got enough copies in 
+# git-annex yet.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+progname=ga-getnew
+
+git wait-until-clean -u
+ga sync
+git allfiles --since=1.month | strip-nonexisting | xargs -d \\n ga get --auto
+ga sync
