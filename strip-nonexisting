@@ -4,9 +4,12 @@
 # strip-nonexisting
 # File ID: 89302bf2-f33a-11e4-a2d5-000df06acc56
 #
-# [Description]
+# Strip non-existing files from stdin
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+while read f; do
+    test -e "$f" && echo "$f"
+done
