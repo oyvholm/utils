@@ -19,8 +19,7 @@ else
 fi
 
 if test "$1" = "sync"; then
-    stat_output="$(git status --porcelain | grep -v '^??')"
-    test -n "$stat_output" && { echo $progname: Repo has modifications, will not git-annex sync >&2; exit 1; }
+    git wait-until-clean -u
 fi
 
 git-annex "$@"
