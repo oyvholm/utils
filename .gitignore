@@ -2,6 +2,7 @@
 *.swp
 /.ignore/
 /Lib/std/c/compile.tmp/
+/du.dat
 /src/fldb/tests/log/
 /src/personnr/personnr
 /src/smsum/tests/log/
