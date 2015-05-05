@@ -11,12 +11,24 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+progname=ga-sjekk
+
 for f in "$@"; do
     key=$(ga-key -q "$f")
     test -n "$key" && {
         echo ======== $f $key
         # FIXME: Hardcoding
-        for dir in /media/seagate-3tb/annex/{musikk,opptak,usortert}; do
+        for dir in musikk opptak usortert; do
+            if test -d "/media/seagate-3tb/annex/$dir"; then
+                dir="/media/seagate-3tb/annex/$dir"
+            elif test -d "/home/sunny/annex/$dir"; then
+                dir="/home/sunny/annex/$dir"
+            elif test -d "/media/pavi/annex/$dir"; then
+                dir="/media/pavi/annex/$dir"
+            else
+                echo $progname: $dir: Repo not found >&2
+                continue
+            fi
             (
                 cd "$dir" && {
                     result="$(ga whereis --key "$key" 2>/dev/null | grep -v '(0 copies) failed$')"
