@@ -19,6 +19,12 @@ msg() {
     echo ==== $progname: $*
 }
 
+toplevel="$(git rev-parse --show-toplevel)"
+cd "$toplevel" || {
+    echo $progname: $toplevel: Cannot chdir to top of repo >&2
+    exit 1
+}
+
 git wait-until-clean -u
 msg ga sync
 ga sync
