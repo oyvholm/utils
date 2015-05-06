@@ -26,10 +26,10 @@ if test -n "$2"; then
 fi
 
 if test $(git log --format='%h' ..$branch | wc -l) -lt 2; then
-    echo $progname: There is only one commit, use fast-forward if possible
+    # There is only one commit, use fast-forward if possible
     git merge $branch
 else
-    echo $progname: There is more than 1 commit, use --no-ff
+    # There is more than 1 commit, use --no-ff
     git merge --no-ff $branch
 fi
 
