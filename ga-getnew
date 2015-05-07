@@ -26,11 +26,11 @@ cd "$toplevel" || {
 }
 
 git wait-until-clean -u
-msg ga sync
-ga sync
+msg ga sync --quiet
+ga sync --quiet
 msg ga get --auto
 git allfiles --since=1.month "$@" | strip-nonexisting | xargs -d \\n ga get --auto
 msg ga fsck --fast --quiet
 git allfiles --since=1.month "$@" | strip-nonexisting | xargs -d \\n ga fsck --fast --quiet
-msg ga sync
-ga sync
+msg ga sync --quiet
+ga sync --quiet
