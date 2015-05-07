@@ -17,4 +17,3 @@ while test "$(git status --porcelain$u_str)" != ""; do
     echo Waiting for $(hostname):$(pwd) to be cleaned up... \($(date)\);
     sleep 5;
 done;
-echo $(hostname):$(pwd) is clean. Continuing...
