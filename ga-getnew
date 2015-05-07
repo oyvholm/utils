@@ -34,10 +34,10 @@ ga sync
 echo $progname: ga sync \}\}\}
 
 msg ga get --auto
-git allfiles --since=1.month "$@" | strip-nonexisting | xargs -d \\n --no-run-if-empty ga get --auto
+git allfiles --since=1.week "$@" | strip-nonexisting | xargs -d \\n --no-run-if-empty ga get --auto
 
 msg ga fsck --fast --quiet
-git allfiles --since=1.month "$@" | strip-nonexisting | xargs -d \\n --no-run-if-empty ga fsck --fast --quiet
+git allfiles --since=1.week "$@" | strip-nonexisting | xargs -d \\n --no-run-if-empty ga fsck --fast --quiet
 
 msg ga sync \{\{\{
 ga sync
