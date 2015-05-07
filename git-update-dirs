@@ -34,6 +34,7 @@ our %Opt = (
     'fetch-prune' => 0,
     'ga-dropget' => 0,
     'ga-dropunused' => 0,
+    'ga-getnew' => 0,
     'ga-moveunused' => 0,
     'ga-sync' => 0,
     'help' => 0,
@@ -74,6 +75,7 @@ GetOptions(
     "fetch|f" => \$Opt{'fetch'},
     "ga-dropget|G" => \$Opt{'ga-dropget'},
     "ga-dropunused|u" => \$Opt{'ga-dropunused'},
+    "ga-getnew|N" => \$Opt{'ga-getnew'},
     "ga-moveunused|U" => \$Opt{'ga-moveunused'},
     "ga-sync|g" => \$Opt{'ga-sync'},
     "help|h" => \$Opt{'help'},
@@ -112,7 +114,7 @@ if ($Opt{'all-options'}) {
     $Opt{'push'} = 1;
     $Opt{'submodule'} = 1;
 }
-($Opt{'ga-dropget'} || $Opt{'ga-dropunused'} || $Opt{'ga-moveunused'}) &&
+($Opt{'ga-dropget'} || $Opt{'ga-dropunused'} || $Opt{'ga-getnew'} || $Opt{'ga-moveunused'}) &&
     ($Opt{'ga-sync'} = 1);
 
 my @Dirs = @ARGV;
@@ -231,9 +233,13 @@ LOOP: for my $f (@Dirs) {
                     warn("$progname: Cannot open 'git remote' pipe: $!\n");
                 }
             }
-            if (should('ga-dropget')) {
-                mysystem("ga", "get", "--auto");
-                mysystem("ga", "sync");
+            if (should('ga-dropget') || should('ga-getnew')) {
+                if (!$Opt{'ga-getnew'}) {
+                    mysystem("ga", "get", "--auto");
+                    mysystem("ga", "sync");
+                } else {
+                    mysystem("ga-getnew | fold-stdin");
+                }
             }
         }
         if (should('dangling')) {
@@ -414,6 +420,10 @@ Options:
     Move unused git-annex contents to the '$archive_disk' remote. Can't 
     be used together with -u/--ga-dropunused.
     To disable: git config git-update-dirs.no-ga-moveunused true
+  -N, --ga-getnew
+    Execute "ga-getnew | fold-stdin", i.e. use "ga get --auto" to get 
+    all files from one week back that don't have enough copies.
+    To disable: git config git-update-dirs.no-ga-getnew true
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into 
     branches.
