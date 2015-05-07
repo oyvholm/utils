@@ -38,7 +38,9 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
 fi
 
 if test "$use_new_branch" = "1"; then
-    git checkout -b "$ext"
+    git branch "$ext"
+    git checkout "$ext"
 else
-    git checkout -b "$curr.$ext"
+    git branch "$curr.$ext"
+    git checkout "$curr.$ext"
 fi
