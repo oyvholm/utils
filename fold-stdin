@@ -56,6 +56,33 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    my $FOLD_BEGIN = "\x7B\x7B\x7B";
+    my $FOLD_END = "\x7D\x7D\x7D";
+
+    my $count = 0;
+    my $level = 0;
+    my $suppress = 0;
+
+    while (my $line = <>) {
+        $line =~ /$FOLD_BEGIN/ && ($level++, $suppress = 1, $count++);
+        if ($line =~ /$FOLD_END/) {
+            $level--;
+            $level < 0 && msg(0, "Extra end fold found, level = $level");
+            if (!$level) {
+                printf("[Vim fold removed, %u line%s]\n",
+                    $count, $count == 1 ? '' : 's');
+                $count = 0;
+                $suppress = 0;
+            }
+        } else {
+            $suppress ? $count++ : print("$line");
+        }
+    }
+    if ($level > 0) {
+        msg(0, sprintf("Missing %u end fold%s, output may be truncated",
+            $level, $level == 1 ? '' : 's'));
+    }
+
     return($Retval);
     # }}}
 } # main()
