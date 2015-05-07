@@ -22,6 +22,7 @@ our $Debug = 0;
 our %Opt = (
 
     'debug' => 0,
+    'dry-run' => 0,
     'help' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -36,6 +37,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'debug' => \$Opt{'debug'},
+    'dry-run|n' => \$Opt{'dry-run'},
     'help|h' => \$Opt{'help'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -56,9 +58,38 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    for my $arg (@ARGV) {
+        if ($arg =~ /^(\S+?)\/(\S+)/) {
+            my ($remote, $branch) = ($1, $2);
+            $branch =~ s/,$//;
+            mysystem("git", "push", $remote, ":$branch");
+        } elsif ($arg !~ /\//) {
+            $arg =~ s/,$//;
+            mysystem("git", "branch", "-D", $arg);
+        }
+    }
     return($Retval);
     # }}}
 } # main()
+
+sub check_sig {
+    # {{{
+    my $retval = shift;
+    ($retval & 127) && die("\n$progname: Child process interrupted, aborting.\n");
+    return(0);
+    # }}}
+} # check_sig()
+
+sub mysystem {
+    # {{{
+    my @cmd = @_;
+    msg(0, sprintf("%s '", $Opt{'dry-run'} ? "Simulating" : "Executing") .
+        join(" ", @cmd) . "'...");
+    $? = 0;
+    !$Opt{'dry-run'} && system(@cmd) && check_sig($?);
+    return $?;
+    # }}}
+} # mysystem()
 
 sub print_version {
     # Print program version {{{
@@ -77,12 +108,14 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] remote/branch [remote/branch [branch [...]]]
 
 Options:
 
   -h, --help
     Show this help.
+  -n, --dry-run
+    Simulate what would happen, don't actually do anything.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
