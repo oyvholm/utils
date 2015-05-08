@@ -64,7 +64,11 @@ sub main {
     my $suppress = 0;
 
     while (my $line = <>) {
-        $line =~ /$FOLD_BEGIN/ && ($level++, $suppress = 1, $count++);
+        if ($line =~ /$FOLD_BEGIN/) {
+            $level++;
+            $suppress = 1;
+            $count++;
+        }
         if ($line =~ /$FOLD_END/) {
             $level--;
             $level < 0 && msg(0, "Extra end fold found, level = $level");
