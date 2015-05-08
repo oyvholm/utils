@@ -20,3 +20,4 @@ while test "$(git status --porcelain$u_str)" != ""; do
     did_wait=1
 done;
 test -n "$did_wait" && echo $(hostname):$(pwd) is clean. Continuing...
+exit 0
