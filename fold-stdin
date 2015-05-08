@@ -60,6 +60,7 @@ sub main {
     my $FOLD_END = "\x7D\x7D\x7D";
 
     my $count = 0;
+    my $fold_str = '';
     my $level = 0;
     my $suppress = 0;
 
@@ -68,12 +69,17 @@ sub main {
             $level++;
             $suppress = 1;
             $count++;
+            chomp($fold_str = $line);
+            $fold_str =~ s/$FOLD_BEGIN//;
+            $fold_str =~ s/^\s+(.*)$/$1/;
+            $fold_str =~ s/^(.*?)\s+$/$1/;
         }
         if ($line =~ /$FOLD_END/) {
             $level--;
             $level < 0 && msg(0, "Extra end fold found, level = $level");
             if (!$level) {
-                printf("[Vim fold removed, %u line%s]\n",
+                printf("[Removed %s, %u line%s]\n",
+                    length($fold_str) ? "\"$fold_str\"" : "Vim fold",
                     $count, $count == 1 ? '' : 's');
                 $count = 0;
                 $suppress = 0;
