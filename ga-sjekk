@@ -18,7 +18,7 @@ for f in "$@"; do
     test -n "$key" && {
         echo ======== $f $key
         # FIXME: Hardcoding
-        for dir in musikk opptak usortert; do
+        for dir in innsp musikk opptak s usortert; do
             if test -d "/media/seagate-3tb/annex/$dir"; then
                 dir="/media/seagate-3tb/annex/$dir"
             elif test -d "/home/sunny/annex/$dir"; then
