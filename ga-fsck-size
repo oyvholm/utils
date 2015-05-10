@@ -59,6 +59,22 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    my $total = 0;
+
+    while (my $line = <>) {
+        chomp($line);
+        if ($line =~ /Only \d+ of \d+ trustworthy copies exist of (.*)$/m) {
+            my $filename = $1;
+            my $bytes = `gadu --bytes "$filename"`;
+            $bytes =~ s/^(\d+).*?$/$1/;
+            chomp($bytes);
+            $total += $bytes;
+            $line .= " ($bytes bytes)"
+        }
+        print("$line\n");
+    }
+    print("Total size of files that need more copies: $total\n");
+
     return($Retval);
     # }}}
 } # main()
