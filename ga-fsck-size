@@ -3,7 +3,8 @@
 #=======================================================================
 # ga-fsck-size
 # File ID: 071005ea-f6bc-11e4-a11c-000df06acc56
-# [Description]
+#
+# Add byte count to output created by "git annex fsck".
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
@@ -97,7 +98,9 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: git annex fsck 2>&1 | $progname [options]
+
+Add byte count to output created by "git annex fsck".
 
 Options:
 
