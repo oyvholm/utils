@@ -118,9 +118,9 @@ update_branches() {
     git checkout $(git log -1 --format=%H) 2>/dev/null
     echo -n "master: " >&2
     git push . origin/master:master || {
-        echo $progname: master branch did not fast-forward, aborting >&2;
+        echo $progname: master branch did not fast-forward, aborting >&2
         git checkout -
-        myexit 1;
+        myexit 1
     }
     for f in maint next pu todo; do
         echo -n "$f: " >&2
@@ -134,15 +134,15 @@ lpar_git() {
 }
 
 [ -z "`git --version | grep '^git version '`" ] && {
-    echo $progname: You need to have git installed to use this script. >&2;
-    myexit 1;
+    echo $progname: You need to have git installed to use this script. >&2
+    myexit 1
 }
 
 rmdir $builddir 2>/dev/null
 if [ ! -d $builddir/. ]; then
     mkdir -p $builddir || {
-        echo $progname: $builddir: Cannot create directory;
-        myexit 1;
+        echo $progname: $builddir: Cannot create directory
+        myexit 1
     }
     rmdir $builddir
     echo ================= git clone =================
@@ -151,15 +151,15 @@ if [ ! -d $builddir/. ]; then
     git config lpar.name git
     for f in maint next pu todo; do
         git branch -t $f origin/$f || {
-            echo $progname: $f: Could not create branch >&2;
-            myexit 1;
+            echo $progname: $f: Could not create branch >&2
+            myexit 1
         }
     done
 fi
 cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
 GIT_PAGER=cat git status --porcelain | grep . && {
-    echo $progname: $builddir is not clean, aborting >&2;
-    myexit 1;
+    echo $progname: $builddir is not clean, aborting >&2
+    myexit 1
 }
 curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
 lpar_git
@@ -242,11 +242,11 @@ update_branches
 vername=git.$local_master.`git describe --long --match 'v[12]*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
-    echo;
-    echo "Sorry, no new git(1) for you this time.";
-    echo You’ll have to stick with `git --version` for now.;
+    echo
+    echo "Sorry, no new git(1) for you this time."
+    echo You’ll have to stick with `git --version` for now.
     push_changes
-    myexit 0;
+    myexit 0
 }
 push_changes
 if [ "$use_configure" = "1" ]; then
@@ -292,8 +292,8 @@ $sudo rm $pref/prg/git
 $sudo ln -svf ../varprg/$vername $pref/prg/git
 $sudo ln -sv /etc $pref/prg/git/etc
 cd $pref/bin || {
-    echo $progname: $pref/bin: Cannot chdir, aborting >&2;
-    myexit 1;
+    echo $progname: $pref/bin: Cannot chdir, aborting >&2
+    myexit 1
 }
 $sudo ln -svf ../prg/git/bin/* .
 echo ================= Check that the thing works =================
@@ -318,8 +318,8 @@ mansects=`ls`
 for f in $mansects; do
     $sudo mkdir -p $pref/share/man/$f
     cd $pref/share/man/$f || {
-        echo $progname: $pref/share/man/$f: Could not chdir, aborting >&2;
-        myexit 1;
+        echo $progname: $pref/share/man/$f: Could not chdir, aborting >&2
+        myexit 1
     }
     pwd
     $sudo ln -sf ../../../prg/git/share/man/$f/* .
