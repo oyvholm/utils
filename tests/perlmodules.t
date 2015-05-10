@@ -135,6 +135,7 @@ my %Modules = (
     'Module::Starter' => 'libmodule-starter-perl',
     'Module::Starter::Plugin::CGIApp' => 'libmodule-starter-plugin-cgiapp-perl',
     'Net::SMTP::SSL' => 'libnet-smtp-ssl-perl',
+    'Number::Bytes::Human' => 'libnumber-bytes-human-perl',
     'OSSP::uuid' => 'libossp-uuid-perl',
     'POSIX' => '',
     'Perl::Critic' => 'libtest-perl-critic-perl',
