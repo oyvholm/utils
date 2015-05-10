@@ -242,7 +242,8 @@ update_branches
 vername=git.$local_master.`git describe --long --match 'v[12]*'`
 dest=$pref/varprg/$vername
 [ -d $dest/. ] && {
-    echo; echo "Sorry, no new git(1) for you this time.";
+    echo;
+    echo "Sorry, no new git(1) for you this time.";
     echo You’ll have to stick with `git --version` for now.;
     push_changes
     myexit 0;
