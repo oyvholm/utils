@@ -71,7 +71,9 @@ sub main {
             $bytes =~ s/^(\d+).*?$/$1/;
             chomp($bytes);
             $total += $bytes;
-            $line .= sprintf(" (%s bytes)", format_bytes($bytes));
+            $line .= sprintf(" (%s bytes)",
+                format_bytes($bytes),
+            );
         }
         if ($line !~ /^  Back it up with git-annex copy\.$/) {
             print("$line\n");
