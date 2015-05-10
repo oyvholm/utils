@@ -73,7 +73,9 @@ sub main {
             $total += $bytes;
             $line .= sprintf(" (%s bytes)", format_bytes($bytes));
         }
-        print("$line\n");
+        if ($line !~ /^  Back it up with git-annex copy\.$/) {
+            print("$line\n");
+        }
     }
     printf("Total size of files that need more copies: %s\n", format_bytes($total));
 
