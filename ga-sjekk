@@ -38,7 +38,7 @@ for f in "$@"; do
                         base=$(basename "$dir")
                         ga whereis --key "$key"
                         cd -
-                        dest=".ga-found/$base"
+                        dest=".ga-found/$base/$(dirname "$f")"
                         mkdir -p "$dest"
                         mv -vi "$f" "$dest"
                     }
