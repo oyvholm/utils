@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# fix_svn-dirs
-# File ID: 3df46086-5d3a-11df-973d-90e6ba3022ac
-# Kjører sunnyrights på alle .svn-kataloger i subtreet.
-
-find $* -type d -name .svn | xargs sunnyrights

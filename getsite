@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# getsite
-# File ID: a7c765da-5d3a-11df-8f81-90e6ba3022ac
-# Henter en hel site og kamuflerer seg litt.
-
-wget -m -U 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)' $*

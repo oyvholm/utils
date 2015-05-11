@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# sunbassh
-# File ID: 975f4446-5d45-11df-901d-90e6ba3022ac
-
-ssh -p 19716 $*

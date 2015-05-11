@@ -1,6 +1,0 @@
-#/bin/bash
-
-# fjerncvs
-# File ID: 52bce9ca-5d3a-11df-a52a-90e6ba3022ac
-
-rm -rfv `find . -type d -name CVS`
