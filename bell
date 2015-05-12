@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#=======================================================================
+# bell
+# File ID: 001cfd58-f87c-11e4-a40d-f5521b4ff37a
+#
+# Create local remote. Used when cleaning up in old repos.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=bell
+
+test -z "$1" && { echo $progname: Repo not specified >&2; exit 1; }
+
+test -d "/bellmann/home/sunny/repos/Git/$1.git" || {
+    echo $progname: $1: Repo doesn\'t exist >&2
+    exit 1
+}
+git remote add bellmann "/bellmann/home/sunny/repos/Git/$1.git"
