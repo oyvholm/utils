@@ -147,6 +147,14 @@ END
 
     # }}}
     ok(chdir("repo"), "chdir repo");
+    likecmd("git commit --allow-empty -m 'Empty start commit'", # {{{
+        '/.*/',
+        '/^$/',
+        0,
+        'Create empty start commit',
+    );
+
+    # }}}
 
     todo_section:
     ;
