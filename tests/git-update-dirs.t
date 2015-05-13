@@ -155,6 +155,14 @@ END
     );
 
     # }}}
+    likecmd("git annex init testrepo", # {{{
+        '/.*/',
+        '/^$/',
+        0,
+        'Make it an annex',
+    );
+
+    # }}}
 
     todo_section:
     ;
