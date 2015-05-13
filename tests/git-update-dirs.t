@@ -146,6 +146,7 @@ END
     );
 
     # }}}
+    ok(chdir("repo"), "chdir repo");
 
     todo_section:
     ;
@@ -162,6 +163,7 @@ END
         # TODO tests }}}
     }
 
+    ok(chdir(".."), "chdir ..");
     testcmd("rm -rf repo", # {{{
         '',
         '',
