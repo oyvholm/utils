@@ -114,7 +114,7 @@ if ($Opt{'all-options'}) {
     $Opt{'push'} = 1;
     $Opt{'submodule'} = 1;
 }
-($Opt{'ga-dropget'} || $Opt{'ga-dropunused'} || $Opt{'ga-getnew'} || $Opt{'ga-moveunused'}) &&
+($Opt{'ga-dropget'} || $Opt{'ga-dropunused'} || $Opt{'ga-moveunused'}) &&
     ($Opt{'ga-sync'} = 1);
 
 my @Dirs = @ARGV;
@@ -206,8 +206,8 @@ LOOP: for my $f (@Dirs) {
                 mysystem('git', 'restore-dirs');
             }
         }
-        if ($is_annex && should('ga-sync')) {
-            mysystem("ga", "sync") && push(@err_gasync, $f);
+        if ($is_annex && (should('ga-sync') || should('ga-getnew'))) {
+            should('ga-sync') && mysystem("ga", "sync") && push(@err_gasync, $f);
             if (should('ga-dropget')) {
                 mysystem("ga", "drop", "--auto");
                 mysystem("ga", "sync");
