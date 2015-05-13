@@ -118,6 +118,22 @@ END
     );
 
     # }}}
+    likecmd("git --version", # {{{
+        '/^git version /',
+        '/^$/',
+        0,
+        'git is installed',
+    ) && BAIL_OUT("git is not installed, cannot continue");
+
+    # }}}
+    likecmd("git annex version", # {{{
+        '/^git-annex version:/',
+        '/^$/',
+        0,
+        'git-annex is installed',
+    ) && BAIL_OUT("git-annex is not installed, cannot continue");
+
+    # }}}
 
     todo_section:
     ;
