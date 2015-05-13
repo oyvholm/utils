@@ -91,6 +91,9 @@ END
 
 =cut
 
+    my $Tmptop = "tmp-git-update-dirs-t-$$-" . substr(rand, 2, 8);
+    ok(mkdir($Tmptop), "mkdir $Tmptop") || BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
+
     diag('Testing -h (--help) option...');
     likecmd("$CMD -h", # {{{
         '/  Show this help\./',
@@ -149,6 +152,9 @@ END
         }
         # TODO tests }}}
     }
+
+    ok(rmdir($Tmptop), "rmdir $Tmptop");
+    ok(!-d $Tmptop, "$Tmptop is gone");
 
     diag('Testing finished.');
     # }}}
