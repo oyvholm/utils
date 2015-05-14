@@ -15,7 +15,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
-use Number::Bytes::Human qw(format_bytes parse_bytes);
+use Number::Bytes::Human qw(format_bytes);
 
 local $| = 1;
 
