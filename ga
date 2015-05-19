@@ -22,4 +22,9 @@ if test "$1" = "sync"; then
     git wait-until-clean -u
 fi
 
-git-annex "$@"
+if test "$1" = "fsck"; then
+    shift
+    git-annex fsck "$@" 2>&1 | ga-fsck-size
+else
+    git-annex "$@"
+fi
