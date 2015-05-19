@@ -62,15 +62,17 @@ sub main {
     my $Retval = 0;
 
     my $total = 0;
+    my $fulltotal = 0;
 
     while (my $line = <>) {
         chomp($line);
-        if ($line =~ /Only \d+ of \d+ trustworthy copies exist of (.*)$/m) {
-            my $filename = $1;
+        if ($line =~ /Only (\d+) of (\d+) trustworthy copies exist of (.*)$/m) {
+            my ($actual, $wanted, $filename) = ($1, $2, $3);
             my $bytes = `gadu --bytes "$filename"`;
             $bytes =~ s/^(\d+).*?$/$1/;
             chomp($bytes);
             $total += $bytes;
+            $fulltotal += $bytes * ($wanted - $actual);
             $line .= sprintf(" (%s bytes)",
                 format_bytes($bytes),
             );
@@ -80,6 +82,7 @@ sub main {
         }
     }
     printf("Total size of files that need more copies: %s\n", format_bytes($total));
+    printf("Total size of files including all missing copies: %s\n", format_bytes($fulltotal));
 
     return($Retval);
     # }}}
