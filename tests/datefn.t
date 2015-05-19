@@ -125,7 +125,7 @@ END
     testcmd("tar xzf file.tar.gz", "", "", 0);
     testcmd("../$CMD file.txt",
         "datefn: 'file.txt' renamed to '20121224T002858Z.file.txt'\n",
-        "datefn: file.txt: Could not read 358 bytes, but continuing: \n",
+        "",
         0,
     );
     my $newname = "20121224T002858Z.file.txt";
@@ -139,15 +139,14 @@ END
     testcmd("tar xzf file.tar.gz", "", "", 0);
     testcmd("../$CMD file.txt",
         "",
-        "datefn: file.txt: Could not read 358 bytes, but continuing: \n" .
-            "datefn: 20121224T002858Z.file.txt: File already exists, use --force to overwrite\n",
+        "datefn: 20121224T002858Z.file.txt: File already exists, use --force to overwrite\n",
         0,
         "Don't overwrite file without --force",
     );
 
     testcmd("../$CMD -f file.txt",
         "datefn: 'file.txt' renamed to '20121224T002858Z.file.txt'\n",
-        "datefn: file.txt: Could not read 358 bytes, but continuing: \n",
+        "",
         0,
         "File is overwritten with --force",
     );
@@ -158,7 +157,7 @@ END
     testcmd("tar xzf file.tar.gz", "", "", 0);
     testcmd("../$CMD -s 86400 file.txt",
         "datefn: 'file.txt' renamed to '20121225T002858Z.file.txt'\n",
-        "datefn: file.txt: Could not read 358 bytes, but continuing: \n",
+        "",
         0,
         "Test -s (--skew) with positive integer",
     );
@@ -167,11 +166,13 @@ END
     testcmd("tar xzf file.tar.gz", "", "", 0);
     testcmd("../$CMD --skew -86400 file.txt",
         "datefn: 'file.txt' renamed to '20121223T002858Z.file.txt'\n",
-        "datefn: file.txt: Could not read 358 bytes, but continuing: \n",
+        "",
         0,
         "--skew with negative integer",
     );
     ok(unlink('20121223T002858Z.file.txt'), "unlink '20121223T002858Z.file.txt'");
+
+    # FIXME: Add tests for --bwf
 
     todo_section:
     ;

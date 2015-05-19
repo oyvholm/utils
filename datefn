@@ -20,6 +20,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'bwf' => 0,
     'debug' => 0,
     'dry-run' => 0,
     'force' => 0,
@@ -37,6 +38,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "bwf" => \$Opt{'bwf'},
     "debug" => \$Opt{'debug'},
     "dry-run|n" => \$Opt{'dry-run'},
     "force|f" => \$Opt{'force'},
@@ -111,9 +113,11 @@ sub start_date {
     # Find start of recording {{{
     my $File = shift;
     my $Retval = "";
-    my $bwf_date = bwf_date($File);
-    if (length($bwf_date)) {
-        $Retval = $bwf_date;
+    if ($Opt{'bwf'}) {
+        my $bwf_date = bwf_date($File);
+        if (length($bwf_date)) {
+            $Retval = $bwf_date;
+        }
     }
     D("start_date($File) returns '$Retval'");
     return($Retval);
@@ -192,6 +196,10 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
+  --bwf
+    Find start of recording in Broadcast Wave Format files. This is 
+    based on examining .wav files from the Zoom H4n, and it seems to 
+    work there. The file format may vary on other devices.
   -f, --force
     If a file with the new name already exists, allow the program to 
     overwrite the file.
