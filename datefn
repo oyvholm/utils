@@ -145,8 +145,7 @@ sub bwf_date {
 } # bwf_date()
 
 sub sec_to_string {
-    # Convert seconds since 1970 to "yyyymmddThhmmss[.frac]Z"
-    # {{{
+    # Convert seconds since 1970 to "yyyymmddThhmmss[.frac]Z" {{{
     my ($Seconds, $Sep) = @_;
     length($Seconds) || return(undef);
     ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return(undef);
