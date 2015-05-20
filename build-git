@@ -70,24 +70,22 @@ fetch_remotes() {
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
     git remote | grep -q '^peff$' || git remote add peff git://github.com/peff/git.git
     git remote | grep -q '^sunbase$' || git remote add sunbase sunny@sunbase.org:/home/sunny/repos/Git/git.git
-    echo ================= git fetch =================
-    echo ===== origin =====
     if test -z "$opt_no_net"; then
+        echo ================= git fetch =================
+        echo ===== origin =====
         until git fetch origin; do
             echo $progname: Fetch error from origin, retrying >&2
             sleep 2
         done
-    else
-        git fetch origin
+        # git fetch --all arrived in v1.6.6, and that’s too recent to use.
+        for f in $(git remote | grep -v '^origin$'); do
+            echo ===== $f =====
+            git fetch $f
+        done
+        for f in maint master next pu todo; do
+            git branch | cut -c 3- | grep -q ^$f\$ || git branch $f origin/$f
+        done
     fi
-    # git fetch --all arrived in v1.6.6, and that’s too recent to use.
-    for f in $(git remote | grep -v '^origin$'); do
-        echo ===== $f =====
-        git fetch $f
-    done
-    for f in maint master next pu todo; do
-        git branch | cut -c 3- | grep -q ^$f\$ || git branch $f origin/$f
-    done
 }
 
 commit_tree() {
@@ -101,19 +99,21 @@ enable_sudo() {
 }
 
 push_changes() {
-    for f in bellmann loc-repo passp sunbase github rsync-net; do
-        git remote | grep -q "^$f\$" && {
-            echo ==== push changes to $f ====
-            git push -f $f master maint next pu todo
-        }
-    done
-    for f in loc-repo passp sunbase rsync-net; do
-        git remote | grep -q "^$f\$" && {
-            echo ==== push tags to $f ====
-            git push --tags $f
-        }
-    done
-    echo ==== push finished ====
+    if test -z "$opt_no_net"; then
+        for f in bellmann loc-repo passp sunbase github rsync-net; do
+            git remote | grep -q "^$f\$" && {
+                echo ==== push changes to $f ====
+                git push -f $f master maint next pu todo
+            }
+        done
+        for f in loc-repo passp sunbase rsync-net; do
+            git remote | grep -q "^$f\$" && {
+                echo ==== push tags to $f ====
+                git push --tags $f
+            }
+        done
+        echo ==== push finished ====
+    fi
     lpar_git
 }
 
@@ -230,7 +230,14 @@ if [ -n "$curr_git_ver" ]; then
         [ "$choice" = "lt" ] && git log --graph --stat $curr_git_ver..$destbranch
         [ "$choice" = "lw" ] && git log --patch --word-diff $curr_git_ver..$destbranch
         [ "$choice" = "n" ] && myexit 0
-        [ "$choice" = "p" ] && { update_branches; push_changes; }
+        [ "$choice" = "p" ] && {
+            if test -z "$opt_no_net"; then
+                update_branches
+                push_changes
+            else
+                echo $progname: --no-net was specified, will not push >&2
+            fi
+        }
         [ "$choice" = "t" ] && commit_tree $curr_git_ver..$destbranch
     done
 else
@@ -311,7 +318,7 @@ if [ "$localgit" = "$globalgit" ]; then
     echo Congratulations with your shiny new $globalgit
     cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
     git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
-    git push --tags sunbase
+    test -z "$opt_no_net" && git push --tags sunbase
 else
     echo Uhm, something went wrong.
     echo Current version of git : $globalgit
@@ -339,7 +346,7 @@ if [ -d $pref/.git/. ]; then
     echo Commit message:
     echo $commitmsg
     $sudo git commit -m "$commitmsg"
-    git pa
+    test -z "$opt_no_net" && git pa
 fi
 
 myexit 0
