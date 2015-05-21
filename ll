@@ -10,5 +10,5 @@ if [ -e /nett2.mrk ]; then
 elif [ -e $HOME/.n900.mrk ]; then
     ls -artl "$@"
 else
-    ls -artl --color=auto --time-style=+%F\ %T "$@"
+    ls -artl --color=auto --full-time "$@"
 fi
