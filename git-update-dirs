@@ -49,6 +49,7 @@ our %Opt = (
     'version' => 0,
 
 );
+our @opt_dirs_from = ();
 our @opt_exec_after = ();
 our @opt_exec_before = ();
 
@@ -68,6 +69,7 @@ GetOptions(
     "dangling|d" => \$Opt{'dangling'},
     "debug" => \$Opt{'debug'},
     "delete-dangling|D" => \$Opt{'delete-dangling'},
+    "dirs-from=s" => \@opt_dirs_from,
     "dry-run|n" => \$Opt{'dry-run'},
     "exec-after|e=s" => \@opt_exec_after,
     "exec-before|E=s" => \@opt_exec_before,
@@ -136,6 +138,24 @@ if ($Opt{'recursive'}) {
 
 my $orig_dir = getcwd();
 my ($total_before, $total_after, $total_saved) = (0, 0, 0);
+
+for my $dirfile (@opt_dirs_from) {
+    if ($dirfile eq '-') {
+        while (<STDIN>) {
+            chomp();
+            push(@Dirs, $_);
+        }
+    } else {
+        open(DirFP, "<$dirfile") or
+            die("$progname: $dirfile: Cannot read from file: $!\n");
+        while (<DirFP>) {
+            chomp();
+            push(@Dirs, $_);
+        }
+        close(DirFP);
+    }
+}
+
 LOOP: for my $f (@Dirs) {
     my $object_dir = '';
     -d "$f/.git/." && ($object_dir = ".git/objects");
@@ -456,6 +476,9 @@ Options:
 
   -A, --all-options
     Run the program as if "-lFpgdaPsD" had been specified.
+  --dirs-from X
+    Read directory list from file X. If "-" is specified, read from 
+    stdin. Can be specified multiple times to read from different files.
   -h, --help
     Show this help.
   -n, --dry-run
