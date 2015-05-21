@@ -4,9 +4,18 @@
 # dir-elems
 # File ID: 6a061bba-0014-11e5-8931-0d8802d731e4
 #
-# [Description]
+# Create sorted list with number of directory elements in a directory 
+# tree. Useful to find directories with lots of files that need to be 
+# split up.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+find "$@" -type d | while read f; do
+    (
+        cd "$f" && {
+            echo $(find | wc -l) $f
+        }
+    )
+done | sort -n
