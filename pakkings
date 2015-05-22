@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#=======================================================================
+# pakkings
+# File ID: c31a44fa-001f-11e5-84cd-1fba44bd8d3d
+#
+# Unpack all gzip files in a directory tree and move them into one big 
+# .tar.gz file. For times when you for example realise you've got more 
+# than 39000 IRC logs since 2004. True story.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=pakkings
+
+dir="$1"
+
+test -d "$dir" || { echo $progname: $dir: Not a directory >&2; exit 1; }
+test -e "$dir.tar.gz" && { echo $progname: $dir.tar.gz already exists >&2; exit 1; }
+echo
+echo ========= gunzip -r $dir
+gunzip -r "$dir"
+echo === tar $dir
+tar czf "$dir.tar.gz" --remove-files "$dir"
