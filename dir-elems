@@ -12,10 +12,17 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+unset opt_recursive
+test "$1" = "-r" && { opt_recursive=1; shift; }
+
 find "$@" -type d | while read f; do
     (
         cd "$f" && {
-            echo $(find | wc -l) $f
+            if test -n "$opt_recursive"; then
+                echo $(find | wc -l) $f
+            else
+                echo $(ls -a | wc -l) $f
+            fi
         }
     )
 done | sort -n
