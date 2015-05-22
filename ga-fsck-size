@@ -81,6 +81,7 @@ sub main {
             print("$line\n");
         }
     }
+    print("\n");
     printf("Total size of files that need more copies: %s\n", format_bytes($total));
     printf("Total size necessary to get enough copies: %s\n", format_bytes($fulltotal));
 
