@@ -33,10 +33,10 @@ msg ga sync \{\{\{
 ga sync 2>&1
 echo $progname: ga sync \}\}\}
 
-msg ga get --auto
+msg ga fix
 git allfiles --since=1.week "$@" |
     strip-nonexisting |
-    xargs -d \\n --no-run-if-empty ga get --auto
+    xargs -d \\n --no-run-if-empty ga fix
 
 msg ga fsck --fast --quiet
 git allfiles --since=1.week "$@" |
