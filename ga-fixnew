@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#=======================================================================
+# ga-getnew
+# File ID: 1fc79a40-015b-11e5-a869-f13c8f9a2603
+#
+# Fix broken symlinks for new files from the last week (can be 
+# overridden) in git-annex. Useful when moving lots of files around and 
+# committing with --no-verify (or disabling the automatic symlink fixing 
+# in .git/hooks/pre-commit) to properly record file moves in Git.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=ga-getnew
+
+msg() {
+    echo
+    echo ==== $progname: $*
+}
+
+toplevel="$(git rev-parse --show-toplevel)"
+cd "$toplevel" || {
+    echo $progname: $toplevel: Cannot chdir to top of repo >&2
+    exit 1
+}
+
+git wait-until-clean -u
+
+msg ga fix
+git allfiles --since=1.week "$@" |
+    strip-nonexisting |
+    xargs -d \\n --no-run-if-empty ga fix
