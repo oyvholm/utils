@@ -27,17 +27,7 @@ cd "$toplevel" || {
 
 git wait-until-clean -u
 
-# Using backslash before { and } to suppress folding when editing this 
-# file.
-msg ga sync \{\{\{
-ga sync 2>&1
-echo $progname: ga sync \}\}\}
-
 msg ga fix
 git allfiles --since=1.week "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga fix
-
-msg ga sync \{\{\{
-ga sync 2>&1
-echo $progname: ga sync \}\}\}
