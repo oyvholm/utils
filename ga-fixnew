@@ -4,9 +4,10 @@
 # ga-getnew
 # File ID: 1fc79a40-015b-11e5-a869-f13c8f9a2603
 #
-# Get new files from the last month that haven't got enough copies in 
-# git-annex yet, then execute a fast fsck to check that the files have 
-# enough copies.
+# Fix broken symlinks for new files from the last week (can be 
+# overridden) in git-annex. Useful when moving lots of files around and 
+# committing with --no-verify (or disabling the automatic symlink fixing 
+# in .git/hooks/pre-commit) to properly record file moves in Git.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
