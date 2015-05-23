@@ -3,8 +3,15 @@
 #=======================================================================
 # ga-other
 # File ID: 8ccdcd38-f1c3-11e3-96ba-c80aa9e67bbd
-# Read filenames from stdin and output lines on the format
-# KEY FILENAME
+#
+# Read filenames from stdin and store the git-annex key to 
+# /kopiert-annex/$1. For documenting where I got files from or who I've 
+# given a copy to. If all copies should be destroyed (FSM forbid) I know 
+# where to get another copy. Example:
+#
+# ls | ga-other Some_Bloke
+# find -type l | ga-other Another_Bloke
+#
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
