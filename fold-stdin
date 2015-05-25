@@ -13,6 +13,7 @@
 
 use strict;
 use warnings;
+use Digest::SHA qw(sha1_hex);
 use Getopt::Long;
 
 local $| = 1;
@@ -81,6 +82,7 @@ sub main {
             $level < 0 && msg(0, "Extra end fold found, level = $level");
             if (!$level) {
                 $deleted_text .= $line;
+                my $data_sha = sha1_hex($deleted_text);
                 -d $fold_dir || mkdir($fold_dir);
                 printf("[Removed %s, %u line%s]\n",
                     length($fold_str) ? "\"$fold_str\"" : "Vim fold",
