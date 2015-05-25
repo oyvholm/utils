@@ -13,6 +13,7 @@
 
 use strict;
 use warnings;
+use Digest::SHA qw(sha1_hex);
 use Getopt::Long;
 
 local $| = 1;
@@ -58,11 +59,13 @@ sub main {
 
     my $FOLD_BEGIN = "\x7B\x7B\x7B";
     my $FOLD_END = "\x7D\x7D\x7D";
+    my $fold_dir = "/tmp/folds";
 
     my $count = 0;
     my $fold_str = '';
     my $level = 0;
     my $suppress = 0;
+    my $deleted_text = '';
 
     while (my $line = <>) {
         if ($line =~ /$FOLD_BEGIN/) {
@@ -78,14 +81,33 @@ sub main {
             $level--;
             $level < 0 && msg(0, "Extra end fold found, level = $level");
             if (!$level) {
-                printf("[Removed %s, %u line%s]\n",
+                $deleted_text .= $line;
+                my $data_sha = sha1_hex($deleted_text);
+                -d $fold_dir || mkdir($fold_dir);
+                my $destfile = "$fold_dir/fold-$data_sha";
+                my $created_file = 0;
+                if (open(DestFP, ">$destfile")) {
+                    print(DestFP $deleted_text);
+                    close(DestFP) && ($created_file = 1);
+                } else {
+                    warn("$progname: $destfile: Could not create file: $!\n");
+                }
+                printf("[ Removed %s, %u line%s%s ]\n",
                     length($fold_str) ? "\"$fold_str\"" : "Vim fold",
-                    $count, $count == 1 ? '' : 's');
+                    $count, $count == 1 ? '' : 's',
+                    $created_file ? " stored in $destfile" : "",
+                );
                 $count = 0;
                 $suppress = 0;
+                $deleted_text = '';
             }
         } else {
-            $suppress ? $count++ : print("$line");
+            if ($suppress) {
+                $count++;
+                $deleted_text .= $line;
+            } else {
+                print("$line");
+            }
         }
     }
     if ($level > 0) {
