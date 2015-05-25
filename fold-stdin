@@ -63,6 +63,7 @@ sub main {
     my $fold_str = '';
     my $level = 0;
     my $suppress = 0;
+    my $deleted_text = '';
 
     while (my $line = <>) {
         if ($line =~ /$FOLD_BEGIN/) {
@@ -78,16 +79,19 @@ sub main {
             $level--;
             $level < 0 && msg(0, "Extra end fold found, level = $level");
             if (!$level) {
+                $deleted_text .= $line;
                 printf("[Removed %s, %u line%s]\n",
                     length($fold_str) ? "\"$fold_str\"" : "Vim fold",
                     $count, $count == 1 ? '' : 's',
                 );
                 $count = 0;
                 $suppress = 0;
+                $deleted_text = '';
             }
         } else {
             if ($suppress) {
                 $count++;
+                $deleted_text .= $line;
             } else {
                 print("$line");
             }
