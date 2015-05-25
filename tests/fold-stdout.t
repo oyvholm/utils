@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 
 #=======================================================================
-# fold-stdin.t
+# fold-stdout.t
 # File ID: 9f015a7a-f4a5-11e4-9ef1-000df06acc56
-# Test suite for fold-stdin(1).
+# Test suite for fold-stdout(1).
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
@@ -25,7 +25,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $Debug = 0;
-our $CMD = '../fold-stdin';
+our $CMD = '../fold-stdout';
 
 our %Opt = (
 
@@ -149,7 +149,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-    my $TMP_STDERR = 'fold-stdin-stderr.tmp';
+    my $TMP_STDERR = 'fold-stdout-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -180,7 +180,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-    my $TMP_STDERR = 'fold-stdin-stderr.tmp';
+    my $TMP_STDERR = 'fold-stdout-stderr.tmp';
 
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
@@ -234,7 +234,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the fold-stdin(1) program.
+Contains tests for the fold-stdout(1) program.
 
 Options:
 
@@ -279,11 +279,11 @@ run-tests.pl
 
 =head1 SYNOPSIS
 
-fold-stdin.t [options] [file [files [...]]]
+fold-stdout.t [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
-Contains tests for the fold-stdin(1) program.
+Contains tests for the fold-stdout(1) program.
 
 =head1 OPTIONS
 

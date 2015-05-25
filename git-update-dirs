@@ -258,7 +258,7 @@ LOOP: for my $f (@Dirs) {
                     mysystem("ga", "get", "--auto");
                     mysystem("ga", "sync");
                 } else {
-                    mysystem("ga-getnew | fold-stdin");
+                    mysystem("ga-getnew | fold-stdout");
                 }
             }
         }
@@ -441,7 +441,7 @@ Options:
     be used together with -u/--ga-dropunused.
     To disable: git config git-update-dirs.no-ga-moveunused true
   -N, --ga-getnew
-    Execute "ga-getnew | fold-stdin", i.e. use "ga get --auto" to get 
+    Execute "ga-getnew | fold-stdout", i.e. use "ga get --auto" to get 
     all files from one week back that don't have enough copies.
     To disable: git config git-update-dirs.no-ga-getnew true
   -d, --dangling
