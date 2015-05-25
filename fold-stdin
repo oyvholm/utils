@@ -80,7 +80,8 @@ sub main {
             if (!$level) {
                 printf("[Removed %s, %u line%s]\n",
                     length($fold_str) ? "\"$fold_str\"" : "Vim fold",
-                    $count, $count == 1 ? '' : 's');
+                    $count, $count == 1 ? '' : 's',
+                );
                 $count = 0;
                 $suppress = 0;
             }
