@@ -85,7 +85,11 @@ sub main {
                 $suppress = 0;
             }
         } else {
-            $suppress ? $count++ : print("$line");
+            if ($suppress) {
+                $count++;
+            } else {
+                print("$line");
+            }
         }
     }
     if ($level > 0) {
