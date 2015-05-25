@@ -85,15 +85,17 @@ sub main {
                 my $data_sha = sha1_hex($deleted_text);
                 -d $fold_dir || mkdir($fold_dir);
                 my $destfile = "$fold_dir/fold-$data_sha";
+                my $created_file = 0;
                 if (open(DestFP, ">$destfile")) {
                     print(DestFP $deleted_text);
-                    close(DestFP);
+                    close(DestFP) && ($created_file = 1);
                 } else {
                     warn("$progname: $destfile: Could not create file: $!\n");
                 }
-                printf("[Removed %s, %u line%s]\n",
+                printf("[ Removed %s, %u line%s%s ]\n",
                     length($fold_str) ? "\"$fold_str\"" : "Vim fold",
                     $count, $count == 1 ? '' : 's',
+                    $created_file ? " stored in $destfile" : "",
                 );
                 $count = 0;
                 $suppress = 0;
