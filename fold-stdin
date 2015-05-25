@@ -58,6 +58,7 @@ sub main {
 
     my $FOLD_BEGIN = "\x7B\x7B\x7B";
     my $FOLD_END = "\x7D\x7D\x7D";
+    my $fold_dir = "/tmp/folds";
 
     my $count = 0;
     my $fold_str = '';
@@ -80,6 +81,7 @@ sub main {
             $level < 0 && msg(0, "Extra end fold found, level = $level");
             if (!$level) {
                 $deleted_text .= $line;
+                -d $fold_dir || mkdir($fold_dir);
                 printf("[Removed %s, %u line%s]\n",
                     length($fold_str) ? "\"$fold_str\"" : "Vim fold",
                     $count, $count == 1 ? '' : 's',
