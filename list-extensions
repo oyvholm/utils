@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#=======================================================================
+# list-extensions
+# File ID: eeac3f34-031b-11e5-aec1-2330d30b8995
+#
+# Read filenames or paths from stdin and output a list of used 
+# extensions, sorted by frequency.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+perl -pe 's/^.*\/(.+?)$/$1/' |
+    grep '\.' |
+    rev |
+    cut -f 1 -d . |
+    rev |
+    sort |
+    uniq -c |
+    sort -n
