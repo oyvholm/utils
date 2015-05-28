@@ -44,6 +44,7 @@ grep -v \
 -e /DoggCatcher/EpisodeEnclosures/ \
 -e /DoggCatcher/PodcastImages/ \
 -e /QrDroid/tmp/ \
+-e /UnityAdsVideoCache/ \
 -e /\\.ActionMemo/ \
 -e /\\.cgeo/ \
 -e /\\.samsungvideohub/cache/ \
