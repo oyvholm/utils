@@ -3,6 +3,7 @@
 #=======================================================================
 # STDfilenameDTS
 # File ID: STDuuidDTS
+#
 # Test suite for STDprognameDTS(1).
 #
 # Character set: UTF-8
