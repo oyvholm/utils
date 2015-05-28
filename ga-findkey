@@ -3,7 +3,9 @@
 #=======================================================================
 # ga-findkey
 # File ID: a7e2ddb8-0584-11e5-9395-000df06acc56
-# [Description]
+#
+# Scan stdin or files specified on the command line for SHA256 keys 
+# created by git-annex.
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
@@ -59,6 +61,12 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    while (<>) {
+        if (/(SHA256-s\d+--[0-9a-f]{40})/) {
+            print("$1\n");
+        }
+    }
+
     return($Retval);
     # }}}
 } # main()
@@ -81,6 +89,9 @@ sub usage {
     print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
+
+Scan stdin or files specified on the command line for SHA256 keys 
+created by git-annex.
 
 Options:
 
