@@ -138,6 +138,7 @@ if ($Opt{'recursive'}) {
 
 my $orig_dir = getcwd();
 my ($total_before, $total_after, $total_saved) = (0, 0, 0);
+my ($totnum_before, $totnum_after) = (0, 0);
 
 for my $dirfile (@opt_dirs_from) {
     if ($dirfile eq '-') {
@@ -280,6 +281,8 @@ LOOP: for my $f (@Dirs) {
         if (should('compress') || should('aggressive-compress')) {
             chomp(my $before = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
             $total_before += $before;
+            chomp(my $numfiles_before = `find $object_dir -type f | wc -l`);
+            $totnum_before += $numfiles_before;
             if (should('aggressive-compress')) {
                 mysystem("git gc --aggressive") && push(@err_compress, $f);
             } else {
@@ -288,7 +291,11 @@ LOOP: for my $f (@Dirs) {
             chomp(my $after = `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
             $total_after += $after;
             my $saved = $before - $after;
+            chomp(my $numfiles_after = `find $object_dir -type f | wc -l`);
+            $totnum_after += $numfiles_after;
             $before && printf("\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n", commify($before), commify($after), commify($saved), 100.0 * $saved / $before);
+            printf("Number of files in %s: before: %u, after: %u, saved: %d\n",
+                $object_dir, $numfiles_before, $numfiles_after, $numfiles_before-$numfiles_after)
             # Temporarily (?) disabled, it takes a heck of a long 
             # time and uses loads of CPU and memory. If the 
             # git-annex repo gets corrupted it's in most cases good 
@@ -325,6 +332,8 @@ if ($Opt{'compress'} || $Opt{'aggressive-compress'}) {
     printf("Before: %s\nAfter : %s\n", commify($total_before), commify($total_after));
     $total_before && printf("Total : %s (%.4f%%)\n",
         commify($total_saved), 100.0 * $total_saved / $total_before);
+    printf("Number of object files: before: %u, after: %u, saved: %d\n",
+        $totnum_before, $totnum_after, $totnum_before-$totnum_after)
 }
 
 sub check_sig {
