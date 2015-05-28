@@ -19,6 +19,10 @@ dir="$1"
 test -d "$dir" || { echo $progname: $dir: Not a directory >&2; exit 1; }
 test -e "$dir.tar.gz" && { echo $progname: $dir.tar.gz already exists >&2; exit 1; }
 echo
+if test -n "$(git config --get annex.uuid)"; then
+    echo ========= ga edit $dir
+    ga edit "$dir"
+fi
 echo ========= gunzip -r $dir
 gunzip -r "$dir"
 echo === tar $dir
