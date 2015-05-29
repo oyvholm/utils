@@ -26,6 +26,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'quiet' => 0,
+    'unique' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -41,6 +42,7 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
+    'unique|u' => \$Opt{'unique'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -54,6 +56,8 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my %keys = ();
+
 exit(main(%Opt));
 
 sub main {
@@ -62,12 +66,25 @@ sub main {
     my $Retval = 0;
 
     while (<>) {
-        s/(SHA256-s\d+--[0-9a-f]{40})/print("$1\n")/ge;
+        s/(SHA256-s\d+--[0-9a-f]{40})/print_key($1)/ge;
     }
 
     return($Retval);
     # }}}
 } # main()
+
+sub print_key {
+    # {{{
+    my $key = shift;
+    if ($Opt{'unique'}) {
+        $keys{"$key"} || print("$key\n");
+        $keys{"$key"} = 1;
+    } else {
+        print("$key\n");
+    }
+    return('');
+    # }}}
+} # print_key()
 
 sub print_version {
     # Print program version {{{
@@ -97,6 +114,8 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -u, --unique
+    Remove duplicate keys from output, print every key only once.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
