@@ -62,9 +62,7 @@ sub main {
     my $Retval = 0;
 
     while (<>) {
-        if (/(SHA256-s\d+--[0-9a-f]{40})/) {
-            print("$1\n");
-        }
+        s/(SHA256-s\d+--[0-9a-f]{40})/print("$1\n")/ge;
     }
 
     return($Retval);
