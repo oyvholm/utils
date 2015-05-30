@@ -3,11 +3,12 @@
 #=======================================================================
 # perlmodules.t
 # File ID: a2e25ad4-56fe-11e0-8c2f-00023faf1383
+#
 # Find missing Perl modules.
 #
 # Character set: UTF-8
 # ©opyleft 2011– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -66,143 +67,152 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-my %Modules = (
+    my %Modules = (
 
-    'Authen::SASL' => 'libauthen-sasl-perl',
-    'CGI' => '',
-    'Cwd' => '',
-    'DBI' => 'libdbi-perl',
-    'Data::Dumper' => '',
-    'Date::Manip' => 'libdate-manip-perl',
-    'Devel::GDB' => 'libdevel-gdb-perl',
-    'Devel::NYTProf' => 'libdevel-nytprof-perl',
-    'Devel::ptkdb' => 'libdevel-ptkdb-perl',
-    'Digest::CRC' => 'libdigest-crc-perl',
-    'Digest::MD5' => 'libdigest-md5-file-perl',
-    'Digest::SHA' => 'libdigest-sha-perl',
-    'Env' => '',
-    'Exporter' => '',
-    'FLDBdebug' => '', # mine
-    'FLDBpg' => '', # mine
-    'FLDBsum' => '', # mine
-    'FLDButf' => '', # mine
-    'Fcntl' => '',
-    'File::Copy' => '',
-    'File::Find' => '',
-    'File::Glob' => '',
-    'File::Path' => '',
-    'File::Spec' => '',
-    'File::Temp' => '',
-    'FileHandle' => '',
-    'GPST' => '', # mine
-    'GPSTdate' => '', # mine
-    'GPSTdebug' => '', # mine
-    'GPSTgeo' => '', # mine
-    'GPSTxml' => '', # mine
-    'Getopt::Long' => '',
-    'Getopt::Std' => '',
-    'GraphViz' => 'libgraphviz-perl',
-    'HTML::Template' => 'libhtml-template-perl',
-    'HTML::TreeBuilder' => 'libxml-treebuilder-perl libhtml-treebuilder-xpath-perl',
-    'HTML::WikiConverter' => 'libhtml-wikiconverter-mediawiki-perl',
-    'IO::Handle' => '',
-    'Image::ExifTool' => 'libimage-exiftool-perl',
-    'JSON::XS' => 'libjson-xs-perl',
-    'MIME::Base64' => 'libmime-base64-urlsafe-perl',
-    'Module::Starter' => 'libmodule-starter-perl',
-    'Module::Starter::Plugin::CGIApp' => 'libmodule-starter-plugin-cgiapp-perl',
-    'Net::SMTP::SSL' => 'libnet-smtp-ssl-perl',
-    'Number::Bytes::Human' => 'libnumber-bytes-human-perl',
-    'OSSP::uuid' => 'libossp-uuid-perl',
-    'POSIX' => '',
-    'Perl::Critic' => 'libtest-perl-critic-perl',
-    'Socket' => '',
-    'Term::ReadLine' => '',
-    'Term::ReadLine::Gnu' => 'libterm-readline-gnu-perl',
-    'Term::ReadLine::Perl' => 'libterm-readline-perl-perl',
-    'Test::More' => '',
-    'Test::Perl::Critic' => 'libtest-perl-critic-perl',
-    'Time::HiRes' => '',
-    'Time::Local' => '',
-    'XML::Parser' => 'libxml-parser-perl',
-    'bigint' => '',
-    'constant' => '',
-    'strict' => '',
-    'suncgi' => '', # mine
-    'utf8' => '',
-    'vars' => '',
+        'Authen::SASL' => 'libauthen-sasl-perl',
+        'CGI' => '',
+        'Cwd' => '',
+        'DBI' => 'libdbi-perl',
+        'Data::Dumper' => '',
+        'Date::Manip' => 'libdate-manip-perl',
+        'Devel::GDB' => 'libdevel-gdb-perl',
+        'Devel::NYTProf' => 'libdevel-nytprof-perl',
+        'Devel::ptkdb' => 'libdevel-ptkdb-perl',
+        'Digest::CRC' => 'libdigest-crc-perl',
+        'Digest::MD5' => 'libdigest-md5-file-perl',
+        'Digest::SHA' => 'libdigest-sha-perl',
+        'Env' => '',
+        'Exporter' => '',
+        'FLDBdebug' => '', # mine
+        'FLDBpg' => '', # mine
+        'FLDBsum' => '', # mine
+        'FLDButf' => '', # mine
+        'Fcntl' => '',
+        'File::Copy' => '',
+        'File::Find' => '',
+        'File::Glob' => '',
+        'File::Path' => '',
+        'File::Spec' => '',
+        'File::Temp' => '',
+        'FileHandle' => '',
+        'GPST' => '', # mine
+        'GPSTdate' => '', # mine
+        'GPSTdebug' => '', # mine
+        'GPSTgeo' => '', # mine
+        'GPSTxml' => '', # mine
+        'Getopt::Long' => '',
+        'Getopt::Std' => '',
+        'GraphViz' => 'libgraphviz-perl',
+        'HTML::Template' => 'libhtml-template-perl',
+        'HTML::TreeBuilder' => 'libxml-treebuilder-perl libhtml-treebuilder-xpath-perl',
+        'HTML::WikiConverter' => 'libhtml-wikiconverter-mediawiki-perl',
+        'IO::Handle' => '',
+        'Image::ExifTool' => 'libimage-exiftool-perl',
+        'JSON::XS' => 'libjson-xs-perl',
+        'MIME::Base64' => 'libmime-base64-urlsafe-perl',
+        'Module::Starter' => 'libmodule-starter-perl',
+        'Module::Starter::Plugin::CGIApp' => 'libmodule-starter-plugin-cgiapp-perl',
+        'Net::SMTP::SSL' => 'libnet-smtp-ssl-perl',
+        'Number::Bytes::Human' => 'libnumber-bytes-human-perl',
+        'OSSP::uuid' => 'libossp-uuid-perl',
+        'POSIX' => '',
+        'Perl::Critic' => 'libtest-perl-critic-perl',
+        'Socket' => '',
+        'Term::ReadLine' => '',
+        'Term::ReadLine::Gnu' => 'libterm-readline-gnu-perl',
+        'Term::ReadLine::Perl' => 'libterm-readline-perl-perl',
+        'Test::More' => '',
+        'Test::Perl::Critic' => 'libtest-perl-critic-perl',
+        'Time::HiRes' => '',
+        'Time::Local' => '',
+        'XML::Parser' => 'libxml-parser-perl',
+        'bigint' => '',
+        'constant' => '',
+        'strict' => '',
+        'suncgi' => '', # mine
+        'utf8' => '',
+        'vars' => '',
 
-);
-
-my @missing = ();
-my $outfile = './install-modules';
-
-unlink $outfile;
-for my $mod (sort keys %Modules) {
-    my $package = $Modules{$mod};
-    use_ok($mod) || length($package) && push(@missing, $package);
-}
--e "nytprof.out" && ok(unlink("nytprof.out"), "Remove nytprof.out");
-
-if (scalar(@missing)) {
-    open(my $fp, '>', $outfile) || die("$progname: $outfile: Cannot create file: $!\n");
-    print($fp
-        join("\n",
-            '#!/bin/sh',
-            '',
-            '# Created by perlmodules.t',
-            '',
-            "sudo apt-get update\n",
-        )
     );
-    for my $m (@missing) {
-        print($fp "sudo apt-get --assume-yes install $m\n");
+
+    my @missing = ();
+    my $outfile = './install-modules';
+
+    unlink $outfile;
+    for my $mod (sort keys %Modules) {
+        my $package = $Modules{$mod};
+        use_ok($mod) || length($package) && push(@missing, $package);
     }
-    ok(close($fp), "Close $outfile");
-    ok(chmod(0755, $outfile), "Make $outfile executable");
-    diag("\nExecute $outfile to install missing modules.\n\n");
-    diag("Contents of $outfile:\n==== BEGIN ====\n", file_data($outfile), "==== END ====\n\n");
-}
+    -e "nytprof.out" && ok(unlink("nytprof.out"), "Remove nytprof.out");
 
-todo_section:
-;
-
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
-
-    TODO: {
-
-local $TODO = '';
-# Insert TODO tests here.
-
+    if (scalar(@missing)) {
+        open(my $fp, '>', $outfile) || die("$progname: $outfile: Cannot create file: $!\n");
+        print($fp
+            join("\n",
+                '#!/bin/sh',
+                '',
+                '# Created by perlmodules.t',
+                '',
+                "sudo apt-get update\n",
+            )
+        );
+        for my $m (@missing) {
+            print($fp "sudo apt-get --assume-yes install $m\n");
+        }
+        ok(close($fp), "Close $outfile");
+        ok(chmod(0755, $outfile), "Make $outfile executable");
+        diag("\nExecute $outfile to install missing modules.\n\n");
+        diag("Contents of $outfile:\n==== BEGIN ====\n", file_data($outfile), "==== END ====\n\n");
     }
-    # TODO tests }}}
-}
 
-diag('Testing finished.');
+    todo_section:
+    ;
+
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+    local $TODO = '';
+    # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
+    }
+
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -392,9 +402,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

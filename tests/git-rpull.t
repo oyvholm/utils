@@ -3,11 +3,12 @@
 #=======================================================================
 # git-rpull.t
 # File ID: 9e65f99c-4555-11e2-86f2-0016d364066c
+#
 # Test suite for git-rpull(1).
 #
 # Character set: UTF-8
 # ©opyleft 2012– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -80,7 +81,7 @@ sub main {
 
     testcmd("$CMD command", # {{{
         <<'END',
-[expected stdin]
+[expected stdout]
 END
         '',
         0,
@@ -326,9 +327,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

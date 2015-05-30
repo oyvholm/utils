@@ -3,11 +3,12 @@
 #=======================================================================
 # std.t
 # File ID: 685626fa-f988-11dd-af37-000475e441b9
+#
 # Test suite for std(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -64,208 +65,217 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
-
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
-
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
-
-# }}}
-
-my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
-diag("Creating tempdir...");
-if ($use_svn) {
-    likecmd("svn mkdir $Tmptop", # {{{
-        '/^A\s+tmp-std-t-.+$/s',
-        '/^$/s',
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
         0,
-        "Create svn-controlled directory",
+        'Option -h prints help screen',
     );
-    # }}}
-} else {
-    mkdir($Tmptop) || die("$progname: $Tmptop: Cannot create directory: $!\n");
-}
-chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
-mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
-likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
-    '/GNU General Public License/s',
-    '/^std: Warning: Undefined tags: filename\n$/s',
-    0,
-    "One argument sends file to stdout",
-);
 
-# }}}
-my $suuid_file = glob("tmpuuids/*");
-ok(-e $suuid_file, "suuid log file exists");
-if ($use_svn) {
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
-        "/^$v1_templ\\nA\\s+bashfile.+\$/s",
-        '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
-        0,
-        "Create bash script",
-    );
     # }}}
-} else {
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
+
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
+
+    # }}}
+
+    my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
+    diag("Creating tempdir...");
+    if ($use_svn) {
+        likecmd("svn mkdir $Tmptop", # {{{
+            '/^A\s+tmp-std-t-.+$/s',
+            '/^$/s',
+            0,
+            "Create svn-controlled directory",
+        );
+        # }}}
+    } else {
+        mkdir($Tmptop) || die("$progname: $Tmptop: Cannot create directory: $!\n");
+    }
+    chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
+    mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
+        '/GNU General Public License/s',
+        '/^std: Warning: Undefined tags: filename\n$/s',
+        0,
+        "One argument sends file to stdout",
+    );
+
+    # }}}
+    my $suuid_file = glob("tmpuuids/*");
+    ok(-e $suuid_file, "suuid log file exists");
+    if ($use_svn) {
+        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
+            "/^$v1_templ\\nA\\s+bashfile.+\$/s",
+            '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
+            0,
+            "Create bash script",
+        );
+        # }}}
+    } else {
+        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
+            "/^$v1_templ\\n\$/s",
+            '/^$/',
+            0,
+            "Create bash script",
+        );
+        # }}}
+    }
+    ok(-e "bashfile", "bashfile exists");
+    ok(unlink('bashfile'), 'Remove bashfile');
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^$/',
         0,
-        "Create bash script",
+        "Create bash script with -l (--local)",
     );
+
     # }}}
-}
-ok(-e "bashfile", "bashfile exists");
-ok(unlink('bashfile'), 'Remove bashfile');
-likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
-    "/^$v1_templ\\n\$/s",
-    '/^$/',
-    0,
-    "Create bash script with -l (--local)",
-);
-
-# }}}
-ok(-x "bashfile", "bashfile is executable");
-$use_svn && likecmd("svn propget mergesvn bashfile", # {{{
-    '/^\d+ \S+Lib\/std\/bash\n$/s',
-    '/^$/s',
-    0,
-    "mergesvn property is set to bash template",
-);
-
-# }}}
-diag("Check for unused tags...");
-likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
-    '/^.*Contains tests for the.*$/s',
-    '/^std: Warning: Undefined tags: exec filename libdir progname testcmd\n$/s',
-    0,
-    "Report unused tags",
-);
-
-# }}}
-diag("Testing -f (--force) option...");
-likecmd("../$CMD bash bashfile", # {{{
-    '/^$/s',
-    '/^std: bashfile: File already exists, will not overwrite\n$/s',
-    1,
-    "Create bash script, file already exists, don’t use --force",
-);
-
-# }}}
-if ($use_svn) {
-    likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
-        "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
-        '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+    ok(-x "bashfile", "bashfile is executable");
+    $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
+        '/^\d+ \S+Lib\/std\/bash\n$/s',
+        '/^$/s',
         0,
-        "Overwrite bashfile with perl script using --force",
+        "mergesvn property is set to bash template",
     );
+
     # }}}
-} else {
-    likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
-        "/^$v1_templ\\n\$/s",
-        '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+    diag("Check for unused tags...");
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
+        '/^.*Contains tests for the.*$/s',
+        '/^std: Warning: Undefined tags: exec filename libdir progname testcmd\n$/s',
         0,
-        "Overwrite bashfile with perl script using --force",
+        "Report unused tags",
     );
+
     # }}}
-}
-like(file_data("bashfile"), # {{{
-    qr/use Getopt::Long/s,
-    "Contents of bashfile is replaced"
-);
+    diag("Testing -f (--force) option...");
+    likecmd("../$CMD bash bashfile", # {{{
+        '/^$/s',
+        '/^std: bashfile: File already exists, will not overwrite\n$/s',
+        1,
+        "Create bash script, file already exists, don’t use --force",
+    );
 
-# }}}
-$use_svn && likecmd("svn propget mergesvn bashfile", # {{{
-    '/^\d+ \S+Lib\/std\/perl\n$/s',
-    '/^$/s',
-    0,
-    "mergesvn property is replaced with perl template",
-);
-
-# }}}
-diag("Testing -T (--notag) option...");
-likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -T uuid,year perl", # {{{
-    '/STDuuidDTS.*STDyearDTS/s',
-    '/^std: Warning: Undefined tags: filename uuid year\n.*$/s',
-    0,
-    "Send perl script to stdout, don’t expand uuid and year tag",
-);
-
-# }}}
-
-todo_section:
-;
-
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
-
-    TODO: {
-
-local $TODO = '';
-# Insert TODO tests here.
-
+    # }}}
+    if ($use_svn) {
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
+            "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
+            '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+            0,
+            "Overwrite bashfile with perl script using --force",
+        );
+        # }}}
+    } else {
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
+            "/^$v1_templ\\n\$/s",
+            '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+            0,
+            "Overwrite bashfile with perl script using --force",
+        );
+        # }}}
     }
-    # TODO tests }}}
-}
+    like(file_data("bashfile"), # {{{
+        qr/use Getopt::Long/s,
+        "Contents of bashfile is replaced"
+    );
 
-chdir("..") || die("$progname: Cannot 'chdir ..': $!");
-diag("Cleaning up temp files...");
-$use_svn && likecmd("svn revert $Tmptop", # {{{
-    '/tmp-std-t/s',
-    '/^$/s',
-    0,
-    "svn revert tempdir",
-);
+    # }}}
+    $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
+        '/^\d+ \S+Lib\/std\/perl\n$/s',
+        '/^$/s',
+        0,
+        "mergesvn property is replaced with perl template",
+    );
 
-# }}}
-ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob $Tmptop/tmpuuids/*')");
-ok(rmdir("$Tmptop/tmpuuids"), "rmdir('$Tmptop/tmpuuids')");
-ok(unlink("$Tmptop/bashfile"), "unlink('$Tmptop/bashfile')");
-ok(rmdir($Tmptop), "rmdir('$Tmptop')");
+    # }}}
+    diag("Testing -T (--notag) option...");
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -T uuid,year perl", # {{{
+        '/STDuuidDTS.*STDyearDTS/s',
+        '/^std: Warning: Undefined tags: filename uuid year\n.*$/s',
+        0,
+        "Send perl script to stdout, don’t expand uuid and year tag",
+    );
 
-diag('Testing finished.');
+    # }}}
+
+    todo_section:
+    ;
+
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+    local $TODO = '';
+    # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
+    }
+
+    chdir("..") || die("$progname: Cannot 'chdir ..': $!");
+    diag("Cleaning up temp files...");
+    $use_svn && likecmd("svn revert $Tmptop", # {{{
+        '/tmp-std-t/s',
+        '/^$/s',
+        0,
+        "svn revert tempdir",
+    );
+
+    # }}}
+    ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob $Tmptop/tmpuuids/*')");
+    ok(rmdir("$Tmptop/tmpuuids"), "rmdir('$Tmptop/tmpuuids')");
+    ok(unlink("$Tmptop/bashfile"), "unlink('$Tmptop/bashfile')");
+    ok(rmdir($Tmptop), "rmdir('$Tmptop')");
+
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -455,9 +465,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

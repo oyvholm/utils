@@ -3,11 +3,12 @@
 #=======================================================================
 # sortxml.t
 # File ID: 8c064bc0-1463-11de-b31f-000475e441b9
+#
 # Test suite for sortxml(1).
 #
 # Character set: UTF-8
 # ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -61,59 +62,66 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
 
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
 
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
 
-# }}}
-diag("Test sorting...");
-testcmd("$CMD -s b sortxml-files/a.xml", # {{{
-    <<END,
+    # }}}
+    diag("Test sorting...");
+    testcmd("$CMD -s b sortxml-files/a.xml", # {{{
+        <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE a [
 <!ELEMENT a (b)+>
@@ -153,14 +161,14 @@ testcmd("$CMD -s b sortxml-files/a.xml", # {{{
   </b>
 </a>
 END
-    "",
-    0,
-    "Sorting XML document",
-);
+        "",
+        0,
+        "Sorting XML document",
+    );
 
-# }}}
-testcmd("$CMD -s b sortxml-files/oneliners.xml", # {{{
-    <<END,
+    # }}}
+    testcmd("$CMD -s b sortxml-files/oneliners.xml", # {{{
+        <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE a [
 <!ELEMENT a (b)+>
@@ -178,15 +186,15 @@ testcmd("$CMD -s b sortxml-files/oneliners.xml", # {{{
   <b> <c>zsd</c> </b>
 </a>
 END
-    "",
-    0,
-    "XML uses oneliners",
-);
+        "",
+        0,
+        "XML uses oneliners",
+    );
 
-# }}}
-diag("Test reverse sorting...");
-testcmd("$CMD -s b -r sortxml-files/a.xml", # {{{
-    <<END,
+    # }}}
+    diag("Test reverse sorting...");
+    testcmd("$CMD -s b -r sortxml-files/a.xml", # {{{
+        <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE a [
 <!ELEMENT a (b)+>
@@ -226,14 +234,14 @@ testcmd("$CMD -s b -r sortxml-files/a.xml", # {{{
   </b>
 </a>
 END
-    "",
-    0,
-    "Reverse sort XML document",
-);
+        "",
+        0,
+        "Reverse sort XML document",
+    );
 
-# }}}
-testcmd("$CMD -s b -r sortxml-files/oneliners.xml", # {{{
-    <<END,
+    # }}}
+    testcmd("$CMD -s b -r sortxml-files/oneliners.xml", # {{{
+        <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE a [
 <!ELEMENT a (b)+>
@@ -251,15 +259,15 @@ testcmd("$CMD -s b -r sortxml-files/oneliners.xml", # {{{
   <b> <c>abc</c> <d>dsfv</d> </b>
 </a>
 END
-    "",
-    0,
-    "Reverse sort onelined XML",
-);
+        "",
+        0,
+        "Reverse sort onelined XML",
+    );
 
-# }}}
-diag('Testing -u (--unique) option...');
-testcmd("$CMD -s b -u sortxml-files/a.xml", # {{{
-    <<END,
+    # }}}
+    diag('Testing -u (--unique) option...');
+    testcmd("$CMD -s b -u sortxml-files/a.xml", # {{{
+        <<END,
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE a [
 <!ELEMENT a (b)+>
@@ -295,29 +303,31 @@ testcmd("$CMD -s b -u sortxml-files/a.xml", # {{{
   </b>
 </a>
 END
-    "",
-    0,
-    "Duplicated <b> removed",
-);
+        "",
+        0,
+        "Duplicated <b> removed",
+    );
 
-# }}}
+    # }}}
 
-todo_section:
-;
+    todo_section:
+    ;
 
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
 
-    TODO: {
+        TODO: {
 
-local $TODO = '';
-# Insert TODO tests here.
+    local $TODO = '';
+    # Insert TODO tests here.
 
+        }
+        # TODO tests }}}
     }
-    # TODO tests }}}
-}
 
-diag('Testing finished.');
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -507,9 +517,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

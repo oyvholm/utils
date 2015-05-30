@@ -3,11 +3,12 @@
 #=======================================================================
 # fileid.t
 # File ID: ac826c20-fa15-11dd-bdfd-000475e441b9
+#
 # Test suite for fileid(1).
 #
 # Character set: UTF-8
 # ©opyleft 2009– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -64,88 +65,97 @@ if ($Opt{'version'}) {
 my $Lh = "[0-9a-fA-F]";
 my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
 
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
 
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
 
-# }}}
-ok(mkdir("tmpuuids"), 'mkdir tmpuuids');
-diag("Testing -t/--type option...");
-likecmd("SUUID_LOGDIR=tmpuuids $CMD -t perl ohyes", # {{{
-    "/^# File ID: $Templ\\n\$/",
-    '/^$/',
-    0,
-    "--type perl returns Perl comment",
-);
+    # }}}
+    ok(mkdir("tmpuuids"), 'mkdir tmpuuids');
+    diag("Testing -t/--type option...");
+    likecmd("SUUID_LOGDIR=tmpuuids $CMD -t perl ohyes", # {{{
+        "/^# File ID: $Templ\\n\$/",
+        '/^$/',
+        0,
+        "--type perl returns Perl comment",
+    );
 
-# }}}
-my $uuid_tmpfile = glob("tmpuuids/*");
-ok(-f $uuid_tmpfile, "uuid file exists");
+    # }}}
+    my $uuid_tmpfile = glob("tmpuuids/*");
+    ok(-f $uuid_tmpfile, "uuid file exists");
 
-todo_section:
-;
+    todo_section:
+    ;
 
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
 
-    TODO: {
+        TODO: {
 
-local $TODO = '';
-# Insert TODO tests here.
+    local $TODO = '';
+    # Insert TODO tests here.
 
+        }
+        # TODO tests }}}
     }
-    # TODO tests }}}
-}
 
-diag("Cleaning up...");
-ok(unlink($uuid_tmpfile), "Remove $uuid_tmpfile");
-ok(rmdir("tmpuuids"), 'rmdir tmpuuids');
-diag('Testing finished.');
+    diag("Cleaning up...");
+    ok(unlink($uuid_tmpfile), "Remove $uuid_tmpfile");
+    ok(rmdir("tmpuuids"), 'rmdir tmpuuids');
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -335,9 +345,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

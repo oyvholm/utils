@@ -3,11 +3,12 @@
 #=======================================================================
 # installed_progs.t
 # File ID: 3d0e23bc-400e-11e4-a184-c80aa9e67bbd
+#
 # Check that some necessary programs are installed.
 #
 # Character set: UTF-8
 # ©opyleft 2014– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -495,9 +496,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

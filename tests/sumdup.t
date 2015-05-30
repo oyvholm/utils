@@ -3,11 +3,12 @@
 #=======================================================================
 # sumdup.t
 # File ID: 72d68c8c-f988-11dd-989d-000475e441b9
+#
 # Test suite for sumdup(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -61,59 +62,66 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
 
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
 
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
 
-# }}}
-diag('Testing sorted input...');
-testcmd("sort sumdup-files/files.md5 | $CMD", # {{{
-    <<'END',
+    # }}}
+    diag('Testing sorted input...');
+    testcmd("sort sumdup-files/files.md5 | $CMD", # {{{
+        <<'END',
 
 99754106633f94d350db34d548d6091a  file2
 99754106633f94d350db34d548d6091a  file4
@@ -122,14 +130,14 @@ testcmd("sort sumdup-files/files.md5 | $CMD", # {{{
 ab4e78bf3b9d8b1aa18537c3f780245c  file3
 ab4e78bf3b9d8b1aa18537c3f780245c  file6
 END
-    '',
-    0,
-    'Finds duplicates in sorted output from sumdup-files/files.md5',
-);
+        '',
+        0,
+        'Finds duplicates in sorted output from sumdup-files/files.md5',
+    );
 
-# }}}
-testcmd("sort sumdup-files/files.sha1 | $CMD", # {{{
-    <<'END',
+    # }}}
+    testcmd("sort sumdup-files/files.sha1 | $CMD", # {{{
+        <<'END',
 
 38d0f91a99c57d189416439ce377ccdcd92639d0  file2
 38d0f91a99c57d189416439ce377ccdcd92639d0  file4
@@ -144,14 +152,14 @@ f62e5bcda4fae4f82370da0c6f20697b8f8447ef  file1
 f62e5bcda4fae4f82370da0c6f20697b8f8447ef  file8
 f62e5bcda4fae4f82370da0c6f20697b8f8447ef  file9
 END
-    '',
-    0,
-    'Finds duplicates in sorted output from sumdup-files/files.sha1',
-);
+        '',
+        0,
+        'Finds duplicates in sorted output from sumdup-files/files.sha1',
+    );
 
-# }}}
-testcmd("sort sumdup-files/files.sha256 | $CMD", # {{{
-    <<'END',
+    # }}}
+    testcmd("sort sumdup-files/files.sha256 | $CMD", # {{{
+        <<'END',
 
 6ac3c336e4094835293a3fed8a4b5fedde1b5e2626d9838fed50693bba00af0e  file2
 6ac3c336e4094835293a3fed8a4b5fedde1b5e2626d9838fed50693bba00af0e  file6
@@ -163,29 +171,31 @@ dfc7027894e168c3292c50b5461ef8ec635a5e04874b1e13b5ad7596a98f3bda  file5
 e2c4470a88f236a403c49d4be7c8f2f9e5e54f914e0d342ff24ee707ca85f070  file3
 e2c4470a88f236a403c49d4be7c8f2f9e5e54f914e0d342ff24ee707ca85f070  file7
 END
-    '',
-    0,
-    'Finds duplicates in sorted output from sumdup-files/files.sha256',
-);
+        '',
+        0,
+        'Finds duplicates in sorted output from sumdup-files/files.sha256',
+    );
 
-# }}}
+    # }}}
 
-todo_section:
-;
+    todo_section:
+    ;
 
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
 
-    TODO: {
+        TODO: {
 
-local $TODO = '';
-# Insert TODO tests here.
+    local $TODO = '';
+    # Insert TODO tests here.
 
+        }
+        # TODO tests }}}
     }
-    # TODO tests }}}
-}
 
-diag('Testing finished.');
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -375,9 +385,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

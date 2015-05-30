@@ -81,7 +81,7 @@ sub main {
 
     testcmd("$CMD command", # {{{
         <<'END',
-[expected stdin]
+[expected stdout]
 END
         '',
         0,

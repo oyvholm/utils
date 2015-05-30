@@ -3,11 +3,12 @@
 #=======================================================================
 # git-dangling.t
 # File ID: 54f4f91e-573c-11e1-b91f-915288b515ae
+#
 # Test suite for git-dangling(1).
 #
 # Character set: UTF-8
 # ©opyleft 2012– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -61,110 +62,119 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
-my $repo = "$Tmptop/repo";
-chomp(my $origdir = `pwd`);
+    my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
+    my $repo = "$Tmptop/repo";
+    chomp(my $origdir = `pwd`);
 
-ok(mkdir($Tmptop), "mkdir $Tmptop") || die("$progname: Unable to continue\n");
-likecmd("git clone git-dangling-files/repo.bundle $repo", # {{{
-    '/.*/',
-    '/.*/',
-    0,
-    'Clone repo.bundle',
-);
+    ok(mkdir($Tmptop), "mkdir $Tmptop") || die("$progname: Unable to continue\n");
+    likecmd("git clone git-dangling-files/repo.bundle $repo", # {{{
+        '/.*/',
+        '/.*/',
+        0,
+        'Clone repo.bundle',
+    );
 
-# }}}
-ok(chdir($repo), "chdir $repo") || die("$progname: Unable to continue\n");
-testcmd('git log --format=format:%H -1', # {{{
-    'd48c5ed0264a0384b135273e08159c1a4bd80a4b',
-    '',
-    0,
-    'master is where it should be',
-);
+    # }}}
+    ok(chdir($repo), "chdir $repo") || die("$progname: Unable to continue\n");
+    testcmd('git log --format=format:%H -1', # {{{
+        'd48c5ed0264a0384b135273e08159c1a4bd80a4b',
+        '',
+        0,
+        'master is where it should be',
+    );
 
-# }}}
-testcmd('git log --format=format:%H -1 origin/expbranch', # {{{
-    'd5d64eb0e240a25134a2222586d0c76252e89d8c',
-    '',
-    0,
-    'origin/expbranch is where it should be',
-);
+    # }}}
+    testcmd('git log --format=format:%H -1 origin/expbranch', # {{{
+        'd5d64eb0e240a25134a2222586d0c76252e89d8c',
+        '',
+        0,
+        'origin/expbranch is where it should be',
+    );
 
-# }}}
-likecmd("git remote rm origin", # {{{
-    '/^$/',
-    '/^$/',
-    0,
-    'Delete origin remote',
-);
+    # }}}
+    likecmd("git remote rm origin", # {{{
+        '/^$/',
+        '/^$/',
+        0,
+        'Delete origin remote',
+    );
 
-# }}}
-testcmd("$CMD", # {{{
-    "git-dangling: Creating commit-d5d64eb0e240a25134a2222586d0c76252e89d8c\n",
-    '',
-    0,
-    'Restore origin/expbranch',
-);
+    # }}}
+    testcmd("$CMD", # {{{
+        "git-dangling: Creating commit-d5d64eb0e240a25134a2222586d0c76252e89d8c\n",
+        '',
+        0,
+        'Restore origin/expbranch',
+    );
 
-# }}}
-likecmd("git branch", # {{{
-    '/^.*commit-d5d64eb0e240a25134a2222586d0c76252e89d8c.*$/s',
-    '/^$/',
-    0,
-    'expbranch was in fact recreated',
-);
+    # }}}
+    likecmd("git branch", # {{{
+        '/^.*commit-d5d64eb0e240a25134a2222586d0c76252e89d8c.*$/s',
+        '/^$/',
+        0,
+        'expbranch was in fact recreated',
+    );
 
-# }}}
-ok(chdir($origdir), "chdir $origdir");
-testcmd("rm -rf $Tmptop", # {{{
-    '',
-    '',
-    0,
-    'Remove tempdir',
-);
+    # }}}
+    ok(chdir($origdir), "chdir $origdir");
+    testcmd("rm -rf $Tmptop", # {{{
+        '',
+        '',
+        0,
+        'Remove tempdir',
+    );
 
-# }}}
-ok(!-e $Tmptop, 'Tempdir is gone');
+    # }}}
+    ok(!-e $Tmptop, 'Tempdir is gone');
 
-todo_section:
-;
+    todo_section:
+    ;
 
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
 
-    TODO: {
+        TODO: {
 
-local $TODO = '';
-# Insert TODO tests here.
+    local $TODO = '';
+    # Insert TODO tests here.
 
+        }
+        # TODO tests }}}
     }
-    # TODO tests }}}
-}
 
-diag('Testing finished.');
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -354,9 +364,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 
