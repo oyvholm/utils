@@ -120,6 +120,17 @@ END
 
     # }}}
 
+    testcmd("echo Dødens pølse ☠ | $CMD", # {{{
+        <<'END',
+D̲ø̲d̲e̲n̲s̲ ̲p̲ø̲l̲s̲e̲ ̲☠̲
+END
+        '',
+        0,
+        'Works with UTF-8',
+    );
+
+    # }}}
+
     todo_section:
     ;
 
