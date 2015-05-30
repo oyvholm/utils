@@ -1,49 +1,136 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 #=======================================================================
 # ustr
 # File ID: 3c899bbc-5d49-11df-b62a-90e6ba3022ac
+#
 # Inserts a COMBINING LOW LINE (U+0332, "◌̲") after every character 
 # except newline (\n).
 #
 # Character set: UTF-8
 # ©opyleft 2004– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License, see end of file for legal stuff.
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
 #=======================================================================
 
 use strict;
+use warnings;
+use Getopt::Long;
 use open ':std', ':encoding(UTF-8)';
 
-$| = 1;
+local $| = 1;
 
-use Getopt::Std;
-our ($opt_h) = (0);
-getopts('h') || die("Option error. Use -h for help.\n");
+our $Debug = 0;
 
-my $VERSION = "0.0";
+our %Opt = (
+
+    'debug' => 0,
+    'help' => 0,
+    'quiet' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
 
 our $progname = $0;
-$progname =~ s#^.*/(.*?)$#$1#;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
 
-$opt_h && usage(0);
+Getopt::Long::Configure('bundling');
+GetOptions(
 
-while (<>) {
-    s/([^\n])/$1\x{0332}/g;
-    print;
+    'debug' => \$Opt{'debug'},
+    'help|h' => \$Opt{'help'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
 }
+
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    while (<>) {
+        s/([^\n])/$1\x{0332}/g;
+        print;
+    }
+
+    return($Retval);
+    # }}}
+} # main()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
 
 sub usage {
     # Send the help message to stdout {{{
     my $Retval = shift;
-    print(<<END);
-$progname v$VERSION
 
-Usage: $progname
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+  --debug
+    Print debugging messages.
 
 END
     exit($Retval);
     # }}}
-}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+sub D {
+    # Print a debugging message {{{
+    $Debug || return;
+    my @call_info = caller;
+    chomp(my $Txt = shift);
+    my $File = $call_info[1];
+    $File =~ s#\\#/#g;
+    $File =~ s#^.*/(.*?)$#$1#;
+    print(STDERR "$File:$call_info[2] $$ $Txt\n");
+    return('');
+    # }}}
+} # D()
 
 __END__
 
@@ -57,7 +144,7 @@ __END__
 
 =head1 SYNOPSIS
 
-
+ [options] [file [files [...]]]
 
 =head1 DESCRIPTION
 
@@ -67,9 +154,21 @@ __END__
 
 =over 4
 
-=item B<-h>
+=item B<-h>, B<--help>
 
 Print a brief help summary.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=item B<--debug>
+
+Print debugging messages.
 
 =back
 
@@ -79,11 +178,11 @@ Print a brief help summary.
 
 =head1 AUTHOR
 
-Made by Øyvind A. Holm S<E<lt>sunny _AT_ sunbase.orgE<gt>>.
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
 
 =head1 COPYRIGHT
 
-Copyleft © Øyvind A. Holm &lt;sunny@sunbase.org&gt;
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
 This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
@@ -99,8 +198,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along 
-with this program; if not, write to the Free Software Foundation, Inc., 
-59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
 
 =head1 SEE ALSO
 
@@ -109,4 +208,3 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # }}}
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
-# End of file ustr
