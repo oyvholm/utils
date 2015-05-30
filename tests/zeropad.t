@@ -3,11 +3,12 @@
 #=======================================================================
 # zeropad.t
 # File ID: af9a9f46-f988-11dd-a1c1-000475e441b9
+#
 # Test suite for zeropad(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -61,163 +62,171 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
 
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
 
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
 
-# }}}
+    # }}}
+    testcmd("echo 1 5 12 156 1024 | $CMD", # {{{
+        "0001 0005 0012 0156 1024\n",
+        '',
+        0,
+        '1 5 12 156 1024 with LF',
+    );
 
-testcmd("echo 1 5 12 156 1024 | $CMD", # {{{
-    "0001 0005 0012 0156 1024\n",
-    '',
-    0,
-    '1 5 12 156 1024 with LF',
-);
+    # }}}
+    testcmd("echo -n 1 5 12 156 1024 | $CMD", # {{{
+        '0001 0005 0012 0156 1024',
+        '',
+        0,
+        'No terminating LF',
+    );
 
-# }}}
-testcmd("echo -n 1 5 12 156 1024 | $CMD", # {{{
-    '0001 0005 0012 0156 1024',
-    '',
-    0,
-    'No terminating LF',
-);
+    # }}}
+    testcmd("echo -n 0 jada 1234567 e 345 - 23477 æøå | $CMD", # {{{
+        '0000000 jada 1234567 e 0000345 - 0023477 æøå',
+        '',
+        0,
+        'Contains non-numbers',
+    );
 
-# }}}
-testcmd("echo -n 0 jada 1234567 e 345 - 23477 æøå | $CMD", # {{{
-    '0000000 jada 1234567 e 0000345 - 0023477 æøå',
-    '',
-    0,
-    'Contains non-numbers',
-);
+    # }}}
+    testcmd("echo -n 0 12345 -4 1000 | $CMD", # {{{
+        '00000 12345 -00004 01000',
+        '',
+        0,
+        'Contains negative number',
+    );
 
-# }}}
-testcmd("echo -n 0 12345 -4 1000 | $CMD", # {{{
-    '00000 12345 -00004 01000',
-    '',
-    0,
-    'Contains negative number',
-);
+    # }}}
+    testcmd("echo -n 0 jada 143022551321802064700594651108964515733 e 345 - 23477 æøå | $CMD", # {{{
+        '000000000000000000000000000000000000000 jada 143022551321802064700594651108964515733 e 000000000000000000000000000000000000345 - 000000000000000000000000000000000023477 æøå',
+        '',
+        0,
+        'Manage large numbers',
+    );
 
-# }}}
-testcmd("echo -n 0 jada 143022551321802064700594651108964515733 e 345 - 23477 æøå | $CMD", # {{{
-    '000000000000000000000000000000000000000 jada 143022551321802064700594651108964515733 e 000000000000000000000000000000000000345 - 000000000000000000000000000000000023477 æøå',
-    '',
-    0,
-    'Manage large numbers',
-);
+    # }}}
+    diag('Testing -x/--hex option...');
+    testcmd("echo 1 5 12 156 1024 | $CMD -x", # {{{
+        "0001 0005 0012 0156 1024\n",
+        '',
+        0,
+        '-x: 1 5 12 156 1024 with LF',
+    );
 
-# }}}
-diag('Testing -x/--hex option...');
-testcmd("echo 1 5 12 156 1024 | $CMD -x", # {{{
-    "0001 0005 0012 0156 1024\n",
-    '',
-    0,
-    '-x: 1 5 12 156 1024 with LF',
-);
+    # }}}
+    testcmd("echo -n 1 5 12 156 1024 | $CMD -x", # {{{
+        '0001 0005 0012 0156 1024',
+        '',
+        0,
+        '-x: No terminating LF',
+    );
 
-# }}}
-testcmd("echo -n 1 5 12 156 1024 | $CMD -x", # {{{
-    '0001 0005 0012 0156 1024',
-    '',
-    0,
-    '-x: No terminating LF',
-);
+    # }}}
+    testcmd("echo -n 0 jada 1234567 e 345 - 23477 æøå | $CMD -x", # {{{
+        '0000000 j0000ada 1234567 000000e 0000345 - 0023477 æøå',
+        '',
+        0,
+        '-x: Contains non-numbers',
+    );
 
-# }}}
-testcmd("echo -n 0 jada 1234567 e 345 - 23477 æøå | $CMD -x", # {{{
-    '0000000 j0000ada 1234567 000000e 0000345 - 0023477 æøå',
-    '',
-    0,
-    '-x: Contains non-numbers',
-);
+    # }}}
+    testcmd("echo -n 0 12345 -a4 1000 | $CMD -x", # {{{
+        '00000 12345 -000a4 01000',
+        '',
+        0,
+        '-x: Contains negative number',
+    );
 
-# }}}
-testcmd("echo -n 0 12345 -a4 1000 | $CMD -x", # {{{
-    '00000 12345 -000a4 01000',
-    '',
-    0,
-    '-x: Contains negative number',
-);
+    # }}}
+    testcmd("echo -n 0 jada 143022551321802064700594651108964515733 e 345 - 23477 æøå | $CMD -x", # {{{
+        '000000000000000000000000000000000000000 j000000000000000000000000000000000000ada 143022551321802064700594651108964515733 00000000000000000000000000000000000000e 000000000000000000000000000000000000345 - 000000000000000000000000000000000023477 æøå',
+        '',
+        0,
+        '-x: Manage large numbers',
+    );
 
-# }}}
-testcmd("echo -n 0 jada 143022551321802064700594651108964515733 e 345 - 23477 æøå | $CMD -x", # {{{
-    '000000000000000000000000000000000000000 j000000000000000000000000000000000000ada 143022551321802064700594651108964515733 00000000000000000000000000000000000000e 000000000000000000000000000000000000345 - 000000000000000000000000000000000023477 æøå',
-    '',
-    0,
-    '-x: Manage large numbers',
-);
+    # }}}
+    testcmd("echo 76abCD ffFFf f F yyyabcyyy | $CMD --hex", # {{{
+        "76abCD 0ffFFf 00000f 00000F yyy000abcyyy\n",
+        '',
+        0,
+        '--hex: Upper/lower case and "abc" inside word',
+    );
 
-# }}}
-testcmd("echo 76abCD ffFFf f F yyyabcyyy | $CMD --hex", # {{{
-    "76abCD 0ffFFf 00000f 00000F yyy000abcyyy\n",
-    '',
-    0,
-    '--hex: Upper/lower case and "abc" inside word',
-);
+    # }}}
 
-# }}}
+    todo_section:
+    ;
 
-todo_section:
-;
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
 
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
+        TODO: {
 
-    TODO: {
+    local $TODO = '';
+    # Insert TODO tests here.
 
-local $TODO = '';
-# Insert TODO tests here.
-
+        }
+        # TODO tests }}}
     }
-    # TODO tests }}}
-}
 
-diag('Testing finished.');
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -407,9 +416,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 

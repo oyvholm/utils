@@ -3,6 +3,7 @@
 #=======================================================================
 # fold-stdout.t
 # File ID: 9f015a7a-f4a5-11e4-9ef1-000df06acc56
+#
 # Test suite for fold-stdout(1).
 #
 # Character set: UTF-8
@@ -80,7 +81,7 @@ sub main {
 
     testcmd("$CMD command", # {{{
         <<'END',
-[expected stdin]
+[expected stdout]
 END
         '',
         0,

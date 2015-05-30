@@ -3,6 +3,7 @@
 #=======================================================================
 # u2h.t
 # File ID: b11d9b00-5ab4-11e4-862a-000df06acc56
+#
 # Test suite for u2h(1).
 #
 # Character set: UTF-8
@@ -80,7 +81,7 @@ sub main {
 
     testcmd("$CMD command", # {{{
         <<'END',
-[expected stdin]
+[expected stdout]
 END
         '',
         0,

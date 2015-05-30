@@ -3,6 +3,7 @@
 #=======================================================================
 # h2u.t
 # File ID: aed71362-5ab4-11e4-b17f-000df06acc56
+#
 # Test suite for h2u(1).
 #
 # Character set: UTF-8
@@ -80,7 +81,7 @@ sub main {
 
     testcmd("$CMD command", # {{{
         <<'END',
-[expected stdin]
+[expected stdout]
 END
         '',
         0,

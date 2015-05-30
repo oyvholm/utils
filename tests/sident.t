@@ -3,11 +3,12 @@
 #=======================================================================
 # sident.t
 # File ID: 9e63b5fe-f989-11dd-9357-000475e441b9
+#
 # Test suite for sident(1).
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later, see end of 
+# License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
 
@@ -61,59 +62,66 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-diag(sprintf('========== Executing %s v%s ==========',
-    $progname,
-    $VERSION));
+exit(main(%Opt));
 
-if ($Opt{'todo'} && !$Opt{'all'}) {
-    goto todo_section;
-}
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    diag(sprintf('========== Executing %s v%s ==========',
+        $progname,
+        $VERSION));
+
+    if ($Opt{'todo'} && !$Opt{'all'}) {
+        goto todo_section;
+    }
 
 =pod
 
-testcmd("$CMD command", # {{{
-    <<'END',
-[expected stdin]
+    testcmd("$CMD command", # {{{
+        <<'END',
+[expected stdout]
 END
-    '',
-    0,
-    'description',
-);
+        '',
+        0,
+        'description',
+    );
 
-# }}}
+    # }}}
 
 =cut
 
-diag('Testing -h (--help) option...');
-likecmd("$CMD -h", # {{{
-    '/  Show this help\./',
-    '/^$/',
-    0,
-    'Option -h prints help screen',
-);
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
 
-# }}}
-diag('Testing -v (--verbose) option...');
-likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
-    '/^$/',
-    0,
-    'Option --version with -h returns version number and help screen',
-);
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^$/',
+        0,
+        'Option --version with -h returns version number and help screen',
+    );
 
-# }}}
-diag('Testing --version option...');
-likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
-    '/^$/',
-    0,
-    'Option --version returns version number',
-);
+    # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d\.\d\d\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
 
-# }}}
-diag("Testing without options...");
-testcmd("$CMD sident-files/textfile", # {{{
-    <<'END',
+    # }}}
+    diag("Testing without options...");
+    testcmd("$CMD sident-files/textfile", # {{{
+        <<'END',
 
 sident-files/textfile:
      $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
@@ -126,52 +134,52 @@ sident-files/textfile:
      $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 END
-    "",
-    0,
-    "Read textfile, no arguments",
-);
+        "",
+        0,
+        "Read textfile, no arguments",
+    );
 
-# }}}
-testcmd("$CMD sident-files/random", # {{{
-    <<'END',
+    # }}}
+    testcmd("$CMD sident-files/random", # {{{
+        <<'END',
 
 sident-files/random:
      $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
-    "",
-    0,
-    "Read random binary data, no arguments",
-);
+        "",
+        0,
+        "Read random binary data, no arguments",
+    );
 
-# }}}
-diag("Testing stdin...");
-testcmd("$CMD - <sident-files/random", # {{{
-    <<'END',
-
--:
-     $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
-END
-    "",
-    0,
-    "Read random binary data from stdin with hyphen as filename",
-);
-
-# }}}
-testcmd("cat sident-files/random | $CMD -", # {{{
-    <<'END',
+    # }}}
+    diag("Testing stdin...");
+    testcmd("$CMD - <sident-files/random", # {{{
+        <<'END',
 
 -:
      $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
 END
-    "",
-    0,
-    "Read random binary through pipe, hyphen filename",
-);
+        "",
+        0,
+        "Read random binary data from stdin with hyphen as filename",
+    );
 
-# }}}
-diag("Testing -e (--expanded-only) option...");
-testcmd("$CMD -e sident-files/unexpanded sident-files/textfile", # {{{
-    <<'END',
+    # }}}
+    testcmd("cat sident-files/random | $CMD -", # {{{
+        <<'END',
+
+-:
+     $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
+END
+        "",
+        0,
+        "Read random binary through pipe, hyphen filename",
+    );
+
+    # }}}
+    diag("Testing -e (--expanded-only) option...");
+    testcmd("$CMD -e sident-files/unexpanded sident-files/textfile", # {{{
+        <<'END',
 
 sident-files/textfile:
      $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
@@ -184,14 +192,14 @@ sident-files/textfile:
      $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 END
-    "",
-    0,
-    "List only expanded keywords",
-);
+        "",
+        0,
+        "List only expanded keywords",
+    );
 
-# }}}
-testcmd("$CMD -ev sident-files/unexpanded sident-files/textfile", # {{{
-    <<'END',
+    # }}}
+    testcmd("$CMD -ev sident-files/unexpanded sident-files/textfile", # {{{
+        <<'END',
 
 sident-files/unexpanded:
 
@@ -206,15 +214,15 @@ sident-files/textfile:
      $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 END
-    "",
-    0,
-    "List only expanded keywords, plus list filename without expanded kw",
-);
+        "",
+        0,
+        "List only expanded keywords, plus list filename without expanded kw",
+    );
 
-# }}}
-diag("Testing -f (--filenames-from) option...");
-testcmd("$CMD -f sident-files/filenames", # {{{
-    <<'END',
+    # }}}
+    diag("Testing -f (--filenames-from) option...");
+    testcmd("$CMD -f sident-files/filenames", # {{{
+        <<'END',
 
 sident-files/random:
      $Id: randomstuff 314159 1969-01-21 17:12:16Z sunny $
@@ -242,15 +250,15 @@ sident-files/unexpanded:
      $Id$
      $RealLyuNKoWN$
 END
-    "",
-    0,
-    "Read filenames from file",
-);
+        "",
+        0,
+        "Read filenames from file",
+    );
 
-# }}}
-diag("Testing -k (--known-keywords-only) option...");
-testcmd("$CMD -k sident-files/textfile", # {{{
-    <<'END',
+    # }}}
+    diag("Testing -k (--known-keywords-only) option...");
+    testcmd("$CMD -k sident-files/textfile", # {{{
+        <<'END',
 
 sident-files/textfile:
      $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
@@ -262,27 +270,27 @@ sident-files/textfile:
      $Header: /cvsweb/cvs-guide/keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
 END
-    "",
-    0,
-    "List only known keywords",
-);
+        "",
+        0,
+        "List only known keywords",
+    );
 
-# }}}
-diag("Testing -l (--filenames-only) option...");
-testcmd("$CMD -le sident-files/*", # {{{
-    <<'END',
+    # }}}
+    diag("Testing -l (--filenames-only) option...");
+    testcmd("$CMD -le sident-files/*", # {{{
+        <<'END',
 sident-files/random
 sident-files/textfile
 END
-    "",
-    0,
-    "Only list names of files with expanded keywords",
-);
+        "",
+        0,
+        "Only list names of files with expanded keywords",
+    );
 
-# }}}
-diag("Testing -u (--unique-keywords) option...");
-testcmd("$CMD -u sident-files/textfile", # {{{
-    <<'END',
+    # }}}
+    diag("Testing -u (--unique-keywords) option...");
+    testcmd("$CMD -u sident-files/textfile", # {{{
+        <<'END',
 
 sident-files/textfile:
      $Id: plain_old_textfile 93653 2008-09-22 14:15:10Z sunny $
@@ -292,14 +300,14 @@ sident-files/textfile:
      $Id: keyword.html,v 1.3 1999/12/23 21:59:22 markd Exp $
      $Weirdo: blah blah $
 END
-    "",
-    0,
-    "Remove duplicates from textfile",
-);
+        "",
+        0,
+        "Remove duplicates from textfile",
+    );
 
-# }}}
-testcmd("$CMD -v sident-files/*", # {{{
-    <<'END',
+    # }}}
+    testcmd("$CMD -v sident-files/*", # {{{
+        <<'END',
 
 sident-files/filenames:
 
@@ -331,14 +339,14 @@ sident-files/unexpanded:
      $Id$
      $RealLyuNKoWN$
 END
-    "",
-    0,
-    "Also list files without keywords",
-);
+        "",
+        0,
+        "Also list files without keywords",
+    );
 
-# }}}
-testcmd("$CMD -vx sident-files/*", # {{{
-    <<'END',
+    # }}}
+    testcmd("$CMD -vx sident-files/*", # {{{
+        <<'END',
 <?xml version="1.0"?>
 <sident>
   <file>
@@ -384,15 +392,15 @@ testcmd("$CMD -vx sident-files/*", # {{{
   </file>
 </sident>
 END
-    "",
-    0,
-    "Output XML, including files without keywords",
-);
+        "",
+        0,
+        "Output XML, including files without keywords",
+    );
 
-# }}}
-diag("Testing -x (--xml) option...");
-testcmd("$CMD -x sident-files/textfile", # {{{
-    <<'END',
+    # }}}
+    diag("Testing -x (--xml) option...");
+    testcmd("$CMD -x sident-files/textfile", # {{{
+        <<'END',
 <?xml version="1.0"?>
 <sident>
   <file>
@@ -411,14 +419,14 @@ testcmd("$CMD -x sident-files/textfile", # {{{
   </file>
 </sident>
 END
-    "",
-    0,
-    "Output XML from textfile",
-);
+        "",
+        0,
+        "Output XML from textfile",
+    );
 
-# }}}
-testcmd("$CMD -ux sident-files/textfile", # {{{
-    <<'END',
+    # }}}
+    testcmd("$CMD -ux sident-files/textfile", # {{{
+        <<'END',
 <?xml version="1.0"?>
 <sident>
   <file>
@@ -434,71 +442,73 @@ testcmd("$CMD -ux sident-files/textfile", # {{{
   </file>
 </sident>
 END
-    "",
-    0,
-    "Output XML, remove duplicates",
-);
+        "",
+        0,
+        "Output XML, remove duplicates",
+    );
 
-# }}}
-diag("Error conditions...");
-testcmd("$CMD sident-files", # {{{
-    "",
-    "",
-    0,
-    "Ignore directories",
-);
+    # }}}
+    diag("Error conditions...");
+    testcmd("$CMD sident-files", # {{{
+        "",
+        "",
+        0,
+        "Ignore directories",
+    );
 
-# }}}
-testcmd("$CMD -v sident-files", # {{{
-    "",
-    "",
-    0,
-    "Ignore directories, even with --verbose",
-);
+    # }}}
+    testcmd("$CMD -v sident-files", # {{{
+        "",
+        "",
+        0,
+        "Ignore directories, even with --verbose",
+    );
 
-# }}}
-likecmd("$CMD sident-files/shbvkdsvsdfv", # {{{
-    '/^$/',
-    '/^sident: sident-files/shbvkdsvsdfv: .*$/',
-    1,
-    "File not found",
-);
+    # }}}
+    likecmd("$CMD sident-files/shbvkdsvsdfv", # {{{
+        '/^$/',
+        '/^sident: sident-files/shbvkdsvsdfv: .*$/',
+        1,
+        "File not found",
+    );
 
-# }}}
-likecmd("$CMD -x sident-files/shbvkdsvsdfv", # {{{
-    '/^<\?xml version="1\.0"\?>\n<sident>\n<\/sident>$/',
-    '/^sident: sident-files/shbvkdsvsdfv: .*$/',
-    1,
-    "File not found, don’t break the XML",
-);
+    # }}}
+    likecmd("$CMD -x sident-files/shbvkdsvsdfv", # {{{
+        '/^<\?xml version="1\.0"\?>\n<sident>\n<\/sident>$/',
+        '/^sident: sident-files/shbvkdsvsdfv: .*$/',
+        1,
+        "File not found, don’t break the XML",
+    );
 
-# }}}
-diag("Validate POD (Plain Old Documentation)");
-testcmd("podchecker $CMD", # {{{
-    "",
-    "$CMD pod syntax OK.\n",
-    0,
-    "$CMD contains valid POD",
-);
+    # }}}
+    diag("Validate POD (Plain Old Documentation)");
+    testcmd("podchecker $CMD", # {{{
+        "",
+        "$CMD pod syntax OK.\n",
+        0,
+        "$CMD contains valid POD",
+    );
 
-# }}}
+    # }}}
 
-todo_section:
-;
+    todo_section:
+    ;
 
-if ($Opt{'all'} || $Opt{'todo'}) {
-    diag('Running TODO tests...'); # {{{
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
 
-    TODO: {
+        TODO: {
 
-local $TODO = '';
-# Insert TODO tests here.
+    local $TODO = '';
+    # Insert TODO tests here.
 
+        }
+        # TODO tests }}}
     }
-    # TODO tests }}}
-}
 
-diag('Testing finished.');
+    diag('Testing finished.');
+    # }}}
+} # main()
 
 sub testcmd {
     # {{{
@@ -688,9 +698,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 3 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 
