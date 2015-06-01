@@ -151,6 +151,10 @@ __END__
 
 Print a brief help summary.
 
+=item B<-q>, B<--quiet>
+
+Be more quiet. Can be repeated to increase silence.
+
 =item B<-v>, B<--verbose>
 
 Increase level of verbosity. Can be repeated.
