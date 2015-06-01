@@ -68,14 +68,14 @@ sub main {
         chomp($line);
         if ($line =~ /Only (\d+) of (\d+) trustworthy copies exist of (.*)$/m) {
             my ($actual, $wanted, $filename) = ($1, $2, $3);
-            my $bytes = `gadu --bytes "$filename"`;
-            $bytes =~ s/^(\d+).*?$/$1/;
-            chomp($bytes);
-            $total += $bytes;
-            $fulltotal += $bytes * ($wanted - $actual);
-            $line .= sprintf(" (%s bytes)",
-                format_bytes($bytes),
-            );
+            my $bytes = file_size($filename);
+            if (length($bytes)) {
+                $total += $bytes;
+                $fulltotal += $bytes * ($wanted - $actual);
+                $line .= sprintf(" (%s bytes)",
+                    format_bytes($bytes),
+                );
+            }
         }
         if ($line !~ /^  Back it up with git-annex copy\.$/) {
             print("$line\n");
@@ -88,6 +88,20 @@ sub main {
     return($Retval);
     # }}}
 } # main()
+
+sub file_size {
+    # Read file size from git-annex symlink {{{
+    my $filename = shift;
+    my $retval = '';
+    if (-l $filename) {
+        my $symlink = readlink($filename);
+        if ($symlink =~ /^.*\/[A-Z0-9]+-s(\d+)-/) {
+            $retval = $1;
+        }
+    }
+    return($retval)
+    # }}}
+} # file_size()
 
 sub print_version {
     # Print program version {{{
