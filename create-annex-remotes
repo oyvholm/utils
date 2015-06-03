@@ -89,6 +89,7 @@ create pavi /media/pavi/annex
 create seagate-3tb /media/seagate-3tb/annex
 
 if test "$comp" != "linode"; then
+
     create cruzer /media/cruzer/annex
     create dennis-32g-1 /media/dennis-32g-1/annex
     create exthd /media/exthd/annex
