@@ -24,6 +24,7 @@ grep -v \
 -e /Android/data/com\\.handmark\\.tweetcaster/cache/ \
 -e /Android/data/com\\.nianticproject\\.ingress/cache/ \
 -e /Android/data/com\\.rovio\\.angrybirdsspace\\.ads/cache/sessions/ \
+-e /Android/data/com\\.samsung\\.android\\.app\\.episodes/cache/thumbnail \
 -e /Android/data/com\\.samsung\\.android\\.app\\.episodes/files/album/ \
 -e /Android/data/com\\.samsung\\.android\\.snote/cache/sstream_cache/ \
 -e /Android/data/com\\.sec\\.android\\.app\\.sbrowser/TabManager/ \
