@@ -113,3 +113,4 @@ fi
 
 git remote -v | cut -f 1 | sort -u >$tmp_end_file
 diff -U0 $tmp_begin_file $tmp_end_file | grep -E '^[+\-][^+\-]'
+rm $tmp_begin_file $tmp_end_file
