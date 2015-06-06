@@ -25,6 +25,9 @@ fi
 if test "$1" = "fsck"; then
     shift
     git-annex fsck "$@" 2>&1 | ga-fsck-size
+elif test "$1" = "md"; then
+    shift
+    git-annex metadata "$@"
 else
     git-annex "$@"
 fi
