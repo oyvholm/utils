@@ -17,8 +17,8 @@ progname=create-annex-remotes
 # Set to "echo" to simulate
 simul=
 
-tmp_begin_file=/tmp/.$progname.beg.tmp
-tmp_end_file=/tmp/.$progname.end.tmp
+tmp_begin_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.beg.tmp
+tmp_end_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.end.tmp
 
 comp="$(hostname)"
 test "$comp" = "bellmann" -o "$comp" = "linode" || {
