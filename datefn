@@ -77,7 +77,7 @@ sub process_file {
     D(sprintf("mod_date(%s) = '%s'\n", $File, mod_date($File)));
     my $mod_date = mod_date($File);
     my $start_date = start_date($File);
-    my $dates = sprintf("%s%s%s", $start_date, length($start_date) ? "-" : "", $mod_date);
+    my $dates = sprintf("%s%s%s", sec_to_string($start_date), length($start_date) ? "-" : "", sec_to_string($mod_date));
     if (length($dates)) {
         my $new_name = "$dates.$File";
         if ($Opt{'dry-run'}) {
@@ -101,7 +101,7 @@ sub mod_date {
     my $Retval = "";
     my @stat_array = stat($File);
     if (scalar(@stat_array)) {
-        $Retval = sec_to_string($stat_array[9] + $Opt{'skew'});
+        $Retval = $stat_array[9] + $Opt{'skew'};
     } else {
         warn("$progname: $File: Cannot stat file: $!\n");
     }
@@ -140,7 +140,7 @@ sub bwf_date {
         warn("$progname: $File: Could not read 358 bytes, but continuing: $!\n");
     }
     if ($buf =~ /^.*(\d\d\d\d)-(\d\d)-(\d\d)(\d\d):(\d\d):(\d\d)$/s) {
-        $Retval = "$1$2${3}T$4$5${6}Z";
+        $Retval = timelocal($6, $5, $4, $3, $2-1, $1);
     }
     close(InFP);
     D("bwf_date($File) returns '$Retval'\n");
@@ -151,7 +151,7 @@ sub bwf_date {
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyymmddThhmmss[.frac]Z" {{{
     my ($Seconds, $Sep) = @_;
-    length($Seconds) || return(undef);
+    length($Seconds) || return('');
     ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return(undef);
     my $Secfrac = ($Seconds =~ /^([\-\d]*)(\.\d+)$/) ? 1.0*$2 : "";
     $Secfrac =~ s/^0//;
