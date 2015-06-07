@@ -77,7 +77,7 @@ sub process_file {
     D(sprintf("mod_date(%s) = '%s'\n", $File, mod_date($File)));
     my $mod_date = mod_date($File);
     my $start_date = start_date($File);
-    my $dates = sprintf("%s%s%s", $start_date, length($start_date) ? "-" : "", $mod_date);
+    my $dates = sprintf("%s%s%s", $start_date, length($start_date) ? "-" : "", sec_to_string($mod_date));
     if (length($dates)) {
         my $new_name = "$dates.$File";
         if ($Opt{'dry-run'}) {
@@ -101,7 +101,7 @@ sub mod_date {
     my $Retval = "";
     my @stat_array = stat($File);
     if (scalar(@stat_array)) {
-        $Retval = sec_to_string($stat_array[9] + $Opt{'skew'});
+        $Retval = $stat_array[9] + $Opt{'skew'};
     } else {
         warn("$progname: $File: Cannot stat file: $!\n");
     }
