@@ -10,11 +10,14 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+unset i_str
+test "$1" = "-i" && { i_str=" --ignored"; shift; }
+
 unset u_str
 test "$1" = "-u" && { u_str=" --untracked-files=no"; shift; }
 
 unset did_wait
-while test "$(git status --porcelain$u_str "$@")" != ""; do
+while test "$(git status --porcelain$i_str$u_str "$@")" != ""; do
     echo Waiting for $(hostname):$(pwd) to be cleaned up... \($(date)\) >&2
     sleep 5
     did_wait=1
