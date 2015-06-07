@@ -18,7 +18,7 @@ test "$1" = "-u" && { u_str=" --untracked-files=no"; shift; }
 
 unset did_wait
 while test "$(git status --porcelain$i_str$u_str "$@")" != ""; do
-    echo Waiting for $(hostname):$(pwd) to be cleaned up... \($(date)\) >&2
+    echo Waiting for $(hostname):$(pwd) to be cleaned up \(opt: $i_str$u_str\)... \($(date)\) >&2
     sleep 5
     did_wait=1
 done
