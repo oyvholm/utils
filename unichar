@@ -3,4 +3,13 @@
 # unichar
 # File ID: 23f515ba-5d47-11df-bcb0-90e6ba3022ac
 
+if test "$1" = "-c"; then
+    # Convert from unichar output to actual UTF-8
+    shift
+    while read f; do
+        echo -n "&#x$(echo -n $f | cut -f 1 -d ';');"
+    done | h2u
+    exit 0
+fi
+
 zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* | grep -Ei "$@"
