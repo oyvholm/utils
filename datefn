@@ -141,7 +141,7 @@ sub bwf_date {
         warn("$progname: $File: Could not read 358 bytes, but continuing: $!\n");
     }
     if ($buf =~ /^.*(\d\d\d\d)-(\d\d)-(\d\d)(\d\d):(\d\d):(\d\d)$/s) {
-        $Retval = timelocal($6, $5, $4, $3, $2-1, $1);
+        $Retval = timegm($6, $5, $4, $3, $2-1, $1);
     }
     close(InFP);
     D("bwf_date($File) returns '$Retval'\n");
