@@ -154,6 +154,55 @@ END
 
     ok(unlink($newname), "unlink $newname");
 
+    diag('Testing --git option...');
+    my $git_version = `git --version 2>/dev/null`;
+    if ($git_version =~ /^git version \d/) {
+        testcmd("tar xzf repo.tar.gz",
+            '',
+            '',
+            0,
+            "Unpack repo.tar.gz"
+        );
+        ok(chdir("repo"), "chdir repo");
+        ok(-d ".git" && -f "file.txt", "repo.tar.gz was properly unpacked");
+        testcmd("../../$CMD --git file.txt",
+            "datefn: 'file.txt' renamed to '20150611T123129Z.file.txt'\n",
+            "datefn: Executing \"git mv file.txt 20150611T123129Z.file.txt\"...\n",
+            0,
+            "Use --git option in Git repository",
+        );
+        is(
+            file_data("20150611T123129Z.file.txt"),
+            "This is the most amazing file.\n",
+            "file.txt was properly renamed",
+        );
+        testcmd("git status --porcelain",
+            <<END,
+R  file.txt -> 20150611T123129Z.file.txt
+?? datefn-stderr.tmp
+?? unknown.txt
+END
+            "",
+            0,
+            "File status looks ok in git",
+        );
+        testcmd("../../$CMD -g unknown.txt",
+            "",
+            <<END,
+datefn: Executing "git mv unknown.txt 20150611T141445Z.unknown.txt"...
+fatal: not under version control, source=unknown.txt, destination=20150611T141445Z.unknown.txt
+datefn: unknown.txt: Cannot rename file to '20150611T141445Z.unknown.txt': No such file or directory
+END
+            0,
+            "Use --git option on file unknown to Git",
+        );
+        ok(chdir(".."), "chdir ..");
+        testcmd("rm -rf repo", "", "", 0, "Remove repo/");
+        ok(!-e "repo", "repo/ is gone");
+    } else {
+        diag("Cannot find 'git' executable, skipping --git tests");
+    }
+
     diag('Testing --skew option...');
     testcmd("tar xzf file.tar.gz", "", "", 0);
     testcmd("../$CMD -s 86400 file.txt",

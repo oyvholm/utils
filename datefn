@@ -25,6 +25,7 @@ our %Opt = (
     'debug' => 0,
     'dry-run' => 0,
     'force' => 0,
+    'git' => 0,
     'help' => 0,
     'skew' => 0,
     'verbose' => 0,
@@ -43,6 +44,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "dry-run|n" => \$Opt{'dry-run'},
     "force|f" => \$Opt{'force'},
+    "git|g" => \$Opt{'git'},
     "help|h" => \$Opt{'help'},
     "skew|s=i" => \$Opt{'skew'},
     "verbose|v+" => \$Opt{'verbose'},
@@ -101,11 +103,28 @@ sub rename_file {
     my ($oldname, $newname) = @_;
     my $retval;
 
-    $retval = rename($oldname, $newname);
+    if ($Opt{'git'}) {
+        $retval = mysystem('git', 'mv', $oldname, $newname);
+        $retval = !$retval;
+    } else {
+        $retval = rename($oldname, $newname);
+    }
 
     return($retval);
     # }}}
 } # rename_file()
+
+sub mysystem {
+    # {{{
+    my @cmd = @_;
+    my $retval;
+
+    msg(0, "Executing \"" . join(' ', @cmd) . "\"...");
+    $retval = system(@cmd);
+
+    return($retval);
+    # }}}
+} # mysystem()
 
 sub mod_date {
     # Return file modification timestamp {{{
@@ -215,6 +234,9 @@ Options:
   -f, --force
     If a file with the new name already exists, allow the program to 
     overwrite the file.
+  -g, --git
+    Use git commands when dealing with files. For example, execute the 
+    command "git mv oldname newname" when renaming files.
   -n, --dry-run
     Don’t rename files, but report what would happen.
   -h, --help
