@@ -159,9 +159,24 @@ END
         "Don't add date when there's already one there",
     );
 
+    diag("Testing --replace option...");
+
+    ok(utime(1433116800, 1433116800, "20121224T002858Z.file.txt"), "Change mtime of 20121224T002858Z.file.txt");
+    testcmd("../$CMD --replace 20121224T002858Z.file.txt",
+        "datefn: '20121224T002858Z.file.txt' renamed to '20150601T000000Z.file.txt'\n",
+        "",
+        0,
+        "Replace timestamp with new modification time",
+    );
+    is(
+        file_data("20150601T000000Z.file.txt"),
+        "Sånn går now the days.\n",
+        "file.txt was renamed to new mtime with -r",
+    );
+
     diag('Testing --delete option...');
-    testcmd("../$CMD --delete 20121224T002858Z.file.txt",
-        "datefn: '20121224T002858Z.file.txt' renamed to 'file.txt'\n",
+    testcmd("../$CMD --delete 20150601T000000Z.file.txt",
+        "datefn: '20150601T000000Z.file.txt' renamed to 'file.txt'\n",
         "",
         0,
         "Delete date with --delete",
@@ -174,7 +189,21 @@ END
         "Delete non-existing date with -d",
     );
 
-    ok(unlink("file.txt"), "unlink file.txt");
+    testcmd("../$CMD -d -r -v file.txt",
+        "",
+        "datefn: Cannot mix -d/--delete and -r/--replace options\n",
+        1,
+        "-d and -r can't be mixed",
+    );
+
+    testcmd("../$CMD -r -v file.txt",
+        "datefn: 'file.txt' renamed to '20150601T000000Z.file.txt'\n",
+        "",
+        0,
+        "-r on file without date adds timestamp",
+    );
+
+    ok(unlink("20150601T000000Z.file.txt"), "unlink 20150601T000000Z.file.txt");
 
     diag('Testing --git option...');
     my $git_version = `git --version 2>/dev/null`;
