@@ -86,7 +86,7 @@ sub process_file {
         } else {
             if (-e $new_name && !$Opt{'force'}) {
                 warn("$progname: $new_name: File already exists, use --force to overwrite\n");
-            } elsif (rename($File, $new_name)) {
+            } elsif (rename_file($File, $new_name)) {
                 print("$progname: '$File' renamed to '$new_name'\n");
             } else {
                 warn("$progname: $File: Cannot rename file to '$new_name': $!\n");
@@ -95,6 +95,17 @@ sub process_file {
     }
     # }}}
 } # process_file()
+
+sub rename_file {
+    # {{{
+    my ($oldname, $newname) = @_;
+    my $retval;
+
+    $retval = rename($oldname, $newname);
+
+    return($retval);
+    # }}}
+} # rename_file()
 
 sub mod_date {
     # Return file modification timestamp {{{
