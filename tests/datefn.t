@@ -152,6 +152,13 @@ END
         "File is overwritten with --force",
     );
 
+    testcmd("../$CMD 20121224T002858Z.file.txt",
+        "",
+        "datefn: 20121224T002858Z.file.txt: Filename already has date\n",
+        0,
+        "Don't add date when there's already one there",
+    );
+
     ok(unlink($newname), "unlink $newname");
 
     diag('Testing --git option...');

@@ -61,6 +61,16 @@ if ($Opt{'version'}) {
 
 defined($ARGV[0]) || die("$progname: Missing filenames. Use -h for help.\n");
 
+my $d = '[\dX]'; # Legal regexp digits, 0-9 or X (unknown)
+my $r_date = "[12]$d$d$d" . # year
+            "$d$d" .        # month
+            "$d$d" .        # day
+            "T" .
+            "$d$d" .        # hours
+            "$d$d" .        # minutes
+            "$d$d" .        # seconds
+            "Z";
+
 for my $Curr (@ARGV) {
     D("Curr = '$Curr'\n");
     process_file($Curr);
@@ -73,7 +83,7 @@ sub process_file {
         warn("$progname: $File: Not a regular file\n");
         return;
     }
-    if ($File =~ /^\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ/) {
+    if (numdates($File) > 0) {
         warn("$progname: $File: Filename already has date\n");
         return;
     }
@@ -139,6 +149,23 @@ sub mod_date {
     return($Retval);
     # }}}
 } # mod_date()
+
+sub numdates {
+    # {{{
+    my $str = shift;
+    my $retval;
+
+    if ($str =~ /^$r_date-$r_date/) {
+        $retval = 2;
+    } elsif ($str =~ /^$r_date/) {
+        $retval = 1;
+    } else {
+        $retval = 0;
+    }
+    msg(3, "numdates('$str') returns '$retval'");
+    return($retval);
+    # }}}
+} # numdates()
 
 sub start_date {
     # Find start of recording {{{
