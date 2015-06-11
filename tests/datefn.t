@@ -159,7 +159,22 @@ END
         "Don't add date when there's already one there",
     );
 
-    ok(unlink($newname), "unlink $newname");
+    diag('Testing --delete option...');
+    testcmd("../$CMD --delete 20121224T002858Z.file.txt",
+        "datefn: '20121224T002858Z.file.txt' renamed to 'file.txt'\n",
+        "",
+        0,
+        "Delete date with --delete",
+    );
+
+    testcmd("../$CMD -d -v file.txt",
+        "",
+        "datefn: Filename for file.txt is unchanged\n",
+        0,
+        "Delete non-existing date with -d",
+    );
+
+    ok(unlink("file.txt"), "unlink file.txt");
 
     diag('Testing --git option...');
     my $git_version = `git --version 2>/dev/null`;
@@ -192,6 +207,26 @@ END
             "",
             0,
             "File status looks ok in git",
+        );
+        testcmd("../../$CMD -gd 20150611T123129Z.file.txt",
+            "datefn: '20150611T123129Z.file.txt' renamed to 'file.txt'\n",
+            "datefn: Executing \"git mv 20150611T123129Z.file.txt file.txt\"...\n",
+            0,
+            "Use -d and -g option in Git repository",
+        );
+        is(
+            file_data("file.txt"),
+            "This is the most amazing file.\n",
+            "20150611T123129Z.file.txt was properly renamed",
+        );
+        testcmd("git status --porcelain",
+            <<END,
+?? datefn-stderr.tmp
+?? unknown.txt
+END
+            "",
+            0,
+            "File status in git is ok, changes to file.txt are gone",
         );
         testcmd("../../$CMD -g unknown.txt",
             "",

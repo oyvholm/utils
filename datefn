@@ -23,6 +23,7 @@ our %Opt = (
 
     'bwf' => 0,
     'debug' => 0,
+    'delete' => 0,
     'dry-run' => 0,
     'force' => 0,
     'git' => 0,
@@ -42,6 +43,7 @@ GetOptions(
 
     "bwf" => \$Opt{'bwf'},
     "debug" => \$Opt{'debug'},
+    "delete|d" => \$Opt{'delete'},
     "dry-run|n" => \$Opt{'dry-run'},
     "force|f" => \$Opt{'force'},
     "git|g" => \$Opt{'git'},
@@ -83,7 +85,7 @@ sub process_file {
         warn("$progname: $File: Not a regular file\n");
         return;
     }
-    if (numdates($File) > 0) {
+    if (!$Opt{'delete'} && numdates($File) > 0) {
         warn("$progname: $File: Filename already has date\n");
         return;
     }
@@ -93,6 +95,13 @@ sub process_file {
     my $dates = sprintf("%s%s%s", sec_to_string($start_date), length($start_date) ? "-" : "", sec_to_string($mod_date));
     if (length($dates)) {
         my $new_name = "$dates.$File";
+        if ($Opt{'delete'}) {
+            $new_name = strip_date_from_filename($File);
+        }
+        if ($new_name eq "$File") {
+            msg(1, "Filename for $File is unchanged");
+            return;
+        }
         if ($Opt{'dry-run'}) {
             print("$progname: '$File' would be renamed to '$new_name'\n");
         } else {
@@ -166,6 +175,16 @@ sub numdates {
     return($retval);
     # }}}
 } # numdates()
+
+sub strip_date_from_filename {
+    # {{{
+    my $file = shift;
+    my $retval = $file;
+    $retval =~ s/^20......T......*?Z\.(.*$)/$1/;
+    msg(3, "strip_date_from_filename('$file') returns '$retval'");
+    return($retval);
+    # }}}
+} # strip_date_from_filename()
 
 sub start_date {
     # Find start of recording {{{
@@ -258,6 +277,8 @@ Options:
     Find start of recording in Broadcast Wave Format files. This is 
     based on examining .wav files from the Zoom H4n, and it seems to 
     work there. The file format may vary on other devices.
+  -d, --delete
+    Delete timestamp from filename.
   -f, --force
     If a file with the new name already exists, allow the program to 
     overwrite the file.
