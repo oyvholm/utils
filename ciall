@@ -7,7 +7,9 @@
 
 progname=ciall
 
+unset opt_str
 test "$1" = "-d" && {
+    opt_str=-d
     test "$(git config --get ciall.noemptydirs)" = "true" && { echo $progname: -d option not allowed here >&2; exit 1; }
     shift;
     echo -n $progname: Executing git-store-dirs... >&2
@@ -18,7 +20,7 @@ test "$1" = "-d" && {
     echo DONE >&2
 }
 besafe=n
-test "$1" = "-y" && { besafe=y; shift; }
+test "$1" = "-y" && { besafe=y; opt_str=-y; shift; }
 echo $progname: git status 1... >&2
 LC_ALL=C git status . | grep "^nothing to commit" && { echo $progname: Nothing to do here.; exit 0; }
 
@@ -28,7 +30,7 @@ unset logmsg
 echo $progname: git status 2... >&2
 git status .
 echo
-echo "Log message: '$logmsg'"
+echo "Log message: $opt_str '$logmsg'"
 until test "$besafe" = "y"; do
     echo -n Press \'y\' + Enter to commit all new changes or \'n\' to abort...
     read besafe
