@@ -54,12 +54,6 @@ if test "$store_blobs" = "1"; then
         git show $f >blob-$f && echo $progname: Creating blob-$f
     done
 fi
-if test -e $bannedfile; then
-    for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
-        git br -D commit-$ban 2>/dev/null
-        git tag -d tag-$ban 2>/dev/null
-        test -e "blob-$ban" && rm "blob-$ban"
-    done
-fi
+git delete-banned
 test "$dangfile" = "$(basename $dangfile)" && rm $dangfile
 exit 0

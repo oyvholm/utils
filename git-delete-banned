@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#=======================================================================
+# git-delete-banned
+# File ID: 8363d7d8-10b2-11e5-9153-000df06acc56
+#
+# Delete banned commits, tags and blobs. Mostly used by git-dangling to 
+# remove unwanted commits.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=git-delete-banned
+bannedfile=$HOME/.git-dangling-banned
+
+if test -e $bannedfile; then
+    for ban in $(cut -f1 -d ' ' $bannedfile | grep -E '^[0-9a-f]{40}'); do
+        git br -D commit-$ban 2>/dev/null
+        git tag -d tag-$ban 2>/dev/null
+        test -e "blob-$ban" && rm "blob-$ban"
+    done
+fi
