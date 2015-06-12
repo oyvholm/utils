@@ -203,6 +203,25 @@ END
         "-r on file without date adds timestamp",
     );
 
+    diag("Check that it works with paths...");
+    ok(chdir(".."), "chdir ..");
+
+    testcmd("$CMD -d datefn-files/20150601T000000Z.file.txt",
+        "datefn: 'datefn-files/20150601T000000Z.file.txt' renamed to 'datefn-files/file.txt'\n",
+        "",
+        0,
+        "Delete date from parent directory",
+    );
+
+    testcmd("$CMD datefn-files/file.txt",
+        "datefn: 'datefn-files/file.txt' renamed to 'datefn-files/20150601T000000Z.file.txt'\n",
+        "",
+        0,
+        "Re-add date from parent directory",
+    );
+
+    ok(chdir("datefn-files"), "chdir datefn-files");
+
     ok(unlink("20150601T000000Z.file.txt"), "unlink 20150601T000000Z.file.txt");
 
     diag('Testing --git option...');

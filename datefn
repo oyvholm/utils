@@ -13,6 +13,7 @@
 
 use strict;
 use Getopt::Long;
+use File::Basename;
 use Time::Local;
 
 $| = 1;
@@ -101,14 +102,18 @@ sub process_file {
     my $start_date = start_date($File);
     my $dates = sprintf("%s%s%s", sec_to_string($start_date), length($start_date) ? "-" : "", sec_to_string($mod_date));
     if (length($dates)) {
-        my $file_ext = $File;
+        my ($basename, $dirname) = fileparse($File);
+        my $new_name = $basename;
         if ($Opt{'replace'}) {
-            $file_ext = strip_date_from_filename($file_ext);
+            $new_name = strip_date_from_filename($new_name);
         }
-        $new_name = "$dates.$file_ext";
         if ($Opt{'delete'}) {
-            $new_name = strip_date_from_filename($File);
+            $new_name = strip_date_from_filename($new_name);
+        } else {
+            $new_name = "$dates.$new_name";
         }
+        $dirname eq "./" && ($dirname = '');
+        $new_name = "$dirname$new_name";
         if ($new_name eq "$File") {
             msg(1, "Filename for $File is unchanged");
             return;
