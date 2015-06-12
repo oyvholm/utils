@@ -13,6 +13,7 @@
 
 use strict;
 use Getopt::Long;
+use File::Basename;
 use Time::Local;
 
 $| = 1;
@@ -23,9 +24,12 @@ our %Opt = (
 
     'bwf' => 0,
     'debug' => 0,
+    'delete' => 0,
     'dry-run' => 0,
     'force' => 0,
+    'git' => 0,
     'help' => 0,
+    'replace' => 0,
     'skew' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -41,9 +45,12 @@ GetOptions(
 
     "bwf" => \$Opt{'bwf'},
     "debug" => \$Opt{'debug'},
+    "delete|d" => \$Opt{'delete'},
     "dry-run|n" => \$Opt{'dry-run'},
     "force|f" => \$Opt{'force'},
+    "git|g" => \$Opt{'git'},
     "help|h" => \$Opt{'help'},
+    "replace|r" => \$Opt{'replace'},
     "skew|s=i" => \$Opt{'skew'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -51,6 +58,10 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'debug'} && ($Debug = 1);
+if ($Opt{'delete'} && $Opt{'replace'}) {
+    warn("$progname: Cannot mix -d/--delete and -r/--replace options\n");
+    exit(1);
+}
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -58,6 +69,16 @@ if ($Opt{'version'}) {
 }
 
 defined($ARGV[0]) || die("$progname: Missing filenames. Use -h for help.\n");
+
+my $d = '[\dX]'; # Legal regexp digits, 0-9 or X (unknown)
+my $r_date = "[12]$d$d$d" . # year
+            "$d$d" .        # month
+            "$d$d" .        # day
+            "T" .
+            "$d$d" .        # hours
+            "$d$d" .        # minutes
+            "$d$d" .        # seconds
+            "Z";
 
 for my $Curr (@ARGV) {
     D("Curr = '$Curr'\n");
@@ -71,22 +92,38 @@ sub process_file {
         warn("$progname: $File: Not a regular file\n");
         return;
     }
-    if ($File =~ /^\d\d\d\d\d\d\d\dT\d\d\d\d\d\dZ/) {
+    if (!$Opt{'delete'} && !$Opt{'replace'} && numdates($File) > 0) {
         warn("$progname: $File: Filename already has date\n");
         return;
     }
     D(sprintf("mod_date(%s) = '%s'\n", $File, mod_date($File)));
+    my $new_name = '';
     my $mod_date = mod_date($File);
     my $start_date = start_date($File);
     my $dates = sprintf("%s%s%s", sec_to_string($start_date), length($start_date) ? "-" : "", sec_to_string($mod_date));
     if (length($dates)) {
-        my $new_name = "$dates.$File";
+        my ($basename, $dirname) = fileparse($File);
+        my $new_name = $basename;
+        if ($Opt{'replace'}) {
+            $new_name = strip_date_from_filename($new_name);
+        }
+        if ($Opt{'delete'}) {
+            $new_name = strip_date_from_filename($new_name);
+        } else {
+            $new_name = "$dates.$new_name";
+        }
+        $dirname eq "./" && ($dirname = '');
+        $new_name = "$dirname$new_name";
+        if ($new_name eq "$File") {
+            msg(1, "Filename for $File is unchanged");
+            return;
+        }
         if ($Opt{'dry-run'}) {
             print("$progname: '$File' would be renamed to '$new_name'\n");
         } else {
             if (-e $new_name && !$Opt{'force'}) {
                 warn("$progname: $new_name: File already exists, use --force to overwrite\n");
-            } elsif (rename($File, $new_name)) {
+            } elsif (rename_file($File, $new_name)) {
                 print("$progname: '$File' renamed to '$new_name'\n");
             } else {
                 warn("$progname: $File: Cannot rename file to '$new_name': $!\n");
@@ -95,6 +132,34 @@ sub process_file {
     }
     # }}}
 } # process_file()
+
+sub rename_file {
+    # {{{
+    my ($oldname, $newname) = @_;
+    my $retval;
+
+    if ($Opt{'git'}) {
+        $retval = mysystem('git', 'mv', $oldname, $newname);
+        $retval = !$retval;
+    } else {
+        $retval = rename($oldname, $newname);
+    }
+
+    return($retval);
+    # }}}
+} # rename_file()
+
+sub mysystem {
+    # {{{
+    my @cmd = @_;
+    my $retval;
+
+    msg(0, "Executing \"" . join(' ', @cmd) . "\"...");
+    $retval = system(@cmd);
+
+    return($retval);
+    # }}}
+} # mysystem()
 
 sub mod_date {
     # Return file modification timestamp {{{
@@ -109,6 +174,33 @@ sub mod_date {
     return($Retval);
     # }}}
 } # mod_date()
+
+sub numdates {
+    # {{{
+    my $str = shift;
+    my $retval;
+
+    if ($str =~ /^$r_date-$r_date/) {
+        $retval = 2;
+    } elsif ($str =~ /^$r_date/) {
+        $retval = 1;
+    } else {
+        $retval = 0;
+    }
+    msg(3, "numdates('$str') returns '$retval'");
+    return($retval);
+    # }}}
+} # numdates()
+
+sub strip_date_from_filename {
+    # {{{
+    my $file = shift;
+    my $retval = $file;
+    $retval =~ s/^20......T......*?Z\.(.*$)/$1/;
+    msg(3, "strip_date_from_filename('$file') returns '$retval'");
+    return($retval);
+    # }}}
+} # strip_date_from_filename()
 
 sub start_date {
     # Find start of recording {{{
@@ -201,13 +293,21 @@ Options:
     Find start of recording in Broadcast Wave Format files. This is 
     based on examining .wav files from the Zoom H4n, and it seems to 
     work there. The file format may vary on other devices.
+  -d, --delete
+    Delete timestamp from filename. Can not be used with -r/--replace.
   -f, --force
     If a file with the new name already exists, allow the program to 
     overwrite the file.
+  -g, --git
+    Use git commands when dealing with files. For example, execute the 
+    command "git mv oldname newname" when renaming files.
   -n, --dry-run
     Don’t rename files, but report what would happen.
   -h, --help
     Show this help.
+  -r, --replace
+    Replace date in filename with new value. Can not be used with 
+    -d/--delete.
   -s X, --skew X
     Adjust clock skew by adding X seconds to the timestamp. A negative 
     integer can also be specified.

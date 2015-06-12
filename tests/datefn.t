@@ -152,7 +152,146 @@ END
         "File is overwritten with --force",
     );
 
-    ok(unlink($newname), "unlink $newname");
+    testcmd("../$CMD 20121224T002858Z.file.txt",
+        "",
+        "datefn: 20121224T002858Z.file.txt: Filename already has date\n",
+        0,
+        "Don't add date when there's already one there",
+    );
+
+    diag("Testing --replace option...");
+
+    ok(utime(1433116800, 1433116800, "20121224T002858Z.file.txt"), "Change mtime of 20121224T002858Z.file.txt");
+    testcmd("../$CMD --replace 20121224T002858Z.file.txt",
+        "datefn: '20121224T002858Z.file.txt' renamed to '20150601T000000Z.file.txt'\n",
+        "",
+        0,
+        "Replace timestamp with new modification time",
+    );
+    is(
+        file_data("20150601T000000Z.file.txt"),
+        "Sånn går now the days.\n",
+        "file.txt was renamed to new mtime with -r",
+    );
+
+    diag('Testing --delete option...');
+    testcmd("../$CMD --delete 20150601T000000Z.file.txt",
+        "datefn: '20150601T000000Z.file.txt' renamed to 'file.txt'\n",
+        "",
+        0,
+        "Delete date with --delete",
+    );
+
+    testcmd("../$CMD -d -v file.txt",
+        "",
+        "datefn: Filename for file.txt is unchanged\n",
+        0,
+        "Delete non-existing date with -d",
+    );
+
+    testcmd("../$CMD -d -r -v file.txt",
+        "",
+        "datefn: Cannot mix -d/--delete and -r/--replace options\n",
+        1,
+        "-d and -r can't be mixed",
+    );
+
+    testcmd("../$CMD -r -v file.txt",
+        "datefn: 'file.txt' renamed to '20150601T000000Z.file.txt'\n",
+        "",
+        0,
+        "-r on file without date adds timestamp",
+    );
+
+    diag("Check that it works with paths...");
+    ok(chdir(".."), "chdir ..");
+
+    testcmd("$CMD -d datefn-files/20150601T000000Z.file.txt",
+        "datefn: 'datefn-files/20150601T000000Z.file.txt' renamed to 'datefn-files/file.txt'\n",
+        "",
+        0,
+        "Delete date from parent directory",
+    );
+
+    testcmd("$CMD datefn-files/file.txt",
+        "datefn: 'datefn-files/file.txt' renamed to 'datefn-files/20150601T000000Z.file.txt'\n",
+        "",
+        0,
+        "Re-add date from parent directory",
+    );
+
+    ok(chdir("datefn-files"), "chdir datefn-files");
+
+    ok(unlink("20150601T000000Z.file.txt"), "unlink 20150601T000000Z.file.txt");
+
+    diag('Testing --git option...');
+    my $git_version = `git --version 2>/dev/null`;
+    if ($git_version =~ /^git version \d/) {
+        testcmd("tar xzf repo.tar.gz",
+            '',
+            '',
+            0,
+            "Unpack repo.tar.gz"
+        );
+        ok(chdir("repo"), "chdir repo");
+        ok(-d ".git" && -f "file.txt", "repo.tar.gz was properly unpacked");
+        testcmd("../../$CMD --git file.txt",
+            "datefn: 'file.txt' renamed to '20150611T123129Z.file.txt'\n",
+            "datefn: Executing \"git mv file.txt 20150611T123129Z.file.txt\"...\n",
+            0,
+            "Use --git option in Git repository",
+        );
+        is(
+            file_data("20150611T123129Z.file.txt"),
+            "This is the most amazing file.\n",
+            "file.txt was properly renamed",
+        );
+        testcmd("git status --porcelain",
+            <<END,
+R  file.txt -> 20150611T123129Z.file.txt
+?? datefn-stderr.tmp
+?? unknown.txt
+END
+            "",
+            0,
+            "File status looks ok in git",
+        );
+        testcmd("../../$CMD -gd 20150611T123129Z.file.txt",
+            "datefn: '20150611T123129Z.file.txt' renamed to 'file.txt'\n",
+            "datefn: Executing \"git mv 20150611T123129Z.file.txt file.txt\"...\n",
+            0,
+            "Use -d and -g option in Git repository",
+        );
+        is(
+            file_data("file.txt"),
+            "This is the most amazing file.\n",
+            "20150611T123129Z.file.txt was properly renamed",
+        );
+        testcmd("git status --porcelain",
+            <<END,
+?? datefn-stderr.tmp
+?? unknown.txt
+END
+            "",
+            0,
+            "File status in git is ok, changes to file.txt are gone",
+        );
+        testcmd("../../$CMD -g unknown.txt",
+            "",
+            <<END,
+datefn: Executing "git mv unknown.txt 20150611T141445Z.unknown.txt"...
+fatal: not under version control, source=unknown.txt, destination=20150611T141445Z.unknown.txt
+datefn: unknown.txt: Cannot rename file to '20150611T141445Z.unknown.txt': No such file or directory
+END
+            0,
+            "Use --git option on file unknown to Git",
+        );
+        ok(chdir(".."), "chdir ..");
+        testcmd("rm -rf repo", "", "", 0, "Remove repo/");
+        ok(!-e "repo", "repo/ is gone");
+    } else {
+        diag("Cannot find 'git' executable, skipping --git tests");
+    }
 
     diag('Testing --skew option...');
     testcmd("tar xzf file.tar.gz", "", "", 0);
