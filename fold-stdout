@@ -84,7 +84,9 @@ sub main {
                 $deleted_text .= $line;
                 my $data_sha = sha1_hex($deleted_text);
                 -d $fold_dir || mkdir($fold_dir);
-                my $destfile = "$fold_dir/fold-$data_sha";
+                my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = gmtime();
+                my $destfile = sprintf("%s/fold-%u%02u%02uT%02u%02u%02uZ-%s",
+                    $fold_dir, $year + 1900, $mon + 1, $mday, $hour, $min, $sec, $data_sha);
                 my $created_file = 0;
                 if (open(DestFP, ">$destfile")) {
                     print(DestFP $deleted_text);
