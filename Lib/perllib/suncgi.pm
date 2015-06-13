@@ -809,7 +809,7 @@ sub print_header {
 	print($html_version);
 	print("\n<html lang=\"$head_lang\">\n");
 	$head_script = "" unless defined($head_script);
-	if (defined(@main::rcs_array)) {
+	if (@main::rcs_array) {
 		foreach(@main::rcs_array) {
 			h_print("\t<!-- $_ -->\n");
 		}
