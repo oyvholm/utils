@@ -118,6 +118,7 @@ END
         'FLDBsum' => '', # mine
         'FLDButf' => '', # mine
         'Fcntl' => '',
+        'File::Basename' => '',
         'File::Copy' => '',
         'File::Find' => '',
         'File::Glob' => '',
