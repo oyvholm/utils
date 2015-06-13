@@ -193,6 +193,7 @@ sub testcmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
+    $Txt =~ s/$Tmptop/[Tmptop]/g; # Remove unique variations from output
     is(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
@@ -224,6 +225,7 @@ sub likecmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
+    $Txt =~ s/$Tmptop/[Tmptop]/g; # Remove unique variations from output
     like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
