@@ -97,7 +97,7 @@ END
     my $repo = "$Tmptop/repo";
     chomp(my $origdir = `pwd`);
 
-    ok(mkdir($Tmptop), "mkdir $Tmptop") || die("$progname: Unable to continue\n");
+    ok(mkdir($Tmptop), "mkdir \$Tmptop") || die("$progname: Unable to continue\n");
     likecmd("git clone git-dangling-files/repo.bundle $repo", # {{{
         '/.*/',
         '/.*/',
@@ -106,7 +106,7 @@ END
     );
 
     # }}}
-    ok(chdir($repo), "chdir $repo") || die("$progname: Unable to continue\n");
+    ok(chdir($repo), "chdir \$repo") || die("$progname: Unable to continue\n");
     testcmd('git log --format=format:%H -1', # {{{
         'd48c5ed0264a0384b135273e08159c1a4bd80a4b',
         '',
@@ -147,7 +147,7 @@ END
     );
 
     # }}}
-    ok(chdir($origdir), "chdir $origdir");
+    ok(chdir($origdir), "chdir \$origdir");
     testcmd("rm -rf $Tmptop", # {{{
         '',
         '',
