@@ -8,6 +8,11 @@
 # if any of the arguments is a directory, a trailing slash will be added 
 # if it doesn't exist already.
 #
+# Syntax:
+#   gitignore file [files]
+#     Place files, symlinks or directories in a global .gitignore in the 
+#     root directory.
+#
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 3 or later.
 #=======================================================================
