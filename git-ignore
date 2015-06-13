@@ -12,18 +12,34 @@
 #   gitignore file [files]
 #     Place files, symlinks or directories in a global .gitignore in the 
 #     root directory.
+#   gitignore -l file [files]
+#     Use local .gitignore in the current directory.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-gitignore="$(git rev-parse --show-toplevel)/.gitignore"
+unset opt_local
+
+if test "$1" = "-l"; then
+    opt_local=1
+    gitignore=.gitignore
+    shift
+else
+    gitignore="$(git rev-parse --show-toplevel)/.gitignore"
+fi
 
 for f in "$@"; do
     unset termslash
     test -d "$f" && { echo "$f" | grep -q '/$' || termslash=/; }
     git ls-files -- "$f" | grep -q . && git rm -r --cached "$f"
-    echo /$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
+    if test -n "$opt_local"; then
+        # Use local .gitignore in current directory
+        echo $f$termslash >>"$gitignore"
+    else
+        # Use global .gitignore at top of repo
+        echo /$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
+    fi
 done
 
 sort -u "$gitignore" >"$gitignore.tmp"
