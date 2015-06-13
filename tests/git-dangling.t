@@ -62,6 +62,8 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
+
 exit(main(%Opt));
 
 sub main {
@@ -92,7 +94,6 @@ END
 
 =cut
 
-    my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
     my $repo = "$Tmptop/repo";
     chomp(my $origdir = `pwd`);
 
