@@ -62,6 +62,8 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
+
 exit(main(%Opt));
 
 sub main {
@@ -92,11 +94,10 @@ END
 
 =cut
 
-    my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
     my $repo = "$Tmptop/repo";
     chomp(my $origdir = `pwd`);
 
-    ok(mkdir($Tmptop), "mkdir $Tmptop") || die("$progname: Unable to continue\n");
+    ok(mkdir($Tmptop), "mkdir \$Tmptop") || die("$progname: Unable to continue\n");
     likecmd("git clone git-dangling-files/repo.bundle $repo", # {{{
         '/.*/',
         '/.*/',
@@ -105,7 +106,7 @@ END
     );
 
     # }}}
-    ok(chdir($repo), "chdir $repo") || die("$progname: Unable to continue\n");
+    ok(chdir($repo), "chdir \$repo") || die("$progname: Unable to continue\n");
     testcmd('git log --format=format:%H -1', # {{{
         'd48c5ed0264a0384b135273e08159c1a4bd80a4b',
         '',
@@ -146,7 +147,7 @@ END
     );
 
     # }}}
-    ok(chdir($origdir), "chdir $origdir");
+    ok(chdir($origdir), "chdir \$origdir");
     testcmd("rm -rf $Tmptop", # {{{
         '',
         '',
@@ -192,6 +193,7 @@ sub testcmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
+    $Txt =~ s/$Tmptop/[Tmptop]/g; # Remove unique variations from output
     is(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
@@ -223,6 +225,7 @@ sub likecmd {
     if (defined($Exp_stderr) && !length($deb_str)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
+    $Txt =~ s/$Tmptop/[Tmptop]/g; # Remove unique variations from output
     like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {

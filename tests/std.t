@@ -268,10 +268,10 @@ END
     );
 
     # }}}
-    ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob $Tmptop/tmpuuids/*')");
-    ok(rmdir("$Tmptop/tmpuuids"), "rmdir('$Tmptop/tmpuuids')");
-    ok(unlink("$Tmptop/bashfile"), "unlink('$Tmptop/bashfile')");
-    ok(rmdir($Tmptop), "rmdir('$Tmptop')");
+    ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob [Tmptop]/tmpuuids/*')");
+    ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
+    ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
+    ok(rmdir($Tmptop), "rmdir([Tmptop])");
 
     diag('Testing finished.');
     # }}}
