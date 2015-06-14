@@ -30,7 +30,8 @@ for gf in "$@"; do
     else
         unset not_ok_str
     fi
-    printf "%3u ok%s\\n" $(grep "^ok -" log/$testname.log | wc -l) "$not_ok_str"
+    ok_count=$(grep "^ok -" log/$testname.log | wc -l)
+    printf "%3u ok%s\\n" $ok_count "$not_ok_str"
 done
 
 exit $retval
