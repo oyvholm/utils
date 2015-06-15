@@ -56,6 +56,15 @@ END
     exit 0
 fi
 
+loop_until_y() {
+    # Loop until the user says 'y'.
+    unset resp
+    until test "$resp" = "y"; do
+        echo -n $progname: Type \'y\' + Enter to $*...
+        read resp
+    done
+}
+
 if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
     if test -n "$(echo "$curr" | grep '\.')"; then
         # Current branch contains a full stop, so it has a parent
@@ -64,12 +73,7 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
         # Current branch has no parents, prepare for merge or squash to 
         # master.
         test "$ext" = "-s" && ms_str=squash || ms_str=merge
-        # Loop until the user says 'y'.
-        unset resp
-        until test "$resp" = "y"; do
-            echo -n $progname: Type \'y\' + Enter to $ms_str $curr to master...
-            read resp
-        done
+        loop_until_y $ms_str $curr to master
         parent=master
     fi
 
