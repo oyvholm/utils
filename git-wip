@@ -77,6 +77,11 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
         parent=master
     fi
 
+    git branch | cut -c 3- | grep "^$parent\$" || {
+        echo $progname: $parent: Parent branch does not exist >&2
+        loop_until_y create the \'$parent\' branch on \'master\'
+        git branch "$parent" master
+    }
     git checkout $parent &&
     if test "$ext" = "-d"; then
         # Delete current branch after merge to parent, use fast-forward 
