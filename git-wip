@@ -60,7 +60,7 @@ loop_until_y() {
     # Loop until the user says 'y'.
     unset resp
     until test "$resp" = "y"; do
-        echo -n $progname: Type \'y\' + Enter to $*...
+        echo -n $progname: Type \'y\' + Enter to $*... >&2
         read resp
     done
 }
