@@ -42,6 +42,10 @@ Options:
     Squash the branch into the parent branch, all commits will be 
     collapsed into one.
 
+When the -d, -m or -s option is used and there are no parent branches 
+(there are no full stops ('.') in the current branch name), the branch 
+will be merged or squashed to 'master'.
+
 If no options are specified, a new "subbranch" will be created from the 
 current branch by postfixing it with ".BRANCHNAME" where BRANCHNAME is 
 specified on the command line. An exception is made when the current 
@@ -53,11 +57,22 @@ END
 fi
 
 if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
-    echo "$curr" | grep -q '\.' || {
-        echo $progname: No periods found in branch name \"$curr\", cannot merge >&2
-        exit 1
-    }
-    parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
+    if test -n "$(echo "$curr" | grep '\.')"; then
+        # Current branch contains a full stop, so it has a parent
+        parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
+    else
+        # Current branch has no parents, prepare for merge or squash to 
+        # master.
+        test "$ext" = "-s" && ms_str=squash || ms_str=merge
+        # Loop until the user says 'y'.
+        unset resp
+        until test "$resp" = "y"; do
+            echo -n $progname: Type \'y\' + Enter to $ms_str $curr to master...
+            read resp
+        done
+        parent=master
+    fi
+
     git checkout $parent &&
     if test "$ext" = "-d"; then
         # Delete current branch after merge to parent, use fast-forward 
