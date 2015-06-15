@@ -60,11 +60,17 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
     parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
     git checkout $parent &&
     if test "$ext" = "-d"; then
+        # Delete current branch after merge to parent, use fast-forward 
+        # if possible.
         git merge $curr
         git branch -d $curr
     elif test "$ext" = "-s"; then
+        # Squash the current branch to parent, combine all commits into 
+        # one.
         git merge --squash $curr
     else
+        # Merge current branch into parent, always create merge commit 
+        # even if a fast-forward merge is possible.
         git merge --no-ff $curr
         git branch -d $curr
     fi
@@ -72,9 +78,11 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
 fi
 
 if test "$use_new_branch" = "1"; then
+    # Create new branch without prefix
     git branch "$ext"
     git checkout "$ext"
 else
+    # Create new branch, use current branch name as prefix
     git branch "$curr.$ext"
     git checkout "$curr.$ext"
 fi
