@@ -18,6 +18,40 @@ test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
 ext="wip"
 test -n "$1" && { ext="$1"; shift; }
 
+if test "$ext" = "-h" -o "$ext" = "--help"; then
+    cat <<END
+
+Usage:
+
+  $progname -d|-h|-m|-s
+  $progname BRANCHNAME
+
+Options:
+
+  -d
+    Delete current branch after merging it to parent. Used when there's 
+    no need to document the existence of the branch, and a fast-forward 
+    merge will do just fine.
+  -h, --help
+    Show this help.
+  -m
+    Merge the current branch to the parent branch using --no-ff in 
+    git(1). This creates a merge commit even if a fast-forward is 
+    possible. Useful to group related changes together.
+  -s
+    Squash the branch into the parent branch, all commits will be 
+    collapsed into one.
+
+If no options are specified, a new "subbranch" will be created from the 
+current branch by postfixing it with ".BRANCHNAME" where BRANCHNAME is 
+specified on the command line. An exception is made when the current 
+branch is 'master', in that case the old branch name is not used as 
+prefix.
+
+END
+    exit 0
+fi
+
 if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
     echo "$curr" | grep -q '\.' || {
         echo $progname: No periods found in branch name \"$curr\", cannot merge >&2
