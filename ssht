@@ -7,11 +7,12 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
+progname=ssht
+
 msg() {
-    echo ssht: "$*"
+    echo $progname: "$*"
 }
 
-progname=ssht
 PORT=9141
 HOST=sunny@sunbase.org
 CMD="ssh -A -Y -q -N -R $PORT:localhost:22 $HOST"
