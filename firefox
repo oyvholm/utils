@@ -7,4 +7,8 @@
 # License: GNU General Public License version 3 or later.
 #=======================================================================
 
-sess -t c_firefox /usr/bin/firefox
+unset file
+for f in /opt/firefox/firefox /usr/bin/firefox; do
+    test -x "$f" && { file="$f"; break; }
+done
+sess -t c_firefox "$file"
