@@ -92,7 +92,7 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
         # Squash the current branch to parent, combine all commits into 
         # one.
         git merge --squash $curr
-    else
+    elif test "$ext" = "-m"; then
         # Merge current branch into parent, always create merge commit 
         # even if a fast-forward merge is possible.
         git merge --no-ff $curr
