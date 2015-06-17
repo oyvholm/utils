@@ -73,6 +73,10 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
         # Current branch has no parents, prepare for merge or squash to 
         # master.
         test "$ext" = "-s" && ms_str=squash || ms_str=merge
+        if test "$curr" = "master"; then
+            echo Is already on master, nowhere to $ms_str branch >&2
+            exit 1
+        fi
         loop_until_y $ms_str $curr to master
         parent=master
     fi
