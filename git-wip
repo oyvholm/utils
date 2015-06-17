@@ -23,7 +23,7 @@ if test "$ext" = "-h" -o "$ext" = "--help"; then
 
 Usage:
 
-  $progname -d|-h|-m|-s
+  $progname OPTION
   $progname BRANCHNAME
 
 Options:
