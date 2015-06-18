@@ -164,14 +164,7 @@ END
 
     # }}}
     diag("Test -m option...");
-    testcmd("../../$CMD add-files", # {{{
-        "",
-        "Switched to branch 'wip.add-files'\n",
-        0,
-        "subbranch add-files",
-    );
-
-    # }}}
+    create_and_switch_to_subbranch('add-files', 'wip.add-files');
     is(commit_log(''), <<END, "Commit log is unchanged since file1.txt");
 04c774c04d6f3c4915c535077c24bc00dba82828 Add file1.txt
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
@@ -204,14 +197,7 @@ END
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
 END
     diag("Testing -s option...");
-    testcmd("../../$CMD more-files", # {{{
-        "",
-        "Switched to branch 'wip.more-files'\n",
-        0,
-        "subbranch more-files",
-    );
-
-    # }}}
+    create_and_switch_to_subbranch('more-files', 'wip.more-files');
     commit_new_file("file4.txt");
     commit_new_file("file5.txt");
     is(commit_log(''), <<END, "Commit log with file5.txt is ok");
@@ -279,6 +265,19 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub create_and_switch_to_subbranch {
+    # {{{
+    my ($branch, $exp_branch) = @_;
+    testcmd("../../$CMD $branch",
+        "",
+        "Switched to branch '$exp_branch'\n",
+        0,
+        "Create subbranch '$branch' and checkout '$exp_branch'",
+    );
+    return;
+    # }}}
+} # create_and_switch_to_subbranch()
 
 sub commit_log {
     # {{{
