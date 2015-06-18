@@ -233,7 +233,7 @@ END
     );
 
     # }}}
-    is(commit_log(''), <<END, "Commit log with file5.txt is ok"); # {{{
+    is(commit_log(''), <<END, "Commit log after squash (-s) is ok"); # {{{
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Merge branch 'wip.add-files' into wip
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Add file3.txt
 9ddbad632f192f4edd053709b3aaedc95bd9ac0e Add file2.txt
