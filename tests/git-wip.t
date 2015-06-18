@@ -105,6 +105,7 @@ END
     ok(chdir($Tmptop), "chdir [Tmptop]") or
         die("$progname: $Tmptop: Cannot chdir: $!\n");
 
+    diag("Initialise repository...");
     likecmd("git init repo", # {{{
         '/.*/',
         '/.*/',
@@ -132,6 +133,7 @@ END
 
     # }}}
     commit_new_file("file1.txt");
+    diag("Test without arguments...");
     testcmd("../../$CMD", # {{{
         "",
         "Switched to branch 'wip'\n",
@@ -148,6 +150,7 @@ END
     );
 
     # }}}
+    diag("Test -d option...");
     likecmd("../../$CMD -d", # {{{
         '/^wip\\nAlready up-to-date.*Deleted branch wip\.wip.*$/s',
         '/^Switched to branch \'wip\'\\n$/',
@@ -157,6 +160,7 @@ END
 
     # }}}
 
+    diag("Cleaning up temp files...");
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{
         '/^$/',
@@ -183,7 +187,6 @@ END
         # TODO tests }}}
     }
 
-    diag("Cleaning up temp files...");
     ok(-d $Tmptop, "[Tmptop] exists");
     ok(rmdir($Tmptop), "rmdir([Tmptop])");
     ok(!-e $Tmptop, "Tempdir is gone");
