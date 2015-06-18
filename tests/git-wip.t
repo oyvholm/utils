@@ -131,7 +131,8 @@ END
     );
 
     # }}}
-
+    commit_new_file("file1.txt");
+    ok(-f "file1.txt", "file1.txt exists and is a regular file");
 
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{
@@ -167,6 +168,17 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub commit_new_file {
+    # {{{
+    my $file = shift;
+    ok(!-e $file, "$file doesn't exist");
+    open(my $outfp, ">$file");
+    print($outfp "This is $file\n");
+    close($outfp);
+    is(file_data($file), "This is $file\n", "Contents of $file is ok");
+    # }}}
+} # commit_new_file()
 
 sub create_empty_commit {
     # {{{
