@@ -123,7 +123,7 @@ END
     );
 
     # }}}
-    create_empty_commit("Initial empty commit");
+    create_empty_commit("Init");
     testcmd("git branch", # {{{
         "* master\n",
         '',
@@ -133,7 +133,7 @@ END
 
     # }}}
     commit_new_file("file1.txt");
-    is(commit_log("HEAD"), "Add file1.txt\nInitial empty commit\n");
+    is(commit_log("HEAD"), "Add file1.txt\nInit\n");
     diag("Test without arguments...");
     testcmd("../../$CMD", # {{{
         "",
