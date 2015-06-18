@@ -38,13 +38,17 @@ Options:
     Merge the current branch to the parent branch using --no-ff in 
     git(1). This creates a merge commit even if a fast-forward is 
     possible. Useful to group related changes together.
+  -p
+   Change the active branch (git checkout) to the parent branch, i.e., 
+   the part of the branch name before the final full stop. If no parent 
+   branch exists, you will be prompted to create one on 'master'.
   -s
     Squash the branch into the parent branch, all commits will be 
     collapsed into one.
 
-When the -d, -m or -s option is used and there are no parent branches 
-(there are no full stops ('.') in the current branch name), the branch 
-will be merged or squashed to 'master'.
+When the -d, -m, -p or -s option is used and there are no parent 
+branches (there are no full stops ('.') in the current branch name), the 
+branch will be merged or squashed to 'master'.
 
 If no options are specified, a new "subbranch" will be created from the 
 current branch by postfixing it with ".BRANCHNAME" where BRANCHNAME is 
@@ -65,7 +69,7 @@ loop_until_y() {
     done
 }
 
-if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-s"; then
+if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-p" -o "$ext" = "-s"; then
     if test -n "$(echo "$curr" | grep '\.')"; then
         # Current branch contains a full stop, so it has a parent
         parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"

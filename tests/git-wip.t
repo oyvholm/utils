@@ -204,9 +204,35 @@ END
 END
 
     # }}}
-    diag("Testing -s option...");
     create_and_switch_to_subbranch('more-files', 'wip.more-files');
     commit_new_file("file4.txt");
+    diag("Test -p option...");
+    likecmd("../../$CMD -p", # {{{
+        '/^wip\\n$/',
+        '/^Switched to branch \'wip\'\\n$/',
+        0,
+        "-p option works",
+    );
+
+    # }}}
+    testcmd("git branch",
+        <<END,
+  master
+* wip
+  wip.more-files
+END
+        '',
+        0,
+        "Branches after -p looks fine",
+    );
+    likecmd("git checkout wip.more-files", # {{{
+        '/^$/',
+        '/^Switched to branch \'wip\.more-files\'\\n$/',
+        0,
+        "Go back to wip.more-files",
+    );
+
+    # }}}
     commit_new_file("file5.txt");
     is(commit_log(''), <<END, "Commit log with file5.txt is ok"); # {{{
 375860ebe00ccc64321c2ade0c1525e7428458fa Add file5.txt
@@ -219,6 +245,7 @@ END
 END
 
     # }}}
+    diag("Testing -s option...");
     likecmd("../../$CMD -s", # {{{
         '/^wip\\nUpdating [0-9a-f]+\.\.[0-9a-f]+\\n' .
         'Fast-forward\\n' .
