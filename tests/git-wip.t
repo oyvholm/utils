@@ -98,6 +98,11 @@ END
 
     # }}}
 
+    my $Tmptop = "tmp-git-wip-t-$$-" . substr(rand, 2, 8);
+    diag("Creating tempdir...");
+    ok(mkdir($Tmptop), "mkdir [Tmptop]") or
+        die("$progname: $Tmptop: Cannot create directory: $!\n");
+
     todo_section:
     ;
 
@@ -112,6 +117,10 @@ END
         }
         # TODO tests }}}
     }
+
+    diag("Cleaning up temp files...");
+    ok(rmdir($Tmptop), "rmdir([Tmptop])");
+    ok(!-e $Tmptop, "Tempdir is gone");
 
     diag('Testing finished.');
     # }}}
