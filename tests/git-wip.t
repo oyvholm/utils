@@ -200,7 +200,7 @@ END
     # }}}
     commit_new_file("file4.txt");
     commit_new_file("file5.txt");
-    is(commit_log('--topo-order'), <<END, "Commit log with file5.txt is ok");
+    is(commit_log(''), <<END, "Commit log with file5.txt is ok");
 Add file5.txt
 Add file4.txt
 Merge branch 'wip.add-files' into wip
@@ -223,7 +223,7 @@ END
     );
 
     # }}}
-    is(commit_log('--topo-order'), <<END, "Commit log with file5.txt is ok");
+    is(commit_log(''), <<END, "Commit log with file5.txt is ok");
 Merge branch 'wip.add-files' into wip
 Add file3.txt
 Add file2.txt
@@ -270,7 +270,7 @@ sub commit_log {
     # {{{
     my $ref = shift;
     my $retval = '';
-    open(my $pipefp, "git log --format=%s $ref |") or
+    open(my $pipefp, "git log --format=%s --topo-order $ref |") or
         return("'git log' pipe error: $!\n");
     while (<$pipefp>) {
         $retval .= $_;
