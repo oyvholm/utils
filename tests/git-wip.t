@@ -133,6 +133,7 @@ END
 
     # }}}
     commit_new_file("file1.txt");
+    is(commit_log("HEAD"), "Add file1.txt\nInitial empty commit\n");
     diag("Test without arguments...");
     testcmd("../../$CMD", # {{{
         "",
@@ -242,6 +243,20 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub commit_log {
+    # {{{
+    my $ref = shift;
+    my $retval = '';
+    open(my $pipefp, "git log --format=%s |") or
+        return("'git log' pipe error: $!\n");
+    while (<$pipefp>) {
+        $retval .= $_;
+    }
+    close($pipefp);
+    return($retval);
+    # }}}
+} # commit_log()
 
 sub commit_new_file {
     # {{{
