@@ -248,7 +248,7 @@ sub commit_log {
     # {{{
     my $ref = shift;
     my $retval = '';
-    open(my $pipefp, "git log --format=%s |") or
+    open(my $pipefp, "git log --format=%s $ref |") or
         return("'git log' pipe error: $!\n");
     while (<$pipefp>) {
         $retval .= $_;
