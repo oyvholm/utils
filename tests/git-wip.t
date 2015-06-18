@@ -133,7 +133,10 @@ END
 
     # }}}
     commit_new_file("file1.txt");
-    is(commit_log(''), "Add file1.txt\nInit\n", "Commit log with file1.txt is ok");
+    is(commit_log(''), <<END, "Commit log with file1.txt is ok");
+04c774c Add file1.txt
+4b825dc Init
+END
     diag("Test without arguments...");
     testcmd("../../$CMD", # {{{
         "",
@@ -169,14 +172,17 @@ END
     );
 
     # }}}
-    is(commit_log(''), "Add file1.txt\nInit\n", "Commit log is unchanged since file1.txt");
+    is(commit_log(''), <<END, "Commit log is unchanged since file1.txt");
+04c774c Add file1.txt
+4b825dc Init
+END
     commit_new_file("file2.txt");
     commit_new_file("file3.txt");
     is(commit_log(''), <<END, "Commit log with file3.txt is ok");
-Add file3.txt
-Add file2.txt
-Add file1.txt
-Init
+5c0f1e7 Add file3.txt
+9ddbad6 Add file2.txt
+04c774c Add file1.txt
+4b825dc Init
 END
     likecmd("../../$CMD -m", # {{{
         '/^wip\\nMerge made by the \'recursive\' strategy.*' .
@@ -191,11 +197,11 @@ END
 
     # }}}
     is(commit_log(''), <<END, "Commit log after -m is ok");
-Merge branch 'wip.add-files' into wip
-Add file3.txt
-Add file2.txt
-Add file1.txt
-Init
+5c0f1e7 Merge branch 'wip.add-files' into wip
+5c0f1e7 Add file3.txt
+9ddbad6 Add file2.txt
+04c774c Add file1.txt
+4b825dc Init
 END
     diag("Testing -s option...");
     testcmd("../../$CMD more-files", # {{{
@@ -209,13 +215,13 @@ END
     commit_new_file("file4.txt");
     commit_new_file("file5.txt");
     is(commit_log(''), <<END, "Commit log with file5.txt is ok");
-Add file5.txt
-Add file4.txt
-Merge branch 'wip.add-files' into wip
-Add file3.txt
-Add file2.txt
-Add file1.txt
-Init
+375860e Add file5.txt
+6c4c1a3 Add file4.txt
+5c0f1e7 Merge branch 'wip.add-files' into wip
+5c0f1e7 Add file3.txt
+9ddbad6 Add file2.txt
+04c774c Add file1.txt
+4b825dc Init
 END
     likecmd("../../$CMD -s", # {{{
         '/^wip\\nUpdating [0-9a-f]+\.\.[0-9a-f]+\\n' .
@@ -232,11 +238,11 @@ END
 
     # }}}
     is(commit_log(''), <<END, "Commit log with file5.txt is ok");
-Merge branch 'wip.add-files' into wip
-Add file3.txt
-Add file2.txt
-Add file1.txt
-Init
+5c0f1e7 Merge branch 'wip.add-files' into wip
+5c0f1e7 Add file3.txt
+9ddbad6 Add file2.txt
+04c774c Add file1.txt
+4b825dc Init
 END
 
     diag("Cleaning up temp files...");
@@ -278,7 +284,7 @@ sub commit_log {
     # {{{
     my $ref = shift;
     my $retval = '';
-    open(my $pipefp, "git log --format=%s --topo-order $ref |") or
+    open(my $pipefp, "git log --format='%t %s' --topo-order $ref |") or
         return("'git log' pipe error: $!\n");
     while (<$pipefp>) {
         $retval .= $_;
