@@ -133,10 +133,12 @@ END
 
     # }}}
     commit_new_file("file1.txt");
-    is(commit_log(''), <<END, "Commit log with file1.txt is ok");
+    is(commit_log(''), <<END, "Commit log with file1.txt is ok"); # {{{
 04c774c04d6f3c4915c535077c24bc00dba82828 Add file1.txt
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
 END
+
+    # }}}
     diag("Test without arguments...");
     testcmd("../../$CMD", # {{{
         "",
@@ -165,18 +167,22 @@ END
     # }}}
     diag("Test -m option...");
     create_and_switch_to_subbranch('add-files', 'wip.add-files');
-    is(commit_log(''), <<END, "Commit log is unchanged since file1.txt");
+    is(commit_log(''), <<END, "Commit log is unchanged since file1.txt"); # {{{
 04c774c04d6f3c4915c535077c24bc00dba82828 Add file1.txt
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
 END
+
+    # }}}
     commit_new_file("file2.txt");
     commit_new_file("file3.txt");
-    is(commit_log(''), <<END, "Commit log with file3.txt is ok");
+    is(commit_log(''), <<END, "Commit log with file3.txt is ok"); # {{{
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Add file3.txt
 9ddbad632f192f4edd053709b3aaedc95bd9ac0e Add file2.txt
 04c774c04d6f3c4915c535077c24bc00dba82828 Add file1.txt
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
 END
+
+    # }}}
     likecmd("../../$CMD -m", # {{{
         '/^wip\\nMerge made by the \'recursive\' strategy.*' .
         ' create mode 100644 file2\.txt\\n' .
@@ -189,18 +195,20 @@ END
     );
 
     # }}}
-    is(commit_log(''), <<END, "Commit log after -m is ok");
+    is(commit_log(''), <<END, "Commit log after -m is ok"); # {{{
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Merge branch 'wip.add-files' into wip
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Add file3.txt
 9ddbad632f192f4edd053709b3aaedc95bd9ac0e Add file2.txt
 04c774c04d6f3c4915c535077c24bc00dba82828 Add file1.txt
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
 END
+
+    # }}}
     diag("Testing -s option...");
     create_and_switch_to_subbranch('more-files', 'wip.more-files');
     commit_new_file("file4.txt");
     commit_new_file("file5.txt");
-    is(commit_log(''), <<END, "Commit log with file5.txt is ok");
+    is(commit_log(''), <<END, "Commit log with file5.txt is ok"); # {{{
 375860ebe00ccc64321c2ade0c1525e7428458fa Add file5.txt
 6c4c1a3c2c479e74e02394040d6da63046c1458c Add file4.txt
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Merge branch 'wip.add-files' into wip
@@ -209,6 +217,8 @@ END
 04c774c04d6f3c4915c535077c24bc00dba82828 Add file1.txt
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
 END
+
+    # }}}
     likecmd("../../$CMD -s", # {{{
         '/^wip\\nUpdating [0-9a-f]+\.\.[0-9a-f]+\\n' .
         'Fast-forward\\n' .
@@ -223,7 +233,7 @@ END
     );
 
     # }}}
-    is(commit_log(''), <<END, "Commit log with file5.txt is ok");
+    is(commit_log(''), <<END, "Commit log with file5.txt is ok"); # {{{
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Merge branch 'wip.add-files' into wip
 5c0f1e77ac82fe0d382b312202a467446d5948f4 Add file3.txt
 9ddbad632f192f4edd053709b3aaedc95bd9ac0e Add file2.txt
@@ -231,6 +241,7 @@ END
 4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
 END
 
+    # }}}
     diag("Cleaning up temp files...");
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{
