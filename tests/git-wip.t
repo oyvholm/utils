@@ -164,7 +164,7 @@ END
         "",
         "Switched to branch 'wip.add-files'\n",
         0,
-        "subbbranch add-file2",
+        "subbranch add-files",
     );
 
     # }}}
