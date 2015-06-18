@@ -284,6 +284,33 @@ END
     );
 
     # }}}
+    is(commit_log(''), <<END, "Commit log after -m"); # {{{
+375860ebe00ccc64321c2ade0c1525e7428458fa Merge branch 'wip'
+375860ebe00ccc64321c2ade0c1525e7428458fa Squash wip.more-files into wip
+5c0f1e77ac82fe0d382b312202a467446d5948f4 Merge branch 'wip.add-files' into wip
+5c0f1e77ac82fe0d382b312202a467446d5948f4 Add file3.txt
+9ddbad632f192f4edd053709b3aaedc95bd9ac0e Add file2.txt
+04c774c04d6f3c4915c535077c24bc00dba82828 Add file1.txt
+4b825dc642cb6eb9a060e54bf8d69288fbee4904 Init
+END
+
+    # }}}
+    likecmd("echo y | ../../$CMD -m", # {{{
+        '/^$/',
+        '/^Is already on master, nowhere to merge branch\\n$/',
+        1,
+        "Option -m on master doesn't work",
+    );
+
+    # }}}
+    likecmd("echo y | ../../$CMD -s", # {{{
+        '/^$/',
+        '/^Is already on master, nowhere to squash branch\\n$/',
+        1,
+        "Neither does -s",
+    );
+
+    # }}}
     diag("Cleaning up temp files...");
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{
