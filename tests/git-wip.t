@@ -159,6 +159,29 @@ END
     );
 
     # }}}
+    diag("Test -m option...");
+    testcmd("../../$CMD add-files", # {{{
+        "",
+        "Switched to branch 'wip.add-files'\n",
+        0,
+        "subbbranch add-file2",
+    );
+
+    # }}}
+    commit_new_file("file2.txt");
+    commit_new_file("file3.txt");
+    likecmd("../../$CMD -m", # {{{
+        '/^wip\\nMerge made by the \'recursive\' strategy.*' .
+        ' create mode 100644 file2\.txt\\n' .
+        ' create mode 100644 file3\.txt\\n' .
+        'Deleted branch wip\.add-files .*' .
+        '/s',
+        '/^Switched to branch \'wip\'\\n$/',
+        0,
+        "Merge wip.add-files to parent (wip)",
+    );
+
+    # }}}
 
     diag("Cleaning up temp files...");
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
