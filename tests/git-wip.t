@@ -104,7 +104,34 @@ END
         die("$progname: $Tmptop: Cannot create directory: $!\n");
     ok(chdir($Tmptop), "chdir [Tmptop]") or
         die("$progname: $Tmptop: Cannot chdir: $!\n");
-    ok(chdir(".."), "chdir ..");
+
+    likecmd("git init repo", # {{{
+        '/.*/',
+        '/.*/',
+        0,
+        'description',
+    );
+
+    # }}}
+    ok(chdir("repo"), "chdir repo") || BAIL_OUT("Cannot chdir repo");
+    likecmd("../../$CMD", # {{{
+        '/^$/',
+        '/fatal: ambiguous argument \'HEAD\': unknown revision or path not in the working tree\./s',
+        1,
+        'master doesn\'t exist yet',
+    );
+
+    # }}}
+    ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
+    likecmd("rm -rf repo", # {{{
+        '/^$/',
+        '/^$/',
+        0,
+        'Delete repo/',
+    );
+
+    # }}}
+    ok(chdir(".."), "chdir .."); # From $Tmptop/
 
     todo_section:
     ;
