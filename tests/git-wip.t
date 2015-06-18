@@ -102,6 +102,9 @@ END
     diag("Creating tempdir...");
     ok(mkdir($Tmptop), "mkdir [Tmptop]") or
         die("$progname: $Tmptop: Cannot create directory: $!\n");
+    ok(chdir($Tmptop), "chdir [Tmptop]") or
+        die("$progname: $Tmptop: Cannot chdir: $!\n");
+    ok(chdir(".."), "chdir ..");
 
     todo_section:
     ;
@@ -119,6 +122,7 @@ END
     }
 
     diag("Cleaning up temp files...");
+    ok(-d $Tmptop, "[Tmptop] exists");
     ok(rmdir($Tmptop), "rmdir([Tmptop])");
     ok(!-e $Tmptop, "Tempdir is gone");
 
