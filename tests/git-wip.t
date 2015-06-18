@@ -177,6 +177,18 @@ sub commit_new_file {
     print($outfp "This is $file\n");
     close($outfp);
     is(file_data($file), "This is $file\n", "Contents of $file is ok");
+    testcmd("git add \"$file\"",
+        '',
+        '',
+        0,
+        "git add $file",
+    );
+    likecmd("git commit -m \"Add $file\"",
+        "/.* Add $file.*/s",
+        '/^$/',
+        0,
+        "git commit",
+    );
     # }}}
 } # commit_new_file()
 
