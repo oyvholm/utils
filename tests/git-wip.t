@@ -122,6 +122,17 @@ END
     );
 
     # }}}
+    create_empty_commit("Initial empty commit");
+    testcmd("git branch", # {{{
+        "* master\n",
+        '',
+        0,
+        'master is created',
+    );
+
+    # }}}
+
+
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{
         '/^$/',
@@ -156,6 +167,15 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub create_empty_commit {
+    # {{{
+    my $msg = shift;
+    likecmd("git commit --allow-empty -m \"$msg\"",
+        '/.*/', '/.*/', 0, "Create empty commit");
+    return;
+    # }}}
+} # create_empty_commit()
 
 sub testcmd {
     # {{{
