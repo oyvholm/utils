@@ -133,7 +133,7 @@ END
 
     # }}}
     commit_new_file("file1.txt");
-    is(commit_log("HEAD"), "Add file1.txt\nInit\n");
+    is(commit_log(''), "Add file1.txt\nInit\n");
     diag("Test without arguments...");
     testcmd("../../$CMD", # {{{
         "",
@@ -171,6 +171,12 @@ END
     # }}}
     commit_new_file("file2.txt");
     commit_new_file("file3.txt");
+    is(commit_log(''), <<END, "Commit log with file3.txt is ok");
+Add file3.txt
+Add file2.txt
+Add file1.txt
+Init
+END
     likecmd("../../$CMD -m", # {{{
         '/^wip\\nMerge made by the \'recursive\' strategy.*' .
         ' create mode 100644 file2\.txt\\n' .
@@ -194,6 +200,15 @@ END
     # }}}
     commit_new_file("file4.txt");
     commit_new_file("file5.txt");
+    is(commit_log('--topo-order'), <<END, "Commit log with file5.txt is ok");
+Add file5.txt
+Add file4.txt
+Merge branch 'wip.add-files' into wip
+Add file3.txt
+Add file2.txt
+Add file1.txt
+Init
+END
     likecmd("../../$CMD -s", # {{{
         '/^wip\\nUpdating [0-9a-f]+\.\.[0-9a-f]+\\n' .
         'Fast-forward\\n' .
@@ -208,6 +223,13 @@ END
     );
 
     # }}}
+    is(commit_log('--topo-order'), <<END, "Commit log with file5.txt is ok");
+Merge branch 'wip.add-files' into wip
+Add file3.txt
+Add file2.txt
+Add file1.txt
+Init
+END
 
     diag("Cleaning up temp files...");
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
