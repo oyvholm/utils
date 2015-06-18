@@ -132,7 +132,6 @@ END
 
     # }}}
     commit_new_file("file1.txt");
-    ok(-f "file1.txt", "file1.txt exists and is a regular file");
 
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{
@@ -176,6 +175,7 @@ sub commit_new_file {
     open(my $outfp, ">$file");
     print($outfp "This is $file\n");
     close($outfp);
+    ok(-f "file1.txt", "file1.txt exists and is a regular file");
     is(file_data($file), "This is $file\n", "Contents of $file is ok");
     testcmd("git add \"$file\"",
         '',
