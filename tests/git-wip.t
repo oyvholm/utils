@@ -133,7 +133,7 @@ END
 
     # }}}
     commit_new_file("file1.txt");
-    is(commit_log(''), "Add file1.txt\nInit\n");
+    is(commit_log(''), "Add file1.txt\nInit\n", "Commit log with file1.txt is ok");
     diag("Test without arguments...");
     testcmd("../../$CMD", # {{{
         "",
@@ -169,6 +169,7 @@ END
     );
 
     # }}}
+    is(commit_log(''), "Add file1.txt\nInit\n", "Commit log is unchanged since file1.txt");
     commit_new_file("file2.txt");
     commit_new_file("file3.txt");
     is(commit_log(''), <<END, "Commit log with file3.txt is ok");
@@ -189,6 +190,13 @@ END
     );
 
     # }}}
+    is(commit_log(''), <<END, "Commit log after -m is ok");
+Merge branch 'wip.add-files' into wip
+Add file3.txt
+Add file2.txt
+Add file1.txt
+Init
+END
     diag("Testing -s option...");
     testcmd("../../$CMD more-files", # {{{
         "",
