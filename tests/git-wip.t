@@ -182,6 +182,31 @@ END
     );
 
     # }}}
+    diag("Testing -s option...");
+    testcmd("../../$CMD more-files", # {{{
+        "",
+        "Switched to branch 'wip.more-files'\n",
+        0,
+        "subbranch more-files",
+    );
+
+    # }}}
+    commit_new_file("file4.txt");
+    commit_new_file("file5.txt");
+    likecmd("../../$CMD -s", # {{{
+        '/^wip\\nUpdating [0-9a-f]+\.\.[0-9a-f]+\\n' .
+        'Fast-forward\\n' .
+        'Squash commit -- not updating HEAD\\n' .
+        '.*' .
+        ' create mode 100644 file4\.txt\\n' .
+        ' create mode 100644 file5\.txt\\n' .
+        '/s',
+        '/^Switched to branch \'wip\'\\n$/',
+        0,
+        "Squash wip.more-files to parent with -s",
+    );
+
+    # }}}
 
     diag("Cleaning up temp files...");
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
