@@ -132,6 +132,30 @@ END
 
     # }}}
     commit_new_file("file1.txt");
+    testcmd("../../$CMD", # {{{
+        "",
+        "Switched to branch 'wip'\n",
+        0,
+        "Command without arguments uses default 'wip' branch",
+    );
+
+    # }}}
+    testcmd("../../$CMD", # {{{
+        "",
+        "Switched to branch 'wip.wip'\n",
+        0,
+        "No args again, create wip.wip",
+    );
+
+    # }}}
+    likecmd("../../$CMD -d", # {{{
+        '/^wip\\nAlready up-to-date.*Deleted branch wip\.wip.*$/s',
+        '/^Switched to branch \'wip\'\\n$/',
+        0,
+        "Delete empty branch with -d",
+    );
+
+    # }}}
 
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{
