@@ -160,7 +160,6 @@ END
         'bigint' => '',
         'constant' => '',
         'strict' => '',
-        'suncgi' => '', # mine
         'utf8' => '',
         'vars' => '',
 
