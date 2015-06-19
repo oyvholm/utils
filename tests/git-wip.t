@@ -30,6 +30,7 @@ our $CMD = '../git-wip';
 our %Opt = (
 
     'all' => 0,
+    'git' => 'git',
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
@@ -45,6 +46,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'all|a' => \$Opt{'all'},
+    'git|g=s' => \$Opt{'git'},
     'help|h' => \$Opt{'help'},
     'todo|t' => \$Opt{'todo'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -106,7 +108,7 @@ END
         die("$progname: $Tmptop: Cannot chdir: $!\n");
 
     diag("Initialise repository...");
-    likecmd("git init repo", # {{{
+    likecmd("$Opt{'git'} init repo", # {{{
         '/.*/',
         '/.*/',
         0,
@@ -124,7 +126,7 @@ END
 
     # }}}
     create_empty_commit("Init");
-    testcmd("git branch", # {{{
+    testcmd("$Opt{'git'} branch", # {{{
         "* master\n",
         '',
         0,
@@ -215,7 +217,7 @@ END
     );
 
     # }}}
-    testcmd("git branch",
+    testcmd("$Opt{'git'} branch",
         <<END,
   master
 * wip
@@ -225,7 +227,7 @@ END
         0,
         "Branches after -p looks fine",
     );
-    likecmd("git checkout wip.more-files", # {{{
+    likecmd("$Opt{'git'} checkout wip.more-files", # {{{
         '/^$/',
         '/^Switched to branch \'wip\.more-files\'\\n$/',
         0,
@@ -269,7 +271,7 @@ END
 END
 
     # }}}
-    likecmd("git commit -m 'Squash wip.more-files into wip'", # {{{
+    likecmd("$Opt{'git'} commit -m 'Squash wip.more-files into wip'", # {{{
         '/^\[wip [0-9a-f]+\] Squash wip\.more-files into wip\\n' .
         ' 2 files changed, 2 insertions\(\+\)\\n' .
         ' create mode 100644 file4\.txt\\n' .
@@ -390,8 +392,8 @@ sub commit_log {
     # {{{
     my $ref = shift;
     my $retval = '';
-    open(my $pipefp, "git log --format='%T %s' --topo-order $ref |") or
-        return("'git log' pipe error: $!\n");
+    open(my $pipefp, "$Opt{'git'} log --format='%T %s' --topo-order $ref |") or
+        return("'$Opt{'git'} log' pipe error: $!\n");
     while (<$pipefp>) {
         $retval .= $_;
     }
@@ -409,17 +411,17 @@ sub commit_new_file {
     close($outfp);
     ok(-f $file, "$file exists and is a regular file");
     is(file_data($file), "This is $file\n", "Contents of $file is ok");
-    testcmd("git add \"$file\"",
+    testcmd("$Opt{'git'} add \"$file\"",
         '',
         '',
         0,
-        "git add $file",
+        "$Opt{'git'} add $file",
     );
-    likecmd("git commit -m \"Add $file\"",
+    likecmd("$Opt{'git'} commit -m \"Add $file\"",
         "/.* Add $file.*/s",
         '/^$/',
         0,
-        "git commit",
+        "$Opt{'git'} commit",
     );
     # }}}
 } # commit_new_file()
@@ -427,7 +429,7 @@ sub commit_new_file {
 sub create_empty_commit {
     # {{{
     my $msg = shift;
-    likecmd("git commit --allow-empty -m \"$msg\"",
+    likecmd("$Opt{'git'} commit --allow-empty -m \"$msg\"",
         '/.*/', '/.*/', 0, "Create empty commit");
     return;
     # }}}
@@ -529,6 +531,9 @@ Options:
 
   -a, --all
     Run all tests, also TODOs.
+  -g X, --git X
+    Specify alternative git executable to use. Used to execute the tests 
+    with different git versions.
   -h, --help
     Show this help.
   -t, --todo
