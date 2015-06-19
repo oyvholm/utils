@@ -151,7 +151,7 @@ END
     }
 
     diag("Cleaning up...");
-    ok(unlink($uuid_tmpfile), "Remove $uuid_tmpfile");
+    ok(unlink($uuid_tmpfile), "Remove [uuid_tmpfile]");
     ok(rmdir("tmpuuids"), 'rmdir tmpuuids');
     diag('Testing finished.');
     # }}}
