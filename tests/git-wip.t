@@ -186,7 +186,7 @@ END
 
     # }}}
     likecmd("../../$CMD -m", # {{{
-        '/^wip\\nMerge made by the \'recursive\' strategy.*' .
+        '/^wip\\nMerge made by (the \')?recursive(\' strategy)?.*' .
         ' create mode 100644 file2\.txt\\n' .
         ' create mode 100644 file3\.txt\\n' .
         'Deleted branch wip\.add-files .*' .
@@ -273,7 +273,7 @@ END
     # }}}
     likecmd("$Opt{'git'} commit -m 'Squash wip.more-files into wip'", # {{{
         '/^\[wip [0-9a-f]+\] Squash wip\.more-files into wip\\n' .
-        ' 2 files changed, 2 insertions\(\+\)\\n' .
+        ' 2 files changed, 2 insertions\(\+\)(, 0 deletions\(-\))?\\n' .
         ' create mode 100644 file4\.txt\\n' .
         ' create mode 100644 file5\.txt\\n$' .
         '/s',
@@ -295,12 +295,12 @@ END
     # }}}
     likecmd("echo y | ../../$CMD -m", # {{{
         '/^master\\n' .
-        'Merge made by the \'recursive\' strategy\.\\n' .
+        'Merge made by (the \')?recursive(\' strategy)?\.\\n' .
         ' file2\.txt \| +1 \+\\n' .
         ' file3\.txt \| +1 \+\\n' .
         ' file4\.txt \| +1 \+\\n' .
         ' file5\.txt \| +1 \+\\n' .
-        ' 4 files changed, 4 insertions\(\+\)\\n' .
+        ' 4 files changed, 4 insertions\(\+\)(, 0 deletions\(-\))?\\n' .
         ' create mode 100644 file2\.txt\\n' .
         ' create mode 100644 file3\.txt\\n' .
         ' create mode 100644 file4\.txt\\n' .
