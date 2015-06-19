@@ -296,10 +296,10 @@ END
     likecmd("echo y | ../../$CMD -m", # {{{
         '/^master\\n' .
         'Merge made by the \'recursive\' strategy\.\\n' .
-        ' file2\.txt \| 1 \+\\n' .
-        ' file3\.txt \| 1 \+\\n' .
-        ' file4\.txt \| 1 \+\\n' .
-        ' file5\.txt \| 1 \+\\n' .
+        ' file2\.txt \| +1 \+\\n' .
+        ' file3\.txt \| +1 \+\\n' .
+        ' file4\.txt \| +1 \+\\n' .
+        ' file5\.txt \| +1 \+\\n' .
         ' 4 files changed, 4 insertions\(\+\)\\n' .
         ' create mode 100644 file2\.txt\\n' .
         ' create mode 100644 file3\.txt\\n' .
