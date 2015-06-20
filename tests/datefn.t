@@ -276,7 +276,7 @@ END
             0,
             "File status in git is ok, changes to file.txt are gone",
         );
-        testcmd("../../$CMD -g unknown.txt",
+        testcmd("LC_ALL=C ../../$CMD -g unknown.txt",
             "",
             <<END,
 datefn: Executing "git mv unknown.txt 20150611T141445Z.unknown.txt"...
