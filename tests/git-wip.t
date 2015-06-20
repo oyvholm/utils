@@ -250,7 +250,7 @@ END
     diag("Testing -s option...");
     likecmd("../../$CMD -s", # {{{
         '/^wip\\nUpdating [0-9a-f]+\.\.[0-9a-f]+\\n' .
-        'Fast-forward\\n' .
+        'Fast(-| )forward\\n' .
         'Squash commit -- not updating HEAD\\n' .
         '.*' .
         ' create mode 100644 file4\.txt\\n' .
