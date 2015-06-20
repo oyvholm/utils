@@ -108,7 +108,9 @@ END
         die("$progname: $Tmptop: Cannot chdir: $!\n");
 
     diag("Initialise repository...");
-    likecmd("$Opt{'git'} init repo", # {{{
+    ok(mkdir("repo"), "mkdir repo");
+    ok(chdir("repo"), "chdir repo") || BAIL_OUT("Cannot chdir repo");
+    likecmd("$Opt{'git'} init", # {{{
         '/.*/',
         '/.*/',
         0,
@@ -116,7 +118,6 @@ END
     );
 
     # }}}
-    ok(chdir("repo"), "chdir repo") || BAIL_OUT("Cannot chdir repo");
     likecmd("../../$CMD", # {{{
         '/^$/',
         '/fatal: ambiguous argument \'HEAD\': unknown revision or path not in the working tree\./s',
