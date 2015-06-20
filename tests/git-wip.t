@@ -30,7 +30,7 @@ our $CMD = '../git-wip';
 our %Opt = (
 
     'all' => 0,
-    'git' => length($ENV{'GITWIP_GIT'}) ? $ENV{'GITWIP_GIT'} : 'git',
+    'git' => defined($ENV{'GITWIP_GIT'}) ? $ENV{'GITWIP_GIT'} : 'git',
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
