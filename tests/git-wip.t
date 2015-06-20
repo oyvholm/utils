@@ -114,7 +114,7 @@ END
         '/.*/',
         '/.*/',
         0,
-        'description',
+        'Initialise Git repository',
     );
 
     # }}}
