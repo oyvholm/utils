@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-wip
-CMD_GIT=git
+test -n "$GIT_EXEC" && CMD_GIT="$GIT_EXEC" || CMD_GIT=git
 curr="$($CMD_GIT rev-parse --abbrev-ref HEAD)"
 use_new_branch=0
 test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
@@ -56,6 +56,12 @@ current branch by postfixing it with ".BRANCHNAME" where BRANCHNAME is
 specified on the command line. An exception is made when the current 
 branch is 'master', in that case the old branch name is not used as 
 prefix.
+
+The GIT_EXEC environment variable can be set to a specific git(1) 
+executable to use. Example:
+
+  export GIT_EXEC=/usr/bin/git
+  git wip -m
 
 END
     exit 0

@@ -30,7 +30,7 @@ our $CMD = '../git-wip';
 our %Opt = (
 
     'all' => 0,
-    'git' => 'git',
+    'git' => length($ENV{'GIT_EXEC'}) ? $ENV{'GIT_EXEC'} : 'git',
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
@@ -533,7 +533,8 @@ Options:
     Run all tests, also TODOs.
   -g X, --git X
     Specify alternative git executable to use. Used to execute the tests 
-    with different git versions.
+    with different git versions. This can also be set with the GIT_EXEC 
+    environment variable.
   -h, --help
     Show this help.
   -t, --todo
