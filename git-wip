@@ -11,7 +11,8 @@
 #=======================================================================
 
 progname=git-wip
-curr="$(git rev-parse --abbrev-ref HEAD)"
+test -n "$GITWIP_GIT" && CMD_GIT="$GITWIP_GIT" || CMD_GIT=git
+curr="$($CMD_GIT rev-parse --abbrev-ref HEAD)"
 use_new_branch=0
 test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
 
@@ -56,6 +57,12 @@ specified on the command line. An exception is made when the current
 branch is 'master', in that case the old branch name is not used as 
 prefix.
 
+The GITWIP_GIT environment variable can be set to a specific git(1) 
+executable to use. Example:
+
+  export GITWIP_GIT=/usr/bin/git
+  git wip -m
+
 END
     exit 0
 fi
@@ -85,36 +92,36 @@ if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-p" -o "$ext" = "-s"; then
         parent=master
     fi
 
-    git branch | cut -c 3- | grep "^$parent\$" || {
+    $CMD_GIT branch | cut -c 3- | grep "^$parent\$" || {
         echo $progname: $parent: Parent branch does not exist >&2
         loop_until_y create the \'$parent\' branch on \'master\'
-        git branch "$parent" master
+        $CMD_GIT branch "$parent" master
     }
-    git checkout $parent &&
+    $CMD_GIT checkout $parent &&
     if test "$ext" = "-d"; then
         # Delete current branch after merge to parent, use fast-forward 
         # if possible.
-        git merge $curr
-        git branch -d $curr
+        $CMD_GIT merge $curr
+        $CMD_GIT branch -d $curr
     elif test "$ext" = "-s"; then
         # Squash the current branch to parent, combine all commits into 
         # one.
-        git merge --squash $curr
+        $CMD_GIT merge --squash $curr
     elif test "$ext" = "-m"; then
         # Merge current branch into parent, always create merge commit 
         # even if a fast-forward merge is possible.
-        git merge --no-ff $curr
-        git branch -d $curr
+        $CMD_GIT merge --no-ff $curr
+        $CMD_GIT branch -d $curr
     fi
     exit
 fi
 
 if test "$use_new_branch" = "1"; then
     # Create new branch without prefix
-    git branch "$ext"
-    git checkout "$ext"
+    $CMD_GIT branch "$ext"
+    $CMD_GIT checkout "$ext"
 else
     # Create new branch, use current branch name as prefix
-    git branch "$curr.$ext"
-    git checkout "$curr.$ext"
+    $CMD_GIT branch "$curr.$ext"
+    $CMD_GIT checkout "$curr.$ext"
 fi

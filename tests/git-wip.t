@@ -30,6 +30,7 @@ our $CMD = '../git-wip';
 our %Opt = (
 
     'all' => 0,
+    'git' => length($ENV{'GITWIP_GIT'}) ? $ENV{'GITWIP_GIT'} : 'git',
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
@@ -45,6 +46,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'all|a' => \$Opt{'all'},
+    'git|g=s' => \$Opt{'git'},
     'help|h' => \$Opt{'help'},
     'todo|t' => \$Opt{'todo'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -106,7 +108,9 @@ END
         die("$progname: $Tmptop: Cannot chdir: $!\n");
 
     diag("Initialise repository...");
-    likecmd("git init repo", # {{{
+    ok(mkdir("repo"), "mkdir repo");
+    ok(chdir("repo"), "chdir repo") || BAIL_OUT("Cannot chdir repo");
+    likecmd("$Opt{'git'} init", # {{{
         '/.*/',
         '/.*/',
         0,
@@ -114,7 +118,6 @@ END
     );
 
     # }}}
-    ok(chdir("repo"), "chdir repo") || BAIL_OUT("Cannot chdir repo");
     likecmd("../../$CMD", # {{{
         '/^$/',
         '/fatal: ambiguous argument \'HEAD\': unknown revision or path not in the working tree\./s',
@@ -124,7 +127,7 @@ END
 
     # }}}
     create_empty_commit("Init");
-    testcmd("git branch", # {{{
+    testcmd("$Opt{'git'} branch", # {{{
         "* master\n",
         '',
         0,
@@ -184,7 +187,7 @@ END
 
     # }}}
     likecmd("../../$CMD -m", # {{{
-        '/^wip\\nMerge made by the \'recursive\' strategy.*' .
+        '/^wip\\nMerge made by (the \')?recursive(\' strategy)?.*' .
         ' create mode 100644 file2\.txt\\n' .
         ' create mode 100644 file3\.txt\\n' .
         'Deleted branch wip\.add-files .*' .
@@ -215,7 +218,7 @@ END
     );
 
     # }}}
-    testcmd("git branch",
+    testcmd("$Opt{'git'} branch",
         <<END,
   master
 * wip
@@ -225,7 +228,7 @@ END
         0,
         "Branches after -p looks fine",
     );
-    likecmd("git checkout wip.more-files", # {{{
+    likecmd("$Opt{'git'} checkout wip.more-files", # {{{
         '/^$/',
         '/^Switched to branch \'wip\.more-files\'\\n$/',
         0,
@@ -248,7 +251,7 @@ END
     diag("Testing -s option...");
     likecmd("../../$CMD -s", # {{{
         '/^wip\\nUpdating [0-9a-f]+\.\.[0-9a-f]+\\n' .
-        'Fast-forward\\n' .
+        'Fast(-| )forward\\n' .
         'Squash commit -- not updating HEAD\\n' .
         '.*' .
         ' create mode 100644 file4\.txt\\n' .
@@ -269,9 +272,9 @@ END
 END
 
     # }}}
-    likecmd("git commit -m 'Squash wip.more-files into wip'", # {{{
+    likecmd("$Opt{'git'} commit -m 'Squash wip.more-files into wip'", # {{{
         '/^\[wip [0-9a-f]+\] Squash wip\.more-files into wip\\n' .
-        ' 2 files changed, 2 insertions\(\+\)\\n' .
+        ' 2 files changed, 2 insertions\(\+\)(, 0 deletions\(-\))?\\n' .
         ' create mode 100644 file4\.txt\\n' .
         ' create mode 100644 file5\.txt\\n$' .
         '/s',
@@ -293,12 +296,12 @@ END
     # }}}
     likecmd("echo y | ../../$CMD -m", # {{{
         '/^master\\n' .
-        'Merge made by the \'recursive\' strategy\.\\n' .
-        ' file2\.txt \| 1 \+\\n' .
-        ' file3\.txt \| 1 \+\\n' .
-        ' file4\.txt \| 1 \+\\n' .
-        ' file5\.txt \| 1 \+\\n' .
-        ' 4 files changed, 4 insertions\(\+\)\\n' .
+        'Merge made by (the \')?recursive(\' strategy)?\.\\n' .
+        ' file2\.txt \| +1 \+\\n' .
+        ' file3\.txt \| +1 \+\\n' .
+        ' file4\.txt \| +1 \+\\n' .
+        ' file5\.txt \| +1 \+\\n' .
+        ' 4 files changed, 4 insertions\(\+\)(, 0 deletions\(-\))?\\n' .
         ' create mode 100644 file2\.txt\\n' .
         ' create mode 100644 file3\.txt\\n' .
         ' create mode 100644 file4\.txt\\n' .
@@ -390,8 +393,8 @@ sub commit_log {
     # {{{
     my $ref = shift;
     my $retval = '';
-    open(my $pipefp, "git log --format='%T %s' --topo-order $ref |") or
-        return("'git log' pipe error: $!\n");
+    open(my $pipefp, "$Opt{'git'} log --format='%T %s' --topo-order $ref |") or
+        return("'$Opt{'git'} log' pipe error: $!\n");
     while (<$pipefp>) {
         $retval .= $_;
     }
@@ -409,17 +412,17 @@ sub commit_new_file {
     close($outfp);
     ok(-f $file, "$file exists and is a regular file");
     is(file_data($file), "This is $file\n", "Contents of $file is ok");
-    testcmd("git add \"$file\"",
+    testcmd("$Opt{'git'} add \"$file\"",
         '',
         '',
         0,
-        "git add $file",
+        "$Opt{'git'} add $file",
     );
-    likecmd("git commit -m \"Add $file\"",
+    likecmd("$Opt{'git'} commit -m \"Add $file\"",
         "/.* Add $file.*/s",
         '/^$/',
         0,
-        "git commit",
+        "$Opt{'git'} commit",
     );
     # }}}
 } # commit_new_file()
@@ -427,7 +430,7 @@ sub commit_new_file {
 sub create_empty_commit {
     # {{{
     my $msg = shift;
-    likecmd("git commit --allow-empty -m \"$msg\"",
+    likecmd("$Opt{'git'} commit --allow-empty -m \"$msg\"",
         '/.*/', '/.*/', 0, "Create empty commit");
     return;
     # }}}
@@ -529,6 +532,10 @@ Options:
 
   -a, --all
     Run all tests, also TODOs.
+  -g X, --git X
+    Specify alternative git executable to use. Used to execute the tests 
+    with different git versions. This can also be set with the GITWIP_GIT 
+    environment variable.
   -h, --help
     Show this help.
   -t, --todo
