@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#=======================================================================
+# rdbl-sqlite3
+# File ID: 7515bdfa-1872-11e5-aaa8-fefdb24f8e10
+#
+# [Description]
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+sqlite3 "$1" .dump
