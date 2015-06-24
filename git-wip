@@ -76,7 +76,7 @@ loop_until_y() {
     done
 }
 
-if test "$ext" = "-d" -o "$ext" = "-m" -o "$ext" = "-p" -o "$ext" = "-s"; then
+if test -n "$(echo x$ext | grep -E '^x-[dmps]$')"; then
     if test -n "$(echo "$curr" | grep '\.')"; then
         # Current branch contains a full stop, so it has a parent
         parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
