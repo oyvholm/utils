@@ -14,7 +14,7 @@
 
 use strict;
 use Getopt::Long;
-use Time::HiRes qw{ gettimeofday };
+use Time::HiRes qw{ gettimeofday usleep };
 
 $| = 1;
 
@@ -54,6 +54,7 @@ my ($Old, $Str) = ("", "");
 
 while (1) {
     do {
+        usleep(1_000);
         my ($Epoch, $Fract) = gettimeofday();
         my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
             gmtime($Epoch);
@@ -62,6 +63,7 @@ while (1) {
     } while ($Str eq $Old);
     print("$Str\r");
     $Old = $Str;
+    usleep(900_000);
 }
 
 sub print_version {
