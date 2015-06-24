@@ -218,7 +218,7 @@ END
     );
 
     # }}}
-    testcmd("$Opt{'git'} branch",
+    testcmd("$Opt{'git'} branch", # {{{
         <<END,
   master
 * wip
@@ -228,6 +228,8 @@ END
         0,
         "Branches after -p looks fine",
     );
+
+    # }}}
     likecmd("$Opt{'git'} checkout wip.more-files", # {{{
         '/^$/',
         '/^Switched to branch \'wip\.more-files\'\\n$/',
