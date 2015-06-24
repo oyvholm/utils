@@ -343,6 +343,39 @@ END
     );
 
     # }}}
+    diag("Test for unknown options...");
+    likecmd("../../$CMD -W", # {{{
+        '/^$/',
+        '/^git-wip: -W: Unknown option\\n$/',
+        1,
+        "It doesn't recognise -W",
+    );
+
+    # }}}
+    likecmd("../../$CMD -e", # {{{
+        '/^$/',
+        '/^git-wip: -e: Unknown option\\n$/',
+        1,
+        "It doesn't recognise -e (used by echo)",
+    );
+
+    # }}}
+    likecmd("../../$CMD --", # {{{
+        '/^$/',
+        '/^git-wip: --: Unknown option\\n$/',
+        1,
+        "It doesn't recognise --",
+    );
+
+    # }}}
+    likecmd("../../$CMD -", # {{{
+        '/^$/',
+        '/^git-wip: -: Unknown option\\n$/',
+        1,
+        "Abort if a single hyphen is specified",
+    );
+
+    # }}}
     diag("Cleaning up temp files...");
     ok(chdir(".."), "chdir .."); # From $Tmptop/repo/
     likecmd("rm -rf repo", # {{{

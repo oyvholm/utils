@@ -116,6 +116,11 @@ if test -n "$(echo x$ext | grep -E '^x-[dmps]$')"; then
     exit
 fi
 
+if test -n "$(echo x$ext | grep '^x-')"; then
+    echo $progname: $ext: Unknown option >&2
+    exit 1
+fi
+
 if test "$use_new_branch" = "1"; then
     # Create new branch without prefix
     $CMD_GIT branch "$ext"
