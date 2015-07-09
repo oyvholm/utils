@@ -36,6 +36,11 @@ for gf in "$@"; do
     printf "%3u ok%s\\n" $ok_count "$not_ok_str"
     tot_ok=$(($tot_ok + $ok_count))
     tot_not_ok=$(($tot_not_ok + $not_ok_count))
+    grep -q "^not ok -" log/$testname.log && {
+        echo
+        grep "^not ok -" log/$testname.log
+        echo
+    }
 done
 echo
 printf "  %${maxlen}s: %u ok, %u not ok\n" "total" $tot_ok $tot_not_ok
