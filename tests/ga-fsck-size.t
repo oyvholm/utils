@@ -121,6 +121,77 @@ END
     testcmd('tar xzf annex-backends.tar.gz', '', '', 0, 'Untar annex-backends.tar.gz');
 
     ok(chdir('annex-backends'), 'chdir annex-backends');
+
+    testcmd("git annex fsck 2>&1 | ../../$CMD", # {{{
+       <<END,
+fsck MD5.txt (checksum...)
+ok
+fsck MD5E.txt (checksum...)
+ok
+fsck SHA1.txt (checksum...)
+ok
+fsck SHA1E.txt (checksum...)
+ok
+fsck SHA224.txt (checksum...)
+ok
+fsck SHA224E.txt (checksum...)
+ok
+fsck SHA256.txt (checksum...)
+ok
+fsck SHA256E.txt (checksum...)
+ok
+fsck SHA384.txt (checksum...)
+ok
+fsck SHA384E.txt (checksum...)
+ok
+fsck SHA512.txt (checksum...)
+ok
+fsck SHA512E.txt (checksum...)
+ok
+fsck SKEIN256.txt (checksum...)
+ok
+fsck SKEIN256E.txt (checksum...)
+ok
+fsck SKEIN512.txt (checksum...)
+ok
+fsck SKEIN512E.txt (checksum...)
+ok
+fsck WORM.txt ok
+(recording state in git...)
+
+Total size of files that need more copies: 0
+Total space needed to get enough copies  : 0
+END
+        '',
+        0,
+        "Filter 'git annex fsck' through $CMD"
+    );
+
+    # }}}
+    likecmd("git annex fsck --numcopies=2 2>&1 | ../../$CMD", # {{{
+        (
+            '/^' .
+            'fsck MD5.txt \(checksum...\)' .
+            '.+' .
+            'Only 1 of 2 trustworthy copies exist of MD5\.txt \(4(\.0)? bytes\)\n' .
+            'failed\n' .
+            '.+' .
+            'Only 1 of 2 trustworthy copies exist of SHA256\.txt \(7(\.0)? bytes\)\n' .
+            'failed\n' .
+            '.+' .
+            'git-annex: fsck: 17 failed\n' .
+            '\n' .
+            'Total size of files that need more copies: 123\n' .
+            'Total space needed to get enough copies  : 123\n' .
+            '$/s'
+        ),
+        '/^$/',
+        0,
+        "Copies missing when numcopies=2",
+    );
+
+    # }}}
+
     ok(chdir('..'), 'chdir ..');
 
     diag('Clean up temporary files...');
