@@ -15,7 +15,5 @@ fi
 for f in "$@" $stdin; do
     search_str="$search_str -e $f"
 done
-grep -hi $search_str ~/src/git/uuids/*.xml ~/uuids/*.xml |
-    sort -u |
-    sortuuid |
-    less
+search_str=$1
+psql suuids -c "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%$search_str%') TO STDOUT;" | sort -u | less
