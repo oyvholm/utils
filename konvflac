@@ -4,7 +4,7 @@
 # konvflac
 # File ID: dde2fab8-3dfd-11e0-9b12-1b57187fd9d3
 # Convert .wav files to .flac and keep metadata
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 if test -z "$1"; then

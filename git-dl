@@ -5,7 +5,7 @@
 # File ID: a4693388-6575-11e1-96df-8000600fe800
 # Clone to a remote repo, create bundle, and download it via rsync(1). 
 # Temporary solution until Git gets resumable clone/fetch.
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 login=sunny@sunbase.org

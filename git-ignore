@@ -16,7 +16,7 @@
 #     Use local .gitignore in the current directory.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 unset opt_local

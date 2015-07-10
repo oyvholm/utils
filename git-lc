@@ -4,7 +4,7 @@
 # git-lc
 # File ID: 81eb015e-87fb-11e0-9674-fefdb24f8e10
 # List all Git branches where all the specified refs exists
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 urevs=$*

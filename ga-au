@@ -4,7 +4,7 @@
 # ga-au
 # File ID: d607b6ae-e5b6-11e2-8ccb-0800274013ad
 # Download file(s) and store URL in git-annex
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 for f in $@; do

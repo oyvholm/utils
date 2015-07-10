@@ -4,7 +4,7 @@
 # mc
 # File ID: 6dbf2f84-f7c0-11e2-9a3f-001f3b596ec9
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 sess_str="sess -d mc -t c_mc --"

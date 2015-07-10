@@ -4,7 +4,7 @@
 # git-authoract
 # File ID: 6d9eb5a8-2526-11e4-be0d-c80aa9e67bbd
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 outfile=/tmp/git-authors.txt

@@ -4,7 +4,7 @@
 # testfail
 # File ID: 8ccc15ec-0049-11e1-b1a1-fefdb24f8e10
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 cd ~/build-git || exit 1

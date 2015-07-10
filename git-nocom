@@ -9,7 +9,7 @@
 #
 #   git log `git branch -a | git nocom`
 #
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 v_str=

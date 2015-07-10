@@ -4,7 +4,7 @@
 # git-size
 # File ID: b09591f4-e010-11e1-b5d9-07918aa00493
 # Show transfer size of a range of commits
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 cd $(git rev-parse --show-toplevel)

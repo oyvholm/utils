@@ -4,7 +4,7 @@
 # mobilstripp
 # File ID: 81a4b5e0-cb0b-11e3-8632-000df06acc56
 # Strip irrelevant stuff from nf list of mobile files
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 grep -i -E -e '\.(flac|gz|jpeg|jpg|m4a|mp3|mp4|pdf|pgn|png|wav)' \

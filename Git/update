@@ -4,7 +4,7 @@
 # update
 # File ID: f6345be0-abd5-11de-9791-00248cd5cf1e
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 if [ ! -d gpstools/. ]; then

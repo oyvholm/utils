@@ -8,7 +8,7 @@
 # the .t extension and a file with some common option tests will be 
 # created.
 #
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 [ -z "$1" ] && { echo Syntax: $0 testname >&2; exit 1; }

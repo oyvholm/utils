@@ -4,7 +4,7 @@
 # strip-conflict
 # File ID: d92ddb10-a028-11e3-b37c-fefdb24f8e10
 # Remove Git conflict markers from files or stdin
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 grep -hvE '^(<<<<<<< |=======$|>>>>>>> )' "$@"

@@ -4,7 +4,7 @@
 # git-safe-rm-remote
 # File ID: c01eca2e-add5-11df-a45d-3fc3287c8843
 # Check that nothing is lost by deleting a git remote
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=git-safe-rm-remote

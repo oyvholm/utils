@@ -8,7 +8,7 @@
 # Command line arguments are delivered to "git log".
 #
 # Author: Øyvind A. Holm
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 git log --raw "$@" | grep ^: | cut -f 2 | sort -u

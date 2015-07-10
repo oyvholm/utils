@@ -4,7 +4,7 @@
 # git-wn
 # File ID: 149ce758-8aca-11e0-afed-37ea9f2067e0
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 if test "$1" = "-h" -o "$1" = "--help"; then

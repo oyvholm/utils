@@ -4,7 +4,7 @@
 <!--
 Unofficial Document Type Definition for GPX ver. 1.1
 Created by Øyvind A. Holm - sunny@sunbase.org
-License: GNU General Public License version 3 or later
+License: GNU General Public License version 2 or later
 
 FIXME: ptseg and pt elements are not included, don’t know where to put 
 them. Didn’t find any example GPX files which uses it.

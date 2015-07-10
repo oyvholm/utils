@@ -4,7 +4,7 @@
 # oldrepo
 # File ID: d4b8e930-0c56-11e0-b541-fefdb24f8e10
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 repo=$1
