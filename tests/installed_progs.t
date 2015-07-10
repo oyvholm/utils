@@ -116,6 +116,7 @@ sub main {
     installed('autoconf --version', '/GNU Autoconf/', 'stdout');
     installed('bash --version', '/^GNU bash/', 'stdout');
     installed('bc --version', '/^bc \d.*Free Software Foundation/s', 'stdout');
+    installed('cmark --version', '/^cmark \d+\.\d+\.\d+/', 'stdout');
     installed('cronolog --version', '/^cronolog version \d/', 'stderr');
     installed('ctags --version', '/^(Exuberant Ctags|ctags \(GNU Emacs) \d/', 'stdout');
     installed('curl --version', '/^curl /', 'stdout');
