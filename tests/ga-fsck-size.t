@@ -116,6 +116,18 @@ END
 
     # }}}
 
+    diag("Initialise temprepo...");
+    ok(chdir('ga-fsck-size-files'), 'chdir ga-fsck-size-files');
+    testcmd('tar xzf annex-backends.tar.gz', '', '', 0, 'Untar annex-backends.tar.gz');
+
+    ok(chdir('annex-backends'), 'chdir annex-backends');
+    ok(chdir('..'), 'chdir ..');
+
+    diag('Clean up temporary files...');
+    testcmd('chmod -R +w annex-backends', '', '', 0, 'chmod everything under annex-backends/ to +write');
+    testcmd('rm -rf annex-backends', '', '', 0, 'Delete temp repo');
+    ok(!-e 'annex-backends', 'annex-backends is gone');
+
     todo_section:
     ;
 
