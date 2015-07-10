@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2, June 1991.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -11,15 +9,16 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>,
+# or in pdf format at <http://www.dhampir.no/stuff/private/gpl-2.0.pdf>
 
-# Copyright 2014 - Øyvind 'bolt' Hvidsten   <bolt@dhampir.no>
+# Copyright 2012-2014 - Øyvind 'bolt' Hvidsten   <bolt@dhampir.no>
 
 # Description:
 #
 # telenorsms is a script that connects to the Norwegian cell operator Telenor and sends SMS messages
 #
-# It requires wget, xxd, tr, cat and sed. "tempfile" is also recommended, though the script should manage
+# It requires curl or wget, xxd, tr, cat and sed. "tempfile" is also recommended, though the script should manage
 # to generate tempfiles itself.
 #
 # Your username (email) and password for your Telenor account need to be stored in ~/.telenorsms on two
@@ -27,9 +26,12 @@
 # ------------------------------------------
 # username=me@provider.com
 # password=awesome1
+# grabber=/home/me/bin/grabber
 # ------------------------------------------
+# As shown above, it is also strongly recommended to indicate the path to the "grabber" library,
+# which should be available where this script was downloaded from. Grabber does not need to be executable.
 #
-# You must have sent at least one message through the online interface, as it will as you to verify your
+# You must have sent at least one message through the online interface, as it will ask you to verify your
 # cell phone number by entering a code received by SMS, the first time you use it.
 #
 # telenorsms supports using numbers and names stored in your online address book in the SMS section of
@@ -51,12 +53,24 @@
 # 2013-04-07: Minor style changes and comment cleanup - Øyvind 'bolt' Hvidsten
 # 2013-04-20: Updated to comply with changes on Telenor's website
 # 2013-06-15: Retry 3 times because of random cases of Ubuntu bug #965371 occuring on Telenor's server:
-#                 GnuTLS: A TLS packet with unexpected length was received.
-#                 Unable to establish SSL connection.
+#             GnuTLS: A TLS packet with unexpected length was received.
+#             Unable to establish SSL connection.
 # 2014-04-04: Updated to comply with changes on Telenor's website
 # 2014-08-26: Support for complaining about "technical error" on Telenor's website
 # 2014-08-27: Support for the -d (dry run) option, testing most of the script without sending a message
 # 2014-08-28: Support for the -a (force address book) option, used during debugging
+# 2014-10-01: Spelling error fix
+# 2014-10-18: Rewrote URL grabbing to use curl, as Telenor screwed up their TLS negotiation
+#             Use of wget can still be forced by adding [-w]
+#             Added several debugging features
+#             Note from debugging: URL encoding the "+" sign in "Logg+inn" breaks Telenor's form
+# 2014-10-19: Pushed the HTTP grabbing functionality to a separate file in order to unify the methods used
+#             across several scripts I'm maintaining that all have similar functionality.
+#             Deeply sorry for any inconvenience caused.
+# 2014-10-24: They changed the text "gjenstående SMS" to "gjenstående gratis SMS" for no reason. OK.
+# 2015-01-04: Added detection of the SMS counter breaking - no longer exiting with non-zero unless debugging
+# 2015-05-01: Minimal fix to support new link format for the login page
+# 2015-05-16: Updated to comply with changes to grabber
 #
 
 
@@ -65,90 +79,18 @@ set -e
 set -u
 
 
-# Check bash version
-if ((BASH_VERSINFO[0] < 4)); then
-	echo "$_scriptname uses features only found in bash 4 or above. Unable to continue execution." >&2
-	exit 1
-fi
-
-
-# Check for required programs
-if
-	! type "wget" &>/dev/null ||
-	! type "xxd" &>/dev/null ||
-	! type "tr" &>/dev/null ||
-	! type "cat" &>/dev/null ||
-	! type "sed" &>/dev/null
-then
-	echo 'One or more required programs are missing!' >&2
-	echo 'Please ensure wget, xxd, tr, cat and sed are all installed and in $PATH' >&2
-	exit 1
-fi
-
-
-# How to wget
-function wget
-{
-	>"$out"
-	local i
-	for ((i=0; i<3; i++)); do
-		if command wget -O- --quiet --no-check-certificate --save-cookies=$cookies --keep-session-cookies -T $timeout -t $retries "$@" >"$out"; then
-			return 0
-		fi
-	done
-	fail
-}
-
-
-# Check for string in output
-function found
-{
-	grep -q "$@" "$out"
-}
-function assert
-{
-	if found "$@"; then
-		echo "OK"
-	else
-		echo "Failed!"
-		echo "Exiting due to failed assertion (${@})" >&2
-		exit 1
-	fi
-}
-
-
-# Simple URL encoding - just encode everything
-function encode
-{
-	local encoded=$(xxd -plain <<<"${@:-$(cat)}" | tr -d '\n' | sed 's/\(..\)/%\1/g')
-	echo "${encoded%\%0a}"
-}
-
-
-# Make a temporary file
-type "tempfile" &>/dev/null && tempfile=true || tempfile=false
-function tempfile
-{(
-	umask 0077
-	if $tempfile; then
-		command tempfile
-	else
-		file="/tmp/${_scriptname}-$RANDOM"
-		set -o noclobber
-		{ >"$file"; } &>/dev/null &&
-		echo "$file"
-	fi
-)}
-
-
 # Options
 dryrun=false
+DEBUG=false
 forceaddressbook=false
+GRABBER="curl"
 OPTIND=1
-while getopts ":ad" opt; do
+while getopts ":adDw" opt; do
 	case "$opt" in
 		a) forceaddressbook=true ;;
 		d) dryrun=true ;;
+		D) DEBUG=true ;;
+		w) GRABBER="wget" ;;
 		[?])
 			echo "Unknown option -${OPTARG}" >&2
 			exit 1
@@ -165,14 +107,26 @@ if [[ "${1:-}" = "--" ]]; then shift; fi
 
 # Settings
 config="$HOME/.${_scriptname}"
+
+
+# Grabber
+grabber=$(grep -m 1 "^grabber=" $config 2>/dev/null | cut -d = -f 2);
+[[ -n "$grabber" ]] || grabber="/cathedral/src/lib/grabber" # alt path
+[[ -e "$grabber" ]] || grabber="$HOME/.grabber"             # default path
+if ! [[ -e "$grabber" ]]; then
+	echo "grabber library was not found" >&2
+	echo "Please download \"grabber\" from the same place you got this script," >&2
+	echo "Put it at $grabber or point at it in $config." >&2
+	exit 2
+fi
+source "$grabber"
+
+
+# Config
 username=$(grep -m 1 "^username=" $config 2>/dev/null | cut -d = -f 2 | encode);
 password=$(grep -m 1 "^password=" $config 2>/dev/null | cut -d = -f 2 | encode);
-agent="Mozilla/5.0 (X11; Linux i686; rv:6.0) Gecko/20100101 Firefox/6.0"
 [[ -z "${1:-}" ]] || { recipient=$1 && shift; }
 [[ -z "${1:-}" ]] || { message=$(encode "$@"); }
-timeout=30
-retries=1
-cookies=""
 
 
 # Sanity
@@ -180,122 +134,61 @@ if [[ -z "${username:-}" ]] || [[ -z "${password:-}" ]]; then
 	echo "Username or password unset. please put both in $config!" >&2
 	exit 1
 fi
-
 if [[ -z "${recipient:-}" ]] || [[ -z "${message:-}" ]]; then
 	echo -e "Missing required arguments!\nUsage: $_scriptname [-d] <name|number> <text message>" >&2
 	exit 0
 fi
 
 
-# Feedback
-function task
-{
-	echo -n "$@... "
-}
-function ok
-{
-	echo "OK"
-}
-function fail
-{
-	echo "Failed!"
-	if [[ -n "$@" ]]; then
-		echo "$@" >&2
-	else
-		echo "General failure" >&2
-	fi
-	exit 1
-}
-
-
-# Temp file generation and cleanup
-function cleanup
-{
-	task "Cleanup"
-	if
-		[[ -n "$cookies" ]] && [[ -e "$cookies" ]] && rm "$cookies" &&
-		[[ -n "$out" ]] && [[ -e "$out" ]] && rm "$out"
-	then
-		ok
-	else
-		fail
-	fi
-}
-trap cleanup EXIT
-task "Generating cookie file"
-if cookies=$(tempfile) && [[ -n "$cookies" ]] && [[ -e "$cookies" ]]; then
-	echo "$cookies"
-else
-	fail
-fi
-task "Generating wget output file"
-if out=$(tempfile) && [[ -n "$out" ]] && [[ -e "$out" ]]; then
-	echo "$out"
-else
-	fail
-fi
-
-
 # Get cookie
-task "Getting cookie"
-wget \
-	"https://www.telenor.no/privat/minesider/logginnfelles.cms"
-assert 'action="/privat/minesider/logginnfelles.cms"'
+grabber_task "Getting cookie"
+grab "https://www.telenor.no/privat/minesider/logginnfelles.cms"
+assert 'action="/privat/minesider/logginnfelles.cms'
 
 
 # Login
-task "Logging in"
+grabber_task "Logging in"
 up=false
 while true; do
-	postdata="usr_name=$username&usr_password=$password&lbAction=Logg+inn"
-	wget \
-		--load-cookies=$cookies \
-		--post-data="$postdata" \
-		--referer "https://www.telenor.no/privat/minesider/logginnfelles.cms" \
-		"https://www.telenor.no/privat/minesider/logginnfelles.cms"
+	grab_data="usr_name=$username&usr_password=$password&lbAction=Logg+inn" \
+	grab_ref="https://www.telenor.no/privat/minesider/logginnfelles.cms" \
+	grab "https://www.telenor.no/privat/minesider/logginnfelles.cms"
 	if found 'SEND_SMS'; then
 		echo "OK"
 		break
 	elif found 'action="/privat/minesider/minprofil/oppdatereMinProfil.cms"'; then
 		if ! $up; then
 			echo "Profile update needed!"
-			task "Updating profile"
-			postdata="confirmProfile=true&lbAction=Bekreft"
-			wget \
-				--load-cookies=$cookies \
-				--post-data="$postdata" \
-				--referer "https://www.telenor.no/privat/minesider/minprofil/oppdatereMinProfil.cms" \
-				"https://www.telenor.no/privat/minesider/minprofil/oppdatereMinProfil.cms"
+			grabber_task "Updating profile"
+			grab_data="confirmProfile=true&lbAction=Bekreft" \
+			grab_ref="https://www.telenor.no/privat/minesider/minprofil/oppdatereMinProfil.cms" \
+			grab "https://www.telenor.no/privat/minesider/minprofil/oppdatereMinProfil.cms"
 			up=true
 		else
-			fail
+			grabber_fail
 		fi
 	else
-		fail
+		grabber_fail
 	fi
 done
 
 
 # Mandatory SMS page get...
-task "SMS page get"
-wget \
-	--load-cookies=$cookies \
-	--referer "https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
-	"https://www.telenor.no/privat/minesider/norm/win/sms/send.do"
+grabber_task "SMS page get"
+grab_ref="https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
+grab "https://www.telenor.no/privat/minesider/norm/win/sms/send.do"
 if found '<h1>Teknisk feil</h1>'; then
-	fail '"Teknisk feil" - Have you activated SMS from Web yet?'
+	grabber_fail '"Teknisk feil" - Have you activated SMS from Web yet?'
 fi
 assert 'action="/norm/win/sms/send/process.do"'
 
 
 # Get the address list
-task "Getting address list"
-wget \
---load-cookies=$cookies \
---referer "https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
-"https://telenormobil.no/norm/sms/async/addresslist.do"
-ok
-task "Parsing..."
+grabber_task "Getting address list"
+grab_ref="https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
+grab "https://telenormobil.no/norm/sms/async/addresslist.do"
+grabber_ok
+grabber_task "Parsing..."
 names=()
 numbers=()
 i=0
@@ -314,8 +207,8 @@ while read -r line; do
 		numbers[i]=$number
 		(( ++i ))
 	fi
-done <"$out"
-ok
+done <"$f_stdout"
+grabber_ok
 echo "Read ${#names[@]:-} entries from address list."
 
 
@@ -344,41 +237,42 @@ done
 if ! $match; then
 	echo "Recipient not in address book: $recipient"
 	if $forceaddressbook; then
-		fail "Address book broken?"
+		grabber_fail "Address book broken?"
 	fi
 fi
 
 
 # Send SMS
 if ! $dryrun; then
-	task "Sending SMS"
-	wget \
-		--load-cookies=$cookies \
-		--header="Content-Type: application/x-www-form-urlencoded; charset=utf-8" \
-		--post-data="toAddress=$(encode "$recipient")&message=$message&b_send=b_send" \
-		"https://telenormobil.no/norm/win/sms/send/process.do"
+	grabber_task "Sending SMS"
+	grab_head="Content-Type: application/x-www-form-urlencoded; charset=utf-8" \
+	grab_data="toAddress=$(encode "$recipient")&message=$message&b_send=b_send" \
+	grab "https://telenormobil.no/norm/win/sms/send/process.do"
 	if found '<td>Sendt</td>'; then
 		echo "Sent!"
 	else
-		fail
+		grabber_fail
 	fi
 fi
 
 
 # SMS left count
-task "Getting number of free messages remaining"
-wget \
-	--load-cookies=$cookies \
-	--referer "https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
-	"https://telenormobil.no/norm/win/sms/send/popup/counter.do"
+grabber_task "Getting number of free messages remaining"
+grab_ref="https://www.telenor.no/privat/minesider/minside/minSidePage.cms" \
+grab "https://telenormobil.no/norm/win/sms/send/popup/counter.do"
 if
-	free=$(grep 'Antall gjenstående SMS: ' "$out") &&
-	free=${free#*'Antall gjenstående SMS: '} &&
+	free=$(grep 'Antall gjenstående gratis SMS: ' "$f_stdout") &&
+	free=${free#*'Antall gjenstående gratis SMS: '} &&
 	free=${free%% *} &&
 	[[ -n "$free" ]]
 then
 	echo "$free"
 	echo "Telenor updates the number of free messages remaining every 10 minutes."
+elif
+	found "Klarte ikke å hente antall gjenstående gratis SMS"
+then
+	echo "Telenor broke the SMS counter again."
+	! $DEBUG || exit 1
 else
-	fail
+	grabber_fail
 fi
