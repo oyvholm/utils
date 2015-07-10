@@ -4,7 +4,7 @@
 # git-all-blobs
 # File ID: fcc2d334-5b41-11e0-a1bf-00023faf1383
 # Extract all blobs to blob-dir/
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 mkdir blob-dir

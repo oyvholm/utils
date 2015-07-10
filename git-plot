@@ -4,7 +4,7 @@
 # git-plot
 # File ID: 815ee2b8-c99a-11e2-b66c-001f3b596ec9
 # Plot a curve to show the Git commit activity
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 if test "$1" = "-2"; then

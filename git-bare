@@ -4,7 +4,7 @@
 # git-bare
 # File ID: 8959f7a6-2961-11e3-bf45-001f3b596ec9
 # Set config values in bare/non-bare Git repositories
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 mode=$1

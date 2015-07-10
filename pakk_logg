@@ -4,7 +4,7 @@
 # pakk_logg
 # File ID: 7bd794f8-5551-11e0-942f-b7ae6f27caa2
 # Compress script logs
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 lockdir=~/.pakk_log.lock

@@ -4,7 +4,7 @@
 # wav_to_mp3
 # File ID: ffabc804-0665-11e3-a941-a088b4ddef28
 # Convert .wav files to .mp3
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=wav_to_mp3

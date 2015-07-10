@@ -4,7 +4,7 @@
 # g0
 # File ID: fc27f60a-0397-11e4-a32d-c80aa9e67bbd
 # Disable git prompt in current repository
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 git config ps1.disable true

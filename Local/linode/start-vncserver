@@ -4,7 +4,7 @@
 # start-vncserver
 # File ID: f2c80c9c-602f-11e2-9661-fefdb24f8e10
 # Start vncserver
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 vncserver -kill :1

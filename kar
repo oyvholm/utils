@@ -4,7 +4,7 @@
 # kar
 # File ID: fe72f7b6-e0b7-11e1-b043-f713f3430bad
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 mplayer -af karaoke "$@"

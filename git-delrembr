@@ -4,7 +4,7 @@
 # git-delrembr
 # File ID: bb8f9564-dfd3-11e2-b044-0800274013ad
 # Delete the specified Git branches locally and from all remotes
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=git-delrembr

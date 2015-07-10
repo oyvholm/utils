@@ -4,7 +4,7 @@
 # create_cproject
 # File ID: 0aa2560c-8683-11e0-bc0d-00023faf1383
 # Create skeleton for new C project
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 name=$1

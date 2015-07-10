@@ -12,7 +12,7 @@
 # ls | ga-other Some_Bloke
 # find -type l | ga-other Another_Bloke
 #
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ga-other

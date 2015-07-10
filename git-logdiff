@@ -5,7 +5,7 @@
 # File ID: b51c5d58-5406-11e0-a9ae-552d51fb27db
 # Compare two different Git histories. Syntax:
 # git logdiff <commit1> <commit2> [rootcommit]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 test "$1" = "-p" && { p_str=-p; shift; }

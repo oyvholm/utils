@@ -6,7 +6,7 @@
 #
 # Run all tests, update files in log/ and display the results.
 #
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 [ -z "$1" ] && { echo "Syntax: $0 testname [testname [...]]" >&2; exit 1; }

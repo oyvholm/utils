@@ -4,7 +4,7 @@
 # wavto16
 # File ID: e755fe92-820c-11e2-814c-0016d364066c
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 for f in "$@"; do

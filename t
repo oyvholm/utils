@@ -4,7 +4,7 @@
 # t
 # File ID: e2469b62-dc83-11e0-9dfc-9f1b7346cb92
 # Shortcut to task(1) and commit changes to Git
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=t

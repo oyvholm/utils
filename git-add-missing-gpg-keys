@@ -4,7 +4,7 @@
 # git-add-missing-gpg-keys
 # File ID: e53738b0-9caa-11e3-a01a-001f3b596ec9
 # Add missing GPG keys used for signed Git tags and commits
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=git-add-missing-gpg-keys

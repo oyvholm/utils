@@ -4,7 +4,7 @@
 # ta_backup
 # File ID: 923caf7a-6fa9-11e2-a5bc-0016d364066c
 # Backup stuff to the external harddisk
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ta_backup

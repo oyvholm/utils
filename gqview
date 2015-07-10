@@ -5,7 +5,7 @@
 # File ID: ac113e22-5e6c-11e3-a4fa-001f3b596ec9
 # gqview was forked and changed the name to geeqie years ago, but I'll 
 # never get used to that.
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 geeqie "$@" &>/dev/null &

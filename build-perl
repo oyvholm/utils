@@ -4,7 +4,7 @@
 # build-perl
 # File ID: e11bba20-382d-11e4-a75c-c80aa9e67bbd
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 cd /home/sunny/src/other/perl || exit 1

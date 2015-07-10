@@ -4,7 +4,7 @@
 # slowdown
 # File ID: cfa94aca-a2d5-11e3-a97b-001f3b596ec9
 # [Description]
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 test -e /ubstud.mrk || { echo slowdown: This is not ubstud >&2; exit 1; }

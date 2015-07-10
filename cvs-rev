@@ -4,7 +4,7 @@
 # cvs-rev
 # File ID: aae12904-f742-11dd-a971-000475e441b9
 # Lister ut alle cvs2svn:cvs-rev fra et element i en svn-repo.
-# License: GNU General Public License version 3 or later.
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 dest=$1
