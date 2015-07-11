@@ -11,4 +11,4 @@ unset file
 for f in /opt/firefox/firefox /usr/bin/firefox; do
     test -x "$f" && { file="$f"; break; }
 done
-sess -t c_firefox "$file"
+sess -t c_firefox -- "$file" "$@"
