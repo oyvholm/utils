@@ -209,6 +209,7 @@ Split contents into files based on separation bytes.
 - git-listbundle
 - git-mkrepo
 - git-plot
+- git-scanrefs
 
 Create a graph in Gnuplot of the commit activity. Needs `ep`, 
 `inc_epstat` and `stpl`. And Gnuplot, of course.
