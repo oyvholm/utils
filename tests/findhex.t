@@ -147,6 +147,24 @@ END
     );
 
     # }}}
+    diag('Testing -i/--ignore-case option...');
+    testcmd("echo $stdtxt | $CMD -i", # {{{
+        <<'END',
+a
+BAdc
+b
+abdFF
+2349
+dc3211a
+abd
+2349
+END
+        '',
+        0,
+        'Find all hex numbers, regardless of case',
+    );
+
+    # }}}
     diag('Testing -l/--length option...');
     testcmd("echo $stdtxt | $CMD -l 4 -vvv", # {{{
         <<'END',

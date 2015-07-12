@@ -22,6 +22,7 @@ our %Opt = (
 
     'decimal' => 0,
     'help' => 0,
+    'ignore-case' => 0,
     'length' => '1-',
     'quiet' => 0,
     'verbose' => 0,
@@ -38,6 +39,7 @@ GetOptions(
 
     'decimal|d' => \$Opt{'decimal'},
     'help|h' => \$Opt{'help'},
+    'ignore-case|i' => \$Opt{'ignore-case'},
     'length|l=s' => \$Opt{'length'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -77,6 +79,7 @@ sub main {
     msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
 
     my $exp = '0-9';
+    $Opt{'ignore-case'} && ($exp .= 'A-F');
     $Opt{'decimal'} || ($exp .= 'a-f');
     while (my $line = <>) {
         $line =~ s{
