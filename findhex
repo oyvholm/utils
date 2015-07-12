@@ -85,10 +85,11 @@ sub main {
         $line =~ s{
             ([$exp]+)
         }{
+            my $str = $1;
             my $do_print = 1;
-            length($1) < $minlen && ($do_print = 0);
-            $maxlen && length($1) > $maxlen && ($do_print = 0);
-            $do_print && print("$1\n");
+            length($str) < $minlen && ($do_print = 0);
+            $maxlen && length($str) > $maxlen && ($do_print = 0);
+            $do_print && print("$str\n");
             '';
         }egx;
     }
