@@ -116,7 +116,7 @@ END
 
     # }}}
     my $stdtxt = 'asBAdcjkbw abdFF 2349.kjdc3211a abd 2349jk';
-    testcmd("echo $stdtxt | $CMD", # {{{
+    testcmd("echo $stdtxt | $CMD -vvv", # {{{
         <<'END',
 a
 dc
@@ -127,9 +127,59 @@ dc3211a
 abd
 2349
 END
-        '',
+        "findhex: minlen = '1', maxlen = '0'\n",
         0,
         'Find all hexadecimal numbers',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt | $CMD -l 4 -vvv", # {{{
+        <<'END',
+2349
+2349
+END
+        "findhex: minlen = '4', maxlen = '4'\n",
+        0,
+        'Find all hexadecimal with length of four chars',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt | $CMD -l 4- -vvv", # {{{
+        <<'END',
+2349
+dc3211a
+2349
+END
+        "findhex: minlen = '4', maxlen = '0'\n",
+        0,
+        'Find all hex four or more in length',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt | $CMD -l -3 -vvv", # {{{
+        <<'END',
+a
+dc
+b
+abd
+abd
+END
+        "findhex: minlen = '1', maxlen = '3'\n",
+        0,
+        'Up to three chars in length',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt | $CMD -l 3-4 -vvv", # {{{
+        <<'END',
+abd
+2349
+abd
+2349
+END
+        "findhex: minlen = '3', maxlen = '4'\n",
+        0,
+        'Three or four chars',
     );
 
     # }}}

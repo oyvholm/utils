@@ -21,6 +21,7 @@ local $| = 1;
 our %Opt = (
 
     'help' => 0,
+    'length' => '1-',
     'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,6 +36,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'help|h' => \$Opt{'help'},
+    'length|l=s' => \$Opt{'length'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -55,11 +57,31 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    my $minlen = 1;
+    my $maxlen = '0';
+
+    my $l = $Opt{'length'};
+    if ($l =~ /^(\d+)$/) {
+        $minlen = $1;
+        $maxlen = $minlen;
+    } elsif ($l =~ /^(\d+)-$/) {
+        $minlen = $1;
+    } elsif ($l =~ /^-(\d+)$/) {
+        $maxlen = $1;
+    } elsif ($l =~ /^(\d+)-(\d+)$/) {
+        $minlen = $1;
+        $maxlen = $2;
+    }
+    msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
+
     while (my $line = <>) {
         $line =~ s{
             ([0-9a-f]+)
         }{
-            print("$1\n");
+            my $do_print = 1;
+            length($1) < $minlen && ($do_print = 0);
+            $maxlen && length($1) > $maxlen && ($do_print = 0);
+            $do_print && print("$1\n");
             '';
         }egx;
     }
@@ -90,6 +112,17 @@ Options:
 
   -h, --help
     Show this help.
+  -l X, --length X
+    List only values of length X where X can be:
+      X
+        Each printed value must be exactly X characters wide
+      X-
+        X or longer
+      -X
+        No longer than X characters
+      X-Y
+        Minimal and maximum length
+    Default value: '1-'
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
