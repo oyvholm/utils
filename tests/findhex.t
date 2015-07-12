@@ -116,6 +116,7 @@ END
 
     # }}}
     my $stdtxt = 'asBAdcjkbw abdFF 2349.kjdc3211a abd 2349jk';
+    diag('No options (except -vvv)...');
     testcmd("echo $stdtxt | $CMD -vvv", # {{{
         <<'END',
 a
@@ -133,6 +134,7 @@ END
     );
 
     # }}}
+    diag('Testing -d/--decimal option...');
     testcmd("echo $stdtxt | $CMD -vvv -d", # {{{
         <<'END',
 2349
@@ -145,6 +147,7 @@ END
     );
 
     # }}}
+    diag('Testing -l/--length option...');
     testcmd("echo $stdtxt | $CMD -l 4 -vvv", # {{{
         <<'END',
 2349
