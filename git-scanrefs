@@ -56,13 +56,17 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+    my %printed = ();
 
     while (my $line = <>) {
         chomp($line);
         my @result = potential_refs($line);
         for my $curr (@result) {
             my $act = actual_ref($curr);
-            length($act) && print("$act\n");
+            if (length($act) && !$printed{"$act"}) {
+                print("$act\n");
+                $printed{"$act"} = 1;
+            }
         }
     }
 

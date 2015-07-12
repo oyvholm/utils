@@ -127,6 +127,26 @@ END
     );
 
     # }}}
+    testcmd("echo $stdtxt $stdtxt | $CMD", # {{{
+        <<'END',
+151da78d6363d20e9a64e478835985ce378fc54f
+END
+        '',
+        0,
+        'Don\'t list duplicate info',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt 151da78d6363d20e $stdtxt | $CMD", # {{{
+        <<'END',
+151da78d6363d20e9a64e478835985ce378fc54f
+END
+        '',
+        0,
+        'Not even when the sha has different length',
+    );
+
+    # }}}
 
     todo_section:
     ;
