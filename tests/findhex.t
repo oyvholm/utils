@@ -216,6 +216,37 @@ END
     );
 
     # }}}
+
+    diag('Test various predefined units...');
+    unit_test('arj', 8);
+    unit_test('byte', 2);
+    unit_test('crc16', 4);
+    unit_test('crc32', 8);
+    unit_test('git', 40);
+    unit_test('gzip', 8);
+    unit_test('hg', 40);
+    unit_test('md2', 32);
+    unit_test('md4', 32);
+    unit_test('md5', 32);
+    unit_test('sha0', 40);
+    unit_test('sha1', 40);
+    unit_test('sha224', 56);
+    unit_test('sha256', 64);
+    unit_test('sha384', 96);
+    unit_test('sha512', 128);
+    unit_test('skein256', 64);
+    unit_test('skein384', 96);
+    unit_test('skein512', 128);
+    unit_test('zip', 8);
+
+    testcmd("$CMD -l yaman", # {{{
+        '',
+        "findhex: yaman: Unknown length unit\n",
+        1,
+        'Unknown value',
+    );
+
+    # }}}
     diag('Testing -u/--unique option...');
     testcmd("echo $stdtxt | $CMD -u", # {{{
         <<'END',
@@ -311,6 +342,18 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub unit_test {
+    # {{{
+    my ($name, $size) = @_;
+    return(testcmd("$CMD -vvv -l $name /dev/null",
+        '',
+        "findhex: minlen = '$size', maxlen = '$size'\n",
+        0,
+        "Unit: $name, size: $size",
+    ));
+    # }}}
+} # unit_test()
 
 sub testcmd {
     # {{{

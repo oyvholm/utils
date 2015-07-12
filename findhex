@@ -15,6 +15,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Text::Wrap;
 
 local $| = 1;
 
@@ -49,6 +50,31 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+my %size = (
+
+    'arj' => 8,
+    'byte' => 2,
+    'crc16' => 4,
+    'crc32' => 8,
+    'git' => 40,
+    'gzip' => 8,
+    'hg' => 40,
+    'md2' => 32,
+    'md4' => 32,
+    'md5' => 32,
+    'sha0' => 40,
+    'sha1' => 40,
+    'sha224' => 56,
+    'sha256' => 64,
+    'sha384' => 96,
+    'sha512' => 128,
+    'skein256' => 64,
+    'skein384' => 96,
+    'skein512' => 128,
+    'zip' => 8,
+
+);
+
 $Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -77,6 +103,15 @@ sub main {
     } elsif ($l =~ /^(\d+)-(\d+)$/) {
         $minlen = $1;
         $maxlen = $2;
+    } elsif ($l =~ /^([0-9a-z])+$/) {
+        my $val = $size{"$Opt{'length'}"};
+        if (length($val)) {
+            $minlen = $val;
+            $maxlen = $val;
+        } else {
+            warn("$progname: $l: Unknown length unit\n");
+            return(1);
+        }
     }
     msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
 
@@ -104,6 +139,16 @@ sub main {
     # }}}
 } # main()
 
+sub unit_list {
+    # {{{
+    my @arr = ();
+    for my $f (keys %size) {
+        push(@arr, "$f ($size{$f})");
+    }
+    return(join(', ', sort(@arr)));
+    # }}}
+} # unit_list()
+
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
@@ -119,6 +164,8 @@ sub usage {
         print("\n");
         print_version();
     }
+    $Text::Wrap::columns = 72;
+    my $unit_str = wrap(' ' x 6, ' ' x 6, unit_list());
     print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
@@ -140,6 +187,8 @@ Options:
       X-Y
         Minimal and maximum length
     Default value: '1-'
+    A list of predefined sizes can also be specified. Current list:
+$unit_str
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -u, --unique
