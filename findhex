@@ -55,6 +55,14 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    while (my $line = <>) {
+        $line =~ s{
+            ([0-9a-f]+)
+        }{
+            print("$1\n");
+            '';
+        }egx;
+    }
     return($Retval);
     # }}}
 } # main()

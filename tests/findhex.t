@@ -115,7 +115,24 @@ END
     );
 
     # }}}
+    my $stdtxt = 'asBAdcjkbw abdFF 2349.kjdc3211a abd 2349jk';
+    testcmd("echo $stdtxt | $CMD", # {{{
+        <<'END',
+a
+dc
+b
+abd
+2349
+dc3211a
+abd
+2349
+END
+        '',
+        0,
+        'Find all hexadecimal numbers',
+    );
 
+    # }}}
     todo_section:
     ;
 
