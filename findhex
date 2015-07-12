@@ -60,21 +60,20 @@ sub main {
     my $minlen = 1;
     my $maxlen = 9999999999999;
 
-    if (length($Opt{'length'})) {
-        my $l = $Opt{'length'};
-        if ($l =~ /^(\d+)$/) {
-            $minlen = $1;
-            $maxlen = $minlen;
-        } elsif ($l =~ /^(\d+)-$/) {
-            $minlen = $1;
-        } elsif ($l =~ /^-(\d+)$/) {
-            $maxlen = $1;
-        } elsif ($l =~ /^(\d+)-(\d+)$/) {
-            $minlen = $1;
-            $maxlen = $2;
-        }
-        msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
+    my $l = $Opt{'length'};
+    if ($l =~ /^(\d+)$/) {
+        $minlen = $1;
+        $maxlen = $minlen;
+    } elsif ($l =~ /^(\d+)-$/) {
+        $minlen = $1;
+    } elsif ($l =~ /^-(\d+)$/) {
+        $maxlen = $1;
+    } elsif ($l =~ /^(\d+)-(\d+)$/) {
+        $minlen = $1;
+        $maxlen = $2;
     }
+    msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
+
     while (my $line = <>) {
         $line =~ s{
             ([0-9a-f]+)
