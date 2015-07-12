@@ -112,6 +112,17 @@ Options:
 
   -h, --help
     Show this help.
+  -l X, --length X
+    List only values of length X where X can be:
+      X
+        Each printed value must be exactly X characters wide
+      X-
+        X or longer
+      -X
+        No longer than X characters
+      X-Y
+        Minimal and maximum length
+    Default value: '1-'
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
