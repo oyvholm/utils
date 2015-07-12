@@ -21,6 +21,7 @@ local $| = 1;
 our %Opt = (
 
     'help' => 0,
+    'length' => 1,
     'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,6 +36,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'help|h' => \$Opt{'help'},
+    'length|l=s' => \$Opt{'length'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -55,11 +57,31 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    my $minlen = 1;
+    my $maxlen = 9999999999999;
+
+    if (length($Opt{'length'})) {
+        my $l = $Opt{'length'};
+        if ($l =~ /^(\d+)$/) {
+            $minlen = $1;
+            $maxlen = $minlen;
+        } elsif ($l =~ /^(\d+)-$/) {
+            $minlen = $1;
+        } elsif ($l =~ /^-(\d+)$/) {
+            $maxlen = $1;
+        } elsif ($l =~ /^(\d+)-(\d+)$/) {
+            $minlen = $1;
+            $maxlen = $2;
+        }
+        msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
+    }
     while (my $line = <>) {
         $line =~ s{
             ([0-9a-f]+)
         }{
-            print("$1\n");
+            if (length($1) >= $minlen && length($1) <= $maxlen) {
+                print("$1\n");
+            }
             '';
         }egx;
     }
