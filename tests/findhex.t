@@ -216,12 +216,55 @@ END
     );
 
     # }}}
+    diag('Testing -u/--unique option...');
+    testcmd("echo $stdtxt | $CMD -u", # {{{
+        <<'END',
+a
+dc
+b
+abd
+2349
+dc3211a
+END
+        "",
+        0,
+        'Don\'t print same value twice with -u',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt badc AbD | $CMD -u -i", # {{{
+        <<'END',
+a
+badc
+b
+abdff
+2349
+dc3211a
+abd
+END
+        '',
+        0,
+        'Unique with upper/lower case',
+    );
+
+    # }}}
     diag('Various option combinations...');
     testcmd("echo $stdtxt | $CMD -vvv -d -l -3", # {{{
         '',
         "findhex: minlen = '1', maxlen = '3'\n",
         0,
         'No decimal-only with length 3 or less',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt | $CMD --decimal --unique", # {{{
+        <<'END',
+2349
+3211
+END
+        '',
+        0,
+        'Unique decimal',
     );
 
     # }}}

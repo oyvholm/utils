@@ -25,6 +25,7 @@ our %Opt = (
     'ignore-case' => 0,
     'length' => '1-',
     'quiet' => 0,
+    'unique' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -42,6 +43,7 @@ GetOptions(
     'ignore-case|i' => \$Opt{'ignore-case'},
     'length|l=s' => \$Opt{'length'},
     'quiet|q+' => \$Opt{'quiet'},
+    'unique|u' => \$Opt{'unique'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -78,6 +80,8 @@ sub main {
     }
     msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
 
+    my %uniq = ();
+
     my $exp = '0-9';
     $Opt{'ignore-case'} && ($exp .= 'A-F');
     $Opt{'decimal'} || ($exp .= 'a-f');
@@ -90,7 +94,9 @@ sub main {
             length($str) < $minlen && ($do_print = 0);
             $maxlen && length($str) > $maxlen && ($do_print = 0);
             $str = lc($str);
+            $Opt{'unique'} && $uniq{"$str"} && ($do_print = 0);
             $do_print && print("$str\n");
+            $uniq{"$str"} = 1;
             '';
         }egx;
     }
@@ -136,6 +142,8 @@ Options:
     Default value: '1-'
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -u, --unique
+    Don't print any value more than once.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
