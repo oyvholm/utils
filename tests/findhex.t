@@ -216,6 +216,40 @@ END
     );
 
     # }}}
+    diag('Various option combinations...');
+    testcmd("echo $stdtxt | $CMD -vvv -d -l -3", # {{{
+        '',
+        "findhex: minlen = '1', maxlen = '3'\n",
+        0,
+        'No decimal-only with length 3 or less',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt | $CMD -i -l -3 --verbose -v -v", # {{{
+        <<'END',
+a
+b
+abd
+END
+        "findhex: minlen = '1', maxlen = '3'\n",
+        0,
+        'Upper/lower case, max length 3',
+    );
+
+    # }}}
+    testcmd("echo $stdtxt | $CMD -i --length 4-5 --verbose -q --quiet -vvvv", # {{{
+        <<'END',
+BAdc
+abdFF
+2349
+2349
+END
+        "findhex: minlen = '4', maxlen = '5'\n",
+        0,
+        'Length 4-5, upper/lower case, -v and -q',
+    );
+
+    # }}}
     todo_section:
     ;
 
