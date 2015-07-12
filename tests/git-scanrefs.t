@@ -119,7 +119,7 @@ END
 
     testcmd("echo $stdtxt | $CMD -vvv", # {{{
         <<'END',
-151da78
+151da78d6363d20e9a64e478835985ce378fc54f
 END
         "git-scanrefs: potential_refs('skdjfv151da78gbhs12345abower aaaabbbb01234 asdf 2345 6789') returns ['151da78', '12345ab', 'aaaabbbb01234']\n",
         0,

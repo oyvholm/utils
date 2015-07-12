@@ -61,9 +61,8 @@ sub main {
         chomp($line);
         my @result = potential_refs($line);
         for my $curr (@result) {
-            if (is_actual_ref($curr)) {
-                print("$curr\n");
-            }
+            my $act = actual_ref($curr);
+            length($act) && print("$act\n");
         }
     }
 
@@ -94,14 +93,14 @@ sub potential_refs {
     return(@retval);
 } # potential_refs()
 
-sub is_actual_ref {
+sub actual_ref {
     my $ref = shift;
-    my $result = `git rev-parse --quiet --verify $ref`;
+    chomp(my $result = `git rev-parse --quiet --verify $ref`);
     msg(4, "is_actual_ref(): \$result = '$result'");
-    my $retval = ($result =~ /^[0-9a-f]{40}/) ? 1 : 0;
+    my $retval = ($result =~ /^[0-9a-f]{40}/) ? $result : '';
     msg(4, "is_actual_ref('$ref') returns '$retval'");
     return($retval);
-} # is_actual_ref()
+} # actual_ref()
 
 sub print_version {
     # Print program version {{{
