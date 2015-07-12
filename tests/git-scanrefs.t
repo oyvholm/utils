@@ -107,6 +107,7 @@ END
 
     # }}}
     diag('Testing --version option...');
+    my $stdtxt = 'skdjfvgbhs12345abower aaaabbbb01234 asdf 2345 6789';
     likecmd("$CMD --version", # {{{
         '/^\S+ v\d\.\d\d\n/',
         '/^$/',
@@ -116,7 +117,7 @@ END
 
     # }}}
 
-    testcmd("echo skdjfvgbhs12345abower aaaabbbb01234 asdf 2345 6789 | $CMD -vvv", # {{{
+    testcmd("echo $stdtxt | $CMD -vvv", # {{{
         <<'END',
 12345ab
 aaaabbbb01234
