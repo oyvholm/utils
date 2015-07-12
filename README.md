@@ -377,6 +377,7 @@ the alias somewhere.
 - filtrer_access_log
 - findbom
 - finddup
+- findhex
 - findrev
 - finn_triton
 - firefox
