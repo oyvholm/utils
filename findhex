@@ -20,6 +20,7 @@ local $| = 1;
 
 our %Opt = (
 
+    'decimal' => 0,
     'help' => 0,
     'length' => '1-',
     'quiet' => 0,
@@ -35,6 +36,7 @@ our $VERSION = '0.00';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'decimal|d' => \$Opt{'decimal'},
     'help|h' => \$Opt{'help'},
     'length|l=s' => \$Opt{'length'},
     'quiet|q+' => \$Opt{'quiet'},
@@ -74,9 +76,11 @@ sub main {
     }
     msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
 
+    my $exp = '0-9';
+    $Opt{'decimal'} || ($exp .= 'a-f');
     while (my $line = <>) {
         $line =~ s{
-            ([0-9a-f]+)
+            ([$exp]+)
         }{
             my $do_print = 1;
             length($1) < $minlen && ($do_print = 0);
@@ -112,6 +116,8 @@ Options:
 
   -h, --help
     Show this help.
+  -d, --decimal
+    Limit search to decimal (0-9) digits.
   -l X, --length X
     List only values of length X where X can be:
       X

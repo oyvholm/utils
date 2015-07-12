@@ -133,6 +133,18 @@ END
     );
 
     # }}}
+    testcmd("echo $stdtxt | $CMD -vvv -d", # {{{
+        <<'END',
+2349
+3211
+2349
+END
+        "findhex: minlen = '1', maxlen = '0'\n",
+        0,
+        'Find all decimal numbers',
+    );
+
+    # }}}
     testcmd("echo $stdtxt | $CMD -l 4 -vvv", # {{{
         <<'END',
 2349
