@@ -89,6 +89,7 @@ sub main {
             my $do_print = 1;
             length($str) < $minlen && ($do_print = 0);
             $maxlen && length($str) > $maxlen && ($do_print = 0);
+            $str = lc($str);
             $do_print && print("$str\n");
             '';
         }egx;

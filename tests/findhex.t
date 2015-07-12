@@ -151,9 +151,9 @@ END
     testcmd("echo $stdtxt | $CMD -i", # {{{
         <<'END',
 a
-BAdc
+badc
 b
-abdFF
+abdff
 2349
 dc3211a
 abd
@@ -239,8 +239,8 @@ END
     # }}}
     testcmd("echo $stdtxt | $CMD -i --length 4-5 --verbose -q --quiet -vvvv", # {{{
         <<'END',
-BAdc
-abdFF
+badc
+abdff
 2349
 2349
 END
