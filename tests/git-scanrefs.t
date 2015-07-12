@@ -116,6 +116,18 @@ END
 
     # }}}
 
+    testcmd("echo skdjfvgbhs12345abower aaaabbbb01234 asdf 2345 6789 | $CMD -vvv", # {{{
+        <<'END',
+12345ab
+aaaabbbb01234
+END
+        "git-scanrefs: potential_refs('skdjfvgbhs12345abower aaaabbbb01234 asdf 2345 6789') returns ['12345ab', 'aaaabbbb01234']\n",
+        0,
+        'List potential unchecked refs from line',
+    );
+
+    # }}}
+
     todo_section:
     ;
 

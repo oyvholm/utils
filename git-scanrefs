@@ -48,6 +48,8 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my %checked = (); # Contains all potential shas checked
+
 exit(main(%Opt));
 
 sub main {
@@ -55,9 +57,40 @@ sub main {
     my %Opt = @_;
     my $Retval = 0;
 
+    while (my $line = <>) {
+        chomp($line);
+        my @result = potential_refs($line);
+        for my $curr (@result) {
+            print("$curr\n");
+        }
+    }
+
     return($Retval);
     # }}}
 } # main()
+
+sub potential_refs {
+    my $orig = shift;
+    my $str = $orig;
+    my @retval = ();
+    msg(4, "Entering potential_refs('$orig')");
+    $str =~ s{
+        ([0-9a-f]{7,})
+    }{
+        my $pot = $1;
+        msg(4, "\$pot = '$pot'");
+        if (!$checked{"$pot"}) {
+            msg(4, "'$pot' is not checked before");
+            push(@retval, $pot);
+            $checked{"$pot"} = 1;
+        };
+        '';
+    }xegs;
+    msg(4, "\$str afterwards: '$str'");
+    msg(4, "scalar(retval) = '" . scalar(@retval) . "'");
+    msg(3, "potential_refs('$orig') returns ['" . join("', '", @retval) . "']");
+    return(@retval);
+} # potential_refs()
 
 sub print_version {
     # Print program version {{{
