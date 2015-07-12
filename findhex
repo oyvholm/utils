@@ -1,0 +1,243 @@
+#!/usr/bin/perl
+
+#=======================================================================
+# findhex
+# File ID: 04048b4a-284a-11e5-8465-000df06acc56
+#
+# Search for hexadecimal or decimal numbers in files or streams.
+#
+# Character set: UTF-8
+# ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use warnings;
+use Getopt::Long;
+
+local $| = 1;
+
+our %Opt = (
+
+    'decimal' => 0,
+    'help' => 0,
+    'ignore-case' => 0,
+    'length' => '1-',
+    'quiet' => 0,
+    'unique' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.00';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'decimal|d' => \$Opt{'decimal'},
+    'help|h' => \$Opt{'help'},
+    'ignore-case|i' => \$Opt{'ignore-case'},
+    'length|l=s' => \$Opt{'length'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'unique|u' => \$Opt{'unique'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'verbose'} -= $Opt{'quiet'};
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+exit(main(%Opt));
+
+sub main {
+    # {{{
+    my %Opt = @_;
+    my $Retval = 0;
+
+    my $minlen = 1;
+    my $maxlen = '0';
+
+    my $l = $Opt{'length'};
+    if ($l =~ /^(\d+)$/) {
+        $minlen = $1;
+        $maxlen = $minlen;
+    } elsif ($l =~ /^(\d+)-$/) {
+        $minlen = $1;
+    } elsif ($l =~ /^-(\d+)$/) {
+        $maxlen = $1;
+    } elsif ($l =~ /^(\d+)-(\d+)$/) {
+        $minlen = $1;
+        $maxlen = $2;
+    }
+    msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
+
+    my %uniq = ();
+
+    my $exp = '0-9';
+    $Opt{'ignore-case'} && ($exp .= 'A-F');
+    $Opt{'decimal'} || ($exp .= 'a-f');
+    while (my $line = <>) {
+        $line =~ s{
+            ([$exp]+)
+        }{
+            my $str = $1;
+            my $do_print = 1;
+            length($str) < $minlen && ($do_print = 0);
+            $maxlen && length($str) > $maxlen && ($do_print = 0);
+            $str = lc($str);
+            $Opt{'unique'} && $uniq{"$str"} && ($do_print = 0);
+            $do_print && print("$str\n");
+            $uniq{"$str"} = 1;
+            '';
+        }egx;
+    }
+    return($Retval);
+    # }}}
+} # main()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname v$VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -d, --decimal
+    Limit search to decimal (0-9) digits.
+  -l X, --length X
+    List only values of length X where X can be:
+      X
+        Each printed value must be exactly X characters wide
+      X-
+        X or longer
+      -X
+        No longer than X characters
+      X-Y
+        Minimal and maximum length
+    Default value: '1-'
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -u, --unique
+    Don't print any value more than once.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-q>, B<--quiet>
+
+Be more quiet. Can be repeated to increase silence.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
