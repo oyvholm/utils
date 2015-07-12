@@ -21,7 +21,7 @@ local $| = 1;
 our %Opt = (
 
     'help' => 0,
-    'length' => 1,
+    'length' => '1-',
     'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
