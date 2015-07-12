@@ -58,7 +58,7 @@ sub main {
     my $Retval = 0;
 
     my $minlen = 1;
-    my $maxlen = 9999999999999;
+    my $maxlen = '0';
 
     my $l = $Opt{'length'};
     if ($l =~ /^(\d+)$/) {
@@ -78,9 +78,10 @@ sub main {
         $line =~ s{
             ([0-9a-f]+)
         }{
-            if (length($1) >= $minlen && length($1) <= $maxlen) {
-                print("$1\n");
-            }
+            my $do_print = 1;
+            length($1) < $minlen && ($do_print = 0);
+            $maxlen && length($1) > $maxlen && ($do_print = 0);
+            $do_print && print("$1\n");
             '';
         }egx;
     }

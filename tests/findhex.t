@@ -127,7 +127,7 @@ dc3211a
 abd
 2349
 END
-        "findhex: minlen = '1', maxlen = '9999999999999'\n",
+        "findhex: minlen = '1', maxlen = '0'\n",
         0,
         'Find all hexadecimal numbers',
     );
@@ -150,7 +150,7 @@ END
 dc3211a
 2349
 END
-        "findhex: minlen = '4', maxlen = '9999999999999'\n",
+        "findhex: minlen = '4', maxlen = '0'\n",
         0,
         'Find all hex four or more in length',
     );
