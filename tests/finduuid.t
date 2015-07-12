@@ -283,6 +283,37 @@ END
     );
 
     # }}}
+    diag("Testing -r (--reverse) option...");
+    testcmd("$CMD -l finduuid-files/textfile -r", # {{{
+        <<END,
+1 dsfv sdfJada
+2 kldfjnvdsv
+3 dsfv dsfv dsf
+4 dfv dsf 
+5 dsfv dsf qw weqd
+6 
+7 i ksjn klasjdnc
+8 once more 
+9 yet another one 
+10 unique + dup  
+11 dup + unique  
+12 four uniques    
+13 four dups    
+END
+        "",
+        0,
+        "Strip UUIDs from input",
+    );
+
+    # }}}
+    testcmd("$CMD -l finduuid-files/compact --reverse", # {{{
+        "",
+        "",
+        0,
+        "Nothing left from compact when using --reverse",
+    );
+
+    # }}}
     diag("Testing -u (--unique) option...");
     testcmd("$CMD --unique -l finduuid-files/textfile", # {{{
         <<END,

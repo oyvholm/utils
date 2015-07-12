@@ -27,6 +27,7 @@ our %Opt = (
     'filenames' => 0,
     'help' => 0,
     'line' => 0,
+    'reverse' => 0,
     'unique' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -45,6 +46,7 @@ GetOptions(
     'filenames|f' => \$Opt{'filenames'},
     'help|h' => \$Opt{'help'},
     'line|l' => \$Opt{'line'},
+    'reverse|r' => \$Opt{'reverse'},
     'unique|u' => \$Opt{'unique'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -72,6 +74,14 @@ sub main {
     my $Lh = "[0-9a-fA-F]";
     my $Templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
 
+    if ($Opt{'reverse'}) {
+        while (<>) {
+            s/$Templ//g;
+            print;
+        }
+        return($Retval);
+    }
+
     while (<>) {
         chomp(my $Line = $_);
         if (/$Templ/) {
@@ -94,7 +104,7 @@ sub main {
         }
     }
 
-    exit($exit_value);
+    return($exit_value);
     # }}}
 } # main()
 
