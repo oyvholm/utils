@@ -107,7 +107,7 @@ END
 
     # }}}
     diag('Testing --version option...');
-    my $stdtxt = 'skdjfvgbhs12345abower aaaabbbb01234 asdf 2345 6789';
+    my $stdtxt = 'skdjfv151da78gbhs12345abower aaaabbbb01234 asdf 2345 6789';
     likecmd("$CMD --version", # {{{
         '/^\S+ v\d\.\d\d\n/',
         '/^$/',
@@ -119,10 +119,11 @@ END
 
     testcmd("echo $stdtxt | $CMD -vvv", # {{{
         <<'END',
+151da78
 12345ab
 aaaabbbb01234
 END
-        "git-scanrefs: potential_refs('skdjfvgbhs12345abower aaaabbbb01234 asdf 2345 6789') returns ['12345ab', 'aaaabbbb01234']\n",
+        "git-scanrefs: potential_refs('skdjfv151da78gbhs12345abower aaaabbbb01234 asdf 2345 6789') returns ['151da78', '12345ab', 'aaaabbbb01234']\n",
         0,
         'List potential unchecked refs from line',
     );
