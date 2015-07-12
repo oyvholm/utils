@@ -49,6 +49,31 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+my %size = (
+
+    'arj' => 8,
+    'byte' => 2,
+    'crc16' => 4,
+    'crc32' => 8,
+    'git' => 40,
+    'gzip' => 8,
+    'hg' => 40,
+    'md2' => 32,
+    'md4' => 32,
+    'md5' => 32,
+    'sha0' => 40,
+    'sha1' => 40,
+    'sha224' => 56,
+    'sha256' => 64,
+    'sha384' => 96,
+    'sha512' => 128,
+    'skein256' => 64,
+    'skein384' => 96,
+    'skein512' => 128,
+    'zip' => 8,
+
+);
+
 $Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -77,6 +102,15 @@ sub main {
     } elsif ($l =~ /^(\d+)-(\d+)$/) {
         $minlen = $1;
         $maxlen = $2;
+    } elsif ($l =~ /^([0-9a-z])+$/) {
+        my $val = $size{"$Opt{'length'}"};
+        if (length($val)) {
+            $minlen = $val;
+            $maxlen = $val;
+        } else {
+            warn("$progname: $l: Unknown length unit\n");
+            return(1);
+        }
     }
     msg(3, "minlen = '$minlen', maxlen = '$maxlen'");
 
