@@ -15,6 +15,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Text::Wrap;
 
 local $| = 1;
 
@@ -138,6 +139,16 @@ sub main {
     # }}}
 } # main()
 
+sub unit_list {
+    # {{{
+    my @arr = ();
+    for my $f (keys %size) {
+        push(@arr, "$f ($size{$f})");
+    }
+    return(join(', ', sort(@arr)));
+    # }}}
+} # unit_list()
+
 sub print_version {
     # Print program version {{{
     print("$progname v$VERSION\n");
@@ -153,6 +164,8 @@ sub usage {
         print("\n");
         print_version();
     }
+    $Text::Wrap::columns = 72;
+    my $unit_str = wrap(' ' x 6, ' ' x 6, unit_list());
     print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
@@ -174,6 +187,8 @@ Options:
       X-Y
         Minimal and maximum length
     Default value: '1-'
+    A list of predefined sizes can also be specified. Current list:
+$unit_str
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -u, --unique
