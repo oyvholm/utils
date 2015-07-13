@@ -403,6 +403,7 @@ the alias somewhere.
 - getsvnfiles
 - gfuck
 - githubnetwork
+- gotexp
 - gpath
 - gpgpakk
 - gpsfold
