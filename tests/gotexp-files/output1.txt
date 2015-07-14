@@ -1,0 +1,72 @@
+# ========== Executing conv-suuid.t v0.00 ==========
+# Testing -h (--help) option...
+ok 1 - "../conv-suuid -h" - Option -h prints help screen (stdout)
+ok 2 - "../conv-suuid -h" - Option -h prints help screen (stderr)
+ok 3 - "../conv-suuid -h" - Option -h prints help screen (retval)
+# Testing -v (--verbose) option...
+ok 4 - "../conv-suuid -hv" - Option --version with -h returns version number and help screen (stdout)
+ok 5 - "../conv-suuid -hv" - Option --version with -h returns version number and help screen (stderr)
+ok 6 - "../conv-suuid -hv" - Option --version with -h returns version number and help screen (retval)
+# Testing --version option...
+ok 7 - "../conv-suuid --version" - Option --version returns version number (stdout)
+ok 8 - "../conv-suuid --version" - Option --version returns version number (stderr)
+ok 9 - "../conv-suuid --version" - Option --version returns version number (retval)
+ok 10 - chdir conv-suuid-files
+not ok 11 - "../../conv-suuid test.xml" - Read test.xml (stdout)
+#   Failed test '"../../conv-suuid test.xml" - Read test.xml (stdout)'
+#   at ./conv-suuid.t line 399.
+#          got: '<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \ ' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+# '
+#     expected: '<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \\ '' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+# '
+ok 12 - "../../conv-suuid test.xml" - Read test.xml (stderr)
+ok 13 - "../../conv-suuid test.xml" - Read test.xml (retval)
+not ok 14 - "../../conv-suuid -o xml test.xml" - Output XML format (stdout)
+#   Failed test '"../../conv-suuid -o xml test.xml" - Output XML format (stdout)'
+#   at ./conv-suuid.t line 399.
+#          got: '<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \ ' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+# '
+#     expected: '<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \\ '' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+# '
+ok 15 - "../../conv-suuid -o xml test.xml" - Output XML format (stderr)
+ok 16 - "../../conv-suuid -o xml test.xml" - Output XML format (retval)
+ok 17 - "../../conv-suuid --output-format postgres --verbose -vv test.xml" - Output Postgres format (stdout)
+ok 18 - "../../conv-suuid --output-format postgres --verbose -vv test.xml" - Output Postgres format (stderr)
+ok 19 - "../../conv-suuid --output-format postgres --verbose -vv test.xml" - Output Postgres format (retval)
+ok 20 - "../../conv-suuid --pg-table --output-format postgres test.xml" - Output Postgres tables and format (stdout)
+ok 21 - "../../conv-suuid --pg-table --output-format postgres test.xml" - Output Postgres tables and format (stderr)
+ok 22 - "../../conv-suuid --pg-table --output-format postgres test.xml" - Output Postgres tables and format (retval)
+# Testing Postgres database...
+ok 23 - "createdb tmp-27719-15653329" - Create test database (stdout)
+ok 24 - "createdb tmp-27719-15653329" - Create test database (stderr)
+ok 25 - "createdb tmp-27719-15653329" - Create test database (retval)
+ok 26 - "../../conv-suuid --pg-table -o postgres test.xml | psql -X -d tmp-27719-15653329" - Import test data into database (stdout)
+ok 27 - "../../conv-suuid --pg-table -o postgres test.xml | psql -X -d tmp-27719-15653329" - Import test data into database (stderr)
+ok 28 - "../../conv-suuid --pg-table -o postgres test.xml | psql -X -d tmp-27719-15653329" - Import test data into database (retval)
+ok 29 - "psql -d tmp-27719-15653329 -c "COPY (SELECT * FROM uuids) TO STDOUT;"" - Check contents of database (stdout)
+ok 30 - "psql -d tmp-27719-15653329 -c "COPY (SELECT * FROM uuids) TO STDOUT;"" - Check contents of database (stderr)
+ok 31 - "psql -d tmp-27719-15653329 -c "COPY (SELECT * FROM uuids) TO STDOUT;"" - Check contents of database (retval)
+ok 32 - "../../conv-suuid --pg-table -o postgres test2.xml | psql -X -d tmp-27719-15653329" - Import more data into db, table already exists (stdout)
+ok 33 - "../../conv-suuid --pg-table -o postgres test2.xml | psql -X -d tmp-27719-15653329" - Import more data into db, table already exists (stderr)
+ok 34 - "../../conv-suuid --pg-table -o postgres test2.xml | psql -X -d tmp-27719-15653329" - Import more data into db, table already exists (retval)
+ok 35 - "psql -d tmp-27719-15653329 -c "COPY (SELECT * FROM uuids) TO STDOUT;"" - Database has six entries (stdout)
+ok 36 - "psql -d tmp-27719-15653329 -c "COPY (SELECT * FROM uuids) TO STDOUT;"" - Database has six entries (stderr)
+ok 37 - "psql -d tmp-27719-15653329 -c "COPY (SELECT * FROM uuids) TO STDOUT;"" - Database has six entries (retval)
+ok 38 - "dropdb tmp-27719-15653329" - Delete test database (stdout)
+ok 39 - "dropdb tmp-27719-15653329" - Delete test database (stderr)
+ok 40 - "dropdb tmp-27719-15653329" - Delete test database (retval)
+# Testing finished.
+1..40
+# Looks like you failed 2 tests of 40.

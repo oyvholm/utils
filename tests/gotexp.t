@@ -116,6 +116,49 @@ END
 
     # }}}
 
+    ok(chdir('gotexp-files'), 'chdir gotexp-files') || BAIL_OUT('Could not chdir');
+    testcmd("../$CMD <output1.txt", # {{{
+        '',
+        '',
+        0,
+        'Use output1.txt as stdin',
+    );
+
+    # }}}
+
+    is(file_data('got'), <<END . "# '", "Check contents of 'got'");
+'<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \\ ' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+END
+
+    is(file_data('exp'), <<END, "Check contents of 'exp'");
+'<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \\\\ '' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+# '
+ok 12 - "../../conv-suuid test.xml" - Read test.xml (stderr)
+ok 13 - "../../conv-suuid test.xml" - Read test.xml (retval)
+not ok 14 - "../../conv-suuid -o xml test.xml" - Output XML format (stdout)
+#   Failed test '"../../conv-suuid -o xml test.xml" - Output XML format (stdout)'
+#   at ./conv-suuid.t line 399.
+#          got: '<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \\ ' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+# '
+#     expected: '<suuid t="2015-06-14T02:34:41.5608070Z" u="e8f90906-123d-11e5-81a8-000df06acc56"> <tag>std</tag> <txt>std -l python suuids-to-postgres.py</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/4</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-14T02:51:50.4477750Z" u="4e3cba36-1240-11e5-ab4e-000df06acc56"> <tag>ti</tag> <tag>another</tag> <txt>Yo mainn.</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/postgres</cwd> <user>sunny</user> <tty>/dev/pts/13</tty> <sess desc="xterm">f923e8fc-11e6-11e5-913a-000df06acc56</sess> <sess desc="logging">09733f50-11e7-11e5-a1ac-000df06acc56</sess> <sess>0bb564f0-11e7-11e5-bc0c-000df06acc56</sess> </suuid>
+# <suuid t="2015-06-21T10:49:19.2036620Z" u="2b1e350c-1803-11e5-9c66-000df06acc56"> <txt>Weird characters: \\\\ '' ; &lt; &gt; "</txt> <host>bellmann</host> <cwd>/home/sunny/src/git/.er_ikke_i_bellmann/utils.dev/Git/suuid/tests</cwd> <user>sunny</user> <tty>/dev/pts/15</tty> <sess desc="xterm">edcbd7d8-16ca-11e5-9739-000df06acc56</sess> <sess desc="logging">03a706ae-16cb-11e5-becb-000df06acc56</sess> <sess desc="screen">088f9e56-16cb-11e5-a56c-000df06acc56</sess> </suuid>
+# <suuid t="2015-07-14T02:07:50.9817960Z" u="2162ae68-29cd-11e5-aa3e-000df06acc56"> </suuid>
+# '
+END
+
+    ok(unlink('got'), "Delete 'got'");
+    ok(unlink('exp'), "Delete 'exp'");
+
     todo_section:
     ;
 
