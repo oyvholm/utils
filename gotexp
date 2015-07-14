@@ -58,7 +58,7 @@ sub main {
     my $slurp = join('', <>);
     !length($slurp) && return(0);
 
-    if ($slurp =~ /^.*?#\s+got: ('.+?')\n#\s+expected: ('.+'\n).*?$/s) {
+    if ($slurp =~ /^.*?#\s+got: ('.+?'\n)#\s+expected: ('.+'\n).*?$/s) {
         open(my $gotfh, ">got") or die("$progname: got: Cannot create file: $!\n");
         open(my $expfh, ">exp") or die("$progname: exp: Cannot create file: $!\n");
         print($gotfh $1);
