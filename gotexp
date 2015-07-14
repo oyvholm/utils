@@ -58,13 +58,22 @@ sub main {
     my $slurp = join('', <>);
     !length($slurp) && return(0);
 
-    if ($slurp =~ /^.*?#\s+got: ('.+?'\n)#\s+expected: ('.+'\n).*?$/s) {
-        my ($got, $exp) = ($1, $2);
+    if ($slurp =~ /^
+        .*?
+        (not\ ok\s.*?\n)
+        .*?
+        \s+got:\s+
+        ('.*?'\n)
+        \#\s+expected:\s+
+        ('.*?'\n)
+        .*
+    $/sx) {
+        my ($header, $got, $exp) = ($1, $2, $3);
         $exp =~ s/^(.*?\n)(not )?ok .*$/$1/s;
         open(my $gotfh, ">got") or die("$progname: got: Cannot create file: $!\n");
         open(my $expfh, ">exp") or die("$progname: exp: Cannot create file: $!\n");
-        print($gotfh $got);
-        print($expfh $exp);
+        print($gotfh $header . $got);
+        print($expfh $header . $exp);
         close($gotfh);
         close($expfh);
     }
