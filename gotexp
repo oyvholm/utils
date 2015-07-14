@@ -21,6 +21,7 @@ local $| = 1;
 our %Opt = (
 
     'help' => 0,
+    'number' => 1,
     'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,6 +36,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'help|h' => \$Opt{'help'},
+    'number|n=i' => \$Opt{'number'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -54,21 +56,31 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+    my $count = 0;
 
     my $slurp = join('', <>);
     !length($slurp) && return(0);
 
-    if ($slurp =~ /^
-        .*?
+    $slurp =~ s{
         (not\ ok\s.*?\n)
         .*?
         \s+got:\s+
         ('.*?'\n)
         \#\s+expected:\s+
         ('.*?'\n)
-        .*
-    $/sx) {
+    }{
         my ($header, $got, $exp) = ($1, $2, $3);
+        $count++;
+        write_data($count, $Opt{'number'}, $header, $got, $exp);
+    }egsx;
+
+    return($Retval);
+    # }}}
+} # main()
+
+sub write_data {
+    my ($count, $number, $header, $got, $exp) = @_;
+    if ($count == $Opt{'number'}) {
         $exp =~ s/^(.*?\n)(not )?ok .*$/$1/s;
         open(my $gotfh, ">got") or die("$progname: got: Cannot create file: $!\n");
         open(my $expfh, ">exp") or die("$progname: exp: Cannot create file: $!\n");
@@ -76,11 +88,9 @@ sub main {
         print($expfh $header . $exp);
         close($gotfh);
         close($expfh);
-    }
-
-    return($Retval);
-    # }}}
-} # main()
+    };
+    return('');
+} # write_data()
 
 sub print_version {
     # Print program version {{{
@@ -105,6 +115,8 @@ Options:
 
   -h, --help
     Show this help.
+  -n X, --number X
+    Skip to error number X.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
