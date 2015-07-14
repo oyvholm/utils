@@ -59,10 +59,11 @@ sub main {
     !length($slurp) && return(0);
 
     if ($slurp =~ /^.*?#\s+got: ('.+?'\n)#\s+expected: ('.+'\n).*?$/s) {
+        my ($got, $exp) = ($1, $2);
         open(my $gotfh, ">got") or die("$progname: got: Cannot create file: $!\n");
         open(my $expfh, ">exp") or die("$progname: exp: Cannot create file: $!\n");
-        print($gotfh $1);
-        print($expfh $2);
+        print($gotfh $got);
+        print($expfh $exp);
         close($gotfh);
         close($expfh);
     }
