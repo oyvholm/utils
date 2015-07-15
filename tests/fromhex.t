@@ -226,6 +226,14 @@ END
     );
 
     # }}}
+    testcmd("echo 89 101 112-46 32%8594?9786 8592b32 128701 | $CMD -d", # {{{
+        'Yep. ',
+        "fromhex: Cannot print byte value 8594 in bytewise mode, use -u\n",
+        1,
+        'Read high decimal values when not in Unicode mode',
+    );
+
+    # }}}
 
     todo_section:
     ;

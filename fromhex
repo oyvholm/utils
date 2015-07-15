@@ -58,7 +58,7 @@ if ($Opt{'unicode'}) {
 
 if ($Opt{'decimal'}) {
     while (<>) {
-        s/(\d+)/print(chr($1))/seig;
+        s/(\d+)/print_decimal($1)/seig;
     }
 } else {
     if ($Opt{'unicode'}) {
@@ -74,6 +74,19 @@ if ($Opt{'decimal'}) {
         }
     }
 }
+
+sub print_decimal {
+    # {{{
+    my $val = shift;
+    if ($val > 255 && !$Opt{'unicode'}) {
+        warn("$progname: Cannot print byte value $val in bytewise mode, use -u\n");
+        exit(1);
+    } else {
+        print(chr($val));
+    }
+    return('');
+    # }}}
+} # print_decimal()
 
 sub print_version {
     # Print program version {{{
