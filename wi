@@ -16,4 +16,4 @@ for f in "$@" $stdin; do
     search_str="$search_str -e $f"
 done
 search_str=$1
-psql suuids -c "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%$search_str%') TO STDOUT;" | sort -u | less
+psql suuids -c "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%$search_str%') TO STDOUT;" | sort -u | less
