@@ -119,7 +119,55 @@ END
     );
 
     # }}}
+    testcmd("echo 76 72 c3 b8 76 6c 65 62 c3 b8 74 74 65 | $CMD", # {{{
+        'vrøvlebøtte',
+        '',
+        0,
+        'Read standard two-digit lowercase hex',
+    );
 
+    # }}}
+    testcmd("echo 466ac3b873756c66206865722c2076656c6b6f6d6d656e2e | $CMD", # {{{
+        'Fjøsulf her, velkommen.',
+        '',
+        0,
+        'No spaces between hex',
+    );
+
+    # }}}
+    testcmd("echo '4j4r6%%574.20 677w26_1756c6+ 573206§9206cg69:612/1.' | $CMD", # {{{
+        'Det graules i lia!',
+        '',
+        0,
+        'Ignore non-hex digits',
+    );
+
+    # }}}
+    testcmd("echo 4B4A48426a6b62686a68626a6b6861732F262F36353435252629282f0A | $CMD", # {{{
+        "KJHBjkbhjhbjkhas/&/6545%&)(/\n",
+        '',
+        0,
+        'Include upper case',
+    );
+
+    # }}}
+    testcmd("$CMD -d fromhex-files/decimal.txt", # {{{
+        <<'END',
+ __________________________
+< Have to test decimal too >
+ --------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+END
+        '',
+        0,
+        'Read decimal numbers with -d, ignore other chars',
+    );
+
+    # }}}
     todo_section:
     ;
 
