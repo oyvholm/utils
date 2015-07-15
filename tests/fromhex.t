@@ -189,6 +189,27 @@ END
     );
 
     # }}}
+    testcmd("$CMD fromhex-files/standardpudding.bin", # {{{
+        <<'END',
+Standardpudding til Folket. Det er vel ikke for mye forlangt. Eller skal
+vi sitte her og råtne i luksusen?
+
+    Mvh              ~                                         +--------,
+    Øyvind         _~              +        )        +      '  |/ _      \
+  ,_______________| |______   ,                  ,           .   (~)  + +
+ /________________________/\         .      *           +         U    *
+ |                        ||                                       `.
++-------------------------------------------------------------_      (o_.'
+| All you touch and all you see is all your life will ever be. -_    //\
+| ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭  -_  V_/_
++-------------------------------------------------------------------------
+END
+        '',
+        0,
+        'Read digits from file with lots of binary noise',
+    );
+
+    # }}}
 
     todo_section:
     ;
