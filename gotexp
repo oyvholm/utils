@@ -79,6 +79,7 @@ sub main {
 } # main()
 
 sub write_data {
+    # {{{
     my ($count, $number, $header, $got, $exp) = @_;
     if ($count == $Opt{'number'}) {
         $exp =~ s/^(.*?\n)(not )?ok .*$/$1/s;
@@ -90,6 +91,7 @@ sub write_data {
         close($expfh);
     };
     return('');
+    # }}}
 } # write_data()
 
 sub print_version {
