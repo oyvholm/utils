@@ -50,9 +50,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-my $print_str = $Opt{'decimal'} ? "%u " : "%02x ";
+my $print_str = $Opt{'decimal'} ? "%u" : "%02x";
+my $spc = '';
 while (<>) {
-    s/(.)/sprintf($print_str, ord($1))/gse;
+    s/(.)/printf("$spc$print_str", ord($1)), $spc = ' ', ''/gse;
     print;
 }
 print "\n";

@@ -120,7 +120,7 @@ END
 
     # }}}
     testcmd("echo This is it. | $CMD", # {{{
-        "54 68 69 73 20 69 73 20 69 74 2e 0a \n",
+        "54 68 69 73 20 69 73 20 69 74 2e 0a\n",
         '',
         0,
         'ASCII to hex',
@@ -128,7 +128,7 @@ END
 
     # }}}
     testcmd("echo This is it. | $CMD -d", # {{{
-        "84 104 105 115 32 105 115 32 105 116 46 10 \n",
+        "84 104 105 115 32 105 115 32 105 116 46 10\n",
         '',
         0,
         'ASCII to decimal output (-d)',
