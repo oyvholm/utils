@@ -168,6 +168,28 @@ END
     );
 
     # }}}
+    testcmd("echo 53 74 65 69 6b 6a 65 20 66 69 6e 65 20 67 61 72 64 69 6e 65 2 | $CMD", # {{{
+        'Steikje fine gardine',
+        '',
+        0,
+        'Don\'t output the byte that\'s missing a nibble',
+    );
+
+    # }}}
+    testcmd("$CMD fromhex-files/single.txt", # {{{
+        <<'END',
+
+ ☺
+/S\
+/'\
+END
+        '',
+        0,
+        'Read single digits on their own line',
+    );
+
+    # }}}
+
     todo_section:
     ;
 

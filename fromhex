@@ -55,10 +55,11 @@ if ($Opt{'decimal'}) {
         s/(\d+)/print(chr($1))/seig;
     }
 } else {
-    while (<>) {
-        s/[^\da-f]//sig;
-        s/([\da-f][\da-f])/chr(hex($1))/seig;
-        print;
+    my $buf = '';
+    while (my $line = <>) {
+        $line =~ s/[^\da-f]//sig;
+        $buf .= $line;
+        $buf =~ s/([\da-f][\da-f])/print(chr(hex($1))), ''/seig;
     }
 }
 
