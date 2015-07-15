@@ -23,6 +23,7 @@ our %Opt = (
     'debug' => 0,
     'decimal' => 0,
     'help' => 0,
+    'unicode' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -38,6 +39,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "decimal|d" => \$Opt{'decimal'},
     "help|h" => \$Opt{'help'},
+    "unicode|u" => \$Opt{'unicode'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -50,16 +52,26 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+if ($Opt{'unicode'}) {
+    binmode(STDOUT, ':utf8');
+}
+
 if ($Opt{'decimal'}) {
     while (<>) {
         s/(\d+)/print(chr($1))/seig;
     }
 } else {
-    my $buf = '';
-    while (my $line = <>) {
-        $line =~ s/[^\da-f]//sig;
-        $buf .= $line;
-        $buf =~ s/([\da-f][\da-f])/print(chr(hex($1))), ''/seig;
+    if ($Opt{'unicode'}) {
+        while (<>) {
+            s/([\da-f]+)/print(chr(hex($1)))/seig;
+        }
+    } else {
+        my $buf = '';
+        while (my $line = <>) {
+            $line =~ s/[^\da-f]//sig;
+            $buf .= $line;
+            $buf =~ s/([\da-f][\da-f])/print(chr(hex($1))), ''/seig;
+        }
     }
 }
 
@@ -89,6 +101,11 @@ Options:
     Create bytes from decimal (base 10) numbers.
   -h, --help
     Show this help.
+  -u, --unicode
+    Use Unicode mode. If any values are higher than U+007F (127), output 
+    the character as a UTF-8 sequence instead of bytewise output. I.e. 
+    the character U+263A will be output as the bytes "e2 98 ba" instead 
+    of "26 3a".
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version

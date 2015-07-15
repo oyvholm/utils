@@ -210,6 +210,22 @@ END
     );
 
     # }}}
+    testcmd("echo 59 65 70_2E 20.2192/263a 2190 20 1f6BD | $CMD --unicode", # {{{
+        'Yep. →☺← 🚽',
+        '',
+        0,
+        'Read hex values in Unicode mode (--unicode)',
+    );
+
+    # }}}
+    testcmd("echo 89 101 112_46 32%8594 9786 8592+32 128701 | $CMD -du", # {{{
+        'Yep. →☺← 🚽',
+        '',
+        0,
+        'Read decimal values in Unicode mode (-u)',
+    );
+
+    # }}}
 
     todo_section:
     ;
