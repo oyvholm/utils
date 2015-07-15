@@ -135,6 +135,42 @@ END
     );
 
     # }}}
+    testcmd("echo This is a somewhat longer test. With ☮, ❤ and Linux. Oh, and €. | $CMD", # {{{
+        <<END,
+54 68 69 73 20 69 73 20 61 20 73 6f 6d 65 77 68
+61 74 20 6c 6f 6e 67 65 72 20 74 65 73 74 2e 20
+57 69 74 68 20 e2 98 ae 2c 20 e2 9d a4 20 61 6e
+64 20 4c 69 6e 75 78 2e 20 4f 68 2c 20 61 6e 64
+20 e2 82 ac 2e 0a
+END
+        '',
+        0,
+        "Hex output, wrap every 16th byte",
+    );
+
+    # }}}
+    testcmd("echo This is a somewhat longer test. With ☮, ❤ and Linux. Oh, and €. | $CMD -d", # {{{
+        <<END,
+84 104 105 115 32 105 115 32 97 32 115 111 109 101 119 104
+97 116 32 108 111 110 103 101 114 32 116 101 115 116 46 32
+87 105 116 104 32 226 152 174 44 32 226 157 164 32 97 110
+100 32 76 105 110 117 120 46 32 79 104 44 32 97 110 100
+32 226 130 172 46 10
+END
+        '',
+        0,
+        "Decimal output, with wrap every 16th byte",
+    );
+
+    # }}}
+    testcmd("echo -n This is 16 chars | $CMD", # {{{
+        "54 68 69 73 20 69 73 20 31 36 20 63 68 61 72 73\n",
+        '',
+        0,
+        'No extra LF at the end',
+    );
+
+    # }}}
 
     todo_section:
     ;
