@@ -105,7 +105,7 @@ sub main {
         $maxlen = $2;
     } elsif ($l =~ /^([0-9a-z])+$/) {
         my $val = $size{"$Opt{'length'}"};
-        if (length($val)) {
+        if (defined($val)) {
             $minlen = $val;
             $maxlen = $val;
         } else {
