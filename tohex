@@ -23,6 +23,7 @@ our %Opt = (
     'debug' => 0,
     'decimal' => 0,
     'help' => 0,
+    'unicode' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -38,6 +39,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "decimal|d" => \$Opt{'decimal'},
     "help|h" => \$Opt{'help'},
+    "unicode|u" => \$Opt{'unicode'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -58,6 +60,11 @@ if (scalar(@ARGV)) {
 my $print_str = $Opt{'decimal'} ? "%u" : "%02x";
 my $spc = '';
 my $count = 0;
+
+if ($Opt{'unicode'}) {
+    binmode(STDIN, ':utf8');
+}
+
 while (<STDIN>) {
     s/(.)/print_byte(ord($1))/gse;
     print;
@@ -103,6 +110,11 @@ Options:
     Use decimal (10 base) output instead of hex.
   -h, --help
     Show this help.
+  -u, --unicode
+    Output Unicode values instead of bytes when reading UTF-8. For 
+    example, when reading the character U+2620, output "2620" instead of 
+    "e2 98 a0" when this option is used. Likewise, when combined with 
+    --decimal, output "9760" instead of "226 152 160".
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
