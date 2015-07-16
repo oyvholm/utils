@@ -12,5 +12,6 @@
 
 script="$1"
 shift
-"$script" 2>&1 | gotexp "$@" ; vimdiff -c "windo set wrap" got exp
+"$script" 2>&1 | gotexp "$@"
+vimdiff -c "windo set wrap" got exp
 rm got exp
