@@ -119,6 +119,14 @@ END
     );
 
     # }}}
+    testcmd("$CMD file.bin", # {{{
+        '',
+        "tohex: file.bin: Unknown command line argument\n",
+        1,
+        'No command line arguments allowed',
+    );
+
+    # }}}
     testcmd("echo This is it. | $CMD", # {{{
         "54 68 69 73 20 69 73 20 69 74 2e 0a\n",
         '',
@@ -285,7 +293,7 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options]
 
 Contains tests for the tohex(1) program.
 

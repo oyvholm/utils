@@ -50,10 +50,15 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+if (scalar(@ARGV)) {
+    warn("$progname: $ARGV[0]: Unknown command line argument\n");
+    exit(1);
+}
+
 my $print_str = $Opt{'decimal'} ? "%u" : "%02x";
 my $spc = '';
 my $count = 0;
-while (<>) {
+while (<STDIN>) {
     s/(.)/print_byte(ord($1))/gse;
     print;
 }
