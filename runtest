@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# runtest
+# File ID: a813eb74-2b2c-11e5-b0b2-000df06acc56
+#
+# [Description]
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+script="$1"
+shift
+"$script" 2>&1 | gotexp "$@" ; vimdiff -c "windo set wrap" got exp
+rm got exp
