@@ -119,6 +119,121 @@ END
     );
 
     # }}}
+    testcmd("echo 76 72 c3 b8 76 6c 65 62 c3 b8 74 74 65 | $CMD", # {{{
+        'vrøvlebøtte',
+        '',
+        0,
+        'Read standard two-digit lowercase hex',
+    );
+
+    # }}}
+    testcmd("echo 466ac3b873756c66206865722c2076656c6b6f6d6d656e2e | $CMD", # {{{
+        'Fjøsulf her, velkommen.',
+        '',
+        0,
+        'No spaces between hex',
+    );
+
+    # }}}
+    testcmd("echo '4j4r6%%574.20 677w26_1756c6+ 573206§9206cg69:612/1.' | $CMD", # {{{
+        'Det graules i lia!',
+        '',
+        0,
+        'Ignore non-hex digits',
+    );
+
+    # }}}
+    testcmd("echo 4B4A48426a6b62686a68626a6b6861732F262F36353435252629282f0A | $CMD", # {{{
+        "KJHBjkbhjhbjkhas/&/6545%&)(/\n",
+        '',
+        0,
+        'Include upper case',
+    );
+
+    # }}}
+    testcmd("$CMD -d fromhex-files/decimal.txt", # {{{
+        <<'END',
+ __________________________
+< Have to test decimal too >
+ --------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+END
+        '',
+        0,
+        'Read decimal numbers with -d, ignore other chars',
+    );
+
+    # }}}
+    testcmd("echo 53 74 65 69 6b 6a 65 20 66 69 6e 65 20 67 61 72 64 69 6e 65 2 | $CMD", # {{{
+        'Steikje fine gardine',
+        '',
+        0,
+        'Don\'t output the byte that\'s missing a nibble',
+    );
+
+    # }}}
+    testcmd("$CMD fromhex-files/single.txt", # {{{
+        <<'END',
+
+ ☺
+/S\
+/'\
+END
+        '',
+        0,
+        'Read single digits on their own line',
+    );
+
+    # }}}
+    testcmd("$CMD fromhex-files/standardpudding.bin", # {{{
+        <<'END',
+Standardpudding til Folket. Det er vel ikke for mye forlangt. Eller skal
+vi sitte her og råtne i luksusen?
+
+    Mvh              ~                                         +--------,
+    Øyvind         _~              +        )        +      '  |/ _      \
+  ,_______________| |______   ,                  ,           .   (~)  + +
+ /________________________/\         .      *           +         U    *
+ |                        ||                                       `.
++-------------------------------------------------------------_      (o_.'
+| All you touch and all you see is all your life will ever be. -_    //\
+| ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭ ✭  -_  V_/_
++-------------------------------------------------------------------------
+END
+        '',
+        0,
+        'Read digits from file with lots of binary noise',
+    );
+
+    # }}}
+    testcmd("echo 59 65 70_2E 20.2192/263a 2190 20 1f6BD | $CMD --unicode", # {{{
+        'Yep. →☺← 🚽',
+        '',
+        0,
+        'Read hex values in Unicode mode (--unicode)',
+    );
+
+    # }}}
+    testcmd("echo 89 101 112_46 32%8594 9786 8592+32 128701 | $CMD -du", # {{{
+        'Yep. →☺← 🚽',
+        '',
+        0,
+        'Read decimal values in Unicode mode (-u)',
+    );
+
+    # }}}
+    testcmd("echo 89 101 112-46 32%8594?9786 8592b32 128701 | $CMD -d", # {{{
+        'Yep. ',
+        "fromhex: Cannot print byte value 8594 in bytewise mode, use -u\n",
+        1,
+        'Read high decimal values when not in Unicode mode',
+    );
+
+    # }}}
 
     todo_section:
     ;
