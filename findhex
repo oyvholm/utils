@@ -176,6 +176,8 @@ Options:
     Show this help.
   -d, --decimal
     Limit search to decimal (0-9) digits.
+  -i, --ignore-case
+    Also include hexadecimal digits with upper case (A-F).
   -l X, --length X
     List only values of length X where X can be:
       X
