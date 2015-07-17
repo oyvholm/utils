@@ -210,6 +210,7 @@ END
     );
 
     # }}}
+    diag('Test -u/--unicode option...');
     testcmd("echo 59 65 70_2E 20.2192/263a 2190 20 1f6BD | $CMD --unicode", # {{{
         'Yep. →☺← 🚽',
         '',
@@ -234,6 +235,7 @@ END
     );
 
     # }}}
+    diag('Suppress Perl warnings about invalid UTF-8...');
     testcmd("echo ffff | $CMD -u", # {{{
         "\xef\xbf\xbf",
         "",
@@ -266,6 +268,7 @@ END
     );
 
     # }}}
+    diag('Enable Perl UTF-8 warnings with -w/--warnings');
     likecmd("echo ffff | $CMD -uw", # {{{
         '/^\xef\xbf\xbf$/',
         '/Unicode non-character U\+FFFF is illegal/',
