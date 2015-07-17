@@ -271,7 +271,7 @@ END
     diag('Enable Perl UTF-8 warnings with -w/--warnings');
     likecmd("echo ffff | $CMD -uw", # {{{
         '/^\xef\xbf\xbf$/',
-        '/Unicode non-character U\+FFFF is illegal/',
+        '/Unicode .* illegal/',
         0,
         "Perl complains about U+FFFF",
     );
@@ -279,7 +279,7 @@ END
     # }}}
     likecmd("echo d800 | $CMD -u --warning", # {{{
         '/^\xed\xa0\x80$/',
-        '/Unicode surrogate U\+D800 is illegal/',
+        '/surrogate .*D800/i',
         0,
         "Perl complains about U+D800",
     );
@@ -287,7 +287,7 @@ END
     # }}}
     likecmd("echo 65535 | $CMD -u --decimal -w", # {{{
         '/^\xef\xbf\xbf$/',
-        '/Unicode non-character U\+FFFF is illegal/',
+        '/Unicode .* illegal/',
         0,
         "Perl complains about U+FFFF (decimal)",
     );
@@ -295,7 +295,7 @@ END
     # }}}
     likecmd("echo 55296 | $CMD -udw", # {{{
         '/^\xed\xa0\x80$/',
-        '/Unicode surrogate U\+D800 is illegal/',
+        '/surrogate .*D800/i',
         0,
         "Perl complains about U+D800 (decimal)",
     );
