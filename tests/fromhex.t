@@ -234,6 +234,38 @@ END
     );
 
     # }}}
+    testcmd("echo ffff | $CMD -u", # {{{
+        "\xef\xbf\xbf",
+        "",
+        0,
+        "Perl doesn't complain about U+FFFF",
+    );
+
+    # }}}
+    testcmd("echo d800 | $CMD -u", # {{{
+        "\xed\xa0\x80",
+        "",
+        0,
+        "Perl doesn't complain about U+D800",
+    );
+
+    # }}}
+    testcmd("echo 65535 | $CMD -ud", # {{{
+        "\xef\xbf\xbf",
+        "",
+        0,
+        "Perl doesn't complain about U+FFFF (decimal)",
+    );
+
+    # }}}
+    testcmd("echo 55296 | $CMD -ud", # {{{
+        "\xed\xa0\x80",
+        "",
+        0,
+        "Perl doesn't complain about U+D800 (decimal)",
+    );
+
+    # }}}
 
     todo_section:
     ;
