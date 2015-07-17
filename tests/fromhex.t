@@ -266,6 +266,38 @@ END
     );
 
     # }}}
+    likecmd("echo ffff | $CMD -uw", # {{{
+        '/^\xef\xbf\xbf$/',
+        '/Unicode non-character U\+FFFF is illegal/',
+        0,
+        "Perl complains about U+FFFF",
+    );
+
+    # }}}
+    likecmd("echo d800 | $CMD -u --warning", # {{{
+        '/^\xed\xa0\x80$/',
+        '/Unicode surrogate U\+D800 is illegal/',
+        0,
+        "Perl complains about U+D800",
+    );
+
+    # }}}
+    likecmd("echo 65535 | $CMD -u --decimal -w", # {{{
+        '/^\xef\xbf\xbf$/',
+        '/Unicode non-character U\+FFFF is illegal/',
+        0,
+        "Perl complains about U+FFFF (decimal)",
+    );
+
+    # }}}
+    likecmd("echo 55296 | $CMD -udw", # {{{
+        '/^\xed\xa0\x80$/',
+        '/Unicode surrogate U\+D800 is illegal/',
+        0,
+        "Perl complains about U+D800 (decimal)",
+    );
+
+    # }}}
 
     todo_section:
     ;

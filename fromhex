@@ -26,6 +26,7 @@ our %Opt = (
     'unicode' => 0,
     'verbose' => 0,
     'version' => 0,
+    'warnings' => 0,
 
 );
 
@@ -42,6 +43,7 @@ GetOptions(
     "unicode|u" => \$Opt{'unicode'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
+    "warnings|w" => \$Opt{'warnings'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
@@ -62,9 +64,17 @@ if ($Opt{'decimal'}) {
     }
 } else {
     if ($Opt{'unicode'}) {
-        no warnings "utf8";
-        while (<>) {
-            s/([\da-f]+)/print(chr(hex($1)))/seig;
+        if (!$Opt{'warnings'}) {
+            no warnings "utf8";
+            # Not very elegant to duplicate code like this, but 'no 
+            # warnings' only works in the local scope.
+            while (<>) {
+                s/([\da-f]+)/print(chr(hex($1)))/seig;
+            }
+        } else {
+            while (<>) {
+                s/([\da-f]+)/print(chr(hex($1)))/seig;
+            }
         }
     } else {
         my $buf = '';
@@ -83,8 +93,12 @@ sub print_decimal {
         warn("$progname: Cannot print byte value $val in bytewise mode, use -u\n");
         exit(1);
     } else {
-        no warnings "utf8";
-        print(chr($val));
+        if (!$Opt{'warnings'}) {
+            no warnings "utf8";
+            print(chr($val));
+        } else {
+            print(chr($val));
+        }
     }
     return('');
     # }}}
@@ -125,6 +139,10 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -w, --warnings
+    Enable Perl warnings about invalid UTF-8. Use this if you want to 
+    generate safe UTF-8 or be warned about invalid code points in 
+    (hexa)decimal input.
   --debug
     Print debugging messages.
 
