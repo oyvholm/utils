@@ -24,6 +24,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'hex' => 0,
+    'size' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -39,6 +40,7 @@ GetOptions(
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "hex|x" => \$Opt{'hex'},
+    "size|s=i" => \$Opt{'size'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
 
@@ -71,7 +73,7 @@ sub check_max {
     # {{{
     my $Str = shift;
     if (length($Str) > $max_length) {
-        $max_length = length($Str);
+        $max_length = $Opt{'size'} ? $Opt{'size'} : length($Str);
     }
     return("");
     # }}}
@@ -111,6 +113,9 @@ Options:
     Show this help.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -s X, --size X
+    Instead of padding to the size of the largest number, pad to a width 
+    of X digits.
   -x, --hex
     Include hexadecimal digits a-f and A-F.
   --version

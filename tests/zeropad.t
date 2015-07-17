@@ -159,6 +159,23 @@ END
     );
 
     # }}}
+    diag('Testing -s/--size option...');
+    testcmd("echo -n 1 234444 5 2312 233333333156 1024 | $CMD -s 4", # {{{
+        '0001 234444 0005 2312 233333333156 1024',
+        '',
+        0,
+        'Pad decimal numbers to four digits, -s 4',
+    );
+
+    # }}}
+    testcmd("echo -n 0 jada 1234567 e 345 - 23477 æøå | $CMD -x --size 5", # {{{
+        '00000 j00ada 1234567 0000e 00345 - 23477 æøå',
+        '',
+        0,
+        'Pad to five hex digits with --size 5',
+    );
+
+    # }}}
     diag('Testing -x/--hex option...');
     testcmd("echo 1 5 12 156 1024 | $CMD -x", # {{{
         "0001 0005 0012 0156 1024\n",
