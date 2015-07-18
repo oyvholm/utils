@@ -442,9 +442,9 @@ sub commit_new_file {
     # {{{
     my $file = shift;
     ok(!-e $file, "$file doesn't exist");
-    open(my $outfp, ">$file");
-    print($outfp "This is $file\n");
-    close($outfp);
+    ok(open(my $outfp, ">$file"), "Create file '$file'");
+    ok(print($outfp "This is $file\n"), "Add content to $file");
+    ok(close($outfp), "Close $file");
     ok(-f $file, "$file exists and is a regular file");
     is(file_data($file), "This is $file\n", "Contents of $file is ok");
     testcmd("$Opt{'git'} add \"$file\"",
