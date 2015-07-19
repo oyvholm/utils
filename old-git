@@ -1,0 +1,290 @@
+#!/bin/bash
+
+#=======================================================================
+# build-git
+# File ID: 352732aa-2e4d-11e5-bd5f-fefdb24f8e10
+# (C)opyleft 2009 Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later
+#=======================================================================
+
+progname=build-git
+lockdir=$HOME/.Build-git.LOCK
+
+myexit() {
+    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
+    exit $1
+}
+
+trap "myexit 1" INT TERM
+mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
+
+rcfile=$HOME/.build-gitrc
+origin_url=git://git.kernel.org/pub/scm/git/git.git
+
+# Directory where the git build happens
+builddir=$HOME/src/other/git/build-git
+
+# Prefix to directory tree where git will be installed. You can change it to 
+# for example $HOME/local if you don’t have root access.
+pref=/usr/local
+
+# If you don’t have sudo rights or you don’t need it at the location in the 
+# file system, clear the value of the $sudo variable
+sudo=sudo
+
+# Local name of remote master
+local_master=master
+
+# Name of remote master
+remote_master=origin/master
+
+# Set to 0 to skip ./configure and use Makefile in git.git instead
+use_configure=1
+configure_opts=
+
+makeflags=
+make_doc=1
+make_info=1
+hname=$(hostname)
+
+[ -e $rcfile ] && . $rcfile
+
+unset opt_no_net
+test "$1" = "--no-net" && { opt_no_net=1; shift; }
+
+if [ -n "$1" ]; then
+    local_master=$1
+fi
+
+is_official_branch() {
+    echo -n $1 | grep -Eq '^(master|maint|next|pu|todo)$' && return 0 || return 1
+}
+
+fetch_remotes() {
+    git remote | grep -q '^origin$' || git remote add origin $origin_url
+    git remote | grep -q '^kernelorg$' || git remote add kernelorg git://git.kernel.org/pub/scm/git/git.git
+    git remote | grep -q '^gitster$' || {
+        git remote add gitster git://github.com/gitster/git.git
+        git config --add remote.gitster.fetch +refs/notes/*:refs/notes/*
+    }
+    git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
+    git remote | grep -q '^peff$' || git remote add peff git://github.com/peff/git.git
+    git remote | grep -q '^sunbase$' || git remote add sunbase sunny@sunbase.org:/home/sunny/repos/Git/git.git
+    if test -z "$opt_no_net"; then
+        echo ================= git fetch =================
+        echo ===== origin =====
+        until git fetch origin; do
+            echo $progname: Fetch error from origin, retrying >&2
+            sleep 2
+        done
+        # git fetch --all arrived in v1.6.6, and that’s too recent to use.
+        for f in $(git remote | grep -v '^origin$'); do
+            echo ===== $f =====
+            git fetch $f
+        done
+        for f in maint master next pu todo; do
+            git branch | cut -c 3- | grep -q ^$f\$ || git branch $f origin/$f
+        done
+    fi
+}
+
+commit_tree() {
+    git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $1
+}
+
+enable_sudo() {
+    until $sudo echo Password OK | grep -q "Password OK"; do
+        :
+    done
+}
+
+push_changes() {
+    if test -z "$opt_no_net"; then
+        for f in bellmann loc-repo passp sunbase github rsync-net; do
+            git remote | grep -q "^$f\$" && {
+                echo ==== push changes to $f ====
+            }
+        done
+        for f in loc-repo passp sunbase rsync-net; do
+            git remote | grep -q "^$f\$" && {
+                echo ==== push tags to $f ====
+            }
+        done
+        echo ==== push finished ====
+    fi
+    lpar_git
+}
+
+print_timestamp() {
+    date +"%Y-%m-%d %H:%M:%S%z"
+}
+
+update_branches() {
+    :
+}
+
+lpar_git() {
+    :
+}
+
+[ -z "`git --version | grep '^git version '`" ] && {
+    echo $progname: You need to have git installed to use this script. >&2
+    myexit 1
+}
+
+rmdir $builddir 2>/dev/null
+if [ ! -d $builddir/. ]; then
+    mkdir -p $builddir || {
+        echo $progname: $builddir: Cannot create directory
+        myexit 1
+    }
+    rmdir $builddir
+    echo ================= git clone =================
+    git clone $origin_url $builddir
+    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
+    git config lpar.name git
+    for f in maint next pu todo; do
+        git branch -t $f origin/$f || {
+            echo $progname: $f: Could not create branch >&2
+            myexit 1
+        }
+    done
+fi
+cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
+GIT_PAGER=cat git status --porcelain | grep . && {
+    echo $progname: $builddir is not clean, aborting >&2
+    myexit 1
+}
+curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
+lpar_git
+
+echo
+echo Variables:
+echo
+echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --long --match 'v[12]*' $curr_git_ver))"
+echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
+echo "builddir       = \"$builddir\""
+echo "pref           = \"$pref\""
+echo "sudo           = \"$sudo\""
+echo "local_master   = \"$local_master\""
+echo "remote_master  = \"$remote_master\""
+echo "makeflags      = \"$makeflags\""
+echo "make_doc       = \"$make_doc\""
+echo "make_info      = \"$make_info\""
+echo "hname          = \"$hname\""
+echo "use_configure  = \"$use_configure\""
+echo "configure_opts = \"$configure_opts\""
+echo
+
+git checkout $local_master || { echo Cannot check out branch >&2; myexit 1; }
+if [ ! -e GIT-VERSION-GEN ]; then
+    # Paranoia check
+    echo $progname: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
+    myexit 1
+fi
+is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
+echo
+if [ -n "$curr_git_ver" ]; then
+    echo ================= git status in `pwd` =================
+    GIT_PAGER=cat git status
+    echo
+    print_timestamp
+    unset choice
+    until [ "$choice" = "y" ]; do
+        echo
+        unset choice
+        echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
+        echo Going to compile git $(git describe --long --match 'v[12]*' $destbranch)
+        echo
+        echo If that looks okay to you, press \'y\' to start the build, or:
+        echo \'d\' to diff
+        echo \'ds\' to diff --stat
+        echo \'dw\' to word-diff
+        echo \'l\' to list log
+        echo \'lp\' to list log with patch
+        echo \'lt\' to list log with commit tree
+        echo \'lw\' to list log with patch using word diff
+        echo \'n\' to abort
+        echo \'p\' to push new commits
+        echo \'t\' to show commit tree
+        read choice
+        [ "$choice" = "d" ] && git diff $curr_git_ver $destbranch
+        [ "$choice" = "ds" ] && git diff --stat $curr_git_ver $destbranch
+        [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
+        [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
+        [ "$choice" = "lp" ] && git log --patch $curr_git_ver..$destbranch
+        [ "$choice" = "lt" ] && git log --graph --stat $curr_git_ver..$destbranch
+        [ "$choice" = "lw" ] && git log --patch --word-diff $curr_git_ver..$destbranch
+        [ "$choice" = "n" ] && myexit 0
+        [ "$choice" = "p" ] && {
+            if test -z "$opt_no_net"; then
+                update_branches
+                push_changes
+            else
+                echo $progname: --no-net was specified, will not push >&2
+            fi
+        }
+        [ "$choice" = "t" ] && commit_tree $curr_git_ver..$destbranch
+    done
+else
+    unset choice
+    until [ "$choice" = "y" ]; do
+        echo -n Press \'y\' to start the build, or \'n\' to abort...
+        read choice
+        [ "$choice" = "n" ] && myexit 0
+    done
+fi
+
+echo ================= git clean =================
+git clean -fxd
+echo ================= Update all branches =================
+update_branches
+vername=git.$local_master.`git describe --long --match 'v[12]*'`
+dest=$pref/varprg/$vername
+[ -d $dest/. ] && {
+    echo
+    echo "Sorry, no new git(1) for you this time."
+    echo You’ll have to stick with `git --version` for now.
+    push_changes
+    myexit 0
+}
+push_changes
+if [ "$use_configure" = "1" ]; then
+    echo $progname: Creating ./configure
+    make configure
+    echo ==== ./configure --prefix=$dest $configure_opts
+    ./configure --prefix=$dest $configure_opts
+fi
+if [ "$make_doc" = "1" ]; then
+    make_doc_str=doc
+    inst_doc_str="install-doc install-html"
+else
+    make_doc_str=
+    inst_doc_str=
+fi
+if [ "$make_info" = "1" ]; then
+    make_info_str=info
+    inst_info_str=install-info
+else
+    make_info_str=
+    inst_info_str=
+fi
+unset make_doc_str make_info_str inst_doc_str inst_info_str
+echo Compiling $vername
+echo ==== make prefix=$dest $makeflags all $make_doc_str $make_info_str \|\| myexit
+make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
+echo ==== make $makeflags test
+echo
+echo Ready to install $(./git --version) from branch \"$local_master\"
+unset choice
+until test "$choice" = "y"; do
+    echo
+    print_timestamp
+    echo -n If all tests succeeded, press y to continue...
+    read choice
+done
+enable_sudo
+echo ==== $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
+$sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
+echo ================= make install finished =================
+myexit 0
