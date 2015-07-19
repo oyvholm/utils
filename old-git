@@ -103,13 +103,11 @@ push_changes() {
         for f in bellmann loc-repo passp sunbase github rsync-net; do
             git remote | grep -q "^$f\$" && {
                 echo ==== push changes to $f ====
-                git push -f $f master maint next pu todo
             }
         done
         for f in loc-repo passp sunbase rsync-net; do
             git remote | grep -q "^$f\$" && {
                 echo ==== push tags to $f ====
-                git push --tags $f
             }
         done
         echo ==== push finished ====
@@ -122,22 +120,11 @@ print_timestamp() {
 }
 
 update_branches() {
-    git checkout $(git log -1 --format=%H) 2>/dev/null
-    echo -n "master: " >&2
-    git push . origin/master:master || {
-        echo $progname: master branch did not fast-forward, aborting >&2
-        git checkout -
-        myexit 1
-    }
-    for f in maint next pu todo; do
-        echo -n "$f: " >&2
-        git push -f . origin/$f:$f
-    done
-    git checkout -f $local_master
+    :
 }
 
 lpar_git() {
-    [ -f $HOME/src/git/lpar/git.lpar ] && lpar
+    :
 }
 
 [ -z "`git --version | grep '^git version '`" ] && {
@@ -195,7 +182,6 @@ if [ ! -e GIT-VERSION-GEN ]; then
     echo $progname: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
     myexit 1
 fi
-fetch_remotes
 is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
 echo
 if [ -n "$curr_git_ver" ]; then
@@ -283,11 +269,11 @@ else
     make_info_str=
     inst_info_str=
 fi
+unset make_doc_str make_info_str inst_doc_str inst_info_str
 echo Compiling $vername
 echo ==== make prefix=$dest $makeflags all $make_doc_str $make_info_str \|\| myexit
 make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
 echo ==== make $makeflags test
-make $makeflags test
 echo
 echo Ready to install $(./git --version) from branch \"$local_master\"
 unset choice
@@ -301,52 +287,4 @@ enable_sudo
 echo ==== $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
-$sudo mkdir -p $pref/{bin,prg,varprg}
-$sudo rm $pref/prg/git
-$sudo ln -svf ../varprg/$vername $pref/prg/git
-$sudo ln -sv /etc $pref/prg/git/etc
-cd $pref/bin || {
-    echo $progname: $pref/bin: Cannot chdir, aborting >&2
-    myexit 1
-}
-$sudo ln -svf ../prg/git/bin/* .
-echo ================= Check that the thing works =================
-hash -r
-localgit=`./git --version`
-globalgit=`git --version`
-if [ "$localgit" = "$globalgit" ]; then
-    echo Congratulations with your shiny new $globalgit
-    cd $builddir || { echo $progname: $builddir: Cannot chdir >&2; myexit 1; }
-    git tag compiled-$hname-$(date -u +"%Y%m%dT%H%M%SZ")
-    test -z "$opt_no_net" && git push --tags sunbase
-else
-    echo Uhm, something went wrong.
-    echo Current version of git : $globalgit
-    echo Expected version of git: $localgit
-    myexit 1
-fi
-lpar_git
-echo ================= symlink manpages =================
-cd $pref/prg/git/share/man
-mansects=`ls`
-for f in $mansects; do
-    $sudo mkdir -p $pref/share/man/$f
-    cd $pref/share/man/$f || {
-        echo $progname: $pref/share/man/$f: Could not chdir, aborting >&2
-        myexit 1
-    }
-    pwd
-    $sudo ln -sf ../../../prg/git/share/man/$f/* .
-done
-if [ -d $pref/.git/. ]; then
-    echo ================= git commit the symlink =================
-    commitmsg=`echo $progname installed $globalgit on $(hostname); echo; suuid -t commit,$progname`
-    cd $pref/prg
-    $sudo git add git
-    echo Commit message:
-    echo $commitmsg
-    $sudo git commit -m "$commitmsg"
-    test -z "$opt_no_net" && git pa
-fi
-
 myexit 0
