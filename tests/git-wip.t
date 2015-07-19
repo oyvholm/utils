@@ -230,6 +230,26 @@ END
     );
 
     # }}}
+    likecmd("echo y | ../../$CMD -p", # {{{
+        '/^master$/',
+        '/^git-wip: Type \'y\' \+ Enter to set active branch to \'master\' \(git checkout\)\.\.\.Switched to branch \'master\'$/',
+        0,
+        'If -p option and no parent, checkout master',
+    );
+
+    # }}}
+    testcmd("$Opt{'git'} branch", # {{{
+        <<END,
+* master
+  wip
+  wip.more-files
+END
+        '',
+        0,
+        "Check current branch status after -p to master",
+    );
+
+    # }}}
     likecmd("$Opt{'git'} checkout wip.more-files", # {{{
         '/^$/',
         '/^Switched to branch \'wip\.more-files\'\\n$/',

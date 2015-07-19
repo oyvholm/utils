@@ -88,7 +88,11 @@ if test -n "$(echo x$ext | grep -E '^x-[dmps]$')"; then
             echo Is already on master, nowhere to $ms_str branch >&2
             exit 1
         fi
-        loop_until_y $ms_str $curr to master
+        if test "$ext" = "-p"; then
+            loop_until_y set active branch to \'master\' \(git checkout\)
+        else
+            loop_until_y $ms_str $curr to master
+        fi
         parent=master
     fi
 
