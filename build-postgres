@@ -1,28 +1,27 @@
 #!/bin/bash
 
 #=======================================================================
-# build-perl
-# File ID: e11bba20-382d-11e4-a75c-c80aa9e67bbd
+# build-postgres
+# File ID: 86126f82-2e60-11e5-bf33-fefdb24f8e10
 # [Description]
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-cd /home/sunny/src/other/perl || exit 1
-export perldir="perl-$(git desc --long)"
-export destdir="/usr/local/varprg/$perldir"
+cd /home/sunny/src/other/postgres || exit 1
+export pgdir="postgres-$(git desc --long --tags)"
+export destdir="/usr/local/varprg/$pgdir"
 sudo rmdir $destdir 2>/dev/null
 sudo mkdir $destdir &&
 sudo chown sunny.sunny $destdir &&
 git clean -fxd &&
 git co -f &&
-./Configure -de -Dusedevel -Dprefix=$destdir &&
+./configure --prefix=$destdir --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp
 make &&
 make test &&
 make install &&
 cd /usr/local/prg &&
-(test -L perl && sudo rm perl || true) &&
-sudo ln -sv ../varprg/$perldir perl &&
-cd ../varprg/$perldir/bin &&
-(test -x perl || ln -sv perl5.* perl) &&
+(test -L postgres && sudo rm postgres || true) &&
+sudo ln -sv ../varprg/$pgdir postgres &&
+cd ../varprg/$pgdir/bin &&
 /usr/local/prg/perl/bin/perl --version ||
 sudo rmdir $destdir
