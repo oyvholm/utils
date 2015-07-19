@@ -100,6 +100,13 @@ END
 
     # }}}
 
+    # git(1) refuses to commit if user.email or user.name isn't defined, 
+    # so abort if that's how things are.
+    like(`git config --get user.email`, qr/./, 'user.email is defined in Git') ||
+        BAIL_OUT('user.email is not defined in Git');
+    like(`git config --get user.name`, qr/./, 'user.name is defined in Git') ||
+        BAIL_OUT('user.name is not defined in Git');
+
     my $Tmptop = "tmp-git-wip-t-$$-" . substr(rand, 2, 8);
     diag("Creating tempdir...");
     ok(mkdir($Tmptop), "mkdir [Tmptop]") or
