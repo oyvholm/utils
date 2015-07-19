@@ -56,4 +56,6 @@ if test "$store_blobs" = "1"; then
 fi
 git delete-banned
 test "$dangfile" = "$(basename $dangfile)" && rm $dangfile
+echo $progname: New branches:
+git branch | git nocom -r
 exit 0

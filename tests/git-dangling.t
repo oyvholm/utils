@@ -132,7 +132,11 @@ END
 
     # }}}
     testcmd("$CMD", # {{{
-        "git-dangling: Creating commit-d5d64eb0e240a25134a2222586d0c76252e89d8c\n",
+        <<END,
+git-dangling: Creating commit-d5d64eb0e240a25134a2222586d0c76252e89d8c
+git-dangling: New branches:
+commit-d5d64eb0e240a25134a2222586d0c76252e89d8c
+END
         '',
         0,
         'Restore origin/expbranch',
