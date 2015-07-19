@@ -3,25 +3,34 @@
 #=======================================================================
 # build-postgres
 # File ID: 86126f82-2e60-11e5-bf33-fefdb24f8e10
-# [Description]
+#
+# Compile and install the Postgres version stored in $srcdir .
+#
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-cd /home/sunny/src/other/postgres || exit 1
+progname=build-postgres
+
+srcdir="$HOME/src/other/postgres"
+cd "$srcdir" || exit 1
 export pgdir="postgres-$(git desc --long --tags)"
 export destdir="/usr/local/varprg/$pgdir"
-sudo rmdir $destdir 2>/dev/null
-sudo mkdir $destdir &&
-sudo chown sunny.sunny $destdir &&
-git clean -fxd &&
-git co -f &&
-./configure --prefix=$destdir --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp
+sudo rmdir "$destdir" 2>/dev/null
+
+sudo mkdir -p "$destdir" &&
+sudo chown sunny.sunny "$destdir" &&
+git wait-until-clean &&
+./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
 make &&
-make test &&
+make check &&
 make install &&
 cd /usr/local/prg &&
 (test -L postgres && sudo rm postgres || true) &&
-sudo ln -sv ../varprg/$pgdir postgres &&
-cd ../varprg/$pgdir/bin &&
-/usr/local/prg/perl/bin/perl --version ||
-sudo rmdir $destdir
+sudo ln -sv "../varprg/$pgdir" postgres &&
+/usr/local/prg/postgres/bin/postgres --version &&
+echo $progname finished successfully >&2 &&
+exit 0 || {
+    echo $progname: Something went wrong, aborted >&2
+    sudo rmdir "$destdir"
+    exit 1
+}
