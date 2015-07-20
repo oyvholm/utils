@@ -15,6 +15,10 @@ srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
 pgdir="postgres-$(git desc --long --tags)"
 destdir="/usr/local/varprg/$pgdir"
+test -e "$destdir" && {
+    echo $progname: $destdir already exists >&2
+    exit 1
+}
 sudo rmdir "$destdir" 2>/dev/null
 
 sudo mkdir -p "$destdir" &&
