@@ -19,7 +19,7 @@ sudo rmdir "$destdir" 2>/dev/null
 
 sudo mkdir -p "$destdir" &&
 sudo chown sunny.sunny "$destdir" &&
-git wait-until-clean &&
+git wait-until-clean -i &&
 ./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
 make &&
 make check &&
