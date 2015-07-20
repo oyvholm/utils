@@ -15,6 +15,7 @@ srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
 user=sunny
 pgdir="postgres-$(git desc --long --tags)"
+prgdir="/usr/local/prg"
 destdir="/usr/local/varprg/$pgdir"
 test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
@@ -29,7 +30,7 @@ git wait-until-clean -i &&
 make &&
 make check &&
 make install &&
-cd /usr/local/prg &&
+cd "$prgdir" &&
 (test -L postgres && sudo rm postgres || true) &&
 sudo ln -sv "../varprg/$pgdir" postgres &&
 /usr/local/prg/postgres/bin/postgres --version &&
