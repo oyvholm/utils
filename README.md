@@ -308,6 +308,7 @@ the alias somewhere.
 - bs
 - build-git
 - build-perl
+- build-postgres
 - ccc
 - cdiff
 - cdiffa
