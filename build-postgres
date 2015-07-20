@@ -11,6 +11,12 @@
 
 progname=build-postgres
 
+msg() {
+    echo >&2
+    echo $progname: $* >&2
+    return
+}
+
 srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
 user=sunny
@@ -24,13 +30,19 @@ test -e "$destdir" && {
 old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null)"
 sudo rmdir "$destdir" 2>/dev/null
 
+msg mkdir $destdir &&
 sudo mkdir -p "$destdir" &&
+msg chown $user.$user $destdir &&
 sudo chown $user.$user "$destdir" &&
 git wait-until-clean -i &&
 ./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
+msg make &&
 make &&
+msg make check &&
 make check &&
+msg make install &&
 make install &&
+msg Update the $prgdir/postgres symlink &&
 cd "$prgdir" &&
 (test -L postgres && sudo rm postgres || true) &&
 sudo ln -sv "../varprg/$pgdir" postgres &&
@@ -40,7 +52,7 @@ echo $progname: New version: $($prgdir/postgres/bin/postgres --version) >&2 &&
 echo &&
 echo $progname finished successfully >&2 &&
 exit 0 || {
-    echo $progname: Something went wrong, aborted >&2
+    msg Something went wrong, aborted
     sudo rmdir "$destdir"
     exit 1
 }
