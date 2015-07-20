@@ -13,6 +13,7 @@ progname=build-postgres
 
 srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
+user=sunny
 pgdir="postgres-$(git desc --long --tags)"
 destdir="/usr/local/varprg/$pgdir"
 test -e "$destdir" && {
@@ -22,7 +23,7 @@ test -e "$destdir" && {
 sudo rmdir "$destdir" 2>/dev/null
 
 sudo mkdir -p "$destdir" &&
-sudo chown sunny.sunny "$destdir" &&
+sudo chown $user.$user "$destdir" &&
 git wait-until-clean -i &&
 ./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
 make &&
