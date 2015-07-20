@@ -21,6 +21,7 @@ test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
     exit 1
 }
+old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null)"
 sudo rmdir "$destdir" 2>/dev/null
 
 sudo mkdir -p "$destdir" &&
@@ -33,7 +34,10 @@ make install &&
 cd "$prgdir" &&
 (test -L postgres && sudo rm postgres || true) &&
 sudo ln -sv "../varprg/$pgdir" postgres &&
-/usr/local/prg/postgres/bin/postgres --version &&
+echo &&
+echo $progname: Old version: $old_version >&2 &&
+echo $progname: New version: $($prgdir/postgres/bin/postgres --version) >&2 &&
+echo &&
 echo $progname finished successfully >&2 &&
 exit 0 || {
     echo $progname: Something went wrong, aborted >&2
