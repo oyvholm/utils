@@ -12,4 +12,10 @@ if test "$1" = "-c"; then
     exit 0
 fi
 
+if test "$1" = "-g"; then
+    # FIXME: No matter what I do, it won't STFU
+    (okular ~/pub/unicode/current/charts/CodeCharts.pdf &>/dev/null) &
+    exit 0
+fi
+
 zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* | grep -Ei "$@"
