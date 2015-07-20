@@ -1,0 +1,58 @@
+#!/bin/bash
+
+#=======================================================================
+# build-postgres
+# File ID: 86126f82-2e60-11e5-bf33-fefdb24f8e10
+#
+# Compile and install the Postgres version stored in $srcdir .
+#
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=build-postgres
+
+msg() {
+    echo >&2
+    echo $progname: $* >&2
+    return
+}
+
+srcdir="$HOME/src/other/postgres"
+cd "$srcdir" || exit 1
+user=sunny
+pgdir="postgres-$(git desc --long --tags)"
+prgdir="/usr/local/prg"
+destdir="/usr/local/varprg/$pgdir"
+test -e "$destdir" && {
+    echo $progname: $destdir already exists >&2
+    exit 1
+}
+old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null)"
+sudo rmdir "$destdir" 2>/dev/null
+
+msg mkdir $destdir &&
+sudo mkdir -p "$destdir" &&
+msg chown $user.$user $destdir &&
+sudo chown $user.$user "$destdir" &&
+git wait-until-clean -i &&
+./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
+msg make &&
+make &&
+msg make check &&
+make check &&
+msg make install &&
+make install &&
+msg Update the $prgdir/postgres symlink &&
+cd "$prgdir" &&
+(test -L postgres && sudo rm postgres || true) &&
+sudo ln -sv "../varprg/$pgdir" postgres &&
+echo &&
+echo $progname: Old version: $old_version >&2 &&
+echo $progname: New version: $($prgdir/postgres/bin/postgres --version) >&2 &&
+echo &&
+echo $progname finished successfully >&2 &&
+exit 0 || {
+    msg Something went wrong, aborted
+    sudo rmdir "$destdir"
+    exit 1
+}
