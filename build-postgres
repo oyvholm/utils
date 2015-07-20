@@ -13,8 +13,8 @@ progname=build-postgres
 
 srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
-export pgdir="postgres-$(git desc --long --tags)"
-export destdir="/usr/local/varprg/$pgdir"
+pgdir="postgres-$(git desc --long --tags)"
+destdir="/usr/local/varprg/$pgdir"
 sudo rmdir "$destdir" 2>/dev/null
 
 sudo mkdir -p "$destdir" &&
