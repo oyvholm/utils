@@ -8,6 +8,7 @@
 #=======================================================================
 
 progname=wi
+version=0.0.1
 
 msg() {
     echo $* >&2
@@ -34,8 +35,15 @@ Options:
         If this is specified as first argument, don't actually do 
         anything. This will only send diagnostic messages to stderr. 
         Used by 'wi.t'.
+    --version
+        Display program version.
 
 END
+    exit 0
+fi
+
+if test "$1" = "--version"; then
+    echo $progname v$version
     exit 0
 fi
 

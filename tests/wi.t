@@ -97,6 +97,15 @@ END
     );
 
     # }}}
+    diag('Testing --version option...');
+    likecmd("$CMD --version", # {{{
+        '/^\S+ v\d+.\d+\.\d+(\+git)?\n/',
+        '/^$/',
+        0,
+        'Option --version returns version number',
+    );
+
+    # }}}
     diag('Read from stdin...');
     testcmd("$CMD </dev/null", # {{{
         '',
