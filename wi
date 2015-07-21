@@ -9,6 +9,16 @@
 
 progname=wi
 
+msg() {
+    echo $* >&2
+}
+
+unset test_simul
+if test "$1" = "--test-simul"; then
+    test_simul=1
+    shift
+fi
+
 search_str=
 stdin=
 
@@ -18,6 +28,7 @@ fi
 
 unset or_str
 for f in "$@" $stdin; do
+    test -n "$test_simul" && msg f = \'$f\'
     search_str="$search_str ${or_str}s::varchar ILIKE '%$f%'"
     or_str="OR "
 done
@@ -27,6 +38,12 @@ test -z "$search_str" && {
     exit 1
 }
 
-cat <<END | psql suuids | sort -u | less
-COPY (SELECT s FROM uuids WHERE$search_str) TO STDOUT;
-END
+sql_str="COPY (SELECT s FROM uuids WHERE$search_str) TO STDOUT;"
+
+if test -n "$test_simul"; then
+    # --test-simul is specified as $1, only output what would've been 
+    # done
+    echo "$sql_str"
+else
+    echo "$sql_str" | psql suuids | sort -u | less
+fi
