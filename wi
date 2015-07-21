@@ -38,6 +38,20 @@ Options:
     --version
         Display program version.
 
+"-a" and "-o" can be used as modifiers to the search. "-a" is replaced 
+by "AND" and "-o" is replaced with OR. For example:
+
+    abc -o def
+        abc OR def (default)
+    abc -a def
+        abc AND def
+    abc -a def -o ghi
+        abc AND def OR ghi
+    -a abc def
+        abc AND def
+    abc def -a ghi jkl -o mno
+        abc OR def AND ghi AND jkl OR mno
+
 END
     exit 0
 fi
@@ -49,16 +63,30 @@ fi
 
 search_str=
 stdin=
+andor=OR
 
 if test -z "$1"; then
     stdin="`finduuid -u`"
 fi
 
-unset or_str
+unset add_str
 for f in "$@" $stdin; do
     test -n "$test_simul" && msg f = \'$f\'
-    search_str="$search_str ${or_str}s::varchar ILIKE '%$f%'"
-    or_str="OR "
+    case "$f" in
+        (-a)
+            test -n "$test_simul" && msg andor set to AND
+            andor=AND
+            ;;
+        (-o)
+            test -n "$test_simul" && msg andor set to OR
+            andor=OR
+            ;;
+        (*)
+            test -n "$add_str" && or_str="$andor "
+            search_str="$search_str ${or_str}s::varchar ILIKE '%$f%'"
+            add_str="1"
+            ;;
+    esac
 done
 
 test -z "$search_str" && {

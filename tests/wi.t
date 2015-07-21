@@ -170,6 +170,108 @@ END
     );
 
     # }}}
+    diag("Test -a (AND) and -o (OR)...");
+    testcmd("$CMD abc -o def", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' OR s::varchar ILIKE '%def%') TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-o'
+andor set to OR
+f = 'def'
+END
+        0,
+        'Use -o, but that\'s default anyway',
+    );
+
+    # }}}
+    testcmd("$CMD -a abc def", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%') TO STDOUT;\n",
+        <<END,
+f = '-a'
+andor set to AND
+f = 'abc'
+f = 'def'
+END
+        0,
+        '-a specified first, use AND from now on',
+    );
+
+    # }}}
+    testcmd("$CMD abc -a def", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%') TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-a'
+andor set to AND
+f = 'def'
+END
+        0,
+        'Use AND between args',
+    );
+
+    # }}}
+    testcmd("$CMD abc -a def -o ghi", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%' OR s::varchar ILIKE '%ghi%') TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-a'
+andor set to AND
+f = 'def'
+f = '-o'
+andor set to OR
+f = 'ghi'
+END
+        0,
+        '-a and -o between args',
+    );
+
+    # }}}
+    testcmd("$CMD abc -o -a def -a -o ghi", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%' OR s::varchar ILIKE '%ghi%') TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-o'
+andor set to OR
+f = '-a'
+andor set to AND
+f = 'def'
+f = '-a'
+andor set to AND
+f = '-o'
+andor set to OR
+f = 'ghi'
+END
+        0,
+        '-a followed by -o and vice versa',
+    );
+
+    # }}}
+    testcmd("$CMD abc def -a ghi jkl mno -o pqr", # {{{
+        "COPY (SELECT s FROM uuids WHERE " .
+            "s::varchar ILIKE '%abc%' OR " .
+            "s::varchar ILIKE '%def%' AND " .
+            "s::varchar ILIKE '%ghi%' AND " .
+            "s::varchar ILIKE '%jkl%' AND " .
+            "s::varchar ILIKE '%mno%' OR " .
+            "s::varchar ILIKE '%pqr%'" .
+        ") TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = 'def'
+f = '-a'
+andor set to AND
+f = 'ghi'
+f = 'jkl'
+f = 'mno'
+f = '-o'
+andor set to OR
+f = 'pqr'
+END
+        0,
+        'Several args with no -a or -o between',
+    );
+
+    # }}}
 
     todo_section:
     ;
