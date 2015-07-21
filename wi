@@ -19,6 +19,26 @@ if test "$1" = "--test-simul"; then
     shift
 fi
 
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Search the suuids database and send results to stdout.
+
+Syntax: $progname [options] [search expression]
+
+Options:
+
+    -h, --help
+        Show this help.
+    --test-simul
+        If this is specified as first argument, don't actually do 
+        anything. This will only send diagnostic messages to stderr. 
+        Used by 'wi.t'.
+
+END
+    exit 0
+fi
+
 search_str=
 stdin=
 

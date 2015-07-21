@@ -88,6 +88,15 @@ END
 
 =cut
 
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h", # {{{
+        '/  Show this help\./',
+        '/^$/',
+        0,
+        'Option -h prints help screen',
+    );
+
+    # }}}
     diag('Read from stdin...');
     testcmd("$CMD </dev/null", # {{{
         '',
