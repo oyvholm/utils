@@ -116,7 +116,7 @@ END
 
     # }}}
     testcmd("echo jeppec3a1814-2feb-11e5-a5f7-bd3e22fb78992345234553ed5c0a-cbf4-4878-91ae-9dc97431793daaa | $CMD", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%ec3a1814-2feb-11e5-a5f7-bd3e22fb7899%' OR s::varchar ILIKE '%53ed5c0a-cbf4-4878-91ae-9dc97431793d%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%ec3a1814-2feb-11e5-a5f7-bd3e22fb7899%' OR s::varchar LIKE '%53ed5c0a-cbf4-4878-91ae-9dc97431793d%') TO STDOUT;\n",
         <<END,
 f = 'ec3a1814-2feb-11e5-a5f7-bd3e22fb7899'
 f = '53ed5c0a-cbf4-4878-91ae-9dc97431793d'
@@ -128,7 +128,7 @@ END
     # }}}
     diag('Search for command line arguments...');
     testcmd("$CMD abc", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%') TO STDOUT;\n",
         "f = 'abc'\n",
         0,
         'Single argument specified',
@@ -136,7 +136,7 @@ END
 
     # }}}
     testcmd("$CMD abc def", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' OR s::varchar ILIKE '%def%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' OR s::varchar LIKE '%def%') TO STDOUT;\n",
         <<END,
 f = 'abc'
 f = 'def'
@@ -147,7 +147,7 @@ END
 
     # }}}
     testcmd("$CMD abc def 'with space'", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' OR s::varchar ILIKE '%def%' OR s::varchar ILIKE '%with space%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' OR s::varchar LIKE '%def%' OR s::varchar LIKE '%with space%') TO STDOUT;\n",
         <<END,
 f = 'abc'
 f = 'def'
@@ -159,7 +159,7 @@ END
 
     # }}}
     testcmd("$CMD abc def ' with space '", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' OR s::varchar ILIKE '%def%' OR s::varchar ILIKE '% with space %') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' OR s::varchar LIKE '%def%' OR s::varchar LIKE '% with space %') TO STDOUT;\n",
         <<END,
 f = 'abc'
 f = 'def'
@@ -172,7 +172,7 @@ END
     # }}}
     diag("Test -a (AND) and -o (OR)...");
     testcmd("$CMD abc -o def", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' OR s::varchar ILIKE '%def%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' OR s::varchar LIKE '%def%') TO STDOUT;\n",
         <<END,
 f = 'abc'
 f = '-o'
@@ -185,7 +185,7 @@ END
 
     # }}}
     testcmd("$CMD -a abc def", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' AND s::varchar LIKE '%def%') TO STDOUT;\n",
         <<END,
 f = '-a'
 andor set to AND
@@ -198,7 +198,7 @@ END
 
     # }}}
     testcmd("$CMD abc -a def", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' AND s::varchar LIKE '%def%') TO STDOUT;\n",
         <<END,
 f = 'abc'
 f = '-a'
@@ -211,7 +211,7 @@ END
 
     # }}}
     testcmd("$CMD abc -a def -o ghi", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%' OR s::varchar ILIKE '%ghi%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' AND s::varchar LIKE '%def%' OR s::varchar LIKE '%ghi%') TO STDOUT;\n",
         <<END,
 f = 'abc'
 f = '-a'
@@ -227,7 +227,7 @@ END
 
     # }}}
     testcmd("$CMD abc -o -a def -a -o ghi", # {{{
-        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' AND s::varchar ILIKE '%def%' OR s::varchar ILIKE '%ghi%') TO STDOUT;\n",
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' AND s::varchar LIKE '%def%' OR s::varchar LIKE '%ghi%') TO STDOUT;\n",
         <<END,
 f = 'abc'
 f = '-o'
@@ -248,12 +248,12 @@ END
     # }}}
     testcmd("$CMD abc def -a ghi jkl mno -o pqr", # {{{
         "COPY (SELECT s FROM uuids WHERE " .
-            "s::varchar ILIKE '%abc%' OR " .
-            "s::varchar ILIKE '%def%' AND " .
-            "s::varchar ILIKE '%ghi%' AND " .
-            "s::varchar ILIKE '%jkl%' AND " .
-            "s::varchar ILIKE '%mno%' OR " .
-            "s::varchar ILIKE '%pqr%'" .
+            "s::varchar LIKE '%abc%' OR " .
+            "s::varchar LIKE '%def%' AND " .
+            "s::varchar LIKE '%ghi%' AND " .
+            "s::varchar LIKE '%jkl%' AND " .
+            "s::varchar LIKE '%mno%' OR " .
+            "s::varchar LIKE '%pqr%'" .
         ") TO STDOUT;\n",
         <<END,
 f = 'abc'

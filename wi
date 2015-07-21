@@ -83,7 +83,7 @@ for f in "$@" $stdin; do
             ;;
         (*)
             test -n "$add_str" && or_str="$andor "
-            search_str="$search_str ${or_str}s::varchar ILIKE '%$f%'"
+            search_str="$search_str ${or_str}s::varchar LIKE '%$f%'"
             add_str="1"
             ;;
     esac
