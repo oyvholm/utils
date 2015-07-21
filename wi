@@ -7,13 +7,22 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+progname=wi
+
 search_str=
 stdin=
 if test -z "$1"; then
     stdin="`finduuid -u`"
 fi
+unset or_str
 for f in "$@" $stdin; do
-    search_str="$search_str -e $f"
+    search_str="$search_str ${or_str}s::varchar ILIKE '%$f%'"
+    or_str="OR "
 done
-search_str=$1
-psql suuids -c "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%$search_str%') TO STDOUT;" | sort -u | less
+test -z "$search_str" && {
+    echo $progname: No search strings found >&2
+    exit 1
+}
+cat <<END | psql suuids | sort -u | less
+COPY (SELECT s FROM uuids WHERE$search_str) TO STDOUT;
+END
