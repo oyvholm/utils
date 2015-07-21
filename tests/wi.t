@@ -115,6 +115,17 @@ END
     );
 
     # }}}
+    testcmd("echo jeppec3a1814-2feb-11e5-a5f7-bd3e22fb78992345234553ed5c0a-cbf4-4878-91ae-9dc97431793daaa | $CMD", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%ec3a1814-2feb-11e5-a5f7-bd3e22fb7899%' OR s::varchar ILIKE '%53ed5c0a-cbf4-4878-91ae-9dc97431793d%') TO STDOUT;\n",
+        <<END,
+f = 'ec3a1814-2feb-11e5-a5f7-bd3e22fb7899'
+f = '53ed5c0a-cbf4-4878-91ae-9dc97431793d'
+END
+        0,
+        'Search for UUIDs found in stdin',
+    );
+
+    # }}}
     diag('Search for command line arguments...');
     testcmd("$CMD abc", # {{{
         "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%') TO STDOUT;\n",
