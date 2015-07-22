@@ -681,7 +681,6 @@ the alias somewhere.
 - wavto16
 - wdiff
 - wdisk
-- wi
 - wikipedia-export
 - wlan-list
 - wlan0
