@@ -272,6 +272,63 @@ END
     );
 
     # }}}
+    diag("Test -i (ignore case)...");
+    testcmd("$CMD abc -i def", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%' OR s::varchar ILIKE '%def%') TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-i'
+f = 'def'
+END
+        0,
+        '-i sets the following arg to case insensitive',
+    );
+
+    # }}}
+    testcmd("$CMD abc -i def g h i", # {{{
+        "COPY (SELECT s FROM uuids WHERE " .
+            "s::varchar LIKE '%abc%' OR " .
+            "s::varchar ILIKE '%def%' OR " .
+            "s::varchar ILIKE '%g%' OR " .
+            "s::varchar ILIKE '%h%' OR " .
+            "s::varchar ILIKE '%i%'" .
+        ") TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-i'
+f = 'def'
+f = 'g'
+f = 'h'
+f = 'i'
+END
+        0,
+        '-i works with all following args',
+    );
+
+    # }}}
+    testcmd("$CMD abc -a def -i ghi -o jkl", # {{{
+        "COPY (SELECT s FROM uuids WHERE " .
+            "s::varchar LIKE '%abc%' AND " .
+            "s::varchar LIKE '%def%' AND " .
+            "s::varchar ILIKE '%ghi%' OR " .
+            "s::varchar ILIKE '%jkl%'" .
+        ") TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-a'
+andor set to AND
+f = 'def'
+f = '-i'
+f = 'ghi'
+f = '-o'
+andor set to OR
+f = 'jkl'
+END
+        0,
+        'Use -i with -a and -o',
+    );
+
+    # }}}
 
     todo_section:
     ;

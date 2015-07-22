@@ -39,7 +39,12 @@ Options:
         Display program version.
 
 "-a" and "-o" can be used as modifiers to the search. "-a" is replaced 
-by "AND" and "-o" is replaced with OR. For example:
+by "AND" and "-o" is replaced with OR.
+
+-i turns case sensitivity OFF for all following search patterns ('abc' 
+will find 'abc', 'ABC' and 'AbC', etc).
+
+For example:
 
     abc -o def
         abc OR def (default)
@@ -51,6 +56,13 @@ by "AND" and "-o" is replaced with OR. For example:
         abc AND def
     abc def -a ghi jkl -o mno
         abc OR def AND ghi AND jkl OR mno
+
+    abc -i def
+       Searches for 'abc' OR all variants of 'def', i.e., 'DEF' and 
+       'DeF' are also found.
+    abc -a def -i ghi -o jkl
+        Find (lowercase abc) AND (lowercase def) AND (all-case ghi) OR 
+        (all-case jkl).
 
 END
     exit 0
@@ -70,6 +82,7 @@ if test -z "$1"; then
 fi
 
 unset add_str
+like_str=LIKE
 for f in "$@" $stdin; do
     test -n "$test_simul" && msg f = \'$f\'
     case "$f" in
@@ -77,13 +90,16 @@ for f in "$@" $stdin; do
             test -n "$test_simul" && msg andor set to AND
             andor=AND
             ;;
+        (-i)
+            like_str=ILIKE
+            ;;
         (-o)
             test -n "$test_simul" && msg andor set to OR
             andor=OR
             ;;
         (*)
             test -n "$add_str" && or_str="$andor "
-            search_str="$search_str ${or_str}s::varchar LIKE '%$f%'"
+            search_str="$search_str ${or_str}s::varchar $like_str '%$f%'"
             add_str="1"
             ;;
     esac
