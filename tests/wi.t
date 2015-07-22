@@ -329,6 +329,89 @@ END
     );
 
     # }}}
+    diag("Test -I (Be case sensitive about following patterns)...");
+    testcmd("$CMD -I abc", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar LIKE '%abc%') TO STDOUT;\n",
+        <<END,
+f = '-I'
+f = 'abc'
+END
+        0,
+        '-I as first option makes no difference, case sensitive search is the default',
+    );
+
+    # }}}
+    testcmd("$CMD -i abc -I def", # {{{
+        "COPY (SELECT s FROM uuids WHERE s::varchar ILIKE '%abc%' OR s::varchar LIKE '%def%') TO STDOUT;\n",
+        <<END,
+f = '-i'
+f = 'abc'
+f = '-I'
+f = 'def'
+END
+        0,
+        'First arg all-case, second arg case sensitive',
+    );
+
+    # }}}
+    testcmd("$CMD abc -I def -a ghi -i JkL mno -o -i pqr -I stu", # {{{
+        "COPY (SELECT s FROM uuids WHERE " .
+            "s::varchar LIKE '%abc%' OR " .
+            "s::varchar LIKE '%def%' AND " .
+            "s::varchar LIKE '%ghi%' AND " .
+            "s::varchar ILIKE '%JkL%' AND " .
+            "s::varchar ILIKE '%mno%' OR " .
+            "s::varchar ILIKE '%pqr%' OR " .
+            "s::varchar LIKE '%stu%'" .
+        ") TO STDOUT;\n",
+        <<END,
+f = 'abc'
+f = '-I'
+f = 'def'
+f = '-a'
+andor set to AND
+f = 'ghi'
+f = '-i'
+f = 'JkL'
+f = 'mno'
+f = '-o'
+andor set to OR
+f = '-i'
+f = 'pqr'
+f = '-I'
+f = 'stu'
+END
+        0,
+        'Several args with -I, -i -a and -o',
+    );
+
+    # }}}
+    testcmd("$CMD ABC -a -i def -I -i -I ghi -o JKL", # {{{
+        "COPY (SELECT s FROM uuids WHERE " .
+            "s::varchar LIKE '%ABC%' AND " .
+            "s::varchar ILIKE '%def%' AND " .
+            "s::varchar LIKE '%ghi%' OR " .
+            "s::varchar LIKE '%JKL%'" .
+        ") TO STDOUT;\n",
+        <<END,
+f = 'ABC'
+f = '-a'
+andor set to AND
+f = '-i'
+f = 'def'
+f = '-I'
+f = '-i'
+f = '-I'
+f = 'ghi'
+f = '-o'
+andor set to OR
+f = 'JKL'
+END
+        0,
+        'More -I, -i, -a and -o combinations, some succeeding -i and -I',
+    );
+
+    # }}}
 
     todo_section:
     ;

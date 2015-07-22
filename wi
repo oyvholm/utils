@@ -44,6 +44,9 @@ by "AND" and "-o" is replaced with OR.
 -i turns case sensitivity OFF for all following search patterns ('abc' 
 will find 'abc', 'ABC' and 'AbC', etc).
 
+-I switches case sensitivity ON for all following patterns, this is the 
+default.
+
 For example:
 
     abc -o def
@@ -63,6 +66,12 @@ For example:
     abc -a def -i ghi -o jkl
         Find (lowercase abc) AND (lowercase def) AND (all-case ghi) OR 
         (all-case jkl).
+    abc -i def -I ghi
+       'abc' must be lower case, 'def' can be all cases, ghi must match 
+       case.
+    ABC -a -i def -I ghi -o jkl
+        Find (uppercase abc) AND (both-case def) AND (lowercase ghi) OR 
+        (lowercase jkl).
 
 END
     exit 0
@@ -86,6 +95,9 @@ like_str=LIKE
 for f in "$@" $stdin; do
     test -n "$test_simul" && msg f = \'$f\'
     case "$f" in
+        (-I)
+            like_str=LIKE
+            ;;
         (-a)
             test -n "$test_simul" && msg andor set to AND
             andor=AND
