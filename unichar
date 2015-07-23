@@ -18,4 +18,8 @@ if test "$1" = "-g"; then
     exit 0
 fi
 
-zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* | grep -Ei "$@"
+unset grep_str
+for f in "$@"; do
+    grep_str="$grep_str | grep -Ei $f"
+done
+sh -c "zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* $grep_str"
