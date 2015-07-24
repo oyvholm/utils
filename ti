@@ -1,17 +1,1 @@
-#!/bin/sh
-
-# ti
-# File ID: db9d9ec0-fa70-11dd-9fc7-000475e441b9
-# Terminal Identification – for å identifisere skjermhøyde etc ved 
-# logging.
-
-[ -z "$*" ] || suuid -t ti -c "$*" || { echo ti: suuid error >&2; exit 1; }
-LC_ALL=C stty -a | grep speed
-echo -n "`date -Iseconds` "
-tty
-[ -z "$SESS_UUID" ] || printf 'SESS_UUID = \n%s\n' "$(echo $SESS_UUID | tjah | sed 's/,/\n    ,/g' | sortuuid)"
-[ -z "$LOGGING_UUID" ] || {
-    echo LOGGING_UUID = $LOGGING_UUID
-    cd $HOME/log/script || { echo ti: $HOME/log/script: Cannot chdir >&2; exit 1; }
-    ls | grep $LOGGING_UUID | grep scrlog
-}
+Git/suuid/ti
