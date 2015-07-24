@@ -4,9 +4,12 @@
 # dass
 # File ID: e71b5fc8-31d0-11e5-a8b5-fefdb24f8e10
 #
-# [Description]
+# Experimental Postgres-only suuid logging. Well, it is logged, but it 
+# goes into a separate directory.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+SUUID_LOGDIR="$HOME/uuids/dass"
+suuid -t dass -c "$*"
