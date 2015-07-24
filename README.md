@@ -180,10 +180,6 @@ Read text from stdin and output all lines with bytes &gt; U+007F.
 
 Read text from stdin and print all lines containing invalid UTF-8.
 
-#### finduuid
-
-Search for UUIDs in text or binary data.
-
 #### zeropad
 
 Pad decimal or hecadecimal numbers with zeroes to get equal length.
@@ -509,7 +505,6 @@ the alias somewhere.
 - n0
 - n1
 - n95film
-- needuuid
 - netgraph
 - nettradio
 - nf
@@ -591,7 +586,6 @@ the alias somewhere.
 - snu_epstat
 - sommer
 - sortcvs
-- sortuuid
 - sortxml
 - split_access_log
 - split_ep-logg
@@ -640,9 +634,7 @@ the alias somewhere.
 - termtitle
 - testfail
 - tests
-- ti
 - tilgps
-- tjah
 - tmux_local_install.sh
 - todos
 - togpx
@@ -668,7 +660,6 @@ the alias somewhere.
 - usedchars
 - ustr
 - utc
-- uuiddate
 - v
 - vd
 - vekt
