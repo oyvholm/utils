@@ -13,9 +13,12 @@ ext=.git-logdiff.$(date +%s).$$.tmp
 c1=$(git log -1 --format=format:%h $1)
 c2=$(git log -1 --format=format:%h $2)
 if test -n "$3"; then
-    c1=$3..$c1
-    c2=$3..$c2
+    mbase="$3"
+else
+    mbase="$(git merge-base $c1 $c2)"
 fi
+c1=$mbase..$c1
+c2=$mbase..$c2
 git log --raw --format=raw $p_str $c1 >/tmp/$c1$ext
 git log --raw --format=raw $p_str $c2 >/tmp/$c2$ext
 vimdiff /tmp/{$c1,$c2}$ext
