@@ -3,6 +3,8 @@
 # unichar
 # File ID: 23f515ba-5d47-11df-bcb0-90e6ba3022ac
 
+progname=unichar
+
 if test "$1" = "-c"; then
     # Convert from unichar output to actual UTF-8
     shift
@@ -20,4 +22,8 @@ unset grep_str
 for f in "$@"; do
     grep_str="$grep_str | grep -Ei $f"
 done
+test -z "$grep_str" && {
+    echo $progname: No search string specified >&2
+    exit 1
+}
 sh -c "zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* $grep_str"
