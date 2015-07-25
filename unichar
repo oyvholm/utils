@@ -6,9 +6,7 @@
 if test "$1" = "-c"; then
     # Convert from unichar output to actual UTF-8
     shift
-    while read f; do
-        echo -n "&#x$(echo -n $f | cut -f 1 -d ';');"
-    done | h2u
+    cut -f 1 -d ';' | fromhex -u
     exit 0
 fi
 
