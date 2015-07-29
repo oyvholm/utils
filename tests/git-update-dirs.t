@@ -163,6 +163,127 @@ END
     );
 
     # }}}
+    $CMD = "../../$CMD";
+    my $sep = "================ . ================\n";
+
+    testcmd("$CMD -E 'echo This is nice' .", # {{{
+        "${sep}This is nice\n\n",
+        "git-update-dirs: Executing 'echo This is nice'...\n",
+        0,
+        'Test -E option',
+    );
+
+    # }}}
+    testcmd("$CMD --exec-before 'echo This is nice' .", # {{{
+        "${sep}This is nice\n\n",
+        "git-update-dirs: Executing 'echo This is nice'...\n",
+        0,
+        'Test --exec-before option',
+    );
+
+    # }}}
+
+    testcmd("$CMD -n -l .", # {{{
+        "$sep\n",
+        "git-update-dirs: Simulating 'lpar'...\n" .
+            "git-update-dirs: Simulating 'lpar'...\n",
+        0,
+        'Test -l option',
+    );
+
+    # }}}
+    testcmd("$CMD -n --lpar .", # {{{
+        "$sep\n",
+        "git-update-dirs: Simulating 'lpar'...\n" .
+            "git-update-dirs: Simulating 'lpar'...\n",
+        0,
+        'Test --lpar option',
+    );
+
+    # }}}
+
+    test_option('-t', 'git fsck');
+    test_option('--test', 'git fsck');
+
+    test_option('-F', 'git fetch --all --prune');
+    test_option('--fetch-prune', 'git fetch --all --prune');
+
+    test_option('-f', 'git fetch --all');
+    test_option('--fetch', 'git fetch --all');
+
+    test_option('-p', 'git pull --ff-only');
+    test_option('--pull', 'git pull --ff-only');
+
+    test_option('-g', 'ga sync');
+    test_option('--ga-sync', 'ga sync');
+
+    test_option('-G', nolf(<<END));
+ga sync'...
+git-update-dirs: Simulating 'ga drop --auto'...
+git-update-dirs: Simulating 'ga sync'...
+git-update-dirs: Simulating 'ga get --auto'...
+git-update-dirs: Simulating 'ga sync
+END
+    test_option('--ga-dropget', nolf(<<END));
+ga sync'...
+git-update-dirs: Simulating 'ga drop --auto'...
+git-update-dirs: Simulating 'ga sync'...
+git-update-dirs: Simulating 'ga get --auto'...
+git-update-dirs: Simulating 'ga sync
+END
+
+    test_option('-u', nolf(<<END));
+ga sync'...
+git-update-dirs: Simulating 'ga unused'...
+git-update-dirs: Simulating 'ga dropunused all'...
+git-update-dirs: Simulating 'ga sync
+END
+    test_option('--ga-dropunused', nolf(<<END));
+ga sync'...
+git-update-dirs: Simulating 'ga unused'...
+git-update-dirs: Simulating 'ga dropunused all'...
+git-update-dirs: Simulating 'ga sync
+END
+
+    test_option('-U', nolf(<<END)); # FIXME
+ga sync
+END
+    test_option('--ga-moveunused', nolf(<<END)); # FIXME
+ga sync
+END
+
+    test_option('-N', 'ga-getnew | fold-stdout');
+    test_option('-d', 'git dangling');
+
+    test_option('-a', nolf(<<END)); # FIXME: Add remotes
+git nobr'...
+git-update-dirs: Simulating 'git checkout -
+END
+    test_option('--allbr', nolf(<<END)); # FIXME: Add remotes
+git nobr'...
+git-update-dirs: Simulating 'git checkout -
+END
+
+    # -a
+    # --allbr
+
+    test_option('-P', 'git pa');
+    test_option('--push', 'git pa');
+
+    # -s
+    # --submodule
+
+    # -c
+    # --compress
+
+    # -C
+    # --aggressive-compress
+
+    test_option('-D', 'git dangling -D');
+    test_option('--delete-dangling', 'git dangling -D');
+
+    test_option('-d', 'git dangling');
+    test_option('--dangling', 'git dangling');
 
     todo_section:
     ;
@@ -195,6 +316,26 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub nolf {
+    # Strip \n from string, replacement for chomp() {{{
+    my $str = shift;
+    $str =~ s/\n$//s;
+    return($str);
+    # }}}
+} # nolf()
+
+sub test_option {
+    my ($option, $cmd) = @_;
+
+    return(testcmd("$CMD -n $option .",
+        "================ . ================\n\n",
+        "git-update-dirs: Simulating '$cmd'...\n",
+        0,
+        'Test $option option',
+    ));
+    # }}}
+} # test_option()
 
 sub testcmd {
     # {{{
