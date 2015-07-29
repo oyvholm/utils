@@ -92,7 +92,7 @@ END
 =cut
 
     my $Tmptop = "tmp-git-update-dirs-t-$$-" . substr(rand, 2, 8);
-    ok(mkdir($Tmptop), "mkdir $Tmptop") || BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
+    ok(mkdir($Tmptop), "mkdir [Tmptop]") || BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
 
     diag('Testing -h (--help) option...');
     likecmd("$CMD -h", # {{{
@@ -137,7 +137,7 @@ END
     ) && BAIL_OUT("git-annex is not installed, cannot continue");
 
     # }}}
-    ok(chdir($Tmptop), "chdir $Tmptop") || BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
+    ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
     likecmd("git init repo", # {{{
         '/.*/',
         '/^$/',
@@ -189,8 +189,8 @@ END
 
     # }}}
     ok(chdir(".."), "chdir ..");
-    ok(rmdir($Tmptop), "rmdir $Tmptop");
-    ok(!-d $Tmptop, "$Tmptop is gone");
+    ok(rmdir($Tmptop), "rmdir [Tmptop]");
+    ok(!-d $Tmptop, "[Tmptop] is gone");
 
     diag('Testing finished.');
     # }}}
