@@ -14,6 +14,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Cwd qw{ abs_path getcwd };
 use File::Path qw{ make_path };
 
 local $| = 1;
@@ -54,6 +55,11 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
+    exit(0);
+}
+
+if (get_config_value('lpar.skip') eq 'true') {
+    msg(0, "lpar.skip is 'true', skip lpar in " . getcwd());
     exit(0);
 }
 
@@ -187,6 +193,11 @@ Options:
     Print version information.
   --debug
     Print debugging messages.
+
+If the Git configuration variable lpar.skip is set to 'true' in a 
+specific repository, the command is ignored. This is useful when dealing 
+with shallow clones or grafts where parents or root commits are 
+different from the original repository.
 
 END
     exit($Retval);
