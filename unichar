@@ -8,7 +8,8 @@ progname=unichar
 db="$HOME/.unichar.sqlite"
 
 if test "$1" = "--init"; then
-    if test -z "$2"; then
+    ucdir="$2"
+    if test -z "$ucdir"; then
         cat <<END >&2
 $progname: Unicode data directory not specified
 
@@ -22,12 +23,12 @@ END
         exit 1
     fi
 
-    if test ! -d "$2/."; then
-        echo $progname: $2: Non-existent or unavailable directory >&2
+    if test ! -d "$ucdir/."; then
+        echo $progname: $ucdir: Non-existent or unavailable directory >&2
         exit 1
     fi
 
-    ucdata="$2/UnicodeData.txt"
+    ucdata="$ucdir/UnicodeData.txt"
 
     if test ! -r "$ucdata"; then
         echo $progname: $ucdata not found or is not readable >&2
