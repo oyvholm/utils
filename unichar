@@ -5,6 +5,52 @@
 
 progname=unichar
 
+db="$HOME/.unichar.sqlite"
+
+if test "$1" = "--init"; then
+    if test -z "$2"; then
+        cat <<END >&2
+$progname: Unicode data directory not specified
+
+Syntax: $progname --init directory_with_Unicode_files
+
+The files you need are available from 
+<ftp://unicode.org/Public/UNIDATA/>.
+At the moment only UnicodeData.txt is used.
+
+END
+        exit 1
+    fi
+
+    if test ! -d "$2/."; then
+        echo $progname: $2: Non-existent or unavailable directory >&2
+        exit 1
+    fi
+
+    ucdata="$2/UnicodeData.txt"
+
+    if test ! -r "$ucdata"; then
+        echo $progname: $ucdata not found or is not readable >&2
+        exit 1
+    fi
+
+    sqlite3 "$db" "CREATE TABLE chars (s varchar);" || {
+        echo $progname: $db: SQLite database already exists, >&2
+        echo please remove it and try again >&2
+        exit 1
+    }
+
+    sqlite3 "$db" "CREATE INDEX idx_chars_s ON chars (s);"
+
+    sqlite3 "$db" ".import '$ucdata' chars" && {
+        echo $progname: $ucdata successfully imported into $db >&2
+        exit 0
+    } || {
+        echo $progname: Something went wrong during import into $db >&2
+        exit 1
+    }
+fi
+
 if test "$1" = "-c"; then
     # Convert from unichar output to actual UTF-8
     shift
@@ -18,14 +64,13 @@ if test "$1" = "-g"; then
     exit 0
 fi
 
-unset grep_str
+unset and_str search_str
 for f in "$@"; do
-    # grep_str="$grep_str | grep -Ei $f"
-    grep_str="$grep_str s LIKE '%$f%'"
+    search_str="$search_str$and_str s LIKE '%$f%'"
+    and_str=" AND"
 done
-test -z "$grep_str" && {
+test -z "$search_str" && {
     echo $progname: No search string specified >&2
     exit 1
 }
-# sh -c "zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* $grep_str"
-sqlite3 ~/.unicode.sqlite "SELECT * FROM chars WHERE $grep_str"
+sqlite3 "$db" "SELECT * FROM chars WHERE $search_str"
