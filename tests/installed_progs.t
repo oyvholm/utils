@@ -216,6 +216,7 @@ sub main {
         installed('abiword --version', '/^\d\.\d+\.\d+/', 'stdout');
         installed('bash -c "type -p gnome-system-monitor"', '/bin\/gnome-system-monitor$/', 'stdout');
         installed('celestia --help', '/Usage:.*\bcelestia\b.+OPTION/s', 'stdout');
+        installed('firefox --version', '/Mozilla Firefox \d+\.\d+/', 'stdout');
         installed('geeqie --version', '/^Geeqie \d\./', 'stderr');
         installed('gnucash --version', '/GnuCash \d\./', 'stdout');
         installed('gnumeric --version', '/^gnumeric version /', 'stdout');
