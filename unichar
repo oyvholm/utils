@@ -26,8 +26,8 @@ END
 
 if test "$1" = "--init"; then
     if test -e "$db"; then
-        echo $progname: $db: SQLite database already exists, >&2
-        echo please remove it and try again >&2
+        echo $progname: $db: SQLite database already exists >&2
+        echo $progname: Please remove it and try again >&2
         exit 1
     fi
     ucdir="$2"
@@ -54,10 +54,11 @@ if test "$1" = "--init"; then
                 exit 1
             }
         else
-            echo $progname: Unable to find a suitable download program \(searched for wget and curl\)
+            echo $progname: Unable to find a suitable download program >&2
+            echo $progname: \(searched for wget and curl\) >&2
             exit 1
         fi
-        cd -
+        cd - >/dev/null
     fi
 
     if test ! -d "$ucdir/."; then
