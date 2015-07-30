@@ -9,13 +9,19 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-[ -z "$1" ] && { echo "Syntax: $0 testname [testname [...]]" >&2; exit 1; }
+[ -z "$1" ] && { echo "Syntax: $0 testname [options] [testname [...]]" >&2; exit 1; }
 
 mkdir -p log
 maxlen=0
 retval=0
 tot_ok=0
 tot_not_ok=0
+opt_str=
+
+while printf "%s" "$1" | grep -q ^-; do
+    opt_str="$opt_str $1"
+    shift
+done
 
 for gf in "$@"; do
     currlen=`echo -n $gf | perl -pe 's/\.t$//' | wc -c`
@@ -26,7 +32,7 @@ for gf in "$@"; do
     testname=$gf
     testname=`echo -n $testname | perl -pe 's/\.t$//'`
     printf "%${maxlen}s.t: " $testname
-    ./$testname.t 2>&1 | remove_perltestnumbers >log/$testname.log
+    ./$testname.t $opt_str 2>&1 | remove_perltestnumbers >log/$testname.log
     not_ok_count=$(grep "^not ok -" log/$testname.log | wc -l | tr -d ' ')
     if [ $not_ok_count -gt 0 ]; then
         not_ok_str=", $not_ok_count not ok"
