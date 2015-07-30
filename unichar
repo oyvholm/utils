@@ -64,6 +64,12 @@ if test "$1" = "-g"; then
     exit 0
 fi
 
+if test ! -r "$db"; then
+    echo $progname: Database $db not found, >&2
+    echo you need to run \'$progname --init\' >&2
+    exit 1
+fi
+
 unset and_str search_str
 for f in "$@"; do
     search_str="$search_str$and_str s LIKE '%$f%'"
