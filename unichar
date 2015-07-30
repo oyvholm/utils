@@ -20,10 +20,12 @@ fi
 
 unset grep_str
 for f in "$@"; do
-    grep_str="$grep_str | grep -Ei $f"
+    # grep_str="$grep_str | grep -Ei $f"
+    grep_str="$grep_str s LIKE '%$f%'"
 done
 test -z "$grep_str" && {
     echo $progname: No search string specified >&2
     exit 1
 }
-sh -c "zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* $grep_str"
+# sh -c "zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* $grep_str"
+sqlite3 ~/.unicode.sqlite "SELECT * FROM chars WHERE $grep_str"
