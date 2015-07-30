@@ -8,6 +8,7 @@
 #=======================================================================
 
 sess_str="sess -d mc -t c_mc --"
+test "$1" = "--version" && unset sess_str
 test "$HISTFILE" = "/dev/null" && unset sess_str
 if test -x ~/local/bin/mc; then
     $sess_str ~/local/bin/mc -d -u "$@"
