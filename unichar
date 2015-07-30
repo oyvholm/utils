@@ -24,6 +24,55 @@ END
     exit 1
 }
 
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Search for Unicode characters, different arguments are ANDed against 
+each other
+
+Usage:
+
+  $progname --init [--get] directory_with_Unicode_files
+    Create the database and optionally download the necessary files from 
+    unicode.org .
+
+  $progname search_string [search_string [...]]
+    Search through the database after Unicode characters.
+
+  $progname -c
+    Read $progname output (search result) from stdin and convert it into 
+    proper UTF-8.
+
+  $progname -h
+  $progname --help
+    Show this help.
+
+For example (with Unicode 8.0.0):
+
+  $ $progname latin | wc -l
+  1492
+
+  $ $progname latin ring | wc -l
+  17
+
+  $ $progname die face
+  2680;DIE FACE-1;So;0;ON;;;;;N;;;;;
+  2681;DIE FACE-2;So;0;ON;;;;;N;;;;;
+  2682;DIE FACE-3;So;0;ON;;;;;N;;;;;
+  2683;DIE FACE-4;So;0;ON;;;;;N;;;;;
+  2684;DIE FACE-5;So;0;ON;;;;;N;;;;;
+  2685;DIE FACE-6;So;0;ON;;;;;N;;;;;
+
+  $ $progname fac angr
+  1F620;ANGRY FACE;So;0;ON;;;;;N;;;;;
+
+  $ $progname latin above ring | $progname -c
+  ÅåŮůǺǻẘẙ
+
+END
+    exit 0
+fi
+
 if test "$1" = "--init"; then
     if test -e "$db"; then
         echo $progname: $db: SQLite database already exists >&2
