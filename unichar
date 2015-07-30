@@ -1,7 +1,14 @@
 #!/bin/sh
 
+#=======================================================================
 # unichar
 # File ID: 23f515ba-5d47-11df-bcb0-90e6ba3022ac
+#
+# Create a searchable SQLite database of all Unicode characters
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
 
 progname=unichar
 version=0.1.0
