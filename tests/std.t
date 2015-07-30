@@ -243,21 +243,6 @@ END
 
     # }}}
 
-    todo_section:
-    ;
-
-    if ($Opt{'all'} || $Opt{'todo'}) {
-        diag('Running TODO tests...'); # {{{
-
-        TODO: {
-
-            local $TODO = '';
-            # Insert TODO tests here.
-
-        }
-        # TODO tests }}}
-    }
-
     chdir("..") || die("$progname: Cannot 'chdir ..': $!");
     diag("Cleaning up temp files...");
     $use_svn && likecmd("svn revert $Tmptop", # {{{
@@ -272,6 +257,21 @@ END
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
     ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
     ok(rmdir($Tmptop), "rmdir([Tmptop])");
+
+    todo_section:
+    ;
+
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+            local $TODO = '';
+            # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
+    }
 
     diag('Testing finished.');
     # }}}

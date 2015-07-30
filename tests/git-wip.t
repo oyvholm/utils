@@ -415,6 +415,10 @@ END
     # }}}
     ok(chdir(".."), "chdir .."); # From $Tmptop/
 
+    ok(-d $Tmptop, "[Tmptop] exists");
+    ok(rmdir($Tmptop), "rmdir([Tmptop])");
+    ok(!-e $Tmptop, "Tempdir is gone");
+
     todo_section:
     ;
 
@@ -429,10 +433,6 @@ END
         }
         # TODO tests }}}
     }
-
-    ok(-d $Tmptop, "[Tmptop] exists");
-    ok(rmdir($Tmptop), "rmdir([Tmptop])");
-    ok(!-e $Tmptop, "Tempdir is gone");
 
     diag('Testing finished.');
     # }}}
