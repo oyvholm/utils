@@ -11,11 +11,14 @@ dir_not_specified() {
     cat <<END >&2
 $progname: Unicode data directory not specified
 
-Syntax: $progname --init directory_with_Unicode_files
+Syntax: $progname --init [--get] directory_with_Unicode_files
 
 The files you need are available from 
 <ftp://unicode.org/Public/UNIDATA/>.
 At the moment only UnicodeData.txt is used.
+
+If --get is specified before the directory name, the necessary files 
+will be downloaded into that directory and automatically imported.
 
 END
     exit 1
@@ -24,6 +27,33 @@ END
 if test "$1" = "--init"; then
     ucdir="$2"
     test -z "$ucdir" && dir_not_specified
+
+    if test "$ucdir" = "--get"; then
+        shift
+        test -z "$2" && dir_not_specified
+        ucdir="$2"
+        uc_url="ftp://unicode.org/Public/UNIDATA/UnicodeData.txt"
+        mkdir -p "$ucdir"
+        cd "$ucdir" || {
+            echo $progname: Cannot change directory to \'$ucdir\' >&2
+            exit 1
+        }
+        if wget --version | grep -q "GNU Wget"; then
+            wget "$uc_url" || {
+                echo $progname: Error during download from $uc_url >&2
+                exit 1
+            }
+        elif curl --version | grep -q '^curl [0-9]'; then
+            curl "$uc_url" -o UnicodeData.txt || {
+                echo $progname: Error during download from $uc_url >&2
+                exit 1
+            }
+        else
+            echo $progname: Unable to find a suitable download program \(searched for wget and curl\)
+            exit 1
+        fi
+        cd -
+    fi
 
     if test ! -d "$ucdir/."; then
         echo $progname: $ucdir: Non-existent or unavailable directory >&2
