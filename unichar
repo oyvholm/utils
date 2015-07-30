@@ -7,10 +7,8 @@ progname=unichar
 
 db="$HOME/.unichar.sqlite"
 
-if test "$1" = "--init"; then
-    ucdir="$2"
-    if test -z "$ucdir"; then
-        cat <<END >&2
+dir_not_specified() {
+    cat <<END >&2
 $progname: Unicode data directory not specified
 
 Syntax: $progname --init directory_with_Unicode_files
@@ -20,8 +18,12 @@ The files you need are available from
 At the moment only UnicodeData.txt is used.
 
 END
-        exit 1
-    fi
+    exit 1
+}
+
+if test "$1" = "--init"; then
+    ucdir="$2"
+    test -z "$ucdir" && dir_not_specified
 
     if test ! -d "$ucdir/."; then
         echo $progname: $ucdir: Non-existent or unavailable directory >&2
