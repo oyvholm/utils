@@ -11,4 +11,8 @@ unset file
 for f in /opt/firefox/firefox /usr/bin/firefox; do
     test -x "$f" && { file="$f"; break; }
 done
-sess -t c_firefox -- "$file" "$@"
+if test "$1" = "--version"; then
+    "$file" --version
+else
+    sess -t c_firefox -- "$file" "$@"
+fi
