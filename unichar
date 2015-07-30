@@ -25,6 +25,11 @@ END
 }
 
 if test "$1" = "--init"; then
+    if test -e "$db"; then
+        echo $progname: $db: SQLite database already exists, >&2
+        echo please remove it and try again >&2
+        exit 1
+    fi
     ucdir="$2"
     test -z "$ucdir" && dir_not_specified
 
@@ -67,14 +72,8 @@ if test "$1" = "--init"; then
         exit 1
     fi
 
-    sqlite3 "$db" "CREATE TABLE chars (s varchar);" || {
-        echo $progname: $db: SQLite database already exists, >&2
-        echo please remove it and try again >&2
-        exit 1
-    }
-
+    sqlite3 "$db" "CREATE TABLE chars (s varchar);"
     sqlite3 "$db" "CREATE INDEX idx_chars_s ON chars (s);"
-
     sqlite3 "$db" ".import '$ucdata' chars" && {
         echo $progname: $ucdata successfully imported into $db >&2
         exit 0
