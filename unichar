@@ -4,6 +4,143 @@
 # File ID: 23f515ba-5d47-11df-bcb0-90e6ba3022ac
 
 progname=unichar
+version=0.1.0
+
+db="$HOME/.unichar.sqlite"
+
+dir_not_specified() {
+    cat <<END >&2
+$progname: Unicode data directory not specified
+
+Syntax: $progname --init [--get] directory_with_Unicode_files
+
+The files you need are available from 
+<ftp://unicode.org/Public/UNIDATA/>.
+At the moment only UnicodeData.txt is used.
+
+If --get is specified before the directory name, the necessary files 
+will be downloaded into that directory and automatically imported.
+
+END
+    exit 1
+}
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Search for Unicode characters, different arguments are ANDed against 
+each other
+
+Usage:
+
+  $progname --init [--get] directory_with_Unicode_files
+    Create the database and optionally download the necessary files from 
+    unicode.org .
+
+  $progname search_string [search_string [...]]
+    Search through the database after Unicode characters.
+
+  $progname -c
+    Read $progname output (search result) from stdin and convert it into 
+    proper UTF-8.
+
+  $progname -h
+  $progname --help
+    Show this help.
+
+  $progname --version
+    Print version information.
+
+For example (with Unicode 8.0.0):
+
+  $ $progname latin | wc -l
+  1492
+
+  $ $progname latin ring | wc -l
+  17
+
+  $ $progname die face
+  2680;DIE FACE-1;So;0;ON;;;;;N;;;;;
+  2681;DIE FACE-2;So;0;ON;;;;;N;;;;;
+  2682;DIE FACE-3;So;0;ON;;;;;N;;;;;
+  2683;DIE FACE-4;So;0;ON;;;;;N;;;;;
+  2684;DIE FACE-5;So;0;ON;;;;;N;;;;;
+  2685;DIE FACE-6;So;0;ON;;;;;N;;;;;
+
+  $ $progname fac angr
+  1F620;ANGRY FACE;So;0;ON;;;;;N;;;;;
+
+  $ $progname latin above ring | $progname -c
+  ÅåŮůǺǻẘẙ
+
+END
+    exit 0
+fi
+
+if test "$1" = "--version"; then
+    echo $progname $version
+    exit 0
+fi
+
+if test "$1" = "--init"; then
+    if test -e "$db"; then
+        echo $progname: $db: SQLite database already exists >&2
+        echo $progname: Please remove it and try again >&2
+        exit 1
+    fi
+    ucdir="$2"
+    test -z "$ucdir" && dir_not_specified
+
+    if test "$ucdir" = "--get"; then
+        shift
+        test -z "$2" && dir_not_specified
+        ucdir="$2"
+        uc_url="ftp://unicode.org/Public/UNIDATA/UnicodeData.txt"
+        mkdir -p "$ucdir"
+        cd "$ucdir" || {
+            echo $progname: Cannot change directory to \'$ucdir\' >&2
+            exit 1
+        }
+        if wget --version | grep -q "GNU Wget"; then
+            wget "$uc_url" || {
+                echo $progname: Error during download from $uc_url >&2
+                exit 1
+            }
+        elif curl --version | grep -q '^curl [0-9]'; then
+            curl "$uc_url" -o UnicodeData.txt || {
+                echo $progname: Error during download from $uc_url >&2
+                exit 1
+            }
+        else
+            echo $progname: Unable to find a suitable download program >&2
+            echo $progname: \(searched for wget and curl\) >&2
+            exit 1
+        fi
+        cd - >/dev/null
+    fi
+
+    if test ! -d "$ucdir/."; then
+        echo $progname: $ucdir: Non-existent or unavailable directory >&2
+        exit 1
+    fi
+
+    ucdata="$ucdir/UnicodeData.txt"
+
+    if test ! -r "$ucdata"; then
+        echo $progname: $ucdata not found or is not readable >&2
+        exit 1
+    fi
+
+    sqlite3 "$db" "CREATE TABLE chars (s varchar);"
+    sqlite3 "$db" "CREATE INDEX idx_chars_s ON chars (s);"
+    sqlite3 "$db" ".import '$ucdata' chars" && {
+        echo $progname: $ucdata successfully imported into $db >&2
+        exit 0
+    } || {
+        echo $progname: Something went wrong during import into $db >&2
+        exit 1
+    }
+fi
 
 if test "$1" = "-c"; then
     # Convert from unichar output to actual UTF-8
@@ -18,12 +155,19 @@ if test "$1" = "-g"; then
     exit 0
 fi
 
-unset grep_str
+if test ! -r "$db"; then
+    echo $progname: Database $db not found, >&2
+    echo you need to run \'$progname --init\' >&2
+    exit 1
+fi
+
+unset and_str search_str
 for f in "$@"; do
-    grep_str="$grep_str | grep -Ei $f"
+    search_str="$search_str$and_str s LIKE '%$f%'"
+    and_str=" AND"
 done
-test -z "$grep_str" && {
+test -z "$search_str" && {
     echo $progname: No search string specified >&2
     exit 1
 }
-sh -c "zcat -f $HOME/pub/unicode/UNIDATA/UnicodeData.txt* $grep_str"
+sqlite3 "$db" "SELECT * FROM chars WHERE $search_str"
