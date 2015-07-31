@@ -101,6 +101,22 @@ END
     );
 
     # }}}
+    likecmd("$CMD --help", # {{{
+        '/' .
+            '1\xCC\xB6' .
+            '2\xCC\xB6' .
+            '3\xCC\xB6' .
+            ' \xCC\xB6' .
+            'a\xCC\xB6' .
+            'b\xCC\xB6' .
+            'c\xCC\xB6' .
+            '/',
+        '/^$/',
+        0,
+        'Strikethrough example in usage screen is displayed correctly',
+    );
+
+    # }}}
     diag('Testing -v (--verbose) option...');
     likecmd("$CMD -hv", # {{{
         '/^\n\S+ v\d\.\d\d\n/s',
