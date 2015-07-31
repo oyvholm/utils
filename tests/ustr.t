@@ -130,6 +130,26 @@ END
     );
 
     # }}}
+    testcmd("echo Sausage of death ☠ | $CMD -s", # {{{
+        <<'END',
+S̶a̶u̶s̶a̶g̶e̶ ̶o̶f̶ ̶d̶e̶a̶t̶h̶ ̶☠̶
+END
+        '',
+        0,
+        'Use -s (strikethrough)',
+    );
+
+    # }}}
+    testcmd("echo Dødens pølse ☠ | $CMD --strikethrough", # {{{
+        <<'END',
+D̶ø̶d̶e̶n̶s̶ ̶p̶ø̶l̶s̶e̶ ̶☠̶
+END
+        '',
+        0,
+        'Use --strikethrough',
+    );
+
+    # }}}
 
     todo_section:
     ;

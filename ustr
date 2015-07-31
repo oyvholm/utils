@@ -27,6 +27,7 @@ our %Opt = (
     'debug' => 0,
     'help' => 0,
     'quiet' => 0,
+    'strikethrough' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -42,6 +43,7 @@ GetOptions(
     'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
+    'strikethrough|s' => \$Opt{'strikethrough'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -61,9 +63,13 @@ sub main {
     # {{{
     my %Opt = @_;
     my $Retval = 0;
+    my $combchar = "\x{0332}";
 
+    if ($Opt{'strikethrough'}) {
+        $combchar = "\x{0336}";
+    }
     while (<>) {
-        s/([^\n])/$1\x{0332}/g;
+        s/([^\n])/$1$combchar/g;
         print;
     }
 
@@ -96,6 +102,8 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -s, --strikethrough
+    Use strikethrough (U+0336, '1̶2̶3̶ ̶a̶b̶c̶') instead of underline.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
