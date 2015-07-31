@@ -39,7 +39,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.0.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -99,7 +99,7 @@ END
     # }}}
     diag('Testing -v (--verbose) option...');
     likecmd("$CMD -hv", # {{{
-        '/^\n\S+ v\d\.\d\d\n/s',
+        '/^\n\S+ \d+\.\d+\.\d+(\+git)?\n/s',
         '/^$/',
         0,
         'Option -v with -h returns version number and help screen',
@@ -108,7 +108,7 @@ END
     # }}}
     diag('Testing --version option...');
     likecmd("$CMD --version", # {{{
-        '/^\S+ v\d\.\d\d\n/',
+        '/^\S+ \d+\.\d+\.\d+(\+git)?\n/',
         '/^$/',
         0,
         'Option --version returns version number',
@@ -208,7 +208,7 @@ sub file_data {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
     return;
     # }}}
 } # print_version()
