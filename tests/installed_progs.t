@@ -133,6 +133,7 @@ sub main {
     installed('gzip --version', '/^gzip \d/', 'stdout');
     installed('make --version', '/GNU Make/', 'stdout');
     installed('mc --version', '/GNU Midnight Commander/', 'stdout');
+    installed('mysql --version', '/^$/', 'stdout', 'MySQL is not installed');
     installed('perl --version', '/This is perl( |, v)5/', 'stdout');
     installed('pinfo --version', '/^Przemek\'s Info Viewer /', 'stdout');
     installed('pip --version', '/^pip \d/', 'stdout');
