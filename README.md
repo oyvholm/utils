@@ -643,6 +643,7 @@ the alias somewhere.
 - tolower
 - tosec
 - towav
+- txt2uc
 - txtfold
 - u
 - u2h

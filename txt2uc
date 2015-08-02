@@ -1,0 +1,42 @@
+#!/bin/bash
+
+#=======================================================================
+# txt2uc
+# File ID: 821a49a8-3776-11e5-8c4f-fefdb24f8e10
+#
+# Convert UTF-8 text into the format created by unichar(1).
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=txt2uc
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Convert UTF-8 text into the format created by unichar(1). Displays all 
+characters used, also things like combining chars and that bloody BOM.
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+tohex -u | zeropad -s 4 -x | fmt -1 | while read f; do
+    sqlite3 ~/.unichar.sqlite "SELECT * FROM chars WHERE s LIKE '$f;%';"
+done
