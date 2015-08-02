@@ -125,7 +125,7 @@ sub main {
     installed('find --version', '/GNU findutils/', 'stdout');
     installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
-    installed('git --version', '/git version/', 'stdout');
+    installed('git --version', '/^git version 2\.5/', 'stdout');
     installed('git-annex version', '/^git-annex version: /', 'stdout');
     installed('gnuplot --version', '/^gnuplot /', 'stdout');
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
@@ -145,7 +145,7 @@ sub main {
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
     installed('screen --version', '/^Screen version \d/', 'stdout');
     installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
-    installed('sqlite3 --version', '/^\d\.\d/', 'stdout');
+    installed('sqlite3 --version', '/^3\.8\.11\.1 2015-07-29/', 'stdout');
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
