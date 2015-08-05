@@ -59,6 +59,8 @@ if ($Opt{'version'}) {
 }
 
 my $tmpdb = "tmp-postgres-t-$$-" . substr(rand, 2, 8);
+my $tmp_stdout = '.tmp-postgres-t-stdout.tmp';
+my $tmp_stderr = '.tmp-postgres-t-stderr.tmp';
 
 exit(main(%Opt));
 
@@ -98,6 +100,74 @@ END
     ) && BAIL_OUT("Cannot create temporary database, not much point in going on, then");
 
     # }}}
+    diag('Make sure the db sorting uses C locale');
+    psql_cmd($tmpdb, # {{{
+        <<END,
+CREATE TABLE t (s varchar);
+COPY t FROM stdin;
+f
+gh
+ß
+ser
+æ
+øæ
+å
+
+ØØØØHH
+12
+ÆØ
+ÅØÆ
+→
+©
+🤘
+❤
+☮
+A
+B
+indeed
+\\.
+END
+        '/^' .
+            'CREATE TABLE\n' .
+            'COPY 20\n' .
+            '$/',
+        '/^$/',
+        'Insert unsorted text into db',
+    );
+
+    # }}}
+    psql_cmd($tmpdb, # {{{
+        'COPY (SELECT * FROM t ORDER BY s) TO stdout;',
+        '/^' .
+            '\n' .
+            '12\n' .
+            'A\n' .
+            'B\n' .
+            'f\n' .
+            'gh\n' .
+            'indeed\n' .
+            'ser\n' .
+            '©\n' .
+            'ÅØÆ\n' .
+            'ÆØ\n' .
+            'ØØØØHH\n' .
+            'ß\n' .
+            'å\n' .
+            'æ\n' .
+            'øæ\n' .
+            '→\n' .
+            '☮\n' .
+            '❤\n' .
+            '🤘\n' .
+            '$/',
+        '/^$/',
+        'Text sorting follows the Unicode table',
+    );
+
+    # }}}
+    diag('Cleaning up...');
+    ok(unlink($tmp_stdout), 'Delete stdout tmpfile');
+    ok(unlink($tmp_stderr), 'Delete stderr tmpfile');
     testcmd("dropdb \"$tmpdb\"", # {{{
         '',
         '',
@@ -125,6 +195,18 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub psql_cmd {
+    # {{{
+    my ($db, $sql, $exp_stdout, $exp_stderr, $desc) = @_;
+    ok(open(my $dbpipe, "| psql -X -d \"$tmpdb\" >$tmp_stdout 2>$tmp_stderr"), "Open db pipe ($desc)");
+    ok(print($dbpipe $sql), "Print to pipe ($desc)");
+    ok(close($dbpipe), "Close db pipe ($desc)");
+    like(file_data($tmp_stdout), $exp_stdout, "$desc (stdout)");
+    like(file_data($tmp_stderr), $exp_stderr, "$desc (stderr)");
+    return;
+    # }}}
+} # psql_cmd()
 
 sub testcmd {
     # {{{
