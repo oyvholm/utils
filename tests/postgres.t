@@ -131,7 +131,7 @@ sub testcmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return;
+    return($ret_val >> 8);
     # }}}
 } # testcmd()
 
@@ -159,7 +159,7 @@ sub likecmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return;
+    return($ret_val >> 8);
     # }}}
 } # likecmd()
 
