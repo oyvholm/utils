@@ -58,6 +58,8 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $tmpdb = "tmp-postgres-t-$$-" . substr(rand, 2, 8);
+
 exit(main(%Opt));
 
 sub main {
@@ -88,6 +90,23 @@ END
 
 =cut
 
+    testcmd("createdb \"$tmpdb\"", # {{{
+        '',
+        '',
+        0,
+        'Create temporary database',
+    ) && BAIL_OUT("Cannot create temporary database, not much point in going on, then");
+
+    # }}}
+    testcmd("dropdb \"$tmpdb\"", # {{{
+        '',
+        '',
+        0,
+        'Drop temporary database',
+    );
+
+    # }}}
+
     todo_section:
     ;
 
@@ -117,6 +136,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
+    $Txt =~ s/$tmpdb/\[tmpdb\]/g;
     my $TMP_STDERR = 'postgres-stderr.tmp';
 
     if (defined($Exp_stderr)) {
@@ -145,6 +165,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
+    $Txt =~ s/$tmpdb/\[tmpdb\]/g;
     my $TMP_STDERR = 'postgres-stderr.tmp';
 
     if (defined($Exp_stderr)) {
