@@ -97,7 +97,8 @@ END
         '',
         0,
         'Create temporary database',
-    ) && BAIL_OUT("Cannot create temporary database, not much point in going on, then");
+    ) && BAIL_OUT("Cannot create temporary database, " .
+                  "not much point in going on, then");
 
     # }}}
     diag('Make sure the db sorting uses C locale');
@@ -199,7 +200,8 @@ END
 sub psql_cmd {
     # {{{
     my ($db, $sql, $exp_stdout, $exp_stderr, $desc) = @_;
-    ok(open(my $dbpipe, "| psql -X -d \"$tmpdb\" >$tmp_stdout 2>$tmp_stderr"), "Open db pipe ($desc)");
+    ok(open(my $dbpipe, "| psql -X -d \"$tmpdb\" >$tmp_stdout 2>$tmp_stderr"),
+        "Open db pipe ($desc)");
     ok(print($dbpipe $sql), "Print to pipe ($desc)");
     ok(close($dbpipe), "Close db pipe ($desc)");
     like(file_data($tmp_stdout), $exp_stdout, "$desc (stdout)");
