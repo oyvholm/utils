@@ -144,6 +144,22 @@ fsck SHA384.txt (checksum...)
 ok
 fsck SHA384E.txt (checksum...)
 ok
+fsck SHA3_224.txt (checksum...)
+ok
+fsck SHA3_224E.txt (checksum...)
+ok
+fsck SHA3_256.txt (checksum...)
+ok
+fsck SHA3_256E.txt (checksum...)
+ok
+fsck SHA3_384.txt (checksum...)
+ok
+fsck SHA3_384E.txt (checksum...)
+ok
+fsck SHA3_512.txt (checksum...)
+ok
+fsck SHA3_512E.txt (checksum...)
+ok
 fsck SHA512.txt (checksum...)
 ok
 fsck SHA512E.txt (checksum...)
@@ -179,10 +195,10 @@ END
             'Only 1 of 2 trustworthy copies exist of SHA256\.txt \(7(\.0)? bytes\)\n' .
             'failed\n' .
             '.+' .
-            'git-annex: fsck: 17 failed\n' .
+            'git-annex: fsck: 25 failed\n' .
             '\n' .
-            'Total size of files that need more copies: 123\n' .
-            'Total space needed to get enough copies  : 123\n' .
+            'Total size of files that need more copies: 199\n' .
+            'Total space needed to get enough copies  : 199\n' .
             '$/s'
         ),
         '/^$/',

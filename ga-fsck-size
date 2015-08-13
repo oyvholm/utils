@@ -95,7 +95,7 @@ sub file_size {
     my $retval = '';
     if (-l $filename) {
         my $symlink = readlink($filename);
-        if ($symlink =~ /^.*\/[A-Z0-9]+-s(\d+)-/) {
+        if ($symlink =~ /^.*\/[A-Z0-9_]+-s(\d+)-/) {
             $retval = $1;
         }
     }
