@@ -38,6 +38,7 @@ git allfiles --since=1.week "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga get --auto
 
+msg git allfiles --since=1.week $*
 msg ga fsck --fast --quiet
 git allfiles --since=1.week "$@" |
     strip-nonexisting |
