@@ -19,33 +19,43 @@ msg() {
 
 srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
+
 user=sunny
 pgdir="postgres-$(git desc --long --tags)"
 prgdir="/usr/local/prg"
 destdir="/usr/local/varprg/$pgdir"
+
 test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
     exit 1
 }
+
 old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null)"
 sudo rmdir "$destdir" 2>/dev/null
 
 msg mkdir $destdir &&
 sudo mkdir -p "$destdir" &&
+
 msg chown $user.$user $destdir &&
 sudo chown $user.$user "$destdir" &&
+
 git wait-until-clean -i &&
 ./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
+
 msg make all &&
 make all &&
+
 msg make check &&
 make check &&
+
 msg make install &&
 make install &&
+
 msg Update the $prgdir/postgres symlink &&
 cd "$prgdir" &&
 (test -L postgres && sudo rm postgres || true) &&
 sudo ln -sv "../varprg/$pgdir" postgres &&
+
 echo &&
 echo $progname: Old version: $old_version >&2 &&
 echo $progname: New version: $($prgdir/postgres/bin/postgres --version) >&2 &&
