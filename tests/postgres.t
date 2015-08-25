@@ -110,6 +110,8 @@ f
 gh
 ß
 ser
+a
+o
 æ
 øæ
 å
@@ -119,7 +121,12 @@ ser
 ÆØ
 ÅØÆ
 →
+O
 ©
+X
+Y
+x
+y
 🤘
 ❤
 ☮
@@ -130,7 +137,7 @@ indeed
 END
         '/^' .
             'CREATE TABLE\n' .
-            'COPY 20\n' .
+            'COPY 27\n' .
             '$/',
         '/^$/',
         'Insert unsorted text into db',
@@ -144,10 +151,17 @@ END
             '12\n' .
             'A\n' .
             'B\n' .
+            'O\n' .
+            'X\n' .
+            'Y\n' .
+            'a\n' .
             'f\n' .
             'gh\n' .
             'indeed\n' .
+            'o\n' .
             'ser\n' .
+            'x\n' .
+            'y\n' .
             '©\n' .
             'ÅØÆ\n' .
             'ÆØ\n' .
