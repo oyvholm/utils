@@ -21,7 +21,7 @@ fi
 if test "$1" = "-h" -o "$1" = "--help"; then
     cat <<END
 
-Usage: STDfilenameDTS [options]
+Usage: $progname [options]
 
 Options:
 
