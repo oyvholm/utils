@@ -22,8 +22,9 @@ cd "$srcdir" || exit 1
 
 user=sunny
 pgdir="postgres-$(git desc --long --tags)"
-prgdir="/usr/local/prg"
-destdir="/usr/local/varprg/$pgdir"
+prefix="/usr/local"
+prgdir="$prefix/prg"
+destdir="$prefix/varprg/$pgdir"
 
 test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
