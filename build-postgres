@@ -42,6 +42,7 @@ msg() {
 
 srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
+git wait-until-clean -i
 
 user=sunny
 pgdesc="$(git desc --long --tags)"
@@ -64,7 +65,6 @@ sudo mkdir -p "$destdir" &&
 msg chown $user.$user $destdir &&
 sudo chown $user.$user "$destdir" &&
 
-git wait-until-clean -i &&
 ./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
 
 msg make all &&
