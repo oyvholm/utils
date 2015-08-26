@@ -21,7 +21,8 @@ srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
 
 user=sunny
-pgdir="postgres-$(git desc --long --tags)"
+pgdesc="$(git desc --long --tags)"
+pgdir="postgres-$pgdesc"
 prefix="/usr/local"
 prgdir="$prefix/prg"
 destdir="$prefix/varprg/$pgdir"
