@@ -65,7 +65,7 @@ sudo mkdir -p "$destdir" &&
 msg chown $user.$user $destdir &&
 sudo chown $user.$user "$destdir" &&
 
-msg Run ./configure
+msg Run ./configure &&
 ./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
 
 msg make all &&
