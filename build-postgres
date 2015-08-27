@@ -50,6 +50,7 @@ pgdir="postgres-$pgdesc"
 prefix="/usr/local"
 prgdir="$prefix/prg"
 destdir="$prefix/varprg/$pgdir"
+dbroot="/var/lib/postgresql"
 
 test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
@@ -104,6 +105,12 @@ for f in 1 3 7; do
     cd "$prefix/share/man/man$f" &&
     ln -sv ../../../prg/postgres/share/man/man$f/* . 2>/dev/null || true
 done &&
+
+msg Create \'current\' symlink to $pgdesc &&
+until sudo -u postgres echo postgres pwd OK | grep -q "postgres pwd OK"; do
+    :
+done &&
+sudo -u postgres ln -fnsv "$pgdesc" "$dbroot/current" &&
 
 echo &&
 echo $progname: Old version: $old_version >&2 &&
