@@ -1,0 +1,36 @@
+diff --git a/src/tools/version_stamp.pl b/src/tools/version_stamp.pl
+index 6be1ac0..f463e0a 100755
+--- a/src/tools/version_stamp.pl
++++ b/src/tools/version_stamp.pl
+@@ -17,7 +17,7 @@
+ # Usage: cd to top of source tree and issue
+ #	src/tools/version_stamp.pl MINORVERSION
+ # where MINORVERSION can be a minor release number (0, 1, etc), or
+-# "devel", "alphaN", "betaN", "rcN".
++# "devel", "git", "alphaN", "betaN", "rcN".
+ #
+ 
+ # Major version is hard-wired into the script.  We update it when we branch
+@@ -39,6 +39,13 @@ elsif ($minor eq "devel")
+ 	$dotneeded    = 0;
+ 	$numericminor = 0;
+ }
++elsif ($minor eq "git")
++{
++	$dotneeded    = 0;
++	$numericminor = 0;
++	$minor        = '+' . `git describe --tags --long`;
++	$minor        =~ s/\s+$//;
++}
+ elsif ($minor =~ m/^alpha\d+$/)
+ {
+ 	$dotneeded    = 0;
+@@ -56,7 +63,7 @@ elsif ($minor =~ m/^rc\d+$/)
+ }
+ else
+ {
+-	die "$0: minor-version must be N, devel, alphaN, betaN, or rcN\n";
++	die "$0: minor-version must be N, devel, git, alphaN, betaN, or rcN\n";
+ }
+ 
+ # Create various required forms of the version number
