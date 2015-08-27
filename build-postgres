@@ -67,6 +67,8 @@ sudo chown $user.$user "$destdir" &&
 
 msg Patch src/tools/version_stamp.pl &&
 patch -p1 <~/bin/Patch/postgres/add-git-version.diff &&
+
+msg Execute src/tools/version_stamp.pl git &&
 src/tools/version_stamp.pl git &&
 
 msg Regenerate ./configure &&
@@ -87,18 +89,24 @@ make install &&
 msg make in contrib/uuid-ossp/ &&
 cd contrib/uuid-ossp &&
 make &&
+
+msg make install in contrib/uuid-ossp/ &&
 make install &&
 cd - &&
 
 msg make in src/bin/pgbench/ &&
 cd src/bin/pgbench &&
 make &&
+
+msg make install in src/bin/pgbench/ &&
 make install &&
 cd - &&
 
 msg make in doc/ &&
 cd doc &&
 make &&
+
+msg make install in doc/ &&
 make install &&
 cd - &&
 
