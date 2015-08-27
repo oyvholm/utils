@@ -65,6 +65,13 @@ sudo mkdir -p "$destdir" &&
 msg chown $user.$user $destdir &&
 sudo chown $user.$user "$destdir" &&
 
+msg Patch src/tools/version_stamp.pl &&
+patch -p1 <~/bin/Patch/postgres/add-git-version.diff &&
+src/tools/version_stamp.pl git &&
+
+msg Regenerate ./configure &&
+autoconf &&
+
 msg Run ./configure &&
 ./configure --prefix="$destdir" --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
 
