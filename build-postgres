@@ -76,6 +76,24 @@ make check &&
 msg make install &&
 make install &&
 
+msg make in contrib/uuid-ossp/ &&
+cd contrib/uuid-ossp &&
+make &&
+make install &&
+cd - &&
+
+msg make in src/bin/pgbench/ &&
+cd src/bin/pgbench &&
+make &&
+make install &&
+cd - &&
+
+msg make in doc/ &&
+cd doc &&
+make &&
+make install &&
+cd - &&
+
 msg Update the $prgdir/postgres symlink &&
 cd "$prgdir" &&
 (test -L postgres && sudo rm postgres || true) &&
