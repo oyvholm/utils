@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#=======================================================================
+# git-upstream
+# File ID: cb907ea4-4d42-11e5-8090-fefdb24f8e10
+#
+# Set up local branches to track remote branches.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=git-upstream
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Set up local branches to track remote branches. If no remote is 
+specified, 'origin' is used.
+
+Usage: $progname [options] remote [branches]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+remote=origin
+test -n "$1" && { remote="$1"; shift; }
+git remote | grep -q "^$remote\$" || {
+    echo $progname: $remote: No local remote with that name found >&2
+    exit 1
+}
+
+if test -n "$1"; then
+    branches="$@"
+else
+    branches="$(
+        git branch |
+        fmt -1 |
+        tr -d '\t ' |
+        grep -v -E '^(->|\*)$'
+    )"
+fi
+
+for f in $branches; do
+    git branch -u "$remote/$f" "$f"
+done
