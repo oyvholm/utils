@@ -24,7 +24,7 @@ if test "$1" = "-h" -o "$1" = "--help"; then
 Set up local branches to track remote branches. If no remote is 
 specified, 'origin' is used.
 
-Usage: $progname [options] remote [branches]
+Usage: $progname [options] [remote [branches]]
 
 Options:
 
