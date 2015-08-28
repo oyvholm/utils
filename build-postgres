@@ -110,7 +110,7 @@ sudo ln -sv "../varprg/$pgdir" postgres &&
 msg Create manpage symlinks &&
 for f in 1 3 7; do
     cd "$prefix/share/man/man$f" &&
-    ln -sv ../../../prg/postgres/share/man/man$f/* . 2>/dev/null || true
+    sudo ln -nfsv ../../../prg/postgres/share/man/man$f/* . || true
 done &&
 
 msg Create \'current\' symlink to $pgdesc &&
