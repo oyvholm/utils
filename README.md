@@ -195,6 +195,7 @@ Split contents into files based on separation bytes.
 - git-all-repos
 - git-allfiles
 - git-authoract
+- git-context-diff
 - git-dl
 - git-dobranch
 - git-eb
@@ -340,6 +341,7 @@ the alias somewhere.
 - cvse
 - cvsrootmd5
 - cvsvimdiff
+- dass
 - date2iso
 - dbk
 - dbllf
@@ -515,6 +517,7 @@ the alias somewhere.
 - nosvn
 - ns
 - oggname
+- old-git
 - outl
 - p
 - pakk
@@ -565,6 +568,7 @@ the alias somewhere.
 - rmxmlcomm
 - rot13
 - roundgpx
+- runtest
 - scrdump
 - scrplay
 - sea-repo
@@ -647,6 +651,7 @@ the alias somewhere.
 - txtfold
 - u
 - u2h
+- uc
 - uh2dec
 - uj
 - unichar
