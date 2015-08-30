@@ -51,13 +51,22 @@ prefix="/usr/local"
 prgdir="$prefix/prg"
 destdir="$prefix/varprg/$pgdir"
 dbroot="/var/lib/postgresql"
+dumpfile="$dbroot/$(date -u +"%Y%m%dT%H%M%SZ").all.pgdump.gz"
 
 test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
     exit 1
 }
 
+test -e "$dbroot/$pgdesc/main" && {
+    echo $progname: $dbroot/$pgdesc/main already exists >&2
+    exit 1
+}
+
 old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null)"
+
+msg Current databases: &&
+psql -c '\l+' &&
 
 msg mkdir $destdir &&
 sudo mkdir -p "$destdir" &&
@@ -102,22 +111,39 @@ msg make install in doc/ &&
 make install &&
 cd - &&
 
+until sudo -u postgres echo postgres pwd OK | grep -q "postgres pwd OK"; do
+    :
+done &&
+
+msg Dump all databases to $dumpfile &&
+sudo -u postgres bash -c "pg_dumpall | gzip >\"$dumpfile\"" &&
+
+msg pg_ctl stop &&
+sudo -u postgres pg_ctl -D "$dbroot/current/main" stop &&
+
 msg Update the $prgdir/postgres symlink &&
 cd "$prgdir" &&
-(test -L postgres && sudo rm postgres || true) &&
-sudo ln -sv "../varprg/$pgdir" postgres &&
+sudo ln -fnsv "../varprg/$pgdir" postgres &&
+
+msg Create \'current\' symlink to $pgdesc &&
+sudo -u postgres ln -fnsv "$pgdesc" "$dbroot/current" &&
+
+msg initdb &&
+sudo -u postgres initdb --lc-collate=C -E UTF-8 "$dbroot/$pgdesc/main" &&
+
+msg pg_ctl start &&
+sudo -u postgres pg_ctl -D "$dbroot/$pgdesc/main" -l "$dbroot/$pgdesc/logfile" start &&
+
+sudo -u postgres bash -c "until pg_isready -q; do sleep 1; done" &&
+
+msg Restore databases from $dumpfile &&
+sudo -u postgres bash -c "zcat \"$dumpfile\" | psql postgres" &&
 
 msg Create manpage symlinks &&
 for f in 1 3 7; do
     cd "$prefix/share/man/man$f" &&
     sudo ln -nfsv ../../../prg/postgres/share/man/man$f/* . || true
 done &&
-
-msg Create \'current\' symlink to $pgdesc &&
-until sudo -u postgres echo postgres pwd OK | grep -q "postgres pwd OK"; do
-    :
-done &&
-sudo -u postgres ln -fnsv "$pgdesc" "$dbroot/current" &&
 
 echo &&
 echo $progname: Old version: $old_version >&2 &&
