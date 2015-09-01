@@ -157,6 +157,21 @@ Options:
   --debug
     Print debugging messages.
 
+Postgres:
+
+  createdb DBNAME
+  $progname --create-table | psql DBNAME
+  cat *ACCESS_LOG_FILES* | \\
+    $progname -s SERVERNAME | \\
+    psql DBNAME -c "copy access_log from stdin"
+
+SQLite 3:
+
+  $progname --create-table | sqlite3 DBNAME
+  cat *ACCESS_LOG_FILES* | \\
+    $progname -s SERVERNAME | \\
+    sqlite3 DBNAME '.separator "\\t"' '.import /dev/stdin access_log'
+
 END
     exit($Retval);
     # }}}
