@@ -20,6 +20,7 @@ our $Debug = 0;
 
 our %Opt = (
 
+    'create-table' => 0,
     'debug' => 0,
     'help' => 0,
     'server' => "",
@@ -35,6 +36,7 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
+    "create-table" => \$Opt{'create-table'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
     "server|s=s" => \$Opt{'server'},
@@ -47,6 +49,24 @@ $Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
+    exit(0);
+}
+
+if ($Opt{'create-table'}) {
+    print(<<END);
+CREATE TABLE access_log (
+    host text,
+    ip inet,
+    identd text,
+    username text,
+    date timestamptz,
+    page text,
+    status integer,
+    bytes_sent integer,
+    referrer text,
+    browser text
+);
+END
     exit(0);
 }
 
@@ -124,6 +144,8 @@ Usage: $progname -s servername [options] [file [files [...]]]
 
 Options:
 
+  --create-table
+    Output SQL command to create the database table.
   -h, --help
     Show this help.
   -s x, --server x
