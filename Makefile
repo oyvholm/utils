@@ -36,7 +36,6 @@ remotes:
 	git remote add bitbucket git@bitbucket.org:sunny256/utils.git; true
 	git remote add github git@github.com:sunny256/utils.git; true
 	git remote add gitlab git@gitlab.com:sunny256/utils.git; true
-	git remote add google https://code.google.com/p/sunny256-utils.git; true
 	git remote add repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
 
 lgd:
