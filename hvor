@@ -7,4 +7,4 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-psql gps -c "select wherepos('$1');"
+psql gps -c "COPY (SELECT wherepos('$1')) TO STDOUT;"
