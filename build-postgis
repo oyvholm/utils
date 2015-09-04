@@ -1,0 +1,85 @@
+#!/bin/bash
+
+#=======================================================================
+# build-postgis
+# File ID: 4467f922-5330-11e5-814f-fefdb24f8e10
+#
+# Compile and install PostGIS
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=build-postgis
+VERSION=0.1.0
+
+srcdir="$HOME/src/other/postgis"
+
+msg() {
+    echo >&2
+    echo $progname: $* >&2
+}
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Compile and install PostGIS from $srcdir
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+if ! test -d "$srcdir/."; then
+    git clone git@github.com:postgis/postgis.git $srcdir &&
+    cd "$srcdir" &&
+    echo &&
+    echo $progname: No stable version is selected, you have to choose one. &&
+    echo $progname: Dropping you into a bash shell, please take care of that &&
+    echo $progname: and return to the build with \'exit\'. &&
+    echo &&
+    echo $progname: List of newest tags: &&
+    echo &&
+    git tag --sort=version:refname | grep -E '^[2-9]' | tail &&
+    bash &&
+    echo $progname: Continuing the build process... || {
+        echo $progname: Something went wrong after clone or shell, aborting
+        exit 1
+    }
+fi
+
+tmpdb=postgis-test-$(date +%s)
+
+cd "$srcdir" &&
+git-wait-until-clean -i &&
+msg ./autogen.sh &&
+./autogen.sh &&
+msg ./configure &&
+./configure &&
+msg make &&
+make &&
+msg make install &&
+make install &&
+msg Test that the installation works &&
+createdb "$tmpdb" &&
+psql "$tmpdb" -c "CREATE EXTENSION postgis;" &&
+dropdb "$tmpdb" && {
+    msg PostGIS installation ok
+    exit 0
+} || {
+    msg Cannot create postgis extension, something is wrong
+    exit 1
+}
