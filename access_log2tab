@@ -66,7 +66,8 @@ CREATE TABLE access_log (
     status integer,
     bytes_sent integer,
     referrer text,
-    browser text
+    browser text,
+    w text
 );
 END
     exit(0);
@@ -106,7 +107,8 @@ while (<>) {
                 $6,
                 $7 eq '-' ? 0 : $7,
                 postgresql_copy_safe($8),
-                postgresql_copy_safe($9)
+                postgresql_copy_safe($9),
+                '',
             ) . "\n"
         );
     } else {
