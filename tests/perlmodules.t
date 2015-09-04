@@ -155,6 +155,7 @@ END
         'Term::ReadLine::Perl' => 'libterm-readline-perl-perl',
         'Test::More' => '',
         'Test::Perl::Critic' => 'libtest-perl-critic-perl',
+        'Text::Diff' => 'libtext-diff-perl',
         'Time::HiRes' => '',
         'Time::Local' => '',
         'XML::Parser' => 'libxml-parser-perl',
