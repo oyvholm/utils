@@ -74,9 +74,9 @@ make &&
 msg make install &&
 make install &&
 msg Test that the installation works &&
-createdb "$tmpdb" &&
-psql "$tmpdb" -c "CREATE EXTENSION postgis;" &&
-dropdb "$tmpdb" && {
+sudo -u postgres createdb "$tmpdb" &&
+sudo -u postgres psql "$tmpdb" -c "CREATE EXTENSION postgis;" &&
+sudo -u postgres dropdb "$tmpdb" && {
     msg PostGIS installation ok
     exit 0
 } || {
