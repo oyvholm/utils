@@ -136,6 +136,9 @@ sudo -u postgres pg_ctl -D "$dbroot/$pgdesc/main" -l "$dbroot/$pgdesc/logfile" s
 
 sudo -u postgres bash -c "until pg_isready -q; do sleep 1; done" &&
 
+msg build-postgis &&
+build-postgis &&
+
 msg Restore databases from $dumpfile &&
 sudo -u postgres bash -c "zcat \"$dumpfile\" | psql postgres" &&
 
