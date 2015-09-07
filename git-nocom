@@ -44,6 +44,7 @@ fi
 
 v_str=
 test "$1" = "-r" || v_str=-v
+grep -v "HEAD detached" |
 fmt -1 |
 tr -d '\t ' |
 grep -v -E '^(->|\*)$' |
