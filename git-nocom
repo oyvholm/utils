@@ -9,8 +9,38 @@
 #
 #   git log `git branch -a | git nocom`
 #
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
+
+progname=git-nocom
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+List all branches except those containing "commit-[0-9a-f]{40}" .
+Can be used for things like this:
+
+  git log \`git branch -a | git nocom\`
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 v_str=
 test "$1" = "-r" || v_str=-v
