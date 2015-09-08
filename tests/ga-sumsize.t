@@ -116,6 +116,39 @@ END
 
     # }}}
 
+    testcmd("$CMD </dev/null", # {{{
+        "ga-sumsize: Total size of keys: 0\n",
+        '',
+        0,
+        'Read empty input from stdin',
+    );
+
+    # }}}
+    testcmd("$CMD /dev/null", # {{{
+        "ga-sumsize: Total size of keys: 0\n",
+        '',
+        0,
+        'Read directly from /dev/null',
+    );
+
+    # }}}
+    testcmd("$CMD ga-sumsize-files/1.txt", # {{{
+        "ga-sumsize: Total size of keys: 1948027876\n",
+        '',
+        0,
+        'Read from 1.txt',
+    );
+
+    # }}}
+    testcmd("$CMD <ga-sumsize-files/1.txt", # {{{
+        "ga-sumsize: Total size of keys: 1948027876\n",
+        '',
+        0,
+        'Read from 1.txt via stdin',
+    );
+
+    # }}}
+
     todo_section:
     ;
 
