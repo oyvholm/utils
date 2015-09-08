@@ -255,6 +255,7 @@ the alias somewhere.
 - ga-other
 - ga-repofix
 - ga-sjekk
+- ga-sumsize
 - ga-tree
 
 ### Apache logs
