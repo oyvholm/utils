@@ -125,7 +125,7 @@ sub main {
     installed('find --version', '/GNU findutils/', 'stdout');
     installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
-    installed('git --version', '/^git version 2\.5/', 'stdout');
+    installed('git --version', '/^git version 2\.6/', 'stdout');
     installed('git-annex version', '/^git-annex version: /', 'stdout');
     installed('gnuplot --version', '/^gnuplot /', 'stdout');
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
