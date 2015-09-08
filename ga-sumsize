@@ -20,6 +20,7 @@ local $| = 1;
 
 our %Opt = (
 
+    'display' => 0,
     'help' => 0,
     'quiet' => 0,
     'verbose' => 0,
@@ -34,6 +35,7 @@ our $VERSION = '0.0.0';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'display|d' => \$Opt{'display'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -58,6 +60,7 @@ sub main {
 
     while (<>) {
         $total_size += file_size($_);
+        $Opt{'display'} && print("$total_size $_");
     }
 
     print("$progname: Total size of keys: $total_size\n");
@@ -105,6 +108,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -d, --display
+    Display each line, prefixed by the current count.
   -h, --help
     Show this help.
   -q, --quiet
