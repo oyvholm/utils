@@ -56,7 +56,10 @@ for f in $(git lc $from); do
 done
 
 if test "$opt_p" = "1"; then
-    git vl -p --date-order $lg_args $branches
+    git log --date-order --date=iso --decorate=short --format=fuller --graph \
+      -c -p $lg_args $branches
 else
-    git lg --date-order $lg_args $branches
+    git log --abbrev-commit --date-order --decorate=short --graph \
+      --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d' \
+      $lg_args $branches
 fi
