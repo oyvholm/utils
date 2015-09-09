@@ -3,23 +3,43 @@
 #=======================================================================
 # git-wn
 # File ID: 149ce758-8aca-11e0-afed-37ea9f2067e0
-# [Description]
+#
+# "git what's new", show descendants of a specific commit
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-if test "$1" = "-h" -o "$1" = "--help"; then
-    cat <<'HELP_END'
+progname=git-wn
+VERSION=0.1.0
 
-git "what's new"
-
-Syntax: git wn [commit] [git-lg_args]
-
-If commit is not specified, use HEAD. To use lg_args, a 
-commit/branch/tag/whatever has to be specified as $1.
-
-HELP_END
+if test "$1" = "--version"; then
+    echo $progname $VERSION
     exit 0
 fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+"git what's new", show descendants of a specific commit. For example, 
+after "git fetch", list all new commits.
+
+Usage: $progname [options] [commit] [git-lg_args]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+If commit is not specified, use HEAD. To use lg_args, a 
+commit/branch/tag/whatever has to be specified as \$1.
+
+END
+    exit 0
+fi
+
 unset branches
 from="$1"
 shift
