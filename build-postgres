@@ -151,6 +151,17 @@ done &&
 echo &&
 echo $progname: Old version: $old_version >&2 &&
 echo $progname: New version: $($prgdir/postgres/bin/postgres --version) >&2 &&
+
+if test -d "$prefix/.git/."; then
+    msg Commit the symlink &&
+    commitmsg=$(echo $progname installed $pgdir on $(hostname); echo; suuid -t commit,$progname) &&
+    cd "$prgdir" &&
+    sudo git add postgres &&
+    echo Commit message: &&
+    echo $commitmsg &&
+    sudo git commit -m "$commitmsg"
+fi &&
+
 echo &&
 echo $progname finished successfully >&2 &&
 exit 0 || {
