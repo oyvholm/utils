@@ -30,6 +30,8 @@ Options:
 
   -h, --help
     Show this help.
+  -p
+    Use extended format with patch.
   --version
     Print version information.
 
@@ -39,6 +41,8 @@ commit/branch/tag/whatever has to be specified as \$1.
 END
     exit 0
 fi
+
+test "$1" = "-p" && { opt_p=1; shift; } || unset opt_p
 
 unset branches
 from="$1"
@@ -50,4 +54,9 @@ lg_args="$@"
 for f in $(git lc $from); do
     branches="$branches $from..$f"
 done
-git lg --date-order $lg_args $branches
+
+if test "$opt_p" = "1"; then
+    git vl -p --date-order $lg_args $branches
+else
+    git lg --date-order $lg_args $branches
+fi
