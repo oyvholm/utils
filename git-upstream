@@ -56,5 +56,5 @@ else
 fi
 
 for f in $branches; do
-    git branch -u "$remote/$f" "$f"
+    git -c "advice.setupstreamfailure=false" branch -u "$remote/$f" "$f"
 done
