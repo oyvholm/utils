@@ -24,7 +24,7 @@ if test "$1" = "-h" -o "$1" = "--help"; then
 "git what's new", show descendants of a specific commit. For example, 
 after "git fetch", list all new commits.
 
-Usage: $progname [options] [commit] [git-lg_args]
+Usage: $progname [options] [commit] [git_log_args]
 
 Options:
 
@@ -35,7 +35,7 @@ Options:
   --version
     Print version information.
 
-If commit is not specified, use HEAD. To use lg_args, a 
+If commit is not specified, use HEAD. To use git_log_args, a 
 commit/branch/tag/whatever has to be specified as \$1.
 
 END
@@ -49,7 +49,7 @@ from="$1"
 shift
 test -z "$from" && from=HEAD
 git log -1 $from &>/dev/null || { echo $from: Invalid ref >&2; exit 1; }
-lg_args="$@"
+log_args="$@"
 
 for f in $(git lc $from); do
     branches="$branches $from..$f"
@@ -57,9 +57,9 @@ done
 
 if test "$opt_p" = "1"; then
     git log --date-order --date=iso --decorate=short --format=fuller --graph \
-      -c -p $lg_args $branches
+      -c -p $log_args $branches
 else
     git log --abbrev-commit --date-order --decorate=short --graph \
       --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d' \
-      $lg_args $branches
+      $log_args $branches
 fi
