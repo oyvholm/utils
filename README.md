@@ -432,6 +432,7 @@ the alias somewhere.
 - html2db
 - html2wiki
 - htmlfold
+- httplog
 - hub
 - hvor
 - icat

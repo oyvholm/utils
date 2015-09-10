@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#=======================================================================
+# httplog
+# File ID: e1cda716-5696-11e5-8516-fefdb24f8e10
+#
+# Update the httplog database with info from the Apache logs. One of 
+# those scripts that only works for me.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=httplog
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+cd /var/log/apache2 &&
+./update-db &&
+psql httplog
