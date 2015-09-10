@@ -42,7 +42,6 @@ msg() {
 
 srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
-git wait-until-clean -i
 
 user=sunny
 pgdesc="$(git desc --long --tags)"
@@ -60,6 +59,13 @@ test -e "$destdir" && {
 
 test -e "$dbroot/$pgdesc/main" && {
     echo $progname: $dbroot/$pgdesc/main already exists >&2
+    exit 1
+}
+
+git wait-until-clean &&
+msg Remove ignored files from $(pwd)/ &&
+git clean -fxd || {
+    msg \"git wait-until-clean\" or \"git clean\" failed
     exit 1
 }
 

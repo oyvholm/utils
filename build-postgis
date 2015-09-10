@@ -64,7 +64,10 @@ fi
 tmpdb=postgis-test-$(date +%s)
 
 cd "$srcdir" &&
-git-wait-until-clean -i &&
+git checkout -f ./install-sh &&
+git-wait-until-clean &&
+msg Remove ignored files from $(pwd)/ &&
+git clean -fxd &&
 msg ./autogen.sh &&
 ./autogen.sh &&
 msg ./configure &&
