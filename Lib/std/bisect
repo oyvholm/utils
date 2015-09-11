@@ -38,7 +38,6 @@ function runtest {
 cleangit
 cd $topdir
 inittest
-runtest || { cleangit; echo STDfilenameDTS: bad, returns $bad; exit $bad; }
-cleangit
+runtest || { echo STDfilenameDTS: bad, returns $bad; exit $bad; }
 echo STDfilenameDTS: good, returns $good
 exit $good
