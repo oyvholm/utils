@@ -84,38 +84,14 @@ msg Run ./configure &&
 ./configure --prefix="$destdir" --with-extra-version="+$pgdesc" \
   --enable-debug --with-libxml --with-openssl --with-perl --with-uuid=ossp &&
 
-msg make all &&
-make all &&
+msg make world &&
+make world &&
 
 msg make check &&
 make check &&
 
-msg make install &&
-make install &&
-
-msg make in contrib/uuid-ossp/ &&
-cd contrib/uuid-ossp &&
-make &&
-
-msg make install in contrib/uuid-ossp/ &&
-make install &&
-cd - &&
-
-msg make in src/bin/pgbench/ &&
-cd src/bin/pgbench &&
-make &&
-
-msg make install in src/bin/pgbench/ &&
-make install &&
-cd - &&
-
-msg make in doc/ &&
-cd doc &&
-make &&
-
-msg make install in doc/ &&
-make install &&
-cd - &&
+msg make install-world &&
+make install-world &&
 
 until sudo -u postgres echo postgres pwd OK | grep -q "postgres pwd OK"; do
     :
