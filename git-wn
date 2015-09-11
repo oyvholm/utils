@@ -42,7 +42,8 @@ END
     exit 0
 fi
 
-test "$1" = "-p" && { opt_p=1; shift; } || unset opt_p
+unset opt_p
+test "$1" = "-p" && { opt_p=1; shift; }
 
 unset branches
 from="$1"
