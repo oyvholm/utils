@@ -32,6 +32,8 @@ Options:
     Show this help.
   -p
     Use extended format with patch.
+  -w
+    Same as -p, but use word diff instead
   --version
     Print version information.
 
@@ -44,6 +46,8 @@ fi
 
 unset opt_p
 test "$1" = "-p" && { opt_p=1; shift; }
+unset opt_w word_diff_str
+test "$1" = "-w" && { opt_p=1; opt_w=1; word_diff_str="--word-diff"; shift; }
 
 unset branches
 from="$1"
@@ -58,7 +62,7 @@ done
 
 if test "$opt_p" = "1"; then
     git log --date-order --date=iso --decorate=short --format=fuller --graph \
-      -c -p $log_args $branches
+      $word_diff_str -c -p $log_args $branches
 else
     git log --abbrev-commit --date-order --decorate=short --graph \
       --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d' \
