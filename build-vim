@@ -4,7 +4,7 @@
 # build-vim
 # File ID: 6d23a156-5d3e-11df-9a9a-90e6ba3022ac
 #
-# Mekker ihop ny, fin Vim.
+# Compile and install Vim
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
@@ -12,6 +12,9 @@
 
 progname=build-vim
 VERSION=0.1.0
+
+# Set to "echo" to simulate
+sim=
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -21,24 +24,16 @@ fi
 if test "$1" = "-h" -o "$1" = "--help"; then
     cat <<END
 
-Mekker ihop ny, fin Vim.
+Compile and install Vim
 
 Usage: $progname [options]
 
 Options:
 
   -f
-    Fjern lockdir før man peiser videre.
+    Remove lockdir before installing The Holy Editor.
   -h, --help
     Show this help.
-  -l
-    Lokal laging, ikke kjør update_vim-clean (CVS-oppdatering)
-  -p
-    Ikke patch filene
-  -x
-    Lag gvim med X og saker. Standard oppførsel er å ikke lage med X, 
-    for det er som kjent et delay i begynnelsen hvis det er manko på 
-    X-forbindelse, og Vimmene har en tendens til å daue når X stoppes.
   --version
     Print version information.
 
@@ -46,54 +41,90 @@ END
     exit 0
 fi
 
-lv_lockdir=$HOME/.build-vim.LOCK
-[ "$1" = "-f" ] && { rmdir $lv_lockdir 2>/dev/null; shift; }
-mkdir $lv_lockdir || { echo "build-vim: $lv_lockdir: Lockdir eksisterer, avbryter." >&2; exit 1; }
+msg() {
+    echo >&2
+    echo $progname: $* >&2
+    return
+}
 
-[ "$1" = "-l" ] && { bruk_lokal=1; shift; }
-unset ingen_patch
-[ "$1" = "-p" ] && { ingen_patch=-p; shift; }
-[ "$1" = "-x" ] && { med_x=1; shift; }
-
-if [ "$bruk_lokal" != "1" ]; then
-    update_vim-clean
+lockdir="$HOME/.$progname.LOCK"
+if test "$1" = "-f"; then
+    rmdir -v "$lockdir"
+    shift
 fi
+mkdir "$lockdir" || {
+    echo "build-vim: $lockdir: Lockdir exists, aborting" >&2
+    exit 1
+}
 
-mincvs_vim $ingen_patch || { echo "Et eller annet speist skjedde med mincvs_vim. Kreperer." >&2; rmdir $lv_lockdir; exit 0; }
+srcdir="$HOME/src/other/vim"
+cd "$srcdir" || {
+    rmdir "$lockdir"
+    exit 1
+}
 
-vimcompdir=$HOME/src/other/vim/vim
-cd $vimcompdir || { echo "cd $vimcompdir; Ånn ðe tryn." >&2; rmdir $lv_lockdir; exit 0; }
+user=sunny
+prefix="/usr/local"
+prgdir="$prefix/prg"
+vimdesc="$(git describe --long --tags)"
+destdir="$prefix/varprg/vim-$vimdesc"
 
-x_flags="--enable-gui=no --without-x"
-vim_size=huge
+test -e "$destdir" && {
+    echo $progname: $destdir already exists >&2
+    rmdir "$lockdir"
+    exit 1
+}
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk -o -e $HOME/.devslx.mrk ]; then
-    echo ======== Man er på petronas, vagabond, solsje eller developer.skolelinux.no . Lag lokal vim.
-    vimdir=$HOME/local/prg/vim
-else
-    vimdir=/usr/local/prg/vim
-    if [ "$med_x" = "1" ]; then
-        echo ======== Fikk beskjed om å lage Vim med X og gode greia
-        x_flags="--with-x --enable-gui=gtk"
-    fi
-fi
+msg mkdir and chown $destdir &&
+$sim sudo mkdir -p "$destdir" &&
+$sim sudo chown $user.$user "$destdir" &&
 
-echo -e "======== ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags \x7B\x7B\x7B"
-CFLAGS=-g
-./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags
-echo -e "======== ./configure --prefix=$vimdir --with-features=$vim_size --enable-multibyte $x_flags \x7D\x7D\x7D"
+cd "$srcdir" &&
+$sim git wait-until-clean &&
 
-echo -e "======== make \x7B\x7B\x7B"
-make
-echo -e "======== make \x7D\x7D\x7D"
+msg git clean in $(pwd)/ &&
+$sim git clean -fxd &&
 
-if [ -e $HOME/.petronas.mrk -o -e $HOME/.vagabond.mrk -o -e $HOME/.solsje.mrk -o -e $HOME/.devslx.mrk ]; then
-    echo Vi er på petronas, vagabond, solsje eller developer.skolelinux.no, så vi nøyer oss med:
-else
-    echo Hvis det gikk bra, er det på tide å bli root, og...
-fi
-echo "cd $vimcompdir && rm -rf $vimdir && make install && cp -vp src/vim $vimdir/bin/"
+msg ./configure &&
+$sim ./configure --prefix="$destdir" \
+  --with-features=huge --with-x --enable-multibyte &&
+msg make &&
+$sim make &&
 
-rmdir $lv_lockdir
+msg make install &&
+$sim make install &&
+
+cd "$prgdir" &&
+msg Update the vim symlink in $(pwd)/ &&
+$sim sudo ln -fnsv "../varprg/vim-$vimdesc" vim &&
+
+cd "$prefix/share/man/man1" &&
+msg Create manpage symlinks in $(pwd)/ &&
+$sim sudo ln -fnsv ../../../prg/vim/share/man/man1/* . &&
+
+cd "$prefix/bin" &&
+msg Create symlinks in $(pwd)/ &&
+$sim ln -fnsv ../prg/vim/bin/* . &&
+
+if test -d "$prefix/.git/."; then
+    msg Commit the symlink &&
+    commitmsg=$(echo $progname installed vim-$vimdesc on $(hostname); echo; $sim suuid -t commit,$progname) &&
+    cd "$prgdir" &&
+    $sim sudo git add vim &&
+    echo Commit message: &&
+    echo $commitmsg &&
+    $sim sudo git commit -m "$commitmsg"
+fi &&
+
+{
+    msg Successfully installed vim-$vimdesc
+    retval=0
+} || {
+    msg Something went bananas
+    retval=1
+}
+
+rmdir "$lockdir"
+exit $retval
 
 # vim: set ts=4 sw=4 sts=4 et fenc=utf8 :
