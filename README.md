@@ -307,6 +307,7 @@ the alias somewhere.
 - build-git
 - build-perl
 - build-postgres
+- build-vim
 - ccc
 - cdiff
 - cdiffa
@@ -457,7 +458,6 @@ the alias somewhere.
 - lag3d
 - lag_gqv
 - lag_linker
-- lag_vim
 - latlon
 - line_exec.py
 - linux-counter-machine-update
