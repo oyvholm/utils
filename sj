@@ -34,7 +34,7 @@ elif test "$1" = "df"; then
     df -h | grep ^Filesystem
     df -h --total | grep -e /dev/ -e ^total | sort -h -k4
 elif test "$1" = "kern"; then
-    tail -F /var/log/kern.log
+    tail -F /var/log/kern.log /var/log/syslog
 elif test "$1" = "space"; then
     unset prevlast
     while :; do
