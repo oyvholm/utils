@@ -57,6 +57,7 @@ if ($Opt{'version'}) {
 if ($Opt{'create-table'}) {
     print(<<END);
 CREATE TABLE access_log (
+    w text,
     host text,
     ip inet,
     identd text,
@@ -66,8 +67,7 @@ CREATE TABLE access_log (
     status integer,
     bytes_sent integer,
     referrer text,
-    browser text,
-    w text
+    browser text
 );
 END
     exit(0);
@@ -98,6 +98,7 @@ while (<>) {
     /x) {
         print(
             join("\t",
+                '',
                 $Opt{'server'},
                 $1,
                 $2,
@@ -108,7 +109,6 @@ while (<>) {
                 $7 eq '-' ? 0 : $7,
                 postgresql_copy_safe($8),
                 postgresql_copy_safe($9),
-                '',
             ) . "\n"
         );
     } else {
