@@ -56,7 +56,7 @@ if ($Opt{'version'}) {
 
 if ($Opt{'create-table'}) {
     print(<<END);
-CREATE TABLE access_log (
+CREATE TABLE IF NOT EXISTS access_log (
     w text,
     host text,
     ip inet,
