@@ -69,7 +69,7 @@ git clean -fxd || {
     exit 1
 }
 
-old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null)"
+old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null | fmt -1 | tail -1)"
 
 msg Current databases: &&
 psql -c '\l+' &&
@@ -132,7 +132,7 @@ done &&
 
 echo &&
 echo $progname: Old version: $old_version >&2 &&
-echo $progname: New version: $($prgdir/postgres/bin/postgres --version) >&2 &&
+echo $progname: New version: $($prgdir/postgres/bin/postgres --version | fmt -1 | tail -1) >&2 &&
 
 if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
