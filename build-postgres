@@ -71,6 +71,11 @@ git clean -fxd || {
 
 old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null | fmt -1 | tail -1)"
 
+msg New commits since $old_version:
+git log --abbrev-commit --date-order --decorate=short --graph \
+  --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d' \
+  $old_version..
+
 msg Current databases: &&
 psql -c '\l+' &&
 
