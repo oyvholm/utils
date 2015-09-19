@@ -63,7 +63,10 @@ sub main {
         $Opt{'display'} && print("$total_size $_");
     }
 
-    print("$progname: Total size of keys: $total_size\n");
+    printf("%s: Total size of keys: %u\n",
+        $progname,
+        $total_size,
+    );
 
     return($Retval);
     # }}}
