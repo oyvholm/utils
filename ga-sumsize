@@ -15,6 +15,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Number::Bytes::Human qw(format_bytes);
 
 local $| = 1;
 
@@ -63,9 +64,10 @@ sub main {
         $Opt{'display'} && print("$total_size $_");
     }
 
-    printf("%s: Total size of keys: %u\n",
+    printf("%s: Total size of keys: %u (%s)\n",
         $progname,
         $total_size,
+        format_bytes($total_size),
     );
 
     return($Retval);

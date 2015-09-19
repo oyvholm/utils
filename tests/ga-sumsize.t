@@ -117,7 +117,7 @@ END
     # }}}
 
     testcmd("$CMD </dev/null", # {{{
-        "ga-sumsize: Total size of keys: 0\n",
+        "ga-sumsize: Total size of keys: 0 (0)\n",
         '',
         0,
         'Read empty input from stdin',
@@ -125,7 +125,7 @@ END
 
     # }}}
     testcmd("$CMD /dev/null", # {{{
-        "ga-sumsize: Total size of keys: 0\n",
+        "ga-sumsize: Total size of keys: 0 (0)\n",
         '',
         0,
         'Read directly from /dev/null',
@@ -133,7 +133,7 @@ END
 
     # }}}
     testcmd("$CMD ga-sumsize-files/1.txt", # {{{
-        "ga-sumsize: Total size of keys: 1948027876\n",
+        "ga-sumsize: Total size of keys: 1948027876 (1.9G)\n",
         '',
         0,
         'Read from 1.txt',
@@ -141,7 +141,7 @@ END
 
     # }}}
     testcmd("$CMD <ga-sumsize-files/1.txt", # {{{
-        "ga-sumsize: Total size of keys: 1948027876\n",
+        "ga-sumsize: Total size of keys: 1948027876 (1.9G)\n",
         '',
         0,
         'Read from 1.txt via stdin',
@@ -162,7 +162,7 @@ END
 1948027876   To remove unwanted data: git-annex dropunused NUMBER
 1948027876 
 1948027876 ok
-ga-sumsize: Total size of keys: 1948027876
+ga-sumsize: Total size of keys: 1948027876 (1.9G)
 END
         '',
         0,
@@ -184,7 +184,7 @@ END
 1948027876   To remove unwanted data: git-annex dropunused NUMBER
 1948027876 
 1948027876 ok
-ga-sumsize: Total size of keys: 1948027876
+ga-sumsize: Total size of keys: 1948027876 (1.9G)
 END
         '',
         0,
