@@ -57,7 +57,7 @@ if ($Opt{'version'}) {
 if ($Opt{'create-table'}) {
     print(<<END);
 CREATE TABLE IF NOT EXISTS access_log (
-    w text,
+    w text[],
     host text,
     ip inet,
     identd text,
@@ -98,7 +98,7 @@ while (<>) {
     /x) {
         print(
             join("\t",
-                '',
+                '{}',
                 $Opt{'server'},
                 $1,
                 $2,
