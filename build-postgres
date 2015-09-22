@@ -146,7 +146,9 @@ if test -d "$prefix/.git/."; then
     sudo git add postgres &&
     echo Commit message: &&
     echo $commitmsg &&
-    sudo git commit -m "$commitmsg"
+    sudo git commit -m "$commitmsg" &&
+    msg \"git pa\" in $(pwd) &&
+    (git pa || true)
 fi &&
 
 echo &&
