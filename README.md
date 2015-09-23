@@ -540,6 +540,7 @@ the alias somewhere.
 - po-merge.py
 - poiformat
 - pols
+- posmap
 - prearmor
 - pri
 - primitiv_prompt
