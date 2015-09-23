@@ -23,12 +23,17 @@ if test "$1" = "-h" -o "$1" = "--help"; then
 
 Plot GPS tracks around a specific waypoint.
 
-Usage: $progname waypoint_name [radius_in_metres]
+Usage:
+
+  $progname waypoint_name [radius_in_metres]
+  $progname --list
 
 Options:
 
   -h, --help
     Show this help.
+  -l, --list
+    List all available waypoints.
   --version
     Print version information.
 
@@ -40,6 +45,11 @@ name="$1"
 if test -z "$name"; then
     echo $progname: No waypoint name specified >&2
     exit 1
+fi
+
+if test "$name" = "-l" -o "$name" = "--list"; then
+    psql gps -c "COPY (SELECT name FROM wp) TO STDOUT;"
+    exit 0
 fi
 
 radius=100
