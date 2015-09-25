@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#=======================================================================
+# mymkdir
+# File ID: cbdb01c6-63be-11e5-84b6-fefdb24f8e10
+#
+# Create a directory using sudo(8) where the current user don't have 
+# permission to do so, and set the owner of that directory to the 
+# current user.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=mymkdir
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Create a directory using sudo(8) where the current user don't have 
+permission to do so, and set the owner of that directory to the current 
+user.
+
+Usage: $progname [options] directory
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+user="$(whoami)"
+
+if test "$user" = "root"; then
+    echo $progname: You are root, should be run as a regular user
+    exit 1
+fi
+
+sudo mkdir -vp "$1"
+sudo chown -v "$user"."$user" "$1"

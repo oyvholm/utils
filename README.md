@@ -506,6 +506,7 @@ the alias somewhere.
 - multiapt
 - mvdirnewest
 - myf
+- mymkdir
 - n0
 - n1
 - n95film
