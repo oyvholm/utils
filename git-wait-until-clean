@@ -10,6 +10,36 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+progname=git-wait-until-clean
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Wait until the current Git repository is clean before continuing.
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -i
+    Also wait if there are any ignored files in the repository.
+  -u
+    Allow untracked files in the repository.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
 unset i_str
 test "$1" = "-i" && { i_str=" --ignored"; shift; }
 
