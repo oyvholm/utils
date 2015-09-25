@@ -27,6 +27,8 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
+  -a X
+    Amplify sound with X dB. 10 is a nice value to start with.
   -h, --help
     Show this help.
   -s
@@ -41,8 +43,21 @@ fi
 sess_str="sess -d p -t c_p --"
 test "$HISTFILE" = "/dev/null" && unset sess_str
 ao_str=
+amplify_str=
 pgrep jackd && ao_str=" -ao jack"
+if test "$1" = "-a"; then
+    shift
+    echo "$1" | grep -q -E '^[0-9]+$' || {
+        # Well, mplayer also understands floats, but it's easier to 
+        # just check for [0-9].
+        echo $progname: -a needs an integer argument >&2
+        exit 1
+    }
+    amplify_val="$1";
+    shift
+fi
+test -n "$amplify_val" && amplify_str=" --af=volume=$amplify_val:0"
 test "$1" = "-s" && { use_slow=1; shift; }
 test "$use_slow" = "1" && slow=" -lavdopts fast:skiploopfilter=all"
 test -e /dg-vbox.mrk && vo_str=" -vo x11 -zoom"
-$sess_str mplayer -fs -osdlevel 3$slow$vo_str$ao_str "$@"
+$sess_str mplayer -fs -osdlevel 3$slow$vo_str$ao_str$amplify_str "$@"
