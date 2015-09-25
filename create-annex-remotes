@@ -4,18 +4,46 @@
 # create-annex-remotes
 # File ID: c925d0fe-2a9a-11e4-9f76-c80aa9e67bbd
 #
-# Create remotes in local git-annex repositories. Example usages:
-#   annex-cmd -e create-annex-remotes
-#   annex-cmd -e "create-annex-remotes -r"
+# Create remotes in local git-annex repositories.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=create-annex-remotes
+VERSION=0.1.0
 
 # Set to "echo" to simulate
 simul=
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Create remotes in local git-annex repositories.
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -r
+   Remove non-existing remotes.
+  --version
+    Print version information.
+
+Examples:
+  annex-cmd -e create-annex-remotes
+  annex-cmd -e "create-annex-remotes -r"
+
+END
+    exit 0
+fi
 
 tmp_begin_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.beg.tmp
 tmp_end_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.end.tmp
