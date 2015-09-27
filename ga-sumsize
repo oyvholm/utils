@@ -61,10 +61,11 @@ sub main {
 
     while (<>) {
         $total_size += file_size($_);
-        $Opt{'display'} && print("$total_size $_");
+        $Opt{'display'} && print("$total_size ");
+        print;
     }
 
-    printf("%s: Total size of keys: %u (%s)\n",
+    printf("\n%s: Total size of keys: %u (%s)\n",
         $progname,
         $total_size,
         format_bytes($total_size),
@@ -114,7 +115,7 @@ Usage: $progname [options] [file [files [...]]]
 Options:
 
   -d, --display
-    Display each line, prefixed by the current count.
+    Prefix each line with the current count.
   -h, --help
     Show this help.
   -q, --quiet

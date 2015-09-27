@@ -117,7 +117,7 @@ END
     # }}}
 
     testcmd("$CMD </dev/null", # {{{
-        "ga-sumsize: Total size of keys: 0 (0)\n",
+        "\nga-sumsize: Total size of keys: 0 (0)\n",
         '',
         0,
         'Read empty input from stdin',
@@ -125,7 +125,7 @@ END
 
     # }}}
     testcmd("$CMD /dev/null", # {{{
-        "ga-sumsize: Total size of keys: 0 (0)\n",
+        "\nga-sumsize: Total size of keys: 0 (0)\n",
         '',
         0,
         'Read directly from /dev/null',
@@ -133,7 +133,22 @@ END
 
     # }}}
     testcmd("$CMD ga-sumsize-files/1.txt", # {{{
-        "ga-sumsize: Total size of keys: 1948027876 (1.9G)\n",
+        <<END,
+unused . (checking for unused data...) (checking master...)
+  Some annexed data is no longer used by any files:
+    NUMBER  KEY
+    1       SHA256-s487883366--2125edd12f347e19dc9d5c2c2f4cee14b44f9cbba1ea46ff8af54ae020c58563
+    2       SHA256-s484307143--049e14e3af3bf9aece17ddab008b3cb9be6ab0fb42c91e6ad383364d26b3ffa7
+    3       SHA256-s490478481--12453004cbf74f56adf115f9da32d2b783c9c967469668dbf0f88b85efc856b8
+    4       SHA256-s485358886--bf6c061f378e04d6f45a95e13412aabc4c420a714cfebe7ab70034b72605bc47
+  (To see where data was previously used, try: git log --stat -S'KEY')
+
+  To remove unwanted data: git-annex dropunused NUMBER
+
+ok
+
+ga-sumsize: Total size of keys: 1948027876 (1.9G)
+END
         '',
         0,
         'Read from 1.txt',
@@ -141,7 +156,22 @@ END
 
     # }}}
     testcmd("$CMD <ga-sumsize-files/1.txt", # {{{
-        "ga-sumsize: Total size of keys: 1948027876 (1.9G)\n",
+        <<END,
+unused . (checking for unused data...) (checking master...)
+  Some annexed data is no longer used by any files:
+    NUMBER  KEY
+    1       SHA256-s487883366--2125edd12f347e19dc9d5c2c2f4cee14b44f9cbba1ea46ff8af54ae020c58563
+    2       SHA256-s484307143--049e14e3af3bf9aece17ddab008b3cb9be6ab0fb42c91e6ad383364d26b3ffa7
+    3       SHA256-s490478481--12453004cbf74f56adf115f9da32d2b783c9c967469668dbf0f88b85efc856b8
+    4       SHA256-s485358886--bf6c061f378e04d6f45a95e13412aabc4c420a714cfebe7ab70034b72605bc47
+  (To see where data was previously used, try: git log --stat -S'KEY')
+
+  To remove unwanted data: git-annex dropunused NUMBER
+
+ok
+
+ga-sumsize: Total size of keys: 1948027876 (1.9G)
+END
         '',
         0,
         'Read from 1.txt via stdin',
@@ -162,6 +192,7 @@ END
 1948027876   To remove unwanted data: git-annex dropunused NUMBER
 1948027876 
 1948027876 ok
+
 ga-sumsize: Total size of keys: 1948027876 (1.9G)
 END
         '',
@@ -184,6 +215,7 @@ END
 1948027876   To remove unwanted data: git-annex dropunused NUMBER
 1948027876 
 1948027876 ok
+
 ga-sumsize: Total size of keys: 1948027876 (1.9G)
 END
         '',
