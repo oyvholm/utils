@@ -22,9 +22,9 @@ our $Debug = 0;
 
 our %Opt = (
 
-    'create-table' => 0,
     'debug' => 0,
     'help' => 0,
+    'initdb' => 0,
     'server' => "",
     'verbose' => 0,
     'version' => 0,
@@ -38,9 +38,9 @@ our $VERSION = "0.00";
 Getopt::Long::Configure("bundling");
 GetOptions(
 
-    "create-table" => \$Opt{'create-table'},
     "debug" => \$Opt{'debug'},
     "help|h" => \$Opt{'help'},
+    "initdb" => \$Opt{'initdb'},
     "server|s=s" => \$Opt{'server'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
@@ -54,7 +54,7 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-if ($Opt{'create-table'}) {
+if ($Opt{'initdb'}) {
     print(<<'END');
 CREATE TABLE IF NOT EXISTS access_log (
     w text[],
@@ -163,8 +163,8 @@ Usage: $progname -s servername [options] [file [files [...]]]
 
 Options:
 
-  --create-table
-    Output SQL command to create the database table.
+  --initdb
+    Output SQL commands to create the initialise the database.
   -h, --help
     Show this help.
   -s x, --server x
@@ -179,14 +179,14 @@ Options:
 Postgres:
 
   createdb DBNAME
-  $progname --create-table | psql DBNAME
+  $progname --initdb | psql DBNAME
   cat *ACCESS_LOG_FILES* | \\
     $progname -s SERVERNAME | \\
     psql DBNAME -c "copy access_log from stdin"
 
 SQLite 3:
 
-  $progname --create-table | sqlite3 DBNAME
+  $progname --initdb | sqlite3 DBNAME
   cat *ACCESS_LOG_FILES* | \\
     $progname -s SERVERNAME | \\
     sqlite3 DBNAME '.separator "\\t"' '.import /dev/stdin access_log'
