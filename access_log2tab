@@ -55,7 +55,7 @@ if ($Opt{'version'}) {
 }
 
 if ($Opt{'create-table'}) {
-    print(<<END);
+    print(<<'END');
 CREATE TABLE IF NOT EXISTS access_log (
     w text[],
     host text,
@@ -67,8 +67,19 @@ CREATE TABLE IF NOT EXISTS access_log (
     status integer,
     bytes_sent integer,
     referrer text,
-    browser text
+    browser text,
+    hostname text
 );
+CREATE TABLE IF NOT EXISTS domains (
+    ip inet,
+    hostname text,
+    date timestamptz
+);
+CREATE OR REPLACE FUNCTION ip2host(inet) RETURNS text
+AS $$
+SELECT hostname FROM domains
+    WHERE ip = $1;
+$$ LANGUAGE SQL;
 END
     exit(0);
 }
@@ -109,6 +120,7 @@ while (<>) {
                 $7 eq '-' ? 0 : $7,
                 postgresql_copy_safe($8),
                 postgresql_copy_safe($9),
+                '',
             ) . "\n"
         );
     } else {
