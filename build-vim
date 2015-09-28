@@ -13,9 +13,6 @@
 progname=build-vim
 VERSION=0.1.0
 
-# Set to "echo" to simulate
-sim=
-
 if test "$1" = "--version"; then
     echo $progname $VERSION
     exit 0
@@ -34,6 +31,8 @@ Options:
     Remove lockdir before installing The Holy Editor.
   -h, --help
     Show this help.
+  -n, --dry-run
+    Don't do anything, output commands that would be executed instead.
   --version
     Print version information.
 
@@ -46,6 +45,9 @@ msg() {
     echo $progname: $* >&2
     return
 }
+
+unset sim
+test "$1" = "-n" -o "$1" = "--dry-run" && { sim=echo; shift; }
 
 lockdir="$HOME/.$progname.LOCK"
 if test "$1" = "-f"; then
