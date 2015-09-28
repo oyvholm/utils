@@ -1,8 +1,50 @@
 #!/bin/bash
 
+#=======================================================================
+# git-allbr
 # File ID: b8c0ee54-eb71-11df-a07a-fefdb24f8e10
+#
+# Create local Git branches that only exist on remotes and update local 
+# branches against remote branches.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
 
 progname=git-allbr
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Create local Git branches that only exist on remotes and update local 
+branches against remote branches.
+
+Usage: $progname [options] [remote [remotes [...]]]
+
+Options:
+
+  -a
+    Create branches from all remotes. If this option is not specified, 
+    only "origin" or remotes specified on the command line are scanned.
+  -c
+    Also create commit-* branches created by git-dangling.
+  -f
+    Allow rewriting of local branches, override fast-forwarding.
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
 remotes=origin
 test "$1" = "-a" && { remotes=$(git remote); shift; }
 unset create_dangling
