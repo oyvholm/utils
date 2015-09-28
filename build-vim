@@ -91,6 +91,9 @@ $sim ./configure --prefix="$destdir" \
 msg make &&
 $sim make &&
 
+msg make test &&
+$sim make test &&
+
 msg make install &&
 $sim make install &&
 
