@@ -65,7 +65,7 @@ cd "$srcdir" || {
     exit 1
 }
 
-user=sunny
+user=$(whoami)
 prefix="/usr/local"
 prgdir="$prefix/prg"
 vimdesc="$(git describe --long --tags)"
