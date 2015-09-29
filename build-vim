@@ -60,7 +60,7 @@ mkdir "$lockdir" || {
 }
 
 srcdir="$HOME/src/other/vim"
-cd "$srcdir" || {
+$sim cd "$srcdir" || {
     rmdir "$lockdir"
     exit 1
 }
@@ -81,7 +81,7 @@ msg mkdir and chown $destdir &&
 $sim sudo mkdir -p "$destdir" &&
 $sim sudo chown $user.$user "$destdir" &&
 
-cd "$srcdir" &&
+$sim cd "$srcdir" &&
 $sim git wait-until-clean &&
 
 msg git clean in $(pwd)/ &&
@@ -99,22 +99,22 @@ $sim make test &&
 msg make install &&
 $sim make install &&
 
-cd "$prgdir" &&
+$sim cd "$prgdir" &&
 msg Update the vim symlink in $(pwd)/ &&
 $sim sudo ln -fnsv "../varprg/vim-$vimdesc" vim &&
 
-cd "$prefix/share/man/man1" &&
+$sim cd "$prefix/share/man/man1" &&
 msg Create manpage symlinks in $(pwd)/ &&
 $sim sudo ln -fnsv ../../../prg/vim/share/man/man1/* . &&
 
-cd "$prefix/bin" &&
+$sim cd "$prefix/bin" &&
 msg Create symlinks in $(pwd)/ &&
 $sim ln -fnsv ../prg/vim/bin/* . &&
 
 if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
     commitmsg=$(echo $progname installed vim-$vimdesc on $(hostname); echo; $sim suuid -t commit,$progname) &&
-    cd "$prgdir" &&
+    $sim cd "$prgdir" &&
     $sim sudo git add vim &&
     echo Commit message: &&
     echo $commitmsg &&
