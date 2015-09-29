@@ -13,6 +13,7 @@
 progname=build-vim
 VERSION=0.1.0
 rcfile="$HOME/.${progname}rc"
+configure_opts="--with-features=huge --with-x --enable-multibyte"
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -60,6 +61,9 @@ These are the main variables to control the build:
   - destdir
     Directory where the compiled files are installed.
     Default value: \$prefix/varprg/vim-\$vimdesc
+  - configure_opts
+    Options passed to "./configure".
+    Default value: $configure_opts
   - vimdesc
     Version number, you shouldn't need to touch this.
     Default value is the output of "git describe --long --tags".
@@ -137,9 +141,8 @@ $sim git wait-until-clean &&
 msg git clean in $srcdir/ &&
 $sim git clean -fxd &&
 
-msg ./configure &&
-$sim ./configure --prefix="$destdir" \
-  --with-features=huge --with-x --enable-multibyte &&
+msg ./configure $configure_opts &&
+$sim ./configure --prefix="$destdir" $configure_opts &&
 msg make &&
 $sim make &&
 
