@@ -176,6 +176,10 @@ $sim cd "$prefix/share/man/man1" &&
 msg Create manpage symlinks in $prefix/share/man/man1/ &&
 $sim $sudo ln -fnsv ../../../prg/vim/share/man/man1/* . &&
 
+$sim cd "$prefix/share" &&
+msg Create $prefix/share/vim symlink &&
+$sim $sudo ln -fnsv ../prg/vim/share/vim . &&
+
 $sim cd "$prefix/bin" &&
 msg Create symlinks in $prefix/bin/ &&
 $sim ln -fnsv ../prg/vim/bin/* . &&
