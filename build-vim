@@ -68,6 +68,9 @@ These are the main variables to control the build:
     Default value is the output of "whoami". "make install" is not 
     executed as root to be sure that no files are installed outside 
     \$prefix.
+  - group
+    Group of the \$prefix directory.
+    Default value: Same as \$user.
 
 END
     exit 0
@@ -104,6 +107,7 @@ $sim cd "$srcdir" || {
 }
 
 user=$(whoami)
+group=$user
 prefix="/usr/local"
 exec_rcfile
 prgdir="$prefix/prg"
@@ -119,7 +123,7 @@ test -e "$destdir" && {
 
 msg mkdir and chown $destdir &&
 $sim sudo mkdir -p "$destdir" &&
-$sim sudo chown $user.$user "$destdir" &&
+$sim sudo chown $user.$group "$destdir" &&
 
 $sim cd "$srcdir" &&
 $sim git wait-until-clean &&
