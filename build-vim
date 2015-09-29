@@ -12,6 +12,7 @@
 
 progname=build-vim
 VERSION=0.1.0
+rcfile="$HOME/.${progname}rc"
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -36,9 +37,45 @@ Options:
   --version
     Print version information.
 
+If "$rcfile" exists, execute it before the compilation starts. Use it to 
+configure the build for each computer. For example:
+
+  prefix=~/local
+
+will place everything below the ~/local directory.
+
+These are the main variables to control the build:
+
+  - srcdir
+    Directory where the cloned source from 
+    https://github.com/vim/vim.git is stored.
+    Default value: \$HOME/src/other/vim
+  - prefix
+    Top directory of the installed files.
+    Default value: /usr/local
+  - prgdir
+    Directory where the symlink of the current version is stored. Points 
+    to \$destdir.
+    Default value: \$prefix/prg
+  - destdir
+    Directory where the compiled files are installed.
+    Default value: \$prefix/varprg/vim-\$vimdesc
+  - vimdesc
+    Version number, you shouldn't need to touch this.
+    Default value is the output of "git describe --long --tags".
+  - user
+    Owner of the \$prefix directory.
+    Default value is the output of "whoami". "make install" is not 
+    executed as root to be sure that no files are installed outside 
+    \$prefix.
+
 END
     exit 0
 fi
+
+exec_rcfile() {
+    test -e "$rcfile" && . $rcfile
+}
 
 msg() {
     echo >&2
@@ -60,6 +97,7 @@ mkdir "$lockdir" || {
 }
 
 srcdir="$HOME/src/other/vim"
+exec_rcfile
 $sim cd "$srcdir" || {
     rmdir "$lockdir"
     exit 1
@@ -67,9 +105,11 @@ $sim cd "$srcdir" || {
 
 user=$(whoami)
 prefix="/usr/local"
+exec_rcfile
 prgdir="$prefix/prg"
 vimdesc="$(git describe --long --tags)"
 destdir="$prefix/varprg/vim-$vimdesc"
+exec_rcfile
 
 test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
