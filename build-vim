@@ -134,9 +134,11 @@ exec_rcfile
 test "$sudo" = "1" -o "$sudo" = "true" && sudo=sudo || unset sudo
 
 test -e "$destdir" && {
-    echo $progname: $destdir already exists >&2
-    rmdir "$lockdir"
-    exit 1
+    rmdir "$destdir" || {
+        echo $progname: $destdir already exists >&2
+        rmdir "$lockdir"
+        exit 1
+    }
 }
 
 msg mkdir and chown $destdir &&
