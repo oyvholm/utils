@@ -84,7 +84,7 @@ $sim sudo chown $user.$user "$destdir" &&
 $sim cd "$srcdir" &&
 $sim git wait-until-clean &&
 
-msg git clean in $(pwd)/ &&
+msg git clean in $srcdir/ &&
 $sim git clean -fxd &&
 
 msg ./configure &&
@@ -100,15 +100,15 @@ msg make install &&
 $sim make install &&
 
 $sim cd "$prgdir" &&
-msg Update the vim symlink in $(pwd)/ &&
+msg Update the vim symlink in $prgdir/ &&
 $sim sudo ln -fnsv "../varprg/vim-$vimdesc" vim &&
 
 $sim cd "$prefix/share/man/man1" &&
-msg Create manpage symlinks in $(pwd)/ &&
+msg Create manpage symlinks in $prefix/share/man/man1/ &&
 $sim sudo ln -fnsv ../../../prg/vim/share/man/man1/* . &&
 
 $sim cd "$prefix/bin" &&
-msg Create symlinks in $(pwd)/ &&
+msg Create symlinks in $prefix/bin/ &&
 $sim ln -fnsv ../prg/vim/bin/* . &&
 
 if test -d "$prefix/.git/."; then
