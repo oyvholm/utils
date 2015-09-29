@@ -71,6 +71,10 @@ These are the main variables to control the build:
   - group
     Group of the \$prefix directory.
     Default value: Same as \$user.
+  - sudo
+    Set to "1" or "true" if sudo(8) should be used. Any other value 
+    disables sudo.
+    Default value: true
 
 END
     exit 0
@@ -108,12 +112,14 @@ $sim cd "$srcdir" || {
 
 user=$(whoami)
 group=$user
+sudo=true
 prefix="/usr/local"
 exec_rcfile
 prgdir="$prefix/prg"
 vimdesc="$(git describe --long --tags)"
 destdir="$prefix/varprg/vim-$vimdesc"
 exec_rcfile
+test "$sudo" = "1" -o "$sudo" = "true" && sudo=sudo || unset sudo
 
 test -e "$destdir" && {
     echo $progname: $destdir already exists >&2
@@ -122,8 +128,8 @@ test -e "$destdir" && {
 }
 
 msg mkdir and chown $destdir &&
-$sim sudo mkdir -p "$destdir" &&
-$sim sudo chown $user.$group "$destdir" &&
+$sim $sudo mkdir -p "$destdir" &&
+$sim $sudo chown $user.$group "$destdir" &&
 
 $sim cd "$srcdir" &&
 $sim git wait-until-clean &&
@@ -145,11 +151,11 @@ $sim make install &&
 
 $sim cd "$prgdir" &&
 msg Update the vim symlink in $prgdir/ &&
-$sim sudo ln -fnsv "../varprg/vim-$vimdesc" vim &&
+$sim $sudo ln -fnsv "../varprg/vim-$vimdesc" vim &&
 
 $sim cd "$prefix/share/man/man1" &&
 msg Create manpage symlinks in $prefix/share/man/man1/ &&
-$sim sudo ln -fnsv ../../../prg/vim/share/man/man1/* . &&
+$sim $sudo ln -fnsv ../../../prg/vim/share/man/man1/* . &&
 
 $sim cd "$prefix/bin" &&
 msg Create symlinks in $prefix/bin/ &&
@@ -159,10 +165,10 @@ if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
     commitmsg=$(echo $progname installed vim-$vimdesc on $(hostname); echo; $sim suuid -t commit,$progname) &&
     $sim cd "$prgdir" &&
-    $sim sudo git add vim &&
+    $sim $sudo git add vim &&
     echo Commit message: &&
     echo $commitmsg &&
-    $sim sudo git commit -m "$commitmsg"
+    $sim $sudo git commit -m "$commitmsg"
 fi &&
 
 {
