@@ -145,6 +145,12 @@ msg mkdir and chown $destdir &&
 $sim $sudo mkdir -p "$destdir" &&
 $sim $sudo chown $user.$group "$destdir" &&
 
+msg mkdir -p $prefix/share/man/man1 &&
+$sim mkdir -p "$prefix/share/man/man1" &&
+
+msg mkdir -p $prefix/bin &&
+$sim mkdir -p "$prefix/bin" &&
+
 $sim cd "$srcdir" &&
 $sim git wait-until-clean &&
 
