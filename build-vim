@@ -98,6 +98,14 @@ unset sim
 test "$1" = "-n" -o "$1" = "--dry-run" && { sim=echo; shift; }
 
 lockdir="$HOME/.$progname.LOCK"
+
+myexit() {
+    rmdir $lockdir || echo $progname: $lockdir: Cannot remove lockdir >&2
+    exit $1
+}
+
+trap "myexit 1" INT TERM
+
 if test "$1" = "-f"; then
     rmdir -v "$lockdir"
     shift
