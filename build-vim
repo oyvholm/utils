@@ -38,8 +38,8 @@ Options:
   --version
     Print version information.
 
-If "$rcfile" exists, execute it before the compilation starts. Use it to 
-configure the build for each computer. For example:
+If "$rcfile" exists, execute it before the compilation starts.
+Use it to configure the build for each computer. For example:
 
   prefix=~/local
 
@@ -206,7 +206,11 @@ $sim ln -fnsv ../prg/vim/bin/* . &&
 
 if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
-    commitmsg=$(echo $progname installed vim-$vimdesc on $(hostname); echo; $sim suuid -t commit,$progname) &&
+    commitmsg=$(
+        echo $progname installed vim-$vimdesc on $(hostname)
+        echo
+        $sim suuid -t commit,$progname
+    ) &&
     $sim cd "$prgdir" &&
     $sim $sudo git add vim &&
     echo Commit message: &&
