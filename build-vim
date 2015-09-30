@@ -141,6 +141,19 @@ test -e "$destdir" && {
     }
 }
 
+cat <<END
+srcdir = "$srcdir"
+prefix = "$prefix"
+prgdir = "$prgdir"
+destdir = "$destdir"
+configure_opts = "$configure_opts"
+vimdesc = "$vimdesc"
+user = "$user"
+group = "$group"
+sudo = "$sudo"
+
+END
+
 msg mkdir and chown $destdir &&
 $sim $sudo mkdir -p "$destdir" &&
 $sim $sudo chown $user.$group "$destdir" &&
