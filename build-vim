@@ -154,6 +154,13 @@ sudo = "$sudo"
 
 END
 
+unset choice
+until test "$choice" = "y"; do
+    echo -n If that looks OK, press \'y\' to start the build or \'n\' to abort...
+    read choice
+    test "$choice" = "n" -o "$choice" = "q" && myexit 0
+done
+
 msg mkdir and chown $destdir &&
 $sim $sudo mkdir -p "$destdir" &&
 $sim $sudo chown $user.$group "$destdir" &&
