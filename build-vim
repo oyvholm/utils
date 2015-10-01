@@ -133,9 +133,15 @@ mkdir "$lockdir" || {
 
 srcdir="$HOME/src/other/vim"
 exec_rcfile
-$sim cd "$srcdir" || {
-    rmdir "$lockdir"
-    exit 1
+cd "$srcdir" || {
+    if test "$sim" = "echo"; then
+        msg $srcdir doesn\'t exist,
+        msg -s values of \$vimdesc and \$destdir are not shown correctly.
+        msg -s Not a problem, since we\'re only simulating.
+        echo >&2
+    else
+        myexit 1
+    fi
 }
 
 user="$(whoami)"
