@@ -95,7 +95,12 @@ msg() {
         local no_lf="-n"
         shift
     fi
-    echo >&2
+    if test "$1" = "-s"; then
+        # If -s is specified, skip initial \n
+        shift
+    else
+        echo >&2
+    fi
     echo $no_lf "$progname: $*" >&2
     return
 }
