@@ -15,6 +15,7 @@ VERSION=0.1.0
 rcfile="$HOME/.${progname}rc"
 configure_opts="--with-features=huge --with-x --enable-multibyte"
 cloneurl=https://github.com/vim/vim.git
+branch=master
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -55,6 +56,9 @@ These are the main variables to control the build:
     Git URL to clone the source from if the \$srcdir directory
     doesn't exist.
     Default value: $cloneurl
+  - branch
+    Check out this branch after cloning the source from \$cloneurl.
+    Default value: $branch
   - srcdir
     Directory where the cloned source from \$cloneurl is stored.
     Default value: \$HOME/src/other/vim
@@ -177,6 +181,8 @@ cd "$srcdir" || {
     fi
 }
 
+$sim git checkout "$branch"
+
 user="$(whoami)"
 group="$user"
 sudo=true
@@ -207,6 +213,7 @@ cat <<END
 Going to compile and install "vim-$vimdesc"$sim_str
 
 cloneurl = "$cloneurl"
+branch = "$branch"
 srcdir = "$srcdir"
 prefix = "$prefix"
 prgdir = "$prgdir"
