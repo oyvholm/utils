@@ -172,6 +172,8 @@ if test ! -f "$srcdir/Vim.info"; then
     msg -n -s "from $cloneurl (y/n)?$sim_str " &&
     continue_if_y &&
     $sim git clone -o "$remotename" $cloneurl "$srcdir" &&
+    cd "$srcdir" &&
+    $sim git checkout "$branch" &&
     echo >&2 ||
     myexit 1
 fi
@@ -185,8 +187,6 @@ cd "$srcdir" || {
         myexit 1
     fi
 }
-
-$sim git checkout "$branch"
 
 user="$(whoami)"
 group="$user"
