@@ -126,6 +126,18 @@ myexit() {
 
 trap "myexit 1" INT TERM
 
+continue_if_y() {
+    unset choice_y
+    until test "$choice_y" = "y"; do
+        read choice_y
+        test "$choice_y" = "n" && myexit 0
+        if test "$choice_y" != "y"; then
+            msg -n -s "Please press 'y' or 'n': "
+        fi
+    done
+    return
+}
+
 mkdir "$lockdir" || {
     echo "build-vim: $lockdir: Lockdir exists, aborting" >&2
     exit 1
@@ -177,12 +189,8 @@ sudo = "$sudo"
 
 END
 
-unset choice
-until test "$choice" = "y"; do
-    echo -n If that looks OK, press \'y\' to start the build or \'n\' to abort...
-    read choice
-    test "$choice" = "n" -o "$choice" = "q" && myexit 0
-done
+echo -n If that looks OK, press \'y\' to start the build or \'n\' to abort...
+continue_if_y
 
 msg mkdir and chown $destdir &&
 $sim $sudo mkdir -p "$destdir" &&
