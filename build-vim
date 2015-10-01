@@ -102,7 +102,11 @@ if test "$1" = "-f"; then
 fi
 
 unset sim
-test "$1" = "-n" -o "$1" = "--dry-run" && { sim=echo; shift; }
+if test "$1" = "-n" -o "$1" = "--dry-run"; then
+    sim=echo
+    sim_str=" (Simulated)"
+    shift
+fi
 
 myexit() {
     rmdir "$lockdir" || echo $progname: $lockdir: Cannot remove lockdir >&2
@@ -143,7 +147,7 @@ test -e "$destdir" && {
 }
 
 cat <<END
-Going to compile and install "vim-$vimdesc"
+Going to compile and install "vim-$vimdesc"$sim_str
 
 srcdir = "$srcdir"
 prefix = "$prefix"
@@ -221,7 +225,7 @@ if test -d "$prefix/.git/."; then
 fi &&
 
 {
-    msg Successfully installed vim-$vimdesc
+    msg Successfully installed vim-$vimdesc$sim_str
     retval=0
 } || {
     msg Something went bananas
