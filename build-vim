@@ -208,8 +208,7 @@ fi
 test -e "$destdir" && {
     rmdir "$destdir" || {
         msg -s $destdir already exists
-        rmdir "$lockdir"
-        exit 1
+        myexit 1
     }
 }
 
@@ -299,7 +298,6 @@ fi &&
     retval=1
 }
 
-rmdir "$lockdir"
-exit $retval
+myexit $retval
 
 # vim: set ts=4 sw=4 sts=4 et fenc=utf8 :
