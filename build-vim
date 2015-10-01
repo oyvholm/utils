@@ -27,7 +27,7 @@ Compile and install Vim
 
 Usage: $progname [options]
 
-Options:
+Options (has to be specified alphabetically):
 
   -f
     Remove lockdir before installing The Holy Editor.
@@ -94,10 +94,15 @@ msg() {
     return
 }
 
+lockdir="$HOME/.$progname.LOCK"
+
+if test "$1" = "-f"; then
+    rmdir -v "$lockdir"
+    shift
+fi
+
 unset sim
 test "$1" = "-n" -o "$1" = "--dry-run" && { sim=echo; shift; }
-
-lockdir="$HOME/.$progname.LOCK"
 
 myexit() {
     rmdir "$lockdir" || echo $progname: $lockdir: Cannot remove lockdir >&2
@@ -106,10 +111,6 @@ myexit() {
 
 trap "myexit 1" INT TERM
 
-if test "$1" = "-f"; then
-    rmdir -v "$lockdir"
-    shift
-fi
 mkdir "$lockdir" || {
     echo "build-vim: $lockdir: Lockdir exists, aborting" >&2
     exit 1
