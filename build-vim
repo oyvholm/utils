@@ -35,6 +35,9 @@ Options (has to be specified alphabetically):
     Show this help.
   -n, --dry-run
     Don't do anything, output commands that would be executed instead.
+  -y
+    Answer 'y' to all questions, perform an automated build. May cause 
+    the script to hang if sudo is used and it's timed out.
   --version
     Print version information.
 
@@ -119,6 +122,9 @@ if test "$1" = "-n" -o "$1" = "--dry-run"; then
     shift
 fi
 
+unset opt_y
+test "$1" = "-y" && { opt_y=1; shift; }
+
 myexit() {
     rmdir "$lockdir" || echo $progname: $lockdir: Cannot remove lockdir >&2
     exit $1
@@ -127,14 +133,18 @@ myexit() {
 trap "myexit 1" INT TERM
 
 continue_if_y() {
-    unset choice_y
-    until test "$choice_y" = "y"; do
-        read choice_y
-        test "$choice_y" = "n" && myexit 0
-        if test "$choice_y" != "y"; then
-            msg -n -s "Please press 'y' or 'n': "
-        fi
-    done
+    if test "$opt_y" = "1"; then
+        echo y >&2
+    else
+        unset choice_y
+        until test "$choice_y" = "y"; do
+            read choice_y
+            test "$choice_y" = "n" && myexit 0
+            if test "$choice_y" != "y"; then
+                msg -n -s "Please press 'y' or 'n': "
+            fi
+        done
+    fi
     return
 }
 
