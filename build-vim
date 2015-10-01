@@ -130,7 +130,7 @@ unset opt_y
 test "$1" = "-y" && { opt_y=1; shift; }
 
 myexit() {
-    rmdir "$lockdir" || echo $progname: $lockdir: Cannot remove lockdir >&2
+    rmdir "$lockdir" || msg -s $lockdir: Cannot remove lockdir
     exit $1
 }
 
@@ -153,14 +153,14 @@ continue_if_y() {
 }
 
 mkdir "$lockdir" || {
-    echo "build-vim: $lockdir: Lockdir exists, aborting" >&2
+    msg -s $lockdir: Lockdir exists, aborting
     exit 1
 }
 
 srcdir="$HOME/src/other/vim"
 exec_rcfile
 if test ! -f "$srcdir/Vim.info"; then
-    msg -s $progname: $srcdir/ doesn\'t exist, clone it
+    msg -s $srcdir/ doesn\'t exist, clone it
     msg -n -s "from $cloneurl (y/n)?$sim_str "
     continue_if_y
     $sim git clone $cloneurl "$srcdir"
@@ -197,7 +197,7 @@ fi
 
 test -e "$destdir" && {
     rmdir "$destdir" || {
-        echo $progname: $destdir already exists >&2
+        msg -s $destdir already exists
         rmdir "$lockdir"
         exit 1
     }
