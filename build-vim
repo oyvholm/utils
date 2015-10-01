@@ -14,6 +14,7 @@ progname=build-vim
 VERSION=0.1.0
 rcfile="$HOME/.${progname}rc"
 configure_opts="--with-features=huge --with-x --enable-multibyte"
+cloneurl=https://github.com/vim/vim.git
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -50,9 +51,13 @@ will place everything below the ~/local directory.
 
 These are the main variables to control the build:
 
+  - cloneurl
+    Git URL to clone the source from if the \$srcdir directory
+    doesn't exist.
+    Default value: $cloneurl
   - srcdir
     Directory where the cloned source from 
-    https://github.com/vim/vim.git is stored.
+    $cloneurl is stored.
     Default value: \$HOME/src/other/vim
   - prefix
     Top directory of the installed files.
@@ -155,6 +160,13 @@ mkdir "$lockdir" || {
 
 srcdir="$HOME/src/other/vim"
 exec_rcfile
+if test ! -f "$srcdir/Vim.info"; then
+    msg -s $progname: $srcdir/ doesn\'t exist, clone it
+    msg -n -s "from $cloneurl (y/n)?$sim_str "
+    continue_if_y
+    $sim git clone $cloneurl "$srcdir"
+    echo >&2
+fi
 cd "$srcdir" || {
     if test "$sim" = "echo"; then
         msg $srcdir doesn\'t exist,
@@ -188,6 +200,7 @@ test -e "$destdir" && {
 cat <<END
 Going to compile and install "vim-$vimdesc"$sim_str
 
+cloneurl = "$cloneurl"
 srcdir = "$srcdir"
 prefix = "$prefix"
 prgdir = "$prgdir"
