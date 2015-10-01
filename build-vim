@@ -56,8 +56,7 @@ These are the main variables to control the build:
     doesn't exist.
     Default value: $cloneurl
   - srcdir
-    Directory where the cloned source from 
-    $cloneurl is stored.
+    Directory where the cloned source from \$cloneurl is stored.
     Default value: \$HOME/src/other/vim
   - prefix
     Top directory of the installed files.
