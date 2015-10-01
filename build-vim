@@ -226,7 +226,12 @@ msg mkdir -p $prefix/bin &&
 $sim mkdir -p "$prefix/bin" &&
 
 $sim cd "$srcdir" &&
-$sim git wait-until-clean &&
+{
+    $sim test -z "$(git status --porcelain)" || {
+        msg $srcdir is not clean
+        myexit 1
+    }
+} &&
 
 msg git clean in $srcdir/ &&
 $sim git clean -fxd &&
