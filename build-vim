@@ -262,8 +262,10 @@ if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
     commitmsg=$(
         echo $progname installed vim-$vimdesc on $(hostname)
-        echo
-        $sim suuid -t commit,$progname
+        if suuid --version 2>/dev/null | grep -q "^suuid v"; then
+            echo
+            $sim suuid -t commit,$progname
+        fi || true
     ) &&
     $sim cd "$prgdir" &&
     $sim $sudo git add vim &&
