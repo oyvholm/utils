@@ -326,6 +326,7 @@ sub nolf {
 } # nolf()
 
 sub test_option {
+    # {{{
     my ($option, $cmd) = @_;
 
     return(testcmd("$CMD -n $option .",
