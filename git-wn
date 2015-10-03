@@ -65,6 +65,6 @@ if test "$opt_p" = "1"; then
       $word_diff_str -c -p $log_args $branches
 else
     git log --abbrev-commit --date-order --decorate=short --graph \
-      --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d' \
+      --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d%Creset' \
       $log_args $branches
 fi
