@@ -27,6 +27,8 @@ Options:
 
   -h, --help
     Show this help.
+  -u, --update
+    Fetch new commits and update the source code.
   --version
     Print version information.
 
@@ -42,6 +44,13 @@ msg() {
 
 srcdir="$HOME/src/other/postgres"
 cd "$srcdir" || exit 1
+
+if test "$1" = "-u" -o "$1" = "--update"; then
+    git fetch origin
+    git merge --ff-only
+    git allbr origin
+    shift
+fi
 
 user=sunny
 pgdesc="$(git desc --long --tags)"
