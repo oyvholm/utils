@@ -82,7 +82,7 @@ old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null | fmt -1 | ta
 
 msg New commits since $old_version:
 git log --abbrev-commit --date-order --decorate=short --graph \
-  --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d' \
+  --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d%Creset' \
   $old_version..
 
 msg Current databases: &&
