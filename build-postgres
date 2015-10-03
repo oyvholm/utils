@@ -37,8 +37,19 @@ END
 fi
 
 msg() {
-    echo >&2
-    echo $progname: $* >&2
+    unset no_lf
+    if test "$1" = "-n"; then
+        # If -n is first argument, don't terminate with \n
+        local no_lf="-n"
+        shift
+    fi
+    if test "$1" = "-s"; then
+        # If -s is specified, skip initial \n
+        shift
+    else
+        echo >&2
+    fi
+    echo $no_lf "$progname: $*" >&2
     return
 }
 
