@@ -91,13 +91,54 @@ git clean -fxd || {
 
 old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null | fmt -1 | tail -1)"
 
-msg New commits since $old_version:
-git log --abbrev-commit --date-order --decorate=short --graph \
-  --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d%Creset' \
-  $old_version..
-
-msg Current databases: &&
-psql -c '\l+' &&
+if [ -n "$old_version" ]; then
+    msg git status in $(pwd)
+    GIT_PAGER=cat git status
+    unset choice
+    until [ "$choice" = "y" ]; do
+        echo
+        unset choice
+        echo $(git log --format=oneline $old_version..$pgdesc | wc -l) new commits available in range $old_version..$pgdesc
+        echo Going to compile Postgres $pgdesc
+        echo
+        echo If that looks okay to you, press \'y\' to start the build, or:
+        echo \'d\' to diff
+        echo \'ds\' to diff --stat
+        echo \'dw\' to word-diff
+        echo \'l\' to list log
+        echo \'ld\' to list current databases
+        echo \'lp\' to list log with patch
+        echo \'lt\' to list log with commit tree
+        echo \'lw\' to list log with patch using word diff
+        echo \'n\' to abort
+        echo \'p\' to push new commits
+        echo \'t\' to show commit tree
+        read choice
+        [ "$choice" = "d" ] && git diff $old_version $pgdesc
+        [ "$choice" = "ds" ] && git diff --stat $old_version $pgdesc
+        [ "$choice" = "dw" ] && git diff --word-diff $old_version $pgdesc
+        [ "$choice" = "l" ] && git log --stat $old_version..$pgdesc
+        [ "$choice" = "ld" ] && psql -X -c '\l+'
+        [ "$choice" = "lp" ] && git log --patch $old_version..$pgdesc
+        [ "$choice" = "lt" ] && git log --graph --stat $old_version..$pgdesc
+        [ "$choice" = "lw" ] && git log --patch --word-diff $old_version..$pgdesc
+        [ "$choice" = "n" ] && exit 0
+        [ "$choice" = "p" ] && git pa
+        [ "$choice" = "t" ] && {
+            git log --abbrev-commit --date-order --decorate=short --graph \
+              --pretty=format:'%Cred%h %Cblue%p%Creset -%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset%C(yellow)%d%Creset' \
+              $old_version..$pgdesc
+        }
+    echo
+    done
+else
+    unset choice
+    until [ "$choice" = "y" ]; do
+        echo -n Press \'y\' to start the build, or \'n\' to abort...
+        read choice
+        [ "$choice" = "n" ] && exit 0
+    done
+fi
 
 msg mkdir $destdir &&
 sudo mkdir -p "$destdir" &&
