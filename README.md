@@ -171,6 +171,12 @@ Cripple the file modtime by truncating odd seconds to even. To make life
 easier for rsync and friends if one has to interact with those kinds of 
 "file systems".
 
+#### edit-sqlite3
+
+Edit an SQLite 3.x database file in your favourite text editor. The 
+original version is backuped with the file modification time in the file 
+name as seconds since 1970-01-01 00:00:00 UTC.
+
 #### find_8bit
 
 Read text from stdin and output all lines with bytes &gt; U+007F.
