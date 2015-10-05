@@ -4,14 +4,14 @@
 # edit-sqlite3
 # File ID: d6a111fc-6a8c-11e5-b795-fefdb24f8e10
 #
-# [Description]
+# Edit an SQLite database in your favourite text editor.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=edit-sqlite3
-VERSION=0.0.0
+VERSION=0.1.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -21,12 +21,18 @@ fi
 if test "$1" = "-h" -o "$1" = "--help"; then
     cat <<END
 
-Usage: $progname [options]
+Edit an SQLite 3.x database file in your favourite text editor. The 
+original version is backuped with the file modification time in the file 
+name as seconds since 1970-01-01 00:00:00 UTC.
+
+Usage: $progname [options] sqlite_database_file
 
 Options:
 
   -h, --help
     Show this help.
+  -n, --dry-run
+    Simulate what would happen.
   --version
     Print version information.
 
@@ -34,3 +40,71 @@ END
     exit 0
 fi
 
+if test "$1" = "-n" -o "$1" = "--dry-run"; then
+    opt_dry_run=1
+    shift
+fi
+
+db="$1"
+sql="$db.sql"
+
+test -z "$db" && {
+    echo $progname: No SQLite database specified >&2
+    exit 1
+}
+test -h "$db" && {
+    echo $progname: $db: File is a symlink >&2
+    exit 1
+}
+test -f "$db" || {
+    echo $progname: $db: File not found or is not a regular file >&2
+    exit 1
+}
+test -r "$db" || {
+    echo $progname: $db: File is not readable by you >&2
+    exit 1
+}
+test -w "$db" || {
+    echo $progname: $db: File is not writable by you >&2
+    exit 1
+}
+test -n "$EDITOR" || {
+    echo $progname: \$EDITOR environment variable is not defined >&2
+    exit 1
+}
+sqlite3 "$db" "PRAGMA integrity_check;" || {
+    echo $progname: $db: SQLite database contains errors >&2
+    exit 1
+}
+
+bck="$db.$(stat -c %Y "$db").bck"
+
+if test "$opt_dry_run" = "1"; then
+    echo $progname: $db: File would be edited >&2
+    exit 0
+else
+    test -e "$sql" || # Don't overwrite an existing file
+      sqlite3 "$db" .dump >"$sql"
+fi
+
+cp -p "$db" "$bck" || {
+    echo $progname: $db: Error when creating backup $bck
+    exit 1
+}
+
+sqlite_ok=0
+until test "$sqlite_ok" = "1"; do
+    "$EDITOR" "$sql"
+    rm "$db"
+    sqlite3 "$db" <"$sql" && sqlite_ok=1 || {
+        sqlite_ok=0
+        echo -n $progname: Press Enter to edit again, or q to abort... >&2
+        unset choice
+        read choice
+        test "$choice" = "q" && exit
+    }
+done
+
+rm "$db"
+sqlite3 "$db" <"$sql"
+rm "$sql"
