@@ -261,6 +261,7 @@ END
     test_option('-N', 'ga-getnew | fold-stdout');
     diag('--dangling');
     test_option('-d', 'git dangling');
+    test_option('--dangling', 'git dangling');
     diag('--allbr');
     test_option('-a', nolf(<<END));
 git nobr'...
@@ -331,9 +332,6 @@ END
     diag('--delete-dangling');
     test_option('-D', 'git dangling -D');
     test_option('--delete-dangling', 'git dangling -D');
-
-    test_option('-d', 'git dangling');
-    test_option('--dangling', 'git dangling');
 
     todo_section:
     ;
