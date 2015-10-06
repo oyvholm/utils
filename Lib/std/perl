@@ -48,11 +48,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     return($Retval);
