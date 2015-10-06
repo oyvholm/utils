@@ -333,6 +333,20 @@ END
     test_option('-D', 'git dangling -D');
     test_option('--delete-dangling', 'git dangling -D');
 
+    diag('Clean up');
+    ok(chdir(".."), "chdir ..");
+    testcmd("rm -rf repo", # {{{
+        '',
+        '',
+        0,
+        'Remove test repository',
+    );
+
+    # }}}
+    ok(chdir(".."), "chdir ..");
+    ok(rmdir($Tmptop), "rmdir [Tmptop]");
+    ok(!-d $Tmptop, "[Tmptop] is gone");
+
     todo_section:
     ;
 
@@ -347,19 +361,6 @@ END
         }
         # TODO tests }}}
     }
-
-    ok(chdir(".."), "chdir ..");
-    testcmd("rm -rf repo", # {{{
-        '',
-        '',
-        0,
-        'Remove test repository',
-    );
-
-    # }}}
-    ok(chdir(".."), "chdir ..");
-    ok(rmdir($Tmptop), "rmdir [Tmptop]");
-    ok(!-d $Tmptop, "[Tmptop] is gone");
 
     diag('Testing finished.');
     # }}}
