@@ -332,6 +332,23 @@ END
     diag('--delete-dangling');
     test_option('-D', 'git dangling -D');
     test_option('--delete-dangling', 'git dangling -D');
+    diag('--exec-after');
+    testcmd("$CMD -e 'echo This is nice' .", # {{{
+        "${sep}This is nice\n\n",
+        "git-update-dirs: Executing 'echo This is nice'...\n",
+        0,
+        'Test -e option',
+    );
+
+    # }}}
+    testcmd("$CMD --exec-after 'echo This is nice' .", # {{{
+        "${sep}This is nice\n\n",
+        "git-update-dirs: Executing 'echo This is nice'...\n",
+        0,
+        'Test --exec-after option',
+    );
+
+    # }}}
 
     diag('Clean up');
     ok(chdir(".."), "chdir ..");
