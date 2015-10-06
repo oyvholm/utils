@@ -241,39 +241,91 @@ git-update-dirs: Simulating 'ga dropunused all'...
 git-update-dirs: Simulating 'ga sync
 END
 
-    test_option('-U', nolf(<<END)); # FIXME
+    test_option('-U', nolf(<<END));
 ga sync
 END
-    test_option('--ga-moveunused', nolf(<<END)); # FIXME
-ga sync
+    testcmd('git remote add seagate-3tb yep',
+        '',
+        '',
+        0,
+        'Add fake seagate-3tb remote',
+    );
+    test_option('--ga-moveunused', nolf(<<END));
+ga sync'...
+git-update-dirs: Simulating 'ga unused'...
+git-update-dirs: Simulating 'ga move --unused --to seagate-3tb'...
+git-update-dirs: Simulating 'ga sync
 END
 
     test_option('-N', 'ga-getnew | fold-stdout');
     test_option('-d', 'git dangling');
 
-    test_option('-a', nolf(<<END)); # FIXME: Add remotes
+    test_option('-a', nolf(<<END));
 git nobr'...
 git-update-dirs: Simulating 'git checkout -
 END
-    test_option('--allbr', nolf(<<END)); # FIXME: Add remotes
+    test_option('--allbr', nolf(<<END));
 git nobr'...
 git-update-dirs: Simulating 'git checkout -
 END
-
-    # -a
-    # --allbr
 
     test_option('-P', 'git pa');
     test_option('--push', 'git pa');
 
-    # -s
-    # --submodule
+    testcmd("$CMD --dry-run -s .", # {{{
+        "================ . ================\n\n",
+        '',
+        0,
+        'Test -s option, .gitmodules is missing',
+    );
 
-    # -c
-    # --compress
+    # }}}
+    testcmd("touch .gitmodules", '', '', 0, 'Create empty .gitmodules');
+    test_option('--submodule', nolf(<<END));
+git submodule init'...
+git-update-dirs: Simulating 'git submodule update
+END
 
-    # -C
-    # --aggressive-compress
+    my $compress_output =
+        '/^' .
+        '================ \. ================\n' .
+        '\n' .
+        'Before: \d+\n' .
+        'After : \d+\n' .
+        'Saved : \d+ \(\d+.\d+%\)\n' .
+        'Number of files in .git\/objects: before: \d+, after: \d+, saved: \d+\n' .
+        '\n' .
+        'Before: \d+\n' .
+        'After : \d+\n' .
+        'Total : \d+ \(\d+.\d+%\)\n' .
+        'Number of object files: before: \d+, after: \d+, saved: \d+\n' .
+        '/';
+
+    likecmd("$CMD -n -c .",
+        $compress_output,
+        '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
+        0,
+        'Test -c option',
+    );
+    likecmd("$CMD -n --compress .",
+        $compress_output,
+        '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
+        0,
+        'Test --compress option',
+    );
+
+    likecmd("$CMD -n -C .",
+        $compress_output,
+        '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
+        0,
+        'Test -c option',
+    );
+    likecmd("$CMD --dry-run --aggressive-compress .",
+        $compress_output,
+        '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
+        0,
+        'Test --aggressive-compress option',
+    );
 
     test_option('-D', 'git dangling -D');
     test_option('--delete-dangling', 'git dangling -D');
