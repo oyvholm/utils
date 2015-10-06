@@ -329,7 +329,7 @@ sub test_option {
         "================ . ================\n\n",
         "git-update-dirs: Simulating '$cmd'...\n",
         0,
-        'Test $option option',
+        "Test $option option",
     ));
     # }}}
 } # test_option()
