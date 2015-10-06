@@ -162,6 +162,7 @@ END
     $CMD = "../../$CMD";
     my $sep = "================ . ================\n";
 
+    diag('--exec-before');
     testcmd("$CMD -E 'echo This is nice' .", # {{{
         "${sep}This is nice\n\n",
         "git-update-dirs: Executing 'echo This is nice'...\n",
@@ -178,7 +179,7 @@ END
     );
 
     # }}}
-
+    diag('--lpar');
     testcmd("$CMD -n -l .", # {{{
         "$sep\n",
         "git-update-dirs: Simulating 'lpar'...\n" .
@@ -197,22 +198,22 @@ END
     );
 
     # }}}
-
+    diag('--test');
     test_option('-t', 'git fsck');
     test_option('--test', 'git fsck');
-
+    diag('--fetch-prune');
     test_option('-F', 'git fetch --all --prune');
     test_option('--fetch-prune', 'git fetch --all --prune');
-
+    diag('--fetch');
     test_option('-f', 'git fetch --all');
     test_option('--fetch', 'git fetch --all');
-
+    diag('--pull');
     test_option('-p', 'git pull --ff-only');
     test_option('--pull', 'git pull --ff-only');
-
+    diag('--ga-sync');
     test_option('-g', 'ga sync');
     test_option('--ga-sync', 'ga sync');
-
+    diag('--ga-dropget');
     test_option('-G', nolf(<<END));
 ga sync'...
 git-update-dirs: Simulating 'ga drop --auto'...
@@ -227,7 +228,7 @@ git-update-dirs: Simulating 'ga sync'...
 git-update-dirs: Simulating 'ga get --auto'...
 git-update-dirs: Simulating 'ga sync
 END
-
+    diag('--ga-dropunused');
     test_option('-u', nolf(<<END));
 ga sync'...
 git-update-dirs: Simulating 'ga unused'...
@@ -240,7 +241,7 @@ git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga dropunused all'...
 git-update-dirs: Simulating 'ga sync
 END
-
+    diag('--ga-moveunused');
     test_option('-U', nolf(<<END));
 ga sync
 END
@@ -256,10 +257,11 @@ git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga move --unused --to seagate-3tb'...
 git-update-dirs: Simulating 'ga sync
 END
-
+    diag('--ga-getnew');
     test_option('-N', 'ga-getnew | fold-stdout');
+    diag('--dangling');
     test_option('-d', 'git dangling');
-
+    diag('--allbr');
     test_option('-a', nolf(<<END));
 git nobr'...
 git-update-dirs: Simulating 'git checkout -
@@ -268,10 +270,10 @@ END
 git nobr'...
 git-update-dirs: Simulating 'git checkout -
 END
-
+    diag('--push');
     test_option('-P', 'git pa');
     test_option('--push', 'git pa');
-
+    diag('--submodule');
     testcmd("$CMD --dry-run -s .", # {{{
         "================ . ================\n\n",
         '',
@@ -300,7 +302,7 @@ END
         'Total : \d+ \(\d+.\d+%\)\n' .
         'Number of object files: before: \d+, after: \d+, saved: \d+\n' .
         '/';
-
+    diag('--compress');
     likecmd("$CMD -n -c .",
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
@@ -313,7 +315,7 @@ END
         0,
         'Test --compress option',
     );
-
+    diag('--aggressive-compress');
     likecmd("$CMD -n -C .",
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
@@ -326,7 +328,7 @@ END
         0,
         'Test --aggressive-compress option',
     );
-
+    diag('--delete-dangling');
     test_option('-D', 'git dangling -D');
     test_option('--delete-dangling', 'git dangling -D');
 
