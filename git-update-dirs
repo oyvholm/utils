@@ -269,10 +269,10 @@ sub main {
             if (should('dangling')) {
                 mysystem("git", "dangling") && push(@err_dangling, $f);
             }
-            if (should('allbr')) {
-                    $is_bare || mysystem("git", "nobr");
-                    ($is_bare || $Opt{'allbr'} > 1) && mysystem("git", "allbr", "-a");
-                    $is_bare || mysystem("git", "checkout", "-");
+            if (should('allbr') && ($is_bare || $Opt{'allbr'} > 1)) {
+                mysystem("git", "nobr");
+                mysystem("git", "allbr", "-a");
+                mysystem("git", "checkout", "-");
             }
             if (should('push')) {
                 mysystem("git", "pa") && push(@err_push, $f);

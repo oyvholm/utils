@@ -263,14 +263,22 @@ END
     test_option('-d', 'git dangling');
     test_option('--dangling', 'git dangling');
     diag('--allbr');
-    test_option('-a', nolf(<<END));
-git nobr'...
-git-update-dirs: Simulating 'git checkout -
+    testcmd("$CMD . -n --allbr",
+        "$sep\n",
+        '',
+        0,
+        'Ignore --allbr if it\'s only specified once in a non-bare repo',
+    );
+    testcmd("$CMD -aan .", 
+        "$sep\n",
+        <<END,
+git-update-dirs: Simulating 'git nobr'...
+git-update-dirs: Simulating 'git allbr -a'...
+git-update-dirs: Simulating 'git checkout -'...
 END
-    test_option('--allbr', nolf(<<END));
-git nobr'...
-git-update-dirs: Simulating 'git checkout -
-END
+        0,
+        '-aa works in non-bare repos, though',
+    );
     diag('--push');
     test_option('-P', 'git pa');
     test_option('--push', 'git pa');
