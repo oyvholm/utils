@@ -299,49 +299,63 @@ sub test_repo {
     test_option('-g', 'ga sync');
     test_option('--ga-sync', 'ga sync');
     diag('--ga-dropget');
-    test_option('-G', nolf(<<END));
+    test_option('-G', nolf(<<END)); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga drop --auto'...
 git-update-dirs: Simulating 'ga sync'...
 git-update-dirs: Simulating 'ga get --auto'...
 git-update-dirs: Simulating 'ga sync
 END
-    test_option('--ga-dropget', nolf(<<END));
+
+    # }}}
+    test_option('--ga-dropget', nolf(<<END)); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga drop --auto'...
 git-update-dirs: Simulating 'ga sync'...
 git-update-dirs: Simulating 'ga get --auto'...
 git-update-dirs: Simulating 'ga sync
 END
+
+    # }}}
     diag('--ga-dropunused');
-    test_option('-u', nolf(<<END));
+    test_option('-u', nolf(<<END)); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga dropunused all'...
 git-update-dirs: Simulating 'ga sync
 END
-    test_option('--ga-dropunused', nolf(<<END));
+
+    # }}}
+    test_option('--ga-dropunused', nolf(<<END)); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga dropunused all'...
 git-update-dirs: Simulating 'ga sync
 END
+
+    # }}}
     diag('--ga-moveunused');
-    test_option('-U', nolf(<<END));
+    test_option('-U', nolf(<<END)); # {{{
 ga sync
 END
-    testcmd('git remote add seagate-3tb yep',
+
+    # }}}
+    testcmd('git remote add seagate-3tb yep', # {{{
         '',
         '',
         0,
         'Add fake seagate-3tb remote',
     );
-    test_option('--ga-moveunused', nolf(<<END));
+
+    # }}}
+    test_option('--ga-moveunused', nolf(<<END)); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga move --unused --to seagate-3tb'...
 git-update-dirs: Simulating 'ga sync
 END
+
+    # }}}
     diag('--ga-getnew');
     test_option('-N', 'ga-getnew | fold-stdout');
     diag('--dangling');
@@ -349,31 +363,39 @@ END
     test_option('--dangling', 'git dangling');
     diag('--allbr');
     if ($is_bare) {
-        test_option('-a', nolf(<<END));
+        test_option('-a', nolf(<<END)); # {{{
 git nobr'...
 git-update-dirs: Simulating 'git allbr -a'...
 git-update-dirs: Simulating 'git checkout -
 END
-        test_option('--allbr', nolf(<<END));
+
+        # }}}
+        test_option('--allbr', nolf(<<END)); # {{{
 git nobr'...
 git-update-dirs: Simulating 'git allbr -a'...
 git-update-dirs: Simulating 'git checkout -
 END
+
+        # }}}
     } else {
-        testcmd("$CMD . -n --allbr",
+        testcmd("$CMD . -n --allbr", # {{{
             "$sep\n",
             '',
             0,
             'Ignore --allbr if it\'s only specified once in a non-bare repo',
         );
-        testcmd("$CMD . -n -a",
+
+        # }}}
+        testcmd("$CMD . -n -a", # {{{
             "$sep\n",
             '',
             0,
             'Ignore -a if it\'s only specified once in a non-bare repo',
         );
+
+        # }}}
     }
-    testcmd("$CMD -aan .", 
+    testcmd("$CMD -aan .", # {{{
         "$sep\n",
         <<END,
 git-update-dirs: Simulating 'git nobr'...
@@ -383,6 +405,8 @@ END
         0,
         '-aa works in non-bare repos, though',
     );
+
+    # }}}
     diag('--push');
     test_option('-P', 'git pa');
     test_option('--push', 'git pa');
@@ -396,12 +420,14 @@ END
 
     # }}}
     testcmd("touch .gitmodules", '', '', 0, 'Create empty .gitmodules');
-    test_option('--submodule', nolf(<<END));
+    test_option('--submodule', nolf(<<END)); # {{{
 git submodule init'...
 git-update-dirs: Simulating 'git submodule update
 END
+
+    # }}}
     my $objects = $is_bare ? 'objects' : '.git\/objects';
-    my $compress_output =
+    my $compress_output = # {{{
         '/^' .
         '================ \. ================\n' .
         '\n' .
@@ -416,47 +442,61 @@ END
         'Number of object files: before: \d+, after: \d+, saved: \d+\n' .
         '/';
     diag('--compress');
-    likecmd("$CMD -n -c .",
+
+    # }}}
+    likecmd("$CMD -n -c .", # {{{
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
         0,
         'Test -c option',
     );
-    likecmd("$CMD -n --compress .",
+
+    # }}}
+    likecmd("$CMD -n --compress .", # {{{
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
         0,
         'Test --compress option',
     );
+
+    # }}}
     diag('--aggressive-compress');
-    likecmd("$CMD -n -C .",
+    likecmd("$CMD -n -C .", # {{{
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
         0,
         'Test -c option',
     );
-    likecmd("$CMD --dry-run --aggressive-compress .",
+
+    # }}}
+    likecmd("$CMD --dry-run --aggressive-compress .", # {{{
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
         0,
         'Test --aggressive-compress option',
     );
+
+    # }}}
     diag('--delete-dangling');
     if ($is_bare) {
         # FIXME: This behaviour is up for debate. Should -D be ignored 
         # in bare repositories by default?
-        testcmd("$CMD -n -D .",
+        testcmd("$CMD -n -D .", # {{{
             "$sep\n",
             '',
             0,
             'Test -D',
         );
-        testcmd("$CMD -n --delete-dangling .",
+
+        # }}}
+        testcmd("$CMD -n --delete-dangling .", # {{{
             "$sep\n",
             '',
             0,
             'Test --delete-dangling',
         );
+
+        # }}}
     } else {
         test_option('-D', 'git dangling -D');
         test_option('--delete-dangling', 'git dangling -D');
