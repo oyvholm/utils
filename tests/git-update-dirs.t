@@ -43,6 +43,7 @@ our $VERSION = '0.0.0';
 
 my $current_repo;
 my %descriptions = ();
+my %disable_already_tested = ();
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -265,6 +266,7 @@ sub test_repo {
     );
 
     # }}}
+    test_disabled("exec-before", "$CMD --exec-before echo .");
     diag('--lpar');
     testcmd("$CMD -n -l .", # {{{
         "$sep\n",
@@ -284,6 +286,7 @@ sub test_repo {
     );
 
     # }}}
+    test_disabled("lpar");
     diag('--test');
     test_option('-t', 'git fsck');
     test_option('--test', 'git fsck');
@@ -467,6 +470,19 @@ END
     );
 
     # }}}
+    system("git config git-update-dirs.no-compress true");
+    likecmd("$CMD -n -c .", # {{{
+        '/^================ \. ================\n\n' .
+        'Before: \d+\n' .
+        'After : \d+\n' .
+        'Number of object files: before: \d+, after: \d+, saved: \d+\n/',
+        '/^$/',
+        0,
+        "$repo: Test disabling of -c",
+    );
+
+    # }}}
+    system("git config --unset git-update-dirs.no-compress");
     diag('--aggressive-compress');
     likecmd("$CMD -n -C .", # {{{
         $compress_output,
@@ -484,6 +500,19 @@ END
     );
 
     # }}}
+    system("git config git-update-dirs.no-aggressive-compress true");
+    likecmd("$CMD -n -C .", # {{{
+        '/^================ \. ================\n\n' .
+        'Before: \d+\n' .
+        'After : \d+\n' .
+        'Number of object files: before: \d+, after: \d+, saved: \d+\n/',
+        '/^$/',
+        0,
+        "$repo: Test disabling of -C",
+    );
+
+    # }}}
+    system("git config --unset git-update-dirs.no-aggressive-compress");
     diag('--delete-dangling');
     if ($is_bare) {
         # FIXME: This behaviour is up for debate. Should -D be ignored 
@@ -525,6 +554,7 @@ END
     );
 
     # }}}
+    test_disabled("exec-after", "$CMD --exec-after echo .");
     diag('--all-options');
     my ($allbr_str, $deletedangling_str, $pull_str);
     if ($is_bare) {
@@ -604,9 +634,37 @@ sub test_option {
         0,
         "$current_repo: Test $option option",
     );
+    if ($option =~ /^--(.+)$/ && !defined($disable_already_tested{$1})) {
+        test_disabled($1);
+    }
     return;
     # }}}
 } # test_option()
+
+sub test_disabled {
+    # Test disabling of commands {{{
+    my ($longopt, $command) = @_;
+    system("git config git-update-dirs.no-$longopt true");
+    # Some commands calls "ga sync", so also disable "ga sync" to 
+    # avoid that single line appear in the output.
+    if ($longopt =~ /^(ga-dropget|ga-dropunused|ga-moveunused)$/) {
+        system("git config git-update-dirs.no-ga-sync true");
+    }
+    defined($command) || ($command = "../../../$CMD_BASENAME -n --$longopt .");
+    testcmd($command,
+        "================ . ================\n\n",
+        '',
+        0,
+        "$current_repo: --$longopt is disabled",
+    );
+    system("git config --unset git-update-dirs.no-$longopt");
+    if ($longopt =~ /^(ga-dropget|ga-dropunused|ga-moveunused)$/) {
+        system("git config --unset git-update-dirs.no-ga-sync");
+    }
+    $disable_already_tested{$longopt} = 1;
+    return;
+    # }}}
+} # test_disabled()
 
 sub testcmd {
     # {{{
