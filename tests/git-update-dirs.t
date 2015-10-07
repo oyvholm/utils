@@ -41,6 +41,9 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.0.0';
 
+my $current_repo;
+my %descriptions = ();
+
 Getopt::Long::Configure('bundling');
 GetOptions(
 
@@ -203,6 +206,7 @@ sub test_repo {
     my ($repo, $is_bare) = @_;
 
     diag("Run tests in $repo");
+    $current_repo = $repo;
     ok(chdir($repo), "chdir $repo") || BAIL_OUT('chdir error');
     if (!$is_bare) {
         likecmd("git remote add bare ../bare.git", # {{{
@@ -249,7 +253,7 @@ sub test_repo {
         "${sep}This is nice\n\n",
         "git-update-dirs: Executing 'echo This is nice'...\n",
         0,
-        'Test -E option',
+        "$repo: Test -E option",
     );
 
     # }}}
@@ -257,7 +261,7 @@ sub test_repo {
         "${sep}This is nice\n\n",
         "git-update-dirs: Executing 'echo This is nice'...\n",
         0,
-        'Test --exec-before option',
+        "$repo: Test --exec-before option",
     );
 
     # }}}
@@ -267,7 +271,7 @@ sub test_repo {
         "git-update-dirs: Simulating 'lpar'...\n" .
             "git-update-dirs: Simulating 'lpar'...\n",
         0,
-        'Test -l option',
+        "$repo: Test -l option",
     );
 
     # }}}
@@ -276,7 +280,7 @@ sub test_repo {
         "git-update-dirs: Simulating 'lpar'...\n" .
             "git-update-dirs: Simulating 'lpar'...\n",
         0,
-        'Test --lpar option',
+        "$repo: Test --lpar option",
     );
 
     # }}}
@@ -291,8 +295,8 @@ sub test_repo {
     test_option('--fetch', 'git fetch --all');
     diag('--pull');
     if ($is_bare) {
-        testcmd("$CMD -n -p", '', '', 0, "Test -p");
-        testcmd("$CMD -n --pull", '', '', 0, "Test -p");
+        testcmd("$CMD -n -p", '', '', 0, "$repo: Test -p");
+        testcmd("$CMD -n --pull", '', '', 0, "$repo: Test --pull");
     } else {
         test_option('-p', 'git pull --ff-only');
         test_option('--pull', 'git pull --ff-only');
@@ -346,7 +350,7 @@ END
         '',
         '',
         0,
-        'Add fake seagate-3tb remote',
+        "$repo: Add fake seagate-3tb remote",
     );
 
     # }}}
@@ -405,7 +409,7 @@ git-update-dirs: Simulating 'git allbr -a'...
 git-update-dirs: Simulating 'git checkout -'...
 END
         0,
-        '-aa works in non-bare repos, though',
+        "$repo: -aa works in non-bare repos, though",
     );
 
     # }}}
@@ -417,11 +421,11 @@ END
         "================ . ================\n\n",
         '',
         0,
-        'Test -s option, .gitmodules is missing',
+        "$repo: Test -s option, .gitmodules is missing",
     );
 
     # }}}
-    testcmd("touch .gitmodules", '', '', 0, 'Create empty .gitmodules');
+    testcmd("touch .gitmodules", '', '', 0, "$repo: Create empty .gitmodules");
     test_option('--submodule', nolf(<<END)); # {{{
 git submodule init'...
 git-update-dirs: Simulating 'git submodule update
@@ -450,7 +454,7 @@ END
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
         0,
-        'Test -c option',
+        "$repo: Test -c option",
     );
 
     # }}}
@@ -458,7 +462,7 @@ END
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
         0,
-        'Test --compress option',
+        "$repo: Test --compress option",
     );
 
     # }}}
@@ -467,7 +471,7 @@ END
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
         0,
-        'Test -c option',
+        "$repo: Test -C option",
     );
 
     # }}}
@@ -475,7 +479,7 @@ END
         $compress_output,
         '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
         0,
-        'Test --aggressive-compress option',
+        "$repo: Test --aggressive-compress option",
     );
 
     # }}}
@@ -487,7 +491,7 @@ END
             "$sep\n",
             '',
             0,
-            'Test -D',
+            "$repo: Test -D",
         );
 
         # }}}
@@ -495,7 +499,7 @@ END
             "$sep\n",
             '',
             0,
-            'Test --delete-dangling',
+            "$repo: Test --delete-dangling",
         );
 
         # }}}
@@ -508,7 +512,7 @@ END
         "${sep}This is nice\n\n",
         "git-update-dirs: Executing 'echo This is nice'...\n",
         0,
-        'Test -e option',
+        "$repo: Test -e option",
     );
 
     # }}}
@@ -516,7 +520,7 @@ END
         "${sep}This is nice\n\n",
         "git-update-dirs: Executing 'echo This is nice'...\n",
         0,
-        'Test --exec-after option',
+        "$repo: Test --exec-after option",
     );
 
     # }}}
@@ -548,7 +552,7 @@ git-update-dirs: Simulating 'git submodule update'...
 ${deletedangling_str}git-update-dirs: Simulating 'lpar'...
 END
         0,
-        'Test --all-options, allbr is ignored',
+        "$repo: Test --all-options, allbr is ignored",
     );
 
     # }}}
@@ -568,11 +572,11 @@ git-update-dirs: Simulating 'git submodule update'...
 ${deletedangling_str}git-update-dirs: Simulating 'lpar'...
 END
         0,
-        'Test the -A option with an extra -a to get some allbr action',
+        "$repo: Test the -A option with an extra -a to get some allbr action",
     );
 
     # }}}
-    ok(chdir('..'), 'chdir ..');
+    ok(chdir('..'), "$repo: chdir ..");
     return;
     # }}}
 } # test_repo()
@@ -597,7 +601,7 @@ sub test_option {
         "================ . ================\n\n",
         "git-update-dirs: Simulating '$cmd'...\n",
         0,
-        "Test $option option",
+        "$current_repo: Test $option option",
     );
     return;
     # }}}
@@ -606,6 +610,8 @@ sub test_option {
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) && BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
@@ -635,6 +641,8 @@ sub testcmd {
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) && BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
