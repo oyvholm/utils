@@ -364,6 +364,7 @@ END
     # }}}
     diag('--ga-getnew');
     test_option('-N', 'ga-getnew | fold-stdout');
+    test_option('--ga-getnew', 'ga-getnew | fold-stdout');
     diag('--dangling');
     test_option('-d', 'git dangling');
     test_option('--dangling', 'git dangling');
