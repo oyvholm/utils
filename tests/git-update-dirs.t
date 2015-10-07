@@ -136,6 +136,7 @@ END
 
     # }}}
     ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
+    diag('Initialise repositories');
     likecmd("git init --bare bare.git", # {{{
         '/.*/',
         '/^$/',
@@ -201,6 +202,7 @@ sub test_repo {
     # {{{
     my ($repo, $is_bare) = @_;
 
+    diag("Run tests in $repo");
     ok(chdir($repo), "chdir $repo") || BAIL_OUT('chdir error');
     if (!$is_bare) {
         likecmd("git remote add bare ../bare.git", # {{{
@@ -426,6 +428,7 @@ git-update-dirs: Simulating 'git submodule update
 END
 
     # }}}
+    diag('--compress');
     my $objects = $is_bare ? 'objects' : '.git\/objects';
     my $compress_output = # {{{
         '/^' .
@@ -441,7 +444,6 @@ END
         'Total : \d+ \(\d+.\d+%\)\n' .
         'Number of object files: before: \d+, after: \d+, saved: \d+\n' .
         '/';
-    diag('--compress');
 
     # }}}
     likecmd("$CMD -n -c .", # {{{
