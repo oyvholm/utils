@@ -25,7 +25,7 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD = '../git-update-dirs';
+our $CMD_BASENAME = 'git-update-dirs';
 
 our %Opt = (
 
@@ -90,6 +90,8 @@ END
     my $Tmptop = "tmp-git-update-dirs-t-$$-" . substr(rand, 2, 8);
     ok(mkdir($Tmptop), "mkdir [Tmptop]") || BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
 
+    my $CMD = "../$CMD_BASENAME";
+
     diag('Testing -h (--help) option...');
     likecmd("$CMD -h", # {{{
         '/  Show this help\./',
@@ -134,32 +136,110 @@ END
 
     # }}}
     ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
-    likecmd("git init repo", # {{{
+    likecmd("git init --bare bare.git", # {{{
         '/.*/',
         '/^$/',
         0,
-        'Create Git repository',
+        'Create bare Git repository',
     );
 
     # }}}
-    ok(chdir("repo"), "chdir repo");
-    likecmd("git commit --allow-empty -m 'Empty start commit'", # {{{
+    likecmd("git clone bare.git repo", # {{{
+        '/.*/',
+        '/.*/',
+        0,
+        'Clone bare.git to \'repo\'',
+    );
+
+    # }}}
+
+    test_repo('repo', 0);
+    test_repo('bare.git', 1);
+
+    diag('Clean up');
+    testcmd("rm -rf bare.git", # {{{
+        '',
+        '',
+        0,
+        'Remove bare test repository',
+    );
+
+    # }}}
+    testcmd("rm -rf repo", # {{{
+        '',
+        '',
+        0,
+        'Remove non-bare test repository',
+    );
+
+    # }}}
+    ok(chdir(".."), "chdir ..");
+    ok(-d $Tmptop, "[Tmptop] exists");
+    ok(rmdir($Tmptop), "rmdir [Tmptop]");
+    ok(!-d $Tmptop, "[Tmptop] is gone");
+
+    todo_section:
+    ;
+
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...'); # {{{
+
+        TODO: {
+
+            local $TODO = '';
+            # Insert TODO tests here.
+
+        }
+        # TODO tests }}}
+    }
+
+    diag('Testing finished.');
+    # }}}
+} # main()
+
+sub test_repo {
+    # {{{
+    my ($repo, $is_bare) = @_;
+
+    ok(chdir($repo), "chdir $repo") || BAIL_OUT('chdir error');
+    if (!$is_bare) {
+        likecmd("git remote add bare ../bare.git", # {{{
+            '/^$/',
+            '/^$/',
+            0,
+            'Create bare remote',
+        );
+
+        # }}}
+        likecmd("git commit --allow-empty -m 'Empty start commit'", # {{{
+            '/.*/',
+            '/^$/',
+            0,
+            'Create empty start commit',
+        );
+
+        # }}}
+        likecmd("git push bare master", # {{{
+            '/.*/',
+            '/.*/',
+            0,
+            'Push master to the bare repo',
+        );
+
+        # }}}
+    }
+    likecmd("git annex init " . ($is_bare ? "bare" : "repo"), # {{{
         '/.*/',
         '/^$/',
         0,
-        'Create empty start commit',
+        "Make $repo an annex",
     );
 
     # }}}
-    likecmd("git annex init testrepo", # {{{
-        '/.*/',
-        '/^$/',
-        0,
-        'Make it an annex',
-    );
-
-    # }}}
-    $CMD = "../../$CMD";
+    my $CMD = "../../../$CMD_BASENAME";
+    if (!-e $CMD) {
+        BAIL_OUT("\$CMD is '$CMD', that's wrong");
+    }
     my $sep = "================ . ================\n";
 
     diag('--exec-before');
@@ -208,8 +288,13 @@ END
     test_option('-f', 'git fetch --all');
     test_option('--fetch', 'git fetch --all');
     diag('--pull');
-    test_option('-p', 'git pull --ff-only');
-    test_option('--pull', 'git pull --ff-only');
+    if ($is_bare) {
+        testcmd("$CMD -n -p", '', '', 0, "Test -p");
+        testcmd("$CMD -n --pull", '', '', 0, "Test -p");
+    } else {
+        test_option('-p', 'git pull --ff-only');
+        test_option('--pull', 'git pull --ff-only');
+    }
     diag('--ga-sync');
     test_option('-g', 'ga sync');
     test_option('--ga-sync', 'ga sync');
@@ -263,12 +348,31 @@ END
     test_option('-d', 'git dangling');
     test_option('--dangling', 'git dangling');
     diag('--allbr');
-    testcmd("$CMD . -n --allbr",
-        "$sep\n",
-        '',
-        0,
-        'Ignore --allbr if it\'s only specified once in a non-bare repo',
-    );
+    if ($is_bare) {
+        test_option('-a', nolf(<<END));
+git nobr'...
+git-update-dirs: Simulating 'git allbr -a'...
+git-update-dirs: Simulating 'git checkout -
+END
+        test_option('--allbr', nolf(<<END));
+git nobr'...
+git-update-dirs: Simulating 'git allbr -a'...
+git-update-dirs: Simulating 'git checkout -
+END
+    } else {
+        testcmd("$CMD . -n --allbr",
+            "$sep\n",
+            '',
+            0,
+            'Ignore --allbr if it\'s only specified once in a non-bare repo',
+        );
+        testcmd("$CMD . -n -a",
+            "$sep\n",
+            '',
+            0,
+            'Ignore -a if it\'s only specified once in a non-bare repo',
+        );
+    }
     testcmd("$CMD -aan .", 
         "$sep\n",
         <<END,
@@ -296,7 +400,7 @@ END
 git submodule init'...
 git-update-dirs: Simulating 'git submodule update
 END
-
+    my $objects = $is_bare ? 'objects' : '.git\/objects';
     my $compress_output =
         '/^' .
         '================ \. ================\n' .
@@ -304,7 +408,7 @@ END
         'Before: \d+\n' .
         'After : \d+\n' .
         'Saved : \d+ \(\d+.\d+%\)\n' .
-        'Number of files in .git\/objects: before: \d+, after: \d+, saved: \d+\n' .
+        'Number of files in ' . $objects . ': before: \d+, after: \d+, saved: \d+\n' .
         '\n' .
         'Before: \d+\n' .
         'After : \d+\n' .
@@ -338,8 +442,25 @@ END
         'Test --aggressive-compress option',
     );
     diag('--delete-dangling');
-    test_option('-D', 'git dangling -D');
-    test_option('--delete-dangling', 'git dangling -D');
+    if ($is_bare) {
+        # FIXME: This behaviour is up for debate. Should -D be ignored 
+        # in bare repositories by default?
+        testcmd("$CMD -n -D .",
+            "$sep\n",
+            '',
+            0,
+            'Test -D',
+        );
+        testcmd("$CMD -n --delete-dangling .",
+            "$sep\n",
+            '',
+            0,
+            'Test --delete-dangling',
+        );
+    } else {
+        test_option('-D', 'git dangling -D');
+        test_option('--delete-dangling', 'git dangling -D');
+    }
     diag('--exec-after');
     testcmd("$CMD -e 'echo This is nice' .", # {{{
         "${sep}This is nice\n\n",
@@ -358,19 +479,31 @@ END
 
     # }}}
     diag('--all-options');
+    my ($allbr_str, $deletedangling_str, $pull_str);
+    if ($is_bare) {
+        $allbr_str = <<END;
+git-update-dirs: Simulating 'git nobr'...
+git-update-dirs: Simulating 'git allbr -a'...
+git-update-dirs: Simulating 'git checkout -'...
+END
+        $deletedangling_str = "";
+        $pull_str = "";
+    } else {
+        $allbr_str = "";
+        $deletedangling_str = "git-update-dirs: Simulating 'git dangling -D'...\n";
+        $pull_str = "git-update-dirs: Simulating 'git pull --ff-only'...\n";
+    }
     testcmd("$CMD --all-options -n .", # {{{
         "$sep\n",
         <<END,
 git-update-dirs: Simulating 'lpar'...
 git-update-dirs: Simulating 'git fetch --all --prune'...
-git-update-dirs: Simulating 'git pull --ff-only'...
-git-update-dirs: Simulating 'ga sync'...
+${pull_str}git-update-dirs: Simulating 'ga sync'...
 git-update-dirs: Simulating 'git dangling'...
-git-update-dirs: Simulating 'git pa'...
+${allbr_str}git-update-dirs: Simulating 'git pa'...
 git-update-dirs: Simulating 'git submodule init'...
 git-update-dirs: Simulating 'git submodule update'...
-git-update-dirs: Simulating 'git dangling -D'...
-git-update-dirs: Simulating 'lpar'...
+${deletedangling_str}git-update-dirs: Simulating 'lpar'...
 END
         0,
         'Test --all-options, allbr is ignored',
@@ -382,8 +515,7 @@ END
         <<END,
 git-update-dirs: Simulating 'lpar'...
 git-update-dirs: Simulating 'git fetch --all --prune'...
-git-update-dirs: Simulating 'git pull --ff-only'...
-git-update-dirs: Simulating 'ga sync'...
+${pull_str}git-update-dirs: Simulating 'ga sync'...
 git-update-dirs: Simulating 'git dangling'...
 git-update-dirs: Simulating 'git nobr'...
 git-update-dirs: Simulating 'git allbr -a'...
@@ -391,47 +523,17 @@ git-update-dirs: Simulating 'git checkout -'...
 git-update-dirs: Simulating 'git pa'...
 git-update-dirs: Simulating 'git submodule init'...
 git-update-dirs: Simulating 'git submodule update'...
-git-update-dirs: Simulating 'git dangling -D'...
-git-update-dirs: Simulating 'lpar'...
+${deletedangling_str}git-update-dirs: Simulating 'lpar'...
 END
         0,
         'Test the -A option with an extra -a to get some allbr action',
     );
 
     # }}}
-
-    diag('Clean up');
-    ok(chdir(".."), "chdir ..");
-    testcmd("rm -rf repo", # {{{
-        '',
-        '',
-        0,
-        'Remove test repository',
-    );
-
+    ok(chdir('..'), 'chdir ..');
+    return;
     # }}}
-    ok(chdir(".."), "chdir ..");
-    ok(rmdir($Tmptop), "rmdir [Tmptop]");
-    ok(!-d $Tmptop, "[Tmptop] is gone");
-
-    todo_section:
-    ;
-
-    if ($Opt{'all'} || $Opt{'todo'}) {
-        diag('Running TODO tests...'); # {{{
-
-        TODO: {
-
-            local $TODO = '';
-            # Insert TODO tests here.
-
-        }
-        # TODO tests }}}
-    }
-
-    diag('Testing finished.');
-    # }}}
-} # main()
+} # test_repo()
 
 sub nolf {
     # Strip \n from string, replacement for chomp() {{{
@@ -445,12 +547,17 @@ sub test_option {
     # {{{
     my ($option, $cmd) = @_;
 
-    return(testcmd("$CMD -n $option .",
+    my $CMD = "../../../$CMD_BASENAME";
+    if (!-e $CMD) {
+        BAIL_OUT("\$CMD is '$CMD', that's wrong");
+    }
+    testcmd("$CMD -n $option .",
         "================ . ================\n\n",
         "git-update-dirs: Simulating '$cmd'...\n",
         0,
         "Test $option option",
-    ));
+    );
+    return;
     # }}}
 } # test_option()
 
