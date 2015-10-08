@@ -160,6 +160,80 @@ END
     test_repo('repo', 0);
     test_repo('bare.git', 1);
 
+    my @dir_list = qw {
+        repo/sub2
+        repo/sub1
+        repo/sub1/subrepo1
+        repo/bare1.git
+        repo/sub1/subrepo1/subsubrepo1.git
+    };
+
+    for my $dir (@dir_list) {
+        my $bare_str = ($dir =~ /\.git$/ ? ' --bare' : '');
+        likecmd("git$bare_str init $dir",
+            '/.*/',
+            '/^$/',
+            0,
+            "Create repo '$dir'",
+        );
+    }
+
+    testcmd("$CMD --recursive -nf", # {{{
+        <<END,
+================ ./repo ================
+
+================ ./repo/sub1 ================
+
+================ ./repo/sub1/subrepo1 ================
+
+================ ./repo/sub2 ================
+
+END
+        "git-update-dirs: Simulating 'git fetch --all'...\n" x 4,
+        0,
+        "--recursive option",
+    );
+
+    # }}}
+    testcmd("$CMD -rfn", # {{{
+        <<END,
+================ ./repo ================
+
+================ ./repo/sub1 ================
+
+================ ./repo/sub1/subrepo1 ================
+
+================ ./repo/sub2 ================
+
+END
+        "git-update-dirs: Simulating 'git fetch --all'...\n" x 4,
+        0,
+        "-r (recursive) option",
+    );
+
+    # }}}
+    create_file("filelist.txt", join("\n", @dir_list));
+    testcmd("$CMD --dirs-from filelist.txt -nf", # {{{
+        <<END,
+================ repo/sub2 ================
+
+================ repo/sub1 ================
+
+================ repo/sub1/subrepo1 ================
+
+================ repo/bare1.git ================
+
+================ repo/sub1/subrepo1/subsubrepo1.git ================
+
+END
+        "git-update-dirs: Simulating 'git fetch --all'...\n" x 5,
+        0,
+        "--dirs-from option",
+    );
+
+    # }}}
+    ok(unlink("filelist.txt"), "Delete filelist.txt");
+
     diag('Clean up');
     testcmd("rm -rf bare.git", # {{{
         '',
@@ -741,6 +815,23 @@ sub file_data {
     }
     # }}}
 } # file_data()
+
+sub create_file {
+    # Create new file and fill it with data {{{
+    my ($file, $text) = @_;
+    my $retval = 0;
+    if (open(my $fp, ">$file")) {
+        print($fp $text);
+        close($fp);
+        $retval = is(
+            file_data($file),
+            $text,
+            "$file was successfully created",
+        );
+    }
+    return($retval); # 0 if error, 1 if ok
+    # }}}
+} # create_file()
 
 sub print_version {
     # Print program version {{{
