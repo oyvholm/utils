@@ -4,10 +4,39 @@
 # Genlog
 # File ID: 20281518-f989-11dd-98ac-000475e441b9
 #
-# Run all tests, update files in log/ and display the results.
+# Run all tests, update files in log/ of that directory and display the 
+# results.
 #
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
+
+progname=Genlog
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Run all tests, update files in log/ of that directory and display the 
+results.
+
+Usage: $progname testname [options] [testname [...]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 [ -z "$1" ] && { echo "Syntax: $0 testname [options] [testname [...]]" >&2; exit 1; }
 
