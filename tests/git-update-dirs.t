@@ -232,7 +232,57 @@ END
     );
 
     # }}}
+    testcmd("$CMD --fetch -n --dirs-from - <filelist.txt", # {{{
+        <<END,
+================ repo/sub2 ================
+
+================ repo/sub1 ================
+
+================ repo/sub1/subrepo1 ================
+
+================ repo/bare1.git ================
+
+================ repo/sub1/subrepo1/subsubrepo1.git ================
+
+END
+        "git-update-dirs: Simulating 'git fetch --all'...\n" x 5,
+        0,
+        "Read file list from stdin with '--dirs-from -'",
+    );
+
+    # }}}
+    create_file("filelist2.txt", <<END);
+repo/sub2
+repo/bare1.git
+repo/sub1
+END
+    testcmd("$CMD --fetch -n --dirs-from filelist.txt --dirs-from filelist2.txt", # {{{
+        <<END,
+================ repo/sub2 ================
+
+================ repo/sub1 ================
+
+================ repo/sub1/subrepo1 ================
+
+================ repo/bare1.git ================
+
+================ repo/sub1/subrepo1/subsubrepo1.git ================
+
+================ repo/sub2 ================
+
+================ repo/bare1.git ================
+
+================ repo/sub1 ================
+
+END
+        "git-update-dirs: Simulating 'git fetch --all'...\n" x 8,
+        0,
+        "--dirs-from is specified twice, read from two files",
+    );
+
+    # }}}
     ok(unlink("filelist.txt"), "Delete filelist.txt");
+    ok(unlink("filelist2.txt"), "Delete filelist2.txt");
 
     diag('Clean up');
     testcmd("rm -rf bare.git", # {{{
