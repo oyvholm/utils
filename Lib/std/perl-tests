@@ -41,6 +41,8 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.0.0';
 
+my %descriptions = ();
+
 Getopt::Long::Configure('bundling');
 GetOptions(
 
@@ -137,6 +139,8 @@ END
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) && BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
@@ -166,6 +170,8 @@ sub testcmd {
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) && BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
