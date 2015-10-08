@@ -26,6 +26,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $CMD_BASENAME = 'git-update-dirs';
+our $CMD = "../../$CMD_BASENAME";
 
 our %Opt = (
 
@@ -93,8 +94,7 @@ END
 
     my $Tmptop = "tmp-git-update-dirs-t-$$-" . substr(rand, 2, 8);
     ok(mkdir($Tmptop), "mkdir [Tmptop]") || BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
-
-    my $CMD = "../$CMD_BASENAME";
+    ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
 
     diag('Testing -h (--help) option...');
     likecmd("$CMD -h", # {{{
@@ -139,7 +139,6 @@ END
     ) || BAIL_OUT("git-annex is not installed, cannot continue");
 
     # }}}
-    ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
     diag('Initialise repositories');
     likecmd("git init --bare bare.git", # {{{
         '/.*/',
@@ -209,6 +208,10 @@ sub test_repo {
     diag("Run tests in $repo");
     $current_repo = $repo;
     ok(chdir($repo), "chdir $repo") || BAIL_OUT('chdir error');
+    $CMD = "../../../$CMD_BASENAME";
+    if (!-e $CMD) {
+        BAIL_OUT("test_repo(): \$CMD is '$CMD', that's wrong");
+    }
     if (!$is_bare) {
         likecmd("git remote add bare ../bare.git", # {{{
             '/^$/',
@@ -243,10 +246,6 @@ sub test_repo {
     );
 
     # }}}
-    my $CMD = "../../../$CMD_BASENAME";
-    if (!-e $CMD) {
-        BAIL_OUT("\$CMD is '$CMD', that's wrong");
-    }
     my $sep = "================ . ================\n";
 
     diag('--exec-before');
@@ -608,6 +607,7 @@ END
 
     # }}}
     ok(chdir('..'), "$repo: chdir ..");
+    $CMD = "../../$CMD_BASENAME";
     return;
     # }}}
 } # test_repo()
@@ -624,7 +624,6 @@ sub test_option {
     # {{{
     my ($option, $cmd) = @_;
 
-    my $CMD = "../../../$CMD_BASENAME";
     if (!-e $CMD) {
         BAIL_OUT("\$CMD is '$CMD', that's wrong");
     }
