@@ -7,4 +7,4 @@ test:
 	Genlog *.t
 
 clean:
-	rm -rf log
+	rm -rf *.tmp tmp-*
