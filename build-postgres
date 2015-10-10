@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=build-postgres
-VERSION=0.1.0
+VERSION=0.2.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
