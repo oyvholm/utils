@@ -62,20 +62,20 @@ for gf in "$@"; do
     testname=`echo -n $testname | perl -pe 's/\.t$//'`
     printf "%${maxlen}s.t: " $testname
     ./$testname.t $opt_str 2>&1 | remove_perltestnumbers >log/$testname.log
-    not_ok_count=$(grep "^not ok -" log/$testname.log | wc -l | tr -d ' ')
+    not_ok_count=$(grep -a "^not ok -" log/$testname.log | wc -l | tr -d ' ')
     if [ $not_ok_count -gt 0 ]; then
         not_ok_str=", $not_ok_count not ok"
         retval=1
     else
         unset not_ok_str
     fi
-    ok_count=$(grep "^ok -" log/$testname.log | wc -l)
+    ok_count=$(grep -a "^ok -" log/$testname.log | wc -l)
     printf "%3u ok%s\\n" $ok_count "$not_ok_str"
     tot_ok=$(($tot_ok + $ok_count))
     tot_not_ok=$(($tot_not_ok + $not_ok_count))
-    grep -q "^not ok -" log/$testname.log && {
+    grep -a -q "^not ok -" log/$testname.log && {
         echo
-        grep "^not ok -" log/$testname.log
+        grep -a "^not ok -" log/$testname.log
         echo
     }
 done
