@@ -80,6 +80,10 @@ for gf in "$@"; do
     }
 done
 echo
-printf "  %${maxlen}s: %u ok, %u not ok\n" "total" $tot_ok $tot_not_ok
+unset tot_not_ok_str
+if test $tot_not_ok -gt 0; then
+    tot_not_ok_str=", $tot_not_ok not ok"
+fi
+printf "  %${maxlen}s: %u ok%s\n" "total" "$tot_ok" "$tot_not_ok_str"
 
 exit $retval
