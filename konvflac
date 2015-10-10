@@ -3,14 +3,42 @@
 #=======================================================================
 # konvflac
 # File ID: dde2fab8-3dfd-11e0-9b12-1b57187fd9d3
+#
 # Convert .wav files to .flac and keep metadata
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-if test -z "$1"; then
-    echo 'Syntax: konvflac wav_file [...]' >&2
-    exit 1
+progname=konvflac
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
 fi
+
+if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Convert .wav files to .flac and keep all metadata + verify that the file 
+uncompresses to an identical .wav file. If the tiniest difference is 
+found, the file is skipped and an error message is written to 
+konvflac-error.txt .
+
+Usage: $progname [options] wav_file [...]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
 tmpuuid=$(suuid -m -t c_konvflac -wa -c "Starting conversion")
 test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
 chkfile="/tmp/konvflac.$tmpuuid.tmp"
