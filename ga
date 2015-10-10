@@ -29,11 +29,12 @@ The following commands (first non-option on the command line) are
 customised:
 
   init
-    Initialise annex.uuid with UUID v1 (time-based UUID) before 
-    executing an ordinary "git annex init". Will abort if annex.uuid 
-    already is defined. Also, if any other command is executed and 
-    annex.uuid doesn't exist, the script aborts. This is to make sure no 
-    git-annex setup is done in non-annex repositories.
+    Initialise annex.uuid with UUID v1 (time-based UUID) instead of v4 
+    (random-based), which is the default. This is done before executing 
+    an ordinary "git annex init". Will abort if annex.uuid already is 
+    defined. Also, if any other command is executed and annex.uuid 
+    doesn't exist, the script aborts. This is to make sure no git-annex 
+    setup is done in non-annex repositories.
   sync
     Execute "git wait-until-clean -u" before syncing, i.e., wait until 
     the repository is clean before continuing. This is to avoid any 
