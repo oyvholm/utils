@@ -3,9 +3,65 @@
 #=======================================================================
 # ga
 # File ID: e89047ce-29d1-11e2-bb6f-00c0a8deee11
+#
+# Customised frontend to git-annex
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ga
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Customised frontend to git-annex.
+
+Usage: $progname [options] git-annex_commands_and_options
+
+The following commands (first non-option on the command line) are 
+customised:
+
+  init
+    Initialise annex.uuid with UUID v1 (time-based UUID) before 
+    executing an ordinary "git annex init". Will abort if annex.uuid 
+    already is defined. Also, if any other command is executed and 
+    annex.uuid doesn't exist, the script aborts. This is to make sure no 
+    git-annex setup is done in non-annex repositories.
+  sync
+    Execute "git wait-until-clean -u" before syncing, i.e., wait until 
+    the repository is clean before continuing. This is to avoid any 
+    accidental commits.
+  fsck
+    Filter the output through ga-fsck-size, calculates how much space is 
+    needed to get enough file copies.
+  md
+    Shortcut for "metadata".
+  unused
+    Filter the output through ga-sumsize, display total number of bytes 
+    in unused files.
+
+After all this, it checks that "git annex pre-commit ." is disabled in 
+.git/hooks/pre-commit . This is to avoid an automatic "git annex fix" 
+that automatically fixes broken symlinks before commit. This makes it 
+hard to track file renames, as it breaks "git log --follow" and friends.
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 if test "$1" = "init"; then
     if test -z "$(git config --get annex.uuid)"; then
