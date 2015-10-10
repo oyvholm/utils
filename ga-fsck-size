@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #=======================================================================
 # ga-fsck-size
@@ -19,11 +19,8 @@ use Number::Bytes::Human qw(format_bytes);
 
 local $| = 1;
 
-our $Debug = 0;
-
 our %Opt = (
 
-    'debug' => 0,
     'help' => 0,
     'quiet' => 0,
     'verbose' => 0,
@@ -33,12 +30,11 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
-    'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -46,7 +42,6 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
 $Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -54,11 +49,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     my $total = 0;
@@ -105,7 +99,7 @@ sub file_size {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
     return;
     # }}}
 } # print_version()
@@ -134,8 +128,6 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -152,19 +144,6 @@ sub msg {
     return;
     # }}}
 } # msg()
-
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return('');
-    # }}}
-} # D()
 
 __END__
 
@@ -192,6 +171,10 @@ __END__
 
 Print a brief help summary.
 
+=item B<-q>, B<--quiet>
+
+Be more quiet. Can be repeated to increase silence.
+
 =item B<-v>, B<--verbose>
 
 Increase level of verbosity. Can be repeated.
@@ -199,10 +182,6 @@ Increase level of verbosity. Can be repeated.
 =item B<--version>
 
 Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
 
 =back
 
