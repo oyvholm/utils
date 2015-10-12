@@ -9,8 +9,8 @@
 
 name=$1
 test -z "$name" && { echo $0: Name not specified as arg 1 >&2; exit 1; }
-echo -n "Makefile: "; std -l -t exec=$name c/Makefile Makefile
-echo -n "$name.c: "; std -l -t exec=$name c/std.c $name.c
-echo -n "$name.h: "; std -l -t exec=$name c/std.h $name.h
-echo -n "version.h: "; std -l -t exec=$name c/version.h version.h
-echo -n "COPYING: "; std -l COPYING COPYING && echo OK || echo ERROR
+echo -n "Makefile: "; std -t exec=$name c/Makefile Makefile
+echo -n "$name.c: "; std -t exec=$name c/std.c $name.c
+echo -n "$name.h: "; std -t exec=$name c/std.h $name.h
+echo -n "version.h: "; std -t exec=$name c/version.h version.h
+echo -n "COPYING: "; std COPYING COPYING && echo OK || echo ERROR

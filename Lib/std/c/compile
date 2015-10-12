@@ -17,10 +17,10 @@ cd $tmpdir || { echo $0: $tmpdir: cannot chdir >&2; exit 1; }
 SUUID_LOGDIR=$(pwd)/uuids
 mkdir $SUUID_LOGDIR
 echo ==== std ====
-std -l -d ./synced.sqlite -t exec=jada c/std.c jada.c
-std -l -d ./synced.sqlite -t exec=jada c/std.h jada.h
-std -l -d ./synced.sqlite -t exec=jada c/version.h version.h
-std -l -d ./synced.sqlite -t exec=jada c/Makefile Makefile
+std -d ./synced.sqlite -t exec=jada c/std.c jada.c
+std -d ./synced.sqlite -t exec=jada c/std.h jada.h
+std -d ./synced.sqlite -t exec=jada c/version.h version.h
+std -d ./synced.sqlite -t exec=jada c/Makefile Makefile
 echo ==== make clean ====
 make clean
 echo ==== make ====
