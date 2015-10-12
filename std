@@ -37,7 +37,7 @@ my @Tags = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 my $CMD_GIT = "git";
 my $CMD_SQLITE = "sqlite3";
