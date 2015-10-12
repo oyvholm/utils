@@ -26,6 +26,7 @@ use Getopt::Long;
 local $| = 1;
 
 our $CMD = '../std';
+my $SQLITE = "sqlite3";
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 my $use_svn = 0;
@@ -146,7 +147,7 @@ END
     my $suuid_file = glob("tmpuuids/*");
     ok(-e $suuid_file, "suuid log file exists");
     if ($use_svn) {
-        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
+        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite bashfile", # {{{
             "/^$v1_templ\\nA\\s+bashfile.+\$/s",
             '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
             0,
@@ -154,19 +155,43 @@ END
         );
         # }}}
     } else {
-        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash bashfile", # {{{
+        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite bashfile", # {{{
             "/^$v1_templ\\n\$/s",
-            '/^$/',
+            '/^std: Creating database \'./db.sqlite\'\n$/',
             0,
             "Create bash script",
         );
         # }}}
     }
     ok(-e "bashfile", "bashfile exists");
+    ok(-e "db.sqlite", "db.sqlite exists");
+    chomp(my $commit = `git rev-parse HEAD`);
+    like(sqlite_dump("db.sqlite"), # {{{
+        '/^' .
+            'PRAGMA foreign_keys=OFF;\n' .
+            'BEGIN TRANSACTION;\n' .
+            'CREATE TABLE synced \(\n' .
+            '  file TEXT UNIQUE NOT NULL,\n' .
+            '  orig TEXT,\n' .
+            '  rev TEXT,\n' .
+            '  date TEXT\n' .
+            '\);\n' .
+            'INSERT INTO "synced" VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
+            '\'Lib/std/bash\',\'' .
+            $commit .
+            '\',' .
+            '\'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\'\);\n' .
+            'COMMIT;\n' .
+            '$/',
+        "db.sqlite looks ok",
+    );
+
+    # }}}
     ok(unlink('bashfile'), 'Remove bashfile');
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l bash bashfile", # {{{
+    ok(unlink('db.sqlite'), 'Remove db.sqlite');
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l -d ./db.sqlite bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
-        '/^$/',
+            '/^std: Creating database \'./db.sqlite\'\n$/',
         0,
         "Create bash script with -l (--local)",
     );
@@ -191,7 +216,7 @@ END
 
     # }}}
     diag("Testing -f (--force) option...");
-    likecmd("../$CMD bash bashfile", # {{{
+    likecmd("../$CMD --database ./db.sqlite bash bashfile", # {{{
         '/^$/s',
         '/^std: bashfile: File already exists, will not overwrite\n$/s',
         1,
@@ -200,7 +225,7 @@ END
 
     # }}}
     if ($use_svn) {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv -d ./db.sqlite perl bashfile", # {{{
             "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
             '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
             0,
@@ -208,7 +233,7 @@ END
         );
         # }}}
     } else {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv perl bashfile", # {{{
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv -d ./db.sqlite perl bashfile", # {{{
             "/^$v1_templ\\n\$/s",
             '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
             0,
@@ -253,6 +278,7 @@ END
     ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob [Tmptop]/tmpuuids/*')");
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
     ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
+    ok(unlink("$Tmptop/db.sqlite"), "unlink('[Tmptop]/db.sqlite')");
     ok(rmdir($Tmptop), "rmdir([Tmptop])");
 
     todo_section:
@@ -273,6 +299,21 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub sqlite_dump {
+    # Return SQLite dump of database file {{{
+    my $File = shift;
+    my $Txt;
+    if (open(my $fp, "$SQLITE $File .dump |")) {
+        local $/ = undef;
+        $Txt = <$fp>;
+        close($fp);
+        return($Txt);
+    } else {
+        return;
+    }
+    # }}}
+} # sqlite_dump()
 
 sub testcmd {
     # {{{
