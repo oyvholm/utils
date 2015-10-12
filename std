@@ -1,8 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # std
 # File ID: e9801250-f743-11dd-afdc-000475e441b9
+#
 # Send file templates to stdout
 #
 # Character set: UTF-8
@@ -12,21 +13,20 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 use Cwd;
 
-$| = 1;
-
-our $Debug = 0;
+local $| = 1;
 
 our %Opt = (
 
-    'debug' => 0,
     'force' => 0,
     'help' => 0,
     'local' => 0,
     'no-svn' => 0,
     'notag' => "",
+    'quiet' => 0,
     'tag' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -36,7 +36,7 @@ my @Tags = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.1.0';
 
 my $CMD_GIT = "git";
 my $CMD_SVN = "svn";
@@ -48,22 +48,22 @@ my $Dest = "";
 my $session_uuid = "";
 my @bck_cmdline = @ARGV;
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "debug" => \$Opt{'debug'},
-    "force|f" => \$Opt{'force'},
-    "help|h" => \$Opt{'help'},
-    "local|l+" => \$Opt{'local'},
-    "no-svn|n" => \$Opt{'no-svn'},
-    "notag|T=s" => \$Opt{'notag'},
-    "tag|t=s" => \@Tags,
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'force|f' => \$Opt{'force'},
+    'help|h' => \$Opt{'help'},
+    'local|l+' => \$Opt{'local'},
+    'no-svn|n' => \$Opt{'no-svn'},
+    'notag|T=s' => \$Opt{'notag'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'tag|t=s' => \@Tags,
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -81,6 +81,10 @@ if (defined($ARGV[0])) {
 
 defined($ARGV[1]) && ($Dest = $ARGV[1]);
 
+my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime();
+$Year += 1900;
+$Mon += 1;
+
 my %Tag = ();
 if (scalar(@Tags)) {
     for my $Curr (@Tags) {
@@ -92,103 +96,109 @@ if (scalar(@Tags)) {
     }
 }
 
-if (length($Dest) && -e $Dest) {
-    if ($Opt{'force'}) {
-        msg(1, "Overwriting '$Dest'...");
-    } else {
-        warn("$progname: $Dest: File already exists, will not overwrite\n");
-        exit(1);
-    }
-}
+exit(main());
 
-D(sprintf("\@Tags = \"%s", join("\", \"", @Tags) . "\""));
-D(sprintf("%%Tag = \"%s", join("\", \"", %Tag) . "\""));
+sub main {
+    # {{{
+    my $Retval = 0;
 
-my $dat_dir = $0;
-$dat_dir =~ s/^(.+\/)(.+?)$/$1/;
-$dat_dir .= "Lib/std";
-my $dat_file = "$dat_dir/$Type";
-
-my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime();
-$Year += 1900;
-$Mon += 1;
-
-my $URL = "https://github.com/sunny256/utils/raw/master/Lib/std/$Type";
-my $tmpfile = "tmp.std." . time;
-
-my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
-
-if ($Opt{'local'}) {
-    my $orig_dir = getcwd();
-    chdir($dat_dir) || die("$progname: $dat_dir: Cannot chdir: $!\n");
-    if (open(PipeFP, "$CMD_GIT status $Type |")) {
-        while (<PipeFP>) {
-            if (/modified:\s+$dat_file/) {
-                warn("$progname: WARNING: $dat_file is modified\n");
-                last;
-            }
-        }
-        close(PipeFP);
-        chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original dir: $!\n");
-        mysyst("cp", "-a", $dat_file, $tmpfile);
-    } else {
-        warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
-    }
-} else {
-    # FIXME: Have to add --no-check-certificate to get around bug in wget(1) described at http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=409938
-    mysyst($CMD_WGET, "--no-check-certificate", "-O", $tmpfile, "-o", "/dev/null", $URL);
-}
-
-if (length($Dest)) {
-    msg(1, "Copying temp file");
-    mysyst("cp", "-a", $tmpfile, $Dest);
-}
-
-my $Output = "";
-
-if (open(FromFP, "<$tmpfile")) {
-    while (my $Line = <FromFP>) {
-        $Line = replace_tags($Line);
-        $Output .= $Line;
-    }
-    close(FromFP);
-    if ($Output =~ /STD\S+DTS/s) {
-        my ($tmp, $tmp2) = ($Output, "");
-        my %Ha = ();
-        $tmp =~ s/STD(\S+?)DTS/($Ha{$1} = 1)/gse;
-        for my $key (sort keys %Ha) {
-            defined($Ha{$key}) && ($tmp2 .= "$key ");
-        }
-        $tmp2 =~ s/ $//;
-        warn("$progname: Warning: Undefined tags: $tmp2\n");
-    }
-} else {
-    die("$progname: $tmpfile: Cannot read file: $!\n");
-}
-
-if (length($Dest)) {
-    open(DestFP, ">$Dest")
-        || die("$progname: $Dest: Cannot open file for write: $!\n");
-    print(DestFP $Output);
-    close(DestFP);
-    if ($is_svn_wc) {
-        if (!is_added($Dest)) {
-            msg(1, "$CMD_SVN add");
-            mysyst($CMD_SVN, "add", $Dest);
-        }
-        msg(1, "mergesvn");
-        if (-f "Lib/std/$Type") {
-            mysyst("mergesvn", "-s", "Lib/std/$Type", $Dest);
+    if (length($Dest) && -e $Dest) {
+        if ($Opt{'force'}) {
+            msg(1, "Overwriting '$Dest'...");
         } else {
-            mysyst("mergesvn", "-s", $URL, $Dest);
+            warn("$progname: $Dest: File already exists, will not overwrite\n");
+            exit(1);
         }
-        mysyst("keyw", $Dest);
     }
-} else {
-    print($Output);
-}
 
-unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
+    msg(2, sprintf("\@Tags = \"%s", join("\", \"", @Tags) . "\""));
+    msg(2, sprintf("%%Tag = \"%s", join("\", \"", %Tag) . "\""));
+
+    my $dat_dir = $0;
+    $dat_dir =~ s/^(.+\/)(.+?)$/$1/;
+    $dat_dir .= "Lib/std";
+    my $dat_file = "$dat_dir/$Type";
+
+    my $URL = "https://github.com/sunny256/utils/raw/master/Lib/std/$Type";
+    my $tmpfile = "tmp.std." . time;
+
+    my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
+
+    if ($Opt{'local'}) {
+        my $orig_dir = getcwd();
+        chdir($dat_dir) || die("$progname: $dat_dir: Cannot chdir: $!\n");
+        if (open(PipeFP, "$CMD_GIT status $Type |")) {
+            while (<PipeFP>) {
+                if (/modified:\s+$dat_file/) {
+                    warn("$progname: WARNING: $dat_file is modified\n");
+                    last;
+                }
+            }
+            close(PipeFP);
+            chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original dir: $!\n");
+            mysyst("cp", "-a", $dat_file, $tmpfile);
+        } else {
+            warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
+        }
+    } else {
+        # FIXME: Have to add --no-check-certificate to get around bug in wget(1) described at http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=409938
+        mysyst($CMD_WGET, "--no-check-certificate", "-O", $tmpfile, "-o", "/dev/null", $URL);
+    }
+
+    if (length($Dest)) {
+        msg(1, "Copying temp file");
+        mysyst("cp", "-a", $tmpfile, $Dest);
+    }
+
+    my $Output = "";
+
+    if (open(FromFP, "<$tmpfile")) {
+        while (my $Line = <FromFP>) {
+            $Line = replace_tags($Line);
+            $Output .= $Line;
+        }
+        close(FromFP);
+        if ($Output =~ /STD\S+DTS/s) {
+            my ($tmp, $tmp2) = ($Output, "");
+            my %Ha = ();
+            $tmp =~ s/STD(\S+?)DTS/($Ha{$1} = 1)/gse;
+            for my $key (sort keys %Ha) {
+                defined($Ha{$key}) && ($tmp2 .= "$key ");
+            }
+            $tmp2 =~ s/ $//;
+            warn("$progname: Warning: Undefined tags: $tmp2\n");
+        }
+    } else {
+        die("$progname: $tmpfile: Cannot read file: $!\n");
+    }
+
+    if (length($Dest)) {
+        open(DestFP, ">$Dest")
+            || die("$progname: $Dest: Cannot open file for write: $!\n");
+        print(DestFP $Output);
+        close(DestFP);
+        if ($is_svn_wc) {
+            if (!is_added($Dest)) {
+                msg(1, "$CMD_SVN add");
+                mysyst($CMD_SVN, "add", $Dest);
+            }
+            msg(1, "mergesvn");
+            if (-f "Lib/std/$Type") {
+                mysyst("mergesvn", "-s", "Lib/std/$Type", $Dest);
+            } else {
+                mysyst("mergesvn", "-s", $URL, $Dest);
+            }
+            mysyst("keyw", $Dest);
+        }
+    } else {
+        print($Output);
+    }
+
+    unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
+
+    return($Retval);
+    # }}}
+} # main()
 
 sub is_added {
     # Check if a file is already added with svn(1) {{{
@@ -220,8 +230,7 @@ sub mysyst {
     # Customised system() {{{
     my @Args = @_;
     my $system_txt = sprintf("system(\"%s\");", join("\", \"", @Args));
-    D("$system_txt");
-    deb_wait();
+    msg(2, "$system_txt");
     msg(1, "@_\n");
     system(@_);
     # }}}
@@ -241,24 +250,15 @@ sub gen_uuid {
         }
     }
     $Retval = $session_uuid;
-    D("gen_uuid(): Retval = '$Retval'");
+    msg(2, "gen_uuid(): Retval = '$Retval'");
     return($Retval);
     # }}}
 } # gen_uuid()
 
-sub deb_wait {
-    # Wait until Enter is pressed if $Debug and verbose >= 2 {{{
-    $Debug || return;
-    if ($Opt{'verbose'} >= 2) {
-        print("debug: Press ENTER...");
-        <STDIN>;
-    }
-    # }}}
-} # deb_wait()
-
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -270,7 +270,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] type [destfile]
 
@@ -287,6 +287,8 @@ Options:
     Use local copy, don’t download.
   -n, --no-svn
     Don’t version control the file with Subversion.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -t x, --tag x
     Replaces strings of the form "STDtagDTS" in the template file with 
     another string. Examples:
@@ -301,8 +303,6 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -316,21 +316,9 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
-
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
 
 __END__
 
@@ -358,6 +346,10 @@ Send a template of a special file type to stdout.
 
 Print a brief help summary.
 
+=item B<-q>, B<--quiet>
+
+Be more quiet. Can be repeated to increase silence.
+
 =item B<-v>, B<--verbose>
 
 Increase level of verbosity. Can be repeated.
@@ -365,10 +357,6 @@ Increase level of verbosity. Can be repeated.
 =item B<--version>
 
 Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
 
 =back
 
@@ -387,9 +375,9 @@ This is free software; see the file F<COPYING> for legalese stuff.
 
 =head1 LICENCE
 
-This program is free software: you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 2 of the License, or (at your 
+Free Software Foundation; either version 2 of the License, or (at your 
 option) any later version.
 
 This program is distributed in the hope that it will be useful, but 
