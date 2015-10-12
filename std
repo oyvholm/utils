@@ -106,6 +106,11 @@ sub main {
     # {{{
     my $Retval = 0;
 
+    if ($Opt{'local'}) {
+        # FIXME: Remove -l/--local after 2016-01-12, that's three months 
+        # since the warning.
+        msg(0, "The -l/--local option is obsolete and will be removed soon");
+    }
     if (length($Dest) && -e $Dest) {
         if ($Opt{'force'}) {
             msg(1, "Overwriting '$Dest'...");
@@ -128,25 +133,20 @@ sub main {
 
     my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
 
-    if ($Opt{'local'}) {
-        my $orig_dir = getcwd();
-        chdir($dat_dir) || die("$progname: $dat_dir: Cannot chdir: $!\n");
-        if (open(PipeFP, "$CMD_GIT status $Type |")) {
-            while (<PipeFP>) {
-                if (/modified:\s+$dat_file/) {
-                    warn("$progname: WARNING: $dat_file is modified\n");
-                    last;
-                }
+    my $orig_dir = getcwd();
+    chdir($dat_dir) || die("$progname: $dat_dir: Cannot chdir: $!\n");
+    if (open(PipeFP, "$CMD_GIT status $Type |")) {
+        while (<PipeFP>) {
+            if (/modified:\s+$dat_file/) {
+                warn("$progname: WARNING: $dat_file is modified\n");
+                last;
             }
-            close(PipeFP);
-            chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original dir: $!\n");
-            mysyst("cp", "-a", $dat_file, $tmpfile);
-        } else {
-            warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
         }
+        close(PipeFP);
+        chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original dir: $!\n");
+        mysyst("cp", "-a", $dat_file, $tmpfile);
     } else {
-        # FIXME: Have to add --no-check-certificate to get around bug in wget(1) described at http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=409938
-        mysyst($CMD_WGET, "--no-check-certificate", "-O", $tmpfile, "-o", "/dev/null", $URL);
+        warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
     }
 
     if (length($Dest)) {
@@ -388,8 +388,6 @@ Options:
     Show this help.
   -f, --force
     Overwrite existing file.
-  -l, --local
-    Use local copy, don’t download.
   -n, --no-svn
     Don’t version control the file with Subversion.
   -q, --quiet

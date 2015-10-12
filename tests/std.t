@@ -191,7 +191,10 @@ END
     ok(unlink('db.sqlite'), 'Remove db.sqlite');
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l -d ./db.sqlite bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
-            '/^std: Creating database \'./db.sqlite\'\n$/',
+        '/^' .
+            'std: The -l/--local option is obsolete and will be removed soon\n' .
+            'std: Creating database \'./db.sqlite\'\n' .
+            '$/',
         0,
         "Create bash script with -l (--local)",
     );
