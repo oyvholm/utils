@@ -177,11 +177,11 @@ Edit an SQLite 3.x database file in your favourite text editor. The
 original version is backuped with the file modification time in the file 
 name as seconds since 1970-01-01 00:00:00 UTC.
 
-#### find_8bit
+#### find\_8bit
 
 Read text from stdin and output all lines with bytes &gt; U+007F.
 
-#### find_inv_utf8
+#### find\_inv\_utf8
 
 Read text from stdin and print all lines containing invalid UTF-8.
 
@@ -199,7 +199,7 @@ Split contents into files based on separation bytes.
 
 Sort the entries in an SQLite database. Warning: Quite crude, only works 
 with databases with single-line entries. A backup of the previous 
-version is copied to a *.bck file containing the date of the file 
+version is copied to a \*.bck file containing the date of the file 
 modification time in the file name.
 
 ## Not described yet
@@ -224,7 +224,7 @@ modification time in the file name.
 - git-upstream
 
 Create a graph in Gnuplot of the commit activity. Needs `ep`, 
-`inc_epstat` and `stpl`. And Gnuplot, of course.
+`inc\_epstat` and `stpl`. And Gnuplot, of course.
 
 FIXME: `ep` is in Nårwidsjn.
 
@@ -254,7 +254,7 @@ the alias somewhere.
 - rdbl-gpg
 - rdbl-gramps-backup
 - rdbl-odt
-- rdbl-sort_k5
+- rdbl-sort\_k5
 - rdbl-sqlite3
 - rdbl-unzip
 
@@ -275,11 +275,11 @@ the alias somewhere.
 
 ### Apache logs
 
-- access_log-date
-- access_log-drops
-- access_log2epstat
-- access_log2tab
-- access_log_ip
+- access\_log-date
+- access\_log-drops
+- access\_log2epstat
+- access\_log2tab
+- access\_log\_ip
 
 ### Other
 
@@ -304,8 +304,8 @@ the alias somewhere.
 - activesvn
 - addpoints
 - afv
-- afv_move
-- afv_rename
+- afv\_move
+- afv\_rename
 - afvctl
 - age
 - all-lpar
@@ -333,22 +333,22 @@ the alias somewhere.
 - charconv
 - ciall
 - cl
-- clean_files
+- clean\_files
 - cleansrc
 - cmds
 - colourtest
 - commify
 - commout
-- construct_call_graph.py
+- construct\_call\_graph.py
 - conv-old-suuid
 - convkeyw
 - cp1252
 - cp865
 - create-annex-remotes
-- create_cproject
-- create_imgindex
-- create_new
-- create_svn
+- create\_cproject
+- create\_imgindex
+- create\_new
+- create\_svn
 - cryptit
 - csv2gpx
 - cunw
@@ -367,8 +367,8 @@ the alias somewhere.
 - degpg
 - denycurrent
 - detab
-- dings_it
-- dings_vimtrans
+- dings\_it
+- dings\_vimtrans
 - dir-elems
 - doc
 - dprofpp.graphviz
@@ -379,33 +379,33 @@ the alias somewhere.
 - encr
 - ep
 - ep-pause
-- ep_day
+- ep\_day
 - eplog2date
 - epstat
-- export_kde_svn
-- extract_mail
+- export\_kde\_svn
+- extract\_mail
 - ferdig
 - fibonacci
 - fileid
 - filenamelower
 - filmer
 - filt
-- filter_ep
-- filtrer_access_log
+- filter\_ep
+- filtrer\_access\_log
 - findbom
 - finddup
 - findhex
 - findrev
-- finn_triton
+- finn\_triton
 - firefox
-- fix_filenames
-- fix_mailman
+- fix\_filenames
+- fix\_mailman
 - fixtext
-- fjern_here
-- flac_to_ogg
+- fjern\_here
+- flac\_to\_ogg
 - fldb
 - fold-stdout
-- fra_linode
+- fra\_linode
 - fromdos
 - fromhex
 - g
@@ -428,7 +428,7 @@ the alias somewhere.
 - gpst
 - gpst-file
 - gpst-pic
-- gptrans_conv
+- gptrans\_conv
 - gq
 - gqfav
 - gqview
@@ -454,7 +454,7 @@ the alias somewhere.
 - icat
 - icatf
 - impnet
-- inc_epstat
+- inc\_epstat
 - irc-conn
 - irssi
 - isoname
@@ -467,14 +467,14 @@ the alias somewhere.
 - klokke
 - klokkesig-conv
 - konvflac
-- kopier_bilder
+- kopier\_bilder
 - l
 - l33t
 - lag3d
-- lag_gqv
-- lag_linker
+- lag\_gqv
+- lag\_linker
 - latlon
-- line_exec.py
+- line\_exec.py
 - linux-counter-machine-update
 - list-extensions
 - list-tables
@@ -482,9 +482,9 @@ the alias somewhere.
 - livecd-exit
 - livecd-init
 - ll
-- log_df
-- log_df_pg
-- log_load
+- log\_df
+- log\_df\_pg
+- log\_load
 - logg
 - logging
 - lpar
@@ -493,8 +493,8 @@ the alias somewhere.
 - maileditor
 - mailfix
 - mailview
-- make_svnlog
-- make_tags
+- make\_svnlog
+- make\_tags
 - makemesh
 - mangefiler
 - manyfiles
@@ -503,12 +503,12 @@ the alias somewhere.
 - mc
 - mergesvn
 - mime2txt
-- mincvs_vim
+- mincvs\_vim
 - mixline
 - mixword
 - mkFiles
-- mkFiles_rec
-- mk_local_links
+- mkFiles\_rec
+- mk\_local\_links
 - mkcvsbck
 - mkd
 - mklist
@@ -516,7 +516,7 @@ the alias somewhere.
 - mkt
 - mobilstripp
 - mountusb
-- mp3_to_ogg
+- mp3\_to\_ogg
 - mtube
 - multiapt
 - mvdirnewest
@@ -539,7 +539,7 @@ the alias somewhere.
 - outl
 - p
 - pakk
-- pakk_logg
+- pakk\_logg
 - pakkdir
 - pakkings
 - pakkut
@@ -559,7 +559,7 @@ the alias somewhere.
 - posmap
 - prearmor
 - pri
-- primitiv_prompt
+- primitiv\_prompt
 - purgewiki
 - push-annex-sunbase
 - pynt
@@ -569,7 +569,7 @@ the alias somewhere.
 - random
 - rc.firewall-2.2
 - rcs-extract
-- remove_perltestnumbers
+- remove\_perltestnumbers
 - rensk
 - repo
 - repodiffer
@@ -577,7 +577,7 @@ the alias somewhere.
 - repopuller
 - reposurgeon
 - reset
-- rm_backup
+- rm\_backup
 - rmdup
 - rmheadtail
 - rmspc
@@ -596,7 +596,7 @@ the alias somewhere.
 - shellshock
 - sident
 - sj
-- sjekk_iso
+- sjekk\_iso
 - sjekkhtmlindent
 - sjekkrand
 - sjekksommer
@@ -606,14 +606,14 @@ the alias somewhere.
 - slekt
 - slogg
 - smsum
-- snu_epstat
+- snu\_epstat
 - sommer
 - sortcvs
 - sortxml
-- split_access_log
-- split_ep-logg
-- split_log
-- split_md5
+- split\_access\_log
+- split\_ep-logg
+- split\_log
+- split\_md5
 - spreadsheet
 - src
 - ssht
@@ -621,14 +621,14 @@ the alias somewhere.
 - statgits
 - statplot
 - std
-- still_klokka
+- still\_klokka
 - storelog
 - stpl
 - stq
 - strip-conflict
 - strip-nonexisting
-- strip_english
-- strip_msgstr
+- strip\_english
+- strip\_msgstr
 - sub-mergesvn
 - sumdup
 - sums
@@ -649,7 +649,7 @@ the alias somewhere.
 - svup
 - t
 - t2h
-- ta_backup
+- ta\_backup
 - tab
 - tail-errorlog
 - tarsize
@@ -658,7 +658,7 @@ the alias somewhere.
 - testfail
 - tests
 - tilgps
-- tmux_local_install.sh
+- tmux\_local\_install.sh
 - todos
 - togpx
 - tohex
@@ -674,12 +674,12 @@ the alias somewhere.
 - uh2dec
 - uj
 - unichar
-- unicode_htmlchart
-- unik_df
+- unicode\_htmlchart
+- unik\_df
 - unz
 - uoversatt
 - upd
-- update_vim-clean
+- update\_vim-clean
 - urlstrip
 - urm
 - usedchars
@@ -689,11 +689,11 @@ the alias somewhere.
 - vd
 - vekt
 - vg
-- view_df
+- view\_df
 - vx
 - vy
-- wav_to_flac
-- wav_to_mp3
+- wav\_to\_flac
+- wav\_to\_mp3
 - wavto16
 - wdiff
 - wdisk
