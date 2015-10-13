@@ -193,6 +193,15 @@ Pad decimal or hecadecimal numbers with zeroes to get equal length.
 
 Split contents into files based on separation bytes.
 
+## Stable, but has some limitations
+
+### sort-sqlite
+
+Sort the entries in an SQLite database. Warning: Quite crude, only works 
+with databases with single-line entries. A backup of the previous 
+version is copied to a *.bck file containing the date of the file 
+modification time in the file name.
+
 ## Not described yet
 
 - git-add-missing-gpg-keys
