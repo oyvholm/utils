@@ -97,7 +97,7 @@ done
 echo
 unset tot_not_ok_str
 if test $tot_not_ok -gt 0; then
-    tot_not_ok_str=", $tot_not_ok not ok"
+    tot_not_ok_str=", $tot_not_ok not ok ($tot_not_ok/$(($tot_ok + $tot_not_ok)) FAIL)"
 fi
 printf "  %${maxlen}s: %u ok%s\n" "total" "$tot_ok" "$tot_not_ok_str"
 if test $tot_bailout -gt 0; then
