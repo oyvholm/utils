@@ -25,7 +25,9 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD = '../sort-sqlite';
+our $CMD_BASENAME = "sort-sqlite";
+our $CMD = "../$CMD_BASENAME";
+our $SQLITE = "sqlite3";
 
 our %Opt = (
 
@@ -39,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
 
 my %descriptions = ();
 
@@ -116,6 +118,125 @@ END
     );
 
     # }}}
+    ok(chdir("sort-sqlite-files"), "chdir sort-sqlite-files");
+    $CMD = "../$CMD";
+    testcmd("tar xzf sqlite-dbs.tar.gz", # {{{
+        '',
+        '',
+        0,
+        "Untar sqlite-dbs.tar.gz",
+    );
+
+    # }}}
+    ok(chdir("sqlite-dbs"), "chdir sqlite-dbs");
+    $CMD = "../$CMD";
+    testcmd("$CMD non-existing.sqlite", # {{{
+        "",
+        "sort-sqlite: non-existing.sqlite: File is not readable by you or is not a regular file\n",
+        1,
+        "Try to open a non-existing file",
+    );
+
+    # }}}
+    testcmd("$CMD unsorted1.sqlite", # {{{
+        "",
+        "",
+        0,
+        "Sort unsorted1.sqlite",
+    );
+
+    # }}}
+    is(dump_db("unsorted1.sqlite"), # {{{
+        <<END,
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE t (
+  a TEXT
+);
+INSERT INTO "t" VALUES('a');
+INSERT INTO "t" VALUES('b');
+INSERT INTO "t" VALUES('c');
+INSERT INTO "t" VALUES('d');
+COMMIT;
+END
+        "unsorted1.sqlite looks ok",
+    );
+
+    # }}}
+    ok(-f "unsorted1.sqlite.20151012T164244Z.bck", "Backup file 1 exists");
+    testcmd("$CMD -v unsorted2.sqlite unsorted3.sqlite", # {{{
+        "",
+        "sort-sqlite: Sorting unsorted2.sqlite\n" .
+        "sort-sqlite: Sorting unsorted3.sqlite\n",
+        0,
+        "Sort unsorted2.sqlite",
+    );
+
+    # }}}
+    is(dump_db("unsorted2.sqlite"), # {{{
+        <<END,
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE u (
+  a TEXT
+);
+INSERT INTO "u" VALUES('0');
+INSERT INTO "u" VALUES('1');
+INSERT INTO "u" VALUES('a');
+INSERT INTO "u" VALUES('aa');
+INSERT INTO "u" VALUES('→');
+CREATE TABLE t (
+  a TEXT
+);
+INSERT INTO "t" VALUES('a');
+INSERT INTO "t" VALUES('b');
+INSERT INTO "t" VALUES('c');
+INSERT INTO "t" VALUES('d');
+COMMIT;
+END
+        "unsorted2.sqlite looks ok",
+    );
+
+    # }}}
+    is(dump_db("unsorted3.sqlite"), # {{{
+        <<END,
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE u (
+  a TEXT
+);
+INSERT INTO "u" VALUES('0');
+INSERT INTO "u" VALUES('1');
+INSERT INTO "u" VALUES('a');
+INSERT INTO "u" VALUES('aa');
+INSERT INTO "u" VALUES('→');
+CREATE TABLE one (
+  single TEXT
+);
+INSERT INTO "one" VALUES('z');
+CREATE TABLE t (
+  a TEXT
+);
+INSERT INTO "t" VALUES('a');
+INSERT INTO "t" VALUES('b');
+INSERT INTO "t" VALUES('c');
+INSERT INTO "t" VALUES('d');
+COMMIT;
+END
+        "unsorted3.sqlite looks ok",
+    );
+
+    # }}}
+    ok(-f "unsorted2.sqlite.20151012T164437Z.bck", "Backup file 2 exists");
+    ok(-f "unsorted3.sqlite.20151012T181141Z.bck", "Backup file 3 exists");
+    ok(unlink("unsorted1.sqlite"), "Delete unsorted1.sqlite");
+    ok(unlink("unsorted2.sqlite"), "Delete unsorted2.sqlite");
+    ok(unlink("unsorted3.sqlite"), "Delete unsorted3.sqlite");
+    ok(unlink("unsorted1.sqlite.20151012T164244Z.bck"), "Delete backup 1");
+    ok(unlink("unsorted2.sqlite.20151012T164437Z.bck"), "Delete backup 2");
+    ok(unlink("unsorted3.sqlite.20151012T181141Z.bck"), "Delete backup 3");
+    ok(chdir(".."), "chdir ..");
+    ok(rmdir("sqlite-dbs"), "rmdir sqlite-dbs");
 
     todo_section:
     ;
@@ -135,6 +256,21 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub dump_db {
+    # Return SQLite dump of database file {{{
+    my $File = shift;
+    my $Txt;
+    if (open(my $fp, "$SQLITE $File .dump |")) {
+        local $/ = undef;
+        $Txt = <$fp>;
+        close($fp);
+        return($Txt);
+    } else {
+        return;
+    }
+    # }}}
+} # dump_db()
 
 sub testcmd {
     # {{{
