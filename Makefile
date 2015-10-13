@@ -4,7 +4,7 @@
 # File ID: 455af534-fd45-11dd-a4b7-000475e441b9
 
 all:
-	@echo Syntax: make test
+	sort-sqlite synced.sqlite
 
 update:
 	cd Git && ./update
