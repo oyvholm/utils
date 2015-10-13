@@ -1,0 +1,282 @@
+#!/usr/bin/env perl
+
+#=======================================================================
+# sort-sqlite
+# File ID: 0f3555b6-70fd-11e5-89be-fefdb24f8e10
+#
+# Sort the entries in an SQLite database.
+#
+# Character set: UTF-8
+# ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use warnings;
+use Getopt::Long;
+use File::Copy;
+
+local $| = 1;
+
+our %Opt = (
+
+    'help' => 0,
+    'quiet' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.1.0';
+
+my $ERROR = 0;
+my $OK = 1;
+
+my $SQLITE = "sqlite3";
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'help|h' => \$Opt{'help'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'verbose'} -= $Opt{'quiet'};
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+exit(main());
+
+sub main {
+    # {{{
+    my $Retval = 0;
+
+    $ENV{'LC_COLLATE'} = 'C';
+    for my $file (@ARGV) {
+        sort_file($file) || ($Retval = 1);
+    }
+
+    return($Retval);
+    # }}}
+} # main()
+
+sub sort_file {
+    # {{{
+    my $file = shift;
+    my $retval = $OK;
+    if (!-r $file || !-f $file) {
+        warn("$progname: $file: File is not readable by you or is not a regular file\n");
+        return($ERROR);
+    }
+    my $backup = sprintf("%s.%s.bck", $file, sec_to_string(mod_date($file)));
+    if (!copy($file, $backup)) {
+        warn("$progname: $backup: Cannot create backup file: $!\n");
+        return($ERROR);
+    }
+    if (open(my $infp, "$SQLITE \"$file\" .dump |")) {
+        my $pipefp;
+        if (open($pipefp, "| $SQLITE \"$file.tmp\"")) {
+            msg(1, "Sorting $file");
+        } else {
+            warn("$progname: $SQLITE \"$file.tmp\": Cannot create pipe: $!\n");
+            close($infp);
+            return($ERROR);
+        }
+        my $in_insert = 0;
+        my @inserts = ();
+        while (my $Line = <$infp>) {
+            if ($Line =~ /^INSERT INTO /) {
+                $in_insert = 1;
+                push(@inserts, $Line);
+            } else {
+                if ($in_insert == 1) {
+                    for (sort @inserts) {
+                        print($pipefp $_);
+                    }
+                    @inserts = ();
+                }
+                print($pipefp $Line);
+                $in_insert = 0;
+            }
+        }
+        close($pipefp);
+        close($infp);
+        if (!rename("$file.tmp", $file)) {
+            warn("$progname: Cannot rename '$file.tmp' to '$file': $!\n");
+            $retval = $ERROR;
+        }
+    } else {
+        warn("$progname: $file: Cannot read file: $!\n");
+        $retval = $ERROR;
+    }
+    return($retval);
+    # }}}
+} # sort_file()
+
+sub mod_date {
+    # Return file modification timestamp {{{
+    my $File = shift;
+    my $Retval = "";
+    my @stat_array = stat($File);
+    if (scalar(@stat_array)) {
+        $Retval = $stat_array[9];
+    } else {
+        warn("$progname: $File: Cannot stat file: $!\n");
+    }
+    return($Retval);
+    # }}}
+} # mod_date()
+
+sub sec_to_string {
+    # Convert seconds since 1970 to "yyyymmddThhmmss[.frac]Z" {{{
+    my ($Seconds, $Sep) = @_;
+    length($Seconds) || return('');
+    ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return(undef);
+    my $Secfrac = ($Seconds =~ /^([\-\d]*)(\.\d+)$/) ? 1.0*$2 : "";
+    $Secfrac =~ s/^0//;
+
+    defined($Sep) || ($Sep = " ");
+    my @TA = gmtime($Seconds);
+    my($DateString) = sprintf("%04u%02u%02uT%02u%02u%02u%sZ",
+                              $TA[5]+1900, $TA[4]+1, $TA[3],
+                              $TA[2], $TA[1], $TA[0], $Secfrac);
+    return($DateString);
+    # }}}
+} # sec_to_string()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname $VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Sort the entries in an SQLite database. Warning: Quite crude, only works 
+with databases with single-line entries. A backup of the previous 
+version is copied to a *.bck file containing the date of the file 
+modification time in the file name.
+
+Usage: $progname [options] SQLite_database_file [...]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+__END__
+
+# Plain Old Documentation (POD) {{{
+
+=pod
+
+=head1 NAME
+
+
+
+=head1 SYNOPSIS
+
+ [options] [file [files [...]]]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print a brief help summary.
+
+=item B<-q>, B<--quiet>
+
+Be more quiet. Can be repeated to increase silence.
+
+=item B<-v>, B<--verbose>
+
+Increase level of verbosity. Can be repeated.
+
+=item B<--version>
+
+Print version information.
+
+=back
+
+=head1 BUGS
+
+
+
+=head1 AUTHOR
+
+Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
+
+=head1 COPYRIGHT
+
+Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
+This is free software; see the file F<COPYING> for legalese stuff.
+
+=head1 LICENCE
+
+This program is free software; you can redistribute it and/or modify it 
+under the terms of the GNU General Public License as published by the 
+Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along 
+with this program.
+If not, see L<http://www.gnu.org/licenses/>.
+
+=head1 SEE ALSO
+
+=cut
+
+# }}}
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
