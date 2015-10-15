@@ -48,8 +48,9 @@ If "$rcfile" exists, execute it before the compilation starts.
 Use it to configure the build for each computer. For example:
 
   prefix=~/local
+  sudo=
 
-will place everything below the ~/local directory.
+will place everything below the ~/local directory and not use sudo.
 
 These are the main variables to control the build:
 
