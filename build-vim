@@ -142,8 +142,6 @@ myexit() {
     exit $1
 }
 
-trap "myexit 1" INT TERM
-
 continue_if_y() {
     if test "$opt_y" = "1"; then
         echo y >&2
@@ -164,6 +162,8 @@ mkdir "$lockdir" || {
     msg -s $lockdir: Lockdir exists, aborting
     exit 1
 }
+
+trap "myexit 1" INT TERM
 
 srcdir="$HOME/src/other/vim"
 exec_rcfile
