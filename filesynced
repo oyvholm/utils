@@ -4,14 +4,14 @@
 # filesynced
 # File ID: 25796c28-7205-11e5-b257-fefdb24f8e10
 #
-# [Description]
+# Add 'synced'-entry into synced.sqlite for files.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=filesynced
-VERSION=0.0.0
+VERSION=0.1.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -21,7 +21,10 @@ fi
 if test "$1" = "-h" -o "$1" = "--help"; then
     cat <<END
 
-Usage: $progname [options]
+Add 'synced'-entry into synced.sqlite for files. Updates synced.rev and 
+synced.date with Git commit info.
+
+Usage: $progname [options] commit file [file [...]]
 
 Options:
 
@@ -34,3 +37,43 @@ END
     exit 0
 fi
 
+SQLITE=sqlite3
+
+commit="$(git rev-parse $1)"
+if test -z "$commit"; then
+    echo $progname: $1: Invalid Git ref
+    exit 1
+fi
+shift
+files="$*"
+if test -z "$files"; then
+    echo $progname: No files specified >&2
+    exit 1
+fi
+date="$(
+    git log -1 --format=%ad --date=raw $commit |
+    cut -f 1 -d ' ' |
+    ep -D ' ' |
+    tr -d Z
+)"
+
+db="synced.sqlite"
+test -f "$db" || {
+    echo $progname: $db: File not found >&2
+    exit 1
+}
+
+for f in $files; do
+    if test -z "$(git ls-files "$f")"; then
+        echo $progname: $f: File is not in Git, no entries updated
+        exit 1
+    fi
+done
+
+(
+    echo BEGIN\;
+    for f in $files; do
+        echo "UPDATE synced SET rev = '$commit', date = '$date' WHERE file = '$f';"
+    done
+    echo COMMIT\;
+) | $SQLITE "$db"
