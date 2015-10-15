@@ -281,8 +281,16 @@ END
     );
 
     # }}}
-    is(file_data('ok.sqlite.1443959539.bck'), file_data('ok.sqlite'), # {{{
-        'Backup file is identical to ok.sqlite',
+    testcmd("sqlite3 ok.sqlite.1443959539.bck .dump", # {{{
+        <<END,
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE t (a integer);
+COMMIT;
+END
+        '',
+        0,
+        'Data of backup file is identical to ok.sqlite',
     );
 
     # }}}
