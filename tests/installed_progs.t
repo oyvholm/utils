@@ -161,6 +161,11 @@ sub main {
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
     repeat_test('uuidgen -t', 100, "^$v1_templ\$");
 
+    is(`echo "SELECT json('[\\"a\\",   4,   true, { \\"abc\\"  :\\"def\\"}]');" | sqlite3 2>/dev/null`,
+        "[\"a\",4,true,{\"abc\":\"def\"}]\n",
+        "sqlite3 has json support",
+    );
+
     if ($Opt{'other'} || $Opt{'all'}) {
 
         diag("Checking other software...");
