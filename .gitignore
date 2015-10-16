@@ -11,6 +11,7 @@
 /src/suuid/tests/sess-stderr.tmp
 /src/suuid/tests/suuid-stderr.tmp
 /src/suuid/tests/tmp-suuid-t-*/
+/synced.sqlite.*.bck
 /tests/install-modules
 /tests/log/
 /x.dev/
