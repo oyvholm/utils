@@ -388,6 +388,7 @@ the alias somewhere.
 - fibonacci
 - fileid
 - filenamelower
+- filesynced
 - filmer
 - filt
 - filter\_ep
