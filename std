@@ -271,6 +271,10 @@ CREATE TABLE synced (
     CONSTRAINT rev_length
       CHECK (length(rev) = 40 OR rev = ''),
   date TEXT
+    CONSTRAINT date_length
+      CHECK (date = '' OR length(date) = 19)
+    CONSTRAINT valid_date
+      CHECK (date = '' OR datetime(date) IS NOT NULL)
 );
 END
             }
