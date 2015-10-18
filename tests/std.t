@@ -182,9 +182,9 @@ END
             '      CHECK \(length\(rev\) = 40 OR rev = \'\'\),\n' .
             '  date TEXT\n' .
             '    CONSTRAINT date_length\n' .
-            '      CHECK \(date = \'\' OR length\(date\) = 19\)\n' .
+            '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
             '    CONSTRAINT valid_date\n' .
-            '      CHECK \(date = \'\' OR datetime\(date\) IS NOT NULL\)\n' .
+            '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
             '\);\n' .
             'INSERT INTO "synced" VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
             '\'Lib/std/bash\',\'' .
