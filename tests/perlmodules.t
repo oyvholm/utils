@@ -138,6 +138,7 @@ END
         'HTML::TreeBuilder' => 'libxml-treebuilder-perl libhtml-treebuilder-xpath-perl',
         'HTML::WikiConverter' => 'libhtml-wikiconverter-mediawiki-perl',
         'IO::Handle' => '',
+        'IPC::Open3' => '',
         'Image::ExifTool' => 'libimage-exiftool-perl',
         'JSON::XS' => 'libjson-xs-perl',
         'MIME::Base64' => 'libmime-base64-urlsafe-perl',
