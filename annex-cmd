@@ -3,9 +3,53 @@
 #=======================================================================
 # annex-cmd
 # File ID: f1ca60b4-d33a-11e2-a3c0-0800274013ad
+#
 # Execute command in all local git-annex repositories
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
+
+progname=annex-cmd
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Execute command in all local git-annex repositories
+
+Usage: $progname [options]
+
+Options:
+
+  --annex
+    Execute git-update-dirs in the **/annex directories instead of the 
+    actual annexes.
+  --count-loose
+    Display the number of loose objects in annex repositories in sorted 
+    order.
+  -D X
+    Only run git-update-dirs in annex repositories named X.
+  --find-extra
+    List files in all annexes that have more copies than necessary. 
+    Lists locations too, to get only the file names with number of 
+    copies, filter through "grep ^whereis".
+  --gadu
+    Execute ./lag_gadu-local * in all top annex/ directories. Uses 
+    gadu(1).
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 if [ "$1" = "--gadu" ]; then
     git update-dirs ~/annex /media/*/annex \
