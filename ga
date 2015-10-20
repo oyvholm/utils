@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.1.0
+VERSION=0.1.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
