@@ -75,6 +75,20 @@ else
     test -z "$(git config --get annex.uuid)" && { echo $progname: annex.uuid is not defined, aborting >&2; exit 1; }
 fi
 
+# Check that "git annex pre-commit ." is commented out in 
+# .git/hooks/pre-commit, I don't want to let "git commit" run "git annex 
+# fix" automatically when I've moved files around. I want to be able to 
+# track moves, and it breaks "git log --follow". If it's not disabled, 
+# do it automatically.
+precommit="$(git rev-parse --show-toplevel)/.git/hooks/pre-commit"
+if test -f "$precommit"; then
+    grep -q '^git.*annex.*pre-commit' "$precommit" && {
+        perl -p -i -e 's/^(git.annex.+pre-commit)/# $1/' "$precommit"
+        echo $progname: $precommit: Have disabled git annex pre-commit: >&2
+        cat "$precommit" >&2
+    }
+fi
+
 if test "$1" = "sync"; then
     git wait-until-clean -u
 fi
@@ -90,18 +104,4 @@ elif test "$1" = "unused"; then
     git-annex unused "$@" | ga-sumsize
 else
     git-annex "$@"
-fi
-
-# Check that "git annex pre-commit ." is commented out in 
-# .git/hooks/pre-commit, I don't want to let "git commit" run "git annex 
-# fix" automatically when I've moved files around. I want to be able to 
-# track moves, and it breaks "git log --follow". If it's not disabled, 
-# do it automatically.
-precommit="$(git rev-parse --show-toplevel)/.git/hooks/pre-commit"
-if test -f "$precommit"; then
-    grep -q '^git.*annex.*pre-commit' "$precommit" && {
-        perl -p -i -e 's/^(git.annex.+pre-commit)/# $1/' "$precommit"
-        echo $progname: $precommit: Have disabled git annex pre-commit: >&2
-        cat "$precommit" >&2
-    }
 fi
