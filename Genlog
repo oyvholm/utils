@@ -66,15 +66,14 @@ while printf "%s" "$1" | grep -q ^-; do
 done
 
 for gf in "$@"; do
-    currlen=`echo -n $gf | perl -pe 's/\.t$//' | wc -c`
+    currlen=`echo -n $gf | wc -c`
     [ $currlen -gt $maxlen ] && maxlen=$currlen
 done
 
 for gf in "$@"; do
     testname=$gf
-    testname=`echo -n $testname | perl -pe 's/\.t$//'`
-    printf "%${maxlen}s.t: " $testname
-    ./$testname.t $opt_str 2>&1 | remove_perltestnumbers >log/$testname.log
+    printf "%${maxlen}s: " $testname
+    ./$testname $opt_str 2>&1 | remove_perltestnumbers >log/$testname.log
     not_ok_count=$(grep -a "^not ok" log/$testname.log | wc -l | tr -d ' ')
     if [ $not_ok_count -gt 0 ]; then
         not_ok_str=", $not_ok_count not ok"
@@ -99,9 +98,9 @@ unset tot_not_ok_str
 if test $tot_not_ok -gt 0; then
     tot_not_ok_str=", $tot_not_ok not ok ($tot_not_ok/$(($tot_ok + $tot_not_ok)) FAIL)"
 fi
-printf "  %${maxlen}s: %u ok%s\n" "total" "$tot_ok" "$tot_not_ok_str"
+printf "%${maxlen}s: %u ok%s\n" "total" "$tot_ok" "$tot_not_ok_str"
 if test $tot_bailout -gt 0; then
-    printf "  %${maxlen}s: %u\n" "bailout" "$tot_bailout"
+    printf "%${maxlen}s: %u\n" "bailout" "$tot_bailout"
 fi
 
 exit $retval
