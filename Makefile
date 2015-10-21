@@ -23,12 +23,13 @@ testclean:
 	cd src/fldb/tests && $(MAKE) clean
 	cd src/smsum/tests && $(MAKE) clean
 	cd Git/suuid/tests && $(MAKE) clean
-	cd src/gpstools/tests && $(MAKE) clean
 
 unmerged:
 	git br -a --no-merged | grep -v /all/ | cut -f 3- -d / | rmspcall | sort -u | grep -v ^commit-
 
-clean: testclean
+clean:
+	rm -fv synced.sqlite.*.bck
+	$(MAKE) testclean
 
 remotes:
 	git remote add sunbase sunny@git.sunbase.org:/home/sunny/Git/utils.git; true
