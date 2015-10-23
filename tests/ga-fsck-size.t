@@ -125,54 +125,30 @@ END
 
     testcmd("git annex fsck 2>&1 | ../../$CMD", # {{{
        <<END,
-fsck MD5.txt (checksum...)
-ok
-fsck MD5E.txt (checksum...)
-ok
-fsck SHA1.txt (checksum...)
-ok
-fsck SHA1E.txt (checksum...)
-ok
-fsck SHA224.txt (checksum...)
-ok
-fsck SHA224E.txt (checksum...)
-ok
-fsck SHA256.txt (checksum...)
-ok
-fsck SHA256E.txt (checksum...)
-ok
-fsck SHA384.txt (checksum...)
-ok
-fsck SHA384E.txt (checksum...)
-ok
-fsck SHA3_224.txt (checksum...)
-ok
-fsck SHA3_224E.txt (checksum...)
-ok
-fsck SHA3_256.txt (checksum...)
-ok
-fsck SHA3_256E.txt (checksum...)
-ok
-fsck SHA3_384.txt (checksum...)
-ok
-fsck SHA3_384E.txt (checksum...)
-ok
-fsck SHA3_512.txt (checksum...)
-ok
-fsck SHA3_512E.txt (checksum...)
-ok
-fsck SHA512.txt (checksum...)
-ok
-fsck SHA512E.txt (checksum...)
-ok
-fsck SKEIN256.txt (checksum...)
-ok
-fsck SKEIN256E.txt (checksum...)
-ok
-fsck SKEIN512.txt (checksum...)
-ok
-fsck SKEIN512E.txt (checksum...)
-ok
+fsck MD5.txt (checksum...) ok
+fsck MD5E.txt (checksum...) ok
+fsck SHA1.txt (checksum...) ok
+fsck SHA1E.txt (checksum...) ok
+fsck SHA224.txt (checksum...) ok
+fsck SHA224E.txt (checksum...) ok
+fsck SHA256.txt (checksum...) ok
+fsck SHA256E.txt (checksum...) ok
+fsck SHA384.txt (checksum...) ok
+fsck SHA384E.txt (checksum...) ok
+fsck SHA3_224.txt (checksum...) ok
+fsck SHA3_224E.txt (checksum...) ok
+fsck SHA3_256.txt (checksum...) ok
+fsck SHA3_256E.txt (checksum...) ok
+fsck SHA3_384.txt (checksum...) ok
+fsck SHA3_384E.txt (checksum...) ok
+fsck SHA3_512.txt (checksum...) ok
+fsck SHA3_512E.txt (checksum...) ok
+fsck SHA512.txt (checksum...) ok
+fsck SHA512E.txt (checksum...) ok
+fsck SKEIN256.txt (checksum...) ok
+fsck SKEIN256E.txt (checksum...) ok
+fsck SKEIN512.txt (checksum...) ok
+fsck SKEIN512E.txt (checksum...) ok
 fsck WORM.txt ok
 (recording state in git...)
 
