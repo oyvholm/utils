@@ -118,6 +118,46 @@ END
     my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
     ok(mkdir($Tmptop), "mkdir [Tmptop]");
     ok(chdir($Tmptop), "chdir [Tmptop]");
+    diag("Initialise test repos");
+    likecmd("git init repo_a", # {{{
+        '/.*/',
+        '/.*/',
+        0,
+        "git init repo_a",
+    );
+
+    # }}}
+    ok(-d "repo_a/.git", "repo_a/.git exists");
+    likecmd("git init repo_b", # {{{
+        '/.*/',
+        '/.*/',
+        0,
+        "git init repo_b",
+    );
+
+    # }}}
+    ok(-d "repo_b/.git", "repo_b/.git exists");
+    diag("Delete temporary test directories");
+    ok(-d "repo_a", "repo_a exists");
+    testcmd("rm -rf repo_a", # {{{
+        '',
+        '',
+        0,
+        "Delete repo_a",
+    );
+
+    # }}}
+    ok(!-e "repo_a", "repo_a is gone");
+    ok(-d "repo_b", "repo_b exists");
+    testcmd("rm -rf repo_b", # {{{
+        '',
+        '',
+        0,
+        "Delete repo_b",
+    );
+
+    # }}}
+    ok(!-e "repo_b", "repo_b is gone");
     ok(chdir(".."), "chdir ..");
     ok(rmdir($Tmptop), "rmdir [Tmptop]");
 
