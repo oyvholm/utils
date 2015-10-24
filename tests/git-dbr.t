@@ -131,7 +131,13 @@ END
     );
 
     # }}}
-    ok(-d "repo_a/.git", "repo_a/.git exists");
+    if (!ok(-d "repo_a/.git", "repo_a/.git exists")) { # {{{
+        ok(chdir(".."), "chdir .. before bailout");
+        ok(rmdir($Tmptop), "rmdir [Tmptop] before bailout");
+        BAIL_OUT("repo_a wasn't created properly, aborting");
+    }
+
+    # }}}
     likecmd("$GIT init repo_b", # {{{
         '/.*/',
         '/.*/',
