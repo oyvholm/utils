@@ -59,6 +59,7 @@ sub main {
     my $Retval = 0;
 
     for my $arg (@ARGV) {
+        $arg =~ s/^remotes\///;
         if ($arg =~ /^(\S+?)\/(\S+)/) {
             my ($remote, $branch) = ($1, $2);
             $branch =~ s/,$//;
