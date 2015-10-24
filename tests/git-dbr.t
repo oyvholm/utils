@@ -147,6 +147,46 @@ END
 
     # }}}
     ok(-d "repo_b/.git", "repo_b/.git exists");
+    ok(chdir("repo_a"), "chdir repo_a");
+    create_remote("repo_b", "../repo_b");
+    likecmd("$GIT commit --allow-empty -m 'Initial empty commit'", # {{{
+        '/.*/',
+        '/.*/',
+        0,
+        "Create initial commit in repo_a",
+    );
+
+    # }}}
+    is(`$GIT log --format="%T %s"`, # {{{
+        "4b825dc642cb6eb9a060e54bf8d69288fbee4904 Initial empty commit\n",
+        "Initial commit in repo_a was created",
+    );
+
+    # }}}
+    create_branch("branch_a");
+    create_branch("branch_b");
+    create_branch("oldbranch");
+    ok(chdir("../repo_b"), "chdir ../repo_b");
+    create_remote("repo_a", "../repo_a");
+    likecmd("$GIT fetch repo_a", # {{{
+        '/^$/',
+        '/^' .
+            'From \.\.\/repo_a\n' .
+            '.+' .
+            '\[new branch\].+repo_a\/branch_a\n' .
+            '.+' .
+            '\[new branch\].+repo_a\/branch_b\n' .
+            '.+' .
+            '\[new branch\].+repo_a\/master\n' .
+            '.+' .
+            '\[new branch\].+repo_a\/oldbranch\n' .
+            '$/s',
+        0,
+        "Fetch from repo_a",
+    );
+
+    # }}}
+    ok(chdir(".."), "chdir ..");
     diag("Delete temporary test directories");
     ok(-d "repo_a", "repo_a exists");
     testcmd("rm -rf repo_a", # {{{
@@ -189,6 +229,32 @@ END
     diag('Testing finished.');
     # }}}
 } # main()
+
+sub create_branch {
+    # {{{
+    my $branch = shift;
+    testcmd("$GIT branch \"$branch\"",
+        '',
+        '',
+        0,
+        "Create '$branch' branch",
+    );
+    return;
+    # }}}
+} # create_branch()
+
+sub create_remote {
+    # {{{
+    my ($name, $url) = @_;
+    testcmd("$GIT remote add $name $url",
+        '',
+        '',
+        0,
+        "Create remote '$name'",
+    );
+    return;
+    # }}}
+} # create_remote()
 
 sub testcmd {
     # {{{
