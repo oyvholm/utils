@@ -232,12 +232,14 @@ END
 
 sub create_branch {
     # {{{
-    my $branch = shift;
-    testcmd("$GIT branch \"$branch\"",
-        '',
-        '',
+    my ($branch, $remote_branch) = @_;
+    defined($remote_branch) || ($remote_branch = '');
+    likecmd("$GIT branch $branch $remote_branch",
+        '/.*/s',
+        '/^$/s',
         0,
-        "Create '$branch' branch",
+        "Create '$branch' branch" .
+            (length($remote_branch) ? " from $remote_branch" : ""),
     );
     return;
     # }}}
