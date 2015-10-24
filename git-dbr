@@ -4,7 +4,8 @@
 # git-dbr
 # File ID: fd27c966-f4ed-11e4-bb56-000df06acc56
 #
-# [Description]
+# Delete local and remote branches from local and remote Git 
+# repositories.
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
@@ -59,10 +60,12 @@ sub main {
     for my $arg (@ARGV) {
         $arg =~ s/^remotes\///;
         if ($arg =~ /^(\S+?)\/(\S+)/) {
+            # Argument contains remote
             my ($remote, $branch) = ($1, $2);
             $branch =~ s/,$//;
             mysystem("git", "push", $remote, ":$branch");
         } elsif ($arg !~ /\//) {
+            # Argument is a local branch
             $arg =~ s/,$//;
             mysystem("git", "branch", "-D", $arg);
         }
@@ -107,7 +110,11 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] remote/branch [remote/branch [branch [...]]]
+Delete local and remote branches from local and remote Git repositories. 
+Also removes trailing comma to make it easier to copy+paste from %d 
+output used with "git log --format".
+
+Usage: $progname [options] [remote/]branch[,] [[remote/]branch[,] [...]]
 
 Options:
 
@@ -121,6 +128,21 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+
+Examples:
+
+  git dbr gitlab/oldbranch oldbranch
+    Delete oldbranch from the gitlab remote and also delete it if it 
+    exists locally.
+  git dbr gitlab/oldbranch, oldbranch,
+    Same as above. This is copy+paste from the %d output created by "git 
+    log --format". The comma is removed internally before the branches 
+    are deleted.
+  git branch -a | grep oldbranch | xargs git dbr
+  git dbr \$(git branch -a | grep oldbranch)
+    These two examples works identically, it's just a matter of 
+    preference how to write it. Delete all branches locally and from all 
+    known remotes where the string "oldbranch" occurs.
 
 END
     exit($Retval);
