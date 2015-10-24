@@ -29,6 +29,7 @@ our $CMD = '../git-dbr';
 our %Opt = (
 
     'all' => 0,
+    'git' => defined($ENV{'GIT_DBR_GIT'}) ? $ENV{'GIT_DBR_GIT'} : 'git',
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
@@ -46,6 +47,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'all|a' => \$Opt{'all'},
+    'git|g=s' => \$Opt{'git'},
     'help|h' => \$Opt{'help'},
     'todo|t' => \$Opt{'todo'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -58,6 +60,8 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+my $GIT = $Opt{'git'};
 
 exit(main());
 
@@ -119,7 +123,7 @@ END
     ok(mkdir($Tmptop), "mkdir [Tmptop]");
     ok(chdir($Tmptop), "chdir [Tmptop]");
     diag("Initialise test repos");
-    likecmd("git init repo_a", # {{{
+    likecmd("$GIT init repo_a", # {{{
         '/.*/',
         '/.*/',
         0,
@@ -128,7 +132,7 @@ END
 
     # }}}
     ok(-d "repo_a/.git", "repo_a/.git exists");
-    likecmd("git init repo_b", # {{{
+    likecmd("$GIT init repo_b", # {{{
         '/.*/',
         '/.*/',
         0,
@@ -282,6 +286,10 @@ Options:
 
   -a, --all
     Run all tests, also TODOs.
+  -g X, --git X
+    Specify alternative git executable to use. Used to execute the tests 
+    with different git versions. This can also be set with the 
+    GIT_DBR_GIT environment variable.
   -h, --help
     Show this help.
   -t, --todo
