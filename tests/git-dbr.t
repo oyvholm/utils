@@ -115,6 +115,11 @@ END
     );
 
     # }}}
+    my $Tmptop = "tmp-git-dangling-t-$$-" . substr(rand, 2, 8);
+    ok(mkdir($Tmptop), "mkdir [Tmptop]");
+    ok(chdir($Tmptop), "chdir [Tmptop]");
+    ok(chdir(".."), "chdir ..");
+    ok(rmdir($Tmptop), "rmdir [Tmptop]");
 
     todo_section:
     ;
