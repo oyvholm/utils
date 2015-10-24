@@ -39,7 +39,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
 
 my %descriptions = ();
 
@@ -186,6 +186,100 @@ END
     );
 
     # }}}
+    check_branches(<<END, "after initial fetch"); # {{{
+  remotes/repo_a/branch_a
+  remotes/repo_a/branch_b
+  remotes/repo_a/master
+  remotes/repo_a/oldbranch
+END
+
+    # }}}
+    $CMD = "../../$CMD";
+    diag("Start of git-dbr tests");
+    testcmd("$CMD", # {{{
+        '',
+        '',
+        0,
+        "No arguments",
+    );
+
+    # }}}
+    create_branch("oldbranch", "repo_a/oldbranch");
+    check_branches(<<END, "after oldbranch was created"); # {{{
+  oldbranch
+  remotes/repo_a/branch_a
+  remotes/repo_a/branch_b
+  remotes/repo_a/master
+  remotes/repo_a/oldbranch
+END
+
+    # }}}
+    likecmd("$CMD oldbranch", # {{{
+        '/^Deleted branch oldbranch \(was [0-9a-f]+\)\.\n$/s',
+        '/^git-dbr: Executing \'git branch -D oldbranch\'\.\.\.\n$/s',
+        0,
+        "Delete local branch 'oldbranch'",
+    );
+
+    # }}}
+    create_branch("oldbranch2", "repo_a/oldbranch");
+    likecmd("$CMD oldbranch2 repo_a/oldbranch", # {{{
+        '/^Deleted branch oldbranch2 \(was [0-9a-f]+\)\.\n$/s',
+        '/^' .
+            'git-dbr: Executing \'git branch -D oldbranch2\'\.\.\.\n' .
+            'git-dbr: Executing \'git push repo_a :oldbranch\'\.\.\.\n' .
+            'To \.\.\/repo_a\n' .
+            '.+' .
+            '\[deleted\]\s+oldbranch\n' .
+            '$/s',
+        0,
+        "Delete local branch 'oldbranch2' and remote branch 'repo_a/oldbranch'",
+    );
+
+    # }}}
+    fetch("repo_a", "after deletion of oldbranch2 and repo_a/oldbranch");
+    check_branches(<<END, "after oldbranch2 and repo_a/oldbranch were deleted"); # {{{
+  remotes/repo_a/branch_a
+  remotes/repo_a/branch_b
+  remotes/repo_a/master
+END
+
+    # }}}
+    create_branch("branch_a", "repo_a/branch_a");
+    likecmd("$GIT branch -a | grep branch_a | xargs $CMD", # {{{
+        '/^Deleted branch branch_a \(was [0-9a-f]+\)\.\n$/s',
+        '/^' .
+            'git-dbr: Executing \'git branch -D branch_a\'\.\.\.\n' .
+            'git-dbr: Executing \'git push repo_a :branch_a\'\.\.\.\n' .
+            'To \.\.\/repo_a\n' .
+            '.+' .
+            '\[deleted\]\s+branch_a\n' .
+            '$/s',
+        0,
+        "Delete all 'branch_a' branches with xargs",
+    );
+
+    # }}}
+    fetch("repo_a", "after all 'branch_a' branches were deleted");
+    check_branches(<<END, "after all 'branch_a' branches were deleted"); # {{{
+  remotes/repo_a/branch_b
+  remotes/repo_a/master
+END
+
+    # }}}
+    likecmd("$CMD repo_a/branch_b,", # {{{
+        '/^$/s',
+        '/^' .
+            'git-dbr: Executing \'git push repo_a :branch_b\'\.\.\.\n' .
+            'To \.\.\/repo_a\n' .
+            '.+' .
+            '\[deleted\]\s+branch_b\n' .
+            '$/s',
+        0,
+        "Delete local branch 'repo_a/branch_b' and strip trailing comma",
+    );
+
+    # }}}
     ok(chdir(".."), "chdir ..");
     diag("Delete temporary test directories");
     ok(-d "repo_a", "repo_a exists");
@@ -230,6 +324,14 @@ END
     # }}}
 } # main()
 
+sub check_branches {
+    # {{{
+    my ($should_be, $desc) = @_;
+    is(`$GIT branch -a`, $should_be, "Branches are ok $desc");
+    return;
+    # }}}
+} # check_branches()
+
 sub create_branch {
     # {{{
     my ($branch, $remote_branch) = @_;
@@ -257,6 +359,19 @@ sub create_remote {
     return;
     # }}}
 } # create_remote()
+
+sub fetch {
+    # {{{
+    my ($remote, $desc) = @_;
+    testcmd("$GIT fetch --prune $remote",
+        '',
+        '',
+        0,
+        "Fetch from $remote ($desc)",
+    );
+    return;
+    # }}}
+} # fetch()
 
 sub testcmd {
     # {{{
