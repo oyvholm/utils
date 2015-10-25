@@ -109,7 +109,7 @@ sub main {
     if ($Opt{'local'}) {
         # FIXME: Remove -l/--local after 2016-01-12, that's three months 
         # since the warning.
-        msg(0, "The -l/--local option is obsolete and will be removed soon");
+        msg(-2, "The -l/--local option is obsolete and will be removed soon");
     }
     if (length($Dest) && -e $Dest) {
         if ($Opt{'force'}) {
