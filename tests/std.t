@@ -231,14 +231,27 @@ END
     diag("Testing -f (--force) option...");
     likecmd("../$CMD --database ./db.sqlite bash bashfile", # {{{
         '/^$/s',
-        '/^std: bashfile: File already exists, will not overwrite\n$/s',
+        '/^' .
+            'std: The --database option is obsolete and will be removed soon,\n' .
+            'std: Please use --dbname instead\n' .
+            'std: bashfile: File already exists, will not overwrite\n' .
+            '$/s',
         1,
         "Create bash script, file already exists, don’t use --force",
     );
 
     # }}}
+    # FIXME: Remove this when --database goes out the window
+    testcmd("../$CMD --database ./db.sqlite --dbname ./db2.sqlite bash bashfile", # {{{
+        "",
+        "std: Cannot use both --database and --dbname, please use --dbname only\n",
+        1,
+        "--database and --dbname used at the same time",
+    );
+
+    # }}}
     if ($use_svn) {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv -d ./db.sqlite perl bashfile", # {{{
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv --dbname ./db.sqlite perl bashfile", # {{{
             "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
             '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
             0,
@@ -246,7 +259,7 @@ END
         );
         # }}}
     } else {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv -d ./db.sqlite perl bashfile", # {{{
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv --dbname ./db.sqlite perl bashfile", # {{{
             "/^$v1_templ\\n\$/s",
             '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
             0,

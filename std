@@ -22,6 +22,7 @@ local $| = 1;
 our %Opt = (
 
     'database' => '',
+    'dbname' => '',
     'force' => 0,
     'help' => 0,
     'local' => 0,
@@ -54,7 +55,8 @@ my @bck_cmdline = @ARGV;
 Getopt::Long::Configure('bundling');
 GetOptions(
 
-    'database|d=s' => \$Opt{'database'},
+    'database=s' => \$Opt{'database'},
+    'dbname|d=s' => \$Opt{'dbname'},
     'force|f' => \$Opt{'force'},
     'help|h' => \$Opt{'help'},
     'local|l+' => \$Opt{'local'},
@@ -67,6 +69,13 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+if (length($Opt{'database'}) && length($Opt{'dbname'})) {
+    warn("$progname: Cannot use both --database and --dbname, please use --dbname only\n");
+    exit(1);
+}
+if (length($Opt{'database'})) {
+    $Opt{'dbname'} = $Opt{'database'};
+}
 $Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -106,6 +115,12 @@ sub main {
     # {{{
     my $Retval = 0;
 
+    if ($Opt{'database'}) {
+        # FIXME: Remove --database after 2016-01-25, three months since 
+        # the warning.
+        msg(-2, "The --database option is obsolete and will be removed soon,");
+        msg(-2, "Please use --dbname instead");
+    }
     if ($Opt{'local'}) {
         # FIXME: Remove -l/--local after 2016-01-12, that's three months 
         # since the warning.
@@ -205,7 +220,7 @@ sub main {
     #
     # $syncdb is set as follows:
     #
-    # - Use the location specified by the `-d`/`--database` command line 
+    # - Use the location specified by the `-d`/`--dbname` command line 
     #   option,
     # - otherwise use the $ENV{$ENV_DATABASE} environment variable if 
     #   defined,
@@ -213,8 +228,8 @@ sub main {
 
     my $syncdb;
 
-    if (length($Opt{'database'})) {
-        $syncdb = $Opt{'database'};
+    if (length($Opt{'dbname'})) {
+        $syncdb = $Opt{'dbname'};
     } elsif (defined($ENV{$ENV_DATABASE}) && length($ENV{$ENV_DATABASE})) {
         $syncdb = $ENV{$ENV_DATABASE};
     } else {
@@ -395,7 +410,7 @@ destination file is specified, output goes to stdout.
 
 Options:
 
-  -d X, --database X
+  -d X, --dbname X
     Use SQLite database file X to store file sync information. See below 
     for details.
   -h, --help
@@ -426,7 +441,7 @@ which revision the file was last synced against.
 
 The file name of the database is set as follows:
 
-- Use the location specified by the -d/--database command line option,
+- Use the location specified by the -d/--dbname command line option,
 - otherwise use the $ENV_DATABASE environment variable if defined,
 - otherwise use hardcoded value 'synced.sqlite'.
 
