@@ -173,7 +173,7 @@ END
             'CREATE TABLE synced \(\n' .
             '  file TEXT\n' .
             '    CONSTRAINT filename_length\n' .
-            '      CHECK \(length\(file\)\)\n' .
+            '      CHECK \(length\(file\) > 0\)\n' .
             '    UNIQUE\n' .
             '    NOT NULL,\n' .
             '  orig TEXT,\n' .
