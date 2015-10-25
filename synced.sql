@@ -3,7 +3,7 @@ BEGIN TRANSACTION;
 CREATE TABLE synced (
   file TEXT
     CONSTRAINT filename_length
-      CHECK (length(file))
+      CHECK (length(file) > 0)
     UNIQUE
     NOT NULL,
   orig TEXT,
