@@ -5,6 +5,7 @@
 
 all:
 	sort-sqlite synced.sqlite
+	sqlite3 synced.sqlite .dump >synced.sql
 
 update:
 	cd Git && ./update
