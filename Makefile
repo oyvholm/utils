@@ -4,7 +4,7 @@
 # File ID: 455af534-fd45-11dd-a4b7-000475e441b9
 
 all:
-	test ! -e synced.sqlite && sqlite3 synced.sqlite <synced.sql || true
+	test ! -e synced.sqlite && { sqlite3 synced.sqlite <synced.sql || { rm synced.sqlite; exit 1; } } || true
 	sort-sqlite synced.sqlite
 	sqlite3 synced.sqlite .dump >synced.sql
 
