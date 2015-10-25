@@ -395,6 +395,9 @@ destination file is specified, output goes to stdout.
 
 Options:
 
+  -d X, --database X
+    Use SQLite database file X to store file sync information. See below 
+    for details.
   -h, --help
     Show this help.
   -f, --force
@@ -417,6 +420,19 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+
+The created file will be added to an SQLite database to keep track of 
+which revision the file was last synced against.
+
+The file name of the database is set as follows:
+
+- Use the location specified by the -d/--database command line option,
+- otherwise use the $ENV_DATABASE environment variable if defined,
+- otherwise use hardcoded value 'synced.sqlite'.
+
+If the database file name starts with '/' or '.', use it as is, because 
+it points to a location in the local file system. Otherwise use a 
+location relative to the top of the current Git repository.
 
 END
     exit($Retval);
