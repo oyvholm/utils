@@ -166,6 +166,7 @@ END
     create_branch("branch_a");
     create_branch("branch_b");
     create_branch("oldbranch");
+    create_branch("with/slash");
     ok(chdir("../repo_b"), "chdir ../repo_b");
     create_remote("repo_a", "../repo_a");
     likecmd("$GIT fetch repo_a", # {{{
@@ -180,6 +181,8 @@ END
             '\[new branch\].+repo_a\/master\n' .
             '.+' .
             '\[new branch\].+repo_a\/oldbranch\n' .
+            '.+' .
+            '\[new branch\].+repo_a\/with\/slash\n' .
             '$/s',
         0,
         "Fetch from repo_a",
@@ -191,6 +194,7 @@ END
   remotes/repo_a/branch_b
   remotes/repo_a/master
   remotes/repo_a/oldbranch
+  remotes/repo_a/with/slash
 END
 
     # }}}
@@ -211,6 +215,7 @@ END
   remotes/repo_a/branch_b
   remotes/repo_a/master
   remotes/repo_a/oldbranch
+  remotes/repo_a/with/slash
 END
 
     # }}}
@@ -239,6 +244,66 @@ END
     # }}}
     fetch("repo_a", "after deletion of oldbranch2 and repo_a/oldbranch");
     check_branches(<<END, "after oldbranch2 and repo_a/oldbranch were deleted"); # {{{
+  remotes/repo_a/branch_a
+  remotes/repo_a/branch_b
+  remotes/repo_a/master
+  remotes/repo_a/with/slash
+END
+
+    # }}}
+    test_branch("slash/branch_a");
+    test_branch("ab/cd/ef");
+    test_branch("remotes/abc");
+    test_branch("remotes/repo_a/abc");
+    test_branch("repo_a/abc");
+    test_branch("abc,");
+    test_branch("abc,,,,,");
+    test_branch("repo_a/abc,/,/,,,");
+    test_branch("slash/branch_a,");
+    test_branch("ab/cd/ef,");
+    test_branch("remotes/abc,");
+    test_branch("remotes/repo_a/abc,");
+    test_branch("repo_a/abc,");
+    test_branch("heads/master");
+    test_branch("refs/heads/master");
+    diag("branch name is identical to remote name");
+    create_branch("remotes/repo_a/master", "repo_a/master");
+    check_branches(<<END, "even with same name as remote");
+  remotes/repo_a/master
+  remotes/repo_a/branch_a
+  remotes/repo_a/branch_b
+  remotes/repo_a/master
+  remotes/repo_a/with/slash
+END
+    likecmd("$CMD remotes/repo_a/master", # {{{
+        '/^Deleted branch remotes/repo_a/master \(was [0-9a-f]+\)\.\n$/s',
+        '/^git-dbr: Executing \'git branch -D ' .
+            'remotes/repo_a/master\'\.\.\.\n$/s',
+        0,
+        "Delete local branch 'remotes/repo_a/master'",
+    );
+
+    # }}}
+    check_branches(<<END, "after 'remotes/repo_a/master' was deleted"); # {{{
+  remotes/repo_a/branch_a
+  remotes/repo_a/branch_b
+  remotes/repo_a/master
+  remotes/repo_a/with/slash
+END
+
+    # }}}
+    likecmd("$CMD remotes/repo_a/with/slash", # {{{
+        '/^$/s',
+        '/^' .
+            'git-dbr: Executing \'git push repo_a :with\/slash\'\.\.\.\n' .
+            'To \.\.\/repo_a\n' .
+            '.+' .
+            '\[deleted\]\s+with\/slash\n' .
+            '$/s',
+        0,
+        "Delete remote branch 'repo_a/with/slash'",
+    );
+    check_branches(<<END, "after local 'remotes/repo_a/master' was deleted");
   remotes/repo_a/branch_a
   remotes/repo_a/branch_b
   remotes/repo_a/master
@@ -359,6 +424,29 @@ sub create_remote {
     return;
     # }}}
 } # create_remote()
+
+sub test_branch {
+    # Create and delete local branch. Check retval, but ignore output. {{{
+    my $branch = shift;
+    system("$GIT branch \"$branch\" repo_a/branch_a >/dev/null 2>/dev/null");
+    like(`$GIT branch -a`,
+        '/.*' .
+            '  ' . $branch . '\n' .
+            '.*$/s',
+        "Branch '$branch' exists",
+    );
+    my $exit_val = system("$CMD \"$branch\" >/dev/null 2>/dev/null");
+    $exit_val = $exit_val >> 8;
+    is($exit_val, 0, "Delete '$branch', retval ok");
+    unlike(`$GIT branch -a`,
+        '/.*' .
+            '  ' . $branch . '\n' .
+            '.*$/s',
+        "Branch '$branch' is gone",
+    );
+    return;
+    # }}}
+} # test_branch()
 
 sub fetch {
     # {{{
