@@ -134,10 +134,12 @@ END
         );
         # }}}
     } else {
-        mkdir($Tmptop) || die("$progname: $Tmptop: Cannot create directory: $!\n");
+        mkdir($Tmptop) ||
+            die("$progname: $Tmptop: Cannot create directory: $!\n");
     }
     chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
-    mkdir("tmpuuids") || die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
+    mkdir("tmpuuids") ||
+        die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash", # {{{
         '/GNU General Public License/s',
         '/^std: Warning: Undefined tags: filename\n$/s',
@@ -148,7 +150,8 @@ END
     # }}}
     my $suuid_file = glob("tmpuuids/*");
     ok(-e $suuid_file, "suuid log file exists");
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --dbname none bash bash-no-db", # {{{
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --dbname none " .
+        "bash bash-no-db", # {{{
         "/^$v1_templ\\n\$/s",
         '/^' .
             '$/',
@@ -159,7 +162,8 @@ END
     # }}}
     ok(-e "bash-no-db", "bash-no-db exists");
     if ($use_svn) {
-        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite bashfile", # {{{
+        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite " .
+                "bashfile", # {{{
             "/^$v1_templ\\nA\\s+bashfile.+\$/s",
             '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
             0,
@@ -167,7 +171,8 @@ END
         );
         # }}}
     } else {
-        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite bashfile", # {{{
+        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite " .
+                "bashfile", # {{{
             "/^$v1_templ\\n\$/s",
             '/^std: Creating database \'./db.sqlite\'\n$/',
             0,
@@ -198,7 +203,8 @@ END
             '    CONSTRAINT valid_date\n' .
             '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
             '\);\n' .
-            'INSERT INTO "synced" VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
+            'INSERT INTO "synced" ' .
+            'VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
             '\'Lib/std/bash\',\'' .
             $commit .
             '\',' .
@@ -211,10 +217,12 @@ END
     # }}}
     ok(unlink('bashfile'), 'Remove bashfile');
     ok(unlink('db.sqlite'), 'Remove db.sqlite');
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l -d ./db.sqlite bash bashfile", # {{{
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l -d ./db.sqlite " .
+            "bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^' .
-            'std: The -l/--local option is obsolete and will be removed soon\n' .
+            'std: The -l/--local option is obsolete and ' .
+            'will be removed soon\n' .
             'std: Creating database \'./db.sqlite\'\n' .
             '$/',
         0,
@@ -244,7 +252,8 @@ END
     likecmd("../$CMD --database ./db.sqlite bash bashfile", # {{{
         '/^$/s',
         '/^' .
-            'std: The --database option is obsolete and will be removed soon,\n' .
+            'std: The --database option is obsolete and ' .
+            'will be removed soon,\n' .
             'std: Please use --dbname instead\n' .
             'std: bashfile: File already exists, will not overwrite\n' .
             '$/s',
@@ -254,16 +263,19 @@ END
 
     # }}}
     # FIXME: Remove this when --database goes out the window
-    testcmd("../$CMD --database ./db.sqlite --dbname ./db2.sqlite bash bashfile", # {{{
+    testcmd("../$CMD --database ./db.sqlite --dbname ./db2.sqlite " .
+            "bash bashfile", # {{{
         "",
-        "std: Cannot use both --database and --dbname, please use --dbname only\n",
+        "std: Cannot use both --database and --dbname, " .
+        "please use --dbname only\n",
         1,
         "--database and --dbname used at the same time",
     );
 
     # }}}
     if ($use_svn) {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv --dbname ./db.sqlite perl bashfile", # {{{
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv " .
+                "--dbname ./db.sqlite perl bashfile", # {{{
             "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
             '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
             0,
@@ -271,7 +283,8 @@ END
         );
         # }}}
     } else {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv --dbname ./db.sqlite perl bashfile", # {{{
+        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv " .
+                "--dbname ./db.sqlite perl bashfile", # {{{
             "/^$v1_templ\\n\$/s",
             '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
             0,
@@ -306,7 +319,8 @@ END
     create_file("stdrc", <<END);
 dbname = ./dbfromrc.sqlite
 END
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --force --rcfile stdrc bash bashfile", # {{{
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --force --rcfile stdrc " .
+            "bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^' .
             'std: Creating database \'./dbfromrc.sqlite\'\n' .
@@ -336,7 +350,8 @@ END
             '    CONSTRAINT valid_date\n' .
             '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
             '\);\n' .
-            'INSERT INTO "synced" VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
+            'INSERT INTO "synced" ' .
+            'VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
             '\'Lib/std/bash\',\'' .
             $commit .
             '\',' .
@@ -358,12 +373,14 @@ END
     );
 
     # }}}
-    ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob [Tmptop]/tmpuuids/*')");
+    ok(unlink(glob "$Tmptop/tmpuuids/*"),
+        "unlink('glob [Tmptop]/tmpuuids/*')");
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
     ok(unlink("$Tmptop/bash-no-db"), "unlink('[Tmptop]/bash-no-db')");
     ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
     ok(unlink("$Tmptop/db.sqlite"), "unlink('[Tmptop]/db.sqlite')");
-    ok(unlink("$Tmptop/dbfromrc.sqlite"), "unlink('[Tmptop]/dbfromrc.sqlite')");
+    ok(unlink("$Tmptop/dbfromrc.sqlite"),
+        "unlink('[Tmptop]/dbfromrc.sqlite')");
     ok(unlink("$Tmptop/stdrc"), "unlink('[Tmptop]/stdrc");
     ok(rmdir($Tmptop), "rmdir([Tmptop])");
 
@@ -404,7 +421,8 @@ sub sqlite_dump {
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
@@ -435,7 +453,8 @@ sub testcmd {
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',

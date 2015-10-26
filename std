@@ -72,7 +72,8 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 if (length($Opt{'database'}) && length($Opt{'dbname'})) {
-    warn("$progname: Cannot use both --database and --dbname, please use --dbname only\n");
+    warn("$progname: Cannot use both --database and --dbname, " .
+         "please use --dbname only\n");
     exit(1);
 }
 if (length($Opt{'database'})) {
@@ -108,7 +109,8 @@ if (scalar(@Tags)) {
         if ($Curr =~ /^([^=]+?)=(.*)$/) {
             $Tag{$1} = $2;
         } else {
-            die("$progname: $Curr: Invalid tag, must have the form name=value\n");
+            die("$progname: $Curr: Invalid tag, must have the form " .
+                "name=value\n");
         }
     }
 }
@@ -134,7 +136,8 @@ sub main {
         if ($Opt{'force'}) {
             msg(1, "Overwriting '$Dest'...");
         } else {
-            warn("$progname: $Dest: File already exists, will not overwrite\n");
+            warn("$progname: $Dest: File already exists, " .
+                 "will not overwrite\n");
             exit(1);
         }
     }
@@ -162,7 +165,8 @@ sub main {
             }
         }
         close(PipeFP);
-        chdir($orig_dir) || die("$progname: $orig_dir: Cannot return to original dir: $!\n");
+        chdir($orig_dir) ||
+            die("$progname: $orig_dir: Cannot return to original dir: $!\n");
         mysyst("cp", "-a", $dat_file, $tmpfile);
     } else {
         warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
@@ -260,8 +264,8 @@ sub main {
             msg(2, "repotop = '$repotop'");
             msg(2, "syncdb = '$syncdb'");
             if (open(my $sqlitefh, "| $CMD_SQLITE \"$syncdb\"")) {
-                my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
-                    gmtime(time());
+                my ($Sec, $Min, $Hour, $Day, $Mon, $Year,
+                    $Wday, $Yday, $is_dst) = gmtime(time());
                 my $currtime = sprintf("%04u-%02u-%02u %02u:%02u:%02u",
                     $Year+1900, $Mon+1, $Day, $Hour, $Min, $Sec);
                 my $commit = '';
@@ -269,7 +273,8 @@ sub main {
                     chomp($commit = `git rev-parse HEAD`);
                     chdir($currdir);
                 } else {
-                    msg(0, "Could not chdir to $ENV{'HOME'}/bin, not storing commit\n");
+                    msg(0, "Could not chdir to $ENV{'HOME'}/bin, " .
+                           "not storing commit\n");
                 }
                 my $sql = '';
                 if (!-f $syncdb) {
@@ -356,10 +361,12 @@ sub replace_tags {
     my $Txt = shift;
     if (scalar(@Tags)) {
         for my $Curr (keys %Tag) {
-            $Opt{'notag'} =~ /\b$Curr\b/ || $Txt =~ s/STD${Curr}DTS/$Tag{$Curr}/g;
+            $Opt{'notag'} =~ /\b$Curr\b/ ||
+                $Txt =~ s/STD${Curr}DTS/$Tag{$Curr}/g;
         }
     }
-    $Opt{'notag'} =~ /\bfilename\b/ || (length($Dest) && ($Txt =~ s/STDfilenameDTS/$Dest/g));
+    $Opt{'notag'} =~ /\bfilename\b/ || (length($Dest) &&
+        ($Txt =~ s/STDfilenameDTS/$Dest/g));
     $Opt{'notag'} =~ /\byear\b/ || ($Txt =~ s/STDyearDTS/$Year/g);
     $Opt{'notag'} =~ /\buuid\b/ || ($Txt =~ s/STDuuidDTS/gen_uuid()/ge);
     return($Txt);
@@ -393,7 +400,8 @@ sub gen_uuid {
     my $Retval = "";
     my $Comment = "$progname " . join(" ", @bck_cmdline) . "";
     if (!length($session_uuid)) {
-        chomp($session_uuid = `$CMD_SUUID --tag std --whereto o --comment "$Comment"`);
+        chomp($session_uuid =
+            `$CMD_SUUID --tag std --whereto o --comment "$Comment"`);
         if (!defined($session_uuid) || $session_uuid !~ /^$v1_templ$/) {
             die("$progname: $CMD_SUUID error\n");
         }
