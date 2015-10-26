@@ -37,10 +37,15 @@
   <wpt lat="" lon="">
     <ele>0</ele>
     <time>2000-01-01T00:00:00Z</time>
-    <name></name> <!-- The GPS name of the waypoint. This field will be transferred to and from the GPS. -->
-    <cmt></cmt> <!-- GPS waypoint comment. Sent to GPS as comment. -->
-    <desc></desc> <!-- A text description of the element. Holds additional information about the element intended for the user, not the GPS. -->
-    <src></src> <!-- Source of data. Included to give user some idea of reliability and accuracy of data. “Garmin eTrex”, “USGS quad Boston North”, e.g. -->
+    <name></name> <!-- The GPS name of the waypoint. This field will be 
+                       transferred to and from the GPS. -->
+    <cmt></cmt>   <!-- GPS waypoint comment. Sent to GPS as comment. -->
+    <desc></desc> <!-- A text description of the element. Holds 
+                       additional information about the element intended 
+                       for the user, not the GPS. -->
+    <src></src>   <!-- Source of data. Included to give user some idea of 
+                       reliability and accuracy of data. “Garmin eTrex”, 
+                       “USGS quad Boston North”, e.g. -->
     <sym>Dot</sym>
     <type></type>
     <extensions></extensions>

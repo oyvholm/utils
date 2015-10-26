@@ -18,9 +18,13 @@ good=0
 bad=1
 
 function cleangit {
-    cd $topdir || { echo "STDfilenameDTS: $topdir: Cannot change directory, aborting." >&2; exit 150; }
+    cd $topdir || {
+        echo "STDfilenameDTS: $topdir: Cannot change directory, aborting." >&2
+        exit 150
+    }
     if [ ! -d .git/. ]; then
-        echo "STDfilenameDTS: $topdir: Doesn’t contain a .git directory, aborting." >&2
+        echo -n "STDfilenameDTS: $topdir: " >&2
+        echo "Doesn’t contain a .git directory, aborting." >&2
         exit 150
     fi
     git clean -fxd
