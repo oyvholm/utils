@@ -29,6 +29,7 @@ our %Opt = (
     'no-svn' => 0,
     'notag' => "",
     'quiet' => 0,
+    'rcfile' => "$ENV{'HOME'}/.stdrc",
     'tag' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -63,6 +64,7 @@ GetOptions(
     'no-svn|n' => \$Opt{'no-svn'},
     'notag|T=s' => \$Opt{'notag'},
     'quiet|q+' => \$Opt{'quiet'},
+    'rcfile=s' => \$Opt{'rcfile'},
     'tag|t=s' => \@Tags,
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -85,6 +87,8 @@ if ($Opt{'version'}) {
 
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
+my %rc = read_rcfile();
 
 if (defined($ARGV[0])) {
     $Type = $ARGV[0];
@@ -224,6 +228,8 @@ sub main {
         $syncdb = $Opt{'dbname'};
     } elsif (defined($ENV{$ENV_DATABASE}) && length($ENV{$ENV_DATABASE})) {
         $syncdb = $ENV{$ENV_DATABASE};
+    } elsif (defined($rc{'dbname'}) && length($rc{'dbname'})) {
+        $syncdb = $rc{'dbname'};
     } else {
         $syncdb = "synced.sqlite";
     }
@@ -322,6 +328,26 @@ sub is_added {
     # }}}
 } # is_added()
 
+sub read_rcfile {
+    # Read userdefined data from file in $Opt{'rcfile'} {{{
+    my %Retval = ();
+    if (-e $Opt{'rcfile'}) {
+        if (open(RcFP, "<", $Opt{'rcfile'})) {
+            while (my $Line = <RcFP>) {
+                $Line =~ s/^\s*(.*?)\s*$/$1/;
+                if ($Line =~ /^dbname\s*=\s*(\S+)/) {
+                    $Retval{'dbname'} = $1;
+                }
+            }
+            close(RcFP);
+        } else {
+            msg(-1, "$Opt{'rcfile'}: Cannot open file for read: $!");
+        }
+    }
+    return(%Retval);
+    # }}}
+} # read_rcfile()
+
 sub replace_tags {
     # {{{
     my $Txt = shift;
@@ -413,6 +439,8 @@ Options:
     Don’t version control the file with Subversion.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  --rcfile FILE
+    Read initial settings from FILE instead of '\$HOME/.stdrc'.
   -t x, --tag x
     Replaces strings of the form "STDtagDTS" in the template file with 
     another string. Examples:
@@ -435,11 +463,16 @@ The file name of the database is set as follows:
 
 - Use the location specified by the -d/--dbname command line option,
 - otherwise use the $ENV_DATABASE environment variable if defined,
+- otherwise read dbname value from '~/.stdrc',
 - otherwise use hardcoded value 'synced.sqlite'.
 
 If the database file name starts with '/' or '.', use it as is, because 
 it points to a location in the local file system. Otherwise use a 
 location relative to the top of the current Git repository.
+
+Initial settings can be stored in '~/.stdrc'. The format is:
+
+dbname = foo
 
 END
     exit($Retval);

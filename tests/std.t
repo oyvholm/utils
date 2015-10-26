@@ -290,6 +290,51 @@ END
     );
 
     # }}}
+    diag("Test --rcfile option...");
+    create_file("stdrc", <<END);
+dbname = ./dbfromrc.sqlite
+END
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --force --rcfile stdrc bash bashfile", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^' .
+            'std: Creating database \'./dbfromrc.sqlite\'\n' .
+            '$/',
+        0,
+        "Read dbname from stdrc with --rcfile",
+    );
+
+    # }}}
+    like(sqlite_dump("dbfromrc.sqlite"), # {{{
+        '/^' .
+            'PRAGMA foreign_keys=OFF;\n' .
+            'BEGIN TRANSACTION;\n' .
+            'CREATE TABLE synced \(\n' .
+            '  file TEXT\n' .
+            '    CONSTRAINT filename_length\n' .
+            '      CHECK \(length\(file\) > 0\)\n' .
+            '    UNIQUE\n' .
+            '    NOT NULL,\n' .
+            '  orig TEXT,\n' .
+            '  rev TEXT\n' .
+            '    CONSTRAINT rev_length\n' .
+            '      CHECK \(length\(rev\) = 40 OR rev = \'\'\),\n' .
+            '  date TEXT\n' .
+            '    CONSTRAINT date_length\n' .
+            '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
+            '    CONSTRAINT valid_date\n' .
+            '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
+            '\);\n' .
+            'INSERT INTO "synced" VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
+            '\'Lib/std/bash\',\'' .
+            $commit .
+            '\',' .
+            '\'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\'\);\n' .
+            'COMMIT;\n' .
+            '$/',
+        "dbfromrc.sqlite looks ok",
+    );
+
+    # }}}
 
     chdir("..") || die("$progname: Cannot 'chdir ..': $!");
     diag("Cleaning up temp files...");
@@ -305,6 +350,8 @@ END
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
     ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
     ok(unlink("$Tmptop/db.sqlite"), "unlink('[Tmptop]/db.sqlite')");
+    ok(unlink("$Tmptop/dbfromrc.sqlite"), "unlink('[Tmptop]/dbfromrc.sqlite')");
+    ok(unlink("$Tmptop/stdrc"), "unlink('[Tmptop]/stdrc");
     ok(rmdir($Tmptop), "rmdir([Tmptop])");
 
     todo_section:
@@ -417,6 +464,23 @@ sub file_data {
     }
     # }}}
 } # file_data()
+
+sub create_file {
+    # Create new file and fill it with data {{{
+    my ($file, $text) = @_;
+    my $retval = 0;
+    if (open(my $fp, ">$file")) {
+        print($fp $text);
+        close($fp);
+        $retval = is(
+            file_data($file),
+            $text,
+            "$file was successfully created",
+        );
+    }
+    return($retval); # 0 if error, 1 if ok
+    # }}}
+} # create_file()
 
 sub print_version {
     # Print program version {{{
