@@ -39,7 +39,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 my %descriptions = ();
 
