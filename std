@@ -217,14 +217,6 @@ sub main {
 
     # Add the file to a SQLite database to keep track of which revision 
     # the file was last synced against.
-    #
-    # $syncdb is set as follows:
-    #
-    # - Use the location specified by the `-d`/`--dbname` command line 
-    #   option,
-    # - otherwise use the $ENV{$ENV_DATABASE} environment variable if 
-    #   defined,
-    # - otherwise use hardcoded value `$repotop/synced.sqlite`.
 
     my $syncdb;
 
