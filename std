@@ -234,45 +234,47 @@ sub main {
         $syncdb = "synced.sqlite";
     }
 
-    chomp(my $repotop = `git rev-parse --show-toplevel`);
+    if ($syncdb ne "none") {
+        chomp(my $repotop = `git rev-parse --show-toplevel`);
 
-    # If the database name starts with '/' or '.', use it as is, because 
-    # it points to a file in the local file system. Otherwise use it as 
-    # a file relative to the top of the current repository.
+        # If the database name starts with '/' or '.', use it as is, 
+        # because it points to a file in the local file system. 
+        # Otherwise use it as a file relative to the top of the current 
+        # repository.
 
-    msg(2, "syncdb before regexp: '$syncdb'");
-    if ($syncdb !~ /^(\/|\.)/) {
-        $syncdb = "$repotop/$syncdb";
-    }
-    msg(2, "syncdb after regexp: '$syncdb'");
-    my $currdir = getcwd();
-    my $reldir = "$currdir/";
-    $reldir =~ s/^$repotop(.*)/$1/;
-    $reldir =~ s/^\///;
-    my $relfile = "$reldir$Dest";
-    if (length($Dest)) {
-        msg(2, "Dest = '$Dest'");
-        msg(2, "currdir = '$currdir'");
-        msg(2, "reldir = '$reldir'");
-        msg(2, "relfile = '$relfile'");
-        msg(2, "repotop = '$repotop'");
-        msg(2, "syncdb = '$syncdb'");
-        if (open(my $sqlitefh, "| $CMD_SQLITE \"$syncdb\"")) {
-            my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
-                gmtime(time());
-            my $currtime = sprintf("%04u-%02u-%02u %02u:%02u:%02u",
-                $Year+1900, $Mon+1, $Day, $Hour, $Min, $Sec);
-            my $commit = '';
-            if (chdir("$ENV{'HOME'}/bin")) {
-                chomp($commit = `git rev-parse HEAD`);
-                chdir($currdir);
-            } else {
-                msg(0, "Could not chdir to $ENV{'HOME'}/bin, not storing commit\n");
-            }
-            my $sql = '';
-            if (!-f $syncdb) {
-                msg(0, "Creating database '$syncdb'");
-                $sql .= <<END;
+        msg(2, "syncdb before regexp: '$syncdb'");
+        if ($syncdb !~ /^(\/|\.)/) {
+            $syncdb = "$repotop/$syncdb";
+        }
+        msg(2, "syncdb after regexp: '$syncdb'");
+        my $currdir = getcwd();
+        my $reldir = "$currdir/";
+        $reldir =~ s/^$repotop(.*)/$1/;
+        $reldir =~ s/^\///;
+        my $relfile = "$reldir$Dest";
+        if (length($Dest)) {
+            msg(2, "Dest = '$Dest'");
+            msg(2, "currdir = '$currdir'");
+            msg(2, "reldir = '$reldir'");
+            msg(2, "relfile = '$relfile'");
+            msg(2, "repotop = '$repotop'");
+            msg(2, "syncdb = '$syncdb'");
+            if (open(my $sqlitefh, "| $CMD_SQLITE \"$syncdb\"")) {
+                my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
+                    gmtime(time());
+                my $currtime = sprintf("%04u-%02u-%02u %02u:%02u:%02u",
+                    $Year+1900, $Mon+1, $Day, $Hour, $Min, $Sec);
+                my $commit = '';
+                if (chdir("$ENV{'HOME'}/bin")) {
+                    chomp($commit = `git rev-parse HEAD`);
+                    chdir($currdir);
+                } else {
+                    msg(0, "Could not chdir to $ENV{'HOME'}/bin, not storing commit\n");
+                }
+                my $sql = '';
+                if (!-f $syncdb) {
+                    msg(0, "Creating database '$syncdb'");
+                    $sql .= <<END;
 CREATE TABLE synced (
   file TEXT
     CONSTRAINT filename_length
@@ -290,26 +292,27 @@ CREATE TABLE synced (
       CHECK (date IS NULL OR datetime(date) IS NOT NULL)
 );
 END
-            }
-            if ($Opt{'force'}) {
+                }
+                if ($Opt{'force'}) {
+                    $sql .= sprintf(
+                        "DELETE FROM synced WHERE file = '%s';\n",
+                        safe_sql($relfile),
+                    );
+                }
                 $sql .= sprintf(
-                    "DELETE FROM synced WHERE file = '%s';\n",
-                    safe_sql($relfile),
+                    "INSERT INTO synced (file, orig, rev, date) " .
+                    "VALUES ('%s', '%s', '%s', '%s');\n",
+                    safe_sql("$relfile"),
+                    safe_sql("Lib/std/$Type"),
+                    safe_sql($commit),
+                    safe_sql($currtime),
                 );
+                msg(2, "sql = \"$sql\"");
+                print($sqlitefh $sql);
+                close($sqlitefh);
+            } else {
+                warn("$progname: Cannot open $CMD_SQLITE pipe: $!\n");
             }
-            $sql .= sprintf(
-                "INSERT INTO synced (file, orig, rev, date) " .
-                "VALUES ('%s', '%s', '%s', '%s');\n",
-                safe_sql("$relfile"),
-                safe_sql("Lib/std/$Type"),
-                safe_sql($commit),
-                safe_sql($currtime),
-            );
-            msg(2, "sql = \"$sql\"");
-            print($sqlitefh $sql);
-            close($sqlitefh);
-        } else {
-            warn("$progname: Cannot open $CMD_SQLITE pipe: $!\n");
         }
     }
 
@@ -469,6 +472,7 @@ The file name of the database is set as follows:
 If the database file name starts with '/' or '.', use it as is, because 
 it points to a location in the local file system. Otherwise use a 
 location relative to the top of the current Git repository.
+To disable this functionality, use 'none' as the database name.
 
 Initial settings can be stored in '~/.stdrc'. The format is:
 

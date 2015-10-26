@@ -121,6 +121,8 @@ END
 
     # }}}
 
+    # FIXME: Create Git repostory to test things properly, for example 
+    # that --dbname=none doesn't create a database.
     my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
     diag("Creating tempdir...");
     if ($use_svn) {
@@ -146,6 +148,16 @@ END
     # }}}
     my $suuid_file = glob("tmpuuids/*");
     ok(-e $suuid_file, "suuid log file exists");
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --dbname none bash bash-no-db", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^' .
+            '$/',
+        0,
+        "--dbname none",
+    );
+
+    # }}}
+    ok(-e "bash-no-db", "bash-no-db exists");
     if ($use_svn) {
         likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite bashfile", # {{{
             "/^$v1_templ\\nA\\s+bashfile.+\$/s",
@@ -348,6 +360,7 @@ END
     # }}}
     ok(unlink(glob "$Tmptop/tmpuuids/*"), "unlink('glob [Tmptop]/tmpuuids/*')");
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
+    ok(unlink("$Tmptop/bash-no-db"), "unlink('[Tmptop]/bash-no-db')");
     ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
     ok(unlink("$Tmptop/db.sqlite"), "unlink('[Tmptop]/db.sqlite')");
     ok(unlink("$Tmptop/dbfromrc.sqlite"), "unlink('[Tmptop]/dbfromrc.sqlite')");
