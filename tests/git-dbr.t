@@ -238,12 +238,14 @@ END
             '\[deleted\]\s+oldbranch\n' .
             '$/s',
         0,
-        "Delete local branch 'oldbranch2' and remote branch 'repo_a/oldbranch'",
+        "Delete local branch 'oldbranch2' " .
+            "and remote branch 'repo_a/oldbranch'",
     );
 
     # }}}
     fetch("repo_a", "after deletion of oldbranch2 and repo_a/oldbranch");
-    check_branches(<<END, "after oldbranch2 and repo_a/oldbranch were deleted"); # {{{
+    check_branches(<<END,
+        "after oldbranch2 and repo_a/oldbranch were deleted"); # {{{
   remotes/repo_a/branch_a
   remotes/repo_a/branch_b
   remotes/repo_a/master
@@ -464,7 +466,8 @@ sub fetch {
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
@@ -495,7 +498,8 @@ sub testcmd {
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
