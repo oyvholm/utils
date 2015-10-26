@@ -208,7 +208,7 @@ if test "$sim" != "echo"; then
 fi
 
 test -e "$destdir" && {
-    rmdir "$destdir" || {
+    $sim rmdir "$destdir" || {
         msg -s $destdir already exists
         myexit 1
     }
