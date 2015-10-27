@@ -207,7 +207,7 @@ if test "$sim" != "echo"; then
 fi
 
 test -e "$destdir" && {
-    $sim rmdir "$destdir" || {
+    $sim $sudo rmdir "$destdir" || {
         msg -s $destdir already exists
         exit 1
     }
