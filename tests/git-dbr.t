@@ -244,8 +244,7 @@ END
 
     # }}}
     fetch("repo_a", "after deletion of oldbranch2 and repo_a/oldbranch");
-    check_branches(<<END,
-        "after oldbranch2 and repo_a/oldbranch were deleted"); # {{{
+    check_branches(<<END, "after oldbranch2 and repo_a/oldbranch were deleted"); # {{{
   remotes/repo_a/branch_a
   remotes/repo_a/branch_b
   remotes/repo_a/master
