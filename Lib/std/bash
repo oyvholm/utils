@@ -27,7 +27,7 @@ while :; do
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
-        (*) echo Internal error >&2; exit 1 ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
