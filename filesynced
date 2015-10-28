@@ -117,7 +117,11 @@ done
 (
     echo BEGIN\;
     for f in $files; do
-        echo "UPDATE synced SET rev = '$commit', date = '$date' WHERE file = '$f';"
+        cat <<END
+UPDATE synced
+  SET rev = '$commit', date = '$date'
+  WHERE file = '$f';
+END
     done
     echo COMMIT\;
 ) | $SQLITE "$db"
