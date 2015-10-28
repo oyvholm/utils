@@ -25,11 +25,15 @@ Add 'synced'-entry into synced.sqlite for files. Updates synced.rev and
 synced.date with Git commit info.
 
 Usage: $progname [options] commit file [file [...]]
+       $progname -l
 
 Options:
 
   -h, --help
     Show this help.
+  -l, --list
+    Create a file list sorted by how many revisions they are behind the 
+    files in Lib/std/ in current HEAD.
   --version
     Print version information.
 
@@ -38,6 +42,22 @@ END
 fi
 
 SQLITE=sqlite3
+db="synced.sqlite"
+
+if test "$1" = "-l" -o "$1" = "--list"; then
+    head=$(git rev-parse HEAD)
+    cat <<END | $SQLITE "$db" | bash | sort -n
+SELECT
+  'echo \$(git log --format=%h ' || rev || '..$head '
+  || orig || ' | wc -l) ' || file || ';'
+FROM synced
+WHERE
+  orig LIKE 'Lib/std/%'
+  AND
+  rev IS NOT NULL;
+END
+    exit
+fi
 
 commit="$(git rev-parse $1)"
 if test -z "$commit"; then
@@ -57,7 +77,6 @@ date="$(
     tr -d Z
 )"
 
-db="synced.sqlite"
 test -f "$db" || {
     echo $progname: $db: File not found >&2
     exit 1
