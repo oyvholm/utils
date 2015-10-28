@@ -513,7 +513,7 @@ sub testcmd {
     if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    is(`$Cmd$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
+    is(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
         is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
@@ -541,10 +541,10 @@ sub likecmd {
     if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
+    like(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
-        like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
+        like(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
         unlink($TMP_STDERR);
     } else {
         diag("Warning: stderr not defined for '$Txt'");

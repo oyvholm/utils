@@ -633,7 +633,7 @@ INSERT INTO "synced" VALUES('tests/git-rpull.t','Lib/std/perl-tests','482e406e16
 INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','8913fccf335589ce7314efc98e44bfac25e68a6b','2015-07-11 23:35:52');
 INSERT INTO "synced" VALUES('tests/git-update-dirs.t','Lib/std/perl-tests','167b6ac60abfbbd618427586f234fb4f7f897215','2015-10-06 01:33:42');
 INSERT INTO "synced" VALUES('tests/git-upstream.t','Lib/std/perl-tests','6713b985e64a89fdb099beeacd37d5a00ee0938d','2015-08-28 14:44:56');
-INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','9adca677d991a39e69b941b2b1aedccd2ff74257','2015-06-17 08:39:22');
+INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','d3ce34f5c27ed0cfa0abec73a268be0c5a735558','2015-07-01 19:40:11');
 INSERT INTO "synced" VALUES('tests/git-wn.t','Lib/std/perl-tests','91c19e9cebc83ebf63a53c6ab89fdaf2abd16b70','2015-09-09 21:44:01');
 INSERT INTO "synced" VALUES('tests/githubnetwork.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/gotexp-files/output1.txt','',NULL,NULL);
