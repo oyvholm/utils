@@ -13,7 +13,7 @@
 progname=STDfilenameDTS
 VERSION=0.0.0
 
-ARGS="$(getopt -o "hvq" -l "help,quiet,verbose,version" \
+ARGS="$(getopt -o "hqv" -l "help,quiet,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
