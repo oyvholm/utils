@@ -13,7 +13,7 @@
 progname=filesynced
 VERSION=0.1.0
 
-ARGS="$(getopt -o "hlqv" -l "help,list,quiet,verbose,version" \
+ARGS="$(getopt -o "hlqt:v" -l "help,list,quiet,type:,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
@@ -25,6 +25,7 @@ while :; do
         (-h|--help) opt_help=1; shift ;;
         (-l|--list) opt_list=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-t|--type) opt_type=$2; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -41,7 +42,7 @@ Add 'synced'-entry into synced.sqlite for files. Updates synced.rev and
 synced.date with Git commit info.
 
 Usage: $progname [options] commit file [file [...]]
-       $progname -l
+       $progname -l [-t TYPE]
 
 Options:
 
@@ -52,6 +53,9 @@ Options:
     files in Lib/std/ in current HEAD.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -t FILETYPE. --type FILETYPE
+    Limit list to files of type FILETYPE, for example "bash" or 
+    "perl-tests". SQL LIKE wildcards can be used, like '%' and '_'.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -66,13 +70,14 @@ db="synced.sqlite"
 
 if test "$opt_list" = "1"; then
     head=$(git rev-parse HEAD)
+    test -n "$opt_type" && type_str="$opt_type" || type_str="%"
     cat <<END | $SQLITE "$db" | bash | sort -n
 SELECT
   'echo \$(git log --format=%h ' || rev || '..$head '
   || orig || ' | wc -l) ' || file || ';'
 FROM synced
 WHERE
-  orig LIKE 'Lib/std/%'
+  orig LIKE 'Lib/std/$type_str'
   AND
   rev IS NOT NULL;
 END
