@@ -609,7 +609,7 @@ INSERT INTO "synced" VALUES('tests/edit-sqlite3-files/sqlite-databases.tar.gz','
 INSERT INTO "synced" VALUES('tests/edit-sqlite3.t','Lib/std/perl-tests','2f76b915626161a88657f9c551291558473d9898','2015-10-04 11:48:37');
 INSERT INTO "synced" VALUES('tests/enc-mp4.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/find_inv_utf8.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
-INSERT INTO "synced" VALUES('tests/findhex.t','Lib/std/perl-tests','9a62ca9cc515d74600a94dd47743ee259c3286ea','2015-07-12 03:58:31');
+INSERT INTO "synced" VALUES('tests/findhex.t','Lib/std/perl-tests','22f0353c424638cd8b20a65f055c599ec769f885','2015-07-18 22:41:22');
 INSERT INTO "synced" VALUES('tests/findrev.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/fold-stdout.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/fromhex-files/decimal.txt','',NULL,NULL);
@@ -630,14 +630,14 @@ INSERT INTO "synced" VALUES('tests/git-delrembr.t','Lib/std/perl-tests','482e406
 INSERT INTO "synced" VALUES('tests/git-nocom.t','Lib/std/perl-tests','37de20f14f86bd287f2d815afad10af4d9d45e8f','2015-09-07 10:42:34');
 INSERT INTO "synced" VALUES('tests/git-pa.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/git-rpull.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
-INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','8913fccf335589ce7314efc98e44bfac25e68a6b','2015-07-11 23:35:52');
+INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','22f0353c424638cd8b20a65f055c599ec769f885','2015-07-18 22:41:22');
 INSERT INTO "synced" VALUES('tests/git-update-dirs.t','Lib/std/perl-tests','167b6ac60abfbbd618427586f234fb4f7f897215','2015-10-06 01:33:42');
 INSERT INTO "synced" VALUES('tests/git-upstream.t','Lib/std/perl-tests','6713b985e64a89fdb099beeacd37d5a00ee0938d','2015-08-28 14:44:56');
-INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','d3ce34f5c27ed0cfa0abec73a268be0c5a735558','2015-07-01 19:40:11');
+INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','22f0353c424638cd8b20a65f055c599ec769f885','2015-07-18 22:41:22');
 INSERT INTO "synced" VALUES('tests/git-wn.t','Lib/std/perl-tests','91c19e9cebc83ebf63a53c6ab89fdaf2abd16b70','2015-09-09 21:44:01');
 INSERT INTO "synced" VALUES('tests/githubnetwork.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/gotexp-files/output1.txt','',NULL,NULL);
-INSERT INTO "synced" VALUES('tests/gotexp.t','Lib/std/perl-tests','e9cefac40a079f779115131a47dd4335c7bb673e','2015-07-13 17:54:47');
+INSERT INTO "synced" VALUES('tests/gotexp.t','Lib/std/perl-tests','22f0353c424638cd8b20a65f055c599ec769f885','2015-07-18 22:41:22');
 INSERT INTO "synced" VALUES('tests/h2u.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/hhi-files/file.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi-files/name.html','',NULL,NULL);
