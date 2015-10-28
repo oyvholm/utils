@@ -73,8 +73,15 @@ if test "$opt_list" = "1"; then
     test -n "$opt_type" && type_str="$opt_type" || type_str="%"
     cat <<END | $SQLITE "$db" | bash | sort -n
 SELECT
-  'echo \$(git log --format=%h ' || rev || '..$head '
-  || orig || ' | wc -l) ' || file || ';'
+  'echo \$(' ||
+    'git log --format=%h ' || rev || '..$head ' || orig || ' | wc -l' ||
+  ') ' ||
+  file ||
+  ' "(' ||
+    '\$(git log -1 --format=%h ' || rev || ')' ||
+    '.. ' ||
+    orig ||
+  ')";'
 FROM synced
 WHERE
   orig LIKE 'Lib/std/$type_str'
