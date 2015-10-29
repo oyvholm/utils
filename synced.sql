@@ -88,7 +88,7 @@ INSERT INTO "synced" VALUES('Lib/std/mdwn','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/musicxml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-cgi','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/perl-tests','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/perl-tests','Lib/std/perl','29cd106a5f12b8e55b6b60393e688d773a9ba762','2015-10-29 22:47:11');
 INSERT INTO "synced" VALUES('Lib/std/perl-tests-Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-tests.tagdesc','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/python','',NULL,NULL);
