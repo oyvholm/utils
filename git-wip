@@ -11,41 +11,66 @@
 #=======================================================================
 
 progname=git-wip
-test -n "$GITWIP_GIT" && CMD_GIT="$GITWIP_GIT" || CMD_GIT=git
-curr="$($CMD_GIT rev-parse --abbrev-ref HEAD)"
-use_new_branch=0
-test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
+VERSION=0.1.0
 
-ext="wip"
-test -n "$1" && { ext="$1"; shift; }
+ARGS="$(getopt -o "dhmpqsv" \
+    -l "delete,help,merge,parent,quiet,squash,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$ext" = "-h" -o "$ext" = "--help"; then
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-d|--delete) opt_delete=1; shift ;;
+        (-h|--help) opt_help=1; shift ;;
+        (-m|--merge) opt_merge=1; shift ;;
+        (-p|--parent) opt_parent=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-s|--squash) opt_squash=1; shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage:
+Create subbranches using '.' as level delimiter.
 
-  $progname OPTION
-  $progname BRANCHNAME
+Usage: $progname OPTION
+       $progname BRANCHNAME
 
 Options:
 
-  -d
+  -d, --delete
     Delete current branch after merging it to parent. Used when there's 
     no need to document the existence of the branch, and a fast-forward 
     merge will do just fine.
   -h, --help
     Show this help.
-  -m
+  -m, --merge
     Merge the current branch to the parent branch using --no-ff in 
     git(1). This creates a merge commit even if a fast-forward is 
     possible. Useful to group related changes together.
-  -p
+  -p, --parent
    Change the active branch (git checkout) to the parent branch, i.e., 
    the part of the branch name before the final full stop. If no parent 
    branch exists, you will be prompted to create one on 'master'.
-  -s
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -s, --squash
     Squash the branch into the parent branch, all commits will be 
     collapsed into one.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
 
 When the -d, -m, -p or -s option is used and there are no parent 
 branches (there are no full stops ('.') in the current branch name), the 
@@ -67,6 +92,14 @@ END
     exit 0
 fi
 
+test -n "$GITWIP_GIT" && CMD_GIT="$GITWIP_GIT" || CMD_GIT=git
+curr="$($CMD_GIT rev-parse --abbrev-ref HEAD)"
+use_new_branch=0
+test "$curr" = "master" -o "$curr" = "HEAD" && use_new_branch=1
+
+ext="wip"
+test -n "$1" && { ext="$1"; shift; }
+
 loop_until_y() {
     # Loop until the user says 'y'.
     unset resp
@@ -76,19 +109,20 @@ loop_until_y() {
     done
 }
 
-if test -n "$(echo x$ext | grep -E '^x-[dmps]$')"; then
+chkopt="$opt_delete$opt_merge$opt_parent$opt_squash"
+if test -n "$(echo $chkopt | grep 1)"; then
     if test -n "$(echo "$curr" | grep '\.')"; then
         # Current branch contains a full stop, so it has a parent
         parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
     else
         # Current branch has no parents, prepare for merge or squash to 
         # master.
-        test "$ext" = "-s" && ms_str=squash || ms_str=merge
+        test "$opt_squash" = "1" && ms_str=squash || ms_str=merge
         if test "$curr" = "master"; then
             echo Is already on master, nowhere to $ms_str branch >&2
             exit 1
         fi
-        if test "$ext" = "-p"; then
+        if test "$opt_parent" = "1"; then
             loop_until_y set active branch to \'master\' \(git checkout\)
         else
             loop_until_y $ms_str $curr to master
@@ -102,27 +136,22 @@ if test -n "$(echo x$ext | grep -E '^x-[dmps]$')"; then
         $CMD_GIT branch "$parent" master
     }
     $CMD_GIT checkout $parent &&
-    if test "$ext" = "-d"; then
+    if test "$opt_delete" = "1"; then
         # Delete current branch after merge to parent, use fast-forward 
         # if possible.
         $CMD_GIT merge $curr
         $CMD_GIT branch -d $curr
-    elif test "$ext" = "-s"; then
+    elif test "$opt_squash" = "1"; then
         # Squash the current branch to parent, combine all commits into 
         # one.
         $CMD_GIT merge --squash $curr
-    elif test "$ext" = "-m"; then
+    elif test "$opt_merge" = "1"; then
         # Merge current branch into parent, always create merge commit 
         # even if a fast-forward merge is possible.
         $CMD_GIT merge --no-ff $curr
         $CMD_GIT branch -d $curr
     fi
     exit
-fi
-
-if test -n "$(echo x$ext | grep '^x-')"; then
-    echo $progname: $ext: Unknown option >&2
-    exit 1
 fi
 
 if test "$use_new_branch" = "1"; then

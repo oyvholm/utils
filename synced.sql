@@ -347,7 +347,7 @@ INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl','167b6ac60abfbbd618427586f234fb4f7f897215','2015-10-06 01:33:42');
 INSERT INTO "synced" VALUES('git-upstream','Lib/std/bash','6713b985e64a89fdb099beeacd37d5a00ee0938d','2015-08-28 14:44:56');
 INSERT INTO "synced" VALUES('git-wait-until-clean','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-wip','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('git-wip','Lib/std/bash','1cc9aaa0976c314bf025178b5eaf797d6c4921e4','2015-10-29 04:04:04');
 INSERT INTO "synced" VALUES('git-wn','Lib/std/bash','91c19e9cebc83ebf63a53c6ab89fdaf2abd16b70','2015-09-09 21:44:01');
 INSERT INTO "synced" VALUES('githubnetwork','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('gotexp','Lib/std/perl','e9cefac40a079f779115131a47dd4335c7bb673e','2015-07-13 17:54:47');
@@ -633,7 +633,7 @@ INSERT INTO "synced" VALUES('tests/git-rpull.t','Lib/std/perl-tests','e978628eb4
 INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/git-update-dirs.t','Lib/std/perl-tests','167b6ac60abfbbd618427586f234fb4f7f897215','2015-10-06 01:33:42');
 INSERT INTO "synced" VALUES('tests/git-upstream.t','Lib/std/perl-tests','6713b985e64a89fdb099beeacd37d5a00ee0938d','2015-08-28 14:44:56');
-INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','22f0353c424638cd8b20a65f055c599ec769f885','2015-07-18 22:41:22');
+INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','1cc9aaa0976c314bf025178b5eaf797d6c4921e4','2015-10-29 04:04:04');
 INSERT INTO "synced" VALUES('tests/git-wn.t','Lib/std/perl-tests','91c19e9cebc83ebf63a53c6ab89fdaf2abd16b70','2015-09-09 21:44:01');
 INSERT INTO "synced" VALUES('tests/githubnetwork.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/gotexp-files/output1.txt','',NULL,NULL);
