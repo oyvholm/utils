@@ -16,7 +16,6 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
@@ -39,7 +38,9 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
+
+my %descriptions = ();
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -62,11 +63,10 @@ my $tmpdb = "tmp-postgres-t-$$-" . substr(rand, 2, 8);
 my $tmp_stdout = '.tmp-postgres-t-stdout.tmp';
 my $tmp_stderr = '.tmp-postgres-t-stderr.tmp';
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     diag(sprintf('========== Executing %s v%s ==========',
@@ -97,7 +97,7 @@ END
         '',
         0,
         'Create temporary database',
-    ) && BAIL_OUT("Cannot create temporary database, " .
+    ) || BAIL_OUT("Cannot create temporary database, " .
                   "not much point in going on, then");
 
     # }}}
@@ -227,6 +227,9 @@ sub psql_cmd {
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
@@ -236,26 +239,30 @@ sub testcmd {
     );
     $Txt =~ s/$tmpdb/\[tmpdb\]/g;
     my $TMP_STDERR = 'postgres-stderr.tmp';
+    my $retval = 1;
 
     if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    is(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
+    $retval &= is(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
-        is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+        $retval &= is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
         unlink($TMP_STDERR);
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
-    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return($ret_val >> 8);
+    $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return($retval);
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
@@ -265,20 +272,21 @@ sub likecmd {
     );
     $Txt =~ s/$tmpdb/\[tmpdb\]/g;
     my $TMP_STDERR = 'postgres-stderr.tmp';
+    my $retval = 1;
 
     if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
+    $retval &= like(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
-        like(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+        $retval &= like(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
         unlink($TMP_STDERR);
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
-    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return($ret_val >> 8);
+    $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return($retval);
     # }}}
 } # likecmd()
 

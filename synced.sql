@@ -626,7 +626,7 @@ INSERT INTO "synced" VALUES('tests/hhi-files/nohhi.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/installed_progs.t','Lib/std/perl-tests','ca935b5a5af5e57448c5fabca2c0e0a30970ac50','2015-10-29 05:01:50');
 INSERT INTO "synced" VALUES('tests/perlmodules.t','Lib/std/perl-tests','80c3626fce03ecd478d929948a313f513fbaf23b','2015-10-29 05:21:10');
-INSERT INTO "synced" VALUES('tests/postgres.t','Lib/std/perl-tests','db8717776dbf78cc049ad083c30905a752a54a70','2015-08-05 15:28:44');
+INSERT INTO "synced" VALUES('tests/postgres.t','Lib/std/perl-tests','9c9d79e63fc94bf4416e83e6715294b1f92243f3','2015-10-29 21:17:35');
 INSERT INTO "synced" VALUES('tests/sident-files/filenames','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/sident-files/nothing_here','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/sident-files/random','',NULL,NULL);
