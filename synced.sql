@@ -646,7 +646,7 @@ INSERT INTO "synced" VALUES('tests/sumdup.t','Lib/std/perl-tests','e978628eb4d16
 INSERT INTO "synced" VALUES('tests/tohex-files/random256.bin','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/tohex-files/utf8.txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/tohex.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
-INSERT INTO "synced" VALUES('tests/txt2uc.t','Lib/std/perl-tests','a6cef089f834c23864c7e0d1b8813724f4819bff','2015-08-02 20:28:43');
+INSERT INTO "synced" VALUES('tests/txt2uc.t','Lib/std/perl-tests','a4b27bd18e4ce64017ab43a41aa7ea9b1d4dc30a','2015-10-29 21:36:56');
 INSERT INTO "synced" VALUES('tests/ustr.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/zeropad.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tmux_local_install.sh','',NULL,NULL);
@@ -656,7 +656,7 @@ INSERT INTO "synced" VALUES('tojson','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('tolower','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('tosec','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('towav','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('txt2uc','Lib/std/bash','a6cef089f834c23864c7e0d1b8813724f4819bff','2015-08-02 20:28:43');
+INSERT INTO "synced" VALUES('txt2uc','Lib/std/bash','a4b27bd18e4ce64017ab43a41aa7ea9b1d4dc30a','2015-10-29 21:36:56');
 INSERT INTO "synced" VALUES('txtfold','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('u','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('u2h','Lib/std/perl',NULL,NULL);

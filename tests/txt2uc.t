@@ -16,7 +16,6 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
@@ -41,6 +40,8 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.1.0';
 
+my %descriptions = ();
+
 Getopt::Long::Configure('bundling');
 GetOptions(
 
@@ -58,11 +59,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     diag(sprintf('========== Executing %s v%s ==========',
@@ -94,6 +94,15 @@ END
         '/^$/',
         0,
         'Option -h prints help screen',
+    );
+
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ \d+\.\d+\.\d+(\+git)?\n/s',
+        '/^$/',
+        0,
+        'Option -v with -h returns version number and help screen',
     );
 
     # }}}
@@ -218,6 +227,9 @@ END
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
@@ -226,26 +238,30 @@ sub testcmd {
             : ''
     );
     my $TMP_STDERR = 'txt2uc-stderr.tmp';
+    my $retval = 1;
 
     if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    is(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
+    $retval &= is(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
-        is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+        $retval &= is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
         unlink($TMP_STDERR);
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
-    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return;
+    $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return($retval);
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
@@ -254,20 +270,21 @@ sub likecmd {
             : ''
     );
     my $TMP_STDERR = 'txt2uc-stderr.tmp';
+    my $retval = 1;
 
     if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
+    $retval &= like(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
-        like(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+        $retval &= like(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
         unlink($TMP_STDERR);
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
-    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return;
+    $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return($retval);
     # }}}
 } # likecmd()
 
