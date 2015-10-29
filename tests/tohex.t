@@ -106,7 +106,7 @@ END
         '/^\n\S+ v\d\.\d\d\n/s',
         '/^$/',
         0,
-        'Option --version with -h returns version number and help screen',
+        'Option -v with -h returns version number and help screen',
     );
 
     # }}}
