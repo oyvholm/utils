@@ -242,7 +242,7 @@ END
     diag("Check for unused tags...");
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
         '/^.*Contains tests for the.*$/s',
-        '/^std: Warning: Undefined tags: exec filename progname testcmd\n$/s',
+        '/^std: Warning: Undefined tags: exec filename progname\n$/s',
         0,
         "Report unused tags",
     );
