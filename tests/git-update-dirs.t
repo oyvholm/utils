@@ -16,7 +16,6 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
@@ -792,7 +791,8 @@ sub test_disabled {
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
@@ -823,7 +823,8 @@ sub testcmd {
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',

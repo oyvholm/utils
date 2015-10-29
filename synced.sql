@@ -616,7 +616,7 @@ INSERT INTO "synced" VALUES('tests/git-dangling-files/repo.bundle','',NULL,NULL)
 INSERT INTO "synced" VALUES('tests/git-dangling.t','Lib/std/perl-tests','5c96b34f19ff234d44a026e011da5325ee9fc323','2015-10-29 02:20:40');
 INSERT INTO "synced" VALUES('tests/git-dbr.t','Lib/std/perl-tests','171c0ae2c26a6b8192e6d3c3c38b3d092c6caaf0','2015-10-24 13:05:57');
 INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
-INSERT INTO "synced" VALUES('tests/git-update-dirs.t','Lib/std/perl-tests','167b6ac60abfbbd618427586f234fb4f7f897215','2015-10-06 01:33:42');
+INSERT INTO "synced" VALUES('tests/git-update-dirs.t','Lib/std/perl-tests','8f66c006d352981eccef21e2ca03fe64d4d3ff86','2015-10-29 21:47:16');
 INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','1cc9aaa0976c314bf025178b5eaf797d6c4921e4','2015-10-29 04:04:04');
 INSERT INTO "synced" VALUES('tests/gotexp-files/output1.txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/gotexp.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
