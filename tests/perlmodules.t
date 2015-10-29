@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #=======================================================================
 # perlmodules.t
@@ -16,7 +16,6 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 
@@ -30,13 +29,11 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $Debug = 0;
 our $CMD = 'STDexecDTS';
 
 our %Opt = (
 
     'all' => 0,
-    'debug' => 0,
     'help' => 0,
     'todo' => 0,
     'verbose' => 0,
@@ -46,13 +43,14 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.1.0';
+
+my %descriptions = ();
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
     'all|a' => \$Opt{'all'},
-    'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'todo|t' => \$Opt{'todo'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -60,18 +58,16 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     diag(sprintf('========== Executing %s v%s ==========',
@@ -220,8 +216,10 @@ END
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
-    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
     my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
@@ -229,30 +227,31 @@ sub testcmd {
             : ''
     );
     my $TMP_STDERR = 'perlmodules-stderr.tmp';
+    my $retval = 1;
 
-    if (defined($Exp_stderr) && !length($deb_str)) {
+    if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    is(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
+    $retval &= is(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
-        if (!length($deb_str)) {
-            is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
-            unlink($TMP_STDERR);
-        }
+        $retval &= is(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+        unlink($TMP_STDERR);
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
-    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return;
+    $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return($retval);
     # }}}
 } # testcmd()
 
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
-    my $deb_str = $Opt{'debug'} ? ' --debug' : '';
     my $Txt = join('',
         "\"$Cmd\"",
         defined($Desc)
@@ -260,22 +259,21 @@ sub likecmd {
             : ''
     );
     my $TMP_STDERR = 'perlmodules-stderr.tmp';
+    my $retval = 1;
 
-    if (defined($Exp_stderr) && !length($deb_str)) {
+    if (defined($Exp_stderr)) {
         $stderr_cmd = " 2>$TMP_STDERR";
     }
-    like(`$Cmd$deb_str$stderr_cmd`, "$Exp_stdout", "$Txt (stdout)");
+    $retval &= like(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
     my $ret_val = $?;
     if (defined($Exp_stderr)) {
-        if (!length($deb_str)) {
-            like(file_data($TMP_STDERR), "$Exp_stderr", "$Txt (stderr)");
-            unlink($TMP_STDERR);
-        }
+        $retval &= like(file_data($TMP_STDERR), $Exp_stderr, "$Txt (stderr)");
+        unlink($TMP_STDERR);
     } else {
         diag("Warning: stderr not defined for '$Txt'");
     }
-    is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return;
+    $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+    return($retval);
     # }}}
 } # likecmd()
 
@@ -296,7 +294,7 @@ sub file_data {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
     return;
     # }}}
 } # print_version()
@@ -327,8 +325,6 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -387,10 +383,6 @@ Increase level of verbosity. Can be repeated.
 =item B<--version>
 
 Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
 
 =back
 

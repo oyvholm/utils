@@ -651,7 +651,7 @@ INSERT INTO "synced" VALUES('tests/mailfix.t','Lib/std/perl-tests','e978628eb4d1
 INSERT INTO "synced" VALUES('tests/manyfiles.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/mergesvn.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/mvdirnewest.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
-INSERT INTO "synced" VALUES('tests/perlmodules.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-18 22:53:07');
+INSERT INTO "synced" VALUES('tests/perlmodules.t','Lib/std/perl-tests','80c3626fce03ecd478d929948a313f513fbaf23b','2015-10-29 05:21:10');
 INSERT INTO "synced" VALUES('tests/pingstat.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/pmsetdate.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/postgres.t','Lib/std/perl-tests','db8717776dbf78cc049ad083c30905a752a54a70','2015-08-05 15:28:44');
