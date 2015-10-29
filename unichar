@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #=======================================================================
 # unichar
@@ -11,28 +11,38 @@
 #=======================================================================
 
 progname=unichar
-version=0.1.0
+VERSION=0.2.0
 
 db="$HOME/.unichar.sqlite"
+guipdf="$HOME/pub/unicode/current/charts/CodeCharts.pdf"
+uc_url="ftp://unicode.org/Public/UNIDATA/UnicodeData.txt"
 
-dir_not_specified() {
-    cat <<END >&2
-$progname: Unicode data directory not specified
+ARGS="$(getopt -o "cghqv" \
+    -l "convert,get,gui,help,init:,quiet,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-Syntax: $progname --init [--get] directory_with_Unicode_files
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-c|--convert) opt_convert=1; shift ;;
+        (--get) opt_get=1; shift ;;
+        (-g|--gui) opt_gui=1; shift ;;
+        (-h|--help) opt_help=1; shift ;;
+        (--init) opt_init=$2; shift 2 ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
 
-The files you need are available from 
-<ftp://unicode.org/Public/UNIDATA/>.
-At the moment only UnicodeData.txt is used.
-
-If --get is specified before the directory name, the necessary files 
-will be downloaded into that directory and automatically imported.
-
-END
-    exit 1
-}
-
-if test "$1" = "-h" -o "$1" = "--help"; then
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 Search for Unicode characters, different arguments are ANDed against 
@@ -40,7 +50,7 @@ each other
 
 Usage:
 
-  $progname --init [--get] directory_with_Unicode_files
+  $progname --init directory_with_Unicode_files [--get]
     Create the database and optionally download the necessary files from 
     unicode.org .
 
@@ -48,14 +58,29 @@ Usage:
     Search through the database after Unicode characters.
 
   $progname -c
+    See description for -c/--convert.
+
+Options:
+
+  -c, --convert
     Read $progname output (search result) from stdin and convert it into 
     proper UTF-8.
-
-  $progname -h
-  $progname --help
+  --get
+    Used together with --init. Automatically download the necessary 
+    files from ftp://unicode.org/Public/UNIDATA/ into directory 
+    specified with --init. At the moment only UnicodeData.txt is used.
+  -g, --gui
+    Display the Unicode character table with okular(1).
+    Location: $guipdf
+  -h, --help
     Show this help.
-
-  $progname --version
+  --init DIRECTORY
+    Initialise a new database from UnicodeData.txt in DIRECTORY.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
     Print version information.
 
 For example (with Unicode 8.0.0):
@@ -84,28 +109,17 @@ END
     exit 0
 fi
 
-if test "$1" = "--version"; then
-    echo $progname $version
-    exit 0
-fi
-
-if test "$1" = "--init"; then
+if test -n "$opt_init"; then
     if test -e "$db"; then
         echo $progname: $db: SQLite database already exists >&2
         echo $progname: Please remove it and try again >&2
         exit 1
     fi
-    ucdir="$2"
-    test -z "$ucdir" && dir_not_specified
 
-    if test "$ucdir" = "--get"; then
-        shift
-        test -z "$2" && dir_not_specified
-        ucdir="$2"
-        uc_url="ftp://unicode.org/Public/UNIDATA/UnicodeData.txt"
-        mkdir -p "$ucdir"
-        cd "$ucdir" || {
-            echo $progname: Cannot change directory to \'$ucdir\' >&2
+    if test "$opt_get" = "1"; then
+        mkdir -p "$opt_init"
+        cd "$opt_init" || {
+            echo $progname: Cannot change directory to \'$opt_init\' >&2
             exit 1
         }
         if wget --version | grep -q "GNU Wget"; then
@@ -126,12 +140,12 @@ if test "$1" = "--init"; then
         cd - >/dev/null
     fi
 
-    if test ! -d "$ucdir/."; then
-        echo $progname: $ucdir: Non-existent or unavailable directory >&2
+    if test ! -d "$opt_init/."; then
+        echo $progname: $opt_init: Non-existent or unavailable directory >&2
         exit 1
     fi
 
-    ucdata="$ucdir/UnicodeData.txt"
+    ucdata="$opt_init/UnicodeData.txt"
 
     if test ! -r "$ucdata"; then
         echo $progname: $ucdata not found or is not readable >&2
@@ -149,16 +163,15 @@ if test "$1" = "--init"; then
     }
 fi
 
-if test "$1" = "-c"; then
+if test "$opt_convert" = "1"; then
     # Convert from unichar output to actual UTF-8
-    shift
     cut -f 1 -d ';' | fromhex -u
     exit 0
 fi
 
-if test "$1" = "-g"; then
+if test "$opt_gui" = "1"; then
     # FIXME: No matter what I do, it won't STFU
-    (okular ~/pub/unicode/current/charts/CodeCharts.pdf &>/dev/null) &
+    (okular "$guipdf" &>/dev/null) &
     exit 0
 fi
 
