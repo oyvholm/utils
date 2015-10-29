@@ -16,7 +16,6 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
@@ -39,7 +38,9 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
+
+my %descriptions = ();
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -58,11 +59,10 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     diag(sprintf('========== Executing %s v%s ==========',
@@ -95,6 +95,15 @@ END
         '/^$/',
         0,
         'Option -h prints help screen',
+    );
+
+    # }}}
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv", # {{{
+        '/^\n\S+ \d+\.\d+\.\d+(\+git)?\n/s',
+        '/^$/',
+        0,
+        'Option -v with -h returns version number and help screen',
     );
 
     # }}}
@@ -349,6 +358,9 @@ END
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",
@@ -378,6 +390,9 @@ sub testcmd {
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
         "\"$Cmd\"",

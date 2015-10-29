@@ -11,14 +11,30 @@
 #=======================================================================
 
 progname=edit-sqlite3
-VERSION=0.1.0
+VERSION=0.2.0
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
+ARGS="$(getopt -o "hnqv" -l "dry-run,help,quiet,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-n|--dry-run) opt_dry_run=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 Edit an SQLite 3.x database file in your favourite text editor. The 
@@ -33,16 +49,15 @@ Options:
     Show this help.
   -n, --dry-run
     Simulate what would happen.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
 
 END
     exit 0
-fi
-
-if test "$1" = "-n" -o "$1" = "--dry-run"; then
-    opt_dry_run=1
-    shift
 fi
 
 db="$1"
