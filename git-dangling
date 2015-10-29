@@ -1,23 +1,82 @@
-#!/bin/sh
+#!/bin/bash
 
 #=======================================================================
 # git-dangling
 # File ID: 13613774-3334-11e0-bfdc-fefdb24f8e10
+#
 # Create branches on every dangling commit
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=git-dangling
+VERSION=0.1.0
+
+ARGS="$(getopt -o "bcDhqv" \
+    -l "blobs,check-part,delete-only,help,quiet,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-b|--blobs) opt_blobs=1; shift ;;
+        (-c|--check-part) opt_checkpart=1; shift ;;
+        (-D|--delete-only) opt_deleteonly=1; shift ;;
+        (-h|--help) opt_help=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Restore dangling branches, tags or blobs. Branches will be stored as 
+commit-[SHA1], tags as tag-[SHA1] and blobs as blob-[SHA1].
+
+Usage: $progname [options]
+
+Options:
+
+  -b, --blobs
+    Store dangling blobs as blob-[SHA1] files.
+  -c, --check-part
+    Check if any commit-* branches are part of any other branch. Does 
+    not scan for dangling objects.
+  -D, --delete-only
+    Only delete commit-* branches and tag-* tags, don't check for 
+    dangling branches, tags or blobs.
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
 bannedfile=$HOME/.git-dangling-banned
 dangfile=.git/dangling-result.tmp
 
 store_blobs=0
-if test "$1" = "-b"; then
+if test "$opt_blobs" = "1"; then
     store_blobs=1
-    shift
 fi
 
-if test "$1" = "-c"; then
+if test "$opt_checkpart" = "1"; then
     # Check if commit-* branches are part of any other branch
     for f in $(git branch | cut -c 3- | grep '^commit-'); do
         echo ============ $progname: $f
@@ -27,14 +86,15 @@ if test "$1" = "-c"; then
 fi
 
 # Delete all commit-* branches
-git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$' | grep -Ev commit-0{40} | xargs -r git branch -D
+git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$' |
+    grep -Ev commit-0{40} | xargs -r git branch -D
 
 # Delete all tag-* tags
 git tag | grep -E '^tag-[0-9a-f]{40}$' | while read f; do
     git tag -d "$f"
 done
 
-test "$1" = "-D" && exit
+test "$opt_deleteonly" = "1" && exit
 
 cd "$(git rev-parse --show-toplevel)" || {
     echo $progname: Could not chdir to top level of repo >&2

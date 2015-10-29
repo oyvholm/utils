@@ -310,7 +310,7 @@ INSERT INTO "synced" VALUES('git-authoract','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-bare','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-bs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-context-diff','https://raw.githubusercontent.com/postgres/postgres/master/src/tools/git-external-diff',NULL,NULL);
-INSERT INTO "synced" VALUES('git-dangling','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('git-dangling','Lib/std/bash','5c96b34f19ff234d44a026e011da5325ee9fc323','2015-10-29 02:20:40');
 INSERT INTO "synced" VALUES('git-dbr','Lib/std/perl','9b5327bf1e7eb05d5d9ce4cd0cde7451c1a1c683','2015-10-24 12:08:39');
 INSERT INTO "synced" VALUES('git-delete-banned','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-delrembr','Lib/std/bash',NULL,NULL);
@@ -624,7 +624,7 @@ INSERT INTO "synced" VALUES('tests/ga-sumsize.t','Lib/std/perl-tests','e56896d38
 INSERT INTO "synced" VALUES('tests/getsvnfiles.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/git-allbr.t','Lib/std/perl-tests','8358c88dd8556e2c147766db8c6a77a68cc77343','2015-09-28 22:18:24');
 INSERT INTO "synced" VALUES('tests/git-dangling-files/repo.bundle','',NULL,NULL);
-INSERT INTO "synced" VALUES('tests/git-dangling.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-18 22:53:07');
+INSERT INTO "synced" VALUES('tests/git-dangling.t','Lib/std/perl-tests','5c96b34f19ff234d44a026e011da5325ee9fc323','2015-10-29 02:20:40');
 INSERT INTO "synced" VALUES('tests/git-dbr.t','Lib/std/perl-tests','171c0ae2c26a6b8192e6d3c3c38b3d092c6caaf0','2015-10-24 13:05:57');
 INSERT INTO "synced" VALUES('tests/git-delrembr.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-19 00:16:28');
 INSERT INTO "synced" VALUES('tests/git-nocom.t','Lib/std/perl-tests','37de20f14f86bd287f2d815afad10af4d9d45e8f','2015-09-07 10:42:34');
