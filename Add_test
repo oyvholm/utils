@@ -40,5 +40,5 @@ END
 fi
 
 name=$1
-std perl-tests $name.t -t progname=$name -t exec=../$name
+std perl-tests $name.t -t progname=$name
 chmod +x $name.t

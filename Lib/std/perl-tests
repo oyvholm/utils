@@ -24,7 +24,8 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD = 'STDexecDTS';
+our $CMD_BASENAME = "STDprognameDTS";
+our $CMD = "../$CMD_BASENAME";
 
 our %Opt = (
 
@@ -152,7 +153,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
+    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -184,7 +185,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-    my $TMP_STDERR = 'STDprognameDTS-stderr.tmp';
+    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -237,7 +238,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the STDprognameDTS(1) program.
+Contains tests for the $CMD_BASENAME(1) program.
 
 Options:
 
