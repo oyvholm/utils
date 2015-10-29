@@ -644,7 +644,7 @@ INSERT INTO "synced" VALUES('tests/hhi-files/name.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi-files/nohhi.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/html2db.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
-INSERT INTO "synced" VALUES('tests/installed_progs.t','Lib/std/perl-tests','482e406e16ceacfaf391d79a99bb34ff241b7fd5','2015-07-18 22:53:07');
+INSERT INTO "synced" VALUES('tests/installed_progs.t','Lib/std/perl-tests','ca935b5a5af5e57448c5fabca2c0e0a30970ac50','2015-10-29 05:01:50');
 INSERT INTO "synced" VALUES('tests/klokke.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/lpar.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
 INSERT INTO "synced" VALUES('tests/mailfix.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
