@@ -278,7 +278,7 @@ INSERT INTO "synced" VALUES('flac_to_ogg','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('fold-stdout','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('fra_linode','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('fromdos','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('fromhex','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('fromhex','Lib/std/perl','1a9830c37122a2c82178b9b6f75abf5e01d892fb','2015-10-30 02:40:53');
 INSERT INTO "synced" VALUES('g','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('g0','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('g1','Lib/std/bash',NULL,NULL);
@@ -606,7 +606,7 @@ INSERT INTO "synced" VALUES('tests/findhex.t','Lib/std/perl-tests','caaf3a238ed8
 INSERT INTO "synced" VALUES('tests/fromhex-files/decimal.txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/fromhex-files/single.txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/fromhex-files/standardpudding.bin','',NULL,NULL);
-INSERT INTO "synced" VALUES('tests/fromhex.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
+INSERT INTO "synced" VALUES('tests/fromhex.t','Lib/std/perl-tests','1a9830c37122a2c82178b9b6f75abf5e01d892fb','2015-10-30 02:40:53');
 INSERT INTO "synced" VALUES('tests/ga-fsck-size-files/annex-backends.tar.gz','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/ga-fsck-size.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/ga-sumsize-files/1.txt','',NULL,NULL);
