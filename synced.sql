@@ -337,7 +337,7 @@ INSERT INTO "synced" VALUES('git-restore-dirs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-rpull','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-safe-rm-remote','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-savecommit','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-scanrefs','Lib/std/perl','8913fccf335589ce7314efc98e44bfac25e68a6b','2015-07-11 23:35:52');
+INSERT INTO "synced" VALUES('git-scanrefs','Lib/std/perl','a44f216ca0a8631cae08566d2a5d1cde5bf9c34c','2015-10-30 02:51:18');
 INSERT INTO "synced" VALUES('git-seq-rebase','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-size','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-store-dirs','Lib/std/bash',NULL,NULL);
@@ -615,7 +615,7 @@ INSERT INTO "synced" VALUES('tests/ga-sumsize.t','Lib/std/perl-tests','9f4278c12
 INSERT INTO "synced" VALUES('tests/git-dangling-files/repo.bundle','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/git-dangling.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/git-dbr.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
-INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
+INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','a44f216ca0a8631cae08566d2a5d1cde5bf9c34c','2015-10-30 02:51:18');
 INSERT INTO "synced" VALUES('tests/git-update-dirs.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/gotexp-files/output1.txt','',NULL,NULL);
