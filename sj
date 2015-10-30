@@ -18,6 +18,7 @@ ARGS="$(getopt -o "hqv" -l "help,quiet,verbose,version" \
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do

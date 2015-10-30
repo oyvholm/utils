@@ -18,6 +18,7 @@ ARGS="$(getopt -o "hpqvw" -l "help,patch,quiet,verbose,word-diff,version" \
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_help=0
 opt_patch=0
 opt_quiet=0
 opt_verbose=0
