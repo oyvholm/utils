@@ -570,7 +570,7 @@ INSERT INTO "synced" VALUES('strip-conflict','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('strip-nonexisting','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('strip_msgstr','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sub-mergesvn','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('sumdup','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('sumdup','Lib/std/perl','820f105de40173eb9e59a63dedcb49e0aa7357db','2015-10-30 04:07:06');
 INSERT INTO "synced" VALUES('sums','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sunnyrights','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('suntodofold','Lib/std/perl',NULL,NULL);
@@ -642,7 +642,7 @@ INSERT INTO "synced" VALUES('tests/std.t','Lib/std/perl-tests','9f4278c12c4752a6
 INSERT INTO "synced" VALUES('tests/sumdup-files/files.md5','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/sumdup-files/files.sha1','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/sumdup-files/files.sha256','',NULL,NULL);
-INSERT INTO "synced" VALUES('tests/sumdup.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
+INSERT INTO "synced" VALUES('tests/sumdup.t','Lib/std/perl-tests','820f105de40173eb9e59a63dedcb49e0aa7357db','2015-10-30 04:07:06');
 INSERT INTO "synced" VALUES('tests/tohex-files/random256.bin','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/tohex-files/utf8.txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/tohex.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
