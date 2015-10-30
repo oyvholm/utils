@@ -525,7 +525,7 @@ INSERT INTO "synced" VALUES('snu_epstat','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sommer','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sort-sqlite','Lib/std/perl','85ca9dd39b39d3bc45d8322c660bd2ad77dc492a','2015-10-12 16:19:48');
 INSERT INTO "synced" VALUES('sortcvs','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('sortxml','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('sortxml','Lib/std/perl','5c2065185f2ff6a38b0e931e35d2ebf144bcbc38','2015-10-30 03:53:20');
 INSERT INTO "synced" VALUES('split_access_log','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('split_ep-logg','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('split_log','Lib/std/perl',NULL,NULL);
@@ -637,7 +637,7 @@ INSERT INTO "synced" VALUES('tests/sort-sqlite-files/sqlite-dbs.tar.gz','',NULL,
 INSERT INTO "synced" VALUES('tests/sort-sqlite.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/sortxml-files/a.xml','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/sortxml-files/oneliners.xml','',NULL,NULL);
-INSERT INTO "synced" VALUES('tests/sortxml.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
+INSERT INTO "synced" VALUES('tests/sortxml.t','Lib/std/perl-tests','5c2065185f2ff6a38b0e931e35d2ebf144bcbc38','2015-10-30 03:53:20');
 INSERT INTO "synced" VALUES('tests/std.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/sumdup-files/files.md5','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/sumdup-files/files.sha1','',NULL,NULL);
