@@ -1,8 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # zeropad
 # File ID: 7028de4a-f744-11dd-a3ac-000475e441b9
+#
 # Pads all integers read from stdin with zeros so they all have the same 
 # length.
 #
@@ -13,17 +14,16 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 
-$| = 1;
-
-our $Debug = 0;
+local $| = 1;
 
 our %Opt = (
 
-    'debug' => 0,
     'help' => 0,
     'hex' => 0,
+    'quiet' => 0,
     'size' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -32,42 +32,53 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.1.0';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "hex|x" => \$Opt{'hex'},
-    "size|s=i" => \$Opt{'size'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'help|h' => \$Opt{'help'},
+    'hex|x' => \$Opt{'hex'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'size|s=i' => \$Opt{'size'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
 
-my @Array = ();
 my $max_length = 0;
 
-my $DIGITS = $Opt{'hex'} ? '0-9A-Fa-f' : '0-9';
+exit(main());
 
-while (<>) {
-    my $Line = $_;
-    push(@Array, $Line);
-    $Line =~ s/([$DIGITS]+)/check_max($1)/ge;
-}
+sub main {
+    # {{{
+    my $Retval = 0;
 
-for my $Curr (@Array) {
-    $Curr =~ s/([$DIGITS]+)/pad_number($1)/ge;
-    print($Curr);
-}
+    my @Array = ();
+
+    my $DIGITS = $Opt{'hex'} ? '0-9A-Fa-f' : '0-9';
+
+    while (<>) {
+        my $Line = $_;
+        push(@Array, $Line);
+        $Line =~ s/([$DIGITS]+)/check_max($1)/ge;
+    }
+
+    for my $Curr (@Array) {
+        $Curr =~ s/([$DIGITS]+)/pad_number($1)/ge;
+        print($Curr);
+    }
+
+    return($Retval);
+    # }}}
+} # main()
 
 sub check_max {
     # {{{
@@ -88,7 +99,8 @@ sub pad_number {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -100,9 +112,9 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
-Usage: $progname [options]
+Usage: $progname [options] [file [files [...]]]
 
 Pads all integers read from stdin with zeros so they all have the same 
 length. I.e.: 1 5 12 156 1024 = 0001 0005 0012 0156 1024.
@@ -111,17 +123,17 @@ Options:
 
   -h, --help
     Show this help.
-  -v, --verbose
-    Increase level of verbosity. Can be repeated.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -s X, --size X
     Instead of padding to the size of the largest number, pad to a width 
     of X digits.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   -x, --hex
     Include hexadecimal digits a-f and A-F.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -135,95 +147,24 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
-
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 NAME
-
-
-
-=head1 SYNOPSIS
-
- [options] [file [files [...]]]
-
-=head1 DESCRIPTION
-
-
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<-h>, B<--help>
-
-Print a brief help summary.
-
-=item B<-v>, B<--verbose>
-
-Increase level of verbosity. Can be repeated.
-
-=item B<--version>
-
-Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
-
-=back
-
-=head1 BUGS
-
-
-
-=head1 AUTHOR
-
-Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
-
-=head1 COPYRIGHT
-
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
-This is free software; see the file F<COPYING> for legalese stuff.
-
-=head1 LICENCE
-
-This program is free software: you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=head1 SEE ALSO
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
