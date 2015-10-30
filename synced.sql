@@ -175,7 +175,7 @@ INSERT INTO "synced" VALUES('age','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('all-lpar','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('allrevs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ampm','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('annex-cmd','Lib/std/bash','24426aee9c6c8af2694d6dd6c6623abfbeb7c1bc','2015-10-20 02:51:45');
+INSERT INTO "synced" VALUES('annex-cmd','Lib/std/bash-no-getopt','0bfb034882dd4b5853d9720ce6221dd12a58a1e7','2015-10-30 06:48:44');
 INSERT INTO "synced" VALUES('ascii','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('au','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('avlytt','Lib/std/bash',NULL,NULL);
@@ -283,7 +283,7 @@ INSERT INTO "synced" VALUES('fromhex','Lib/std/perl','1a9830c37122a2c82178b9b6f7
 INSERT INTO "synced" VALUES('g','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('g0','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('g1','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('ga','','e27ba580730bc9053cb799e93d68ad6df3af1255','2015-10-10 15:05:12');
+INSERT INTO "synced" VALUES('ga','Lib/std/bash-no-getopt','0bfb034882dd4b5853d9720ce6221dd12a58a1e7','2015-10-30 06:48:44');
 INSERT INTO "synced" VALUES('ga-au','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-findkey','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-fixnew','Lib/std/bash',NULL,NULL);
