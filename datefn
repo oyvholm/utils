@@ -1,8 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # datefn
 # File ID: 4bec96e4-cc13-11de-a8a7-93dd800a3f5e
+#
 # Insert timestamp into file names
 #
 # Character set: UTF-8
@@ -12,23 +13,22 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 use File::Basename;
 use Time::Local;
 
-$| = 1;
-
-our $Debug = 0;
+local $| = 1;
 
 our %Opt = (
 
     'bwf' => 0,
-    'debug' => 0,
     'delete' => 0,
     'dry-run' => 0,
     'force' => 0,
     'git' => 0,
     'help' => 0,
+    'quiet' => 0,
     'replace' => 0,
     'skew' => 0,
     'verbose' => 0,
@@ -38,26 +38,26 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.1.0';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "bwf" => \$Opt{'bwf'},
-    "debug" => \$Opt{'debug'},
-    "delete|d" => \$Opt{'delete'},
-    "dry-run|n" => \$Opt{'dry-run'},
-    "force|f" => \$Opt{'force'},
-    "git|g" => \$Opt{'git'},
-    "help|h" => \$Opt{'help'},
-    "replace|r" => \$Opt{'replace'},
-    "skew|s=i" => \$Opt{'skew'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'bwf' => \$Opt{'bwf'},
+    'delete|d' => \$Opt{'delete'},
+    'dry-run|n' => \$Opt{'dry-run'},
+    'force|f' => \$Opt{'force'},
+    'git|g' => \$Opt{'git'},
+    'help|h' => \$Opt{'help'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'replace|r' => \$Opt{'replace'},
+    'skew|s=i' => \$Opt{'skew'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 if ($Opt{'delete'} && $Opt{'replace'}) {
     warn("$progname: Cannot mix -d/--delete and -r/--replace options\n");
     exit(1);
@@ -67,8 +67,6 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
-
-defined($ARGV[0]) || die("$progname: Missing filenames. Use -h for help.\n");
 
 my $d = '[\dX]'; # Legal regexp digits, 0-9 or X (unknown)
 my $r_date = "[12]$d$d$d" . # year
@@ -80,10 +78,22 @@ my $r_date = "[12]$d$d$d" . # year
             "$d$d" .        # seconds
             "Z";
 
-for my $Curr (@ARGV) {
-    D("Curr = '$Curr'\n");
-    process_file($Curr);
-}
+exit(main());
+
+sub main {
+    # {{{
+    my $Retval = 0;
+
+    defined($ARGV[0]) || die("$progname: Missing filenames. Use -h for help.\n");
+
+    for my $Curr (@ARGV) {
+        msg(2, "Curr = '$Curr'\n");
+        process_file($Curr);
+    }
+
+    return($Retval);
+    # }}}
+} # main()
 
 sub process_file {
     # {{{
@@ -96,7 +106,7 @@ sub process_file {
         warn("$progname: $File: Filename already has date\n");
         return;
     }
-    D(sprintf("mod_date(%s) = '%s'\n", $File, mod_date($File)));
+    msg(2, sprintf("mod_date(%s) = '%s'\n", $File, mod_date($File)));
     my $new_name = '';
     my $mod_date = mod_date($File);
     my $start_date = start_date($File);
@@ -212,7 +222,7 @@ sub start_date {
             $Retval = $bwf_date;
         }
     }
-    D("start_date($File) returns '$Retval'");
+    msg(2, "start_date($File) returns '$Retval'");
     return($Retval);
     # }}}
 } # start_date()
@@ -236,7 +246,7 @@ sub bwf_date {
         $Retval = timegm($6, $5, $4, $3, $2-1, $1);
     }
     close(InFP);
-    D("bwf_date($File) returns '$Retval'\n");
+    msg(2, "bwf_date($File) returns '$Retval'\n");
     return($Retval);
     # }}}
 } # bwf_date()
@@ -260,7 +270,8 @@ sub sec_to_string {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -272,7 +283,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Insert filemod timestamp into filename, and start of recording if 
 available. At the moment only BWF (Broadcast Wave Format, standard .wav 
@@ -305,6 +316,8 @@ Options:
     Don’t rename files, but report what would happen.
   -h, --help
     Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -r, --replace
     Replace date in filename with new value. Can not be used with 
     -d/--delete.
@@ -315,8 +328,6 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -330,95 +341,24 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
-
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 NAME
-
-
-
-=head1 SYNOPSIS
-
- [options] [file [files [...]]]
-
-=head1 DESCRIPTION
-
-
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<-h>, B<--help>
-
-Print a brief help summary.
-
-=item B<-v>, B<--verbose>
-
-Increase level of verbosity. Can be repeated.
-
-=item B<--version>
-
-Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
-
-=back
-
-=head1 BUGS
-
-
-
-=head1 AUTHOR
-
-Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
-
-=head1 COPYRIGHT
-
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
-This is free software; see the file F<COPYING> for legalese stuff.
-
-=head1 LICENCE
-
-This program is free software: you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=head1 SEE ALSO
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
