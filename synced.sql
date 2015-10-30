@@ -346,7 +346,7 @@ INSERT INTO "synced" VALUES('git-svn-myclone','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-trash','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl','167b6ac60abfbbd618427586f234fb4f7f897215','2015-10-06 01:33:42');
-INSERT INTO "synced" VALUES('git-upstream','Lib/std/bash','6713b985e64a89fdb099beeacd37d5a00ee0938d','2015-08-28 14:44:56');
+INSERT INTO "synced" VALUES('git-upstream','Lib/std/bash','fc1cff875c1f7a4f6e627b3db833a1cc83dd7dd3','2015-10-30 22:56:02');
 INSERT INTO "synced" VALUES('git-wait-until-clean','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-wip','Lib/std/bash','1cc9aaa0976c314bf025178b5eaf797d6c4921e4','2015-10-29 04:04:04');
 INSERT INTO "synced" VALUES('git-wn','Lib/std/bash','91c19e9cebc83ebf63a53c6ab89fdaf2abd16b70','2015-09-09 21:44:01');
