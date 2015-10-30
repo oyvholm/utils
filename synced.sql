@@ -282,7 +282,7 @@ INSERT INTO "synced" VALUES('fromhex','Lib/std/perl','1a9830c37122a2c82178b9b6f7
 INSERT INTO "synced" VALUES('g','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('g0','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('g1','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('ga','Lib/std/bash','e27ba580730bc9053cb799e93d68ad6df3af1255','2015-10-10 15:05:12');
+INSERT INTO "synced" VALUES('ga','','e27ba580730bc9053cb799e93d68ad6df3af1255','2015-10-10 15:05:12');
 INSERT INTO "synced" VALUES('ga-au','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-findkey','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-fixnew','Lib/std/bash',NULL,NULL);
