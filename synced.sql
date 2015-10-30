@@ -21,7 +21,7 @@ INSERT INTO "synced" VALUES('.gitignore','',NULL,NULL);
 INSERT INTO "synced" VALUES('.gitmodules','',NULL,NULL);
 INSERT INTO "synced" VALUES('.mailmap','',NULL,NULL);
 INSERT INTO "synced" VALUES('256colors2.pl','',NULL,NULL);
-INSERT INTO "synced" VALUES('Add_test','Lib/std/bash','6dbbd5e13b3bbd6ba8aee3c4b7e4ac5f33f45901','2015-10-17 22:12:10');
+INSERT INTO "synced" VALUES('Add_test','Lib/std/bash','736f1d3663feb2ae1e4690f19416178e1e910cd5','2015-10-30 07:24:31');
 INSERT INTO "synced" VALUES('BUGS','',NULL,NULL);
 INSERT INTO "synced" VALUES('Div/HiRes-test','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('Div/apt-get.ubstud.txt','',NULL,NULL);
