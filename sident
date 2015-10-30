@@ -1,8 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # sident
 # File ID: da340b94-f743-11dd-8d53-000475e441b9
+#
 # Lists RCS-like keywords in files. Replacement for ident(1).
 #
 # Character set: UTF-8
@@ -12,20 +13,19 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 
-$| = 1;
-
-our $Debug = 0;
+local $| = 1;
 
 our %Opt = (
 
-    'debug' => 0,
     'expanded' => 0,
     'filesfrom' => "",
     'help' => 0,
     'known' => 0,
     'namesonly' => 0,
+    'quiet' => 0,
     'unique' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,152 +35,164 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.1.0';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "debug" => \$Opt{'debug'},
-    "expanded-only|e" => \$Opt{'expanded'},
-    "filenames-from|f=s" => \$Opt{'filesfrom'},
-    "filenames-only|l" => \$Opt{'namesonly'},
-    "help|h" => \$Opt{'help'},
-    "known-keywords-only|k" => \$Opt{'known'},
-    "unique-keywords|u" => \$Opt{'unique'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
-    "xml|x" => \$Opt{'xml'}
+    'expanded-only|e' => \$Opt{'expanded'},
+    'filenames-from|f=s' => \$Opt{'filesfrom'},
+    'filenames-only|l' => \$Opt{'namesonly'},
+    'help|h' => \$Opt{'help'},
+    'known-keywords-only|k' => \$Opt{'known'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'unique-keywords|u' => \$Opt{'unique'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+    'xml|x' => \$Opt{'xml'}
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
 
-my @Keywords = (
-                # List of recognised keywords {{{
-                "Id",
-                "Author", "LastChangedBy",
-                "Date", "LastChangedDate",
-                "LastChangedRevision", "Revision", "Rev",
-                "URL", "HeadURL",
-                "Header",
-                "Name",
-                "Locker",
-                "Log",
-                "RCSfile",
-                "Source",
-                "State"
-                # }}}
-               );
-my $Keyw = $Opt{'known'} ? join('|', @Keywords) : '[A-Za-z]+'; # Used in regexps
+exit(main());
 
-if ($Opt{'xml'}) {
-    print(<<END);
+sub main {
+    # {{{
+    my $Retval = 0;
+
+    my @Keywords = (
+                    # List of recognised keywords {{{
+                    "Id",
+                    "Author", "LastChangedBy",
+                    "Date", "LastChangedDate",
+                    "LastChangedRevision", "Revision", "Rev",
+                    "URL", "HeadURL",
+                    "Header",
+                    "Name",
+                    "Locker",
+                    "Log",
+                    "RCSfile",
+                    "Source",
+                    "State"
+                    # }}}
+                   );
+    my $Keyw = $Opt{'known'}
+        ? join('|', @Keywords)
+        : '[A-Za-z]+'; # Used in regexps
+
+    if ($Opt{'xml'}) {
+        print(<<END);
 <?xml version="1.0"?>
 <sident>
 END
-}
-
-my @Files = @ARGV;
-my $exit_val = 0;
-
-if (length($Opt{'filesfrom'})) {
-    # {{{
-    if (open(FromFP, "<$Opt{'filesfrom'}")) {
-        while(<FromFP>) {
-            chomp;
-            push(@Files, $_);
-        }
-        close(FromFP);
-    } else {
-        die("$progname: $Opt{'filesfrom'}: Cannot read filenames from file: $!\n");
     }
-    # }}}
-}
 
-for (@Files) {
-    # {{{
-    my @Out = ();
-    my $File = $_;
-    if (open(FromFP, "<$File")) {
-        while (<FromFP>) {
-            $Opt{'expanded'} || s/(\$($Keyw)\$)/push(@Out, $1)/ge;
-            s/(\$($Keyw)::? .*? \$)/push(@Out, $1)/ge;
-        }
-        if (scalar(@Out)) {
+    my @Files = @ARGV;
+    my $exit_val = 0;
 
-            if ($Opt{'unique'}) {
-                my %Done = ();
-                my @Out2 = @Out;
-                @Out = ();
-                for my $Curr (@Out2) {
-                    if (!defined($Done{$Curr})) {
-                        push(@Out, $Curr);
-                        $Done{$Curr} = 1;
-                    }
-                }
+    if (length($Opt{'filesfrom'})) {
+        # {{{
+        if (open(FromFP, "<$Opt{'filesfrom'}")) {
+            while(<FromFP>) {
+                chomp;
+                push(@Files, $_);
             }
-
-            $Opt{'xml'} && print("  <file>\n");
-            if ($Opt{'namesonly'}) {
-                if ($Opt{'xml'}) {
-                    printf("    <filename>%s</filename>\n",
-                        txt_to_xml($File)
-                    );
-                } else {
-                    print("$File\n");
-                }
-            } else {
-                if ($Opt{'xml'}) {
-                    printf("    <filename>%s</filename>\n",
-                        txt_to_xml($File)
-                    );
-                } else {
-                    print("\n$File:\n");
-                }
-                $Opt{'xml'} && print("    <keywords>\n");
-                for (@Out) {
-                    if ($Opt{'xml'}) {
-                        printf("      <keyword>%s</keyword>\n",
-                            txt_to_xml($_));
-                    } else {
-                        print("     $_\n");
-                    }
-                }
-                $Opt{'xml'} && print("    </keywords>\n");
-            }
-            $Opt{'xml'} && print("  </file>\n");
+            close(FromFP);
         } else {
-            if ($Opt{'verbose'} && !-d $File) {
+            die("$progname: $Opt{'filesfrom'}: " .
+                "Cannot read filenames from file: $!\n");
+        }
+        # }}}
+    }
+
+    for (@Files) {
+        # {{{
+        my @Out = ();
+        my $File = $_;
+        if (open(FromFP, "<$File")) {
+            while (<FromFP>) {
+                $Opt{'expanded'} || s/(\$($Keyw)\$)/push(@Out, $1)/ge;
+                s/(\$($Keyw)::? .*? \$)/push(@Out, $1)/ge;
+            }
+            if (scalar(@Out)) {
+
+                if ($Opt{'unique'}) {
+                    my %Done = ();
+                    my @Out2 = @Out;
+                    @Out = ();
+                    for my $Curr (@Out2) {
+                        if (!defined($Done{$Curr})) {
+                            push(@Out, $Curr);
+                            $Done{$Curr} = 1;
+                        }
+                    }
+                }
+
                 $Opt{'xml'} && print("  <file>\n");
-                if ($Opt{'xml'}) {
-                    printf("    <filename>%s</filename>\n",
-                        txt_to_xml($File)
-                    );
+                if ($Opt{'namesonly'}) {
+                    if ($Opt{'xml'}) {
+                        printf("    <filename>%s</filename>\n",
+                            txt_to_xml($File)
+                        );
+                    } else {
+                        print("$File\n");
+                    }
                 } else {
-                    print("\n$File:\n");
+                    if ($Opt{'xml'}) {
+                        printf("    <filename>%s</filename>\n",
+                            txt_to_xml($File)
+                        );
+                    } else {
+                        print("\n$File:\n");
+                    }
+                    $Opt{'xml'} && print("    <keywords>\n");
+                    for (@Out) {
+                        if ($Opt{'xml'}) {
+                            printf("      <keyword>%s</keyword>\n",
+                                txt_to_xml($_));
+                        } else {
+                            print("     $_\n");
+                        }
+                    }
+                    $Opt{'xml'} && print("    </keywords>\n");
                 }
                 $Opt{'xml'} && print("  </file>\n");
+            } else {
+                if ($Opt{'verbose'} && !-d $File) {
+                    $Opt{'xml'} && print("  <file>\n");
+                    if ($Opt{'xml'}) {
+                        printf("    <filename>%s</filename>\n",
+                            txt_to_xml($File)
+                        );
+                    } else {
+                        print("\n$File:\n");
+                    }
+                    $Opt{'xml'} && print("  </file>\n");
+                }
             }
+        } else {
+            warn("$progname: $File: Cannot read file: $!\n");
+            $exit_val = 1;
         }
-    } else {
-        warn("$progname: $File: Cannot read file: $!\n");
-        $exit_val = 1;
+        # }}}
     }
+
+    $Opt{'xml'} && print("</sident>\n");
+
+    return($exit_val);
     # }}}
-}
-
-$Opt{'xml'} && print("</sident>\n");
-
-exit($exit_val);
+} # main()
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -192,7 +204,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -212,16 +224,17 @@ Options:
   -l, --filenames-only
     Suppress normal output; only list names of files which contain 
     keywords.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -u, --unique-keywords
     List keywords only once per file, avoid duplicates.
   -v, --verbose
-    Also list files without keywords.
+    Increase level of verbosity. Can be repeated.
+    One -v also list files without keywords.
   --version
     Print version information.
   -x, --xml
     Create XML output.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -235,21 +248,9 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
-
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
 
 sub txt_to_xml {
     # Return a XML-safe version of a string {{{
@@ -310,6 +311,10 @@ keywords.
 
 Only list keywords once per file, avoid duplicates.
 
+=item B<-q>, B<--quiet>
+
+Be more quiet. Can be repeated to increase silence.
+
 =item B<-v>, B<--verbose>
 
 In addition to list keywords, also list names of files without keywords.
@@ -321,10 +326,6 @@ Print version information.
 =item B<-x>, B<--xml>
 
 Create XML output.
-
-=item B<--debug>
-
-Print debugging messages.
 
 =back
 
