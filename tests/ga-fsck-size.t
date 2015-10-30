@@ -16,7 +16,6 @@ use strict;
 use warnings;
 
 BEGIN {
-    # push(@INC, "$ENV{'HOME'}/bin/STDlibdirDTS");
     use Test::More qw{no_plan};
     # use_ok() goes here
 }
@@ -25,12 +24,14 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD = '../ga-fsck-size';
+our $CMD_BASENAME = "ga-fsck-size";
+our $CMD = "../$CMD_BASENAME";
 
 our %Opt = (
 
     'all' => 0,
     'help' => 0,
+    'quiet' => 0,
     'todo' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -48,12 +49,14 @@ GetOptions(
 
     'all|a' => \$Opt{'all'},
     'help|h' => \$Opt{'help'},
+    'quiet|q+' => \$Opt{'quiet'},
     'todo|t' => \$Opt{'todo'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -208,13 +211,15 @@ END
     }
 
     diag('Testing finished.');
+    return($Retval);
     # }}}
 } # main()
 
 sub testcmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("testcmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
@@ -223,7 +228,7 @@ sub testcmd {
             ? " - $Desc"
             : ''
     );
-    my $TMP_STDERR = 'ga-fsck-size-stderr.tmp';
+    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -245,7 +250,8 @@ sub testcmd {
 sub likecmd {
     # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) && BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc}) &&
+        BAIL_OUT("likecmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $Txt = join('',
@@ -254,7 +260,7 @@ sub likecmd {
             ? " - $Desc"
             : ''
     );
-    my $TMP_STDERR = 'ga-fsck-size-stderr.tmp';
+    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -307,7 +313,7 @@ sub usage {
 
 Usage: $progname [options] [file [files [...]]]
 
-Contains tests for the ga-fsck-size(1) program.
+Contains tests for the $CMD_BASENAME(1) program.
 
 Options:
 
@@ -315,6 +321,8 @@ Options:
     Run all tests, also TODOs.
   -h, --help
     Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -t, --todo
     Run only the TODO tests.
   -v, --verbose
@@ -340,77 +348,18 @@ sub msg {
 
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 NAME
-
-run-tests.pl
-
-=head1 SYNOPSIS
-
-ga-fsck-size.t [options] [file [files [...]]]
-
-=head1 DESCRIPTION
-
-Contains tests for the ga-fsck-size(1) program.
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<-a>, B<--all>
-
-Run all tests, also TODOs.
-
-=item B<-h>, B<--help>
-
-Print a brief help summary.
-
-=item B<-t>, B<--todo>
-
-Run only the TODO tests.
-
-=item B<-v>, B<--verbose>
-
-Increase level of verbosity. Can be repeated.
-
-=item B<--version>
-
-Print version information.
-
-=back
-
-=head1 AUTHOR
-
-Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
-
-=head1 COPYRIGHT
-
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
-This is free software; see the file F<COPYING> for legalese stuff.
-
-=head1 LICENCE
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation; either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=head1 SEE ALSO
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
