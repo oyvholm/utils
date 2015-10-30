@@ -63,6 +63,7 @@ INSERT INTO "synced" VALUES('Lib/perllib/tricgi.pm',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/perllib/tripwd.pm',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2.0.txt',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/bash','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/bash-no-getopt','Lib/std/bash','fab64baec167a6fb7a883b29030cde6eaf9cb048','2015-10-30 05:50:52');
 INSERT INTO "synced" VALUES('Lib/std/bisect','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/compile','Lib/std/bash',NULL,NULL);
