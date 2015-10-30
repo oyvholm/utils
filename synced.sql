@@ -363,7 +363,7 @@ INSERT INTO "synced" VALUES('h2u','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('hentfilm','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('hf','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('hfa','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('hhi','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('hhi','Lib/std/perl','e753ee1fd21258a29e3cc85f9d21195e63848306','2015-10-30 03:01:10');
 INSERT INTO "synced" VALUES('hmsg','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('href','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('html2cgi','',NULL,NULL);
@@ -623,7 +623,7 @@ INSERT INTO "synced" VALUES('tests/gotexp.t','Lib/std/perl-tests','5b25406a934b9
 INSERT INTO "synced" VALUES('tests/hhi-files/file.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi-files/name.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi-files/nohhi.html','',NULL,NULL);
-INSERT INTO "synced" VALUES('tests/hhi.t','Lib/std/perl-tests','e978628eb4d168ad5bdb1ec2b51445b7f3a5e9aa','2015-07-31 12:25:49');
+INSERT INTO "synced" VALUES('tests/hhi.t','Lib/std/perl-tests','e753ee1fd21258a29e3cc85f9d21195e63848306','2015-10-30 03:01:10');
 INSERT INTO "synced" VALUES('tests/installed_progs.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/perlmodules.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');
 INSERT INTO "synced" VALUES('tests/postgres.t','Lib/std/perl-tests','9f4278c12c4752a64d47fded4b03f1d91b03a736','2015-10-29 23:28:10');

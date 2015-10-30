@@ -1,8 +1,9 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #=======================================================================
 # hhi
 # File ID: 9f049aca-5d3b-11df-8f49-90e6ba3022ac
+#
 # Html Header Indexer
 #
 # Character set: UTF-8
@@ -17,14 +18,12 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $Debug = 0;
-
 our %Opt = (
 
     'all' => 0,
-    'debug' => 0,
     'help' => 0,
     'no-number' => 0,
+    'quiet' => 0,
     'startlevel' => 2,
     'verbose' => 0,
     'version' => 0,
@@ -33,157 +32,167 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
     'all|a' => \$Opt{'help'},
-    'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'no-number|n' => \$Opt{'no-number'},
+    'quiet|q+' => \$Opt{'quiet'},
     'startlevel|l=i' => "",
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
 
-my $last_level = 1;
-my $start_level = 2;
-my @header_num = qw{0};
-my @Data = ();
-my @Toc = ();
-my %name_used = ();
+exit(main());
 
-if ($Opt{'startlevel'} =~ /^\d+$/) {
-    if ($Opt{'startlevel'} < 1) {
-        die("$progname: Number passed to -l has to be bigger than zero\n");
-    } else {
-        $start_level = $Opt{'startlevel'};
-    }
-} else {
-    die("$progname: -l wants a number\n")
-}
-
-while (<>) {
+sub main {
     # {{{
-    my $orig_line = $_;
-    if (!/ nohhi /i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
-        # Header found {{{
-        my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
-        if ($header_level >= $start_level) {
-            my $skip_num = 0;
-            splice(@header_num, $header_level-1) if ($header_level < $last_level);
-            if ($header_level - $last_level > 1) {
-                warn("$progname: Line $.: Header skip ($last_level to $header_level)\n");
-                for (my $Tmp = 0; $Tmp < $header_level-2; $Tmp++) {
-                    defined($header_num[$Tmp]) || ($header_num[$Tmp] = "");
-                }
-            }
-            $header_num[$header_level-2]++;
-            my $tall_str = join(".", @header_num);
-            my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i) ? $1 : "h-$tall_str";
+    my $Retval = 0;
 
-            if (defined($name_used{$name_str})) {
-                warn("$progname: Line $.: \"$name_str\": Section name already used\n");
-            }
-            $name_used{$name_str} = 1;
+    my $last_level = 1;
+    my $start_level = 2;
+    my @header_num = qw{0};
+    my @Data = ();
+    my @Toc = ();
+    my %name_used = ();
 
-            if ($Rest =~ m#^(<a (name|id)=".*?">[\d\.]+</a>\s+)(.*?)$#i) {
-                $Rest = $3;
-            } elsif ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
-                $Rest = $2;
-            }
-            ($tall_str .= ".") if ($header_level == 2);
-            if ($Opt{'no-number'} || $Rest =~ /<!-- nohhinum -->/i) {
-                $skip_num = 1;
-                $_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
-            } else {
-                $_ = "${Pref}<${H}${header_level}${Elem}><a id=\"$name_str\">$tall_str</a> $Rest\n";
-            }
-            if (!/<!-- nohhitoc -->/i || $Opt{'all'}) {
-                push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
-                                     : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
-            }
-            $last_level = $header_level;
+    if ($Opt{'startlevel'} =~ /^\d+$/) {
+        if ($Opt{'startlevel'} < 1) {
+            die("$progname: Number passed to -l has to be bigger than zero\n");
+        } else {
+            $start_level = $Opt{'startlevel'};
         }
-        push(@Data, "$_");
-        # }}}
-    } elsif (/<!-- hhitoc -->/i) {
-        # Contents area found, skip everything until a "<!-- /hhitoc 
-        # -->" is found
+    } else {
+        die("$progname: -l wants a number\n")
+    }
+
+    while (<>) {
         # {{{
-        my $Found = 1;
-        my $line_num = $.;
-        push(@Data, "$_");
-        while (<>) {
-            if (m#<!-- /hhitoc -->#i) {
-                push(@Data, "$_");
-                $Found = 0;
-                last;
-            }
-        }
-        $Found && die("$progname: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
-        # }}}
-    } else {
-        push(@Data, "$_");
-    }
-    # }}}
-}
-
-for my $Line (@Data) {
-    # Send everything to stdout with optional contents inserted {{{
-    if ($Line =~ /^(\s*)(<!-- hhitoc -->)(.*)$/i) {
-        my ($Indent, $HT, $End) = ($1, $2, $3);
-        print("$Line$Indent<ul>\n$Indent<!-- \x7B\x7B\x7B -->\n");
-        my $Old = 0;
-        my ($Cnt, $Txt) = (0, "");
-        my $Ex = "\t";
-        for (@Toc) {
-            # {{{
-            if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
-                ($Cnt, $Txt) = ($1, $2);
-                my $Diff = $Cnt-$Old;
-                $Ex = ""; # "\t" x $Cnt; # FIXME: Temporary disabled until it works
-                if ($Old && $Diff > 0) {
-                    for (my $T = $Diff; $T; $T--) {
-                        print("$Indent$Ex<ul>\n");
+        my $orig_line = $_;
+        if (!/ nohhi /i && /^(.*)<(h)(\d+)(.*?)>(.*)$/i) {
+            # Header found {{{
+            my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
+            if ($header_level >= $start_level) {
+                my $skip_num = 0;
+                splice(@header_num, $header_level-1) if ($header_level < $last_level);
+                if ($header_level - $last_level > 1) {
+                    warn("$progname: Line $.: Header skip ($last_level to $header_level)\n");
+                    for (my $Tmp = 0; $Tmp < $header_level-2; $Tmp++) {
+                        defined($header_num[$Tmp]) || ($header_num[$Tmp] = "");
                     }
-                } elsif ($Old && $Diff < 0) {
-                    print("$Indent$Ex</li>\n");
-                    for (my $T = $Diff; $T; $T++) {
-                        print("$Indent$Ex</ul>\n$Indent$Ex</li>\n");
-                    }
-                } elsif ($Old) {
-                    print("$Indent$Ex</li>\n");
                 }
-                print("$Indent$Ex<li><span>$Txt</span>\n");
-                $Old = $Cnt;
+                $header_num[$header_level-2]++;
+                my $tall_str = join(".", @header_num);
+                my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i) ? $1 : "h-$tall_str";
+
+                if (defined($name_used{$name_str})) {
+                    warn("$progname: Line $.: \"$name_str\": Section name already used\n");
+                }
+                $name_used{$name_str} = 1;
+
+                if ($Rest =~ m#^(<a (name|id)=".*?">[\d\.]+</a>\s+)(.*?)$#i) {
+                    $Rest = $3;
+                } elsif ($Rest =~ m#^([\d\.]+)\s*(.*?)$#i) {
+                    $Rest = $2;
+                }
+                ($tall_str .= ".") if ($header_level == 2);
+                if ($Opt{'no-number'} || $Rest =~ /<!-- nohhinum -->/i) {
+                    $skip_num = 1;
+                    $_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
+                } else {
+                    $_ = "${Pref}<${H}${header_level}${Elem}><a id=\"$name_str\">$tall_str</a> $Rest\n";
+                }
+                if (!/<!-- nohhitoc -->/i || $Opt{'all'}) {
+                    push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
+                                         : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
+                }
+                $last_level = $header_level;
             }
+            push(@Data, "$_");
             # }}}
+        } elsif (/<!-- hhitoc -->/i) {
+            # Contents area found, skip everything until a "<!-- /hhitoc 
+            # -->" is found
+            # {{{
+            my $Found = 1;
+            my $line_num = $.;
+            push(@Data, "$_");
+            while (<>) {
+                if (m#<!-- /hhitoc -->#i) {
+                    push(@Data, "$_");
+                    $Found = 0;
+                    last;
+                }
+            }
+            $Found && die("$progname: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
+            # }}}
+        } else {
+            push(@Data, "$_");
         }
-        for (; $Cnt > 1; $Cnt--) {
-            D("Cnt = \"$Cnt\"\n");
-            print("$Indent$Ex</li>\n");
-            ($Cnt == 2) && print("$Indent<!-- \x7D\x7D\x7D -->\n");
-            print("$Indent$Ex</ul>\n");
-        }
-    } else {
-        print("$Line");
+        # }}}
     }
+
+    for my $Line (@Data) {
+        # Send everything to stdout with optional contents inserted {{{
+        if ($Line =~ /^(\s*)(<!-- hhitoc -->)(.*)$/i) {
+            my ($Indent, $HT, $End) = ($1, $2, $3);
+            print("$Line$Indent<ul>\n$Indent<!-- \x7B\x7B\x7B -->\n");
+            my $Old = 0;
+            my ($Cnt, $Txt) = (0, "");
+            my $Ex = "\t";
+            for (@Toc) {
+                # {{{
+                if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
+                    ($Cnt, $Txt) = ($1, $2);
+                    my $Diff = $Cnt-$Old;
+                    $Ex = ""; # "\t" x $Cnt; # FIXME: Temporary disabled until it works
+                    if ($Old && $Diff > 0) {
+                        for (my $T = $Diff; $T; $T--) {
+                            print("$Indent$Ex<ul>\n");
+                        }
+                    } elsif ($Old && $Diff < 0) {
+                        print("$Indent$Ex</li>\n");
+                        for (my $T = $Diff; $T; $T++) {
+                            print("$Indent$Ex</ul>\n$Indent$Ex</li>\n");
+                        }
+                    } elsif ($Old) {
+                        print("$Indent$Ex</li>\n");
+                    }
+                    print("$Indent$Ex<li><span>$Txt</span>\n");
+                    $Old = $Cnt;
+                }
+                # }}}
+            }
+            for (; $Cnt > 1; $Cnt--) {
+                msg(2, "Cnt = \"$Cnt\"\n");
+                print("$Indent$Ex</li>\n");
+                ($Cnt == 2) && print("$Indent<!-- \x7D\x7D\x7D -->\n");
+                print("$Indent$Ex</ul>\n");
+            }
+        } else {
+            print("$Line");
+        }
+        # }}}
+    }
+
+    return($Retval);
     # }}}
-}
+} # main()
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
     return;
     # }}}
 } # print_version()
@@ -215,12 +224,12 @@ Options:
     Start indexing at this level number. Default: 2.
   -n, --no-number
     Don't number headers
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -237,19 +246,6 @@ sub msg {
     return;
     # }}}
 } # msg()
-
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return('');
-    # }}}
-} # D()
 
 __END__
 
