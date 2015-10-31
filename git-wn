@@ -13,12 +13,32 @@
 progname=git-wn
 VERSION=0.2.0
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
+ARGS="$(getopt -o "hpqvw" -l "help,patch,quiet,verbose,word-diff,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+opt_help=0
+opt_patch=0
+opt_quiet=0
+opt_verbose=0
+opt_word_diff=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-p|--patch) opt_patch=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (-w|--word-diff) opt_word_diff=1; shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 "git what's new", show descendants of a specific commit. For example, 
@@ -30,9 +50,13 @@ Options:
 
   -h, --help
     Show this help.
-  -p
+  -p, --patch
     Use extended format with patch.
-  -w
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  -w, --word-diff
     Same as -p, but use word diff instead
   --version
     Print version information.
@@ -44,10 +68,8 @@ END
     exit 0
 fi
 
-unset opt_p
-test "$1" = "-p" && { opt_p=1; shift; }
-unset opt_w word_diff_str
-test "$1" = "-w" && { opt_p=1; opt_w=1; word_diff_str="--word-diff"; shift; }
+unset word_diff_str
+test "$opt_word_diff" = "1" && { opt_patch=1; word_diff_str="--word-diff"; }
 
 unset branches
 from="$1"
@@ -60,7 +82,7 @@ for f in $(git lc $from); do
     branches="$branches $from..$f"
 done
 
-if test "$opt_p" = "1"; then
+if test "$opt_patch" = "1"; then
     git log --date-order --date=iso --decorate=short --format=fuller --graph \
       $word_diff_str -c -p $log_args $branches
 else

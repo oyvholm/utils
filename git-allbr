@@ -14,12 +14,37 @@
 progname=git-allbr
 VERSION=0.2.0
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
+ARGS="$(getopt -o "acfhquv" \
+    -l "all,commit-branches,force,help,quiet,upstream,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+opt_all=0
+opt_commit_branches=0
+opt_force=0
+opt_help=0
+opt_quiet=0
+opt_upstream=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-a|--all) opt_all=1; shift ;;
+        (-c|--commit-branches) opt_commit_branches=1; shift ;;
+        (-f|--force) opt_force=1; shift ;;
+        (-h|--help) opt_help=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-u|--upstream) opt_upstream=1; shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 Create local Git branches that only exist on remotes and update local 
@@ -29,20 +54,24 @@ Usage: $progname [options] [remote [remotes [...]]]
 
 Options:
 
-  -a
+  -a, --all
     Create branches from all remotes. If this option is not specified, 
     only "origin" or remotes specified on the command line are scanned.
-  -c
+  -c, --commit-branches
     Also create commit-* branches created by git-dangling.
-  -f
+  -f, --force
     Allow rewriting of local branches, override fast-forwarding.
   -h, --help
     Show this help.
-  -u
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -u, --upstream
     Set local branches to track remote branches as upstream, similar 
     functionality to "git branch -u" and "git push -u". If several 
     remotes are specified, the last remote in alphabetical order is 
     used.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
 
@@ -51,13 +80,13 @@ END
 fi
 
 remotes=origin
-test "$1" = "-a" && { remotes=$(git remote); shift; }
+test "$opt_all" = "1" && remotes=$(git remote)
 unset create_dangling
-test "$1" = "-c" && { create_dangling=1; shift; }
+test "$opt_commit_branches" = "1" && create_dangling=1
 unset force_str
-test "$1" = "-f" && { force_str="--force"; shift; }
+test "$opt_force" = "1" && force_str="--force"
 unset upstream_str
-test "$1" = "-u" && { upstream_str="-u"; shift; }
+test "$opt_upstream" = "1" && upstream_str="-u"
 test -z "$1" || remotes="$@"
 echo
 is_bare=1

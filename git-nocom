@@ -16,12 +16,30 @@
 progname=git-nocom
 VERSION=0.1.1
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
+ARGS="$(getopt -o "hqrv" -l "help,quiet,reverse,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+opt_help=0
+opt_quiet=0
+opt_reverse=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-r|--reverse) opt_reverse=1; shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 List all branches except those containing "commit-[0-9a-f]{40}" .
@@ -35,6 +53,12 @@ Options:
 
   -h, --help
     Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -r, --reverse
+    Reverse the behaviour, only display commit-* branches.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
 
@@ -43,7 +67,7 @@ END
 fi
 
 v_str=
-test "$1" = "-r" || v_str=-v
+test "$opt_reverse" = "1" || v_str=-v
 grep -v "HEAD detached" |
 fmt -1 |
 tr -d '\t ' |
