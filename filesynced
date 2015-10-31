@@ -69,18 +69,30 @@ END
 fi
 
 SQLITE=sqlite3
+bin="$HOME/bin"
 db="synced.sqlite"
+
+if test ! -f "$bin/$db"; then
+    echo $progname: $bin/$db: Sync database not found >&2
+    exit 1
+fi
+(
+    cd "$bin" || {
+        echo $progname: Cannot chdir to \'$bin\' >&2
+        exit 1
+    }
+)
 
 if test "$opt_list" = "1"; then
     test -n "$opt_type" && type_str="$opt_type" || type_str="%"
     cat <<END | $SQLITE "$db" | bash | sort -n
 SELECT
   'echo \$(' ||
-    'git log --format=%h ' || rev || '.. ' || orig || ' | wc -l' ||
+    'cd "$bin"; git log --format=%h ' || rev || '.. ' || orig || ' | wc -l' ||
   ') ' ||
   file ||
   ' "(' ||
-    '\$(git log -1 --format=%h ' || rev || ')' ||
+    '\$(cd "$bin"; git log -1 --format=%h ' || rev || ')' ||
     '.. ' ||
     orig ||
   ')";'
@@ -93,7 +105,7 @@ END
     exit
 fi
 
-commit="$(git rev-parse $1)"
+commit="$(cd "$bin"; git rev-parse $1)"
 if test -z "$commit"; then
     echo $progname: $1: Invalid Git ref
     exit 1
@@ -105,6 +117,7 @@ if test -z "$files"; then
     exit 1
 fi
 date="$(
+    cd "$bin"
     git log -1 --format=%ad --date=raw $commit |
     cut -f 1 -d ' ' |
     ep -D ' ' |
