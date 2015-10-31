@@ -293,7 +293,7 @@ INSERT INTO "synced" VALUES('ga-key','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-other','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-repofix','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-sjekk','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('ga-sumsize','Lib/std/perl','e56896d388a9c5d5821f958a3ca65f4002502940','2015-09-08 11:10:07');
+INSERT INTO "synced" VALUES('ga-sumsize','Lib/std/perl','8a8fb69e7712e7433fb9e88f823af7f772ce4048','2015-10-31 00:42:28');
 INSERT INTO "synced" VALUES('ga-tree','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('gammelsvn','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('genpasswd','https://raw.githubusercontent.com/fuktommy/homebin/master/genpasswd',NULL,'2015-10-15 17:50:54');
