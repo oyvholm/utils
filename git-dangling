@@ -19,6 +19,9 @@ ARGS="$(getopt -o "bcDhqv" \
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_blobs=0
+opt_checkpart=0
+opt_deleteonly=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0

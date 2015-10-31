@@ -19,8 +19,12 @@ ARGS="$(getopt -o "dhmpqsv" \
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_delete=0
 opt_help=0
+opt_merge=0
+opt_parent=0
 opt_quiet=0
+opt_squash=0
 opt_verbose=0
 while :; do
     case "$1" in

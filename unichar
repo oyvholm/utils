@@ -23,7 +23,11 @@ ARGS="$(getopt -o "cghqv" \
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_convert=0
+opt_get=0
+opt_gui=0
 opt_help=0
+opt_init=''
 opt_quiet=0
 opt_verbose=0
 while :; do

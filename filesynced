@@ -19,7 +19,9 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
+opt_list=0
 opt_quiet=0
+opt_type='%'
 opt_verbose=0
 while :; do
     case "$1" in
