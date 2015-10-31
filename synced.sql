@@ -388,7 +388,7 @@ INSERT INTO "synced" VALUES('kbd','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('keyw','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('klokke','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('klokkesig-conv','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('konvflac','Lib/std/bash','e66195b3f5d4d116565ce1d89f4ad3ddb0b27e14','2015-10-10 15:25:07');
+INSERT INTO "synced" VALUES('konvflac','Lib/std/bash','a71f661401a7e0b202884daf911d504b4e359e2b','2015-10-31 00:23:21');
 INSERT INTO "synced" VALUES('kopier_bilder','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('l','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('l33t','http://users.tpg.com.au/adsln4yb/Specials/l33t',NULL,NULL);
