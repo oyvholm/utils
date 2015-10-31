@@ -72,12 +72,11 @@ SQLITE=sqlite3
 db="synced.sqlite"
 
 if test "$opt_list" = "1"; then
-    head=$(git rev-parse HEAD)
     test -n "$opt_type" && type_str="$opt_type" || type_str="%"
     cat <<END | $SQLITE "$db" | bash | sort -n
 SELECT
   'echo \$(' ||
-    'git log --format=%h ' || rev || '..$head ' || orig || ' | wc -l' ||
+    'git log --format=%h ' || rev || '.. ' || orig || ' | wc -l' ||
   ') ' ||
   file ||
   ' "(' ||
