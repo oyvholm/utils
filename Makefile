@@ -25,12 +25,12 @@ remotes:
 	git remote add repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
 
 test:
-	cd tests; $(MAKE)
-	cd Lib/std/c; ./compile
-	cd src/fldb/tests; $(MAKE)
-	cd src/smsum/tests; $(MAKE)
-	cd Git/suuid/tests; $(MAKE)
-	cd src/gpstools/tests; $(MAKE)
+	cd tests && $(MAKE)
+	cd Lib/std/c && ./compile
+	cd src/fldb/tests && $(MAKE)
+	cd src/smsum/tests && $(MAKE)
+	cd Git/suuid/tests && $(MAKE)
+	cd src/gpstools/tests && $(MAKE)
 
 testclean:
 	cd Lib/std/c && rm -rfv compile.tmp
