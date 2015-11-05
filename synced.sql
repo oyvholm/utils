@@ -231,7 +231,7 @@ INSERT INTO "synced" VALUES('deep','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('degpg','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('denycurrent','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('detab','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('dir-elems','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('dir-elems','Lib/std/bash','94a9ac14a545242384e8dbc783b2a3c5ea7662cf','2015-11-05 13:40:24');
 INSERT INTO "synced" VALUES('doc/Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('doc/build-git.md','',NULL,NULL);
 INSERT INTO "synced" VALUES('doc/git-init.txt','',NULL,NULL);

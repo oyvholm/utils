@@ -12,13 +12,62 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-unset opt_recursive
-test "$1" = "-r" && { opt_recursive=1; shift; }
+progname=dir-elems
+VERSION=0.1.0
+
+ARGS="$(getopt -o "hqrv" -l "help,quiet,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_help=0
+opt_quiet=0
+opt_recursive=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-r) opt_recursive=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Create sorted list with number of directory elements in a directory 
+tree. Useful to find directories with lots of files that need to be 
+split up.
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -r
+    Count files in whole subtrees instead of single directories.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 find "$@" -type d | while read f; do
     (
         cd "$f" && {
-            if test -n "$opt_recursive"; then
+            if test "$opt_recursive" = "1"; then
                 echo $(find | wc -l) $f
             else
                 echo $(ls -a | wc -l) $f
