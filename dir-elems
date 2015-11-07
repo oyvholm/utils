@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=dir-elems
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "hqrsv" -l "help,quiet,subtree,verbose,version" \
     -n "$progname" -- "$@")"

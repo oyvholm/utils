@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=git-allbr
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "acfhquv" \
     -l "all,commit-branches,force,help,quiet,upstream,verbose,version" \

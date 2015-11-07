@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "hqv" -l "help,quiet,verbose,version" \
     -n "$progname" -- "$@")"

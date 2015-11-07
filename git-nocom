@@ -14,7 +14,7 @@
 #=======================================================================
 
 progname=git-nocom
-VERSION=0.1.1
+VERSION=0.2.0
 
 ARGS="$(getopt -o "hqrv" -l "help,quiet,reverse,verbose,version" \
     -n "$progname" -- "$@")"

@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-wn
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "hpqvw" -l "help,patch,quiet,verbose,word-diff,version" \
     -n "$progname" -- "$@")"
