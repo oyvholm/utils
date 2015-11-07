@@ -95,8 +95,10 @@ dbroot="/var/lib/postgresql"
 dumpfile="$dbroot/$(date -u +"%Y%m%dT%H%M%SZ").all.pgdump.gz"
 
 test -e "$destdir" && {
-    echo $progname: $destdir already exists >&2
-    exit 1
+    sudo rmdir "$destdir" || {
+        echo $progname: $destdir already exists >&2
+        exit 1
+    }
 }
 
 test -e "$dbroot/$pgdesc/main" && {
