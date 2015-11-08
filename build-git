@@ -3,11 +3,65 @@
 #=======================================================================
 # build-git
 # File ID: 7075da30-98d2-11de-b3de-00248cd5cf1e
-# (C)opyleft 2009 Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 2 or later
+#
+# Compile and install git(1).
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=build-git
+VERSION=0.1.0
+
+ARGS="$(getopt -o "hqv" -l "help,no-net,quiet,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_help=0
+opt_no_net=0
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (--no-net) opt_no_net=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Compile and install git(1). Default action is to build from the newest 
+revision on 'master'. Another branch or tag can be specified as first 
+argument.
+
+Usage: $progname [options] [branch]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --no-net
+    Don't fetch or push, use what's present in the local repo.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
 lockdir=$HOME/.Build-git.LOCK
 
 myexit() {
@@ -48,9 +102,6 @@ make_info=1
 hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
-
-unset opt_no_net
-test "$1" = "--no-net" && { opt_no_net=1; shift; }
 
 if [ -n "$1" ]; then
     local_master=$1
