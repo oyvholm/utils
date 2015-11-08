@@ -70,7 +70,10 @@ myexit() {
 }
 
 trap "myexit 1" INT TERM
-mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
+mkdir $lockdir || {
+    echo $progname: $lockdir: Cannot create lockdir >&2
+    exit 1
+}
 
 rcfile=$HOME/.build-gitrc
 origin_url=git://git.kernel.org/pub/scm/git/git.git
@@ -78,12 +81,12 @@ origin_url=git://git.kernel.org/pub/scm/git/git.git
 # Directory where the git build happens
 builddir=$HOME/src/other/git/build-git
 
-# Prefix to directory tree where git will be installed. You can change it to 
-# for example $HOME/local if you don’t have root access.
+# Prefix to directory tree where git will be installed. You can change 
+# it to for example $HOME/local if you don’t have root access.
 pref=/usr/local
 
-# If you don’t have sudo rights or you don’t need it at the location in the 
-# file system, clear the value of the $sudo variable
+# If you don’t have sudo rights or you don’t need it at the location in 
+# the file system, clear the value of the $sudo variable
 sudo=sudo
 
 # Local name of remote master
@@ -108,19 +111,24 @@ if [ -n "$1" ]; then
 fi
 
 is_official_branch() {
-    echo -n $1 | grep -Eq '^(master|maint|next|pu|todo)$' && return 0 || return 1
+    echo -n $1 | grep -Eq '^(master|maint|next|pu|todo)$' &&
+        return 0 || return 1
 }
 
 fetch_remotes() {
     git remote | grep -q '^origin$' || git remote add origin $origin_url
-    git remote | grep -q '^kernelorg$' || git remote add kernelorg git://git.kernel.org/pub/scm/git/git.git
+    git remote | grep -q '^kernelorg$' ||
+        git remote add kernelorg git://git.kernel.org/pub/scm/git/git.git
     git remote | grep -q '^gitster$' || {
         git remote add gitster git://github.com/gitster/git.git
         git config --add remote.gitster.fetch +refs/notes/*:refs/notes/*
     }
-    git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
-    git remote | grep -q '^peff$' || git remote add peff git://github.com/peff/git.git
-    git remote | grep -q '^sunbase$' || git remote add sunbase sunny@sunbase.org:/home/sunny/repos/Git/git.git
+    git remote | grep -q '^github$' ||
+        git remote add github git@github.com:sunny256/git.git
+    git remote | grep -q '^peff$' ||
+        git remote add peff git://github.com/peff/git.git
+    git remote | grep -q '^sunbase$' ||
+        git remote add sunbase sunny@sunbase.org:/home/sunny/repos/Git/git.git
     if test -z "$opt_no_net"; then
         echo ================= git fetch =================
         echo ===== origin =====
@@ -140,7 +148,9 @@ fetch_remotes() {
 }
 
 commit_tree() {
-    git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $1
+    git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset '\
+'-%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' \
+    --abbrev-commit $1
 }
 
 enable_sudo() {
@@ -219,13 +229,19 @@ GIT_PAGER=cat git status --porcelain | grep . && {
     echo $progname: $builddir is not clean, aborting >&2
     myexit 1
 }
-curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
+curr_git_ver=$(
+    cd $builddir &&
+        (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN
+)
 lpar_git
 
 echo
 echo Variables:
 echo
-echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --long --match 'v[12]*' $curr_git_ver))"
+echo "curr_git_ver   = \"$curr_git_ver\" ($(
+    cd $builddir
+    git describe --long --match 'v[12]*' $curr_git_ver
+))"
 echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
 echo "builddir       = \"$builddir\""
 echo "pref           = \"$pref\""
@@ -247,7 +263,8 @@ if [ ! -e GIT-VERSION-GEN ]; then
     myexit 1
 fi
 fetch_remotes
-is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
+is_official_branch $local_master &&
+    destbranch=origin/$local_master || destbranch=$local_master
 echo
 if [ -n "$curr_git_ver" ]; then
     echo ================= git status in `pwd` =================
@@ -258,8 +275,11 @@ if [ -n "$curr_git_ver" ]; then
     until [ "$choice" = "y" ]; do
         echo
         unset choice
-        echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
-        echo Going to compile git $(git describe --long --match 'v[12]*' $destbranch)
+        echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) \
+            "new commits available in range $curr_git_ver..$destbranch"
+        echo Going to compile git $(
+            git describe --long --match 'v[12]*' $destbranch
+        )
         echo
         echo If that looks okay to you, press \'y\' to start the build, or:
         echo \'d\' to diff
@@ -278,8 +298,10 @@ if [ -n "$curr_git_ver" ]; then
         [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
         [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
         [ "$choice" = "lp" ] && git log --patch $curr_git_ver..$destbranch
-        [ "$choice" = "lt" ] && git log --graph --stat $curr_git_ver..$destbranch
-        [ "$choice" = "lw" ] && git log --patch --word-diff $curr_git_ver..$destbranch
+        [ "$choice" = "lt" ] &&
+            git log --graph --stat $curr_git_ver..$destbranch
+        [ "$choice" = "lw" ] &&
+            git log --patch --word-diff $curr_git_ver..$destbranch
         [ "$choice" = "n" ] && myexit 0
         [ "$choice" = "p" ] && {
             if test -z "$opt_no_net"; then
@@ -335,7 +357,8 @@ else
     inst_info_str=
 fi
 echo Compiling $vername
-echo ==== make prefix=$dest $makeflags all $make_doc_str $make_info_str \|\| myexit
+echo "==== make prefix=$dest $makeflags all" \
+    "$make_doc_str $make_info_str \|\| myexit"
 make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
 echo ==== make $makeflags test
 make $makeflags test
@@ -349,7 +372,8 @@ until test "$choice" = "y"; do
     read choice
 done
 enable_sudo
-echo ==== $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
+echo "==== $sudo make prefix=$dest" \
+    "$makeflags install $inst_doc_str $inst_info_str"
 $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
 $sudo mkdir -p $pref/{bin,prg,varprg}
@@ -391,7 +415,11 @@ for f in $mansects; do
 done
 if [ -d $pref/.git/. ]; then
     echo ================= git commit the symlink =================
-    commitmsg=`echo $progname installed $globalgit on $(hostname); echo; suuid -t commit,$progname`
+    commitmsg=$(
+        echo $progname installed $globalgit on $(hostname)
+        echo
+        suuid -t commit,$progname
+    )
     cd $pref/prg
     $sudo git add git
     echo Commit message:
