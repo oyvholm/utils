@@ -221,8 +221,6 @@ sudo=true
 prefix="/usr/local"
 exec_rcfile
 prgdir="$prefix/prg"
-desc="$(git describe --long --tags)"
-destdir="$prefix/varprg/vim-$desc"
 exec_rcfile
 test "$sudo" = "1" -o "$sudo" = "true" && sudo=sudo || unset sudo
 
@@ -237,6 +235,9 @@ if test "$opt_update" = "1"; then
     $sim git fetch origin
     $sim git merge --ff-only
 fi
+
+desc="$(git describe --long --tags)"
+destdir="$prefix/varprg/vim-$desc"
 
 test -e "$destdir" && {
     $sim $sudo rmdir "$destdir" || {
