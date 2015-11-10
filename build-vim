@@ -18,19 +18,44 @@ cloneurl=https://github.com/vim/vim.git
 branch=master
 remotename=origin
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
+ARGS="$(getopt -o "fhnquvy" \
+    -l "help,dry-run,quiet,update,verbose,yes,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+opt_f=0
+opt_help=0
+opt_dry_run=0
+opt_quiet=0
+opt_update=0
+opt_verbose=0
+opt_yes=0
+while :; do
+    case "$1" in
+        (-f) opt_f=1; shift ;;
+        (-h|--help) opt_help=1; shift ;;
+        (-n|--dry-run) opt_dry_run=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-u|--update) opt_update=1; shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (-y|--yes) opt_yes=1; shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 Compile and install Vim
 
 Usage: $progname [options]
 
-Options (has to be specified alphabetically):
+Options:
 
   -f
     Remove lockdir before installing The Holy Editor.
@@ -38,9 +63,13 @@ Options (has to be specified alphabetically):
     Show this help.
   -n, --dry-run
     Don't do anything, output commands that would be executed instead.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -u, --update
     Fetch new commits and update the source code before starting the 
     build.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   -y
     Answer 'y' to all questions, perform an automated build. May cause 
     the script to hang if sudo is used and it's timed out.
@@ -126,27 +155,22 @@ msg() {
 
 lockdir="$HOME/.$progname.LOCK"
 
-if test "$1" = "-f"; then
+if test "$opt_f" = "1"; then
     rmdir -v "$lockdir"
-    shift
 fi
 
 unset sim
-if test "$1" = "-n" -o "$1" = "--dry-run"; then
+if test "$opt_dry_run" = "1"; then
     sim=echo
     sim_str=" (Simulated)"
-    shift
 fi
-
-unset opt_y
-test "$1" = "-y" && { opt_y=1; shift; }
 
 cleanup() {
     rmdir "$lockdir" || msg -s $lockdir: Cannot remove lockdir
 }
 
 continue_if_y() {
-    if test "$opt_y" = "1"; then
+    if test "$opt_yes" = "1"; then
         echo y >&2
     else
         unset choice_y
@@ -209,10 +233,9 @@ if test "$sim" != "echo"; then
     }
 fi
 
-if test "$1" = "-u" -o "$1" = "--update"; then
+if test "$opt_update" = "1"; then
     $sim git fetch origin
     $sim git merge --ff-only
-    shift
 fi
 
 test -e "$destdir" && {

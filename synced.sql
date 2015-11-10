@@ -188,7 +188,7 @@ INSERT INTO "synced" VALUES('build-git','Lib/std/bash','ff5be6c4d6eafd326992d7bd
 INSERT INTO "synced" VALUES('build-perl','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('build-postgis','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('build-postgres','Lib/std/bash','cd529b5348c09093e22baf232e0f80c2d3795a64','2015-11-06 12:35:30');
-INSERT INTO "synced" VALUES('build-vim','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('build-vim','Lib/std/bash','2abe18a697fc0ef450987885a306d07eaf5faa7e','2015-11-10 04:07:01');
 INSERT INTO "synced" VALUES('ccc','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('cdiff','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('cdiffa','Lib/std/bash',NULL,NULL);
