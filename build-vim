@@ -38,6 +38,9 @@ Options (has to be specified alphabetically):
     Show this help.
   -n, --dry-run
     Don't do anything, output commands that would be executed instead.
+  -u, --update
+    Fetch new commits and update the source code before starting the 
+    build.
   -y
     Answer 'y' to all questions, perform an automated build. May cause 
     the script to hang if sudo is used and it's timed out.
@@ -76,11 +79,11 @@ These are the main variables to control the build:
     Default value: \$prefix/prg
   - destdir
     Directory where the compiled files are installed.
-    Default value: \$prefix/varprg/vim-\$vimdesc
+    Default value: \$prefix/varprg/vim-\$desc
   - configure_opts
     Options passed to "./configure".
     Default value: $configure_opts
-  - vimdesc
+  - desc
     Version number, you shouldn't need to touch this.
     Default value is the output of "git describe --long --tags".
   - user
@@ -138,9 +141,8 @@ fi
 unset opt_y
 test "$1" = "-y" && { opt_y=1; shift; }
 
-myexit() {
+cleanup() {
     rmdir "$lockdir" || msg -s $lockdir: Cannot remove lockdir
-    exit $1
 }
 
 continue_if_y() {
@@ -150,7 +152,7 @@ continue_if_y() {
         unset choice_y
         until test "$choice_y" = "y"; do
             read choice_y
-            test "$choice_y" = "n" && myexit 0
+            test "$choice_y" = "n" && exit 0
             if test "$choice_y" != "y"; then
                 msg -n -s "Please press 'y' or 'n': "
             fi
@@ -164,7 +166,7 @@ mkdir "$lockdir" || {
     exit 1
 }
 
-trap "myexit 1" INT TERM
+trap cleanup EXIT
 
 srcdir="$HOME/src/other/vim"
 exec_rcfile
@@ -176,16 +178,16 @@ if test ! -f "$srcdir/Vim.info"; then
     cd "$srcdir" &&
     $sim git checkout "$branch" &&
     echo >&2 ||
-    myexit 1
+    exit 1
 fi
 cd "$srcdir" || {
     if test "$sim" = "echo"; then
         msg $srcdir doesn\'t exist,
-        msg -s values of \$vimdesc and \$destdir are not shown correctly.
+        msg -s values of \$desc and \$destdir are not shown correctly.
         msg -s Not a problem, since we\'re only simulating.
         echo >&2
     else
-        myexit 1
+        exit 1
     fi
 }
 
@@ -195,27 +197,33 @@ sudo=true
 prefix="/usr/local"
 exec_rcfile
 prgdir="$prefix/prg"
-vimdesc="$(git describe --long --tags)"
-destdir="$prefix/varprg/vim-$vimdesc"
+desc="$(git describe --long --tags)"
+destdir="$prefix/varprg/vim-$desc"
 exec_rcfile
 test "$sudo" = "1" -o "$sudo" = "true" && sudo=sudo || unset sudo
 
 if test "$sim" != "echo"; then
     test -z "$(git status --porcelain)" || {
         msg -s $srcdir is not clean
-        myexit 1
+        exit 1
     }
 fi
 
+if test "$1" = "-u" -o "$1" = "--update"; then
+    $sim git fetch origin
+    $sim git merge --ff-only
+    shift
+fi
+
 test -e "$destdir" && {
-    rmdir "$destdir" || {
+    $sim $sudo rmdir "$destdir" || {
         msg -s $destdir already exists
-        myexit 1
+        exit 1
     }
 }
 
 cat <<END
-Going to compile and install "vim-$vimdesc"$sim_str
+Going to compile and install "vim-$desc"$sim_str
 
 cloneurl = "$cloneurl"
 remotename = "$remotename"
@@ -262,7 +270,7 @@ $sim make install &&
 
 $sim cd "$prgdir" &&
 msg Update the vim symlink in $prgdir/ &&
-$sim $sudo ln -fnsv "../varprg/vim-$vimdesc" vim &&
+$sim $sudo ln -fnsv "../varprg/vim-$desc" vim &&
 
 $sim cd "$prefix/share/man/man1" &&
 msg Create manpage symlinks in $prefix/share/man/man1/ &&
@@ -279,7 +287,7 @@ $sim ln -fnsv ../prg/vim/bin/* . &&
 if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
     commitmsg=$(
-        echo $progname installed vim-$vimdesc on $(hostname)
+        echo $progname installed vim-$desc on $(hostname)
         if suuid --version 2>/dev/null | grep -q "^suuid v"; then
             echo
             $sim suuid -t commit,$progname
@@ -293,13 +301,13 @@ if test -d "$prefix/.git/."; then
 fi &&
 
 {
-    msg Successfully installed vim-$vimdesc$sim_str
+    msg Successfully installed vim-$desc$sim_str
     retval=0
 } || {
     msg Something went bananas
     retval=1
 }
 
-myexit $retval
+exit $retval
 
 # vim: set ts=4 sw=4 sts=4 et fenc=utf8 :
