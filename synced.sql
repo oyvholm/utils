@@ -382,7 +382,7 @@ INSERT INTO "synced" VALUES('irc-conn','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('irssi','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('isoname','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('ivim','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('jsonfmt.py','Lib/std/python',NULL,NULL);
+INSERT INTO "synced" VALUES('jsonfmt.py','Lib/std/python','223fc61da6e1b13849ced6d921058a50b53b4c9d','2014-10-02 22:26:26');
 INSERT INTO "synced" VALUES('kar','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('kbd','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('keyw','Lib/std/bash',NULL,NULL);
@@ -395,7 +395,7 @@ INSERT INTO "synced" VALUES('l33t','http://users.tpg.com.au/adsln4yb/Specials/l3
 INSERT INTO "synced" VALUES('lag3d','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('lag_gqv','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('lag_linker','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('line_exec.py','Lib/std/python',NULL,NULL);
+INSERT INTO "synced" VALUES('line_exec.py','Lib/std/python','33e2a6f73732491d18e7f7f183c9ca7350fbb616','2013-07-24 12:10:46');
 INSERT INTO "synced" VALUES('linux-counter-machine-update','http://counter.li.org/scripts/machine-update',NULL,NULL);
 INSERT INTO "synced" VALUES('list-extensions','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('list-tables','Lib/std/bash',NULL,NULL);
