@@ -64,10 +64,6 @@ db="$logdir/df.sqlite"
     echo "$progname: $logdir: Could not create directory" >&2
     exit 1
 }
-[ -r "$logdir/.disks" ] || {
-    echo "$progname: $logdir/.disks: File not found, aborting" >&2
-    exit 1
-}
 
 if test ! -f "$db"; then
     cat <<END | $SQLITE "$db"
@@ -112,8 +108,8 @@ CREATE TABLE df (
 END
 fi
 
-df -B 1 -P $(cat "$logdir/.disks") |
-    grep / |
+df -B 1 -P |
+    grep ^/ |
     sort -u |
     perl -e "
 while (<>) {
