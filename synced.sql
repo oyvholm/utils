@@ -403,7 +403,7 @@ INSERT INTO "synced" VALUES('list-youtube','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('livecd-exit','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('livecd-init','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ll','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('log_df','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('log_df','Lib/std/bash','7dc5461ab63f846ec8668f346cff186238a48625','2015-11-10 12:37:13');
 INSERT INTO "synced" VALUES('log_df_pg','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('log_load','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('logg','Lib/std/bash',NULL,NULL);
