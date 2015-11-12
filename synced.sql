@@ -290,7 +290,7 @@ INSERT INTO "synced" VALUES('ga-fixnew','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-fsck-size','Lib/std/perl','9008255ba17dda8ac1fa5a2b98490b9e480d830e','2015-10-31 00:46:55');
 INSERT INTO "synced" VALUES('ga-getnew','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-key','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('ga-other','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('ga-other','Lib/std/bash','f3d617779ce2ef99a6b8c689a23ea28c830abd9e','2015-11-11 20:16:44');
 INSERT INTO "synced" VALUES('ga-repofix','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-sjekk','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-sumsize','Lib/std/perl','8a8fb69e7712e7433fb9e88f823af7f772ce4048','2015-10-31 00:42:28');
