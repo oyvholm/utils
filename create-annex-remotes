@@ -13,15 +13,30 @@
 progname=create-annex-remotes
 VERSION=0.1.0
 
-# Set to "echo" to simulate
-simul=
+ARGS="$(getopt -o "hqrv" -l "help,quiet,remove,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
+opt_help=0
+opt_quiet=0
+opt_remove=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-r|--remove) opt_remove=1; shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 Create remotes in local git-annex repositories.
@@ -32,8 +47,12 @@ Options:
 
   -h, --help
     Show this help.
-  -r
-   Remove non-existing remotes.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -r, --remove
+    Remove non-existing remotes.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
 
@@ -45,6 +64,9 @@ END
     exit 0
 fi
 
+# Set to "echo" to simulate
+simul=
+
 tmp_begin_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.beg.tmp
 tmp_end_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.end.tmp
 
@@ -55,9 +77,6 @@ test "$comp" = "bellmann" -o "$comp" = "linode" || {
 }
 
 test -d .git/annex || { echo $progname: $(pwd) is not a git-annex repository >&2; exit 1; }
-
-unset remove_remotes
-test "$1" = "-r" && { remove_remotes=1; shift; }
 
 base="$(basename $(pwd))"
 
@@ -84,7 +103,7 @@ create() {
     local remote="$1"
     local dir="$2"
     test "$comp" = "bellmann" || host_str="sunny@bellmann:"
-    test -n "$remove_remotes" && $simul git remote rm $remote 2>/dev/null
+    test "$opt_remove" = "1" && $simul git remote rm $remote 2>/dev/null
     if test -n "$is_top"; then
         test "$(cat .disk)" = "$remote" && return
         define_remote $remote $host_str$dir
@@ -133,7 +152,7 @@ if test "$comp" != "linode"; then
     create usb32g-2 /media/usb32g-2/annex
     create usb32g-3 /media/usb32g-3/annex
 
-    test -n "$remove_remotes" && $simul git remote rm linode 2>/dev/null
+    test "$opt_remove" = "1" && $simul git remote rm linode 2>/dev/null
     if test -n "$is_top"; then
         define_remote linode sunny@sunbase.org:/home/sunny/annex
     else
