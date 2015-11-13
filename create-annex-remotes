@@ -72,11 +72,15 @@ tmp_end_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.end.tmp
 
 comp="$(hostname)"
 test "$comp" = "bellmann" -o "$comp" = "linode" || {
-    echo $progname: $comp: Unknown computer, should be \"bellmann\" or \"linode\" >&2
+    echo -n "$progname: $comp: Unknown computer, " >&2
+    echo should be \"bellmann\" or \"linode\" >&2
     exit 1
 }
 
-test -d .git/annex || { echo $progname: $(pwd) is not a git-annex repository >&2; exit 1; }
+test -d .git/annex || {
+    echo $progname: $(pwd) is not a git-annex repository >&2
+    exit 1
+}
 
 base="$(basename $(pwd))"
 
@@ -85,7 +89,8 @@ if test "$base" = "annex" -a -f ".disk" -a -d ".gadu-local"; then
 elif test -f "../.disk" -a -d "../.gadu-local"; then
     unset is_top
 else
-    echo $progname: Didn\'t find .disk or .gadu-local in current or parent directory >&2
+    echo -n "$progname: Didn't find .disk or .gadu-local in current " >&2
+    echo or parent directory >&2
     exit 1
 fi
 
@@ -110,10 +115,11 @@ create() {
     else
         test "$(cat ../.disk)" = "$remote" && return
         if test -z "$host_str"; then
-            test -d $dir/$base/.git/annex && define_remote $remote $host_str$dir/$base
-        else
-            ssh sunny@bellmann "ls -a $dir/$base/.git/annex 2>/dev/null" | grep -q . &&
+            test -d $dir/$base/.git/annex &&
                 define_remote $remote $host_str$dir/$base
+        else
+            ssh sunny@bellmann "ls -a $dir/$base/.git/annex 2>/dev/null" |
+                grep -q . && define_remote $remote $host_str$dir/$base
         fi
     fi
 }
@@ -156,8 +162,10 @@ if test "$comp" != "linode"; then
     if test -n "$is_top"; then
         define_remote linode sunny@sunbase.org:/home/sunny/annex
     else
-        ssh sunny@sunbase.org "ls -a /home/sunny/annex/$base/.git/annex 2>/dev/null" | grep -q . &&
-            define_remote linode sunny@sunbase.org:/home/sunny/annex/$base
+        ssh sunny@sunbase.org \
+          "ls -a /home/sunny/annex/$base/.git/annex 2>/dev/null" |
+            grep -q . &&
+                define_remote linode sunny@sunbase.org:/home/sunny/annex/$base
     fi
 fi
 
