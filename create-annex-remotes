@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=create-annex-remotes
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "hnqrv" -l "dry-run,help,quiet,remove,verbose,version" \
     -n "$progname" -- "$@")"
