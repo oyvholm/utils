@@ -351,6 +351,7 @@ INSERT INTO "synced" VALUES('git-wait-until-clean','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-wip','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
 INSERT INTO "synced" VALUES('git-wn','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
 INSERT INTO "synced" VALUES('githubnetwork','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('goal','Lib/std/perl','56fc904a9fc4b79969caa805f92f125b31c042c5','2015-11-13 19:51:31');
 INSERT INTO "synced" VALUES('gotexp','Lib/std/perl','5b25406a934b99d33e426c6c8649d3644ea8fc71','2015-10-30 02:56:15');
 INSERT INTO "synced" VALUES('gpath','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('gpgpakk','Lib/std/bash',NULL,NULL);
