@@ -13,18 +13,20 @@
 progname=create-annex-remotes
 VERSION=0.1.0
 
-ARGS="$(getopt -o "hqrv" -l "help,quiet,remove,verbose,version" \
+ARGS="$(getopt -o "hnqrv" -l "dry-run,help,quiet,remove,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
+opt_dry_run=0
 opt_quiet=0
 opt_remove=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
+        (-n|--dry-run) opt_dry_run=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-r|--remove) opt_remove=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -47,6 +49,8 @@ Options:
 
   -h, --help
     Show this help.
+  -n, --dry-run
+    Simulate what would happen, no changes are made.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -r, --remove
@@ -64,8 +68,11 @@ END
     exit 0
 fi
 
-# Set to "echo" to simulate
-simul=
+if test "$opt_dry_run" = "1"; then
+    simul=echo
+else
+    simul=
+fi
 
 tmp_begin_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.beg.tmp
 tmp_end_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.end.tmp
