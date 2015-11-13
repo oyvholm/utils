@@ -185,6 +185,12 @@ Read text from stdin and output all lines with bytes &gt; U+007F.
 
 Read text from stdin and print all lines containing invalid UTF-8.
 
+#### goal
+
+Print timestamp when a specific goal will be reached. Specify start date 
+with value, goal value and current value, and it will print the date and 
+time of when the goal will be reached.
+
 #### zeropad
 
 Pad decimal or hecadecimal numbers with zeroes to get equal length.
