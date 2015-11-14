@@ -72,7 +72,8 @@ sub main {
     my $now = gettimeofday();
     my $end_ep = goal_x($endval, $begin_ep, $beginval, $now, $currval);
     msg(2, "end_ep = '$end_ep'");
-    printf("Goal will be reached at %s\n", sec_to_string($end_ep));
+    printf("Goal will be reached at %s, in %s\n",
+        sec_to_string($end_ep), sec_to_interval($end_ep - $now));
 
     return($Retval);
     # }}}
@@ -101,6 +102,33 @@ sub print_version {
     return;
     # }}}
 } # print_version()
+
+sub sec_to_interval {
+    # {{{
+    my $secs = 1.0 * abs(shift);
+    my $rem = 1.0 * $secs;
+    my $frac = sprintf("%.6f", 1.0 * $rem - int($rem));
+    if ($frac == 0) {
+        $frac = "";
+    } elsif ($frac =~ /^1/) {
+        $frac = "";
+        $rem = int($rem) + 1;
+    } else {
+        $frac =~ s/0+$//;
+        $frac =~ s/^0//;
+    }
+    my $days = 1.0 * int($rem / 86400.0);
+    $rem -= 1.0 * $days * 86400.0;
+    my $hours = 1.0 * int($rem / 3600.0);
+    $rem -= 1.0 * ($hours * 3600.0);
+    my $minutes = 1.0 * int($rem / 60.0);
+    $rem -= 1.0 * ($minutes * 60.0);
+    my $seconds = 1.0 * $rem;
+    my $retval = sprintf("%ud:%02u:%02u:%02u%s",
+        $days, $hours, $minutes, $seconds, $frac);
+    return($retval);
+    # }}}
+} # sec_to_interval()
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyy-mm-dd hh:mm:ss[.frac]Z" {{{
