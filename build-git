@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=build-git
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "hqv" -l "help,no-net,quiet,verbose,version" \
     -n "$progname" -- "$@")"
