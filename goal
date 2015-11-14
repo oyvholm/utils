@@ -67,6 +67,7 @@ sub main {
     } else {
         warn("$progname: Invalid date format, " .
              "must be \"YYYY-MM-DD HH:MM:SS\"\n");
+        return(1);
     }
     msg(2, "begin_ep = '$begin_ep'");
     my $now = gettimeofday();
