@@ -62,11 +62,11 @@ sub main {
     my ($begintime, $beginval, $endval, $currval) = @ARGV;
     my $begin_ep;
 
-    if ($begintime =~ /^(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/) {
+    if ($begintime =~ /^(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d(\.\d+)?)$/) {
         $begin_ep = timegm($6, $5, $4, $3, $2-1, $1);
     } else {
         warn("$progname: Invalid date format, " .
-             "must be \"YYYY-MM-DD HH:MM:SS\"\n");
+             "must be \"YYYY-MM-DD HH:MM:SS[.sssss]\"\n");
         return(1);
     }
     msg(2, "begin_ep = '$begin_ep'");
@@ -163,7 +163,7 @@ Print timestamp when a specific goal will be reached.
 Usage: $progname [options] begin_date begin_val end_val current_val
 
 All timestamps use UTC, and the date format must be specified as 
-"YYYY-MM-DD HH:MM:SS".
+"YYYY-MM-DD HH:MM:SS[.sssss]".
 
 Options:
 
