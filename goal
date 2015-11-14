@@ -161,7 +161,7 @@ Print timestamp when a specific goal will be reached.
 
 Usage: $progname [options] begin_date begin_val end_val current_val
 
-All timestamp use UTC, and the date format must be specified as 
+All timestamps use UTC, and the date format must be specified as 
 "YYYY-MM-DD HH:MM:SS".
 
 Options:
