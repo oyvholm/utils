@@ -15,6 +15,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Time::HiRes qw{ gettimeofday };
 use Time::Local;
 
 local $| = 1;
@@ -68,7 +69,8 @@ sub main {
              "must be \"YYYY-MM-DD HH:MM:SS\"\n");
     }
     msg(2, "begin_ep = '$begin_ep'");
-    my $end_ep = goal_x($endval, $begin_ep, $beginval, time(), $currval);
+    my $now = gettimeofday();
+    my $end_ep = goal_x($endval, $begin_ep, $beginval, $now, $currval);
     msg(2, "end_ep = '$end_ep'");
     printf("Goal will be reached at %s\n", sec_to_string($end_ep));
 
