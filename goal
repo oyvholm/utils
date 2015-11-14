@@ -71,6 +71,10 @@ sub main {
     }
     msg(2, "begin_ep = '$begin_ep'");
     my $now = gettimeofday();
+    if ($beginval == $currval) {
+        warn("$progname: Current value must be different from start value\n");
+        return(1);
+    }
     my $end_ep = goal_x($endval, $begin_ep, $beginval, $now, $currval);
     msg(2, "end_ep = '$end_ep'");
     printf("Goal will be reached at %s, in %s\n",
