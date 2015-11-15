@@ -22,6 +22,7 @@ local $| = 1;
 
 our %Opt = (
 
+    'current-time' => '',
     'help' => 0,
     'quiet' => 0,
     'verbose' => 0,
@@ -36,6 +37,7 @@ our $VERSION = '0.2.1';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'current-time|c=s' => \$Opt{'current-time'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -70,7 +72,19 @@ sub main {
         return(1);
     }
     msg(2, "begin_ep = '$begin_ep'");
-    my $now = gettimeofday();
+    my $now;
+    if (length($Opt{'current-time'})) {
+        if ($Opt{'current-time'} =~
+            /^(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d(\.\d+)?)$/
+        ) {
+            $now = timegm($6, $5, $4, $3, $2-1, $1);
+        } else {
+            warn("$progname: Invalid date format in -c/--current-time\n");
+            return(1);
+        }
+    } else {
+        $now = gettimeofday();
+    }
     if ($beginval == $currval) {
         warn("$progname: Current value must be different from start value\n");
         return(1);
@@ -171,6 +185,8 @@ All timestamps use UTC, and the date format must be specified as
 
 Options:
 
+  -c DATE, --current-time DATE
+    Use DATE as current time.
   -h, --help
     Show this help.
   -q, --quiet
