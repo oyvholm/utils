@@ -13,13 +13,14 @@
 progname=git-wip
 VERSION=0.1.0
 
-ARGS="$(getopt -o "dhmpqsv" \
+ARGS="$(getopt -o "Ddhmpqsv" \
     -l "delete,help,merge,parent,quiet,squash,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_delete=0
+opt_olddelete=0
 opt_help=0
 opt_merge=0
 opt_parent=0
@@ -28,7 +29,8 @@ opt_squash=0
 opt_verbose=0
 while :; do
     case "$1" in
-        (-d|--delete) opt_delete=1; shift ;;
+        (-D|--delete) opt_delete=1; shift ;;
+        (-d) opt_olddelete=1; opt_delete=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-m|--merge) opt_merge=1; shift ;;
         (-p|--parent) opt_parent=1; shift ;;
@@ -53,7 +55,7 @@ Usage: $progname OPTION
 
 Options:
 
-  -d, --delete
+  -D, --delete
     Delete current branch after merging it to parent. Used when there's 
     no need to document the existence of the branch, and a fast-forward 
     merge will do just fine.
@@ -95,6 +97,12 @@ executable to use. Example:
 
 END
     exit 0
+fi
+
+# FIXME: Remove -d after 2016-02-15, that's three months warning.
+if test "$opt_olddelete" = "1"; then
+    echo $progname: The -d option is obsolete and will be deleted soon, >&2
+    echo $progname: please use -D instead >&2
 fi
 
 test -n "$GITWIP_GIT" && CMD_GIT="$GITWIP_GIT" || CMD_GIT=git
