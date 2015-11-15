@@ -118,7 +118,7 @@ if test -z "$files"; then
 fi
 date="$(
     cd "$bin"
-    git log -1 --format=%ad --date=raw $commit |
+    git log -1 --format=%cd --date=raw $commit |
     cut -f 1 -d ' ' |
     ep -D ' ' |
     tr -d Z
