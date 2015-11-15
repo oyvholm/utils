@@ -101,7 +101,7 @@ END
 
     diag('Testing -h (--help) option...');
     likecmd("$CMD -h", # {{{
-        '/  Show this help\./',
+        '/  Show this help/i',
         '/^$/',
         0,
         'Option -h prints help screen',
