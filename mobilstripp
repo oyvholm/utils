@@ -29,6 +29,7 @@ grep -v \
 -e /Android/data/com\\.samsung\\.android\\.snote/cache/sstream_cache/ \
 -e /Android/data/com\\.sec\\.android\\.app\\.sbrowser/TabManager/ \
 -e /Android/data/com\\.sec\\.android\\.app\\.sbrowser/files/Pictures/com\\.sec\\.android\\.app\\.sbrowser/TabManager/ \
+-e /Android/data/com\\.sec\\.android\\.app\\.shealth/cache/ \
 -e /Android/data/com\\.sec\\.everglades/Files/icons/ \
 -e /Android/data/com\\.touchtype\\.swiftkey/files/ \
 -e /Android/data/com\\.tripadvisor\\.tripadvisor/files/MapResources/ \
