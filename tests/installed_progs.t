@@ -117,6 +117,7 @@ END
     });
 
     diag("Checking important software...");
+    installed('archivemount --version', '/^archivemount version \d/', 'stderr');
     installed('autoconf --version', '/GNU Autoconf/', 'stdout');
     installed('bash --version', '/^GNU bash/', 'stdout');
     installed('bc --version', '/^bc \d.*Free Software Foundation/s', 'stdout');
