@@ -64,6 +64,6 @@ if test "$opt_init" = "1"; then
 fi
 
 while :; do
-    spar ov | cut -c 1-5
+    printf '%.3f\n' $(spar ov)
     sleep 1
 done | uniq
