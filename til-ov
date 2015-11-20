@@ -60,7 +60,12 @@ fi
 if test "$opt_init" = "1"; then
     currdate="$(date -u +%Y-%m-%d)"
     currtime="$(date -u +%H:%M:%S)"
-    spar ov --bt "$currdate $currtime" --et "$currdate 18:00" --bv 6.87 --ev 0
+    spar ov \
+        --bt "$currdate $currtime" \
+        --et "$currdate 18:00" \
+        --bv 6.87 \
+        --ev 0 \
+        >/dev/null
 fi
 
 while :; do
