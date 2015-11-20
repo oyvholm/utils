@@ -38,7 +38,7 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Usage: $progname [options] [km [timestamp]]
 
 Options:
 
@@ -57,13 +57,25 @@ END
     exit 0
 fi
 
+destkm=$1
+desttime=$2
+
+test -z "$desttime" && desttime=18:00
+test -z "$destkm" && destkm=6.87
+
+currdate="$(date -u +%Y-%m-%d)"
+currtime="$(date -u +%H:%M:%S)"
+
+destdate="$currdate $desttime"
+echo "$desttime" | grep -q ' ' && {
+    destdate="$desttime"
+}
+
 if test "$opt_init" = "1"; then
-    currdate="$(date -u +%Y-%m-%d)"
-    currtime="$(date -u +%H:%M:%S)"
     spar ov \
         --bt "$currdate $currtime" \
-        --et "$currdate 18:00" \
-        --bv 6.87 \
+        --et "$destdate" \
+        --bv "$destkm" \
         --ev 0 \
         >/dev/null
 fi
