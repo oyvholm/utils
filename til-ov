@@ -65,5 +65,5 @@ fi
 
 while :; do
     spar ov | cut -c 1-5
-    sleep 0.2
+    sleep 1
 done | uniq
