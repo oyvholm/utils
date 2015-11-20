@@ -65,6 +65,7 @@ test -z "$destkm" && destkm=6.87
 
 currdate="$(date -u +%Y-%m-%d)"
 currtime="$(date -u +%H:%M:%S)"
+currsec=$(date -u +%s)
 
 destdate="$currdate $desttime"
 echo "$desttime" | grep -q ' ' && {
@@ -79,6 +80,10 @@ if test "$opt_init" = "1"; then
         --ev 0 \
         >/dev/null
 fi
+
+destsec=$(date -u -d "$destdate" +%s)
+km="$(spar ov)"
+printf '%.2f km/h\n' $(echo "$km/($destsec-$currsec)*3600" | bc)
 
 while :; do
     printf '%.3f\n' $(spar ov)
