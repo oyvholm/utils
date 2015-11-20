@@ -1,0 +1,102 @@
+#!/bin/bash
+
+#=======================================================================
+# til-ov
+# File ID: 75a10a58-8f7e-11e5-a744-fefdb24f8e10
+#
+# [Description]
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=til-ov
+VERSION=0.1.0
+
+ARGS="$(getopt -o "hiqrv" -l "help,init,quiet,reverse,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_help=0
+opt_init=0
+opt_quiet=0
+opt_reverse=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-i|--init) opt_init=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-r|--reverse) opt_reverse=1; shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Usage: $progname [options] [km [timestamp]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -i, --init
+    Init the spar db with initial values.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -r, --reverse
+    Count km in reverse order, from 0 and up.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+destkm=$1
+desttime=$2
+
+test -z "$desttime" && desttime=18:00
+test -z "$destkm" && destkm=6.87
+
+currdate="$(date -u +%Y-%m-%d)"
+currtime="$(date -u +%H:%M:%S)"
+currsec=$(date -u +%s)
+
+destdate="$currdate $desttime"
+echo "$desttime" | grep -q ' ' && {
+    destdate="$desttime"
+}
+
+if test "$opt_init" = "1"; then
+    if test "$opt_reverse" = "1"; then
+        beginkm=0
+        endkm=$destkm
+    else
+        beginkm=$destkm
+        endkm=0
+    fi
+    spar ov \
+        --bt "$currdate $currtime" \
+        --et "$destdate" \
+        --bv "$beginkm" \
+        --ev "$endkm" \
+        >/dev/null
+fi
+
+destsec=$(date -u -d "$destdate" +%s)
+printf '%.2f km/h\n' $(echo "$destkm/($destsec-$currsec)*3600" | bc)
+
+while :; do
+    printf '%.3f\n' $(spar ov)
+    sleep 1
+done | uniq

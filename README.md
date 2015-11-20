@@ -664,6 +664,7 @@ the alias somewhere.
 - termtitle
 - testfail
 - tests
+- til-ov
 - tilgps
 - tmux\_local\_install.sh
 - todos
