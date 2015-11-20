@@ -2,6 +2,7 @@
 # File ID: 455af534-fd45-11dd-a4b7-000475e441b9
 
 default:
+	test -n "$$(git status --porcelain synced.sql)" && { echo synced.sql is modified >&2; exit 1; } || true
 	test ! -e synced.sqlite && { sqlite3 synced.sqlite <synced.sql || { rm synced.sqlite; exit 1; } } || true
 	sort-sqlite synced.sqlite
 	sqlite3 synced.sqlite .dump >synced.sql
