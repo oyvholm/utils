@@ -6,7 +6,7 @@
 # Converts from UTF-8 charset to HTML numeric entities (&#x263A; and &#9786;).
 #
 # Character set: UTF-8
-# ©opyleft STDyearDTS– Øyvind A. Holm <sunny@sunbase.org>
+# ©opyleft 2001– Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later, see end of 
 # file for legal stuff.
 #=======================================================================
