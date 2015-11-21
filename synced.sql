@@ -435,7 +435,7 @@ INSERT INTO "synced" VALUES('mkd','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('mklist','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('mkrepo','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('mkt','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('mobilstripp','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('mobilstripp','Lib/std/bash','97e47e793bf1b2b8972203a3e1351f5e3ab047c8','2015-11-21 18:43:18');
 INSERT INTO "synced" VALUES('mountusb','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('mp3_to_ogg','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('mtube','Lib/std/bash',NULL,NULL);
