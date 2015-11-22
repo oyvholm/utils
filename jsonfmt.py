@@ -32,7 +32,7 @@ def main():
         )
     parser.add_argument(
         '-i', '--indent',
-        default=4,
+        default=2,
         help='Use X spaces as indent',
         metavar='X',
         type=int,
