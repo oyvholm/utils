@@ -4,27 +4,73 @@
 # git-ignore
 # File ID: e95d1ab0-30ff-11e4-a73e-fefdb24f8e10
 #
-# Add entries to the top-level .gitignore . Wildcards can be used, and 
-# if any of the arguments is a directory, a trailing slash will be added 
-# if it doesn't exist already.
-#
-# Syntax:
-#   gitignore file [files]
-#     Place files, symlinks or directories in a global .gitignore in the 
-#     root directory.
-#   gitignore -l file [files]
-#     Use local .gitignore in the current directory.
+# Add entries to .gitignore and delete files from Git.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-unset opt_local
+progname=git-ignore
+VERSION=0.1.0
 
-if test "$1" = "-l"; then
-    opt_local=1
+ARGS="$(getopt -o "hlqv" -l "help,local,quiet,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_help=0
+opt_local=0
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-l|--local) opt_local=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Add entries to .gitignore . Default action is to add to .gitignore in 
+the root (top) directory, this can be overriden with -l/--local. 
+Wildcards can be used, and if any of the arguments is a directory, a 
+trailing slash will be added if it doesn't exist already.
+
+Usage: $progname [options] file [files [...]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -l, --local
+    Use local .gitignore in the current directory instead of global 
+    .gitignore in the root directory.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+if test -z "$1"; then
+    echo $progname: No arguments specified >&2
+    exit 1
+fi
+
+if test "$opt_local" = "1"; then
     gitignore=.gitignore
-    shift
 else
     gitignore="$(git rev-parse --show-toplevel)/.gitignore"
 fi
@@ -33,7 +79,7 @@ for f in "$@"; do
     unset termslash
     test -d "$f" && { echo "$f" | grep -q '/$' || termslash=/; }
     git ls-files -- "$f" | grep -q . && git rm -r --cached "$f"
-    if test -n "$opt_local"; then
+    if test "$opt_local" = "1"; then
         # Use local .gitignore in current directory
         echo $f$termslash >>"$gitignore"
     else
