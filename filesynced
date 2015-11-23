@@ -143,6 +143,8 @@ done
 UPDATE synced
   SET rev = '$commit', date = '$date'
   WHERE file = '$f';
+DELETE FROM todo
+  WHERE file = '$f';
 END
     done
     echo COMMIT\;
