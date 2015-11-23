@@ -21,6 +21,7 @@ BEGIN {
 }
 
 use Getopt::Long;
+use Cwd;
 
 local $| = 1;
 
@@ -185,7 +186,15 @@ END
     }
     ok(-e "bashfile", "bashfile exists");
     ok(-e "db.sqlite", "db.sqlite exists");
+    my $orig_dir = getcwd();
+    # FIXME: Hardcoding of directory
+    unless (chdir("$ENV{'HOME'}/bin")) {
+        BAIL_OUT("$progname: $ENV{'HOME'}/bin: chdir error");
+    }
     chomp(my $commit = `git rev-parse HEAD`);
+    unless (chdir($orig_dir)) {
+        BAIL_OUT("$progname: $orig_dir: chdir error");
+    }
     like(sqlite_dump("db.sqlite"), # {{{
         '/^' .
             'PRAGMA foreign_keys=OFF;\n' .
