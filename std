@@ -296,6 +296,19 @@ CREATE TABLE synced (
     CONSTRAINT valid_date
       CHECK (date IS NULL OR datetime(date) IS NOT NULL)
 );
+CREATE TABLE todo (
+  file TEXT
+    CONSTRAINT todo_file_length
+      CHECK(length(file) > 0)
+    UNIQUE
+    NOT NULL
+  ,
+  pri INTEGER
+    CONSTRAINT todo_pri_range
+      CHECK(pri BETWEEN 1 AND 5)
+  ,
+  comment TEXT
+);
 END
                 }
                 if ($Opt{'force'}) {

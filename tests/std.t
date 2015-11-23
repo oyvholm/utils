@@ -221,6 +221,19 @@ END
             $commit .
             '\',' .
             '\'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\'\);\n' .
+            'CREATE TABLE todo \(\n' .
+            '  file TEXT\n' .
+            '    CONSTRAINT todo_file_length\n' .
+            '      CHECK\(length\(file\) > 0\)\n' .
+            '    UNIQUE\n' .
+            '    NOT NULL\n' .
+            '  ,\n' .
+            '  pri INTEGER\n' .
+            '    CONSTRAINT todo_pri_range\n' .
+            '      CHECK\(pri BETWEEN 1 AND 5\)\n' .
+            '  ,\n' .
+            '  comment TEXT\n' .
+            '\);\n' .
             'COMMIT;\n' .
             '$/',
         "db.sqlite looks ok",
@@ -368,6 +381,19 @@ END
             $commit .
             '\',' .
             '\'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\'\);\n' .
+            'CREATE TABLE todo \(\n' .
+            '  file TEXT\n' .
+            '    CONSTRAINT todo_file_length\n' .
+            '      CHECK\(length\(file\) > 0\)\n' .
+            '    UNIQUE\n' .
+            '    NOT NULL\n' .
+            '  ,\n' .
+            '  pri INTEGER\n' .
+            '    CONSTRAINT todo_pri_range\n' .
+            '      CHECK\(pri BETWEEN 1 AND 5\)\n' .
+            '  ,\n' .
+            '  comment TEXT\n' .
+            '\);\n' .
             'COMMIT;\n' .
             '$/',
         "dbfromrc.sqlite looks ok",
