@@ -701,4 +701,15 @@ INSERT INTO "synced" VALUES('youtube-dl','',NULL,NULL);
 INSERT INTO "synced" VALUES('zero-to-lf','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('zeropad','Lib/std/perl','8a7f0fe717498077b9dea93268488bcb3aeea86c','2015-10-30 04:55:50');
 INSERT INTO "synced" VALUES('zerosplit','Lib/std/perl',NULL,NULL);
+CREATE TABLE todo (
+  file TEXT
+    CONSTRAINT todo_file_length
+      CHECK(length(file) > 0)
+    UNIQUE
+    NOT NULL
+  ,
+  pri INTEGER
+    CONSTRAINT todo_pri_range
+      CHECK(pri BETWEEN 1 AND 5)
+);
 COMMIT;
