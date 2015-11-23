@@ -65,6 +65,24 @@ myexit() {
 }
 trap "myexit 1" INT TERM
 
+hname="$(hostname)"
+dfdestdir="$HOME/annex/log/df/$hname"
+dflog="$HOME/log/df.sqlite"
+
+if test -f "$dflog"; then
+    mkdir -p "$dfdestdir"
+    cd "$dfdestdir" || {
+        echo $progname: $dfdestdir: chdir error >&2
+        myexit 1
+    }
+    if test -n "$(git status --porcelain df.sqlite)"; then
+        echo $progname: $dfdestdir/df.sqlite is modified >&2
+        myexit 1
+    fi
+    rm "$dfdestdir/df.sqlite"
+    cp -p "$dflog" "$dfdestdir/df.sqlite"
+fi
+
 cd ~/log/script || { echo $0: ~/log/script: Unable to chdir >&2; exit 1; }
 find -type f | grep -E '\.(scrlog|timing)$' | while read f; do
     uuid=$(echo "$f" | finduuid)
@@ -76,14 +94,6 @@ ircdir=$HOME/log/irc
 if test -d "$ircdir/."; then
     cd "$ircdir" || { echo $0: $ircdir: Unable to chdir >&2; exit 1; }
     currdate=`date +"%Y-%m-%d"`
-    find -type f -name '*.log' -print0 | grep -vz "$currdate" | xargs -0r gzip -v
-fi
-
-dfdir=$HOME/log/df
-
-if test -d "$dfdir/."; then
-    cd "$dfdir" || { echo $0: $dfdir: Unable to chdir >&2; exit 1; }
-    currdate=`date -u +"%Y-%m-%d"`
     find -type f -name '*.log' -print0 | grep -vz "$currdate" | xargs -0r gzip -v
 fi
 
