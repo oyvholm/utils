@@ -316,7 +316,7 @@ INSERT INTO "synced" VALUES('git-dbr','Lib/std/perl','9008255ba17dda8ac1fa5a2b98
 INSERT INTO "synced" VALUES('git-delete-banned','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-delrembr','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
 INSERT INTO "synced" VALUES('git-dl','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-dobranch','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('git-dobranch','Lib/std/bash','2268d1661689e9a5fded4649ac6315c3e4f29cbb','2015-11-24 15:14:08');
 INSERT INTO "synced" VALUES('git-eb','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-expand','Lib/std/python',NULL,NULL);
 INSERT INTO "synced" VALUES('git-fuckit','Lib/std/bash',NULL,NULL);
@@ -818,7 +818,6 @@ INSERT INTO "todo" VALUES('git-authoract',1,NULL);
 INSERT INTO "todo" VALUES('git-bare',3,NULL);
 INSERT INTO "todo" VALUES('git-delete-banned',3,NULL);
 INSERT INTO "todo" VALUES('git-dl',3,NULL);
-INSERT INTO "todo" VALUES('git-dobranch',1,NULL);
 INSERT INTO "todo" VALUES('git-eb',3,NULL);
 INSERT INTO "todo" VALUES('git-fuckit',3,NULL);
 INSERT INTO "todo" VALUES('git-inv-commits',3,NULL);
