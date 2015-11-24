@@ -54,7 +54,7 @@ END
     exit 0
 fi
 
-test -z "$2" && { echo "Syntax: git dobranch <command> <range or HEAD>" >&2; exit 1; }
+test -z "$2" && { echo $progname: No arguments specified >&2; exit 1; }
 echo -n This script will change the history of the branch. Press y to continue...
 read cont
 test "$cont" = "y" || exit;
