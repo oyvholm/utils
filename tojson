@@ -24,6 +24,7 @@ our %Opt = (
     'line' => 0,
     'quiet' => 0,
     'reverse' => 0,
+    'strip-lf' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -40,6 +41,7 @@ GetOptions(
     'line|l' => \$Opt{'line'},
     'quiet|q+' => \$Opt{'quiet'},
     'reverse|r' => \$Opt{'reverse'},
+    'strip-lf|s' => \$Opt{'strip-lf'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -73,6 +75,7 @@ sub main {
             print("[\n  \"");
             my $print_comma = 0;
             while (<>) {
+                $Opt{'strip-lf'} && chomp();
                 $print_comma && print("\",\n  \"") || ($print_comma = 1);
                 print(txt_to_json($_));
             }
@@ -80,6 +83,7 @@ sub main {
         } else {
             print('"');
             while (<>) {
+                $Opt{'strip-lf'} && chomp();
                 print(txt_to_json($_));
             }
             print('"');
@@ -150,6 +154,8 @@ Options:
     Be more quiet. Can be repeated to increase silence.
   -r, --reverse
     Convert from JSON to text.
+  -s, --strip-lf
+    Strip line feeds (\\n) from input when converting to JSON.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
