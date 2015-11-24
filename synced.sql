@@ -655,7 +655,7 @@ INSERT INTO "synced" VALUES('til-ov','Lib/std/bash','d9772bde0d3358a2837acbf6d04
 INSERT INTO "synced" VALUES('tmux_local_install.sh','',NULL,NULL);
 INSERT INTO "synced" VALUES('todos','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('tohex','Lib/std/perl','f224d8b74a086f30dbec4f7a319e91b62aa7c9f9','2015-10-30 04:25:36');
-INSERT INTO "synced" VALUES('tojson','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('tojson','Lib/std/perl','f1116361d6cfc707c0c511397e641b97bbb3b506','2015-11-24 00:37:47');
 INSERT INTO "synced" VALUES('tolower','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('tosec','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('towav','Lib/std/bash',NULL,NULL);
@@ -980,7 +980,6 @@ INSERT INTO "todo" VALUES('ta_backup',3,NULL);
 INSERT INTO "todo" VALUES('tail-errorlog',3,NULL);
 INSERT INTO "todo" VALUES('tarsize',3,NULL);
 INSERT INTO "todo" VALUES('testfail',1,NULL);
-INSERT INTO "todo" VALUES('tojson',1,NULL);
 INSERT INTO "todo" VALUES('tolower',3,NULL);
 INSERT INTO "todo" VALUES('towav',3,NULL);
 INSERT INTO "todo" VALUES('u',1,NULL);
