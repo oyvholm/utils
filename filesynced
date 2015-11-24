@@ -13,7 +13,7 @@
 progname=filesynced
 VERSION=0.3.0
 
-ARGS="$(getopt -o "hlqt:v" -l "help,list,quiet,type:,verbose,version" \
+ARGS="$(getopt -o "hlqt:v" -l "help,list,quiet,random,type:,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
@@ -21,6 +21,7 @@ eval set -- "$ARGS"
 opt_help=0
 opt_list=0
 opt_quiet=0
+opt_random=0
 opt_type='%'
 opt_verbose=0
 while :; do
@@ -28,6 +29,7 @@ while :; do
         (-h|--help) opt_help=1; shift ;;
         (-l|--list) opt_list=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (--random) opt_random=1; shift ;;
         (-t|--type) opt_type=$2; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -56,6 +58,8 @@ Options:
     files in Lib/std/ in current HEAD.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  --random
+    Pick a random file from the todo list and sync it using "vd".
   -t FILETYPE. --type FILETYPE
     Limit list to files of type FILETYPE, for example "bash" or 
     "perl-tests". SQL LIKE wildcards can be used, like '%' and '_'.
@@ -102,6 +106,31 @@ WHERE
   AND
   rev IS NOT NULL;
 END
+    exit
+fi
+
+if test "$opt_random" = "1"; then
+    if test ! -f "$db"; then
+        echo $progname: $db: Sync database not found in current directory >&2
+        exit 1
+    fi
+    file="$(
+        sqlite3 "$db" "
+SELECT file FROM todo
+  ORDER BY pri, random()
+  LIMIT 1;
+        "
+    )"
+    if test -z "$file"; then
+        echo $progname: No files to edit >&2
+        exit 0
+    fi
+    vd "$file" "$HOME/bin/$(
+        sqlite3 synced.sqlite "
+SELECT orig FROM synced
+  WHERE file = '$file';
+        "
+    )"
     exit
 fi
 
