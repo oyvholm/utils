@@ -201,18 +201,18 @@ END
             'BEGIN TRANSACTION;\n' .
             'CREATE TABLE synced \(\n' .
             '  file TEXT\n' .
-            '    CONSTRAINT filename_length\n' .
+            '    CONSTRAINT synced_file_length\n' .
             '      CHECK \(length\(file\) > 0\)\n' .
             '    UNIQUE\n' .
             '    NOT NULL,\n' .
             '  orig TEXT,\n' .
             '  rev TEXT\n' .
-            '    CONSTRAINT rev_length\n' .
+            '    CONSTRAINT synced_rev_length\n' .
             '      CHECK \(length\(rev\) = 40 OR rev = \'\'\),\n' .
             '  date TEXT\n' .
-            '    CONSTRAINT date_length\n' .
+            '    CONSTRAINT synced_date_length\n' .
             '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
-            '    CONSTRAINT valid_date\n' .
+            '    CONSTRAINT synced_date_valid\n' .
             '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
             '\);\n' .
             'INSERT INTO "synced" ' .
@@ -361,18 +361,18 @@ END
             'BEGIN TRANSACTION;\n' .
             'CREATE TABLE synced \(\n' .
             '  file TEXT\n' .
-            '    CONSTRAINT filename_length\n' .
+            '    CONSTRAINT synced_file_length\n' .
             '      CHECK \(length\(file\) > 0\)\n' .
             '    UNIQUE\n' .
             '    NOT NULL,\n' .
             '  orig TEXT,\n' .
             '  rev TEXT\n' .
-            '    CONSTRAINT rev_length\n' .
+            '    CONSTRAINT synced_rev_length\n' .
             '      CHECK \(length\(rev\) = 40 OR rev = \'\'\),\n' .
             '  date TEXT\n' .
-            '    CONSTRAINT date_length\n' .
+            '    CONSTRAINT synced_date_length\n' .
             '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
-            '    CONSTRAINT valid_date\n' .
+            '    CONSTRAINT synced_date_valid\n' .
             '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
             '\);\n' .
             'INSERT INTO "synced" ' .
