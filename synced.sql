@@ -2,18 +2,18 @@ PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE synced (
   file TEXT
-    CONSTRAINT filename_length
+    CONSTRAINT synced_file_length
       CHECK (length(file) > 0)
     UNIQUE
     NOT NULL,
   orig TEXT,
   rev TEXT
-    CONSTRAINT rev_length
+    CONSTRAINT synced_rev_length
       CHECK (length(rev) = 40 OR rev = ''),
   date TEXT
-    CONSTRAINT date_length
+    CONSTRAINT synced_date_length
       CHECK (date IS NULL OR length(date) = 19)
-    CONSTRAINT valid_date
+    CONSTRAINT synced_date_valid
       CHECK (date IS NULL OR datetime(date) IS NOT NULL)
 );
 INSERT INTO "synced" VALUES('.gitattributes','',NULL,NULL);
