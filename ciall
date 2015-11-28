@@ -68,7 +68,10 @@ fi
 unset opt_str
 test "$opt_store_empty_dirs" = "1" && {
     opt_str=-d
-    test "$(git config --get ciall.noemptydirs)" = "true" && { echo $progname: -d option not allowed here >&2; exit 1; }
+    test "$(git config --get ciall.noemptydirs)" = "true" && {
+        echo $progname: -d option not allowed here >&2
+        exit 1
+    }
     echo -n $progname: Executing git-store-dirs... >&2
     git store-dirs || {
         echo git-store-dirs error >&2;
@@ -79,7 +82,10 @@ test "$opt_store_empty_dirs" = "1" && {
 besafe=n
 test "$opt_yes" = "1" && { besafe=y; opt_str=-y; }
 echo $progname: git status 1... >&2
-LC_ALL=C git status . | grep "^nothing to commit" && { echo $progname: Nothing to do here.; exit 0; }
+LC_ALL=C git status . | grep "^nothing to commit" && {
+    echo $progname: Nothing to do here.
+    exit 0
+}
 
 unset logmsg
 [ ! -z "$1" ] && logmsg="$*"
@@ -98,11 +104,24 @@ if [ "$logmsg" = "--" ]; then
     tmpmsgfile=/tmp/$(date +%s)-$$.tmp
     $EDITOR $tmpmsgfile
     logmsg=$(cat $tmpmsgfile)
-    test -z "$logmsg" && { echo $progname: No text entered in editor, aborting.; exit 1; }
+    test -z "$logmsg" && {
+        echo $progname: No text entered in editor, aborting.
+        exit 1
+    }
 fi
 
 echo $progname: git status 3... >&2
-LC_ALL=C git status . | grep "^nothing to commit" || (echo $progname: git add --all .; git add --all . && (echo $progname: git commit; git commit -m "$logmsg`echo; echo; suuid -t $progname -c "$logmsg"`"))
+LC_ALL=C git status . | grep "^nothing to commit" || (
+    echo $progname: git add --all .
+    git add --all . && (
+        echo $progname: git commit
+        git commit -m "$logmsg$(
+            echo
+            echo
+            suuid -t $progname -c "$logmsg"
+        )"
+    )
+)
 echo ========== git status ==========
 git status
 exit 0
