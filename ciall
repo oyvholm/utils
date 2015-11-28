@@ -1,17 +1,74 @@
 #!/bin/bash
 
 #=======================================================================
+# ciall
 # File ID: dd770008-300f-11df-b5fc-90e6ba3022ac
+#
+# Commit all files in current directory tree to Git.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ciall
+VERSION=0.1.0
+
+ARGS="$(getopt -o "dhqvy" \
+    -l "help,quiet,store-empty-dirs,verbose,version,yes" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_store_empty_dirs=0
+opt_help=0
+opt_quiet=0
+opt_verbose=0
+opt_yes=0
+while :; do
+    case "$1" in
+        (-d|--store-empty-dirs) opt_store_empty_dirs=1; shift ;;
+        (-h|--help) opt_help=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (-y|--yes) opt_yes=1; shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Commit all files in current directory tree to Git.
+
+Usage: $progname [options]
+
+Options:
+
+  -d, --store-empty-dirs
+    Also store empty directories in ".emptydirs".
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  -y, --yes
+    Answer "yes" to commit prompt, commit automatically.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 unset opt_str
-test "$1" = "-d" && {
+test "$opt_store_empty_dirs" = "1" && {
     opt_str=-d
     test "$(git config --get ciall.noemptydirs)" = "true" && { echo $progname: -d option not allowed here >&2; exit 1; }
-    shift;
     echo -n $progname: Executing git-store-dirs... >&2
     git store-dirs || {
         echo git-store-dirs error >&2;
@@ -20,7 +77,7 @@ test "$1" = "-d" && {
     echo DONE >&2
 }
 besafe=n
-test "$1" = "-y" && { besafe=y; opt_str=-y; shift; }
+test "$opt_yes" = "1" && { besafe=y; opt_str=-y; }
 echo $progname: git status 1... >&2
 LC_ALL=C git status . | grep "^nothing to commit" && { echo $progname: Nothing to do here.; exit 0; }
 
