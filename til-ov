@@ -66,7 +66,7 @@ destkm=$1
 desttime=$2
 
 test -z "$desttime" && desttime=18:00
-test -z "$destkm" && destkm=6.87
+test -z "$destkm" && destkm=7.68
 
 currdate="$(date -u +%Y-%m-%d)"
 currtime="$(date -u +%H:%M:%S)"
