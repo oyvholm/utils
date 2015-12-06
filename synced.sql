@@ -387,7 +387,7 @@ INSERT INTO "synced" VALUES('jsonfmt.py','Lib/std/python','223fc61da6e1b13849ced
 INSERT INTO "synced" VALUES('kar','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('kbd','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('keyw','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('klokke','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('klokke','Lib/std/perl','6b69d50311a29cc126fc9fac6954e51e346b427d','2015-12-06 16:37:56');
 INSERT INTO "synced" VALUES('klokkesig-conv','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('konvflac','Lib/std/bash','a71f661401a7e0b202884daf911d504b4e359e2b','2015-10-31 00:23:21');
 INSERT INTO "synced" VALUES('kopier_bilder','Lib/std/bash',NULL,NULL);
@@ -860,7 +860,6 @@ INSERT INTO "todo" VALUES('ivim',3,NULL);
 INSERT INTO "todo" VALUES('kar',3,NULL);
 INSERT INTO "todo" VALUES('kbd',3,NULL);
 INSERT INTO "todo" VALUES('keyw',3,NULL);
-INSERT INTO "todo" VALUES('klokke',1,NULL);
 INSERT INTO "todo" VALUES('kopier_bilder',3,NULL);
 INSERT INTO "todo" VALUES('l',2,NULL);
 INSERT INTO "todo" VALUES('lag3d',1,NULL);
