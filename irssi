@@ -7,4 +7,4 @@
 # (Han som oppfant sommertid skulle hatt i ræven.)
 #=======================================================================
 
-TZ=UTC sess -d irssi -- /usr/bin/irssi "$@"
+TZ=UTC sess -d irssi -- /usr/local/bin/irssi "$@"
