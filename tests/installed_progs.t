@@ -162,6 +162,7 @@ END
     installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'stdout', 'OSSP uuid');
     installed('vim --version', '/VIM - Vi IMproved 7\../', 'stdout');
     installed('wget --version', '/GNU Wget/', 'stdout');
+    installed('wiggle --version', '/^wiggle v1\.0/', 'stderr');
     installed('zip -v', '/This is Zip \d.*Info-ZIP/', 'stdout');
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
     repeat_test('uuidgen -t', 100, "^$v1_templ\$");
