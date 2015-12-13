@@ -14,7 +14,7 @@
 #=======================================================================
 
 progname=git-nocom
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "hqrv" -l "help,quiet,reverse,verbose,version" \
     -n "$progname" -- "$@")"
@@ -71,5 +71,5 @@ test "$opt_reverse" = "1" || v_str=-v
 grep -v "HEAD detached" |
 fmt -1 |
 tr -d '\t ' |
-grep -v -E '^(->|\*)$' |
+grep -v -E '^(->|\*|.*/HEAD)$' |
 grep -E $v_str 'commit-[0-9a-f]{40}'
