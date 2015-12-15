@@ -272,6 +272,7 @@ the alias somewhere.
 - ga-fixnew
 - ga-fsck-size
 - ga-getnew
+- ga-ignore-remote
 - ga-key
 - ga-other
 - ga-repofix
