@@ -119,13 +119,11 @@ elif test "$1" = "space"; then
         sleep 1
     done
 elif test "$1" = "temp"; then
-    echo $(
-        (
-            echo scale=1
-            echo -n $(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
-            echo / 1000
-        ) | bc -l
-    ) °C
+    (
+        echo scale=1
+        echo -n $(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
+        echo / 1000
+    ) | bc -l
 else
     test -d /n900/. && sudo=sudo || unset sudo
     while :; do
