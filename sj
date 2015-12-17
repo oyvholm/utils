@@ -54,15 +54,19 @@ If no command is specified, it checks that the network is up by issuing
 a ping command until interrupted. These commands are also available:
 
   allspace
-    Display free space of all local disks every 2nd second until interrupted.
+    Display free space of all local disks every 2nd second until 
+    interrupted.
   date
-    Run a query against pool.ntp.org to see how accurate the system clock is.
+    Run a query against pool.ntp.org to see how accurate the system 
+    clock is.
   df
     Display free space of all local disks, sorted by free space.
   kern
-    Follow the kernel log and display new entries immediately when they occur.
+    Follow the kernel log and display new entries immediately when they 
+    occur.
   space
-    Display free space of the current disk every second until interrupted.
+    Display free space of the current disk every second until 
+    interrupted.
   temp
     Display current temperature.
 
