@@ -63,6 +63,8 @@ a ping command until interrupted. These commands are also available:
     Follow the kernel log and display new entries immediately when they occur.
   space
     Display free space of the current disk every second until interrupted.
+  temp
+    Display current temperature.
 
 END
     exit 0
@@ -112,6 +114,14 @@ elif test "$1" = "space"; then
         fi
         sleep 1
     done
+elif test "$1" = "temp"; then
+    echo $(
+        (
+            echo scale=1
+            echo -n $(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
+            echo / 1000
+        ) | bc -l
+    ) °C
 else
     test -d /n900/. && sudo=sudo || unset sudo
     while :; do
