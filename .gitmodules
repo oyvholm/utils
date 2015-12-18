@@ -10,3 +10,6 @@
 	path = Git/svnutils
 	url = https://gitlab.com/sunny256/svnutils.git
 	branch = master
+[submodule "Git/spar"]
+	path = Git/spar
+	url = https://gitlab.com/sunny256/spar.git
