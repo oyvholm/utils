@@ -30,6 +30,7 @@ test:
 	cd Lib/std/c && ./compile
 	cd src/fldb/tests && $(MAKE)
 	cd src/smsum/tests && $(MAKE)
+	cd Git/spar/t && $(MAKE)
 	cd Git/suuid/tests && $(MAKE)
 	cd src/gpstools/tests && $(MAKE)
 
@@ -38,6 +39,7 @@ testclean:
 	cd tests && $(MAKE) clean
 	cd src/fldb/tests && $(MAKE) clean
 	cd src/smsum/tests && $(MAKE) clean
+	cd Git/spar/t && $(MAKE) clean
 	cd Git/suuid/tests && $(MAKE) clean
 
 unmerged:
