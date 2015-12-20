@@ -85,19 +85,24 @@ sub main {
             my ($Pref, $H, $header_level, $Elem, $Rest) = ($1, $2, $3, $4, $5);
             if ($header_level >= $start_level) {
                 my $skip_num = 0;
-                splice(@header_num, $header_level-1) if ($header_level < $last_level);
+                splice(@header_num, $header_level-1)
+                    if ($header_level < $last_level);
                 if ($header_level - $last_level > 1) {
-                    warn("$progname: Line $.: Header skip ($last_level to $header_level)\n");
+                    warn("$progname: Line $.: Header skip " .
+                        "($last_level to $header_level)\n");
                     for (my $Tmp = 0; $Tmp < $header_level-2; $Tmp++) {
                         defined($header_num[$Tmp]) || ($header_num[$Tmp] = "");
                     }
                 }
                 $header_num[$header_level-2]++;
                 my $tall_str = join(".", @header_num);
-                my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i) ? $1 : "h-$tall_str";
+                my $name_str = ($Rest =~ /<!-- hhiname (\S+) -->/i)
+                    ? $1
+                    : "h-$tall_str";
 
                 if (defined($name_used{$name_str})) {
-                    warn("$progname: Line $.: \"$name_str\": Section name already used\n");
+                    warn("$progname: Line $.: \"$name_str\": " .
+                        "Section name already used\n");
                 }
                 $name_used{$name_str} = 1;
 
@@ -111,11 +116,14 @@ sub main {
                     $skip_num = 1;
                     $_ = "${Pref}<${H}${header_level}${Elem}>$Rest\n";
                 } else {
-                    $_ = "${Pref}<${H}${header_level}${Elem}><a id=\"$name_str\">$tall_str</a> $Rest\n";
+                    $_ = "${Pref}<${H}${header_level}${Elem}>" .
+                        "<a id=\"$name_str\">$tall_str</a> $Rest\n";
                 }
                 if (!/<!-- nohhitoc -->/i || $Opt{'all'}) {
                     push(@Toc, $skip_num ? "<${H}${header_level}${Elem}>$Rest"
-                                         : "<${H}${header_level}${Elem}><b><a href=\"#$name_str\">$tall_str</a></b> $Rest");
+                                         : "<${H}${header_level}${Elem}>" .
+                                           "<b><a href=\"#$name_str\">" .
+                                           "$tall_str</a></b> $Rest");
                 }
                 $last_level = $header_level;
             }
@@ -135,7 +143,8 @@ sub main {
                     last;
                 }
             }
-            $Found && die("$progname: Line $line_num: Missing terminating <!-- /hhitoc -->\n");
+            $Found && die("$progname: Line $line_num: " .
+                "Missing terminating <!-- /hhitoc -->\n");
             # }}}
         } else {
             push(@Data, "$_");
@@ -156,7 +165,8 @@ sub main {
                 if (/<h(\d+).*?>(.*)<\/h\d+>/i) {
                     ($Cnt, $Txt) = ($1, $2);
                     my $Diff = $Cnt-$Old;
-                    $Ex = ""; # "\t" x $Cnt; # FIXME: Temporary disabled until it works
+                    $Ex = ""; # "\t" x $Cnt; # FIXME: Temporary disabled 
+                                             # until it works
                     if ($Old && $Diff > 0) {
                         for (my $T = $Diff; $T; $T--) {
                             print("$Indent$Ex<ul>\n");
