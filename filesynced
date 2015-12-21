@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=filesynced
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "hlp:qt:v" \
     -l \
