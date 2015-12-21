@@ -14,26 +14,32 @@ progname=filesynced
 VERSION=0.3.0
 
 ARGS="$(getopt -o "hlp:qt:v" \
-    -l "help,list,set-priority:,quiet,random,type:,verbose,version" \
+    -l \
+"help,list,lock,set-priority:,quiet,"\
+"random,type:,unlock,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
 opt_list=0
+opt_lock=0
 opt_set_priority=''
 opt_quiet=0
 opt_random=0
 opt_type='%'
+opt_unlock=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
         (-l|--list) opt_list=1; shift ;;
+        (--lock) opt_lock=1; shift ;;
         (-p|--set-priority) opt_set_priority=$2; shift 2 ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (--random) opt_random=1; shift ;;
         (-t|--type) opt_type=$2; shift 2 ;;
+        (--unlock) opt_unlock=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -52,6 +58,8 @@ synced.date with Git commit info.
 Usage: $progname [options] commit file [file [...]]
        $progname -l [-t TYPE]
        $progname -p NEWPRI file [files [...]]
+       $progname --lock
+       $progname --unlock TOKEN
 
 Options:
 
@@ -60,6 +68,9 @@ Options:
   -l, --list
     Create a file list sorted by how many revisions they are behind the 
     files in Lib/std/ in current HEAD.
+  --lock
+    Create synced.sqlite from synced.sql and activate locking. A lock 
+    token is sent to stdout, and this token is needed to unlock.
   -p NEWPRI, --set-priority NEWPRI
     Change todo priority for files specified on the command line. NEWPRI 
     must be between 1 and 5.
@@ -70,6 +81,9 @@ Options:
   -t FILETYPE. --type FILETYPE
     Limit list to files of type FILETYPE, for example "bash" or 
     "perl-tests". SQL LIKE wildcards can be used, like '%' and '_'.
+  --unlock TOKEN
+    If TOKEN is correct, overwrite synced.sql with the contents from 
+    synced.sqlite, delete synced.slite and remove lock.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -105,6 +119,22 @@ msg -l 2 Starting $progname, pwd = $(pwd)
 SQLITE=sqlite3
 bin="$HOME/bin"
 db="synced.sqlite"
+repotop="$(git rev-parse --show-toplevel)"
+msg 2 repotop = \"$repotop\"
+lockdir="$repotop/synced.sql.lock"
+msg 2 lockdir = \"$lockdir\"
+
+cleanup() {
+    msg 2 "cleanup(): bintoken = $bintoken"
+    if test -n "$bintoken"; then
+        msg 2 Unlock bintoken
+        cd "$bin" && filesynced --unlock $bintoken ||
+            echo $progname: $bin: chdir error >&2
+    fi
+    msg 2 Unlock token
+    cd "$repotop" && filesynced --unlock $token ||
+        echo $progname: $repotop: chdir error
+}
 
 safe_chdir() {
     local dir="$1"
@@ -115,11 +145,87 @@ safe_chdir() {
     }
 }
 
-if test ! -f "$bin/$db"; then
-    echo $progname: $bin/$db: Sync database not found >&2
+if test "$opt_lock" = "1" -a "$opt_unlock" = "1"; then
+    echo $progname: Cannot mix --lock and --unlock
     exit 1
 fi
-(safe_chdir "$bin")
+
+if test "$opt_lock" = "1"; then
+    msg 2 Perform --lock stuff
+    cd "$repotop" || {
+        echo $progname --lock: $repotop: chdir error >&2
+        exit 1
+    }
+    until mkdir "$lockdir" 2>/dev/null; do
+        echo $progname --lock: $lockdir: Waiting for lockdir... >&2
+        sleep 2
+    done
+    if test -e "$db"; then
+        echo $progname --lock: $repotop/$db: File already exists >&2
+        rmdir "$lockdir"
+        exit 1
+    fi
+    msg 2 Create $db from $(pwd)/synced.sql
+    $SQLITE "$db" <synced.sql
+    token="token_$(date -u +"%Y%m%dT%H%M%SZ").$$.$(
+        head -c 20 /dev/urandom | sha1sum | head -c 40
+    )"
+    echo $token >"$lockdir/token"
+    echo $token
+    exit 0
+fi
+
+if test "$opt_unlock" = "1"; then
+    msg 2 Perform --unlock stuff
+    token_from_user="$1"
+    msg 2 token_from_user = $token_from_user
+    cd "$repotop" || {
+        echo $progname --unlock: $repotop: chdir error >&2
+        exit 1
+    }
+    if test ! -e "$db"; then
+        echo $progname --unlock: $repotop/$db: File not found >&2
+        exit 1
+    fi
+    if test ! -d "$lockdir"; then
+        echo $progname --unlock: $lockdir: Lockdir doesn\'t exist >&2
+        exit 1
+    fi
+    if test -e "$lockdir/token"; then
+        msg 2 $lockdir/token exists
+        realtoken=$(cat $lockdir/token)
+        msg 2 realtoken = $realtoken
+        if test "$token_from_user" != "$realtoken"; then
+            echo $progname --unlock: Token mismatch >&2
+            msg 2 Got $token_from_user
+            msg 2 Expected $realtoken
+            exit 1
+        fi
+        msg 2 Token is valid, delete $lockdir/token
+        rm "$lockdir/token"
+    fi
+    sort-sqlite synced.sqlite
+    msg 2 Dump $db to $(pwd)/synced.sql
+    $SQLITE "$db" .dump >synced.sql
+    msg 2 Remove $db
+    rm "$db"
+    if rmdir "$lockdir"; then
+        msg 2 $lockdir removed
+        exit 0
+    else
+        echo $progname --unlock: $lockdir: Could not remove lockdir
+        exit 1
+    fi
+fi
+
+bintoken=
+token=$(filesynced --lock)
+if test -z "$(echo $token | grep ^token_)"; then
+    echo $progname: No token received from filesynced --lock >&2
+    exit 1
+fi
+trap cleanup EXIT
+msg 2 token = $token
 
 test -f "$db" || {
     echo $progname: $db: Sync database not found >&2
@@ -129,6 +235,18 @@ test -f "$db" || {
 if test "$opt_list" = "1"; then
     msg 2 Perform --list stuff
     test -n "$opt_type" && type_str="$opt_type" || type_str="%"
+    safe_chdir "$bin"
+    if test "$(cat synced.sql.lock/token 2>/dev/null)" != "$token"; then
+        msg 2 token is different from synced.sql.lock/token
+        bintoken=$(filesynced --lock)
+        msg 2 bintoken = $bintoken
+        if test -z "$(echo $bintoken | grep ^token_)"; then
+            echo -n "$progname: No token received " >&2
+            echo from filesynced --lock in $bin >&2
+            exit 1
+        fi
+    fi
+    safe_chdir - >/dev/null
     cat <<END | $SQLITE "$db" | bash | sort -n
 SELECT
   'echo \$(' ||

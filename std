@@ -115,7 +115,12 @@ if (scalar(@Tags)) {
     }
 }
 
-exit(main());
+my $token = '';
+my $retval = main();
+if ($token =~ /^token_/) {
+    system("filesynced --unlock $token");
+}
+exit($retval);
 
 sub main {
     # {{{
@@ -132,6 +137,13 @@ sub main {
         # since the warning.
         msg(-2, "The -l/--local option is obsolete and will be removed soon");
     }
+
+    chomp ($token = `filesynced --lock`);
+    if ($token !~ /^token_/) {
+        warn("$progname: No token received from filesynced --lock\n");
+        return(1);
+    }
+
     if (length($Dest) && -e $Dest) {
         if ($Opt{'force'}) {
             msg(1, "Overwriting '$Dest'...");
