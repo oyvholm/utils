@@ -79,12 +79,36 @@ END
     exit 0
 fi
 
+msg() {
+    local empty_line=
+    local no_lf=
+    if test "$1" = "-l"; then
+        # If -l is specified, create empty line before message
+        empty_line=1
+        shift
+    fi
+    if test "$1" = "-n"; then
+        # If -n is first argument, don't terminate with \n
+        no_lf="-n"
+        shift
+    fi
+    local vlevel=$1
+    shift
+    test $vlevel -gt $opt_verbose && return;
+    test "$empty_line" = "1" && echo >&2
+    echo $no_lf "$progname $$:$BASH_LINENO: $*" >&2
+    return
+}
+
+msg -l 2 Starting $progname, pwd = $(pwd)
+
 SQLITE=sqlite3
 bin="$HOME/bin"
 db="synced.sqlite"
 
 safe_chdir() {
     local dir="$1"
+    msg 2 chdir $dir
     cd "$dir" || {
         echo $progname: Cannot chdir to \'$dir\' >&2
         exit 1
@@ -103,6 +127,7 @@ test -f "$db" || {
 }
 
 if test "$opt_list" = "1"; then
+    msg 2 Perform --list stuff
     test -n "$opt_type" && type_str="$opt_type" || type_str="%"
     cat <<END | $SQLITE "$db" | bash | sort -n
 SELECT
@@ -125,6 +150,7 @@ END
 fi
 
 if test "$opt_random" = "1"; then
+    msg 2 Perform --random stuff
     file="$(
         sqlite3 "$db" "
 SELECT file FROM todo
@@ -146,6 +172,7 @@ SELECT orig FROM synced
 fi
 
 if test -n "$opt_set_priority"; then
+    msg 2 Perform --set-priority stuff
     echo "$opt_set_priority" | grep -qE '^[1-5]$' || {
         echo $progname: Argument to -p/--set-priority must be between 1 and 5
         exit 1
