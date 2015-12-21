@@ -138,7 +138,7 @@ sub main {
         } else {
             warn("$progname: $Dest: File already exists, " .
                  "will not overwrite\n");
-            exit(1);
+            return(1);
         }
     }
 
