@@ -133,7 +133,7 @@ cleanup() {
     fi
     msg 2 Unlock token
     cd "$repotop" && filesynced --unlock $token ||
-        echo $progname: $repotop: chdir error
+        echo $progname: $repotop: chdir error >&2
 }
 
 safe_chdir() {
@@ -146,7 +146,7 @@ safe_chdir() {
 }
 
 if test "$opt_lock" = "1" -a "$opt_unlock" = "1"; then
-    echo $progname: Cannot mix --lock and --unlock
+    echo $progname: Cannot mix --lock and --unlock >&2
     exit 1
 fi
 
@@ -213,7 +213,7 @@ if test "$opt_unlock" = "1"; then
         msg 2 $lockdir removed
         exit 0
     else
-        echo $progname --unlock: $lockdir: Could not remove lockdir
+        echo $progname --unlock: $lockdir: Could not remove lockdir >&2
         exit 1
     fi
 fi
@@ -307,7 +307,7 @@ fi
 
 commit="$(cd "$bin"; git rev-parse $1)"
 if test -z "$commit"; then
-    echo $progname: $1: Invalid Git ref
+    echo $progname: $1: Invalid Git ref >&2
     exit 1
 fi
 shift
@@ -326,7 +326,7 @@ date="$(
 
 for f in $files; do
     if test -z "$(git ls-files "$f")"; then
-        echo $progname: $f: File is not in Git, no entries updated
+        echo $progname: $f: File is not in Git, no entries updated >&2
         exit 1
     fi
 done
