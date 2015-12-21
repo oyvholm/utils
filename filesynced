@@ -83,16 +83,19 @@ SQLITE=sqlite3
 bin="$HOME/bin"
 db="synced.sqlite"
 
+safe_chdir() {
+    local dir="$1"
+    cd "$dir" || {
+        echo $progname: Cannot chdir to \'$dir\' >&2
+        exit 1
+    }
+}
+
 if test ! -f "$bin/$db"; then
     echo $progname: $bin/$db: Sync database not found >&2
     exit 1
 fi
-(
-    cd "$bin" || {
-        echo $progname: Cannot chdir to \'$bin\' >&2
-        exit 1
-    }
-)
+(safe_chdir "$bin")
 
 test -f "$db" || {
     echo $progname: $db: Sync database not found >&2
