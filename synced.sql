@@ -629,6 +629,7 @@ INSERT INTO "synced" VALUES('tests/hhi-files/name.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi-files/nohhi.html','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/hhi.t','Lib/std/perl-tests','66f599bb92c922be1f40bc2cc1492eccb5088eb5','2015-12-18 14:30:27');
 INSERT INTO "synced" VALUES('tests/installed_progs.t','Lib/std/perl-tests','66f599bb92c922be1f40bc2cc1492eccb5088eb5','2015-12-18 14:30:27');
+INSERT INTO "synced" VALUES('tests/jday.t','Lib/std/perl-tests','44ebc0836a93c0ef04a5da4bfd692bb91ce6bf49','2015-12-24 01:10:59');
 INSERT INTO "synced" VALUES('tests/perlmodules.t','Lib/std/perl-tests','66f599bb92c922be1f40bc2cc1492eccb5088eb5','2015-12-18 14:30:27');
 INSERT INTO "synced" VALUES('tests/postgres.t','Lib/std/perl-tests','66f599bb92c922be1f40bc2cc1492eccb5088eb5','2015-12-18 14:30:27');
 INSERT INTO "synced" VALUES('tests/sident-files/filenames','',NULL,NULL);
