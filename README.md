@@ -467,6 +467,7 @@ the alias somewhere.
 - irssi
 - isoname
 - ivim
+- jday
 - jsonfmt.py
 - kar
 - kbd
