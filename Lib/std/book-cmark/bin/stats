@@ -1,0 +1,231 @@
+#!/usr/bin/env perl
+
+#=======================================================================
+# stats
+# File ID: STDuuidDTS
+#
+# Display word count statistics
+#
+# Character set: UTF-8
+# ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use warnings;
+use Getopt::Long;
+
+local $| = 1;
+
+our %Opt = (
+
+    'data' => 0,
+    'help' => 0,
+    'quiet' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.1.0';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'data' => \$Opt{'data'},
+    'help|h' => \$Opt{'help'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'verbose'} -= $Opt{'quiet'};
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+my $sql_error = 0; # Set to !0 if some sqlite3 error happened
+
+exit(main());
+
+sub main {
+    # {{{
+    my $Retval = 0;
+    my $data = '';
+
+    if ($Opt{'data'}) {
+        print(format_data(join('', <>)));
+        return(0);
+    }
+
+    my $lockdir = "dat/STDprojnameDTS.lock";
+    my $did_wait = 0;
+    until (mkdir($lockdir)) {
+        msg(0, "$progname: $lockdir: Waiting for lockdir");
+        sleep(2);
+        $did_wait = 1;
+    }
+    if ($did_wait) {
+        msg(0, "$progname: Lockdir aquired");
+    }
+
+    if (-e "dat/STDprojnameDTS.spar") {
+        warn("$progname: dat/STDprojnameDTS.spar already exists\n");
+        rmdir($lockdir);
+        return(1);
+    }
+
+    system("sqlite3 dat/STDprojnameDTS.spar <dat/STDprojnameDTS.sql");
+    my $spardata = `spar -d dat -s STDprojnameDTS`;
+    my $currdb = $spardata; # Current value stored in the database
+    $currdb =~ s/^.*?\n(.*?)\n.*$/$1/s;
+    msg(1, "currdb after regexp = '$currdb'");
+    $currdb = int($currdb);
+    msg(1, "currdb = '$currdb'");
+    $data = format_data(join('', <>));
+    my $totwords = word_count($data);
+    if ($currdb != $totwords) {
+        $spardata = `spar -d dat -s STDprojnameDTS -c $totwords`;
+    }
+    my $spar = $spardata; # Current goal to reach
+    $spar =~ s/\n.*$//s;
+    my $spartime = $spardata; # Days, hours, minutes, etc behind/ahead
+    $spartime =~ s/^.*\n(.*?),.*?\n$/$1/s;
+    my $currstat = $totwords - $spar;
+    printf(
+        "Status: %.2f (%s)\n" .
+        "Words: %u\n" .
+        "Goal: %.2f\n",
+        $currstat,
+        $spartime,
+        $totwords,
+        $spar,
+    );
+    system("sqlite3 dat/STDprojnameDTS.spar .dump >dat/STDprojnameDTS.sql");
+    unlink("dat/STDprojnameDTS.spar");
+    rmdir($lockdir);
+
+    return($Retval);
+    # }}}
+} # main()
+
+sub format_data {
+    # {{{
+    my $data = shift;
+    $data =~ s/^.*?TEXT_BEGIN\s+-->\s*//s;
+    $data =~ s/\s*<!--\s+TEXT_END.*?$//s;
+    $data =~ s/<!--.*?-->//gs;
+    msg(4, "data = '$data'");
+    return($data);
+    # }}}
+} # format_data()
+
+sub sql {
+    # {{{
+    my ($db, $sql) = @_;
+    my @retval = ();
+
+    msg(3, "sql(): db = '$db'");
+    local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
+
+    my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, "sqlite3", $db) or (
+        $sql_error = 1,
+        msg(0, "sql(): open3() error: $!"),
+        return("sql() error"),
+    );
+    msg(3, "sql(): sql = '$sql'");
+    print(CHLD_IN "$sql\n") or msg(0, "sql(): print CHLD_IN error: $!");
+    close(CHLD_IN);
+    @retval = <CHLD_OUT>;
+    msg(3, "sql(): retval = '" . join('|', @retval) . "'");
+    my @child_stderr = <CHLD_ERR>;
+    if (scalar(@child_stderr)) {
+        msg(0, "sqlite3 error: " . join('', @child_stderr));
+        $sql_error = 1;
+    }
+    return(join('', @retval));
+    # }}}
+} # sql()
+
+sub word_count {
+    # {{{
+    my $data = shift;
+    $data =~ s/\s+/\n/sg;
+    my $retval = scalar(split(/\s+/, $data));
+    return($retval);
+    # }}}
+} # word_count()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname $VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Display word count statistics
+
+Usage: $progname [options] [file [files [...]]]
+
+Options:
+
+  --data
+    Output text data instead of displaying stats.
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+__END__
+
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :

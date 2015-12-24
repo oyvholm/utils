@@ -1,0 +1,8 @@
+# File ID: STDuuidDTS
+
+*.swp
+/dat/STDprojnameDTS.spar
+/index.html
+/synced.sql.lock
+/synced.sqlite
+/synced.sqlite.*.bck
