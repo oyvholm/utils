@@ -25,8 +25,8 @@ loop:
 	while :; do echo; ciall -y -- Loop 5sec - $$(bin/stats index.md); sleep 5; done
 
 spar:
-	rm -f ~/spar/STDprojnameDTS.spar
-	sqlite3 ~/spar/STDprojnameDTS.spar <dat/STDprojnameDTS.sql
+	sqlite3 ~/spar/.STDprojnameDTS.spar.make-spar.tmp <dat/STDprojnameDTS.sql
+	mv ~/spar/.STDprojnameDTS.spar.make-spar.tmp ~/spar/STDprojnameDTS.spar
 
 wc:
 	@bin/stats index.md

@@ -81,7 +81,9 @@ sub main {
         return(1);
     }
 
-    system("sqlite3 dat/STDprojnameDTS.spar <dat/STDprojnameDTS.sql");
+    my $tmpfile = "dat/.STDprojnameDTS.spar.$$.tmp";
+    system("sqlite3 $tmpfile <dat/STDprojnameDTS.sql");
+    rename($tmpfile, "dat/STDprojnameDTS.spar");
     my $spardata = `spar -d dat -s STDprojnameDTS`;
     my $currdb = $spardata; # Current value stored in the database
     $currdb =~ s/^.*?\n(.*?)\n.*$/$1/s;
@@ -107,7 +109,8 @@ sub main {
         $totwords,
         $spar,
     );
-    system("sqlite3 dat/STDprojnameDTS.spar .dump >dat/STDprojnameDTS.sql");
+    system("sqlite3 dat/STDprojnameDTS.spar .dump >$tmpfile");
+    rename($tmpfile, "dat/STDprojnameDTS.sql");
     unlink("dat/STDprojnameDTS.spar");
     rmdir($lockdir);
 

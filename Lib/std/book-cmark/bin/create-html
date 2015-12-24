@@ -66,7 +66,7 @@ fi
 fileprefix="$(basename "$1" .md)"
 destfile="$fileprefix.html"
 
-cat <<END >"$destfile"
+cat <<END >"$destfile.tmp"
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -91,9 +91,11 @@ cat <<END >"$destfile"
   <body>
 END
 
-cmark "$filename" | hhi -l 1 >>"$destfile"
+cmark "$filename" | hhi -l 1 >>"$destfile.tmp"
 
-cat <<END >>"$destfile"
+cat <<END >>"$destfile.tmp"
   </body>
 </html>
 END
+
+mv "$destfile.tmp" "$destfile"
