@@ -78,11 +78,11 @@ END
 fi
 
 free_space() {
-    df -h "$1" | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+    df -h "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
 }
 
 free_space_bytes() {
-    df -B 1 "$1" | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+    df -B 1 "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
 }
 
 all_free_space() {
