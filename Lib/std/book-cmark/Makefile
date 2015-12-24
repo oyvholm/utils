@@ -2,7 +2,7 @@
 # File ID: STDuuidDTS
 
 default:
-	make wc
+	@make -s wc
 
 clean:
 	rm -fv index.html synced.sqlite.*.bck
