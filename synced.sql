@@ -384,6 +384,7 @@ INSERT INTO "synced" VALUES('irc-conn','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('irssi','Lib/std/bash-no-getopt',NULL,NULL);
 INSERT INTO "synced" VALUES('isoname','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('ivim','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('jday','Lib/std/bash','6393bae2faddb371676ac2153fe6538fedb331c1','2015-12-24 00:58:00');
 INSERT INTO "synced" VALUES('jsonfmt.py','Lib/std/python','223fc61da6e1b13849ced6d921058a50b53b4c9d','2014-10-02 22:26:26');
 INSERT INTO "synced" VALUES('kar','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('kbd','Lib/std/bash',NULL,NULL);
