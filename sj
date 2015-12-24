@@ -59,6 +59,9 @@ a ping command until interrupted. These commands are also available:
   date
     Run a query against pool.ntp.org to see how accurate the system 
     clock is.
+  dfull
+    Display estimated time until the current disk is full based on the 
+    disk usage since the script was started.
   df
     Display free space of all local disks, sorted by free space.
   kern
@@ -76,6 +79,10 @@ fi
 
 free_space() {
     df -h "$1" | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+}
+
+free_space_bytes() {
+    df -B 1 "$1" | grep /dev/ | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
 }
 
 all_free_space() {
@@ -105,6 +112,17 @@ elif test "$1" = "date"; then
 elif test "$1" = "df"; then
     df -h | grep ^Filesystem
     df -h --total | grep -e /dev/ -e ^total | sort -h -k4
+elif test "$1" = "dfull"; then
+    origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
+    origdf=$(free_space_bytes .)
+    while :; do
+        currtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
+        currdf=$(free_space_bytes .)
+        printf "%-21s %s %-16s diff: %s\n" \
+            $(goal "$origtime" "$origdf" 0 "$currdf") \
+            $(echo $(( $currdf-$origdf )) | commify)
+        sleep 2
+    done
 elif test "$1" = "kern"; then
     tail -F /var/log/kern.log /var/log/syslog
 elif test "$1" = "space"; then
