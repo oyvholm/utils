@@ -1,0 +1,99 @@
+#!/bin/bash
+
+#=======================================================================
+# create-html
+# File ID: STDuuidDTS
+#
+# Create HTML file from Commonmark/Markdown file
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=create-html
+VERSION=0.1.0
+
+ARGS="$(getopt -o "hqv" -l "help,quiet,verbose,version" \
+    -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_help=0
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Create HTML file from Commonmark/Markdown file with .md extension.
+
+Usage: $progname [options] FILENAME
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+filename="$1"
+
+if test ! -f "$filename"; then
+    echo $progname: $filename: File not found >&2
+    exit 1
+fi
+
+fileprefix="$(basename "$1" .md)"
+destfile="$fileprefix.html"
+
+cat <<END >"$destfile"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>$destfile</title>
+    <style type="text/css">
+      <!--
+      body { background-color: white; color: black; font-family: sans-serif; }
+      a:link { color: blue; background-color: white; }
+      a:visited { color: maroon; background-color: white; }
+      a:active { color: fuchsia; background-color: white; }
+      -->
+    </style>
+    <meta name="author"
+          content="Øyvind A. Holm — sunny@sunbase.org" />
+    <meta name="copyright"
+          content="©2015- Øyvind A. Holm" />
+    <link rev="made" href="mailto:sunny@sunbase.org" />
+  </head>
+  <body>
+END
+
+cmark "$filename" | hhi -l 1 >>"$destfile"
+
+cat <<END >>"$destfile"
+  </body>
+</html>
+END

@@ -1,0 +1,35 @@
+# Makefile
+# File ID: STDuuidDTS
+
+default:
+	make wc
+
+clean:
+	rm -fv index.html synced.sqlite.*.bck
+
+edit:
+	mkdir .make-edit.lock
+	(v index.md; rmdir .make-edit.lock)
+
+html:
+	bin/create-html index.md
+
+loop:
+	git wait-until-clean
+	git checkout master
+	git fp || true
+	git mff
+	git allbr -a
+	git checkout loop-5sec
+	git mff master
+	while :; do echo; ciall -y -- Loop 5sec - $$(bin/stats index.md); sleep 5; done
+
+spar:
+	rm -f ~/spar/STDprojnameDTS.spar
+	sqlite3 ~/spar/STDprojnameDTS.spar <dat/STDprojnameDTS.sql
+
+wc:
+	@bin/stats index.md
+	@echo wc: $$(bin/stats --data index.md | wc -w)
+	@make -s spar
+	@spar -s STDprojnameDTS | tail -1
