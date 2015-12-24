@@ -124,7 +124,8 @@ sub print_version {
 
 sub sec_to_interval {
     # {{{
-    my $secs = 1.0 * abs(shift);
+    my $origsecs = shift;
+    my $secs = 1.0 * abs($origsecs);
     my $rem = 1.0 * $secs;
     my $frac = sprintf("%.6f", 1.0 * $rem - int($rem));
     if ($frac == 0) {
@@ -143,7 +144,8 @@ sub sec_to_interval {
     my $minutes = 1.0 * int($rem / 60.0);
     $rem -= 1.0 * ($minutes * 60.0);
     my $seconds = 1.0 * $rem;
-    my $retval = sprintf("%ud:%02u:%02u:%02u%s",
+    my $retval = sprintf("%s%ud:%02u:%02u:%02u%s",
+        $origsecs < 0 ? "-" : "",
         $days, $hours, $minutes, $seconds, $frac);
     return($retval);
     # }}}
