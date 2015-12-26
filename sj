@@ -115,14 +115,24 @@ elif test "$1" = "df"; then
 elif test "$1" = "dfull"; then
     origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
     origdf=$(free_space_bytes .)
+    ml_goalint=21
+    ml_goaltime=16
+    ml_dfdiff=1
     while :; do
         currtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
         currdf=$(free_space_bytes .)
         goal_output="$(goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null)"
+        dfdiff="$(( $currdf-$origdf ))"
+        cl_goalint=$(echo $goal_output | awk '{print $1}' | wc -L)
+        cl_goaltime=$(echo $goal_output | awk '{print $2}' | wc -L)
+        cl_dfdiff=$(echo $dfdiff | commify | wc -L)
+        test $cl_goalint -gt $ml_goalint && ml_goalint=$cl_goalint
+        test $cl_goaltime -gt $ml_goaltime && ml_goaltime=$cl_goaltime
+        test $cl_dfdiff -gt $ml_dfdiff && ml_dfdiff=$cl_dfdiff
         if test -n "$goal_output"; then
-            printf "%-21s %s %-16s diff: %s  free: %s\n" \
+            printf "%-${ml_goalint}s %s %-${ml_goaltime}s diff: %-${ml_dfdiff}s  free: %s\n" \
                 $goal_output \
-                $(echo $(( $currdf-$origdf )) $currdf | commify)
+                $(echo $dfdiff $currdf | commify)
         else
             printf "$progname dfull: No changes yet, %s bytes free\n" \
                 $(echo $(echo $currdf | commify))
