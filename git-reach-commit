@@ -4,7 +4,7 @@
 # git-reach-commit
 # File ID: dc91cf88-abf1-11e5-bfdc-fefdb24f8e10
 #
-# [Description]
+# Estimate when a project in Git will reach a certain number of commits.
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
@@ -122,7 +122,7 @@ sub usage {
 
 Estimate when a project in Git will reach a certain number of commits.
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] -r REF -g GOAL
 
 Options:
 
