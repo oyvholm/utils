@@ -118,9 +118,15 @@ elif test "$1" = "dfull"; then
     while :; do
         currtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
         currdf=$(free_space_bytes .)
-        printf "%-21s %s %-16s diff: %s\n" \
-            $(goal "$origtime" "$origdf" 0 "$currdf") \
-            $(echo $(( $currdf-$origdf )) | commify)
+        goal_output="$(goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null)"
+        if test -n "$goal_output"; then
+            printf "%-21s %s %-16s diff: %s\n" \
+                $goal_output \
+                $(echo $(( $currdf-$origdf )) | commify)
+        else
+            printf "$progname dfull: No changes yet, %s bytes free\n" \
+                $(echo $(echo $currdf | commify))
+        fi
         sleep 2
     done
 elif test "$1" = "kern"; then
