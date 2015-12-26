@@ -340,6 +340,7 @@ INSERT INTO "synced" VALUES('git-nocom','Lib/std/bash','0d681ba6e42b913c610e97f6
 INSERT INTO "synced" VALUES('git-pa','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-plot','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-rcmd','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('git-reach-commit','Lib/std/perl','d6db55eba43ff4f881ef72c70aa4a7eac9083127','2015-12-26 16:58:18');
 INSERT INTO "synced" VALUES('git-realclean','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-remote-hg','https://raw.githubusercontent.com/felipec/git-remote-hg/master/git-remote-hg',NULL,NULL);
 INSERT INTO "synced" VALUES('git-repos','Lib/std/bash',NULL,NULL);

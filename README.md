@@ -226,6 +226,7 @@ modification time in the file name.
 - git-listbundle
 - git-mkrepo
 - git-plot
+- git-reach-commit
 - git-scanrefs
 - git-upstream
 
