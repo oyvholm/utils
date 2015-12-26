@@ -120,9 +120,9 @@ elif test "$1" = "dfull"; then
         currdf=$(free_space_bytes .)
         goal_output="$(goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null)"
         if test -n "$goal_output"; then
-            printf "%-21s %s %-16s diff: %s\n" \
+            printf "%-21s %s %-16s diff: %s  free: %s\n" \
                 $goal_output \
-                $(echo $(( $currdf-$origdf )) | commify)
+                $(echo $(( $currdf-$origdf )) $currdf | commify)
         else
             printf "$progname dfull: No changes yet, %s bytes free\n" \
                 $(echo $(echo $currdf | commify))
