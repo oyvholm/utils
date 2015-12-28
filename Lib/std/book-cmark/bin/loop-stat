@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=loop-stat
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "hqv" -l "help,quiet,verbose,version" \
     -n "$progname" -- "$@")"
@@ -37,7 +37,7 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Usage: $progname [options] FILE [FILES [...]]
 
 Options:
 
@@ -54,3 +54,23 @@ END
     exit 0
 fi
 
+files="$@"
+
+begintime="$(date -u +"%Y-%m-%d %H:%M:%S")"
+beginvalue=$(bin/stats --data $files | wc -w)
+
+while :; do
+    outp="$(
+        stats_outp="$(bin/stats $files)"
+        echo "$stats_outp"
+        currgoal=$(echo "$stats_outp" | grep ^Goal | awk '{ print $2 }')
+        currtime="$(TZ=UTC stat $files -c %y | head -c 19)"
+        echo
+        goal -c "$currtime" "$begintime" $beginvalue $currgoal $(
+            bin/stats --data $files | wc -w
+        )
+    )"
+    clear
+    echo "$outp"
+    sleep 2
+done
