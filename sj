@@ -156,9 +156,15 @@ elif test "$1" = "space"; then
         sleep 1
     done
 elif test "$1" = "temp"; then
+    temperature_file=/sys/devices/virtual/thermal/thermal_zone0/temp
+    if test ! -e "$temperature_file"; then
+        echo $progname: $temperature_file: File not found >&2
+        echo $progname: Cannot read temperature >&2
+        exit 1
+    fi
     (
         echo scale=1
-        echo -n $(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
+        echo -n $(cat "$temperature_file")
         echo / 1000
     ) | bc -l
 elif test "$1" = "temp-warn"; then
@@ -170,6 +176,11 @@ elif test "$1" = "temp-warn"; then
     fi
     while :; do
         currtemp="$(sj temp)"
+        if test -z "$currtemp"; then
+            echo -n "$progname: Unable to read temperature, " >&2
+            echo \"$progname temp\" returned nothing >&2
+            exit 1
+        fi
         if test "$currtemp" != "$prevtemp"; then
             echo -n "$currtemp  "
             prevtemp=$currtemp
