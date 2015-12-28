@@ -20,6 +20,7 @@ INSERT INTO "synced" VALUES('.gitattributes','Lib/std/book-cmark/.gitattributes'
 INSERT INTO "synced" VALUES('.gitignore','Lib/std/book-cmark/.gitignore','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('Makefile','Lib/std/book-cmark/Makefile','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('bin/create-html','Lib/std/book-cmark/bin/create-html','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
+INSERT INTO "synced" VALUES('bin/loop-stat','Lib/std/book-cmark/bin/loop-stat','276958cea8d057ad9c672c8a916d7181cf4e1de3','2015-12-28 10:00:51');
 INSERT INTO "synced" VALUES('bin/stats','Lib/std/book-cmark/bin/stats','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('dat/STDprojnameDTS.sql','Lib/std/book-cmark/dat/STDprojnameDTS.sql','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('index.md','Lib/std/book-cmark/index.md','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
