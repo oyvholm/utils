@@ -72,6 +72,9 @@ a ping command until interrupted. These commands are also available:
     interrupted.
   temp
     Display current temperature.
+  temp-warn
+    Loop and check CPU temperature. If it gets too high, create an 
+    xmessage(1) window and send a warning to stderr.
 
 END
     exit 0
@@ -158,6 +161,30 @@ elif test "$1" = "temp"; then
         echo -n $(cat /sys/devices/virtual/thermal/thermal_zone0/temp)
         echo / 1000
     ) | bc -l
+elif test "$1" = "temp-warn"; then
+    unset prevtemp
+    dispfile="/tmp/sj_tw.$(date +%s).$$.tmp"
+    if test -e "$dispfile"; then
+        echo $progname: $dispfile: Tempfile already exists, that\'s spooky >&2
+        exit 1
+    fi
+    while :; do
+        currtemp="$(sj temp)"
+        if test "$currtemp" != "$prevtemp"; then
+            echo -n "$currtemp  "
+            prevtemp=$currtemp
+        fi
+        if test $(echo "$currtemp > 94" | bc) = "1"; then
+            grep Blimey "$dispfile" 2>/dev/null | grep -q . && rm "$dispfile"
+            if test ! -e $dispfile; then
+                warning="Oi! The temperature is $currtemp!"
+                xmessage -button Blimey -print "$warning" >"$dispfile" &
+                echo >&2
+                echo -n "$progname: $warning  " >&2
+            fi
+        fi
+        sleep 2
+    done
 else
     test -d /n900/. && sudo=sudo || unset sudo
     while :; do
