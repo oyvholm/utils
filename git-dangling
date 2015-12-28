@@ -89,16 +89,17 @@ if test "$opt_checkpart" = "1"; then
     exit
 fi
 
-# Delete all commit-* branches
-git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$' |
-    grep -Ev commit-0{40} | xargs -r git branch -D
+if test "$opt_deleteonly" = "1"; then
+    # Delete all commit-* branches
+    git branch | cut -c 3- | grep -E '^commit-[0-9a-f]{40}$' |
+        grep -Ev commit-0{40} | xargs -r git branch -D
 
-# Delete all tag-* tags
-git tag | grep -E '^tag-[0-9a-f]{40}$' | while read f; do
-    git tag -d "$f"
-done
-
-test "$opt_deleteonly" = "1" && exit
+    # Delete all tag-* tags
+    git tag | grep -E '^tag-[0-9a-f]{40}$' | while read f; do
+        git tag -d "$f"
+    done
+    exit
+fi
 
 cd "$(git rev-parse --show-toplevel)" || {
     echo $progname: Could not chdir to top level of repo >&2
