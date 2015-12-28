@@ -28,6 +28,9 @@ spar:
 	sqlite3 ~/spar/.STDprojnameDTS.spar.make-spar.tmp <dat/STDprojnameDTS.sql
 	mv ~/spar/.STDprojnameDTS.spar.make-spar.tmp ~/spar/STDprojnameDTS.spar
 
+stat:
+	bin/loop-stat index.md
+
 wc:
 	@bin/stats index.md
 	@echo wc: $$(bin/stats --data index.md | wc -w)
