@@ -175,7 +175,7 @@ elif test "$1" = "temp-warn"; then
         exit 1
     fi
     while :; do
-        currtemp="$(sj temp)"
+        currtemp="$($progname temp)"
         if test -z "$currtemp"; then
             echo -n "$progname: Unable to read temperature, " >&2
             echo \"$progname temp\" returned nothing >&2
