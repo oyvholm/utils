@@ -69,6 +69,7 @@ INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitattributes','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitignore','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/create-html','Lib/std/bash','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
+INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/loop-stat','Lib/std/bash','276958cea8d057ad9c672c8a916d7181cf4e1de3','2015-12-28 10:00:51');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/stats','Lib/std/perl','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/dat/STDprojnameDTS.sql','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/index.md','Lib/std/markdown','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');

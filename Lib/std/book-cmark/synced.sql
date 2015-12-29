@@ -16,13 +16,14 @@ CREATE TABLE synced (
     CONSTRAINT synced_date_valid
       CHECK (date IS NULL OR datetime(date) IS NOT NULL)
 );
-INSERT INTO "synced" VALUES('.gitattributes','Lib/std/book-cmark/.gitattributes','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
-INSERT INTO "synced" VALUES('.gitignore','Lib/std/book-cmark/.gitignore','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
-INSERT INTO "synced" VALUES('Makefile','Lib/std/book-cmark/Makefile','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
-INSERT INTO "synced" VALUES('bin/create-html','Lib/std/book-cmark/bin/create-html','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
-INSERT INTO "synced" VALUES('bin/stats','Lib/std/book-cmark/bin/stats','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
-INSERT INTO "synced" VALUES('dat/STDprojnameDTS.sql','Lib/std/book-cmark/dat/STDprojnameDTS.sql','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
-INSERT INTO "synced" VALUES('index.md','Lib/std/book-cmark/index.md','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
+INSERT INTO "synced" VALUES('.gitattributes','Lib/std/book-cmark/.gitattributes','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
+INSERT INTO "synced" VALUES('.gitignore','Lib/std/book-cmark/.gitignore','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
+INSERT INTO "synced" VALUES('Makefile','Lib/std/book-cmark/Makefile','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
+INSERT INTO "synced" VALUES('bin/create-html','Lib/std/book-cmark/bin/create-html','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
+INSERT INTO "synced" VALUES('bin/loop-stat','Lib/std/book-cmark/bin/loop-stat','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
+INSERT INTO "synced" VALUES('bin/stats','Lib/std/book-cmark/bin/stats','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
+INSERT INTO "synced" VALUES('dat/STDprojnameDTS.sql','Lib/std/book-cmark/dat/STDprojnameDTS.sql','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
+INSERT INTO "synced" VALUES('index.md','Lib/std/book-cmark/index.md','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
 INSERT INTO "synced" VALUES('synced.sql','',NULL,NULL);
 CREATE TABLE todo (
   file TEXT
