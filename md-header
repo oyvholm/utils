@@ -4,7 +4,7 @@
 # md-header
 # File ID: b9e646d2-ae65-11e5-837d-fefdb24f8e10
 #
-# [Description]
+# Add Vim fold markers to headers in Commonmark/Markdown
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -53,6 +53,21 @@ exit(main());
 sub main {
     # {{{
     my $Retval = 0;
+    my $FB = "\x7b\x7b\x7b";
+
+    while (my $Line = <>) {
+        chomp($Line);
+        if ($Line =~ /^(#+)/) {
+            my $marks = $1;
+            my $level = length($marks);
+            if ($Line =~ /<!-- $FB\d? -->/) {
+                $Line =~ s/<!-- $FB\d? -->/<!-- ${FB}$level -->/;
+            } else {
+                $Line .= " <!-- ${FB}$level -->";
+            }
+        }
+        print("$Line\n");
+    }
 
     return($Retval);
     # }}}
@@ -74,6 +89,8 @@ sub usage {
         print_version();
     }
     print(<<"END");
+
+Add Vim folds to '#*' headers in Commonmark/Markdown.
 
 Usage: $progname [options] [file [files [...]]]
 

@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
 
 my %descriptions = ();
 
@@ -116,6 +116,35 @@ END
         '/^$/',
         0,
         'Option --version returns version number',
+    );
+
+    # }}}
+
+    my $FB = "\x7b\x7b\x7b";
+
+    testcmd("$CMD md-header-files/file1.md", # {{{
+        <<END,
+# file1 <!-- ${FB}1 -->
+
+This is it.
+
+## Header 2 <!-- ${FB}2 -->
+
+Indeed.
+
+### Header 3 <!-- ${FB}3 -->
+### 3 with wrong header <!-- ${FB}3 --> <!-- another comment -->
+#### 4 here <!-- Keep this comment --> <!-- ${FB}4 -->
+
+Gurgle
+
+## Another 2 <!-- ${FB}2 -->
+
+And in the end, the love you take is equal to the love you make.
+END
+        "",
+        0,
+        "Format file1.md",
     );
 
     # }}}

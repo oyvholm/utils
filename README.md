@@ -191,6 +191,12 @@ Print timestamp when a specific goal will be reached. Specify start date
 with value, goal value and current value, and it will print the date and 
 time of when the goal will be reached.
 
+#### md-header
+
+Create commented-out Vim fold markers (&#60;!-- \{\{\{_num_ --&#62;) 
+with header level in Commonmark/Markdown files at the end of every 
+header line where hash signs are used. Useful for big documents.
+
 #### zeropad
 
 Pad decimal or hecadecimal numbers with zeroes to get equal length.
