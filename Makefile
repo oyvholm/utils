@@ -5,7 +5,7 @@ default:
 	@echo No default action for make >&2
 
 clean:
-	rm -fv synced.sqlite.*.bck
+	rm -fv synced.sqlite.*.bck *.pyc
 	$(MAKE) testclean
 
 lgd:
