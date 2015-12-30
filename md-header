@@ -22,6 +22,7 @@ our %Opt = (
 
     'help' => 0,
     'quiet' => 0,
+    'remove' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -36,6 +37,7 @@ GetOptions(
 
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
+    'remove|r' => \$Opt{'remove'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -58,12 +60,16 @@ sub main {
     while (my $Line = <>) {
         chomp($Line);
         if ($Line =~ /^(#+)/) {
-            my $marks = $1;
-            my $level = length($marks);
-            if ($Line =~ /<!-- $FB\d? -->/) {
-                $Line =~ s/ ?<!-- $FB\d? -->/ <!-- ${FB}$level -->/;
+            if ($Opt{'remove'}) {
+                $Line =~ s/ ?<!-- $FB\d? -->//;
             } else {
-                $Line .= " <!-- ${FB}$level -->";
+                my $marks = $1;
+                my $level = length($marks);
+                if ($Line =~ /<!-- $FB\d? -->/) {
+                    $Line =~ s/ ?<!-- $FB\d? -->/ <!-- ${FB}$level -->/;
+                } else {
+                    $Line .= " <!-- ${FB}$level -->";
+                }
             }
         }
         print("$Line\n");
@@ -100,6 +106,8 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -r, --remove
+    Remove folds from header lines instead of adding them.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version

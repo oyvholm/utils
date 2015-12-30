@@ -148,6 +148,30 @@ END
     );
 
     # }}}
+    testcmd("$CMD -r md-header-files/file2.md", # {{{
+        file_data("md-header-files/stripped.md"),
+        "",
+        0,
+        "Remove folds with -r",
+    );
+
+    # }}}
+    testcmd("$CMD --remove <md-header-files/file2.md", # {{{
+        file_data("md-header-files/stripped.md"),
+        "",
+        0,
+        "Use --remove and read from stdin",
+    );
+
+    # }}}
+    testcmd("$CMD md-header-files/stripped.md | $CMD -r", # {{{
+        file_data("md-header-files/stripped.md"),
+        "",
+        0,
+        "Add and remove folds in a single pipe",
+    );
+
+    # }}}
 
     todo_section:
     ;
