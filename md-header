@@ -61,7 +61,7 @@ sub main {
             my $marks = $1;
             my $level = length($marks);
             if ($Line =~ /<!-- $FB\d? -->/) {
-                $Line =~ s/<!-- $FB\d? -->/<!-- ${FB}$level -->/;
+                $Line =~ s/ ?<!-- $FB\d? -->/ <!-- ${FB}$level -->/;
             } else {
                 $Line .= " <!-- ${FB}$level -->";
             }
