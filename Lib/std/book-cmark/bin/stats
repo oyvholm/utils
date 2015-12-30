@@ -20,6 +20,7 @@ local $| = 1;
 
 our %Opt = (
 
+    'colour' => 0,
     'data' => 0,
     'help' => 0,
     'quiet' => 0,
@@ -35,6 +36,7 @@ our $VERSION = '0.1.0';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'colour|c' => \$Opt{'colour'},
     'data' => \$Opt{'data'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
@@ -100,12 +102,31 @@ sub main {
     my $spartime = $spardata; # Days, hours, minutes, etc behind/ahead
     $spartime =~ s/^.*\n(.*?),.*?\n$/$1/s;
     my $currstat = $totwords - $spar;
+
+    my $C_BOLD = '';
+    my $C_GREEN = '';
+    my $C_RED = '';
+    my $C_RESET = '';
+
+    if ($Opt{'colour'}) {
+        $C_BOLD = `tput bold`;
+        $C_GREEN = `tput setaf 2`;
+        $C_RED = `tput setaf 1`;
+        $C_RESET = `tput sgr0`;
+    }
+
+    my $textcol = $C_BOLD . ($currstat < 0 ? $C_RED : $C_GREEN);
+
     printf(
-        "Status: %.2f (%s)\n" .
+        "Status: %s%.2f %s(%s%s%s)\n" .
         "Words: %u\n" .
         "Goal: %.2f\n",
+        $textcol,
         $currstat,
+        $C_RESET,
+        $textcol,
         $spartime,
+        $C_RESET,
         $totwords,
         $spar,
     );
@@ -188,6 +209,8 @@ Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -c, --colour
+    Use colour in output; red if behind schedule, green if ahead.
   --data
     Output text data instead of displaying stats.
   -h, --help
