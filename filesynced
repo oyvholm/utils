@@ -254,10 +254,11 @@ SELECT
   ') ' ||
   file ||
   ' "(' ||
+    'cd ~/bin && git diff ' ||
     '\$(cd "$bin"; git log -1 --format=%h ' || rev || ')' ||
     '.. ' ||
     orig ||
-  ')";'
+  ') | patch -m ' || file || ' && filesynced HEAD ' || file || '";'
 FROM synced
 WHERE
   orig LIKE 'Lib/std/$type_str'
