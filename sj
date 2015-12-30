@@ -197,8 +197,15 @@ elif test "$1" = "temp-warn"; then
             if test ! -e $dispfile; then
                 warning="Oi! The temperature is $currtemp!"
                 xmessage -button Blimey -print "$warning" >"$dispfile" &
-                echo >&2
-                echo -n "$progname: $warning  " >&2
+                (
+                    echo
+                    tput setab 1
+                    tput bold
+                    tput setaf 3
+                    echo -n "$progname: $warning"
+                    tput sgr0
+                    echo -n "  "
+                ) >&2
             fi
         fi
         sleep 2
