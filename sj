@@ -13,17 +13,21 @@
 progname=sj
 VERSION=0.2.0
 
-ARGS="$(getopt -o "hqv" -l "help,quiet,verbose,version" \
+ARGS="$(getopt -o "hqv" -l "help,maxtemp:,quiet,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+std_maxtemp=94
+
 opt_help=0
+opt_maxtemp=$std_maxtemp
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
+        (--maxtemp) opt_maxtemp=$2; shift 2 ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -43,6 +47,9 @@ Options:
 
   -h, --help
     Show this help.
+  --maxtemp NUM
+    Define maximum acceptable temperature for "$progname temp-warn".
+    Default value: $std_maxtemp
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -185,7 +192,7 @@ elif test "$1" = "temp-warn"; then
             echo -n "$currtemp  "
             prevtemp=$currtemp
         fi
-        if test $(echo "$currtemp > 94" | bc) = "1"; then
+        if test $(echo "$currtemp > $opt_maxtemp" | bc) = "1"; then
             grep Blimey "$dispfile" 2>/dev/null | grep -q . && rm "$dispfile"
             if test ! -e $dispfile; then
                 warning="Oi! The temperature is $currtemp!"
