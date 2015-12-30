@@ -13,16 +13,18 @@
 progname=loop-stat
 VERSION=0.1.0
 
-ARGS="$(getopt -o "hqv" -l "help,quiet,verbose,version" \
+ARGS="$(getopt -o "chqv" -l "colour,help,quiet,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_colour=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-c|--colour) opt_colour=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -41,6 +43,8 @@ Usage: $progname [options] FILE [FILES [...]]
 
 Options:
 
+  -c, --colour
+    Use colour in output; red if behind schedule, green if ahead.
   -h, --help
     Show this help.
   -q, --quiet
@@ -59,9 +63,11 @@ files="$@"
 begintime="$(date -u +"%Y-%m-%d %H:%M:%S")"
 beginvalue=$(bin/stats --data $files | wc -w)
 
+colour_str="$(test "$opt_colour" = "1" && echo " --colour")"
+
 while :; do
     outp="$(
-        stats_outp="$(bin/stats $files)"
+        stats_outp="$(bin/stats$colour_str $files)"
         echo "$stats_outp"
         currgoal=$(echo "$stats_outp" | grep ^Goal | awk '{ print $2 }')
         currtime="$(TZ=UTC stat $files -c %y | head -c 19)"
