@@ -29,10 +29,10 @@ spar:
 	mv ~/spar/.STDprojnameDTS.spar.make-spar.tmp ~/spar/STDprojnameDTS.spar
 
 stat:
-	bin/loop-stat index.md
+	bin/loop-stat --colour index.md
 
 wc:
-	@bin/stats index.md
+	@bin/stats -c index.md
 	@echo wc: $$(bin/stats --data index.md | wc -w)
 	@make -s spar
 	@spar -s STDprojnameDTS | tail -1
