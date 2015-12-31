@@ -13,6 +13,10 @@
 progname=filesynced
 VERSION=0.4.0
 
+SQLITE=sqlite3
+bin="$HOME/bin"
+db="synced.sqlite"
+
 ARGS="$(getopt -o "hlp:qt:v" \
     -l \
 "help,list,lock,set-priority:,quiet,"\
@@ -116,9 +120,6 @@ msg() {
 
 msg -l 2 Starting $progname, pwd = $(pwd)
 
-SQLITE=sqlite3
-bin="$HOME/bin"
-db="synced.sqlite"
 repotop="$(git rev-parse --show-toplevel)"
 msg 2 repotop = \"$repotop\"
 lockdir="$repotop/synced.sql.lock"
