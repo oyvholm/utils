@@ -56,7 +56,7 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Add 'synced'-entry into synced.sqlite for files. Updates synced.rev and 
+Add 'synced'-entry into $db for files. Updates synced.rev and 
 synced.date with Git commit info.
 
 Usage: $progname [options] commit file [file [...]]
@@ -73,7 +73,7 @@ Options:
     Create a file list sorted by how many revisions they are behind the 
     files in Lib/std/ in current HEAD.
   --lock
-    Create synced.sqlite from synced.sql and activate locking. A lock 
+    Create $db from synced.sql and activate locking. A lock
     token is sent to stdout, and this token is needed to unlock.
   -p NEWPRI, --set-priority NEWPRI
     Change todo priority for files specified on the command line. NEWPRI 
@@ -87,7 +87,7 @@ Options:
     "perl-tests". SQL LIKE wildcards can be used, like '%' and '_'.
   --unlock TOKEN
     If TOKEN is correct, overwrite synced.sql with the contents from 
-    synced.sqlite, delete synced.slite and remove lock.
+    $db, delete synced.slite and remove lock.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -203,7 +203,7 @@ if test "$opt_unlock" = "1"; then
         msg 2 Token is valid, delete $lockdir/token
         rm "$lockdir/token"
     fi
-    sort-sqlite synced.sqlite
+    sort-sqlite $db
     msg 2 Dump $db to $(pwd)/synced.sql
     $SQLITE "$db" .dump >synced.sql
     msg 2 Remove $db
@@ -281,7 +281,7 @@ SELECT file FROM todo
         exit 0
     fi
     vd "$file" "$HOME/bin/$(
-        sqlite3 synced.sqlite "
+        sqlite3 $db "
 SELECT orig FROM synced
   WHERE file = '$file';
         "
