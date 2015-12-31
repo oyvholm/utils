@@ -182,10 +182,6 @@ if test "$opt_unlock" = "1"; then
         echo $progname --unlock: $repotop: chdir error >&2
         exit 1
     }
-    if test ! -e "$db"; then
-        echo $progname --unlock: $repotop/$db: File not found >&2
-        exit 1
-    fi
     if test ! -d "$lockdir"; then
         echo $progname --unlock: $lockdir: Lockdir doesn\'t exist >&2
         exit 1
@@ -203,11 +199,15 @@ if test "$opt_unlock" = "1"; then
         msg 2 Token is valid, delete $lockdir/token
         rm "$lockdir/token"
     fi
-    sort-sqlite $db
-    msg 2 Dump $db to $(pwd)/synced.sql
-    $SQLITE "$db" .dump >synced.sql
-    msg 2 Remove $db
-    rm "$db"
+    if test -f "$db"; then
+        sort-sqlite "$db"
+        msg 2 Dump $db to $(pwd)/synced.sql
+        $SQLITE "$db" .dump >synced.sql
+        msg 2 Remove $db
+        rm "$db"
+    else
+        msg 1 $db not found, did not update synced.sql
+    fi
     if rmdir "$lockdir"; then
         msg 2 $lockdir removed
         exit 0
