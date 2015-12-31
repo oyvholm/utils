@@ -128,12 +128,10 @@ cleanup() {
     msg 2 "cleanup(): bintoken = $bintoken"
     if test -n "$bintoken"; then
         msg 2 Unlock bintoken
-        cd "$bin" && filesynced --unlock $bintoken ||
-            echo $progname: $bin: chdir error >&2
+        cd "$bin" && filesynced --unlock $bintoken
     fi
     msg 2 Unlock token
-    cd "$repotop" && filesynced --unlock $token ||
-        echo $progname: $repotop: chdir error >&2
+    cd "$repotop" && filesynced --unlock $token
 }
 
 safe_chdir() {
