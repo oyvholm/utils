@@ -7,6 +7,7 @@ default:
 clean:
 	rm -fv synced.sqlite.*.bck *.pyc
 	$(MAKE) testclean
+	cd Lib/std/book-cmark && $(MAKE) clean
 
 lgd:
 	git lg --date-order $$(git branch -a | cut -c3- | grep -E -e 'remotes/(Spread|bitbucket|github|repoorcz|sunbase)/' | grep -v 'HEAD -> ') $$(git branch | cut -c3-)
