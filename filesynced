@@ -270,7 +270,7 @@ fi
 if test "$opt_random" = "1"; then
     msg 2 Perform --random stuff
     file="$(
-        sqlite3 "$db" "
+        $SQLITE "$db" "
 SELECT file FROM todo
   ORDER BY pri, random()
   LIMIT 1;
@@ -281,7 +281,7 @@ SELECT file FROM todo
         exit 0
     fi
     vd "$file" "$HOME/bin/$(
-        sqlite3 $db "
+        $SQLITE $db "
 SELECT orig FROM synced
   WHERE file = '$file';
         "
@@ -301,7 +301,7 @@ if test -n "$opt_set_priority"; then
             echo "UPDATE todo SET pri = $opt_set_priority WHERE file = '$f';"
         done
         echo END\;
-    ) | sqlite3 "$db"
+    ) | $SQLITE "$db"
     exit
 fi
 
