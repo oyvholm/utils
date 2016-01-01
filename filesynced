@@ -168,7 +168,7 @@ if test "$opt_lock" = "1"; then
         msg 2 Create $db from $(pwd)/synced.sql
         $SQLITE "$db" <synced.sql
     else
-        echo $progname --lock: $repotop/$db: Database not found >&2
+        echo $progname --lock: $repotop/synced.sql: Database not found >&2
         rmdir "$lockdir"
         exit 1
     fi
