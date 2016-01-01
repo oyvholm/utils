@@ -125,12 +125,14 @@ END
 
     ok(mkdir($Tmptop), "mkdir [Tmptop]");
     ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT();
-    likecmd("$GIT init repo-fs-t",
+    likecmd("$GIT init repo-fs-t", # {{{
         '/.*/',
         '/.*/',
         0,
         "git init repo-fs-t",
     );
+
+    # }}}
     ok(-d "repo-fs-t/.git", "repo-fs-t/.git exists") || BAIL_OUT();
     ok(-d "../$Tmptop", "We're in [Tmptop]") || BAIL_OUT();
     ok(chdir("repo-fs-t"), "chdir repo-fs-t");
