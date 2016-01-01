@@ -617,6 +617,7 @@ INSERT INTO "synced" VALUES('tests/datefn-files/repo.tar.gz','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/datefn.t','Lib/std/perl-tests','66f599bb92c922be1f40bc2cc1492eccb5088eb5','2015-12-18 14:30:27');
 INSERT INTO "synced" VALUES('tests/edit-sqlite3-files/sqlite-databases.tar.gz','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/edit-sqlite3.t','Lib/std/perl-tests','66f599bb92c922be1f40bc2cc1492eccb5088eb5','2015-12-18 14:30:27');
+INSERT INTO "synced" VALUES('tests/filesynced.t','Lib/std/perl-tests','ecb5bded313a5c5994a91bfce1164a3875915a45','2015-12-21 16:47:45');
 INSERT INTO "synced" VALUES('tests/findhex.t','Lib/std/perl-tests','66f599bb92c922be1f40bc2cc1492eccb5088eb5','2015-12-18 14:30:27');
 INSERT INTO "synced" VALUES('tests/fromhex-files/decimal.txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('tests/fromhex-files/single.txt','',NULL,NULL);
