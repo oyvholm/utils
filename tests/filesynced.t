@@ -226,8 +226,10 @@ END
     );
 
     # }}}
-    testcmd("sqlite3 synced.sqlite <synced.sql", '', '', 0,
+    testcmd("sqlite3 synced.sqlite <synced.sql", '', '', 0, # {{{
         "Create synced.sqlite from synced.sql");
+
+    # }}}
     ok(unlink("synced.sql"), "Delete synced.sql");
     likecmd("$CMD --init", # {{{
         '/^$/',
