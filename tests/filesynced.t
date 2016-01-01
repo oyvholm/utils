@@ -136,6 +136,32 @@ END
     ok(chdir("repo-fs-t"), "chdir repo-fs-t");
     $CMD = "../../../$CMD_BASENAME";
     ok(-f $CMD, "Executable is in place") || BAIL_OUT();
+    likecmd("$CMD -v", # No options, no database {{{
+        '/^$/',
+        join('',
+            '/^',
+            'filesynced --lock: .+\/repo-fs-t\/synced.sql: Database not found\n',
+            'filesynced: No token received from filesynced --lock\n',
+            '$/s',
+        ),
+        1,
+        "No options, no database",
+    );
+
+    # }}}
+    likecmd("$CMD -lv", # No database and -l {{{
+        '/^$/',
+        join('',
+            '/^',
+            'filesynced --lock: .+\/repo-fs-t\/synced.sql: Database not found\n',
+            'filesynced: No token received from filesynced --lock\n',
+            '$/s',
+        ),
+        1,
+        "No database and -l",
+    );
+
+    # }}}
     ok(chdir(".."), "chdir ..");
     testcmd("rm -rf repo-fs-t", '', '', 0, "Delete repo-fs-t/");
     ok(chdir(".."), "chdir ..");
