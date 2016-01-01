@@ -154,6 +154,91 @@ END
     );
 
     # }}}
+    diag("--init");
+    chomp(my $sql_top = <<END); # {{{
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+END
+    # }}}
+    chomp(my $sql_create_synced = <<END); # {{{
+CREATE TABLE synced (
+  file TEXT
+    CONSTRAINT synced_file_length
+      CHECK (length(file) > 0)
+    UNIQUE
+    NOT NULL
+  ,
+  orig TEXT
+  ,
+  rev TEXT
+    CONSTRAINT synced_rev_length
+      CHECK (length(rev) = 40 OR rev = '')
+  ,
+  date TEXT
+    CONSTRAINT synced_date_length
+      CHECK (date IS NULL OR length(date) = 19)
+    CONSTRAINT synced_date_valid
+      CHECK (date IS NULL OR datetime(date) IS NOT NULL)
+);
+END
+    # }}}
+    chomp(my $sql_create_todo = <<END); # {{{
+CREATE TABLE todo (
+  file TEXT
+    CONSTRAINT todo_file_length
+      CHECK(length(file) > 0)
+    UNIQUE
+    NOT NULL
+  ,
+  pri INTEGER
+    CONSTRAINT todo_pri_range
+      CHECK(pri BETWEEN 1 AND 5)
+  ,
+  comment TEXT
+);
+END
+    # }}}
+    chomp(my $sql_bottom = <<END); # {{{
+COMMIT;
+END
+    # }}}
+    testcmd("$CMD --init", # {{{
+        "",
+        "",
+        0,
+        "--init without options",
+    );
+
+    # }}}
+    is(file_data("synced.sql"), <<END, "synced.sql is ok"); # {{{
+$sql_top
+$sql_create_synced
+$sql_create_todo
+$sql_bottom
+END
+
+    # }}}
+    likecmd("$CMD --init", # {{{
+        '/^$/',
+        '/\/repo-fs-t\/synced.sql already exists\n$/s',
+        1,
+        "Refuse to --init when synced.sql exists",
+    );
+
+    # }}}
+    testcmd("sqlite3 synced.sqlite <synced.sql", '', '', 0,
+        "Create synced.sqlite from synced.sql");
+    ok(unlink("synced.sql"), "Delete synced.sql");
+    likecmd("$CMD --init", # {{{
+        '/^$/',
+        '/\/repo-fs-t\/synced.sqlite: File already exists\n' .
+            'filesynced: No token received from filesynced --lock\n' .
+            '$/s',
+        1,
+        "It also reacts negatively to the presence of synced.sqlite",
+    );
+
+    # }}}
     ok(chdir(".."), "chdir ..");
     testcmd("rm -rf repo-fs-t", '', '', 0, "Delete repo-fs-t/");
     ok(chdir(".."), "chdir ..");

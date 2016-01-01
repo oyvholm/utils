@@ -19,13 +19,14 @@ db="synced.sqlite"
 
 ARGS="$(getopt -o "hlp:qt:v" \
     -l \
-"help,list,lock,set-priority:,quiet,"\
+"help,init,list,lock,set-priority:,quiet,"\
 "random,type:,unlock,verbose,version" \
     -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
+opt_init=0
 opt_list=0
 opt_lock=0
 opt_set_priority=''
@@ -37,6 +38,7 @@ opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
+        (--init) opt_init=1; shift ;;
         (-l|--list) opt_list=1; shift ;;
         (--lock) opt_lock=1; shift ;;
         (-p|--set-priority) opt_set_priority=$2; shift 2 ;;
@@ -60,6 +62,7 @@ Add 'synced'-entry into $db for files. Updates synced.rev and
 synced.date with Git commit info.
 
 Usage: $progname [options] commit file [file [...]]
+       $progname --init
        $progname -l [-t TYPE]
        $progname -p NEWPRI file [files [...]]
        $progname --lock
@@ -69,6 +72,9 @@ Options:
 
   -h, --help
     Show this help.
+  --init
+    Initialise the current Git repo for use with $progname, create 
+    synced.sql in the top directory of the repository.
   -l, --list
     Create a file list sorted by how many revisions they are behind the 
     files in Lib/std/ in current HEAD.
@@ -133,6 +139,43 @@ cleanup() {
     fi
     msg 2 Unlock token
     cd "$repotop" && filesynced --unlock $token
+}
+
+init_db() {
+    cat <<END | $SQLITE "$1"
+CREATE TABLE synced (
+  file TEXT
+    CONSTRAINT synced_file_length
+      CHECK (length(file) > 0)
+    UNIQUE
+    NOT NULL
+  ,
+  orig TEXT
+  ,
+  rev TEXT
+    CONSTRAINT synced_rev_length
+      CHECK (length(rev) = 40 OR rev = '')
+  ,
+  date TEXT
+    CONSTRAINT synced_date_length
+      CHECK (date IS NULL OR length(date) = 19)
+    CONSTRAINT synced_date_valid
+      CHECK (date IS NULL OR datetime(date) IS NOT NULL)
+);
+CREATE TABLE todo (
+  file TEXT
+    CONSTRAINT todo_file_length
+      CHECK(length(file) > 0)
+    UNIQUE
+    NOT NULL
+  ,
+  pri INTEGER
+    CONSTRAINT todo_pri_range
+      CHECK(pri BETWEEN 1 AND 5)
+  ,
+  comment TEXT
+);
+END
 }
 
 safe_chdir() {
@@ -227,6 +270,21 @@ if test -z "$(echo $token | grep ^token_)"; then
 fi
 trap cleanup EXIT
 msg 2 token = $token
+
+if test "$opt_init" = "1"; then
+    msg 2 Perform --init stuff
+    safe_chdir "$repotop"
+    for f in synced.sql synced.sqlite; do
+        if test -e "$f"; then
+            echo $progname --init: $repotop/$f already exists >&2
+            exit 1
+        fi
+    done
+    init_db synced.sqlite
+    $SQLITE synced.sqlite .dump >synced.sql
+    rm synced.sqlite
+    exit
+fi
 
 test -f "$db" || {
     echo $progname: $db: Sync database not found >&2
