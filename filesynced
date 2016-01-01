@@ -164,8 +164,14 @@ if test "$opt_lock" = "1"; then
         rmdir "$lockdir"
         exit 1
     fi
-    msg 2 Create $db from $(pwd)/synced.sql
-    $SQLITE "$db" <synced.sql
+    if test -f "synced.sql"; then
+        msg 2 Create $db from $(pwd)/synced.sql
+        $SQLITE "$db" <synced.sql
+    else
+        echo $progname --lock: $repotop/$db: Database not found >&2
+        rmdir "$lockdir"
+        exit 1
+    fi
     token="token_$(date -u +"%Y%m%dT%H%M%SZ").$$.$(
         head -c 20 /dev/urandom | sha1sum | head -c 40
     )"
