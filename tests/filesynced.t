@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.4.0';
 
 my %descriptions = ();
 
@@ -119,6 +119,27 @@ END
     );
 
     # }}}
+
+    my $Tmptop = "tmp-filesynced-t-$$-" . substr(rand, 2, 8);
+    my $GIT = "git";
+
+    ok(mkdir($Tmptop), "mkdir [Tmptop]");
+    ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT();
+    likecmd("$GIT init repo-fs-t",
+        '/.*/',
+        '/.*/',
+        0,
+        "git init repo-fs-t",
+    );
+    ok(-d "repo-fs-t/.git", "repo-fs-t/.git exists") || BAIL_OUT();
+    ok(-d "../$Tmptop", "We're in [Tmptop]") || BAIL_OUT();
+    ok(chdir("repo-fs-t"), "chdir repo-fs-t");
+    $CMD = "../../../$CMD_BASENAME";
+    ok(-f $CMD, "Executable is in place") || BAIL_OUT();
+    ok(chdir(".."), "chdir ..");
+    testcmd("rm -rf repo-fs-t", '', '', 0, "Delete repo-fs-t/");
+    ok(chdir(".."), "chdir ..");
+    ok(rmdir($Tmptop), "rmdir [Tmptop]");
 
     todo_section:
     ;
