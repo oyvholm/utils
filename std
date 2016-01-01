@@ -118,7 +118,7 @@ if (scalar(@Tags)) {
 my $token = '';
 my $retval = main();
 if ($token =~ /^token_/) {
-    system("filesynced --unlock $token");
+    mysyst("filesynced", "--unlock", $token);
 }
 exit($retval);
 
