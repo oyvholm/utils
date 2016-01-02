@@ -127,6 +127,12 @@ fi
 msg() {
     local empty_line=
     local no_lf=
+    local prefix_str=
+    if test $opt_verbose -gt 2; then
+        prefix_str="$progname $$:$BASH_LINENO: "
+    else
+        prefix_str="$progname: "
+    fi
     if test "$1" = "-l"; then
         # If -l is specified, create empty line before message
         empty_line=1
@@ -137,11 +143,16 @@ msg() {
         no_lf="-n"
         shift
     fi
+    if test "$1" = "-q"; then
+        # -q suppresses $progname prefix
+        prefix_str=""
+        shift
+    fi
     local vlevel=$1
     shift
     test $vlevel -gt $opt_verbose && return;
     test "$empty_line" = "1" && echo >&2
-    echo $no_lf "$progname $$:$BASH_LINENO: $*" >&2
+    echo $no_lf "$prefix_str$*" >&2
     return
 }
 
