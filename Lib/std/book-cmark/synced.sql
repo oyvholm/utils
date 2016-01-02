@@ -19,8 +19,8 @@ CREATE TABLE synced (
 INSERT INTO "synced" VALUES('.gitattributes','Lib/std/book-cmark/.gitattributes','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
 INSERT INTO "synced" VALUES('.gitignore','Lib/std/book-cmark/.gitignore','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
 INSERT INTO "synced" VALUES('Makefile','Lib/std/book-cmark/Makefile','80c68f9626ed96fa5610694aa9ba9876b86b9f85','2015-12-30 15:42:34');
-INSERT INTO "synced" VALUES('bin/create-html','Lib/std/book-cmark/bin/create-html','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
-INSERT INTO "synced" VALUES('bin/loop-stat','Lib/std/book-cmark/bin/loop-stat','80c68f9626ed96fa5610694aa9ba9876b86b9f85','2015-12-30 15:42:34');
+INSERT INTO "synced" VALUES('bin/create-html','Lib/std/book-cmark/bin/create-html','7aa9da2bff17f69def4908f0cceef45ccb52819d','2016-01-02 18:02:31');
+INSERT INTO "synced" VALUES('bin/loop-stat','Lib/std/book-cmark/bin/loop-stat','7aa9da2bff17f69def4908f0cceef45ccb52819d','2016-01-02 18:02:31');
 INSERT INTO "synced" VALUES('bin/stats','Lib/std/book-cmark/bin/stats','80c68f9626ed96fa5610694aa9ba9876b86b9f85','2015-12-30 15:42:34');
 INSERT INTO "synced" VALUES('dat/STDprojnameDTS.sql','Lib/std/book-cmark/dat/STDprojnameDTS.sql','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
 INSERT INTO "synced" VALUES('index.md','Lib/std/book-cmark/index.md','b51b9ee08973c1bd7cc2afc83bd9c8f7e38e95ec','2015-12-29 00:18:49');
