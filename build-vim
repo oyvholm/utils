@@ -18,9 +18,23 @@ cloneurl=https://github.com/vim/vim.git
 branch=master
 remotename=origin
 
-ARGS="$(getopt -o "fhnquvy" \
-    -l "help,dry-run,quiet,update,verbose,yes,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+f\
+h\
+n\
+q\
+u\
+v\
+y\
+" -l "\
+help,\
+dry-run,\
+quiet,\
+update,\
+verbose,\
+yes,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 

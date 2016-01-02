@@ -13,8 +13,18 @@
 progname=build-postgres
 VERSION=0.3.0
 
-ARGS="$(getopt -o "hquv" -l "help,quiet,update,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+h\
+q\
+u\
+v\
+" -l "\
+help,\
+quiet,\
+update,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
