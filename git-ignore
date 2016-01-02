@@ -81,7 +81,7 @@ for f in "$@"; do
     git ls-files -- "$f" | grep -q . && git rm -r --cached "$f"
     if test "$opt_local" = "1"; then
         # Use local .gitignore in current directory
-        echo $f$termslash >>"$gitignore"
+        echo /$f$termslash >>"$gitignore"
     else
         # Use global .gitignore at top of repo
         echo /$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
