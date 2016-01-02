@@ -241,6 +241,76 @@ END
     );
 
     # }}}
+    ok(unlink("synced.sqlite"), "Delete synced.sqlite");
+    diag("--lock");
+    testcmd("$CMD --init", # {{{
+        "",
+        "",
+        0,
+        "Create synced.sql again with --init",
+    );
+
+    # }}}
+    testcmd("$CMD --lock >key.txt", "", "", 0, # {{{
+        "Use --lock, store key in key.txt",
+    );
+
+    # }}}
+    my $realtoken = file_data("key.txt");
+    like($realtoken, # {{{
+        (
+            '/^' .
+            'token_' .
+            '20\d\d' . '[01]\d' . '\d\d' .
+            'T' .
+            '[0-2]\d' . '[0-5]\d' . '[0-6]\d' .
+            'Z' .
+            '\.' .
+            '\d+' .
+            '\.' .
+            '[0-9a-f]{40}' .
+            '\n' .
+            '$/s'
+        ),
+        "key.txt looks ok",
+    );
+
+    # }}}
+    diag("--unlock");
+    testcmd("$CMD --unlock", # {{{
+        "",
+        "filesynced --unlock: Token mismatch\n",
+        1,
+        "No argument to --unlock",
+    );
+
+    # }}}
+    testcmd("$CMD --unlock ''", # {{{
+        "",
+        "filesynced --unlock: Token mismatch\n",
+        1,
+        "--unlock receives empty string",
+    );
+
+    # }}}
+    testcmd("$CMD --unlock token_20141212T123456Z.1234." . ("2" x 40), # {{{
+        "",
+        "filesynced --unlock: Token mismatch\n",
+        1,
+        "--unlock token is wrong",
+    );
+
+    # }}}
+    testcmd("$CMD --unlock $realtoken", # {{{
+        "",
+        "",
+        0,
+        "--unlock token is valid",
+    );
+
+    # }}}
+    ok(!-d "synced.sql.lock", "synced.sql.lock/ is gone");
+    diag("Clean up");
     ok(chdir(".."), "chdir ..");
     testcmd("rm -rf repo-fs-t", '', '', 0, "Delete repo-fs-t/");
     ok(chdir(".."), "chdir ..");
