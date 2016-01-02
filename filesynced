@@ -17,11 +17,26 @@ SQLITE=sqlite3
 bin="$HOME/bin"
 db="synced.sqlite"
 
-ARGS="$(getopt -o "hlp:qt:v" \
-    -l \
-"help,init,list,lock,set-priority:,quiet,"\
-"random,type:,unlock,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+h\
+l\
+p:\
+q\
+t:\
+v\
+" -l "\
+help,\
+init,\
+list,\
+lock,\
+set-priority:,\
+quiet,\
+random,\
+type:,\
+unlock,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
