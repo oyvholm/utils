@@ -257,6 +257,17 @@ END
 
     # }}}
     my $realtoken = file_data("key.txt");
+    likecmd("$CMD --lock --timeout 0", # {{{
+        '/^$/',
+        '/^' .
+            'filesynced --lock: .+\/repo-fs-t\/synced.sql\.lock: Waiting for lockdir\.\.\.\n' .
+            'filesynced: Lock not aquired after 0 seconds, aborting\n' .
+            '$/s',
+        1,
+        "Try to lock again, wimp gives up after 0 seconds",
+    );
+
+    # }}}
     like($realtoken, # {{{
         (
             '/^' .
