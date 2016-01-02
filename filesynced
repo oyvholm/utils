@@ -133,7 +133,7 @@ msg() {
         shift
     fi
     if test "$1" = "-n"; then
-        # If -n is first argument, don't terminate with \n
+        # If -n is specified, don't terminate with \n
         no_lf="-n"
         shift
     fi
