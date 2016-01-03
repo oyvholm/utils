@@ -30,7 +30,6 @@ our $CMD = "../$CMD_BASENAME";
 my $SQLITE = "sqlite3";
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
-my $use_svn = 0;
 
 our %Opt = (
 
@@ -129,18 +128,8 @@ END
     # that --dbname=none doesn't create a database.
     my $Tmptop = "tmp-std-t-$$-" . substr(rand, 2, 8);
     diag("Creating tempdir...");
-    if ($use_svn) {
-        likecmd("svn mkdir $Tmptop", # {{{
-            '/^A\s+tmp-std-t-.+$/s',
-            '/^$/s',
-            0,
-            "Create svn-controlled directory",
-        );
-        # }}}
-    } else {
-        mkdir($Tmptop) ||
-            die("$progname: $Tmptop: Cannot create directory: $!\n");
-    }
+    mkdir($Tmptop) ||
+        die("$progname: $Tmptop: Cannot create directory: $!\n");
     chdir($Tmptop) || die("$progname: $Tmptop: Cannot chdir(): $!");
     mkdir("tmpuuids") ||
         die("$progname: $Tmptop/tmpuuids: Cannot mkdir(): $!");
@@ -165,25 +154,14 @@ END
 
     # }}}
     ok(-e "bash-no-db", "bash-no-db exists");
-    if ($use_svn) {
-        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite " .
-                "bashfile", # {{{
-            "/^$v1_templ\\nA\\s+bashfile.+\$/s",
-            '/^mergesvn: bashfile: Using revision \d+ instead of HEAD\n$/s',
-            0,
-            "Create bash script",
-        );
-        # }}}
-    } else {
-        likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite " .
-                "bashfile", # {{{
-            "/^$v1_templ\\n\$/s",
-            '/^std: Creating database \'./db.sqlite\'\n$/',
-            0,
-            "Create bash script",
-        );
-        # }}}
-    }
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite " .
+            "bashfile", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^std: Creating database \'./db.sqlite\'\n$/',
+        0,
+        "Create bash script",
+    );
+    # }}}
     ok(-e "bashfile", "bashfile exists");
     ok(-e "db.sqlite", "db.sqlite exists");
     my $orig_dir = getcwd();
@@ -256,14 +234,6 @@ END
 
     # }}}
     ok(-x "bashfile", "bashfile is executable");
-    $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
-        '/^\d+ \S+Lib\/std\/bash\n$/s',
-        '/^$/s',
-        0,
-        "mergesvn property is set to bash template",
-    );
-
-    # }}}
     diag("Check for unused tags...");
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
         '/^.*Contains tests for the.*$/s',
@@ -298,36 +268,17 @@ END
     );
 
     # }}}
-    if ($use_svn) {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv " .
-                "--dbname ./db.sqlite perl bashfile", # {{{
-            "/^$v1_templ\\nproperty \'mergesvn\' set on \'bashfile\'\\n/s",
-            '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
-            0,
-            "Overwrite bashfile with perl script using --force",
-        );
-        # }}}
-    } else {
-        likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv " .
-                "--dbname ./db.sqlite perl bashfile", # {{{
-            "/^$v1_templ\\n\$/s",
-            '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
-            0,
-            "Overwrite bashfile with perl script using --force",
-        );
-        # }}}
-    }
+    likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv " .
+            "--dbname ./db.sqlite perl bashfile", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
+        0,
+        "Overwrite bashfile with perl script using --force",
+    );
+    # }}}
     like(file_data("bashfile"), # {{{
         qr/use Getopt::Long/s,
         "Contents of bashfile is replaced"
-    );
-
-    # }}}
-    $use_svn && likecmd("svn propget mergesvn bashfile", # {{{
-        '/^\d+ \S+Lib\/std\/perl\n$/s',
-        '/^$/s',
-        0,
-        "mergesvn property is replaced with perl template",
     );
 
     # }}}
@@ -403,14 +354,6 @@ END
 
     chdir("..") || die("$progname: Cannot 'chdir ..': $!");
     diag("Cleaning up temp files...");
-    $use_svn && likecmd("svn revert $Tmptop", # {{{
-        '/tmp-std-t/s',
-        '/^$/s',
-        0,
-        "svn revert tempdir",
-    );
-
-    # }}}
     ok(unlink(glob "$Tmptop/tmpuuids/*"),
         "unlink('glob [Tmptop]/tmpuuids/*')");
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");

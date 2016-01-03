@@ -26,7 +26,6 @@ our %Opt = (
     'force' => 0,
     'help' => 0,
     'local' => 0,
-    'no-svn' => 0,
     'notag' => "",
     'quiet' => 0,
     'rcfile' => "$ENV{'HOME'}/.stdrc",
@@ -43,7 +42,6 @@ our $VERSION = '0.5.0';
 
 my $CMD_GIT = "git";
 my $CMD_SQLITE = "sqlite3";
-my $CMD_SVN = "svn";
 my $CMD_WGET = "wget";
 my $CMD_SUUID = "suuid";
 my $ENV_DATABASE = "SYNCFILE_DB";
@@ -61,7 +59,6 @@ GetOptions(
     'force|f' => \$Opt{'force'},
     'help|h' => \$Opt{'help'},
     'local|l+' => \$Opt{'local'},
-    'no-svn|n' => \$Opt{'no-svn'},
     'notag|T=s' => \$Opt{'notag'},
     'quiet|q+' => \$Opt{'quiet'},
     'rcfile=s' => \$Opt{'rcfile'},
@@ -162,10 +159,7 @@ sub main {
     $dat_dir .= "Lib/std";
     my $dat_file = "$dat_dir/$Type";
 
-    my $URL = "https://github.com/sunny256/utils/raw/master/Lib/std/$Type";
     my $tmpfile = "tmp.std." . time;
-
-    my $is_svn_wc = (!$Opt{'no-svn'} && -d ".svn/.") ? 1 : 0;
 
     my $orig_dir = getcwd();
     chdir($dat_dir) || die("$progname: $dat_dir: Cannot chdir: $!\n");
@@ -216,19 +210,6 @@ sub main {
             || die("$progname: $Dest: Cannot open file for write: $!\n");
         print(DestFP $Output);
         close(DestFP);
-        if ($is_svn_wc) {
-            if (!is_added($Dest)) {
-                msg(1, "$CMD_SVN add");
-                mysyst($CMD_SVN, "add", $Dest);
-            }
-            msg(1, "mergesvn");
-            if (-f "Lib/std/$Type") {
-                mysyst("mergesvn", "-s", "Lib/std/$Type", $Dest);
-            } else {
-                mysyst("mergesvn", "-s", $URL, $Dest);
-            }
-            mysyst("keyw", $Dest);
-        }
     } else {
         print($Output);
     }
@@ -350,17 +331,6 @@ END
     # }}}
 } # main()
 
-sub is_added {
-    # Check if a file is already added with svn(1) {{{
-    my $File = shift;
-    my $Res = `$CMD_SVN stat --xml "$File"`;
-    my $Retval = $Res =~ /<wc-status.*?item="added".*?<\/wc-status>/s
-        ? 1
-        : 0;
-    return($Retval);
-    # }}}
-} # is_added()
-
 sub read_rcfile {
     # Read userdefined data from file in $Opt{'rcfile'} {{{
     my %Retval = ();
@@ -471,8 +441,6 @@ Options:
     Show this help.
   -f, --force
     Overwrite existing file.
-  -n, --no-svn
-    Don’t version control the file with Subversion.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   --rcfile FILE
