@@ -25,6 +25,7 @@ q\
 t:\
 v\
 " -l "\
+add,\
 help,\
 init,\
 list,\
@@ -41,6 +42,7 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_add=0
 opt_help=0
 opt_init=0
 opt_list=0
@@ -54,6 +56,7 @@ opt_unlock=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (--add) opt_add=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (--init) opt_init=1; shift ;;
         (-l|--list) opt_list=1; shift ;;
@@ -81,6 +84,7 @@ synced.date with Git commit info.
 
 Usage: $progname [options] commit file [file [...]]
        $progname --init
+       $progname --add file [file [...]]
        $progname -l [-t TYPE]
        $progname -p NEWPRI file [files [...]]
        $progname --lock
@@ -88,6 +92,9 @@ Usage: $progname [options] commit file [file [...]]
 
 Options:
 
+  --add
+    Add all files specified on the command line to synced.sql, use 
+    undefined sync values.
   -h, --help
     Show this help.
   --init
@@ -414,12 +421,14 @@ if test -n "$opt_set_priority"; then
     exit
 fi
 
-commit="$(cd "$bin"; git rev-parse $1)"
-if test -z "$commit"; then
-    echo $progname: $1: Invalid Git ref >&2
-    exit 1
+if test "$opt_add" != "1"; then
+    commit="$(cd "$bin"; git rev-parse $1)"
+    if test -z "$commit"; then
+        echo $progname: $1: Invalid Git ref >&2
+        exit 1
+    fi
+    shift
 fi
-shift
 files="$*"
 if test -z "$files"; then
     echo $progname: No files specified >&2
@@ -434,22 +443,38 @@ date="$(
 )"
 
 for f in $files; do
-    if test -z "$(git ls-files "$f")"; then
-        echo $progname: $f: File is not in Git, no entries updated >&2
-        exit 1
+    if test "$opt_add" = "1"; then
+        if test ! -f "$f"; then
+            echo $progname: $f: File not found, no entries updated >&2
+            exit 1
+        fi
+    else
+        if test -z "$(git ls-files "$f")"; then
+            echo $progname: $f: File is not in Git, no entries updated >&2
+            exit 1
+        fi
     fi
 done
 
 (
     echo BEGIN\;
     for f in $files; do
-        cat <<END
+        if test "$opt_add" = "1"; then
+            echo "INSERT INTO synced (file) VALUES ('$f');" | $SQLITE "$db"
+            if test "$?" != "0"; then
+                echo -n "$progname: Cannot add \"$f\" to the database, " >&2
+                echo no entries updated >&2
+                echo "ROLLBACK;"
+            fi
+        else
+            cat <<END
 UPDATE synced
   SET rev = '$commit', date = '$date'
   WHERE file = '$f';
 DELETE FROM todo
   WHERE file = '$f';
 END
+        fi
     done
     echo COMMIT\;
 ) | $SQLITE "$db"

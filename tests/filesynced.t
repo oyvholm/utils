@@ -320,6 +320,77 @@ END
     );
 
     # }}}
+    diag("--add");
+    testcmd("$CMD --add nonexisting.txt", # {{{
+        "",
+        "filesynced: nonexisting.txt: File not found, no entries updated\n",
+        1,
+        "Try to --add non-existing file",
+    );
+
+    # }}}
+    ok(create_file("tmpfile.txt", "This is tmpfile.txt"),
+        "Create tmpfile.txt");
+    testcmd("$CMD --add tmpfile.txt nonexisting.txt", # {{{
+        "",
+        "filesynced: nonexisting.txt: File not found, no entries updated\n",
+        1,
+        "Try to --add existing and non-existing file",
+    );
+
+    # }}}
+    is(file_data("synced.sql"), # {{{
+        <<END,
+$sql_top
+$sql_create_synced
+$sql_create_todo
+$sql_bottom
+END
+        "tmpfile.txt is not added to synced.sql yet",
+    );
+
+    # }}}
+    testcmd("$CMD --add tmpfile.txt", # {{{
+        "",
+        "",
+        0,
+        "Add tmpfile.txt with --add",
+    );
+
+    # }}}
+    is(file_data("synced.sql"), # {{{
+        <<END,
+$sql_top
+$sql_create_synced
+INSERT INTO "synced" VALUES('tmpfile.txt',NULL,NULL,NULL);
+$sql_create_todo
+$sql_bottom
+END
+        "tmpfile.txt is added to synced.sql",
+    );
+
+    # }}}
+    likecmd("$CMD --add tmpfile.txt", # {{{
+        '/^$/s',
+        '/filesynced: Cannot add "tmpfile\.txt" to the database, ' .
+            'no entries updated\n/s',
+        1,
+        "Fail to add it again",
+    );
+
+    # }}}
+    is(file_data("synced.sql"), # {{{
+        <<END,
+$sql_top
+$sql_create_synced
+INSERT INTO "synced" VALUES('tmpfile.txt',NULL,NULL,NULL);
+$sql_create_todo
+$sql_bottom
+END
+        "There's only one tmpfile.txt in synced.sql",
+    );
+
+    # }}}
     ok(!-d "synced.sql.lock", "synced.sql.lock/ is gone");
     diag("Clean up");
     ok(chdir(".."), "chdir ..");
