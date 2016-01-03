@@ -125,6 +125,7 @@ elif test "$1" = "df"; then
 elif test "$1" = "dfull"; then
     origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
     origdf=$(free_space_bytes .)
+    prevdf=$origdf
     ml_goalint=21
     ml_goaltime=16
     ml_dfdiff=1
@@ -139,6 +140,15 @@ elif test "$1" = "dfull"; then
         test $cl_goalint -gt $ml_goalint && ml_goalint=$cl_goalint
         test $cl_goaltime -gt $ml_goaltime && ml_goaltime=$cl_goaltime
         test $cl_dfdiff -gt $ml_dfdiff && ml_dfdiff=$cl_dfdiff
+        if test "$(echo "$currdf < $prevdf" | bc)" = "1"; then
+            tput bold
+            tput setaf 1
+            did_use_colour=1
+        elif test "$(echo "$currdf > $prevdf" | bc)" = "1"; then
+            tput bold
+            tput setaf 2
+            did_use_colour=1
+        fi
         if test -n "$goal_output"; then
             printf "%-${ml_goalint}s %s %-${ml_goaltime}s diff: %-${ml_dfdiff}s  free: %s\n" \
                 $goal_output \
@@ -147,6 +157,9 @@ elif test "$1" = "dfull"; then
             printf "$progname dfull: No changes yet, %s bytes free\n" \
                 $(echo $(echo $currdf | commify))
         fi
+        test "$did_use_colour" = "1" && tput sgr0
+        did_use_colour=
+        prevdf=$currdf
         sleep 2
     done
 elif test "$1" = "kern"; then
