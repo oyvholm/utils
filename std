@@ -135,12 +135,6 @@ sub main {
         msg(-2, "The -l/--local option is obsolete and will be removed soon");
     }
 
-    chomp ($token = `filesynced --lock`);
-    if ($token !~ /^token_/) {
-        warn("$progname: No token received from filesynced --lock\n");
-        return(1);
-    }
-
     if (length($Dest) && -e $Dest) {
         if ($Opt{'force'}) {
             msg(1, "Overwriting '$Dest'...");
@@ -256,6 +250,13 @@ sub main {
             msg(2, "relfile = '$relfile'");
             msg(2, "repotop = '$repotop'");
             msg(2, "syncdb = '$syncdb'");
+
+            chomp ($token = `filesynced --lock`);
+            if ($token !~ /^token_/) {
+                warn("$progname: No token received from filesynced --lock\n");
+                return(1);
+            }
+
             if (open(my $sqlitefh, "| $CMD_SQLITE \"$syncdb\"")) {
                 my ($Sec, $Min, $Hour, $Day, $Mon, $Year,
                     $Wday, $Yday, $is_dst) = gmtime(time());
