@@ -416,6 +416,23 @@ sub file_data {
     # }}}
 } # file_data()
 
+sub create_file {
+    # Create new file and fill it with data {{{
+    my ($file, $text) = @_;
+    my $retval = 0;
+    if (open(my $fp, ">$file")) {
+        print($fp $text);
+        close($fp);
+        $retval = is(
+            file_data($file),
+            $text,
+            "$file was successfully created",
+        );
+    }
+    return($retval); # 0 if error, 1 if ok
+    # }}}
+} # create_file()
+
 sub print_version {
     # Print program version {{{
     print("$progname $VERSION\n");
