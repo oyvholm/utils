@@ -279,11 +279,14 @@ CREATE TABLE synced (
     CONSTRAINT synced_file_length
       CHECK (length(file) > 0)
     UNIQUE
-    NOT NULL,
-  orig TEXT,
+    NOT NULL
+  ,
+  orig TEXT
+  ,
   rev TEXT
     CONSTRAINT synced_rev_length
-      CHECK (length(rev) = 40 OR rev = ''),
+      CHECK (length(rev) = 40 OR rev = '')
+  ,
   date TEXT
     CONSTRAINT synced_date_length
       CHECK (date IS NULL OR length(date) = 19)

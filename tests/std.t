@@ -182,11 +182,14 @@ END
             '    CONSTRAINT synced_file_length\n' .
             '      CHECK \(length\(file\) > 0\)\n' .
             '    UNIQUE\n' .
-            '    NOT NULL,\n' .
-            '  orig TEXT,\n' .
+            '    NOT NULL\n' .
+            '  ,\n' .
+            '  orig TEXT\n' .
+            '  ,\n' .
             '  rev TEXT\n' .
             '    CONSTRAINT synced_rev_length\n' .
-            '      CHECK \(length\(rev\) = 40 OR rev = \'\'\),\n' .
+            '      CHECK \(length\(rev\) = 40 OR rev = \'\'\)\n' .
+            '  ,\n' .
             '  date TEXT\n' .
             '    CONSTRAINT synced_date_length\n' .
             '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
@@ -315,11 +318,14 @@ END
             '    CONSTRAINT synced_file_length\n' .
             '      CHECK \(length\(file\) > 0\)\n' .
             '    UNIQUE\n' .
-            '    NOT NULL,\n' .
-            '  orig TEXT,\n' .
+            '    NOT NULL\n' .
+            '  ,\n' .
+            '  orig TEXT\n' .
+            '  ,\n' .
             '  rev TEXT\n' .
             '    CONSTRAINT synced_rev_length\n' .
-            '      CHECK \(length\(rev\) = 40 OR rev = \'\'\),\n' .
+            '      CHECK \(length\(rev\) = 40 OR rev = \'\'\)\n' .
+            '  ,\n' .
             '  date TEXT\n' .
             '    CONSTRAINT synced_date_length\n' .
             '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
