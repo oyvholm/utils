@@ -157,7 +157,13 @@ elif test "$1" = "dfull"; then
         fi
 
         if test -n "$goal_output"; then
-            printf "%-${ml_goalint}s %s %-${ml_goaltime}s diff: %s%-${ml_dfdiff}s%s  free: %s%s%s\n" \
+            printf \
+"%-${ml_goalint}s "\
+"%s "\
+"%-${ml_goaltime}s "\
+"diff: %s%-${ml_dfdiff}s%s  "\
+"free: %s%s%s"\
+"\n" \
                 "$goalint" \
                 "$goaldate" \
                 "$goaltime" \
