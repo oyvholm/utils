@@ -134,31 +134,42 @@ elif test "$1" = "dfull"; then
         currdf=$(free_space_bytes .)
         goal_output="$(goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null)"
         dfdiff="$(( $currdf-$origdf ))"
-        cl_goalint=$(echo $goal_output | awk '{print $1}' | wc -L)
-        cl_goaltime=$(echo $goal_output | awk '{print $2}' | wc -L)
+        goalint=$(echo $goal_output | awk '{print $1}')
+        goaldate=$(echo $goal_output | awk '{print $2}')
+        goaltime=$(echo $goal_output | awk '{print $3}' | tr -d Z)
+        cl_goalint=$(echo $goalint | wc -L)
+        cl_goaltime=$(echo $goaltime | wc -L)
         cl_dfdiff=$(echo $dfdiff | commify | wc -L)
         test $cl_goalint -gt $ml_goalint && ml_goalint=$cl_goalint
         test $cl_goaltime -gt $ml_goaltime && ml_goaltime=$cl_goaltime
         test $cl_dfdiff -gt $ml_dfdiff && ml_dfdiff=$cl_dfdiff
         if test "$(echo "$currdf < $prevdf" | bc)" = "1"; then
-            tput bold
-            tput setaf 1
-            did_use_colour=1
+            t_diskfree="$(tput bold; tput setaf 1)"
+            t_diskfree_reset="$(tput sgr0)"
         elif test "$(echo "$currdf > $prevdf" | bc)" = "1"; then
-            tput bold
-            tput setaf 2
-            did_use_colour=1
+            t_diskfree="$(tput bold; tput setaf 2)"
+            t_diskfree_reset="$(tput sgr0)"
+        else
+            t_diskfree=""
+            t_diskfree_reset=""
         fi
         if test -n "$goal_output"; then
-            printf "%-${ml_goalint}s %s %-${ml_goaltime}s diff: %-${ml_dfdiff}s  free: %s\n" \
-                $goal_output \
-                $(echo $dfdiff $currdf | commify)
+            printf "%-${ml_goalint}s %s %-${ml_goaltime}s diff: %s%-${ml_dfdiff}s%s  free: %s%s%s\n" \
+                "$goalint" \
+                "$goaldate" \
+                "$goaltime" \
+                "$t_diskfree" \
+                "$(echo $dfdiff | commify)" \
+                "$t_diskfree_reset" \
+                "$t_diskfree" \
+                "$(echo $currdf | commify)" \
+                "$t_diskfree_reset"
         else
-            printf "$progname dfull: No changes yet, %s bytes free\n" \
-                $(echo $(echo $currdf | commify))
+            printf "$progname dfull: No changes yet, %s%s%s bytes free\n" \
+                "$t_diskfree" \
+                "$(echo $currdf | commify)" \
+                "$t_diskfree_reset"
         fi
-        test "$did_use_colour" = "1" && tput sgr0
-        did_use_colour=
         prevdf=$currdf
         sleep 2
     done
