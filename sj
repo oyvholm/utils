@@ -140,9 +140,11 @@ elif test "$1" = "dfull"; then
         cl_goalint=$(echo $goalint | wc -L)
         cl_goaltime=$(echo $goaltime | wc -L)
         cl_dfdiff=$(echo $dfdiff | commify | wc -L)
+
         test $cl_goalint -gt $ml_goalint && ml_goalint=$cl_goalint
         test $cl_goaltime -gt $ml_goaltime && ml_goaltime=$cl_goaltime
         test $cl_dfdiff -gt $ml_dfdiff && ml_dfdiff=$cl_dfdiff
+
         if test "$(echo "$currdf < $prevdf" | bc)" = "1"; then
             t_diskfree="$(tput bold; tput setaf 1)"
             t_diskfree_reset="$(tput sgr0)"
@@ -153,6 +155,7 @@ elif test "$1" = "dfull"; then
             t_diskfree=""
             t_diskfree_reset=""
         fi
+
         if test -n "$goal_output"; then
             printf "%-${ml_goalint}s %s %-${ml_goaltime}s diff: %s%-${ml_dfdiff}s%s  free: %s%s%s\n" \
                 "$goalint" \
