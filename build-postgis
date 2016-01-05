@@ -92,7 +92,6 @@ fi
 tmpdb=postgis-test-$(date +%s)
 
 cd "$srcdir" &&
-git checkout -f ./install-sh &&
 git-wait-until-clean &&
 msg Remove ignored files from $(pwd)/ &&
 git clean -fxd &&
