@@ -158,12 +158,12 @@ elif test "$1" = "dfull"; then
 
         if test -n "$goal_output"; then
             printf \
+"\\n"\
 "%-${ml_goalint}s "\
 "%s "\
 "%-${ml_goaltime}s "\
 "diff: %s%-${ml_dfdiff}s%s  "\
 "free: %s%s%s"\
-"\n" \
                 "$goalint" \
                 "$goaldate" \
                 "$goaltime" \
@@ -174,7 +174,7 @@ elif test "$1" = "dfull"; then
                 "$(echo $currdf | commify)" \
                 "$t_diskfree_reset"
         else
-            printf "$progname dfull: No changes yet, %s%s%s bytes free\n" \
+            printf "\\n$progname dfull: No changes yet, %s%s%s bytes free" \
                 "$t_diskfree" \
                 "$(echo $currdf | commify)" \
                 "$t_diskfree_reset"
