@@ -84,7 +84,10 @@ for f in "$@"; do
             fi
             (
                 cd "$dir" && {
-                    result="$(ga whereis --key "$key" 2>/dev/null | grep -v '(0 copies) failed$')"
+                    result="$(
+                        ga whereis --key "$key" 2>/dev/null |
+                        grep -v '(0 copies) failed$'
+                    )"
                     test -n "$result" && {
                         echo
                         echo $dir
