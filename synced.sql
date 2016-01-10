@@ -302,7 +302,7 @@ INSERT INTO "synced" VALUES('ga-ignore-remote','Lib/std/bash','9baa32551134d485f
 INSERT INTO "synced" VALUES('ga-key','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-other','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('ga-repofix','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('ga-sjekk','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('ga-sjekk','Lib/std/bash','e339f783d8ff22666186e06581c4d13aefd0ecd9','2016-01-10 19:41:49');
 INSERT INTO "synced" VALUES('ga-sumsize','Lib/std/perl','8a8fb69e7712e7433fb9e88f823af7f772ce4048','2015-10-31 00:42:28');
 INSERT INTO "synced" VALUES('ga-tree','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('gammelsvn','Lib/std/bash',NULL,NULL);
@@ -818,7 +818,6 @@ INSERT INTO "todo" VALUES('ga-fixnew',1,NULL);
 INSERT INTO "todo" VALUES('ga-getnew',1,NULL);
 INSERT INTO "todo" VALUES('ga-key',1,NULL);
 INSERT INTO "todo" VALUES('ga-repofix',3,NULL);
-INSERT INTO "todo" VALUES('ga-sjekk',1,NULL);
 INSERT INTO "todo" VALUES('ga-tree',1,NULL);
 INSERT INTO "todo" VALUES('gammelsvn',3,NULL);
 INSERT INTO "todo" VALUES('getapr',3,NULL);
