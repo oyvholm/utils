@@ -113,7 +113,7 @@ if test "$1" = "allspace"; then
     unset prev
     while :; do
         curr="$(all_free_space)"
-        test "$curr" != "$prev" && (echo; echo -n "$curr")
+        test "$curr" != "$prev" && (echo; echo -n "$curr$(tput el)")
         prev="$curr"
         sleep 2
     done
@@ -164,6 +164,7 @@ elif test "$1" = "dfull"; then
 "%-${ml_goaltime}s "\
 "diff: %s%-${ml_dfdiff}s%s  "\
 "free: %s%s%s"\
+"%s"\
                 "$goalint" \
                 "$goaldate" \
                 "$goaltime" \
@@ -172,12 +173,14 @@ elif test "$1" = "dfull"; then
                 "$t_diskfree_reset" \
                 "$t_diskfree" \
                 "$(echo $currdf | commify)" \
-                "$t_diskfree_reset"
+                "$t_diskfree_reset" \
+                "$(tput el)"
         else
-            printf "\\n$progname dfull: No changes yet, %s%s%s bytes free" \
+            printf "\\n$progname dfull: No changes yet, %s%s%s bytes free%s" \
                 "$t_diskfree" \
                 "$(echo $currdf | commify)" \
-                "$t_diskfree_reset"
+                "$t_diskfree_reset" \
+                "$(tput el)"
         fi
         prevdf=$currdf
         sleep 2
@@ -189,8 +192,7 @@ elif test "$1" = "space"; then
     while :; do
         lastspace=$(free_space .)
         if test "$lastspace" != "$prevlast"; then
-            echo -n $lastspace
-            echo -n '  '
+            echo -n " $lastspace $(tput el)"
             prevlast=$lastspace
         fi
         sleep 1
@@ -222,7 +224,7 @@ elif test "$1" = "temp-warn"; then
             exit 1
         fi
         if test "$currtemp" != "$prevtemp"; then
-            echo -n "$currtemp  "
+            echo -n " $currtemp $(tput el)"
             prevtemp=$currtemp
         fi
         if test $(echo "$currtemp > $opt_maxtemp" | bc) = "1"; then
@@ -237,7 +239,8 @@ elif test "$1" = "temp-warn"; then
                     tput setaf 3
                     echo -n "$progname: $warning"
                     tput sgr0
-                    echo -n "  "
+                    echo -n " "
+                    tput el
                 ) >&2
             fi
         fi
