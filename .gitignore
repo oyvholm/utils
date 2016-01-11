@@ -7,6 +7,7 @@
 /src/fldb/tests/log/
 /src/personnr/personnr
 /src/smsum/tests/log/
+/synced.sql.lock/
 /synced.sqlite
 /synced.sqlite.*.bck
 /tests/install-modules
