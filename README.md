@@ -592,7 +592,6 @@ the alias somewhere.
 - repofix
 - repopuller
 - reposurgeon
-- reset
 - rm\_backup
 - rmdup
 - rmheadtail
