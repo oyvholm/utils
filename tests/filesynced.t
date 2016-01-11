@@ -392,6 +392,34 @@ END
 
     # }}}
     ok(!-d "synced.sql.lock", "synced.sql.lock/ is gone");
+    diag("--delete");
+    testcmd("$CMD --delete nonexisting.txt", # {{{
+        "",
+        "",
+        1,
+        "--delete nonexisting.txt",
+    );
+
+    # }}}
+    testcmd("$CMD --delete tmpfile.txt", # {{{
+        "",
+        "filesynced: Deleted tmpfile.txt from synced\n",
+        0,
+        "--delete tmpfile.txt",
+    );
+
+    # }}}
+    is(file_data("synced.sql"), # {{{
+        <<END,
+$sql_top
+$sql_create_synced
+$sql_create_todo
+$sql_bottom
+END
+        "tmpfile.txt is gone from synced.sql",
+    );
+
+    # }}}
     diag("Clean up");
     ok(chdir(".."), "chdir ..");
     testcmd("rm -rf repo-fs-t", '', '', 0, "Delete repo-fs-t/");
