@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS access_log (
     date timestamptz,
     page text,
     status integer,
-    bytes_sent integer,
+    bytes_sent bigint,
     referrer text,
     browser text,
     hostname text
