@@ -82,11 +82,11 @@ if test "$opt_help" = "1"; then
 Add 'synced'-entry into $db for files. Updates synced.rev and 
 synced.date with Git commit info.
 
-Usage: $progname [options] commit file [file [...]]
+Usage: $progname [OPTIONS] COMMIT FILE [FILE [...]]
        $progname --init
-       $progname --add file [file [...]]
+       $progname --add FILE [FILE [...]]
        $progname -l [-t TYPE]
-       $progname -p NEWPRI file [files [...]]
+       $progname -p NEWPRI FILE [FILES [...]]
        $progname --lock
        $progname --unlock TOKEN
 
