@@ -343,7 +343,7 @@ INSERT INTO "synced" VALUES('git-plot','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-rcmd','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-reach-commit','Lib/std/perl','d6db55eba43ff4f881ef72c70aa4a7eac9083127','2015-12-26 16:58:18');
 INSERT INTO "synced" VALUES('git-realclean','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-remote-hg','https://raw.githubusercontent.com/felipec/git-remote-hg/master/git-remote-hg',NULL,NULL);
+INSERT INTO "synced" VALUES('git-remote-hg','https://raw.githubusercontent.com/fingolfin/git-remote-hg/master/git-remote-hg',NULL,'2016-01-12 08:45:07');
 INSERT INTO "synced" VALUES('git-repos','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-restore-dirs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-rpull','Lib/std/bash',NULL,NULL);
