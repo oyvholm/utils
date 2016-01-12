@@ -99,6 +99,9 @@ for remote in $remotes; do
             grep -v -E "remotes/$remote/HEAD( |\$)" |
             perl -pe "s!remotes/$remote/(.*)\$!\$1!"
     ); do
+        if test $opt_verbose -gt 0; then
+            echo -ne "$f$(tput el)\\r"
+        fi
         test "$create_dangling" != "1" &&
             echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
                 test "$is_bare" = "0" && continue
@@ -110,5 +113,6 @@ for remote in $remotes; do
             grep -v '^Everything up-to-date'
         test -n "$upstream_str" && git branch -u $remote/$f $f
     done
+    tput el
     echo
 done
