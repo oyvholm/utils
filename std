@@ -25,7 +25,6 @@ our %Opt = (
     'dbname' => '',
     'force' => 0,
     'help' => 0,
-    'local' => 0,
     'notag' => "",
     'quiet' => 0,
     'rcfile' => "$ENV{'HOME'}/.stdrc",
@@ -58,7 +57,6 @@ GetOptions(
     'dbname|d=s' => \$Opt{'dbname'},
     'force|f' => \$Opt{'force'},
     'help|h' => \$Opt{'help'},
-    'local|l+' => \$Opt{'local'},
     'notag|T=s' => \$Opt{'notag'},
     'quiet|q+' => \$Opt{'quiet'},
     'rcfile=s' => \$Opt{'rcfile'},
@@ -128,11 +126,6 @@ sub main {
         # the warning.
         msg(-2, "The --database option is obsolete and will be removed soon,");
         msg(-2, "Please use --dbname instead");
-    }
-    if ($Opt{'local'}) {
-        # FIXME: Remove -l/--local after 2016-01-12, that's three months 
-        # since the warning.
-        msg(-2, "The -l/--local option is obsolete and will be removed soon");
     }
 
     if (length($Dest) && -e $Dest) {

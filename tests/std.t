@@ -163,6 +163,7 @@ END
     );
     # }}}
     ok(-e "bashfile", "bashfile exists");
+    ok(-x "bashfile", "bashfile is executable");
     ok(-e "db.sqlite", "db.sqlite exists");
     my $orig_dir = getcwd();
     # FIXME: Hardcoding of directory
@@ -221,22 +222,6 @@ END
     );
 
     # }}}
-    ok(unlink('bashfile'), 'Remove bashfile');
-    ok(unlink('db.sqlite'), 'Remove db.sqlite');
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -l -d ./db.sqlite " .
-            "bash bashfile", # {{{
-        "/^$v1_templ\\n\$/s",
-        '/^' .
-            'std: The -l/--local option is obsolete and ' .
-            'will be removed soon\n' .
-            'std: Creating database \'./db.sqlite\'\n' .
-            '$/',
-        0,
-        "Create bash script with -l (--local)",
-    );
-
-    # }}}
-    ok(-x "bashfile", "bashfile is executable");
     diag("Check for unused tags...");
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
         '/^.*Contains tests for the.*$/s',
