@@ -13,9 +13,20 @@
 progname=ciall
 VERSION=0.1.0
 
-ARGS="$(getopt -o "dhqvy" \
-    -l "help,quiet,store-empty-dirs,verbose,version,yes" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+d\
+h\
+q\
+v\
+y\
+" -l "\
+help,\
+quiet,\
+store-empty-dirs,\
+verbose,\
+version,\
+yes,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
