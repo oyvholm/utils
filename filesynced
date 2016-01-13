@@ -31,6 +31,7 @@ help,\
 init,\
 list,\
 lock,\
+patch,\
 set-priority:,\
 quiet,\
 random,\
@@ -49,6 +50,7 @@ opt_help=0
 opt_init=0
 opt_list=0
 opt_lock=0
+opt_patch=0
 opt_set_priority=''
 opt_quiet=0
 opt_random=0
@@ -64,6 +66,7 @@ while :; do
         (--init) opt_init=1; shift ;;
         (-l|--list) opt_list=1; shift ;;
         (--lock) opt_lock=1; shift ;;
+        (--patch) opt_patch=1; shift ;;
         (-p|--set-priority) opt_set_priority=$2; shift 2 ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (--random) opt_random=1; shift ;;
@@ -112,6 +115,11 @@ Options:
   --lock
     Create $db from synced.sql and activate locking. A lock
     token is sent to stdout, and this token is needed to unlock.
+  --patch
+    Try to apply the missing patches directly to the files. Files that 
+    were successfully patched are added to Git, together with an updated 
+    entry in synced.sql. Files with conflicts are not added, so it's 
+    easy to find conflicts with a standard "git diff".
   -p NEWPRI, --set-priority NEWPRI
     Change todo priority for files specified on the command line. NEWPRI 
     must be between 1 and 5.
@@ -322,6 +330,42 @@ if test "$opt_unlock" = "1"; then
         echo $progname --unlock: $lockdir: Could not remove lockdir >&2
         exit 1
     fi
+fi
+
+if test "$opt_patch" = "1"; then
+    msg 2 Perform --patch stuff
+    # FIXME: Make it work with filenames containing bloody whitespace. 
+    # Will take care of that when the output format of -l/--list changes 
+    # after --patch is in place.
+    files_behind="$(
+        filesynced -l |
+        grep -v ^0 |
+        awk '{ print $2 }'
+    )"
+    if test -z "$files_behind"; then
+        msg 0 No files need patching
+        exit 0
+    fi
+    echo "$files_behind" | while read f; do
+        echo
+        token=$(filesynced --lock)
+        if test -z "$(echo $token | grep ^token_)"; then
+            echo $progname --patch: Cannot --lock >&2
+            exit 1
+        fi
+        orig=$($SQLITE "$db" "SELECT orig FROM synced WHERE file = '$f';")
+        msg 2 orig = \"$orig\"
+        rev=$($SQLITE "$db" "SELECT rev FROM synced WHERE file = '$f';")
+        msg 2 rev = \"$rev\"
+        filesynced --unlock $token
+
+        (cd ~/bin && git diff $rev.. $orig) |
+          patch -m --no-backup-if-mismatch "$f" && (
+            filesynced HEAD "$f"
+            git add "$f" synced.sql
+        )
+    done
+    exit
 fi
 
 bintoken=
