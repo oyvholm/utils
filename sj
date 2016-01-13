@@ -13,8 +13,17 @@
 progname=sj
 VERSION=0.2.0
 
-ARGS="$(getopt -o "hqv" -l "help,maxtemp:,quiet,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+h\
+q\
+v\
+" -l "\
+help,\
+maxtemp:,\
+quiet,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 

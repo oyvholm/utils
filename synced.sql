@@ -525,7 +525,7 @@ INSERT INTO "synced" VALUES('sea-repo','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('sget','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('shellshock','http://www.dhampir.no/stuff/bash/shellshock',NULL,NULL);
 INSERT INTO "synced" VALUES('sident','Lib/std/perl','ea0c2eb42d04bfa30cbea92f77f985cc58434605','2015-10-30 03:20:13');
-INSERT INTO "synced" VALUES('sj','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
+INSERT INTO "synced" VALUES('sj','Lib/std/bash','5428efff2f3a4c447623544c77dafa32f4251908','2016-01-13 05:06:53');
 INSERT INTO "synced" VALUES('sjekk_iso','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sjekkhtmlindent','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('sjekkrand','Lib/std/bash',NULL,NULL);
