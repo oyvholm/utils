@@ -315,7 +315,7 @@ INSERT INTO "synced" VALUES('gfuck','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-add-missing-gpg-keys','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-all-blobs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-all-repos','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-allbr','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
+INSERT INTO "synced" VALUES('git-allbr','Lib/std/bash','f932a58e3e7a2519ef447e07d86ec5a64e896fda','2016-01-15 01:32:36');
 INSERT INTO "synced" VALUES('git-allfiles','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-authoract','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-bare','Lib/std/bash',NULL,NULL);
