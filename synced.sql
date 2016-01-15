@@ -680,7 +680,7 @@ INSERT INTO "synced" VALUES('u','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('u2h','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('uh2dec','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('uj','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('unichar','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
+INSERT INTO "synced" VALUES('unichar','Lib/std/bash','2fe247422ce3ae1d35e34c38c737961d51523f58','2016-01-15 01:42:57');
 INSERT INTO "synced" VALUES('unicode_htmlchart','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('unik_df','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('unz','Lib/std/bash',NULL,NULL);
