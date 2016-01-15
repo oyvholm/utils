@@ -13,8 +13,20 @@
 progname=til-ov
 VERSION=0.2.0
 
-ARGS="$(getopt -o "hiqrv" -l "help,init,quiet,reverse,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+h\
+i\
+q\
+r\
+v\
+" -l "\
+help,\
+init,\
+quiet,\
+reverse,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 

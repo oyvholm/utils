@@ -13,9 +13,25 @@
 progname=git-wip
 VERSION=0.1.0
 
-ARGS="$(getopt -o "Ddhmpqsv" \
-    -l "delete,help,merge,parent,quiet,squash,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+D\
+d\
+h\
+m\
+p\
+q\
+s\
+v\
+" -l "\
+delete,\
+help,\
+merge,\
+parent,\
+quiet,\
+squash,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
