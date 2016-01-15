@@ -13,9 +13,22 @@
 progname=git-dangling
 VERSION=0.1.0
 
-ARGS="$(getopt -o "bcDhqv" \
-    -l "blobs,check-part,delete-only,help,quiet,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+b\
+c\
+D\
+h\
+q\
+v\
+" -l "\
+blobs,\
+check-part,\
+delete-only,\
+help,\
+quiet,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
