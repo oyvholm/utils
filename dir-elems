@@ -15,8 +15,19 @@
 progname=dir-elems
 VERSION=0.2.0
 
-ARGS="$(getopt -o "hqrsv" -l "help,quiet,subtree,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+h\
+q\
+r\
+s\
+v\
+" -l "\
+help,\
+quiet,\
+subtree,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
