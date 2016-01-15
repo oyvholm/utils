@@ -16,8 +16,18 @@
 progname=git-nocom
 VERSION=0.2.1
 
-ARGS="$(getopt -o "hqrv" -l "help,quiet,reverse,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+h\
+q\
+r\
+v\
+" -l "\
+help,\
+quiet,\
+reverse,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 

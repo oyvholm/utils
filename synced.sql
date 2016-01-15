@@ -337,7 +337,7 @@ INSERT INTO "synced" VALUES('git-lc','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-listbundle','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-logdiff','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-mnff','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-nocom','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
+INSERT INTO "synced" VALUES('git-nocom','Lib/std/bash','2fe247422ce3ae1d35e34c38c737961d51523f58','2016-01-15 01:42:57');
 INSERT INTO "synced" VALUES('git-pa','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-plot','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-rcmd','Lib/std/perl',NULL,NULL);
