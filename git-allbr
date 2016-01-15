@@ -91,6 +91,7 @@ test -z "$1" || remotes="$@"
 echo
 is_bare=1
 test "$(git config --get core.bare)" = "true" || is_bare=0
+t_el="$(tput el)"
 for remote in $remotes; do
     echo ==== $progname: remote $remote
     for f in $(
@@ -100,7 +101,7 @@ for remote in $remotes; do
             perl -pe "s!remotes/$remote/(.*)\$!\$1!"
     ); do
         if test $opt_verbose -gt 0; then
-            echo -ne "$f$(tput el)\\r"
+            echo -ne "$f$t_el\\r"
         fi
         test "$create_dangling" != "1" &&
             echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
