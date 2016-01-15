@@ -13,8 +13,18 @@
 progname=git-ignore
 VERSION=0.1.0
 
-ARGS="$(getopt -o "hlqv" -l "help,local,quiet,verbose,version" \
-    -n "$progname" -- "$@")"
+ARGS="$(getopt -o "\
+h\
+l\
+q\
+v\
+" -l "\
+help,\
+local,\
+quiet,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
