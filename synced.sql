@@ -359,7 +359,7 @@ INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl','9008255ba17dda8ac1fa5a2b98490b9e480d830e','2015-10-31 00:46:55');
 INSERT INTO "synced" VALUES('git-upstream','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('git-wait-until-clean','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-wip','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
+INSERT INTO "synced" VALUES('git-wip','Lib/std/bash','2fe247422ce3ae1d35e34c38c737961d51523f58','2016-01-15 01:42:57');
 INSERT INTO "synced" VALUES('git-wn','Lib/std/bash','0d681ba6e42b913c610e97f668c44b43aaf9f7b2','2015-10-30 23:22:23');
 INSERT INTO "synced" VALUES('githubnetwork','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('goal','Lib/std/perl','56fc904a9fc4b79969caa805f92f125b31c042c5','2015-11-13 18:17:01');
