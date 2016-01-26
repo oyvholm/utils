@@ -167,6 +167,11 @@ msg() {
     return
 }
 
+if test $(tput cols) -lt 80 -o $(tput lines) -lt 24; then
+    echo $progname: The tests need screen size 80x24 or more to run >&2
+    exit 1
+fi
+
 lockdir="$HOME/.$progname.LOCK"
 
 if test "$opt_f" = "1"; then
