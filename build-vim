@@ -246,7 +246,12 @@ test "$sudo" = "1" -o "$sudo" = "true" && sudo=sudo || unset sudo
 if test "$sim" != "echo"; then
     test -z "$(git status --porcelain)" || {
         msg -s $srcdir is not clean
-        exit 1
+        echo >&2
+        git status -s
+        msg -n Press \'y\' to clean it, or \'n\' to abort...
+        continue_if_y
+        git checkout -f
+        git clean -fxd
     }
 fi
 
