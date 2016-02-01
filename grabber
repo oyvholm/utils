@@ -1,0 +1,267 @@
+#!/usr/bin/env bash
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2, June 1991.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>,
+# or in pdf format at <http://www.dhampir.no/stuff/private/gpl-2.0.pdf>
+
+# Copyright 2014 - Øyvind 'bolt' Hvidsten   <bolt@dhampir.no>
+
+# Description:
+#
+# grabber is a set of utility functions for fetching webpages using curl or wget, logging in, keeping cookies and so on.
+#
+# It requires curl or wget, xxd, tr, cat and sed. "tempfile" is also recommended, though the script should manage
+# to generate tempfiles itself.
+#
+# Generally, this script will be sourced by other bash scripts in order to simplify and unify such activities.
+#
+
+# Usage:
+#
+# Source this script and use its functions.
+# If your script has a cleanup trap on EXIT, make sure to specifically call grabber_cleanup as well.
+#
+
+# Version history:
+#
+# 2014-10-19: Initial version
+# 2015-05-15: Improved curl timeout options and renamed agent, timeout and retries options
+# 2015-05-16: Renamed all functions intended for internal use to avoid interfering with outside scripts
+# 2015-08-22: Added support for $grab_method
+# 2015-08-26: Added support for $grab_auth
+# 2016-01-16: Renamed "encode" function to match shellfunc naming
+#
+
+
+# Check bash version
+if ((BASH_VERSINFO[0] < 4)); then
+	echo "grabber uses features only found in bash 4 or above. Unable to continue execution." >&2
+	exit 1
+fi
+
+
+# Check for required programs
+if
+	! type "${GRABBER:-curl}" &>/dev/null ||
+	! type "xxd" &>/dev/null ||
+	! type "tr" &>/dev/null ||
+	! type "cat" &>/dev/null ||
+	! type "sed" &>/dev/null
+then
+	echo "One or more required programs are missing!" >&2
+	echo "Please ensure ${GRABBER:-curl}, xxd, tr, cat and sed are all installed and in \$PATH" >&2
+	exit 1
+fi
+
+
+# How to grab pages
+function _grabber_grab
+{
+	echo "$@" >"$f_cmd"
+	"$@"
+}
+function grab
+{
+	>"$f_stdout"
+	>"$f_stderr"
+	local i
+	local agent=${GRABBER_AGENT:-"Mozilla/5.0 (X11; Linux i686; rv:6.0) Gecko/20100101 Firefox/6.0"}
+	local timeout=${GRABBER_TIMEOUT:-30}
+	local retries=${GRABBER_RETRIES:-3}
+	{
+		case "${GRABBER:-curl}" in
+			curl)
+				_grabber_grab curl \
+					--location \
+					--insecure \
+					--cookie $f_cookies \
+					--cookie-jar $f_cookies \
+					--speed-limit 1 \
+					--speed-time $timeout \
+					--connect-timeout $timeout \
+					--retry $retries \
+					--user-agent "$agent" \
+					${grab_proto:+-"$grab_proto"} \
+					${grab_data:+--data "$grab_data"} \
+					${grab_ref:+--referer "$grab_ref"} \
+					${grab_head:+--header "$grab_head"} \
+					${grab_method:+--request "$grab_method"} \
+					${grab_auth:+--user "$grab_auth"} \
+					"$@" >"$f_stdout" 2>"$f_stderr"
+			;;
+			wget)
+				_grabber_grab wget -O- \
+					--no-check-certificate \
+					--load-cookies=$f_cookies \
+					--save-cookies=$f_cookies \
+					--keep-session-cookies \
+					--timeout $timeout \
+					--tries $retries \
+					--user-agent="$agent" \
+					${grab_proto:+-"$grab_proto"} \
+					${grab_data:+--post-data="$grab_data"} \
+					${grab_ref:+--referer="$grab_ref"} \
+					${grab_head:+--header="$grab_head"} \
+					${grab_method:+--method="$grab_method"} \
+					${grab_auth:+--user="${grab_auth%%:*}" --password="${grab_auth#*:}"} \
+					"$@" >"$f_stdout" 2>"$f_stderr"
+			;;
+			*)
+				echo "Fatal script error - grabber configuration fubar" >&2
+				exit 1
+			;;
+		esac
+	} && grab_status=$? || grab_status=$?
+	(( grab_status )) || return 0
+	grabber_fail
+}
+
+
+# Check for string in output
+function found
+{
+	grep -q "$@" "$f_stdout"
+}
+function errfound
+{
+	grep -q "$@" "$f_stderr"
+}
+function assert
+{
+	if found "$@"; then
+		_grabber_silent || echo "OK"
+	else
+		_grabber_silent || echo "Failed!"
+		echo "Exiting due to failed assertion (${@})" >&2
+		_grabber_debugfail
+		${GRABBER_EXIT:-true} && exit 1 || return 1
+	fi
+}
+
+
+# Simple URL encoding - just encode everything
+function sf_urlencode
+{
+	local encoded=$(xxd -plain <<<"${@:-$(cat)}" | tr -d '\n' | sed 's/\(..\)/%\1/g')
+	echo "${encoded%\%0a}"
+}
+
+
+# Debug printing
+function grabber_debug
+{
+	! ${DEBUG:-false} || echo "Debug: $@" >&2
+}
+
+
+# Make a temporary file
+type "tempfile" &>/dev/null && _grabber_tempfile=false || _grabber_tempfile=true
+function _grabber_tempfile
+{(
+	umask 0077
+	if $_grabber_tempfile; then
+		file="/tmp/${_scriptname}-$RANDOM"
+		set -o noclobber
+		{ >"$file"; } &>/dev/null &&
+		echo "$file"
+	else
+		tempfile
+	fi
+)}
+
+
+# Feedback
+function _grabber_silent
+{
+	${GRABBER_SILENT:-false}
+}
+function grabber_task
+{
+	_grabber_silent || echo -n "$@... "
+}
+function grabber_ok
+{
+	_grabber_silent || echo "OK"
+}
+function _grabber_debugfail
+{
+	${DEBUG:-false} || return
+	echo >&2
+	echo "f_stdout:" >&2
+	cat "$f_stdout" >&2
+	echo >&2
+	echo "f_stderr:" >&2
+	cat "$f_stderr" >&2
+	echo >&2
+	echo "f_cookies:"
+	cat "$f_cookies" >&2
+	echo >&2
+	echo "f_cmd:" >&2
+	cat "$f_cmd" >&2
+}
+function grabber_fail
+{
+	_grabber_silent || echo "Failed!"
+	if [[ -n "$@" ]]; then
+		_grabber_silent || echo "$@" >&2
+	else
+		_grabber_silent || echo "General failure" >&2
+	fi
+	_grabber_silent || _grabber_debugfail
+	${GRABBER_EXIT:-true} && exit 1 || return 1
+}
+
+
+# Temp file generation and cleanup
+function grabber_cleanup
+{
+	grabber_task "Cleanup"
+	if
+		[[ -n "${f_cookies:-}" ]] && [[ -e "$f_cookies" ]] && rm "$f_cookies" &&
+		[[ -n "${f_stdout:-}" ]] && [[ -e "$f_stdout" ]] && rm "$f_stdout" &&
+		[[ -n "${f_stderr:-}" ]] && [[ -e "$f_stderr" ]] && rm "$f_stderr" &&
+		[[ -n "${f_cmd:-}" ]] && [[ -e "$f_cmd" ]] && rm "$f_cmd"
+	then
+		grabber_ok
+	else
+		grabber_fail
+	fi
+}
+trap grabber_cleanup EXIT
+
+
+grabber_task "Generating grabber cookie file"
+if f_cookies=$(_grabber_tempfile) && [[ -n "$f_cookies" ]] && [[ -e "$f_cookies" ]]; then
+	_grabber_silent || echo "$f_cookies"
+else
+	grabber_fail
+fi
+grabber_task "Generating grabber stdout file"
+if f_stdout=$(_grabber_tempfile) && [[ -n "$f_stdout" ]] && [[ -e "$f_stdout" ]]; then
+	_grabber_silent || echo "$f_stdout"
+else
+	grabber_fail
+fi
+grabber_task "Generating grabber stderr file"
+if f_stderr=$(_grabber_tempfile) && [[ -n "$f_stderr" ]] && [[ -e "$f_stderr" ]]; then
+	_grabber_silent || echo "$f_stderr"
+else
+	grabber_fail
+fi
+grabber_task "Generating grabber cmd file"
+if f_cmd=$(_grabber_tempfile) && [[ -n "$f_cmd" ]] && [[ -e "$f_cmd" ]]; then
+	_grabber_silent || echo "$f_cmd"
+else
+	grabber_fail
+fi
+
+
+# vim: tabstop=4:softtabstop=4:shiftwidth=4:noexpandtab
