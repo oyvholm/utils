@@ -368,6 +368,7 @@ INSERT INTO "synced" VALUES('gpath','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('gpgpakk','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('gqfav','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('gqview','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('grabber','https://raw.githubusercontent.com/b01t/telenorsms/master/grabber',NULL,'2016-02-01 09:12:44');
 INSERT INTO "synced" VALUES('h0','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('h1','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('h2chin','Lib/std/perl',NULL,NULL);
