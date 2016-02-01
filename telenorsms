@@ -71,6 +71,7 @@
 # 2015-01-04: Added detection of the SMS counter breaking - no longer exiting with non-zero unless debugging
 # 2015-05-01: Minimal fix to support new link format for the login page
 # 2015-05-16: Updated to comply with changes to grabber
+# 2016-01-16: Updated to comply with changes to grabber (again)
 #
 
 
@@ -109,24 +110,34 @@ if [[ "${1:-}" = "--" ]]; then shift; fi
 config="$HOME/.${_scriptname}"
 
 
+# Smart Sourcing
+function ssource {
+    while (( $# )); do
+        if [[ -f "$1" ]] && [[ -r "$1" ]]; then
+            source "$1"
+            return
+        fi
+        shift
+    done
+    return 1
+}
+
+
 # Grabber
-grabber=$(grep -m 1 "^grabber=" $config 2>/dev/null | cut -d = -f 2);
-[[ -n "$grabber" ]] || grabber="/cathedral/src/lib/grabber" # alt path
-[[ -e "$grabber" ]] || grabber="$HOME/.grabber"             # default path
-if ! [[ -e "$grabber" ]]; then
+grabber=$(grep -m 1 "^grabber=" $config 2>/dev/null | cut -d = -f 2)
+if ! ssource /cathedral/src/lib/grabber "${grabber:-"$HOME/.grabber"}" "$(dirname "${BASH_SOURCE[0]}")/grabber"; then
 	echo "grabber library was not found" >&2
 	echo "Please download \"grabber\" from the same place you got this script," >&2
 	echo "Put it at $grabber or point at it in $config." >&2
 	exit 2
 fi
-source "$grabber"
 
 
 # Config
-username=$(grep -m 1 "^username=" $config 2>/dev/null | cut -d = -f 2 | encode);
-password=$(grep -m 1 "^password=" $config 2>/dev/null | cut -d = -f 2 | encode);
+username=$(grep -m 1 "^username=" $config 2>/dev/null | cut -d = -f 2 | sf_urlencode)
+password=$(grep -m 1 "^password=" $config 2>/dev/null | cut -d = -f 2 | sf_urlencode)
 [[ -z "${1:-}" ]] || { recipient=$1 && shift; }
-[[ -z "${1:-}" ]] || { message=$(encode "$@"); }
+[[ -z "${1:-}" ]] || { message=$(sf_urlencode "$@"); }
 
 
 # Sanity
@@ -246,7 +257,7 @@ fi
 if ! $dryrun; then
 	grabber_task "Sending SMS"
 	grab_head="Content-Type: application/x-www-form-urlencoded; charset=utf-8" \
-	grab_data="toAddress=$(encode "$recipient")&message=$message&b_send=b_send" \
+	grab_data="toAddress=$(sf_urlencode "$recipient")&message=$message&b_send=b_send" \
 	grab "https://telenormobil.no/norm/win/sms/send/process.do"
 	if found '<td>Sendt</td>'; then
 		echo "Sent!"
