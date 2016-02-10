@@ -65,7 +65,7 @@ END
 fi
 
 for f in $@; do
-    ga addurl "$f" --file="$(basename "$f")" -c annex.alwayscommit=false
+    ga addurl "$f" --raw --file="$(basename "$f")" -c annex.alwayscommit=false
 done
 
 ga merge
