@@ -7,4 +7,15 @@
 # (Han som oppfant sommertid skulle hatt i ræven.)
 #=======================================================================
 
-TZ=UTC sess -d irssi -- /usr/local/bin/irssi "$@"
+progname=irssi
+
+if test -e /usr/local/bin/irssi; then
+    irssi_cmd=/usr/local/bin/irssi
+elif test -e /usr/bin/irssi; then
+    irssi_cmd=/usr/bin/irssi
+else
+    echo $progname: Seems as irssi isn\'t installed here >&2
+    exit 1
+fi
+
+TZ=UTC sess -d irssi -- $irssi_cmd "$@"
