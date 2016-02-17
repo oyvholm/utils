@@ -330,7 +330,7 @@ $sim $sudo ln -fnsv ../prg/vim/share/vim . &&
 
 $sim cd "$prefix/bin" &&
 msg Create symlinks in $prefix/bin/ &&
-$sim ln -fnsv ../prg/vim/bin/* . &&
+$sim $sudo ln -fnsv ../prg/vim/bin/* . &&
 
 if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
