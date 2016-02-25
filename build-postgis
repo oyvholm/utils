@@ -72,8 +72,10 @@ msg() {
 }
 
 if ! test -d "$srcdir/."; then
-    git clone git@github.com:postgis/postgis.git $srcdir &&
+    git clone -o o-gitlab git@gitlab.com:postgis/postgis.git $srcdir &&
     cd "$srcdir" &&
+    git remote add o-github git@github.com:postgis/postgis.git &&
+    git fetch o-github &&
     echo &&
     echo $progname: No stable version is selected, you have to choose one. &&
     echo $progname: Dropping you into a bash shell, please take care of that &&
