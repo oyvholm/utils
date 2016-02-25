@@ -104,7 +104,7 @@ msg ./configure &&
 msg make &&
 make &&
 msg make install &&
-make install &&
+sudo make install &&
 msg Test that the installation works &&
 sudo -u postgres createdb "$tmpdb" &&
 sudo -u postgres psql "$tmpdb" -c "CREATE EXTENSION postgis;" &&
