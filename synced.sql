@@ -413,7 +413,7 @@ INSERT INTO "synced" VALUES('line_exec.py','Lib/std/python','33e2a6f73732491d18e
 INSERT INTO "synced" VALUES('linux-counter-machine-update','http://counter.li.org/scripts/machine-update',NULL,NULL);
 INSERT INTO "synced" VALUES('list-extensions','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('list-tables','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('list-youtube','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('list-youtube','Lib/std/bash','33ca69c186631b8c44ff24f626ae2109a8811415','2016-02-25 05:12:38');
 INSERT INTO "synced" VALUES('livecd-exit','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('livecd-init','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ll','Lib/std/bash',NULL,NULL);
@@ -881,7 +881,6 @@ INSERT INTO "todo" VALUES('lag_gqv',1,NULL);
 INSERT INTO "todo" VALUES('lag_linker',3,NULL);
 INSERT INTO "todo" VALUES('list-extensions',1,NULL);
 INSERT INTO "todo" VALUES('list-tables',1,NULL);
-INSERT INTO "todo" VALUES('list-youtube',1,NULL);
 INSERT INTO "todo" VALUES('livecd-exit',2,NULL);
 INSERT INTO "todo" VALUES('livecd-init',2,NULL);
 INSERT INTO "todo" VALUES('ll',2,NULL);
