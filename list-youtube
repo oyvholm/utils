@@ -14,10 +14,12 @@ progname=list-youtube
 VERSION=0.1.0
 
 ARGS="$(getopt -o "\
+f\
 h\
 q\
 v\
 " -l "\
+filenames,\
 help,\
 quiet,\
 verbose,\
@@ -31,6 +33,7 @@ opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-f|--filenames) opt_filenames=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -51,6 +54,9 @@ Usage: $progname [options]
 
 Options:
 
+  -f, --filenames
+    List filenames instead of the default format with date and title. 
+    Useful for creating playlists.
   -h, --help
     Show this help.
   -q, --quiet
@@ -64,6 +70,20 @@ END
     exit 0
 fi
 
-ls *.info.json | while read f; do
-    echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"');
-done | grep . | sort
+if test "$opt_filenames" = "1"; then
+    ls *.info.json | while read f; do
+        echo $(
+            json_reformat <"$f" |
+            grep -e '"upload_date"' |
+            perl -pe 's/^.*"upload_date": "(\d+)".*$/$1/'
+        ).$f;
+    done |
+    grep . |
+    sort |
+    perl -pe 's/\.info\.json$/.mp4/' |
+    cut -f 2- -d .
+else
+    ls *.info.json | while read f; do
+        echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"');
+    done | grep . | sort
+fi
