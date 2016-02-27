@@ -93,6 +93,7 @@ grep -v \
 -e /Android/data/dentex\\.youtube\\.downloader/files/cache/ \
 -e /Android/data/org\\.videolan\\.vlc/cache/art/ \
 -e /Android/data/reddit\\.news/cache/ \
+-e /AnkiDroid/collection\\.media/ \
 -e /BeyondPod/Podcasts/ \
 -e /Camera360/TempData/ \
 -e /Camera360/www/demo/ \
