@@ -90,9 +90,9 @@ tmp_begin_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.beg.tmp
 tmp_end_file=/tmp/.$progname.$(date -u +"%Y%m%dT%H%M%SZ").$$.end.tmp
 
 comp="$(hostname)"
-test "$comp" = "bellmann" -o "$comp" = "linode" || {
+test "$comp" = "bellmann" -o "$comp" = "sunbase" || {
     echo -n "$progname: $comp: Unknown computer, " >&2
-    echo should be \"bellmann\" or \"linode\" >&2
+    echo should be \"bellmann\" or \"sunbase\" >&2
     exit 1
 }
 
@@ -158,7 +158,7 @@ fi
 create bellmann /bellmann/home/annex
 create pavi /media/pavi/annex
 
-if test "$comp" != "linode"; then
+if test "$comp" != "sunbase"; then
 
     create blue4g-r24 /media/blue4g-r24/annex
     create cruzer /media/cruzer/annex
