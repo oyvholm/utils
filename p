@@ -13,12 +13,44 @@
 progname=p
 VERSION=0.2.0
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
+ARGS="$(getopt -o "\
+a:\
+h\
+q\
+s\
+v\
+" -l "\
+amplify:,\
+help,\
+quiet,\
+slow,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+opt_amplify=''
+opt_help=0
+opt_quiet=0
+opt_slow=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-a|--amplify) opt_amplify=$2; shift 2 ;;
+        (-h|--help) opt_help=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-s|--slow) opt_slow=1; shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
 Play a media file in mplayer.
@@ -27,12 +59,16 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
-  -a X
+  -a X, --amplify X
     Amplify sound with X dB. 10 is a nice value to start with.
   -h, --help
     Show this help.
-  -s
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -s, --slow
     Use less resources when playing movie files.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
 
@@ -45,19 +81,15 @@ test "$HISTFILE" = "/dev/null" && unset sess_str
 ao_str=
 amplify_str=
 pgrep jackd && ao_str=" -ao jack"
-if test "$1" = "-a"; then
-    shift
-    echo "$1" | grep -q -E '^[0-9]+$' || {
+if test -n "$opt_amplify"; then
+    echo "$opt_amplify" | grep -q -E '^[0-9]+$' || {
         # Well, mplayer also understands floats, but it's easier to 
         # just check for [0-9].
         echo $progname: -a needs an integer argument >&2
         exit 1
     }
-    amplify_val="$1";
-    shift
+    amplify_str=" --af=volume=$opt_amplify:0"
 fi
-test -n "$amplify_val" && amplify_str=" --af=volume=$amplify_val:0"
-test "$1" = "-s" && { use_slow=1; shift; }
-test "$use_slow" = "1" && slow=" -lavdopts fast:skiploopfilter=all"
+test "$opt_slow" = "1" && slow=" -lavdopts fast:skiploopfilter=all"
 test -e /dg-vbox.mrk && vo_str=" -vo x11 -zoom"
 $sess_str mplayer -fs -osdlevel 3$slow$vo_str$ao_str$amplify_str "$@"
