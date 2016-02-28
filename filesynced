@@ -496,6 +496,8 @@ if test -n "$opt_set_priority"; then
     exit
 fi
 
+ref=$1
+
 if test "$opt_add" != "1"; then
     commit="$(cd "$bin"; git rev-parse $1)"
     if test -z "$commit"; then
@@ -542,12 +544,16 @@ done
                 echo "ROLLBACK;"
             fi
         else
+            if test "$ref" = "HEAD"; then
+                sql_delete_todo="DELETE FROM todo WHERE file = '$f';"
+            else
+                sql_delete_todo=
+            fi
             cat <<END
 UPDATE synced
   SET rev = '$commit', date = '$date'
   WHERE file = '$f';
-DELETE FROM todo
-  WHERE file = '$f';
+$sql_delete_todo
 END
         fi
     done
