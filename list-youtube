@@ -28,6 +28,7 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_filenames=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
