@@ -471,7 +471,7 @@ INSERT INTO "synced" VALUES('nosvn','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('oggname','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('old-git','build-git',NULL,NULL);
 INSERT INTO "synced" VALUES('outl','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('p','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('p','Lib/std/bash','d08dd9d7c99c36fcd1b618b8a263f2ed468905c1','2015-09-25 12:25:27');
 INSERT INTO "synced" VALUES('pakk','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('pakk_logg','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('pakkdir','Lib/std/bash',NULL,NULL);
