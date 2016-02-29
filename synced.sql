@@ -675,6 +675,7 @@ INSERT INTO "synced" VALUES('tojson','Lib/std/perl','f1116361d6cfc707c0c511397e6
 INSERT INTO "synced" VALUES('tolower','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('tosec','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('towav','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('tuxguitar','Lib/std/bash','6026e4962d920448a09a0e7e2b21076bb1b05678','2016-02-29 23:43:15');
 INSERT INTO "synced" VALUES('txt2uc','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('txtfold','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('u','Lib/std/bash',NULL,NULL);
