@@ -187,6 +187,7 @@ INSERT INTO "synced" VALUES('ampm','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('annex-cmd','Lib/std/bash-no-getopt','0bfb034882dd4b5853d9720ce6221dd12a58a1e7','2015-10-30 06:48:44');
 INSERT INTO "synced" VALUES('ascii','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('au','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('audacity','Lib/std/bash-no-getopt','de7c414f5cdc6e46aa98c0ae2d29db5b202b61ee','2016-03-06 07:36:44');
 INSERT INTO "synced" VALUES('avlytt','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('bell','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('bigsh','Lib/std/bash',NULL,NULL);
