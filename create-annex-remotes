@@ -160,7 +160,6 @@ create pavi /media/pavi/annex
 
 if test "$comp" != "sunbase"; then
 
-    create blue4g-r24 /media/blue4g-r24/annex
     create cruzer /media/cruzer/annex
     create dennis-32g-1 /media/dennis-32g-1/annex
     create elem-1t-1 /media/elem-1t-1/annex
