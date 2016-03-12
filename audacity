@@ -16,5 +16,6 @@ VERSION=0.1.0
 if test -e /usr/bin/audacity; then
     /usr/bin/audacity "$@" 2>/dev/null
 else
-    echo $progname: Audacity isn\'t installed here
+    echo $progname: Audacity isn\'t installed here >&2
+    exit 1
 fi
