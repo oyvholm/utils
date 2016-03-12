@@ -13,27 +13,6 @@
 progname=audacity
 VERSION=0.1.0
 
-if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
-fi
-
-if test "$1" = "-h" -o "$1" = "--help"; then
-    cat <<END
-
-Usage: $progname [options]
-
-Options:
-
-  -h, --help
-    Show this help.
-  --version
-    Print version information.
-
-END
-    exit 0
-fi
-
 if test -e /usr/bin/audacity; then
     /usr/bin/audacity "$@" 2>/dev/null
 else
