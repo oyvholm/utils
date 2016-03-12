@@ -35,7 +35,7 @@ END
 fi
 
 if test -e /usr/bin/audacity; then
-    /usr/bin/audacity "$@" &>/dev/null
+    /usr/bin/audacity "$@" 2>/dev/null
 else
     echo $progname: Audacity isn\'t installed here
 fi
