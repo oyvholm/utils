@@ -137,6 +137,7 @@ END
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
     installed('grep --version', '/GNU grep/', 'stdout');
     installed('gzip --version', '/^gzip \d/', 'stdout');
+    installed('lilypond --version', '/^GNU LilyPond 2/', 'stdout');
     installed('make --version', '/GNU Make/', 'stdout');
     installed('mc --version', '/GNU Midnight Commander/', 'stdout');
     installed('mysql --version', '/^$/', 'stdout', 'MySQL is not installed');
@@ -181,6 +182,7 @@ END
         installed('bison --version', '/^bison\b.+GNU Bison\b/', 'stdout');
         installed('cdparanoia --version', '/^cdparanoia III/', 'stderr');
         installed('cpio --version', '/GNU cpio/', 'stdout');
+        installed('dblatex --version', '/^dblatex version \d/', 'stdout');
         installed('dot -V', '/graphviz version \d/', 'stderr');
         installed('echo "[{ }]" | json_reformat -m', '/^\[{}+]$/', 'stdout', 'json_reformat');
         installed('exifprobe -V', '/Program: \'exifprobe\' version \d/', 'stdout');
@@ -188,14 +190,17 @@ END
         installed('fdupes --version', '/^fdupes \d\./', 'stdout');
         installed('flac --version', '/^flac /', 'stdout');
         installed('flex --version', '/^flex \d/', 'stdout');
+        installed('fontforge --version', '/^fontforge 20/', 'stdout');
         installed('gettext --version', '/GNU gettext/', 'stdout');
         installed('gpsbabel --version', '/GPSBabel Version \d/', 'stdout');
+        installed('groff --version', '/^GNU groff version \d/', 'stdout');
         installed('htop --version', '/^htop \d/', 'stdout');
         installed('iotop --version', '/^iotop \d/', 'stdout');
         installed('lame --version', '/LAME .* version /', 'stdout');
         installed('lftp --version', '/^LFTP .+Version \d/', 'stdout');
         installed('lynx --version', '/^Lynx Version \d/', 'stdout');
         installed('lzip --version', '/^Lzip \d/', 'stdout');
+        installed('mftrace --version', '/^mftrace \d\./', 'stdout');
         installed('mosh --version', '/^mosh \d/', 'stderr');
         installed('mutt -h', '/^Mutt \d/', 'stdout');
         installed('ncdu -v', '/^ncdu \d/', 'stdout');
@@ -206,11 +211,13 @@ END
         installed('pandoc --version', '/^pandoc \d\./', 'stdout');
         installed('pip3 --version', '/^pip \d/', 'stdout');
         installed('psql --version', '/psql \(PostgreSQL\)/', 'stdout');
+        installed('quilt --version', '/^\d\./', 'stdout');
         installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
         installed('rzip --version', '/^rzip version \d/', 'stdout');
         installed('scriptreplay --help', '/-m, --maxdelay/', 'stdout', 'scriptreplay has -m/--maxdelay');
         installed('strace -V', '/^strace -- version \d/', 'stdout');
         installed('svn --version', '/svn, version /', 'stdout');
+        installed('texi2html --version', '/^\d\./', 'stdout');
         installed('tig --version', '/^tig version /', 'stdout');
         installed('tmux -V', '/^tmux \d\./', 'stdout');
         installed('trickle -V', '/^trickle: version \d/', 'stderr');
