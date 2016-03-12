@@ -470,6 +470,7 @@ INSERT INTO "synced" VALUES('ngttest','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('nogit','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('nosvn','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('oggname','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('okular','Lib/std/bash-no-getopt','2a9505e13b93289764565075a0cb524615ce3179','2016-03-12 00:30:49');
 INSERT INTO "synced" VALUES('old-git','build-git',NULL,NULL);
 INSERT INTO "synced" VALUES('outl','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('p','Lib/std/bash','fafa0084333ce938ac2a25244a41bd9d0b06776e','2016-02-28 04:12:07');

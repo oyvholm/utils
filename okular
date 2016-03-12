@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#=======================================================================
+# okular
+# File ID: aaece696-e7e9-11e5-8459-02010e0a6634
+#
+# Wrapper for okular(1) to get rid of the terminal noise
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=okular
+VERSION=0.1.0
+
+unset file
+for f in /usr/bin/okular /usr/local/bin/okular; do
+    test -e "$f" && file="$f"
+done
+
+if test -z "$file"; then
+    echo $progname: okular binary not found >&2
+    exit 1
+fi
+
+"$file" "$@" 2>/dev/null
