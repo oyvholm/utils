@@ -153,7 +153,7 @@ END
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
     installed('screen --version', '/^Screen version \d/', 'stdout');
     installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
-    installed('sqlite3 --version', '/^3\.11\.0 2016-02-15 17:29:24/', 'stdout');
+    installed('sqlite3 --version', '/^3\.11\.1 2016-03-03 16:17:53/', 'stdout');
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
