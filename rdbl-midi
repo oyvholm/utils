@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#=======================================================================
+# rdbl-midi
+# File ID: 833b97b0-eac2-11e5-a78d-02010e0a6634
+#
+# [Description]
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=rdbl-midi
+VERSION=0.1.0
+
+midi2ly -o - "$@" | r

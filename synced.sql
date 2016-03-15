@@ -504,6 +504,7 @@ INSERT INTO "synced" VALUES('rcs-extract','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('rdbl-garmin-gpi','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('rdbl-gpg','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('rdbl-gramps-backup','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('rdbl-midi','Lib/std/bash-no-getopt','d708879b60e0b291f1566c548066f82c55706f69','2016-03-15 15:28:05');
 INSERT INTO "synced" VALUES('rdbl-odt','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('rdbl-sort_k5','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('rdbl-sqlite3','Lib/std/bash',NULL,NULL);
