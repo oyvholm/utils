@@ -88,7 +88,7 @@ a ping command until interrupted. These commands are also available:
     interrupted.
   temp
     Display current temperature.
-  temp-warn
+  temp-warn, tw
     Loop and check CPU temperature. If it gets too high, create an 
     xmessage(1) window and send a warning to stderr.
 
@@ -218,7 +218,7 @@ elif test "$1" = "temp"; then
         echo -n $(cat "$temperature_file")
         echo / 1000
     ) | bc -l
-elif test "$1" = "temp-warn"; then
+elif test "$1" = "temp-warn" -o "$1" = "tw"; then
     unset prevtemp
     dispfile="/tmp/sj_tw.$(date +%s).$$.tmp"
     if test -e "$dispfile"; then
