@@ -9,6 +9,7 @@
   composer = ""
 }
 
+\include "bass.lyi"
 \include "guitar1.lyi"
 \include "guitar2.lyi"
 \include "piano-lower.lyi"
@@ -52,6 +53,24 @@
       % \bar "|."
     }
     %}
+    \new Staff \with {
+      instrumentName = "Bass"
+      shortInstrumentName = "Bs."
+      \omit StringNumber
+    } {
+      \clef bass
+      \bassGuitar
+      % \bar "|."
+    }
+    %{
+    \new TabStaff \with {
+      instrumentName = "Bass"
+      stringTunings = #bass-tuning
+    } {
+      \bassGuitar
+      % \bar "|."
+    }
+    %}
     \new PianoStaff <<
       \set PianoStaff.instrumentName = #"Piano"
       \new Staff = "upper" {
@@ -86,6 +105,15 @@
       % midiPanPosition = 0
     } {
       \unfoldRepeats \guitarTwo
+    }
+    \new Staff \with {
+      instrumentName = "Bass"
+      shortInstrumentName = "Bs."
+      midiInstrument = "electric bass (finger)"
+      % midiMaximumVolume = #1.60
+      % midiPanPosition = 0
+    } {
+      \unfoldRepeats \bassGuitar
     }
     \new Staff = "Piano" \with {
       instrumentName = "Piano"
