@@ -30,6 +30,21 @@
     }
   >>
   \layout { }
+}
+
+\score {
+  \new Staff = "Piano" \with {
+    instrumentName = "Piano"
+    shortInstrumentName = "Pn."
+    midiInstrument = "acoustic grand"
+    % midiMaximumVolume = #1.00
+    % midiPanPosition = 0
+  } {
+    <<
+      \unfoldRepeats \pianoUpper
+      \unfoldRepeats \pianoLower
+    >>
+  }
   \midi { }
 }
 
