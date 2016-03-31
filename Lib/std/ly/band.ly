@@ -10,6 +10,7 @@
 }
 
 \include "bass.lyi"
+\include "drums.lyi"
 \include "guitar1.lyi"
 \include "guitar2.lyi"
 \include "piano-lower.lyi"
@@ -82,6 +83,14 @@
         \pianoLower
       }
     >>
+    \new DrumStaff \with {
+      instrumentName = "Drums"
+      shortInstrumentName = "Drm"
+    } {
+      \clef percussion
+      \theDrums
+      % \bar "|."
+    }
   >>
   \layout { }
 }
@@ -126,6 +135,13 @@
         \pianoUpper
         \pianoLower
       >>
+    }
+    \new DrumStaff \with {
+      instrumentName = "Drums"
+      shortInstrumentName = "Drm"
+      % midiMaximumVolume = #1.00
+    } {
+      \unfoldRepeats \theDrums
     }
   >>
   \midi { }
