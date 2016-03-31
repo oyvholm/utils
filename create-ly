@@ -78,21 +78,20 @@ fi
 projtype="$1"
 projname="$2"
 
-if test "$projtype" = "piano"; then
-    mkdir "$projname" || {
-        echo $progname: $projname: Cannot create directory >&2
-        exit 1
-    }
-    cd "$projname" || {
-        echo $progname: $projname: Cannot chdir >&2
-        exit 1
-    }
+mkdir "$projname" || {
+    echo $progname: $projname: Cannot create directory >&2
+    exit 1
+}
+cd "$projname" || {
+    echo $progname: $projname: Cannot chdir >&2
+    exit 1
+}
 
+if test "$projtype" = "piano"; then
     std ly/piano-lower.lyi piano-lower.lyi -t "projname=$projname"
     std ly/piano-upper.lyi piano-upper.lyi -t "projname=$projname"
     std ly/piano.ly "$projname.ly" -t "projname=$projname"
     std ly/Makefile Makefile -t "projname=$projname"
-
 else
     echo $progname: $projtype: Unknown project type >&2
     exit 1
