@@ -38,6 +38,9 @@ dw:
 dww:
 	git dww *.ly *.lyi
 
+edit:
+	v $(NAME).ly *.lyi
+
 fresco:
 	mkdir $(FRESCOLOCKDIR)
 	(cd $(HOME)/src/other/frescobaldi; sess ./frescobaldi $(MTDIR)/$(NAME).ly; rmdir $(FRESCOLOCKDIR)) &
