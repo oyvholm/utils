@@ -65,60 +65,41 @@
     >>
   >>
   \layout { }
-  \midi { }
 }
 
 \score {
   \new StaffGroup <<
-    \new Staff \with {
+    \new Staff = "Guitar 1" \with {
       instrumentName = "Guitar 1"
       shortInstrumentName = "Gt1"
-      \omit StringNumber
+      midiInstrument = "overdriven guitar"
+      % midiMaximumVolume = #1.00
+      % midiPanPosition = 0
     } {
-      \clef "treble_8"
-      \guitarOne
-      % \bar "|."
+      \unfoldRepeats \guitarOne
     }
-    %{
-    \new TabStaff \with {
-      instrumentName = "Guitar 1"
-      shortInstrumentName = "Gt1"
-    } {
-      \guitarOne
-      % \bar "|."
-    }
-    %}
-    \new Staff \with {
+    \new Staff = "Guitar 2" \with {
       instrumentName = "Guitar 2"
       shortInstrumentName = "Gt2"
-      \omit StringNumber
+      midiInstrument = "electric guitar (clean)"
+      % midiMaximumVolume = #1.00
+      % midiPanPosition = 0
     } {
-      \clef "treble_8"
-      \guitarTwo
-      % \bar "|."
+      \unfoldRepeats \guitarTwo
     }
-    %{
-    \new TabStaff \with {
-      instrumentName = "Guitar 2"
-      shortInstrumentName = "Gt2"
+    \new Staff = "Piano" \with {
+      instrumentName = "Piano"
+      shortInstrumentName = "Pn."
+      midiInstrument = "acoustic grand"
+      % midiMaximumVolume = #1.00
+      % midiPanPosition = 0
     } {
-      \guitarTwo
-      % \bar "|."
-    }
-    %}
-    \new PianoStaff <<
-      \set PianoStaff.instrumentName = #"Piano"
-      \new Staff = "upper" {
-        \clef treble
+      <<
         \pianoUpper
-      }
-      \new Staff = "lower" {
-        \clef bass
         \pianoLower
-      }
-    >>
+      >>
+    }
   >>
-  \layout { }
   \midi { }
 }
 
