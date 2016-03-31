@@ -10,6 +10,7 @@
 }
 
 \include "guitar1.lyi"
+\include "guitar2.lyi"
 \include "piano-lower.lyi"
 \include "piano-upper.lyi"
 
@@ -30,6 +31,24 @@
       shortInstrumentName = "Gt1"
     } {
       \guitarOne
+      % \bar "|."
+    }
+    %}
+    \new Staff \with {
+      instrumentName = "Guitar 2"
+      shortInstrumentName = "Gt2"
+      \omit StringNumber
+    } {
+      \clef "treble_8"
+      \guitarTwo
+      % \bar "|."
+    }
+    %{
+    \new TabStaff \with {
+      instrumentName = "Guitar 2"
+      shortInstrumentName = "Gt2"
+    } {
+      \guitarTwo
       % \bar "|."
     }
     %}
