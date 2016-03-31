@@ -4,14 +4,14 @@
 # create-ly
 # File ID: 09750024-f729-11e5-a74f-02010e0a6634
 #
-# [Description]
+# Set up the initial files for a LilyPond project
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=create-ly
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -45,7 +45,15 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Set up the initial files for a LilyPond project
+
+Usage: $progname [options] TYPE PROJECTNAME
+
+Argument \$1 is the type of project. These values are accepted:
+  piano - standard setup for one piano
+
+Argument \$2 is the name of the directory to create and the name of the 
+main .ly file, which will be named "PROJECTNAME.ly".
 
 Options:
 
@@ -62,3 +70,30 @@ END
     exit 0
 fi
 
+if test -z "$2"; then
+    echo $progname: I need two arguments with type and project name >&2
+    exit 1
+fi
+
+projtype="$1"
+projname="$2"
+
+if test "$projtype" = "piano"; then
+    mkdir "$projname" || {
+        echo $progname: $projname: Cannot create directory >&2
+        exit 1
+    }
+    cd "$projname" || {
+        echo $progname: $projname: Cannot chdir >&2
+        exit 1
+    }
+
+    std ly/piano-lower.lyi piano-lower.lyi -t "projname=$projname"
+    std ly/piano-upper.lyi piano-upper.lyi -t "projname=$projname"
+    std ly/piano.ly "$projname.ly" -t "projname=$projname"
+    std ly/Makefile Makefile -t "projname=$projname"
+
+else
+    echo $progname: $projtype: Unknown project type >&2
+    exit 1
+fi
