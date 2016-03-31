@@ -61,7 +61,7 @@ touch:
 
 view:
 	make $(NAME).pdf
-	sess evince $(NAME).pdf
+	sess evince $(NAME).pdf &>/dev/null &
 
 wav: $(NAME).ly *.lyi
 	make $(NAME).wav
