@@ -50,6 +50,8 @@ Set up the initial files for a LilyPond project
 Usage: $progname [options] TYPE PROJECTNAME
 
 Argument \$1 is the type of project. These values are accepted:
+  band - pop/rock band with one vocal, two guitars, one bass, piano and 
+         drums
   piano - standard setup for one piano
 
 Argument \$2 is the name of the directory to create and the name of the 
@@ -87,7 +89,13 @@ cd "$projname" || {
     exit 1
 }
 
-if test "$projtype" = "piano"; then
+if test "$projtype" = "band"; then
+    for f in bass drums guitar1 guitar2 piano-lower piano-upper vocal1; do
+        std ly/$f.lyi $f.lyi -t "projname=$projname"
+    done
+    std ly/band.ly "$projname.ly" -t "projname=$projname"
+    std ly/Makefile Makefile -t "projname=$projname"
+elif test "$projtype" = "piano"; then
     std ly/piano-lower.lyi piano-lower.lyi -t "projname=$projname"
     std ly/piano-upper.lyi piano-upper.lyi -t "projname=$projname"
     std ly/piano.ly "$projname.ly" -t "projname=$projname"
