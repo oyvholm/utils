@@ -13,16 +13,18 @@
 \include "piano-upper.lyi"
 
 \score {
-  \new PianoStaff <<
-    \set PianoStaff.instrumentName = #"Piano"
-    \new Staff = "upper" {
-      \clef treble
-      \pianoUpper
-    }
-    \new Staff = "lower" {
-      \clef bass
-      \pianoLower
-    }
+  \new StaffGroup <<
+    \new PianoStaff <<
+      \set PianoStaff.instrumentName = #"Piano"
+      \new Staff = "upper" {
+        \clef treble
+        \pianoUpper
+      }
+      \new Staff = "lower" {
+        \clef bass
+        \pianoLower
+      }
+    >>
   >>
   \layout { }
   \midi { }
