@@ -5,8 +5,8 @@
 \version "2.18.2"
 
 \header {
-  title = "STDtitleDTS"
-  composer = "Øyvind A. Holm"
+  title = ""
+  composer = ""
 }
 
 \include "piano-lower.lyi"
