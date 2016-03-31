@@ -86,10 +86,12 @@
       \new Staff = "upper" {
         \clef treble
         \pianoUpper
+        % \bar "|."
       }
       \new Staff = "lower" {
         \clef bass
         \pianoLower
+        % \bar "|."
       }
     >>
     \new DrumStaff \with {
