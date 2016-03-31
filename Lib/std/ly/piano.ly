@@ -5,8 +5,11 @@
 \version "2.18.2"
 
 \header {
+  copyright = ""
   title = ""
+  subtitle = ""
   composer = ""
+  poet = ""
 }
 
 \include "piano-lower.lyi"
