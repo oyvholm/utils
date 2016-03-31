@@ -15,9 +15,18 @@
 \include "guitar2.lyi"
 \include "piano-lower.lyi"
 \include "piano-upper.lyi"
+\include "vocal1.lyi"
 
 \score {
   \new StaffGroup <<
+    \new Staff \with {
+      instrumentName = "Vocal 1"
+      shortInstrumentName = "Vc1"
+    } {
+      \vocalOne
+    }
+    \addlyrics {
+    }
     \new Staff \with {
       instrumentName = "Guitar 1"
       shortInstrumentName = "Gt1"
@@ -97,6 +106,15 @@
 
 \score {
   \new StaffGroup <<
+    \new Staff = "Vocal 1" \with {
+      instrumentName = "Vocal 1"
+      shortInstrumentName = "Vc1"
+      midiInstrument = "voice oohs"
+      % midiMaximumVolume = #1.00
+      % midiPanPosition = 0
+    } {
+      \unfoldRepeats \vocalOne
+    }
     \new Staff = "Guitar 1" \with {
       instrumentName = "Guitar 1"
       shortInstrumentName = "Gt1"
