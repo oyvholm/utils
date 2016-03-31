@@ -155,8 +155,8 @@
       % midiPanPosition = 0
     } {
       <<
-        \pianoUpper
-        \pianoLower
+        \unfoldRepeats \pianoUpper
+        \unfoldRepeats \pianoLower
       >>
     }
     \new DrumStaff \with {
