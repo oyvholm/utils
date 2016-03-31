@@ -26,6 +26,7 @@
       instrumentName = "Vocal 1"
       shortInstrumentName = "Vc1"
     } {
+      \clef treble
       \vocalOne
     }
     \addlyrics {
