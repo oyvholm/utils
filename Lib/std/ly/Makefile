@@ -54,7 +54,7 @@ slow:
 	timidity --output-24bit -T 50 $(NAME).midi
 
 swp:
-	for f in .*.swp; do git add $$(echo $$f | cut -c 2-); vim -r $$f; rm -iv $$f; done
+	for f in .*.swp; do git add $$(basename $$(echo $$f | cut -c 2-) .swp); vim -r $$f; rm -iv $$f; done
 
 touch:
 	touch $(NAME).ly
