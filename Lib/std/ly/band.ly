@@ -9,11 +9,30 @@
   composer = ""
 }
 
+\include "guitar1.lyi"
 \include "piano-lower.lyi"
 \include "piano-upper.lyi"
 
 \score {
   \new StaffGroup <<
+    \new Staff \with {
+      instrumentName = "Guitar 1"
+      shortInstrumentName = "Gt1"
+      \omit StringNumber
+    } {
+      \clef "treble_8"
+      \guitarOne
+      % \bar "|."
+    }
+    %{
+    \new TabStaff \with {
+      instrumentName = "Guitar 1"
+      shortInstrumentName = "Gt1"
+    } {
+      \guitarOne
+      % \bar "|."
+    }
+    %}
     \new PianoStaff <<
       \set PianoStaff.instrumentName = #"Piano"
       \new Staff = "upper" {
