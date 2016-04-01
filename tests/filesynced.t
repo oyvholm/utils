@@ -436,7 +436,7 @@ INSERT INTO "synced" VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
 $sql_create_todo
 $sql_bottom
 END
-        "tmpfile.txt is gone from synced.sql",
+        "tmpfile.txt is added to synced.sql with orig value",
     );
 
     # }}}
