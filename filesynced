@@ -90,7 +90,7 @@ synced.date with Git commit info.
 
 Usage: $progname [OPTIONS] COMMIT FILE [FILE [...]]
        $progname --init
-       $progname --add FILE [FILE [...]]
+       $progname --add [-t TYPE] FILE [FILE [...]]
        $progname --delete FILE [FILE [...]]
        $progname -l [-t TYPE]
        $progname -p NEWPRI FILE [FILES [...]]
@@ -133,6 +133,8 @@ Options:
   -t FILETYPE. --type FILETYPE
     Limit list to files of type FILETYPE, for example "bash" or 
     "perl-tests". SQL LIKE wildcards can be used, like '%' and '_'.
+    If used together with --add, set the 'orig' field in the database to 
+    this value, prefixed with 'Lib/std/'.
   --unlock TOKEN
     If TOKEN is correct, overwrite synced.sql with the contents from 
     $db, delete synced.slite and remove lock.
@@ -537,7 +539,13 @@ done
     echo BEGIN\;
     for f in $files; do
         if test "$opt_add" = "1"; then
-            echo "INSERT INTO synced (file) VALUES ('$f');" | $SQLITE "$db"
+            if test "$opt_type" != "%"; then
+                type_def=",orig"
+                type_val=",'Lib/std/$opt_type'"
+            else
+                unset type_def type_val
+            fi
+            echo "INSERT INTO synced (file$type_def) VALUES ('$f'$type_val);" | $SQLITE "$db"
             if test "$?" != "0"; then
                 echo -n "$progname: Cannot add \"$f\" to the database, " >&2
                 echo no entries updated >&2

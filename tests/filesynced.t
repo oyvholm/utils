@@ -420,6 +420,26 @@ END
     );
 
     # }}}
+    testcmd("$CMD --add -t bash tmpfile.txt", # {{{
+        "",
+        "",
+        0,
+        "Add tmpfile.txt again, now with -t bash",
+    );
+
+    # }}}
+    is(file_data("synced.sql"), # {{{
+        <<END,
+$sql_top
+$sql_create_synced
+INSERT INTO "synced" VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
+$sql_create_todo
+$sql_bottom
+END
+        "tmpfile.txt is gone from synced.sql",
+    );
+
+    # }}}
     diag("Clean up");
     ok(chdir(".."), "chdir ..");
     testcmd("rm -rf repo-fs-t", '', '', 0, "Delete repo-fs-t/");
