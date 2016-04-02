@@ -72,7 +72,7 @@
       shortInstrumentName = "Bs."
       \omit StringNumber
     } {
-      \clef bass
+      \clef "bass_8"
       \bassGuitar
       % \bar "|."
     }
