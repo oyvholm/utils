@@ -3,7 +3,7 @@
 % File ID: STDuuidDTS
 
 \documentclass[a4paper]{article}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[norsk]{babel}
 \usepackage{fancyhdr}
 
@@ -23,7 +23,7 @@
 \renewcommand{\footrulewidth}{0pt}
 
 \begin{document}
-\author{Øyvind A. Holm}
+\author{Ã˜yvind A. Holm}
 \title{}
 
 Teksten kommer her.
