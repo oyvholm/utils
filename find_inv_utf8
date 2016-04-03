@@ -101,7 +101,10 @@ sub is_utf8 {
         |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
     }x;
 
-    my $retval = ($text !~ m/^$UTF8*$/x) ? 0 : 1;
+    my $retval;
+    $text =~ s/$UTF8//gs;
+    $retval = length($text) ? 0 : 1;
+
     return($retval);
     # }}}
 } # is_utf8()
