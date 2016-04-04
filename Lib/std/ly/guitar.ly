@@ -15,25 +15,23 @@
 \include ".version.lyi"
 tagline = \versioninfo
 
-\include "guitar1.lyi"
+\include "guitar.lyi"
 
 \score {
   \new StaffGroup <<
     \new Staff \with {
-      instrumentName = "Guitar 1"
-      shortInstrumentName = "Gt1"
+      instrumentName = "Guitar"
       \omit StringNumber
     } {
       \clef "treble_8"
-      \guitarOne
+      \guitar
       % \bar "|."
     }
     %{
     \new TabStaff \with {
-      instrumentName = "Guitar 1"
-      shortInstrumentName = "Gt1"
+      instrumentName = "Guitar"
     } {
-      \guitarOne
+      \guitar
       % \bar "|."
     }
     %}
@@ -43,14 +41,13 @@ tagline = \versioninfo
 
 \score {
   \new StaffGroup <<
-    \new Staff = "Guitar 1" \with {
-      instrumentName = "Guitar 1"
-      shortInstrumentName = "Gt1"
-      midiInstrument = "overdriven guitar"
+    \new Staff = "Guitar" \with {
+      instrumentName = "Guitar"
+      midiInstrument = "acoustic guitar (steel)"
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
-      \unfoldRepeats \guitarOne
+      \unfoldRepeats \guitar
     }
   >>
   \midi { }
