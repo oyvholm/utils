@@ -69,6 +69,6 @@ view:
 	make $(NAME).pdf
 	sess evince $(NAME).pdf &>/dev/null &
 
-wav: $(NAME).ly *.lyi
+wav:
 	make $(NAME).wav
 	p $(NAME).wav
