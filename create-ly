@@ -52,6 +52,7 @@ Usage: $progname [options] TYPE PROJECTNAME
 Argument \$1 is the type of project. These values are accepted:
   band - pop/rock band with one vocal, two guitars, one bass, piano and 
          drums
+  guitar - one guitar
   piano - standard setup for one piano
 
 Argument \$2 is the name of the directory to create and the name of the 
@@ -94,6 +95,10 @@ if test "$projtype" = "band"; then
         std ly/$f.lyi $f.lyi -t "projname=$projname"
     done
     std ly/band.ly "$projname.ly" -t "projname=$projname"
+    std ly/Makefile Makefile -t "projname=$projname"
+elif test "$projtype" = "guitar"; then
+    std ly/guitar.lyi guitar.lyi -t "projname=$projname"
+    std ly/guitar.ly "$projname.ly" -t "projname=$projname"
     std ly/Makefile Makefile -t "projname=$projname"
 elif test "$projtype" = "piano"; then
     std ly/piano-lower.lyi piano-lower.lyi -t "projname=$projname"
