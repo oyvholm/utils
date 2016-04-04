@@ -7,29 +7,35 @@ FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
 default:
-	make $(NAME).midi $(NAME).pdf
+	make .version.lyi $(NAME).midi $(NAME).pdf
 
 $(NAME).midi: $(NAME).ly *.lyi
+	make .version.lyi
 	lilypond $(NAME).ly
 
 $(NAME).pdf: $(NAME).ly *.lyi
+	make .version.lyi
 	lilypond $(NAME).ly
 
 $(NAME).wav: $(NAME).ly *.lyi
 	make
 	timidity --output-24bit -Ow $(NAME).midi
 
+.version.lyi: $(NAME).ly *.lyi
+	git log -1 --date=format:%Y-%m-%d --format="versioninfo = \"%cd, commit %h — Engraved with LilyPond ❤\"" >.version.lyi
+
 afv:
 	mkdir $(AFVLOCKDIR)
 	(sess -- afv -l5 $(NAME).ly '*.lyi' $(NAME).midi; rmdir $(AFVLOCKDIR)) &
 
 clean:
-	rm -fv $(NAME).pdf $(NAME).wav
+	rm -fv $(NAME).pdf $(NAME).wav .version.lyi
 
 diff:
 	git diff *.ly *.lyi
 
 dist:
+	make .version.lyi
 	lilypond -dno-point-and-click $(NAME).ly
 
 dw:

@@ -12,6 +12,9 @@
   poet = ""
 }
 
+\include ".version.lyi"
+tagline = \versioninfo
+
 \include "piano-lower.lyi"
 \include "piano-upper.lyi"
 

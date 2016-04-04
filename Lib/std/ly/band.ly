@@ -12,6 +12,9 @@
   poet = ""
 }
 
+\include ".version.lyi"
+tagline = \versioninfo
+
 \include "bass.lyi"
 \include "drums.lyi"
 \include "guitar1.lyi"
