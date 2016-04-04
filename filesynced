@@ -26,6 +26,7 @@ t:\
 v\
 " -l "\
 add,\
+create-index,\
 delete,\
 help,\
 init,\
@@ -45,6 +46,7 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_add=0
+opt_create_index=0
 opt_delete=0
 opt_help=0
 opt_init=0
@@ -61,6 +63,7 @@ opt_verbose=0
 while :; do
     case "$1" in
         (--add) opt_add=1; shift ;;
+        (--create-index) opt_create_index=1; shift ;;
         (--delete) opt_delete=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (--init) opt_init=1; shift ;;
@@ -91,6 +94,7 @@ synced.date with Git commit info.
 Usage: $progname [OPTIONS] COMMIT FILE [FILE [...]]
        $progname --init
        $progname --add [-t TYPE] FILE [FILE [...]]
+       $progname --create-index
        $progname --delete FILE [FILE [...]]
        $progname -l [-t TYPE]
        $progname -p NEWPRI FILE [FILES [...]]
@@ -102,6 +106,9 @@ Options:
   --add
     Add all files specified on the command line to synced.sql, use 
     undefined sync values.
+  --create-index
+    Create database indexes to speed up operations when synced.sql is 
+    getting quite big.
   --delete
     Delete all files specified on the commandline from the database.
   -h, --help
@@ -332,6 +339,21 @@ if test "$opt_unlock" = "1"; then
         echo $progname --unlock: $lockdir: Could not remove lockdir >&2
         exit 1
     fi
+fi
+
+if test "$opt_create_index" = "1"; then
+    token=$(filesynced --lock)
+    if test -z "$(echo $token | grep ^token_)"; then
+        echo $progname --create-index: Cannot --lock >&2
+        exit 1
+    fi
+    cat <<END | $SQLITE "$db"
+CREATE INDEX IF NOT EXISTS idx_synced_file ON synced (file);
+CREATE INDEX IF NOT EXISTS idx_synced_orig ON synced (orig);
+CREATE INDEX IF NOT EXISTS idx_synced_rev ON synced (rev);
+END
+    filesynced --unlock $token
+    exit
 fi
 
 if test "$opt_patch" = "1"; then

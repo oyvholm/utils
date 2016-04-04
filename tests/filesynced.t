@@ -440,6 +440,31 @@ END
     );
 
     # }}}
+    diag("--create-index");
+    testcmd("$CMD --create-index", # {{{
+        "",
+        "",
+        0,
+        "Use with --create-index",
+    );
+
+    # }}}
+    is(file_data("synced.sql"), # {{{
+        <<END,
+$sql_top
+$sql_create_synced
+INSERT INTO "synced" VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
+$sql_create_todo
+CREATE INDEX idx_synced_file ON synced (file);
+CREATE INDEX idx_synced_orig ON synced (orig);
+CREATE INDEX idx_synced_rev ON synced (rev);
+$sql_bottom
+END
+        "synced.sql contains indexes",
+    );
+
+    # }}}
+
     diag("Clean up");
     ok(chdir(".."), "chdir ..");
     testcmd("rm -rf repo-fs-t", '', '', 0, "Delete repo-fs-t/");
