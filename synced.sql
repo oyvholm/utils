@@ -97,6 +97,8 @@ INSERT INTO "synced" VALUES('Lib/std/ly/Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/band.ly','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/bass.lyi','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/drums.lyi','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/ly/guitar.ly',NULL,NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/ly/guitar.lyi',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/guitar1.lyi','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/guitar2.lyi','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/piano-lower.lyi','',NULL,NULL);
