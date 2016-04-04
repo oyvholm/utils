@@ -95,17 +95,16 @@ if test "$projtype" = "band"; then
         std ly/$f.lyi $f.lyi -t "projname=$projname"
     done
     std ly/band.ly "$projname.ly" -t "projname=$projname"
-    std ly/Makefile Makefile -t "projname=$projname"
 elif test "$projtype" = "guitar"; then
     std ly/guitar.lyi guitar.lyi -t "projname=$projname"
     std ly/guitar.ly "$projname.ly" -t "projname=$projname"
-    std ly/Makefile Makefile -t "projname=$projname"
 elif test "$projtype" = "piano"; then
     std ly/piano-lower.lyi piano-lower.lyi -t "projname=$projname"
     std ly/piano-upper.lyi piano-upper.lyi -t "projname=$projname"
     std ly/piano.ly "$projname.ly" -t "projname=$projname"
-    std ly/Makefile Makefile -t "projname=$projname"
 else
     echo $progname: $projtype: Unknown project type >&2
     exit 1
 fi
+
+std ly/Makefile Makefile -t "projname=$projname"
