@@ -108,3 +108,4 @@ else
 fi
 
 std ly/Makefile Makefile -t "projname=$projname"
+git ignore -l .version.lyi $projname.pdf $projname.wav
