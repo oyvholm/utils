@@ -9,19 +9,19 @@ MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 default:
 	make .version.lyi $(NAME).midi $(NAME).pdf
 
-$(NAME).midi: $(NAME).ly *.lyi
+$(NAME).midi: $(NAME).ly *.lyi Makefile
 	make .version.lyi
 	lilypond $(NAME).ly
 
-$(NAME).pdf: $(NAME).ly *.lyi
+$(NAME).pdf: $(NAME).ly *.lyi Makefile
 	make .version.lyi
 	lilypond $(NAME).ly
 
-$(NAME).wav: $(NAME).ly *.lyi
+$(NAME).wav: $(NAME).ly *.lyi Makefile
 	make
 	timidity --output-24bit -Ow $(NAME).midi
 
-.version.lyi: $(NAME).ly *.lyi
+.version.lyi: $(NAME).ly *.lyi Makefile
 	git log -1 --date=format:%Y-%m-%d --format="versioninfo = \"%cd, commit %h — Engraved with LilyPond ❤\"" >.version.lyi
 
 afv:
