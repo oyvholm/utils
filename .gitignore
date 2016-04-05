@@ -2,7 +2,7 @@
 *.swp
 /.ignore/
 /Lib/std/c/compile.tmp/
-/Lib/std/ly/.version.lyi
+/Lib/std/ly/.version.ily
 /Lib/std/ly/STDprojnameDTS.ly
 /Lib/std/ly/STDprojnameDTS.midi
 /Lib/std/ly/STDprojnameDTS.pdf
