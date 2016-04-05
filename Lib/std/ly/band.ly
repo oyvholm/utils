@@ -31,6 +31,7 @@ tagline = \versioninfo
     } {
       \clef treble
       \vocalOne
+      % \bar "|."
     }
     \addlyrics {
     }
