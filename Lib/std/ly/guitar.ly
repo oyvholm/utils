@@ -12,10 +12,10 @@
   poet = ""
 }
 
-\include ".version.lyi"
+\include ".version.ily"
 tagline = \versioninfo
 
-\include "guitar.lyi"
+\include "guitar.ily"
 
 \score {
   \new StaffGroup <<

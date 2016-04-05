@@ -12,16 +12,16 @@
   poet = ""
 }
 
-\include ".version.lyi"
+\include ".version.ily"
 tagline = \versioninfo
 
-\include "bass.lyi"
-\include "drums.lyi"
-\include "guitar1.lyi"
-\include "guitar2.lyi"
-\include "piano-lower.lyi"
-\include "piano-upper.lyi"
-\include "vocal1.lyi"
+\include "bass.ily"
+\include "drums.ily"
+\include "guitar1.ily"
+\include "guitar2.ily"
+\include "piano-lower.ily"
+\include "piano-upper.ily"
+\include "vocal1.ily"
 
 \score {
   \new StaffGroup <<

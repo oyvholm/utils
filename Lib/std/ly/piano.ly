@@ -12,11 +12,11 @@
   poet = ""
 }
 
-\include ".version.lyi"
+\include ".version.ily"
 tagline = \versioninfo
 
-\include "piano-lower.lyi"
-\include "piano-upper.lyi"
+\include "piano-lower.ily"
+\include "piano-upper.ily"
 
 \score {
   \new PianoStaff <<
