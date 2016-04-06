@@ -7,45 +7,45 @@ FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
 default:
-	make .version.lyi $(NAME).midi $(NAME).pdf
+	make .version.ily $(NAME).midi $(NAME).pdf
 
-$(NAME).midi: $(NAME).ly *.lyi Makefile
-	make .version.lyi
+$(NAME).midi: $(NAME).ly *.ily Makefile
+	make .version.ily
 	lilypond $(NAME).ly
 
-$(NAME).pdf: $(NAME).ly *.lyi Makefile
-	make .version.lyi
+$(NAME).pdf: $(NAME).ly *.ily Makefile
+	make .version.ily
 	lilypond $(NAME).ly
 
-$(NAME).wav: $(NAME).ly *.lyi Makefile
+$(NAME).wav: $(NAME).ly *.ily Makefile
 	make
 	timidity --output-24bit -Ow $(NAME).midi
 
-.version.lyi: $(NAME).ly *.lyi Makefile
-	git log -1 --date=format:%Y-%m-%d --format="versioninfo = \"%cd, commit %h — Engraved with LilyPond ❤\"" . >.version.lyi
+.version.ily: $(NAME).ly *.ily Makefile
+	git log -1 --date=format:%Y-%m-%d --format="versioninfo = \"%cd, commit %h — Engraved with LilyPond ❤\"" . >.version.ily
 
 afv:
 	mkdir $(AFVLOCKDIR)
-	(sess -- afv -l5 $(NAME).ly '*.lyi' $(NAME).midi; rmdir $(AFVLOCKDIR)) &
+	(sess -- afv -l5 $(NAME).ly '*.ily' $(NAME).midi; rmdir $(AFVLOCKDIR)) &
 
 clean:
-	rm -fv $(NAME).pdf $(NAME).wav .version.lyi
+	rm -fv $(NAME).pdf $(NAME).wav .version.ily
 
 diff:
-	git diff *.ly *.lyi
+	git diff *.ly *.ily
 
 dist:
-	make .version.lyi
+	make .version.ily
 	lilypond -dno-point-and-click $(NAME).ly
 
 dw:
-	git dw *.ly *.lyi
+	git dw *.ly *.ily
 
 dww:
-	git dww *.ly *.lyi
+	git dww *.ly *.ily
 
 edit:
-	v $(NAME).ly *.lyi
+	v $(NAME).ly *.ily
 
 fresco:
 	mkdir $(FRESCOLOCKDIR)
