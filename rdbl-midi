@@ -13,4 +13,4 @@
 progname=rdbl-midi
 VERSION=0.1.0
 
-midi2ly -o - "$@" | r
+lilymidi --dump --pretty "$@" | grep -v ^Filename:
