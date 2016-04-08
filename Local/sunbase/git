@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# File ID: 686ccdde-fa1a-11e5-9cac-fefdb24f8e10
-
-TZ=CET /usr/local/bin/git "$@"
