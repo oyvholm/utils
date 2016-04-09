@@ -4,7 +4,7 @@
 # ga-getnew
 # File ID: 8af4d956-f358-11e4-b717-000df06acc56
 #
-# Get new files from the last week (can be overridden) that haven't got 
+# Get new files from the last month (can be overridden) that haven't got 
 # enough copies in git-annex yet, then execute a fast fsck to check that 
 # the files have enough copies.
 #
@@ -34,13 +34,13 @@ ga sync 2>&1
 echo $progname: ga sync \}\}\}
 
 msg ga get --auto
-git allfiles --since=1.week "$@" |
+git allfiles --since=1.month "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga get --auto
 
-msg git allfiles --since=1.week $*
+msg git allfiles --since=1.month $*
 msg ga fsck --fast --quiet
-git allfiles --since=1.week "$@" |
+git allfiles --since=1.month "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga fsck --fast --quiet
 
