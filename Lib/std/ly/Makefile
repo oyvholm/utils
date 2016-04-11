@@ -6,6 +6,7 @@ AFVLOCKDIR = $(HOME)/.$(NAME)-afv.lock
 FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
+.PHONY: default
 default:
 	make .version.ily $(NAME).midi $(NAME).pdf
 
