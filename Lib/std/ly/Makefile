@@ -23,7 +23,7 @@ $(NAME).wav: $(NAME).ly *.ily Makefile
 	timidity --output-24bit -Ow $(NAME).midi
 
 .version.ily: $(NAME).ly *.ily Makefile
-	git log -1 --date=format:%Y-%m-%d --format="versioninfo = \"%cd, commit %h — Engraved with LilyPond ❤\"" . >.version.ily
+	git log -1 --date=format:%Y-%m-%d --format="versioninfo = #(string-append \"%cd, commit %h — Engraved with LilyPond v\" (lilypond-version) \" ❤\")" . >.version.ily
 
 .PHONY: afv
 afv:
