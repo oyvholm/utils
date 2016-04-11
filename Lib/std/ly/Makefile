@@ -6,17 +6,19 @@ AFVLOCKDIR = $(HOME)/.$(NAME)-afv.lock
 FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
+LILYPOND = lilypond
+
 .PHONY: default
 default:
 	make .version.ily $(NAME).midi $(NAME).pdf
 
 $(NAME).midi: $(NAME).ly *.ily Makefile
 	make .version.ily
-	lilypond $(NAME).ly
+	$(LILYPOND) $(NAME).ly
 
 $(NAME).pdf: $(NAME).ly *.ily Makefile
 	make .version.ily
-	lilypond $(NAME).ly
+	$(LILYPOND) $(NAME).ly
 
 $(NAME).wav: $(NAME).ly *.ily Makefile
 	make
@@ -41,7 +43,7 @@ diff:
 .PHONY: dist
 dist:
 	make .version.ily
-	lilypond -dno-point-and-click $(NAME).ly
+	$(LILYPOND) -dno-point-and-click $(NAME).ly
 
 .PHONY: dw
 dw:
