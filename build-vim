@@ -213,7 +213,7 @@ trap cleanup EXIT
 
 srcdir="$HOME/src/other/vim"
 exec_rcfile
-if test ! -f "$srcdir/Vim.info"; then
+if test ! -d "$srcdir/READMEdir"; then
     msg -s $srcdir/ doesn\'t exist, clone it &&
     msg -n -s "from $cloneurl (y/n)?$sim_str " &&
     continue_if_y &&
