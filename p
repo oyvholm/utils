@@ -18,12 +18,14 @@ a:\
 h\
 q\
 s\
+t:\
 v\
 " -l "\
 amplify:,\
 help,\
 quiet,\
 slow,\
+tempo:,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -34,6 +36,7 @@ opt_amplify=''
 opt_help=0
 opt_quiet=0
 opt_slow=0
+opt_tempo=''
 opt_verbose=0
 while :; do
     case "$1" in
@@ -41,6 +44,7 @@ while :; do
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-s|--slow) opt_slow=1; shift ;;
+        (-t|--tempo) opt_tempo=$2; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -67,6 +71,9 @@ Options:
     Be more quiet. Can be repeated to increase silence.
   -s, --slow
     Use less resources when playing movie files.
+  -t TEMPO, --tempo TEMPO
+    Play audio with tempo TEMPO without changing the pitch.
+    FIXME: Make it work with video too.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -91,5 +98,10 @@ if test -n "$opt_amplify"; then
     amplify_str=" --af=volume=$opt_amplify:0"
 fi
 test "$opt_slow" = "1" && slow=" -lavdopts fast:skiploopfilter=all"
+if test -n "$opt_tempo"; then
+    tempo_str=" --af=scaletempo=scale=$opt_tempo"
+else
+    tempo_str=
+fi
 test -e /dg-vbox.mrk && vo_str=" -vo x11 -zoom"
-$sess_str mplayer -fs -osdlevel 3$slow$vo_str$ao_str$amplify_str "$@"
+$sess_str mplayer -fs -osdlevel 3$tempo_str$slow$vo_str$ao_str$amplify_str "$@"
