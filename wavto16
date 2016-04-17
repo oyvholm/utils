@@ -14,10 +14,12 @@ progname=wavto16
 VERSION=0.1.0
 
 ARGS="$(getopt -o "\
+c:\
 h\
 q\
 v\
 " -l "\
+channels:,\
 help,\
 quiet,\
 verbose,\
@@ -26,11 +28,13 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_channels=''
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-c|--channels) opt_channels=$2; shift 2 ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -52,6 +56,8 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
+  -c NUM, --channels NUM
+    Use NUM channels in the resulting .wav file.
   -h, --help
     Show this help.
   -q, --quiet
@@ -70,10 +76,22 @@ if test -z "$1"; then
     exit 1
 fi
 
+if test -n "$opt_channels"; then
+    echo "$opt_channels" | grep -qE '^[1-8]$' || {
+        echo -n $progname: Argument to -c/--channels must be an integer >&2
+        echo " between 1 and 8" >&2
+        exit 1
+    }
+    chan_str=",channels=$opt_channels"
+else
+    chan_str=''
+fi
+
 for f in "$@"; do
     wavfile="$f"
     tmpfile="$f.tmp.wav"
     cp -p "$wavfile" "$wavfile.bck"
-    mplayer -novideo -af format=s16le -ao "pcm:file=$tmpfile" "$wavfile"
+    mplayer -novideo -af format=s16le$chan_str \
+      -ao "pcm:file=$tmpfile" "$wavfile"
     mv "$tmpfile" "$wavfile"
 done
