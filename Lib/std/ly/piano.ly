@@ -22,35 +22,39 @@ tagline = \versioninfo
 \include "piano-upper.ily"
 
 \score {
-  \new PianoStaff <<
-    \set PianoStaff.instrumentName = #"Piano"
-    \new Staff = "upper" {
-      \clef treble
-      \pianoUpper
-      % \bar "|."
-    }
-    \new Staff = "lower" {
-      \clef bass
-      \pianoLower
-      % \bar "|."
-    }
+  \new StaffGroup <<
+    \new PianoStaff <<
+      \set PianoStaff.instrumentName = #"Piano"
+      \new Staff = "upper" {
+        \clef treble
+        \pianoUpper
+        % \bar "|."
+      }
+      \new Staff = "lower" {
+        \clef bass
+        \pianoLower
+        % \bar "|."
+      }
+    >>
   >>
   \layout { }
 }
 
 \score {
-  \new Staff = "Piano" \with {
-    instrumentName = "Piano"
-    shortInstrumentName = "Pn."
-    midiInstrument = "acoustic grand"
-    % midiMaximumVolume = #1.00
-    % midiPanPosition = 0
-  } {
-    <<
-      \unfoldRepeats \pianoUpper
-      \unfoldRepeats \pianoLower
-    >>
-  }
+  \new StaffGroup <<
+    \new Staff = "Piano" \with {
+      instrumentName = "Piano"
+      shortInstrumentName = "Pn."
+      midiInstrument = "acoustic grand"
+      % midiMaximumVolume = #1.00
+      % midiPanPosition = 0
+    } {
+      <<
+        \unfoldRepeats \pianoUpper
+        \unfoldRepeats \pianoLower
+      >>
+    }
+  >>
   \midi { }
 }
 
