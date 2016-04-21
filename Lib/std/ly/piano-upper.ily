@@ -6,6 +6,7 @@ pianoUpper = \relative c'' {
 
 % Begin
 
+  \initTempo
   \key c \major
   \time 4/4
 

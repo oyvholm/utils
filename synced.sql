@@ -104,6 +104,7 @@ INSERT INTO "synced" VALUES('Lib/std/ly/guitar2.ily','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/piano-lower.ily','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/piano-upper.ily','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/piano.ly','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/ly/test-ly-files','Lib/std/bash','0671201d54a5511d200740ced43b9afc5ec848f8','2016-04-21 07:12:00');
 INSERT INTO "synced" VALUES('Lib/std/ly/vocal1.ily','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/markdown','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/mdwn','',NULL,NULL);

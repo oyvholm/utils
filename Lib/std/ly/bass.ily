@@ -6,6 +6,7 @@ bassGuitar = {
 
 % Begin
 
+  \initTempo
   \key c \major
   \time 4/4
 

@@ -12,8 +12,13 @@
   poet = ""
 }
 
+% showFirstLength = R1*1
+% showLastLength = R1*1
+
 \include ".version.ily"
 tagline = \versioninfo
+
+initTempo = { \tempo 4 = 120 }
 
 \include "bass.ily"
 \include "drums.ily"
@@ -22,6 +27,10 @@ tagline = \versioninfo
 \include "piano-lower.ily"
 \include "piano-upper.ily"
 \include "vocal1.ily"
+
+countOff = \repeat unfold 4 \drummode { ss4 }
+
+metronome = \repeat unfold 4 \drummode { ss4 }
 
 \score {
   \new StaffGroup <<
@@ -110,6 +119,15 @@ tagline = \versioninfo
       \theDrums
       % \bar "|."
     }
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+    } {
+      \initTempo
+      \clef percussion
+      \metronome
+      % \bar "|."
+    }
   >>
   \layout { }
 }
@@ -123,6 +141,8 @@ tagline = \versioninfo
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
+      \countOff
       \unfoldRepeats \vocalOne
     }
     \new Staff = "Guitar 1" \with {
@@ -132,6 +152,8 @@ tagline = \versioninfo
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
+      \countOff
       \unfoldRepeats \guitarOne
     }
     \new Staff = "Guitar 2" \with {
@@ -141,6 +163,8 @@ tagline = \versioninfo
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
+      \countOff
       \unfoldRepeats \guitarTwo
     }
     \new Staff \with {
@@ -150,6 +174,8 @@ tagline = \versioninfo
       % midiMaximumVolume = #1.60
       % midiPanPosition = 0
     } {
+      \initTempo
+      \countOff
       \unfoldRepeats \bassGuitar
     }
     \new Staff = "Piano" \with {
@@ -159,6 +185,8 @@ tagline = \versioninfo
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
+      \countOff
       <<
         \unfoldRepeats \pianoUpper
         \unfoldRepeats \pianoLower
@@ -169,7 +197,18 @@ tagline = \versioninfo
       shortInstrumentName = "Drm"
       % midiMaximumVolume = #1.00
     } {
+      \initTempo
+      \countOff
       \unfoldRepeats \theDrums
+    }
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+      % midiMaximumVolume = #1.00
+    } {
+      \initTempo
+      \countOff
+      \unfoldRepeats \metronome
     }
   >>
   \midi { }

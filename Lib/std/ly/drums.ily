@@ -6,6 +6,7 @@ theDrums = \drummode {
 
 % Begin
 
+  \initTempo
   \time 4/4
 
   s1 |

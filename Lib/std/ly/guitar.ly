@@ -12,10 +12,19 @@
   poet = ""
 }
 
+% showFirstLength = R1*1
+% showLastLength = R1*1
+
 \include ".version.ily"
 tagline = \versioninfo
 
+initTempo = { \tempo 4 = 120 }
+
 \include "guitar.ily"
+
+countOff = \repeat unfold 4 \drummode { ss4 }
+
+metronome = \repeat unfold 4 \drummode { ss4 }
 
 \score {
   \new StaffGroup <<
@@ -35,6 +44,15 @@ tagline = \versioninfo
       % \bar "|."
     }
     %}
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+    } {
+      \initTempo
+      \clef percussion
+      \metronome
+      % \bar "|."
+    }
   >>
   \layout { }
 }
@@ -47,7 +65,18 @@ tagline = \versioninfo
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
+      \countOff
       \unfoldRepeats \guitar
+    }
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+      % midiMaximumVolume = #1.00
+    } {
+      \initTempo
+      \countOff
+      \unfoldRepeats \metronome
     }
   >>
   \midi { }
