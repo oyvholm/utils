@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=test-ly-files
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -62,3 +62,12 @@ END
     exit 0
 fi
 
+rm -f STDprojnameDTS.ly
+
+for f in *.ly; do
+    echo
+    echo === $f
+    ln -fnsv $f STDprojnameDTS.ly
+    make touch
+    make || exit 1
+done
