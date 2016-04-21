@@ -20,6 +20,8 @@ tagline = \versioninfo
 
 \include "guitar.ily"
 
+metronome = \repeat unfold 4 \drummode { ss4 }
+
 \score {
   \new StaffGroup <<
     \new Staff \with {
@@ -38,6 +40,14 @@ tagline = \versioninfo
       % \bar "|."
     }
     %}
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+    } {
+      \clef percussion
+      \metronome
+      % \bar "|."
+    }
   >>
   \layout { }
 }
@@ -51,6 +61,13 @@ tagline = \versioninfo
       % midiPanPosition = 0
     } {
       \unfoldRepeats \guitar
+    }
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+      % midiMaximumVolume = #1.00
+    } {
+      \unfoldRepeats \metronome
     }
   >>
   \midi { }

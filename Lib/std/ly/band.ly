@@ -26,6 +26,8 @@ tagline = \versioninfo
 \include "piano-upper.ily"
 \include "vocal1.ily"
 
+metronome = \repeat unfold 4 \drummode { ss4 }
+
 \score {
   \new StaffGroup <<
     \new Staff \with {
@@ -113,6 +115,14 @@ tagline = \versioninfo
       \theDrums
       % \bar "|."
     }
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+    } {
+      \clef percussion
+      \metronome
+      % \bar "|."
+    }
   >>
   \layout { }
 }
@@ -173,6 +183,13 @@ tagline = \versioninfo
       % midiMaximumVolume = #1.00
     } {
       \unfoldRepeats \theDrums
+    }
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+      % midiMaximumVolume = #1.00
+    } {
+      \unfoldRepeats \metronome
     }
   >>
   \midi { }
