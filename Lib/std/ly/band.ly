@@ -18,6 +18,8 @@
 \include ".version.ily"
 tagline = \versioninfo
 
+initTempo = { \tempo 4 = 120 }
+
 \include "bass.ily"
 \include "drums.ily"
 \include "guitar1.ily"
@@ -119,6 +121,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
     } {
+      \initTempo
       \clef percussion
       \metronome
       % \bar "|."
@@ -136,6 +139,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
       \unfoldRepeats \vocalOne
     }
     \new Staff = "Guitar 1" \with {
@@ -145,6 +149,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
       \unfoldRepeats \guitarOne
     }
     \new Staff = "Guitar 2" \with {
@@ -154,6 +159,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
       \unfoldRepeats \guitarTwo
     }
     \new Staff \with {
@@ -163,6 +169,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.60
       % midiPanPosition = 0
     } {
+      \initTempo
       \unfoldRepeats \bassGuitar
     }
     \new Staff = "Piano" \with {
@@ -172,6 +179,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
       <<
         \unfoldRepeats \pianoUpper
         \unfoldRepeats \pianoLower
@@ -182,6 +190,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       shortInstrumentName = "Drm"
       % midiMaximumVolume = #1.00
     } {
+      \initTempo
       \unfoldRepeats \theDrums
     }
     \new DrumStaff \with {
@@ -189,6 +198,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       shortInstrumentName = "Mt."
       % midiMaximumVolume = #1.00
     } {
+      \initTempo
       \unfoldRepeats \metronome
     }
   >>

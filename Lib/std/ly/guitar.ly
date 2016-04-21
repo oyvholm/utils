@@ -18,6 +18,8 @@
 \include ".version.ily"
 tagline = \versioninfo
 
+initTempo = { \tempo 4 = 120 }
+
 \include "guitar.ily"
 
 metronome = \repeat unfold 4 \drummode { ss4 }
@@ -44,6 +46,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
     } {
+      \initTempo
       \clef percussion
       \metronome
       % \bar "|."
@@ -60,6 +63,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
+      \initTempo
       \unfoldRepeats \guitar
     }
     \new DrumStaff \with {
@@ -67,6 +71,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       shortInstrumentName = "Mt."
       % midiMaximumVolume = #1.00
     } {
+      \initTempo
       \unfoldRepeats \metronome
     }
   >>
