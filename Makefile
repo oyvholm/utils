@@ -26,6 +26,7 @@ remotes:
 
 test:
 	cd tests && $(MAKE)
+	cd Lib/std/ly && ./test-ly-files
 	cd Lib/std/c && ./compile
 	cd src/fldb/tests && $(MAKE)
 	cd src/smsum/tests && $(MAKE)
