@@ -240,9 +240,15 @@ END
     ok(chdir("ga-sumsize-repo"), "chdir ga-sumsize-repo");
     likecmd("ga unused", # {{{
         '/^.+' .
-            'SHA256-s1000--541b3e9daa09b20bf85fa273e5cbd3e80185aa4ec298e765db87742b70138a53\n' .
-            '.+' .
-            'SHA256-s123--409a7f83ac6b31dc8c77e3ec18038f209bd2f545e0f4177c2e2381aa4e067b49\n' .
+            '(' .
+                'SHA256-s1000--541b3e9daa09b20bf85fa273e5cbd3e80185aa4ec298e765db87742b70138a53\n' .
+                '.+' .
+                'SHA256-s123--409a7f83ac6b31dc8c77e3ec18038f209bd2f545e0f4177c2e2381aa4e067b49\n' .
+            '|' .
+                'SHA256-s123--409a7f83ac6b31dc8c77e3ec18038f209bd2f545e0f4177c2e2381aa4e067b49\n' .
+                '.+' .
+                'SHA256-s1000--541b3e9daa09b20bf85fa273e5cbd3e80185aa4ec298e765db87742b70138a53\n' .
+            ')' .
             '.+' .
             'ga-sumsize: Total size of keys: 1123 \(1\.1K\)\n' .
             '$/s',
