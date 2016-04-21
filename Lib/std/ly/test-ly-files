@@ -11,13 +11,15 @@
 #=======================================================================
 
 progname=test-ly-files
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
+a\
 h\
 q\
 v\
 " -l "\
+all,\
 help,\
 quiet,\
 verbose,\
@@ -26,11 +28,13 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_all=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-a|--all) opt_all=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -49,6 +53,8 @@ Usage: $progname [options]
 
 Options:
 
+  -a, --all
+    Also run "tm" to check the MIDI and "evince" to check the PDF.
   -h, --help
     Show this help.
   -q, --quiet
@@ -70,4 +76,10 @@ for f in *.ly; do
     ln -fnsv $f STDprojnameDTS.ly
     make touch
     make || exit 1
+    if test "$opt_all" = "1"; then
+        tm STDprojnameDTS.midi
+        evince STDprojnameDTS.pdf
+    fi
 done
+
+rm -f STDprojnameDTS.{ly,midi,pdf}
