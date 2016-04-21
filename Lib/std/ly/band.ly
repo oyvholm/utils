@@ -12,6 +12,9 @@
   poet = ""
 }
 
+% showFirstLength = R1*1
+% showLastLength = R1*1
+
 \include ".version.ily"
 tagline = \versioninfo
 
