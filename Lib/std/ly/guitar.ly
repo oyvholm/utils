@@ -22,6 +22,8 @@ initTempo = { \tempo 4 = 120 }
 
 \include "guitar.ily"
 
+countOff = \repeat unfold 4 \drummode { ss4 }
+
 metronome = \repeat unfold 4 \drummode { ss4 }
 
 \score {
@@ -64,6 +66,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiPanPosition = 0
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \guitar
     }
     \new DrumStaff \with {
@@ -72,6 +75,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \metronome
     }
   >>

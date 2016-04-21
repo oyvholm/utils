@@ -28,6 +28,8 @@ initTempo = { \tempo 4 = 120 }
 \include "piano-upper.ily"
 \include "vocal1.ily"
 
+countOff = \repeat unfold 4 \drummode { ss4 }
+
 metronome = \repeat unfold 4 \drummode { ss4 }
 
 \score {
@@ -140,6 +142,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiPanPosition = 0
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \vocalOne
     }
     \new Staff = "Guitar 1" \with {
@@ -150,6 +153,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiPanPosition = 0
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \guitarOne
     }
     \new Staff = "Guitar 2" \with {
@@ -160,6 +164,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiPanPosition = 0
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \guitarTwo
     }
     \new Staff \with {
@@ -170,6 +175,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiPanPosition = 0
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \bassGuitar
     }
     \new Staff = "Piano" \with {
@@ -180,6 +186,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiPanPosition = 0
     } {
       \initTempo
+      \countOff
       <<
         \unfoldRepeats \pianoUpper
         \unfoldRepeats \pianoLower
@@ -191,6 +198,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \theDrums
     }
     \new DrumStaff \with {
@@ -199,6 +207,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
       % midiMaximumVolume = #1.00
     } {
       \initTempo
+      \countOff
       \unfoldRepeats \metronome
     }
   >>
