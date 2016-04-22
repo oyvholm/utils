@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=audacity
-VERSION=0.1.0
+VERSION=0.2.0
 
 if test -e /usr/bin/audacity; then
     /usr/bin/audacity "$@" &>/dev/null

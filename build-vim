@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=build-vim
-VERSION=0.3.0
+VERSION=0.4.0
 rcfile="$HOME/.${progname}rc"
 configure_opts="--with-features=huge --with-x --enable-multibyte"
 cloneurl=https://github.com/vim/vim.git
