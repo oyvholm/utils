@@ -13,12 +13,11 @@
 #=======================================================================
 
 progname=dir-elems
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
 q\
-r\
 s\
 v\
 " -l "\
@@ -33,14 +32,12 @@ eval set -- "$ARGS"
 
 opt_help=0
 opt_quiet=0
-opt_recursive=0
 opt_subtree=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-r) opt_recursive=1; opt_subtree=1; shift ;;
         (-s|--subtree) opt_subtree=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -49,12 +46,6 @@ while :; do
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
-
-# FIXME: Remove -r after 2016-02-06, that's three months warning
-if test "$opt_recursive" = "1"; then
-    echo $progname: The -r option is obsolete and will be removed soon >&2
-    echo $progname: Please use -s/--subtree instead >&2
-fi
 
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
