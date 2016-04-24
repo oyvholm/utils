@@ -16,7 +16,14 @@
 % showLastLength = R1*1
 
 \include ".version.ily"
-tagline = \versioninfo
+
+\paper {
+  oddFooterMarkup = \markup {
+    \fill-line {
+      \center-column { \versioninfo }
+    }
+  }
+}
 
 initTempo = { \tempo 4 = 120 }
 
