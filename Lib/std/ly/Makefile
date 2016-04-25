@@ -26,6 +26,7 @@ $(NAME).wav: $(NAME).ly *.ily Makefile
 
 $(NAME).mp3: $(NAME).wav $(NAME).ly *.ily Makefile
 	make $(NAME).wav
+	rm -fv $(NAME).mp3
 	wav_to_mp3 $(NAME).wav
 
 .version.ily: $(NAME).ly *.ily Makefile
