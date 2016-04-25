@@ -24,6 +24,10 @@ $(NAME).wav: $(NAME).ly *.ily Makefile
 	make
 	timidity --output-24bit -Ow $(NAME).midi
 
+$(NAME).mp3: $(NAME).wav $(NAME).ly *.ily Makefile
+	make $(NAME).wav
+	wav_to_mp3 $(NAME).wav
+
 .version.ily: $(NAME).ly *.ily Makefile
 	git log -1 --date=format:%Y-%m-%d --format="versioninfo = #(string-append \"%cd, commit %h — Engraved with LilyPond v\" (lilypond-version) \" ❤\")" . >.version.ily
 
@@ -34,7 +38,7 @@ afv:
 
 .PHONY: clean
 clean:
-	rm -fv $(NAME).pdf $(NAME).wav .version.ily
+	rm -fv $(NAME).mp3 $(NAME).pdf $(NAME).wav .version.ily
 
 .PHONY: diff
 diff:
@@ -61,6 +65,10 @@ edit:
 fresco:
 	mkdir $(FRESCOLOCKDIR)
 	(cd $(HOME)/src/other/frescobaldi; sess ./frescobaldi $(MTDIR)/$(NAME).ly; rmdir $(FRESCOLOCKDIR)) &
+
+.PHONY: mp3
+mp3:
+	make $(NAME).mp3
 
 .PHONY: play
 play:
