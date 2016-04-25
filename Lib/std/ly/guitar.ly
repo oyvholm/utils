@@ -37,6 +37,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
   \new StaffGroup <<
     \new Staff \with {
       instrumentName = "Guitar"
+      shortInstrumentName = "Gt."
       \omit StringNumber
     } {
       \clef "treble_8"
@@ -46,6 +47,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
     %{
     \new TabStaff \with {
       instrumentName = "Guitar"
+      shortInstrumentName = "Gt."
     } {
       \guitar
       % \bar "|."
@@ -68,6 +70,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
   \new StaffGroup <<
     \new Staff = "Guitar" \with {
       instrumentName = "Guitar"
+      shortInstrumentName = "Gt."
       midiInstrument = "acoustic guitar (steel)"
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
