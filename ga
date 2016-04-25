@@ -72,7 +72,10 @@ if test "$1" = "init"; then
         exit 1
     fi
 else
-    test -z "$(git config --get annex.uuid)" && { echo $progname: annex.uuid is not defined, aborting >&2; exit 1; }
+    if test -z "$(git config --get annex.uuid)"; then
+        echo $progname: annex.uuid is not defined, aborting >&2
+        exit 1
+    fi
 fi
 
 # Check that "git annex pre-commit ." is commented out in 
