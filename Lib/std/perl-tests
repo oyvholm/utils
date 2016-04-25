@@ -147,10 +147,11 @@ sub testcmd {
         BAIL_OUT("testcmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
+    my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('',
-        "\"$Cmd\"",
+        $cmd_outp_str,
         defined($Desc)
-            ? " - $Desc"
+            ? $Desc
             : ''
     );
     my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
@@ -179,10 +180,11 @@ sub likecmd {
         BAIL_OUT("likecmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
+    my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('',
-        "\"$Cmd\"",
+        $cmd_outp_str,
         defined($Desc)
-            ? " - $Desc"
+            ? $Desc
             : ''
     );
     my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
