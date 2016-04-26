@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=l
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -64,4 +64,4 @@ END
     exit 0
 fi
 
-ls -la --color=auto --full-time "$@"
+ls -la --color=always --full-time "$@" | less -r
