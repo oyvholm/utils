@@ -419,7 +419,7 @@ INSERT INTO "synced" VALUES('klokke','Lib/std/perl','6b69d50311a29cc126fc9fac695
 INSERT INTO "synced" VALUES('klokkesig-conv','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('konvflac','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('kopier_bilder','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('l','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('l','Lib/std/bash','159ac6f91192dd221e690a7237c452583ff0441f','2016-04-26 00:37:57');
 INSERT INTO "synced" VALUES('l33t','http://users.tpg.com.au/adsln4yb/Specials/l33t',NULL,NULL);
 INSERT INTO "synced" VALUES('lag3d','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('lag_gqv','Lib/std/bash',NULL,NULL);
@@ -894,7 +894,6 @@ INSERT INTO "todo" VALUES('kar',3,NULL);
 INSERT INTO "todo" VALUES('kbd',3,NULL);
 INSERT INTO "todo" VALUES('keyw',3,NULL);
 INSERT INTO "todo" VALUES('kopier_bilder',3,NULL);
-INSERT INTO "todo" VALUES('l',2,NULL);
 INSERT INTO "todo" VALUES('lag3d',1,NULL);
 INSERT INTO "todo" VALUES('lag_gqv',1,NULL);
 INSERT INTO "todo" VALUES('lag_linker',3,NULL);
