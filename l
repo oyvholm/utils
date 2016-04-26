@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=l
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -64,10 +64,4 @@ END
     exit 0
 fi
 
-if [ -e /nett2.mrk ]; then
-    ls -la --color=auto "$@"
-elif [ -e $HOME/.n900.mrk ]; then
-    ls -la "$@"
-else
-    ls -la --color=auto --full-time "$@"
-fi
+ls -la --color=auto --full-time "$@"
