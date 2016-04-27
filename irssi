@@ -3,11 +3,16 @@
 #=======================================================================
 # irssi
 # File ID: 8e00c630-8d1d-11e2-ab91-fefdb24f8e10
+#
 # Start irssi(1) using the only acceptable time zone ever
 # (Han som oppfant sommertid skulle hatt i ræven.)
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=irssi
+VERSION=0.1.0
 
 if test -e /usr/local/bin/irssi; then
     irssi_cmd=/usr/local/bin/irssi
