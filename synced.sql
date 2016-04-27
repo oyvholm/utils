@@ -16,10 +16,10 @@ CREATE TABLE synced (
     CONSTRAINT synced_date_valid
       CHECK (date IS NULL OR datetime(date) IS NOT NULL)
 );
-INSERT INTO "synced" VALUES('.gitattributes','',NULL,NULL);
+INSERT INTO "synced" VALUES('.gitattributes','','',NULL);
 INSERT INTO "synced" VALUES('.gitignore','','',NULL);
-INSERT INTO "synced" VALUES('.gitmodules','',NULL,NULL);
-INSERT INTO "synced" VALUES('.mailmap','',NULL,NULL);
+INSERT INTO "synced" VALUES('.gitmodules','','',NULL);
+INSERT INTO "synced" VALUES('.mailmap','','',NULL);
 INSERT INTO "synced" VALUES('256colors2.pl','',NULL,NULL);
 INSERT INTO "synced" VALUES('Add_test','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('BUGS','',NULL,NULL);
@@ -65,8 +65,8 @@ INSERT INTO "synced" VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2
 INSERT INTO "synced" VALUES('Lib/std/bash','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/bash-no-getopt','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
 INSERT INTO "synced" VALUES('Lib/std/bisect','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitattributes','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitignore','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitattributes','','',NULL);
+INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitignore','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/Makefile','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/create-html','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/loop-stat','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
@@ -110,12 +110,12 @@ INSERT INTO "synced" VALUES('Lib/std/ly/vocal1.ily','Lib/std/ly/empty.ily','9028
 INSERT INTO "synced" VALUES('Lib/std/markdown','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/mdwn','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/musicxml','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/perl','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/perl','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-cgi','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-tests','Lib/std/perl','6a98e153551866cee0f6eeb22d4eeee8f3dfb2fb','2015-10-30 00:30:36');
 INSERT INTO "synced" VALUES('Lib/std/perl-tests-Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-tests.tagdesc','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/python','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/python','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/svg','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/xhtml','',NULL,NULL);
