@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=filesynced
-VERSION=0.6.0
+VERSION=0.6.1
 
 SQLITE=sqlite3
 bin="$HOME/bin"
@@ -353,6 +353,7 @@ if test "$opt_unlock" = "1"; then
 fi
 
 if test "$opt_unsynced" = "1"; then
+    msg 2 Perform --unsynced stuff
     token=$(filesynced --lock)
     if test -z "$(echo $token | grep ^token_)"; then
         echo $progname --unsynced: Cannot --lock >&2
@@ -372,6 +373,7 @@ END
 fi
 
 if test "$opt_create_index" = "1"; then
+    msg 2 Perform --create-index stuff
     token=$(filesynced --lock)
     if test -z "$(echo $token | grep ^token_)"; then
         echo $progname --create-index: Cannot --lock >&2
