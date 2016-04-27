@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=filesynced
-VERSION=0.5.0
+VERSION=0.6.0
 
 SQLITE=sqlite3
 bin="$HOME/bin"
@@ -39,6 +39,7 @@ random,\
 timeout:,\
 type:,\
 unlock,\
+unsynced,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -59,6 +60,7 @@ opt_random=0
 opt_timeout=''
 opt_type='%'
 opt_unlock=0
+opt_unsynced=0
 opt_verbose=0
 while :; do
     case "$1" in
@@ -76,6 +78,7 @@ while :; do
         (--timeout) opt_timeout=$2; shift 2 ;;
         (-t|--type) opt_type=$2; shift 2 ;;
         (--unlock) opt_unlock=1; shift ;;
+        (--unsynced) opt_unsynced=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -100,6 +103,7 @@ Usage: $progname [OPTIONS] COMMIT FILE [FILE [...]]
        $progname -p NEWPRI FILE [FILES [...]]
        $progname --lock
        $progname --unlock TOKEN
+       $progname --unsynced [OPTIONS] [FILES] [ -- GIT_OPTIONS ]
 
 Options:
 
@@ -145,6 +149,13 @@ Options:
   --unlock TOKEN
     If TOKEN is correct, overwrite synced.sql with the contents from 
     $db, delete synced.slite and remove lock.
+  --unsynced
+    Generate a list of all filenames that don't have 'rev' defined in 
+    synced.sql, i.e., those that haven't been synced yet. Arguments are 
+    delivered to git-allfiles(1). --since is useful with this, for 
+    example "--since=1.year". Options meant for git-allfiles must come 
+    after a " -- " to separate them from the argument parsing done by 
+    $progname.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -339,6 +350,25 @@ if test "$opt_unlock" = "1"; then
         echo $progname --unlock: $lockdir: Could not remove lockdir >&2
         exit 1
     fi
+fi
+
+if test "$opt_unsynced" = "1"; then
+    token=$(filesynced --lock)
+    if test -z "$(echo $token | grep ^token_)"; then
+        echo $progname --unsynced: Cannot --lock >&2
+        exit 1
+    fi
+    git allfiles "$@" | strip-nonexisting | while read f; do
+        cat <<END
+SELECT file FROM synced
+  WHERE
+    file='$f'
+    AND
+    rev IS NULL;
+END
+    done | sqlite3 synced.sqlite
+    filesynced --unlock $token
+    exit
 fi
 
 if test "$opt_create_index" = "1"; then

@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.0';
 
 my %descriptions = ();
 
@@ -437,6 +437,73 @@ $sql_create_todo
 $sql_bottom
 END
         "tmpfile.txt is added to synced.sql with orig value",
+    );
+
+    # }}}
+    diag("--unsynced");
+    create_file("file1", "This is file1.\n");
+    testcmd("git add file1", # {{{
+        '',
+        '',
+        0,
+        "git add file1",
+    );
+
+    # }}}
+    likecmd("git commit -m 'Add file1'", # {{{
+        '/^.+Add file1.+$/s',
+        '/^$/',
+        0,
+        "git commit file1",
+    );
+
+    # }}}
+    testcmd("$CMD --unsynced", # {{{
+        "",
+        "",
+        0,
+        "file1 is not listed by --unsynced because " .
+          "it's not in synced.sql",
+    );
+
+    # }}}
+    testcmd("$CMD --add -t Lib/std/bash file1", # {{{
+        "",
+        "",
+        0,
+        "--add file1",
+    );
+
+    # }}}
+    testcmd("$CMD --unsynced", # {{{
+        "file1\n",
+        "",
+        0,
+        "file1 is listed by --unsynced",
+    );
+
+    # }}}
+    testcmd("$CMD HEAD file1", # {{{
+        "",
+        "",
+        0,
+        "Mark file1 as updated",
+    );
+
+    # }}}
+    testcmd("$CMD --unsynced", # {{{
+        "",
+        "",
+        0,
+        "file1 should be gone from --unsynced now",
+    );
+
+    # }}}
+    testcmd("$CMD --delete file1", # {{{
+        "",
+        "filesynced: Deleted file1 from synced\n",
+        0,
+        "--delete file1",
     );
 
     # }}}
