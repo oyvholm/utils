@@ -4,7 +4,7 @@
 # ga-getnew
 # File ID: 1fc79a40-015b-11e5-a869-f13c8f9a2603
 #
-# Fix broken symlinks for new files from the last week (can be 
+# Fix broken symlinks for new files from the last month (can be 
 # overridden) in git-annex. Useful when moving lots of files around and 
 # committing with --no-verify (or disabling the automatic symlink fixing 
 # in .git/hooks/pre-commit) to properly record file moves in Git.
@@ -14,7 +14,7 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -48,10 +48,10 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Fix broken symlinks for new files from the last week (can be overridden) 
-in git-annex. Useful when moving lots of files around and committing 
-with --no-verify (or disabling the automatic symlink fixing in 
-.git/hooks/pre-commit) to properly record file moves in Git.
+Fix broken symlinks for new files from the last month (can be 
+overridden) in git-annex. Useful when moving lots of files around and 
+committing with --no-verify (or disabling the automatic symlink fixing 
+in .git/hooks/pre-commit) to properly record file moves in Git.
 
 Usage: $progname [options]
 
@@ -84,6 +84,6 @@ cd "$toplevel" || {
 git wait-until-clean -u
 
 msg ga fix
-git allfiles --since=1.week "$@" |
+git allfiles --since=1.month "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga fix
