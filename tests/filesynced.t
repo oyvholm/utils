@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.6.1';
+our $VERSION = '0.7.0';
 
 my %descriptions = ();
 
@@ -499,6 +499,9 @@ END
     );
 
     # }}}
+    # diag("--valid-sha");
+    # FIXME: Create tests for --valid-sha. Have to set up some sync 
+    # rules first.
     testcmd("$CMD --delete file1", # {{{
         "",
         "filesynced: Deleted file1 from synced\n",

@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=filesynced
-VERSION=0.6.1
+VERSION=0.7.0
 
 SQLITE=sqlite3
 bin="$HOME/bin"
@@ -40,6 +40,7 @@ timeout:,\
 type:,\
 unlock,\
 unsynced,\
+valid-sha,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -61,6 +62,7 @@ opt_timeout=''
 opt_type='%'
 opt_unlock=0
 opt_unsynced=0
+opt_valid_sha=0
 opt_verbose=0
 while :; do
     case "$1" in
@@ -79,6 +81,7 @@ while :; do
         (-t|--type) opt_type=$2; shift 2 ;;
         (--unlock) opt_unlock=1; shift ;;
         (--unsynced) opt_unsynced=1; shift ;;
+        (--valid-sha) opt_valid_sha=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -104,6 +107,7 @@ Usage: $progname [OPTIONS] COMMIT FILE [FILE [...]]
        $progname --lock
        $progname --unlock TOKEN
        $progname --unsynced [OPTIONS] [FILES] [ -- GIT_OPTIONS ]
+       $progname --valid-sha
 
 Options:
 
@@ -156,6 +160,11 @@ Options:
     example "--since=1.year". Options meant for git-allfiles must come 
     after a " -- " to separate them from the argument parsing done by 
     $progname.
+  --valid-sha
+    Test that all 'rev' SHA1s in synced.sql are reachable from the 
+    current Git HEAD. For example, execute this from 'master' to make 
+    sure that no files are synced against revisions on branches that are 
+    not part of it.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -549,6 +558,20 @@ if test -n "$opt_set_priority"; then
         done
         echo END\;
     ) | $SQLITE "$db"
+    exit
+fi
+
+if test "$opt_valid_sha" = "1"; then
+    msg 2 Perform --valid-sha stuff
+    cat <<END | sqlite3 synced.sqlite | sort -u | grep . | while read f; do
+SELECT rev FROM synced
+  WHERE
+    rev IS NOT NULL;
+END
+        if test "$(git sht ..$f | wc -l)" != "0"; then
+            echo $f
+        fi
+    done
     exit
 fi
 
