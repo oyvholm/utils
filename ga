@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.4.0
+VERSION=0.4.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -117,6 +117,11 @@ elif test "$1" = "unused"; then
     shift
     git-annex unused "$@" | ga-sumsize
 elif test "$1" = "update-desc"; then
+    toplevel="$(git rev-parse --show-toplevel)"
+    cd "$toplevel" || {
+        echo $progname update-desc: $toplevel: Cannot change to directory >&2
+        exit 1
+    }
     here="$(ga-pwd)"
     repouuid="$(git config --get annex.uuid)"
     if test -z "$repouuid"; then
