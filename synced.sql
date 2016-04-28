@@ -71,7 +71,7 @@ INSERT INTO "synced" VALUES('Lib/std/book-cmark/Makefile','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/create-html','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/loop-stat','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/stats','Lib/std/perl','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
-INSERT INTO "synced" VALUES('Lib/std/book-cmark/dat/STDprojnameDTS.sql','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/book-cmark/dat/STDprojnameDTS.sql','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/index.md','Lib/std/markdown','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/synced.sql','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/Makefile','',NULL,NULL);
