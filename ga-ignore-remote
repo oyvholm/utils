@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga-ignore-remote
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -78,7 +78,7 @@ if test -z "$(git remote | grep "^$remote\$")"; then
     exit 1
 fi
 
-if test $opt_verbose -gt 0; then
+if test $opt_verbose -ge 0; then
     git config -l | grep ^remote.$remote.annex
     echo
 fi
@@ -91,6 +91,6 @@ else
     git config remote.$remote.annex-readonly true
 fi
 
-if test $opt_verbose -gt 0; then
+if test $opt_verbose -ge 0; then
     git config -l | grep ^remote.$remote.annex
 fi
