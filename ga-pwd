@@ -1,0 +1,141 @@
+#!/usr/bin/env perl
+
+#=======================================================================
+# ga-pwd
+# File ID: b213e514-0d5f-11e6-9cac-fefdb24f8e10
+#
+# Print name of current directory with user name and/or tilde
+#
+# Character set: UTF-8
+# ©opyleft 2016– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of 
+# file for legal stuff.
+#=======================================================================
+
+use strict;
+use warnings;
+use Getopt::Long;
+use Cwd 'abs_path';
+
+local $| = 1;
+
+our %Opt = (
+
+    'help' => 0,
+    'quiet' => 0,
+    'verbose' => 0,
+    'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.1.0';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+    'help|h' => \$Opt{'help'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'verbose'} -= $Opt{'quiet'};
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+    print_version();
+    exit(0);
+}
+
+exit(main());
+
+sub main {
+    # {{{
+    my $Retval = 0;
+    my $abs_path = abs_path('.');
+    my $home_path = abs_path($ENV{'HOME'});
+    my $user = getpwuid($<);
+    chomp(my $hostname = `hostname`);
+    msg(3, "abs_path = '$abs_path', home_path = '$home_path', user = '$user'");
+    my $outpath = $abs_path;
+    $outpath =~ s/^$home_path/~/;
+    msg(3, "outpath after regexp: '$outpath'");
+    unless ($outpath =~ /^\/media\//) {
+        $outpath = "$user\@$hostname:" . $outpath;
+    }
+    print("$outpath\n");
+
+    return($Retval);
+    # }}}
+} # main()
+
+sub print_version {
+    # Print program version {{{
+    print("$progname $VERSION\n");
+    return;
+    # }}}
+} # print_version()
+
+sub usage {
+    # Send the help message to stdout {{{
+    my $Retval = shift;
+
+    if ($Opt{'verbose'}) {
+        print("\n");
+        print_version();
+    }
+    print(<<"END");
+
+Print name of current directory, using the format "user\@host:pwd". Use 
+the "physical" directory location, ignore symlinks. If the current 
+directory is below \$HOME, replace the first part with '~'. If current 
+dir is below /media/, don't print username and hostname.
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit($Retval);
+    # }}}
+} # usage()
+
+sub msg {
+    # Print a status message to stderr based on verbosity level {{{
+    my ($verbose_level, $Txt) = @_;
+
+    if ($Opt{'verbose'} >= $verbose_level) {
+        print(STDERR "$progname: $Txt\n");
+    }
+    return;
+    # }}}
+} # msg()
+
+__END__
+
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
+
+# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
