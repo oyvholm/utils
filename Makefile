@@ -25,6 +25,7 @@ remotes:
 	git remote add repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
 
 test:
+	test -z "$$(filesynced --valid-sha)"
 	cd tests && $(MAKE)
 	cd Lib/std/ly && ./test-ly-files
 	cd Lib/std/c && ./compile
