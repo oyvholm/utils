@@ -317,6 +317,7 @@ INSERT INTO "synced" VALUES('ga-getnew','Lib/std/bash','a4abdee3b8bbfe3859b3a8eb
 INSERT INTO "synced" VALUES('ga-ignore-remote','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('ga-key','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-other','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
+INSERT INTO "synced" VALUES('ga-pwd','Lib/std/perl','6a8942c40ca56c19a44e4d0b45cd94249e936119','2016-04-28 16:38:54');
 INSERT INTO "synced" VALUES('ga-repofix','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-sjekk','Lib/std/bash','e339f783d8ff22666186e06581c4d13aefd0ecd9','2016-01-10 19:41:49');
 INSERT INTO "synced" VALUES('ga-sumsize','Lib/std/perl','8a8fb69e7712e7433fb9e88f823af7f772ce4048','2015-10-31 00:42:28');
