@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.2.0
+VERSION=0.3.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -39,6 +39,10 @@ customised:
     Execute "git wait-until-clean -u" before syncing, i.e., wait until 
     the repository is clean before continuing. This is to avoid any 
     accidental commits.
+  update-desc
+    Update the git-annex description, use the generic output from 
+    ga-pwd. For example, the output for the current directory is
+    "`ga-pwd`".
   fsck
     Filter the output through ga-fsck-size, calculates how much space is 
     needed to get enough file copies.
@@ -112,6 +116,24 @@ elif test "$1" = "md"; then
 elif test "$1" = "unused"; then
     shift
     git-annex unused "$@" | ga-sumsize
+elif test "$1" = "update-desc"; then
+    here="$(ga-pwd)"
+    repouuid="$(git config --get annex.uuid)"
+    if test -z "$repouuid"; then
+        echo $progname: annex.uuid is empty, seems as it is not an annex >&2
+        exit 1
+    fi
+    info_line="$(ga info --fast | grep $repouuid)"
+    found_it=0
+    echo "$info_line" | grep -q " -- $here \\[here\\]" && found_it=1
+    if test "$found_it" = "1"; then
+        echo $progname: Description looks ok, not changing it >&2
+        exit 0
+    else
+        ga sync
+        sess -- ga describe here "$here"
+        ga sync
+    fi
 else
     git-annex "$@"
 fi
