@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.6.0
+VERSION=0.6.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -142,7 +142,7 @@ elif test "$1" = "update-desc"; then
         sess -- ga describe here "$here"
         ga sync
         echo
-        echo $progname update-desc: Before: $info_line
+        echo $progname update-desc: Before: $info_line >&2
         echo $progname update-desc: After : $(
             ga info --fast | grep $repouuid
         ) >&2
