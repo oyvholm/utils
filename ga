@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.5.0
+VERSION=0.6.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -130,7 +130,10 @@ elif test "$1" = "update-desc"; then
     fi
     info_line="$(ga info --fast | grep $repouuid)"
     found_it=0
-    echo "$info_line" | grep -q " -- $here \\[here\\]" && found_it=1
+    # FIXME: The regexp is relaxed here because some suspicious 
+    # behaviour from git-annex, it places remotes there. They're also in 
+    # the JSON output, so it looks like a bug. — Sønnyen, 2016-04-29
+    echo "$info_line" | grep -q " -- $here .*\\[here\\]" && found_it=1
     if test "$found_it" = "1"; then
         echo $progname: Description looks ok, not changing it >&2
         exit 0
