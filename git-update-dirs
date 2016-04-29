@@ -36,6 +36,7 @@ our %Opt = (
     'ga-getnew' => 0,
     'ga-moveunused' => 0,
     'ga-sync' => 0,
+    'ga-update-desc' => 0,
     'help' => 0,
     'lpar' => 0,
     'pull' => 0,
@@ -54,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -78,6 +79,7 @@ GetOptions(
     'ga-getnew|N' => \$Opt{'ga-getnew'},
     'ga-moveunused|U' => \$Opt{'ga-moveunused'},
     'ga-sync|g' => \$Opt{'ga-sync'},
+    'ga-update-desc|S' => \$Opt{'ga-update-desc'},
     'help|h' => \$Opt{'help'},
     'lpar|l' => \$Opt{'lpar'},
     'pull|p' => \$Opt{'pull'},
@@ -114,6 +116,7 @@ sub main {
         $Opt{'delete-dangling'} = 1;
         $Opt{'fetch-prune'} = 1;
         $Opt{'ga-sync'} = 1;
+        $Opt{'ga-update-desc'} = 1;
         $Opt{'lpar'} = 1;
         $Opt{'pull'} = 1;
         $Opt{'push'} = 1;
@@ -265,6 +268,9 @@ sub main {
                         mysystem("ga-getnew | fold-stdout");
                     }
                 }
+            }
+            if ($is_annex && should('ga-update-desc')) {
+                mysystem("ga", "update-desc");
             }
             if (should('dangling')) {
                 mysystem("git", "dangling") && push(@err_dangling, $f);
@@ -461,6 +467,10 @@ Options:
     Execute "ga-getnew | fold-stdout", i.e. use "ga get --auto" to get 
     all files from one week back that don't have enough copies.
     To disable: git config git-update-dirs.no-ga-getnew true
+  -S, --ga-update-desc
+    If the directory is controlled by git-annex, execute "ga 
+    update-desc" to set the description to the output from ga-pwd(1).
+    To disable: git config git-update-dirs.no-ga-update-desc true
   -d, --dangling
     Execute "git dangling", i.e. turn all dangling commits into 
     branches.
