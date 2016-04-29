@@ -26,6 +26,7 @@ remotes:
 
 test:
 	test -z "$$(filesynced --valid-sha)"
+	test -z "$$(filesynced --unsynced -- --since=3.months)"
 	cd tests && $(MAKE)
 	cd Lib/std/ly && ./test-ly-files
 	cd Lib/std/c && ./compile
