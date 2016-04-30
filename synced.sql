@@ -347,6 +347,7 @@ INSERT INTO "synced" VALUES('git-dobranch','Lib/std/bash','9baa32551134d485f2b03
 INSERT INTO "synced" VALUES('git-eb','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-expand','Lib/std/python',NULL,NULL);
 INSERT INTO "synced" VALUES('git-fuckit','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('git-ifmaster','Lib/std/bash','2bafa7ec32b65c7804dece0a5d8bf70656584f95','2016-04-30 14:11:36');
 INSERT INTO "synced" VALUES('git-ignore','Lib/std/bash','2fe247422ce3ae1d35e34c38c737961d51523f58','2016-01-15 01:42:57');
 INSERT INTO "synced" VALUES('git-imerge','https://raw.githubusercontent.com/mhagger/git-imerge/master/git-imerge',NULL,'2015-10-15 17:50:54');
 INSERT INTO "synced" VALUES('git-inv-commits','Lib/std/bash',NULL,NULL);
