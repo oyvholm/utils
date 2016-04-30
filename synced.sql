@@ -135,7 +135,7 @@ INSERT INTO "synced" VALUES('Patch/Div/svnlog2tab.xmlsimple.r2896.patch','','',N
 INSERT INTO "synced" VALUES('Patch/vim7/always_72_chars_per_line_if_undefined.patch','','',NULL);
 INSERT INTO "synced" VALUES('Patch/vim7/modified_by-define.patch','','',NULL);
 INSERT INTO "synced" VALUES('Patch/vim7/sunny256/0001-Show-percent-in-status-line-when-g-Ctrl-g-is-pressed.patch','','',NULL);
-INSERT INTO "synced" VALUES('README.md','',NULL,NULL);
+INSERT INTO "synced" VALUES('README.md','Lib/std/markdown','b7f0c0a801ce7f548aad93458e5aa06dfa51bff6','2016-04-30 14:46:16');
 INSERT INTO "synced" VALUES('Screen/latin1-mode','',NULL,NULL);
 INSERT INTO "synced" VALUES('Screen/split','',NULL,NULL);
 INSERT INTO "synced" VALUES('Screen/utf8-mode','',NULL,NULL);
