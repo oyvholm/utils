@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-ifmaster
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -45,7 +45,9 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Execute a command only if 'master' is the current Git branch.
+
+Usage: $progname [options] COMMAND
 
 Options:
 
@@ -62,3 +64,11 @@ END
     exit 0
 fi
 
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if test "$current_branch" = "master"; then
+    eval $@
+    exit 0
+else
+    exit 1
+fi
