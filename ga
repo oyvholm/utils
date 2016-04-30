@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.6.1
+VERSION=0.7.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -48,6 +48,8 @@ customised:
     needed to get enough file copies.
   md
     Shortcut for "metadata".
+  ud
+    Shortcut for "update-desc".
   unused
     Filter the output through ga-sumsize, display total number of bytes 
     in unused files.
@@ -116,7 +118,7 @@ elif test "$1" = "md"; then
 elif test "$1" = "unused"; then
     shift
     git-annex unused "$@" | ga-sumsize
-elif test "$1" = "update-desc"; then
+elif test "$1" = "update-desc" -o "$1" = "ud"; then
     toplevel="$(git rev-parse --show-toplevel)"
     cd "$toplevel" || {
         echo $progname update-desc: $toplevel: Cannot change to directory >&2
