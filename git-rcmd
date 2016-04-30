@@ -1,8 +1,9 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #=======================================================================
-# git-rpull
+# git-rcmd
 # File ID: 8ed5e844-cf09-11e4-b7ff-000df06acc56
+#
 # Execute command in remote Git repositories
 #
 # Character set: UTF-8
@@ -17,12 +18,9 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $Debug = 0;
-
 our %Opt = (
 
     'cmd' => '',
-    'debug' => 0,
     'dry-run' => 0,
     'help' => 0,
     'local' => 0,
@@ -34,7 +32,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.1.0';
 
 our $hostname = `hostname`;
 chomp($hostname);
@@ -43,7 +41,6 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
     'cmd|c=s' => \$Opt{'cmd'},
-    'debug' => \$Opt{'debug'},
     'dry-run|n' => \$Opt{'dry-run'},
     'help|h' => \$Opt{'help'},
     'local|l' => \$Opt{'local'},
@@ -53,7 +50,6 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
 $Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -65,11 +61,10 @@ if (!length($Opt{'cmd'})) {
     die("$progname: -c/--cmd option not specified\n");
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     if ($Opt{'local'}) {
@@ -134,7 +129,7 @@ sub mysystem {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
     return;
     # }}}
 } # print_version()
@@ -167,13 +162,11 @@ Options:
   -n, --dry-run
     Simulate, don't actually execute any commands.
   -q, --quiet
-    Get less noisy. Can be repeated to increase quietness.
+    Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -191,92 +184,20 @@ sub msg {
     # }}}
 } # msg()
 
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return('');
-    # }}}
-} # D()
-
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 NAME
-
-
-
-=head1 SYNOPSIS
-
- [options] [file [files [...]]]
-
-=head1 DESCRIPTION
-
-
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<-h>, B<--help>
-
-Print a brief help summary.
-
-=item B<-v>, B<--verbose>
-
-Increase level of verbosity. Can be repeated.
-
-=item B<--version>
-
-Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
-
-=back
-
-=head1 BUGS
-
-
-
-=head1 AUTHOR
-
-Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
-
-=head1 COPYRIGHT
-
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
-This is free software; see the file F<COPYING> for legalese stuff.
-
-=head1 LICENCE
-
-This program is free software: you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=head1 SEE ALSO
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
