@@ -32,7 +32,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 our $hostname = `hostname`;
 chomp($hostname);
@@ -68,6 +68,7 @@ sub main {
     my $Retval = 0;
 
     if ($Opt{'local'}) {
+        system("ga-pwd");
         mysystem($Opt{'cmd'});
         $Opt{'verbose'} >= 0 && print("\n");
     }
@@ -85,7 +86,7 @@ sub main {
                         'ssh',
                         '-A',
                         "$username\@$host",
-                        "cd $userdir && ($Opt{'cmd'})",
+                        "cd $userdir && (ga-pwd; $Opt{'cmd'})",
                     );
                     mysystem(@cmd);
                     $done{"$username$host$userdir"} = 1;
@@ -95,6 +96,7 @@ sub main {
                 if (!defined($done{"$url"}) && chdir($url)) {
                     next if (!-d ".git/."); # Avoid bare repos
                     msg(0, "($hostname) chdir $url");
+                    system("ga-pwd");
                     mysystem($Opt{'cmd'});
                     $done{"$url"} = 1;
                     $Opt{'verbose'} >= 0 && print("\n");
