@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.7.0
+VERSION=0.8.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -79,15 +79,8 @@ if test "$1" = "init"; then
     fi
 else
     if test -z "$(git config --get annex.uuid)"; then
-        if test "$1" = "sync"; then
-            echo $progname: Not a git-annex repo, exec git fp and git mff >&2
-            git fp
-            git mff
-            exit
-        else
-            echo $progname: annex.uuid is not defined, aborting >&2
-            exit 1
-        fi
+        echo $progname: annex.uuid is not defined, aborting >&2
+        exit 1
     fi
 fi
 
