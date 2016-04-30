@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-wait-until-clean
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -54,6 +54,7 @@ if test "$opt_help" = "1"; then
     cat <<END
 
 Wait until the current Git repository is clean before continuing.
+Does nothing in bare repositories.
 
 Usage: $progname [options]
 
@@ -75,6 +76,11 @@ Options:
 END
     exit 0
 fi
+
+is_bare=0
+test "git config --get core.bare" = "true" && is_bare=1
+
+test "$is_bare" = "1" && exit 0
 
 unset i_str
 test "$opt_ignored" = "1" && { i_str=" --ignored"; shift; }
