@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=build-git
-VERSION=0.1.1
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -111,6 +111,7 @@ configure_opts=
 makeflags=
 make_doc=1
 make_info=1
+run_tests=1
 hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
@@ -369,8 +370,10 @@ echo Compiling $vername
 echo "==== make prefix=$dest $makeflags all" \
     "$make_doc_str $make_info_str \|\| myexit"
 make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
-echo ==== make $makeflags test
-make $makeflags test
+if test "$run_tests" = "1"; then
+    echo ==== make $makeflags test
+    make $makeflags test
+fi
 echo
 echo Ready to install $(./git --version) from branch \"$local_master\"
 unset choice
