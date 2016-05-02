@@ -142,6 +142,7 @@ END
     installed('make --version', '/GNU Make/', 'stdout');
     installed('mc --version', '/GNU Midnight Commander/', 'stdout');
     installed('mysql --version', '/^$/', 'stdout', 'MySQL is not installed');
+    installed('ncdu -v', '/^ncdu \d/', 'stdout');
     installed('perl --version', '/This is perl( |, v)5/', 'stdout');
     installed('pinfo --version', '/^Przemek\'s Info Viewer /', 'stdout');
     installed('pip --version', '/^pip \d/', 'stdout');
@@ -204,7 +205,6 @@ END
         installed('mftrace --version', '/^mftrace \d\./', 'stdout');
         installed('mosh --version', '/^mosh \d/', 'stderr');
         installed('mutt -h', '/^Mutt \d/', 'stdout');
-        installed('ncdu -v', '/^ncdu \d/', 'stdout');
         installed('ncftp -v', '/Program version:\s+NcFTP /', 'stderr');
         installed('nmap --version', '/Nmap version /', 'stdout');
         installed('nodejs --version', '/^v\d+\.\d+\.\d+$/', 'stdout');
