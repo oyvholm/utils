@@ -44,7 +44,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.6.0';
+our $VERSION = '0.7.0';
 
 my %descriptions = ();
 
@@ -232,27 +232,13 @@ END
 
     # }}}
     diag("Testing -f (--force) option...");
-    likecmd("../$CMD --database ./db.sqlite bash bashfile", # {{{
+    likecmd("../$CMD --dbname ./db.sqlite bash bashfile", # {{{
         '/^$/s',
         '/^' .
-            'std: The --database option is obsolete and ' .
-            'will be removed soon,\n' .
-            'std: Please use --dbname instead\n' .
             'std: bashfile: File already exists, will not overwrite\n' .
             '$/s',
         1,
         "Create bash script, file already exists, don’t use --force",
-    );
-
-    # }}}
-    # FIXME: Remove this when --database goes out the window
-    testcmd("../$CMD --database ./db.sqlite --dbname ./db2.sqlite " .
-            "bash bashfile", # {{{
-        "",
-        "std: Cannot use both --database and --dbname, " .
-        "please use --dbname only\n",
-        1,
-        "--database and --dbname used at the same time",
     );
 
     # }}}

@@ -21,7 +21,6 @@ local $| = 1;
 
 our %Opt = (
 
-    'database' => '',
     'dbname' => '',
     'force' => 0,
     'help' => 0,
@@ -37,7 +36,7 @@ my @Tags = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.6.0';
+our $VERSION = '0.7.0';
 
 my $CMD_GIT = "git";
 my $CMD_SQLITE = "sqlite3";
@@ -53,7 +52,6 @@ my @bck_cmdline = @ARGV;
 Getopt::Long::Configure('bundling');
 GetOptions(
 
-    'database=s' => \$Opt{'database'},
     'dbname|d=s' => \$Opt{'dbname'},
     'force|f' => \$Opt{'force'},
     'help|h' => \$Opt{'help'},
@@ -66,14 +64,6 @@ GetOptions(
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-if (length($Opt{'database'}) && length($Opt{'dbname'})) {
-    warn("$progname: Cannot use both --database and --dbname, " .
-         "please use --dbname only\n");
-    exit(1);
-}
-if (length($Opt{'database'})) {
-    $Opt{'dbname'} = $Opt{'database'};
-}
 $Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
@@ -120,13 +110,6 @@ exit($retval);
 sub main {
     # {{{
     my $Retval = 0;
-
-    if ($Opt{'database'}) {
-        # FIXME: Remove --database after 2016-01-25, three months since 
-        # the warning.
-        msg(-2, "The --database option is obsolete and will be removed soon,");
-        msg(-2, "Please use --dbname instead");
-    }
 
     if (length($Dest) && -e $Dest) {
         if ($Opt{'force'}) {
