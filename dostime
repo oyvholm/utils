@@ -34,7 +34,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -90,16 +90,14 @@ sub process_file {
         $mtime = $mtime >> 1;
         $mtime = $mtime << 1;
 
-        if ($mtime != $origtime) {
-            if (!$Opt{'dry-run'}) {
-                utime($atime, $mtime, $curr)
-                    or (warn("$progname: $curr: Could not set file time: $!\n"), return 1);
-            }
-            $Opt{'verbose'} && printf("%s: %s: mtime changed from %s to %s%s\n",
-                $progname, $curr, sec_to_string($origtime), sec_to_string($mtime),
-                $Opt{'dry-run'} ? " (SIMULATING)" : "",
-            );
+        if (!$Opt{'dry-run'}) {
+            utime($atime, $mtime, $curr)
+                or (warn("$progname: $curr: Could not set file time: $!\n"), return 1);
         }
+        $Opt{'verbose'} && printf("%s: %s: mtime changed from %s to %s%s\n",
+            $progname, $curr, sec_to_string($origtime), sec_to_string($mtime),
+            $Opt{'dry-run'} ? " (SIMULATING)" : "",
+        );
     } else {
         warn("$progname: $curr: File not found\n");
         return 1;
