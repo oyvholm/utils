@@ -1,9 +1,11 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #=======================================================================
 # u2h
 # File ID: cab2ee1e-5d46-11df-8988-90e6ba3022ac
-# Converts from UTF-8 charset to HTML numeric entities (&#x263A; and &#9786;).
+#
+# Converts from UTF-8 charset to HTML numeric entities (&#x263A; and 
+# &#9786;).
 #
 # Character set: UTF-8
 # ©opyleft 2001– Øyvind A. Holm <sunny@sunbase.org>
@@ -17,16 +19,14 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $Debug = 0;
-
 our %Opt = (
 
     'ampersand' => 0,
-    'debug' => 0,
     'decimal' => 0,
     'help' => 0,
     'invalid' => 0,
     'latin1' => 0,
+    'quiet' => 0,
     'standard' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -35,35 +35,34 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
     'ampersand|a' => \$Opt{'ampersand'},
-    'debug' => \$Opt{'debug'},
     'decimal|d' => \$Opt{'decimal'},
     'help|h' => \$Opt{'help'},
     'invalid|i' => \$Opt{'invalid'},
     'latin1|l' => \$Opt{'latin1'},
+    'quiet|q+' => \$Opt{'quiet'},
     'standard|s' => \$Opt{'standard'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     my $amp_ent = $Opt{'decimal'} ? "&#38;" : "&#x26;";
@@ -145,7 +144,7 @@ sub decode_char {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
     return;
     # }}}
 } # print_version()
@@ -159,6 +158,9 @@ sub usage {
         print_version();
     }
     print(<<"END");
+
+Converts from UTF-8 charset to HTML numeric entities (&#x263A; and 
+&#9786;).
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -174,14 +176,14 @@ Options:
     Accept invalid sequences (overlong sequences and surrogates).
   -l, --latin1
     Convert U+0080 through U+00FF to latin-1 instead of entities.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -s, --standard
     Also convert standard ascii U+0020 through U+007F.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -199,43 +201,20 @@ sub msg {
     # }}}
 } # msg()
 
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return('');
-    # }}}
-} # D()
-
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 LICENCE
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation; either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :

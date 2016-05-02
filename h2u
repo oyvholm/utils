@@ -1,9 +1,11 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #=======================================================================
 # h2u
 # File ID: e93feb18-5d3a-11df-bda7-90e6ba3022ac
-# Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to UTF-8.
+#
+# Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to 
+# UTF-8.
 #
 # Character set: UTF-8
 # ©opyleft 2001– Øyvind A. Holm <sunny@sunbase.org>
@@ -17,14 +19,12 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $Debug = 0;
-
 our %Opt = (
 
-    'debug' => 0,
     'help' => 0,
     'invalid' => 0,
     'latin1' => 0,
+    'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -32,32 +32,31 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
-    'debug' => \$Opt{'debug'},
     'help|h' => \$Opt{'help'},
     'invalid|i' => \$Opt{'invalid'},
     'latin1|l' => \$Opt{'latin1'},
+    'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
 
-exit(main(%Opt));
+exit(main());
 
 sub main {
     # {{{
-    my %Opt = @_;
     my $Retval = 0;
 
     while (<>) {
@@ -66,6 +65,7 @@ sub main {
         s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
         print;
     }
+
     return($Retval);
     # }}}
 } # main()
@@ -113,7 +113,7 @@ sub widechar {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
     return;
     # }}}
 } # print_version()
@@ -128,23 +128,26 @@ sub usage {
     }
     print(<<"END");
 
+Converts from numeric entities in HTML/SGML (&#x263A; and &#9786;) to 
+UTF-8.
+
 Usage: $progname [options] [file [files [...]]]
 
 Options:
 
   -h, --help
     Show this help.
-  -i
+  -i, --invalid
     Allow invalid character range U+D800 through U+DFFF, U+FFFE and 
     U+FFFF.
-  -l
+  -l, --latin1
     Also convert Latin-1 characters.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -162,43 +165,20 @@ sub msg {
     # }}}
 } # msg()
 
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return('');
-    # }}}
-} # D()
-
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 LICENCE
-
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation; either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
