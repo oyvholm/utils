@@ -1,3 +1,0 @@
-File ID: e33447b8-8672-11de-8703-00248cd5cf1e
-
-Her er ei ny fil på "git-branch". Det branches med git-svn.
