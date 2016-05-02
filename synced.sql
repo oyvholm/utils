@@ -315,7 +315,7 @@ INSERT INTO "synced" VALUES('ga-fixnew','Lib/std/bash','dfaaacfea59e681af8e18f54
 INSERT INTO "synced" VALUES('ga-fsck-size','Lib/std/perl','9008255ba17dda8ac1fa5a2b98490b9e480d830e','2015-10-31 00:46:55');
 INSERT INTO "synced" VALUES('ga-getnew','Lib/std/bash','a4abdee3b8bbfe3859b3a8eb767d1ba31dcf95f0','2016-04-27 10:50:41');
 INSERT INTO "synced" VALUES('ga-ignore-remote','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
-INSERT INTO "synced" VALUES('ga-key','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('ga-key','Lib/std/bash','5e20880baffc7274f1ede26b9e8dbaee8a27f306','2016-05-01 21:23:05');
 INSERT INTO "synced" VALUES('ga-other','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('ga-pwd','Lib/std/perl','6a8942c40ca56c19a44e4d0b45cd94249e936119','2016-04-28 16:38:54');
 INSERT INTO "synced" VALUES('ga-repofix','Lib/std/bash',NULL,NULL);
@@ -836,7 +836,6 @@ INSERT INTO "todo" VALUES('flac_to_ogg',3,NULL);
 INSERT INTO "todo" VALUES('fra_linode',1,NULL);
 INSERT INTO "todo" VALUES('g0',4,NULL);
 INSERT INTO "todo" VALUES('g1',4,NULL);
-INSERT INTO "todo" VALUES('ga-key',1,NULL);
 INSERT INTO "todo" VALUES('ga-repofix',3,NULL);
 INSERT INTO "todo" VALUES('ga-tree',1,NULL);
 INSERT INTO "todo" VALUES('gammelsvn',3,NULL);
