@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga-ignore-remote
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 h\
@@ -63,7 +63,6 @@ Options:
     config.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
-    -v: List "remote.\$remote.annex" config values before and after
   --version
     Print version information.
 
