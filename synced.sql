@@ -54,7 +54,7 @@ INSERT INTO "synced" VALUES('Lib/perllib/tripwd.pm',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2.0.txt','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/bash','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/bash-no-getopt','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
-INSERT INTO "synced" VALUES('Lib/std/bisect','Lib/std/bash','','2016-05-02 17:18:19');
+INSERT INTO "synced" VALUES('Lib/std/bisect','Lib/std/bash','0b1c9df17273d655a18a171d6ef4ef649f4921c7','2016-05-03 17:57:49');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitattributes','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitignore','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/Makefile','','',NULL);
@@ -65,7 +65,7 @@ INSERT INTO "synced" VALUES('Lib/std/book-cmark/dat/STDprojnameDTS.sql','','',NU
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/index.md','Lib/std/markdown','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/synced.sql','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/Makefile','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/c/compile','Lib/std/bash-no-getopt','','2016-05-02 17:05:44');
+INSERT INTO "synced" VALUES('Lib/std/c/compile','Lib/std/bash-no-getopt','0b1c9df17273d655a18a171d6ef4ef649f4921c7','2016-05-03 17:57:49');
 INSERT INTO "synced" VALUES('Lib/std/c/std.c','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/std.h','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/version.h','',NULL,NULL);
