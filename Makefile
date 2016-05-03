@@ -25,8 +25,8 @@ remotes:
 	git remote add repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
 
 test:
-	test -z "$$(filesynced --valid-sha)"
-	test -z "$$(filesynced --unsynced -- --since=6.months)"
+	test -z "$$(filesynced --valid-sha 2>&1)"
+	test -z "$$(filesynced --unsynced -- --since=6.months 2>&1)"
 	cd tests && $(MAKE)
 	cd Lib/std/ly && ./test-ly-files
 	cd Lib/std/c && ./compile
