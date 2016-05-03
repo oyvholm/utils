@@ -64,6 +64,9 @@ END
     exit 0
 fi
 
+# FIXME: Get rid of hardcoded directories and username
+# FIXME: Set up a common sync source for the build-* scripts
+
 cd /home/sunny/src/other/perl || exit 1
 export perldir="perl-$(git desc --long)"
 export destdir="/usr/local/varprg/$perldir"
