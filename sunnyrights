@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=sunnyrights
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -74,12 +74,12 @@ if [ "$1" = "" ]; then
 fi
 
 abort=0
-for ft in $*; do
-    [ -d $ft ] || {
+for ft in "$@"; do
+    [ -d "$ft" ] || {
         echo "$progname: $ft: Katalogen finnes ikke" >&2
         abort=1
     }
 done
 [ "$abort" = "1" ] && { echo "$progname: Avbryter." >&2; exit 1; }
-chown -Rc sunny.sunny $*
-find $* -type d | xargs chmod -c +s
+chown -Rc sunny.sunny "$@"
+find "$@" -type d -print0 | xargs -0 chmod -c +s
