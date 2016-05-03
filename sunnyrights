@@ -4,16 +4,16 @@
 # sunnyrights
 # File ID: 9b90e1dc-5d45-11df-8c34-90e6ba3022ac
 #
-# Forandrer eierskap te han sunny og setter sticky bit på katalogene så 
-# han (jeg) fortsetter å eie dem. Beregnet på .svn-kataloger først og 
-# fremst.
+# Change file ownership of a subdirectory tree to "sunny" and set the 
+# sticky bit on directories so he (I) will continue to own new files. 
+# Mainly used for .git direcories.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=sunnyrights
-VERSION=0.1.2
+VERSION=0.1.3
 
 ARGS="$(getopt -o "\
 h\
@@ -47,9 +47,9 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Forandrer eierskap te han sunny og setter sticky bit på katalogene så 
-han (jeg) fortsetter å eie dem. Beregnet på .svn-kataloger først og 
-fremst.
+Change file ownership of a subdirectory tree to "sunny" and set the 
+sticky bit on directories so he (I) will continue to own new files. 
+Mainly used for .git direcories.
 
 Usage: $progname [options] DIRECTORY [DIRECTORIES [...]]
 
@@ -76,10 +76,10 @@ fi
 abort=0
 for ft in "$@"; do
     test -d "$ft" || {
-        echo "$progname: $ft: Katalogen finnes ikke" >&2
+        echo "$progname: $ft: Directory not found" >&2
         abort=1
     }
 done
-test "$abort" = "1" && { echo "$progname: Avbryter." >&2; exit 1; }
+test "$abort" = "1" && { echo "$progname: Aborting." >&2; exit 1; }
 chown -Rc sunny.sunny "$@"
 find "$@" -type d -print0 | xargs -0 chmod -c +s
