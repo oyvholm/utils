@@ -69,13 +69,16 @@ END
 fi
 
 if [ "$1" = "" ]; then
-  echo "$progname: No directory specified" >&2
-  exit 1
+    echo "$progname: No directory specified" >&2
+    exit 1
 fi
 
 abort=0
 for ft in $*; do
-  [ -d $ft ] || { echo "$progname: $ft: Katalogen finnes ikke" >&2; abort=1; }
+    [ -d $ft ] || {
+        echo "$progname: $ft: Katalogen finnes ikke" >&2
+        abort=1
+    }
 done
 [ "$abort" = "1" ] && { echo "$progname: Avbryter." >&2; exit 1; }
 chown -Rc sunny.sunny $*
