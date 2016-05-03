@@ -11,15 +11,17 @@
 #=======================================================================
 
 progname=git-wait-until-clean
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
+e\
 h\
 i\
 q\
 u\
 v\
 " -l "\
+exit-val,\
 help,\
 ignored,\
 quiet,\
@@ -30,6 +32,7 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_exit_val=0
 opt_help=0
 opt_ignored=0
 opt_quiet=0
@@ -37,6 +40,7 @@ opt_untracked=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-e|--exit-val) opt_exit_val=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-i|--ignored) opt_ignored=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
@@ -60,6 +64,11 @@ Usage: $progname [options]
 
 Options:
 
+  -e, --exit-val
+    Don't wait if the repository is modified, but exit immediately and 
+    use the return value to tell if it's modified or not.
+      0: Repository is not modified
+      1: Repository is modified
   -h, --help
     Show this help.
   -i, --ignored
@@ -90,9 +99,18 @@ test "$opt_untracked" = "1" && { u_str=" --untracked-files=no"; shift; }
 
 unset did_wait
 while test "$(git status --porcelain$i_str$u_str "$@")" != ""; do
+    if test "$opt_exit_val" = "1"; then
+      if test $opt_verbose -ge 1; then
+          echo $progname: $(pwd) is modified, exit with value 1 >&2
+      fi
+      exit 1
+    fi
     echo Waiting for $(hostname):$(pwd) to be cleaned up \(opt: $i_str$u_str\)... \($(date)\) >&2
     sleep 5
     did_wait=1
 done
 test -n "$did_wait" && echo $(hostname):$(pwd) is clean. Continuing... >&2
+if test $opt_verbose -ge 1; then
+  echo $progname: $(pwd) is clean, exit with value 0 >&2
+fi
 exit 0
