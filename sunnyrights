@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=sunnyrights
-VERSION=0.1.1
+VERSION=0.1.2
 
 ARGS="$(getopt -o "\
 h\
@@ -68,18 +68,18 @@ END
     exit 0
 fi
 
-if [ "$1" = "" ]; then
+if test "$1" = ""; then
     echo "$progname: No directory specified" >&2
     exit 1
 fi
 
 abort=0
 for ft in "$@"; do
-    [ -d "$ft" ] || {
+    test -d "$ft" || {
         echo "$progname: $ft: Katalogen finnes ikke" >&2
         abort=1
     }
 done
-[ "$abort" = "1" ] && { echo "$progname: Avbryter." >&2; exit 1; }
+test "$abort" = "1" && { echo "$progname: Avbryter." >&2; exit 1; }
 chown -Rc sunny.sunny "$@"
 find "$@" -type d -print0 | xargs -0 chmod -c +s
