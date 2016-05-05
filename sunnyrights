@@ -6,14 +6,14 @@
 #
 # Change file ownership of a subdirectory tree to "sunny" and set the 
 # sticky bit on directories so he (I) will continue to own new files. 
-# Mainly used for .git direcories.
+# Mainly used for .git directories.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=sunnyrights
-VERSION=0.1.3
+VERSION=0.1.4
 
 ARGS="$(getopt -o "\
 h\
@@ -49,7 +49,7 @@ if test "$opt_help" = "1"; then
 
 Change file ownership of a subdirectory tree to "sunny" and set the 
 sticky bit on directories so he (I) will continue to own new files. 
-Mainly used for .git direcories.
+Mainly used for .git directories.
 
 Usage: $progname [options] DIRECTORY [DIRECTORIES [...]]
 
