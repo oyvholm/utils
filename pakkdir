@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -64,32 +64,32 @@ END
     exit 0
 fi
 
-for f in $*; do
+for f in "$@"; do
     echo Pakker $f...
 
-    dir=$f
-    targz=$f.pakka.tar.gz
+    dir="$f"
+    targz="$f.pakka.tar.gz"
 
     echo dir = $dir
     echo targz = $targz
 
-    if [ -e $targz ]; then
+    if [ -e "$targz" ]; then
         echo "$targz finnes allerede" >&2
         exit 1
     fi
 
-    if [ ! -d $dir ]; then
+    if [ ! -d "$dir" ]; then
         echo "$dir: Er ikke en dir" >&2
     else
-        echo $dir | grep -q / && { echo "$dir: Forbudt med slasher i filnavnet" >&2; exit 1; }
+        echo "$dir" | grep -q / && { echo "$dir: Forbudt med slasher i filnavnet" >&2; exit 1; }
 
         echo ======= tar czf $targz --remove-files $dir
         uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$targz</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || { echo $0: suuid error >&2; exit 1; }
-        tar czf $targz --remove-files --label=$uuid $dir
-        ls -la $targz
+        tar czf "$targz" --remove-files --label=$uuid "$dir"
+        ls -la "$targz"
         # echo ======= Rensk
-        # (cd $dir && find -type d -print0 -depth | xargs -0 rmdir )
+        # (cd "$dir" && find -type d -print0 -depth | xargs -0 rmdir )
         # echo ======= rmdir $dir
-        # rmdir $dir
+        # rmdir "$dir"
     fi
 done
