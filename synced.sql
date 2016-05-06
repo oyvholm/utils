@@ -531,7 +531,7 @@ INSERT INTO "synced" VALUES('sident','Lib/std/perl','ea0c2eb42d04bfa30cbea92f77f
 INSERT INTO "synced" VALUES('sj','Lib/std/bash','5428efff2f3a4c447623544c77dafa32f4251908','2016-01-13 05:06:53');
 INSERT INTO "synced" VALUES('sjekk_iso','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sjekkhtmlindent','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('sjekkrand','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('sjekkrand','Lib/std/bash','e543f1819431a049517f67e3229f441624f0aaea','2016-05-06 16:13:48');
 INSERT INTO "synced" VALUES('sjekksommer','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('skipline','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('skiptoplines','Lib/std/perl',NULL,NULL);
@@ -935,7 +935,6 @@ INSERT INTO "todo" VALUES('scrplay',1,NULL);
 INSERT INTO "todo" VALUES('sea-repo',1,NULL);
 INSERT INTO "todo" VALUES('sget',1,NULL);
 INSERT INTO "todo" VALUES('sjekkhtmlindent',3,NULL);
-INSERT INTO "todo" VALUES('sjekkrand',1,NULL);
 INSERT INTO "todo" VALUES('sjekksommer',3,NULL);
 INSERT INTO "todo" VALUES('slekt',3,NULL);
 INSERT INTO "todo" VALUES('slogg',3,NULL);
