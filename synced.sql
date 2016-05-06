@@ -421,7 +421,7 @@ INSERT INTO "synced" VALUES('log_df','Lib/std/bash','9baa32551134d485f2b03897730
 INSERT INTO "synced" VALUES('log_df_pg','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('log_load','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('logg','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('logging','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('logging','Lib/std/bash','4d9dc625fda605b31f820c977d7e1352289800ae','2016-05-05 22:53:49');
 INSERT INTO "synced" VALUES('lpar','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('ls-broken','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('lsreadable','Lib/std/perl',NULL,NULL);
@@ -868,7 +868,6 @@ INSERT INTO "todo" VALUES('livecd-init',2,NULL);
 INSERT INTO "todo" VALUES('log_df_pg',3,NULL);
 INSERT INTO "todo" VALUES('log_load',3,NULL);
 INSERT INTO "todo" VALUES('logg',3,NULL);
-INSERT INTO "todo" VALUES('logging',1,NULL);
 INSERT INTO "todo" VALUES('lpar',1,NULL);
 INSERT INTO "todo" VALUES('ls-broken',3,NULL);
 INSERT INTO "todo" VALUES('maileditor',3,NULL);
