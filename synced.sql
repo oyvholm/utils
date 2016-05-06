@@ -180,7 +180,7 @@ INSERT INTO "synced" VALUES('afv_move','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('afv_rename','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('afvctl','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('age','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('all-lpar','Lib/std/bash-no-getopt','48edc2e8afed8bd9063fa97b8d2954aef1ff8c4b','2016-05-06 16:05:27');
+INSERT INTO "synced" VALUES('all-lpar','Lib/std/bash-no-getopt','2b322c146d40a62c77d3fbac267af6658456b2af','2016-05-06 16:27:30');
 INSERT INTO "synced" VALUES('allrevs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ampm','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('annex-cmd','Lib/std/bash-no-getopt','0bfb034882dd4b5853d9720ce6221dd12a58a1e7','2015-10-30 06:48:44');
@@ -531,7 +531,7 @@ INSERT INTO "synced" VALUES('sident','Lib/std/perl','ea0c2eb42d04bfa30cbea92f77f
 INSERT INTO "synced" VALUES('sj','Lib/std/bash','5428efff2f3a4c447623544c77dafa32f4251908','2016-01-13 05:06:53');
 INSERT INTO "synced" VALUES('sjekk_iso','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sjekkhtmlindent','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('sjekkrand','Lib/std/bash','e543f1819431a049517f67e3229f441624f0aaea','2016-05-06 16:13:48');
+INSERT INTO "synced" VALUES('sjekkrand','Lib/std/bash','2b322c146d40a62c77d3fbac267af6658456b2af','2016-05-06 16:27:30');
 INSERT INTO "synced" VALUES('sjekksommer','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('skipline','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('skiptoplines','Lib/std/perl',NULL,NULL);
