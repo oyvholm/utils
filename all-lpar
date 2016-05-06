@@ -3,8 +3,39 @@
 #=======================================================================
 # all-lpar
 # File ID: d96bacfe-6dda-11e3-8559-001f3b596ec9
-# Execute "lpar" in all subdirs
+#
+# Execute "lpar" in all subdirs, options are delivered to 
+# git-update-dirs(1).
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
+
+progname=all-lpar
+VERSION=0.1.0
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Execute "lpar" in all subdirs, options are delivered to 
+git-update-dirs(1).
+
+Usage: $progname [options] [args_and_options_to_git-update-dirs]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 find -name '*.git' -print0 | sort -z | xargs -0 git update-dirs -l "$@"
