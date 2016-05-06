@@ -476,7 +476,7 @@ INSERT INTO "synced" VALUES('p','Lib/std/bash','fafa0084333ce938ac2a25244a41bd9d
 INSERT INTO "synced" VALUES('pakk','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('pakk_logg','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('pakkdir','Lib/std/bash','2828f66452fe0d16e7e062704b7327b3e3a549d3','2016-05-05 20:39:37');
-INSERT INTO "synced" VALUES('pakkings','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('pakkings','Lib/std/bash','83fe5c73430647f54c29d61cc2fdfe03a9d79449','2016-05-06 16:00:45');
 INSERT INTO "synced" VALUES('pakkut','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('perldeboff','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('perldebon','Lib/std/perl',NULL,NULL);
@@ -904,7 +904,6 @@ INSERT INTO "todo" VALUES('oggname',3,NULL);
 INSERT INTO "todo" VALUES('old-git',1,NULL);
 INSERT INTO "todo" VALUES('outl',1,NULL);
 INSERT INTO "todo" VALUES('pakk',3,NULL);
-INSERT INTO "todo" VALUES('pakkings',1,NULL);
 INSERT INTO "todo" VALUES('perlfold',1,NULL);
 INSERT INTO "todo" VALUES('pget',3,NULL);
 INSERT INTO "todo" VALUES('pgsafe',1,NULL);
