@@ -359,6 +359,7 @@ INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl','9008255ba17dda8ac1fa5a2b98490b9e480d830e','2015-10-31 00:46:55');
 INSERT INTO "synced" VALUES('git-upstream','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('git-wait-until-clean','Lib/std/bash','9c3dd8ad0f709a5dd763fa4cdbf220f4f737dd31','2016-04-28 02:30:53');
+INSERT INTO "synced" VALUES('git-when-merged','https://raw.githubusercontent.com/mhagger/git-when-merged/master/bin/git-when-merged','','2016-05-07 12:55:46');
 INSERT INTO "synced" VALUES('git-wip','Lib/std/bash','2fe247422ce3ae1d35e34c38c737961d51523f58','2016-01-15 01:42:57');
 INSERT INTO "synced" VALUES('git-wn','Lib/std/bash','2fe247422ce3ae1d35e34c38c737961d51523f58','2016-01-15 01:42:57');
 INSERT INTO "synced" VALUES('githubnetwork','Lib/std/perl',NULL,NULL);
