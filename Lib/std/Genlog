@@ -1,0 +1,106 @@
+#!/bin/bash
+
+#=======================================================================
+# Genlog
+# File ID: STDuuidDTS
+#
+# Run all tests, update files in log/ of that directory and display the 
+# results.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=Genlog
+VERSION=0.3.1
+
+if test "$1" = "--version"; then
+    echo $progname $VERSION
+    exit 0
+fi
+
+if test -z "$1" -o "$1" = "-h" -o "$1" = "--help"; then
+    cat <<END
+
+Run all tests, update files in log/ of that directory and display the 
+results.
+
+The exit value is a bitwise OR:
+
+  Bit 0 set: One or more tests failed
+  Bit 1 set: Bail out detected (one or more test scripts aborted)
+
+  That is:
+
+    0: Everything ok
+    1: One or more tests failed
+    2: One or more scripts aborted
+    3: Tests failed and scripts aborted
+
+Usage: $progname testname [options] [testname [...]]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
+[ -z "$1" ] && { echo "Syntax: $0 testname [options] [testname [...]]" >&2; exit 1; }
+
+mkdir -p log
+maxlen=0
+retval=0
+tot_bailout=0
+tot_ok=0
+tot_not_ok=0
+opt_str=
+
+while printf "%s" "$1" | grep -q ^-; do
+    opt_str="$opt_str $1"
+    shift
+done
+
+for gf in "$@"; do
+    currlen=`echo -n $gf | wc -c`
+    [ $currlen -gt $maxlen ] && maxlen=$currlen
+done
+
+for gf in "$@"; do
+    testname=$gf
+    printf "%${maxlen}s: " $testname
+    ./$testname $opt_str 2>&1 | remove_perltestnumbers >log/$testname.log
+    not_ok_count=$(grep -a "^not ok" log/$testname.log | wc -l | tr -d ' ')
+    if [ $not_ok_count -gt 0 ]; then
+        not_ok_str=", $not_ok_count not ok"
+        retval=$(($retval | 1))
+    else
+        unset not_ok_str
+    fi
+    ok_count=$(grep -a "^ok" log/$testname.log | wc -l)
+    printf "%3u ok%s\\n" $ok_count "$not_ok_str"
+    tot_ok=$(($tot_ok + $ok_count))
+    tot_not_ok=$(($tot_not_ok + $not_ok_count))
+    grep -a -q "^not ok" log/$testname.log && {
+        echo
+        grep -a "^not ok" log/$testname.log
+        echo
+    }
+    grep -a "^Bail out" log/$testname.log && retval=$(($retval | 2))
+    tot_bailout=$(($tot_bailout + $(grep -a "^Bail out" log/$testname.log | wc -l)))
+done
+echo
+unset tot_not_ok_str
+if test $tot_not_ok -gt 0; then
+    tot_not_ok_str=", $tot_not_ok not ok ($tot_not_ok/$(($tot_ok + $tot_not_ok)) FAIL)"
+fi
+printf "%${maxlen}s: %u ok%s\n" "total" "$tot_ok" "$tot_not_ok_str"
+if test $tot_bailout -gt 0; then
+    printf "%${maxlen}s: %u\n" "bailout" "$tot_bailout"
+fi
+
+exit $retval
