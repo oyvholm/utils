@@ -2,7 +2,7 @@
 
 #=======================================================================
 # Add_test
-# File ID: 948f70c2-f989-11dd-be4a-000475e441b9
+# File ID: STDuuidDTS
 #
 # Create new *.t file in the current directory. Specify a name without 
 # the .t extension and a file with some common option tests will be 
