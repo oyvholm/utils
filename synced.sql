@@ -217,7 +217,6 @@ INSERT INTO "synced" VALUES('construct_call_graph.py','',NULL,NULL);
 INSERT INTO "synced" VALUES('convkeyw','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('cp1252','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('cp865','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('create-annex-remotes','Lib/std/bash','5428efff2f3a4c447623544c77dafa32f4251908','2016-01-13 05:06:53');
 INSERT INTO "synced" VALUES('create-ly','Lib/std/bash','53fa6007cad1eba7f2b6cf8579a1ef985128ae58','2016-03-31 10:12:13');
 INSERT INTO "synced" VALUES('create_cproject','Lib/std/bash','64c52948299d82bb658b09e070f2f936407f3a1b','2016-05-02 20:36:08');
 INSERT INTO "synced" VALUES('create_imgindex','Lib/std/perl',NULL,NULL);

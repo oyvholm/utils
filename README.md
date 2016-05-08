@@ -358,7 +358,6 @@ the alias somewhere.
 - convkeyw
 - cp1252
 - cp865
-- create-annex-remotes
 - create\_cproject
 - create\_imgindex
 - create\_new
