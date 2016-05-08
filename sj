@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 h\
@@ -233,6 +233,7 @@ elif test "$1" = "temp-warn" -o "$1" = "tw"; then
             exit 1
         fi
         if test "$currtemp" != "$prevtemp"; then
+            echo $(date -u +"%Y-%m-%dT%H:%M:%SZ") $currtemp >>~/log/temp.log
             echo -n " $currtemp $(tput el)"
             prevtemp=$currtemp
         fi
