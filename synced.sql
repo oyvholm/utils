@@ -24,7 +24,7 @@ INSERT INTO "synced" VALUES('256colors2.pl','',NULL,NULL);
 INSERT INTO "synced" VALUES('BUGS','',NULL,NULL);
 INSERT INTO "synced" VALUES('Div/HiRes-test','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('Div/apt-get.ubstud.txt','','',NULL);
-INSERT INTO "synced" VALUES('Div/bash-cmds.txt','',NULL,NULL);
+INSERT INTO "synced" VALUES('Div/bash-cmds.txt','Lib/std/txt','98a0741e6f3c0079a21558a99eab3d7b0c7d29d4','2016-05-08 03:30:35');
 INSERT INTO "synced" VALUES('Div/compr-test','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('Div/doc/linux-keyboard.txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('Div/doc/ssh_tunnelling.html','','',NULL);

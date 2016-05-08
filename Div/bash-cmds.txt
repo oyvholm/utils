@@ -1,5 +1,6 @@
 bash-cmds.txt
 File ID: d5efb828-f153-11e0-8fb3-fefdb24f8e10
+Author: Øyvind A. Holm <sunny@sunbase.org>
 
 Create tags and branches in repos created by git-svn:
   for f in $(git branch -a | grep /tags/); do echo $f; git tag $(echo -n $f | perl -pe 's/remotes\/tags\///') $(git log -1 --format=%H $f); done
