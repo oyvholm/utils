@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.2';
+our $VERSION = '0.2.3';
 
 my $current_repo;
 my %descriptions = ();
@@ -95,8 +95,10 @@ END
 =cut
 
     my $Tmptop = "tmp-git-update-dirs-t-$$-" . substr(rand, 2, 8);
-    ok(mkdir($Tmptop), "mkdir [Tmptop]") || BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
-    ok(chdir($Tmptop), "chdir [Tmptop]") || BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
+    ok(mkdir($Tmptop), "mkdir [Tmptop]") ||
+        BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
+    ok(chdir($Tmptop), "chdir [Tmptop]") ||
+        BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
     $CMD = "../$CMD";
 
     diag('Testing -h (--help) option...');
@@ -259,7 +261,8 @@ repo/sub2
 repo/bare1.git
 repo/sub1
 END
-    testcmd("$CMD --fetch -n --dirs-from filelist.txt --dirs-from filelist2.txt", # {{{
+    testcmd("$CMD --fetch -n --dirs-from filelist.txt " .
+        "--dirs-from filelist2.txt", # {{{
         <<END,
 ================ repo/sub2 ================
 
@@ -575,7 +578,9 @@ END
         'Before: \d+\n' .
         'After : \d+\n' .
         'Saved : \d+ \(\d+.\d+%\)\n' .
-        'Number of files in ' . $objects . ': before: \d+, after: \d+, saved: \d+\n' .
+        'Number of files in ' .
+        $objects .
+        ': before: \d+, after: \d+, saved: \d+\n' .
         '\n' .
         'Before: \d+\n' .
         'After : \d+\n' .
@@ -697,7 +702,8 @@ END
         $pull_str = "";
     } else {
         $allbr_str = "";
-        $deletedangling_str = "git-update-dirs: Simulating 'git dangling -D'...\n";
+        $deletedangling_str = "git-update-dirs: " .
+            "Simulating 'git dangling -D'...\n";
         $pull_str = "git-update-dirs: Simulating 'git pull --ff-only'...\n";
     }
     testcmd("$CMD --all-options -n .", # {{{
