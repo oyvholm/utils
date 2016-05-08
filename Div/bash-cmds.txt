@@ -15,7 +15,7 @@ Plot activity graph of Git repos:
   git log --format=%ct | ep_day -w 1 | ep | head -n -1 >/tmp/stpl.tmp; stpl -lp /tmp/stpl.tmp
 
 Format USB sticks:
-  sess -- mkfs.ext3 -m 0 -L LABEL_MAX_16_BYTES -U `suuid -t mkfs,ext3 -c "TEXT" -wa` /dev/DEVICE
+  sess -- mkfs.ext4 -m 0 -L LABEL_MAX_16_BYTES -U `suuid -t mkfs,ext4 -c "TEXT" -wa` /dev/DEVICE
   sess -- mkfs.vfat -n NAME_11_CHARS_MAX -i `suuid -t mkfs,vfat -c "TEXT" -wa | head -c8` /dev/DEVICE
 
 Run fsck on ext* filesystems with progress bar:
