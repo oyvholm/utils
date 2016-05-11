@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#=======================================================================
+# lilypond-new
+# File ID: 2b7149ea-172b-11e6-9cac-fefdb24f8e10
+#
+# Wrapper to run the newest (unstable) LilyPond version. Symlinking 
+# directly to the lilypond executable doesn't work, but this does.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#=======================================================================
+
+progname=lilypond-new
+VERSION=0.1.0
+
+/usr/local/prg/lilypond-new/bin/lilypond "$@"
