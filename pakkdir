@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -21,6 +21,7 @@ v\
 " -l "\
 help,\
 quiet,\
+remove-files,\
 split:,\
 verbose,\
 version,\
@@ -30,12 +31,14 @@ eval set -- "$ARGS"
 
 opt_help=0
 opt_quiet=0
+opt_remove_files=0
 opt_split=''
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (--remove-files) opt_remove_files=1; shift ;;
         (-s|--split) opt_split="$2"; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -59,6 +62,10 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  --remove-files
+    Remove files in DIRECTORY immediately after they've been added to 
+    the archive. Can be used when there's not enough disk space for the 
+    archive.
   -s SIZE, --split SIZE
     Split the .tar file into files with SIZE bytes each. Allowed values 
     are those understood by the -b/--bytes option in split(1). These 
@@ -71,6 +78,12 @@ Options:
 
 END
     exit 0
+fi
+
+if test "$opt_remove_files" = "1"; then
+    rm_files_str="--remove-files"
+else
+    rm_files_str=""
 fi
 
 for f in "$@"; do
@@ -95,11 +108,11 @@ for f in "$@"; do
 
         uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$targz</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || { echo $0: suuid error >&2; exit 1; }
         if test -n "$opt_split"; then
-            echo ======= tar c --remove-files $dir \| split -b $opt_split --verbose - $tarfile.split_
-            tar c --remove-files "$dir" | split -b $opt_split --verbose - "$tarfile.split_"
+            echo ======= tar c $rm_files_str $dir \| split -b $opt_split --verbose - $tarfile.split_
+            tar c $rm_files_str "$dir" | split -b $opt_split --verbose - "$tarfile.split_"
         else
-            echo ======= tar czf $targz --remove-files $dir
-            tar czf "$targz" --remove-files --label=$uuid "$dir"
+            echo ======= tar czf $targz $rm_files_str $dir
+            tar czf "$targz" $rm_files_str --label=$uuid "$dir"
             ls -la "$targz"
         fi
         # echo ======= Rensk
