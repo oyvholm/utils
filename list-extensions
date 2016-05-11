@@ -12,14 +12,16 @@
 #=======================================================================
 
 progname=list-extensions
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
+i\
 q\
 v\
 " -l "\
 help,\
+ignore-case,\
 quiet,\
 verbose,\
 version,\
@@ -28,11 +30,13 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
+opt_ignore_case=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
+        (-i|--ignore-case) opt_ignore_case=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -55,6 +59,8 @@ Options:
 
   -h, --help
     Show this help.
+  -i, --ignore-case
+    Convert all A-Z to a-z before sort and count.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -66,11 +72,18 @@ END
     exit 0
 fi
 
+if test "$opt_ignore_case" = "1"; then
+    ign_str="tr A-Z a-z"
+else
+    ign_str="cat"
+fi
+
 perl -pe 's/^.*\/(.+?)$/$1/' |
     grep '\.' |
     rev |
     cut -f 1 -d . |
     rev |
+    $ign_str |
     sort |
     uniq -c |
     sort -n
