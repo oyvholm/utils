@@ -11,15 +11,17 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.1.1
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
 q\
+s:\
 v\
 " -l "\
 help,\
 quiet,\
+split:,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -28,11 +30,13 @@ eval set -- "$ARGS"
 
 opt_help=0
 opt_quiet=0
+opt_split=''
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-s|--split) opt_split="$2"; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -55,6 +59,11 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -s SIZE, --split SIZE
+    Split the .tar file into files with SIZE bytes each. Allowed values 
+    are those understood by the -b/--bytes option in split(1). These 
+    files are not compressed by default, to make it easier to extract 
+    data from the files without starting from the beginning.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -68,7 +77,8 @@ for f in "$@"; do
     echo Pakker $f...
 
     dir="$f"
-    targz="$f.pakka.tar.gz"
+    tarfile="$f.pakka.tar"
+    targz="$tarfile.gz"
 
     echo dir = $dir
     echo targz = $targz
@@ -83,10 +93,15 @@ for f in "$@"; do
     else
         echo "$dir" | grep -q / && { echo "$dir: Forbudt med slasher i filnavnet" >&2; exit 1; }
 
-        echo ======= tar czf $targz --remove-files $dir
         uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$targz</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || { echo $0: suuid error >&2; exit 1; }
-        tar czf "$targz" --remove-files --label=$uuid "$dir"
-        ls -la "$targz"
+        if test -n "$opt_split"; then
+            echo ======= tar c --remove-files $dir \| split -b $opt_split --verbose - $tarfile.split_
+            tar c --remove-files "$dir" | split -b $opt_split --verbose - "$tarfile.split_"
+        else
+            echo ======= tar czf $targz --remove-files $dir
+            tar czf "$targz" --remove-files --label=$uuid "$dir"
+            ls -la "$targz"
+        fi
         # echo ======= Rensk
         # (cd "$dir" && find -type d -print0 -depth | xargs -0 rmdir )
         # echo ======= rmdir $dir
