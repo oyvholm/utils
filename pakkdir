@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.7.1
+VERSION=0.8.0
 
 ARGS="$(getopt -o "\
 h\
@@ -19,6 +19,7 @@ q\
 r\
 s:\
 v\
+x\
 z\
 " -l "\
 help,\
@@ -27,6 +28,7 @@ remove-files,\
 split:,\
 verbose,\
 version,\
+xz,\
 gzip,\
 " -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
@@ -37,6 +39,7 @@ opt_quiet=0
 opt_remove_files=0
 opt_split=''
 opt_verbose=0
+opt_xz=0
 opt_gzip=0
 while :; do
     case "$1" in
@@ -46,6 +49,7 @@ while :; do
         (-s|--split) opt_split="$2"; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
+        (-x|--xz) opt_xz=1; shift ;;
         (-z|--gzip) opt_gzip=1; shift ;;
         (--) shift; break ;;
         (*) echo $progname: Internal error >&2; exit 1 ;;
@@ -80,11 +84,18 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -x, --xz
+    Compress the archives with xz(1) after the files are added.
   -z, --gzip
     Compress the archives with gzip(1) after the files are added.
 
 END
     exit 0
+fi
+
+if test "$opt_xz" = "1" -a "$opt_gzip" = "1"; then
+    echo $progname: Cannot mix the --gzip and --xz options >&2
+    exit 1
 fi
 
 if test "$opt_remove_files" = "1"; then
@@ -128,11 +139,13 @@ for f in "$@"; do
                 echo $progname: Data size is less than split size, renaming >&2
                 mv -vi "$tarfile.split_aa" "$tarfile"
             fi
+            test "$opt_xz" = "1" && xz -v "$tarfile"*
             test "$opt_gzip" = "1" && gzip -v "$tarfile"*
         else
             echo $progname: tar cf $tarfile $rm_files_str $dir >&2
             tar cf "$tarfile" $rm_files_str --label=$uuid "$dir"
             ls -la "$tarfile" >&2
+            test "$opt_xz" = "1" && xz -v "$tarfile"
             test "$opt_gzip" = "1" && gzip -v "$tarfile"
         fi
         # echo $progname: Rensk >&2
