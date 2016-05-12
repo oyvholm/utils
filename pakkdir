@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.5.0
+VERSION=0.6.0
 
 ARGS="$(getopt -o "\
 h\
@@ -19,6 +19,7 @@ q\
 r\
 s:\
 v\
+z\
 " -l "\
 help,\
 quiet,\
@@ -26,6 +27,7 @@ remove-files,\
 split:,\
 verbose,\
 version,\
+gzip,\
 " -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
@@ -35,6 +37,7 @@ opt_quiet=0
 opt_remove_files=0
 opt_split=''
 opt_verbose=0
+opt_gzip=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
@@ -43,6 +46,7 @@ while :; do
         (-s|--split) opt_split="$2"; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
+        (-z|--gzip) opt_gzip=1; shift ;;
         (--) shift; break ;;
         (*) echo $progname: Internal error >&2; exit 1 ;;
     esac
@@ -76,6 +80,8 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -z, --gzip
+    Compress the archives with gzip(1) after the files are added.
 
 END
     exit 0
@@ -92,15 +98,13 @@ for f in "$@"; do
 
     dir="$f"
     tarfile="$f.pakka.tar"
-    targz="$tarfile.gz"
 
     if test $opt_verbose -ge 2; then
         echo $progname: dir = $dir >&2
-        echo $progname: targz = $targz >&2
     fi
 
-    if [ -e "$targz" ]; then
-        echo "$progname: $targz already exists" >&2
+    if ls "$tarfile"* 2>/dev/null | grep -q .; then
+        echo "$progname: $tarfile* already exist" >&2
         exit 1
     fi
 
@@ -112,17 +116,19 @@ for f in "$@"; do
             exit 1
         }
 
-        uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$targz</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || {
+        uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$tarfile</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || {
             echo $progname: suuid error >&2
             exit 1
         }
         if test -n "$opt_split"; then
             echo $progname: tar c $rm_files_str $dir \| split -b $opt_split --verbose - $tarfile.split_ >&2
             tar c $rm_files_str "$dir" | split -b $opt_split --verbose - "$tarfile.split_"
+            test "$opt_gzip" = "1" && gzip -v "$tarfile.split_"*
         else
-            echo $progname: tar czf $targz $rm_files_str $dir >&2
-            tar czf "$targz" $rm_files_str --label=$uuid "$dir"
-            ls -la "$targz" >&2
+            echo $progname: tar cf $tarfile $rm_files_str $dir >&2
+            tar cf "$tarfile" $rm_files_str --label=$uuid "$dir"
+            ls -la "$tarfile" >&2
+            test "$opt_gzip" = "1" && gzip -v "$tarfile"
         fi
         # echo $progname: Rensk >&2
         # (cd "$dir" && find -type d -print0 -depth | xargs -0 rmdir )
