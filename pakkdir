@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.4.0
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 h\
@@ -88,37 +88,45 @@ else
 fi
 
 for f in "$@"; do
-    echo Pakker $f...
+    echo $progname: Packing $f... >&2
 
     dir="$f"
     tarfile="$f.pakka.tar"
     targz="$tarfile.gz"
 
-    echo dir = $dir
-    echo targz = $targz
+    if test $opt_verbose -ge 2; then
+        echo $progname: dir = $dir >&2
+        echo $progname: targz = $targz >&2
+    fi
 
     if [ -e "$targz" ]; then
-        echo "$targz finnes allerede" >&2
+        echo "$progname: $targz already exists" >&2
         exit 1
     fi
 
     if [ ! -d "$dir" ]; then
-        echo "$dir: Er ikke en dir" >&2
+        echo "$progname: $dir: Not a directory" >&2
     else
-        echo "$dir" | grep -q / && { echo "$dir: Forbudt med slasher i filnavnet" >&2; exit 1; }
+        echo "$dir" | grep -q / && {
+            echo "$progname: $dir: Slashes not allowed in the file name" >&2
+            exit 1
+        }
 
-        uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$targz</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || { echo $0: suuid error >&2; exit 1; }
+        uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$targz</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || {
+            echo $progname: suuid error >&2
+            exit 1
+        }
         if test -n "$opt_split"; then
-            echo ======= tar c $rm_files_str $dir \| split -b $opt_split --verbose - $tarfile.split_
+            echo $progname: tar c $rm_files_str $dir \| split -b $opt_split --verbose - $tarfile.split_ >&2
             tar c $rm_files_str "$dir" | split -b $opt_split --verbose - "$tarfile.split_"
         else
-            echo ======= tar czf $targz $rm_files_str $dir
+            echo $progname: tar czf $targz $rm_files_str $dir >&2
             tar czf "$targz" $rm_files_str --label=$uuid "$dir"
-            ls -la "$targz"
+            ls -la "$targz" >&2
         fi
-        # echo ======= Rensk
+        # echo $progname: Rensk >&2
         # (cd "$dir" && find -type d -print0 -depth | xargs -0 rmdir )
-        # echo ======= rmdir $dir
+        # echo $progname: rmdir $dir >&2
         # rmdir "$dir"
     fi
 done
