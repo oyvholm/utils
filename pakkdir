@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.7.0
+VERSION=0.7.1
 
 ARGS="$(getopt -o "\
 h\
@@ -94,6 +94,7 @@ else
 fi
 
 for f in "$@"; do
+    echo >&2
     echo $progname: Packing $f... >&2
 
     dir="$f"
