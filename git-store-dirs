@@ -13,14 +13,16 @@
 #=======================================================================
 
 progname=git-store-dirs
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
+l\
 q\
 v\
 " -l "\
 help,\
+local,\
 quiet,\
 verbose,\
 version,\
@@ -29,11 +31,13 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
+opt_local=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
+        (-l|--local) opt_local=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -60,6 +64,8 @@ Options:
 
   -h, --help
     Show this help.
+  -l, --local
+    Create $dirfile in the current subdirectory.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -71,7 +77,12 @@ END
     exit 0
 fi
 
-test -d .git/. || { echo $0: Has to be run from the toplevel of the working tree >&2; exit 1; }
+if test "$opt_local" != "1"; then
+    test -d .git/. || {
+        echo $progname: Has to be run from the toplevel of the working tree >&2
+        exit 1
+    }
+fi
 find -type d -empty -print0 | grep -E -v -z '/\.git(/|$)' | LC_ALL=C sort -z >$dirfile
 test "$(cat $dirfile)" = "" &&
     (

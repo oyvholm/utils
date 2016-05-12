@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-restore-dirs
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -68,7 +68,6 @@ tmppref=$(date -u +"%Y%m%dT%H%M%SZ").$$
 bef_file=/tmp/grd.$tmppref.before.tmp
 aft_file=/tmp/grd.$tmppref.after.tmp
 dirfile=.emptydirs
-test -d .git/. || { echo $0: Has to be run from the toplevel of the working tree >&2; exit 1; }
 test -e $dirfile || { echo $0: No $dirfile file found >&2; exit 1; }
 emptydirs >$bef_file
 xargs -0 mkdir -p <$dirfile
