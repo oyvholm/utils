@@ -302,7 +302,7 @@ INSERT INTO "synced" VALUES('ga-pwd','Lib/std/perl','6a8942c40ca56c19a44e4d0b45c
 INSERT INTO "synced" VALUES('ga-repofix','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ga-sjekk','Lib/std/bash','e339f783d8ff22666186e06581c4d13aefd0ecd9','2016-01-10 19:41:49');
 INSERT INTO "synced" VALUES('ga-sumsize','Lib/std/perl','8a8fb69e7712e7433fb9e88f823af7f772ce4048','2015-10-31 00:42:28');
-INSERT INTO "synced" VALUES('ga-tree','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('ga-tree','Lib/std/bash','487616ce7a33f55c3e519955a4d8680f65e6d328','2016-05-13 13:24:23');
 INSERT INTO "synced" VALUES('gammelsvn','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('genpasswd','https://raw.githubusercontent.com/fuktommy/homebin/master/genpasswd','','2015-10-15 17:50:54');
 INSERT INTO "synced" VALUES('geohashing','',NULL,NULL);
@@ -811,7 +811,6 @@ INSERT INTO "todo" VALUES('fra_linode',1,NULL);
 INSERT INTO "todo" VALUES('g0',4,NULL);
 INSERT INTO "todo" VALUES('g1',4,NULL);
 INSERT INTO "todo" VALUES('ga-repofix',3,NULL);
-INSERT INTO "todo" VALUES('ga-tree',1,NULL);
 INSERT INTO "todo" VALUES('gammelsvn',3,NULL);
 INSERT INTO "todo" VALUES('getapr',3,NULL);
 INSERT INTO "todo" VALUES('gfuck',1,NULL);
