@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.4.0
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 h\
@@ -21,6 +21,7 @@ v\
 help,\
 maxtemp:,\
 quiet,\
+space:,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -32,12 +33,14 @@ std_maxtemp=94
 opt_help=0
 opt_maxtemp=$std_maxtemp
 opt_quiet=0
+opt_space='0'
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
         (--maxtemp) opt_maxtemp=$2; shift 2 ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (--space) opt_space=$2; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -61,6 +64,10 @@ Options:
     Default value: $std_maxtemp
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  --space BYTES
+    When used with "dfull":
+      Estimate time until the free disk space reaches BYTES. Must be an 
+      integer, only the characters '0' to '9' are allowed.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -95,6 +102,11 @@ a ping command until interrupted. These commands are also available:
 END
     exit 0
 fi
+
+echo "$opt_space" | grep -Eq "[^0-9]" && {
+    echo "$progname: Argument to --space must be an integer" >&2
+    exit 1
+}
 
 free_space() {
     df -h "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
@@ -133,15 +145,17 @@ elif test "$1" = "df"; then
     df -h --total | grep -e /dev/ -e ^total | sort -h -k4
 elif test "$1" = "dfull"; then
     origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
-    origdf=$(free_space_bytes .)
+    origdf=$(( $(free_space_bytes .) - $opt_space ))
     prevdf=$origdf
     ml_goalint=14
     ml_goaltime=9
     ml_dfdiff=1
     while :; do
         currtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
-        currdf=$(free_space_bytes .)
-        goal_output="$(goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null)"
+        currdf=$(( $(free_space_bytes .) - $opt_space ))
+        goal_output="$(
+            goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null
+        )"
         dfdiff="$(( $currdf-$origdf ))"
         goalint=$(echo $goal_output | awk '{print $1}' | sed 's/\..*//')
         goaldate=$(echo $goal_output | awk '{print $2}')
