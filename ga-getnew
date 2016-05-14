@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -51,7 +51,10 @@ Get new files from the last month (can be overridden) that haven't got
 enough copies in git-annex yet, then execute a fast fsck to check that 
 the files have enough copies.
 
-Usage: $progname [options]
+Arguments and options after " -- " are delivered to git-allfiles(1) 
+which delivers them further to "git log".
+
+Usage: $progname [options] [ -- options_to_git-allfiles ]
 
 Options:
 

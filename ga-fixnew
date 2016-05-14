@@ -14,7 +14,7 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 h\
@@ -53,7 +53,10 @@ overridden) in git-annex. Useful when moving lots of files around and
 committing with --no-verify (or disabling the automatic symlink fixing 
 in .git/hooks/pre-commit) to properly record file moves in Git.
 
-Usage: $progname [options]
+Arguments and options after " -- " are delivered to git-allfiles(1) 
+which delivers them further to "git log".
+
+Usage: $progname [options] [ -- options_to_git-allfiles ]
 
 Options:
 
