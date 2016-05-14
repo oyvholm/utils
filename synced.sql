@@ -71,7 +71,7 @@ INSERT INTO "synced" VALUES('Lib/std/c/std.h','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/version.h','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-article','','',NULL);
-INSERT INTO "synced" VALUES('Lib/std/db-book','Lib/std/db-article','9a82f2ffcefbc9d239e821265a0724b053ab5874','2016-05-13 03:48:10');
+INSERT INTO "synced" VALUES('Lib/std/db-book','Lib/std/db-article','bacb86210fda9f0f7ae461cc0cd8787fa1e1ff29','2016-05-13 15:11:00');
 INSERT INTO "synced" VALUES('Lib/std/db-catalog','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-manpage','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-slides','',NULL,NULL);
