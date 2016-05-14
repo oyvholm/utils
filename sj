@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.5.0
+VERSION=0.6.0
 
 ARGS="$(getopt -o "\
 h\
@@ -66,8 +66,9 @@ Options:
     Be more quiet. Can be repeated to increase silence.
   --space BYTES
     When used with "dfull":
-      Estimate time until the free disk space reaches BYTES. Must be an 
-      integer, only the characters '0' to '9' are allowed.
+      Estimate time until the free disk space reaches BYTES. This value 
+      is parsed by numfmt(1) from GNU coreutils, check the man page for 
+      allowed values. Examples: 10M = 10000000, 10Mi = 10485760.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -103,10 +104,13 @@ END
     exit 0
 fi
 
-echo "$opt_space" | grep -Eq "[^0-9]" && {
-    echo "$progname: Argument to --space must be an integer" >&2
+space_val="$(numfmt --from=auto -- $opt_space)"
+test -z "$space_val" && {
+    echo "$progname: Invalid value in --space argument" >&2
     exit 1
 }
+test $opt_verbose -ge 1 &&
+    echo "$progname: Using --space $space_val" >&2
 
 free_space() {
     df -h "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
@@ -145,14 +149,14 @@ elif test "$1" = "df"; then
     df -h --total | grep -e /dev/ -e ^total | sort -h -k4
 elif test "$1" = "dfull"; then
     origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
-    origdf=$(( $(free_space_bytes .) - $opt_space ))
+    origdf=$(( $(free_space_bytes .) - $space_val ))
     prevdf=$origdf
     ml_goalint=14
     ml_goaltime=9
     ml_dfdiff=1
     while :; do
         currtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
-        currdf=$(( $(free_space_bytes .) - $opt_space ))
+        currdf=$(( $(free_space_bytes .) - $space_val ))
         goal_output="$(
             goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null
         )"
