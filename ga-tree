@@ -65,4 +65,6 @@ END
     exit 0
 fi
 
-tree --charset UTF-8 -N "$@" | perl -pe 's/^(.*)( -> \.\..*)/$1/' | less -r
+tree --charset UTF-8 -N "$@" |
+    perl -pe 's/^(.*)( -> \.\..*)/$1/' |
+    less -r
