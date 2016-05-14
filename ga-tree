@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga-tree
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -65,4 +65,4 @@ END
     exit 0
 fi
 
-tree --charset UTF-8 -N "$@" | perl -pe 's/^(.*)( -> \.\..*)/$1/' | less
+tree --charset UTF-8 -N "$@" | perl -pe 's/^(.*)( -> \.\..*)/$1/' | less -r
