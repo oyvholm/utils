@@ -89,7 +89,8 @@ For every remote
     my $config_allremotes = `git config --get git-pa.allremotes`;
     chomp($config_allremotes);
     my @allremotes_elem = split(' ', $config_allremotes);
-    msg(1, 'Will use --all and --tags with the following remotes: ' . join(', ', @allremotes_elem));
+    msg(1, 'Will use --all and --tags with the following remotes: ' .
+        join(', ', @allremotes_elem));
 
     my %allremotes = ();
     for (@allremotes_elem) {
@@ -103,7 +104,8 @@ For every remote
             chomp($ch);
             msg(2, "ch = '$ch'");
             my $pipefp;
-            open($pipefp, 'git remote -v |') or die("$progname: git remote -v: Cannot open pipe: $!\n");
+            open($pipefp, 'git remote -v |') or
+                die("$progname: git remote -v: Cannot open pipe: $!\n");
             while (my $curr = <$pipefp>) {
                 chomp($curr);
                 msg(3, "curr = '$curr'");
@@ -135,7 +137,8 @@ For every remote
 sub check_sig {
     # {{{
     my $retval = shift;
-    ($retval & 127) && die("\n$progname: Child process interrupted, aborting.\n");
+    ($retval & 127) &&
+        die("\n$progname: Child process interrupted, aborting.\n");
     return(0);
     # }}}
 } # check_sig()
@@ -155,7 +158,8 @@ sub read_regexpfile {
     my $regexpfile = shift;
     my $fp;
     my @Retval = ();
-    open($fp, '<', $regexpfile) || die("$progname: $regexpfile: Could not read regexp file: $!\n");
+    open($fp, '<', $regexpfile) ||
+        die("$progname: $regexpfile: Could not read regexp file: $!\n");
     while (my $curr = <$fp>) {
         chomp($curr);
         push(@Retval, $curr);
