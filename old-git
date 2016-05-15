@@ -69,7 +69,9 @@ fetch_remotes() {
     }
     git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
     git remote | grep -q '^peff$' || git remote add peff git://github.com/peff/git.git
-    git remote | grep -q '^sunbase$' || git remote add sunbase sunny@sunbase.org:/home/sunny/repos/Git/git.git
+    git remote | grep -q '^sunbase$' ||
+        git remote add sunbase \
+        sunny@sunbase.org:/home/sunny/repos/Git-other/git.git
     if test -z "$opt_no_net"; then
         echo ================= git fetch =================
         echo ===== origin =====

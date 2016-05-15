@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=build-git
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -138,7 +138,8 @@ fetch_remotes() {
     git remote | grep -q '^peff$' ||
         git remote add peff git://github.com/peff/git.git
     git remote | grep -q '^sunbase$' ||
-        git remote add sunbase sunny@sunbase.org:/home/sunny/repos/Git/git.git
+        git remote add sunbase \
+            sunny@sunbase.org:/home/sunny/repos/Git-other/git.git
     if test "$opt_no_net" = "0"; then
         echo ================= git fetch =================
         echo ===== origin =====
