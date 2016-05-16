@@ -1,13 +1,76 @@
 #!/bin/bash
 
 #=======================================================================
-# build-git
+# old-git
 # File ID: 352732aa-2e4d-11e5-bd5f-fefdb24f8e10
-# (C)opyleft 2009 Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 2 or later
+#
+# Compile and install git(1).
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
 #=======================================================================
 
-progname=build-git
+progname=old-git
+VERSION=0.3.0
+
+ARGS="$(getopt -o "\
+h\
+q\
+v\
+" -l "\
+help,\
+no-net,\
+quiet,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_help=0
+opt_no_net=0
+opt_quiet=0
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-h|--help) opt_help=1; shift ;;
+        (--no-net) opt_no_net=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Compile and install git(1). Default action is to build from the newest 
+revision on 'master'. Another branch or tag can be specified as first 
+argument.
+
+Usage: $progname [options] [branch]
+
+Options:
+
+  -h, --help
+    Show this help.
+  --no-net
+    Don't fetch or push, use what's present in the local repo.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
+
 lockdir=$HOME/.Build-git.LOCK
 
 myexit() {
@@ -16,7 +79,10 @@ myexit() {
 }
 
 trap "myexit 1" INT TERM
-mkdir $lockdir || { echo $progname: $lockdir: Cannot create lockdir >&2; exit 1; }
+mkdir $lockdir || {
+    echo $progname: $lockdir: Cannot create lockdir >&2
+    exit 1
+}
 
 rcfile=$HOME/.build-gitrc
 origin_url=git://git.kernel.org/pub/scm/git/git.git
@@ -24,12 +90,12 @@ origin_url=git://git.kernel.org/pub/scm/git/git.git
 # Directory where the git build happens
 builddir=$HOME/src/other/git/build-git
 
-# Prefix to directory tree where git will be installed. You can change it to 
-# for example $HOME/local if you don’t have root access.
+# Prefix to directory tree where git will be installed. You can change 
+# it to for example $HOME/local if you don’t have root access.
 pref=/usr/local
 
-# If you don’t have sudo rights or you don’t need it at the location in the 
-# file system, clear the value of the $sudo variable
+# If you don’t have sudo rights or you don’t need it at the location in 
+# the file system, clear the value of the $sudo variable
 sudo=sudo
 
 # Local name of remote master
@@ -45,34 +111,36 @@ configure_opts=
 makeflags=
 make_doc=1
 make_info=1
+run_tests=1
 hname=$(hostname)
 
 [ -e $rcfile ] && . $rcfile
-
-unset opt_no_net
-test "$1" = "--no-net" && { opt_no_net=1; shift; }
 
 if [ -n "$1" ]; then
     local_master=$1
 fi
 
 is_official_branch() {
-    echo -n $1 | grep -Eq '^(master|maint|next|pu|todo)$' && return 0 || return 1
+    echo -n $1 | grep -Eq '^(master|maint|next|pu|todo)$' &&
+        return 0 || return 1
 }
 
 fetch_remotes() {
     git remote | grep -q '^origin$' || git remote add origin $origin_url
-    git remote | grep -q '^kernelorg$' || git remote add kernelorg git://git.kernel.org/pub/scm/git/git.git
+    git remote | grep -q '^kernelorg$' ||
+        git remote add kernelorg git://git.kernel.org/pub/scm/git/git.git
     git remote | grep -q '^gitster$' || {
         git remote add gitster git://github.com/gitster/git.git
         git config --add remote.gitster.fetch +refs/notes/*:refs/notes/*
     }
-    git remote | grep -q '^github$' || git remote add github git@github.com:sunny256/git.git
-    git remote | grep -q '^peff$' || git remote add peff git://github.com/peff/git.git
+    git remote | grep -q '^github$' ||
+        git remote add github git@github.com:sunny256/git.git
+    git remote | grep -q '^peff$' ||
+        git remote add peff git://github.com/peff/git.git
     git remote | grep -q '^sunbase$' ||
         git remote add sunbase \
-        sunny@sunbase.org:/home/sunny/repos/Git-other/git.git
-    if test -z "$opt_no_net"; then
+            sunny@sunbase.org:/home/sunny/repos/Git-other/git.git
+    if test "$opt_no_net" = "0"; then
         echo ================= git fetch =================
         echo ===== origin =====
         until git fetch origin; do
@@ -91,7 +159,9 @@ fetch_remotes() {
 }
 
 commit_tree() {
-    git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' --abbrev-commit $1
+    git log --color --graph --pretty=format:'%Cred%h %Cblue%p%Creset '\
+'-%C(yellow)%d%Creset %s %Cgreen(%cd %Cblue%an%Cgreen)%Creset' \
+    --abbrev-commit $1
 }
 
 enable_sudo() {
@@ -101,7 +171,7 @@ enable_sudo() {
 }
 
 push_changes() {
-    if test -z "$opt_no_net"; then
+    if test "$opt_no_net" = "0"; then
         for f in bellmann loc-repo passp sunbase github rsync-net; do
             git remote | grep -q "^$f\$" && {
                 echo ==== push changes to $f ====
@@ -157,13 +227,19 @@ GIT_PAGER=cat git status --porcelain | grep . && {
     echo $progname: $builddir is not clean, aborting >&2
     myexit 1
 }
-curr_git_ver=$(cd $builddir && (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN)
+curr_git_ver=$(
+    cd $builddir &&
+        (git tag | grep compiled-$hname-2 | tail -1) || echo UNKNOWN
+)
 lpar_git
 
 echo
 echo Variables:
 echo
-echo "curr_git_ver   = \"$curr_git_ver\" ($(cd $builddir; git describe --long --match 'v[12]*' $curr_git_ver))"
+echo "curr_git_ver   = \"$curr_git_ver\" ($(
+    cd $builddir
+    git describe --long --match 'v[12]*' $curr_git_ver
+))"
 echo "rcfile         = \"$rcfile\" ($([ -e $rcfile ] || echo -n "not ")found)"
 echo "builddir       = \"$builddir\""
 echo "pref           = \"$pref\""
@@ -184,7 +260,8 @@ if [ ! -e GIT-VERSION-GEN ]; then
     echo $progname: Didn’t find GIT-VERSION-GEN. That’s strange, aborting.
     myexit 1
 fi
-is_official_branch $local_master && destbranch=origin/$local_master || destbranch=$local_master
+is_official_branch $local_master &&
+    destbranch=origin/$local_master || destbranch=$local_master
 echo
 if [ -n "$curr_git_ver" ]; then
     echo ================= git status in `pwd` =================
@@ -195,8 +272,11 @@ if [ -n "$curr_git_ver" ]; then
     until [ "$choice" = "y" ]; do
         echo
         unset choice
-        echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) new commits available in range $curr_git_ver..$destbranch
-        echo Going to compile git $(git describe --long --match 'v[12]*' $destbranch)
+        echo $(git log --format=oneline $curr_git_ver..$destbranch | wc -l) \
+            "new commits available in range $curr_git_ver..$destbranch"
+        echo Going to compile git $(
+            git describe --long --match 'v[12]*' $destbranch
+        )
         echo
         echo If that looks okay to you, press \'y\' to start the build, or:
         echo \'d\' to diff
@@ -215,11 +295,13 @@ if [ -n "$curr_git_ver" ]; then
         [ "$choice" = "dw" ] && git diff --word-diff $curr_git_ver $destbranch
         [ "$choice" = "l" ] && git log --stat $curr_git_ver..$destbranch
         [ "$choice" = "lp" ] && git log --patch $curr_git_ver..$destbranch
-        [ "$choice" = "lt" ] && git log --graph --stat $curr_git_ver..$destbranch
-        [ "$choice" = "lw" ] && git log --patch --word-diff $curr_git_ver..$destbranch
+        [ "$choice" = "lt" ] &&
+            git log --graph --stat $curr_git_ver..$destbranch
+        [ "$choice" = "lw" ] &&
+            git log --patch --word-diff $curr_git_ver..$destbranch
         [ "$choice" = "n" ] && myexit 0
         [ "$choice" = "p" ] && {
-            if test -z "$opt_no_net"; then
+            if test "$opt_no_net" = "0"; then
                 update_branches
                 push_changes
             else
@@ -271,11 +353,15 @@ else
     make_info_str=
     inst_info_str=
 fi
-unset make_doc_str make_info_str inst_doc_str inst_info_str
+unset make_doc_str make_info_str inst_doc_str inst_info_str run_tests
 echo Compiling $vername
-echo ==== make prefix=$dest $makeflags all $make_doc_str $make_info_str \|\| myexit
+echo "==== make prefix=$dest $makeflags all" \
+    "$make_doc_str $make_info_str \|\| myexit"
 make prefix=$dest $makeflags all $make_doc_str $make_info_str || myexit
-echo ==== make $makeflags test
+if test "$run_tests" = "1"; then
+    echo ==== make $makeflags test
+    make $makeflags test
+fi
 echo
 echo Ready to install $(./git --version) from branch \"$local_master\"
 unset choice
@@ -286,7 +372,8 @@ until test "$choice" = "y"; do
     read choice
 done
 enable_sudo
-echo ==== $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
+echo "==== $sudo make prefix=$dest" \
+    "$makeflags install $inst_doc_str $inst_info_str"
 $sudo make prefix=$dest $makeflags install $inst_doc_str $inst_info_str
 echo ================= make install finished =================
 myexit 0
