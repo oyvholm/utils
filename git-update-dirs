@@ -55,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.3';
+our $VERSION = '0.2.4';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -434,9 +434,12 @@ sub usage {
     }
     print(<<"END");
 
+Execute a predefined or customised set of commands in multiple local Git 
+repositories in one operation.
+
 Usage: $progname [options] [directories [...]]
 
-Options:
+Options, listed in the order they are executed in every Git repository:
 
   -E X, --exec-before X
     Execute command X in every repo before all other commands. This 
