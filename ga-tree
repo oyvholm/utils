@@ -11,15 +11,17 @@
 #=======================================================================
 
 progname=ga-tree
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 C\
+d\
 h\
 q\
 v\
 " -l "\
 colour,\
+directories,\
 help,\
 quiet,\
 verbose,\
@@ -29,12 +31,14 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_colour=0
+opt_directories=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-C|--colour) opt_colour=1; shift ;;
+        (-d|--directories) opt_directories=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -58,6 +62,8 @@ Options:
 
   -C, --colour
     Use colours.
+  -d, --directories
+    Only list directories.
   -h, --help
     Show this help.
   -q, --quiet
@@ -77,6 +83,12 @@ else
     colour_str=''
 fi
 
-tree --charset UTF-8$colour_str -N "$@" |
+if test "$opt_directories" = "1"; then
+    directories_str=' -d'
+else
+    directories_str=''
+fi
+
+tree --charset UTF-8$colour_str$directories_str -N "$@" |
     perl -pe 's/^(.*)( -> \.\..*)/$1/' |
     less -r
