@@ -55,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.4';
+our $VERSION = '0.3.0';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -113,7 +113,6 @@ sub main {
     if ($Opt{'all-options'}) {
         $Opt{'allbr'} += 1;
         $Opt{'dangling'} = 1;
-        $Opt{'delete-dangling'} = 1;
         $Opt{'fetch-prune'} = 1;
         $Opt{'ga-sync'} = 1;
         $Opt{'ga-update-desc'} = 1;
@@ -515,7 +514,7 @@ Options, listed in the order they are executed in every Git repository:
     To disable: git config git-update-dirs.no-exec-after true
 
   -A, --all-options
-    Run the program as if "-lFpgSdaPsD" had been specified.
+    Run the program as if "-lFpgSdaPs" had been specified.
   --dirs-from X
     Read directory list from file X. If "-" is specified, read from 
     stdin. Can be specified multiple times to read from different files.
