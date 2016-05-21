@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.6.0
+VERSION=0.7.0
 
 ARGS="$(getopt -o "\
 h\
@@ -113,7 +113,7 @@ test $opt_verbose -ge 1 &&
     echo "$progname: Using --space $space_val" >&2
 
 free_space() {
-    df -h "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+    df -h --si "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
 }
 
 free_space_bytes() {
@@ -145,8 +145,8 @@ if test "$1" = "allspace"; then
 elif test "$1" = "date"; then
     ntpdate -q pool.ntp.org
 elif test "$1" = "df"; then
-    df -h | grep ^Filesystem
-    df -h --total | grep -e /dev/ -e ^total | sort -h -k4
+    df -h --si | grep ^Filesystem
+    df -h --si --total | grep -e /dev/ -e ^total | sort -h -k4
 elif test "$1" = "dfull"; then
     origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
     origdf=$(( $(free_space_bytes .) - $space_val ))
