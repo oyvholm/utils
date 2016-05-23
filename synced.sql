@@ -111,6 +111,7 @@ INSERT INTO "synced" VALUES('Lib/std/txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/xhtml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/xml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Local/arch-vbox/pkg-to-pavi','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('Local/bellmann/pd','Lib/std/bash','4b33b8fcd8f14e23a27ebce5a78807ac964626c6','2016-05-22 01:49:49');
 INSERT INTO "synced" VALUES('Local/dg-vbox/fixskjerm','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('Local/n900/mountloop','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('Local/n900/pods','Lib/std/bash',NULL,NULL);
