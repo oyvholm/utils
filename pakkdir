@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.10.1
+VERSION=0.10.2
 
 ARGS="$(getopt -o "\
 1\
@@ -170,7 +170,7 @@ for f in "$@"; do
         if test -n "$opt_split"; then
             echo $progname: tar c $rm_files_str $dir \| \
                 split -b $opt_split --verbose - $tarfile.split_ >&2
-            tar c $rm_files_str "$dir" |
+            tar c $rm_files_str --label=$uuid "$dir" |
                 split -b $opt_split --verbose - "$tarfile.split_"
             if test ! -e "$tarfile.split_ab"; then
                 mv -vi "$tarfile.split_aa" "$tarfile"
