@@ -315,7 +315,7 @@ INSERT INTO "synced" VALUES('git-add-missing-gpg-keys','Lib/std/bash',NULL,NULL)
 INSERT INTO "synced" VALUES('git-all-blobs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-all-repos','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-allbr','Lib/std/bash','f932a58e3e7a2519ef447e07d86ec5a64e896fda','2016-01-15 01:32:36');
-INSERT INTO "synced" VALUES('git-allfiles','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('git-allfiles','Lib/std/bash-no-getopt','8e658ba2a0eda108113f02360f6709af958a03f8','2016-05-25 13:23:14');
 INSERT INTO "synced" VALUES('git-authoract','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-bare','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-bs','Lib/std/bash-no-getopt',NULL,NULL);
@@ -817,7 +817,6 @@ INSERT INTO "todo" VALUES('gfuck',1,NULL);
 INSERT INTO "todo" VALUES('git-add-missing-gpg-keys',3,NULL);
 INSERT INTO "todo" VALUES('git-all-blobs',3,NULL);
 INSERT INTO "todo" VALUES('git-all-repos',1,NULL);
-INSERT INTO "todo" VALUES('git-allfiles',1,NULL);
 INSERT INTO "todo" VALUES('git-authoract',1,NULL);
 INSERT INTO "todo" VALUES('git-bare',3,NULL);
 INSERT INTO "todo" VALUES('git-delete-banned',3,NULL);
