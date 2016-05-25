@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #=======================================================================
-# ga-getnew
+# ga-fixnew
 # File ID: 1fc79a40-015b-11e5-a869-f13c8f9a2603
 #
 # Fix broken symlinks for new files from the last month (can be 
@@ -13,8 +13,8 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-progname=ga-getnew
-VERSION=0.2.1
+progname=ga-fixnew
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
