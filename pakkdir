@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.9.1
+VERSION=0.10.0
 
 ARGS="$(getopt -o "\
 1\
@@ -96,6 +96,12 @@ Options:
   -z, --gzip
     Compress the archives with gzip(1) after the files are added.
 
+To protect against potential data loss, it first loops through all 
+directories to check that no files under the directories are stored in a 
+parent Git repository. If any files are stored under any of the 
+directories, it aborts. This is useful for example with git-annex, where 
+only a symlink would be stored in the archive files.
+
 END
     exit 0
 fi
@@ -119,6 +125,18 @@ else
 fi
 
 for f in "$@"; do
+    if test -d "$f"; then
+        git ls-files "$f" | grep . >&2 && {
+            echo $progname: $f: \
+                Files are stored in Git below this directory >&2
+            exit 1
+        }
+    else
+        echo $progname: $f: Not a directory >&2
+    fi
+done
+
+for f in "$@"; do
     echo >&2
     echo $progname: Packing $f... >&2
 
@@ -134,9 +152,7 @@ for f in "$@"; do
         exit 1
     fi
 
-    if [ ! -d "$dir" ]; then
-        echo "$progname: $dir: Not a directory" >&2
-    else
+    if [ -d "$dir" ]; then
         echo "$dir" | grep -q / && {
             echo "$progname: $dir: Slashes not allowed in the file name" >&2
             exit 1
