@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=git-allfiles
-VERSION=0.1.0
+VERSION=0.1.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -38,4 +38,4 @@ END
     exit 0
 fi
 
-git log --raw "$@" | grep ^: | cut -f 2 | sort -u
+git log --raw --no-renames "$@" | grep ^: | cut -f 2 | sort -u
