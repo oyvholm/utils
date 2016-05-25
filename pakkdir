@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.10.0
+VERSION=0.10.1
 
 ARGS="$(getopt -o "\
 1\
@@ -158,13 +158,20 @@ for f in "$@"; do
             exit 1
         }
 
-        uuid=`suuid -t pakkdir --raw -w eo -c "<c_pakkdir> <filename>$tarfile</filename> <host>$(hostname)</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"` || {
+        uuid=$(
+            suuid -t pakkdir --raw -w eo \
+                -c "<c_pakkdir> <filename>$tarfile</filename> <host>$(
+                    hostname
+                )</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"
+        ) || {
             echo $progname: suuid error >&2
             exit 1
         }
         if test -n "$opt_split"; then
-            echo $progname: tar c $rm_files_str $dir \| split -b $opt_split --verbose - $tarfile.split_ >&2
-            tar c $rm_files_str "$dir" | split -b $opt_split --verbose - "$tarfile.split_"
+            echo $progname: tar c $rm_files_str $dir \| \
+                split -b $opt_split --verbose - $tarfile.split_ >&2
+            tar c $rm_files_str "$dir" |
+                split -b $opt_split --verbose - "$tarfile.split_"
             if test ! -e "$tarfile.split_ab"; then
                 mv -vi "$tarfile.split_aa" "$tarfile"
             fi
