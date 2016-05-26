@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 g\
@@ -141,13 +141,10 @@ uuid=$(
     echo $progname: suuid error >&2
     exit 1
 }
-find "$_prefix" -print0 |
-    LC_COLLATE=C sort -z |
-    tar cf "$_prefix.tar" --null -T - \
-        --no-recursion --label=$uuid "$_prefix" || {
-            echo "$progname: Error running tar in parent dir" >&2
-            exit 1
-        }
+tar cf "$_prefix.tar" --label=$uuid "$_prefix" --sort=name || {
+    echo "$progname: Error running tar in parent dir" >&2
+    exit 1
+}
 
 if [ "$opt_nocomp" = "1" ]; then
 	exit 0
