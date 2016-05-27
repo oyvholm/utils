@@ -42,7 +42,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 
 my %descriptions = ();
 
@@ -132,7 +132,7 @@ END
     installed('find --version', '/GNU findutils/', 'stdout');
     installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
-    installed('git --version', '/^git version 2\.8/', 'stdout');
+    installed('git --version', '/^git version 2\.9/', 'stdout');
     installed('git-annex version', '/^git-annex version: /', 'stdout');
     installed('gnuplot --version', '/^gnuplot /', 'stdout');
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
