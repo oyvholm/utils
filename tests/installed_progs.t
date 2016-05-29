@@ -42,7 +42,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.4.0';
 
 my %descriptions = ();
 
@@ -104,15 +104,16 @@ END
 
     diag("Checking coreutils...");
     coreutils(qw{
-        arch base64 basename cat chcon chgrp chmod chown chroot cksum 
-        comm cp csplit cut date dd df dir dircolors dirname du echo env 
-        expand expr factor false fmt fold groups head hostid id install 
-        join link ln logname ls md5sum mkdir mkfifo mknod mktemp mv nice 
-        nl nohup nproc numfmt od paste pathchk pinky pr printenv printf 
-        ptx pwd readlink rm rmdir runcon seq sha1sum sha224sum sha256sum 
-        sha384sum sha512sum shred sleep sort split stat stty sum sync 
-        tac tail tee timeout touch tr true truncate tsort tty uname 
-        unexpand uniq unlink users vdir wc who whoami yes
+        arch base32 base64 basename cat chcon chgrp chmod chown chroot 
+        cksum comm cp csplit cut date dd df dir dircolors dirname du 
+        echo env expand expr factor false fmt fold groups head hostid id 
+        install join kill link ln logname ls md5sum mkdir mkfifo mknod 
+        mktemp mv nice nl nohup nproc numfmt od paste pathchk pinky pr 
+        printenv printf ptx pwd readlink realpath rm rmdir runcon seq 
+        sha1sum sha224sum sha256sum sha384sum sha512sum shred shuf sleep 
+        sort split stat stdbuf stty sum sync tac tail tee timeout touch 
+        tr true truncate tsort tty uname unexpand uniq unlink uptime 
+        users vdir wc who whoami yes
     });
 
     diag("Checking important software...");
@@ -304,7 +305,7 @@ sub coreutils {
     my $retval = 0;
     for my $curr (@progs) {
         my $cmd = $curr;
-        if ($curr =~ /^(echo|false|pwd|true|printf)$/) {
+        if ($curr =~ /^(echo|false|kill|pwd|true|printf)$/) {
             for my $d (qw{ /usr/local/bin /usr/bin /bin }) {
                 if (-x "$d/$curr") {
                     $cmd = "$d/$curr";
