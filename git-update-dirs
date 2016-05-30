@@ -55,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.4.0';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -259,7 +259,7 @@ sub main {
             }
             if (should('allbr') && ($is_bare || $Opt{'allbr'} > 1)) {
                 mysystem("git", "nobr");
-                mysystem("git", "allbr", "-a");
+                mysystem("git", "allbr", "-ac");
                 mysystem("git", "checkout", "-");
             }
             if (should('push')) {
@@ -488,7 +488,7 @@ Options, listed in the order they are executed in every Git repository:
     branches.
     To disable: git config git-update-dirs.no-dangling true
   -a, --allbr
-    Execute "git nobr", "git allbr -a" and "git commit -". If this 
+    Execute "git nobr", "git allbr -ac" and "git commit -". If this 
     option is specified once, it's only executed in bare repos. To also 
     execute it in non-bare repos, it must be specified twice.
     To disable: git config git-update-dirs.no-allbr true
