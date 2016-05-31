@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 my %descriptions = ();
 
@@ -140,7 +140,8 @@ END
     testcmd("tar xzf file.tar.gz", "", "", 0, "Untar file.tar.gz (2)");
     testcmd("../$CMD file.txt",
         "",
-        "datefn: 20121224T002858Z.file.txt: File already exists, use --force to overwrite\n",
+        "datefn: 20121224T002858Z.file.txt: " .
+            "File already exists, use --force to overwrite\n",
         0,
         "Don't overwrite file without --force",
     );
@@ -161,9 +162,11 @@ END
 
     diag("Testing --replace option...");
 
-    ok(utime(1433116800, 1433116800, "20121224T002858Z.file.txt"), "Change mtime of 20121224T002858Z.file.txt");
+    ok(utime(1433116800, 1433116800, "20121224T002858Z.file.txt"),
+        "Change mtime of 20121224T002858Z.file.txt");
     testcmd("../$CMD --replace 20121224T002858Z.file.txt",
-        "datefn: '20121224T002858Z.file.txt' renamed to '20150601T000000Z.file.txt'\n",
+        "datefn: '20121224T002858Z.file.txt' renamed to " .
+            "'20150601T000000Z.file.txt'\n",
         "",
         0,
         "Replace timestamp with new modification time",
@@ -207,14 +210,16 @@ END
     ok(chdir(".."), "chdir ..");
 
     testcmd("$CMD -d datefn-files/20150601T000000Z.file.txt",
-        "datefn: 'datefn-files/20150601T000000Z.file.txt' renamed to 'datefn-files/file.txt'\n",
+        "datefn: 'datefn-files/20150601T000000Z.file.txt' renamed to " .
+            "'datefn-files/file.txt'\n",
         "",
         0,
         "Delete date from parent directory",
     );
 
     testcmd("$CMD datefn-files/file.txt",
-        "datefn: 'datefn-files/file.txt' renamed to 'datefn-files/20150601T000000Z.file.txt'\n",
+        "datefn: 'datefn-files/file.txt' renamed to " .
+            "'datefn-files/20150601T000000Z.file.txt'\n",
         "",
         0,
         "Re-add date from parent directory",
@@ -222,7 +227,8 @@ END
 
     ok(chdir("datefn-files"), "chdir datefn-files");
 
-    ok(unlink("20150601T000000Z.file.txt"), "unlink 20150601T000000Z.file.txt");
+    ok(unlink("20150601T000000Z.file.txt"),
+        "unlink 20150601T000000Z.file.txt");
 
     diag('Testing --git option...');
     my $git_version = `git --version 2>/dev/null`;
@@ -237,7 +243,8 @@ END
         ok(-d ".git" && -f "file.txt", "repo.tar.gz was properly unpacked");
         testcmd("../../$CMD --git file.txt",
             "datefn: 'file.txt' renamed to '20150611T123129Z.file.txt'\n",
-            "datefn: Executing \"git mv file.txt 20150611T123129Z.file.txt\"...\n",
+            "datefn: Executing \"git mv file.txt " .
+                "20150611T123129Z.file.txt\"...\n",
             0,
             "Use --git option in Git repository",
         );
@@ -258,7 +265,8 @@ END
         );
         testcmd("../../$CMD -gd 20150611T123129Z.file.txt",
             "datefn: '20150611T123129Z.file.txt' renamed to 'file.txt'\n",
-            "datefn: Executing \"git mv 20150611T123129Z.file.txt file.txt\"...\n",
+            "datefn: Executing \"git mv 20150611T123129Z.file.txt " .
+                "file.txt\"...\n",
             0,
             "Use -d and -g option in Git repository",
         );
@@ -278,11 +286,12 @@ END
         );
         testcmd("LC_ALL=C ../../$CMD -g unknown.txt",
             "",
-            <<END,
-datefn: Executing "git mv unknown.txt 20150611T141445Z.unknown.txt"...
-fatal: not under version control, source=unknown.txt, destination=20150611T141445Z.unknown.txt
-datefn: unknown.txt: Cannot rename file to '20150611T141445Z.unknown.txt': No such file or directory
-END
+            "datefn: Executing \"git mv unknown.txt " .
+                "20150611T141445Z.unknown.txt\"...\n" .
+                "fatal: not under version control, source=unknown.txt, " .
+                "destination=20150611T141445Z.unknown.txt\n" .
+                "datefn: unknown.txt: Cannot rename file to " .
+                "'20150611T141445Z.unknown.txt': No such file or directory\n",
             0,
             "Use --git option on file unknown to Git",
         );
@@ -301,7 +310,8 @@ END
         0,
         "Test -s (--skew) with positive integer",
     );
-    ok(unlink('20121225T002858Z.file.txt'), "unlink '20121225T002858Z.file.txt'");
+    ok(unlink('20121225T002858Z.file.txt'),
+        "unlink '20121225T002858Z.file.txt'");
 
     testcmd("tar xzf file.tar.gz", "", "", 0, "Untar file.tar.gz (5)");
     testcmd("../$CMD --skew -86400 file.txt",
@@ -310,7 +320,8 @@ END
         0,
         "--skew with negative integer",
     );
-    ok(unlink('20121223T002858Z.file.txt'), "unlink '20121223T002858Z.file.txt'");
+    ok(unlink('20121223T002858Z.file.txt'),
+        "unlink '20121223T002858Z.file.txt'");
 
     # FIXME: Add tests for --bwf
 

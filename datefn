@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -84,7 +84,8 @@ sub main {
     # {{{
     my $Retval = 0;
 
-    defined($ARGV[0]) || die("$progname: Missing filenames. Use -h for help.\n");
+    defined($ARGV[0]) ||
+        die("$progname: Missing filenames. Use -h for help.\n");
 
     for my $Curr (@ARGV) {
         msg(2, "Curr = '$Curr'\n");
@@ -110,7 +111,11 @@ sub process_file {
     my $new_name = '';
     my $mod_date = mod_date($File);
     my $start_date = start_date($File);
-    my $dates = sprintf("%s%s%s", sec_to_string($start_date), length($start_date) ? "-" : "", sec_to_string($mod_date));
+    my $dates = sprintf("%s%s%s",
+        sec_to_string($start_date),
+        length($start_date) ? "-" : "",
+        sec_to_string($mod_date),
+    );
     if (length($dates)) {
         my ($basename, $dirname) = fileparse($File);
         my $new_name = $basename;
@@ -132,11 +137,13 @@ sub process_file {
             print("$progname: '$File' would be renamed to '$new_name'\n");
         } else {
             if (-e $new_name && !$Opt{'force'}) {
-                warn("$progname: $new_name: File already exists, use --force to overwrite\n");
+                warn("$progname: $new_name: File already exists, " .
+                    "use --force to overwrite\n");
             } elsif (rename_file($File, $new_name)) {
                 print("$progname: '$File' renamed to '$new_name'\n");
             } else {
-                warn("$progname: $File: Cannot rename file to '$new_name': $!\n");
+                warn("$progname: $File: Cannot rename file to '$new_name': " .
+                    "$!\n");
             }
         }
     }
@@ -240,7 +247,8 @@ sub bwf_date {
     my $buf;
     my $numread = read(InFP, $buf, 358);
     if ($numread != 358) {
-        warn("$progname: $File: Could not read 358 bytes, but continuing: $!\n");
+        warn("$progname: $File: Could not read 358 bytes, but continuing: " .
+            "$!\n");
     }
     if ($buf =~ /^.*(\d\d\d\d)-(\d\d)-(\d\d)(\d\d):(\d\d):(\d\d)$/s) {
         $Retval = timegm($6, $5, $4, $3, $2-1, $1);
