@@ -184,9 +184,5 @@ for f in "$@"; do
             test "$opt_xz" = "1" && xz -v "$tarfile"
             test "$opt_gzip" = "1" && gzip -v "$tarfile"
         fi
-        # echo $progname: Rensk >&2
-        # (cd "$dir" && find -type d -print0 -depth | xargs -0 rmdir )
-        # echo $progname: rmdir $dir >&2
-        # rmdir "$dir"
     fi
 done
