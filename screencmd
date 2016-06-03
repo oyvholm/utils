@@ -4,14 +4,14 @@
 # screencmd
 # File ID: 354475e0-29d3-11e6-9f89-02010e0a6634
 #
-# [Description]
+# Execute command in all open screen(1) windows
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=screencmd
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -45,7 +45,15 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Execute command in all open screen(1) windows
+
+For example, to send the command "hash -r" to all windows:
+
+  $progname -- hash -r
+or
+  $progname "hash -r"
+
+Usage: $progname [options] COMMAND
 
 Options:
 
@@ -62,3 +70,4 @@ END
     exit 0
 fi
 
+screen -X at "#" stuff "$*^M"
