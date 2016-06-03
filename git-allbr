@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=git-allbr
-VERSION=0.4.0
+VERSION=0.4.1
 
 ARGS="$(getopt -o "\
 a\
@@ -71,7 +71,9 @@ Options:
 
   -a, --all
     Create branches from all remotes. If this option is not specified, 
-    only "origin" or remotes specified on the command line are scanned.
+    only "origin" or remotes specified on the command line are scanned. 
+    This option has no effect if any remotes are specified on the 
+    command line.
   -c, --commit-branches
     Also create commit-* branches created by git-dangling.
   -f, --force
@@ -82,9 +84,9 @@ Options:
     Be more quiet. Can be repeated to increase silence.
   -u, --upstream
     Set local branches to track remote branches as upstream, similar 
-    functionality to "git branch -u" and "git push -u". If several 
-    remotes are specified, the last remote in alphabetical order is 
-    used.
+    functionality to "git branch -u" and "git push -u". When used with 
+    -a/--all, use the last remote in alphabetical order. If several 
+    remotes are specified, the last one is used.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
