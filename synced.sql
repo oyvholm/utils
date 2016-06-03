@@ -525,6 +525,7 @@ INSERT INTO "synced" VALUES('rmxmlcomm','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('rot13','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('runtest','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('scrdump','Lib/std/bash','568a7333c54f59388afe8d99ccce2147fe4ee8f5','2016-04-27 18:27:38');
+INSERT INTO "synced" VALUES('screencmd','Lib/std/bash','0b32be7f98c651ddc6a83d0b360a8059eb9ea88f','2016-06-03 21:36:19');
 INSERT INTO "synced" VALUES('scrplay','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sea-repo','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('sget','Lib/std/bash',NULL,NULL);
