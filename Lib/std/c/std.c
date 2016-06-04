@@ -32,6 +32,7 @@
  * Function prototypes
  */
 
+void print_license(void);
 void print_version(void);
 void usage(int);
 
@@ -87,23 +88,7 @@ int main(int argc, char *argv[])
 
 				else if (!strcmp(long_options[option_index].name, "license"))
 				{
-					fprintf(stdout,
-						"(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n"
-						"\n"
-						"This program is free software; you can redistribute it and/or modify it \n"
-						"under the terms of the GNU General Public License as published by the \n"
-						"Free Software Foundation; either version 2 of the License, or (at your \n"
-						"option) any later version.\n"
-						"\n"
-						"This program is distributed in the hope that it will be useful, but \n"
-						"WITHOUT ANY WARRANTY; without even the implied warranty of \n"
-						"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU \n"
-						"General Public License for more details.\n"
-						"\n"
-						"You should have received a copy of the GNU General Public License along \n"
-						"with this program; if not, write to the Free Software Foundation, Inc., \n"
-						"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
-					);
+					print_license();
 					return(EXIT_OK);
 				}
 
@@ -161,6 +146,31 @@ int main(int argc, char *argv[])
 
 	return(retval);
 } /* main() */
+
+/*
+ * print_license() - Display the program license
+ */
+
+void print_license(void)
+{
+	fprintf(stdout,
+		"(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n"
+		"\n"
+		"This program is free software; you can redistribute it and/or modify it \n"
+		"under the terms of the GNU General Public License as published by the \n"
+		"Free Software Foundation; either version 2 of the License, or (at your \n"
+		"option) any later version.\n"
+		"\n"
+		"This program is distributed in the hope that it will be useful, but \n"
+		"WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU \n"
+		"General Public License for more details.\n"
+		"\n"
+		"You should have received a copy of the GNU General Public License along \n"
+		"with this program; if not, write to the Free Software Foundation, Inc., \n"
+		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
+	);
+} /* print_license() */
 
 /*
  * print_version() - Print version information on stdout
