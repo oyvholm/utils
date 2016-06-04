@@ -64,11 +64,11 @@ INSERT INTO "synced" VALUES('Lib/std/book-cmark/bin/stats','Lib/std/perl','ffe51
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/dat/STDprojnameDTS.sql','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/index.md','Lib/std/markdown','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/synced.sql','','',NULL);
-INSERT INTO "synced" VALUES('Lib/std/c/Makefile','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/c/Makefile','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/compile','Lib/std/bash-no-getopt','0b1c9df17273d655a18a171d6ef4ef649f4921c7','2016-05-03 17:57:49');
-INSERT INTO "synced" VALUES('Lib/std/c/std.c','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/c/std.h','',NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/std/c/version.h','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/c/std.c','','',NULL);
+INSERT INTO "synced" VALUES('Lib/std/c/std.h','','',NULL);
+INSERT INTO "synced" VALUES('Lib/std/c/version.h','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-article','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-book','Lib/std/db-article','bacb86210fda9f0f7ae461cc0cd8787fa1e1ff29','2016-05-13 15:11:00');
