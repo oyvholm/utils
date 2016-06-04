@@ -49,3 +49,7 @@ echo ==== make clean ====
 make clean
 echo ==== make ====
 make
+mkdir t
+cd t
+std --dbname none perl-tests jada.t -t progname=jada
+./jada.t
