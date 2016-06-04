@@ -83,19 +83,24 @@ int main(int argc, char *argv[])
 
 		switch (c) {
 			case 0 :
-				if (!strcmp(long_options[option_index].name, "debug"))
+				if (!strcmp(long_options[option_index].name,
+				    "debug"))
 					debug = 1;
 
-				else if (!strcmp(long_options[option_index].name, "license"))
-				{
+				else if (!strcmp(
+					 long_options[option_index].name,
+					 "license")
+				) {
 					print_license();
 					return(EXIT_OK);
 				}
 
 #if 0
-				fprintf(stddebug, "option %s", long_options[option_index].name);
+				fprintf(stddebug, "option %s",
+					long_options[option_index].name);
 				if (optarg)
-					fprintf(stddebug, " with arg %s", optarg);
+					fprintf(stddebug, " with arg %s",
+						optarg);
 				fprintf(stddebug, "\n");
 #endif /* if 0 */
 				break;
@@ -109,7 +114,8 @@ int main(int argc, char *argv[])
 				return(EXIT_OK);
 
 			default :
-				debpr1("getopt_long() returned character code %d\n", c);
+				debpr1("getopt_long() returned "
+				       "character code %d\n", c);
 				break;
 		}
 	}
@@ -156,18 +162,25 @@ void print_license(void)
 	fprintf(stdout,
 		"(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n"
 		"\n"
-		"This program is free software; you can redistribute it and/or modify it \n"
-		"under the terms of the GNU General Public License as published by the \n"
-		"Free Software Foundation; either version 2 of the License, or (at your \n"
+		"This program is free software; you can redistribute it "
+		"and/or modify it \n"
+		"under the terms of the GNU General Public License as "
+		"published by the \n"
+		"Free Software Foundation; either version 2 of the License, "
+		"or (at your \n"
 		"option) any later version.\n"
 		"\n"
-		"This program is distributed in the hope that it will be useful, but \n"
+		"This program is distributed in the hope that it will be "
+		"useful, but \n"
 		"WITHOUT ANY WARRANTY; without even the implied warranty of \n"
-		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU \n"
+		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  "
+		"See the GNU \n"
 		"General Public License for more details.\n"
 		"\n"
-		"You should have received a copy of the GNU General Public License along \n"
-		"with this program; if not, write to the Free Software Foundation, Inc., \n"
+		"You should have received a copy of "
+		"the GNU General Public License along \n"
+		"with this program; if not, write to "
+		"the Free Software Foundation, Inc., \n"
 		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
 	);
 } /* print_license() */
@@ -188,7 +201,8 @@ void  print_version(void)
 void usage(int retval)
 {
 	if (retval != EXIT_OK)
-		fprintf(stderr, "\nType \"%s --help\" for help screen. Returning with value %d.\n", progname, retval);
+		fprintf(stderr, "\nType \"%s --help\" for help screen. "
+			"Returning with value %d.\n", progname, retval);
 	else {
 		fprintf(stdout, "\n");
 		print_version();
