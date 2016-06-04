@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
 
 void  print_version(void)
 {
-	fprintf(stdout, "%s v%s\n", progname, VERSION);
+	fprintf(stdout, "%s %s\n", progname, VERSION);
 } /* print_version() */
 
 /*
