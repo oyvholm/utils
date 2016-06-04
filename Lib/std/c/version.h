@@ -22,7 +22,7 @@
 #ifndef _VERSION_H
 #define _VERSION_H
 
-#define VERSION       "0.00"
+#define VERSION       "0.0.0"
 #define RELEASE_DATE  "STDyearDTS-00-00"
 
 #endif /* ifndef _VERSION_H */
