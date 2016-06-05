@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.4.0
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 g\
@@ -21,6 +21,9 @@ q\
 r\
 v\
 " -l "\
+cmd-gpg:,\
+cmd-gzip:,\
+cmd-wipe:,\
 gpg,\
 help,\
 nocomp,\
@@ -32,6 +35,9 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_cmd_gpg=''
+opt_cmd_gzip=''
+opt_cmd_wipe=''
 opt_gpg=0
 opt_help=0
 opt_nocomp=0
@@ -40,6 +46,9 @@ opt_remove=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (--cmd-gpg) opt_cmd_gpg="$2"; shift 2 ;;
+        (--cmd-gzip) opt_cmd_gzip="$2"; shift 2 ;;
+        (--cmd-wipe) opt_cmd_wipe="$2"; shift 2 ;;
         (-g|--gpg) opt_gpg=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-n|--nocomp) opt_nocomp=1; shift ;;
@@ -75,6 +84,15 @@ Usage: $progname [options] name_without_the_tar_gz_extension
 
 Options:
 
+  --cmd-gpg GPG_CMD
+    Execute GPG_CMD on the .tar file.
+    Default: "$GPG_CMD"
+  --cmd-gzip GZIP_CMD
+    Execute GZIP_CMD on the .tar file.
+    Default: "$GZIP_CMD"
+  --cmd-wipe WIPE_CMD
+    Execute WIPE_CMD on the .tar file if -g/--gpg is used.
+    Default: "$WIPE_CMD"
   -g, --gpg
     Use "$GPG_CMD" instead of "$GZIP_CMD".
   -h, --help
@@ -95,6 +113,10 @@ END
 fi
 
 # FIXME: Finn ut av -r kombinert med -n
+
+test -n "$opt_cmd_gpg" && GPG_CMD="$opt_cmd_gpg"
+test -n "$opt_cmd_gzip" && GZIP_CMD="$opt_cmd_gzip"
+test -n "$opt_cmd_wipe" && WIPE_CMD="$opt_cmd_wipe"
 
 if [ "$opt_gpg" = "1" ]; then
     _packcmd="$GPG_CMD"
