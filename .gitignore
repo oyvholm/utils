@@ -1,7 +1,10 @@
 *.pyc
 *.swp
 /.ignore/
+/Lib/std/c/STDexecDTS.c
+/Lib/std/c/STDexecDTS.h
 /Lib/std/c/compile.tmp/
+/Lib/std/c/t/STDexecDTS.t
 /Lib/std/ly/.version.ily
 /Lib/std/ly/STDprojnameDTS.ly
 /Lib/std/ly/STDprojnameDTS.midi

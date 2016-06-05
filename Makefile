@@ -8,6 +8,7 @@ clean:
 	rm -fv synced.sqlite.*.bck *.pyc
 	$(MAKE) testclean
 	cd Lib/std/book-cmark && $(MAKE) clean
+	cd Lib/std/c && $(MAKE) clean && rm -fv STDexecDTS.c STDexecDTS.h && rm -frv t
 	cd Lib/std/ly && $(MAKE) clean && rm -fv STDprojnameDTS.ly STDprojnameDTS.midi
 
 lgd:

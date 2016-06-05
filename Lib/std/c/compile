@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=compile
-VERSION=0.1.0
+VERSION=0.2.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -33,6 +33,16 @@ Options:
 END
     exit 0
 fi
+
+fname=STDexecDTS
+test -e $fname.h || ln -s std.h $fname.h
+test -e $fname.c || ln -s std.c $fname.c
+make
+test -d t || mkdir t
+cd t
+test -f $fname.t || std --dbname none perl-tests $fname.t -t progname=$fname
+./$fname.t
+cd ..
 
 tmpdir=./compile.tmp
 rm -rf $tmpdir
