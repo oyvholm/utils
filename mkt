@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.2.2
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 g\
@@ -55,7 +55,7 @@ opt_verbose=$(($opt_verbose - $opt_quiet))
 
 GPG_CMD="gpg -e"
 GZIP_CMD="gzip -vN"
-WIPE_CMD="gitwipe"
+WIPE_CMD="shred -uv"
 
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
@@ -164,7 +164,8 @@ $_packcmd "$_prefix.tar" || {
 if [ "$_packext" = ".gpg" ]; then
     $_wipecmd "$_prefix.tar"
     sync
-    rm -f "$_prefix.tar"
+    test -e "$_prefix.tar" &&
+        echo "$progname: $_prefix.tar: File was not deleted" >&2
 fi
 
 if [ "$opt_remove" = "1" ]; then
