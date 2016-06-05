@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 g\
@@ -52,6 +52,13 @@ while :; do
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
+
+msg() {
+    test $opt_verbose -lt $1 && return
+    shift
+    echo "$progname: $*" >&2
+    return
+}
 
 GPG_CMD="gpg -e"
 GZIP_CMD="gzip -vN"
@@ -101,12 +108,14 @@ fi
 if [ "$opt_nocomp" = "1" ]; then
     unset _packext
 fi
+msg 2 _packext = \"$_packext\"
 
 if [ $# -eq 0 ]; then
     _prefix="$(basename "$(pwd)")"
 else
     _prefix="$(basename "$1")"
 fi
+msg 2 _prefix = \"$_prefix\"
 
 if [ -e "../$_prefix.tar" -o -e "../$_prefix.tar$_packext" ]; then
     echo $progname: ../$_prefix.tar or ../$_prefix.tar$_packext \
@@ -155,6 +164,7 @@ if [ "$opt_nocomp" = "1" ]; then
     exit 0
 fi
 
+msg 1 Executing \'$_packcmd \"$_prefix.tar\"\'
 $_packcmd "$_prefix.tar" || {
     echo "$progname: Error running \"$_packcmd $_prefix.tar\" \
         in parent dir" >&2
@@ -162,6 +172,7 @@ $_packcmd "$_prefix.tar" || {
 }
 
 if [ "$_packext" = ".gpg" ]; then
+    msg 1 Executing \'$_wipecmd \"$_prefix.tar\"\'
     $_wipecmd "$_prefix.tar"
     sync
     test -e "$_prefix.tar" &&
