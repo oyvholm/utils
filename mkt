@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 g\
@@ -86,49 +86,49 @@ fi
 # FIXME: Finn ut av -r kombinert med -n
 
 if [ "$opt_gpg" = "1" ]; then
-	_packcmd="gpg -e"
-	_packext=".gpg"
+    _packcmd="gpg -e"
+    _packext=".gpg"
 else
-	_packcmd="gzip -vN"
-	_packext=".gz"
+    _packcmd="gzip -vN"
+    _packext=".gz"
 fi
 
 if [ "$opt_nocomp" = "1" ]; then
-	unset _packext
+    unset _packext
 fi
 
 if [ $# -eq 0 ]; then
-	_prefix="$(basename "$(pwd)")"
+    _prefix="$(basename "$(pwd)")"
 else
-	_prefix="$(basename "$1")"
+    _prefix="$(basename "$1")"
 fi
 
 if [ -e "../$_prefix.tar" -o -e "../$_prefix.tar$_packext" ]; then
-	echo $progname: ../$_prefix.tar or ../$_prefix.tar$_packext \
+    echo $progname: ../$_prefix.tar or ../$_prefix.tar$_packext \
         already exists >&2
-	exit 1
+    exit 1
 fi
 
 if [ -e "../$_prefix" -a ! "../$_prefix" -ef . ]; then
-	echo $progname: ../$_prefix and current dir are not the same >&2
-	exit 1
+    echo $progname: ../$_prefix and current dir are not the same >&2
+    exit 1
 fi
 
 if [ -e "../$_prefix" -a ! -d "../$_prefix" ]; then
-	echo $progname: ../$_prefix: Not a directory >&2
-	exit 1
+    echo $progname: ../$_prefix: Not a directory >&2
+    exit 1
 fi
 
 if [ ! -e "../$_prefix" ]; then
-	cp -a . "../$_prefix" || {
+    cp -a . "../$_prefix" || {
         echo "$progname: Error running \"cp -a . ../$_prefix\"" >&2
         exit 1
     }
 fi
 
 if [ ! -d "../$_prefix" ]; then
-	echo $progname: Unable to create directory ../$_prefix >&2
-	exit 1
+    echo $progname: Unable to create directory ../$_prefix >&2
+    exit 1
 fi
 
 cd .. || { echo "$progname: Cannot \"cd ..\"" >&2; exit 1; }
@@ -147,7 +147,7 @@ tar cf "$_prefix.tar" --label=$uuid "$_prefix" --sort=name || {
 }
 
 if [ "$opt_nocomp" = "1" ]; then
-	exit 0
+    exit 0
 fi
 
 $_packcmd "$_prefix.tar" || {
@@ -157,13 +157,13 @@ $_packcmd "$_prefix.tar" || {
 }
 
 if [ "$_packext" = ".gpg" ]; then
-	gitwipe "$_prefix.tar"
-	sync
-	rm -f "$_prefix.tar"
+    gitwipe "$_prefix.tar"
+    sync
+    rm -f "$_prefix.tar"
 fi
 
 if [ "$opt_remove" = "1" ]; then
-	rm -rf "$_prefix" || {
+    rm -rf "$_prefix" || {
         echo "$progname: $_prefix: Can't remove directory" >&2
         exit 1
     }
