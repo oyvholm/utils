@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.2.1
+VERSION=0.2.2
 
 ARGS="$(getopt -o "\
 g\
@@ -53,6 +53,10 @@ while :; do
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
+GPG_CMD="gpg -e"
+GZIP_CMD="gzip -vN"
+WIPE_CMD="gitwipe"
+
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
@@ -65,7 +69,7 @@ Usage: $progname [options] name_without_the_tar_gz_extension
 Options:
 
   -g, --gpg
-    Use gpg instead of gzip.
+    Use "$GPG_CMD" instead of "$GZIP_CMD".
   -h, --help
     Show this help.
   -n, --nocomp
@@ -86,10 +90,11 @@ fi
 # FIXME: Finn ut av -r kombinert med -n
 
 if [ "$opt_gpg" = "1" ]; then
-    _packcmd="gpg -e"
+    _packcmd="$GPG_CMD"
     _packext=".gpg"
+    _wipecmd="$WIPE_CMD"
 else
-    _packcmd="gzip -vN"
+    _packcmd="$GZIP_CMD"
     _packext=".gz"
 fi
 
@@ -157,7 +162,7 @@ $_packcmd "$_prefix.tar" || {
 }
 
 if [ "$_packext" = ".gpg" ]; then
-    gitwipe "$_prefix.tar"
+    $_wipecmd "$_prefix.tar"
     sync
     rm -f "$_prefix.tar"
 fi
