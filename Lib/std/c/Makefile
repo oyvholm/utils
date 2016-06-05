@@ -17,4 +17,4 @@ STDexecDTS.o: STDexecDTS.c STDexecDTS.h version.h Makefile
 	$(CC) $(CCFLAGS) STDexecDTS.c
 
 clean:
-	rm -f $(EXEC) $(OBJS) *~ core core.$(EXEC)
+	rm -fv $(EXEC) $(OBJS) *~ core core.$(EXEC)
