@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.5.0
+VERSION=0.6.0
 
 ARGS="$(getopt -o "\
 g\
@@ -70,7 +70,7 @@ msg() {
 }
 
 GPG_CMD="gpg -e"
-GZIP_CMD="gzip -vN"
+GZIP_CMD="gzip -vN --rsyncable"
 WIPE_CMD="shred -uv"
 
 if test "$opt_help" = "1"; then
