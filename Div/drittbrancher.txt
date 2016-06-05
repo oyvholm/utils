@@ -1,46 +1,42 @@
-From bellmann:/home/sunny/repos/Git/utils
- * [new branch]      add-ga-other -> bellmann/add-ga-other
- * [new branch]      add-gist   -> bellmann/add-gist
- * [new branch]      add-git-people -> bellmann/add-git-people
- * [new branch]      add-git-people.wip -> bellmann/add-git-people.wip
- * [new branch]      add-git-plot.wip -> bellmann/add-git-plot.wip
- * [new branch]      add-homeo.wip -> bellmann/add-homeo.wip
- * [new branch]      add-lagiso -> bellmann/add-lagiso
- * [new branch]      add_build-ledger.take1 -> bellmann/add_build-ledger.take1
- * [new branch]      add_ga-bytelimit.wip -> bellmann/add_ga-bytelimit.wip
- * [new branch]      add_git-remote-grypt -> bellmann/add_git-remote-grypt
- * [new branch]      add_git-safe-rm-remote.with-diff -> bellmann/add_git-safe-rm-remote.with-diff
- * [new branch]      add_musha.wip -> bellmann/add_musha.wip
- * [new branch]      add_sshpwd -> bellmann/add_sshpwd
- * [new branch]      add_zlib.wip -> bellmann/add_zlib.wip
- * [new branch]      bisect-find_utf8 -> bellmann/bisect-find_utf8
- * [new branch]      build-git_suuid-log -> bellmann/build-git_suuid-log
- * [new branch]      create-annex-remotes_add_rsync-net -> bellmann/create-annex-remotes_add_rsync-net
- * [new branch]      datefn_newstuff -> bellmann/datefn_newstuff
- * [new branch]      datefn_newstuff.dev -> bellmann/datefn_newstuff.dev
- * [new branch]      finduuid-grep-option -> bellmann/finduuid-grep-option
- * [new branch]      fldb_own-line-take-again -> bellmann/fldb_own-line-take-again
- * [new branch]      git-allbr_grep-commits.wip -> bellmann/git-allbr_grep-commits.wip
- * [new branch]      git-can-ff_add.wip -> bellmann/git-can-ff_add.wip
- * [new branch]      git-delrembr_save_commit.wip -> bellmann/git-delrembr_save_commit.wip
- * [new branch]      git-lc_progmsgs -> bellmann/git-lc_progmsgs
- * [new branch]      git-pa_no-all-push-if-no-args -> bellmann/git-pa_no-all-push-if-no-args
- * [new branch]      git-pa_use-array.wip -> bellmann/git-pa_use-array.wip
- * [new branch]      git-update-dirs_add-T-option.wip -> bellmann/git-update-dirs_add-T-option.wip
- * [new branch]      git-update-dirs_extra-gc -> bellmann/git-update-dirs_extra-gc
- * [new branch]      lpar_store-blobs -> bellmann/lpar_store-blobs
-   f5d207e..11a65b5  master     -> bellmann/master
- * [new branch]      rename-genlog -> bellmann/rename-genlog
- * [new branch]      revert-024f81e -> bellmann/revert-024f81e
- * [new branch]      stpl_fix.wip -> bellmann/stpl_fix.wip
- * [new branch]      sync-tests.94ed2ab.conflicts -> bellmann/sync-tests.94ed2ab.conflicts
- * [new branch]      sync-tests.wip.take1 -> bellmann/sync-tests.wip.take1
-   f5d207e..11a65b5  synced/master -> bellmann/synced/master
- * [new branch]      ting-fra-linode -> bellmann/ting-fra-linode
- * [new branch]      tohex_add-json.wip -> bellmann/tohex_add-json.wip
- * [new branch]      upd2-eksperimentering-med-sqlite -> bellmann/upd2-eksperimentering-med-sqlite
- * [new branch]      urlstrip-fix -> bellmann/urlstrip-fix
- * [new branch]      use-submodules -> bellmann/use-submodules
- * [new branch]      usedchars-speed -> bellmann/usedchars-speed
- * [new branch]      xt-opts    -> bellmann/xt-opts
-ok
+add-ga-other
+add-gist
+add-git-people
+add-git-people.wip
+add-git-plot.wip
+add-homeo.wip
+add-lagiso
+add_build-ledger.take1
+add_ga-bytelimit.wip
+add_git-remote-grypt
+add_git-safe-rm-remote.with-diff
+add_musha.wip
+add_sshpwd
+add_zlib.wip
+bisect-find_utf8
+build-git_suuid-log
+create-annex-remotes_add_rsync-net
+datefn_newstuff
+datefn_newstuff.dev
+finduuid-grep-option
+fldb_own-line-take-again
+git-allbr_grep-commits.wip
+git-can-ff_add.wip
+git-delrembr_save_commit.wip
+git-lc_progmsgs
+git-pa_no-all-push-if-no-args
+git-pa_use-array.wip
+git-update-dirs_add-T-option.wip
+git-update-dirs_extra-gc
+lpar_store-blobs
+rename-genlog
+revert-024f81e
+stpl_fix.wip
+sync-tests.94ed2ab.conflicts
+sync-tests.wip.take1
+ting-fra-linode
+tohex_add-json.wip
+upd2-eksperimentering-med-sqlite
+urlstrip-fix
+use-submodules
+usedchars-speed
+xt-opts
