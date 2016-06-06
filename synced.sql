@@ -311,7 +311,7 @@ INSERT INTO "synced" VALUES('getapr','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('getpic','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('getsvnfiles','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('gfuck','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-add-missing-gpg-keys','Lib/std/bash','58e896e93ba23aad6f762038ee763cf6ebab86a0','2016-06-06 00:14:48');
+INSERT INTO "synced" VALUES('git-add-missing-gpg-keys','Lib/std/bash','90a08a4964e1500404d1f99f0027a2084f38c122','2016-06-06 00:46:56');
 INSERT INTO "synced" VALUES('git-all-blobs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-all-repos','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-allbr','Lib/std/bash','f932a58e3e7a2519ef447e07d86ec5a64e896fda','2016-01-15 01:32:36');
