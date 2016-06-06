@@ -81,41 +81,41 @@ int main(int argc, char *argv[])
 			break;
 
 		switch (c) {
-			case 0 :
-				if (!strcmp(long_options[option_index].name,
-				    "debug"))
-					debug = 1;
+		case 0 :
+			if (!strcmp(long_options[option_index].name,
+			    "debug"))
+				debug = 1;
 
-				else if (!strcmp(
-					 long_options[option_index].name,
-					 "license")
-				) {
-					print_license();
-					return(EXIT_OK);
-				}
+			else if (!strcmp(
+				 long_options[option_index].name,
+				 "license")
+			) {
+				print_license();
+				return(EXIT_OK);
+			}
 
 #if 0
-				fprintf(stddebug, "option %s",
-					long_options[option_index].name);
-				if (optarg)
-					fprintf(stddebug, " with arg %s",
-						optarg);
-				fprintf(stddebug, "\n");
+			fprintf(stddebug, "option %s",
+				long_options[option_index].name);
+			if (optarg)
+				fprintf(stddebug, " with arg %s",
+					optarg);
+			fprintf(stddebug, "\n");
 #endif /* if 0 */
-				break;
+			break;
 
-			case 'h' :
-				usage(EXIT_OK);
-				break;
+		case 'h' :
+			usage(EXIT_OK);
+			break;
 
-			case 'V' :
-				print_version();
-				return(EXIT_OK);
+		case 'V' :
+			print_version();
+			return(EXIT_OK);
 
-			default :
-				debpr1("getopt_long() returned "
-				       "character code %d\n", c);
-				break;
+		default :
+			debpr1("getopt_long() returned "
+			       "character code %d\n", c);
+			break;
 		}
 	}
 
