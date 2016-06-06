@@ -16,5 +16,6 @@ $(EXEC): $(OBJS)
 STDexecDTS.o: STDexecDTS.c STDexecDTS.h version.h Makefile
 	$(CC) $(CCFLAGS) STDexecDTS.c
 
+.PHONY: clean
 clean:
 	rm -fv $(EXEC) $(OBJS) *~ core core.$(EXEC)
