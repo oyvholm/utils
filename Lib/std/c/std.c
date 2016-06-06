@@ -54,8 +54,7 @@ int main(int argc, char *argv[])
 
 	progname = argv[0];
 
-	while (1)
-	{
+	while (1) {
 		int option_index = 0;
 		static struct option long_options[] = {
 			{  "debug", 0, 0,   0},
