@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 h\
@@ -101,12 +101,12 @@ else
     from_str=''
 fi
 
+msg git allfiles --since=1.month $*
 msg ga get --auto$from_str
 git allfiles --since=1.month "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga get --auto$from_str
 
-msg git allfiles --since=1.month $*
 msg ga fsck --fast --quiet
 git allfiles --since=1.month "$@" |
     strip-nonexisting |
