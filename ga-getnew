@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.2.1
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -22,6 +22,7 @@ v\
 " -l "\
 from:,\
 help,\
+no-fsck,\
 quiet,\
 verbose,\
 version,\
@@ -31,12 +32,14 @@ eval set -- "$ARGS"
 
 opt_from=''
 opt_help=0
+opt_no_fsck=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (--from) opt_from="$2"; shift 2 ;;
         (-h|--help) opt_help=1; shift ;;
+        (--no-fsck) opt_no_fsck=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -65,6 +68,8 @@ Options:
     Get new files from Git remote REMOTE.
   -h, --help
     Show this help.
+  --no-fsck
+    Don't execute "ga fsck" after the files are copied.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -107,10 +112,12 @@ git allfiles --since=1.month "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga get --auto$from_str
 
-msg ga fsck --fast --quiet
-git allfiles --since=1.month "$@" |
-    strip-nonexisting |
-    xargs -d \\n --no-run-if-empty ga fsck --fast --quiet
+if test "$opt_no_fsck" = "0"; then
+    msg ga fsck --fast --quiet
+    git allfiles --since=1.month "$@" |
+        strip-nonexisting |
+        xargs -d \\n --no-run-if-empty ga fsck --fast --quiet
+fi
 
 msg ga sync \{\{\{
 ga sync 2>&1
