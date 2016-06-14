@@ -278,7 +278,7 @@ INSERT INTO "synced" VALUES('findhex','Lib/std/perl','caaf3a238ed84227a4905a13a9
 INSERT INTO "synced" VALUES('findrev','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('finn_triton','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('firefox','Lib/std/bash-no-getopt',NULL,NULL);
-INSERT INTO "synced" VALUES('fix_filenames','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('fix_filenames','Lib/std/bash','6bb9510e0af79a080d9bd4ade3e8b826e79ea2fa','2016-06-14 06:35:01');
 INSERT INTO "synced" VALUES('fix_mailman','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('fixtext','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('fjern_here','Lib/std/perl',NULL,NULL);
@@ -805,7 +805,6 @@ INSERT INTO "todo" VALUES('filtrer_access_log',3,NULL);
 INSERT INTO "todo" VALUES('findbom',4,NULL);
 INSERT INTO "todo" VALUES('finddup',3,NULL);
 INSERT INTO "todo" VALUES('finn_triton',3,NULL);
-INSERT INTO "todo" VALUES('fix_filenames',1,NULL);
 INSERT INTO "todo" VALUES('fix_mailman',3,NULL);
 INSERT INTO "todo" VALUES('flac_to_ogg',3,NULL);
 INSERT INTO "todo" VALUES('fra_linode',1,NULL);
