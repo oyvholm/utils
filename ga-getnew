@@ -5,15 +5,15 @@
 # File ID: 8af4d956-f358-11e4-b717-000df06acc56
 #
 # Get new files from the last month (can be overridden) that haven't got 
-# enough copies in git-annex yet, then execute a fast fsck to check that 
-# the files have enough copies.
+# enough copies in git-annex yet, then optionally execute a fast fsck to 
+# check that the files have enough copies.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 h\
@@ -21,8 +21,8 @@ q\
 v\
 " -l "\
 from:,\
+fsck,\
 help,\
-no-fsck,\
 quiet,\
 verbose,\
 version,\
@@ -31,15 +31,15 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_from=''
+opt_fsck=0
 opt_help=0
-opt_no_fsck=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (--from) opt_from="$2"; shift 2 ;;
+        (--fsck) opt_fsck=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
-        (--no-fsck) opt_no_fsck=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -54,8 +54,8 @@ if test "$opt_help" = "1"; then
     cat <<END
 
 Get new files from the last month (can be overridden) that haven't got 
-enough copies in git-annex yet, then execute a fast fsck to check that 
-the files have enough copies.
+enough copies in git-annex yet, then optionally execute a fast fsck to 
+check that the files have enough copies.
 
 Arguments and options after " -- " are delivered to git-allfiles(1) 
 which delivers them further to "git log".
@@ -66,10 +66,10 @@ Options:
 
   --from REMOTE
     Get new files from Git remote REMOTE.
+  --fsck
+    Execute "ga fsck" after the files are copied.
   -h, --help
     Show this help.
-  --no-fsck
-    Don't execute "ga fsck" after the files are copied.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -112,7 +112,7 @@ git allfiles --since=1.month "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga get --auto$from_str
 
-if test "$opt_no_fsck" = "0"; then
+if test "$opt_fsck" = "1"; then
     msg ga fsck --fast --quiet
     git allfiles --since=1.month "$@" |
         strip-nonexisting |
