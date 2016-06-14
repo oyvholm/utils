@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=fix_filenames
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -66,5 +66,5 @@ END
     exit 0
 fi
 
-rename -v 's/ /_/g' "$@"
-rename -v "s/'/’/g" "$@"
+prename -v 's/ /_/g' "$@"
+prename -v "s/'/’/g" "$@"
