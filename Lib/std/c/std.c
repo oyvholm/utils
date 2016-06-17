@@ -36,29 +36,28 @@ int debug = 0;
 
 void print_license(void)
 {
-	fprintf(stdout,
-		"(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n"
-		"\n"
-		"This program is free software; you can redistribute it "
-		"and/or modify it \n"
-		"under the terms of the GNU General Public License as "
-		"published by the \n"
-		"Free Software Foundation; either version 2 of the License, "
-		"or (at your \n"
-		"option) any later version.\n"
-		"\n"
-		"This program is distributed in the hope that it will be "
-		"useful, but \n"
-		"WITHOUT ANY WARRANTY; without even the implied warranty of \n"
-		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  "
-		"See the GNU \n"
-		"General Public License for more details.\n"
-		"\n"
-		"You should have received a copy of "
-		"the GNU General Public License along \n"
-		"with this program; if not, write to "
-		"the Free Software Foundation, Inc., \n"
-		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
+	puts("(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n");
+	puts("\n");
+	puts("This program is free software; you can redistribute it "
+	     "and/or modify it \n"
+	     "under the terms of the GNU General Public License as "
+	     "published by the \n"
+	     "Free Software Foundation; either version 2 of the License, "
+	     "or (at your \n"
+	     "option) any later version.\n");
+	puts("\n");
+	puts("This program is distributed in the hope that it will be "
+	     "useful, but \n"
+	     "WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+	     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  "
+	     "See the GNU \n"
+	     "General Public License for more details.\n");
+	puts("\n");
+	puts("You should have received a copy of "
+	     "the GNU General Public License along \n"
+	     "with this program; if not, write to "
+	     "the Free Software Foundation, Inc., \n"
+	     "59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
 }
 
 /*
@@ -82,21 +81,21 @@ void usage(int retval)
 	else {
 		fprintf(stdout, "\n");
 		print_version();
-		fprintf(stdout,
-			"Usage: %s [options] [file [files [...]]]\n"
-			"\n"
-			"Options:\n"
-			"\n"
-			"  -h, --help\n"
-			"    Show this help.\n"
-			"  --license\n"
-			"    Print the software license\n"
-			"  -v, --verbose\n"
-			"    Increase level of verbosity. Can be repeated.\n"
-			"  --version\n"
-			"    Print version information.\n"
-			"  --debug\n"
-			"    Print debugging messages.\n" "\n", progname);
+		printf("Usage: %s [options] [file [files [...]]]\n", progname);
+		puts("\n");
+		puts("Options:\n");
+		puts("\n");
+		puts("  -h, --help\n"
+		     "    Show this help.\n");
+		puts("  --license\n"
+		     "    Print the software license\n");
+		puts("  -v, --verbose\n"
+		     "    Increase level of verbosity. Can be repeated.\n");
+		puts("  --version\n"
+		     "    Print version information.\n");
+		puts("  --debug\n"
+		     "    Print debugging messages.\n"
+		     "\n");
 	}
 
 	exit(retval);
