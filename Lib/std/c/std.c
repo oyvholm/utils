@@ -97,8 +97,6 @@ void usage(int retval)
 		     "    Print debugging messages.\n"
 		     "\n");
 	}
-
-	exit(retval);
 }
 
 /*
@@ -157,7 +155,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'h':
 			usage(EXIT_OK);
-			break;
+			return EXIT_OK;
 		case 'V':
 			print_version();
 			return EXIT_OK;
