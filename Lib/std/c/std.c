@@ -44,6 +44,81 @@ char *progname;
 int  debug = 0;
 
 /*
+ * print_license() - Display the program license
+ */
+
+void print_license(void)
+{
+	fprintf(stdout,
+		"(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n"
+		"\n"
+		"This program is free software; you can redistribute it "
+		"and/or modify it \n"
+		"under the terms of the GNU General Public License as "
+		"published by the \n"
+		"Free Software Foundation; either version 2 of the License, "
+		"or (at your \n"
+		"option) any later version.\n"
+		"\n"
+		"This program is distributed in the hope that it will be "
+		"useful, but \n"
+		"WITHOUT ANY WARRANTY; without even the implied warranty of \n"
+		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  "
+		"See the GNU \n"
+		"General Public License for more details.\n"
+		"\n"
+		"You should have received a copy of "
+		"the GNU General Public License along \n"
+		"with this program; if not, write to "
+		"the Free Software Foundation, Inc., \n"
+		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
+	);
+} /* print_license() */
+
+/*
+ * print_version() - Print version information on stdout
+ */
+
+void  print_version(void)
+{
+	fprintf(stdout, "%s %s\n", progname, VERSION);
+} /* print_version() */
+
+/*
+ * usage() - Prints a help screen
+ */
+
+void usage(int retval)
+{
+	if (retval != EXIT_OK)
+		fprintf(stderr, "\nType \"%s --help\" for help screen. "
+			"Returning with value %d.\n", progname, retval);
+	else {
+		fprintf(stdout, "\n");
+		print_version();
+		fprintf(stdout,
+			"Usage: %s [options] [file [files [...]]]\n"
+			"\n"
+			"Options:\n"
+			"\n"
+			"  -h, --help\n"
+			"    Show this help.\n"
+			"  --license\n"
+			"    Print the software license\n"
+			"  -v, --verbose\n"
+			"    Increase level of verbosity. Can be repeated.\n"
+			"  --version\n"
+			"    Print version information.\n"
+			"  --debug\n"
+			"    Print debugging messages.\n"
+			"\n", progname
+		);
+	}
+
+	exit(retval);
+} /* usage() */
+
+/*
  * main()
  */
 
@@ -151,80 +226,5 @@ int main(int argc, char *argv[])
 
 	return(retval);
 } /* main() */
-
-/*
- * print_license() - Display the program license
- */
-
-void print_license(void)
-{
-	fprintf(stdout,
-		"(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>\n"
-		"\n"
-		"This program is free software; you can redistribute it "
-		"and/or modify it \n"
-		"under the terms of the GNU General Public License as "
-		"published by the \n"
-		"Free Software Foundation; either version 2 of the License, "
-		"or (at your \n"
-		"option) any later version.\n"
-		"\n"
-		"This program is distributed in the hope that it will be "
-		"useful, but \n"
-		"WITHOUT ANY WARRANTY; without even the implied warranty of \n"
-		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  "
-		"See the GNU \n"
-		"General Public License for more details.\n"
-		"\n"
-		"You should have received a copy of "
-		"the GNU General Public License along \n"
-		"with this program; if not, write to "
-		"the Free Software Foundation, Inc., \n"
-		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
-	);
-} /* print_license() */
-
-/*
- * print_version() - Print version information on stdout
- */
-
-void  print_version(void)
-{
-	fprintf(stdout, "%s %s\n", progname, VERSION);
-} /* print_version() */
-
-/*
- * usage() - Prints a help screen
- */
-
-void usage(int retval)
-{
-	if (retval != EXIT_OK)
-		fprintf(stderr, "\nType \"%s --help\" for help screen. "
-			"Returning with value %d.\n", progname, retval);
-	else {
-		fprintf(stdout, "\n");
-		print_version();
-		fprintf(stdout,
-			"Usage: %s [options] [file [files [...]]]\n"
-			"\n"
-			"Options:\n"
-			"\n"
-			"  -h, --help\n"
-			"    Show this help.\n"
-			"  --license\n"
-			"    Print the software license\n"
-			"  -v, --verbose\n"
-			"    Increase level of verbosity. Can be repeated.\n"
-			"  --version\n"
-			"    Print version information.\n"
-			"  --debug\n"
-			"    Print debugging messages.\n"
-			"\n", progname
-		);
-	}
-
-	exit(retval);
-} /* usage() */
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
