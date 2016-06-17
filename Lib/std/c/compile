@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=compile
-VERSION=0.3.0
+VERSION=0.4.0
 
 set -e
 
@@ -40,6 +40,7 @@ fname=STDexecDTS
 test -e $fname.h || ln -s std.h $fname.h
 test -e $fname.c || ln -s std.c $fname.c
 make
+./$fname
 test -d t || mkdir t
 cd t
 test -f $fname.t || std --dbname none perl-tests $fname.t -t progname=$fname
