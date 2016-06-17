@@ -115,10 +115,10 @@ int main(int argc, char *argv[])
 	while (1) {
 		int option_index = 0;
 		static struct option long_options[] = {
-			{"debug", 0, 0, 0},
-			{"help", 0, 0, 'h'},
-			{"license", 0, 0, 0},
-			{"version", 0, 0, 'V'},
+			{"debug", no_argument, 0, 0},
+			{"help", no_argument, 0, 'h'},
+			{"license", no_argument, 0, 0},
+			{"version", no_argument, 0, 'V'},
 			{0, 0, 0, 0}
 		};
 
