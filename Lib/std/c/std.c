@@ -29,14 +29,6 @@
 #include "version.h"
 
 /*
- * Function prototypes
- */
-
-void print_license(void);
-void print_version(void);
-void usage(int);
-
-/*
  * Global variables
  */
 

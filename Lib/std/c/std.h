@@ -75,6 +75,7 @@ typedef unsigned char bool;
  * Function prototypes
  */
 
+extern void print_license(void);
 extern void print_version(void);
 extern void usage(int);
 
