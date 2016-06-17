@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 				 "license")
 			) {
 				print_license();
-				return(EXIT_OK);
+				return EXIT_OK;
 			}
 
 #if 0
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 
 		case 'V' :
 			print_version();
-			return(EXIT_OK);
+			return EXIT_OK;
 
 		default :
 			debpr1("getopt_long() returned "
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 
 	debpr1("Returning from main() with value %d\n", retval);
 
-	return(retval);
+	return retval;
 }
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
