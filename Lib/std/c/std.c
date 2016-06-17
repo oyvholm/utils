@@ -49,15 +49,13 @@ void print_license(void)
 	puts("This program is distributed in the hope that it will be "
 	     "useful, but \n"
 	     "WITHOUT ANY WARRANTY; without even the implied warranty of \n"
-	     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  "
-	     "See the GNU \n"
-	     "General Public License for more details.\n");
+	     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
+	puts("See the GNU General Public License for more details.\n");
 	puts("\n");
 	puts("You should have received a copy of "
 	     "the GNU General Public License along \n"
-	     "with this program; if not, write to "
-	     "the Free Software Foundation, Inc., \n"
-	     "59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
+	     "with this program. If not, see "
+	     "<http://www.gnu.org/licenses/>.\n");
 }
 
 /*
