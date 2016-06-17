@@ -66,6 +66,15 @@
 	(a),(b),(c),(d),(e),(f),(g)); }
 
 /*
+ * Standard header files
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <getopt.h>
+
+/*
  * Typedefs
  */
 
