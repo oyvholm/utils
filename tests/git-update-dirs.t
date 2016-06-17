@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.4.0';
+our $VERSION = '0.5.0';
 
 my $current_repo;
 my %descriptions = ();
@@ -591,7 +591,10 @@ END
     # }}}
     likecmd("$CMD -n -c .", # {{{
         $compress_output,
-        '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
+        '/^' .
+            'git-update-dirs: Simulating \'git count-objects -vH\'\.\.\.\n' .
+            'git-update-dirs: Simulating \'git gc\'\.\.\.\n' .
+            '$/',
         0,
         "$repo: Test -c option",
     );
@@ -599,7 +602,10 @@ END
     # }}}
     likecmd("$CMD -n --compress .", # {{{
         $compress_output,
-        '/^git-update-dirs: Simulating \'git gc\'\.\.\.\n$/',
+        '/^' .
+            'git-update-dirs: Simulating \'git count-objects -vH\'\.\.\.\n' .
+            'git-update-dirs: Simulating \'git gc\'\.\.\.\n' .
+            '$/',
         0,
         "$repo: Test --compress option",
     );
@@ -621,7 +627,10 @@ END
     diag('--aggressive-compress');
     likecmd("$CMD -n -C .", # {{{
         $compress_output,
-        '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
+        '/^' .
+            'git-update-dirs: Simulating \'git count-objects -vH\'\.\.\.\n' .
+            'git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n' .
+            '$/',
         0,
         "$repo: Test -C option",
     );
@@ -629,7 +638,10 @@ END
     # }}}
     likecmd("$CMD --dry-run --aggressive-compress .", # {{{
         $compress_output,
-        '/^git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n$/',
+        '/^' .
+            'git-update-dirs: Simulating \'git count-objects -vH\'\.\.\.\n' .
+            'git-update-dirs: Simulating \'git gc --aggressive\'\.\.\.\n' .
+            '$/',
         0,
         "$repo: Test --aggressive-compress option",
     );

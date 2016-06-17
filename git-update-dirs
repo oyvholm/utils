@@ -55,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.4.0';
+our $VERSION = '0.5.0';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -277,6 +277,9 @@ sub main {
                 chomp(my $numfiles_before =
                     `find $object_dir -type f | wc -l`);
                 $totnum_before += $numfiles_before;
+                $Opt{'dry-run'} || print("\n");
+                mysystem("git", "count-objects", "-vH");
+                $Opt{'dry-run'} || print("\n");
                 if (should('aggressive-compress')) {
                     mysystem("git gc --aggressive") && push(@err_compress, $f);
                 } else {
