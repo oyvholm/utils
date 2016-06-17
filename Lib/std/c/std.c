@@ -141,7 +141,6 @@ int main(int argc, char *argv[])
 		case 0:
 			if (!strcmp(long_options[option_index].name, "debug"))
 				debug = 1;
-
 			else if (!strcmp(long_options[option_index].name,
 					 "license")
 			    ) {
@@ -156,15 +155,12 @@ int main(int argc, char *argv[])
 			fprintf(stddebug, "\n");
 #endif /* if 0 */
 			break;
-
 		case 'h':
 			usage(EXIT_OK);
 			break;
-
 		case 'V':
 			print_version();
 			return EXIT_OK;
-
 		default:
 			debpr1("getopt_long() returned "
 			       "character code %d\n", c);
