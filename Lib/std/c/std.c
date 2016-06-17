@@ -77,7 +77,7 @@ void usage(int retval)
 		fprintf(stderr, "\nType \"%s --help\" for help screen. "
 			"Returning with value %d.\n", progname, retval);
 	else {
-		printf("\n");
+		puts("");
 		print_version();
 		printf("Usage: %s [options] [file [files [...]]]\n", progname);
 		puts("");
