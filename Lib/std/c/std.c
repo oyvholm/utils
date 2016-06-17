@@ -29,6 +29,9 @@
 
 char *progname;
 int debug = 0;
+struct {
+	int verbose;
+} opt;
 
 /*
  * print_license() - Display the program license
@@ -108,12 +111,15 @@ int main(int argc, char *argv[])
 
 	progname = argv[0];
 
+	opt.verbose = 0;
+
 	while (1) {
 		int option_index = 0;
 		static struct option long_options[] = {
 			{"debug", no_argument, 0, 0},
 			{"help", no_argument, 0, 'h'},
 			{"license", no_argument, 0, 0},
+			{"verbose", no_argument, 0, 'v'},
 			{"version", no_argument, 0, 'V'},
 			{0, 0, 0, 0}
 		};
@@ -128,7 +134,7 @@ int main(int argc, char *argv[])
 		 *
 		 */
 
-		c = getopt_long(argc, argv, "hV", long_options, &option_index);
+		c = getopt_long(argc, argv, "hvV", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -154,6 +160,9 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(EXIT_OK);
 			return EXIT_OK;
+		case 'v':
+			opt.verbose++;
+			break;
 		case 'V':
 			print_version();
 			return EXIT_OK;
