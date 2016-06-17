@@ -175,18 +175,18 @@ int main(int argc, char *argv[])
 			print_version();
 			return EXIT_OK;
 		default:
-			debpr1("getopt_long() returned "
+			msg1("getopt_long() returned "
 			       "character code %d\n", c);
 			break;
 		}
 	}
 
-	debpr1("debugging is set to level %d\n", debug);
+	msg1("debugging is set to level %d\n", debug);
 
 	if (debug && optind < argc) {
 		int t;
 
-		debpr0("non-option args: ");
+		msg0("non-option args: ");
 		for (t = optind; t < argc; t++)
 			fprintf(stddebug, "%s ", argv[t]);
 
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 
 	/* ...and stops here */
 
-	debpr1("Returning from main() with value %d\n", retval);
+	msg1("Returning from main() with value %d\n", retval);
 
 	return retval;
 }

@@ -49,19 +49,19 @@
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
 #define myerror(a)       { fprintf(stderr, "%s: ", progname); perror(a); }
 
-#define debpr0(a)              if (debug) { fprintf(stddebug, \
+#define msg0(a)              if (debug) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a)); }
-#define debpr1(a,b)            if (debug) { fprintf(stddebug, \
+#define msg1(a,b)            if (debug) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b)); }
-#define debpr2(a,b,c)          if (debug) { fprintf(stddebug, \
+#define msg2(a,b,c)          if (debug) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c)); }
-#define debpr3(a,b,c,d)        if (debug) { fprintf(stddebug, \
+#define msg3(a,b,c,d)        if (debug) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d)); }
-#define debpr4(a,b,c,d,e)      if (debug) { fprintf(stddebug, \
+#define msg4(a,b,c,d,e)      if (debug) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e)); }
-#define debpr5(a,b,c,d,e,f)    if (debug) { fprintf(stddebug, \
+#define msg5(a,b,c,d,e,f)    if (debug) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e),(f)); }
-#define debpr6(a,b,c,d,e,f,g)  if (debug) { fprintf(stddebug, \
+#define msg6(a,b,c,d,e,f,g)  if (debug) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, \
 	(a),(b),(c),(d),(e),(f),(g)); }
 
