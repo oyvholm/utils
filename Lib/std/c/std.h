@@ -35,12 +35,12 @@
 #define stddebug  stderr
 
 #ifdef C_ASSERT
-#  ifdef NDEBUG
-#    undef NDEBUG
-#  endif            /* ifdef NDEBUG        */
-#else               /* ifdef C_ASSERT      */
-#  define NDEBUG  1
-#endif              /* ifdef C_ASSERT else */
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* ifdef NDEBUG        */
+#else /* ifdef C_ASSERT      */
+#define NDEBUG  1
+#endif /* ifdef C_ASSERT else */
 
 /*
  * Macros
@@ -93,7 +93,7 @@ extern void usage(int);
  */
 
 extern char *progname;
-extern int  debug;
+extern int debug;
 
 #endif /* ifndef _STDexecDTS_H */
 

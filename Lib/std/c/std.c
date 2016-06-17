@@ -28,7 +28,7 @@
  */
 
 char *progname;
-int  debug = 0;
+int debug = 0;
 
 /*
  * print_license() - Display the program license
@@ -58,15 +58,14 @@ void print_license(void)
 		"the GNU General Public License along \n"
 		"with this program; if not, write to "
 		"the Free Software Foundation, Inc., \n"
-		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
-	);
+		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
 }
 
 /*
  * print_version() - Print version information on stdout
  */
 
-void  print_version(void)
+void print_version(void)
 {
 	fprintf(stdout, "%s %s\n", progname, VERSION);
 }
@@ -97,9 +96,7 @@ void usage(int retval)
 			"  --version\n"
 			"    Print version information.\n"
 			"  --debug\n"
-			"    Print debugging messages.\n"
-			"\n", progname
-		);
+			"    Print debugging messages.\n" "\n", progname);
 	}
 
 	exit(retval);
@@ -111,19 +108,18 @@ void usage(int retval)
 
 int main(int argc, char *argv[])
 {
-	int c,
-		retval = EXIT_OK;
+	int c, retval = EXIT_OK;
 
 	progname = argv[0];
 
 	while (1) {
 		int option_index = 0;
 		static struct option long_options[] = {
-			{  "debug", 0, 0,   0},
-			{   "help", 0, 0, 'h'},
-			{"license", 0, 0,   0},
+			{"debug", 0, 0, 0},
+			{"help", 0, 0, 'h'},
+			{"license", 0, 0, 0},
 			{"version", 0, 0, 'V'},
-			{        0, 0, 0,   0}
+			{0, 0, 0, 0}
 		};
 
 		/*
@@ -136,45 +132,40 @@ int main(int argc, char *argv[])
 		 *
 		 */
 
-		c = getopt_long (argc, argv, "hV",
-			long_options, &option_index);
+		c = getopt_long(argc, argv, "hV", long_options, &option_index);
 
 		if (c == -1)
 			break;
 
 		switch (c) {
-		case 0 :
-			if (!strcmp(long_options[option_index].name,
-			    "debug"))
+		case 0:
+			if (!strcmp(long_options[option_index].name, "debug"))
 				debug = 1;
 
-			else if (!strcmp(
-				 long_options[option_index].name,
-				 "license")
-			) {
+			else if (!strcmp(long_options[option_index].name,
+					 "license")
+			    ) {
 				print_license();
 				return EXIT_OK;
 			}
-
 #if 0
 			fprintf(stddebug, "option %s",
 				long_options[option_index].name);
 			if (optarg)
-				fprintf(stddebug, " with arg %s",
-					optarg);
+				fprintf(stddebug, " with arg %s", optarg);
 			fprintf(stddebug, "\n");
 #endif /* if 0 */
 			break;
 
-		case 'h' :
+		case 'h':
 			usage(EXIT_OK);
 			break;
 
-		case 'V' :
+		case 'V':
 			print_version();
 			return EXIT_OK;
 
-		default :
+		default:
 			debpr1("getopt_long() returned "
 			       "character code %d\n", c);
 			break;
@@ -198,14 +189,14 @@ int main(int argc, char *argv[])
 	 */
 
 	/*
-	if (optind < argc) {
-		int  t;
+	   if (optind < argc) {
+	   int  t;
 
-		for (t = optind; t < argc; t++)
-			retval |= process_file(argv[t]);
-	} else
-		retval |= process_file("-");
-	*/
+	   for (t = optind; t < argc; t++)
+	   retval |= process_file(argv[t]);
+	   } else
+	   retval |= process_file("-");
+	 */
 
 	/* ...and stops here */
 
