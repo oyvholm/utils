@@ -108,7 +108,8 @@ void usage(int retval)
 
 int main(int argc, char *argv[])
 {
-	int c, retval = EXIT_OK;
+	int c;
+	int retval = EXIT_OK;
 
 	progname = argv[0];
 
