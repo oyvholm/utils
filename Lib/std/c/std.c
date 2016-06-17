@@ -90,6 +90,9 @@ void usage(int retval)
 		     "    Show this help.");
 		puts("  --license\n"
 		     "    Print the software license");
+		puts("  -q, --quiet\n"
+		     "    Be more quiet. "
+		     "Can be repeated to increase silence.");
 		puts("  -v, --verbose\n"
 		     "    Increase level of verbosity. Can be repeated.");
 		puts("  --version\n"
@@ -119,6 +122,7 @@ int main(int argc, char *argv[])
 			{"debug", no_argument, 0, 0},
 			{"help", no_argument, 0, 'h'},
 			{"license", no_argument, 0, 0},
+			{"quiet", no_argument, 0, 'q'},
 			{"verbose", no_argument, 0, 'v'},
 			{"version", no_argument, 0, 'V'},
 			{0, 0, 0, 0}
@@ -134,7 +138,8 @@ int main(int argc, char *argv[])
 		 *
 		 */
 
-		c = getopt_long(argc, argv, "hvV", long_options, &option_index);
+		c = getopt_long(argc, argv, "hqvV", long_options,
+				&option_index);
 
 		if (c == -1)
 			break;
@@ -160,6 +165,9 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(EXIT_OK);
 			return EXIT_OK;
+		case 'q':
+			opt.verbose--;
+			break;
 		case 'v':
 			opt.verbose++;
 			break;
