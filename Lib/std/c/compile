@@ -11,7 +11,9 @@
 #=======================================================================
 
 progname=compile
-VERSION=0.2.0
+VERSION=0.3.0
+
+set -e
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
