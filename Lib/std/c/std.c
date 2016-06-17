@@ -66,7 +66,7 @@ void print_license(void)
 
 void print_version(void)
 {
-	fprintf(stdout, "%s %s\n", progname, VERSION);
+	printf("%s %s\n", progname, VERSION);
 }
 
 /*
@@ -79,7 +79,7 @@ void usage(int retval)
 		fprintf(stderr, "\nType \"%s --help\" for help screen. "
 			"Returning with value %d.\n", progname, retval);
 	else {
-		fprintf(stdout, "\n");
+		printf("\n");
 		print_version();
 		printf("Usage: %s [options] [file [files [...]]]\n", progname);
 		puts("\n");
