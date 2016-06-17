@@ -73,7 +73,7 @@ void print_license(void)
 		"the Free Software Foundation, Inc., \n"
 		"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
 	);
-} /* print_license() */
+}
 
 /*
  * print_version() - Print version information on stdout
@@ -82,7 +82,7 @@ void print_license(void)
 void  print_version(void)
 {
 	fprintf(stdout, "%s %s\n", progname, VERSION);
-} /* print_version() */
+}
 
 /*
  * usage() - Prints a help screen
@@ -116,7 +116,7 @@ void usage(int retval)
 	}
 
 	exit(retval);
-} /* usage() */
+}
 
 /*
  * main()
@@ -225,6 +225,6 @@ int main(int argc, char *argv[])
 	debpr1("Returning from main() with value %d\n", retval);
 
 	return(retval);
-} /* main() */
+}
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
