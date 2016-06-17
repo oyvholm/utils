@@ -190,13 +190,13 @@ int main(int argc, char *argv[])
 	 */
 
 	/*
-	   if (optind < argc) {
-	   int  t;
+	if (optind < argc) {
+		int t;
 
-	   for (t = optind; t < argc; t++)
-	   retval |= process_file(argv[t]);
-	   } else
-	   retval |= process_file("-");
+		for (t = optind; t < argc; t++)
+			retval |= process_file(argv[t]);
+	} else
+		retval |= process_file("-");
 	 */
 
 	/* ...and stops here */
