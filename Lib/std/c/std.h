@@ -49,19 +49,19 @@
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
 #define myerror(a)       { fprintf(stderr, "%s: ", progname); perror(a); }
 
-#define msg0(a)              if (debug) { fprintf(stddebug, \
+#define msg0(v,a)              if (opt.verbose >= (v)) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a)); }
-#define msg1(a,b)            if (debug) { fprintf(stddebug, \
+#define msg1(v,a,b)            if (opt.verbose >= (v)) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b)); }
-#define msg2(a,b,c)          if (debug) { fprintf(stddebug, \
+#define msg2(v,a,b,c)          if (opt.verbose >= (v)) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c)); }
-#define msg3(a,b,c,d)        if (debug) { fprintf(stddebug, \
+#define msg3(v,a,b,c,d)        if (opt.verbose >= (v)) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d)); }
-#define msg4(a,b,c,d,e)      if (debug) { fprintf(stddebug, \
+#define msg4(v,a,b,c,d,e)      if (opt.verbose >= (v)) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e)); }
-#define msg5(a,b,c,d,e,f)    if (debug) { fprintf(stddebug, \
+#define msg5(v,a,b,c,d,e,f)    if (opt.verbose >= (v)) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e),(f)); }
-#define msg6(a,b,c,d,e,f,g)  if (debug) { fprintf(stddebug, \
+#define msg6(v,a,b,c,d,e,f,g)  if (opt.verbose >= (v)) { fprintf(stddebug, \
 	"%s: debug: ", progname); fprintf(stddebug, \
 	(a),(b),(c),(d),(e),(f),(g)); }
 
