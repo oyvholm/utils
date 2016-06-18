@@ -142,9 +142,9 @@ int main(int argc, char *argv[])
 
 		switch (c) {
 		case 0:
-			if (!strcmp(long_options[option_index].name,
-					 "license")
-			    ) {
+			if (!strcmp(
+				long_options[option_index].name, "license"
+			)) {
 				print_license();
 				return EXIT_OK;
 			}
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
 			return EXIT_OK;
 		default:
 			msg1(2, "getopt_long() returned "
-			       "character code %d\n", c);
+				"character code %d\n", c);
 			break;
 		}
 	}
