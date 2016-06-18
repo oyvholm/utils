@@ -110,7 +110,8 @@ void usage(int retval)
  * Returns 0 only, the return value is undefined at the moment.
  */
 
-int parse_options(struct Options *dest, int argc, char *argv[]) {
+int parse_options(struct Options *dest, int argc, char *argv[])
+{
 	int retval = 0;
 	int c;
 	dest->help = 0;
@@ -189,7 +190,7 @@ int parse_options(struct Options *dest, int argc, char *argv[]) {
 		fprintf(stddebug, "\n");
 	}
 
-	return(retval);
+	return retval;
 }
 
 /*
@@ -213,7 +214,7 @@ int main(int argc, char *argv[])
 
 	if (opt.version) {
 		print_version();
-		return(EXIT_OK);
+		return EXIT_OK;
 	}
 
 	/*
