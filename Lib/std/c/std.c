@@ -152,19 +152,19 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 
 /*
  * parse_options() - Parse command line options.
- * Returns 0 only, the return value is undefined at the moment.
+ * Returns EXIT_OK if ok, EXIT_ERROR if error.
  */
 
 int parse_options(struct Options *dest, int argc, char *argv[])
 {
-	int retval = 0;
+	int retval = EXIT_OK;
 	int c;
 	dest->help = 0;
 	dest->license = 0;
 	dest->verbose = 0;
 	dest->version = 0;
 
-	while (1) {
+	while (retval == EXIT_OK) {
 		int option_index = 0;
 		static struct option long_options[] = {
 			{"help", no_argument, 0, 'h'},
@@ -191,7 +191,8 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		if (c == -1)
 			break;
 
-		choose_opt_action(dest, c, &long_options[option_index]);
+		retval = choose_opt_action(dest,
+					   c, &long_options[option_index]);
 	}
 
 	if (opt.verbose >= 2 && optind < argc) {
@@ -204,6 +205,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		fprintf(stddebug, "\n");
 	}
 
+	msg1(3, "parse_options() returns %d\n", retval);
 	return retval;
 }
 
