@@ -1,4 +1,3 @@
-
 /*
  * STDfilenameDTS
  * File ID: STDuuidDTS
@@ -159,6 +158,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 {
 	int retval = EXIT_OK;
 	int c;
+
 	dest->help = 0;
 	dest->license = 0;
 	dest->verbose = 0;
@@ -262,7 +262,6 @@ int main(int argc, char *argv[])
 	}
 
 	msg1(2, "Returning from main() with value %d\n", retval);
-
 	return retval;
 }
 
