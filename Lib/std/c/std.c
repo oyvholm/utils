@@ -29,6 +29,7 @@
 
 char *progname;
 struct {
+	int help;
 	int verbose;
 } opt;
 
@@ -111,6 +112,7 @@ int main(int argc, char *argv[])
 
 	progname = argv[0];
 
+	opt.help = 0;
 	opt.verbose = 0;
 
 	while (1) {
@@ -157,8 +159,8 @@ int main(int argc, char *argv[])
 #endif /* if 0 */
 			break;
 		case 'h':
-			usage(EXIT_OK);
-			return EXIT_OK;
+			opt.help = 1;
+			break;
 		case 'q':
 			opt.verbose--;
 			break;
@@ -185,6 +187,11 @@ int main(int argc, char *argv[])
 			fprintf(stddebug, "%s ", argv[t]);
 
 		fprintf(stddebug, "\n");
+	}
+
+	if (opt.help) {
+		usage(EXIT_OK);
+		return EXIT_OK;
 	}
 
 	/*
