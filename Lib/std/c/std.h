@@ -1,6 +1,6 @@
 
 /*
- * Main header file
+ * STDfilenameDTS
  * File ID: STDuuidDTS
  *
  * (C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>
@@ -35,12 +35,12 @@
 #define stddebug  stderr
 
 #ifdef C_ASSERT
-#  ifdef NDEBUG
-#    undef NDEBUG
-#  endif            /* ifdef NDEBUG        */
-#else               /* ifdef C_ASSERT      */
-#  define NDEBUG  1
-#endif              /* ifdef C_ASSERT else */
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* ifdef NDEBUG        */
+#else /* ifdef C_ASSERT      */
+#define NDEBUG  1
+#endif /* ifdef C_ASSERT else */
 
 /*
  * Macros
@@ -49,21 +49,30 @@
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
 #define myerror(a)       { fprintf(stderr, "%s: ", progname); perror(a); }
 
-#define debpr0(a)              if (debug) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a)); }
-#define debpr1(a,b)            if (debug) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b)); }
-#define debpr2(a,b,c)          if (debug) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c)); }
-#define debpr3(a,b,c,d)        if (debug) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d)); }
-#define debpr4(a,b,c,d,e)      if (debug) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e)); }
-#define debpr5(a,b,c,d,e,f)    if (debug) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e),(f)); }
-#define debpr6(a,b,c,d,e,f,g)  if (debug) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, \
+#define msg0(v,a)              if (opt.verbose >= (v)) { fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, (a)); }
+#define msg1(v,a,b)            if (opt.verbose >= (v)) { fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, (a),(b)); }
+#define msg2(v,a,b,c)          if (opt.verbose >= (v)) { fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c)); }
+#define msg3(v,a,b,c,d)        if (opt.verbose >= (v)) { fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d)); }
+#define msg4(v,a,b,c,d,e)      if (opt.verbose >= (v)) { fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e)); }
+#define msg5(v,a,b,c,d,e,f)    if (opt.verbose >= (v)) { fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e),(f)); }
+#define msg6(v,a,b,c,d,e,f,g)  if (opt.verbose >= (v)) { fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, \
 	(a),(b),(c),(d),(e),(f),(g)); }
+
+/*
+ * Standard header files
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <getopt.h>
 
 /*
  * Typedefs
@@ -75,15 +84,17 @@ typedef unsigned char bool;
  * Function prototypes
  */
 
+extern void print_license(void);
 extern void print_version(void);
 extern void usage(int);
+extern int process_file(const char *);
 
 /*
  * Global variables
  */
 
 extern char *progname;
-extern int  debug;
+extern struct Options opt;
 
 #endif /* ifndef _STDexecDTS_H */
 
