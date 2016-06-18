@@ -28,7 +28,6 @@
  */
 
 char *progname;
-int debug = 0;
 struct {
 	int verbose;
 } opt;
@@ -97,8 +96,6 @@ void usage(int retval)
 		     "    Increase level of verbosity. Can be repeated.");
 		puts("  --version\n"
 		     "    Print version information.");
-		puts("  --debug\n"
-		     "    Print debugging messages.");
 		puts("");
 	}
 }
@@ -119,7 +116,6 @@ int main(int argc, char *argv[])
 	while (1) {
 		int option_index = 0;
 		static struct option long_options[] = {
-			{"debug", no_argument, 0, 0},
 			{"help", no_argument, 0, 'h'},
 			{"license", no_argument, 0, 0},
 			{"quiet", no_argument, 0, 'q'},
@@ -146,9 +142,7 @@ int main(int argc, char *argv[])
 
 		switch (c) {
 		case 0:
-			if (!strcmp(long_options[option_index].name, "debug"))
-				debug = 1;
-			else if (!strcmp(long_options[option_index].name,
+			if (!strcmp(long_options[option_index].name,
 					 "license")
 			    ) {
 				print_license();
@@ -181,9 +175,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	msg1(2, "debugging is set to level %d\n", debug);
+	msg1(2, "Using verbose level %d\n", opt.verbose);
 
-	if (debug && optind < argc) {
+	if (opt.verbose >= 2 && optind < argc) {
 		int t;
 
 		fprintf(stddebug, "non-option args: ");

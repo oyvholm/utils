@@ -50,19 +50,19 @@
 #define myerror(a)       { fprintf(stderr, "%s: ", progname); perror(a); }
 
 #define msg0(v,a)              if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a)); }
+	"%s: ", progname); fprintf(stddebug, (a)); }
 #define msg1(v,a,b)            if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b)); }
+	"%s: ", progname); fprintf(stddebug, (a),(b)); }
 #define msg2(v,a,b,c)          if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c)); }
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c)); }
 #define msg3(v,a,b,c,d)        if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d)); }
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d)); }
 #define msg4(v,a,b,c,d,e)      if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e)); }
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e)); }
 #define msg5(v,a,b,c,d,e,f)    if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e),(f)); }
+	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e),(f)); }
 #define msg6(v,a,b,c,d,e,f,g)  if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: debug: ", progname); fprintf(stddebug, \
+	"%s: ", progname); fprintf(stddebug, \
 	(a),(b),(c),(d),(e),(f),(g)); }
 
 /*
@@ -93,7 +93,6 @@ extern void usage(int);
  */
 
 extern char *progname;
-extern int debug;
 
 #endif /* ifndef _STDexecDTS_H */
 
