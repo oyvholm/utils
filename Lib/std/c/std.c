@@ -81,7 +81,10 @@ void usage(int retval)
 			"Returning with value %d.\n", progname, retval);
 	else {
 		puts("");
-		print_version();
+		if (opt.verbose >= 1) {
+			print_version();
+			puts("");
+		}
 		printf("Usage: %s [options] [file [files [...]]]\n", progname);
 		puts("");
 		puts("Options:");
