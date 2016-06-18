@@ -207,6 +207,13 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 	return retval;
 }
 
+int process_file(const char *fname)
+{
+	int retval = 0;
+	msg1(1, "Processing file '%s'\n", fname);
+	return retval;
+}
+
 /*
  * main()
  */
@@ -236,15 +243,12 @@ int main(int argc, char *argv[])
 		return EXIT_OK;
 	}
 
-#if 0
 	if (optind < argc) {
 		int t;
 
 		for (t = optind; t < argc; t++)
 			retval |= process_file(argv[t]);
-	} else
-		retval |= process_file("-");
-#endif
+	}
 
 	msg1(2, "Returning from main() with value %d\n", retval);
 

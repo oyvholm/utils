@@ -87,6 +87,7 @@ typedef unsigned char bool;
 extern void print_license(void);
 extern void print_version(void);
 extern void usage(int);
+extern int process_file(const char *);
 
 /*
  * Global variables
