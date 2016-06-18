@@ -31,6 +31,7 @@ char *progname;
 struct Options {
 	int help;
 	int verbose;
+	int version;
 } opt;
 
 /*
@@ -114,6 +115,7 @@ int parse_options(struct Options *dest, int argc, char *argv[]) {
 	int c;
 	dest->help = 0;
 	dest->verbose = 0;
+	dest->version = 0;
 
 	while (1) {
 		int option_index = 0;
@@ -168,8 +170,8 @@ int parse_options(struct Options *dest, int argc, char *argv[]) {
 			dest->verbose++;
 			break;
 		case 'V':
-			print_version();
-			return EXIT_OK;
+			dest->version = 1;
+			break;
 		default:
 			msg1(2, "getopt_long() returned "
 				"character code %d\n", c);
@@ -207,6 +209,11 @@ int main(int argc, char *argv[])
 	if (opt.help) {
 		usage(EXIT_OK);
 		return EXIT_OK;
+	}
+
+	if (opt.version) {
+		print_version();
+		return(EXIT_OK);
 	}
 
 	/*
