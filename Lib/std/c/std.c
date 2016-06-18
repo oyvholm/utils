@@ -119,7 +119,6 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 	case 0:
 		if (!strcmp(opts->name, "license")) {
 			dest->license = 1;
-			break;
 		}
 		if (opt.verbose >= 2) {
 			fprintf(stddebug, "%s: option %s",
