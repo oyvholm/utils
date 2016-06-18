@@ -1,6 +1,6 @@
 
 /*
- * STDexecDTS.c
+ * STDfilenameDTS
  * File ID: STDuuidDTS
  *
  * (C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>
