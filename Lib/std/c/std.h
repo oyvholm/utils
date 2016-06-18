@@ -94,6 +94,7 @@ extern int process_file(const char *);
  */
 
 extern char *progname;
+extern struct Options opt;
 
 #endif /* ifndef _STDexecDTS_H */
 
