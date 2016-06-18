@@ -30,6 +30,7 @@
 char *progname;
 struct Options {
 	int help;
+	int license;
 	int verbose;
 	int version;
 } opt;
@@ -118,8 +119,8 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 	switch (c) {
 	case 0:
 		if (!strcmp(opts->name, "license")) {
-			print_license();
-			return EXIT_OK;
+			dest->license = 1;
+			break;
 		}
 #if 0
 		fprintf(stddebug, "option %s",
@@ -160,6 +161,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 	int retval = 0;
 	int c;
 	dest->help = 0;
+	dest->license = 0;
 	dest->verbose = 0;
 	dest->version = 0;
 
@@ -227,6 +229,11 @@ int main(int argc, char *argv[])
 
 	if (opt.version) {
 		print_version();
+		return EXIT_OK;
+	}
+
+	if (opt.license) {
+		print_license();
 		return EXIT_OK;
 	}
 
