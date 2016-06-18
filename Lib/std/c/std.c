@@ -106,6 +106,51 @@ void usage(int retval)
 }
 
 /*
+ * choose_opt_action() - Decide what to do when option c is found. Store 
+ * changes in dest. opts is the struct with the definitions for the long 
+ * options.
+ */
+
+int choose_opt_action(struct Options *dest, int c, struct option *opts)
+{
+	int retval = 0;
+
+	switch (c) {
+	case 0:
+		if (!strcmp(opts->name, "license")) {
+			print_license();
+			return EXIT_OK;
+		}
+#if 0
+		fprintf(stddebug, "option %s",
+			long_name);
+		if (optarg)
+			fprintf(stddebug, " with arg %s", optarg);
+		fprintf(stddebug, "\n");
+#endif /* if 0 */
+		break;
+	case 'h':
+		dest->help = 1;
+		break;
+	case 'q':
+		dest->verbose--;
+		break;
+	case 'v':
+		dest->verbose++;
+		break;
+	case 'V':
+		dest->version = 1;
+		break;
+	default:
+		msg1(2, "getopt_long() returned "
+			"character code %d\n", c);
+		break;
+	}
+
+	return retval;
+}
+
+/*
  * parse_options() - Parse command line options.
  * Returns 0 only, the return value is undefined at the moment.
  */
@@ -145,39 +190,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		if (c == -1)
 			break;
 
-		switch (c) {
-		case 0:
-			if (!strcmp(
-				long_options[option_index].name, "license"
-			)) {
-				print_license();
-				return EXIT_OK;
-			}
-#if 0
-			fprintf(stddebug, "option %s",
-				long_options[option_index].name);
-			if (optarg)
-				fprintf(stddebug, " with arg %s", optarg);
-			fprintf(stddebug, "\n");
-#endif /* if 0 */
-			break;
-		case 'h':
-			dest->help = 1;
-			break;
-		case 'q':
-			dest->verbose--;
-			break;
-		case 'v':
-			dest->verbose++;
-			break;
-		case 'V':
-			dest->version = 1;
-			break;
-		default:
-			msg1(2, "getopt_long() returned "
-				"character code %d\n", c);
-			break;
-		}
+		choose_opt_action(dest, c, &long_options[option_index]);
 	}
 
 	if (opt.verbose >= 2 && optind < argc) {
