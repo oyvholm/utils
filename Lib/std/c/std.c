@@ -197,7 +197,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 	if (opt.verbose >= 2 && optind < argc) {
 		int t;
 
-		fprintf(stddebug, "non-option args: ");
+		fprintf(stddebug, "%s: non-option args: ", progname);
 		for (t = optind; t < argc; t++)
 			fprintf(stddebug, "%s ", argv[t]);
 
