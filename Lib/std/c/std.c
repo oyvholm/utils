@@ -17,7 +17,6 @@
  *
  * You should have received a copy of the GNU General Public License 
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 #include "STDexecDTS.h"
@@ -128,7 +127,7 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 		if (optarg)
 			fprintf(stddebug, " with arg %s", optarg);
 		fprintf(stddebug, "\n");
-#endif /* if 0 */
+#endif
 		break;
 	case 'h':
 		dest->help = 1;
@@ -237,11 +236,7 @@ int main(int argc, char *argv[])
 		return EXIT_OK;
 	}
 
-	/*
-	 * Code goes here
-	 */
-
-	/*
+#if 0
 	if (optind < argc) {
 		int t;
 
@@ -249,9 +244,7 @@ int main(int argc, char *argv[])
 			retval |= process_file(argv[t]);
 	} else
 		retval |= process_file("-");
-	 */
-
-	/* ...and stops here */
+#endif
 
 	msg1(2, "Returning from main() with value %d\n", retval);
 
