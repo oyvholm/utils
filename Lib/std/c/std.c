@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 	if (debug && optind < argc) {
 		int t;
 
-		msg0(2, "non-option args: ");
+		fprintf(stddebug, "non-option args: ");
 		for (t = optind; t < argc; t++)
 			fprintf(stddebug, "%s ", argv[t]);
 
