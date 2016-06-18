@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=compile
-VERSION=0.4.0
+VERSION=0.5.0
 
 set -e
 
@@ -39,6 +39,7 @@ fi
 fname=STDexecDTS
 test -e $fname.h || ln -s std.h $fname.h
 test -e $fname.c || ln -s std.c $fname.c
+make clean
 make
 ./$fname
 test -d t || mkdir t
