@@ -28,7 +28,7 @@
  */
 
 char *progname;
-struct {
+struct Options {
 	int help;
 	int verbose;
 } opt;
@@ -105,18 +105,15 @@ void usage(int retval)
 }
 
 /*
- * main()
+ * parse_options() - Parse command line options.
+ * Returns 0 only, the return value is undefined at the moment.
  */
 
-int main(int argc, char *argv[])
-{
+int parse_options(struct Options *dest, int argc, char *argv[]) {
+	int retval = 0;
 	int c;
-	int retval = EXIT_OK;
-
-	progname = argv[0];
-
-	opt.help = 0;
-	opt.verbose = 0;
+	dest->help = 0;
+	dest->verbose = 0;
 
 	while (1) {
 		int option_index = 0;
@@ -162,13 +159,13 @@ int main(int argc, char *argv[])
 #endif /* if 0 */
 			break;
 		case 'h':
-			opt.help = 1;
+			dest->help = 1;
 			break;
 		case 'q':
-			opt.verbose--;
+			dest->verbose--;
 			break;
 		case 'v':
-			opt.verbose++;
+			dest->verbose++;
 			break;
 		case 'V':
 			print_version();
@@ -180,8 +177,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	msg1(2, "Using verbose level %d\n", opt.verbose);
-
 	if (opt.verbose >= 2 && optind < argc) {
 		int t;
 
@@ -191,6 +186,23 @@ int main(int argc, char *argv[])
 
 		fprintf(stddebug, "\n");
 	}
+
+	return(retval);
+}
+
+/*
+ * main()
+ */
+
+int main(int argc, char *argv[])
+{
+	int retval = EXIT_OK;
+
+	progname = argv[0];
+
+	parse_options(&opt, argc, argv);
+
+	msg1(2, "Using verbose level %d\n", opt.verbose);
 
 	if (opt.help) {
 		usage(EXIT_OK);
