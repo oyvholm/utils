@@ -109,11 +109,12 @@ void usage(int retval)
  * choose_opt_action() - Decide what to do when option c is found. Store 
  * changes in dest. opts is the struct with the definitions for the long 
  * options.
+ * Return EXIT_OK if ok, EXIT_ERROR if c is unknown.
  */
 
 int choose_opt_action(struct Options *dest, int c, struct option *opts)
 {
-	int retval = 0;
+	int retval = EXIT_OK;
 
 	switch (c) {
 	case 0:
@@ -142,6 +143,7 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 	default:
 		msg1(2, "getopt_long() returned "
 			"character code %d\n", c);
+		retval = EXIT_ERROR;
 		break;
 	}
 
