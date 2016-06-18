@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
 	msg1(3, "retval after parse_options(): %d\n", retval);
 	if (retval != EXIT_OK) {
 		fprintf(stderr, "%s: Option error\n", progname);
-		return(EXIT_ERROR);
+		return EXIT_ERROR;
 	}
 
 	msg1(2, "Using verbose level %d\n", opt.verbose);
