@@ -119,6 +119,8 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 	case 0:
 		if (!strcmp(opts->name, "license")) {
 			dest->license = 1;
+		} else if (!strcmp(opts->name, "version")) {
+			dest->version = 1;
 		}
 		if (opt.verbose >= 2) {
 			fprintf(stddebug, "%s: option %s",
@@ -136,9 +138,6 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 		break;
 	case 'v':
 		dest->verbose++;
-		break;
-	case 'V':
-		dest->version = 1;
 		break;
 	default:
 		msg1(2, "getopt_long() returned "
@@ -170,7 +169,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 			{"license", no_argument, 0, 0},
 			{"quiet", no_argument, 0, 'q'},
 			{"verbose", no_argument, 0, 'v'},
-			{"version", no_argument, 0, 'V'},
+			{"version", no_argument, 0, 0},
 			{0, 0, 0, 0}
 		};
 
@@ -184,7 +183,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		 *
 		 */
 
-		c = getopt_long(argc, argv, "hqvV", long_options,
+		c = getopt_long(argc, argv, "hqv", long_options,
 				&option_index);
 
 		if (c == -1)
