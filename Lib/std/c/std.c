@@ -121,13 +121,13 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 			dest->license = 1;
 			break;
 		}
-#if 0
-		fprintf(stddebug, "option %s",
-			long_name);
-		if (optarg)
-			fprintf(stddebug, " with arg %s", optarg);
-		fprintf(stddebug, "\n");
-#endif
+		if (opt.verbose >= 2) {
+			fprintf(stddebug, "%s: option %s",
+					  progname, opts->name);
+			if (optarg)
+				fprintf(stddebug, " with arg %s", optarg);
+			fprintf(stddebug, "\n");
+		}
 		break;
 	case 'h':
 		dest->help = 1;
