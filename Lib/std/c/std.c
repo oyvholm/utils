@@ -209,6 +209,10 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 	return retval;
 }
 
+/*
+ * process_file()
+ */
+
 int process_file(const char *fname)
 {
 	int retval = 0;
