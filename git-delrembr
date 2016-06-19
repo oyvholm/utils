@@ -11,13 +11,15 @@
 #=======================================================================
 
 progname=git-delrembr
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
+n\
 q\
 v\
 " -l "\
+dry-run,\
 help,\
 quiet,\
 verbose,\
@@ -27,11 +29,13 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
+opt_dry_run=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
+        (-n|--dry-run) opt_dry_run=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -53,6 +57,8 @@ Options:
 
   -h, --help
     Show this help.
+  -n, --dry-run
+    Don't delete anything, only print out what would be done.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -64,12 +70,18 @@ END
     exit 0
 fi
 
+if test "$opt_dry_run" = "1"; then
+    sim=echo
+else
+    sim=
+fi
+
 branches="$@"
 remotes=". $(git remote)"
 for r in $remotes; do
     echo
     echo ==== remote \"$r\" ====
     for b in $branches; do
-        git push $r :$b
+        $sim git push $r :$b
     done
 done
