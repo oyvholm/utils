@@ -48,27 +48,12 @@
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
 #define myerror(a)       { fprintf(stderr, "%s: ", progname); perror(a); }
 
-#define msg0(v,a)              if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: ", progname); fprintf(stddebug, (a)); }
-#define msg1(v,a,b)            if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: ", progname); fprintf(stddebug, (a),(b)); }
-#define msg2(v,a,b,c)          if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: ", progname); fprintf(stddebug, (a),(b),(c)); }
-#define msg3(v,a,b,c,d)        if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d)); }
-#define msg4(v,a,b,c,d,e)      if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e)); }
-#define msg5(v,a,b,c,d,e,f)    if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: ", progname); fprintf(stddebug, (a),(b),(c),(d),(e),(f)); }
-#define msg6(v,a,b,c,d,e,f,g)  if (opt.verbose >= (v)) { fprintf(stddebug, \
-	"%s: ", progname); fprintf(stddebug, \
-	(a),(b),(c),(d),(e),(f),(g)); }
-
 /*
  * Standard header files
  */
 
 #include <getopt.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,6 +68,7 @@ typedef unsigned char bool;
  * Function prototypes
  */
 
+extern int msg(int, const char *, ...);
 extern void print_license(void);
 extern void print_version(void);
 extern void usage(int);

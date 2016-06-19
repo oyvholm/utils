@@ -34,6 +34,26 @@ struct Options {
 } opt;
 
 /*
+ * msg() - Print a message prefixed with "[progname]: " to stddebug if 
+ * opt.verbose is equal or higher than the first argument. The rest of 
+ * the arguments are delivered to vfprintf().
+ * Returns the number of characters written.
+ */
+
+int msg(int verbose, const char *format, ...)
+{
+	va_list ap;
+	int retval = 0;
+	if (opt.verbose >= verbose) {
+		va_start(ap, format);
+		retval = fprintf(stddebug, "%s: ", progname);
+		retval += vfprintf(stddebug, format, ap);
+		va_end(ap);
+	}
+	return retval;
+}
+
+/*
  * print_license() - Display the program license
  */
 
@@ -140,8 +160,8 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 		dest->verbose++;
 		break;
 	default:
-		msg1(2, "getopt_long() returned "
-			"character code %d\n", c);
+		msg(2, "getopt_long() returned "
+		       "character code %d\n", c);
 		retval = EXIT_ERROR;
 		break;
 	}
@@ -205,7 +225,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		fprintf(stddebug, "\n");
 	}
 
-	msg1(3, "parse_options() returns %d\n", retval);
+	msg(3, "parse_options() returns %d\n", retval);
 	return retval;
 }
 
@@ -216,7 +236,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 int process_file(const char *fname)
 {
 	int retval = 0;
-	msg1(1, "Processing file '%s'\n", fname);
+	msg(1, "Processing file '%s'\n", fname);
 	return retval;
 }
 
@@ -231,13 +251,13 @@ int main(int argc, char *argv[])
 	progname = argv[0];
 
 	retval = parse_options(&opt, argc, argv);
-	msg1(3, "retval after parse_options(): %d\n", retval);
+	msg(3, "retval after parse_options(): %d\n", retval);
 	if (retval != EXIT_OK) {
 		fprintf(stderr, "%s: Option error\n", progname);
 		return EXIT_ERROR;
 	}
 
-	msg1(2, "Using verbose level %d\n", opt.verbose);
+	msg(2, "Using verbose level %d\n", opt.verbose);
 
 	if (opt.help) {
 		usage(EXIT_OK);
@@ -261,7 +281,7 @@ int main(int argc, char *argv[])
 			retval |= process_file(argv[t]);
 	}
 
-	msg1(2, "Returning from main() with value %d\n", retval);
+	msg(2, "Returning from main() with value %d\n", retval);
 	return retval;
 }
 
