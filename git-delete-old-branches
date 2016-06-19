@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -76,9 +76,11 @@ listbr() {
 unset LESS
 
 for f in "$@"; do
-    echo
-    echo f = \"$f\"
-    listbr "$f"
+    if test $opt_verbose -ge 1; then
+        echo
+        echo $progname: Check \"$f\" branches
+        listbr "$f"
+    fi
     listbr "$f" | grep -q . || continue
     clear
     (
