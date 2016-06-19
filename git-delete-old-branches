@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.2.1
+VERSION=0.2.2
 
 ARGS="$(getopt -o "\
 h\
@@ -98,7 +98,7 @@ for f in "$@"; do
     ) | less -S
     echo -n "Delete all '$f' branches? " >&2
     unset valg
-    read valg
+    read valg </dev/tty
     if test "$valg" = "y"; then
         git dbr $(listbr "$f")
     fi
