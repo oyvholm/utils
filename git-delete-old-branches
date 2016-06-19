@@ -4,14 +4,14 @@
 # git-delete-old-branches
 # File ID: b2a8aec0-3649-11e6-912b-02010e0a6634
 #
-# [Description]
+# Delete obsolete Git branches after displaying some info about them
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -45,7 +45,14 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Delete obsolete Git branches locally and from all remotes. For each 
+branch, display a "git diff --stat" against all local and remote 
+branches with this name, a simplified --graph log, and finally a git log 
+with patch against all branches. Display this in less(1), and ask if all 
+branches with this name should be deleted. If the answer is "y", delete 
+all branches with this name locally and from all remotes.
+
+Usage: $progname [options] BRANCH [BRANCH [...]]
 
 Options:
 
@@ -62,3 +69,35 @@ END
     exit 0
 fi
 
+listbr() {
+    git br -a | grep "/$1\$" | rmspcall
+}
+
+unset LESS
+
+for f in "$@"; do
+    echo
+    echo f = \"$f\"
+    listbr "$f"
+    listbr "$f" | grep -q . || continue
+    clear
+    (
+        echo $f
+        echo
+        git diff --stat $(listbr "$f" | perl -pe 's/^/.../;')
+        echo
+        git log -C -C -M -M --abbrev-commit --decorate=short --format=oneline \
+          --graph $(
+            listbr "$f" | perl -pe 's/^/../;'
+        )
+        echo
+        git log -C -C -M -M --date-order --date=iso --decorate=short \
+          --format=fuller --graph -c -p $(listbr "$f" | perl -pe 's/^/../;')
+    ) | less -S
+    echo -n "Delete all '$f' branches? " >&2
+    unset valg
+    read valg
+    if test "$valg" = "y"; then
+        git dbr $(listbr "$f")
+    fi
+done
