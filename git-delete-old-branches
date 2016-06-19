@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 h\
@@ -70,7 +70,7 @@ END
 fi
 
 listbr() {
-    git br -a | grep "/$1\$" | rmspcall
+    git br -a | rmspcall | grep -E "(^|/)$1\$"
 }
 
 unset LESS
