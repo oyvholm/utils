@@ -48,6 +48,7 @@ int msg(int verbose, const char *format, ...)
 		va_start(ap, format);
 		retval = fprintf(stddebug, "%s: ", progname);
 		retval += vfprintf(stddebug, format, ap);
+		fputc('\n', stddebug);
 		va_end(ap);
 	}
 	return retval;
@@ -154,7 +155,7 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 		break;
 	default:
 		msg(2, "getopt_long() returned "
-		       "character code %d\n", c);
+		       "character code %d", c);
 		retval = EXIT_ERROR;
 		break;
 	}
@@ -208,7 +209,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 					   c, &long_options[option_index]);
 	}
 
-	msg(3, "parse_options() returns %d\n", retval);
+	msg(3, "parse_options() returns %d", retval);
 	return retval;
 }
 
@@ -223,13 +224,13 @@ int main(int argc, char *argv[])
 	progname = argv[0];
 
 	retval = parse_options(&opt, argc, argv);
-	msg(3, "retval after parse_options(): %d\n", retval);
+	msg(3, "retval after parse_options(): %d", retval);
 	if (retval != EXIT_OK) {
 		fprintf(stderr, "%s: Option error\n", progname);
 		return EXIT_ERROR;
 	}
 
-	msg(2, "Using verbose level %d\n", opt.verbose);
+	msg(2, "Using verbose level %d", opt.verbose);
 
 	if (opt.help) {
 		usage(EXIT_OK);
@@ -250,10 +251,10 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++)
-			msg(2, "Non-option arg: %s\n", argv[t]);
+			msg(2, "Non-option arg: %s", argv[t]);
 	}
 
-	msg(2, "Returning from main() with value %d\n", retval);
+	msg(2, "Returning from main() with value %d", retval);
 	return retval;
 }
 
