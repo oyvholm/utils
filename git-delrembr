@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delrembr
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 h\
@@ -76,13 +76,25 @@ else
     sim=
 fi
 
+msg() {
+    if test $opt_verbose -ge $1; then
+        shift
+        echo "$progname: $*" >&2
+    fi
+}
+
 branches="$@"
 remotes="$(git remote)"
 for b in $branches; do
     echo ==== $progname: branch \"$b\" ====
-    git branch | grep -q "^  $b\$" && $sim git branch -D $b
+    git branch | grep -q "^  $b\$" && {
+        msg 1 Executing $sim git branch -D $b
+        $sim git branch -D $b
+    }
     for r in $remotes; do
-        git branch -a | grep -q "^  remotes/$r/$b\$" &&
+        git branch -a | grep -q "^  remotes/$r/$b\$" && {
+            msg 1 Executing $sim git push $r :$b
             $sim git push $r :$b
+        }
     done
 done
