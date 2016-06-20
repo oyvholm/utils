@@ -72,7 +72,6 @@ extern int msg(int, const char *, ...);
 extern void print_license(void);
 extern void print_version(void);
 extern void usage(int);
-extern int process_file(const char *);
 
 /*
  * Global variables

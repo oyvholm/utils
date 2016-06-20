@@ -142,13 +142,6 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 		} else if (!strcmp(opts->name, "version")) {
 			dest->version = 1;
 		}
-		if (opt.verbose >= 2) {
-			fprintf(stddebug, "%s: option %s",
-					  progname, opts->name);
-			if (optarg)
-				fprintf(stddebug, " with arg %s", optarg);
-			fprintf(stddebug, "\n");
-		}
 		break;
 	case 'h':
 		dest->help = 1;
@@ -215,28 +208,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 					   c, &long_options[option_index]);
 	}
 
-	if (opt.verbose >= 2 && optind < argc) {
-		int t;
-
-		fprintf(stddebug, "%s: non-option args: ", progname);
-		for (t = optind; t < argc; t++)
-			fprintf(stddebug, "%s ", argv[t]);
-
-		fprintf(stddebug, "\n");
-	}
-
 	msg(3, "parse_options() returns %d\n", retval);
-	return retval;
-}
-
-/*
- * process_file()
- */
-
-int process_file(const char *fname)
-{
-	int retval = 0;
-	msg(1, "Processing file '%s'\n", fname);
 	return retval;
 }
 
@@ -278,7 +250,7 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++)
-			retval |= process_file(argv[t]);
+			msg(2, "Non-option arg: %s\n", argv[t]);
 	}
 
 	msg(2, "Returning from main() with value %d\n", retval);
