@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delrembr
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -77,11 +77,12 @@ else
 fi
 
 branches="$@"
-remotes=". $(git remote)"
-for r in $remotes; do
-    echo
-    echo ==== remote \"$r\" ====
-    for b in $branches; do
-        $sim git push $r :$b
+remotes="$(git remote)"
+for b in $branches; do
+    echo ==== $progname: branch \"$b\" ====
+    git branch | grep -q "^  $b\$" && $sim git branch -D $b
+    for r in $remotes; do
+        git branch -a | grep -q "^  remotes/$r/$b\$" &&
+            $sim git push $r :$b
     done
 done
