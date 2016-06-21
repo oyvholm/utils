@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.7.0';
+our $VERSION = '0.7.1';
 
 my %descriptions = ();
 
@@ -260,7 +260,8 @@ END
     likecmd("$CMD --lock --timeout 0", # {{{
         '/^$/',
         '/^' .
-            'filesynced --lock: .+\/repo-fs-t\/synced.sql\.lock: Waiting for lockdir\.\.\.\n' .
+            'filesynced --lock: .+\/repo-fs-t\/synced.sql\.lock: ' .
+              'Waiting for lockdir\.\.\.\n' .
             'filesynced: Lock not aquired after 0 seconds, aborting\n' .
             '$/s',
         1,

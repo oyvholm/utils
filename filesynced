@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=filesynced
-VERSION=0.7.0
+VERSION=0.7.1
 
 SQLITE=sqlite3
 bin="$HOME/bin"
@@ -622,7 +622,8 @@ done
             else
                 unset type_def type_val
             fi
-            echo "INSERT INTO synced (file$type_def) VALUES ('$f'$type_val);" | $SQLITE "$db"
+            echo "INSERT INTO synced (file$type_def) VALUES ('$f'$type_val);" |
+              $SQLITE "$db"
             if test "$?" != "0"; then
                 echo -n "$progname: Cannot add \"$f\" to the database, " >&2
                 echo no entries updated >&2
