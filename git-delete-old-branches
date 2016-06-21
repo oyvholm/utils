@@ -11,16 +11,18 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.4.0
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 d:\
 h\
+o\
 q\
 v\
 " -l "\
 dbname:,\
 help,\
+once,\
 quiet,\
 verbose,\
 version,\
@@ -30,12 +32,14 @@ eval set -- "$ARGS"
 
 opt_dbname=''
 opt_help=0
+opt_once=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-d|--dbname) opt_dbname="$2"; shift 2 ;;
         (-h|--help) opt_help=1; shift ;;
+        (-o|--once) opt_once=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -66,6 +70,8 @@ Options:
     deletions later.
   -h, --help
     Show this help.
+  -o, --once
+    Don't ask about branches that have been answered "n" to earlier.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -146,6 +152,10 @@ fi
 unset LESS
 
 for f in "$@"; do
+    if test -n "$db" -a "$opt_once" = "1"; then
+        sql "SELECT branch FROM branches WHERE branch = '$f' AND yn = 'n';" |
+            grep -q . && continue
+    fi
     if test $opt_verbose -ge 1; then
         echo
         echo $progname: Check \"$f\" branches
