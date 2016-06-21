@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.5.0
+VERSION=0.5.1
 
 ARGS="$(getopt -o "\
 d:\
@@ -57,9 +57,14 @@ Delete obsolete Git branches locally and from all remotes. For each
 branch, display a "git diff --stat" against all local and remote 
 branches with this name, a simplified --graph log, and finally a git log 
 with patch against all branches. Display this in less(1), and ask if all 
-branches with this name should be deleted. If the answer is "y", delete 
-all branches with this name locally and from all remotes. "q" exits the 
-program.
+branches with this name should be deleted.
+The following responses are valid:
+
+"y" - Delete all branches with this name locally and from all remotes
+      and mark it as garbage.
+"n" - Don't delete the branch. If -o/--once is used later, files marked
+      with "n" will not be checked.
+"q" - Exit the program.
 
 Usage: $progname [options] BRANCH [BRANCH [...]]
 
