@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.2.2
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -50,7 +50,8 @@ branch, display a "git diff --stat" against all local and remote
 branches with this name, a simplified --graph log, and finally a git log 
 with patch against all branches. Display this in less(1), and ask if all 
 branches with this name should be deleted. If the answer is "y", delete 
-all branches with this name locally and from all remotes.
+all branches with this name locally and from all remotes. "q" exits the 
+program.
 
 Usage: $progname [options] BRANCH [BRANCH [...]]
 
@@ -101,5 +102,7 @@ for f in "$@"; do
     read valg </dev/tty
     if test "$valg" = "y"; then
         git dbr $(listbr "$f")
+    elif test "$valg" = "q"; then
+        exit 0
     fi
 done
