@@ -11,17 +11,19 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.6.1
+VERSION=0.7.0
 
 ARGS="$(getopt -o "\
 d:\
 h\
+l\
 o\
 q\
 v\
 " -l "\
 dbname:,\
 help,\
+load,\
 once,\
 quiet,\
 verbose,\
@@ -32,6 +34,7 @@ eval set -- "$ARGS"
 
 opt_dbname=''
 opt_help=0
+opt_load=0
 opt_once=0
 opt_quiet=0
 opt_verbose=0
@@ -39,6 +42,7 @@ while :; do
     case "$1" in
         (-d|--dbname) opt_dbname="$2"; shift 2 ;;
         (-h|--help) opt_help=1; shift ;;
+        (-l|--load) opt_load=1; shift ;;
         (-o|--once) opt_once=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -76,6 +80,11 @@ Options:
     deletions later.
   -h, --help
     Show this help.
+  -l, --load
+    Store the specified branches in the "refs" database table along with 
+    the commit date. This makes it possible to sort the branches by age. 
+    Must be used together with the -d/--dbname option. If -v is 
+    specified, progress is shown while the branches are stored.
   -o, --once
     Don't ask about branches that have been answered "n" to earlier.
   -q, --quiet
@@ -142,8 +151,25 @@ INSERT OR IGNORE INTO meta (key, value)
    'https://gitlab.com/sunny256/utils/blob/master/git-delete-old-branches');
 INSERT OR IGNORE INTO meta (key, value)
   VALUES('dbversion', '$dbversion');
+CREATE TABLE IF NOT EXISTS refs (
+  date TEXT
+    CONSTRAINT refs_date_length
+      CHECK (date IS NULL OR length(date) = 19)
+    CONSTRAINT refs_date_valid
+      CHECK (date IS NULL OR datetime(date) IS NOT NULL),
+  branch TEXT
+    CONSTRAINT refs_branch_length
+      CHECK (length(branch) > 0)
+    UNIQUE
+    NOT NULL
+);
 COMMIT;
 "
+
+if test "$opt_load" = "1" -a -z "$opt_dbname"; then
+    echo $progname: -l/--load doesn\'t work without -d/--dbname >&2
+    exit 1
+fi
 
 currversion=$(sql "SELECT value FROM meta WHERE key = 'dbversion';")
 if test -n "$currversion"; then
@@ -153,6 +179,22 @@ if test -n "$currversion"; then
         echo $progname: only handle databases up to version $dbversion.) >&2
         exit 1
     fi
+fi
+
+if test "$opt_load" = "1"; then
+    test $opt_verbose -ge 1 && tput sc >&2
+    for f in "$@"; do
+        s="$(echo "$f" | sed "s/'/''/g")"
+        if test $opt_verbose -ge 1; then
+            tput rc >&2
+            echo -n "$f " >&2
+            tput el >&2
+        fi
+        GIT_PAGER=cat git log -1 "$f" \
+          --format=tformat:"INSERT INTO refs (date, branch) VALUES (datetime('%cI'), '$s');"
+    done | sqlite3 "$db"
+    test $opt_verbose -ge 1 && tput rc el >&2
+    exit
 fi
 
 unset LESS
