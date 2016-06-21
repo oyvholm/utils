@@ -11,13 +11,15 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
+d:\
 h\
 q\
 v\
 " -l "\
+dbname:,\
 help,\
 quiet,\
 verbose,\
@@ -26,11 +28,13 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_dbname=''
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-d|--dbname) opt_dbname="$2"; shift 2 ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -57,6 +61,9 @@ Usage: $progname [options] BRANCH [BRANCH [...]]
 
 Options:
 
+  -d FILE, --dbname FILE
+    Store answers in the SQLite database FILE. Can be used to automate 
+    deletions later.
   -h, --help
     Show this help.
   -q, --quiet
@@ -70,9 +77,71 @@ END
     exit 0
 fi
 
+db="$opt_dbname"
+dbversion=1
+
 listbr() {
     git br -a | rmspcall | grep -E "(^|/)$1\$"
 }
+
+sql() {
+    test -z "$db" && return
+    echo "$@" | sqlite3 "$db"
+}
+
+add_entry() {
+    sql "
+INSERT OR REPLACE
+  INTO branches (yn, branch, date)
+  VALUES('$1', '$2', datetime('now'));
+"
+}
+
+sql "
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS branches (
+  yn TEXT
+    CONSTRAINT branches_yn_contents
+      CHECK (yn = 'y' OR yn = 'n' OR yn IS NULL),
+  branch TEXT
+    CONSTRAINT branches_branch_length
+      CHECK (length(branch) > 0)
+    UNIQUE
+    NOT NULL,
+  date TEXT
+    DEFAULT (datetime('now'))
+    CONSTRAINT branches_date_length
+      CHECK (date IS NULL OR length(date) = 19)
+    CONSTRAINT branches_date_valid
+      CHECK (date IS NULL OR datetime(date) IS NOT NULL)
+);
+CREATE TABLE IF NOT EXISTS meta (
+  key TEXT
+    CONSTRAINT meta_key_length
+      CHECK (length(key) > 0)
+    UNIQUE
+    NOT NULL,
+  value TEXT
+);
+INSERT OR IGNORE INTO meta (key, value)
+  VALUES('program', 'git-delete-old-branches');
+INSERT OR IGNORE INTO meta (key, value)
+  VALUES('url',
+   'https://gitlab.com/sunny256/utils/blob/master/git-delete-old-branches');
+INSERT OR IGNORE INTO meta (key, value)
+  VALUES('dbversion', '$dbversion');
+COMMIT;
+"
+
+currversion=$(sql "SELECT value FROM meta WHERE key = 'dbversion';")
+if test -n "$currversion"; then
+    if test $currversion -gt $dbversion; then
+        (echo $progname: Database version of $db is too new.
+        echo $progname: The db version is $currversion, and this program can
+        echo $progname: only handle databases up to version $dbversion.) >&2
+        exit 1
+    fi
+fi
 
 unset LESS
 
@@ -102,6 +171,9 @@ for f in "$@"; do
     read valg </dev/tty
     if test "$valg" = "y"; then
         git dbr $(listbr "$f")
+        add_entry y "$f"
+    elif test "$valg" = "n"; then
+        add_entry n "$f"
     elif test "$valg" = "q"; then
         exit 0
     fi
