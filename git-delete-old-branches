@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.6.0
+VERSION=0.6.1
 
 ARGS="$(getopt -o "\
 d:\
@@ -158,8 +158,9 @@ fi
 unset LESS
 
 for f in "$@"; do
+    s="$(echo "$f" | sed "s/'/''/g")"
     if test -n "$db" -a "$opt_once" = "1"; then
-        sql "SELECT branch FROM branches WHERE branch = '$f' AND yn = 'n';" |
+        sql "SELECT branch FROM branches WHERE branch = '$s' AND yn = 'n';" |
             grep -q . && continue
     fi
     if test $opt_verbose -ge 1; then
@@ -187,11 +188,11 @@ for f in "$@"; do
     read valg </dev/tty
     if test "$valg" = "y"; then
         git dbr $(listbr "$f")
-        add_entry y "$f"
+        add_entry y "$s"
     elif test "$valg" = "n"; then
-        add_entry n "$f"
+        add_entry n "$s"
     elif test "$valg" = "d"; then
-        add_entry d "$f"
+        add_entry d "$s"
     elif test "$valg" = "q"; then
         exit 0
     fi
