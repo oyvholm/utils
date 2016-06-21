@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=build-vim
-VERSION=0.4.0
+VERSION=0.5.0
 rcfile="$HOME/.${progname}rc"
 configure_opts="--with-features=huge --with-x --enable-multibyte"
 cloneurl=https://github.com/vim/vim.git
@@ -29,6 +29,7 @@ y\
 " -l "\
 help,\
 dry-run,\
+no-install,\
 quiet,\
 update,\
 verbose,\
@@ -41,6 +42,7 @@ eval set -- "$ARGS"
 opt_f=0
 opt_help=0
 opt_dry_run=0
+opt_no_install=0
 opt_quiet=0
 opt_update=0
 opt_verbose=0
@@ -50,6 +52,7 @@ while :; do
         (-f) opt_f=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-n|--dry-run) opt_dry_run=1; shift ;;
+        (--no-install) opt_no_install=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-u|--update) opt_update=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -77,6 +80,8 @@ Options:
     Show this help.
   -n, --dry-run
     Don't do anything, output commands that would be executed instead.
+  --no-install
+    Exit after the tests have been run, don't install.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -u, --update
@@ -263,15 +268,18 @@ fi
 desc="$(git describe --long --tags)"
 destdir="$prefix/varprg/vim-$desc"
 
-test -e "$destdir" && {
-    $sim $sudo rmdir "$destdir" || {
-        msg -s $destdir already exists
-        exit 1
+if test "$opt_no_install" != "1"; then
+    test -e "$destdir" && {
+        $sim $sudo rmdir "$destdir" || {
+            msg -s $destdir already exists
+            exit 1
+        }
     }
-}
+fi
 
+test "$opt_no_install" = "1" && butnot_str=", but not" || butnot_str=" and"
 cat <<END
-Going to compile and install "vim-$desc"$sim_str
+Going to compile$butnot_str install "vim-$desc"$sim_str
 
 cloneurl = "$cloneurl"
 remotename = "$remotename"
@@ -290,15 +298,17 @@ END
 echo -n If that looks OK, press \'y\' to start the build or \'n\' to abort...
 continue_if_y
 
-msg mkdir and chown $destdir &&
-$sim $sudo mkdir -p "$destdir" &&
-$sim $sudo chown "$user"."$group" "$destdir" &&
+if "$opt_no_install" != "1"; then
+    msg mkdir and chown $destdir &&
+    $sim $sudo mkdir -p "$destdir" &&
+    $sim $sudo chown "$user"."$group" "$destdir" &&
 
-msg mkdir -p $prefix/share/man/man1 &&
-$sim mkdir -p "$prefix/share/man/man1" &&
+    msg mkdir -p $prefix/share/man/man1 &&
+    $sim mkdir -p "$prefix/share/man/man1" &&
 
-msg mkdir -p $prefix/bin &&
-$sim mkdir -p "$prefix/bin" &&
+    msg mkdir -p $prefix/bin &&
+    $sim mkdir -p "$prefix/bin" || exit 1
+fi
 
 $sim cd "$srcdir" &&
 
@@ -312,6 +322,8 @@ $sim make &&
 
 msg make test &&
 $sim make test &&
+
+test "$opt_no_install" != "1" &&
 
 msg make install &&
 $sim make install &&
@@ -352,8 +364,13 @@ fi &&
     msg Successfully installed vim-$desc$sim_str
     retval=0
 } || {
-    msg Something went bananas
-    retval=1
+    if test "$opt_no_install" = "1"; then
+        msg --no-install is used, skipping install
+        retval=0
+    else
+        msg Something went bananas
+        retval=1
+    fi
 }
 
 exit $retval
