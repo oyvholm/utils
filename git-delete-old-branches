@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-delete-old-branches
-VERSION=0.5.1
+VERSION=0.6.0
 
 ARGS="$(getopt -o "\
 d:\
@@ -64,6 +64,7 @@ The following responses are valid:
       and mark it as garbage.
 "n" - Don't delete the branch. If -o/--once is used later, files marked
       with "n" will not be checked.
+"d" - Mark branch as "don't know", to be perused later.
 "q" - Exit the program.
 
 Usage: $progname [options] BRANCH [BRANCH [...]]
@@ -113,7 +114,7 @@ BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS branches (
   yn TEXT
     CONSTRAINT branches_yn_contents
-      CHECK (yn = 'y' OR yn = 'n' OR yn IS NULL),
+      CHECK (yn = 'y' OR yn = 'n' OR yn = 'd' OR yn IS NULL),
   branch TEXT
     CONSTRAINT branches_branch_length
       CHECK (length(branch) > 0)
@@ -189,6 +190,8 @@ for f in "$@"; do
         add_entry y "$f"
     elif test "$valg" = "n"; then
         add_entry n "$f"
+    elif test "$valg" = "d"; then
+        add_entry d "$f"
     elif test "$valg" = "q"; then
         exit 0
     fi
