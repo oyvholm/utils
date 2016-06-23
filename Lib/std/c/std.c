@@ -107,21 +107,21 @@ void usage(int retval)
 			puts("");
 		}
 		printf("Usage: %s [options] [file [files [...]]]\n", progname);
-		puts("");
-		puts("Options:");
-		puts("");
-		puts("  -h, --help\n"
-		     "    Show this help.");
-		puts("  --license\n"
-		     "    Print the software license");
-		puts("  -q, --quiet\n"
-		     "    Be more quiet. "
-		     "Can be repeated to increase silence.");
-		puts("  -v, --verbose\n"
-		     "    Increase level of verbosity. Can be repeated.");
-		puts("  --version\n"
-		     "    Print version information.");
-		puts("");
+		printf("\n");
+		printf("Options:\n");
+		printf("\n");
+		printf("  -h, --help\n"
+		       "    Show this help.\n");
+		printf("  --license\n"
+		       "    Print the software license\n");
+		printf("  -q, --quiet\n"
+		       "    Be more quiet. "
+		       "Can be repeated to increase silence.\n");
+		printf("  -v, --verbose\n"
+		       "    Increase level of verbosity. Can be repeated.\n");
+		printf("  --version\n"
+		       "    Print version information.\n");
+		printf("\n");
 	}
 }
 
