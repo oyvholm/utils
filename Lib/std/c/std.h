@@ -36,8 +36,8 @@
 #ifdef C_ASSERT
 #ifdef NDEBUG
 #undef NDEBUG
-#endif /* ifdef NDEBUG        */
-#else /* ifdef C_ASSERT      */
+#endif /* ifdef NDEBUG */
+#else /* ifdef C_ASSERT */
 #define NDEBUG  1
 #endif /* ifdef C_ASSERT else */
 
@@ -46,7 +46,7 @@
  */
 
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
-#define myerror(a)       { fprintf(stderr, "%s: ", progname); perror(a); }
+#define myerror(a)  { fprintf(stderr, "%s: ", progname); perror(a); }
 
 /*
  * Standard header files

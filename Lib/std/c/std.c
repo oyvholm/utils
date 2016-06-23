@@ -99,7 +99,8 @@ void usage(int retval)
 {
 	if (retval != EXIT_OK)
 		fprintf(stderr, "\nType \"%s --help\" for help screen. "
-			"Returning with value %d.\n", progname, retval);
+		                "Returning with value %d.\n",
+		                progname, retval);
 	else {
 		puts("");
 		if (opt.verbose >= 1) {
@@ -200,13 +201,13 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		 */
 
 		c = getopt_long(argc, argv, "hqv", long_options,
-				&option_index);
+		                &option_index);
 
 		if (c == -1)
 			break;
 
 		retval = choose_opt_action(dest,
-					   c, &long_options[option_index]);
+		                           c, &long_options[option_index]);
 	}
 
 	msg(3, "parse_options() returns %d", retval);
