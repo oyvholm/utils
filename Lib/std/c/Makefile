@@ -3,6 +3,8 @@
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
 OBJS = STDexecDTS.o
+HFILES = STDexecDTS.h version.h
+DEPS = $(HFILES) Makefile
 CC = gcc
 LD = gcc
 CCFLAGS = -Wall -O2 -c -g -ansi -pedantic
@@ -12,7 +14,7 @@ EXEC = STDexecDTS
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS)
 
-STDexecDTS.o: STDexecDTS.c STDexecDTS.h version.h Makefile
+STDexecDTS.o: STDexecDTS.c $(DEPS)
 	$(CC) $(CCFLAGS) STDexecDTS.c
 
 .PHONY: clean
