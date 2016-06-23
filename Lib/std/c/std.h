@@ -65,6 +65,12 @@
  */
 
 typedef unsigned char bool;
+struct Options {
+	int help;
+	int license;
+	int verbose;
+	int version;
+};
 
 /*
  * Function prototypes

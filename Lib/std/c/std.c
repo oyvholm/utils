@@ -25,12 +25,7 @@
  */
 
 char *progname;
-struct Options {
-	int help;
-	int license;
-	int verbose;
-	int version;
-} opt;
+struct Options opt;
 
 /*
  * msg() - Print a message prefixed with "[progname]: " to stddebug if 
