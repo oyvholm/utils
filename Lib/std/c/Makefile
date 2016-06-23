@@ -22,5 +22,9 @@ STDexecDTS.o: STDexecDTS.c $(DEPS)
 clean:
 	rm -fv $(EXEC) $(OBJS) *~ core core.$(EXEC) tags
 
+.PHONY: edit
+edit: tags
+	$(EDITOR) *.c *.h Makefile
+
 tags: $(CFILES) $(HFILES)
 	ctags $(CFILES) $(HFILES)
