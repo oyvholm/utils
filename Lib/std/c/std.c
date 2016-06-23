@@ -19,7 +19,6 @@
  */
 
 #include "STDexecDTS.h"
-#include "version.h"
 
 /*
  * Global variables
