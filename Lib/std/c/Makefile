@@ -3,6 +3,7 @@
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
 OBJS = STDexecDTS.o
+CFILES = STDexecDTS.c
 HFILES = STDexecDTS.h version.h
 DEPS = $(HFILES) Makefile
 CC = gcc
@@ -19,4 +20,7 @@ STDexecDTS.o: STDexecDTS.c $(DEPS)
 
 .PHONY: clean
 clean:
-	rm -fv $(EXEC) $(OBJS) *~ core core.$(EXEC)
+	rm -fv $(EXEC) $(OBJS) *~ core core.$(EXEC) tags
+
+tags: $(CFILES) $(HFILES)
+	ctags $(CFILES) $(HFILES)
