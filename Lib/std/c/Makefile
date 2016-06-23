@@ -1,4 +1,3 @@
-
 # Makefile for STDexecDTS.c
 # File ID: STDuuidDTS
 # Author: Øyvind A. Holm <sunny@sunbase.org>
