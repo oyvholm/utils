@@ -41,13 +41,6 @@
 #define NDEBUG  1
 #endif /* ifdef C_ASSERT else */
 
-/*
- * Macros
- */
-
-#define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
-#define myerror(a)  { fprintf(stderr, "%s: ", progname); perror(a); }
-
 #include "version.h"
 
 /*
@@ -59,6 +52,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/*
+ * Macros
+ */
+
+#define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
+#define myerror(a)  { fprintf(stderr, "%s: ", progname); perror(a); }
 
 /*
  * Typedefs
