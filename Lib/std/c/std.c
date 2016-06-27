@@ -31,13 +31,14 @@ struct Options opt;
  * msg() - Print a message prefixed with "[progname]: " to stddebug if 
  * opt.verbose is equal or higher than the first argument. The rest of the 
  * arguments are delivered to vfprintf().
- * Returns the number of characters written.
+ * Returns the number of characters written, excluding the terminating \n.
  */
 
 int msg(int verbose, const char *format, ...)
 {
 	va_list ap;
 	int retval = 0;
+
 	if (opt.verbose >= verbose) {
 		va_start(ap, format);
 		retval = fprintf(stddebug, "%s: ", progname);
@@ -45,6 +46,7 @@ int msg(int verbose, const char *format, ...)
 		fputc('\n', stddebug);
 		va_end(ap);
 	}
+
 	return retval;
 }
 
@@ -124,7 +126,7 @@ void usage(int retval)
  * choose_opt_action() - Decide what to do when option c is found. Store 
  * changes in dest. opts is the struct with the definitions for the long 
  * options.
- * Return EXIT_OK if ok, EXIT_ERROR if c is unknown.
+ * Return EXIT_OK if ok, EXIT_ERROR if c is unknown or anything fails.
  */
 
 int choose_opt_action(struct Options *dest, int c, struct option *opts)
@@ -149,8 +151,7 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 		dest->verbose++;
 		break;
 	default:
-		msg(2, "getopt_long() returned "
-		       "character code %d", c);
+		msg(2, "getopt_long() returned character code %d", c);
 		retval = EXIT_ERROR;
 		break;
 	}
@@ -194,8 +195,11 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		 *
 		 */
 
-		c = getopt_long(argc, argv, "hqv", long_options,
-		                &option_index);
+		c = getopt_long(argc, argv,
+		                "h"
+		                "q"
+		                "v"
+		                , long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -205,6 +209,7 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 	}
 
 	msg(3, "parse_options() returns %d", retval);
+
 	return retval;
 }
 
@@ -250,6 +255,7 @@ int main(int argc, char *argv[])
 	}
 
 	msg(2, "Returning from main() with value %d", retval);
+
 	return retval;
 }
 

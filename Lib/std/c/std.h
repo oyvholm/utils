@@ -76,6 +76,7 @@ struct Options {
  * Function prototypes
  */
 
+/* STDexecDTS.c */
 extern int msg(int, const char *, ...);
 extern void print_license(void);
 extern void print_version(void);
