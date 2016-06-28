@@ -36,14 +36,6 @@
 
 #define stddebug  stderr
 
-#ifdef C_ASSERT
-#ifdef NDEBUG
-#undef NDEBUG
-#endif /* ifdef NDEBUG */
-#else /* ifdef C_ASSERT */
-#define NDEBUG  1
-#endif /* ifdef C_ASSERT else */
-
 /*
  * Standard header files
  */
