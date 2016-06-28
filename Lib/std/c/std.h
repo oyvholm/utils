@@ -25,6 +25,9 @@
  * Defines
  */
 
+#define VERSION       "0.0.0"
+#define RELEASE_DATE  "STDyearDTS-00-00"
+
 #define FALSE  0
 #define TRUE   1
 
@@ -40,8 +43,6 @@
 #else /* ifdef C_ASSERT */
 #define NDEBUG  1
 #endif /* ifdef C_ASSERT else */
-
-#include "version.h"
 
 /*
  * Standard header files

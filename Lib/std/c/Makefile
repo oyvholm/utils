@@ -4,7 +4,7 @@
 
 OBJS = STDexecDTS.o
 CFILES = STDexecDTS.c
-HFILES = STDexecDTS.h version.h
+HFILES = STDexecDTS.h
 DEPS = $(HFILES) Makefile
 CC = gcc
 LD = gcc
