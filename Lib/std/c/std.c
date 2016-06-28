@@ -51,6 +51,29 @@ int msg(int verbose, const char *format, ...)
 }
 
 /*
+ * myerror() - Print an error message to stderr using this format:
+ *   a: b: c
+ * where a is the name of the program (progname), b is the output from the 
+ * printf-like string and optional arguments, and c is the error message from 
+ * errno. Returns the number of characters written.
+ */
+
+int myerror(const char *format, ...)
+{
+	va_list ap;
+	int retval = 0;
+	int orig_errno = errno;
+
+	retval = fprintf(stderr, "%s: ", progname);
+	va_start(ap, format);
+	retval += vfprintf(stderr, format, ap);
+	va_end(ap);
+	retval += fprintf(stderr, ": %s\n", strerror(orig_errno));
+
+	return retval;
+}
+
+/*
  * print_license() - Display the program license
  */
 

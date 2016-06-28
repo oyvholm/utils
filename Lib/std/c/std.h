@@ -48,6 +48,7 @@
  * Standard header files
  */
 
+#include <errno.h>
 #include <getopt.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -59,7 +60,6 @@
  */
 
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
-#define myerror(a)  { fprintf(stderr, "%s: ", progname); perror(a); }
 
 /*
  * Typedefs
@@ -79,6 +79,7 @@ struct Options {
 
 /* STDexecDTS.c */
 extern int msg(int, const char *, ...);
+extern int myerror(const char *, ...);
 extern void print_license(void);
 extern void print_version(void);
 extern void usage(int);
