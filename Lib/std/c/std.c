@@ -207,16 +207,6 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 			{0, 0, 0, 0}
 		};
 
-		/*
-		 * long_options:
-		 *
-		 * 1. const char  *name;
-		 * 2. int         has_arg;
-		 * 3. int         *flag;
-		 * 4. int         val;
-		 *
-		 */
-
 		c = getopt_long(argc, argv,
 		                "h"  /* --help */
 		                "q"  /* --quiet */
