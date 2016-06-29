@@ -218,9 +218,9 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		 */
 
 		c = getopt_long(argc, argv,
-		                "h"
-		                "q"
-		                "v"
+		                "h"  /* --help */
+		                "q"  /* --quiet */
+		                "v"  /* --verbose */
 		                , long_options, &option_index);
 
 		if (c == -1)
