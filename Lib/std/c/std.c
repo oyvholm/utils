@@ -158,11 +158,10 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 
 	switch (c) {
 	case 0:
-		if (!strcmp(opts->name, "license")) {
+		if (!strcmp(opts->name, "license"))
 			dest->license = 1;
-		} else if (!strcmp(opts->name, "version")) {
+		else if (!strcmp(opts->name, "version"))
 			dest->version = 1;
-		}
 		break;
 	case 'h':
 		dest->help = 1;
