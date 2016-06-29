@@ -159,12 +159,12 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 	switch (c) {
 	case 0:
 		if (!strcmp(opts->name, "license"))
-			dest->license = 1;
+			dest->license = TRUE;
 		else if (!strcmp(opts->name, "version"))
-			dest->version = 1;
+			dest->version = TRUE;
 		break;
 	case 'h':
-		dest->help = 1;
+		dest->help = TRUE;
 		break;
 	case 'q':
 		dest->verbose--;
@@ -191,10 +191,10 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 	int retval = EXIT_OK;
 	int c;
 
-	dest->help = 0;
-	dest->license = 0;
+	dest->help = FALSE;
+	dest->license = FALSE;
 	dest->verbose = 0;
-	dest->version = 0;
+	dest->version = FALSE;
 
 	while (retval == EXIT_OK) {
 		int option_index = 0;

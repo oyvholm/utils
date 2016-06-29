@@ -59,10 +59,10 @@
 
 typedef unsigned char bool;
 struct Options {
-	int help;
-	int license;
+	bool help;
+	bool license;
 	int verbose;
-	int version;
+	bool version;
 };
 
 /*
