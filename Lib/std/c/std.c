@@ -173,7 +173,7 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
 		dest->verbose++;
 		break;
 	default:
-		msg(2, "getopt_long() returned character code %d", c);
+		msg(3, "getopt_long() returned character code %d", c);
 		retval = EXIT_ERROR;
 		break;
 	}
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
 		return EXIT_ERROR;
 	}
 
-	msg(2, "Using verbose level %d", opt.verbose);
+	msg(3, "Using verbose level %d", opt.verbose);
 
 	if (opt.help) {
 		usage(EXIT_OK);
@@ -273,10 +273,10 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++)
-			msg(2, "Non-option arg: %s", argv[t]);
+			msg(3, "Non-option arg: %s", argv[t]);
 	}
 
-	msg(2, "Returning from main() with value %d", retval);
+	msg(3, "Returning from main() with value %d", retval);
 
 	return retval;
 }
