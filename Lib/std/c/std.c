@@ -220,8 +220,6 @@ int parse_options(struct Options *dest, int argc, char *argv[])
 		                           c, &long_options[option_index]);
 	}
 
-	msg(3, "parse_options() returns %d", retval);
-
 	return retval;
 }
 
@@ -236,7 +234,6 @@ int main(int argc, char *argv[])
 	progname = argv[0];
 
 	retval = parse_options(&opt, argc, argv);
-	msg(3, "retval after parse_options(): %d", retval);
 	if (retval != EXIT_OK) {
 		fprintf(stderr, "%s: Option error\n", progname);
 		return EXIT_ERROR;
