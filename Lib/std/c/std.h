@@ -85,4 +85,4 @@ extern struct Options opt;
 
 #endif /* ifndef _STDexecDTS_H */
 
-/* vim: set ts=8 sw=8 sts=8 noet fo+=w fenc=UTF-8 : */
+/* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */
