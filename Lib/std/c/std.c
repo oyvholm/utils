@@ -31,7 +31,7 @@ struct Options opt;
  * msg() - Print a message prefixed with "[progname]: " to stddebug if 
  * opt.verbose is equal or higher than the first argument. The rest of the 
  * arguments are delivered to vfprintf().
- * Returns the number of characters written, excluding the terminating \n.
+ * Returns the number of characters written.
  */
 
 int msg(int verbose, const char *format, ...)
@@ -43,7 +43,7 @@ int msg(int verbose, const char *format, ...)
 		va_start(ap, format);
 		retval = fprintf(stddebug, "%s: ", progname);
 		retval += vfprintf(stddebug, format, ap);
-		fputc('\n', stddebug);
+		retval += fprintf(stddebug, "\n");
 		va_end(ap);
 	}
 
