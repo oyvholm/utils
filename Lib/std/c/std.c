@@ -244,14 +244,10 @@ int main(int argc, char *argv[])
 	if (opt.help) {
 		usage(EXIT_OK);
 		return EXIT_OK;
-	}
-
-	if (opt.version) {
+	} else if (opt.version) {
 		print_version();
 		return EXIT_OK;
-	}
-
-	if (opt.license) {
+	} else if (opt.license) {
 		print_license();
 		return EXIT_OK;
 	}
