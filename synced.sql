@@ -68,7 +68,6 @@ INSERT INTO "synced" VALUES('Lib/std/c/Makefile','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/compile','Lib/std/bash-no-getopt','0b1c9df17273d655a18a171d6ef4ef649f4921c7','2016-05-03 17:57:49');
 INSERT INTO "synced" VALUES('Lib/std/c/std.c','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/std.h','','',NULL);
-INSERT INTO "synced" VALUES('Lib/std/c/version.h','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-article','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-book','Lib/std/db-article','bacb86210fda9f0f7ae461cc0cd8787fa1e1ff29','2016-05-13 15:11:00');

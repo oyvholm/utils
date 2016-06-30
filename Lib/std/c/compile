@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=compile
-VERSION=0.5.0
+VERSION=0.6.0
 
 set -e
 
@@ -57,7 +57,6 @@ mkdir $SUUID_LOGDIR
 echo ==== std ====
 std -d ./synced.sqlite -t exec=jada c/std.c jada.c
 std -d ./synced.sqlite -t exec=jada c/std.h jada.h
-std -d ./synced.sqlite -t exec=jada c/version.h version.h
 std -d ./synced.sqlite -t exec=jada c/Makefile Makefile
 echo ==== make clean ====
 make clean

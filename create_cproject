@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=create_cproject
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -69,5 +69,4 @@ test -z "$name" && { echo $progname: Name not specified as arg 1 >&2; exit 1; }
 echo -n "Makefile: "; std -t exec=$name c/Makefile Makefile
 echo -n "$name.c: "; std -t exec=$name c/std.c $name.c
 echo -n "$name.h: "; std -t exec=$name c/std.h $name.h
-echo -n "version.h: "; std -t exec=$name c/version.h version.h
 echo -n "COPYING: "; std COPYING COPYING && echo OK || echo ERROR
