@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.6.0';
+our $VERSION = '0.6.1';
 
 my $current_repo;
 my %descriptions = ();
