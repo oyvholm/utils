@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.0';
 
 my $current_repo;
 my %descriptions = ();
@@ -496,8 +496,8 @@ END
 
     # }}}
     diag('--ga-getnew');
-    test_option('-N', 'ga-getnew | fold-stdout');
-    test_option('--ga-getnew', 'ga-getnew | fold-stdout');
+    test_option('-N', 'ga-getnew');
+    test_option('--ga-getnew', 'ga-getnew');
     diag('--ga-update-desc');
     test_option('-S', 'ga update-desc');
     test_option('--ga-update-desc', 'ga update-desc');

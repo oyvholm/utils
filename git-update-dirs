@@ -55,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.0';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -247,7 +247,7 @@ sub main {
                         mysystem("ga", "get", "--auto");
                         mysystem("ga", "sync");
                     } else {
-                        mysystem("ga-getnew | fold-stdout");
+                        mysystem("ga-getnew");
                     }
                 }
             }
@@ -479,8 +479,8 @@ Options, listed in the order they are executed in every Git repository:
     be used together with -u/--ga-dropunused.
     To disable: git config git-update-dirs.no-ga-moveunused true
   -N, --ga-getnew
-    Execute "ga-getnew | fold-stdout", i.e. use "ga get --auto" to get 
-    all files from one week back that don't have enough copies.
+    Execute "ga-getnew", i.e. use "ga get --auto" to get all files from 
+    one week back that don't have enough copies.
     To disable: git config git-update-dirs.no-ga-getnew true
   -S, --ga-update-desc
     If the directory is controlled by git-annex, execute "ga 
