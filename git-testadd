@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -41,11 +41,31 @@ while :; do
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
+tmpdir=".tmp-$progname.tmp"
+
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Execute a command with only the staged changes in Git applied.
+
+Usage: $progname [options] COMMAND
+
+For example, if you have lots of unrelated uncommitted changes in the 
+repository and want to split up the commit, how can you easily check if 
+the changes passes the test suite? With all the other unrelated changes 
+it can be hard to ensure that only relevant changes becomes part of the 
+commit, and that they don't result in regressions. This script clones 
+the repository to the directory "$tmpdir" at the root of the repo, 
+applies the staged chenges there, chdir to the same relative directory 
+in the clone and executes the command specified on the command line there.
+
+Example:
+
+  user@host:~/src/myproject/src/t \$ $progname make test
+
+If ~/src/myproject is the top of the repo, the command will be executed 
+in ~/src/myproject/$tmpdir/src/t/ with only the staged changes applied.
 
 Options:
 
@@ -62,3 +82,34 @@ END
     exit 0
 fi
 
+topdir="$(git rev-parse --show-toplevel)"
+subdir="$(git rev-parse --show-prefix)"
+
+if test -z "$topdir"; then
+    echo $progname: Could not get root dir of repo >&2
+    exit 1
+fi
+
+cd "$topdir" || {
+    echo $progname: $topdir: chdir error >&2
+    exit 1
+}
+
+git diff --cached --binary | grep -q . || {
+    echo $progname: No staged changes found >&2
+    exit 0
+}
+
+rm -rf "$tmpdir"
+git clone . "$tmpdir"
+git diff --cached --binary | (cd $tmpdir && git apply)
+
+newdir="$topdir/$tmpdir/$subdir"
+cd "$newdir" || {
+    echo $progname: $newdir: Cannot chdir >&2
+    exit 1
+}
+
+echo >&2
+test $opt_verbose -ge 1 && echo "$progname: Executing \"$*\" in $(pwd)" >&2
+"$@"
