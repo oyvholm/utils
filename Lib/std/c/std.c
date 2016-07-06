@@ -118,33 +118,32 @@ void print_version(void)
 
 void usage(int retval)
 {
-	if (retval != EXIT_OK)
+	if (retval != EXIT_OK) {
 		fprintf(stderr, "\nType \"%s --help\" for help screen. "
 		                "Returning with value %d.\n",
 		                progname, retval);
-	else {
-		puts("");
-		if (opt.verbose >= 1) {
-			print_version();
-			puts("");
-		}
-		printf("Usage: %s [options] [file [files [...]]]\n", progname);
-		printf("\n");
-		printf("Options:\n");
-		printf("\n");
-		printf("  -h, --help\n"
-		       "    Show this help.\n");
-		printf("  --license\n"
-		       "    Print the software license\n");
-		printf("  -q, --quiet\n"
-		       "    Be more quiet. "
-		       "Can be repeated to increase silence.\n");
-		printf("  -v, --verbose\n"
-		       "    Increase level of verbosity. Can be repeated.\n");
-		printf("  --version\n"
-		       "    Print version information.\n");
-		printf("\n");
+		return;
 	}
+	puts("");
+	if (opt.verbose >= 1) {
+		print_version();
+		puts("");
+	}
+	printf("Usage: %s [options]\n", progname);
+	printf("\n");
+	printf("Options:\n");
+	printf("\n");
+	printf("  -h, --help\n"
+	       "    Show this help.\n");
+	printf("  --license\n"
+	       "    Print the software license\n");
+	printf("  -q, --quiet\n"
+	       "    Be more quiet. Can be repeated to increase silence.\n");
+	printf("  -v, --verbose\n"
+	       "    Increase level of verbosity. Can be repeated.\n");
+	printf("  --version\n"
+	       "    Print version information.\n");
+	printf("\n");
 }
 
 /*
