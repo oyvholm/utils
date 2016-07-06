@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -112,4 +112,4 @@ cd "$newdir" || {
 
 echo >&2
 test $opt_verbose -ge 1 && echo "$progname: Executing \"$*\" in $(pwd)" >&2
-"$@"
+eval "$@"
