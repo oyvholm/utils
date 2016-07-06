@@ -354,6 +354,7 @@ INSERT INTO "synced" VALUES('git-seq-rebase','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-size','Lib/std/bash','9382b81b7cf74c031ee8930593f6555267761f5a','2016-05-12 15:20:44');
 INSERT INTO "synced" VALUES('git-store-dirs','Lib/std/bash','24f94ed0c1e4b364bd1dd5191d12debb8554e535','2016-05-03 21:45:25');
 INSERT INTO "synced" VALUES('git-svn-myclone','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('git-testadd','Lib/std/bash','f55b8ad783d82fbd4b7fd4030c013d1b493b79e8','2016-07-06 17:47:17');
 INSERT INTO "synced" VALUES('git-trash','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl','9008255ba17dda8ac1fa5a2b98490b9e480d830e','2015-10-31 00:46:55');
