@@ -109,7 +109,7 @@ void print_license(void)
 
 void print_version(void)
 {
-	printf("%s %s\n", progname, VERSION);
+	printf("%s %s (%s)\n", progname, VERSION, RELEASE_DATE);
 }
 
 /*
