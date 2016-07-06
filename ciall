@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ciall
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 d\
@@ -129,7 +129,7 @@ LC_ALL=C git status . | grep "^nothing to commit" || (
         git commit -m "$logmsg$(
             echo
             echo
-            suuid -t $progname -c "$logmsg"
+            suuid -t $progname -c "$logmsg" -wa
         )"
     )
 )
