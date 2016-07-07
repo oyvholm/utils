@@ -51,6 +51,7 @@
  * Macros
  */
 
+#define DEBL  msg(2, "%s, line %u in %s()", __FILE__, __LINE__, __func__)
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
 
 /*
