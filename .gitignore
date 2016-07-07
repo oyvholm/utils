@@ -1,5 +1,6 @@
 *.pyc
 *.swp
+.testadd.tmp/
 /.ignore/
 /Lib/std/c/STDexecDTS.c
 /Lib/std/c/STDexecDTS.h
