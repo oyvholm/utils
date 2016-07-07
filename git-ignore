@@ -11,14 +11,16 @@
 #=======================================================================
 
 progname=git-ignore
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
+g\
 h\
 l\
 q\
 v\
 " -l "\
+global,\
 help,\
 local,\
 quiet,\
@@ -28,12 +30,14 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_global=0
 opt_help=0
 opt_local=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-g|--global) opt_global=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-l|--local) opt_local=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
@@ -58,6 +62,12 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
+  -g, --global
+    Don't prefix the new entries in .gitignore with '/', let the ignore 
+    rule work in all subdirectories too. For example, *.o files should 
+    generally be ignored all over the place, but without this option 
+    only *.o files in the directory where .gitignore is located are 
+    ignored.
   -h, --help
     Show this help.
   -l, --local
@@ -85,16 +95,19 @@ else
     gitignore="$(git rev-parse --show-toplevel)/.gitignore"
 fi
 
+prslash="/"
+test "$opt_global" = "1" && prslash=""
+
 for f in "$@"; do
     unset termslash
     test -d "$f" && { echo "$f" | grep -q '/$' || termslash=/; }
     git ls-files -- "$f" | grep -q . && git rm -r --cached "$f"
     if test "$opt_local" = "1"; then
         # Use local .gitignore in current directory
-        echo /$f$termslash >>"$gitignore"
+        echo $prslash$f$termslash >>"$gitignore"
     else
         # Use global .gitignore at top of repo
-        echo /$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
+        echo $prslash$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
     fi
 done
 
