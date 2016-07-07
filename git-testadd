@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.2.1
+VERSION=0.2.2
 
 ARGS="$(getopt -o "\
 h\
@@ -111,11 +111,11 @@ fi
 
 rm -rf "$tmpdir"
 git clone "$topdir" "$tmpdir"
-git diff --cached --binary | (cd $tmpdir && git apply)
+git diff --cached --binary | (cd "$tmpdir" && git apply)
 
 newdir="$tmpdir/$subdir"
 cd "$newdir" || {
-    echo $progname: $newdir: Cannot chdir >&2
+    echo "$progname: $newdir: Cannot chdir" >&2
     exit 1
 }
 
