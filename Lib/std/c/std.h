@@ -70,12 +70,16 @@ struct Options {
  * Function prototypes
  */
 
+#if 1 /* Set to 0 to test without prototypes */
+
 /* STDexecDTS.c */
 extern int msg(int, const char *, ...);
 extern int myerror(const char *, ...);
 extern void print_license(void);
 extern void print_version(void);
 extern void usage(int);
+
+#endif
 
 /*
  * Global variables
