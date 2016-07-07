@@ -4,7 +4,7 @@
 # git-testadd
 # File ID: ae2451d2-43a1-11e6-86fa-175746503fe8
 #
-# [Description]
+# Execute a command with only the staged changes in Git applied.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
