@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.1.1
+VERSION=0.1.2
 
 ARGS="$(getopt -o "\
 h\
@@ -80,6 +80,11 @@ Options:
 
 END
     exit 0
+fi
+
+if test -z "$1"; then
+    echo $progname: No command specified >&2
+    exit 1
 fi
 
 topdir="$(git rev-parse --show-toplevel)"
