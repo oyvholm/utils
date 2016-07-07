@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.1.2
+VERSION=0.1.3
 
 ARGS="$(getopt -o "\
 h\
@@ -87,6 +87,11 @@ if test -z "$1"; then
     exit 1
 fi
 
+git diff --cached --binary | grep -q . || {
+    echo $progname: No staged changes found >&2
+    exit 0
+}
+
 topdir="$(git rev-parse --show-toplevel)"
 subdir="$(git rev-parse --show-prefix)"
 
@@ -98,11 +103,6 @@ fi
 cd "$topdir" || {
     echo $progname: $topdir: chdir error >&2
     exit 1
-}
-
-git diff --cached --binary | grep -q . || {
-    echo $progname: No staged changes found >&2
-    exit 0
 }
 
 rm -rf "$tmpdir"
