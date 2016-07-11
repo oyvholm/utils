@@ -77,6 +77,7 @@ struct Options {
 #if 1 /* Set to 0 to test without prototypes */
 
 /* STDexecDTS.c */
+extern int verbose_level(const int action, ...);
 extern int msg(const int verbose, const char *format, ...);
 extern int myerror(const char *format, ...);
 extern void print_license(void);
