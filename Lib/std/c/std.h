@@ -95,7 +95,6 @@ extern int parse_options(struct Options *dest,
  */
 
 extern char *progname;
-extern struct Options opt;
 
 #endif /* ifndef _STDexecDTS_H */
 

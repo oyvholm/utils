@@ -25,7 +25,6 @@
  */
 
 char *progname;
-struct Options opt;
 
 /*
  * verbose_level() - Get or set the verbosity level. If action is 0, return the 
@@ -254,6 +253,7 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 int main(int argc, char *argv[])
 {
 	int retval = EXIT_OK;
+	struct Options opt;
 
 	progname = argv[0];
 
