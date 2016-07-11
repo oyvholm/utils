@@ -34,6 +34,10 @@
 #define EXIT_OK     0
 #define EXIT_ERROR  1
 
+#define T_RESET  "\x1b[m\x0f"
+#define T_RED    "\x1b[31m"
+#define T_GREEN  "\x1b[32m"
+
 #define stddebug  stderr
 
 /*
