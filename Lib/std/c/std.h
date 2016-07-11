@@ -73,11 +73,11 @@ struct Options {
 #if 1 /* Set to 0 to test without prototypes */
 
 /* STDexecDTS.c */
-extern int msg(int, const char *, ...);
-extern int myerror(const char *, ...);
+extern int msg(const int verbose, const char *format, ...);
+extern int myerror(const char *format, ...);
 extern void print_license(void);
 extern void print_version(void);
-extern void usage(int);
+extern void usage(const int retval);
 
 #endif
 

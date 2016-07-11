@@ -34,7 +34,7 @@ struct Options opt;
  * Returns the number of characters written.
  */
 
-int msg(int verbose, const char *format, ...)
+int msg(const int verbose, const char *format, ...)
 {
 	va_list ap;
 	int retval = 0;
@@ -116,7 +116,7 @@ void print_version(void)
  * usage() - Prints a help screen
  */
 
-void usage(int retval)
+void usage(const int retval)
 {
 	if (retval != EXIT_OK) {
 		fprintf(stderr, "\nType \"%s --help\" for help screen. "
@@ -153,7 +153,8 @@ void usage(int retval)
  * Return EXIT_OK if ok, EXIT_ERROR if c is unknown or anything fails.
  */
 
-int choose_opt_action(struct Options *dest, int c, struct option *opts)
+int choose_opt_action(struct Options *dest,
+                      const int c, const struct option *opts)
 {
 	int retval = EXIT_OK;
 
@@ -187,7 +188,7 @@ int choose_opt_action(struct Options *dest, int c, struct option *opts)
  * Returns EXIT_OK if ok, EXIT_ERROR if error.
  */
 
-int parse_options(struct Options *dest, int argc, char *argv[])
+int parse_options(struct Options *dest, const int argc, char * const argv[])
 {
 	int retval = EXIT_OK;
 	int c;
