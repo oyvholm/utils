@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=build-vim
-VERSION=0.5.0
+VERSION=0.5.1
 rcfile="$HOME/.${progname}rc"
 configure_opts="--with-features=huge --with-x --enable-multibyte"
 cloneurl=https://github.com/vim/vim.git
@@ -298,7 +298,7 @@ END
 echo -n If that looks OK, press \'y\' to start the build or \'n\' to abort...
 continue_if_y
 
-if "$opt_no_install" != "1"; then
+if test "$opt_no_install" != "1"; then
     msg mkdir and chown $destdir &&
     $sim $sudo mkdir -p "$destdir" &&
     $sim $sudo chown "$user"."$group" "$destdir" &&
