@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 h\
@@ -96,14 +96,6 @@ if test -z "$1"; then
     exit 1
 fi
 
-has_changes=1
-git diff --cached --binary | grep -q . || {
-    if test $opt_verbose -ge 0; then
-        echo $progname: No staged changes, running command with clean HEAD >&2
-    fi
-    has_changes=0
-}
-
 topdir="$(git rev-parse --show-toplevel)"
 subdir="$(git rev-parse --show-prefix)"
 
@@ -115,8 +107,10 @@ fi
 rm -rf "$tmpdir"
 git clone "$topdir" "$tmpdir"
 
-if test "$has_changes" = "1"; then
+if git diff --cached --binary | grep -q .; then
     git diff --cached --binary | (cd "$tmpdir" && git apply)
+elif test $opt_verbose -ge 0; then
+    echo $progname: No staged changes, running command with clean HEAD >&2
 fi
 
 newdir="$tmpdir/$subdir"
