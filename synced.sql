@@ -102,7 +102,6 @@ INSERT INTO "synced" VALUES('Lib/std/musicxml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-cgi','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-tests','Lib/std/perl','6a98e153551866cee0f6eeb22d4eeee8f3dfb2fb','2015-10-30 00:30:36');
-INSERT INTO "synced" VALUES('Lib/std/perl-tests-Makefile','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-tests.tagdesc','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/python','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/svg','',NULL,NULL);
