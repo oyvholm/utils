@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.3.1
+VERSION=0.3.2
 
 ARGS="$(getopt -o "\
 h\
@@ -51,18 +51,19 @@ Execute a command with only the staged changes in Git applied.
 
 Usage: $progname [options] [--] COMMAND
 
-For example, if you have lots of unrelated uncommitted changes in the 
+If you have lots of unrelated uncommitted changes in the current 
 repository and want to split up the commit, how can you easily check if 
 the changes passes the test suite? With all the other unrelated changes 
-it can be hard to ensure that only relevant changes becomes part of the 
-commit, and that they don't result in regressions. This script clones 
-the repository to the directory "$tmpdir" in the current directory and 
-applies the staged chenges there, chdirs to the same relative directory 
-in the clone and executes the command specified on the command line 
-there.
+it can be hard to make sure that only relevant changes becomes part of 
+the commit, and that they don't result in regressions. This script 
+clones the repository to the directory "$tmpdir" in the current 
+directory and applies the staged chenges there, chdirs to the same 
+relative directory in the clone and executes the command specified on 
+the command line there.
 
-If COMMAND contains any options starting with '-', add "--" in front 
-of the command so they won't be parsed by $progname.
+If COMMAND contains any options starting with '-', add "--" in front of 
+the command so they won't be parsed by $progname, or surround it with 
+quotes.
 
 Examples:
 
@@ -75,6 +76,10 @@ Examples:
 
     This command contains a "-v" option. Disable option parsing of the 
     command by prefixing it with "--".
+
+  $ $progname "make && cd t && make 2>&1 | less || echo fail"
+
+    With quotes, even control operators and pipes can be used.
 
 Options:
 
