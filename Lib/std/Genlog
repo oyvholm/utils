@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=Genlog
-VERSION=0.3.2
+VERSION=0.4.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -76,7 +76,8 @@ done
 for gf in "$@"; do
     testname=$gf
     printf "%${maxlen}s: " $testname
-    ./$testname $opt_str 2>&1 | remove_perltestnumbers >log/$testname.log
+    ./$testname $opt_str 2>&1 |
+        perl -pe 's/^((not )?ok)( \d+ )- /$1 - /;' >log/$testname.log
     not_ok_count=$(grep -a "^not ok" log/$testname.log | wc -l | tr -d ' ')
     if [ $not_ok_count -gt 0 ]; then
         not_ok_str=", $not_ok_count not ok"
