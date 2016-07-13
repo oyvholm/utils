@@ -11,15 +11,17 @@
 #=======================================================================
 
 progname=git-testadd
-VERSION=0.3.2
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 h\
 q\
+u\
 v\
 " -l "\
 help,\
 quiet,\
+unmodified,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -28,11 +30,13 @@ eval set -- "$ARGS"
 
 opt_help=0
 opt_quiet=0
+opt_unmodified=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-u|--unmodified) opt_unmodified=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -57,9 +61,9 @@ the changes passes the test suite? With all the other unrelated changes
 it can be hard to make sure that only relevant changes becomes part of 
 the commit, and that they don't result in regressions. This script 
 clones the repository to the directory "$tmpdir" in the current 
-directory and applies the staged chenges there, chdirs to the same 
-relative directory in the clone and executes the command specified on 
-the command line there.
+directory and applies the staged chenges there (unless -u/--unmodified 
+is specified), chdirs to the same relative directory in the clone and 
+executes the command specified on the command line there.
 
 If COMMAND contains any options starting with '-', add "--" in front of 
 the command so they won't be parsed by $progname, or surround it with 
@@ -87,6 +91,12 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -u, --unmodified
+    Don't remove $tmpdir/, clone the repo and apply the patch, only 
+    chdir to $tmpdir/ and run the command there as it was left from the 
+    previous run. For example:
+      $ $progname make         # This takes a long time, won't repeat
+      $ $progname -u make test # Run the tests in a finished build
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -109,13 +119,20 @@ if test -z "$topdir"; then
     exit 1
 fi
 
-rm -rf "$tmpdir"
-git clone "$topdir" "$tmpdir"
+if test "$opt_unmodified" = "1"; then
+    if test ! -d "$tmpdir"; then
+        echo $progname: $tmpdir not found, -u/--unmodified needs it >&2
+        exit 1
+    fi
+else
+    rm -rf "$tmpdir"
+    git clone "$topdir" "$tmpdir"
 
-if git diff --cached --binary | grep -q .; then
-    git diff --cached --binary | (cd "$tmpdir" && git apply)
-elif test $opt_verbose -ge 0; then
-    echo $progname: No staged changes, running command with clean HEAD >&2
+    if git diff --cached --binary | grep -q .; then
+        git diff --cached --binary | (cd "$tmpdir" && git apply)
+    elif test $opt_verbose -ge 0; then
+        echo $progname: No staged changes, running command with clean HEAD >&2
+    fi
 fi
 
 newdir="$tmpdir/$subdir"
