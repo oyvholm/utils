@@ -38,20 +38,7 @@ Stable utilities
 
 These scripts are stable and ready for public use.
 
-### Git extensions
-
-#### git-allbr
-
-Scan remotes for branches and recreate them in the local repository.
-
-#### git-bare
-
-Change the state of the current repository to/from a bare repository 
-to/from a regular repository.
-
-#### git-bs
-
-Alias for `git bisect`, but allows execution from a subdirectory.
+### Git extensions, check out first
 
 #### git-dangling
 
@@ -66,6 +53,71 @@ around in the reflog anymore. Needs `git-delete-banned`.
 Delete remote and local branches specified on the command line, but can 
 be used with the output from `git log --format=%d` or `%D`. A quick and 
 easy way to clean up the branch tree with copy+paste.
+
+#### git-rcmd
+
+Execute commands in remote ssh repositories. For example, to make all 
+connected ssh repos (if they have a local shell, of course) fetch all 
+new commits from all remotes:
+
+    git-rcmd -c "git fetch --all --prune"
+
+#### git-testadd
+
+Execute a command with only the staged changes in Git applied.
+
+If you have lots of unrelated uncommitted changes in the current 
+repository and want to split up the commit, how can you easily check if 
+the changes passes the test suite? With all the other unrelated changes 
+it can be hard to make sure that only relevant changes becomes part of 
+the commit, and that they don't result in regressions. This script 
+clones the repository to the directory `.testadd.tmp` in the current 
+directory and applies the staged chenges there (unless 
+`-u`/`--unmodified` is specified), chdirs to the same relative directory 
+in the clone and executes the command specified on the command line 
+there.
+
+If the command contains any options starting with `-`, add `--` in front 
+of the command so they won't be parsed by git-testadd, or surround it 
+with quotes.
+
+##### Examples
+
+    user@host:~/src/myproject/src/t $ git-testadd make test
+
+The command will be executed in `~/src/myproject/src/t/.testadd.tmp/` 
+with only the staged changes applied.
+
+    user@host:~/src/myproject/src/t $ git-testadd -- ./run-tests -v
+
+This command contains a `-v` option. Disable option parsing of the 
+command by prefixing it with `--`.
+
+    $ git-testadd "make && cd t && make 2>&1 | less || echo fail"
+
+With quotes, even control operators and pipes can be used.
+
+#### git-wip
+
+Useful for working with topic branches. Create subbranches separated 
+with a full stop in the branch name. It can create new subbranches, 
+merge to parent branches or `master` with or without fast-forward and 
+squash the whole branch to the parent branch or `master`.
+
+### Other stable Git extensions
+
+#### git-allbr
+
+Scan remotes for branches and recreate them in the local repository.
+
+#### git-bare
+
+Change the state of the current repository to/from a bare repository 
+to/from a regular repository.
+
+#### git-bs
+
+Alias for `git bisect`, but allows execution from a subdirectory.
 
 #### git-delete-banned
 
@@ -137,14 +189,6 @@ branches.
 
 Push to all predefined remotes with a single command.
 
-#### git-rcmd
-
-Execute commands in remote ssh repositories. For example, to make all 
-connected ssh repos (if they have a local shell, of course) fetch all 
-new commits from all remotes:
-
-    git-rcmd -c "git fetch --all --prune"
-
 #### git-restore-dirs
 
 Restore empty directories from the `.emptydirs` file created by 
@@ -161,54 +205,12 @@ at the top of the repository. The names are zerobyte-separated to work
 with all kinds of weird characters in the directory names. Use 
 `git-restore-dirs` to recreate the directories.
 
-#### git-testadd
-
-Execute a command with only the staged changes in Git applied.
-
-If you have lots of unrelated uncommitted changes in the current 
-repository and want to split up the commit, how can you easily check if 
-the changes passes the test suite? With all the other unrelated changes 
-it can be hard to make sure that only relevant changes becomes part of 
-the commit, and that they don't result in regressions. This script 
-clones the repository to the directory `.testadd.tmp` in the current 
-directory and applies the staged chenges there (unless 
-`-u`/`--unmodified` is specified), chdirs to the same relative directory 
-in the clone and executes the command specified on the command line 
-there.
-
-If the command contains any options starting with `-`, add `--` in front 
-of the command so they won't be parsed by git-testadd, or surround it 
-with quotes.
-
-##### Examples
-
-    user@host:~/src/myproject/src/t $ git-testadd make test
-
-The command will be executed in `~/src/myproject/src/t/.testadd.tmp/` 
-with only the staged changes applied.
-
-    user@host:~/src/myproject/src/t $ git-testadd -- ./run-tests -v
-
-This command contains a `-v` option. Disable option parsing of the 
-command by prefixing it with `--`.
-
-    $ git-testadd "make && cd t && make 2>&1 | less || echo fail"
-
-With quotes, even control operators and pipes can be used.
-
 #### git-wait-until-clean
 
 If there are any modifications or unknown files in the current 
 repository, wait until it's been cleaned up. Useful in scripts where the 
 following commands need a clean repository. Can also ignore unknown 
 files or check for the existence of ignored files.
-
-#### git-wip
-
-Useful for working with topic branches. Create subbranches separated 
-with a full stop in the branch name. It can create new subbranches, 
-merge to parent branches or `master` with or without fast-forward and 
-squash the whole branch to the parent branch or `master`.
 
 ### Various
 
