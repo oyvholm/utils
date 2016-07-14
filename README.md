@@ -76,6 +76,26 @@ branches around that only clutter the history. Those commits can be
 specified in `~/.git-dangling-banned`, and this command will delete 
 them.
 
+#### git-delete-old-branches
+
+Delete obsolete Git branches locally and from all remotes. For each
+branch, display a `git diff --stat` against all local and remote
+branches with this name, a simplified `git log --graph`, and finally a 
+`git log` with patch against all branches. Display this in less(1), and 
+ask if all branches with this name should be deleted.
+
+The following responses are valid:
+
+- **y** - Delete all branches with this name locally and from all 
+  remotes and mark it as garbage.
+- **n** - Don't delete the branch. If `-o`/`--once` is used later, files 
+  marked with `n` will not be checked.
+- **d** - Mark branch as "don't know", to be perused later.
+- **q** - Exit the program.
+
+The answers can also be stored in an SQLite database to automate 
+subsequent runs.
+
 #### git-delrembr
 
 Delete all remote and local branches specified on the command line.
