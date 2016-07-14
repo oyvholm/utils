@@ -91,6 +91,13 @@ command by prefixing it with `--`.
 
 With quotes, even control operators and pipes can be used.
 
+#### git-wip
+
+Useful for working with topic branches. Create subbranches separated 
+with a full stop in the branch name. It can create new subbranches, 
+merge to parent branches or `master` with or without fast-forward and 
+squash the whole branch to the parent branch or `master`.
+
 ### Other stable Git extensions
 
 #### git-allbr
@@ -204,13 +211,6 @@ If there are any modifications or unknown files in the current
 repository, wait until it's been cleaned up. Useful in scripts where the 
 following commands need a clean repository. Can also ignore unknown 
 files or check for the existence of ignored files.
-
-#### git-wip
-
-Useful for working with topic branches. Create subbranches separated 
-with a full stop in the branch name. It can create new subbranches, 
-merge to parent branches or `master` with or without fast-forward and 
-squash the whole branch to the parent branch or `master`.
 
 ### Various
 
