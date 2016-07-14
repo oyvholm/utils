@@ -48,6 +48,14 @@ format `commit-SHA1` and `tag-SHA1`. This makes it easy to locate
 branches and tags that shouldn't have been deleted. No need to dig 
 around in the reflog anymore. Needs `git-delete-banned`.
 
+#### git-rcmd
+
+Execute commands in remote ssh repositories. For example, to make all 
+connected ssh repos (if they have a local shell, of course) fetch all 
+new commits from all remotes:
+
+    git-rcmd -c "git fetch --all --prune"
+
 #### git-testadd
 
 Execute a command with only the staged changes in Git applied.
@@ -173,14 +181,6 @@ branches.
 #### git-pa
 
 Push to all predefined remotes with a single command.
-
-#### git-rcmd
-
-Execute commands in remote ssh repositories. For example, to make all 
-connected ssh repos (if they have a local shell, of course) fetch all 
-new commits from all remotes:
-
-    git-rcmd -c "git fetch --all --prune"
 
 #### git-restore-dirs
 
