@@ -38,7 +38,9 @@ Stable utilities
 
 These scripts are stable and ready for public use.
 
-### Git extensions
+### Git extensions, check out first
+
+### Other stable Git extensions
 
 #### git-allbr
 
