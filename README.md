@@ -40,6 +40,14 @@ These scripts are stable and ready for public use.
 
 ### Git extensions, check out first
 
+#### git-dangling
+
+Scan the current repository for dangling heads (dead branches where the 
+branch names have been deleted) or tags and create branches with the 
+format `commit-SHA1` and `tag-SHA1`. This makes it easy to locate 
+branches and tags that shouldn't have been deleted. No need to dig 
+around in the reflog anymore. Needs `git-delete-banned`.
+
 ### Other stable Git extensions
 
 #### git-allbr
@@ -54,14 +62,6 @@ to/from a regular repository.
 #### git-bs
 
 Alias for `git bisect`, but allows execution from a subdirectory.
-
-#### git-dangling
-
-Scan the current repository for dangling heads (dead branches where the 
-branch names have been deleted) or tags and create branches with the 
-format `commit-SHA1` and `tag-SHA1`. This makes it easy to locate 
-branches and tags that shouldn't have been deleted. No need to dig 
-around in the reflog anymore. Needs `git-delete-banned`.
 
 #### git-dbr
 
