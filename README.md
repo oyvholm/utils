@@ -48,6 +48,12 @@ format `commit-SHA1` and `tag-SHA1`. This makes it easy to locate
 branches and tags that shouldn't have been deleted. No need to dig 
 around in the reflog anymore. Needs `git-delete-banned`.
 
+#### git-dbr
+
+Delete remote and local branches specified on the command line, but can 
+be used with the output from `git log --format=%d` or `%D`. A quick and 
+easy way to clean up the branch tree with copy+paste.
+
 #### git-rcmd
 
 Execute commands in remote ssh repositories. For example, to make all 
@@ -112,12 +118,6 @@ to/from a regular repository.
 #### git-bs
 
 Alias for `git bisect`, but allows execution from a subdirectory.
-
-#### git-dbr
-
-Delete remote and local branches specified on the command line, but can 
-be used with the output from `git log --format=%d` or `%D`. A quick and 
-easy way to clean up the branch tree with copy+paste.
 
 #### git-delete-banned
 
