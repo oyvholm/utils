@@ -76,19 +76,6 @@ sub main {
 		goto todo_section;
 	}
 
-=pod
-
-	testcmd("$CMD command",
-		<<'END',
-[expected stdout]
-END
-		'',
-		0,
-		'description',
-	);
-
-=cut
-
 	test_standard_options();
 
 	todo_section:
