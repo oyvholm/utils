@@ -103,7 +103,7 @@ END
     # }}}
     diag('Testing -v (--verbose) option...');
     likecmd("$CMD -hv", # {{{
-        '/^\n\S+ \d+\.\d+\.\d+\b\S*\n/s',
+        '/^\n\S+ \d+\.\d+\.\d+/s',
         '/^$/',
         0,
         'Option -v with -h returns version number and help screen',
@@ -112,7 +112,7 @@ END
     # }}}
     diag('Testing --version option...');
     likecmd("$CMD --version", # {{{
-        '/^\S+ \d+\.\d+\.\d+\b\S*\n/',
+        '/^\S+ \d+\.\d+\.\d+/',
         '/^$/',
         0,
         'Option --version returns version number',
