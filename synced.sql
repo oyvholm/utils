@@ -54,6 +54,7 @@ INSERT INTO "synced" VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2
 INSERT INTO "synced" VALUES('Lib/std/Genlog','Lib/std/bash-no-getopt','602afb101b41e50c9ed7096c56839fe83ff799aa','2015-10-30 07:05:38');
 INSERT INTO "synced" VALUES('Lib/std/bash','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/bash-no-getopt','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
+INSERT INTO "synced" VALUES('Lib/std/bash-tab','Lib/std/bash','b7dffb94d495268c783a0f015e1b0ba3b540e4be','2016-07-14 02:27:12');
 INSERT INTO "synced" VALUES('Lib/std/bisect','Lib/std/bash','0b1c9df17273d655a18a171d6ef4ef649f4921c7','2016-05-03 17:57:49');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitattributes','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitignore','','',NULL);
@@ -101,6 +102,7 @@ INSERT INTO "synced" VALUES('Lib/std/mdwn','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/musicxml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-cgi','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/perl-tab','Lib/std/perl','b7dffb94d495268c783a0f015e1b0ba3b540e4be','2016-07-14 02:27:12');
 INSERT INTO "synced" VALUES('Lib/std/perl-tests','Lib/std/perl','6a98e153551866cee0f6eeb22d4eeee8f3dfb2fb','2015-10-30 00:30:36');
 INSERT INTO "synced" VALUES('Lib/std/perl-tests.tagdesc','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/python','','',NULL);
