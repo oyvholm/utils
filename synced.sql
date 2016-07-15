@@ -104,6 +104,7 @@ INSERT INTO "synced" VALUES('Lib/std/perl','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-cgi','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/perl-tab','Lib/std/perl','b7dffb94d495268c783a0f015e1b0ba3b540e4be','2016-07-14 02:27:12');
 INSERT INTO "synced" VALUES('Lib/std/perl-tests','Lib/std/perl','6a98e153551866cee0f6eeb22d4eeee8f3dfb2fb','2015-10-30 00:30:36');
+INSERT INTO "synced" VALUES('Lib/std/perl-tests-tab','Lib/std/perl-tests','144e10f3481a2ed2c5b94b5b9ee7a88d23924411','2016-07-15 00:29:44');
 INSERT INTO "synced" VALUES('Lib/std/perl-tests.tagdesc','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/python','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/svg','',NULL,NULL);
