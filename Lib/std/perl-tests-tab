@@ -129,7 +129,7 @@ END
 
 	diag('Testing finished.');
 	return($Retval);
-} # main()
+}
 
 sub testcmd {
 	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
@@ -161,7 +161,7 @@ sub testcmd {
 	}
 	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
 	return($retval);
-} # testcmd()
+}
 
 sub likecmd {
 	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
@@ -193,7 +193,7 @@ sub likecmd {
 	}
 	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
 	return($retval);
-} # likecmd()
+}
 
 sub file_data {
 	# Return file content as a string
@@ -207,13 +207,13 @@ sub file_data {
 	} else {
 		return;
 	}
-} # file_data()
+}
 
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
 	return;
-} # print_version()
+}
 
 sub usage {
 	# Send the help message to stdout
@@ -246,7 +246,7 @@ Options:
 
 END
 	exit($Retval);
-} # usage()
+}
 
 sub msg {
 	# Print a status message to stderr based on verbosity level
@@ -256,7 +256,7 @@ sub msg {
 		print(STDERR "$progname: $Txt\n");
 	}
 	return;
-} # msg()
+}
 
 __END__
 
