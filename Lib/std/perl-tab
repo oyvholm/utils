@@ -51,22 +51,19 @@ if ($Opt{'version'}) {
 exit(main());
 
 sub main {
-	# {{{
 	my $Retval = 0;
 
 	return($Retval);
-	# }}}
-} # main()
+}
 
 sub print_version {
-	# Print program version {{{
+	# Print program version
 	print("$progname $VERSION\n");
 	return;
-	# }}}
-} # print_version()
+}
 
 sub usage {
-	# Send the help message to stdout {{{
+	# Send the help message to stdout
 	my $Retval = shift;
 
 	if ($Opt{'verbose'}) {
@@ -90,19 +87,17 @@ Options:
 
 END
 	exit($Retval);
-	# }}}
-} # usage()
+}
 
 sub msg {
-	# Print a status message to stderr based on verbosity level {{{
+	# Print a status message to stderr based on verbosity level
 	my ($verbose_level, $Txt) = @_;
 
 	if ($Opt{'verbose'} >= $verbose_level) {
 		print(STDERR "$progname: $Txt\n");
 	}
 	return;
-	# }}}
-} # msg()
+}
 
 __END__
 
