@@ -83,16 +83,14 @@ sub main {
 
 	if ($Opt{'all'} || $Opt{'todo'}) {
 		diag('Running TODO tests...');
-
 		TODO: {
-
 			local $TODO = '';
 			# Insert TODO tests here.
-
 		}
 	}
 
 	diag('Testing finished.');
+
 	return($Retval);
 }
 
@@ -120,7 +118,6 @@ sub test_standard_options {
 		0,
 		'Option --version returns version number',
 	);
-
 	return;
 }
 
@@ -153,6 +150,7 @@ sub testcmd {
 		diag("Warning: stderr not defined for '$Txt'");
 	}
 	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
 	return($retval);
 }
 
@@ -185,6 +183,7 @@ sub likecmd {
 		diag("Warning: stderr not defined for '$Txt'");
 	}
 	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
 	return($retval);
 }
 
@@ -192,6 +191,7 @@ sub file_data {
 	# Return file content as a string
 	my $File = shift;
 	my $Txt;
+
 	if (open(my $fp, '<', $File)) {
 		local $/ = undef;
 		$Txt = <$fp>;
@@ -248,6 +248,7 @@ sub msg {
 	if ($Opt{'verbose'} >= $verbose_level) {
 		print(STDERR "$progname: $Txt\n");
 	}
+
 	return;
 }
 
