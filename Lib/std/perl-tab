@@ -20,10 +20,10 @@ local $| = 1;
 
 our %Opt = (
 
-    'help' => 0,
-    'quiet' => 0,
-    'verbose' => 0,
-    'version' => 0,
+	'help' => 0,
+	'quiet' => 0,
+	'verbose' => 0,
+	'version' => 0,
 
 );
 
@@ -34,46 +34,46 @@ our $VERSION = '0.0.0';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
-    'help|h' => \$Opt{'help'},
-    'quiet|q+' => \$Opt{'quiet'},
-    'verbose|v+' => \$Opt{'verbose'},
-    'version' => \$Opt{'version'},
+	'help|h' => \$Opt{'help'},
+	'quiet|q+' => \$Opt{'quiet'},
+	'verbose|v+' => \$Opt{'verbose'},
+	'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
-    print_version();
-    exit(0);
+	print_version();
+	exit(0);
 }
 
 exit(main());
 
 sub main {
-    # {{{
-    my $Retval = 0;
+	# {{{
+	my $Retval = 0;
 
-    return($Retval);
-    # }}}
+	return($Retval);
+	# }}}
 } # main()
 
 sub print_version {
-    # Print program version {{{
-    print("$progname $VERSION\n");
-    return;
-    # }}}
+	# Print program version {{{
+	print("$progname $VERSION\n");
+	return;
+	# }}}
 } # print_version()
 
 sub usage {
-    # Send the help message to stdout {{{
-    my $Retval = shift;
+	# Send the help message to stdout {{{
+	my $Retval = shift;
 
-    if ($Opt{'verbose'}) {
-        print("\n");
-        print_version();
-    }
-    print(<<"END");
+	if ($Opt{'verbose'}) {
+		print("\n");
+		print_version();
+	}
+	print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -89,19 +89,19 @@ Options:
     Print version information.
 
 END
-    exit($Retval);
-    # }}}
+	exit($Retval);
+	# }}}
 } # usage()
 
 sub msg {
-    # Print a status message to stderr based on verbosity level {{{
-    my ($verbose_level, $Txt) = @_;
+	# Print a status message to stderr based on verbosity level {{{
+	my ($verbose_level, $Txt) = @_;
 
-    if ($Opt{'verbose'} >= $verbose_level) {
-        print(STDERR "$progname: $Txt\n");
-    }
-    return;
-    # }}}
+	if ($Opt{'verbose'} >= $verbose_level) {
+		print(STDERR "$progname: $Txt\n");
+	}
+	return;
+	# }}}
 } # msg()
 
 __END__
