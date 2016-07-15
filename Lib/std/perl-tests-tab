@@ -89,6 +89,27 @@ END
 
 =cut
 
+	test_standard_options();
+
+	todo_section:
+	;
+
+	if ($Opt{'all'} || $Opt{'todo'}) {
+		diag('Running TODO tests...');
+
+		TODO: {
+
+			local $TODO = '';
+			# Insert TODO tests here.
+
+		}
+	}
+
+	diag('Testing finished.');
+	return($Retval);
+}
+
+sub test_standard_options {
 	diag('Testing -h (--help) option...');
 	likecmd("$CMD -h",
 		'/  Show this help/i',
@@ -113,22 +134,7 @@ END
 		'Option --version returns version number',
 	);
 
-	todo_section:
-	;
-
-	if ($Opt{'all'} || $Opt{'todo'}) {
-		diag('Running TODO tests...');
-
-		TODO: {
-
-			local $TODO = '';
-			# Insert TODO tests here.
-
-		}
-	}
-
-	diag('Testing finished.');
-	return($Retval);
+	return;
 }
 
 sub testcmd {
