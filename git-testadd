@@ -36,24 +36,24 @@ opt_quiet=0
 opt_unmodified=0
 opt_verbose=0
 while :; do
-    case "$1" in
-        (-h|--help) opt_help=1; shift ;;
-        (-p|--pristine) opt_pristine=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-u|--unmodified) opt_unmodified=1; shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+	case "$1" in
+		(-h|--help) opt_help=1; shift ;;
+		(-p|--pristine) opt_pristine=1; shift ;;
+		(-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+		(-u|--unmodified) opt_unmodified=1; shift ;;
+		(-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+		(--version) echo $progname $VERSION; exit 0 ;;
+		(--) shift; break ;;
+		(*) echo $progname: Internal error >&2; exit 1 ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 tmpdir=".testadd.tmp"
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Execute a command with only the staged changes in Git applied.
 
@@ -109,44 +109,44 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 if test -z "$1"; then
-    echo $progname: No command specified >&2
-    exit 1
+	echo $progname: No command specified >&2
+	exit 1
 fi
 
 topdir="$(git rev-parse --show-toplevel)"
 subdir="$(git rev-parse --show-prefix)"
 
 if test -z "$topdir"; then
-    echo $progname: Could not get root dir of repo >&2
-    exit 1
+	echo $progname: Could not get root dir of repo >&2
+	exit 1
 fi
 
 if test "$opt_unmodified" = "1"; then
-    if test ! -d "$tmpdir"; then
-        echo $progname: $tmpdir not found, -u/--unmodified needs it >&2
-        exit 1
-    fi
+	if test ! -d "$tmpdir"; then
+		echo $progname: $tmpdir not found, -u/--unmodified needs it >&2
+		exit 1
+	fi
 else
-    rm -rf "$tmpdir"
-    git clone "$topdir" "$tmpdir"
+	rm -rf "$tmpdir"
+	git clone "$topdir" "$tmpdir"
 
-    if test "$opt_pristine" = "1"; then
-        :
-    elif git diff --cached --binary | grep -q .; then
-        git diff --cached --binary | (cd "$tmpdir" && git apply)
-    elif test $opt_verbose -ge 0; then
-        echo $progname: No staged changes, running command with clean HEAD >&2
-    fi
+	if test "$opt_pristine" = "1"; then
+		:
+	elif git diff --cached --binary | grep -q .; then
+		git diff --cached --binary | (cd "$tmpdir" && git apply)
+	elif test $opt_verbose -ge 0; then
+		echo $progname: No staged changes, running command with clean HEAD >&2
+	fi
 fi
 
 newdir="$tmpdir/$subdir"
 cd "$newdir" || {
-    echo "$progname: $newdir: Cannot chdir" >&2
-    exit 1
+	echo "$progname: $newdir: Cannot chdir" >&2
+	exit 1
 }
 
 echo >&2
