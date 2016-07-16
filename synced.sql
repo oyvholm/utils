@@ -556,7 +556,7 @@ INSERT INTO "synced" VALUES('split_md5','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('spreadsheet/exponential_growth.ods','','',NULL);
 INSERT INTO "synced" VALUES('src/check_utf8/.cvsignore','',NULL,NULL);
 INSERT INTO "synced" VALUES('src/check_utf8/Makefile','','',NULL);
-INSERT INTO "synced" VALUES('src/check_utf8/check_utf8.c','',NULL,NULL);
+INSERT INTO "synced" VALUES('src/check_utf8/check_utf8.c','','',NULL);
 INSERT INTO "synced" VALUES('src/check_utf8/utf8-locale','',NULL,NULL);
 INSERT INTO "synced" VALUES('src/dbf2tab/dbf2tab.c','http://www.pgts.com.au/download/misc/dbf2tab.c','',NULL);
 INSERT INTO "synced" VALUES('src/fldb/FLDBdebug.pm',NULL,NULL,NULL);

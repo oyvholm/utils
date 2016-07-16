@@ -5,7 +5,7 @@ CC = gcc
 EXEC = check_utf8
 
 check_utf8: check_utf8.c
-	$(CC) -Wall -o $(EXEC) -O2 check_utf8.c
+	$(CC) -Wall -Werror -o $(EXEC) -O2 check_utf8.c
 
 .PHONY: clean
 clean:
