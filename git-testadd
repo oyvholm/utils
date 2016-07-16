@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#=======================================================================
+#==============================================================================
 # git-testadd
 # File ID: ae2451d2-43a1-11e6-86fa-175746503fe8
 #
@@ -8,7 +8,7 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=git-testadd
 VERSION=0.5.0
@@ -139,7 +139,8 @@ else
 	elif git diff --cached --binary | grep -q .; then
 		git diff --cached --binary | (cd "$tmpdir" && git apply)
 	elif test $opt_verbose -ge 0; then
-		echo $progname: No staged changes, running command with clean HEAD >&2
+		echo -n "$progname: No staged changes, " >&2
+		echo running command with clean HEAD >&2
 	fi
 fi
 
@@ -152,3 +153,5 @@ cd "$newdir" || {
 echo >&2
 test $opt_verbose -ge 1 && echo "$progname: Executing \"$*\" in $(pwd)" >&2
 eval "$@"
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
