@@ -28,3 +28,6 @@ edit: tags
 
 tags: $(CFILES) $(HFILES)
 	ctags $(CFILES) $(HFILES)
+
+.PHONY: test
+test:

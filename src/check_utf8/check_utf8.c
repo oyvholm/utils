@@ -70,14 +70,15 @@ main(int argc, char **argv)
 	static char *getpos  = "\033[6n";
 	char retstr[16];
 	int pos,rc,row,col;
+	ssize_t ss;
 
 	(void)(rcs_id); /* Avoid compiler warning */
 	if (!isatty(0))
 		exit(0);
 
 	tty_raw();
-	write(1,teststr,strlen(teststr));
-	write(1,getpos,strlen(getpos));
+	ss = write(1,teststr,strlen(teststr));
+	ss = write(1,getpos,strlen(getpos));
 	for (pos = 0; pos < sizeof(retstr)-1;) {
 		if (0 == select_wait())
 			break;
@@ -90,7 +91,9 @@ main(int argc, char **argv)
 			break;
 	}
 	retstr[pos] = 0;
-	write(1,cleanup,strlen(cleanup));
+	ss = write(1,cleanup,strlen(cleanup));
+	if (ss == -1)
+		perror("Error when writing to stdout");
 	tty_restore();
 
 	rc = sscanf(retstr,"\033[%d;%dR",&row,&col);

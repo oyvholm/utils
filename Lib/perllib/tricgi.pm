@@ -19,9 +19,9 @@ HTML-rutiner som brukes hele tiden.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999 Øyvind A. Holm E<lt>F<sunny@tritech.no>E<gt>
+(C)opyright 1999 ?yvind A. Holm E<lt>F<sunny@tritech.no>E<gt>
 
-Denne modulen er eiendom tilhørende Øyvind A. Holm. Dispensasjon for bruk
+Denne modulen er eiendom tilh?rende ?yvind A. Holm. Dispensasjon for bruk
 er gitt til Tritech A/S E<lt>F<http://www.tritech.no>E<gt> inntil videre.
 
 =cut
@@ -30,50 +30,50 @@ require 5.003;
 
 =head1 VARIABLER
 
-=head2 Nødvendige variabler
+=head2 N?dvendige variabler
 
-Når man bruker dette biblioteket, er det en del variabler som må defineres
-under kjøring:
+N?r man bruker dette biblioteket, er det en del variabler som m? defineres
+under kj?ring:
 
 =over 4
 
 =item I<${main::Url}>
 
-URL'en til index.cgi. Normalt sett blir denne satt til navnet på scriptet,
-for eksempel "I<index.cgi>" eller lignende. Før ble I<${main::Url}> satt
-til full URL med F<httpZ<>://> og greier, men det gikk dårlig hvis ting
-for eksempel ble kjørt under F<httpsZ<>://>
+URL'en til index.cgi. Normalt sett blir denne satt til navnet p? scriptet,
+for eksempel "I<index.cgi>" eller lignende. F?r ble I<${main::Url}> satt
+til full URL med F<httpZ<>://> og greier, men det gikk d?rlig hvis ting
+for eksempel ble kj?rt under F<httpsZ<>://>
 
 =item I<${main::WebMaster}>
 
-Emailadressen til den som eier dokumentet. Denne blir ikke satt inn på
-copyrighter og sånn, der er det F<tritech@tritech.no> som hersker.
+Emailadressen til den som eier dokumentet. Denne blir ikke satt inn p?
+copyrighter og s?nn, der er det F<tritech@tritech.no> som hersker.
 
 =item I<${main::error_file}>
 
-Filnavn på en fil som er skrivbar av den som kjører scriptet (som oftest
+Filnavn p? en fil som er skrivbar av den som kj?rer scriptet (som oftest
 I<nobody>). Alle feilmeldinger og warnings havner her.
 
 =item I<${main::log_dir}>
 
-Navn på directory der logging fra blant annet I<&log_access()> havner.
-Brukeren I<nobody> (eller hva nå httpd måtte kjøre under) skal ha
+Navn p? directory der logging fra blant annet I<&log_access()> havner.
+Brukeren I<nobody> (eller hva n? httpd m?tte kj?re under) skal ha
 skrive/leseaksess der.
 
 =back
 
-NB: Disse må ikke være I<my>'et, de må være globale så de kan bli brukt av
+NB: Disse m? ikke v?re I<my>'et, de m? v?re globale s? de kan bli brukt av
 alle modulene.
 
 =head2 Valgfrie variabler
 
-Disse variablene er ikke nødvendige å definere, bare hvis man gidder:
+Disse variablene er ikke n?dvendige ? definere, bare hvis man gidder:
 
 =over 4
 
 =item I<${main::doc_width}>
 
-Bredden på dokumentet i pixels. I<$STD_DOCWIDTH> som default.
+Bredden p? dokumentet i pixels. I<$STD_DOCWIDTH> som default.
 
 =item I<${main::CharSet}>
 
@@ -91,23 +91,23 @@ Skriver ut en del debuggingsinfo.
 =item I<${main::FONTB}>
 =item I<${main::FONTE}>
 
-Disse to definerer fontene som skal brukes. I alle områder med tekst
+Disse to definerer fontene som skal brukes. I alle omr?der med tekst
 legges disse inn, for eksempel:
 
 	$tricgi::tab_print("<h1>${FONTB}Dette er en snadderheader${FONTE}</h1>\n";
 
-Normalt sett er $FONTB og $FONTE satt til disse verdiene sånn omtrent:
+Normalt sett er $FONTB og $FONTE satt til disse verdiene s?nn omtrent:
 
 	$FONTB = '<font face="arial, helvetica">';
 	$FONTE = '</font>';
 
-Dette er som kjent bare lov i HTML når minst I<$DTD_HTML4LOOSE> brukes.
+Dette er som kjent bare lov i HTML n?r minst I<$DTD_HTML4LOOSE> brukes.
 
 =item I<${main::Utv}>
 
 Beslektet med I<${main::Debug}>, men hvis denne er definert, sitter man
 lokalt og tester. Ikke helt klargjort hvordan disse to skal fungere i
-forhold til hverandre, men når sida ligger offentlig, skal hverken
+forhold til hverandre, men n?r sida ligger offentlig, skal hverken
 I<${main::Debug}> eller I<${main::Utv}>
 
 =item I<${main::Border}>
@@ -130,7 +130,7 @@ my $rcs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.12 1999/07/
 my $rcs_id = '$Id: tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $';
 my $rcs_date = '$Date: 1999/07/05 13:33:59 $';
 
-# $cvs_* skal ut av sirkulasjon etterhvert. Foreløpig er de merket med "GD" (Gammel Drit) for å finne dem.
+# $cvs_* skal ut av sirkulasjon etterhvert. Forel?pig er de merket med "GD" (Gammel Drit) for ? finne dem.
 my $cvs_header = '$Header: /home/sunny/tmp/cvs/perllib/tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $ GD';
 my $cvs_id = '$Id: tricgi.pm,v 1.12 1999/07/05 13:33:59 sunny Exp $ GD';
 my $cvs_date = '$Date: 1999/07/05 13:33:59 $ GD';
@@ -149,7 +149,7 @@ my $STD_CHARSET = "ISO-8859-1"; # Hvis $main::CharSet ikke er definert
 my $STD_DOCALIGN = "center"; # Standard align for dokumentet hvis align ikke er spesifisert
 my $STD_DOCWIDTH = "500"; # Hvis ikke $main::doc_width er spesifisert
 my $STD_HTMLDTD = $DTD_HTML4LOOSE;
-my $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle vært istedenfor, men nøye då.
+my $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kanskje. Mulig "/var/log/etellerannet" skulle v?rt istedenfor, men n?ye d?.
 
 ###########################################################################
 #### Subrutiner
@@ -164,7 +164,7 @@ my $STD_LOGDIR = "/usr/local/www/APACHE_LOG/default"; # FIXME: Litt skummelt kan
 =head2 &content_type()
 
 Brukes omtrent bare av F<&print_header()>, men kan kalles
-separat hvis det er speisa content-typer ute og går, som for eksempel
+separat hvis det er speisa content-typer ute og g?r, som for eksempel
 C<application/x-tar> og lignende.
 
 =cut
@@ -177,19 +177,19 @@ sub content_type {
 	} else {
 		&HTMLwarn("Intern feil: \$ContType ble ikke spesifisert til &content_type()");
 	}
-	# print "Content-Type: $ContType\n\n"; # Til ære for slappe servere som ikke har peiling
+	# print "Content-Type: $ContType\n\n"; # Til ?re for slappe servere som ikke har peiling
 } # content_type()
 
 ###########################################################################
 
 =head2 &curr_local_time()
 
-Returnerer tidspunktet akkurat nå, lokal tid. Formatet er i henhold til S<ISO 8601>, dvs.
+Returnerer tidspunktet akkurat n?, lokal tid. Formatet er i henhold til S<ISO 8601>, dvs.
 I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>+I<HHMM>
 
-B<FIXME:> Finn en måte å returnere differansen mellom UTC og lokal tid.
-Foreløpig droppes +0200 og sånn. Det liker vi I<ikke>. Ikke baser noen
-programmer på formatet foreløpig.
+B<FIXME:> Finn en m?te ? returnere differansen mellom UTC og lokal tid.
+Forel?pig droppes +0200 og s?nn. Det liker vi I<ikke>. Ikke baser noen
+programmer p? formatet forel?pig.
 
 =cut
 
@@ -209,8 +209,8 @@ sub curr_local_time {
 
 =head2 &curr_utc_time()
 
-Returnerer tidspunktet akkurat nå i UTC. Brukes av blant annet
-F<&print_header()> til å sette rett tidspunkt inn i headeren. Formatet på
+Returnerer tidspunktet akkurat n? i UTC. Brukes av blant annet
+F<&print_header()> til ? sette rett tidspunkt inn i headeren. Formatet p?
 datoen er i henhold til S<ISO 8601>, dvs.
 I<YYYY>-I<MM>-I<DD>TI<HH>:I<MM>:I<SS>Z
 
@@ -227,17 +227,17 @@ sub curr_utc_time {
 
 =head2 &deb_pr()
 
-En debuggingsrutine som kjøres hvis ${main::Debug} ikke er 0. Den
-forlanger at ${main::$error_file} er definert, det skal være en fil der
+En debuggingsrutine som kj?res hvis ${main::Debug} ikke er 0. Den
+forlanger at ${main::$error_file} er definert, det skal v?re en fil der
 all debuggingsinformasjonen skrives til.
 
-For at debugging skal bli lettere, kan man slenge denne inn på enkelte
+For at debugging skal bli lettere, kan man slenge denne inn p? enkelte
 steder. Eksempel:
 
 	&deb_pr(__LINE__ . ": sort_dir(): Det er $Elements elementer her.");
 
 Hvis dette formatet brukes (fram til og med __LINE__) kan man filtrere fila
-gjennom denne perlsnutten for å kommentere ut alle debuggingsmeldingene:
+gjennom denne perlsnutten for ? kommentere ut alle debuggingsmeldingene:
 
 	#!/usr/bin/perl
 
@@ -246,7 +246,7 @@ gjennom denne perlsnutten for å kommentere ut alle debuggingsmeldingene:
 		print;
 	}
 
-For å ta bort utkommenteringen, filtrer fila gjennom dette scriptet:
+For ? ta bort utkommenteringen, filtrer fila gjennom dette scriptet:
 
 	#!/usr/bin/perl
 
@@ -255,8 +255,8 @@ For å ta bort utkommenteringen, filtrer fila gjennom dette scriptet:
 		print;
 	}
 
-Dette er bare nødvendig hvis det ligger strødd med debuggingsmeldinger på
-steder som bør gå raskest mulig. Rutina sjekker verdien av
+Dette er bare n?dvendig hvis det ligger str?dd med debuggingsmeldinger p?
+steder som b?r g? raskest mulig. Rutina sjekker verdien av
 I<${main::Debug}>, hvis den er 0, returnerer den med en gang.
 
 B<FIXME:> Mer pod seinere.
@@ -268,9 +268,9 @@ sub deb_pr {
 	my $Msg = shift;
 	my $err_msg = "";
 	if (-e ${main::debug_file}) {
-		$err_msg = "Klarte ikke å åpne debugfila for lesing/skriving" unless open(DebugFP, "+<${main::debug_file}");
+		$err_msg = "Klarte ikke ? ?pne debugfila for lesing/skriving" unless open(DebugFP, "+<${main::debug_file}");
 	} else {
-		$err_msg = "Klarte ikke å lage debugfila" unless open(DebugFP, "+>${main::debug_file}");
+		$err_msg = "Klarte ikke ? lage debugfila" unless open(DebugFP, "+>${main::debug_file}");
 	}
 	unless(length($err_msg)) {
 		flock(DebugFP, LOCK_EX);
@@ -305,13 +305,13 @@ END
 
 =head2 &escape_dangeours_chars()
 
-Brukes hvis man skal utføre en systemkommando og man får med kommandolinja
-å gjøre. Eksempel:
+Brukes hvis man skal utf?re en systemkommando og man f?r med kommandolinja
+? gj?re. Eksempel:
 
 	$cmd_line = &escape_dangerous_chars("$cmd_line");
 	system("$cmd_line");
 
-Tegn som kan rote til denne kommandoen får en backslash foran seg.
+Tegn som kan rote til denne kommandoen f?r en backslash foran seg.
 
 =cut
 
@@ -344,22 +344,22 @@ sub file_mdate {
 =head2 &get_cgivars()
 
 Leser inn alle verdier sendt med GET eller POST requests og returnerer en
-hash med verdiene. Fungerer på denne måten:
+hash med verdiene. Fungerer p? denne m?ten:
 
 	%Opt = &get_cgivars;
 	my $Document = $Opt{doc};
 	my $user_name = $Opt{username};
 
-Alle verdiene ligger nå i de respektive variablene og kan (mis)brukes Vilt
+Alle verdiene ligger n? i de respektive variablene og kan (mis)brukes Vilt
 & UhemmetZ<>(tm).
 
-Funksjonen leser både 'I<&>' (ampersand) og 'I<;>' (semikolon) som
-skilletegn i GET/POST, scripts bør sende 'I<;>' så det ikke blir kluss med
+Funksjonen leser b?de 'I<&>' (ampersand) og 'I<;>' (semikolon) som
+skilletegn i GET/POST, scripts b?r sende 'I<;>' s? det ikke blir kluss med
 entities. Eksempel:
 
 	index.cgi?doc=login;username=suttleif;pwd=hemmelig
 
-B<FIXME:> Denne må utvides litt med flere Content-type'er.
+B<FIXME:> Denne m? utvides litt med flere Content-type'er.
 
 =cut
 
@@ -408,8 +408,8 @@ i standard ASCII-format.
 sub get_countervalue {
 	my $counter_file = shift;
 	my $counter_value = 0;
-	&deb_pr(__LINE__ . ": get_countervalue(): Åpner $counter_file for lesing+flock");
-	open(TmpFP, "<$counter_file") || (&HTMLwarn("$counter_file i get_counter(): Kan ikke åpne fila for lesing: $!"), return(0));
+	&deb_pr(__LINE__ . ": get_countervalue(): ?pner $counter_file for lesing+flock");
+	open(TmpFP, "<$counter_file") || (&HTMLwarn("$counter_file i get_counter(): Kan ikke ?pne fila for lesing: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$counter_value = <TmpFP>;
 	chomp($counter_value);
@@ -422,13 +422,13 @@ sub get_countervalue {
 
 =head2 &HTMLdie()
 
-Tilsvarer F<die()> i standard Perl, men sender HTML-output så man ikke får
+Tilsvarer F<die()> i standard Perl, men sender HTML-output s? man ikke f?r
 Internal Server Error. Funksjonen tar to parametere, I<$Msg> som havner i
 E<lt>titleE<gt>E<lt>/titleE<gt> og E<lt>h1E<gt>E<lt>/h1E<gt>, og I<$Msg>
 som blir skrevet ut som beskjed.
 
 Hvis hverken I<${main::$Utv}> eller I<${main::Debug}> er sann, skrives meldinga til
-I<${main::error_file}> og en standardmelding blir skrevet ut. Folk får ikke vite
+I<${main::error_file}> og en standardmelding blir skrevet ut. Folk f?r ikke vite
 mer enn de har godt av.
 
 =cut
@@ -499,11 +499,11 @@ END
 =head2 &HTMLwarn()
 
 En lightversjon av I<&HTMLdie()>, den skriver kun til
-I<${main::error_file}>. Når det oppstår feil, men ikke trenger å rive ned
-hele systemet. Brukes til småting som tellere som ikke virker og sånn.
+I<${main::error_file}>. N?r det oppst?r feil, men ikke trenger ? rive ned
+hele systemet. Brukes til sm?ting som tellere som ikke virker og s?nn.
 
-B<FIXME:> Muligens det burde vært lagt inn at ${main::WebMaster} fikk mail om
-hver gang ting går på trynet.
+B<FIXME:> Muligens det burde v?rt lagt inn at ${main::WebMaster} fikk mail om
+hver gang ting g?r p? trynet.
 
 =cut
 
@@ -512,7 +512,7 @@ sub HTMLwarn {
 	my $curr_utc = &curr_utc_time;
 
 	&deb_pr(__LINE__ . ": WARN: $Msg");
-	# Gjør det så stille og rolig som mulig.
+	# Gj?r det s? stille og rolig som mulig.
 	if (${main::Utv} || ${main::Debug}) {
 		&print_header("CGI warning");
 		&tab_print("<p><font size=\"+1\"><b>HTMLwarn(): $Msg</font></n>\n");
@@ -533,7 +533,7 @@ sub HTMLwarn {
 
 =head2 &increase_counter()
 
-Øker telleren i en spesifisert fil med en. Fila skal inneholde et tall i
+?ker telleren i en spesifisert fil med en. Fila skal inneholde et tall i
 ASCII-format. I tillegg lages en fil som heter F<{fil}.ip> som inneholder
 IP'en som brukeren er tilkoblet fra. Hvis IP'en er den samme som i fila,
 oppdateres ikke telleren.
@@ -547,20 +547,20 @@ sub increase_counter {
 	my $user_ip = $ENV{REMOTE_ADDR};
 	system("touch $counter_file") unless (-e $counter_file);
 	system("touch $ip_file") unless (-e $ip_file);
-	open(TmpFP, "+<$ip_file") || (&HTMLwarn("$ip_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
+	open(TmpFP, "+<$ip_file") || (&HTMLwarn("$ip_file i increase_counter(): Kan ikke ?pne fila for lesing og skriving: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	$last_ip = <TmpFP>;
 	chomp($last_ip);
 	my $new_ip = ($last_ip eq $user_ip) ? $FALSE : $TRUE;
 	if ($new_ip) {
-		seek(TmpFP, 0, 0) || (&HTMLwarn("$ip_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
+		seek(TmpFP, 0, 0) || (&HTMLwarn("$ip_file: Kan ikke g? til begynnelsen av fila: $!"), close(TmpFP), return(0));
 		print(TmpFP "$user_ip\n");
 	}
-	open(TmpFP, "+<$counter_file") || (&HTMLwarn("$counter_file i increase_counter(): Kan ikke åpne fila for lesing og skriving: $!"), return(0));
+	open(TmpFP, "+<$counter_file") || (&HTMLwarn("$counter_file i increase_counter(): Kan ikke ?pne fila for lesing og skriving: $!"), return(0));
 	flock(TmpFP, LOCK_EX);
 	my $counter_value = <TmpFP>;
 	if ($new_ip) {
-		seek(TmpFP, 0, 0) || (&HTMLwarn("$counter_file: Kan ikke gå til begynnelsen av fila: $!"), close(TmpFP), return(0));
+		seek(TmpFP, 0, 0) || (&HTMLwarn("$counter_file: Kan ikke g? til begynnelsen av fila: $!"), close(TmpFP), return(0));
 		printf(TmpFP "%u\n", $counter_value+1) if ($user_ip ne $last_ip);
 	}
 	close(TmpFP);
@@ -571,8 +571,8 @@ sub increase_counter {
 
 =head2 &log_access()
 
-Logger aksess til en fil. Filnavnet skal være uten extension, rutina tar seg av det. I tillegg
-øker den en teller i fila I<$Base.count> unntatt hvis parameter 2 != 0.
+Logger aksess til en fil. Filnavnet skal v?re uten extension, rutina tar seg av det. I tillegg
+?ker den en teller i fila I<$Base.count> unntatt hvis parameter 2 != 0.
 
 Forutsetter at I<${main::log_dir}> er definert. Hvis ikke, settes den til
 I<$STD_LOGDIR>.
@@ -603,28 +603,28 @@ sub log_access {
 
 Leser inn et dokument og konverterer det til HTML. Dette blir en av de
 mest sentrale rutinene i en hjemmeside, i og med at det skal ta seg av
-HTML-output'en. Istedenfor å fylle opp scriptene med HTML-koder, gjøres et
+HTML-output'en. Istedenfor ? fylle opp scriptene med HTML-koder, gj?res et
 kall til F<&print_doc()> som skriver ut sidene og genererer HTML.
 
-Formatet på fila består av to deler: Header og HTML. De første linjene
-består av ting som tittel, keywords, html-versjon, evt. refresh og så
-videre. Her har vi et eksempel på en fil (Ingen space i begynnelsen på
-hver linje, det er til ære for F<pod> at det er sånn):
+Formatet p? fila best?r av to deler: Header og HTML. De f?rste linjene
+best?r av ting som tittel, keywords, html-versjon, evt. refresh og s?
+videre. Her har vi et eksempel p? en fil (Ingen space i begynnelsen p?
+hver linje, det er til ?re for F<pod> at det er s?nn):
 
  title Velkommen til snaddersida
- keywords snadder, stilig, kanontøfft, extremt, tjobing
+ keywords snadder, stilig, kanont?fft, extremt, tjobing
  htmlversion html4strict
  author jeg@er.snill.edu
 
  <table width="<=docwidth>">
  	<tr>
  		<td colspan="2" align="center">
- 			Han dæven sjteiki
+ 			Han d?ven sjteiki
  		</td>
  	</tr>
  	<tr>
  		<td>
- 			Så tøfft dette var.
+ 			S? t?fft dette var.
  		</td>
  		<td>
  			Nemlig. Mailadressen min er <=author>
@@ -637,7 +637,7 @@ Rutina tar to parametere:
 
 =over 4
 
-=item I<$file_name> (nødvendig)
+=item I<$file_name> (n?dvendig)
 
 Fil som skal skrives ut. Denne har som standard extension F<*.shtml> .
 
@@ -646,18 +646,18 @@ Fil som skal skrives ut. Denne har som standard extension F<*.shtml> .
 Denne brukes hvis det er en "kjede" med dokumenter, og det skal lages en
 "framover" og "bakover"-button.
 
-Alt F<&print_footer()> gjør, er å lete opp plassen i fila som ting skal
+Alt F<&print_footer()> gj?r, er ? lete opp plassen i fila som ting skal
 skrives ut fra. Grunnen til dette er at et dokument kan inneholde flere
 dokumenter som separeres med E<lt>=pageE<gt>.
 
 =back
 
-B<FIXME:> Skriver mer på denne seinere. Og gjør greia ferdig. Support for
-<=page> må legges inn.
+B<FIXME:> Skriver mer p? denne seinere. Og gj?r greia ferdig. Support for
+<=page> m? legges inn.
 
 Alt kan legges inn i en fil:
 
-	title Eksempel på datafil
+	title Eksempel p? datafil
 	lang no
 	ext html
 	cvsroot :pserver:bruker@host.no:/cvsroot
@@ -678,7 +678,7 @@ sub print_doc {
 	my ($file_name, $page_num) = @_;
 	my $in_header = $TRUE;
 
-	open(FromFP, "<$file_name") || &HTMLdie("$file_name: Kan ikke åpne fila for lesing: $!");
+	open(FromFP, "<$file_name") || &HTMLdie("$file_name: Kan ikke ?pne fila for lesing: $!");
 	LINE: while (<FromFP>) {
 		chomp;
 		next LINE if /^#\s/;
@@ -717,31 +717,31 @@ END
 
 =head2 &print_footer()
 
-Skriver ut en footer med en E<lt>hrE<gt> først. Funksjonen tar disse
+Skriver ut en footer med en E<lt>hrE<gt> f?rst. Funksjonen tar disse
 parameterne:
 
 =over 4
 
 =item I<$footer_width>
 
-Bredden på footeren i pixels. Hvis den ikke er definert, brukes
+Bredden p? footeren i pixels. Hvis den ikke er definert, brukes
 I<${main::doc_width}>. Og hvis den heller ikke er definert, brukes
 I<$STD_DOCWIDTH> som default.
 
 =item I<$footer_align>
 
-Kan være I<left>, I<center> eller I<right>. Brukes av E<lt>tableE<gt>.
+Kan v?re I<left>, I<center> eller I<right>. Brukes av E<lt>tableE<gt>.
 Hvis udefinert, brukes I<${main::doc_align}>. Hvis den ikke er definert,
 brukes I<$STD_DOCALIGN>.
 
 =item I<$no_vh>
 
-I<$FALSE> eller udefinert: Skriver I<Valid HTML>-logoen nederst i høyre
-hjørne. I<$TRUE>: Dropper den.
+I<$FALSE> eller udefinert: Skriver I<Valid HTML>-logoen nederst i h?yre
+hj?rne. I<$TRUE>: Dropper den.
 
 =item I<$no_end>
 
-Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten hvis I<$TRUE>.
+Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> p? slutten hvis I<$TRUE>.
 
 =back
 
@@ -750,7 +750,7 @@ Tar ikke med E<lt>/bodyE<gt>E<lt>/htmlE<gt> på slutten hvis I<$TRUE>.
 sub print_footer {
 	my ($footer_width, $footer_align, $no_vh, $no_end) = @_;
 
-	&deb_pr(__LINE__ . ": Går inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
+	&deb_pr(__LINE__ . ": G?r inn i print_footer(\"$footer_width\", \"$footer_align\", \"$no_vh\", \"$no_end\")");
 	unless (length($footer_width)) {
 		$footer_width = length(${main::doc_width}) ? ${main::doc_width} : $STD_DOCWIDTH;
 	}
@@ -759,7 +759,7 @@ sub print_footer {
 	}
 	$no_vh = $FALSE unless length($no_vh);
 	$no_end = $FALSE unless length($no_end);
-	my $rcs_str = ${main::rcs_date}; # FIXME: Er ikke nødvendigvis denne som skal brukes.
+	my $rcs_str = ${main::rcs_date}; # FIXME: Er ikke n?dvendigvis denne som skal brukes.
 	$rcs_str =~ s/ /&nbsp;/g;
 	my $vh_str = $no_vh ? "&nbsp;" : "<a href=\"http://validator.w3.org/check/referer;ss\"><img src=\"${main::GrafDir}/vh40.gif\" height=\"31\" width=\"88\" align=\"right\" border=\"0\" alt=\"Valid HTML 4.0!\"></a>";
 	my $count_str = length($this_counter) ? "Du er bes&oslash;kende nummer $this_counter p&aring; denne siden." : "&nbsp;";
@@ -804,7 +804,7 @@ END
 </html>
 END
 	}
-	exit; # FIXME: Sikker på det?
+	exit; # FIXME: Sikker p? det?
 } # print_footer()
 
 ###########################################################################
@@ -823,14 +823,14 @@ Det som skal inn i E<lt>titleE<gt>E<lt>/titleE<gt>
 =item I<$html_version>
 
 Hvilken DTD som skal brukes i begynnelsen. Bruker I<$DTD_HTML4STRICT> som
-default, altså
+default, alts?
 
 S<E<lt>!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 S<"httpZ<>://www.w3.org/TR/REC-html40/loose.dtd"E<gt>>
 
 =item I<$Language>
 
-Landskode på to bokstaver som havner i E<lt>html langE<gt>. Standardverdi
+Landskode p? to bokstaver som havner i E<lt>html langE<gt>. Standardverdi
 er "no", det vil si
 
 	<html lang="no">
@@ -853,25 +853,25 @@ inn noen javascript-greier der.
 
 =item I<$Description>
 
-Det som skal stå i beskrivelsen i E<lt>metaE<gt>-bestyret.
+Det som skal st? i beskrivelsen i E<lt>metaE<gt>-bestyret.
 
 =item I<$Keywords>
 
-Keywords i E<lt>metaE<gt>. Skal være kommaseparert og med etities.
+Keywords i E<lt>metaE<gt>. Skal v?re kommaseparert og med etities.
 
 =item I<@StyleSheet>
 
 Array med alt som skal inn style sheets. B<FIXME:> Stygg sak dette her at
-den må være på slutten av parametrene, skulle vært en bedre måte så den
-kan bli sendt som ETT parameter, men det ser vi på seinere. Er vel ikke så
-nøye enda. Eventuelt slenger vi koden inn som en streng og ikke som en
+den m? v?re p? slutten av parametrene, skulle v?rt en bedre m?te s? den
+kan bli sendt som ETT parameter, men det ser vi p? seinere. Er vel ikke s?
+n?ye enda. Eventuelt slenger vi koden inn som en streng og ikke som en
 array.
 
-BTW blir vel ikke parameterne brukt så mye til hverdags, hvis
+BTW blir vel ikke parameterne brukt s? mye til hverdags, hvis
 F<&print_doc()> blir ferdig rimelig fort. Der skal som kjent alt
 spesifiseres.
 
-B<FIXME:> Det hadde gjort seg med tidligere HTML-versjoner også.
+B<FIXME:> Det hadde gjort seg med tidligere HTML-versjoner ogs?.
 
 =back
 
@@ -890,7 +890,7 @@ sub print_header {
 	<!-- $doc_val{id} -->
 END
 	if ($header_done) {
-		&deb_pr(__LINE__ . ": Yo! print_header() ble kjørt selv om \$header_done = $header_done. \$DocTitle = \"$DocTitle\"");
+		&deb_pr(__LINE__ . ": Yo! print_header() ble kj?rt selv om \$header_done = $header_done. \$DocTitle = \"$DocTitle\"");
 		print("\n<!-- debug: print_header(\"$DocTitle\", \"$Refresh\", \"$no_body\", \"$html_version\") selv om \$header_done -->\n");
 		return;
 	} else {
@@ -932,7 +932,7 @@ $DocId_str	<!-- ${main::rcs_id} -->
 END
 	&Tabs(2); # html og head
 
-	# FIXME: Midlertidig here'ing, det kan gjøres mye gøyere. Tar ikke hensyn til $Tabs heller, men det kommer.
+	# FIXME: Midlertidig here'ing, det kan gj?res mye g?yere. Tar ikke hensyn til $Tabs heller, men det kommer.
 	print <<END;
 	<head>
 		<title>$DocTitle</title>
@@ -962,8 +962,8 @@ END
 
 =head2 &tab_print()
 
-Skriver ut på samme måte som print, men setter inn I<$Tabs> først på
-hver linje. Det er for å få riktige innrykk. Det forutsetter at
+Skriver ut p? samme m?te som print, men setter inn I<$Tabs> f?rst p?
+hver linje. Det er for ? f? riktige innrykk. Det forutsetter at
 I<$Tabs> er oppdatert til enhver tid.
 
 B<FIXME:> Legg inn konvertering av tegn > 0x7f til entities.
@@ -984,13 +984,13 @@ sub tab_print {
 
 =head2 &tab_str()
 
-Fungerer på samme måte som I<&tab_print()>, men returnerer en streng med
-innholdet istedenfor å skrive det ut. Mulignes det burde vært implementert
-i I<&tab_print()> på en eller annen måte, men blir ikke det tungvint?
+Fungerer p? samme m?te som I<&tab_print()>, men returnerer en streng med
+innholdet istedenfor ? skrive det ut. Mulignes det burde v?rt implementert
+i I<&tab_print()> p? en eller annen m?te, men blir ikke det tungvint?
 
-Vi lar det være sånn foreløpig.
+Vi lar det v?re s?nn forel?pig.
 
-B<FIXME:> Legg inn konvertering av tegn > 0x7f til entities her også.
+B<FIXME:> Legg inn konvertering av tegn > 0x7f til entities her ogs?.
 
 =cut
 
@@ -1009,7 +1009,7 @@ sub tab_str {
 
 =head2 &Tabs()
 
-Øker/minsker verdien av I<${tricgi::Tabs}>. Den kan ta ett parameter, en
+?ker/minsker verdien av I<${tricgi::Tabs}>. Den kan ta ett parameter, en
 verdi som er negativ eller positiv alt ettersom man skal fjerne eller
 legge til TAB'er. Hvis man skriver
 
@@ -1020,7 +1020,7 @@ fjernes to spacer, hvis man skriver
 	&Tabs(5);
 
 legges 5 TAB'er til. Hvis ingen parametere spesifiseres, brukes 1 som
-default, altså en TAB legges til.
+default, alts? en TAB legges til.
 
 =cut
 
