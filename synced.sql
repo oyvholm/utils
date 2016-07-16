@@ -575,7 +575,7 @@ INSERT INTO "synced" VALUES('src/kbd.c','',NULL,NULL);
 INSERT INTO "synced" VALUES('src/personnr/COPYING','http://www.gnu.org/licenses/gpl-2.0.txt','','2015-10-15 17:50:54');
 INSERT INTO "synced" VALUES('src/personnr/Files.md5','','',NULL);
 INSERT INTO "synced" VALUES('src/personnr/Makefile','','',NULL);
-INSERT INTO "synced" VALUES('src/personnr/personnr.c',NULL,NULL,NULL);
+INSERT INTO "synced" VALUES('src/personnr/personnr.c','','',NULL);
 INSERT INTO "synced" VALUES('src/smsum/smsum','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('src/smsum/tests/Makefile','','',NULL);
 INSERT INTO "synced" VALUES('src/smsum/tests/files/dir1.tar.gz','','',NULL);

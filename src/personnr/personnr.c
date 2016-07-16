@@ -103,13 +103,19 @@ int main(int argc, char *argv[])
 			retval |= process_personnr(p);
 		}
 	} else {
-		char buf[15];
-		while (fgets(buf, 12, stdin), !feof(stdin)) {
-			char *p = strstr(buf, "\n");
+		do {
+			char *result;
+			char buf[15];
+			char *p;
+
+			result = fgets(buf, 12, stdin);
+			if (!result)
+				break;
+			p = strstr(buf, "\n");
 			if (p)
 				*p = '\0';
 			retval |= process_personnr(buf);
-		}
+		} while (!feof(stdin));
 	}
 
 	if (retval != EXIT_OK)

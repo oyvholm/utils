@@ -3,7 +3,7 @@
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
 CC = gcc
-CFLAGS = -O2 -g -ansi -pedantic -Wall
+CFLAGS = -O2 -g -ansi -pedantic -Wall -Werror
 EXEC = personnr
 
 $(EXEC): personnr.c Makefile
