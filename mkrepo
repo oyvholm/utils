@@ -1,8 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # mkrepo
 # File ID: b7ee76c4-10c2-11e0-8682-00023faf1383
+#
 # [Description]
 #
 # Character set: UTF-8
@@ -12,20 +13,19 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 
-$| = 1;
-
-our $Debug = 0;
+local $| = 1;
 
 our %Opt = (
 
     'create-remote' => 0,
-    'debug' => 0,
     'directory' => "",
     'exthd-remote' => 0,
     'github-remote' => 0,
     'help' => 0,
+    'quiet' => 0,
     'rsyncnet-remote' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -34,95 +34,107 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = "0.1.0";
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "create-remote|c" => \$Opt{'create-remote'},
-    "debug" => \$Opt{'debug'},
-    "directory|d=s" => \$Opt{'directory'},
-    "exthd-remote|e" => \$Opt{'exthd-remote'},
-    "github-remote|g" => \$Opt{'github-remote'},
-    "help|h" => \$Opt{'help'},
-    "rsyncnet-remote|r" => \$Opt{'rsyncnet-remote'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
+    'create-remote|c' => \$Opt{'create-remote'},
+    'debug' => \$Opt{'debug'},
+    'directory|d=s' => \$Opt{'directory'},
+    'exthd-remote|e' => \$Opt{'exthd-remote'},
+    'github-remote|g' => \$Opt{'github-remote'},
+    'help|h' => \$Opt{'help'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'rsyncnet-remote|r' => \$Opt{'rsyncnet-remote'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
-    die("$progname: $Opt{'directory'}: Invalid characters in --directory argument\n");
-
-my $url = 'sunny@sunbase.org';
-my $rsyncnet_url = $ENV{RN};
-my $dir = $Opt{'directory'} ? "/home/sunny/repos/Git-$Opt{'directory'}" : "/home/sunny/repos/Git";
-my $exthd_dir = '/media/exthd/alt/repos/Git';
-
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
 
-defined($ARGV[0]) || die("$progname: No repo name specified, see --help\n");
-my $repo = $ARGV[0];
-$repo =~ s/(.*)\.git$/$1/i;
-my $rg = "$dir/$repo.git";
-$repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid characters\n");
-chomp(my $hname = `hostname`); # FIXME: Should probably use $HNAME
-if ($Opt{'create-remote'}) {
-    mysystem("ssh", $url, "mkdir $rg && git init --bare $rg");
-    mysystem("git", "remote", "add", "sunbase", "$url:$rg");
-    if (-d "$dir/.") {
-        msg(1, "'$dir' exists, check for local repo...");
-        if (!-d "$rg/.") {
-            msg(1, "'$rg' doesn't exist, create local repo");
-            mysystem("git", "init", "--bare", $rg);
+exit(main());
+
+sub main {
+    # {{{
+    my $Retval = 0;
+
+    $Opt{'directory'} =~ /[^a-z0-9\-_\.\/]/ &&
+        die("$progname: $Opt{'directory'}: Invalid characters in --directory argument\n");
+
+    my $url = 'sunny@sunbase.org';
+    my $rsyncnet_url = $ENV{RN};
+    my $dir = $Opt{'directory'} ? "/home/sunny/repos/Git-$Opt{'directory'}" : "/home/sunny/repos/Git";
+    my $exthd_dir = '/media/exthd/alt/repos/Git';
+
+    defined($ARGV[0]) || die("$progname: No repo name specified, see --help\n");
+    my $repo = $ARGV[0];
+    $repo =~ s/(.*)\.git$/$1/i;
+    my $rg = "$dir/$repo.git";
+    $repo =~ /[^a-z0-9\-_\.\/]/ && die("$progname: $repo: Name contains invalid characters\n");
+    chomp(my $hname = `hostname`); # FIXME: Should probably use $HNAME
+    if ($Opt{'create-remote'}) {
+        mysystem("ssh", $url, "mkdir $rg && git init --bare $rg");
+        mysystem("git", "remote", "add", "sunbase", "$url:$rg");
+        if (-d "$dir/.") {
+            msg(1, "'$dir' exists, check for local repo...");
+            if (!-d "$rg/.") {
+                msg(1, "'$rg' doesn't exist, create local repo");
+                mysystem("git", "init", "--bare", $rg);
+            } else {
+                msg(1, "$rg: Repo already exists, that's good");
+            }
+            mysystem("git", "remote", "add", $hname, "sunny\@localhost:$rg");
+            chomp(my $origdir = `pwd`);
+            if (chdir($rg)) {
+                mysystem("git", "remote", "add", "sunbase", "$url:$rg");
+                chdir($origdir) ||
+                    warn("$progname: $origdir: Cannot chdir to original directory: $!\n");
+            } else {
+                warn("$progname: $rg: chdir error: $!\n");
+            }
         } else {
-            msg(1, "$rg: Repo already exists, that's good");
+            msg(1, "'$dir' doesn't exist, skipping check for local repo");
         }
-        mysystem("git", "remote", "add", $hname, "sunny\@localhost:$rg");
-        chomp(my $origdir = `pwd`);
-        if (chdir($rg)) {
-            mysystem("git", "remote", "add", "sunbase", "$url:$rg");
-            chdir($origdir) ||
-                warn("$progname: $origdir: Cannot chdir to original directory: $!\n");
-        } else {
-            warn("$progname: $rg: chdir error: $!\n");
-        }
-    } else {
-        msg(1, "'$dir' doesn't exist, skipping check for local repo");
     }
-}
-if ($Opt{'github-remote'}) {
-    mysystem("git", "remote", "add", "github", "git\@github.com:sunny256/$repo.git");
-}
-if ($Opt{'exthd-remote'}) {
-    -d "$exthd_dir/$repo.git/." || mysystem("git", "init", "--bare", "$exthd_dir/$repo.git");
-    mysystem("git", "remote", "add", "exthd", "sunny\@localhost:$exthd_dir/$repo.git");
-}
-if ($Opt{'rsyncnet-remote'}) {
-    my $repodir = sprintf("repos/Git%s/$repo.git",
-        length($Opt{'directory'}) ? "-$Opt{'directory'}" : "",
-    );
-    mysystem("git", "remote", "add", "rsync-net", "$rsyncnet_url:$repodir");
-    mysystem("ssh", $rsyncnet_url, "git", "init", "--bare", "$repodir");
-}
+    if ($Opt{'github-remote'}) {
+        mysystem("git", "remote", "add", "github", "git\@github.com:sunny256/$repo.git");
+    }
+    if ($Opt{'exthd-remote'}) {
+        -d "$exthd_dir/$repo.git/." || mysystem("git", "init", "--bare", "$exthd_dir/$repo.git");
+        mysystem("git", "remote", "add", "exthd", "sunny\@localhost:$exthd_dir/$repo.git");
+    }
+    if ($Opt{'rsyncnet-remote'}) {
+        my $repodir = sprintf("repos/Git%s/$repo.git",
+            length($Opt{'directory'}) ? "-$Opt{'directory'}" : "",
+        );
+        mysystem("git", "remote", "add", "rsync-net", "$rsyncnet_url:$repodir");
+        mysystem("ssh", $rsyncnet_url, "git", "init", "--bare", "$repodir");
+    }
+
+    return($Retval);
+    # }}}
+} # main()
 
 sub mysystem {
     # {{{
     my @cmd = @_;
     msg(0, "Executing '" . join(" ", @cmd) . "'");
-    system(@cmd);
+    # system(@cmd);
     return;
     # }}}
 } # mysystem()
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -134,7 +146,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Usage: $progname [options] repo_name
 
@@ -150,14 +162,14 @@ Options:
     Define the github remote
   -h, --help
     Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -r, --rsyncnet-remote
     Create the rsync-net remote and initialize it.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
     exit($Retval);
@@ -171,95 +183,24 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
-
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 NAME
-
-
-
-=head1 SYNOPSIS
-
- [options] [file [files [...]]]
-
-=head1 DESCRIPTION
-
-
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<-h>, B<--help>
-
-Print a brief help summary.
-
-=item B<-v>, B<--verbose>
-
-Increase level of verbosity. Can be repeated.
-
-=item B<--version>
-
-Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
-
-=back
-
-=head1 BUGS
-
-
-
-=head1 AUTHOR
-
-Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
-
-=head1 COPYRIGHT
-
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
-This is free software; see the file F<COPYING> for legalese stuff.
-
-=head1 LICENCE
-
-This program is free software: you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=head1 SEE ALSO
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
