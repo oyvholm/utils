@@ -48,6 +48,3 @@ testclean:
 
 unmerged:
 	git br -a --no-merged | grep -v /all/ | cut -f 3- -d / | rmspcall | sort -u | grep -v ^commit-
-
-update:
-	cd Git && ./update
