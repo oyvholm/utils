@@ -47,7 +47,7 @@ INSERT INTO "synced" VALUES('Lib/perllib/Test/edc-test.pl','Lib/std/perl',NULL,N
 INSERT INTO "synced" VALUES('Lib/perllib/index.cgi',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/perllib/suncgi.pm',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/perllib/test.shtml',NULL,NULL,NULL);
-INSERT INTO "synced" VALUES('Lib/perllib/tricgi.pm',NULL,NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/perllib/tricgi.pm','','',NULL);
 INSERT INTO "synced" VALUES('Lib/perllib/tripwd.pm',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/Add_test','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2.0.txt','',NULL);
