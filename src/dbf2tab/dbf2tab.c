@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <strings.h>
+#include <stdlib.h>
+#include <string.h>
 #define  MAXSTR 512
 #define  INTEL
 #define  min(x,y) (x < y ? x : y)
