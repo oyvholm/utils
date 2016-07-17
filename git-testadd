@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.5.0
+VERSION=0.6.0
 
 ARGS="$(getopt -o "\
 h\
@@ -48,6 +48,12 @@ while :; do
 	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
+
+msg() {
+	test $1 -gt $opt_verbose && return;
+	shift
+	echo "$progname: $*" >&2
+}
 
 tmpdir=".testadd.tmp"
 
@@ -135,12 +141,12 @@ else
 	git clone "$topdir" "$tmpdir"
 
 	if test "$opt_pristine" = "1"; then
-		:
+		msg 0 Running command with unmodified HEAD
 	elif git diff --cached --binary | grep -q .; then
+		msg 0 Applying staged changes
 		git diff --cached --binary | (cd "$tmpdir" && git apply)
-	elif test $opt_verbose -ge 0; then
-		echo -n "$progname: No staged changes, " >&2
-		echo running command with clean HEAD >&2
+	else
+		msg 0 No staged changes, running command with clean HEAD
 	fi
 fi
 
@@ -151,7 +157,7 @@ cd "$newdir" || {
 }
 
 echo >&2
-test $opt_verbose -ge 1 && echo "$progname: Executing \"$*\" in $(pwd)" >&2
+msg 0 "Executing \"$*\" in $(pwd)"
 eval "$@"
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
