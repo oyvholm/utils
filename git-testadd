@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.6.0
+VERSION=0.6.1
 
 ARGS="$(getopt -o "\
 h\
@@ -136,6 +136,7 @@ if test "$opt_unmodified" = "1"; then
 		echo $progname: $tmpdir not found, -u/--unmodified needs it >&2
 		exit 1
 	fi
+	msg 0 "No changes made in $tmpdir/"
 else
 	rm -rf "$tmpdir"
 	git clone "$topdir" "$tmpdir"
