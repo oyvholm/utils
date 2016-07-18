@@ -27,6 +27,7 @@ our $CMD_BASENAME = "git-testadd";
 our %Opt = (
 
 	'help' => 0,
+	'verbose' => 0,
 	'version' => 0,
 
 );
@@ -39,6 +40,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'help|h' => \$Opt{'help'},
+	'verbose|v+' => \$Opt{'verbose'},
 	'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
@@ -71,6 +73,10 @@ sub usage {
 	# Send the help message to stdout
 	my $Retval = shift;
 
+	if ($Opt{'verbose'}) {
+		print("\n");
+		print_version();
+	}
 	print(<<"END");
 
 Usage: $progname [options]
@@ -81,6 +87,8 @@ Options:
 
   -h, --help
     Show this help.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
   --version
     Print version information.
 
