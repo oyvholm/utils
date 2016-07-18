@@ -20,9 +20,28 @@ BEGIN {
 	# use_ok() goes here
 }
 
+use Getopt::Long;
+
+our $CMD_BASENAME = "git-testadd";
+
+our %Opt = (
+
+	'help' => 0,
+
+);
+
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.8.0';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+	'help|h' => \$Opt{'help'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'help'} && usage(0);
 
 exit(main());
 
@@ -35,6 +54,25 @@ sub main {
 	diag('Testing finished.');
 
 	return $Retval;
+}
+
+sub usage {
+	# Send the help message to stdout
+	my $Retval = shift;
+
+	print(<<"END");
+
+Usage: $progname [options]
+
+Contains tests for the $CMD_BASENAME(1) program.
+
+Options:
+
+  -h, --help
+    Show this help.
+
+END
+	exit($Retval);
 }
 
 __END__
