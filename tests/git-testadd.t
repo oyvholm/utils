@@ -27,6 +27,7 @@ our $CMD_BASENAME = "git-testadd";
 our %Opt = (
 
 	'help' => 0,
+	'version' => 0,
 
 );
 
@@ -38,10 +39,15 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'help|h' => \$Opt{'help'},
+	'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+	print_version();
+	exit(0);
+}
 
 exit(main());
 
@@ -54,6 +60,11 @@ sub main {
 	diag('Testing finished.');
 
 	return $Retval;
+}
+
+sub print_version {
+	# Print program version
+	print("$progname $VERSION\n");
 }
 
 sub usage {
@@ -70,6 +81,8 @@ Options:
 
   -h, --help
     Show this help.
+  --version
+    Print version information.
 
 END
 	exit($Retval);
