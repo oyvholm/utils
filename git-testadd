@@ -11,11 +11,12 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.7.0
+VERSION=0.8.0
 
 ARGS="$(getopt -o "\
 h\
 l:\
+n,
 p\
 q\
 u\
@@ -23,6 +24,7 @@ v\
 " -l "\
 help,\
 label:,\
+dry-run,\
 pristine,\
 quiet,\
 unmodified,\
@@ -34,6 +36,7 @@ eval set -- "$ARGS"
 
 opt_help=0
 opt_label=''
+opt_dry_run=0
 opt_pristine=0
 opt_quiet=0
 opt_unmodified=0
@@ -42,6 +45,7 @@ while :; do
 	case "$1" in
 		(-h|--help) opt_help=1; shift ;;
 		(-l|--label) opt_label="$2"; shift 2 ;;
+		(-n|--dry-run) opt_dry_run=1; shift ;;
 		(-p|--pristine) opt_pristine=1; shift ;;
 		(-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 		(-u|--unmodified) opt_unmodified=1; shift ;;
@@ -106,6 +110,8 @@ Options:
   -l LABEL, --label LABEL
     Add LABEL to the name of the destination directory, specify 
     destination directory to use.
+  -n, --dry-run
+    Don't do anything, only print all commands to stdout.
   -p, --pristine
     Don't apply the staged changes, run the command with a clean HEAD.
   -q, --quiet
@@ -123,6 +129,12 @@ Options:
 
 END
 	exit 0
+fi
+
+if test "$opt_dry_run" = "1"; then
+	sim=echo
+else
+	sim=''
 fi
 
 if test -z "$1"; then
@@ -150,27 +162,28 @@ if test "$opt_unmodified" = "1"; then
 	fi
 	msg 0 "No changes made in $tmpdir/"
 else
-	rm -rf "$tmpdir"
-	git clone "$topdir" "$tmpdir"
+	$sim rm -rf "$tmpdir"
+	$sim git clone "$topdir" "$tmpdir"
 
 	if test "$opt_pristine" = "1"; then
 		msg 0 Running command with unmodified HEAD
 	elif git diff --cached --binary | grep -q .; then
 		msg 0 Applying staged changes
-		git diff --cached --binary | (cd "$tmpdir" && git apply)
+		ap="git diff --cached --binary | (cd \"$tmpdir\" && git apply)"
+		$sim eval "$ap"
 	else
 		msg 0 No staged changes, running command with clean HEAD
 	fi
 fi
 
 newdir="$tmpdir/$subdir"
-cd "$newdir" || {
+$sim cd "$newdir" || {
 	echo "$progname: $newdir: Cannot chdir" >&2
 	exit 1
 }
 
 echo >&2
 msg 0 "Executing \"$*\" in $(pwd)"
-eval "$@"
+$sim eval "$@"
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
