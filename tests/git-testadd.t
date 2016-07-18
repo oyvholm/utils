@@ -15,10 +15,24 @@
 use strict;
 use warnings;
 
+BEGIN {
+	use Test::More qw{no_plan};
+	# use_ok() goes here
+}
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.8.0';
+
 exit(main());
 
 sub main {
 	my $Retval = 0;
+
+	diag(sprintf('========== Executing %s v%s ==========',
+	             $progname, $VERSION));
+
+	diag('Testing finished.');
 
 	return $Retval;
 }
