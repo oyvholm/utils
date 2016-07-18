@@ -11,16 +11,18 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.6.1
+VERSION=0.7.0
 
 ARGS="$(getopt -o "\
 h\
+l:\
 p\
 q\
 u\
 v\
 " -l "\
 help,\
+label:,\
 pristine,\
 quiet,\
 unmodified,\
@@ -31,6 +33,7 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_help=0
+opt_label=''
 opt_pristine=0
 opt_quiet=0
 opt_unmodified=0
@@ -38,6 +41,7 @@ opt_verbose=0
 while :; do
 	case "$1" in
 		(-h|--help) opt_help=1; shift ;;
+		(-l|--label) opt_label="$2"; shift 2 ;;
 		(-p|--pristine) opt_pristine=1; shift ;;
 		(-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 		(-u|--unmodified) opt_unmodified=1; shift ;;
@@ -99,6 +103,9 @@ Options:
 
   -h, --help
     Show this help.
+  -l LABEL, --label LABEL
+    Add LABEL to the name of the destination directory, specify 
+    destination directory to use.
   -p, --pristine
     Don't apply the staged changes, run the command with a clean HEAD.
   -q, --quiet
@@ -130,6 +137,11 @@ if test -z "$topdir"; then
 	echo $progname: Could not get root dir of repo >&2
 	exit 1
 fi
+
+if test -n "$opt_label"; then
+	tmpdir=".testadd-$opt_label.tmp"
+fi
+msg 0 Using \"$tmpdir\" as destination directory
 
 if test "$opt_unmodified" = "1"; then
 	if test ! -d "$tmpdir"; then
