@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=Add_test
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -72,5 +72,5 @@ if test -z "$name"; then
     echo $progname: Missing test file name >&2
     exit 1
 fi
-std perl-tests $name.t -t progname=$name
+std perl-tests-tab $name.t -t progname=$name
 chmod +x $name.t
