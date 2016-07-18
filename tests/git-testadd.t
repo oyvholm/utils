@@ -27,6 +27,7 @@ our $CMD_BASENAME = "git-testadd";
 our %Opt = (
 
 	'help' => 0,
+	'quiet' => 0,
 	'verbose' => 0,
 	'version' => 0,
 
@@ -40,11 +41,13 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'help|h' => \$Opt{'help'},
+	'quiet|q+' => \$Opt{'quiet'},
 	'verbose|v+' => \$Opt{'verbose'},
 	'version' => \$Opt{'version'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
 	print_version();
@@ -87,6 +90,8 @@ Options:
 
   -h, --help
     Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
