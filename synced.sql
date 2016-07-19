@@ -640,6 +640,7 @@ INSERT INTO "synced" VALUES('tests/git-dangling-files/repo.bundle','','',NULL);
 INSERT INTO "synced" VALUES('tests/git-dangling.t','Lib/std/perl-tests','6d2b8613110bc1ca96585f35a26600572a8ec6ff','2016-07-15 18:39:15');
 INSERT INTO "synced" VALUES('tests/git-dbr.t','Lib/std/perl-tests','6d2b8613110bc1ca96585f35a26600572a8ec6ff','2016-07-15 18:39:15');
 INSERT INTO "synced" VALUES('tests/git-scanrefs.t','Lib/std/perl-tests','6d2b8613110bc1ca96585f35a26600572a8ec6ff','2016-07-15 18:39:15');
+INSERT INTO "synced" VALUES('tests/git-testadd.t','Lib/std/perl-tests-tab','99955fc90d1fd8f95f178b68e1424533498712b5','2016-07-18 11:36:27');
 INSERT INTO "synced" VALUES('tests/git-update-dirs.t','Lib/std/perl-tests','6d2b8613110bc1ca96585f35a26600572a8ec6ff','2016-07-15 18:39:15');
 INSERT INTO "synced" VALUES('tests/git-wip.t','Lib/std/perl-tests','6d2b8613110bc1ca96585f35a26600572a8ec6ff','2016-07-15 18:39:15');
 INSERT INTO "synced" VALUES('tests/gotexp-files/output1.txt','','',NULL);
