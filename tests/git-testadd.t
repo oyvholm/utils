@@ -22,6 +22,8 @@ BEGIN {
 
 use Getopt::Long;
 
+local $| = 1;
+
 our $CMD_BASENAME = "git-testadd";
 our $CMD = "../$CMD_BASENAME";
 
@@ -471,6 +473,14 @@ Options:
 
 END
 	exit($Retval);
+}
+
+sub msg {
+	# Print a status message to stderr based on verbosity level
+	my ($verbose_level, $Txt) = @_;
+
+	$verbose_level > $Opt{'verbose'} && return;
+	print(STDERR "$progname: $Txt\n");
 }
 
 __END__
