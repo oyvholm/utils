@@ -69,8 +69,7 @@ sub main {
 	my $Retval = 0;
 
 	diag(sprintf('========== Executing %s v%s ==========',
-		$progname,
-		$VERSION));
+	             $progname, $VERSION));
 
 	if ($Opt{'todo'} && !$Opt{'all'}) {
 		goto todo_section;
@@ -91,34 +90,30 @@ sub main {
 
 	diag('Testing finished.');
 
-	return($Retval);
+	return $Retval;
 }
 
 sub test_standard_options {
 	diag('Testing -h (--help) option...');
 	likecmd("$CMD -h",
-		'/  Show this help/i',
-		'/^$/',
-		0,
-		'Option -h prints help screen',
-	);
+	        '/  Show this help/i',
+	        '/^$/',
+	        0,
+	        'Option -h prints help screen');
 
 	diag('Testing -v (--verbose) option...');
 	likecmd("$CMD -hv",
-		'/^\n\S+ \d+\.\d+\.\d+/s',
-		'/^$/',
-		0,
-		'Option -v with -h returns version number and help screen',
-	);
+	        '/^\n\S+ \d+\.\d+\.\d+/s',
+	        '/^$/',
+	        0,
+	        'Option -v with -h returns version number and help screen');
 
 	diag('Testing --version option...');
 	likecmd("$CMD --version",
-		'/^\S+ \d+\.\d+\.\d+/',
-		'/^$/',
-		0,
-		'Option --version returns version number',
-	);
-	return;
+	        '/^\S+ \d+\.\d+\.\d+/',
+	        '/^$/',
+	        0,
+	        'Option --version returns version number');
 }
 
 sub testcmd {
@@ -128,12 +123,7 @@ sub testcmd {
 	$descriptions{$Desc} = 1;
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
-	my $Txt = join('',
-		$cmd_outp_str,
-		defined($Desc)
-			? $Desc
-			: ''
-	);
+	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
 	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
 	my $retval = 1;
 
@@ -151,7 +141,7 @@ sub testcmd {
 	}
 	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
 
-	return($retval);
+	return $retval;
 }
 
 sub likecmd {
@@ -161,12 +151,7 @@ sub likecmd {
 	$descriptions{$Desc} = 1;
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
-	my $Txt = join('',
-		$cmd_outp_str,
-		defined($Desc)
-			? $Desc
-			: ''
-	);
+	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
 	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
 	my $retval = 1;
 
@@ -184,7 +169,7 @@ sub likecmd {
 	}
 	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
 
-	return($retval);
+	return $retval;
 }
 
 sub file_data {
