@@ -148,6 +148,12 @@ sub test_options_without_commits {
 	             ",rm(),clone(),cd(),cmd,",
 	             ",using(),unmodified,cmd,", 0,
 	             "-p", "--pristine");
+
+	diag("-u/--unmodified");
+	test_options("-u/--unmodified, missing destdir",
+	             "",
+	             ",using(),notfound(),", 1,
+	             "-u", "--unmodified");
 }
 
 =pod
@@ -225,6 +231,13 @@ sub o_err {
 		$val = length($val) ? "-$val" : "";
 		$retval .= "git-testadd: Using \"\\.testadd$val\\.tmp\" as " .
 		           "destination directory\\n";
+	}
+	if ($flags =~ /,notfound\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$val = length($val) ? "-$val" : "";
+		$retval .= "git-testadd: \\.testadd$val\\.tmp not found, " .
+		           "-u\\/--unmodified needs it\\n";
 	}
 	if ($flags =~ /,nostaged,/) {
 		$retval .= "git-testadd: No staged changes, running command " .
