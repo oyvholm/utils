@@ -121,12 +121,110 @@ sub test_executable {
 	ok(chdir($repo), "chdir [repo]");
 	$CMD = "../../$CMD";
 
+	test_options_without_commits();
+
 	diag("Clean up files");
 	ok(chdir("../.."), "chdir ../..");
 	$CMD =~ s/^\.\.\/\.\.\///;
 	ok(-d $repo, "[repo] exists") || BAIL_OUT("$repo not found");
 	testcmd("rm -rf \"$repo\"", "", "", 0, "rm -rf [repo]");
 	ok(rmdir($toptmp), "rmdir [toptmp]");
+}
+
+sub test_options_without_commits {
+	diag("No options");
+	test_options("No options",
+	             ",rm(),clone(),cd(),cmd,", ",using(),nostaged,cmd,", 0,
+	             "");
+}
+
+=pod
+
+test_options() - Test the executable with the received options. Runs the 
+program with -n (--dry-run) and checks stdout, stderr and exit value.
+
+=cut
+
+sub test_options {
+	my ($desc, $stdout, $stderr, $exitval, @opts) = @_;
+
+	for my $opt (@opts) {
+		my $spc = length($opt) ? " " : "";
+
+		likecmd("$CMD -n$spc$opt cmd",
+		        o_out($stdout), o_err($stderr), $exitval,
+		        "$desc ($opt)");
+	}
+}
+
+=pod
+
+o_out() - Return string with expected stdout output. Parse contents of $flags, 
+a comma-separated list of flags with optional arguments in ().
+
+=cut
+
+sub o_out {
+	my $flags = shift;
+	my $retval = "";
+
+	$retval .= '/^';
+	if ($flags =~ /,rm\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$val = length($val) ? "-$val" : "";
+		$retval .= "rm -rf \\.testadd$val\\.tmp\\n";
+	}
+	if ($flags =~ /,clone\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$val = length($val) ? "-$val" : "";
+		$retval .= "git clone .+ \\.testadd$val\\.tmp\\n";
+	}
+	if ($flags =~ /,cd\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$val = length($val) ? "-$val" : "";
+		$retval .= "cd \\.testadd$val\\.tmp\\/\\n";
+	}
+	if ($flags =~ /,cmd,/) {
+		$retval .= "eval cmd\\n";
+	}
+	$retval .= '$/s';
+
+	return $retval;
+}
+
+=pod
+
+o_err() - Return string with expected stderr output. Parse contents of $flags, 
+a comma-separated list of flags with optional arguments in ().
+
+=cut
+
+sub o_err {
+	my $flags = shift;
+	my $retval = "";
+
+	$retval .= '/^';
+	if ($flags =~ /,using\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$val = length($val) ? "-$val" : "";
+		$retval .= "git-testadd: Using \"\\.testadd$val\\.tmp\" as " .
+		           "destination directory\\n";
+	}
+	if ($flags =~ /,nostaged,/) {
+		$retval .= "git-testadd: No staged changes, running command " .
+		           "with clean HEAD\\n";
+	}
+	if ($flags =~ /,cmd,/) {
+		$retval .= "\\n";
+		$retval .= "git-testadd: Executing \"cmd\" in .+\\n";
+	}
+	$retval .= '$/s';
+
+	return $retval;
 }
 
 sub cmd {
