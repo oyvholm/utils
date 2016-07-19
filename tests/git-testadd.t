@@ -122,6 +122,7 @@ sub test_executable {
 	$CMD = "../../$CMD";
 
 	test_options_without_commits();
+	test_options_with_commits();
 
 	diag("Clean up files");
 	ok(chdir("../.."), "chdir ../..");
@@ -154,6 +155,17 @@ sub test_options_without_commits {
 	             "",
 	             ",using(),notfound(),", 1,
 	             "-u", "--unmodified");
+}
+
+sub test_options_with_commits {
+	diag("Add, commit and modify a new file");
+	commit_new_file("file.txt");
+	is(commit_log("master"),
+	   "1f935e2a5946e77df739c9d2f376af3778ddb71e Add file.txt\n",
+	   "git log after file.txt was added");
+	cmd("echo New line >>file.txt", "Add new line to file.txt");
+	is(file_data("file.txt"), "This is file.txt\nNew line\n",
+	             "New line was added to file.txt");
 }
 
 =pod
@@ -256,6 +268,31 @@ sub o_err {
 	return $retval;
 }
 
+sub commit_new_file {
+	my $file = shift;
+
+	ok(!-e $file, "$file doesn't exist");
+	create_file($file, "This is $file\n");
+	cmd("$Opt{'git'} add \"$file\"", "$Opt{'git'} add $file");
+	cmd("$Opt{'git'} commit -m \"Add $file\"",
+	    "$Opt{'git'} commit (add $file)");
+}
+
+sub commit_log {
+	my $ref = shift;
+	my $retval = '';
+
+	open(my $pipefp,
+	     "$Opt{'git'} log --format='%T %s' --topo-order $ref |") or
+		return "'$Opt{'git'} log' pipe error: $!\n";
+	while (<$pipefp>) {
+		$retval .= $_;
+	}
+	close($pipefp);
+
+	return $retval;
+}
+
 sub cmd {
 	my ($cmd, $desc) = @_;
 
@@ -328,6 +365,20 @@ sub file_data {
 	$Txt = <$fp>;
 	close($fp);
 	return $Txt;
+}
+
+sub create_file {
+	# Create new file and fill it with data
+	my ($file, $text) = @_;
+	my $retval = 0;
+
+	open(my $fp, ">$file") or return 0;
+	print($fp $text);
+	close($fp);
+	$retval = is(file_data($file), $text,
+	             "$file was successfully created");
+
+	return $retval; # 0 if error, 1 if ok
 }
 
 sub print_version {
