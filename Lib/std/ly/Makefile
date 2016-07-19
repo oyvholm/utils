@@ -52,15 +52,15 @@ dist:
 
 .PHONY: dw
 dw:
-	git dw *.ly *.ily
+	git diff --word-diff *.ly *.ily
 
 .PHONY: dww
 dww:
-	git dww *.ly *.ily
+	git diff --word-diff --word-diff-regex=. *.ly *.ily
 
 .PHONY: edit
 edit:
-	v $(NAME).ly *.ily
+	$(EDITOR) $(NAME).ly *.ily
 
 .PHONY: fresco
 fresco:
