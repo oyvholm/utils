@@ -88,6 +88,13 @@ sub test_standard_options {
 	        '/^$/',
 	        0,
 	        'Option -h prints help screen');
+
+	diag('Testing -v (--verbose) option...');
+	likecmd("$CMD -hv",
+	        '/^\n\S+ \d+\.\d+\.\d+/s',
+	        '/^$/',
+	        0,
+	        'Option -v with -h returns version number and help screen');
 }
 
 sub likecmd {
