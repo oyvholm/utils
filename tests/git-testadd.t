@@ -175,6 +175,26 @@ sub test_options_with_commits {
 	cmd("echo New line >>file.txt", "Add new line to file.txt");
 	is(file_data("file.txt"), "This is file.txt\nNew line\n",
 	             "New line was added to file.txt");
+
+	diag("Test without staged changes");
+	test_options("No options, no staged changes",
+	             ",rm(),clone(),cd(),cmd,", ",using(),nostaged,cmd,", 0,
+	             "");
+
+	diag("Test with staged changes");
+	cmd("$Opt{'git'} add file.txt", "Add changes in file.txt to Git");
+
+	diag("-p/--pristine");
+	test_options("-p/--pristine, staged changes",
+	             ",rm(),clone(),cd(),cmd,",
+	             ",using(),unmodified,cmd,", 0,
+	             "-p", "--pristine");
+
+	diag("-u/--unmodified");
+	test_options("-u/--unmodified, staged changes",
+	             "",
+	             ",using(),notfound(),", 1,
+	             "-u", "--unmodified");
 }
 
 =pod
