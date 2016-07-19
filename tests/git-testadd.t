@@ -23,6 +23,7 @@ BEGIN {
 use Getopt::Long;
 
 our $CMD_BASENAME = "git-testadd";
+our $CMD = "../$CMD_BASENAME";
 
 our %Opt = (
 
@@ -38,6 +39,8 @@ our %Opt = (
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.8.0';
+
+my %descriptions = ();
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -71,9 +74,60 @@ sub main {
 		return 0;
 	}
 
+	test_standard_options();
+
 	diag('Testing finished.');
 
 	return $Retval;
+}
+
+sub test_standard_options {
+	diag('Testing -h (--help) option...');
+	likecmd("$CMD -h",
+	        '/  Show this help/i',
+	        '/^$/',
+	        0,
+	        'Option -h prints help screen');
+}
+
+sub likecmd {
+	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+	defined($descriptions{$Desc}) &&
+		BAIL_OUT("likecmd(): '$Desc' description is used twice");
+	$descriptions{$Desc} = 1;
+	my $stderr_cmd = '';
+	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
+	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
+	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $retval = 1;
+
+	if (defined($Exp_stderr)) {
+		$stderr_cmd = " 2>$TMP_STDERR";
+	}
+	$retval &= like(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
+	my $ret_val = $?;
+	if (defined($Exp_stderr)) {
+		$retval &= like(file_data($TMP_STDERR),
+		                $Exp_stderr, "$Txt (stderr)");
+		unlink($TMP_STDERR);
+	} else {
+		diag("Warning: stderr not defined for '$Txt'");
+	}
+	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
+	return $retval;
+}
+
+sub file_data {
+	# Return file content as a string
+	my $File = shift;
+	my $Txt;
+
+	open(my $fp, '<', $File) or return undef;
+	local $/ = undef;
+	$Txt = <$fp>;
+	close($fp);
+	return $Txt;
 }
 
 sub print_version {
