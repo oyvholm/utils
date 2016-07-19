@@ -28,6 +28,7 @@ our $CMD = "../$CMD_BASENAME";
 our %Opt = (
 
 	'all' => 0,
+	'git' => defined($ENV{'TESTADD_GIT'}) ? $ENV{'TESTADD_GIT'} : 'git',
 	'help' => 0,
 	'quiet' => 0,
 	'todo' => 0,
@@ -46,6 +47,7 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'all|a' => \$Opt{'all'},
+	'git|g=s' => \$Opt{'git'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
 	'todo|t' => \$Opt{'todo'},
@@ -107,13 +109,58 @@ sub test_standard_options {
 
 sub test_executable {
 	my $toptmp = "tmp-git-testadd-t-$$-" . substr(rand, 2, 8);
+	my $repo = "$toptmp/repo";
 
+	diag("Initialise Git repository");
 	ok(! -d $toptmp, "[toptmp] doesn't exist") ||
 		BAIL_OUT("$toptmp already exists");
 	ok(mkdir($toptmp), "mkdir [toptmp]");
+	cmd("$Opt{'git'} init \"$repo\"", "$Opt{'git'} init [repo]");
+	ok(-d "$repo/.git", "[repo]/.git exists") ||
+		BAIL_OUT("$repo/.git doesn't exist");
+	ok(chdir($repo), "chdir [repo]");
+	$CMD = "../../$CMD";
 
 	diag("Clean up files");
+	ok(chdir("../.."), "chdir ../..");
+	$CMD =~ s/^\.\.\/\.\.\///;
+	ok(-d $repo, "[repo] exists") || BAIL_OUT("$repo not found");
+	testcmd("rm -rf \"$repo\"", "", "", 0, "rm -rf [repo]");
 	ok(rmdir($toptmp), "rmdir [toptmp]");
+}
+
+sub cmd {
+	my ($cmd, $desc) = @_;
+
+	likecmd($cmd, '/.*/', '/.*/', 0, $desc);
+}
+
+sub testcmd {
+	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
+	defined($descriptions{$Desc}) &&
+		BAIL_OUT("testcmd(): '$Desc' description is used twice");
+	$descriptions{$Desc} = 1;
+	my $stderr_cmd = '';
+	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
+	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
+	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $retval = 1;
+
+	if (defined($Exp_stderr)) {
+		$stderr_cmd = " 2>$TMP_STDERR";
+	}
+	$retval &= is(`$Cmd$stderr_cmd`, $Exp_stdout, "$Txt (stdout)");
+	my $ret_val = $?;
+	if (defined($Exp_stderr)) {
+		$retval &= is(file_data($TMP_STDERR),
+		              $Exp_stderr, "$Txt (stderr)");
+		unlink($TMP_STDERR);
+	} else {
+		diag("Warning: stderr not defined for '$Txt'");
+	}
+	$retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
+	return $retval;
 }
 
 sub likecmd {
@@ -179,6 +226,10 @@ Options:
 
   -a, --all
     Run all tests, also TODOs.
+  -g X, --git X
+    Specify alternative git executable to use. Used to execute the tests 
+    with different git versions. This can also be set with the 
+    TESTADD_GIT environment variable.
   -h, --help
     Show this help.
   -q, --quiet
