@@ -75,6 +75,7 @@ sub main {
 	}
 
 	test_standard_options();
+	test_executable();
 
 	diag('Testing finished.');
 
@@ -102,6 +103,17 @@ sub test_standard_options {
 	        '/^$/',
 	        0,
 	        'Option --version returns version number');
+}
+
+sub test_executable {
+	my $toptmp = "tmp-git-testadd-t-$$-" . substr(rand, 2, 8);
+
+	ok(! -d $toptmp, "[toptmp] doesn't exist") ||
+		BAIL_OUT("$toptmp already exists");
+	ok(mkdir($toptmp), "mkdir [toptmp]");
+
+	diag("Clean up files");
+	ok(rmdir($toptmp), "rmdir [toptmp]");
 }
 
 sub likecmd {
