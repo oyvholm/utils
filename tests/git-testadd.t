@@ -183,6 +183,16 @@ sub test_options_with_commits {
 
 	diag("Test with staged changes");
 	cmd("$Opt{'git'} add file.txt", "Add changes in file.txt to Git");
+	test_options("No options, staged changes",
+	             ",rm(),clone(),apply(),cd(),cmd,",
+	             ",using(),applying,cmd,", 0, "");
+
+	diag("-l/--label");
+	test_options("-l/--label, staged changes",
+	             ",rm(mylabel),clone(mylabel),apply(mylabel)," .
+	                 "cd(mylabel),cmd,",
+	             ",using(mylabel),applying,cmd,", 0,
+	             "-l mylabel", "--label mylabel");
 
 	diag("-p/--pristine");
 	test_options("-p/--pristine, staged changes",
@@ -240,6 +250,14 @@ sub o_out {
 		$val = length($val) ? "-$val" : "";
 		$retval .= "git clone .+ \\.testadd$val\\.tmp\\n";
 	}
+	if ($flags =~ /,apply\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$val = length($val) ? "-$val" : "";
+		$retval .= "eval git diff --cached --binary \\| " .
+		           "\\(cd \"\\.testadd$val\\.tmp\" \\&\\& " .
+		           "git apply\\)\\n" . "";
+	}
 	if ($flags =~ /,cd\(([^\(\)]*)\),/) {
 		my $val = $1;
 
@@ -279,6 +297,9 @@ sub o_err {
 		$val = length($val) ? "-$val" : "";
 		$retval .= "git-testadd: \\.testadd$val\\.tmp not found, " .
 		           "-u\\/--unmodified needs it\\n";
+	}
+	if ($flags =~ /,applying,/) {
+		$retval .= "git-testadd: Applying staged changes\\n";
 	}
 	if ($flags =~ /,nostaged,/) {
 		$retval .= "git-testadd: No staged changes, running command " .
