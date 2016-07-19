@@ -10,22 +10,22 @@ LILYPOND = lilypond
 
 .PHONY: default
 default:
-	make .version.ily $(NAME).midi $(NAME).pdf
+	$(MAKE) .version.ily $(NAME).midi $(NAME).pdf
 
 $(NAME).midi: $(NAME).ly *.ily Makefile
-	make .version.ily
+	$(MAKE) .version.ily
 	$(LILYPOND) $(NAME).ly
 
 $(NAME).pdf: $(NAME).ly *.ily Makefile
-	make .version.ily
+	$(MAKE) .version.ily
 	$(LILYPOND) $(NAME).ly
 
 $(NAME).wav: $(NAME).ly *.ily Makefile
-	make
+	$(MAKE)
 	timidity --output-24bit -Ow $(NAME).midi
 
 $(NAME).mp3: $(NAME).wav $(NAME).ly *.ily Makefile
-	make $(NAME).wav
+	$(MAKE) $(NAME).wav
 	rm -fv $(NAME).mp3
 	wav_to_mp3 $(NAME).wav
 
@@ -47,7 +47,7 @@ diff:
 
 .PHONY: dist
 dist:
-	make .version.ily
+	$(MAKE) .version.ily
 	$(LILYPOND) -dno-point-and-click $(NAME).ly
 
 .PHONY: dw
@@ -69,16 +69,16 @@ fresco:
 
 .PHONY: mp3
 mp3:
-	make $(NAME).mp3
+	$(MAKE) $(NAME).mp3
 
 .PHONY: play
 play:
-	make
+	$(MAKE)
 	timidity --output-24bit $(NAME).midi
 
 .PHONY: slow
 slow:
-	make $(NAME).midi
+	$(MAKE) $(NAME).midi
 	timidity --output-24bit -T 50 $(NAME).midi
 
 .PHONY: swp
@@ -91,10 +91,10 @@ touch:
 
 .PHONY: view
 view:
-	make $(NAME).pdf
+	$(MAKE) $(NAME).pdf
 	sess evince $(NAME).pdf &>/dev/null &
 
 .PHONY: wav
 wav:
-	make $(NAME).wav
+	$(MAKE) $(NAME).wav
 	p $(NAME).wav

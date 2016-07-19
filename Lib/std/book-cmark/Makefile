@@ -3,7 +3,7 @@
 
 .PHONY: default
 default:
-	@make -s wc
+	@$(MAKE) -s wc
 
 .PHONY: clean
 clean:
@@ -45,5 +45,5 @@ test:
 wc:
 	@bin/stats -c index.md
 	@echo wc: $$(bin/stats --data index.md | wc -w)
-	@make -s spar
+	@$(MAKE) -s spar
 	@spar -s STDprojnameDTS | tail -1
