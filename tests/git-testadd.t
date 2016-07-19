@@ -142,6 +142,12 @@ sub test_options_without_commits {
 	             ",rm(mylabel),clone(mylabel),cd(mylabel),cmd,",
 	             ",using(mylabel),nostaged,cmd,", 0,
 	             "-l mylabel", "--label mylabel");
+
+	diag("-p/--pristine");
+	test_options("-p/--pristine",
+	             ",rm(),clone(),cd(),cmd,",
+	             ",using(),unmodified,cmd,", 0,
+	             "-p", "--pristine");
 }
 
 =pod
@@ -223,6 +229,10 @@ sub o_err {
 	if ($flags =~ /,nostaged,/) {
 		$retval .= "git-testadd: No staged changes, running command " .
 		           "with clean HEAD\\n";
+	}
+	if ($flags =~ /,unmodified,/) {
+		$retval .= "git-testadd: Running command with unmodified " .
+		           "HEAD\\n";
 	}
 	if ($flags =~ /,cmd,/) {
 		$retval .= "\\n";
