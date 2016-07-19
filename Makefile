@@ -4,17 +4,17 @@
 
 .PHONY: default
 default:
-	cd Git && $(MAKE)
 	cd Lib && $(MAKE)
 	cd src && $(MAKE)
+	cd Git && $(MAKE)
 
 .PHONY: clean
 clean:
 	rm -fv synced.sqlite.*.bck *.pyc
 	cd tests && $(MAKE) clean
-	cd Git && $(MAKE) clean
 	cd Lib && $(MAKE) clean
 	cd src && $(MAKE) clean
+	cd Git && $(MAKE) clean
 
 .PHONY: lgd
 lgd:
@@ -44,9 +44,9 @@ test:
 	test -z "$$(filesynced --unsynced -- --since=6.months 2>&1)"
 	test "$$(git log | grep -- -by: | sort -u | wc -l)" = "2"
 	cd tests && $(MAKE) test
-	cd Git && $(MAKE) test
 	cd Lib && $(MAKE) test
 	cd src && $(MAKE) test
+	cd Git && $(MAKE) test
 
 .PHONY: unmerged
 unmerged:
