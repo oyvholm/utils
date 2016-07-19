@@ -658,7 +658,7 @@ the alias somewhere.
 - rmxmlcomm
 - rot13
 - roundgpx
-- runtest
+- run-test
 - scrdump
 - scrplay
 - sea-repo
