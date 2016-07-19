@@ -107,6 +107,15 @@ sub test_standard_options {
 	        'Option --version returns version number');
 }
 
+=pod
+
+test_executable() - Specify options and expected output to test. The expected 
+output is represented as special flags in a comma-separated list, all flags 
+must have a comme before and after them. Some flags expect "()" added to them, 
+with an optional value inside.
+
+=cut
+
 sub test_executable {
 	my $toptmp = "tmp-git-testadd-t-$$-" . substr(rand, 2, 8);
 	my $repo = "$toptmp/repo";
