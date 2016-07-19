@@ -136,6 +136,12 @@ sub test_options_without_commits {
 	test_options("No options",
 	             ",rm(),clone(),cd(),cmd,", ",using(),nostaged,cmd,", 0,
 	             "");
+
+	diag("-l/--label");
+	test_options("-l/--label",
+	             ",rm(mylabel),clone(mylabel),cd(mylabel),cmd,",
+	             ",using(mylabel),nostaged,cmd,", 0,
+	             "-l mylabel", "--label mylabel");
 }
 
 =pod
