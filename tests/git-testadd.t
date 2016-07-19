@@ -26,8 +26,10 @@ our $CMD_BASENAME = "git-testadd";
 
 our %Opt = (
 
+	'all' => 0,
 	'help' => 0,
 	'quiet' => 0,
+	'todo' => 0,
 	'verbose' => 0,
 	'version' => 0,
 
@@ -40,8 +42,10 @@ our $VERSION = '0.8.0';
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+	'all|a' => \$Opt{'all'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
+	'todo|t' => \$Opt{'todo'},
 	'verbose|v+' => \$Opt{'verbose'},
 	'version' => \$Opt{'version'},
 
@@ -61,6 +65,11 @@ sub main {
 
 	diag(sprintf('========== Executing %s v%s ==========',
 	             $progname, $VERSION));
+
+	if ($Opt{'todo'} && !$Opt{'all'}) {
+		ok(1, "No todo tests here");
+		return 0;
+	}
 
 	diag('Testing finished.');
 
@@ -88,10 +97,14 @@ Contains tests for the $CMD_BASENAME(1) program.
 
 Options:
 
+  -a, --all
+    Run all tests, also TODOs.
   -h, --help
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -t, --todo
+    Run only the TODO tests.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
