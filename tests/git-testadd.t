@@ -41,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.9.0';
+our $VERSION = '0.10.0';
 
 my %descriptions = ();
 
@@ -161,6 +161,12 @@ sub test_options_without_commits {
 	             ",using(),unmodified,cmd,", 0,
 	             "-p", "--pristine");
 
+	diag("-r/--ref");
+	test_options("-r/--ref",
+	             "",
+	             ",invalidref(nosuchrefmate),", 1,
+	             "-r nosuchrefmate", "--ref nosuchrefmate");
+
 	diag("-u/--unmodified");
 	test_options("-u/--unmodified, missing destdir",
 	             "",
@@ -174,6 +180,10 @@ sub test_options_with_commits {
 	is(commit_log("master"),
 	   "1f935e2a5946e77df739c9d2f376af3778ddb71e Add file.txt\n",
 	   "git log after file.txt was added");
+	cmd("$Opt{'git'} branch first", "Create 'first' branch");
+	is(commit_log("first"),
+	   "1f935e2a5946e77df739c9d2f376af3778ddb71e Add file.txt\n",
+	   "'first' branch looks ok");
 	cmd("echo New line >>file.txt", "Add new line to file.txt");
 	is(file_data("file.txt"), "This is file.txt\nNew line\n",
 	             "New line was added to file.txt");
@@ -207,6 +217,37 @@ sub test_options_with_commits {
 	             "",
 	             ",using(),notfound(),", 1,
 	             "-u", "--unmodified");
+
+	diag("-r/--ref");
+	cmd("$Opt{'git'} commit -m 'Add line to file.txt'",
+	    "Commit line addition to file.txt");
+	is(commit_log("master"),
+	   "dec5ff4abeb9999e6e6989a549ccc95185e7dfab Add line to file.txt\n" .
+	   "1f935e2a5946e77df739c9d2f376af3778ddb71e Add file.txt\n",
+	   "git log is ok after line addition");
+	test_options("-r/--ref",
+	             "",
+	             ",invalidref(nosuchrefwc),", 1,
+	             "-r nosuchrefwc", "--ref nosuchrefwc");
+	cmd("echo Third line >>file.txt", "Add third line to file.txt");
+	cmd("$Opt{'git'} add file.txt", "Stage third line in file.txt");
+	likecmd("$CMD -r first echo yup",
+	        '/.*/',
+	        o_err(",using(),clone(),swnewbranch(first),applying" .
+	              ",applyfailed(file.txt),"),
+	        1,
+	        "-r first, apply should fail");
+	cmd("$Opt{'git'} reset", "git reset");
+	cmd("$Opt{'git'} checkout -f file.txt",
+	    "Remove changes from file.txt");
+	create_file("file2.txt", "This is file2.txt");
+	cmd("$Opt{'git'} add file2.txt", "Stage file2.txt for addition");
+	likecmd("$CMD -r first echo yup",
+	        '/yup\n$/s',
+	        o_err(",using(),clone(),swnewbranch(first),applying,cmd," .
+	              ""),
+	        0,
+	        "-r first, apply of file2.txt should succeed");
 }
 
 =pod
@@ -222,7 +263,7 @@ sub test_options {
 	for my $opt (@opts) {
 		my $spc = length($opt) ? " " : "";
 
-		likecmd("$CMD -n$spc$opt cmd",
+		likecmd("$CMD -n$spc$opt echo yup",
 		        o_out($stdout), o_err($stderr), $exitval,
 		        "$desc ($opt)");
 	}
@@ -267,7 +308,7 @@ sub o_out {
 		$retval .= "cd \\.testadd$val\\.tmp\\/\\n";
 	}
 	if ($flags =~ /,cmd,/) {
-		$retval .= "eval cmd\\n";
+		$retval .= "eval echo yup\\n";
 	}
 	$retval .= '$/s';
 
@@ -293,6 +334,20 @@ sub o_err {
 		$retval .= "git-testadd: Using \"\\.testadd$val\\.tmp\" as " .
 		           "destination directory\\n";
 	}
+	if ($flags =~ /,clone\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$val = length($val) ? "-$val" : "";
+		$retval .= "Cloning into " .
+		           "\\'\\.testadd$val\\.tmp\\'\\.\\.\\.\\n" .
+		           "done\\.\\n";
+	}
+	if ($flags =~ /,invalidref\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$retval .= "fatal: Needed a single revision\\n" .
+		           "git-testadd: $val: Invalid Git ref\\n";
+	}
 	if ($flags =~ /,notfound\(([^\(\)]*)\),/) {
 		my $val = $1;
 
@@ -300,8 +355,20 @@ sub o_err {
 		$retval .= "git-testadd: \\.testadd$val\\.tmp not found, " .
 		           "-u\\/--unmodified needs it\\n";
 	}
+	if ($flags =~ /,swnewbranch\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$retval .= "Switched to a new branch '$val'\\n";
+	}
 	if ($flags =~ /,applying,/) {
 		$retval .= "git-testadd: Applying staged changes\\n";
+	}
+	if ($flags =~ /,applyfailed\(([^\(\)]*)\),/) {
+		my $val = $1;
+
+		$retval .= "error: patch failed: $val:1\\n" .
+		           "error: $val: patch does not apply\\n" .
+		           "git-testadd: Could not apply patch\\n";
 	}
 	if ($flags =~ /,nostaged,/) {
 		$retval .= "git-testadd: No staged changes, running command " .
@@ -313,7 +380,7 @@ sub o_err {
 	}
 	if ($flags =~ /,cmd,/) {
 		$retval .= "\\n";
-		$retval .= "git-testadd: Executing \"cmd\" in .+\\n";
+		$retval .= "git-testadd: Executing \"echo yup\" in .+\\n";
 	}
 	$retval .= '$/s';
 

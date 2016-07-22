@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.9.0
+VERSION=0.10.0
 
 ARGS="$(getopt -o "\
 g:\
@@ -20,6 +20,7 @@ l:\
 n\
 p\
 q\
+r:\
 u\
 v\
 " -l "\
@@ -29,6 +30,7 @@ label:,\
 dry-run,\
 pristine,\
 quiet,\
+ref:,\
 unmodified,\
 verbose,\
 version,\
@@ -42,6 +44,7 @@ opt_label=''
 opt_dry_run=0
 opt_pristine=0
 opt_quiet=0
+opt_ref=''
 opt_unmodified=0
 opt_verbose=0
 while :; do
@@ -52,6 +55,7 @@ while :; do
 		(-n|--dry-run) opt_dry_run=1; shift ;;
 		(-p|--pristine) opt_pristine=1; shift ;;
 		(-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+		(-r|--ref) opt_ref="$2"; shift 2 ;;
 		(-u|--unmodified) opt_unmodified=1; shift ;;
 		(-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 		(--version) echo $progname $VERSION; exit 0 ;;
@@ -65,6 +69,19 @@ msg() {
 	test $1 -gt $opt_verbose && return;
 	shift
 	echo "$progname: $*" >&2
+}
+
+checkout_ref() {
+	(
+		$sim cd "$tmpdir" || {
+			echo $progname: $tmpdir: chdir error >&2
+			exit 1
+		}
+		$sim $GIT checkout $opt_ref || {
+			echo $progname: Cannot check out ref \"$opt_ref\" >&2
+			exit 1
+		}
+	)
 }
 
 tmpdir=".testadd.tmp"
@@ -123,6 +140,10 @@ Options:
     Don't apply the staged changes, run the command with a clean HEAD.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -r REF, --ref REF
+    Check out REF (a commit, branch or tag) before the patch is applied 
+    and the command is executed. The script will abort if the patch 
+    couldn't be applied to this ref.
   -u, --unmodified
     Don't remove $tmpdir/, clone the repo and apply the patch, only 
     chdir to $tmpdir/ and run the command there as it was left from the 
@@ -165,6 +186,13 @@ if test -z "$topdir"; then
 	exit 1
 fi
 
+if test -n "$opt_ref"; then
+	if test -z "$($GIT rev-parse --verify $opt_ref^{commit})"; then
+		echo $progname: $opt_ref: Invalid Git ref >&2
+		exit 1
+	fi
+fi
+
 if test -n "$opt_label"; then
 	tmpdir=".testadd-$opt_label.tmp"
 fi
@@ -179,13 +207,17 @@ if test "$opt_unmodified" = "1"; then
 else
 	$sim rm -rf "$tmpdir"
 	$sim $GIT clone "$topdir" "$tmpdir"
+	test -n "$opt_ref" && checkout_ref "$opt_ref"
 
 	if test "$opt_pristine" = "1"; then
 		msg 0 Running command with unmodified HEAD
 	elif $GIT diff --cached --binary | grep -q .; then
 		msg 0 Applying staged changes
 		ap="$GIT diff --cached --binary | (cd \"$tmpdir\" && $GIT apply)"
-		$sim eval "$ap"
+		$sim eval "$ap" || {
+			echo $progname: Could not apply patch >&2
+			exit 1
+		}
 	else
 		msg 0 No staged changes, running command with clean HEAD
 	fi
