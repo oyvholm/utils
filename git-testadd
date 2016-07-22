@@ -11,9 +11,10 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.8.1
+VERSION=0.9.0
 
 ARGS="$(getopt -o "\
+g:\
 h\
 l:\
 n\
@@ -22,6 +23,7 @@ q\
 u\
 v\
 " -l "\
+git:,\
 help,\
 label:,\
 dry-run,\
@@ -34,6 +36,7 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_git=''
 opt_help=0
 opt_label=''
 opt_dry_run=0
@@ -43,6 +46,7 @@ opt_unmodified=0
 opt_verbose=0
 while :; do
 	case "$1" in
+		(-g|--git) opt_git="$2"; shift 2 ;;
 		(-h|--help) opt_help=1; shift ;;
 		(-l|--label) opt_label="$2"; shift 2 ;;
 		(-n|--dry-run) opt_dry_run=1; shift ;;
@@ -105,6 +109,9 @@ Examples:
 
 Options:
 
+  -g X, --git X
+    Specify alternative git executable to use. It can also be set with 
+    the TESTADD_GIT environment variable.
   -h, --help
     Show this help.
   -l LABEL, --label LABEL
@@ -137,13 +144,21 @@ else
 	sim=''
 fi
 
+if test -n "$opt_git"; then
+	GIT="$opt_git"
+elif test -n "$TESTADD_GIT"; then
+	GIT="$TESTADD_GIT"
+else
+	GIT=git
+fi
+
 if test -z "$1"; then
 	echo $progname: No command specified >&2
 	exit 1
 fi
 
-topdir="$(git rev-parse --show-toplevel)"
-subdir="$(git rev-parse --show-prefix)"
+topdir="$($GIT rev-parse --show-toplevel)"
+subdir="$($GIT rev-parse --show-prefix)"
 
 if test -z "$topdir"; then
 	echo $progname: Could not get root dir of repo >&2
@@ -163,13 +178,13 @@ if test "$opt_unmodified" = "1"; then
 	msg 0 "No changes made in $tmpdir/"
 else
 	$sim rm -rf "$tmpdir"
-	$sim git clone "$topdir" "$tmpdir"
+	$sim $GIT clone "$topdir" "$tmpdir"
 
 	if test "$opt_pristine" = "1"; then
 		msg 0 Running command with unmodified HEAD
-	elif git diff --cached --binary | grep -q .; then
+	elif $GIT diff --cached --binary | grep -q .; then
 		msg 0 Applying staged changes
-		ap="git diff --cached --binary | (cd \"$tmpdir\" && git apply)"
+		ap="$GIT diff --cached --binary | (cd \"$tmpdir\" && $GIT apply)"
 		$sim eval "$ap"
 	else
 		msg 0 No staged changes, running command with clean HEAD

@@ -41,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.8.1';
+our $VERSION = '0.9.0';
 
 my %descriptions = ();
 
@@ -250,15 +250,15 @@ sub o_out {
 		my $val = $1;
 
 		$val = length($val) ? "-$val" : "";
-		$retval .= "git clone .+ \\.testadd$val\\.tmp\\n";
+		$retval .= ".+ clone .+ \\.testadd$val\\.tmp\\n";
 	}
 	if ($flags =~ /,apply\(([^\(\)]*)\),/) {
 		my $val = $1;
 
 		$val = length($val) ? "-$val" : "";
-		$retval .= "eval git diff --cached --binary \\| " .
+		$retval .= "eval .+ diff --cached --binary \\| " .
 		           "\\(cd \"\\.testadd$val\\.tmp\" \\&\\& " .
-		           "git apply\\)\\n" . "";
+		           ".+ apply\\)\\n" . "";
 	}
 	if ($flags =~ /,cd\(([^\(\)]*)\),/) {
 		my $val = $1;
