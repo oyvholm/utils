@@ -152,14 +152,6 @@ subsequent runs.
 
 Delete all remote and local branches specified on the command line.
 
-#### git-fuckit
-
-Throw away one or more commits and execute `git reset --hard` to another 
-commit or branch. The tip of the deleted branch is not deleted, but 
-marked with a branch name with a similar format to what `git-dangling` 
-uses, `commit-SHA1`. Will not run if there are any changes in the 
-repository, you'll have to get rid of those first.
-
 #### git-ignore
 
 Ignore files in Git. Automatically update `.gitignore` at the top of the 
@@ -284,7 +276,6 @@ modification time in the file name.
 - git-eb
 - git-expand
 - git-imerge
-- git-inv-commits
 - git-lc
 - git-listbundle
 - git-mkrepo
@@ -301,12 +292,9 @@ FIXME: `ep` is in Nårwidsjn.
 - git-realclean
 - git-remote-hg
 - git-repos
-- git-safe-rm-remote
 - git-savecommit
-- git-seq-rebase
 - git-size
 - git-svn-myclone
-- git-trash
 - git-tree-size
 - git-update-dirs
 - git-wn
@@ -339,7 +327,6 @@ the alias somewhere.
 - ga-ignore-remote
 - ga-key
 - ga-other
-- ga-repofix
 - ga-sjekk
 - ga-sumsize
 - ga-tree
@@ -387,7 +374,6 @@ the alias somewhere.
 - avlytt
 - bell
 - bigsh
-- bom
 - bpakk
 - bs
 - build-git
@@ -396,8 +382,6 @@ the alias somewhere.
 - build-vim
 - ccc
 - cdiff
-- cdiffa
-- cdiffb
 - cdlabel
 - center
 - cfold
@@ -405,7 +389,6 @@ the alias somewhere.
 - ciall
 - cl
 - clean\_files
-- cleansrc
 - cmds
 - colourtest
 - commify
@@ -423,26 +406,21 @@ the alias somewhere.
 - csv2gpx
 - cunw
 - cutfold
-- cvs-rev
 - cvscat
 - cvse
-- cvsrootmd5
 - cvsvimdiff
-- dass
 - date2iso
 - dbk
 - dbllf
 - debugprompt
 - deep
 - degpg
-- denycurrent
 - detab
 - dings\_it
 - dings\_vimtrans
 - dir-elems
 - doc
 - dprofpp.graphviz
-- efnhtml
 - emptydirs
 - enc-mp4
 - encap
@@ -452,7 +430,6 @@ the alias somewhere.
 - ep\_day
 - eplog2date
 - epstat
-- export\_kde\_svn
 - extract\_mail
 - ferdig
 - fibonacci
@@ -467,12 +444,9 @@ the alias somewhere.
 - finddup
 - findhex
 - findrev
-- finn\_triton
 - firefox
 - fix\_filenames
 - fix\_mailman
-- fixtext
-- fjern\_here
 - flac\_to\_ogg
 - fldb
 - fold-stdout
@@ -504,8 +478,6 @@ the alias somewhere.
 - gqfav
 - gqview
 - grafkjent
-- h0
-- h1
 - h2chin
 - h2t
 - h2u
@@ -520,16 +492,11 @@ the alias somewhere.
 - html2wiki
 - htmlfold
 - httplog
-- hub
 - hvor
-- icat
-- icatf
-- impnet
 - inc\_epstat
 - irc-conn
 - irssi
 - isoname
-- ivim
 - jday
 - jsonfmt.py
 - kar
@@ -537,9 +504,7 @@ the alias somewhere.
 - keyw
 - kl
 - klokke
-- klokkesig-conv
 - konvflac
-- kopier\_bilder
 - l
 - l33t
 - lag3d
@@ -547,7 +512,6 @@ the alias somewhere.
 - lag\_linker
 - latlon
 - line\_exec.py
-- linux-counter-machine-update
 - list-extensions
 - list-tables
 - list-youtube
@@ -555,7 +519,6 @@ the alias somewhere.
 - livecd-init
 - ll
 - log\_df
-- log\_df\_pg
 - log\_load
 - logg
 - logging
@@ -563,14 +526,9 @@ the alias somewhere.
 - ls-broken
 - lsreadable
 - maileditor
-- mailfix
-- mailview
-- make\_svnlog
 - make\_tags
 - makemesh
-- mangefiler
 - manyfiles
-- manypatch
 - markdown
 - mc
 - mergesvn
@@ -594,14 +552,10 @@ the alias somewhere.
 - mvdirnewest
 - myf
 - mymkdir
-- n0
-- n1
 - n95film
 - netgraph
 - nettradio
 - nf
-- nfs0
-- nfs1
 - ngttest
 - nogit
 - nosvn
@@ -639,13 +593,11 @@ the alias somewhere.
 - r
 - radiolagring
 - random
-- rc.firewall-2.2
 - rcs-extract
 - remove\_perltestnumbers
 - rensk
 - repo
 - repodiffer
-- repofix
 - repopuller
 - reposurgeon
 - rm\_backup
@@ -673,7 +625,6 @@ the alias somewhere.
 - sjekksommer
 - skipline
 - skiptoplines
-- skjermhoyde
 - slekt
 - slogg
 - smsum
@@ -689,35 +640,28 @@ the alias somewhere.
 - src
 - ssht
 - sssh
-- statgits
 - statplot
 - std
-- still\_klokka
 - storelog
 - stpl
-- stq
 - strip-conflict
 - strip-nonexisting
 - strip\_english
 - strip\_msgstr
-- sub-mergesvn
 - sumdup
 - sums
 - sunnyrights
 - suntodofold
 - suuid
 - svedit
-- svi
 - svn-po
 - svnclean
-- svncvsrevs
 - svndiff
 - svnfiledate
 - svnlog2tab
 - svnrevs
 - svnsize
 - svnstat
-- svup
 - t
 - t2h
 - ta\_backup
@@ -725,11 +669,9 @@ the alias somewhere.
 - tail-errorlog
 - tarsize
 - telenorsms
-- termtitle
 - testfail
 - tests
 - til-ov
-- tilgps
 - tmux\_local\_install.sh
 - todos
 - togpx
@@ -743,7 +685,6 @@ the alias somewhere.
 - u
 - u2h
 - uc
-- uh2dec
 - uj
 - unichar
 - unicode\_htmlchart
@@ -751,9 +692,7 @@ the alias somewhere.
 - unz
 - uoversatt
 - upd
-- update\_vim-clean
 - urlstrip
-- urm
 - usedchars
 - ustr
 - utc

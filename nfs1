@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# nfs1
-# File ID: a7ed762e-5d41-11df-8f6c-90e6ba3022ac
-# Starter nfsd
-
-/etc/rc.d/init.d/nfs start
