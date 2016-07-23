@@ -4,14 +4,14 @@
 # fix-agdate
 # File ID: 3a208946-50bb-11e6-8515-02010e0a6634
 #
-# [Description]
+# Fix timestamp difference between .mp4 and .srt in AutoGuard
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=fix-agdate
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -45,7 +45,12 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Usage: $progname [options]
+Fix timestamp difference between .mp4 and .srt in AutoGuard (dash camera 
+app for Android). Sometimes there is a difference of 1 second between 
+the .mp4 and .srt file, and when they've been processed with datefn(1), 
+the subtitles (GPS coordinates and timestamp) disappear.
+
+Usage: $progname [options] AG_FILES [...]
 
 Options:
 
@@ -62,3 +67,11 @@ END
     exit 0
 fi
 
+for f in "$@"; do
+    echo "$f" | grep -q 20.._.._.._.._.._..\\.mp4\$ || continue
+    base="$(basename "$f" .mp4)"
+    if test -e "$base.srt"; then
+        echo touch -r "$base.mp4" "$base.srt"
+        touch -r "$base.mp4" "$base.srt"
+    fi
+done
