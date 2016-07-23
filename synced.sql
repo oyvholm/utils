@@ -268,6 +268,7 @@ INSERT INTO "synced" VALUES('finddup','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('findhex','Lib/std/perl','caaf3a238ed84227a4905a13a9e80a85ea891d93','2015-10-30 02:24:18');
 INSERT INTO "synced" VALUES('findrev','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('firefox','Lib/std/bash-no-getopt',NULL,NULL);
+INSERT INTO "synced" VALUES('fix-agdate','Lib/std/bash','256a91f7e8db3d602fde1807f655d88c7741c91d','2016-07-23 09:52:54');
 INSERT INTO "synced" VALUES('fix_filenames','Lib/std/bash','6bb9510e0af79a080d9bd4ade3e8b826e79ea2fa','2016-06-14 06:35:01');
 INSERT INTO "synced" VALUES('fix_mailman','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('flac_to_ogg','Lib/std/bash',NULL,NULL);
