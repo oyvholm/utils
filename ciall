@@ -11,15 +11,17 @@
 #=======================================================================
 
 progname=ciall
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 d\
+e\
 h\
 q\
 v\
 y\
 " -l "\
+edit,\
 help,\
 quiet,\
 store-empty-dirs,\
@@ -31,6 +33,7 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_store_empty_dirs=0
+opt_edit=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
@@ -38,6 +41,7 @@ opt_yes=0
 while :; do
     case "$1" in
         (-d|--store-empty-dirs) opt_store_empty_dirs=1; shift ;;
+        (-e|--edit) opt_edit=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -59,6 +63,9 @@ Usage: $progname [options]
 
 Options:
 
+  -e, --edit
+    Edit the log message in your favourite editor, using the value of 
+    the EDITOR environment variable.
   -d, --store-empty-dirs
     Also store empty directories in ".emptydirs".
   -h, --help
@@ -111,7 +118,11 @@ until test "$besafe" = "y"; do
     test "$besafe" = "n" && exit 0;
 done
 
-if [ "$logmsg" = "--" ]; then
+if test "$opt_edit" = "1"; then
+    if test -z "$EDITOR"; then
+        echo $progname: The EDITOR environment variable is not defined >&2
+        exit 1
+    fi
     tmpmsgfile=/tmp/$(date +%s)-$$.tmp
     $EDITOR $tmpmsgfile
     logmsg=$(cat $tmpmsgfile)
