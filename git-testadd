@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.10.0
+VERSION=0.10.1
 
 ARGS="$(getopt -o "\
 g:\
@@ -100,7 +100,7 @@ the changes passes the test suite? With all the other unrelated changes
 it can be hard to make sure that only relevant changes becomes part of 
 the commit, and that they don't result in regressions. This script 
 clones the repository to the directory "$tmpdir" in the current 
-directory and applies the staged chenges there (unless -u/--unmodified 
+directory and applies the staged changes there (unless -u/--unmodified 
 or -p/--pristine is specified), chdirs to the same relative directory in 
 the clone and executes the command specified on the command line there.
 
