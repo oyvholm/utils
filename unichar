@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=unichar
-VERSION=0.4.0
+VERSION=0.4.1
 
 db="$HOME/.unichar.sqlite"
 guipdf="$HOME/bin/Lib/unicode/current/charts/CodeCharts.pdf"
@@ -189,7 +189,7 @@ if test "$opt_convert" = "1"; then
 fi
 
 if test "$opt_gui" = "1"; then
-    $pdfprog "$guipdf" 2>/dev/null &
+    $pdfprog "$guipdf" &
     exit 0
 fi
 
