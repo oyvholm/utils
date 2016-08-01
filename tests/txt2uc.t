@@ -155,6 +155,23 @@ END
     );
 
     # }}}
+    testcmd("echo 🥓 FTW 🕺 | $CMD", # {{{
+        <<'END',
+1F953;BACON;So;0;ON;;;;;N;;;;;
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+0046;LATIN CAPITAL LETTER F;Lu;0;L;;;;;N;;;;0066;
+0054;LATIN CAPITAL LETTER T;Lu;0;L;;;;;N;;;;0074;
+0057;LATIN CAPITAL LETTER W;Lu;0;L;;;;;N;;;;0077;
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+1F57A;MAN DANCING;So;0;ON;;;;;N;;;;;
+000A;<control>;Cc;0;B;;;;;N;LINE FEED (LF);;;;
+END
+        '',
+        0,
+        'Use chars from Unicode 9.0',
+    );
+
+    # }}}
     testcmd("echo U̲l̲i̲n̲e̲ and s̶t̶r̶i̶k̶e̶. | $CMD", # {{{
         <<'END',
 0055;LATIN CAPITAL LETTER U;Lu;0;L;;;;;N;;;;0075;
