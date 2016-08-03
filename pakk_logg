@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakk_logg
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 h\
@@ -65,10 +65,16 @@ END
 fi
 
 lockdir=~/.pakk_log.lock
-mkdir "$lockdir" || { echo $0: $lockdir: Cannot create lockdir >&2; exit 1; }
+mkdir "$lockdir" || {
+    echo $progname: $lockdir: Cannot create lockdir >&2
+    exit 1
+}
 
 myexit() {
-    rmdir "$lockdir" || { echo $0: $lockdir: Cannot remove lockdir >&2; exit 1; }
+    rmdir "$lockdir" || {
+        echo $progname: $lockdir: Cannot remove lockdir >&2
+        exit 1
+    }
     exit $1
 }
 trap "myexit 1" INT TERM
@@ -91,7 +97,10 @@ if test -f "$dflog"; then
     sqlite3 "$dflog" .dump | sqlite3 "$dfdestdir/df.sqlite"
 fi
 
-cd ~/log/script || { echo $0: ~/log/script: Unable to chdir >&2; exit 1; }
+cd ~/log/script || {
+    echo $progname: ~/log/script: Unable to chdir >&2
+    exit 1
+}
 find -type f | grep -E '\.(scrlog|timing)$' | while read f; do
     uuid=$(echo "$f" | finduuid)
     ps auxw | grep -v "grep $uuid" | grep $uuid | grep -q . || gzip -v "$f"
@@ -100,9 +109,10 @@ done
 ircdir=$HOME/log/irc
 
 if test -d "$ircdir/."; then
-    cd "$ircdir" || { echo $0: $ircdir: Unable to chdir >&2; exit 1; }
+    cd "$ircdir" || { echo $progname: $ircdir: Unable to chdir >&2; exit 1; }
     currdate=`date +"%Y-%m-%d"`
-    find -type f -name '*.log' -print0 | grep -vz "$currdate" | xargs -0r gzip -v
+    find -type f -name '*.log' -print0 | grep -vz "$currdate" |
+        xargs -0r gzip -v
 fi
 
 myexit 0
