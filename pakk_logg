@@ -80,7 +80,8 @@ myexit() {
 trap "myexit 1" INT TERM
 
 hname="$(hostname)"
-dfdestdir="$HOME/annex/log/df/$hname"
+annexdir="$HOME/annex/log"
+dfdestdir="$annexdir/df/$hname"
 dflog="$HOME/log/df.sqlite"
 
 if test -f "$dflog"; then
