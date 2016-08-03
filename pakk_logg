@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakk_logg
-VERSION=0.2.1
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -83,6 +83,9 @@ hname="$(hostname)"
 annexdir="$HOME/annex/log"
 dfdestdir="$annexdir/df/$hname"
 dflog="$HOME/log/df.sqlite"
+
+cd "$annexdir" || { echo $progname: $annexdir: chdir error >&2; exit 1; }
+ga sync
 
 if test -f "$dflog"; then
     mkdir -p "$dfdestdir"
