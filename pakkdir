@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.12.0
+VERSION=0.12.1
 
 ARGS="$(getopt -o "\
 1\
@@ -126,7 +126,7 @@ fi
 
 for f in "$@"; do
     if test -d "$f"; then
-        git ls-files "$f" | grep . >&2 && {
+        git ls-files "$f" | grep -q . >&2 && {
             echo $progname: $f: \
                 Files are stored in Git below this directory >&2
             exit 1
