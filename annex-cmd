@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=annex-cmd
-VERSION=0.2.1
+VERSION=0.2.2
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -93,7 +93,7 @@ if [ "$1" = "--get" ]; then
             echo $progname: $f: No annex information found >&2
             continue
         }
-        test $free_space -le 128000000 && {
+        test $free_space -le 4096 && {
             echo -n "$progname: $f: Skipping annex, " >&2
             echo only $free_space bytes free >&2
             continue
