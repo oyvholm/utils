@@ -112,7 +112,6 @@ INSERT INTO "synced" VALUES('Lib/std/txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/xhtml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/xml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Local/arch-vbox/pkg-to-pavi','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('Local/bellmann/pd','Lib/std/bash','4b33b8fcd8f14e23a27ebce5a78807ac964626c6','2016-05-22 01:49:49');
 INSERT INTO "synced" VALUES('Local/dg-vbox/fixskjerm','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('Local/n900/mountloop','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('Local/n900/pods','Lib/std/bash',NULL,NULL);
@@ -445,6 +444,7 @@ INSERT INTO "synced" VALUES('pakk_logg','Lib/std/bash','9baa32551134d485f2b03897
 INSERT INTO "synced" VALUES('pakkdir','Lib/std/bash','2828f66452fe0d16e7e062704b7327b3e3a549d3','2016-05-05 20:39:37');
 INSERT INTO "synced" VALUES('pakkings','Lib/std/bash','83fe5c73430647f54c29d61cc2fdfe03a9d79449','2016-05-06 16:00:45');
 INSERT INTO "synced" VALUES('pakkut','Lib/std/perl',NULL,NULL);
+INSERT INTO "synced" VALUES('pd','Lib/std/bash','4b33b8fcd8f14e23a27ebce5a78807ac964626c6','2016-05-22 01:49:49');
 INSERT INTO "synced" VALUES('perldeboff','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('perldebon','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('perlfold','Lib/std/perl',NULL,NULL);
