@@ -15,4 +15,4 @@
 	url = https://gitlab.com/sunny256/spar.git
 [submodule "Git/dropboxannex"]
 	path = Git/dropboxannex
-	url = git://github.com/TobiasTheViking/dropboxannex.git
+	url = git://github.com/sunny256/dropboxannex.git
