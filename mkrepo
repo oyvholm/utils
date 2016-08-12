@@ -34,7 +34,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.1.0";
+our $VERSION = "0.1.1";
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -126,7 +126,7 @@ sub mysystem {
     # {{{
     my @cmd = @_;
     msg(0, "Executing '" . join(" ", @cmd) . "'");
-    # system(@cmd);
+    system(@cmd);
     return;
     # }}}
 } # mysystem()
