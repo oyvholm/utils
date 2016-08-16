@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.9.0
+VERSION=0.10.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -152,4 +152,8 @@ elif test "$1" = "update-desc" -o "$1" = "ud"; then
     fi
 else
     git-annex "$@"
+fi
+
+if test "$1" = "sync"; then
+    git push . git-annex:synced/git-annex
 fi
