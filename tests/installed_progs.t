@@ -158,6 +158,7 @@ END
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
+    installed('task --version', '/^2\.5\.1$/', 'stdout');
     installed('top -v', '/procps(-ng)? version \d/', 'stdout');
     installed('tree --version', '/^tree v\d\./', 'stdout');
     installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
