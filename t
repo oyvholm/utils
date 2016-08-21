@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=t
-VERSION=0.1.0
+VERSION=0.1.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -57,13 +57,13 @@ if [ ! -f $taskdir/.taskrc -o ! -d $taskdir/.task ]; then
     myexit 1
 fi
 task "$@"
-yes | ciall t "$@" >/tmp/t-output.txt 2>&1 || {
+ciall -y -- t "$@" >/tmp/t-output.txt 2>&1 || {
     echo $progname: git commit error >&2
     exit 1
 }
 
 task &>/dev/null
-yes | ciall Finish previous command >/tmp/t-output-2.txt 2>&1 || {
+ciall -y -- Finish previous command >/tmp/t-output-2.txt 2>&1 || {
     echo $progname: git commit 2 error >&2
     exit 1
 }
