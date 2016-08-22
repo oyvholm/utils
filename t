@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=t
-VERSION=0.1.1
+VERSION=0.2.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -57,6 +57,7 @@ if [ ! -f $taskdir/.taskrc -o ! -d $taskdir/.task ]; then
     myexit 1
 fi
 task "$@"
+oldcommit=$(git rev-parse HEAD)
 ciall -y -- t "$@" >/tmp/t-output.txt 2>&1 || {
     echo $progname: git commit error >&2
     exit 1
@@ -67,5 +68,8 @@ ciall -y -- Finish previous command >/tmp/t-output-2.txt 2>&1 || {
     echo $progname: git commit 2 error >&2
     exit 1
 }
+newcommit=$(git rev-parse HEAD)
+GIT_PAGER=cat git log --abbrev-commit --format=oneline --decorate=short \
+    $oldcommit..$newcommit
 
 myexit 0
