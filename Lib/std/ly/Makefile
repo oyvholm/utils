@@ -25,12 +25,15 @@ $(NAME).mp3: $(NAME).wav
 	wav_to_mp3 $(NAME).wav
 
 .version.ily: $(NAME).ly *.ily Makefile
-	git log -1 --date=format:%Y-%m-%d --format="versioninfo = #(string-append \"%cd, commit %h — Engraved with LilyPond v\" (lilypond-version) \" ❤\")" . >.version.ily
+	git log -1 --date=format:%Y-%m-%d \
+		--format="versioninfo = #(string-append \"%cd, commit %h — Engraved with LilyPond v\" (lilypond-version) \" ❤\")" \
+		. >.version.ily
 
 .PHONY: afv
 afv:
 	mkdir $(AFVLOCKDIR)
-	(sess -- afv -l5 $(NAME).ly '*.ily' $(NAME).midi; rmdir $(AFVLOCKDIR)) &
+	(sess -- afv -l5 $(NAME).ly '*.ily' $(NAME).midi; \
+		rmdir $(AFVLOCKDIR)) &
 
 .PHONY: clean
 clean:
@@ -60,7 +63,9 @@ edit:
 .PHONY: fresco
 fresco:
 	mkdir $(FRESCOLOCKDIR)
-	(cd $(HOME)/src/other/frescobaldi; sess ./frescobaldi $(MTDIR)/$(NAME).ly; rmdir $(FRESCOLOCKDIR)) &
+	(cd $(HOME)/src/other/frescobaldi; \
+		sess ./frescobaldi $(MTDIR)/$(NAME).ly; \
+		rmdir $(FRESCOLOCKDIR)) &
 
 .PHONY: mp3
 mp3: $(NAME).mp3
@@ -75,7 +80,10 @@ slow: $(NAME).midi
 
 .PHONY: swp
 swp:
-	for f in .*.swp; do git add $$(basename $$(echo $$f | cut -c 2-) .swp); vim -r $$f; rm -iv $$f; done
+	for f in .*.swp; do \
+		git add $$(basename $$(echo $$f | cut -c 2-) .swp); \
+		vim -r $$f; rm -iv $$f; \
+	done
 
 .PHONY: touch
 touch:
