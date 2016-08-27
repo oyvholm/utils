@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=test-ly-files
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 a\
@@ -70,7 +70,7 @@ END
     exit 0
 fi
 
-rm -f STDprojnameDTS.ly
+rm -fv STDprojnameDTS.{ly,midi,pdf}
 
 for f in *.ly; do
     echo
@@ -83,5 +83,3 @@ for f in *.ly; do
         evince STDprojnameDTS.pdf
     fi
 done
-
-rm -f STDprojnameDTS.{ly,midi,pdf}
