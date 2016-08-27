@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=test-ly-files
-VERSION=0.2.1
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 a\
@@ -70,7 +70,7 @@ END
     exit 0
 fi
 
-rm -fv STDprojnameDTS.{ly,midi,pdf}
+rm -fv STDprojnameDTS.{ly,midi,pdf,wav}
 
 for f in *.ly; do
     echo
@@ -78,6 +78,11 @@ for f in *.ly; do
     ln -fnsv $f STDprojnameDTS.ly
     make touch
     make || exit 1
+    make STDprojnameDTS.wav
+    test -f STDprojnameDTS.wav || {
+        echo $progname: STDprojnameDTS.wav does not exist >&2
+        exit 1
+    }
     if test "$opt_all" = "1"; then
         tm STDprojnameDTS.midi
         evince STDprojnameDTS.pdf
