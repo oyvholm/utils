@@ -4,7 +4,7 @@
 # test-ly-files
 # File ID: 57712470-0790-11e6-9cac-fefdb24f8e10
 #
-# [Description]
+# Test build of LilyPond template files
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
@@ -48,6 +48,8 @@ opt_verbose=$(($opt_verbose - $opt_quiet))
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
+
+Test build of LilyPond template files
 
 Usage: $progname [options]
 
