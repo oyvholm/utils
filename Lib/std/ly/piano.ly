@@ -81,6 +81,7 @@ metronome = \repeat unfold 4 \drummode { ss4 }
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
+      midiReverbLevel = #0
       % midiMaximumVolume = #1.00
     } {
       \initTempo
