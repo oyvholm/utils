@@ -26,7 +26,6 @@ This repository can be cloned from
 
 - `git@gitlab.com:sunny256/utils.git` / 
   <https://gitlab.com/sunny256/utils.git> (Main repo)
-- `git@github.com:sunny256/utils.git`
 - `git@bitbucket.org:sunny256/utils.git`
 - `ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git`
 
