@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=old-git
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 h\
@@ -133,8 +133,8 @@ fetch_remotes() {
         git remote add gitster git://github.com/gitster/git.git
         git config --add remote.gitster.fetch +refs/notes/*:refs/notes/*
     }
-    git remote | grep -q '^github$' ||
-        git remote add github git@github.com:sunny256/git.git
+    git remote | grep -q '^gitlab$' ||
+        git remote add gitlab git@gitlab.com:sunny256/git.git
     git remote | grep -q '^peff$' ||
         git remote add peff git://github.com/peff/git.git
     git remote | grep -q '^sunbase$' ||
@@ -172,7 +172,7 @@ enable_sudo() {
 
 push_changes() {
     if test "$opt_no_net" = "0"; then
-        for f in bellmann loc-repo passp sunbase github rsync-net; do
+        for f in bellmann loc-repo passp sunbase gitlab rsync-net; do
             git remote | grep -q "^$f\$" && {
                 echo ==== push changes to $f ====
             }

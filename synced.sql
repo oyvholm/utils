@@ -436,7 +436,7 @@ INSERT INTO "synced" VALUES('nogit','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('nosvn','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('oggname','Lib/std/bash','dc2ada078baf9741866b5201a0ad2fa1b425759b','2016-06-14 00:50:09');
 INSERT INTO "synced" VALUES('okular','Lib/std/bash-no-getopt','2a9505e13b93289764565075a0cb524615ce3179','2016-03-12 00:30:49');
-INSERT INTO "synced" VALUES('old-git','build-git','c455190a10ca3198554826aa7ab746e2f5638273','2016-05-16 18:41:39');
+INSERT INTO "synced" VALUES('old-git','build-git','d8b88f3cf530ef77c1dc339878751d5ab84358c9','2016-09-01 00:59:33');
 INSERT INTO "synced" VALUES('outl','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('p','Lib/std/bash','fafa0084333ce938ac2a25244a41bd9d0b06776e','2016-02-28 04:12:07');
 INSERT INTO "synced" VALUES('pakk','Lib/std/bash',NULL,NULL);
