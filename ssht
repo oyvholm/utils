@@ -3,11 +3,98 @@
 #=======================================================================
 # ssht
 # File ID: 307e8876-e099-11e0-94c2-ef2688b28a12
-# [Description]
+#
+# Create/terminate SSH tunnel or set up VNC connection.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ssht
+VERSION=0.1.0
+
+ARGS="$(getopt -o "\
+c\
+h\
+k\
+l\
+q\
+t\
+V:\
+v\
+" -l "\
+connect,\
+help,\
+kill,\
+list,\
+quiet,\
+tunnel,\
+vnc:,\
+verbose,\
+version,\
+" -n "$progname" -- "$@")"
+test "$?" = "0" || exit 1
+eval set -- "$ARGS"
+
+opt_connect=0
+opt_help=0
+opt_kill=0
+opt_list=0
+opt_quiet=0
+opt_tunnel=0
+opt_vnc=''
+opt_verbose=0
+while :; do
+    case "$1" in
+        (-c|--connect) opt_connect=1; shift ;;
+        (-h|--help) opt_help=1; shift ;;
+        (-k|--kill) opt_kill=1; shift ;;
+        (-l|--list) opt_list=1; shift ;;
+        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-t|--tunnel) opt_tunnel=1; shift ;;
+        (-V|--vnc) opt_vnc=$2; shift 2 ;;
+        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        (--version) echo $progname $VERSION; exit 0 ;;
+        (--) shift; break ;;
+        (*) echo $progname: Internal error >&2; exit 1 ;;
+    esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+    cat <<END
+
+Create/terminate SSH tunnel or set up VNC connection.
+
+Usage: $progname [options]
+
+Options:
+
+  -c, --connect
+    Connect to SSH tunnel from outside.
+  -h, --help
+    Show this help.
+  -k, --kill
+    Kill SSH tunnel.
+  -l, --list
+    List PID of active tunnel.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -t, --tunnel
+    Create SSH tunnel if none exist yet.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  -V DISPLAY [QUALITY], --vnc DISPLAY [QUALITY]
+    Connect via VNC to display DISPLAY. QUALITY can be 0 (worst, but 
+    great compression) to 9 (best quality). If QUALITY is not specified, 
+    top quality and no compression is used.
+  --version
+    Print version information.
+
+END
+    exit 0
+fi
 
 msg() {
     echo $progname: "$*"
@@ -20,34 +107,35 @@ CMD="ssh -A -Y -q -N -R $PORT:localhost:22 $HOST"
 unset PID
 PID=$(pgrep -f -x "$CMD")
 
-if test "$1" = "-c"; then
-    USERNAME=$2
-    test -z "$2" && USERNAME=sunny
+if test "$opt_connect" = "1"; then
+    USERNAME=$1
+    test -z "$1" && USERNAME=sunny
     sess -t c_ssht.c -- ssh -A -Y -p $PORT -l $USERNAME localhost
-elif test "$1" = "-k"; then
+elif test "$opt_kill" = "1"; then
     test -n "$PID" || { echo $progname: No tunnel found >&2; exit 1; }
     kill $PID
-elif test "$1" = "-l"; then
+elif test "$opt_list" = "1"; then
     test -n "$PID" && echo $PID
-elif test "$1" = "-t"; then
+elif test "$opt_tunnel" = "1"; then
     test -n "$PID" && { echo $progname: Tunnel already active at PID $PID >&2; exit 1; }
     sess -t c_ssht.t -- $CMD &
-elif test "$1" = "-v"; then
+elif test -n "$opt_vnc"; then
     msg Running pkill...
-    pkill -9 -f "ssh -L 590$2:localhost:590$2"
+    pkill -9 -f "ssh -L 590$opt_vnc:localhost:590$opt_vnc"
     msg Creating ssh tunnel...
-    sess -d ssh_tunnel -- ssh -L 590$2:localhost:590$2 -C -N -f $HOST
+    sess -d ssh_tunnel -- ssh -L 590$opt_vnc:localhost:590$opt_vnc -C -N -f $HOST
     quality_str=
-    if test -n "$3"; then
-        quality_str="-quality $3"
-        msg Starting xtightvncviewer with quality $3...
-        sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 -nocursorshape $quality_str localhost:$2
+    if test -n "$1"; then
+        quality_str="-quality $1"
+        msg Starting xtightvncviewer with quality $1...
+        sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 -nocursorshape $quality_str localhost:$opt_vnc
     else
         msg Starting xtightvncviewer with top quality...
-        sess -- xtightvncviewer -encodings tight -truecolour -nojpeg -nocursorshape localhost:$2
+        sess -- xtightvncviewer -encodings tight -truecolour -nojpeg -nocursorshape localhost:$opt_vnc
     fi
     msg Destroying ssh tunnel...
-    pkill -9 -f "ssh -L 590$2:localhost:590$2"
+    pkill -9 -f "ssh -L 590$opt_vnc:localhost:590$opt_vnc"
 else
-    echo Syntax: $progname \[ -c \| -k \| -l \| -t \| -v \]
+    echo $progname: No option specified >&2
+    exit 1
 fi
