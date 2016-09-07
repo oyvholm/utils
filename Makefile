@@ -50,5 +50,4 @@ test:
 
 .PHONY: unmerged
 unmerged:
-	git br -a --no-merged | grep -v /all/ | cut -f 3- -d / | rmspcall | \
-	    sort -u | grep -v ^commit-
+	git branch -a --no-merged | git nocom | cut -f 3- -d / | sort -u
