@@ -100,30 +100,30 @@ msg() {
     echo $progname: "$*"
 }
 
-PORT=9141
-HOST=sunny@sunbase.org
-CMD="ssh -A -Y -q -N -R $PORT:localhost:22 $HOST"
+SSHT_PORT=9141
+SSHT_HOST=sunny@sunbase.org
+SSHT_CMD="ssh -A -Y -q -N -R $SSHT_PORT:localhost:22 $SSHT_HOST"
 
-unset PID
-PID=$(pgrep -f -x "$CMD")
+unset SSHT_PID
+SSHT_PID=$(pgrep -f -x "$SSHT_CMD")
 
 if test "$opt_connect" = "1"; then
-    USERNAME=$1
-    test -z "$1" && USERNAME=sunny
-    sess -t c_ssht.c -- ssh -A -Y -p $PORT -l $USERNAME localhost
+    SSHT_USERNAME=$1
+    test -z "$1" && SSHT_USERNAME=sunny
+    sess -t c_ssht.c -- ssh -A -Y -p $SSHT_PORT -l $SSHT_USERNAME localhost
 elif test "$opt_kill" = "1"; then
-    test -n "$PID" || { echo $progname: No tunnel found >&2; exit 1; }
-    kill $PID
+    test -n "$SSHT_PID" || { echo $progname: No tunnel found >&2; exit 1; }
+    kill $SSHT_PID
 elif test "$opt_list" = "1"; then
-    test -n "$PID" && echo $PID
+    test -n "$SSHT_PID" && echo $SSHT_PID
 elif test "$opt_tunnel" = "1"; then
-    test -n "$PID" && { echo $progname: Tunnel already active at PID $PID >&2; exit 1; }
-    sess -t c_ssht.t -- $CMD &
+    test -n "$SSHT_PID" && { echo $progname: Tunnel already active at PID $SSHT_PID >&2; exit 1; }
+    sess -t c_ssht.t -- $SSHT_CMD &
 elif test -n "$opt_vnc"; then
     msg Running pkill...
     pkill -9 -f "ssh -L 590$opt_vnc:localhost:590$opt_vnc"
     msg Creating ssh tunnel...
-    sess -d ssh_tunnel -- ssh -L 590$opt_vnc:localhost:590$opt_vnc -C -N -f $HOST
+    sess -d ssh_tunnel -- ssh -L 590$opt_vnc:localhost:590$opt_vnc -C -N -f $SSHT_HOST
     quality_str=
     if test -n "$1"; then
         quality_str="-quality $1"
