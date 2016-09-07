@@ -50,4 +50,6 @@ test:
 
 .PHONY: unmerged
 unmerged:
-	git branch -a --no-merged | git nocom | cut -f 3- -d / | sort -u
+	git log --graph --date-order --format=fuller -p --decorate=short \
+		$$(git br -a --contains firstrev --no-merged | git nocom) \
+		^master
