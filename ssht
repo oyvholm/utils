@@ -145,21 +145,27 @@ elif test "$opt_kill" = "1"; then
 elif test "$opt_list" = "1"; then
     test -n "$SSHT_PID" && echo $SSHT_PID
 elif test "$opt_tunnel" = "1"; then
-    test -n "$SSHT_PID" && { echo $progname: Tunnel already active at PID $SSHT_PID >&2; exit 1; }
+    test -n "$SSHT_PID" && {
+        echo $progname: Tunnel already active at PID $SSHT_PID >&2
+        exit 1
+    }
     sess -t c_ssht.t -- $SSHT_CMD &
 elif test -n "$opt_vnc"; then
     msg Running pkill...
     pkill -9 -f "ssh -L 590$opt_vnc:localhost:590$opt_vnc"
     msg Creating ssh tunnel...
-    sess -d ssh_tunnel -- ssh -L 590$opt_vnc:localhost:590$opt_vnc -C -N -f $SSHT_HOST
+    sess -d ssh_tunnel -- \
+        ssh -L 590$opt_vnc:localhost:590$opt_vnc -C -N -f $SSHT_HOST
     quality_str=
     if test -n "$1"; then
         quality_str="-quality $1"
         msg Starting xtightvncviewer with quality $1...
-        sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 -nocursorshape $quality_str localhost:$opt_vnc
+        sess -- xtightvncviewer -encodings tight -depth 16 -compresslevel 9 \
+                -nocursorshape $quality_str localhost:$opt_vnc
     else
         msg Starting xtightvncviewer with top quality...
-        sess -- xtightvncviewer -encodings tight -truecolour -nojpeg -nocursorshape localhost:$opt_vnc
+        sess -- xtightvncviewer -encodings tight -truecolour -nojpeg \
+                -nocursorshape localhost:$opt_vnc
     fi
     msg Destroying ssh tunnel...
     pkill -9 -f "ssh -L 590$opt_vnc:localhost:590$opt_vnc"
