@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ssht
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 c\
@@ -61,6 +61,8 @@ while :; do
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
+rcfile="$HOME/.sshtrc"
+
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
@@ -92,6 +94,20 @@ Options:
   --version
     Print version information.
 
+The file "$rcfile"
+is a regular shell script used for setting constants:
+
+  SSHT_PORT
+    Port number for SSH tunnel. Choose something random above 1024, 
+    preferably not listed in /etc/services .
+  SSHT_HOST
+    SSH username and host on the format USER@HOST .
+  SSHT_USERNAME
+    SSH username used with -c/--connect option.
+  SSHT_CMD
+    Command to set up the SSH tunnel. If not defined, a default value is 
+    used.
+
 END
     exit 0
 fi
@@ -100,16 +116,28 @@ msg() {
     echo $progname: "$*"
 }
 
-SSHT_PORT=9141
-SSHT_HOST=sunny@sunbase.org
-SSHT_CMD="ssh -A -Y -q -N -R $SSHT_PORT:localhost:22 $SSHT_HOST"
+test -e "$rcfile" && . "$rcfile"
+
+if test -z "$SSHT_PORT"; then
+    echo $progname: SSHT_PORT environment variable is not defined
+    exit 1
+fi
+if test -z "$SSHT_HOST"; then
+    echo $progname: SSHT_HOST environment variable is not defined
+    exit 1
+fi
+if test -z "$SSHT_CMD"; then
+    SSHT_CMD="ssh -A -Y -q -N -R $SSHT_PORT:localhost:22 $SSHT_HOST"
+fi
 
 unset SSHT_PID
 SSHT_PID=$(pgrep -f -x "$SSHT_CMD")
 
 if test "$opt_connect" = "1"; then
-    SSHT_USERNAME=$1
-    test -z "$1" && SSHT_USERNAME=sunny
+    if test -z "$SSHT_USERNAME"; then
+        echo $progname: SSHT_USERNAME environment variable is not defined
+        exit 1
+    fi
     sess -t c_ssht.c -- ssh -A -Y -p $SSHT_PORT -l $SSHT_USERNAME localhost
 elif test "$opt_kill" = "1"; then
     test -n "$SSHT_PID" || { echo $progname: No tunnel found >&2; exit 1; }
