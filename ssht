@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ssht
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 c\
@@ -113,17 +113,17 @@ END
 fi
 
 msg() {
-    echo $progname: "$*"
+    echo "$progname: $*" >&2
 }
 
 test -e "$rcfile" && . "$rcfile"
 
 if test -z "$SSHT_PORT"; then
-    echo $progname: SSHT_PORT environment variable is not defined
+    msg SSHT_PORT environment variable is not defined
     exit 1
 fi
 if test -z "$SSHT_HOST"; then
-    echo $progname: SSHT_HOST environment variable is not defined
+    msg SSHT_HOST environment variable is not defined
     exit 1
 fi
 if test -z "$SSHT_CMD"; then
@@ -135,18 +135,18 @@ SSHT_PID=$(pgrep -f -x "$SSHT_CMD")
 
 if test "$opt_connect" = "1"; then
     if test -z "$SSHT_USERNAME"; then
-        echo $progname: SSHT_USERNAME environment variable is not defined
+        msg SSHT_USERNAME environment variable is not defined
         exit 1
     fi
     sess -t c_ssht.c -- ssh -A -Y -p $SSHT_PORT -l $SSHT_USERNAME localhost
 elif test "$opt_kill" = "1"; then
-    test -n "$SSHT_PID" || { echo $progname: No tunnel found >&2; exit 1; }
+    test -n "$SSHT_PID" || { msg No tunnel found; exit 1; }
     kill $SSHT_PID
 elif test "$opt_list" = "1"; then
     test -n "$SSHT_PID" && echo $SSHT_PID
 elif test "$opt_tunnel" = "1"; then
     test -n "$SSHT_PID" && {
-        echo $progname: Tunnel already active at PID $SSHT_PID >&2
+        msg Tunnel already active at PID $SSHT_PID
         exit 1
     }
     sess -t c_ssht.t -- $SSHT_CMD &
@@ -170,6 +170,6 @@ elif test -n "$opt_vnc"; then
     msg Destroying ssh tunnel...
     pkill -9 -f "ssh -L 590$opt_vnc:localhost:590$opt_vnc"
 else
-    echo $progname: No option specified >&2
+    msg No option specified
     exit 1
 fi
