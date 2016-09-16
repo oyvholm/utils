@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ssht
-VERSION=0.2.1
+VERSION=0.2.2
 
 ARGS="$(getopt -o "\
 c\
@@ -149,6 +149,9 @@ elif test "$opt_tunnel" = "1"; then
         msg Tunnel already active at PID $SSHT_PID
         exit 1
     }
+    # FIXME: Create some standardised version of this
+    ps x | grep "bash -c while :; do date; sleep 2; done" |
+        grep -v "grep " | awk '{print $1}' | xargs -r kill
     sess -t c_ssht.t -- $SSHT_CMD &
 elif test -n "$opt_vnc"; then
     msg Running pkill...
