@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mobilstripp
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -112,5 +112,6 @@ grep -v \
 -e /foursquare/cache/ \
 -e /foursquare/category_cache/ \
 -e /foursquare/photo_cache/ \
+-e /tel/ \
 -e \\.pcg\$ \
 -e ☠_her_har_vi_slutten | less
