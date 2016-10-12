@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=mymkdir
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 h\
@@ -77,3 +77,4 @@ fi
 
 sudo mkdir -vp "$1"
 sudo chown -v "$user"."$user" "$1"
+sudo -k
