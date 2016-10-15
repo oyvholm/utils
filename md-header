@@ -75,7 +75,7 @@ sub main {
         print("$Line\n");
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

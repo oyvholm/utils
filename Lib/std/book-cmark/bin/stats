@@ -135,7 +135,7 @@ sub main {
     unlink("dat/STDprojnameDTS.spar");
     rmdir($lockdir);
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

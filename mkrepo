@@ -118,7 +118,7 @@ sub main {
         mysystem("ssh", $rsyncnet_url, "git", "init", "--bare", "$repodir");
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

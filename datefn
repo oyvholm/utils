@@ -92,7 +92,7 @@ sub main {
         process_file($Curr);
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

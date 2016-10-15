@@ -72,7 +72,7 @@ sub main {
         usleep(900_000);
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

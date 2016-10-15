@@ -307,7 +307,7 @@ END
         }
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

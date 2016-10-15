@@ -76,7 +76,7 @@ sub main {
         print($Curr);
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

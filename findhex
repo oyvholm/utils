@@ -134,7 +134,7 @@ sub main {
             '';
         }egx;
     }
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

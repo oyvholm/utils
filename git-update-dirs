@@ -355,7 +355,7 @@ sub main {
             $totnum_before, $totnum_after, $totnum_before-$totnum_after)
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

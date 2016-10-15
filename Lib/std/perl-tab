@@ -53,7 +53,7 @@ exit(main());
 sub main {
 	my $Retval = 0;
 
-	return($Retval);
+	return $Retval;
 }
 
 sub print_version {
