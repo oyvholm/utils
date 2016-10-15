@@ -136,7 +136,7 @@ END
     }
 
     diag('Testing finished.');
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 
