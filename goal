@@ -96,7 +96,7 @@ sub main {
         sec_to_string($end_ep),
     );
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

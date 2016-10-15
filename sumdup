@@ -74,7 +74,7 @@ sub main {
         $last_line = $Line;
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

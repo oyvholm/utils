@@ -113,7 +113,7 @@ sub main {
             $level, $level == 1 ? '' : 's'));
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

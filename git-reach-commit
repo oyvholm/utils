@@ -82,7 +82,7 @@ sub main {
         $currentvalue,
     );
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

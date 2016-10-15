@@ -67,7 +67,7 @@ sub main {
     }
     print("$outpath\n");
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

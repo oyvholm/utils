@@ -78,7 +78,7 @@ sub main {
         print;
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

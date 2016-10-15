@@ -73,7 +73,7 @@ sub main {
         write_data($count, $Opt{'number'}, $header, $got, $exp);
     }egsx;
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

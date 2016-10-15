@@ -79,7 +79,7 @@ sub main {
     printf("Total size of files that need more copies: %s\n", format_bytes($total));
     printf("Total space needed to get enough copies  : %s\n", format_bytes($fulltotal));
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

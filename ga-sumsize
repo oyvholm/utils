@@ -70,7 +70,7 @@ sub main {
         format_bytes($total_size),
     );
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 
