@@ -63,7 +63,7 @@ sub main {
         s/(SHA256-s\d+--[0-9a-f]{64})/print_key($1)/ge;
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

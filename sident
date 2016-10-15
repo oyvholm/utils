@@ -185,7 +185,7 @@ END
 
     $Opt{'xml'} && print("</sident>\n");
 
-    return($exit_val);
+    return $exit_val;
     # }}}
 } # main()
 

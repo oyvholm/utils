@@ -65,7 +65,7 @@ sub main {
         sort_file($file) || ($Retval = 1);
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

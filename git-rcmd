@@ -106,7 +106,7 @@ sub main {
     }
     close($pipefp);
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

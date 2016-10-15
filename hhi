@@ -196,7 +196,7 @@ sub main {
         # }}}
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

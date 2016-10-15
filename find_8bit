@@ -58,7 +58,7 @@ sub main {
         /[\x80-\xFF]/ && print;
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 

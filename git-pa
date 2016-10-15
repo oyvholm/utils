@@ -130,7 +130,7 @@ For every remote
         }
     }
 
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 
