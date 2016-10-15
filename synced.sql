@@ -84,7 +84,7 @@ INSERT INTO "synced" VALUES('Lib/std/html4','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/html5','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/latex-article','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/ly/Makefile','','',NULL);
-INSERT INTO "synced" VALUES('Lib/std/ly/band.ly','Lib/std/ly/guitar.ly','8eab2476a5f329773822e39804c350967c2ad864','2016-04-27 17:53:30');
+INSERT INTO "synced" VALUES('Lib/std/ly/band.ly','Lib/std/ly/guitar.ly','171829f831fac11673e0e89c4be29f7b78c3c303','2016-10-15 15:47:33');
 INSERT INTO "synced" VALUES('Lib/std/ly/bass.ily','Lib/std/ly/empty.ily','90285119f07f2b6b45ae2cd2042d99a7b16d392f','2016-04-27 17:39:52');
 INSERT INTO "synced" VALUES('Lib/std/ly/drums.ily','Lib/std/ly/empty.ily','90285119f07f2b6b45ae2cd2042d99a7b16d392f','2016-04-27 17:39:52');
 INSERT INTO "synced" VALUES('Lib/std/ly/empty.ily','','',NULL);
@@ -94,7 +94,7 @@ INSERT INTO "synced" VALUES('Lib/std/ly/guitar1.ily','Lib/std/ly/empty.ily','902
 INSERT INTO "synced" VALUES('Lib/std/ly/guitar2.ily','Lib/std/ly/empty.ily','90285119f07f2b6b45ae2cd2042d99a7b16d392f','2016-04-27 17:39:52');
 INSERT INTO "synced" VALUES('Lib/std/ly/piano-lower.ily','Lib/std/ly/empty.ily','90285119f07f2b6b45ae2cd2042d99a7b16d392f','2016-04-27 17:39:52');
 INSERT INTO "synced" VALUES('Lib/std/ly/piano-upper.ily','Lib/std/ly/empty.ily','90285119f07f2b6b45ae2cd2042d99a7b16d392f','2016-04-27 17:39:52');
-INSERT INTO "synced" VALUES('Lib/std/ly/piano.ly','Lib/std/ly/guitar.ly','8eab2476a5f329773822e39804c350967c2ad864','2016-04-27 17:53:30');
+INSERT INTO "synced" VALUES('Lib/std/ly/piano.ly','Lib/std/ly/guitar.ly','171829f831fac11673e0e89c4be29f7b78c3c303','2016-10-15 15:47:33');
 INSERT INTO "synced" VALUES('Lib/std/ly/test-ly-files','Lib/std/bash','0671201d54a5511d200740ced43b9afc5ec848f8','2016-04-21 07:12:00');
 INSERT INTO "synced" VALUES('Lib/std/ly/vocal1.ily','Lib/std/ly/empty.ily','90285119f07f2b6b45ae2cd2042d99a7b16d392f','2016-04-27 17:39:52');
 INSERT INTO "synced" VALUES('Lib/std/markdown','',NULL,NULL);
