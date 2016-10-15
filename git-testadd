@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.10.1
+VERSION=0.10.2
 
 ARGS="$(getopt -o "\
 g:\
@@ -165,6 +165,10 @@ else
 	sim=''
 fi
 
+if test -n "$opt_label"; then
+	tmpdir=".testadd-$opt_label.tmp"
+fi
+
 if test -n "$opt_git"; then
 	GIT="$opt_git"
 elif test -n "$TESTADD_GIT"; then
@@ -193,9 +197,6 @@ if test -n "$opt_ref"; then
 	fi
 fi
 
-if test -n "$opt_label"; then
-	tmpdir=".testadd-$opt_label.tmp"
-fi
 msg 0 Using \"$tmpdir\" as destination directory
 
 if test "$opt_unmodified" = "1"; then
