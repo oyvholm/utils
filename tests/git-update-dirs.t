@@ -328,7 +328,7 @@ END
     }
 
     diag('Testing finished.');
-    return($Retval);
+    return $Retval;
     # }}}
 } # main()
 
@@ -842,7 +842,7 @@ sub testcmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return($retval);
+    return $retval;
     # }}}
 } # testcmd()
 
@@ -875,7 +875,7 @@ sub likecmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
-    return($retval);
+    return $retval;
     # }}}
 } # likecmd()
 
@@ -887,7 +887,7 @@ sub file_data {
         local $/ = undef;
         $Txt = <$fp>;
         close($fp);
-        return($Txt);
+        return $Txt;
     } else {
         return;
     }
