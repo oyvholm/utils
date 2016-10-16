@@ -340,7 +340,7 @@ INSERT INTO "synced" VALUES('git-store-dirs','Lib/std/bash','24f94ed0c1e4b364bd1
 INSERT INTO "synced" VALUES('git-svn-myclone','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-testadd','Lib/std/bash-tab','10ce8e48f05c9b7289f0868dc35bc540860b3f10','2016-07-16 00:10:42');
 INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
+INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl-tab','fc141daa719ef82e36a06437f1017e33e4ff997a','2016-10-16 20:02:25');
 INSERT INTO "synced" VALUES('git-upstream','Lib/std/bash','9baa32551134d485f2b0389773027a43da599321','2016-01-02 18:07:29');
 INSERT INTO "synced" VALUES('git-wait-until-clean','Lib/std/bash','9c3dd8ad0f709a5dd763fa4cdbf220f4f737dd31','2016-04-28 02:30:53');
 INSERT INTO "synced" VALUES('git-when-merged','https://raw.githubusercontent.com/mhagger/git-when-merged/master/bin/git-when-merged','','2016-05-07 12:55:46');
