@@ -107,8 +107,8 @@ sub main {
 	my $Retval = 0;
 
 	($Opt{'ga-dropunused'} && $Opt{'ga-moveunused'}) &&
-		die("$progname: Can't use -u/--ga-dropunused and -U/--ga-moveunused " .
-		    "at the same time\n");
+		die("$progname: Can't use -u/--ga-dropunused and " .
+		    "-U/--ga-moveunused at the same time\n");
 
 	if ($Opt{'all-options'}) {
 		$Opt{'allbr'} += 1;
@@ -121,7 +121,8 @@ sub main {
 		$Opt{'push'} = 1;
 		$Opt{'submodule'} = 1;
 	}
-	($Opt{'ga-dropget'} || $Opt{'ga-dropunused'} || $Opt{'ga-moveunused'}) &&
+	($Opt{'ga-dropget'} || $Opt{'ga-dropunused'}
+	    || $Opt{'ga-moveunused'}) &&
 		($Opt{'ga-sync'} = 1);
 
 	my @Dirs = @ARGV;
@@ -138,7 +139,8 @@ sub main {
 		my $repos = `find -type d -name .git -print0`;
 		$repos =~ s/\/\.git\000/\000/g;
 		my %dupdir;
-		@Dirs = sort(grep { !$dupdir{$_}++ } (@Dirs, split("\000", $repos)));
+		@Dirs = sort(grep { !$dupdir{$_}++ }
+		        (@Dirs, split("\000", $repos)));
 	}
 
 	my $orig_dir = getcwd();
@@ -153,7 +155,8 @@ sub main {
 			}
 		} else {
 			open(DirFP, "<$dirfile") or
-				die("$progname: $dirfile: Cannot read from file: $!\n");
+				die("$progname: $dirfile: Cannot read " .
+				    "from file: $!\n");
 			while (<DirFP>) {
 				chomp();
 				push(@Dirs, $_);
@@ -169,18 +172,24 @@ sub main {
 		msg(2, "object_dir = '$object_dir'");
 		if (length($object_dir)) {
 			$Opt{'verbose'} >= -1 &&
-				print("================ $f ================\n");
+				print("================ $f " .
+				      "================\n");
 			if (!chdir($f)) {
 				warn("$progname: $f: Cannot chdir: $!\n");
 				next LOOP;
 			}
-			inside_git_dir() && (chdir('..'), $object_dir = ".git/objects");
-			my $is_bare = (get_config('core.bare') =~ /^true/) ? 1 : 0;
+			inside_git_dir() &&
+				(chdir('..'), $object_dir = ".git/objects");
+			my $is_bare = (get_config('core.bare') =~ /^true/)
+			                  ? 1
+			                  : 0;
 			msg(2, "is_bare = '$is_bare'");
 
 			my $Lh = "[0-9a-fA-F]";
-			my $uuid_templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-$Lh\{4}-$Lh\{12}";
-			my $is_annex = (get_config('annex.uuid') =~ /^$uuid_templ/)
+			my $uuid_templ = "$Lh\{8}-$Lh\{4}-$Lh\{4}-" .
+			                 "$Lh\{4}-$Lh\{12}";
+			my $is_annex = (get_config('annex.uuid') =~
+			               /^$uuid_templ/)
 			                   ? 1
 			                   : 0;
 			msg(2, "is_annex = '$is_annex'");
@@ -197,7 +206,8 @@ sub main {
 				mysystem("git", "fsck") && (
 					push(@err_test, $f),
 					warn("$progname: $f: ERRORS FOUND! " .
-					     "Skipping other actions for this repo.\n"),
+					     "Skipping other actions " .
+					     "for this repo.\n"),
 					next LOOP
 				);
 			}
@@ -205,15 +215,18 @@ sub main {
 				mysystem("git", "fetch", "--all", "--prune") &&
 					push(@err_fetch, $f);
 			} elsif (should('fetch')) {
-				mysystem("git", "fetch", "--all") && push(@err_fetch, $f);
+				mysystem("git", "fetch", "--all") &&
+					push(@err_fetch, $f);
 			}
 			if (should('pull') && !$is_bare) {
-				mysystem("git", "pull", "--ff-only") && push(@err_pull, $f);
+				mysystem("git", "pull", "--ff-only") &&
+					push(@err_pull, $f);
 				if (-e '.emptydirs') {
 					mysystem('git', 'restore-dirs');
 				}
 			}
-			if ($is_annex && (should('ga-sync') || should('ga-getnew'))) {
+			if ($is_annex &&
+			    (should('ga-sync') || should('ga-getnew'))) {
 				should('ga-sync') && mysystem("ga", "sync") &&
 					push(@err_gasync, $f);
 				if (should('ga-dropget')) {
@@ -239,12 +252,14 @@ sub main {
 						}
 						close($fh);
 					} else {
-						warn("$progname: Cannot open 'git remote' pipe: $!\n");
+						warn("$progname: Cannot open " .
+						     "'git remote' pipe: $!\n");
 					}
 				}
 				if (should('ga-dropget') || should('ga-getnew')) {
 					if (!$Opt{'ga-getnew'}) {
-						mysystem("ga", "get", "--auto");
+						mysystem("ga", "get",
+						         "--auto");
 						mysystem("ga", "sync");
 					} else {
 						mysystem("ga-getnew");
@@ -255,9 +270,11 @@ sub main {
 				mysystem("ga", "update-desc");
 			}
 			if (should('dangling')) {
-				mysystem("git", "dangling") && push(@err_dangling, $f);
+				mysystem("git", "dangling") &&
+					push(@err_dangling, $f);
 			}
-			if (should('allbr') && ($is_bare || $Opt{'allbr'} > 1)) {
+			if (should('allbr') &&
+			    ($is_bare || $Opt{'allbr'} > 1)) {
 				mysystem("git", "nobr");
 				mysystem("git", "allbr", "-ac");
 				mysystem("git", "checkout", "-");
@@ -270,7 +287,8 @@ sub main {
 				mysystem("git", "submodule", "update") &&
 					push(@err_updsub, $f);
 			}
-			if (should('compress') || should('aggressive-compress')) {
+			if (should('compress') ||
+			    should('aggressive-compress')) {
 				chomp(my $before =
 				    `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
 				$total_before += $before;
@@ -281,33 +299,39 @@ sub main {
 				mysystem("git", "count-objects", "-vH");
 				$Opt{'dry-run'} || print("\n");
 				if (should('aggressive-compress')) {
-					mysystem("git gc --aggressive") && push(@err_compress, $f);
+					mysystem("git gc --aggressive") &&
+						push(@err_compress, $f);
 				} else {
-					mysystem("git gc") && push(@err_compress, $f);
+					mysystem("git gc") &&
+						push(@err_compress, $f);
 				}
 				chomp(my $after =
-					`(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
+				    `(find $object_dir -type f -printf '%s+' ; echo 0) | bc`);
 				$total_after += $after;
 				my $saved = $before - $after;
-				chomp(my $numfiles_after = `find $object_dir -type f | wc -l`);
+				chomp(my $numfiles_after =
+				      `find $object_dir -type f | wc -l`);
 				$totnum_after += $numfiles_after;
-				$before && printf(
-				             "\nBefore: %s\nAfter : %s\nSaved : %s (%.4f%%)\n",
-				             commify($before),
-				             commify($after),
-				             commify($saved),
-				             100.0 * $saved / $before);
+				$before &&
+					printf("\nBefore: %s\n" .
+					       "After : %s\n" .
+					       "Saved : %s (%.4f%%)\n",
+					       commify($before),
+					       commify($after),
+					       commify($saved),
+					       100.0 * $saved / $before);
 				printf("Number of files in %s: " .
 				       "before: %u, after: %u, saved: %d\n",
 				       $object_dir,
 				       $numfiles_before,
 				       $numfiles_after,
 				       $numfiles_before-$numfiles_after)
-				# Temporarily (?) disabled, it takes a heck of a long 
-				# time and uses loads of CPU and memory. If the 
-				# git-annex repo gets corrupted it's in most cases good 
-				# enough to delete .git/annex/index anyway, and that can 
-				# be done manually.
+				# Temporarily (?) disabled, it takes a heck of 
+				# a long time and uses loads of CPU and memory. 
+				# If the git-annex repo gets corrupted it's in 
+				# most cases good enough to delete 
+				# .git/annex/index anyway, and that can be done 
+				# manually.
 				# $is_annex && should('dangling') && mysystem("ga", "repair");
 			}
 			if (should('delete-dangling') && !$is_bare) {
@@ -324,35 +348,39 @@ sub main {
 			$Opt{'verbose'} >= -1 && print("\n");
 		}
 		chdir($orig_dir) || die(
-		    "$progname: $orig_dir: Cannot return to original directory: $!\n");
+		    "$progname: $orig_dir: Cannot return to " .
+		    "original directory: $!\n");
 	}
-	scalar(@err_fetch) && print(
-	    "$progname: Unable to fetch from: " . join(" ", @err_fetch) . "\n");
-	scalar(@err_gasync) && print(
-	    "$progname: Unable to run ga sync: " . join(" ", @err_gasync) . "\n");
-	scalar(@err_dangling) && print(
-	    "$progname: Unable to run git dangling: " .
-	    join(" ", @err_dangling) . "\n");
-	scalar(@err_pull) && print(
-	    "$progname: Unable to pull from: " . join(" ", @err_pull) . "\n");
-	scalar(@err_push) && print(
-	    "$progname: Unable to push from: " . join(" ", @err_push) . "\n");
-	scalar(@err_updsub) && print(
-	    "$progname: Unable to update submodules in: " .
-	    join(" ", @err_updsub) . "\n");
-	scalar(@err_compress) && print(
-	    "$progname: Unable to compress: " . join(" ", @err_compress) . "\n");
-	scalar(@err_test) && print(
-	    "$progname: Error in git fsck: " . join(" ", @err_test) . "\n");
+	scalar(@err_fetch) && print("$progname: Unable to fetch from: " .
+	                            join(" ", @err_fetch) . "\n");
+	scalar(@err_gasync) && print("$progname: Unable to run ga sync: " .
+	                             join(" ", @err_gasync) . "\n");
+	scalar(@err_dangling) &&
+		print("$progname: Unable to run git dangling: " .
+		      join(" ", @err_dangling) . "\n");
+	scalar(@err_pull) && print("$progname: Unable to pull from: " .
+	                           join(" ", @err_pull) . "\n");
+	scalar(@err_push) && print("$progname: Unable to push from: " .
+	                           join(" ", @err_push) . "\n");
+	scalar(@err_updsub) &&
+		print("$progname: Unable to update submodules in: " .
+		      join(" ", @err_updsub) . "\n");
+	scalar(@err_compress) && print("$progname: Unable to compress: " .
+	                               join(" ", @err_compress) . "\n");
+	scalar(@err_test) && print("$progname: Error in git fsck: " .
+	                           join(" ", @err_test) . "\n");
 
 	if ($Opt{'compress'} || $Opt{'aggressive-compress'}) {
 		my $total_saved = $total_before - $total_after;
 		printf("Before: %s\nAfter : %s\n",
 		    commify($total_before), commify($total_after));
-		$total_before && printf("Total : %s (%.4f%%)\n",
-		    commify($total_saved), 100.0 * $total_saved / $total_before);
-		printf("Number of object files: before: %u, after: %u, saved: %d\n",
-		    $totnum_before, $totnum_after, $totnum_before-$totnum_after)
+		$total_before &&
+			printf("Total : %s (%.4f%%)\n",
+			       commify($total_saved),
+			       100.0 * $total_saved / $total_before);
+		printf("Number of object files: before: %u, after: %u, " .
+		       "saved: %d\n", $totnum_before, $totnum_after,
+		       $totnum_before-$totnum_after)
 	}
 
 	return $Retval;
