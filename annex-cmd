@@ -14,12 +14,12 @@ progname=annex-cmd
 VERSION=0.2.2
 
 if test "$1" = "--version"; then
-    echo $progname $VERSION
-    exit 0
+	echo $progname $VERSION
+	exit 0
 fi
 
 if test "$1" = "-h" -o "$1" = "--help"; then
-    cat <<END
+	cat <<END
 
 Execute command in all local git-annex repositories
 
@@ -52,78 +52,78 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 annex_free() {
-    dir="$1"
-    (
-        cd "$dir" || {
-            echo $progname: $dir: chdir error >&2
-            return 1
-        }
-        ga info --fast --bytes | grep "^available local disk space:" |
-            awk '{print($5)}'
-    )
+	dir="$1"
+	(
+		cd "$dir" || {
+			echo $progname: $dir: chdir error >&2
+			return 1
+		}
+		ga info --fast --bytes | grep "^available local disk space:" |
+		    awk '{print($5)}'
+	)
 }
 
 if [ "$1" = "--gadu" ]; then
-    git update-dirs ~/annex /media/*/annex \
-        -e "ga sync; sess ./lag_gadu-local *; git add .gadu-local; git ci -av; ga sync"
-    exit
+	git update-dirs ~/annex /media/*/annex \
+	    -e "ga sync; sess ./lag_gadu-local *; git add .gadu-local; git ci -av; ga sync"
+	exit
 fi
 
 wildc='*'
 if [ "$1" = "--annex" ]; then
-    unset wildc
-    shift
+	unset wildc
+	shift
 fi
 if [ "$1" = "-D" ]; then
-    test -z "$2" && { echo annex-cmd: Missing argument for -D >&2; exit 1; }
-    wildc="$2"
-    shift 2
+	test -z "$2" && { echo annex-cmd: Missing argument for -D >&2; exit 1; }
+	wildc="$2"
+	shift 2
 fi
 
 if [ "$1" = "--get" ]; then
-    shift
-    for f in /media/*/annex $HOME/annex; do
-        test -d "$f" || continue
-        free_space="$(annex_free "$f")"
-        test -z "$free_space" && {
-            echo $progname: $f: No annex information found >&2
-            continue
-        }
-        test $free_space -le 4096 && {
-            echo -n "$progname: $f: Skipping annex, " >&2
-            echo only $free_space bytes free >&2
-            continue
-        }
-        echo $free_space $f
-    done | sort -rn | cut -f 2- -d ' ' | while read d; do
-        (
-            echo >&2
-            echo $progname: Get files to $d >&2
-            cd "$d" && git update-dirs -N $wildc
-        )
-    done
-    exit
+	shift
+	for f in /media/*/annex $HOME/annex; do
+		test -d "$f" || continue
+		free_space="$(annex_free "$f")"
+		test -z "$free_space" && {
+			echo $progname: $f: No annex information found >&2
+			continue
+		}
+		test $free_space -le 4096 && {
+			echo -n "$progname: $f: Skipping annex, " >&2
+			echo only $free_space bytes free >&2
+			continue
+		}
+		echo $free_space $f
+	done | sort -rn | cut -f 2- -d ' ' | while read d; do
+		(
+			echo >&2
+			echo $progname: Get files to $d >&2
+			cd "$d" && git update-dirs -N $wildc
+		)
+	done
+	exit
 fi
 
 if [ "$1" = "--count-loose" ]; then
-    git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc \
-        -qq \
-        -E 'pwd >&2' \
-        -e 'echo $(find .git/objects -type f | grep -v -e pack -e info | wc -l) $(pwd)' \
-        | sort -n
-    exit
+	git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc \
+	    -qq \
+	    -E 'pwd >&2' \
+	    -e 'echo $(find .git/objects -type f | grep -v -e pack -e info | wc -l) $(pwd)' \
+	    | sort -n
+	exit
 fi
 
 if [ "$1" = "--find-extra" ]; then
-    git update-dirs ~/annex/$wildc \
-        -q \
-        -E 'pwd >&2' \
-        -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
-    exit
+	git update-dirs ~/annex/$wildc \
+	    -q \
+	    -E 'pwd >&2' \
+	    -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
+	exit
 fi
 
 git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc "$@"
