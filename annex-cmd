@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#=======================================================================
+#==============================================================================
 # annex-cmd
 # File ID: f1ca60b4-d33a-11e2-a3c0-0800274013ad
 #
@@ -8,7 +8,7 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=annex-cmd
 VERSION=0.2.2
@@ -127,3 +127,5 @@ if [ "$1" = "--find-extra" ]; then
 fi
 
 git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc "$@"
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
