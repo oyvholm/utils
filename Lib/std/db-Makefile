@@ -13,6 +13,9 @@ HTMLFILE = file.html
 $(HTMLFILE): $(BOOKFILES)
 	xsltproc --output $(HTMLFILE) ~/xsl/xhtml/docbook.xsl $(BOOKFILES)
 
-.PHONY: valid
-valid:
+.PHONY: clean
+clean:
+
+.PHONY: test
+test:
 	xmllint --valid --noout $(BOOKFILES)
