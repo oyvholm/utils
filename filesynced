@@ -11,13 +11,14 @@
 #=======================================================================
 
 progname=filesynced
-VERSION=0.7.1
+VERSION=0.8.0
 
 SQLITE=sqlite3
 bin="$HOME/bin"
 db="synced.sqlite"
 
 ARGS="$(getopt -o "\
+f\
 h\
 l\
 p:\
@@ -28,6 +29,7 @@ v\
 add,\
 create-index,\
 delete,\
+force,\
 help,\
 init,\
 list,\
@@ -50,6 +52,7 @@ eval set -- "$ARGS"
 opt_add=0
 opt_create_index=0
 opt_delete=0
+opt_force=0
 opt_help=0
 opt_init=0
 opt_list=0
@@ -69,6 +72,7 @@ while :; do
         (--add) opt_add=1; shift ;;
         (--create-index) opt_create_index=1; shift ;;
         (--delete) opt_delete=1; shift ;;
+        (-f|--force) opt_force=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (--init) opt_init=1; shift ;;
         (-l|--list) opt_list=1; shift ;;
@@ -106,6 +110,7 @@ Usage: $progname [OPTIONS] COMMIT FILE [FILE [...]]
        $progname -p NEWPRI FILE [FILES [...]]
        $progname --lock
        $progname --unlock TOKEN
+       $progname --unlock -f
        $progname --unsynced [OPTIONS] [FILES] [ -- GIT_OPTIONS ]
        $progname --valid-sha
 
@@ -119,6 +124,8 @@ Options:
     getting quite big.
   --delete
     Delete all files specified on the commandline from the database.
+  -f, --force
+    When used together with --unlock, force unlock without a token.
   -h, --help
     Show this help.
   --init
@@ -151,8 +158,10 @@ Options:
     If used together with --add, set the 'orig' field in the database to 
     this value, prefixed with 'Lib/std/'.
   --unlock TOKEN
+  --unlock -f
     If TOKEN is correct, overwrite synced.sql with the contents from 
-    $db, delete synced.slite and remove lock.
+    $db, delete synced.slite and remove lock. To unlock without a token, 
+    add the -f/--force option.
   --unsynced
     Generate a list of all filenames that don't have 'rev' defined in 
     synced.sql, i.e., those that haven't been synced yet. Arguments are 
@@ -334,7 +343,8 @@ if test "$opt_unlock" = "1"; then
         msg 2 $lockdir/token exists
         realtoken=$(cat $lockdir/token)
         msg 2 realtoken = $realtoken
-        if test "$token_from_user" != "$realtoken"; then
+        if test "$token_from_user" != "$realtoken" -a \
+          "$opt_force" != "1" ; then
             echo $progname --unlock: Token mismatch >&2
             msg 2 Got $token_from_user
             msg 2 Expected $realtoken

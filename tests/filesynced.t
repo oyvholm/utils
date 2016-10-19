@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.7.1';
+our $VERSION = '0.8.0';
 
 my %descriptions = ();
 
@@ -318,6 +318,38 @@ END
         "",
         0,
         "--unlock token is valid",
+    );
+
+    # }}}
+    likecmd("$CMD --lock", # {{{
+        '/^token_\S+\n$/',
+        '/^$/',
+        0,
+        "--lock, throw away the token",
+    );
+
+    # }}}
+    testcmd("$CMD --unlock -f", # {{{
+        "",
+        "",
+        0,
+        "--unlock with -f (force)",
+    );
+
+    # }}}
+    likecmd("$CMD --lock", # {{{
+        '/^token_\S+\n$/',
+        '/^$/',
+        0,
+        "--lock again, throw away the token",
+    );
+
+    # }}}
+    testcmd("$CMD --force --unlock", # {{{
+        "",
+        "",
+        0,
+        "--unlock with --force",
     );
 
     # }}}
