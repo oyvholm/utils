@@ -54,6 +54,7 @@ INSERT INTO "synced" VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2
 INSERT INTO "synced" VALUES('Lib/std/Genlog','Lib/std/bash-no-getopt','602afb101b41e50c9ed7096c56839fe83ff799aa','2015-10-30 07:05:38');
 INSERT INTO "synced" VALUES('Lib/std/bash','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/bash-no-getopt','Lib/std/bash','47adc00cc01f3a732c45efb9fa7e0947d16d30a0','2016-01-02 17:42:44');
+INSERT INTO "synced" VALUES('Lib/std/bash-no-getopt-tab','Lib/std/bash-tab','f46781d54bfab36fe43f49a75120b2b25e404ae2','2016-10-18 23:28:38');
 INSERT INTO "synced" VALUES('Lib/std/bash-tab','Lib/std/bash','b7dffb94d495268c783a0f015e1b0ba3b540e4be','2016-07-14 02:27:12');
 INSERT INTO "synced" VALUES('Lib/std/bisect','Lib/std/bash','0b1c9df17273d655a18a171d6ef4ef649f4921c7','2016-05-03 17:57:49');
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/.gitattributes','','',NULL);
