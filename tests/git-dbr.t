@@ -565,7 +565,7 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options]
 
 Contains tests for the $CMD_BASENAME(1) program.
 

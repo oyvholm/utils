@@ -316,7 +316,7 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options]
 
 Find missing Perl modules.
 
