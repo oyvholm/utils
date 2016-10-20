@@ -70,8 +70,7 @@ sub main {
     my $Retval = 0;
 
     diag(sprintf('========== Executing %s v%s ==========',
-        $progname,
-        $VERSION));
+                 $progname, $VERSION));
 
     if ($Opt{'todo'} && !$Opt{'all'}) {
         goto todo_section;
@@ -223,12 +222,7 @@ sub testcmd {
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
-    my $Txt = join('',
-        $cmd_outp_str,
-        defined($Desc)
-            ? $Desc
-            : ''
-    );
+    my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
     my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
@@ -256,12 +250,7 @@ sub likecmd {
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
-    my $Txt = join('',
-        $cmd_outp_str,
-        defined($Desc)
-            ? $Desc
-            : ''
-    );
+    my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
     my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
