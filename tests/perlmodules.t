@@ -75,8 +75,7 @@ sub main {
     my $Retval = 0;
 
     diag(sprintf('========== Executing %s v%s ==========',
-        $progname,
-        $VERSION));
+                 $progname, $VERSION));
 
     if ($Opt{'todo'} && !$Opt{'all'}) {
         goto todo_section;
@@ -226,12 +225,7 @@ sub testcmd {
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
-    my $Txt = join('',
-        $cmd_outp_str,
-        defined($Desc)
-            ? $Desc
-            : ''
-    );
+    my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
     my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
@@ -247,6 +241,7 @@ sub testcmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
     return $retval;
     # }}}
 } # testcmd()
@@ -259,12 +254,7 @@ sub likecmd {
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
-    my $Txt = join('',
-        $cmd_outp_str,
-        defined($Desc)
-            ? $Desc
-            : ''
-    );
+    my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
     my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
     my $retval = 1;
 
@@ -280,6 +270,7 @@ sub likecmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
     return $retval;
     # }}}
 } # likecmd()
@@ -288,14 +279,12 @@ sub file_data {
     # Return file content as a string {{{
     my $File = shift;
     my $Txt;
-    if (open(my $fp, '<', $File)) {
-        local $/ = undef;
-        $Txt = <$fp>;
-        close($fp);
-        return $Txt;
-    } else {
-        return;
-    }
+
+    open(my $fp, '<', $File) or return undef;
+    local $/ = undef;
+    $Txt = <$fp>;
+    close($fp);
+    return $Txt;
     # }}}
 } # file_data()
 
@@ -316,7 +305,7 @@ sub usage {
     }
     print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options]
 
 Find missing Perl modules.
 
@@ -344,9 +333,8 @@ sub msg {
     # Print a status message to stderr based on verbosity level {{{
     my ($verbose_level, $Txt) = @_;
 
-    if ($Opt{'verbose'} >= $verbose_level) {
-        print(STDERR "$progname: $Txt\n");
-    }
+    $verbose_level > $Opt{'verbose'} && return;
+    print(STDERR "$progname: $Txt\n");
     return;
     # }}}
 } # msg()
