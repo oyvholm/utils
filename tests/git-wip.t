@@ -535,6 +535,7 @@ sub testcmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
     return $retval;
     # }}}
 } # testcmd()
@@ -563,6 +564,7 @@ sub likecmd {
         diag("Warning: stderr not defined for '$Txt'");
     }
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
+
     return $retval;
     # }}}
 } # likecmd()
@@ -571,14 +573,12 @@ sub file_data {
     # Return file content as a string {{{
     my $File = shift;
     my $Txt;
-    if (open(my $fp, '<', $File)) {
-        local $/ = undef;
-        $Txt = <$fp>;
-        close($fp);
-        return $Txt;
-    } else {
-        return;
-    }
+
+    open(my $fp, '<', $File) or return undef;
+    local $/ = undef;
+    $Txt = <$fp>;
+    close($fp);
+    return $Txt;
     # }}}
 } # file_data()
 
@@ -631,9 +631,8 @@ sub msg {
     # Print a status message to stderr based on verbosity level {{{
     my ($verbose_level, $Txt) = @_;
 
-    if ($Opt{'verbose'} >= $verbose_level) {
-        print(STDERR "$progname: $Txt\n");
-    }
+    $verbose_level > $Opt{'verbose'} && return;
+    print(STDERR "$progname: $Txt\n");
     return;
     # }}}
 } # msg()
