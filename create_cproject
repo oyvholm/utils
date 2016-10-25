@@ -11,13 +11,15 @@
 #=======================================================================
 
 progname=create_cproject
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
+c\
 h\
 q\
 v\
 " -l "\
+copying,\
 help,\
 quiet,\
 verbose,\
@@ -26,11 +28,13 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_copying=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-c|--copying) opt_copying=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -51,6 +55,8 @@ Usage: $progname [options] PROJECT_NAME
 
 Options:
 
+  -c, --copying
+    Also create a COPYING file with the current license.
   -h, --help
     Show this help.
   -q, --quiet
@@ -69,4 +75,6 @@ test -z "$name" && { echo $progname: Name not specified as arg 1 >&2; exit 1; }
 echo -n "Makefile: "; std -t exec=$name c/Makefile Makefile
 echo -n "$name.c: "; std -t exec=$name c/std.c $name.c
 echo -n "$name.h: "; std -t exec=$name c/std.h $name.h
-echo -n "COPYING: "; std COPYING COPYING && echo OK || echo ERROR
+if test "$opt_copying" = "1"; then
+    echo -n "COPYING: "; std COPYING COPYING && echo OK || echo ERROR
+fi
