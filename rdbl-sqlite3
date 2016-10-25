@@ -10,4 +10,6 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+sqlite3 "$1" .dbinfo
+echo
 sqlite3 "$1" .dump
