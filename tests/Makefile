@@ -8,7 +8,7 @@ test:
 .PHONY: clean
 clean:
 	rm -rfv *.tmp tmp-*
-	rm -rfv datefn-files/file.txt datefn-files/repo
+	rm -rfv datefn-files/*.txt datefn-files/repo
 	rm -rfv edit-sqlite3-files/sqlite-databases
 	test -d ga-fsck-size-files/annex-backends && chmod -R +w ga-fsck-size-files/annex-backends || true
 	rm -rf ga-fsck-size-files/annex-backends
