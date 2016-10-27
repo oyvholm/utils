@@ -3,6 +3,7 @@
 
 .PHONY: test
 test:
+	test ! -e ../synced.sql.lock
 	Genlog *.t
 
 .PHONY: clean
