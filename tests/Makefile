@@ -10,8 +10,8 @@ clean:
 	rm -rfv *.tmp tmp-*
 	rm -rfv datefn-files/file.txt datefn-files/repo
 	rm -rfv edit-sqlite3-files/sqlite-databases
-	test -d ga-fsck-size-files/annex-backends && chmod -Rc +w ga-fsck-size-files/annex-backends || true
-	rm -rfv ga-fsck-size-files/annex-backends
-	test -d ga-sumsize-files/ga-sumsize-repo && chmod -Rc +w ga-sumsize-files/ga-sumsize-repo || true
-	rm -rfv ga-sumsize-files/ga-sumsize-repo
+	test -d ga-fsck-size-files/annex-backends && chmod -R +w ga-fsck-size-files/annex-backends || true
+	rm -rf ga-fsck-size-files/annex-backends
+	test -d ga-sumsize-files/ga-sumsize-repo && chmod -R +w ga-sumsize-files/ga-sumsize-repo || true
+	rm -rf ga-sumsize-files/ga-sumsize-repo
 	rm -rfv sort-sqlite-files/sqlite-dbs
