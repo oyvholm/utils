@@ -15,6 +15,7 @@ clean:
 	cd Lib && $(MAKE) clean
 	cd src && $(MAKE) clean
 	cd Git && $(MAKE) clean
+	find -name .testadd.tmp -type d -print0 | xargs -0r rm -rf
 
 .PHONY: lgd
 lgd:
