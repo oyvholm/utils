@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakk_logg
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 h\
@@ -79,9 +79,44 @@ myexit() {
 }
 trap "myexit 1" INT TERM
 
+get_sha1() {
+    sha1sum "$1" | head -c 40
+}
+
+copy_df_log() {
+    local dflog="$1"
+    local dfdestfile="$2"
+    local orig_sha=$(get_sha1 "$dflog")
+    local new_sha=""
+    local dest_sha=""
+    local have_tried=0
+    local retval=0
+
+    while test "$orig_sha" != "$new_sha"; do
+        if test "$have_tried" = "1"; then
+            echo $progname: $dflog has changed, retrying copy >&2
+            orig_sha=$(get_sha1 "$dflog")
+            sleep 1
+        fi
+        rm -f "$dfdestfile"
+        cp "$dflog" "$dfdestfile"
+        new_sha=$(get_sha1 "$dflog")
+        have_tried=1
+    done
+
+    dest_sha=$(get_sha1 "$dfdestfile")
+    if test "$dest_sha" != "$orig_sha"; then
+        echo $progname: SHA1 checksum for $dest_sha does not match >&2
+        retval=1
+    fi
+
+    return $retval
+}
+
 hname="$(hostname)"
 annexdir="$HOME/annex/log"
 dfdestdir="$annexdir/df/$hname"
+dfdestfile="$dfdestdir/df.sqlite"
 dflog="$HOME/log/df.sqlite"
 
 cd "$annexdir" || { echo $progname: $annexdir: chdir error >&2; exit 1; }
@@ -94,11 +129,11 @@ if test -f "$dflog"; then
         myexit 1
     }
     if test -n "$(git status --porcelain df.sqlite)"; then
-        echo $progname: $dfdestdir/df.sqlite is modified >&2
+        echo $progname: $dfdestfile is modified >&2
         myexit 1
     fi
-    rm "$dfdestdir/df.sqlite"
-    sqlite3 "$dflog" .dump | sqlite3 "$dfdestdir/df.sqlite"
+
+    copy_df_log "$dflog" "$dfdestfile" || myexit 1
 fi
 
 cd ~/log/script || {
