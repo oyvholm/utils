@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#=======================================================================
+#==============================================================================
 # filesynced
 # File ID: 25796c28-7205-11e5-b257-fefdb24f8e10
 #
@@ -8,7 +8,7 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=filesynced
 VERSION=0.8.0
@@ -655,3 +655,5 @@ END
 	done
 	echo COMMIT\;
 ) | $SQLITE "$db"
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
