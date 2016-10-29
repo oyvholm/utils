@@ -68,35 +68,35 @@ opt_unsynced=0
 opt_valid_sha=0
 opt_verbose=0
 while :; do
-    case "$1" in
-        (--add) opt_add=1; shift ;;
-        (--create-index) opt_create_index=1; shift ;;
-        (--delete) opt_delete=1; shift ;;
-        (-f|--force) opt_force=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (--init) opt_init=1; shift ;;
-        (-l|--list) opt_list=1; shift ;;
-        (--lock) opt_lock=1; shift ;;
-        (--patch) opt_patch=1; shift ;;
-        (-p|--set-priority) opt_set_priority=$2; shift 2 ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (--random) opt_random=1; shift ;;
-        (--timeout) opt_timeout=$2; shift 2 ;;
-        (-t|--type) opt_type=$2; shift 2 ;;
-        (--unlock) opt_unlock=1; shift ;;
-        (--unsynced) opt_unsynced=1; shift ;;
-        (--valid-sha) opt_valid_sha=1; shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+	case "$1" in
+		(--add) opt_add=1; shift ;;
+		(--create-index) opt_create_index=1; shift ;;
+		(--delete) opt_delete=1; shift ;;
+		(-f|--force) opt_force=1; shift ;;
+		(-h|--help) opt_help=1; shift ;;
+		(--init) opt_init=1; shift ;;
+		(-l|--list) opt_list=1; shift ;;
+		(--lock) opt_lock=1; shift ;;
+		(--patch) opt_patch=1; shift ;;
+		(-p|--set-priority) opt_set_priority=$2; shift 2 ;;
+		(-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+		(--random) opt_random=1; shift ;;
+		(--timeout) opt_timeout=$2; shift 2 ;;
+		(-t|--type) opt_type=$2; shift 2 ;;
+		(--unlock) opt_unlock=1; shift ;;
+		(--unsynced) opt_unsynced=1; shift ;;
+		(--valid-sha) opt_valid_sha=1; shift ;;
+		(-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+		(--version) echo $progname $VERSION; exit 0 ;;
+		(--) shift; break ;;
+		(*) echo $progname: Internal error >&2; exit 1 ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Add 'synced'-entry into $db for files. Updates synced.rev and 
 synced.date with Git commit info.
@@ -180,48 +180,48 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 msg() {
-    local empty_line=
-    local no_lf=
-    local prefix_str=
-    if test $opt_verbose -gt 2; then
-        prefix_str="$progname $$:$BASH_LINENO: "
-    else
-        prefix_str="$progname: "
-    fi
-    if test "$1" = "-l"; then
-        # If -l is specified, create empty line before message
-        empty_line=1
-        shift
-    fi
-    if test "$1" = "-n"; then
-        # If -n is specified, don't terminate with \n
-        no_lf="-n"
-        shift
-    fi
-    if test "$1" = "-q"; then
-        # -q suppresses $progname prefix
-        prefix_str=""
-        shift
-    fi
-    local vlevel=$1
-    shift
-    test $vlevel -gt $opt_verbose && return;
-    test "$empty_line" = "1" && echo >&2
-    echo $no_lf "$prefix_str$*" >&2
-    return
+	local empty_line=
+	local no_lf=
+	local prefix_str=
+	if test $opt_verbose -gt 2; then
+		prefix_str="$progname $$:$BASH_LINENO: "
+	else
+		prefix_str="$progname: "
+	fi
+	if test "$1" = "-l"; then
+		# If -l is specified, create empty line before message
+		empty_line=1
+		shift
+	fi
+	if test "$1" = "-n"; then
+		# If -n is specified, don't terminate with \n
+		no_lf="-n"
+		shift
+	fi
+	if test "$1" = "-q"; then
+		# -q suppresses $progname prefix
+		prefix_str=""
+		shift
+	fi
+	local vlevel=$1
+	shift
+	test $vlevel -gt $opt_verbose && return;
+	test "$empty_line" = "1" && echo >&2
+	echo $no_lf "$prefix_str$*" >&2
+	return
 }
 
 msg -l 2 Starting $progname, pwd = $(pwd)
 
 if test -n "$opt_timeout"; then
-    if test -n "$(echo "$opt_timeout" | tr -d 0-9 | grep .)"; then
-        echo $progname: Argument to --timeout must be an integer >&2
-        exit 1
-    fi
+	if test -n "$(echo "$opt_timeout" | tr -d 0-9 | grep .)"; then
+		echo $progname: Argument to --timeout must be an integer >&2
+		exit 1
+	fi
 fi
 
 repotop="$(git rev-parse --show-toplevel)"
@@ -230,17 +230,17 @@ lockdir="$repotop/synced.sql.lock"
 msg 2 lockdir = \"$lockdir\"
 
 cleanup() {
-    msg 2 "cleanup(): bintoken = $bintoken"
-    if test -n "$bintoken"; then
-        msg 2 Unlock bintoken
-        cd "$bin" && filesynced --unlock $bintoken
-    fi
-    msg 2 Unlock token
-    cd "$repotop" && filesynced --unlock $token
+	msg 2 "cleanup(): bintoken = $bintoken"
+	if test -n "$bintoken"; then
+		msg 2 Unlock bintoken
+		cd "$bin" && filesynced --unlock $bintoken
+	fi
+	msg 2 Unlock token
+	cd "$repotop" && filesynced --unlock $token
 }
 
 init_db() {
-    cat <<END | $SQLITE "$1"
+	cat <<END | $SQLITE "$1"
 CREATE TABLE synced (
   file TEXT
     CONSTRAINT synced_file_length
@@ -277,217 +277,217 @@ END
 }
 
 safe_chdir() {
-    local dir="$1"
-    msg 2 chdir $dir
-    cd "$dir" || {
-        echo $progname: Cannot chdir to \'$dir\' >&2
-        exit 1
-    }
+	local dir="$1"
+	msg 2 chdir $dir
+	cd "$dir" || {
+		echo $progname: Cannot chdir to \'$dir\' >&2
+		exit 1
+	}
 }
 
 if test "$opt_lock" = "1" -a "$opt_unlock" = "1"; then
-    echo $progname: Cannot mix --lock and --unlock >&2
-    exit 1
+	echo $progname: Cannot mix --lock and --unlock >&2
+	exit 1
 fi
 
 if test "$opt_lock" = "1"; then
-    msg 2 Perform --lock stuff
-    cd "$repotop" || {
-        echo $progname --lock: $repotop: chdir error >&2
-        exit 1
-    }
-    begin_wait_time=$(date -u +%s)
-    until mkdir "$lockdir" 2>/dev/null; do
-        echo $progname --lock: $lockdir: Waiting for lockdir... >&2
-        if test -n "$opt_timeout" -a \
-          $(( $(date -u +%s) - $begin_wait_time )) -gt \
-          $(( $opt_timeout - 1 )); then
-            printf '%s: Lock not aquired after %u second%s, aborting\n' >&2 \
-                "$progname" \
-                "$opt_timeout" \
-                "$(test "$opt_timeout" = "1" || echo -n s)"
-            exit 1
-        fi
-        sleep 2
-    done
-    if test -e "$db"; then
-        echo $progname --lock: $repotop/$db: File already exists >&2
-        rmdir "$lockdir"
-        exit 1
-    fi
-    if test -f "synced.sql"; then
-        msg 2 Create $db from $(pwd)/synced.sql
-        $SQLITE "$db" <synced.sql
-    fi
-    token="token_$(date -u +"%Y%m%dT%H%M%SZ").$$.$(
-        head -c 20 /dev/urandom | sha1sum | head -c 40
-    )"
-    echo $token >"$lockdir/token"
-    echo $token
-    exit 0
+	msg 2 Perform --lock stuff
+	cd "$repotop" || {
+		echo $progname --lock: $repotop: chdir error >&2
+		exit 1
+	}
+	begin_wait_time=$(date -u +%s)
+	until mkdir "$lockdir" 2>/dev/null; do
+		echo $progname --lock: $lockdir: Waiting for lockdir... >&2
+		if test -n "$opt_timeout" -a \
+		  $(( $(date -u +%s) - $begin_wait_time )) -gt \
+		  $(( $opt_timeout - 1 )); then
+			printf '%s: Lock not aquired after %u second%s, aborting\n' >&2 \
+			    "$progname" \
+			    "$opt_timeout" \
+			    "$(test "$opt_timeout" = "1" || echo -n s)"
+			exit 1
+		fi
+		sleep 2
+	done
+	if test -e "$db"; then
+		echo $progname --lock: $repotop/$db: File already exists >&2
+		rmdir "$lockdir"
+		exit 1
+	fi
+	if test -f "synced.sql"; then
+		msg 2 Create $db from $(pwd)/synced.sql
+		$SQLITE "$db" <synced.sql
+	fi
+	token="token_$(date -u +"%Y%m%dT%H%M%SZ").$$.$(
+		head -c 20 /dev/urandom | sha1sum | head -c 40
+	)"
+	echo $token >"$lockdir/token"
+	echo $token
+	exit 0
 fi
 
 if test "$opt_unlock" = "1"; then
-    msg 2 Perform --unlock stuff
-    token_from_user="$1"
-    msg 2 token_from_user = $token_from_user
-    cd "$repotop" || {
-        echo $progname --unlock: $repotop: chdir error >&2
-        exit 1
-    }
-    if test ! -d "$lockdir"; then
-        echo $progname --unlock: $lockdir: Lockdir doesn\'t exist >&2
-        exit 1
-    fi
-    if test -e "$lockdir/token"; then
-        msg 2 $lockdir/token exists
-        realtoken=$(cat $lockdir/token)
-        msg 2 realtoken = $realtoken
-        if test "$token_from_user" != "$realtoken" -a \
-          "$opt_force" != "1" ; then
-            echo $progname --unlock: Token mismatch >&2
-            msg 2 Got $token_from_user
-            msg 2 Expected $realtoken
-            exit 1
-        fi
-        msg 2 Token is valid, delete $lockdir/token
-        rm "$lockdir/token"
-    fi
-    if test -f "$db"; then
-        sort-sqlite "$db"
-        msg 2 Dump $db to $(pwd)/synced.sql
-        $SQLITE "$db" .dump >synced.sql
-        msg 2 Remove $db
-        rm "$db"
-    else
-        msg 1 $db not found, did not update synced.sql
-    fi
-    if rmdir "$lockdir"; then
-        msg 2 $lockdir removed
-        exit 0
-    else
-        echo $progname --unlock: $lockdir: Could not remove lockdir >&2
-        exit 1
-    fi
+	msg 2 Perform --unlock stuff
+	token_from_user="$1"
+	msg 2 token_from_user = $token_from_user
+	cd "$repotop" || {
+		echo $progname --unlock: $repotop: chdir error >&2
+		exit 1
+	}
+	if test ! -d "$lockdir"; then
+		echo $progname --unlock: $lockdir: Lockdir doesn\'t exist >&2
+		exit 1
+	fi
+	if test -e "$lockdir/token"; then
+		msg 2 $lockdir/token exists
+		realtoken=$(cat $lockdir/token)
+		msg 2 realtoken = $realtoken
+		if test "$token_from_user" != "$realtoken" -a \
+		  "$opt_force" != "1" ; then
+			echo $progname --unlock: Token mismatch >&2
+			msg 2 Got $token_from_user
+			msg 2 Expected $realtoken
+			exit 1
+		fi
+		msg 2 Token is valid, delete $lockdir/token
+		rm "$lockdir/token"
+	fi
+	if test -f "$db"; then
+		sort-sqlite "$db"
+		msg 2 Dump $db to $(pwd)/synced.sql
+		$SQLITE "$db" .dump >synced.sql
+		msg 2 Remove $db
+		rm "$db"
+	else
+		msg 1 $db not found, did not update synced.sql
+	fi
+	if rmdir "$lockdir"; then
+		msg 2 $lockdir removed
+		exit 0
+	else
+		echo $progname --unlock: $lockdir: Could not remove lockdir >&2
+		exit 1
+	fi
 fi
 
 if test "$opt_unsynced" = "1"; then
-    msg 2 Perform --unsynced stuff
-    token=$(filesynced --lock)
-    if test -z "$(echo $token | grep ^token_)"; then
-        echo $progname --unsynced: Cannot --lock >&2
-        exit 1
-    fi
-    git allfiles "$@" | strip-nonexisting | while read f; do
-        cat <<END
+	msg 2 Perform --unsynced stuff
+	token=$(filesynced --lock)
+	if test -z "$(echo $token | grep ^token_)"; then
+		echo $progname --unsynced: Cannot --lock >&2
+		exit 1
+	fi
+	git allfiles "$@" | strip-nonexisting | while read f; do
+		cat <<END
 SELECT file FROM synced
   WHERE
     file='$f'
     AND
     rev IS NULL;
 END
-    done | sqlite3 synced.sqlite
-    filesynced --unlock $token
-    exit
+	done | sqlite3 synced.sqlite
+	filesynced --unlock $token
+	exit
 fi
 
 if test "$opt_create_index" = "1"; then
-    msg 2 Perform --create-index stuff
-    token=$(filesynced --lock)
-    if test -z "$(echo $token | grep ^token_)"; then
-        echo $progname --create-index: Cannot --lock >&2
-        exit 1
-    fi
-    cat <<END | $SQLITE "$db"
+	msg 2 Perform --create-index stuff
+	token=$(filesynced --lock)
+	if test -z "$(echo $token | grep ^token_)"; then
+		echo $progname --create-index: Cannot --lock >&2
+		exit 1
+	fi
+	cat <<END | $SQLITE "$db"
 CREATE INDEX IF NOT EXISTS idx_synced_file ON synced (file);
 CREATE INDEX IF NOT EXISTS idx_synced_orig ON synced (orig);
 CREATE INDEX IF NOT EXISTS idx_synced_rev ON synced (rev);
 END
-    filesynced --unlock $token
-    exit
+	filesynced --unlock $token
+	exit
 fi
 
 if test "$opt_patch" = "1"; then
-    msg 2 Perform --patch stuff
-    # FIXME: Make it work with filenames containing bloody whitespace. 
-    # Will take care of that when the output format of -l/--list changes 
-    # after --patch is in place.
-    files_behind="$(
-        filesynced -l |
-        grep -v ^0 |
-        awk '{ print $2 }'
-    )"
-    if test -z "$files_behind"; then
-        msg 0 No files need patching
-        exit 0
-    fi
-    echo "$files_behind" | while read f; do
-        echo
-        token=$(filesynced --lock)
-        if test -z "$(echo $token | grep ^token_)"; then
-            echo $progname --patch: Cannot --lock >&2
-            exit 1
-        fi
-        orig=$($SQLITE "$db" "SELECT orig FROM synced WHERE file = '$f';")
-        msg 2 orig = \"$orig\"
-        rev=$($SQLITE "$db" "SELECT rev FROM synced WHERE file = '$f';")
-        msg 2 rev = \"$rev\"
-        filesynced --unlock $token
+	msg 2 Perform --patch stuff
+	# FIXME: Make it work with filenames containing bloody whitespace. 
+	# Will take care of that when the output format of -l/--list changes 
+	# after --patch is in place.
+	files_behind="$(
+	    filesynced -l |
+	    grep -v ^0 |
+	    awk '{ print $2 }'
+	)"
+	if test -z "$files_behind"; then
+		msg 0 No files need patching
+		exit 0
+	fi
+	echo "$files_behind" | while read f; do
+		echo
+		token=$(filesynced --lock)
+		if test -z "$(echo $token | grep ^token_)"; then
+			echo $progname --patch: Cannot --lock >&2
+			exit 1
+		fi
+		orig=$($SQLITE "$db" "SELECT orig FROM synced WHERE file = '$f';")
+		msg 2 orig = \"$orig\"
+		rev=$($SQLITE "$db" "SELECT rev FROM synced WHERE file = '$f';")
+		msg 2 rev = \"$rev\"
+		filesynced --unlock $token
 
-        (cd ~/bin && git diff $rev.. $orig) |
-          patch -m --no-backup-if-mismatch "$f" && (
-            filesynced HEAD "$f"
-            git add "$f" synced.sql
-        )
-    done
-    exit
+		(cd ~/bin && git diff $rev.. $orig) |
+		  patch -m --no-backup-if-mismatch "$f" && (
+		    filesynced HEAD "$f"
+		    git add "$f" synced.sql
+		)
+	done
+	exit
 fi
 
 bintoken=
 token=$(filesynced --lock --timeout "$opt_timeout")
 if test -z "$(echo $token | grep ^token_)"; then
-    echo $progname: No token received from filesynced --lock >&2
-    exit 1
+	echo $progname: No token received from filesynced --lock >&2
+	exit 1
 fi
 trap cleanup EXIT
 msg 2 token = $token
 
 if test "$opt_init" = "1"; then
-    msg 2 Perform --init stuff
-    safe_chdir "$repotop"
-    for f in synced.sql synced.sqlite; do
-        if test -e "$f"; then
-            echo $progname --init: $repotop/$f already exists >&2
-            exit 1
-        fi
-    done
-    init_db synced.sqlite
-    $SQLITE synced.sqlite .dump >synced.sql
-    rm synced.sqlite
-    exit
+	msg 2 Perform --init stuff
+	safe_chdir "$repotop"
+	for f in synced.sql synced.sqlite; do
+		if test -e "$f"; then
+			echo $progname --init: $repotop/$f already exists >&2
+			exit 1
+		fi
+	done
+	init_db synced.sqlite
+	$SQLITE synced.sqlite .dump >synced.sql
+	rm synced.sqlite
+	exit
 fi
 
 test -f "$db" || {
-    echo $progname: $db: Sync database not found >&2
-    exit 1
+	echo $progname: $db: Sync database not found >&2
+	exit 1
 }
 
 if test "$opt_list" = "1"; then
-    msg 2 Perform --list stuff
-    test -n "$opt_type" && type_str="$opt_type" || type_str="%"
-    safe_chdir "$bin"
-    if test "$(cat synced.sql.lock/token 2>/dev/null)" != "$token"; then
-        msg 2 token is different from synced.sql.lock/token
-        bintoken=$(filesynced --lock)
-        msg 2 bintoken = $bintoken
-        if test -z "$(echo $bintoken | grep ^token_)"; then
-            echo -n "$progname: No token received " >&2
-            echo from filesynced --lock in $bin >&2
-            exit 1
-        fi
-    fi
-    safe_chdir - >/dev/null
-    cat <<END | $SQLITE "$db" | bash | sort -n
+	msg 2 Perform --list stuff
+	test -n "$opt_type" && type_str="$opt_type" || type_str="%"
+	safe_chdir "$bin"
+	if test "$(cat synced.sql.lock/token 2>/dev/null)" != "$token"; then
+		msg 2 token is different from synced.sql.lock/token
+		bintoken=$(filesynced --lock)
+		msg 2 bintoken = $bintoken
+		if test -z "$(echo $bintoken | grep ^token_)"; then
+			echo -n "$progname: No token received " >&2
+			echo from filesynced --lock in $bin >&2
+			exit 1
+		fi
+	fi
+	safe_chdir - >/dev/null
+	cat <<END | $SQLITE "$db" | bash | sort -n
 SELECT
   'echo \$(' ||
     'cd "$bin"; git log --format=%h ' || rev || '.. ' || orig || ' | wc -l' ||
@@ -505,153 +505,153 @@ WHERE
   AND
   rev IS NOT NULL;
 END
-    exit
+	exit
 fi
 
 if test "$opt_delete" = "1"; then
-    msg 2 Perform --delete stuff
-    safe_chdir "$repotop"
-    retval=0
-    for f in "$@"; do
-        from_synced="$(
-            echo "SELECT file FROM synced WHERE file = '$f';" | $SQLITE "$db"
-        )"
-        from_todo="$(
-            echo "SELECT file FROM todo WHERE file = '$f';" | $SQLITE "$db"
-        )"
-        if test -n "$from_synced"; then
-            echo "DELETE FROM synced WHERE file = '$f';" | $SQLITE "$db"
-            msg 0 Deleted $f from synced
-        else
-            retval=1
-        fi
-        if test -n "$from_todo"; then
-            echo "DELETE FROM todo WHERE file = '$f';" | $SQLITE "$db"
-            msg 0 Deleted $f from todo
-        fi
-    done
-    exit $retval
+	msg 2 Perform --delete stuff
+	safe_chdir "$repotop"
+	retval=0
+	for f in "$@"; do
+		from_synced="$(
+		    echo "SELECT file FROM synced WHERE file = '$f';" | $SQLITE "$db"
+		)"
+		from_todo="$(
+		    echo "SELECT file FROM todo WHERE file = '$f';" | $SQLITE "$db"
+		)"
+		if test -n "$from_synced"; then
+			echo "DELETE FROM synced WHERE file = '$f';" | $SQLITE "$db"
+			msg 0 Deleted $f from synced
+		else
+			retval=1
+		fi
+		if test -n "$from_todo"; then
+			echo "DELETE FROM todo WHERE file = '$f';" | $SQLITE "$db"
+			msg 0 Deleted $f from todo
+		fi
+	done
+	exit $retval
 fi
 
 if test "$opt_random" = "1"; then
-    msg 2 Perform --random stuff
-    file="$(
-        $SQLITE "$db" "
+	msg 2 Perform --random stuff
+	file="$(
+		$SQLITE "$db" "
 SELECT file FROM todo
   ORDER BY pri, random()
   LIMIT 1;
-        "
-    )"
-    if test -z "$file"; then
-        echo $progname: No files to edit >&2
-        exit 0
-    fi
-    vd "$file" "$HOME/bin/$(
-        $SQLITE $db "
+		"
+	)"
+	if test -z "$file"; then
+		echo $progname: No files to edit >&2
+		exit 0
+	fi
+	vd "$file" "$HOME/bin/$(
+	    $SQLITE $db "
 SELECT orig FROM synced
   WHERE file = '$file';
-        "
-    )"
-    exit
+	    "
+	)"
+	exit
 fi
 
 if test -n "$opt_set_priority"; then
-    msg 2 Perform --set-priority stuff
-    echo "$opt_set_priority" | grep -qE '^[1-5]$' || {
-        echo $progname: Argument to -p/--set-priority must be between 1 and 5
-        exit 1
-    }
-    (
-        echo BEGIN\;
-        for f in "$@"; do
-            echo "UPDATE todo SET pri = $opt_set_priority WHERE file = '$f';"
-        done
-        echo END\;
-    ) | $SQLITE "$db"
-    exit
+	msg 2 Perform --set-priority stuff
+	echo "$opt_set_priority" | grep -qE '^[1-5]$' || {
+		echo $progname: Argument to -p/--set-priority must be between 1 and 5
+		exit 1
+	}
+	(
+		echo BEGIN\;
+		for f in "$@"; do
+			echo "UPDATE todo SET pri = $opt_set_priority WHERE file = '$f';"
+		done
+		echo END\;
+	) | $SQLITE "$db"
+	exit
 fi
 
 if test "$opt_valid_sha" = "1"; then
-    msg 2 Perform --valid-sha stuff
-    cat <<END | sqlite3 synced.sqlite | sort -u | grep . | while read f; do
+	msg 2 Perform --valid-sha stuff
+	cat <<END | sqlite3 synced.sqlite | sort -u | grep . | while read f; do
 SELECT rev FROM synced
   WHERE
     rev IS NOT NULL;
 END
-        if test "$(git sht ..$f | wc -l)" != "0"; then
-            echo $f
-        fi
-    done
-    exit
+		if test "$(git sht ..$f | wc -l)" != "0"; then
+			echo $f
+		fi
+	done
+	exit
 fi
 
 ref=$1
 
 if test "$opt_add" != "1"; then
-    commit="$(cd "$bin"; git rev-parse $1)"
-    if test -z "$commit"; then
-        echo $progname: $1: Invalid Git ref >&2
-        exit 1
-    fi
-    shift
+	commit="$(cd "$bin"; git rev-parse $1)"
+	if test -z "$commit"; then
+		echo $progname: $1: Invalid Git ref >&2
+		exit 1
+	fi
+	shift
 fi
 files="$*"
 if test -z "$files"; then
-    echo $progname: No files specified >&2
-    exit 1
+	echo $progname: No files specified >&2
+	exit 1
 fi
 date="$(
-    cd "$bin"
-    git log -1 --format=%cd --date=raw $commit |
-    cut -f 1 -d ' ' |
-    ep -D ' ' |
-    tr -d Z
+	cd "$bin"
+	git log -1 --format=%cd --date=raw $commit |
+	cut -f 1 -d ' ' |
+	ep -D ' ' |
+	tr -d Z
 )"
 
 for f in $files; do
-    if test "$opt_add" = "1"; then
-        if test ! -f "$f"; then
-            echo $progname: $f: File not found, no entries updated >&2
-            exit 1
-        fi
-    else
-        if test -z "$(git ls-files "$f")"; then
-            echo $progname: $f: File is not in Git, no entries updated >&2
-            exit 1
-        fi
-    fi
+	if test "$opt_add" = "1"; then
+		if test ! -f "$f"; then
+			echo $progname: $f: File not found, no entries updated >&2
+			exit 1
+		fi
+	else
+		if test -z "$(git ls-files "$f")"; then
+			echo $progname: $f: File is not in Git, no entries updated >&2
+			exit 1
+		fi
+	fi
 done
 
 (
-    echo BEGIN\;
-    for f in $files; do
-        if test "$opt_add" = "1"; then
-            if test "$opt_type" != "%"; then
-                type_def=",orig"
-                type_val=",'Lib/std/$opt_type'"
-            else
-                unset type_def type_val
-            fi
-            echo "INSERT INTO synced (file$type_def) VALUES ('$f'$type_val);" |
-              $SQLITE "$db"
-            if test "$?" != "0"; then
-                echo -n "$progname: Cannot add \"$f\" to the database, " >&2
-                echo no entries updated >&2
-                echo "ROLLBACK;"
-            fi
-        else
-            if test "$ref" = "HEAD"; then
-                sql_delete_todo="DELETE FROM todo WHERE file = '$f';"
-            else
-                sql_delete_todo=
-            fi
-            cat <<END
+	echo BEGIN\;
+	for f in $files; do
+		if test "$opt_add" = "1"; then
+			if test "$opt_type" != "%"; then
+				type_def=",orig"
+				type_val=",'Lib/std/$opt_type'"
+			else
+				unset type_def type_val
+			fi
+			echo "INSERT INTO synced (file$type_def) VALUES ('$f'$type_val);" |
+			  $SQLITE "$db"
+			if test "$?" != "0"; then
+				echo -n "$progname: Cannot add \"$f\" to the database, " >&2
+				echo no entries updated >&2
+				echo "ROLLBACK;"
+			fi
+		else
+			if test "$ref" = "HEAD"; then
+				sql_delete_todo="DELETE FROM todo WHERE file = '$f';"
+			else
+				sql_delete_todo=
+			fi
+			cat <<END
 UPDATE synced
   SET rev = '$commit', date = '$date'
   WHERE file = '$f';
 $sql_delete_todo
 END
-        fi
-    done
-    echo COMMIT\;
+		fi
+	done
+	echo COMMIT\;
 ) | $SQLITE "$db"
