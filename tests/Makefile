@@ -17,3 +17,4 @@ clean:
 	test -d ga-sumsize-files/ga-sumsize-repo && chmod -R +w ga-sumsize-files/ga-sumsize-repo || true
 	rm -rf ga-sumsize-files/ga-sumsize-repo
 	rm -rfv sort-sqlite-files/sqlite-dbs
+	if test ! -e log/.git; then rm -rfv log; fi
