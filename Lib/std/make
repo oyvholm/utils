@@ -1,0 +1,11 @@
+# STDfilenameDTS
+# File ID: STDuuidDTS
+
+.PHONY: default
+default:
+
+.PHONY: clean
+clean:
+
+.PHONY: test
+test:
