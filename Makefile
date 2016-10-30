@@ -55,3 +55,25 @@ unmerged:
 	git log --graph --date-order --format=fuller -p --decorate=short \
 		$$(git br -a --contains firstrev --no-merged | git nocom) \
 		^master
+
+.PHONY: update-synced
+update-synced:
+	test ! -e .update-synced_token.tmp
+	test ! -e synced.sql.lock
+	filesynced --lock >.update-synced_token.tmp
+	git ls-files | while read f; do \
+		if test -f "$$f" -a ! -h "$$f" ; then \
+			echo "INSERT INTO synced (file) VALUES ('$$f');"; \
+		fi; \
+	done | sqlite3 synced.sqlite 2>/dev/null || true; \
+	echo "SELECT file FROM synced ORDER BY file;" | \
+	    sqlite3 synced.sqlite | while read f; do \
+		if test ! -f "$$f"; then \
+			echo "DELETE FROM synced WHERE file = '$$f';" | \
+			    sqlite3 synced.sqlite; \
+			echo "DELETE FROM todo WHERE file = '$$f';" | \
+			    sqlite3 synced.sqlite; \
+		fi; \
+	done
+	filesynced --unlock $$(cat .update-synced_token.tmp)
+	rm -f .update-synced_token.tmp
