@@ -43,7 +43,6 @@ INSERT INTO "synced" VALUES('Div/svnprops/utils-repo.smsum.asc','','',NULL);
 INSERT INTO "synced" VALUES('Div/unfinished/svnbck','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('Div/unfinished/svnstat','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('Git/Makefile','','',NULL);
-INSERT INTO "synced" VALUES('Git/update','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/Makefile','','',NULL);
 INSERT INTO "synced" VALUES('Lib/perllib/.gitignore','','',NULL);
 INSERT INTO "synced" VALUES('Lib/perllib/Makefile','','',NULL);
@@ -707,7 +706,6 @@ CREATE TABLE todo (
   ,
   comment TEXT
 );
-INSERT INTO "todo" VALUES('Git/update',3,NULL);
 INSERT INTO "todo" VALUES('Local/arch-vbox/pkg-to-pavi',5,NULL);
 INSERT INTO "todo" VALUES('Local/dg-vbox/fixskjerm',5,NULL);
 INSERT INTO "todo" VALUES('Local/n900/mountloop',5,NULL);
