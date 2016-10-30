@@ -91,33 +91,7 @@ END
 
 =cut
 
-    diag('Testing -h (--help) option...');
-    likecmd("$CMD -h", # {{{
-        '/  Show this help/i',
-        '/^$/',
-        0,
-        'Option -h prints help screen',
-    );
-
-    # }}}
-    diag('Testing -v (--verbose) option...');
-    likecmd("$CMD -hv", # {{{
-        '/^\n\S+ \d+\.\d+\.\d+/s',
-        '/^$/',
-        0,
-        'Option -v with -h returns version number and help screen',
-    );
-
-    # }}}
-    diag('Testing --version option...');
-    likecmd("$CMD --version", # {{{
-        '/^\S+ \d+\.\d+\.\d+/',
-        '/^$/',
-        0,
-        'Option --version returns version number',
-    );
-
-    # }}}
+    test_standard_options();
 
     my $topdir = "datefn-files";
     ok(chdir($topdir), "chdir $topdir");
@@ -343,6 +317,33 @@ END
     return $Retval;
     # }}}
 } # main()
+
+sub test_standard_options {
+    # {{{
+    diag('Testing -h (--help) option...');
+    likecmd("$CMD -h",
+            '/  Show this help/i',
+            '/^$/',
+            0,
+            'Option -h prints help screen');
+
+    diag('Testing -v (--verbose) option...');
+    likecmd("$CMD -hv",
+            '/^\n\S+ \d+\.\d+\.\d+/s',
+            '/^$/',
+            0,
+            'Option -v with -h returns version number and help screen');
+
+    diag('Testing --version option...');
+    likecmd("$CMD --version",
+            '/^\S+ \d+\.\d+\.\d+/',
+            '/^$/',
+            0,
+            'Option --version returns version number');
+
+    return;
+    # }}}
+}
 
 sub testcmd {
     # {{{
