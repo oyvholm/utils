@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakk_logg
-VERSION=0.3.1
+VERSION=0.3.2
 
 ARGS="$(getopt -o "\
 h\
@@ -70,6 +70,11 @@ mkdir "$lockdir" || {
     exit 1
 }
 
+msg() {
+    echo >&2
+    echo "$progname: $*" >&2
+}
+
 myexit() {
     rmdir "$lockdir" || {
         echo $progname: $lockdir: Cannot remove lockdir >&2
@@ -98,8 +103,7 @@ copy_df_log() {
             orig_sha=$(get_sha1 "$dflog")
             sleep 1
         fi
-        rm -f "$dfdestfile"
-        cp "$dflog" "$dfdestfile"
+        rsync -avP --inplace "$dflog" "$dfdestfile"
         new_sha=$(get_sha1 "$dflog")
         have_tried=1
     done
@@ -120,6 +124,7 @@ dfdestfile="$dfdestdir/df.sqlite"
 dflog="$HOME/log/df.sqlite"
 
 cd "$annexdir" || { echo $progname: $annexdir: chdir error >&2; exit 1; }
+msg ga sync
 ga sync
 
 if test -f "$dflog"; then
@@ -133,9 +138,12 @@ if test -f "$dflog"; then
         myexit 1
     fi
 
+    msg Copy the df log
+    rm -f "$dfdestfile"
     copy_df_log "$dflog" "$dfdestfile" || myexit 1
 fi
 
+msg Packing \~/log/script/
 cd ~/log/script || {
     echo $progname: ~/log/script: Unable to chdir >&2
     exit 1
@@ -148,6 +156,7 @@ done
 ircdir=$HOME/log/irc
 
 if test -d "$ircdir/."; then
+    msg Packing irc logs
     cd "$ircdir" || { echo $progname: $ircdir: Unable to chdir >&2; exit 1; }
     currdate=`date +"%Y-%m-%d"`
     find -type f -name '*.log' -print0 | grep -vz "$currdate" |
