@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=filesynced
-VERSION=0.8.0
+VERSION=0.8.1
 
 SQLITE=sqlite3
 bin="$HOME/bin"
@@ -354,7 +354,28 @@ if test "$opt_unlock" = "1"; then
 		rm "$lockdir/token"
 	fi
 	if test -f "$db"; then
-		sort-sqlite "$db"
+		echo "
+BEGIN EXCLUSIVE TRANSACTION;
+
+CREATE TEMPORARY TABLE tmp AS
+  SELECT * FROM synced;
+DELETE FROM synced;
+INSERT INTO synced
+  SELECT * FROM tmp ORDER BY file;
+DROP TABLE tmp;
+
+CREATE TEMPORARY TABLE tmp AS
+  SELECT * FROM todo;
+DELETE FROM todo;
+INSERT INTO todo
+  SELECT * FROM tmp ORDER BY file;
+DROP TABLE tmp;
+
+COMMIT TRANSACTION;
+		" | $SQLITE "$db" || {
+			echo $progname: SQLite error, cannot sort tables >&2
+			exit 1
+		}
 		msg 2 Dump $db to $(pwd)/synced.sql
 		$SQLITE "$db" .dump >synced.sql
 		msg 2 Remove $db
