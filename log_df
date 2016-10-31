@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=log_df
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 h\
@@ -74,7 +74,7 @@ db="$logdir/df.sqlite"
 }
 
 if test ! -f "$db"; then
-    cat <<END | $SQLITE "$db"
+    cat <<SQL_END | $SQLITE "$db"
 CREATE TABLE df (
   date TEXT
     CONSTRAINT df_date_length
@@ -113,7 +113,17 @@ CREATE TABLE df (
       CHECK (length(percent) > 0)
     NOT NULL
 );
-END
+CREATE TRIGGER nodups
+  BEFORE INSERT ON df
+  BEGIN
+    SELECT RAISE (IGNORE)
+      WHERE
+        (SELECT used FROM df
+          WHERE mountp = NEW.mountp
+          ORDER BY date DESC
+          LIMIT 1) = NEW.used;
+  END;
+SQL_END
 fi
 
 df -B 1 -P |
