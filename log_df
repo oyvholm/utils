@@ -11,13 +11,15 @@
 #=======================================================================
 
 progname=log_df
-VERSION=0.2.2
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
+d:\
 h\
 q\
 v\
 " -l "\
+dbname:,\
 help,\
 quiet,\
 verbose,\
@@ -26,11 +28,13 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_dbname=''
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
     case "$1" in
+        (-d|--dbname) opt_dbname="$2"; shift 2 ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -51,6 +55,8 @@ Usage: $progname [options]
 
 Options:
 
+  -d DBFILE, --dbname DBFILE
+    Use DBFILE as database file for SQLite.
   -h, --help
     Show this help.
   -q, --quiet
@@ -67,6 +73,10 @@ fi
 SQLITE=sqlite3
 logdir="$HOME/log"
 db="$logdir/df.sqlite"
+if test -n "$opt_dbname"; then
+    db="$opt_dbname"
+    logdir="$(dirname "$db")"
+fi
 
 [ -d "$logdir" ] || mkdir -p "$logdir" || {
     echo "$progname: $logdir: Could not create directory" >&2
