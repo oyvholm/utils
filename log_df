@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=log_df
-VERSION=0.2.1
+VERSION=0.2.2
 
 ARGS="$(getopt -o "\
 h\
@@ -111,7 +111,8 @@ CREATE TABLE df (
   percent REAL
     CONSTRAINT df_percent_length
       CHECK (length(percent) > 0)
-    NOT NULL
+    NOT NULL,
+  UNIQUE (date, mountp)
 );
 CREATE TRIGGER nodups
   BEFORE INSERT ON df
