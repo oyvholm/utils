@@ -69,11 +69,9 @@ update-synced:
 	echo "SELECT file FROM synced ORDER BY file;" | \
 	    sqlite3 synced.sqlite | while read f; do \
 		if test ! -f "$$f"; then \
-			echo "DELETE FROM synced WHERE file = '$$f';" | \
-			    sqlite3 synced.sqlite; \
-			echo "DELETE FROM todo WHERE file = '$$f';" | \
-			    sqlite3 synced.sqlite; \
+			echo "DELETE FROM synced WHERE file = '$$f';"; \
+			echo "DELETE FROM todo WHERE file = '$$f';"; \
 		fi; \
-	done
+	done | sqlite3 synced.sqlite
 	filesynced --unlock $$(cat .update-synced_token.tmp)
 	rm -f .update-synced_token.tmp
