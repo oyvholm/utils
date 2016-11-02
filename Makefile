@@ -65,7 +65,7 @@ update-synced:
 		if test -f "$$f" -a ! -h "$$f" ; then \
 			echo "INSERT INTO synced (file) VALUES ('$$f');"; \
 		fi; \
-	done | sqlite3 synced.sqlite 2>/dev/null || true; \
+	done | sqlite3 synced.sqlite 2>/dev/null || true
 	echo "SELECT file FROM synced ORDER BY file;" | \
 	    sqlite3 synced.sqlite | while read f; do \
 		if test ! -f "$$f"; then \
