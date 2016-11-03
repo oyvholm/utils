@@ -14,15 +14,15 @@ progname=git-ignore
 VERSION=0.3.0
 
 ARGS="$(getopt -o "\
-g\
 h\
 q\
+s\
 t\
 v\
 " -l "\
-global,\
 help,\
 quiet,\
+subdirs,\
 top,\
 verbose,\
 version,\
@@ -30,16 +30,16 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
-opt_global=0
 opt_help=0
 opt_quiet=0
+opt_subdirs=0
 opt_top=0
 opt_verbose=0
 while :; do
     case "$1" in
-        (-g|--global) opt_global=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-s|--subdirs) opt_subdirs=1; shift ;;
         (-t|--top) opt_top=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -63,16 +63,16 @@ Usage: $progname [options] file [files [...]]
 
 Options:
 
-  -g, --global
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -s, --subdirs
     Don't prefix the new entries in .gitignore with '/', let the ignore 
     rule work in all subdirectories too. For example, *.o files should 
     generally be ignored all over the place, but without this option 
     only *.o files in the directory where .gitignore is located are 
     ignored.
-  -h, --help
-    Show this help.
-  -q, --quiet
-    Be more quiet. Can be repeated to increase silence.
   -t, --top
     Update the .gitignore in the top directory of the repository instead 
     of .gitignore in the current directory.
@@ -97,7 +97,7 @@ else
 fi
 
 prslash="/"
-test "$opt_global" = "1" && prslash=""
+test "$opt_subdirs" = "1" && prslash=""
 
 for f in "$@"; do
     unset termslash
