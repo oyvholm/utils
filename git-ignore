@@ -16,14 +16,14 @@ VERSION=0.3.0
 ARGS="$(getopt -o "\
 g\
 h\
-l\
 q\
+t\
 v\
 " -l "\
 global,\
 help,\
-local,\
 quiet,\
+top,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -32,15 +32,15 @@ eval set -- "$ARGS"
 
 opt_global=0
 opt_help=0
-opt_local=0
 opt_quiet=0
+opt_top=0
 opt_verbose=0
 while :; do
     case "$1" in
         (-g|--global) opt_global=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
-        (-l|--local) opt_local=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-t|--top) opt_top=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -54,9 +54,10 @@ if test "$opt_help" = "1"; then
     cat <<END
 
 Add entries to .gitignore . Default action is to add to .gitignore in 
-the root (top) directory, this can be overriden with -l/--local. 
-Wildcards can be used, and if any of the arguments is a directory, a 
-trailing slash will be added if it doesn't exist already.
+the local directory, this can be overriden with -t/--top to update the 
+.gitignore in the top directory of the repository. Wildcards can be 
+used, and if any of the arguments is a directory, a trailing slash will 
+be added if it doesn't exist already.
 
 Usage: $progname [options] file [files [...]]
 
@@ -70,11 +71,11 @@ Options:
     ignored.
   -h, --help
     Show this help.
-  -l, --local
-    Use local .gitignore in the current directory instead of global 
-    .gitignore in the root directory.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -t, --top
+    Update the .gitignore in the top directory of the repository instead 
+    of .gitignore in the current directory.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -89,10 +90,10 @@ if test -z "$1"; then
     exit 1
 fi
 
-if test "$opt_local" = "1"; then
-    gitignore=.gitignore
-else
+if test "$opt_top" = "1"; then
     gitignore="$(git rev-parse --show-toplevel)/.gitignore"
+else
+    gitignore=.gitignore
 fi
 
 prslash="/"
@@ -102,12 +103,12 @@ for f in "$@"; do
     unset termslash
     test -d "$f" && { echo "$f" | grep -q '/$' || termslash=/; }
     git ls-files -- "$f" | grep -q . && git rm -r --cached "$f"
-    if test "$opt_local" = "1"; then
-        # Use local .gitignore in current directory
-        echo $prslash$f$termslash >>"$gitignore"
-    else
+    if test "$opt_top" = "1"; then
         # Use global .gitignore at top of repo
         echo $prslash$(git rev-parse --show-prefix)$f$termslash >>"$gitignore"
+    else
+        # Use local .gitignore in current directory
+        echo $prslash$f$termslash >>"$gitignore"
     fi
 done
 
