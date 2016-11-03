@@ -153,9 +153,9 @@ Delete all remote and local branches specified on the command line.
 
 #### git-ignore
 
-Ignore files in Git. Automatically update `.gitignore` at the top of the 
-repository (default) or add the file, directory or symlink to a local 
-`.gitignore` in the current directory. Directories will have a slash 
+Ignore files in Git. Automatically update `.gitignore` in the local 
+directory (default) or add the file, directory or symlink to the 
+`.gitignore` at the top of the repository. Directories will have a slash 
 automatically added, and if the file/directory/symlink already exists in 
 Git, it will be removed from the repository without touching the actual 
 file.
