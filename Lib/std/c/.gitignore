@@ -1,3 +1,7 @@
 *.o
 /STDexecDTS
 /tags
+/STDexecDTS.c
+/STDexecDTS.h
+/compile.tmp/
+/t/STDexecDTS.t
