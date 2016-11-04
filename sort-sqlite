@@ -4,7 +4,7 @@
 # sort-sqlite
 # File ID: 0f3555b6-70fd-11e5-89be-fefdb24f8e10
 #
-# Sort the entries in an SQLite database.
+# Sort the rows in an SQLite database.
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
@@ -16,6 +16,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Copy;
+use IPC::Open3;
 
 local $| = 1;
 
@@ -30,16 +31,19 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 my $ERROR = 0;
 my $OK = 1;
 
 my $SQLITE = "sqlite3";
 
+my @Columns = ();
+
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'column|c=s' => \@Columns,
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -54,71 +58,78 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $sql_error = 0; # Is set to !0 if some sqlite3 error happened
+
 exit(main());
 
 sub main {
-    # {{{
-    my $Retval = 0;
-
+    if (!scalar(@Columns)) {
+        warn("$progname: Missing -c/--column option\n");
+        return 1;
+    }
     $ENV{'LC_COLLATE'} = 'C';
     for my $file (@ARGV) {
-        sort_file($file) || ($Retval = 1);
+        sort_file($file, @Columns) || return 1;
     }
-
-    return $Retval;
-    # }}}
+    return 0;
 } # main()
 
 sub sort_file {
     # {{{
-    my $file = shift;
+    my ($file, @tabcol) = @_;
+    my $tmptable = "sortsqltmp";
     my $retval = $OK;
-    if (!-r $file || !-f $file) {
-        warn("$progname: $file: File is not readable by you or is not a regular file\n");
-        return($ERROR);
+    my $c;
+
+    for $c (@tabcol) {
+        if ($c !~ /^(\S+?)\.(\S+)$/) {
+            warn("$progname: \"$c\" is not a valid identifier\n");
+            return $ERROR;
+        }
     }
+
+    if (!-r $file || !-f $file) {
+        warn("$progname: $file: File is not readable by you or " .
+             "is not a regular file\n");
+        return $ERROR;
+    }
+
     my $backup = sprintf("%s.%s.bck", $file, sec_to_string(mod_date($file)));
     if (!copy($file, $backup)) {
         warn("$progname: $backup: Cannot create backup file: $!\n");
-        return($ERROR);
+        return $ERROR;
     }
-    if (open(my $infp, "$SQLITE \"$file\" .dump |")) {
-        my $pipefp;
-        if (open($pipefp, "| $SQLITE \"$file.tmp\"")) {
-            msg(1, "Sorting $file");
+
+    msg(1, "Sorting $file");
+    for $c (@tabcol) {
+        my ($table, $column);
+
+        if ($c =~ /^(\S+?)\.(\S+)$/) {
+            ($table, $column) = ($1, $2);
         } else {
-            warn("$progname: $SQLITE \"$file.tmp\": Cannot create pipe: $!\n");
-            close($infp);
-            return($ERROR);
+            warn("$progname: This should not happen, invalid identifier " .
+                 "\"$c\" even though it has been validated\n");
+            return $ERROR;
         }
-        my $in_insert = 0;
-        my @inserts = ();
-        while (my $Line = <$infp>) {
-            if ($Line =~ /^INSERT INTO /) {
-                $in_insert = 1;
-                push(@inserts, $Line);
-            } else {
-                if ($in_insert == 1) {
-                    for (sort @inserts) {
-                        print($pipefp $_);
-                    }
-                    @inserts = ();
-                }
-                print($pipefp $Line);
-                $in_insert = 0;
-            }
-        }
-        close($pipefp);
-        close($infp);
-        if (!rename("$file.tmp", $file)) {
-            warn("$progname: Cannot rename '$file.tmp' to '$file': $!\n");
-            $retval = $ERROR;
-        }
-    } else {
-        warn("$progname: $file: Cannot read file: $!\n");
-        $retval = $ERROR;
+        sql($file, "
+BEGIN EXCLUSIVE TRANSACTION;
+
+CREATE TEMPORARY TABLE \"$tmptable\" AS
+  SELECT * FROM \"$table\";
+DELETE FROM \"$table\";
+INSERT INTO \"$table\"
+  SELECT * FROM \"$tmptable\" ORDER BY \"$column\";
+DROP TABLE \"$tmptable\";
+
+COMMIT TRANSACTION;
+");
     }
-    return($retval);
+    if ($sql_error) {
+        warn("$progname: $file: $SQLITE error, aborting\n");
+        return $ERROR;
+    }
+
+    return $OK;
     # }}}
 } # sort_file()
 
@@ -132,15 +143,15 @@ sub mod_date {
     } else {
         warn("$progname: $File: Cannot stat file: $!\n");
     }
-    return($Retval);
+    return $Retval;
     # }}}
 } # mod_date()
 
 sub sec_to_string {
     # Convert seconds since 1970 to "yyyymmddThhmmss[.frac]Z" {{{
     my ($Seconds, $Sep) = @_;
-    length($Seconds) || return('');
-    ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return(undef);
+    length($Seconds) || return '';
+    ($Seconds =~ /^-?(\d*)(\.\d+)?$/) || return undef;
     my $Secfrac = ($Seconds =~ /^([\-\d]*)(\.\d+)$/) ? 1.0*$2 : "";
     $Secfrac =~ s/^0//;
 
@@ -149,9 +160,36 @@ sub sec_to_string {
     my($DateString) = sprintf("%04u%02u%02uT%02u%02u%02u%sZ",
                               $TA[5]+1900, $TA[4]+1, $TA[3],
                               $TA[2], $TA[1], $TA[0], $Secfrac);
-    return($DateString);
+    return $DateString;
     # }}}
 } # sec_to_string()
+
+sub sql {
+    # {{{
+    my ($db, $sql) = @_;
+    my @retval = ();
+
+    msg(3, "sql(): db = '$db'");
+    local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
+
+    my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, $SQLITE, $db) or (
+        $sql_error = 1,
+        msg(0, "sql(): open3() error: $!"),
+        return "sql() error",
+    );
+    msg(3, "sql(): sql = '$sql'");
+    print(CHLD_IN "$sql\n") or msg(0, "sql(): print CHLD_IN error: $!");
+    close(CHLD_IN);
+    @retval = <CHLD_OUT>;
+    msg(3, "sql(): retval = '" . join('|', @retval) . "'");
+    my @child_stderr = <CHLD_ERR>;
+    if (scalar(@child_stderr)) {
+        msg(0, "$SQLITE error: " . join('', @child_stderr));
+        $sql_error = 1;
+    }
+    return join('', @retval);
+    # }}}
+} # sql()
 
 sub print_version {
     # Print program version {{{
@@ -170,15 +208,17 @@ sub usage {
     }
     print(<<"END");
 
-Sort the entries in an SQLite database. Warning: Quite crude, only works 
-with databases with single-line entries. A backup of the previous 
-version is copied to a *.bck file containing the date of the file 
-modification time in the file name.
+Sort the rows in an SQLite database. A backup of the previous version is 
+copied to a *.bck file containing the date of the file modification time 
+in the file name.
 
 Usage: $progname [options] SQLite_database_file [...]
 
 Options:
 
+  -c TABLE.COLUMN, --column TABLE.COLUMN
+    Sort COLUMN in TABLE. This option can be repeated to sort several 
+    columns.
   -h, --help
     Show this help.
   -q, --quiet

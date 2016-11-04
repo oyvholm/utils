@@ -257,10 +257,9 @@ Split contents into files based on separation bytes.
 
 ### sort-sqlite
 
-Sort the entries in an SQLite database. Warning: Quite crude, only works 
-with databases with single-line entries. A backup of the previous 
-version is copied to a \*.bck file containing the date of the file 
-modification time in the file name.
+Sort the rows in an SQLite database. A backup of the previous version is 
+copied to a \*.bck file containing the date of the file modification 
+time in the file name.
 
 ## Not described yet
 

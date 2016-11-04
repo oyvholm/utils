@@ -41,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 my %descriptions = ();
 
@@ -131,7 +131,7 @@ END
     # }}}
     ok(chdir("sqlite-dbs"), "chdir sqlite-dbs");
     $CMD = "../$CMD";
-    testcmd("$CMD non-existing.sqlite", # {{{
+    testcmd("$CMD -c abc.def non-existing.sqlite", # {{{
         "",
         "sort-sqlite: non-existing.sqlite: File is not readable by you or is not a regular file\n",
         1,
@@ -140,6 +140,39 @@ END
 
     # }}}
     testcmd("$CMD unsorted1.sqlite", # {{{
+        "",
+        "sort-sqlite: Missing -c/--column option\n",
+        1,
+        "Missing -c/--column option",
+    );
+
+    # }}}
+    likecmd("$CMD -c non.existing unsorted1.sqlite", # {{{
+        '/^$/',
+        '/^.*sort-sqlite: unsorted1.sqlite: sqlite3 error, aborting\n$/s',
+        1,
+        "Try to sort unsorted1.sqlite with unknown table and column",
+    );
+
+    # }}}
+    is(dump_db("unsorted1.sqlite"), # {{{
+        <<END,
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE t (
+  a TEXT
+);
+INSERT INTO "t" VALUES('a');
+INSERT INTO "t" VALUES('b');
+INSERT INTO "t" VALUES('d');
+INSERT INTO "t" VALUES('c');
+COMMIT;
+END
+        "unsorted1.sqlite is not modified",
+    );
+
+    # }}}
+    testcmd("$CMD -c t.a unsorted1.sqlite", # {{{
         "",
         "",
         0,
@@ -165,12 +198,13 @@ END
 
     # }}}
     ok(-f "unsorted1.sqlite.20151012T164244Z.bck", "Backup file 1 exists");
-    testcmd("$CMD -v unsorted2.sqlite unsorted3.sqlite", # {{{
+    testcmd("$CMD -v --column t.a -c u.a unsorted2.sqlite " .
+            "unsorted3.sqlite", # {{{
         "",
         "sort-sqlite: Sorting unsorted2.sqlite\n" .
         "sort-sqlite: Sorting unsorted3.sqlite\n",
         0,
-        "Sort unsorted2.sqlite",
+        "Sort several tables in unsorted2.sqlite",
     );
 
     # }}}
@@ -228,14 +262,58 @@ END
     );
 
     # }}}
+    testcmd("$CMD -c t.a unsorted4.sqlite --column u.a", # {{{
+        "",
+        "",
+        0,
+        "Sort unsorted4.sqlite, entries have several lines",
+    );
+
+    # }}}
+    ok(-f "unsorted4.sqlite.20161103T235439Z.bck", "Backup file 4 exists");
+    is(dump_db("unsorted4.sqlite"), # {{{
+        <<END,
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE u (
+  a TEXT
+);
+INSERT INTO "u" VALUES('0');
+INSERT INTO "u" VALUES('1');
+INSERT INTO "u" VALUES('aa');
+INSERT INTO "u" VALUES('multi
+line
+here');
+INSERT INTO "u" VALUES('→');
+CREATE TABLE t (
+  a TEXT
+);
+INSERT INTO "t" VALUES('
+
+another
+
+multi
+line
+');
+INSERT INTO "t" VALUES('a');
+INSERT INTO "t" VALUES('b');
+INSERT INTO "t" VALUES('c');
+COMMIT;
+END
+        "unsorted4.sqlite looks ok",
+    );
+
+    # }}}
     ok(-f "unsorted2.sqlite.20151012T164437Z.bck", "Backup file 2 exists");
     ok(-f "unsorted3.sqlite.20151012T181141Z.bck", "Backup file 3 exists");
     ok(unlink("unsorted1.sqlite"), "Delete unsorted1.sqlite");
     ok(unlink("unsorted2.sqlite"), "Delete unsorted2.sqlite");
     ok(unlink("unsorted3.sqlite"), "Delete unsorted3.sqlite");
+    ok(unlink("unsorted4.sqlite"), "Delete unsorted4.sqlite");
     ok(unlink("unsorted1.sqlite.20151012T164244Z.bck"), "Delete backup 1");
     ok(unlink("unsorted2.sqlite.20151012T164437Z.bck"), "Delete backup 2");
     ok(unlink("unsorted3.sqlite.20151012T181141Z.bck"), "Delete backup 3");
+    ok(unlink("unsorted4.sqlite.20161103T235439Z.bck"), "Delete backup 4");
     ok(chdir(".."), "chdir ..");
     ok(rmdir("sqlite-dbs"), "rmdir sqlite-dbs");
 
