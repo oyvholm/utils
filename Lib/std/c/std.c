@@ -59,6 +59,9 @@ int msg(const int verbose, const char *format, ...)
 	va_list ap;
 	int retval = 0;
 
+	assert(format);
+	assert(strlen(format));
+
 	if (verbose_level(0) >= verbose) {
 		va_start(ap, format);
 		retval = fprintf(stddebug, "%s: ", progname);
@@ -83,6 +86,9 @@ int myerror(const char *format, ...)
 	va_list ap;
 	int retval = 0;
 	int orig_errno = errno;
+
+	assert(format);
+	assert(strlen(format));
 
 	retval = fprintf(stderr, "%s: ", progname);
 	va_start(ap, format);
@@ -178,6 +184,9 @@ int choose_opt_action(struct Options *dest,
 {
 	int retval = EXIT_OK;
 
+	assert(dest);
+	assert(opts);
+
 	switch (c) {
 	case 0:
 		if (!strcmp(opts->name, "license"))
@@ -212,6 +221,9 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 {
 	int retval = EXIT_OK;
 	int c;
+
+	assert(dest);
+	assert(argv);
 
 	dest->help = FALSE;
 	dest->license = FALSE;

@@ -40,10 +40,13 @@
 
 #define stddebug  stderr
 
+#undef NDEBUG
+
 /*
  * Standard header files
  */
 
+#include <assert.h>
 #include <errno.h>
 #include <getopt.h>
 #include <stdarg.h>
