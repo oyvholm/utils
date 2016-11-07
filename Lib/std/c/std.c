@@ -102,10 +102,10 @@ int myerror(const char *format, ...)
 }
 
 /*
- * print_license() - Display the program license
+ * print_license() - Display the program license. Returns EXIT_OK.
  */
 
-void print_license(void)
+int print_license(void)
 {
 	puts("(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>");
 	puts("");
@@ -127,28 +127,32 @@ void print_license(void)
 	     "the GNU General Public License along \n"
 	     "with this program. If not, see "
 	     "<http://www.gnu.org/licenses/>.");
+
+	return EXIT_OK;
 }
 
 /*
- * print_version() - Print version information on stdout
+ * print_version() - Print version information on stdout. Returns EXIT_OK.
  */
 
-void print_version(void)
+int print_version(void)
 {
 	printf("%s %s (%s)\n", progname, VERSION, RELEASE_DATE);
+
+	return EXIT_OK;
 }
 
 /*
- * usage() - Prints a help screen
+ * usage() - Prints a help screen. Returns retval.
  */
 
-void usage(const int retval)
+int usage(const int retval)
 {
 	if (retval != EXIT_OK) {
 		fprintf(stderr, "\nType \"%s --help\" for help screen. "
 		                "Returning with value %d.\n",
 		                progname, retval);
-		return;
+		return retval;
 	}
 	puts("");
 	if (verbose_level(0) >= 1) {
@@ -170,6 +174,8 @@ void usage(const int retval)
 	printf("  --version\n"
 	       "    Print version information.\n");
 	printf("\n");
+
+	return retval;
 }
 
 /*
@@ -277,16 +283,12 @@ int main(int argc, char *argv[])
 
 	msg(3, "Using verbose level %d", verbose_level(0));
 
-	if (opt.help) {
-		usage(EXIT_OK);
-		return EXIT_OK;
-	} else if (opt.version) {
-		print_version();
-		return EXIT_OK;
-	} else if (opt.license) {
-		print_license();
-		return EXIT_OK;
-	}
+	if (opt.help)
+		return usage(EXIT_OK);
+	if (opt.version)
+		return print_version();
+	if (opt.license)
+		return print_license();
 
 	if (optind < argc) {
 		int t;
