@@ -270,7 +270,7 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 
 int main(int argc, char *argv[])
 {
-	int retval = EXIT_OK;
+	int retval;
 	struct Options opt;
 
 	progname = argv[0];
