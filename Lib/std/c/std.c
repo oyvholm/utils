@@ -297,7 +297,6 @@ int main(int argc, char *argv[])
 			msg(3, "Non-option arg: %s", argv[t]);
 	}
 
-
 	msg(3, "Returning from main() with value %d", retval);
 	return retval;
 }
