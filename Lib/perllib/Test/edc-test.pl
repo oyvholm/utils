@@ -6,7 +6,7 @@ require "tritech/tricgi.pm";
 
 $Str = '(;<>*|&$!#()[]{}:\'"lsdkjvnklsdjvfn';
 
-# print  "Før  : $Str\n";
+# print  "FÃ¸r  : $Str\n";
 # printf("Etter: %s\n", &tricgi::escape_dangerous_chars($Str));
 
 while (<>) {

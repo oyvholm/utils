@@ -12,7 +12,7 @@ diff -u -r1.38 feature.h
   *			Also from the "--with-modified-by" configure argument.
   */
 -/* #define MODIFIED_BY "John Doe" */
-+#define MODIFIED_BY "Øyvind A. Holm <sunny@sunbase.org>"
++#define MODIFIED_BY "\xd8yvind A. Holm <sunny@sunbase.org>"
  
  /*
   * Machine dependent:

@@ -18,9 +18,9 @@ Inneholder diverse passordrutiner.
 
 =head1 COPYRIGHT
 
-(C)opyright 1999 Øyvind A. Holm E<lt>F<sunny@tritech.no>E<gt>
+(C)opyright 1999 Ã˜yvind A. Holm E<lt>F<sunny@tritech.no>E<gt>
 
-Denne modulen er eiendom tilhørende Øyvind A. Holm. Dispensasjon for bruk
+Denne modulen er eiendom tilhÃ¸rende Ã˜yvind A. Holm. Dispensasjon for bruk
 er gitt til Tritech A/S E<lt>F<http://www.tritech.no>E<gt> inntil videre.
 
 =cut
@@ -40,7 +40,7 @@ my $TRUE = 1;
 
 # $EXIT_OK = 0;
 # $EXIT_ERROR = 1;
-$EXIT_CORRECT_PWD = 2364; # FIXME: Funker det sånn? Tror det bør være tilfeldige verdier med i bildet her.
+$EXIT_CORRECT_PWD = 2364; # FIXME: Funker det sÃ¥nn? Tror det bÃ¸r vÃ¦re tilfeldige verdier med i bildet her.
 $EXIT_WRONG_PWD = 6452;
 $EXIT_UNKNOWN_USER = 3623;
 
@@ -74,10 +74,10 @@ Brukeren finnes ikke
 
 =back
 
-FIXME: Lurer litt på disse returverdiene. Er det ikke bedre hvis den
+FIXME: Lurer litt pÃ¥ disse returverdiene. Er det ikke bedre hvis den
 returnerer 0 hvis passordet er rett? Kanskje en F<&wrong_password()> hadde
-vært på sin plass. Sånn som det er nå, er returverdiene rimelig
-tilfeldige. Jaja. Vi bruker denne foreløpig. Den funker.
+vÃ¦rt pÃ¥ sin plass. SÃ¥nn som det er nÃ¥, er returverdiene rimelig
+tilfeldige. Jaja. Vi bruker denne forelÃ¸pig. Den funker.
 
 Mulig det skal defineres et parameter seinere som bestemmer hvordan
 passordet skal sjekkes.
@@ -94,13 +94,13 @@ sub correct_pwd {
 	} else {
 		$RetVal = $EXIT_UNKNOWN_USER;
 	}
-	print("debug: Går ut av &correct_pwd(), \$RetVal = \"$RetVal\"\n") if ${main::Debug};
+	print("debug: GÃ¥r ut av &correct_pwd(), \$RetVal = \"$RetVal\"\n") if ${main::Debug};
 	return $RetVal;
 } # correct_pwd()
 
 =head1 BUGS
 
-Rimelig spinkel foreløpig. Det kommer seg vel.
+Rimelig spinkel forelÃ¸pig. Det kommer seg vel.
 
 =cut
 
