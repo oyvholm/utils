@@ -283,6 +283,7 @@ INSERT INTO "synced" VALUES('fold-stdout','Lib/std/perl','4dbab2bf09b9ff111945b0
 INSERT INTO "synced" VALUES('fra_linode','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('fromdos','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('fromhex','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
+INSERT INTO "synced" VALUES('fs','Lib/std/bash-no-getopt-tab','ac3d669d5e7f1edf29c053195b3c7f4a7c42ba75','2016-11-08 15:22:18');
 INSERT INTO "synced" VALUES('g','Lib/std/bash-no-getopt',NULL,NULL);
 INSERT INTO "synced" VALUES('g0','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('g1','Lib/std/bash',NULL,NULL);
