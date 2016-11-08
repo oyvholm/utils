@@ -11,21 +11,21 @@
 #==============================================================================
 
 progname=fs
-VERSION=0.0.0
+VERSION=0.1.0
 
 if test "$1" = "--version"; then
 	echo $progname $VERSION
 	exit 0
 fi
 
-if test "$1" = "-h" -o "$1" = "--help"; then
+if test "$1" = "-h"; then
 	cat <<END
 
 Usage: $progname [options]
 
 Options:
 
-  -h, --help
+  -h
     Show this help.
   --version
     Print version information.
@@ -33,5 +33,7 @@ Options:
 END
 	exit 0
 fi
+
+fossil "$@"
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
