@@ -166,7 +166,7 @@ int usage(const int retval)
 	printf("  -h, --help\n"
 	       "    Show this help.\n");
 	printf("  --license\n"
-	       "    Print the software license\n");
+	       "    Print the software license.\n");
 	printf("  -q, --quiet\n"
 	       "    Be more quiet. Can be repeated to increase silence.\n");
 	printf("  -v, --verbose\n"
