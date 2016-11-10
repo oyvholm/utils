@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=log_df
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 d:\
@@ -104,23 +104,31 @@ CREATE TABLE df (
     NOT NULL
   ,
   size INTEGER
+    CONSTRAINT df_size_length
+      CHECK (length(size) > 0)
     CONSTRAINT df_size_positive
-      CHECK (size > 0)
+      CHECK (size >= 0)
     NOT NULL
   ,
   used INTEGER
+    CONSTRAINT df_used_length
+      CHECK (length(used) > 0)
     CONSTRAINT df_used_positive
-      CHECK (used > 0)
+      CHECK (used >= 0)
     NOT NULL
   ,
   free INTEGER
     CONSTRAINT df_free_length
       CHECK (length(free) > 0)
+    CONSTRAINT df_free_positive
+      CHECK (free >= 0)
     NOT NULL
   ,
   percent REAL
     CONSTRAINT df_percent_length
       CHECK (length(percent) > 0)
+    CONSTRAINT df_percent_range
+      CHECK (percent BETWEEN 0 AND 100)
     NOT NULL,
   UNIQUE (date, mountp)
 );
