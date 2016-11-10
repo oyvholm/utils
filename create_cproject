@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=create_cproject
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 c\
@@ -49,7 +49,8 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Create skeleton for new C project
+Create skeleton for a new C project in the current directory where the 
+main .c file is called PROJECT_NAME.c.
 
 Usage: $progname [options] PROJECT_NAME
 
