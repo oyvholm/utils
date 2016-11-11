@@ -87,7 +87,8 @@ sub process_file {
 	my $displayed_filename = $Filename;
 	my $tmpfile = "/tmp/$progname." . time . ".$$.tmp";
 	if ($use_stdin) {
-		open(my $tmpfp, '>', $tmpfile) or die("$progname: $tmpfile: Cannot create tempfile: $!\n");
+		open(my $tmpfp, '>', $tmpfile) or
+		    die("$progname: $tmpfile: Cannot create tempfile: $!\n");
 		unless (print($tmpfp join('', <STDIN>))) {
 			my $errmsg = $!;
 			close($tmpfp);
