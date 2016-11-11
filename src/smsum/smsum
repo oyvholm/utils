@@ -1,177 +1,188 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
-#=======================================================================
+#==============================================================================
 # smsum
 # File ID: ac639b66-f942-11dd-8b88-0001805bf4b1
+#
 # Generates smsum hashes
 #
 # Character set: UTF-8
 # ©opyleft 2008– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 2 or later, see end of 
-# file for legal stuff.
-#=======================================================================
+# License: GNU General Public License version 2 or later, see end of file for 
+# legal stuff.
+#==============================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 
-$| = 1;
-
-our $Debug = 0;
+local $| = 1;
 
 our %Opt = (
 
-    'debug' => 0,
-    'help' => 0,
-    'verbose' => 0,
-    'version' => 0,
-    'with-mtime' => 0,
+	'help' => 0,
+	'quiet' => 0,
+	'verbose' => 0,
+	'version' => 0,
+	'with-mtime' => 0,
 
 );
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
-my $exit_val = 0;
+our $VERSION = '0.1.0';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "debug" => \$Opt{'debug'},
-    "help|h" => \$Opt{'help'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
-    "with-mtime|m" => \$Opt{'with-mtime'},
+	'help|h' => \$Opt{'help'},
+	'quiet|q+' => \$Opt{'quiet'},
+	'verbose|v+' => \$Opt{'verbose'},
+	'version' => \$Opt{'version'},
+	'with-mtime|m' => \$Opt{'with-mtime'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
-    print_version();
-    exit(0);
+	print_version();
+	exit(0);
 }
 
-if ($#ARGV >= 0) {
-    for (@ARGV) {
-        print(process_file($_));
-    }
-} else {
-    print(process_file("-"));
-}
+exit(main());
 
-exit($exit_val);
+sub main {
+	my $Retval = 0;
+	my $result;
+
+	if ($#ARGV >= 0) {
+		for (@ARGV) {
+			$result = process_file($_);
+			if (defined($result)) {
+				print($result);
+			} else {
+				$Retval = 1;
+			}
+		}
+	} else {
+		$result = process_file("-");
+		if (defined($result)) {
+			print($result);
+		} else {
+			$Retval = 1;
+		}
+	}
+
+	return $Retval;
+}
 
 sub process_file {
-    # {{{
-    my $Filename = shift;
-    my $Retval = "";
-    my %Sum = ();
-    D("process_file('$Filename')");
-    my $use_stdin = ($Filename eq "-") ? 1 : 0;
-    my @stat_array = ();
-    my $displayed_filename = $Filename;
-    my $tmpfile = "/tmp/$progname." . time . ".$$.tmp";
-    if ($use_stdin) {
-        open(my $tmpfp, '>', $tmpfile) or die("$progname: $tmpfile: Cannot create tempfile: $!\n");
-        unless (print($tmpfp join('', <STDIN>))) {
-            my $errmsg = $!;
-            close($tmpfp);
-            unlink($tmpfile);
-            die("$progname: $tmpfile: Cannot write to tempfile: $errmsg\n");
-        }
-        close($tmpfp);
-        $Filename = $tmpfile;
-    }
-    if (@stat_array = stat($Filename)) {
-        my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
-            $Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
-        if ($use_stdin || -f $Filename) {
-            local *FP;
-            if ($use_stdin || open(FP, "<", $Filename)) {
-                msg(2, sprintf("Reading %s...", safe_tab($Filename)));
-                $Sum{'sha1'} = sha1sum($Filename);
-                $Sum{'md5'} = md5sum($Filename);
-                $Retval =
-                    $Sum{'sha1'} . "-" .
-                    $Sum{'md5'} . "-" .
-                    $Size . (
-                        $use_stdin && !$Opt{'with-mtime'}
-                            ? ""
-                            : "\t" . safe_tab($displayed_filename) . (
-                                  $Opt{'with-mtime'}
-                                      ? "\t" . sec_to_string($Mtime)
-                                      : ""
-                              )
-                    )
-                    . "\n";
-            } else {
-                warn("$progname: $Filename: Cannot read file\n");
-                $exit_val = 1;
-            }
-        } else {
-            msg(1, "$Filename: Ignoring non-file");
-        }
-    } else {
-        warn("$progname: $Filename: Cannot read file status\n");
-        $exit_val = 1;
-    }
-    unlink($tmpfile);
-    return($Retval);
-    # }}}
-} # process_file()
+	my $Filename = shift;
+	my $Retval = "";
+	my %Sum = ();
+	msg(3, "process_file('$Filename')");
+	my $use_stdin = ($Filename eq "-") ? 1 : 0;
+	my @stat_array = ();
+	my $displayed_filename = $Filename;
+	my $tmpfile = "/tmp/$progname." . time . ".$$.tmp";
+	if ($use_stdin) {
+		open(my $tmpfp, '>', $tmpfile) or die("$progname: $tmpfile: Cannot create tempfile: $!\n");
+		unless (print($tmpfp join('', <STDIN>))) {
+			my $errmsg = $!;
+			close($tmpfp);
+			unlink($tmpfile);
+			die("$progname: $tmpfile: Cannot write to tempfile: $errmsg\n");
+		}
+		close($tmpfp);
+		$Filename = $tmpfile;
+	}
+	if (@stat_array = stat($Filename)) {
+		my ($Dev, $Inode, $Mode, $Nlinks, $Uid, $Gid, $Rdev, $Size,
+			$Atime, $Mtime, $Ctime, $Blksize, $Blocks) = @stat_array;
+		if ($use_stdin || -f $Filename) {
+			local *FP;
+			if ($use_stdin || open(FP, "<", $Filename)) {
+				msg(2, sprintf("Reading %s...", safe_tab($Filename)));
+				$Sum{'sha1'} = sha1sum($Filename);
+				$Sum{'md5'} = md5sum($Filename);
+				$Retval =
+				    $Sum{'sha1'} . "-" .
+				    $Sum{'md5'} . "-" .
+				    $Size . (
+				        $use_stdin && !$Opt{'with-mtime'}
+				            ? ""
+				            : "\t" . safe_tab($displayed_filename) . (
+				                  $Opt{'with-mtime'}
+				                      ? "\t" . sec_to_string($Mtime)
+				                      : ""
+				              )
+				    )
+				    . "\n";
+			} else {
+				warn("$progname: $Filename: Cannot read file\n");
+				$Retval = undef;
+			}
+		} else {
+			msg(1, "$Filename: Ignoring non-file");
+		}
+	} else {
+		warn("$progname: $Filename: Cannot read file status\n");
+		$Retval = undef;
+	}
+	unlink($tmpfile);
+	return($Retval);
+}
 
 sub sha1sum {
-    my $file = shift;
-    my $retval = `sha1sum "$file"`;
-    $retval =~ s/^(\S+)\b.*/$1/s;
-    return($retval);
+	my $file = shift;
+	my $retval = `sha1sum "$file"`;
+	$retval =~ s/^(\S+)\b.*/$1/s;
+	return($retval);
 }
 
 sub md5sum {
-    my $file = shift;
-    chomp(my $retval = `md5sum "$file"`);
-    $retval =~ s/^(\S+)\b.*/$1/s;
-    return($retval);
+	my $file = shift;
+	chomp(my $retval = `md5sum "$file"`);
+	$retval =~ s/^(\S+)\b.*/$1/s;
+	return($retval);
 }
 
 sub safe_tab {
-    # {{{
-    my $Str = shift;
-    $Str =~ s/\\/\\\\/gs;
-    $Str =~ s/\n/\\n/gs;
-    $Str =~ s/\r/\\r/gs;
-    $Str =~ s/\t/\\t/gs;
-    return($Str);
-    # }}}
-} # safe_tab()
+	my $Str = shift;
+	$Str =~ s/\\/\\\\/gs;
+	$Str =~ s/\n/\\n/gs;
+	$Str =~ s/\r/\\r/gs;
+	$Str =~ s/\t/\\t/gs;
+	return($Str);
+}
 
 sub sec_to_string {
-    # Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ" {{{
-    my ($Seconds) = shift;
+	# Convert seconds since 1970 to "yyyy-mm-ddThh:mm:ssZ"
+	my ($Seconds) = shift;
 
-    my @TA = gmtime($Seconds);
-    my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
-                              $TA[5]+1900, $TA[4]+1, $TA[3],
-                              $TA[2], $TA[1], $TA[0]);
-    return($DateString);
-    # }}}
-} # sec_to_string()
+	my @TA = gmtime($Seconds);
+	my($DateString) = sprintf("%04u-%02u-%02uT%02u:%02u:%02uZ",
+	                          $TA[5]+1900, $TA[4]+1, $TA[3],
+	                          $TA[2], $TA[1], $TA[0]);
+	return($DateString);
+}
 
 sub print_version {
-    # Print program version {{{
-    print("$progname v$VERSION\n");
-    # }}}
-} # print_version()
+	# Print program version
+	print("$progname $VERSION\n");
+	return;
+}
 
 sub usage {
-    # Send the help message to stdout {{{
-    my $Retval = shift;
+	# Send the help message to stdout
+	my $Retval = shift;
 
-    if ($Opt{'verbose'}) {
-        print("\n");
-        print_version();
-    }
-    print(<<END);
+	if ($Opt{'verbose'}) {
+		print("\n");
+		print_version();
+	}
+	print(<<"END");
 
 Usage: $progname [options] [file [files [...]]]
 
@@ -209,114 +220,41 @@ Options:
     Also include file modification time at the end of every line. The 
     date uses the UTC timezone and has the format 
     "yyyy-mm-ddThh:mm:ssZ". If stdin is read, the current time is used.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
-  --debug
-    Print debugging messages.
 
 END
-    exit($Retval);
-    # }}}
-} # usage()
+	exit($Retval);
+}
 
 sub msg {
-    # Print a status message to stderr based on verbosity level {{{
-    my ($verbose_level, $Txt) = @_;
+	# Print a status message to stderr based on verbosity level
+	my ($verbose_level, $Txt) = @_;
 
-    if ($Opt{'verbose'} >= $verbose_level) {
-        print(STDERR "$progname: $Txt\n");
-    }
-    # }}}
-} # msg()
-
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
+	if ($Opt{'verbose'} >= $verbose_level) {
+		print(STDERR "$progname: $Txt\n");
+	}
+	return;
+}
 
 __END__
 
-# Plain Old Documentation (POD) {{{
+# This program is free software; you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free Software 
+# Foundation; either version 2 of the License, or (at your option) any later 
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+# FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
-=pod
-
-=head1 NAME
-
-
-
-=head1 SYNOPSIS
-
- [options] [file [files [...]]]
-
-=head1 DESCRIPTION
-
-
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<-h>, B<--help>
-
-Print a brief help summary.
-
-=item B<-v>, B<--verbose>
-
-Increase level of verbosity. Can be repeated.
-
-=item B<--version>
-
-Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
-
-=back
-
-=head1 BUGS
-
-
-
-=head1 AUTHOR
-
-Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
-
-=head1 COPYRIGHT
-
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
-This is free software; see the file F<COPYING> for legalese stuff.
-
-=head1 LICENCE
-
-This program is free software: you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=head1 SEE ALSO
-
-=cut
-
-# }}}
-
-# vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
+# vim: set ts=4 sw=4 sts=4 noet fo+=w tw=79 fenc=UTF-8 :
