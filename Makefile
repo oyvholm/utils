@@ -43,7 +43,6 @@ remotes:
 test:
 	test ! -e synced.sql.lock
 	test -z "$$(filesynced --valid-sha 2>&1)"
-	test -z "$$(filesynced --unsynced -- --since=6.months 2>&1)"
 	test "$$(git log | grep -- -by: | sort -u | wc -l)" = "2"
 	cd tests && $(MAKE) test
 	cd Lib && $(MAKE) test
