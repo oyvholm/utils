@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=Genlog
-VERSION=0.4.0
+VERSION=0.5.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -36,6 +36,10 @@ The exit value is a bitwise OR:
     1: One or more tests failed
     2: One or more scripts aborted
     3: Tests failed and scripts aborted
+
+Lines starting with "# NOTICE:" are displayed during the run. They don't 
+affect the exit value, so they can for example be used to inform the 
+user that tests have been skipped.
 
 Usage: $progname testname [options] [testname [...]]
 
@@ -98,6 +102,7 @@ for gf in "$@"; do
     tot_bailout=$((
         $tot_bailout + $(grep -a "^Bail out" log/$testname.log | wc -l)
     ))
+    grep -a "^# NOTICE:" log/$testname.log
 done
 echo
 unset tot_not_ok_str
