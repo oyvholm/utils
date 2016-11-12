@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #========================================================================
 # Lager symlinker i $prefix/man/man?/ og $prefix/{bin,sbin}/ til greier i

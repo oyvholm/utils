@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # cvscat
 # File ID: e1b60c7c-5d37-11df-b6cd-90e6ba3022ac

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # cvsvimdiff
 # File ID: 319e349e-5d38-11df-8642-90e6ba3022ac
