@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=git-wait-until-clean
-VERSION=0.4.0
+VERSION=0.4.1
 
 ARGS="$(getopt -o "\
 e\
@@ -87,7 +87,7 @@ END
 fi
 
 is_bare=0
-test "git config --get core.bare" = "true" && is_bare=1
+test "$(git config --get core.bare)" = "true" && is_bare=1
 
 test "$is_bare" = "1" && exit 0
 
