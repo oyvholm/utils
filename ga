@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.11.0
+VERSION=0.11.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -29,12 +29,13 @@ The following commands (first non-option on the command line) are
 customised:
 
   init
-    Initialise annex.uuid with UUID v1 (time-based UUID) instead of v4 
-    (random-based), which is the default. This is done before executing 
-    an ordinary "git annex init". Will abort if annex.uuid already is 
-    defined. Also, if any other command is executed and annex.uuid 
-    doesn't exist, the script aborts. This is to make sure no git-annex 
-    setup is done in non-annex repositories.
+    If annex.uuid isn't already defined, initialise annex.uuid with an 
+    UUID v1 (time-based UUID) instead of v4 (random-based) and set the 
+    description to the output from "ga-pwd". This is done before 
+    executing an ordinary "git annex init". Will abort if annex.uuid 
+    already is defined. Also, if any other command than init is executed 
+    and annex.uuid doesn't exist, the script aborts. This is to make 
+    sure no git-annex setup is done in non-annex repositories.
   sync
     Execute "git wait-until-clean -u" before syncing, i.e., wait until 
     the repository is clean before continuing. This is to avoid any 
@@ -61,10 +62,11 @@ customised:
     Filter the output through ga-sumsize, display total number of bytes 
     in unused files.
 
-After all this, it checks that "git annex pre-commit ." is disabled in 
-.git/hooks/pre-commit . This is to avoid an automatic "git annex fix" 
-that automatically fixes broken symlinks before commit. This makes it 
-hard to track file renames, as it breaks "git log --follow" and friends.
+After all this, it disables "git annex pre-commit ." in 
+.git/hooks/pre-commit if it's not already disabled. This is to avoid an 
+automatic "git annex fix" that automatically fixes broken symlinks 
+before commit. It makes it hard to track file renames, as it breaks "git 
+log --follow" and friends.
 
 Options:
 
