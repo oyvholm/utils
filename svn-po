@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #=======================================================================
 # Do stuff with the .po files in Subversion.

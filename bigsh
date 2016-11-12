@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # File ID: b834114a-fa6f-11dd-bf5e-000475e441b9
 # Fyrer opp en stor xterm i X

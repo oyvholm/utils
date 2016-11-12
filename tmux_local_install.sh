@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script for installing tmux on systems where you don't have root access.
 # tmux will be installed in $HOME/local/bin.
