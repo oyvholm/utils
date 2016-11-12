@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.10.0
+VERSION=0.11.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -39,6 +39,13 @@ customised:
     Execute "git wait-until-clean -u" before syncing, i.e., wait until 
     the repository is clean before continuing. This is to avoid any 
     accidental commits.
+    Also, if HEAD is not detached from a branch, set it to track the 
+    synced/ branch for the current branch. For example, if the current 
+    HEAD is on the "mystuff" branch, execute a
+      git branch --set-upstream-to=synced/mystuff
+    If you have a Git-aware command line prompt that shows if the 
+    current branch is behind or ahead upstream, it will show when a sync 
+    or merge is needed.
   update-desc
     Update the git-annex description, use the generic output from 
     ga-pwd. For example, the output for the current directory is
@@ -156,4 +163,8 @@ fi
 
 if test "$1" = "sync"; then
     git push . git-annex:synced/git-annex
+    currbr="$(git rev-parse --abbrev-ref HEAD)"
+    if test "$currbr" != "HEAD" -a -z "$(echo "$currbr" | grep synced/)"; then
+        git branch --set-upstream-to=synced/$currbr
+    fi
 fi
