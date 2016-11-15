@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.11.1
+VERSION=0.11.2
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -30,12 +30,14 @@ customised:
 
   init
     If annex.uuid isn't already defined, initialise annex.uuid with an 
-    UUID v1 (time-based UUID) instead of v4 (random-based) and set the 
-    description to the output from "ga-pwd". This is done before 
-    executing an ordinary "git annex init". Will abort if annex.uuid 
-    already is defined. Also, if any other command than init is executed 
-    and annex.uuid doesn't exist, the script aborts. This is to make 
-    sure no git-annex setup is done in non-annex repositories.
+    UUID v1 (time-based UUID) instead of v4 (random-based). This is done 
+    before executing an ordinary "git annex init". If a description is 
+    provided on the command line after the "init" command, use that, 
+    otherwise set the description to the output from the "ga-pwd" 
+    command. The script will abort if annex.uuid is already defined. 
+    Also, if any other command than init is executed and annex.uuid 
+    doesn't exist, the script aborts. This is to make sure no git-annex 
+    setup is done in non-annex repositories.
   sync
     Execute "git wait-until-clean -u" before syncing, i.e., wait until 
     the repository is clean before continuing. This is to avoid any 
