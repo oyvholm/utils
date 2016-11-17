@@ -79,9 +79,8 @@ sub main {
 	test_standard_options();
 
 	testcmd("$CMD files/dir1.tar.gz", # {{{
-	    <<END,
-31226c9482573c4c323947858616ee174babdeb7-affeeed5dca3c6970e8a8eaf5277be90-3000\tfiles/dir1.tar.gz
-END
+	        "31226c9482573c4c323947858616ee174babdeb7-" .
+	          "affeeed5dca3c6970e8a8eaf5277be90-3000\tfiles/dir1.tar.gz\n",
 	    "",
 	    0,
 	    "Verify files/dir1.tar.gz",
@@ -108,14 +107,24 @@ END
 
 	diag("No options specified...");
 	testcmd("$CMD files/dir1/*", # {{{
-	    <<END,
-da39a3ee5e6b4b0d3255bfef95601890afd80709-d41d8cd98f00b204e9800998ecf8427e-0\tfiles/dir1/empty
-bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048\tfiles/dir1/random_2048
-1fffb088a74a48447ee612dcab91dacae86570ad-af6888a81369b7a1ecfbaf14791c5552-333\tfiles/dir1/random_333
-c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfiles/dir1/textfile
-07b8074463668967f6030016d719ef326eb6382d-6dce58e78b13dab939de6eef142b7543-41\tfiles/dir1/year_1969
-2113343435a9aadb458d576396d4f960071f8efd-6babaa47123f4f94ae59ed581a65090b-41\tfiles/dir1/year_2038
-END
+	    "da39a3ee5e6b4b0d3255bfef95601890afd80709-" .
+	        "d41d8cd98f00b204e9800998ecf8427e-0\t" .
+	        "files/dir1/empty\n" .
+	    "bd91a93ca0462da03f2665a236d7968b0fd9455d-" .
+	        "4a3074b2aae565f8558b7ea707ca48d2-2048\t" .
+	        "files/dir1/random_2048\n" .
+	    "1fffb088a74a48447ee612dcab91dacae86570ad-" .
+	        "af6888a81369b7a1ecfbaf14791c5552-333\t" .
+	        "files/dir1/random_333\n" .
+	    "c70053a7b8f6276ff22181364430e729c7f42c5a-" .
+	        "96319d5ea553d5e39fd9c843759d3175-43\t" .
+	        "files/dir1/textfile\n" .
+	    "07b8074463668967f6030016d719ef326eb6382d-" .
+	        "6dce58e78b13dab939de6eef142b7543-41\t" .
+	        "files/dir1/year_1969\n" .
+	    "2113343435a9aadb458d576396d4f960071f8efd-" .
+	        "6babaa47123f4f94ae59ed581a65090b-41\t" .
+	        "files/dir1/year_2038\n",
 	    "smsum: files/dir1/chmod_0000: Cannot read file\n",
 	    1,
 	    "Read all files in dir1/",
@@ -123,9 +132,8 @@ END
 
 	# }}}
 	testcmd("cat files/dir1/random_2048 | $CMD", # {{{
-	<<END,
-bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048
-END
+	    "bd91a93ca0462da03f2665a236d7968b0fd9455d-" .
+	        "4a3074b2aae565f8558b7ea707ca48d2-2048\n",
 	    "",
 	    0,
 	    "Read data from stdin",
@@ -134,14 +142,24 @@ END
 	# }}}
 	diag("Testing -m (--with-mtime) option...");
 	testcmd("$CMD -m files/dir1/*", # {{{
-	    <<END,
-da39a3ee5e6b4b0d3255bfef95601890afd80709-d41d8cd98f00b204e9800998ecf8427e-0\tfiles/dir1/empty\t2008-09-22T00:10:24Z
-bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048\tfiles/dir1/random_2048\t2008-09-22T00:18:37Z
-1fffb088a74a48447ee612dcab91dacae86570ad-af6888a81369b7a1ecfbaf14791c5552-333\tfiles/dir1/random_333\t2008-09-22T00:10:06Z
-c70053a7b8f6276ff22181364430e729c7f42c5a-96319d5ea553d5e39fd9c843759d3175-43\tfiles/dir1/textfile\t2008-09-22T00:09:38Z
-07b8074463668967f6030016d719ef326eb6382d-6dce58e78b13dab939de6eef142b7543-41\tfiles/dir1/year_1969\t1969-01-21T17:12:15Z
-2113343435a9aadb458d576396d4f960071f8efd-6babaa47123f4f94ae59ed581a65090b-41\tfiles/dir1/year_2038\t2038-01-19T03:14:07Z
-END
+	    "da39a3ee5e6b4b0d3255bfef95601890afd80709-" .
+	        "d41d8cd98f00b204e9800998ecf8427e-" .
+	        "0\tfiles/dir1/empty\t2008-09-22T00:10:24Z\n" .
+	    "bd91a93ca0462da03f2665a236d7968b0fd9455d-" .
+	        "4a3074b2aae565f8558b7ea707ca48d2-" .
+	        "2048\tfiles/dir1/random_2048\t2008-09-22T00:18:37Z\n" .
+	    "1fffb088a74a48447ee612dcab91dacae86570ad-" .
+	        "af6888a81369b7a1ecfbaf14791c5552-" .
+	        "333\tfiles/dir1/random_333\t2008-09-22T00:10:06Z\n" .
+	    "c70053a7b8f6276ff22181364430e729c7f42c5a-" .
+	        "96319d5ea553d5e39fd9c843759d3175-" .
+	        "43\tfiles/dir1/textfile\t2008-09-22T00:09:38Z\n" .
+	    "07b8074463668967f6030016d719ef326eb6382d-" .
+	        "6dce58e78b13dab939de6eef142b7543-" .
+	        "41\tfiles/dir1/year_1969\t1969-01-21T17:12:15Z\n" .
+	    "2113343435a9aadb458d576396d4f960071f8efd-" .
+	        "6babaa47123f4f94ae59ed581a65090b-" .
+	        "41\tfiles/dir1/year_2038\t2038-01-19T03:14:07Z\n",
 	    "smsum: files/dir1/chmod_0000: Cannot read file\n",
 	    1,
 	    "Read files from dir1/ with mtime",
@@ -149,7 +167,10 @@ END
 
 	# }}}
 	likecmd("cat files/dir1/random_2048 | $CMD -m", # {{{
-	    '/^bd91a93ca0462da03f2665a236d7968b0fd9455d-4a3074b2aae565f8558b7ea707ca48d2-2048\\t-\\t20\\d\\d-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-6]\\dZ\\n$/',
+	    '/^bd91a93ca0462da03f2665a236d7968b0fd9455d-' .
+	        '4a3074b2aae565f8558b7ea707ca48d2-2048\\t-' .
+	        '\\t20\\d\\d-[01]\\d-[0-3]\\dT' .
+	        '[0-2]\\d:[0-5]\\d:[0-6]\\dZ\\n$/',
 	    '/^$/',
 	    0,
 	    "Read data from stdin with mtime",
@@ -157,7 +178,8 @@ END
 
 	# }}}
 
-	ok(chmod(0644, "files/dir1/chmod_0000"), "chmod(0644, 'files/dir1/chmod_0000')");
+	ok(chmod(0644, "files/dir1/chmod_0000"),
+	   "chmod(0644, 'files/dir1/chmod_0000')");
 	ok(unlink(glob("files/dir1/*")), 'Delete files in files/dir1/*');
 	ok(rmdir("files/dir1"), 'rmdir files/dir1');
 
@@ -347,4 +369,4 @@ __END__
 # this program.
 # If not, see L<http://www.gnu.org/licenses/>.
 
-# vim: set ts=4 sw=4 sts=4 noet fo+=w tw=79 fenc=UTF-8 :
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
