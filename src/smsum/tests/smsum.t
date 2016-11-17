@@ -67,6 +67,7 @@ exit(main());
 
 sub main {
 	my $Retval = 0;
+	chomp(my $osname = `uname`);
 
 	diag(sprintf('========== Executing %s v%s ==========',
 	             $progname, $VERSION));
@@ -96,6 +97,13 @@ END
 	);
 
 	# }}}
+	if ($osname eq "NetBSD") {
+		ok(utime(-29746065, -29746065, "dir1/year_1969"),
+		        "tar(1) on NetBSD can't exctract files before 1970, " .
+		        "set it manually");
+		diag("NOTICE: tar(1) on NetBSD is broken, can't extract " .
+		     "files with mtime before 1970. Setting it manually.");
+	}
 	chdir('..') or die("$progname: ..: Cannot chdir(): $!\n");
 
 	diag("No options specified...");
