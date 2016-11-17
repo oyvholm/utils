@@ -1,8 +1,10 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 ##
 ##  Written by Owen Taylor <otaylor@redhat.com>
 ##
+
+use warnings;
 
 BEGIN {
     use POSIX qw(:termios_h);

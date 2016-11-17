@@ -1,9 +1,10 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # t2h
 # File ID: 099f1bbc-5d46-11df-bb8a-90e6ba3022ac
 
 use strict;
+use warnings;
 
 while (<>) {
 	s/&/&amp;/g;

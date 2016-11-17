@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # mkd
 # File ID: f695a960-5d3f-11df-ab55-90e6ba3022ac

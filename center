@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #==================================================
 # center
@@ -7,6 +7,7 @@
 #==================================================
 
 use strict;
+use warnings;
 use Getopt::Std;
 
 our ($opt_w, $opt_h) =

@@ -1,7 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # remove_perltestnumbers
 # File ID: 3200faa6-5d43-11df-81ae-90e6ba3022ac
+
+use warnings;
 
 while (<>) {
     s/^((not )?ok)( \d+ )- /$1 - /;

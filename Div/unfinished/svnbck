@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #===============================================================
 # $Id$
@@ -19,6 +19,7 @@
 #===============================================================
 
 use strict;
+use warnings;
 # use utf8; # I don’t like this, it slows down Perl and tastes kludgy. If you are in a non-UTF-8 locale, it should probably be uncommented.
 use Env qw{HOME};
 use Getopt::Std;

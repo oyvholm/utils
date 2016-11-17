@@ -1,4 +1,4 @@
-#!/usr/bin/perl -wT
+#!/usr/bin/env perl
 #
 # Reference implementation for the geohashing algorithm described in xkcd #426
 # See http://wiki.xkcd.com/ProjectRainbow/Main_Page
@@ -7,6 +7,7 @@
 # 2008-05-21
 
 use strict;
+use warnings;
 use Digest::MD5 qw/md5_hex/;
 use Date::Manip;
 use Getopt::Std;

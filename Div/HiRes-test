@@ -1,10 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # $Id$
 #=======================================================================
 
 use strict;
+use warnings;
 use POSIX qw{ strftime };
 use Time::HiRes qw{ gettimeofday };
 use Getopt::Long;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # afv
@@ -14,6 +14,7 @@
 # FIXME: Finn en standard Perl-måte for å erstatte kjøring av /bin/pwd .
 
 use strict;
+use warnings;
 use Fcntl ':flock';
 use File::Path;
 use Digest::MD5;

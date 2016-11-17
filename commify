@@ -1,10 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # commify
 # File ID: 895db0b6-5d37-11df-92d4-90e6ba3022ac
 # Setter inn understrek i nummer.
 
 use strict;
+use warnings;
 use Getopt::Std;
 
 our $opt_s;

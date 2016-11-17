@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=========================================================
 # STDfilenameDTS
@@ -24,6 +24,7 @@ BEGIN {
 }
 
 use strict;
+use warnings;
 use Fcntl ':flock';
 
 use suncgi;

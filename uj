@@ -1,10 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # uj
 # File ID: f8d8d376-5d46-11df-8ae0-90e6ba3022ac
 # Gjentar editering av filer som inneholder ulovlig UTF-8
 
 use strict;
+use warnings;
 
 my @err_list = @ARGV;
 my @new_list = ();

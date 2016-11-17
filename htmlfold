@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # htmlfold
 # File ID: 2c77e8de-5d3d-11df-8a6a-90e6ba3022ac
@@ -6,6 +6,7 @@
 # Select text in visual line mode and filter the block through this script.
 
 use strict;
+use warnings;
 use Getopt::Std;
 our ($opt_c, $opt_h) =
     (     0,      0);

@@ -1,10 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # deep
 # File ID: 48bdd3dc-5d38-11df-9f9a-90e6ba3022ac
 # Omvendt av ep(1).
 
 use strict;
+use warnings;
 use Time::Local;
 
 while(<>) {

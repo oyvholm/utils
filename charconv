@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # charconv
@@ -10,6 +10,7 @@
 #=======================================================================
 
 use strict;
+use warnings;
 require 'getopts.pl';
 
 my $map_file = "$ENV{HOME}/src/svn/div/trunk/ibm2ent/cp865.txt";

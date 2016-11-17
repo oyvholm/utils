@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # pmsetdate
@@ -12,6 +12,7 @@
 #=======================================================================
 
 use strict;
+use warnings;
 use Getopt::Long;
 use Time::HiRes qw{ gettimeofday };
 

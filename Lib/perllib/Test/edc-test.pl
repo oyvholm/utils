@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # $Id: edc-test.pl,v 1.1 1999/04/08 15:03:19 sunny Exp $
 

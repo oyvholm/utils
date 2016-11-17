@@ -1,10 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # mixline
 # File ID: b1e95adc-5d3f-11df-b77c-90e6ba3022ac
 # Blander linjer tilfeldig.
 
 use strict;
+use warnings;
 
 my @Linjer = <>;
 

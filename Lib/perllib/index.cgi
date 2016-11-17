@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # $Id: index.cgi,v 1.2 2000/09/01 10:38:33 sunny Exp $
 # Test-index.cgi som ikke skal brukes til noe annet enn testing av suncgi.pm

@@ -1,9 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # xmlstrip
 # File ID: 06bf7352-5d4a-11df-b044-90e6ba3022ac
 # Remove everything inside and outside XML elements, in other words, 
 # clean up the bastard.
+
+use warnings;
 
 my $Data = join("", <>);
 $Data =~ s/>[^<>]+?</></gs;

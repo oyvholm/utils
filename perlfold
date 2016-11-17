@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # perlfold
 # File ID: 5869cb92-5d42-11df-bb0e-90e6ba3022ac
@@ -6,6 +6,7 @@
 # Select text in visual line mode and filter the block through this script.
 
 use strict;
+use warnings;
 
 $| = 1;
 

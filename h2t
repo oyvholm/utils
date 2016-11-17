@@ -1,9 +1,10 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # h2t
 # File ID: d9427848-5d3a-11df-82ef-90e6ba3022ac
 
 use strict;
+use warnings;
 
 while (<>) {
 	s/&lt;/</g;

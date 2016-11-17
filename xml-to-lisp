@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 #=======================================================================
 # xml-to-lisp
@@ -11,6 +11,7 @@
 $| = 1;
 
 use strict;
+use warnings;
 use XML::Parser;
 use Data::Dumper;
 

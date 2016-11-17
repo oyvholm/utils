@@ -1,9 +1,10 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # pakkut
 # File ID: 096d3c90-5d42-11df-a6c3-90e6ba3022ac
 
 use strict;
+use warnings;
 
 $| = 1;
 

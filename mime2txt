@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # mime2txt
 # File ID: 848c0aa8-5d3f-11df-9938-90e6ba3022ac
@@ -6,6 +6,7 @@
 # den er, men det ser ut til å funke greit.
 
 use strict;
+use warnings;
 
 while (<>) {
 	s/=([0-9a-f]{2})/chr(hex($1))/gei;

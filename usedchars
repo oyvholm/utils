@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # usedchars
 # File ID: 2b47bfdc-5d49-11df-83a7-90e6ba3022ac
@@ -6,6 +6,7 @@
 # for enkelhets skyld. Kjør gjennom "h2u -l" eller recode(1).
 
 use strict;
+use warnings;
 
 my $Char;
 my %Hash; # Gjerne det

@@ -1,7 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # rmspcbak
 # File ID: 8cf4d3ec-5d43-11df-b755-90e6ba3022ac
+
+use warnings;
 
 while (<>) {
 	s/[ \t]*$//g;
