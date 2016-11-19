@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # git-dangling
 # File ID: 13613774-3334-11e0-bfdc-fefdb24f8e10
 #
@@ -8,29 +8,10 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=git-dangling
-VERSION=0.2.0
-
-ARGS="$(getopt -o "\
-b\
-c\
-D\
-h\
-q\
-v\
-" -l "\
-blobs,\
-check-part,\
-delete-only,\
-help,\
-quiet,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.3.0
 
 opt_blobs=0
 opt_checkpart=0
@@ -38,24 +19,31 @@ opt_deleteonly=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
-while :; do
-    case "$1" in
-        (-b|--blobs) opt_blobs=1; shift ;;
-        (-c|--check-part) opt_checkpart=1; shift ;;
-        (-D|--delete-only) opt_deleteonly=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-b|--blobs) opt_blobs=1; shift ;;
+	-c|--check-part) opt_checkpart=1; shift ;;
+	-D|--delete-only) opt_deleteonly=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Restore dangling branches, tags or blobs. Branches will be stored as 
 commit-[SHA1], tags as tag-[SHA1] and blobs as blob-[SHA1].
@@ -82,7 +70,7 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 bannedfile=$HOME/.git-dangling-banned
@@ -135,3 +123,5 @@ fi
 git delete-banned
 test "$dangfile" = "$(basename $dangfile)" && rm $dangfile
 exit 0
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
