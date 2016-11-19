@@ -117,6 +117,8 @@ INSERT INTO "synced" VALUES('Lib/std/perl-tests.tagdesc','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/python','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/sh','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/svg','',NULL,NULL);
+INSERT INTO "synced" VALUES('Lib/std/t/Makefile','Lib/std/make','ea1e3664a0b8d9ea0e2fa8882d86f467cc4ac8ce','2016-11-19 10:34:40');
+INSERT INTO "synced" VALUES('Lib/std/t/sh.t','Lib/std/perl-tests-tab','ea1e3664a0b8d9ea0e2fa8882d86f467cc4ac8ce','2016-11-19 09:58:45');
 INSERT INTO "synced" VALUES('Lib/std/txt','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/xhtml','',NULL,NULL);
 INSERT INTO "synced" VALUES('Lib/std/xml','',NULL,NULL);
