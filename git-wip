@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # git-wip
 # File ID: fe636b92-445c-11e4-940c-c80aa9e67bbd
 #
@@ -8,31 +8,10 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=git-wip
-VERSION=0.2.0
-
-ARGS="$(getopt -o "\
-D\
-h\
-m\
-p\
-q\
-s\
-v\
-" -l "\
-delete,\
-help,\
-merge,\
-parent,\
-quiet,\
-squash,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.3.0
 
 opt_delete=0
 opt_help=0
@@ -41,25 +20,32 @@ opt_parent=0
 opt_quiet=0
 opt_squash=0
 opt_verbose=0
-while :; do
-    case "$1" in
-        (-D|--delete) opt_delete=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-m|--merge) opt_merge=1; shift ;;
-        (-p|--parent) opt_parent=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-s|--squash) opt_squash=1; shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-D|--delete) opt_delete=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-m|--merge) opt_merge=1; shift ;;
+	-p|--parent) opt_parent=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-s|--squash) opt_squash=1; shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Create subbranches using '.' as level delimiter.
 
@@ -109,7 +95,7 @@ executable to use. Example:
   git wip -m
 
 END
-    exit 0
+	exit 0
 fi
 
 test -n "$GITWIP_GIT" && CMD_GIT="$GITWIP_GIT" || CMD_GIT=git
@@ -183,3 +169,5 @@ else
     $CMD_GIT branch "$curr.$ext"
     $CMD_GIT checkout "$curr.$ext"
 fi
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :

@@ -356,7 +356,7 @@ INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl-tab','fc141daa719ef8
 INSERT INTO "synced" VALUES('git-upstream','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-wait-until-clean','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-when-merged','https://raw.githubusercontent.com/mhagger/git-when-merged/master/bin/git-when-merged','','2016-05-07 12:55:46');
-INSERT INTO "synced" VALUES('git-wip','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('git-wip','Lib/std/sh','0eb20f8f1cc87d85a00b3f2ab3446b8e750f41d6','2016-11-19 11:27:52');
 INSERT INTO "synced" VALUES('git-wn','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('githubnetwork','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('goal','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');

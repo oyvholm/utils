@@ -41,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 my %descriptions = ();
 
@@ -103,7 +103,7 @@ END
 
     # }}}
     diag('Testing -v (--verbose) option...');
-    likecmd("$CMD -hv", # {{{
+    likecmd("$CMD -h -v", # {{{
         '/^\n\S+ \d+\.\d+\.\d+/s',
         '/^$/',
         0,
@@ -401,7 +401,7 @@ END
     diag("Test for unknown options...");
     likecmd("../../$CMD -W", # {{{
         '/^$/',
-        '/^git-wip: invalid option -- \'W\'\\n$/',
+        '/^git-wip: -W: Unknown option\\n$/',
         1,
         "It doesn't recognise -W",
     );
@@ -409,7 +409,7 @@ END
     # }}}
     likecmd("../../$CMD -e", # {{{
         '/^$/',
-        '/^git-wip: invalid option -- \'e\'\\n$/',
+        '/^git-wip: -e: Unknown option\\n$/',
         1,
         "It doesn't recognise -e (used by echo)",
     );
