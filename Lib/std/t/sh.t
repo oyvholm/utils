@@ -141,6 +141,32 @@ sub test_standard_options {
 	        '/^$/',
 	        0,
 	        'Option --version --help returns version number');
+	diag("Unknown options and arguments");
+	testcmd("$CMD -U",
+	        "",
+	        "STDfilenameDTS: -U: Unknown option\n",
+	        1,
+	        'Unknown short option');
+	testcmd("$CMD --unknown",
+	        "",
+	        "STDfilenameDTS: --unknown: Unknown option\n",
+	        1,
+	        'Unknown long option');
+	testcmd("$CMD blabla",
+	        "",
+	        "",
+	        0,
+	        'Accepts non-option argument');
+	testcmd("$CMD -- -U",
+	        "",
+	        "",
+	        0,
+	        'Unknown options after -- are ignored');
+	testcmd("$CMD blabla -U",
+	        "",
+	        "",
+	        0,
+	        'Unknown options after first non-option are ignored');
 	return;
 }
 
