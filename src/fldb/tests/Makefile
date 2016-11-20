@@ -4,7 +4,7 @@
 
 .PHONY: test
 test:
-	Genlog *.t
+	./fldb.t
 
 .PHONY: clean
 clean:

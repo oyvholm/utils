@@ -4,7 +4,35 @@
 .PHONY: test
 test:
 	test ! -e ../synced.sql.lock
-	Genlog *.t
+	./datefn.t
+	./edit-sqlite3.t
+	./filesynced.t
+	./findhex.t
+	./fromhex.t
+	./ga-fsck-size.t
+	./ga-sumsize.t
+	./git-dangling.t
+	./git-dbr.t
+	./git-scanrefs.t
+	./git-testadd.t
+	./git-update-dirs.t
+	./git-wip.t
+	./gotexp.t
+	./hhi.t
+	./installed_progs.t
+	./jday.t
+	./md-header.t
+	./perlmodules.t
+	./postgres.t
+	./sident.t
+	./sort-sqlite.t
+	./sortxml.t
+	./std.t
+	./sumdup.t
+	./tohex.t
+	./txt2uc.t
+	./ustr.t
+	./zeropad.t
 
 .PHONY: clean
 clean:

@@ -4,7 +4,7 @@
 
 .PHONY: test
 test:
-	Genlog *.t
+	./smsum.t
 
 .PHONY: clean
 clean:
