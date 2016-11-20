@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=l
-VERSION=0.4.0
+VERSION=0.5.0
 
 opt_help=0
 opt_quiet=0
@@ -58,6 +58,12 @@ END
 	exit 0
 fi
 
-ls -la --color=always --full-time "$@" | less -r
+osname="$(uname)"
+
+if test "$osname" = "Linux"; then
+	ls -la --color=always --full-time "$@" | $PAGER
+else
+	ls -la "$@" | $PAGER
+fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
