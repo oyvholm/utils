@@ -16,3 +16,7 @@ clean:
 test:
 	cd perllib && $(MAKE) test
 	cd std && $(MAKE) test
+
+.PHONY: testport
+testport:
+	cd std && $(MAKE) testport

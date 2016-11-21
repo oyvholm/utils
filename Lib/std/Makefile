@@ -22,3 +22,6 @@ test: test-sh
 .PHONY: test-sh
 test-sh:
 	cd t && ./sh.t
+
+.PHONY: testport
+testport: test-sh
