@@ -270,7 +270,7 @@ END
     diag('Enable Perl UTF-8 warnings with -w/--warnings');
     likecmd("echo ffff | $CMD -uw", # {{{
         '/^\xef\xbf\xbf$/',
-        '/Unicode .* illegal/',
+        '/Unicode/',
         0,
         "Perl complains about U+FFFF",
     );
@@ -286,7 +286,7 @@ END
     # }}}
     likecmd("echo 65535 | $CMD -u --decimal -w", # {{{
         '/^\xef\xbf\xbf$/',
-        '/Unicode .* illegal/',
+        '/Unicode/',
         0,
         "Perl complains about U+FFFF (decimal)",
     );
