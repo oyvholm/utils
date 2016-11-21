@@ -204,24 +204,24 @@ END
     diag('Testing --git option...');
     my $git_version = `git --version 2>/dev/null`;
     if ($git_version =~ /^git version \d/) {
+        my $newname3 = "20150611T123129Z.file.txt";
         untar("repo.tar.gz");
         safe_chdir("repo");
         ok(-d ".git" && -f "file.txt", "repo.tar.gz was properly unpacked");
         testcmd("../../$CMD --git file.txt",
-            "datefn: 'file.txt' renamed to '20150611T123129Z.file.txt'\n",
-            "datefn: Executing \"git mv file.txt " .
-                "20150611T123129Z.file.txt\"...\n",
+            "datefn: 'file.txt' renamed to '$newname3'\n",
+            "datefn: Executing \"git mv file.txt $newname3\"...\n",
             0,
             "Use --git option in Git repository",
         );
         is(
-            file_data("20150611T123129Z.file.txt"),
+            file_data($newname3),
             "This is the most amazing file.\n",
             "file.txt was properly renamed",
         );
         testcmd("git status --porcelain",
             <<END,
-R  file.txt -> 20150611T123129Z.file.txt
+R  file.txt -> $newname3
 ?? datefn-stderr.tmp
 ?? unknown.txt
 END
@@ -229,17 +229,16 @@ END
             0,
             "File status looks ok in git",
         );
-        testcmd("../../$CMD -gd 20150611T123129Z.file.txt",
-            "datefn: '20150611T123129Z.file.txt' renamed to 'file.txt'\n",
-            "datefn: Executing \"git mv 20150611T123129Z.file.txt " .
-                "file.txt\"...\n",
+        testcmd("../../$CMD -gd $newname3",
+            "datefn: '$newname3' renamed to 'file.txt'\n",
+            "datefn: Executing \"git mv $newname3 file.txt\"...\n",
             0,
             "Use -d and -g option in Git repository",
         );
         is(
             file_data("file.txt"),
             "This is the most amazing file.\n",
-            "20150611T123129Z.file.txt was properly renamed",
+            "$newname3 was properly renamed",
         );
         testcmd("git status --porcelain",
             <<END,
