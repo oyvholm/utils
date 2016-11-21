@@ -14,10 +14,13 @@ clean:
 	cd ly && $(MAKE) clean && rm -f STDprojnameDTS.ly STDprojnameDTS.midi
 
 .PHONY: test
-test: test-sh
+test: test-c test-sh
 	cd book-cmark && $(MAKE) test
-	cd c && ./compile
 	cd ly && ./test-ly-files
+
+.PHONY: test-c
+test-c:
+	cd c && ./compile
 
 .PHONY: test-sh
 test-sh:
