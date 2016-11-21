@@ -55,6 +55,7 @@ testport:
 clean:
 	rm -rf *.tmp tmp-*
 	rm -rf *-files/*.tmp *-files/tmp-*
+	rm -f install-modules
 	rm -rf datefn-files/*.txt datefn-files/repo
 	rm -f datefn-files/95a4b9f6-*
 	rm -rf edit-sqlite3-files/sqlite-databases
