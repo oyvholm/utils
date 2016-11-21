@@ -37,19 +37,34 @@ test:
 .PHONY: testport
 testport:
 	./datefn.t
+	# ./edit-sqlite3.t # Fails on NetBSD
+	# ./filesynced.t # Fails on NetBSD
 	./findhex.t
 	./fromhex.t
+	# ./ga-fsck-size.t # Fails on NetBSD
+	# ./ga-sumsize.t # Fails on NetBSD
 	./git-dangling.t
 	./git-dbr.t
 	./git-scanrefs.t
+	# ./git-testadd.t # Fails on NetBSD
+	# ./git-update-dirs.t # Fails on NetBSD
 	./git-wip.t
 	./gotexp.t
 	./hhi.t
+	# ./installed_progs.t # Fails on NetBSD
+	# ./jday.t # Fails on NetBSD
+	# ./md-header.t # Fails on NetBSD
+	# ./perlmodules.t # Fails on NetBSD
+	# ./postgres.t # Fails on NetBSD
 	./sident.t
+	# ./sort-sqlite.t # Fails on NetBSD
 	./sortxml.t
+	# ./std.t # Fails on NetBSD
 	./sumdup.t
 	./tohex.t
+	# ./txt2uc.t # Fails on NetBSD
 	./ustr.t
+	# ./zeropad.t # Fails on NetBSD
 
 .PHONY: clean
 clean:
