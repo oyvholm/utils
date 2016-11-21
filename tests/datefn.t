@@ -136,21 +136,22 @@ END
     diag("Testing --replace option...");
 
     ok(utime(1433116800, 1433116800, $newname), "Change mtime of $newname");
+    my $newname2 = "20150601T000000Z.file.txt";
     testcmd("../$CMD --replace $newname",
-        "datefn: '$newname' renamed to '20150601T000000Z.file.txt'\n",
+        "datefn: '$newname' renamed to '$newname2'\n",
         "",
         0,
         "Replace timestamp with new modification time",
     );
     is(
-        file_data("20150601T000000Z.file.txt"),
+        file_data($newname2),
         "Sånn går now the days.\n",
         "file.txt was renamed to new mtime with -r",
     );
 
     diag('Testing --delete option...');
-    testcmd("../$CMD --delete 20150601T000000Z.file.txt",
-        "datefn: '20150601T000000Z.file.txt' renamed to 'file.txt'\n",
+    testcmd("../$CMD --delete $newname2",
+        "datefn: '$newname2' renamed to 'file.txt'\n",
         "",
         0,
         "Delete date with --delete",
@@ -171,7 +172,7 @@ END
     );
 
     testcmd("../$CMD -r -v file.txt",
-        "datefn: 'file.txt' renamed to '20150601T000000Z.file.txt'\n",
+        "datefn: 'file.txt' renamed to '$newname2'\n",
         "",
         0,
         "-r on file without date adds timestamp",
@@ -180,8 +181,8 @@ END
     diag("Check that it works with paths...");
     safe_chdir("..");
 
-    testcmd("$CMD -d datefn-files/20150601T000000Z.file.txt",
-        "datefn: 'datefn-files/20150601T000000Z.file.txt' renamed to " .
+    testcmd("$CMD -d datefn-files/$newname2",
+        "datefn: 'datefn-files/$newname2' renamed to " .
             "'datefn-files/file.txt'\n",
         "",
         0,
@@ -190,7 +191,7 @@ END
 
     testcmd("$CMD datefn-files/file.txt",
         "datefn: 'datefn-files/file.txt' renamed to " .
-            "'datefn-files/20150601T000000Z.file.txt'\n",
+            "'datefn-files/$newname2'\n",
         "",
         0,
         "Re-add date from parent directory",
@@ -198,8 +199,7 @@ END
 
     safe_chdir("datefn-files");
 
-    ok(unlink("20150601T000000Z.file.txt"),
-        "unlink 20150601T000000Z.file.txt");
+    ok(unlink($newname2), "unlink $newname2");
 
     diag('Testing --git option...');
     my $git_version = `git --version 2>/dev/null`;
