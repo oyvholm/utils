@@ -96,7 +96,7 @@ END
     my $topdir = "datefn-files";
     ok(chdir($topdir), "chdir $topdir");
 
-    testcmd("tar xzf file.tar.gz", "", "", 0, "Untar file.tar.gz (1)");
+    untar("file.tar.gz");
     testcmd("../$CMD file.txt",
         "datefn: 'file.txt' renamed to '20121224T002858Z.file.txt'\n",
         "",
@@ -111,7 +111,7 @@ END
     );
 
     diag('Testing --force option...');
-    testcmd("tar xzf file.tar.gz", "", "", 0, "Untar file.tar.gz (2)");
+    untar("file.tar.gz");
     testcmd("../$CMD file.txt",
         "",
         "datefn: 20121224T002858Z.file.txt: " .
@@ -207,12 +207,7 @@ END
     diag('Testing --git option...');
     my $git_version = `git --version 2>/dev/null`;
     if ($git_version =~ /^git version \d/) {
-        testcmd("tar xzf repo.tar.gz",
-            '',
-            '',
-            0,
-            "Unpack repo.tar.gz (3)"
-        );
+        untar("repo.tar.gz");
         ok(chdir("repo"), "chdir repo");
         ok(-d ".git" && -f "file.txt", "repo.tar.gz was properly unpacked");
         testcmd("../../$CMD --git file.txt",
@@ -277,7 +272,7 @@ END
     }
 
     diag('Testing --skew option...');
-    testcmd("tar xzf file.tar.gz", "", "", 0, "Untar file.tar.gz (4)");
+    untar("file.tar.gz");
     testcmd("../$CMD -s 86400 file.txt",
         "datefn: 'file.txt' renamed to '20121225T002858Z.file.txt'\n",
         "",
@@ -287,7 +282,7 @@ END
     ok(unlink('20121225T002858Z.file.txt'),
         "unlink '20121225T002858Z.file.txt'");
 
-    testcmd("tar xzf file.tar.gz", "", "", 0, "Untar file.tar.gz (5)");
+    untar("file.tar.gz");
     testcmd("../$CMD --skew -86400 file.txt",
         "datefn: 'file.txt' renamed to '20121223T002858Z.file.txt'\n",
         "",
@@ -344,6 +339,14 @@ sub test_standard_options {
 
     return;
     # }}}
+}
+
+sub untar {
+    my $fname = shift;
+
+    likecmd("tar xzf \"$fname\"", '/.*/', '/.*/', 0, "Untar $fname");
+    undef $descriptions{"Untar $fname"};
+    return;
 }
 
 sub testcmd {
