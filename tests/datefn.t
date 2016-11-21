@@ -94,7 +94,7 @@ END
     test_standard_options();
 
     my $topdir = "datefn-files";
-    ok(chdir($topdir), "chdir $topdir");
+    safe_chdir($topdir);
 
     untar("file.tar.gz");
     testcmd("../$CMD file.txt",
@@ -181,7 +181,7 @@ END
     );
 
     diag("Check that it works with paths...");
-    ok(chdir(".."), "chdir ..");
+    safe_chdir("..");
 
     testcmd("$CMD -d datefn-files/20150601T000000Z.file.txt",
         "datefn: 'datefn-files/20150601T000000Z.file.txt' renamed to " .
@@ -199,7 +199,7 @@ END
         "Re-add date from parent directory",
     );
 
-    ok(chdir("datefn-files"), "chdir datefn-files");
+    safe_chdir("datefn-files");
 
     ok(unlink("20150601T000000Z.file.txt"),
         "unlink 20150601T000000Z.file.txt");
@@ -208,7 +208,7 @@ END
     my $git_version = `git --version 2>/dev/null`;
     if ($git_version =~ /^git version \d/) {
         untar("repo.tar.gz");
-        ok(chdir("repo"), "chdir repo");
+        safe_chdir("repo");
         ok(-d ".git" && -f "file.txt", "repo.tar.gz was properly unpacked");
         testcmd("../../$CMD --git file.txt",
             "datefn: 'file.txt' renamed to '20150611T123129Z.file.txt'\n",
@@ -264,7 +264,7 @@ END
             0,
             "Use --git option on file unknown to Git",
         );
-        ok(chdir(".."), "chdir ..");
+        safe_chdir("..");
         testcmd("rm -rf repo", "", "", 0, "Remove repo/");
         ok(!-e "repo", "repo/ is gone");
     } else {
@@ -339,6 +339,14 @@ sub test_standard_options {
 
     return;
     # }}}
+}
+
+sub safe_chdir {
+    my $dir = shift;
+
+    ok(chdir($dir), "chdir $dir") ||
+        BAIL_OUT("$progname: Can't chdir to $dir, aborting");
+    return;
 }
 
 sub untar {
