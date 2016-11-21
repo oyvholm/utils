@@ -101,6 +101,7 @@ END
         "datefn: 'file.txt' renamed to '20121224T002858Z.file.txt'\n",
         "",
         0,
+        "Add date to file.txt",
     );
     my $newname = "20121224T002858Z.file.txt";
     is(
