@@ -87,7 +87,7 @@ sub main {
 	);
 
 	# }}}
-	chdir('files') or die("$progname: files: Cannot chdir(): $!\n");
+	chdir('files') or BAIL_OUT("$progname: files: Cannot chdir(): $!\n");
 	likecmd('tar xzf dir1.tar.gz', # {{{
 	    '/^$/',
 	    '/.*/',
@@ -103,7 +103,7 @@ sub main {
 		diag("NOTICE: tar(1) on NetBSD is broken, can't extract " .
 		     "files with mtime before 1970. Setting it manually.");
 	}
-	chdir('..') or die("$progname: ..: Cannot chdir(): $!\n");
+	chdir('..') or BAIL_OUT("$progname: ..: Cannot chdir(): $!\n");
 
 	diag("No options specified...");
 	testcmd("$CMD files/dir1/*", # {{{
