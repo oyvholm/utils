@@ -39,7 +39,9 @@ clean:
 	rm -rfv *.tmp tmp-*
 	rm -rfv *-files/*.tmp *-files/tmp-*
 	rm -rfv datefn-files/*.txt datefn-files/repo
+	rm -f datefn-files/95a4b9f6-*
 	rm -rfv edit-sqlite3-files/sqlite-databases
+	rm -f edit-sqlite3-files/787a43c8-*
 	test -d ga-fsck-size-files/annex-backends && chmod -R +w ga-fsck-size-files/annex-backends || true
 	rm -rf ga-fsck-size-files/annex-backends
 	test -d ga-sumsize-files/ga-sumsize-repo && chmod -R +w ga-sumsize-files/ga-sumsize-repo || true
