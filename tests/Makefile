@@ -36,10 +36,20 @@ test:
 
 .PHONY: testport
 testport:
+	./datefn.t
 	./findhex.t
+	./fromhex.t
+	./git-dangling.t
+	./git-dbr.t
+	./git-scanrefs.t
 	./git-wip.t
+	./gotexp.t
 	./hhi.t
 	./sident.t
+	./sortxml.t
+	./sumdup.t
+	./tohex.t
+	./ustr.t
 
 .PHONY: clean
 clean:
