@@ -97,6 +97,7 @@ END
     safe_chdir($topdir);
 
     my $newname = "20121224T002858Z.file.txt";
+    unlink($newname); # In case junk from earlier runs
     untar("file.tar.gz");
     testcmd("../$CMD file.txt",
         "datefn: 'file.txt' renamed to '$newname'\n",
@@ -137,6 +138,7 @@ END
 
     ok(utime(1433116800, 1433116800, $newname), "Change mtime of $newname");
     my $newname2 = "20150601T000000Z.file.txt";
+    unlink($newname2); # In case junk from earlier runs
     testcmd("../$CMD --replace $newname",
         "datefn: '$newname' renamed to '$newname2'\n",
         "",
@@ -208,6 +210,7 @@ END
         untar("repo.tar.gz");
         safe_chdir("repo");
         ok(-d ".git" && -f "file.txt", "repo.tar.gz was properly unpacked");
+        unlink($newname3); # In case junk from earlier runs
         testcmd("../../$CMD --git file.txt",
             "datefn: 'file.txt' renamed to '$newname3'\n",
             "datefn: Executing \"git mv file.txt $newname3\"...\n",
