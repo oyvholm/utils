@@ -9,7 +9,7 @@ test:
 .PHONY: clean
 clean:
 	rm -rf *.tmp
-	if test ! -e log/.git; then rm -rfv log; fi
+	if test ! -e log/.git; then rm -rf log; fi
 	rm -f files/57b68db8-*
 	rm -rf files/dir1
 

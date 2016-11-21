@@ -20,8 +20,8 @@ tricgi.html: tricgi.pm
 
 .PHONY: clean
 clean:
-	rm -fv tricgi.3 tricgi.html tricgi.dvi tricgi.man tricgi.ps core *~
-	rm -fv pod2htmd.tmp
+	rm -f tricgi.3 tricgi.html tricgi.dvi tricgi.man tricgi.ps core *~
+	rm -f pod2htmd.tmp
 
 .PHONY: test
 test:

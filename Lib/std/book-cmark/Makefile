@@ -7,7 +7,7 @@ default:
 
 .PHONY: clean
 clean:
-	rm -fv index.html synced.sqlite.*.bck
+	rm -f index.html synced.sqlite.*.bck
 
 .PHONY: edit
 edit:

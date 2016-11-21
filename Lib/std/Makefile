@@ -9,9 +9,9 @@ default:
 clean:
 	cd book-cmark && $(MAKE) clean
 	cd c && $(MAKE) clean
-	cd c && rm -fv STDexecDTS.c STDexecDTS.h
-	cd c && rm -frv t compile.tmp
-	cd ly && $(MAKE) clean && rm -fv STDprojnameDTS.ly STDprojnameDTS.midi
+	cd c && rm -f STDexecDTS.c STDexecDTS.h
+	cd c && rm -fr t compile.tmp
+	cd ly && $(MAKE) clean && rm -f STDprojnameDTS.ly STDprojnameDTS.midi
 
 .PHONY: test
 test: test-sh

@@ -9,7 +9,7 @@ check_utf8: check_utf8.c
 
 .PHONY: clean
 clean:
-	rm -fv core $(EXEC)
+	rm -f core $(EXEC)
 
 .PHONY: test
 test:

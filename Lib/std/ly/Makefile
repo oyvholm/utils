@@ -21,7 +21,7 @@ $(NAME).wav: $(NAME).midi
 	timidity --output-24bit -Ow $(NAME).midi
 
 $(NAME).mp3: $(NAME).wav
-	rm -fv $(NAME).mp3
+	rm -f $(NAME).mp3
 	wav_to_mp3 $(NAME).wav
 
 .version.ily: $(NAME).ly *.ily Makefile
@@ -37,7 +37,7 @@ afv:
 
 .PHONY: clean
 clean:
-	rm -fv $(NAME).mp3 $(NAME).pdf $(NAME).wav .version.ily
+	rm -f $(NAME).mp3 $(NAME).pdf $(NAME).wav .version.ily
 
 .PHONY: diff
 diff:
@@ -82,7 +82,7 @@ slow: $(NAME).midi
 swp:
 	for f in .*.swp; do \
 		git add $$(basename $$(echo $$f | cut -c 2-) .swp); \
-		vim -r $$f; rm -iv $$f; \
+		vim -r $$f; rm -i $$f; \
 	done
 
 .PHONY: touch

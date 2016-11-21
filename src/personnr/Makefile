@@ -11,7 +11,7 @@ $(EXEC): personnr.c Makefile
 
 .PHONY: clean
 clean:
-	rm -fv *~ $(EXEC) core core.$(EXEC)
+	rm -f *~ $(EXEC) core core.$(EXEC)
 
 .PHONY: test
 test:

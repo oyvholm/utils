@@ -6,7 +6,7 @@ dbf2tab: dbf2tab.c
 
 .PHONY: clean
 clean:
-	rm -fv dbf2tab
+	rm -f dbf2tab
 
 .PHONY: test
 test:

@@ -10,7 +10,7 @@ default:
 
 .PHONY: clean
 clean:
-	rm -fv synced.sqlite.*.bck *.pyc
+	rm -f synced.sqlite.*.bck *.pyc
 	cd tests && $(MAKE) clean
 	cd Lib && $(MAKE) clean
 	cd src && $(MAKE) clean
