@@ -96,14 +96,14 @@ END
     my $topdir = "datefn-files";
     safe_chdir($topdir);
 
+    my $newname = "20121224T002858Z.file.txt";
     untar("file.tar.gz");
     testcmd("../$CMD file.txt",
-        "datefn: 'file.txt' renamed to '20121224T002858Z.file.txt'\n",
+        "datefn: 'file.txt' renamed to '$newname'\n",
         "",
         0,
         "Add date to file.txt",
     );
-    my $newname = "20121224T002858Z.file.txt";
     is(
         file_data($newname),
         "Sånn går now the days.\n",
@@ -114,33 +114,30 @@ END
     untar("file.tar.gz");
     testcmd("../$CMD file.txt",
         "",
-        "datefn: 20121224T002858Z.file.txt: " .
-            "File already exists, use --force to overwrite\n",
+        "datefn: $newname: File already exists, use --force to overwrite\n",
         0,
         "Don't overwrite file without --force",
     );
 
     testcmd("../$CMD -f file.txt",
-        "datefn: 'file.txt' renamed to '20121224T002858Z.file.txt'\n",
+        "datefn: 'file.txt' renamed to '$newname'\n",
         "",
         0,
         "File is overwritten with --force",
     );
 
-    testcmd("../$CMD 20121224T002858Z.file.txt",
+    testcmd("../$CMD $newname",
         "",
-        "datefn: 20121224T002858Z.file.txt: Filename already has date\n",
+        "datefn: $newname: Filename already has date\n",
         0,
         "Don't add date when there's already one there",
     );
 
     diag("Testing --replace option...");
 
-    ok(utime(1433116800, 1433116800, "20121224T002858Z.file.txt"),
-        "Change mtime of 20121224T002858Z.file.txt");
-    testcmd("../$CMD --replace 20121224T002858Z.file.txt",
-        "datefn: '20121224T002858Z.file.txt' renamed to " .
-            "'20150601T000000Z.file.txt'\n",
+    ok(utime(1433116800, 1433116800, $newname), "Change mtime of $newname");
+    testcmd("../$CMD --replace $newname",
+        "datefn: '$newname' renamed to '20150601T000000Z.file.txt'\n",
         "",
         0,
         "Replace timestamp with new modification time",
