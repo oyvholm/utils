@@ -51,7 +51,10 @@ clean:
 	rm -f edit-sqlite3-files/787a43c8-*
 	test -d ga-fsck-size-files/annex-backends && chmod -R +w ga-fsck-size-files/annex-backends || true
 	rm -rf ga-fsck-size-files/annex-backends
+	rm -f ga-fsck-size-files/8626cc04-*
 	test -d ga-sumsize-files/ga-sumsize-repo && chmod -R +w ga-sumsize-files/ga-sumsize-repo || true
 	rm -rf ga-sumsize-files/ga-sumsize-repo
+	rm -f ga-sumsize-files/8aef4e74-*
 	rm -rf sort-sqlite-files/sqlite-dbs
+	rm -f sort-sqlite-files/127d434a-*
 	if test ! -e log/.git; then rm -rf log; fi
