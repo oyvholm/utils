@@ -26,3 +26,7 @@ test:
 	cd fldb && $(MAKE) test
 	cd personnr && $(MAKE) test
 	cd smsum && $(MAKE) test
+
+.PHONY: testport
+testport:
+	cd smsum && $(MAKE) testport

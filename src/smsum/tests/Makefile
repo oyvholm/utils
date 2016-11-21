@@ -12,3 +12,6 @@ clean:
 	if test ! -e log/.git; then rm -rfv log; fi
 	rm -f files/57b68db8-*
 	rm -rf files/dir1
+
+.PHONY: testport
+testport: test

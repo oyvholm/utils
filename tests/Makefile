@@ -34,6 +34,13 @@ test:
 	./ustr.t
 	./zeropad.t
 
+.PHONY: testport
+testport:
+	./findhex.t
+	./git-wip.t
+	./hhi.t
+	./sident.t
+
 .PHONY: clean
 clean:
 	rm -rfv *.tmp tmp-*

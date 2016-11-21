@@ -49,6 +49,11 @@ test:
 	cd src && $(MAKE) test
 	cd Git && $(MAKE) test
 
+.PHONY: testport
+testport:
+	cd tests && $(MAKE) testport
+	cd src && $(MAKE) testport
+
 .PHONY: unmerged
 unmerged:
 	git log --graph --date-order --format=fuller -p --decorate=short \

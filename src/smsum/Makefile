@@ -12,3 +12,7 @@ clean:
 .PHONY: test
 test:
 	cd tests && $(MAKE) test
+
+.PHONY: testport
+testport:
+	cd tests && $(MAKE) testport
