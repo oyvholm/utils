@@ -70,12 +70,12 @@ END
     exit 0
 fi
 
-rm -fv STDprojnameDTS.{ly,midi,pdf,wav}
+rm -f STDprojnameDTS.{ly,midi,pdf,wav}
 
 for f in *.ly; do
     echo
     echo === $f
-    ln -fnsv $f STDprojnameDTS.ly
+    ln -fns $f STDprojnameDTS.ly
     make touch
     make || exit 1
     make STDprojnameDTS.wav
