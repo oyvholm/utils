@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.9.0';
+our $VERSION = '0.9.1';
 
 my %descriptions = ();
 
@@ -278,8 +278,6 @@ END
             'Z' .
             '\.' .
             '\d+' .
-            '\.' .
-            '[0-9a-f]{40}' .
             '\n' .
             '$/s'
         ),

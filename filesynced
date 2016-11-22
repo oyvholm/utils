@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=filesynced
-VERSION=0.9.0
+VERSION=0.9.1
 
 SQLITE=sqlite3
 bin="$HOME/bin"
@@ -294,9 +294,7 @@ if test "$opt_lock" = "1"; then
 		msg 2 Create $db from $(pwd)/synced.sql
 		$SQLITE "$db" <synced.sql
 	fi
-	token="token_$(date -u +"%Y%m%dT%H%M%SZ").$$.$(
-		head -c 20 /dev/urandom | sha1sum | head -c 40
-	)"
+	token="token_$(date -u +"%Y%m%dT%H%M%SZ").$$"
 	echo $token >"$lockdir/token"
 	echo $token
 	exit 0
