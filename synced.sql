@@ -417,7 +417,7 @@ INSERT INTO "synced" VALUES('maileditor','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('make_tags','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('manyfiles','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('markdown','',NULL,NULL);
-INSERT INTO "synced" VALUES('mc','Lib/std/bash-no-getopt',NULL,NULL);
+INSERT INTO "synced" VALUES('mc','','',NULL);
 INSERT INTO "synced" VALUES('md-header','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('mergesvn','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('mime2txt','Lib/std/perl',NULL,NULL);
