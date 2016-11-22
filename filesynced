@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 #==============================================================================
 # filesynced
@@ -11,43 +11,11 @@
 #==============================================================================
 
 progname=filesynced
-VERSION=0.8.1
+VERSION=0.9.0
 
 SQLITE=sqlite3
 bin="$HOME/bin"
 db="synced.sqlite"
-
-ARGS="$(getopt -o "\
-f\
-h\
-l\
-p:\
-q\
-t:\
-v\
-" -l "\
-add,\
-create-index,\
-delete,\
-force,\
-help,\
-init,\
-list,\
-lock,\
-patch,\
-set-priority:,\
-quiet,\
-random,\
-timeout:,\
-type:,\
-unlock,\
-unsynced,\
-valid-sha,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
 
 opt_add=0
 opt_create_index=0
@@ -67,29 +35,36 @@ opt_unlock=0
 opt_unsynced=0
 opt_valid_sha=0
 opt_verbose=0
-while :; do
+while test -n "$1"; do
 	case "$1" in
-		(--add) opt_add=1; shift ;;
-		(--create-index) opt_create_index=1; shift ;;
-		(--delete) opt_delete=1; shift ;;
-		(-f|--force) opt_force=1; shift ;;
-		(-h|--help) opt_help=1; shift ;;
-		(--init) opt_init=1; shift ;;
-		(-l|--list) opt_list=1; shift ;;
-		(--lock) opt_lock=1; shift ;;
-		(--patch) opt_patch=1; shift ;;
-		(-p|--set-priority) opt_set_priority=$2; shift 2 ;;
-		(-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-		(--random) opt_random=1; shift ;;
-		(--timeout) opt_timeout=$2; shift 2 ;;
-		(-t|--type) opt_type=$2; shift 2 ;;
-		(--unlock) opt_unlock=1; shift ;;
-		(--unsynced) opt_unsynced=1; shift ;;
-		(--valid-sha) opt_valid_sha=1; shift ;;
-		(-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-		(--version) echo $progname $VERSION; exit 0 ;;
-		(--) shift; break ;;
-		(*) echo $progname: Internal error >&2; exit 1 ;;
+	--add) opt_add=1; shift ;;
+	--create-index) opt_create_index=1; shift ;;
+	--delete) opt_delete=1; shift ;;
+	-f|--force) opt_force=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	--init) opt_init=1; shift ;;
+	-l|--list) opt_list=1; shift ;;
+	--lock) opt_lock=1; shift ;;
+	--patch) opt_patch=1; shift ;;
+	-p|--set-priority) opt_set_priority=$2; shift 2 ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	--random) opt_random=1; shift ;;
+	--timeout) opt_timeout=$2; shift 2 ;;
+	-t|--type) opt_type=$2; shift 2 ;;
+	--unlock) opt_unlock=1; shift ;;
+	--unsynced) opt_unsynced=1; shift ;;
+	--valid-sha) opt_valid_sha=1; shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
 	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))

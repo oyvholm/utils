@@ -266,7 +266,7 @@ INSERT INTO "synced" VALUES('extract_mail','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('ferdig','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('fibonacci','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('filenamelower','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('filesynced','Lib/std/bash-tab','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
+INSERT INTO "synced" VALUES('filesynced','Lib/std/sh','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
 INSERT INTO "synced" VALUES('filmer','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('filt','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('filter_ep','Lib/std/perl',NULL,NULL);
