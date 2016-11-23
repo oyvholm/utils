@@ -38,7 +38,7 @@ test:
 testport:
 	./datefn.t
 	# ./edit-sqlite3.t # Fails on NetBSD
-	# ./filesynced.t # Fails on NetBSD
+	./filesynced.t
 	./findhex.t
 	./fromhex.t
 	# ./ga-fsck-size.t # Fails on NetBSD
@@ -59,7 +59,7 @@ testport:
 	./sident.t
 	# ./sort-sqlite.t # Fails on NetBSD
 	./sortxml.t
-	# ./std.t # Fails on NetBSD
+	./std.t
 	./sumdup.t
 	./tohex.t
 	# ./txt2uc.t # Fails on NetBSD

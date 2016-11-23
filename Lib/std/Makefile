@@ -27,4 +27,4 @@ test-sh:
 	cd t && ./sh.t
 
 .PHONY: testport
-testport: test-sh
+testport: test-c test-sh
