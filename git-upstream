@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-upstream
-VERSION=0.4.0
+VERSION=0.4.1
 
 opt_help=0
 opt_quiet=0
@@ -71,9 +71,8 @@ if test -n "$1"; then
 else
 	branches="$(
 	    git branch |
-	    fmt -1 |
-	    tr -d '\t ' |
-	    grep -v -E '^(->|\*)$'
+	    grep -v HEAD |
+	    cut -c 3-
 	)"
 fi
 
