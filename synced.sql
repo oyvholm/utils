@@ -215,7 +215,7 @@ INSERT INTO "synced" VALUES('cdlabel','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('center','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('cfold','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('charconv','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('ciall','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('ciall','Lib/std/sh','88b8221cb12ac81142810ade1b93cff22f67b89e','2016-11-23 17:21:03');
 INSERT INTO "synced" VALUES('cl','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('cmds','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('colourtest','',NULL,NULL);

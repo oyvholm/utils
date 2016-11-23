@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # ciall
 # File ID: dd770008-300f-11df-b5fc-90e6ba3022ac
 #
@@ -8,29 +8,10 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=ciall
-VERSION=0.3.0
-
-ARGS="$(getopt -o "\
-d\
-e\
-h\
-q\
-v\
-y\
-" -l "\
-edit,\
-help,\
-quiet,\
-store-empty-dirs,\
-verbose,\
-version,\
-yes,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.4.0
 
 opt_store_empty_dirs=0
 opt_edit=0
@@ -38,24 +19,31 @@ opt_help=0
 opt_quiet=0
 opt_verbose=0
 opt_yes=0
-while :; do
-    case "$1" in
-        (-d|--store-empty-dirs) opt_store_empty_dirs=1; shift ;;
-        (-e|--edit) opt_edit=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (-y|--yes) opt_yes=1; shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-d|--store-empty-dirs) opt_store_empty_dirs=1; shift ;;
+	-e|--edit) opt_edit=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	-y|--yes) opt_yes=1; shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Commit all files in current directory tree to Git.
 
@@ -80,70 +68,74 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 unset opt_str
 test "$opt_store_empty_dirs" = "1" && {
-    opt_str=-d
-    test "$(git config --get ciall.noemptydirs)" = "true" && {
-        echo $progname: -d option not allowed here >&2
-        exit 1
-    }
-    echo -n $progname: Executing git-store-dirs... >&2
-    git store-dirs || {
-        echo git-store-dirs error >&2;
-        exit 1;
-    }
-    echo DONE >&2
+	opt_str=-d
+	test "$(git config --get ciall.noemptydirs)" = "true" && {
+		echo $progname: -d option not allowed here >&2
+		exit 1
+	}
+	echo -n $progname: Executing git-store-dirs... >&2
+	git store-dirs || {
+		echo git-store-dirs error >&2;
+		exit 1;
+	}
+	echo DONE >&2
 }
 besafe=n
 test "$opt_yes" = "1" && { besafe=y; opt_str=-y; }
 echo $progname: git status 1... >&2
 LC_ALL=C git status . | grep "^nothing to commit" && {
-    echo $progname: Nothing to do here.
-    exit 0
+	echo $progname: Nothing to do here.
+	exit 0
 }
 
 unset logmsg
-[ ! -z "$1" ] && logmsg="$*"
+test ! -z "$1" && logmsg="$*"
 
 echo $progname: git status 2... >&2
 git status .
 echo
 echo "Log message: $opt_str '$logmsg'"
 until test "$besafe" = "y"; do
-    echo -n Press \'y\' + Enter to commit all new changes or \'n\' to abort...
-    read besafe
-    test "$besafe" = "n" && exit 0;
+	echo -n "Press 'y' + Enter to commit all new changes " >&2
+	echo -n or \'n\' to abort... >&2
+	read besafe
+	test "$besafe" = "n" && exit 0;
 done
 
 if test "$opt_edit" = "1"; then
-    if test -z "$EDITOR"; then
-        echo $progname: The EDITOR environment variable is not defined >&2
-        exit 1
-    fi
-    tmpmsgfile=/tmp/$(date +%s)-$$.tmp
-    $EDITOR $tmpmsgfile
-    logmsg=$(cat $tmpmsgfile)
-    test -z "$logmsg" && {
-        echo $progname: No text entered in editor, aborting.
-        exit 1
-    }
+	if test -z "$EDITOR"; then
+		echo -n "$progname: The EDITOR environment variable " >&2
+		echo is not defined >&2
+		exit 1
+	fi
+	tmpmsgfile=/tmp/$(date +%s)-$$.tmp
+	$EDITOR $tmpmsgfile
+	logmsg=$(cat $tmpmsgfile)
+	test -z "$logmsg" && {
+		echo $progname: No text entered in editor, aborting. >&2
+		exit 1
+	}
 fi
 
 echo $progname: git status 3... >&2
 LC_ALL=C git status . | grep "^nothing to commit" || (
-    echo $progname: git add --all .
-    git add --all . && (
-        echo $progname: git commit
-        git commit -m "$logmsg$(
-            echo
-            echo
-            suuid -t $progname -c "$logmsg" -wa
-        )"
-    )
+	echo $progname: git add --all .
+	git add --all . && (
+		echo $progname: git commit >&2
+		git commit -m "$logmsg$(
+		    echo
+		    echo
+		    suuid -t $progname -c "$logmsg" -wa
+		)"
+	)
 )
 echo ========== git status ==========
 git status
 exit 0
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
