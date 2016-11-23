@@ -37,34 +37,34 @@ test:
 .PHONY: testport
 testport:
 	./datefn.t
-	# ./edit-sqlite3.t # Fails on NetBSD
+	# ./edit-sqlite3.t # netbsd:fail
 	./filesynced.t
 	./findhex.t
 	./fromhex.t
-	# ./ga-fsck-size.t # Fails on NetBSD
-	# ./ga-sumsize.t # Fails on NetBSD
+	# ./ga-fsck-size.t # netbsd:fail
+	# ./ga-sumsize.t # netbsd:fail
 	./git-dangling.t
 	./git-dbr.t
 	./git-scanrefs.t
-	# ./git-testadd.t # Fails on NetBSD
-	# ./git-update-dirs.t # Fails on NetBSD
+	# ./git-testadd.t # netbsd:fail
+	# ./git-update-dirs.t # netbsd:fail
 	./git-wip.t
 	./gotexp.t
 	./hhi.t
-	# ./installed_progs.t # Fails on NetBSD
-	# ./jday.t # Fails on NetBSD
-	# ./md-header.t # Fails on NetBSD
-	# ./perlmodules.t # Fails on NetBSD
-	# ./postgres.t # Fails on NetBSD
+	# ./installed_progs.t # netbsd:fail
+	# ./jday.t # netbsd:fail
+	# ./md-header.t # netbsd:fail
+	# ./perlmodules.t # netbsd:fail
+	# ./postgres.t # netbsd:fail
 	./sident.t
-	# ./sort-sqlite.t # Fails on NetBSD
+	# ./sort-sqlite.t # netbsd:fail
 	./sortxml.t
 	./std.t
 	./sumdup.t
 	./tohex.t
-	# ./txt2uc.t # Fails on NetBSD
+	# ./txt2uc.t # netbsd:fail
 	./ustr.t
-	# ./zeropad.t # Fails on NetBSD
+	# ./zeropad.t # netbsd:fail
 
 .PHONY: clean
 clean:
