@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -85,6 +85,13 @@ For every remote
 
     my @cmdline_args = @ARGV;
     msg(2, "cmdline_args = '" . join('|', @cmdline_args) . "'");
+
+    chomp(my $currbranch = `git rev-parse --abbrev-ref HEAD`);
+    my $local_branches = `git branch`;
+    if ($local_branches =~ / synced\/$currbranch\n/s) {
+        system("git push . $currbranch:synced/$currbranch 2>&1 | " .
+               "grep -v '^Everything up-to-date'");
+    }
 
     my $config_allremotes = `git config --get git-pa.allremotes`;
     chomp($config_allremotes);
@@ -186,7 +193,9 @@ sub usage {
     }
     print(<<"END");
 
-Push to all predefined Git remotes in one go.
+Push to all predefined Git remotes in one go. If any synced/* version of 
+the current branch exists, update that to the current branch before the 
+push.
 
 Usage: $progname [options] [args for git push]
 
