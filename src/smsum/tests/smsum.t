@@ -79,11 +79,11 @@ sub main {
 	test_standard_options();
 
 	testcmd("$CMD files/dir1.tar.gz", # {{{
-	        "31226c9482573c4c323947858616ee174babdeb7-" .
-	          "affeeed5dca3c6970e8a8eaf5277be90-3000\tfiles/dir1.tar.gz\n",
-	    "",
-	    0,
-	    "Verify files/dir1.tar.gz",
+	        "500a1e5b32af08ce829a30b6271833feb8fcdc71-" .
+	          "669c9a09d6b8426f19f79cb6cbb0aed0-2938\tfiles/dir1.tar.gz\n",
+	        "",
+	        0,
+	        "Verify files/dir1.tar.gz",
 	);
 
 	# }}}

@@ -228,9 +228,9 @@ END
 
     # }}}
     ok(chdir("ga-sumsize-files"), "chdir ga-sumsize-files");
-    likecmd("tar xvzf ga-sumsize-repo.tar.gz", # {{{
-        '/^8aef4e74-7976-11e5-910f-fefdb24f8e10\nga-sumsize-repo\/\n.+$/s',
-        '/^$/s',
+    testcmd("tar xzf ga-sumsize-repo.tar.gz", # {{{
+        '',
+        '',
         0,
         "Untar ga-sumsize-repo.tar.gz",
     );

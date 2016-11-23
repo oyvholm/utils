@@ -127,13 +127,8 @@ END
 
     # }}}
     ok(chdir('edit-sqlite3-files'), 'chdir edit-sqlite3-files');
-    testcmd("tar xvzf sqlite-databases.tar.gz", # {{{
-        <<'END',
-787a43c8-6adc-11e5-a8ef-fefdb24f8e10
-sqlite-databases/
-sqlite-databases/ok.sqlite
-sqlite-databases/invalid.sqlite
-END
+    testcmd("tar xzf sqlite-databases.tar.gz", # {{{
+        '',
         '',
         0,
         'Untar sqlite-databases.tar.gz',
