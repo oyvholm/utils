@@ -568,7 +568,7 @@ INSERT INTO "synced" VALUES('std','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62d
 INSERT INTO "synced" VALUES('storelog','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('stpl','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('strip-conflict','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('strip-nonexisting','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('strip-nonexisting','Lib/std/sh','cd6de393d9c5e58544f5323336787006ddbff12c','2016-11-23 20:20:23');
 INSERT INTO "synced" VALUES('strip_msgstr','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sumdup','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('sums','Lib/std/perl',NULL,NULL);
