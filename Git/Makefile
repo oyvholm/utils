@@ -38,3 +38,15 @@ test:
 			true; \
 		fi \
 	done
+
+.PHONY: testport
+testport:
+	if test -f gpstools/Makefile; then \
+		cd gpstools/tests && \
+		./addpoints.t && \
+		./csv2gpx.t && \
+		./gpst-file.t && \
+		./roundgpx.t || exit 1; \
+	fi
+	if test -f spar/Makefile; then cd spar && $(MAKE) test; fi
+	if test -f suuid/Makefile; then cd suuid && $(MAKE) test; fi

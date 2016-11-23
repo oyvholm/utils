@@ -54,6 +54,7 @@ testport:
 	cd tests && $(MAKE) testport
 	cd Lib && $(MAKE) testport
 	cd src && $(MAKE) testport
+	cd Git && $(MAKE) testport
 
 .PHONY: unmerged
 unmerged:
