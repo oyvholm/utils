@@ -72,7 +72,6 @@ INSERT INTO "synced" VALUES('Lib/std/book-cmark/index.md','Lib/std/markdown','ff
 INSERT INTO "synced" VALUES('Lib/std/book-cmark/synced.sql','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/.gitignore','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/Makefile','','',NULL);
-INSERT INTO "synced" VALUES('Lib/std/c/compile','Lib/std/bash-no-getopt','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
 INSERT INTO "synced" VALUES('Lib/std/c/std.c','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/c/std.h','','',NULL);
 INSERT INTO "synced" VALUES('Lib/std/db-Makefile','','',NULL);
