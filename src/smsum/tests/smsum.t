@@ -96,12 +96,10 @@ sub main {
 	);
 
 	# }}}
-	if ($osname eq "NetBSD") {
+	if ($osname =~ /(NetBSD|OpenBSD)/) {
 		ok(utime(-29746065, -29746065, "dir1/year_1969"),
-		        "tar(1) on NetBSD can't exctract files before 1970, " .
+		        "tar(1) on $osname can't exctract files before 1970, " .
 		        "set it manually");
-		diag("NOTICE: tar(1) on NetBSD is broken, can't extract " .
-		     "files with mtime before 1970. Setting it manually.");
 	}
 	chdir('..') or BAIL_OUT("$progname: ..: Cannot chdir(): $!\n");
 
