@@ -130,6 +130,7 @@ INSERT INTO "synced" VALUES('Local/sunbase/start-vncserver','Lib/std/bash','a962
 INSERT INTO "synced" VALUES('Local/ubstud/slowdown','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('Local/vbox-deb/firefox','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('Makefile','','',NULL);
+INSERT INTO "synced" VALUES('Patch/gitmodules_use-bellmann.diff',NULL,NULL,NULL);
 INSERT INTO "synced" VALUES('Patch/vim7/always_72_chars_per_line_if_undefined.patch','','',NULL);
 INSERT INTO "synced" VALUES('Patch/vim7/modified_by-define.patch','','',NULL);
 INSERT INTO "synced" VALUES('Patch/vim7/sunny256/0001-Show-percent-in-status-line-when-g-Ctrl-g-is-pressed.patch','','',NULL);
