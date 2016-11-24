@@ -36,35 +36,35 @@ test:
 
 .PHONY: testport
 testport:
-	./datefn.t # netbsd:ok
-	# ./edit-sqlite3.t # netbsd:fail
-	./filesynced.t # netbsd:ok
-	./findhex.t # netbsd:ok
-	./fromhex.t # netbsd:ok
-	# ./ga-fsck-size.t # netbsd:fail
-	# ./ga-sumsize.t # netbsd:fail
-	./git-dangling.t # netbsd:ok
-	./git-dbr.t # netbsd:ok
-	./git-scanrefs.t # netbsd:ok
-	# ./git-testadd.t # netbsd:fail
-	# ./git-update-dirs.t # netbsd:fail
-	./git-wip.t # netbsd:ok
-	./gotexp.t # netbsd:ok
-	./hhi.t # netbsd:ok
-	# ./installed_progs.t # netbsd:fail
-	# ./jday.t # netbsd:fail
-	# ./md-header.t # netbsd:fail
-	# ./perlmodules.t # netbsd:fail
-	# ./postgres.t # netbsd:fail
-	./sident.t # netbsd:ok
-	# ./sort-sqlite.t # netbsd:fail
-	./sortxml.t # netbsd:ok
-	./std.t # netbsd:ok
-	./sumdup.t # netbsd:ok
-	./tohex.t # netbsd:ok
-	# ./txt2uc.t # netbsd:fail
-	./ustr.t # netbsd:ok
-	# ./zeropad.t # netbsd:fail
+	./datefn.t # netbsd:ok openbsd:ok
+	# ./edit-sqlite3.t # netbsd:fail openbsd:fail
+	./filesynced.t # netbsd:ok openbsd:ok
+	./findhex.t # netbsd:ok openbsd:ok
+	./fromhex.t # netbsd:ok openbsd:ok
+	# ./ga-fsck-size.t # netbsd:fail openbsd:fail
+	# ./ga-sumsize.t # netbsd:fail openbsd:fail
+	./git-dangling.t # netbsd:ok openbsd:ok
+	./git-dbr.t # netbsd:ok openbsd:ok
+	./git-scanrefs.t # netbsd:ok openbsd:ok
+	# ./git-testadd.t # netbsd:fail openbsd:fail
+	# ./git-update-dirs.t # netbsd:fail openbsd:fail
+	./git-wip.t # netbsd:ok openbsd:ok
+	./gotexp.t # netbsd:ok openbsd:ok
+	./hhi.t # netbsd:ok openbsd:ok
+	# ./installed_progs.t # netbsd:fail openbsd:fail
+	# ./jday.t # netbsd:fail openbsd:fail
+	# ./md-header.t # netbsd:fail openbsd:ok
+	# ./perlmodules.t # netbsd:fail openbsd:fail
+	# ./postgres.t # netbsd:fail openbsd:fail
+	./sident.t # netbsd:ok openbsd:ok
+	# ./sort-sqlite.t # netbsd:fail openbsd:ok
+	./sortxml.t # netbsd:ok openbsd:ok
+	./std.t # netbsd:ok openbsd:fail
+	./sumdup.t # netbsd:ok openbsd:ok
+	./tohex.t # netbsd:ok openbsd:ok
+	# ./txt2uc.t # netbsd:fail openbsd:fail
+	./ustr.t # netbsd:ok openbsd:ok
+	# ./zeropad.t # netbsd:fail openbsd:ok
 
 .PHONY: clean
 clean:
