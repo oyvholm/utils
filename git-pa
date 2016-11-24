@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -91,6 +91,7 @@ For every remote
     if ($local_branches =~ / synced\/$currbranch\n/s) {
         system("git push . $currbranch:synced/$currbranch 2>&1 | " .
                "grep -v '^Everything up-to-date'");
+        system("git", "branch", "-q", "-u", "synced/$currbranch");
     }
 
     my $config_allremotes = `git config --get git-pa.allremotes`;
@@ -194,8 +195,11 @@ sub usage {
     print(<<"END");
 
 Push to all predefined Git remotes in one go. If any synced/* version of 
-the current branch exists, update that to the current branch before the 
-push.
+the current branch exists, update that to the same commit as the current 
+branch before the push. Also set the current branch up to track the 
+synced/ branch. This will show up in a Git-aware prompt that new commits 
+have been pushed to the local branch, or there are commits that haven't 
+been pushed yet.
 
 Usage: $progname [options] [args for git push]
 
