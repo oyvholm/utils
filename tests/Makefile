@@ -59,7 +59,7 @@ testport:
 	./sident.t # netbsd:ok openbsd:ok
 	# ./sort-sqlite.t # netbsd:fail openbsd:ok
 	./sortxml.t # netbsd:ok openbsd:ok
-	./std.t # netbsd:ok openbsd:fail
+	./std.t # netbsd:ok openbsd:ok
 	./sumdup.t # netbsd:ok openbsd:ok
 	./tohex.t # netbsd:ok openbsd:ok
 	# ./txt2uc.t # netbsd:fail openbsd:fail

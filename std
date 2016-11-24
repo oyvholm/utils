@@ -36,7 +36,7 @@ my @Tags = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.7.0';
+our $VERSION = '0.7.1';
 
 my $CMD_GIT = "git";
 my $CMD_SQLITE = "sqlite3";
@@ -143,14 +143,14 @@ sub main {
         close(PipeFP);
         chdir($orig_dir) ||
             die("$progname: $orig_dir: Cannot return to original dir: $!\n");
-        mysyst("cp", "-a", $dat_file, $tmpfile);
+        mysyst("cp", "-p", $dat_file, $tmpfile);
     } else {
         warn("$progname: Unable to open \"$CMD_GIT stat\" pipe\n");
     }
 
     if (length($Dest)) {
         msg(1, "Copying temp file");
-        mysyst("cp", "-a", $tmpfile, $Dest);
+        mysyst("cp", "-p", $tmpfile, $Dest);
     }
 
     my $Output = "";
