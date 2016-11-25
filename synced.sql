@@ -323,7 +323,7 @@ INSERT INTO "synced" VALUES('git-dangling','Lib/std/sh','2f12fadf29dc1a1fe88f2d1
 INSERT INTO "synced" VALUES('git-dbr','Lib/std/perl','f3196a371d303f4e800dc0911039dc8b43df7770','2016-10-15 19:55:25');
 INSERT INTO "synced" VALUES('git-delete-banned','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-delete-old-branches','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
-INSERT INTO "synced" VALUES('git-delrembr','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('git-delrembr','Lib/std/sh','34c55d68c647eb5e8f608f8e3446ba36f0c159b5','2016-11-25 10:01:23');
 INSERT INTO "synced" VALUES('git-dl','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-dobranch','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-eb','Lib/std/bash',NULL,NULL);
