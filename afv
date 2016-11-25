@@ -131,7 +131,6 @@ foreach my $FullCurr (@Files) {
         warn(sec_to_string(time) . ": $lock_dir: Venter på lockdir, " . (time-$start_lock) . " sekunder");
         my_sleep(5);
     }
-    D(sprintf("Årntli og offisiell MD5: %s\n", `md5sum $Curr`));
     if (open(FromFP, "<$Curr")) {
         binmode(FromFP);
         if (flock(FromFP, LOCK_EX)) {
