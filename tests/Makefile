@@ -57,12 +57,12 @@ testport:
 	# ./perlmodules.t     # freebsd:fail netbsd:fail openbsd:fail
 	# ./postgres.t        # freebsd:fail netbsd:fail openbsd:fail
 	./sident.t            # freebsd:ok   netbsd:ok   openbsd:ok
-	# ./sort-sqlite.t     # freebsd:ok   netbsd:fail openbsd:ok
+	# ./sort-sqlite.t     # freebsd:ok   netbsd:ok   openbsd:ok
 	./sortxml.t           # freebsd:ok   netbsd:ok   openbsd:ok
 	./std.t               # freebsd:ok   netbsd:ok   openbsd:ok
 	./sumdup.t            # freebsd:ok   netbsd:ok   openbsd:ok
 	./tohex.t             # freebsd:ok   netbsd:ok   openbsd:ok
-	# ./txt2uc.t          # freebsd:hang netbsd:fail openbsd:fail
+	# ./txt2uc.t          # freebsd:hang netbsd:hang openbsd:fail
 	./ustr.t              # freebsd:ok   netbsd:ok   openbsd:ok
 	# ./zeropad.t         # freebsd:ok   netbsd:fail openbsd:ok
 
