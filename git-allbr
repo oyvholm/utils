@@ -12,7 +12,7 @@
 #==============================================================================
 
 progname=git-allbr
-VERSION=0.6.0
+VERSION=0.6.1
 
 opt_all=0
 opt_commit_branches=0
@@ -105,7 +105,7 @@ for remote in $remotes; do
 	        perl -pe "s!remotes/$remote/(.*)\$!\$1!"
 	); do
 	if test $opt_verbose -ge 0; then
-		echo -ne "$f$t_el\\r"
+		printf '%s%s\r' "$f" "$t_el"
 	fi
 	test "$create_dangling" != "1" &&
 		echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
