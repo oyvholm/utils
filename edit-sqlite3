@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # edit-sqlite3
 # File ID: d6a111fc-6a8c-11e5-b795-fefdb24f8e10
 #
@@ -8,46 +8,38 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=edit-sqlite3
-VERSION=0.2.0
-
-ARGS="$(getopt -o "\
-h\
-n\
-q\
-v\
-" -l "\
-dry-run,\
-help,\
-quiet,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.3.0
 
 opt_help=0
 opt_dry_run=0
 opt_quiet=0
 opt_verbose=0
-while :; do
-    case "$1" in
-        (-h|--help) opt_help=1; shift ;;
-        (-n|--dry-run) opt_dry_run=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-h|--help) opt_help=1; shift ;;
+	-n|--dry-run) opt_dry_run=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Edit an SQLite 3.x database file in your favourite text editor. The 
 original version is backuped with the file modification time in the file 
@@ -69,69 +61,72 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 db="$1"
 sql="$db.sql"
 
 test -z "$db" && {
-    echo $progname: No SQLite database specified >&2
-    exit 1
+	echo $progname: No SQLite database specified >&2
+	exit 1
 }
 test -h "$db" && {
-    echo $progname: $db: File is a symlink >&2
-    exit 1
+	echo $progname: $db: File is a symlink >&2
+	exit 1
 }
 test -f "$db" || {
-    echo $progname: $db: File not found or is not a regular file >&2
-    exit 1
+	echo $progname: $db: File not found or is not a regular file >&2
+	exit 1
 }
 test -r "$db" || {
-    echo $progname: $db: File is not readable by you >&2
-    exit 1
+	echo $progname: $db: File is not readable by you >&2
+	exit 1
 }
 test -w "$db" || {
-    echo $progname: $db: File is not writable by you >&2
-    exit 1
+	echo $progname: $db: File is not writable by you >&2
+	exit 1
 }
 test -n "$EDITOR" || {
-    echo $progname: \$EDITOR environment variable is not defined >&2
-    exit 1
+	echo $progname: \$EDITOR environment variable is not defined >&2
+	exit 1
 }
 sqlite3 "$db" "PRAGMA integrity_check;" || {
-    echo $progname: $db: SQLite database contains errors >&2
-    exit 1
+	echo $progname: $db: SQLite database contains errors >&2
+	exit 1
 }
 
 bck="$db.$(stat -c %Y "$db").bck"
 
 if test "$opt_dry_run" = "1"; then
-    echo $progname: $db: File would be edited >&2
-    exit 0
+	echo $progname: $db: File would be edited >&2
+	exit 0
 else
-    test -e "$sql" || # Don't overwrite an existing file
-      sqlite3 "$db" .dump >"$sql"
+	test -e "$sql" || # Don't overwrite an existing file
+		sqlite3 "$db" .dump >"$sql"
 fi
 
 cp -p "$db" "$bck" || {
-    echo $progname: $db: Error when creating backup $bck
-    exit 1
+	echo $progname: $db: Error when creating backup $bck
+	exit 1
 }
 
 sqlite_ok=0
 until test "$sqlite_ok" = "1"; do
-    "$EDITOR" "$sql"
-    rm "$db"
-    sqlite3 "$db" <"$sql" && sqlite_ok=1 || {
-        sqlite_ok=0
-        echo -n $progname: Press Enter to edit again, or q to abort... >&2
-        unset choice
-        read choice
-        test "$choice" = "q" && exit
-    }
+	"$EDITOR" "$sql"
+	rm "$db"
+	sqlite3 "$db" <"$sql" && sqlite_ok=1 || {
+		sqlite_ok=0
+		echo -n "$progname: Press Enter to edit again, " >&2
+		echo -n or q to abort... >&2
+		unset choice
+		read choice
+		test "$choice" = "q" && exit
+	}
 done
 
 rm "$db"
 sqlite3 "$db" <"$sql"
 rm "$sql"
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :

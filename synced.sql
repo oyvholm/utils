@@ -252,7 +252,7 @@ INSERT INTO "synced" VALUES('doc/sident.1','','',NULL);
 INSERT INTO "synced" VALUES('doc/svndiff.1','','',NULL);
 INSERT INTO "synced" VALUES('dostime','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('dprofpp.graphviz','http://cpansearch.perl.org/src/LBROCARD/GraphViz-2.04/examples/dprofpp.graphviz','','2009-06-24 02:15:51');
-INSERT INTO "synced" VALUES('edit-sqlite3','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('edit-sqlite3','Lib/std/sh','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('emptydirs','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('enc-mp4','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('encap','Lib/std/perl',NULL,NULL);
