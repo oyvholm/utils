@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 my %descriptions = ();
 
@@ -101,7 +101,7 @@ END
 
     # }}}
     diag('Testing -v (--verbose) option...');
-    likecmd("$CMD -hv", # {{{
+    likecmd("$CMD -h -v", # {{{
         '/^\n\S+ \d+\.\d+\.\d+/s',
         '/^$/',
         0,

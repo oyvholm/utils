@@ -663,7 +663,7 @@ INSERT INTO "synced" VALUES('tolower','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('tosec','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('towav','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('tuxguitar','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
-INSERT INTO "synced" VALUES('txt2uc','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('txt2uc','Lib/std/sh','5d24f3e3b9588065fb5a877aafc542018ab886b5','2016-11-26 12:21:54');
 INSERT INTO "synced" VALUES('txtfold','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('u','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('u2h','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
