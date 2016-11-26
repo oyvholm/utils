@@ -287,7 +287,8 @@ END
     );
 
     # }}}
-    testcmd("sqlite3 ok.sqlite.1443959539.bck .dump", # {{{
+    my $bckfile = glob("ok.sqlite.2*.bck");
+    testcmd("sqlite3 $bckfile .dump", # {{{
         <<END,
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
@@ -300,7 +301,7 @@ END
     );
 
     # }}}
-    ok(unlink('ok.sqlite.1443959539.bck'), 'Remove backup file');
+    ok(unlink($bckfile), 'Remove backup file');
     create_file('ok.sqlite.sql', <<END); # {{{
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
@@ -324,10 +325,9 @@ END
     );
 
     # }}}
-    ok(unlink('ok.sqlite.sql'), 'Delete ok.sqlite.sql');
-    my $bckfile = glob('ok.sqlite.*.bck');
-    ok(unlink($bckfile), 'Delete backup file');
     diag('Clean up...');
+    ok(unlink('ok.sqlite.sql'), 'Delete ok.sqlite.sql');
+    ok(unlink(glob("ok.sqlite.2*.bck")), 'Delete backup file');
     ok(unlink('invalid.sqlite'), 'Delete invalid.sqlite');
     ok(unlink('ok.sqlite'), 'Delete ok.sqlite');
     ok(chdir('..'), 'chdir ..');
