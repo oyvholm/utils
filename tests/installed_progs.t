@@ -15,9 +15,11 @@
 use strict;
 use warnings;
 
-BEGIN {
-    use Test::More qw{no_plan};
-    # use_ok() goes here
+use Test::More;
+if ($^O ne "linux") {
+    plan skip_all => "We're not on GNU/Linux";
+} else {
+    plan "no_plan";
 }
 
 use Getopt::Long;
@@ -42,7 +44,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.0';
 
 my %descriptions = ();
 
