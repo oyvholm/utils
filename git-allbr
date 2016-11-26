@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # git-allbr
 # File ID: b8c0ee54-eb71-11df-a07a-fefdb24f8e10
 #
@@ -9,31 +9,10 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=git-allbr
-VERSION=0.5.0
-
-ARGS="$(getopt -o "\
-a\
-c\
-f\
-h\
-q\
-u\
-v\
-" -l "\
-all,\
-commit-branches,\
-force,\
-help,\
-quiet,\
-upstream,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.6.0
 
 opt_all=0
 opt_commit_branches=0
@@ -42,25 +21,32 @@ opt_help=0
 opt_quiet=0
 opt_upstream=0
 opt_verbose=0
-while :; do
-    case "$1" in
-        (-a|--all) opt_all=1; shift ;;
-        (-c|--commit-branches) opt_commit_branches=1; shift ;;
-        (-f|--force) opt_force=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-u|--upstream) opt_upstream=1; shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-a|--all) opt_all=1; shift ;;
+	-c|--commit-branches) opt_commit_branches=1; shift ;;
+	-f|--force) opt_force=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-u|--upstream) opt_upstream=1; shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Create local Git branches that only exist on remotes and update local 
 branches against remote branches.
@@ -94,7 +80,7 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 remotes=origin
@@ -111,27 +97,29 @@ is_bare=1
 test "$(git config --get core.bare)" = "true" || is_bare=0
 t_el="$(tput el)"
 for remote in $remotes; do
-    echo ==== $progname: remote $remote
-    for f in $(
-        git branch -a |
-            grep remotes/$remote/ |
-            grep -v -E "remotes/$remote/HEAD( |\$)" |
-            perl -pe "s!remotes/$remote/(.*)\$!\$1!"
-    ); do
-        if test $opt_verbose -ge 0; then
-            echo -ne "$f$t_el\\r"
-        fi
-        test "$create_dangling" != "1" &&
-            echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
-                test "$is_bare" = "0" && continue
-        (
-            git branch --no-track $f $remote/$f 2>&1 &&
-                echo $progname: Created $f
-        ) | grep -v '^fatal: A branch named .* already exists.'
-        git push . $remote/$f:refs/heads/$f $force_str 2>&1 |
-            grep -v '^Everything up-to-date'
-        test -n "$upstream_str" && git branch -u $remote/$f $f
-    done
-    tput el
-    echo
+	echo ==== $progname: remote $remote
+	for f in $(
+	    git branch -a |
+	        grep remotes/$remote/ |
+	        grep -v -E "remotes/$remote/HEAD( |\$)" |
+	        perl -pe "s!remotes/$remote/(.*)\$!\$1!"
+	); do
+	if test $opt_verbose -ge 0; then
+		echo -ne "$f$t_el\\r"
+	fi
+	test "$create_dangling" != "1" &&
+		echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
+			test "$is_bare" = "0" && continue
+	(
+	    git branch --no-track $f $remote/$f 2>&1 &&
+	    echo $progname: Created $f
+	) | grep -v '^fatal: A branch named .* already exists.'
+	git push . $remote/$f:refs/heads/$f $force_str 2>&1 |
+	    grep -v '^Everything up-to-date'
+	test -n "$upstream_str" && git branch -u $remote/$f $f
+	done
+	tput el
+	echo
 done
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
