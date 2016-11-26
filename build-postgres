@@ -123,7 +123,9 @@ git clean -fxd || {
     exit 1
 }
 
-old_version="$($prgdir/postgres/bin/postgres --version 2>/dev/null | fmt -1 | tail -1)"
+old_version="$(
+    $prgdir/postgres/bin/postgres --version 2>/dev/null | fmt -1 | tail -1
+)"
 
 if [ -n "$old_version" ]; then
     msg git status in $(pwd)
@@ -132,7 +134,9 @@ if [ -n "$old_version" ]; then
     until [ "$choice" = "y" ]; do
         echo
         unset choice
-        echo $(git log --format=oneline $old_version..$pgdesc | wc -l) new commits available in range $old_version..$pgdesc
+        echo $(
+            git log --format=oneline $old_version..$pgdesc | wc -l
+        ) new commits available in range $old_version..$pgdesc
         echo Going to compile Postgres $pgdesc
         echo
         echo If that looks okay to you, press \'y\' to start the build, or:
@@ -214,7 +218,8 @@ msg initdb &&
 sudo -u postgres initdb --lc-collate=C -E UTF-8 "$dbroot/$pgdesc/main" &&
 
 msg pg_ctl start &&
-sudo -u postgres pg_ctl -D "$dbroot/$pgdesc/main" -l "$dbroot/$pgdesc/logfile" start &&
+sudo -u postgres pg_ctl -D "$dbroot/$pgdesc/main" \
+    -l "$dbroot/$pgdesc/logfile" start &&
 
 sudo -u postgres bash -c "until pg_isready -q; do sleep 1; done" &&
 
@@ -232,11 +237,17 @@ done &&
 
 echo &&
 echo $progname: Old version: $old_version >&2 &&
-echo $progname: New version: $($prgdir/postgres/bin/postgres --version | fmt -1 | tail -1) >&2 &&
+echo $progname: New version: $(
+    $prgdir/postgres/bin/postgres --version | fmt -1 | tail -1
+) >&2 &&
 
 if test -d "$prefix/.git/."; then
     msg Commit the symlink &&
-    commitmsg=$(echo $progname installed $pgdir on $(hostname); echo; suuid -t commit,$progname) &&
+    commitmsg=$(
+        echo $progname installed $pgdir on $(hostname)
+        echo
+        suuid -t commit,$progname
+    ) &&
     cd "$prgdir" &&
     sudo git add postgres &&
     echo Commit message: &&
