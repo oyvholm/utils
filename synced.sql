@@ -350,7 +350,7 @@ INSERT INTO "synced" VALUES('git-scanrefs','Lib/std/perl','4dbab2bf09b9ff111945b
 INSERT INTO "synced" VALUES('git-size','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-store-dirs','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-svn-myclone','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-testadd','Lib/std/bash-tab','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
+INSERT INTO "synced" VALUES('git-testadd','Lib/std/sh','1bfe49431205e4de6f4603084c3c303455f92460','2016-11-26 10:07:20');
 INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('git-update-dirs','Lib/std/perl-tab','fc141daa719ef82e36a06437f1017e33e4ff997a','2016-10-16 20:02:25');
 INSERT INTO "synced" VALUES('git-upstream','Lib/std/sh','62cd08efa0db288c010ffb2d20af752e18f6ac15','2016-11-23 09:41:48');

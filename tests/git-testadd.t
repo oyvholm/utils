@@ -41,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.10.2';
+our $VERSION = '0.11.0';
 
 my %descriptions = ();
 
@@ -95,7 +95,7 @@ sub test_standard_options {
 	        'Option -h prints help screen');
 
 	diag('Testing -v (--verbose) option...');
-	likecmd("$CMD -hv",
+	likecmd("$CMD -h -v",
 	        '/^\n\S+ \d+\.\d+\.\d+/s',
 	        '/^$/',
 	        0,

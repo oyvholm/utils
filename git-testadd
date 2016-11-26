@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 #==============================================================================
 # git-testadd
@@ -11,32 +11,7 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.10.2
-
-ARGS="$(getopt -o "\
-g:\
-h\
-l:\
-n\
-p\
-q\
-r:\
-u\
-v\
-" -l "\
-git:,\
-help,\
-label:,\
-dry-run,\
-pristine,\
-quiet,\
-ref:,\
-unmodified,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.11.0
 
 opt_git=''
 opt_help=0
@@ -47,20 +22,27 @@ opt_quiet=0
 opt_ref=''
 opt_unmodified=0
 opt_verbose=0
-while :; do
+while test -n "$1"; do
 	case "$1" in
-		(-g|--git) opt_git="$2"; shift 2 ;;
-		(-h|--help) opt_help=1; shift ;;
-		(-l|--label) opt_label="$2"; shift 2 ;;
-		(-n|--dry-run) opt_dry_run=1; shift ;;
-		(-p|--pristine) opt_pristine=1; shift ;;
-		(-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-		(-r|--ref) opt_ref="$2"; shift 2 ;;
-		(-u|--unmodified) opt_unmodified=1; shift ;;
-		(-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-		(--version) echo $progname $VERSION; exit 0 ;;
-		(--) shift; break ;;
-		(*) echo $progname: Internal error >&2; exit 1 ;;
+	-g|--git) opt_git="$2"; shift 2 ;;
+	-h|--help) opt_help=1; shift ;;
+	-l|--label) opt_label="$2"; shift 2 ;;
+	-n|--dry-run) opt_dry_run=1; shift ;;
+	-p|--pristine) opt_pristine=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-r|--ref) opt_ref="$2"; shift 2 ;;
+	-u|--unmodified) opt_unmodified=1; shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
 	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
