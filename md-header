@@ -30,7 +30,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -56,17 +56,18 @@ sub main {
     # {{{
     my $Retval = 0;
     my $FB = "\x7b\x7b\x7b";
+    my $FB_regex = "\\\x7b\\\x7b\\\x7b";
 
     while (my $Line = <>) {
         chomp($Line);
         if ($Line =~ /^(#+)/) {
             if ($Opt{'remove'}) {
-                $Line =~ s/ ?<!-- $FB\d? -->//;
+                $Line =~ s/ ?<!-- $FB_regex\d? -->//;
             } else {
                 my $marks = $1;
                 my $level = length($marks);
-                if ($Line =~ /<!-- $FB\d? -->/) {
-                    $Line =~ s/ ?<!-- $FB\d? -->/ <!-- ${FB}$level -->/;
+                if ($Line =~ /<!-- $FB_regex\d? -->/) {
+                    $Line =~ s/ ?<!-- $FB_regex\d? -->/ <!-- ${FB}$level -->/;
                 } else {
                     $Line .= " <!-- ${FB}$level -->";
                 }

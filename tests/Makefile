@@ -53,7 +53,7 @@ testport:
 	./hhi.t               # freebsd:ok   netbsd:ok   openbsd:ok
 	# ./installed_progs.t # freebsd:hang netbsd:skip openbsd:fail
 	# ./jday.t            # freebsd:fail netbsd:ok   openbsd:fail
-	# ./md-header.t       # freebsd:ok   netbsd:fail openbsd:ok
+	# ./md-header.t       # freebsd:ok   netbsd:ok   openbsd:ok
 	# ./perlmodules.t     # freebsd:fail netbsd:fail openbsd:fail
 	# ./postgres.t        # freebsd:fail netbsd:fail openbsd:fail
 	./sident.t            # freebsd:ok   netbsd:ok   openbsd:ok
