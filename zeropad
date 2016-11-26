@@ -32,7 +32,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -93,6 +93,7 @@ sub check_max {
 sub pad_number {
     # {{{
     my $Num = shift;
+    return $Num if ($max_length <= length($Num));
     return('0' x ($max_length - length($Num)) . $Num);
     # }}}
 } # pad_number()
