@@ -668,7 +668,7 @@ INSERT INTO "synced" VALUES('txtfold','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('u','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('u2h','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('uj','Lib/std/perl',NULL,NULL);
-INSERT INTO "synced" VALUES('unichar','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('unichar','Lib/std/sh','33d454691950cdc2b21ac4d95480ea1f4ec306ff','2016-11-26 10:23:27');
 INSERT INTO "synced" VALUES('unicode_htmlchart','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('unik_df','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('unz','Lib/std/bash',NULL,NULL);

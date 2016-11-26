@@ -1,41 +1,22 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # unichar
 # File ID: 23f515ba-5d47-11df-bcb0-90e6ba3022ac
 #
-# Create a searchable SQLite database of all Unicode characters
+# Create a searchable SQLite database of all Unicode characters.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=unichar
-VERSION=0.4.1
+VERSION=0.5.0
 
 db="$HOME/.unichar.sqlite"
 guipdf="$HOME/bin/Lib/unicode/current/charts/CodeCharts.pdf"
 uc_url="ftp://unicode.org/Public/UNIDATA/UnicodeData.txt"
 pdfprog=evince
-
-ARGS="$(getopt -o "\
-c\
-g\
-h\
-q\
-v\
-" -l "\
-convert,\
-get,\
-gui,\
-help,\
-init:,\
-quiet,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
 
 opt_convert=0
 opt_get=0
@@ -44,28 +25,35 @@ opt_help=0
 opt_init=''
 opt_quiet=0
 opt_verbose=0
-while :; do
-    case "$1" in
-        (-c|--convert) opt_convert=1; shift ;;
-        (--get) opt_get=1; shift ;;
-        (-g|--gui) opt_gui=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (--init) opt_init=$2; shift 2 ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-c|--convert) opt_convert=1; shift ;;
+	--get) opt_get=1; shift ;;
+	-g|--gui) opt_gui=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	--init) opt_init=$2; shift 2 ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Search for Unicode characters, different arguments are ANDed against 
-each other
+each other.
 
 Usage:
 
@@ -125,7 +113,7 @@ For example (with Unicode 8.0.0):
   ÅåŮůǺǻẘẙ
 
 END
-    exit 0
+	exit 0
 fi
 
 if test -n "$opt_init"; then
@@ -209,3 +197,5 @@ test -z "$search_str" && {
     exit 1
 }
 sqlite3 "$db" "SELECT * FROM chars WHERE $search_str"
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
