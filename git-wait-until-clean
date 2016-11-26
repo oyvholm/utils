@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # git-wait-until-clean
 # File ID: 92d46e22-d5a1-11e4-9769-000df06acc56
 #
@@ -8,29 +8,10 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=git-wait-until-clean
-VERSION=0.4.1
-
-ARGS="$(getopt -o "\
-e\
-h\
-i\
-q\
-u\
-v\
-" -l "\
-exit-val,\
-help,\
-ignored,\
-quiet,\
-untracked,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.5.0
 
 opt_exit_val=0
 opt_help=0
@@ -39,23 +20,30 @@ opt_quiet=0
 opt_untracked=0
 opt_verbose=0
 while :; do
-    case "$1" in
-        (-e|--exit-val) opt_exit_val=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-i|--ignored) opt_ignored=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-u|--untracked) opt_untracked=1; shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+	case "$1" in
+	-e|--exit-val) opt_exit_val=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-i|--ignored) opt_ignored=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-u|--untracked) opt_untracked=1; shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Wait until the current Git repository is clean before continuing.
 Does nothing in bare repositories.
@@ -83,7 +71,7 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 is_bare=0
@@ -92,25 +80,29 @@ test "$(git config --get core.bare)" = "true" && is_bare=1
 test "$is_bare" = "1" && exit 0
 
 unset i_str
-test "$opt_ignored" = "1" && { i_str=" --ignored"; shift; }
+test "$opt_ignored" = "1" && i_str=" --ignored"
 
 unset u_str
-test "$opt_untracked" = "1" && { u_str=" --untracked-files=no"; shift; }
+test "$opt_untracked" = "1" && u_str=" --untracked-files=no"
 
 unset did_wait
 while test "$(git status --porcelain$i_str$u_str "$@")" != ""; do
-    if test "$opt_exit_val" = "1"; then
-      if test $opt_verbose -ge 1; then
-          echo $progname: $(pwd) is modified, exit with value 1 >&2
-      fi
-      exit 1
-    fi
-    echo Waiting for $(hostname):$(pwd) to be cleaned up \(opt: $i_str$u_str\)... \($(date)\) >&2
-    sleep 5
-    did_wait=1
+	if test "$opt_exit_val" = "1"; then
+		if test $opt_verbose -ge 1; then
+			echo -n "$progname: $(pwd) is modified, " >&2
+			echo exit with value 1 >&2
+		fi
+		exit 1
+	fi
+	echo -n "Waiting for $(hostname):$(pwd) to be cleaned up " >&2
+	echo \(opt: $i_str$u_str\)... \($(date)\) >&2
+	sleep 5
+	did_wait=1
 done
 test -n "$did_wait" && echo $(hostname):$(pwd) is clean. Continuing... >&2
 if test $opt_verbose -ge 1; then
-  echo $progname: $(pwd) is clean, exit with value 0 >&2
+	echo $progname: $(pwd) is clean, exit with value 0 >&2
 fi
 exit 0
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
