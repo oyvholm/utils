@@ -343,12 +343,12 @@ INSERT INTO "synced" VALUES('git-reach-commit','Lib/std/perl','4dbab2bf09b9ff111
 INSERT INTO "synced" VALUES('git-realclean','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-remote-hg','https://raw.githubusercontent.com/fingolfin/git-remote-hg/master/git-remote-hg','','2016-05-07 15:08:15');
 INSERT INTO "synced" VALUES('git-repos','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('git-restore-dirs','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('git-restore-dirs','Lib/std/sh','d73dc58a4af539a8058e885f7f5ea11dafd71a16','2016-11-27 06:02:49');
 INSERT INTO "synced" VALUES('git-rpull','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-savecommit','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-scanrefs','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('git-size','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
-INSERT INTO "synced" VALUES('git-store-dirs','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('git-store-dirs','Lib/std/sh','d73dc58a4af539a8058e885f7f5ea11dafd71a16','2016-11-27 06:02:49');
 INSERT INTO "synced" VALUES('git-svn-myclone','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-testadd','Lib/std/sh','1bfe49431205e4de6f4603084c3c303455f92460','2016-11-26 10:07:20');
 INSERT INTO "synced" VALUES('git-tree-size','Lib/std/perl',NULL,NULL);

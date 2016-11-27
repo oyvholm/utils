@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # git-store-dirs
 # File ID: 8853c3a0-6be6-11df-8fcb-90e6ba3022ac
 #
@@ -10,48 +10,40 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=git-store-dirs
-VERSION=0.2.0
-
-ARGS="$(getopt -o "\
-h\
-l\
-q\
-v\
-" -l "\
-help,\
-local,\
-quiet,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.3.0
 
 opt_help=0
 opt_local=0
 opt_quiet=0
 opt_verbose=0
-while :; do
-    case "$1" in
-        (-h|--help) opt_help=1; shift ;;
-        (-l|--local) opt_local=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-h|--help) opt_help=1; shift ;;
+	-l|--local) opt_local=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 dirfile=.emptydirs
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Store a list of all directories to $dirfile to be able to restore empty 
 directories. The list is \\0-separated in case there are some directory 
@@ -74,19 +66,24 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 if test "$opt_local" != "1"; then
-    test -d .git/. || {
-        echo $progname: Has to be run from the toplevel of the working tree >&2
-        exit 1
-    }
+	test -d .git/. || {
+		echo -n "$progname: Has to be run from the toplevel " >&2
+		echo of the working tree >&2
+		exit 1
+	}
 fi
-find -type d -empty -print0 | grep -E -v -z '/\.git(/|$)' | LC_ALL=C sort -z >$dirfile
+find . -type d -empty -print0 |
+    grep -E -v -z '/\.git(/|$)' |
+    LC_ALL=C sort -z >$dirfile
 test "$(cat $dirfile)" = "" &&
-    (
-        git reset $dirfile
-        rm $dirfile
-        echo "$0: No empty directories found, deleting $dirfile" >&2
-    ) || git add $dirfile
+	(
+		git reset $dirfile
+		rm $dirfile
+		echo "$0: No empty directories found, deleting $dirfile" >&2
+	) || git add $dirfile
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
