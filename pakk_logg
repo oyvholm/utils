@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakk_logg
-VERSION=0.3.2
+VERSION=0.3.3
 
 ARGS="$(getopt -o "\
 h\
@@ -150,7 +150,7 @@ cd ~/log/script || {
 }
 find -type f | grep -E '\.(scrlog|timing)$' | while read f; do
     uuid=$(echo "$f" | finduuid)
-    ps auxw | grep -v "grep $uuid" | grep $uuid | grep -q . || gzip -v "$f"
+    ps auxw | grep -v "grep $uuid" | grep $uuid | grep -q . || gzip -Nv "$f"
 done
 
 ircdir=$HOME/log/irc
@@ -160,7 +160,7 @@ if test -d "$ircdir/."; then
     cd "$ircdir" || { echo $progname: $ircdir: Unable to chdir >&2; exit 1; }
     currdate=`date +"%Y-%m-%d"`
     find -type f -name '*.log' -print0 | grep -vz "$currdate" |
-        xargs -0r gzip -v
+        xargs -0r gzip -Nv
 fi
 
 myexit 0
