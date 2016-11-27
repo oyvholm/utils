@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # log_df
 # File ID: 99575e5c-5d3e-11df-9eee-90e6ba3022ac
 #
@@ -8,46 +8,38 @@
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
 progname=log_df
-VERSION=0.3.1
-
-ARGS="$(getopt -o "\
-d:\
-h\
-q\
-v\
-" -l "\
-dbname:,\
-help,\
-quiet,\
-verbose,\
-version,\
-" -n "$progname" -- "$@")"
-test "$?" = "0" || exit 1
-eval set -- "$ARGS"
+VERSION=0.4.0
 
 opt_dbname=''
 opt_help=0
 opt_quiet=0
 opt_verbose=0
-while :; do
-    case "$1" in
-        (-d|--dbname) opt_dbname="$2"; shift 2 ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
-    esac
+while test -n "$1"; do
+	case "$1" in
+	-d|--dbname) opt_dbname="$2"; shift 2 ;;
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
-    test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
-    cat <<END
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
 
 Log disk space.
 
@@ -67,24 +59,24 @@ Options:
     Print version information.
 
 END
-    exit 0
+	exit 0
 fi
 
 SQLITE=sqlite3
 logdir="$HOME/log"
 db="$logdir/df.sqlite"
 if test -n "$opt_dbname"; then
-    db="$opt_dbname"
-    logdir="$(dirname "$db")"
+	db="$opt_dbname"
+	logdir="$(dirname "$db")"
 fi
 
 [ -d "$logdir" ] || mkdir -p "$logdir" || {
-    echo "$progname: $logdir: Could not create directory" >&2
-    exit 1
+	echo "$progname: $logdir: Could not create directory" >&2
+	exit 1
 }
 
 if test ! -f "$db"; then
-    cat <<SQL_END | $SQLITE "$db"
+	cat <<SQL_END | $SQLITE "$db"
 CREATE TABLE df (
   date TEXT
     CONSTRAINT df_date_length
@@ -150,22 +142,24 @@ df -B 1 -P |
     sort -u |
     perl -e "
 while (<>) {
-    chomp();
-    if (/^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)%\\s+(\\S+)\$/) {
-        my (\$device, \$size, \$used, \$free, \$percent, \$mountp) =
-            (\$1, \$2, \$3, \$4, \$5, \$6);
-        print(
-            \"INSERT INTO df \" .
-            \"(date, mountp, device, size, used, free, percent) \" .
-            \"VALUES (\" .
-            \"datetime('now'), '\$mountp', '\$device', \" .
-            \"\$size, \$used, \$free, \$percent\" .
-            \");\\n\" .
-            \"\" .
-            \"\"
-        );
-    } else {
-        warn(\"$progname: Invalid line: \\"\$_\\"\\n\");
-    }
+	chomp();
+	if (/^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)%\\s+(\\S+)\$/) {
+		my (\$device, \$size, \$used, \$free, \$percent, \$mountp) =
+		   (     \$1,    \$2,    \$3,    \$4,       \$5,      \$6);
+		print(
+		    \"INSERT INTO df \" .
+		      \"(date, mountp, device, size, used, free, percent) \" .
+		      \"VALUES (\" .
+		        \"datetime('now'), '\$mountp', '\$device', \" .
+		        \"\$size, \$used, \$free, \$percent\" .
+		      \");\\n\" .
+		      \"\" .
+		      \"\"
+		);
+	} else {
+		warn(\"$progname: Invalid line: \\"\$_\\"\\n\");
+	}
 }
 " | $SQLITE "$db"
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :

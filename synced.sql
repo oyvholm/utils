@@ -406,7 +406,7 @@ INSERT INTO "synced" VALUES('list-youtube','Lib/std/bash','a96259fb0e53c1b7d7aa0
 INSERT INTO "synced" VALUES('livecd-exit','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('livecd-init','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('ll','Lib/std/sh','f38b05a925b3011044d56d14f0b335510705d267','2016-11-19 21:45:34');
-INSERT INTO "synced" VALUES('log_df','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('log_df','Lib/std/sh','c92223317dfe9cc6371f33f905322c2bf9e04ae2','2016-11-27 17:17:30');
 INSERT INTO "synced" VALUES('log_load','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('logg','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('logging','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
