@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=txt2uc
-VERSION=0.3.0
+VERSION=0.3.1
 
 opt_help=0
 opt_quiet=0
@@ -59,7 +59,7 @@ END
 	exit 0
 fi
 
-tohex -u | zeropad -s 4 -x | fmt -g 0 -w 1 | while read f; do
+tohex -u | zeropad -s 4 -x | fmt -1 | while read f; do
 	sqlite3 ~/.unichar.sqlite "SELECT * FROM chars WHERE s LIKE '$f;%';"
 done
 
