@@ -501,7 +501,7 @@ INSERT INTO "synced" VALUES('rmxmlcomm','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('rot13','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('run-test','Lib/std/bash-tab','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
 INSERT INTO "synced" VALUES('scrdump','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
-INSERT INTO "synced" VALUES('screencmd','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('screencmd','Lib/std/sh','cef95bc2f24d4ce0485506e12b9011ab17e68e86','2016-11-27 04:23:43');
 INSERT INTO "synced" VALUES('scrplay','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('sea-repo','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('sget','Lib/std/bash',NULL,NULL);
