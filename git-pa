@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.4.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -126,6 +126,16 @@ For every remote
         }
         $Opt{'all-remotes'} && ($do_push = 1);
         if ($do_push) {
+            my $tags_found = 0;
+
+            my $pipefp;
+            open($pipefp, 'git tag |') or
+                die("$progname: git tag: Cannot open pipe: $!\n");
+            my $check_tag = <$pipefp>;
+            $tags_found = 1 if (defined($check_tag));
+            close($pipefp);
+            msg(2, "tags_found = \"$tags_found\"");
+
             if ($Opt{'force'}) {
                 mysystem('git', 'push', '--force', $f, @ARGV);
             } else {
@@ -133,7 +143,7 @@ For every remote
             }
             if (defined($allremotes{$f})) {
                 mysystem('git', 'push', '--all', $f);
-                mysystem('git', 'push', '--tags', $f);
+                mysystem('git', 'push', '--tags', $f) if ($tags_found);
             }
         }
     }
