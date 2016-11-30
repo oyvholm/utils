@@ -42,7 +42,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.00';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -97,7 +97,7 @@ likecmd("$CMD -h", # {{{
 # }}}
 diag('Testing -v (--verbose) option...');
 likecmd("$CMD -hv", # {{{
-    '/^\n\S+ v\d\.\d\d\n/s',
+    '/^\n\S+ \d\.\d+\.\d+/s',
     '/^$/',
     0,
     'Option --version with -h returns version number and help screen',
@@ -106,7 +106,7 @@ likecmd("$CMD -hv", # {{{
 # }}}
 diag('Testing --version option...');
 likecmd("$CMD --version", # {{{
-    '/^\S+ v\d\.\d\d\n/',
+    '/^\S+ \d\.\d+\.\d+/s',
     '/^$/',
     0,
     'Option --version returns version number',
