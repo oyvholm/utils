@@ -49,7 +49,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.1.0";
+our $VERSION = "0.2.0";
 
 Getopt::Long::Configure("bundling");
 GetOptions(
@@ -130,7 +130,7 @@ sub process_file {
     # {{{
     my $Filename = shift;
     D("process_file('$Filename')");
-    if (!-f $Filename || -l $Filename) {
+    if (!-f $Filename) {
         msg(0, "$Filename: Ignoring non-file");
         return;
     }
