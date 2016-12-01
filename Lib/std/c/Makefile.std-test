@@ -1,0 +1,11 @@
+# Makefile.std-test
+# File ID: 0817d7ec-b768-11e6-a01b-279c2a0468a3
+
+.PHONY: default
+default:
+
+.PHONY: clean
+clean:
+
+.PHONY: test
+test:
