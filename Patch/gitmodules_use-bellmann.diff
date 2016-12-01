@@ -13,11 +13,6 @@ index a293c5087c09..0b4ad0978ddd 100644
 -	url = https://gitlab.com/sunny256/suuid.git
 +	url = sunny@bellmann:~/bin/Git/suuid
  	branch = master
- [submodule "Git/svnutils"]
- 	path = Git/svnutils
--	url = https://gitlab.com/sunny256/svnutils.git
-+	url = sunny@bellmann:~/bin/Git/svnutils
- 	branch = master
  [submodule "Git/spar"]
  	path = Git/spar
 -	url = https://gitlab.com/sunny256/spar.git
