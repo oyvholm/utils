@@ -9,3 +9,30 @@ clean:
 
 .PHONY: test
 test:
+	ln -sf std.h STDexecDTS.h
+	ln -sf std.c STDexecDTS.c
+	$(MAKE) clean
+	$(MAKE)
+	./STDexecDTS
+	mkdir -p t
+	rm -f t/STDexecDTS.t
+	cd t && \
+	    std --dbname none perl-tests STDexecDTS.t -t progname=STDexecDTS
+	cd t && ./STDexecDTS.t
+	rm -rf compile.tmp
+	mkdir -p compile.tmp/uuids
+	cd compile.tmp && \
+	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
+	      -t exec=jada c/std.c jada.c
+	cd compile.tmp && \
+	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
+	      -t exec=jada c/std.h jada.h
+	cd compile.tmp && \
+	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
+	      -t exec=jada c/Makefile Makefile
+	cd compile.tmp && $(MAKE) clean
+	cd compile.tmp && $(MAKE)
+	mkdir -p compile.tmp/t
+	cd compile.tmp/t && std --dbname none perl-tests jada.t \
+	    -t progname=jada
+	cd compile.tmp/t && ./jada.t
