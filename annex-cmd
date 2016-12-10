@@ -69,7 +69,11 @@ annex_free() {
 
 if [ "$1" = "--gadu" ]; then
 	git update-dirs ~/annex /media/*/annex \
-	    -e "ga sync; sess ./lag_gadu-local *; git add .gadu-local; git ci -av; ga sync"
+	    -e "ga sync" \
+	    -e "sess ./lag_gadu-local *" \
+	    -e "git add .gadu-local" \
+	    -e "git ci -av" \
+	    -e "ga sync"
 	exit
 fi
 
@@ -79,7 +83,10 @@ if [ "$1" = "--annex" ]; then
 	shift
 fi
 if [ "$1" = "-D" ]; then
-	test -z "$2" && { echo annex-cmd: Missing argument for -D >&2; exit 1; }
+	test -z "$2" && {
+		echo annex-cmd: Missing argument for -D >&2
+		exit 1
+	}
 	wildc="$2"
 	shift 2
 fi
@@ -113,7 +120,9 @@ if [ "$1" = "--count-loose" ]; then
 	git update-dirs /media/*/annex/$wildc $HOME/annex/$wildc \
 	    -qq \
 	    -E 'pwd >&2' \
-	    -e 'echo $(find .git/objects -type f | grep -v -e pack -e info | wc -l) $(pwd)' \
+	    -e 'echo $(
+	            find .git/objects -type f | grep -v -e pack -e info | wc -l
+	        ) $(pwd)' \
 	    | sort -n
 	exit
 fi
@@ -122,7 +131,10 @@ if [ "$1" = "--find-extra" ]; then
 	git update-dirs ~/annex/$wildc \
 	    -q \
 	    -E 'pwd >&2' \
-	    -e 'git update-dirs -Fg >/dev/null; ga whereis --copies=semitrusted+:$(echo $(ga numcopies) + 1 | bc)'
+	    -e 'git update-dirs -Fg >/dev/null' \
+	    -e 'ga whereis --copies=semitrusted+:$(
+	            echo $(ga numcopies) + 1 | bc
+	        )'
 	exit
 fi
 
