@@ -31,7 +31,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -67,7 +67,7 @@ sub main {
     printf("\n%s: Total size of keys: %u (%s)\n",
         $progname,
         $total_size,
-        format_bytes($total_size),
+        format_bytes($total_size, bs => 1000),
     );
 
     return $Retval;

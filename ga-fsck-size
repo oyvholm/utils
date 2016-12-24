@@ -30,7 +30,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -67,7 +67,7 @@ sub main {
                 $total += $bytes;
                 $fulltotal += $bytes * ($wanted - $actual);
                 $line .= sprintf(" (%s bytes)",
-                    format_bytes($bytes),
+                    format_bytes($bytes, bs => 1000),
                 );
             }
         }
@@ -76,8 +76,10 @@ sub main {
         }
     }
     print("\n");
-    printf("Total size of files that need more copies: %s\n", format_bytes($total));
-    printf("Total space needed to get enough copies  : %s\n", format_bytes($fulltotal));
+    printf("Total size of files that need more copies: %s\n",
+           format_bytes($total, bs => 1000));
+    printf("Total space needed to get enough copies  : %s\n",
+           format_bytes($fulltotal, bs => 1000));
 
     return $Retval;
     # }}}
