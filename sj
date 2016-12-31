@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.7.0
+VERSION=0.8.0
 
 ARGS="$(getopt -o "\
 h\
@@ -148,6 +148,7 @@ elif test "$1" = "df"; then
     df -h --si | grep ^Filesystem
     df -h --si --total | grep -e /dev/ -e ^total | sort -h -k4
 elif test "$1" = "dfull"; then
+    origsec=$(date +%s)
     origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
     origdf=$(( $(free_space_bytes .) - $space_val ))
     prevdf=$origdf
@@ -156,6 +157,7 @@ elif test "$1" = "dfull"; then
     ml_dfdiff=1
     while :; do
         currtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
+        currsec=$(date +%s)
         currdf=$(( $(free_space_bytes .) - $space_val ))
         goal_output="$(
             goal "$origtime" "$origdf" 0 "$currdf" 2>/dev/null
@@ -167,6 +169,7 @@ elif test "$1" = "dfull"; then
         cl_goalint=$(echo $goalint | wc -L)
         cl_goaltime=$(echo $goaltime | wc -L)
         cl_dfdiff=$(echo $dfdiff | commify | wc -L)
+        seconds=$(echo $currsec-$origsec | bc)
 
         test $cl_goalint -gt $ml_goalint && ml_goalint=$cl_goalint
         test $cl_goaltime -gt $ml_goaltime && ml_goaltime=$cl_goaltime
@@ -191,6 +194,7 @@ elif test "$1" = "dfull"; then
 "%-${ml_goaltime}s "\
 "diff: %s%-${ml_dfdiff}s%s  "\
 "free: %s%s%s"\
+"%s "\
 "%s"\
                 "$goalint" \
                 "$goaldate" \
@@ -201,7 +205,15 @@ elif test "$1" = "dfull"; then
                 "$t_diskfree" \
                 "$(echo $currdf | commify)" \
                 "$t_diskfree_reset" \
-                "$(tput el)"
+                "$(tput el)" \
+                "$(
+                    if test $seconds -gt 0; then
+                        printf " %s B/s" $(
+                            printf 'scale=0; %d/%u\n' $dfdiff $seconds |
+                                bc | commify
+                        )
+                    fi
+                )"
         else
             printf "\\n$progname dfull: No changes yet, %s%s%s bytes free%s" \
                 "$t_diskfree" \
