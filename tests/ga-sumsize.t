@@ -150,7 +150,7 @@ unused . (checking for unused data...) (checking master...)
 
 ok
 
-ga-sumsize: Total size of keys: 1948027876 (1.9G)
+ga-sumsize: Total size of keys: 1948027876 (2.0G)
 END
         '',
         0,
@@ -173,7 +173,7 @@ unused . (checking for unused data...) (checking master...)
 
 ok
 
-ga-sumsize: Total size of keys: 1948027876 (1.9G)
+ga-sumsize: Total size of keys: 1948027876 (2.0G)
 END
         '',
         0,
@@ -196,7 +196,7 @@ END
 1948027876 
 1948027876 ok
 
-ga-sumsize: Total size of keys: 1948027876 (1.9G)
+ga-sumsize: Total size of keys: 1948027876 (2.0G)
 END
         '',
         0,
@@ -219,7 +219,7 @@ END
 1948027876 
 1948027876 ok
 
-ga-sumsize: Total size of keys: 1948027876 (1.9G)
+ga-sumsize: Total size of keys: 1948027876 (2.0G)
 END
         '',
         0,
@@ -249,7 +249,7 @@ END
                 'SHA256-s1000--541b3e9daa09b20bf85fa273e5cbd3e80185aa4ec298e765db87742b70138a53\n' .
             ')' .
             '.+' .
-            'ga-sumsize: Total size of keys: 1123 \(1\.1K\)\n' .
+            'ga-sumsize: Total size of keys: 1123 \(1\.2k\)\n' .
             '$/s',
         '/^$/s',
         0,
