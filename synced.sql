@@ -301,6 +301,7 @@ INSERT INTO "synced" VALUES('ga-ignore-remote','Lib/std/bash','a96259fb0e53c1b7d
 INSERT INTO "synced" VALUES('ga-key','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('ga-other','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('ga-pwd','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
+INSERT INTO "synced" VALUES('ga-set-type','Lib/std/sh','c3a94977337e77874ccdfd4766e970e9d520577e','2017-01-08 20:12:42');
 INSERT INTO "synced" VALUES('ga-sjekk','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('ga-sumsize','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('ga-tree','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
