@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.12.1
+VERSION=0.13.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -41,6 +41,16 @@ customised:
     Also, if any other command than init is executed and annex.uuid 
     doesn't exist, the script aborts. This is to make sure no git-annex 
     setup is done in non-annex repositories.
+  max-bytes SIZE COMMAND
+    Execute git-annex with a modified annex.diskreserve locally so the 
+    local free annex space seems to be SIZE. This can be used to for 
+    example move maximum SIZE bytes from another repo to the local one:
+      ga max-bytes 1000000 move --from exthd --not --in here
+    will move at most 1 megabyte from the exthd remote. Note that 
+    because it uses the annex.diskreserve Git config variable as a 
+    workaround, it will be affected if the actual disk space changes. It 
+    works best when there's no other activity on the local disk going 
+    on.
   md
     Shortcut for "metadata".
   sync
@@ -84,6 +94,10 @@ END
     exit 0
 fi
 
+disk_free() {
+    df -B 1 -P . | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+}
+
 if test "$1" = "init"; then
     if test -z "$(git config --get annex.uuid)"; then
         git config annex.uuid $(suuid -wa -t ga_init)
@@ -126,6 +140,14 @@ fi
 if test "$1" = "fsck"; then
     shift
     git-annex fsck "$@" 2>&1 | ga-fsck-size
+elif test "$1" = "max-bytes"; then
+    maxbytes=$2
+    if test -z "$maxbytes"; then
+        echo $progname: max-bytes needs an integer argument >&2
+        exit 1
+    fi
+    shift 2
+    git-annex "$@" -c annex.diskreserve=$(echo $(disk_free)-$maxbytes | bc)
 elif test "$1" = "md"; then
     shift
     git-annex metadata "$@"
