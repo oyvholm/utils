@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.12.0
+VERSION=0.12.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -28,6 +28,9 @@ Usage: $progname [options] git-annex_commands_and_options
 The following commands (first non-option on the command line) are 
 customised:
 
+  fsck
+    Filter the output through ga-fsck-size, calculates how much space is 
+    needed to get enough file copies.
   init
     If annex.uuid isn't already defined, initialise annex.uuid with an 
     UUID v1 (time-based UUID) instead of v4 (random-based). This is done 
@@ -38,6 +41,8 @@ customised:
     Also, if any other command than init is executed and annex.uuid 
     doesn't exist, the script aborts. This is to make sure no git-annex 
     setup is done in non-annex repositories.
+  md
+    Shortcut for "metadata".
   sync
     Execute "git wait-until-clean -u" before syncing, i.e., wait until 
     the repository is clean before continuing. This is to avoid any 
@@ -49,6 +54,11 @@ customised:
     If you have a Git-aware command line prompt that shows if the 
     current branch is behind or ahead upstream, it will show when a sync 
     or merge is needed.
+  ud
+    Shortcut for "update-desc".
+  unused
+    Filter the output through ga-sumsize, display total number of bytes 
+    in unused files.
   update-desc
     Update the git-annex description, use the generic output from 
     ga-pwd. For example, the output for the current directory is
@@ -56,16 +66,6 @@ customised:
     If the git config key ga.description is defined, that value is used 
     instead. This can be used if some repos have to be called something 
     else than what the ga-pwd value says.
-  fsck
-    Filter the output through ga-fsck-size, calculates how much space is 
-    needed to get enough file copies.
-  md
-    Shortcut for "metadata".
-  ud
-    Shortcut for "update-desc".
-  unused
-    Filter the output through ga-sumsize, display total number of bytes 
-    in unused files.
 
 After all this, it disables "git annex pre-commit ." in 
 .git/hooks/pre-commit if it's not already disabled. This is to avoid an 
