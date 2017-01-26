@@ -29,6 +29,9 @@ elif [ -e /bellmann ]; then
 elif [ -e /hpelite1 ]; then
 	smallfont=0
 	geom=180x56+0+0
+elif [ -e /sunbase ]; then
+	smallfont=0
+	geom=139x36+0+0
 elif [ -e /dundre.mrk ]; then
 	if [ "$smallfont" = "1" ]; then
 		geom=211x55+0+0
