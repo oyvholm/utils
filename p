@@ -4,14 +4,14 @@
 # p
 # File ID: 3623557a-fa66-11dd-83e3-000475e441b9
 #
-# Play a media file in mplayer
+# Play a media file in mpv
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=p
-VERSION=0.3.0
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 a:\
@@ -57,7 +57,7 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Play a media file in mplayer.
+Play a media file in mpv.
 
 Usage: $progname [options] file [files [...]]
 
@@ -104,4 +104,4 @@ else
     tempo_str=
 fi
 test -e /dg-vbox.mrk && vo_str=" -vo x11 -zoom"
-$sess_str mplayer -fs -osdlevel 3$tempo_str$slow$vo_str$ao_str$amplify_str "$@"
+$sess_str mpv -fs $tempo_str$slow$vo_str$ao_str$amplify_str "$@"
