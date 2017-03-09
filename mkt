@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.6.0
+VERSION=0.6.1
 
 ARGS="$(getopt -o "\
 g\
@@ -177,7 +177,7 @@ uuid=$(
     echo $progname: suuid error >&2
     exit 1
 }
-tar cf "$_prefix.tar" --label=$uuid "$_prefix" --sort=name || {
+tar cf "$_prefix.tar" --force-local --label=$uuid "$_prefix" --sort=name || {
     echo "$progname: Error running tar in parent dir" >&2
     exit 1
 }
