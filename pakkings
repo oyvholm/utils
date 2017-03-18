@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=pakkings
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -67,6 +67,11 @@ fi
 for dir in "$@"; do
     test -d "$dir" || { echo $progname: $dir: Not a directory >&2; continue; }
     test -e "$dir.tar.gz" && { echo $progname: $dir.tar.gz already exists >&2; continue; }
+    label=$(suuid -t c_$progname -c "$progname: Pack $dir")
+    if test -z "$label"; then
+        echo $progname: Could not create UUID for tar volume label >&2
+        exit 1
+    fi
     echo
     if test -n "$(git config --get annex.uuid)"; then
         echo ========= ga edit $dir
@@ -75,5 +80,5 @@ for dir in "$@"; do
     echo ========= gunzip -r $dir
     gunzip -r "$dir"
     echo === tar $dir
-    tar czf "$dir.tar.gz" --remove-files "$dir"
+    tar czf "$dir.tar.gz" --label=$label --remove-files "$dir"
 done
