@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mobilstripp
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 h\
@@ -109,6 +109,7 @@ grep -v \
 -e /\\.cgeo/ \
 -e /\\.samsungvideohub/cache/ \
 -e /annex/mobile/ \
+-e /extSdCard/Android/data/com\\.bambuna\\.podcastaddict/files/podcast/ \
 -e /foursquare/cache/ \
 -e /foursquare/category_cache/ \
 -e /foursquare/photo_cache/ \
