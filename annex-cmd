@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=annex-cmd
-VERSION=0.2.3
+VERSION=0.3.0
 
 if test "$1" = "--version"; then
 	echo $progname $VERSION
@@ -43,9 +43,9 @@ Options:
     Execute ./lag_gadu-local * in all top annex/ directories. Uses 
     gadu(1).
   --get
-    Loop through all local annexes, sorted by descending free space, and 
-    run "git update-dirs -N" there, i.e. ga-getnew, i.e. "ga get 
-    --auto", i.e. "git annex get --auto". 😉
+    Loop through all local annexes under /media/*/annex/, sorted by 
+    descending free space, and run "git update-dirs -N" there, i.e. 
+    ga-getnew, i.e. "ga get --auto", i.e. "git annex get --auto". 😉
   -h, --help
     Show this help.
   --version
@@ -93,7 +93,7 @@ fi
 
 if [ "$1" = "--get" ]; then
 	shift
-	for f in /media/*/annex $HOME/annex; do
+	for f in /media/*/annex; do
 		test -d "$f" || continue
 		free_space="$(annex_free "$f")"
 		test -z "$free_space" && {
