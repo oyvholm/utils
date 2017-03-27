@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.13.0
+VERSION=0.14.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -28,6 +28,9 @@ Usage: $progname [options] git-annex_commands_and_options
 The following commands (first non-option on the command line) are 
 customised:
 
+  copnum
+    Like "git annex numcopies", but always return a number. If numcopies 
+    is not defined, return 1.
   fsck
     Filter the output through ga-fsck-size, calculates how much space is 
     needed to get enough file copies.
@@ -131,6 +134,15 @@ if test -f "$precommit"; then
         echo $progname: $precommit: Have disabled git annex pre-commit: >&2
         cat "$precommit" >&2
     }
+fi
+
+if test "$1" = "copnum"; then
+    if test -n "$(ga numcopies | grep "is not set")"; then
+        echo 1
+    else
+        git annex numcopies
+    fi
+    exit
 fi
 
 if test "$1" = "sync"; then
