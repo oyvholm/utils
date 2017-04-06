@@ -4,14 +4,14 @@
 # t
 # File ID: e2469b62-dc83-11e0-9dfc-9f1b7346cb92
 #
-# Shortcut to task(1) and commit changes to Git
+# Shortcut to task(1) or timew(1) and commit changes to Git
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=t
-VERSION=0.2.0
+VERSION=0.3.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -21,8 +21,12 @@ fi
 if test "$1" = "-h" -o "$1" = "--help"; then
     cat <<END
 
-Frontend to task(1) (Taskwarrior), commit the result of every command to 
-Git.
+Frontend to task(1) (Taskwarrior) or timew(1) (Timewarrior), depending 
+on what the script is called. If the file name of the script is "t", 
+call Taskwarrior, if it's "tw", call Timewarrior. Other names result in 
+an error.
+
+Commits the result of every command to Git.
 
 Usage: $progname [options] TASK_COMMAND
 
@@ -56,14 +60,24 @@ if [ ! -f $taskdir/.taskrc -o ! -d $taskdir/.task ]; then
     echo $progname: Missing files in $taskdir/ >&2
     myexit 1
 fi
-task "$@"
+base="$(basename "$0")"
+if test "$base" = "t"; then
+    cmd=task
+elif test "$base" = "tw"; then
+    cmd=timew
+else
+    echo $progname: $base: Unknown script name, must be \"t\" or \"tw\" >&2
+    exit 1
+fi
+
+$cmd "$@"
 oldcommit=$(git rev-parse HEAD)
-ciall -y -- t "$@" >/tmp/t-output.txt 2>&1 || {
+ciall -y -- $cmd "$@" >/tmp/t-output.txt 2>&1 || {
     echo $progname: git commit error >&2
     exit 1
 }
 
-task &>/dev/null
+$cmd &>/dev/null
 ciall -y -- Finish previous command >/tmp/t-output-2.txt 2>&1 || {
     echo $progname: git commit 2 error >&2
     exit 1
