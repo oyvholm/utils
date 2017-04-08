@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=t
-VERSION=0.3.0
+VERSION=0.4.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -72,13 +72,13 @@ fi
 
 $cmd "$@"
 oldcommit=$(git rev-parse HEAD)
-ciall -y -- $cmd "$@" >/tmp/t-output.txt 2>&1 || {
+ciall -d -y -- $cmd "$@" >/tmp/t-output.txt 2>&1 || {
     echo $progname: git commit error >&2
     exit 1
 }
 
 $cmd &>/dev/null
-ciall -y -- Finish previous command >/tmp/t-output-2.txt 2>&1 || {
+ciall -d -y -- Finish previous command >/tmp/t-output-2.txt 2>&1 || {
     echo $progname: git commit 2 error >&2
     exit 1
 }
