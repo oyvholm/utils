@@ -4,14 +4,14 @@
 # ts
 # File ID: de561b1e-1d18-11e7-9fd8-db5caa6d21d3
 #
-# [Description]
+# Create and start a new task in Taskwarrior.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=ts
-VERSION=0.0.0
+VERSION=0.1.0
 
 opt_help=0
 opt_quiet=0
@@ -39,7 +39,9 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Usage: $progname [options]
+Create and start a new task in Taskwarrior.
+
+Usage: $progname [options] DESCRIPTION
 
 Options:
 
@@ -55,5 +57,26 @@ Options:
 END
 	exit 0
 fi
+
+if test -z "$1"; then
+	echo $progname: No description provided >&2
+	exit 1
+fi
+
+tmpfile="/tmp/ts.$(date +%s.$$).tmp"
+
+t add "$*" | tee "$tmpfile"
+eid=$(
+	grep ^Created "$tmpfile" | \
+	perl -pe 's/^Created task (\d+).*$/$1/;'
+)
+if test -z "$eid"; then
+	echo $progname: Could not get entry ID value >&2
+	echo $progname: Leaving tmpfile as $tmpfile >&2
+	exit 1
+fi
+t start $eid
+t active
+rm "$tmpfile"
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
