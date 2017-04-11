@@ -232,6 +232,7 @@ INSERT INTO "synced" VALUES('create_imgindex','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('create_new','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('create_svn','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('cryptit','',NULL,NULL);
+INSERT INTO "synced" VALUES('cts','Lib/std/sh','9fd232af7583e6252c7ecdc2d9249cdd16ebfdb2','2017-04-09 11:37:10');
 INSERT INTO "synced" VALUES('cunw','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('cutfold','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('cvscat','Lib/std/bash',NULL,NULL);
@@ -664,7 +665,6 @@ INSERT INTO "synced" VALUES('tojson','Lib/std/perl','f3196a371d303f4e800dc091103
 INSERT INTO "synced" VALUES('tolower','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('tosec','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('towav','Lib/std/bash',NULL,NULL);
-INSERT INTO "synced" VALUES('ts','Lib/std/sh','9fd232af7583e6252c7ecdc2d9249cdd16ebfdb2','2017-04-09 11:37:10');
 INSERT INTO "synced" VALUES('tuxguitar','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('tws','Lib/std/sh','942f299c8e0b25b76e7f79e1852157403175a1cd','2017-04-08 19:16:40');
 INSERT INTO "synced" VALUES('txt2uc','Lib/std/sh','5d24f3e3b9588065fb5a877aafc542018ab886b5','2016-11-26 12:21:54');

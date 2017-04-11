@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #==============================================================================
-# ts
+# cts
 # File ID: de561b1e-1d18-11e7-9fd8-db5caa6d21d3
 #
 # Create and start a new task in Taskwarrior.
@@ -10,7 +10,7 @@
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
-progname=ts
+progname=cts
 VERSION=0.1.0
 
 opt_help=0
@@ -63,7 +63,7 @@ if test -z "$1"; then
 	exit 1
 fi
 
-tmpfile="/tmp/ts.$(date +%s.$$).tmp"
+tmpfile="/tmp/cts.$(date +%s.$$).tmp"
 
 t add "$*" | tee "$tmpfile"
 eid=$(
