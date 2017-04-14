@@ -7,7 +7,7 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-youtube-dl -t \
+youtube-dl -o "%(title)s-%(id)s.%(ext)s" \
   --write-description --write-info-json \
   --write-sub --sub-lang en,no,nb \
   "$@"
