@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=p
-VERSION=0.4.0
+VERSION=0.4.1
 
 ARGS="$(getopt -o "\
 a:\
@@ -104,4 +104,5 @@ else
     tempo_str=
 fi
 test -e /dg-vbox.mrk && vo_str=" -vo x11 -zoom"
-$sess_str mpv -fs $tempo_str$slow$vo_str$ao_str$amplify_str "$@"
+$sess_str mpv -fs --no-audio-display \
+  $tempo_str$slow$vo_str$ao_str$amplify_str "$@"
