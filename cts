@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=cts
-VERSION=0.1.0
+VERSION=0.2.0
 
 opt_help=0
 opt_quiet=0
@@ -65,7 +65,7 @@ fi
 
 tmpfile="/tmp/cts.$(date +%s.$$).tmp"
 
-t add "$*" | tee "$tmpfile"
+t add "$@" | tee "$tmpfile"
 eid=$(
 	grep ^Created "$tmpfile" | \
 	perl -pe 's/^Created task (\d+).*$/$1/;'
