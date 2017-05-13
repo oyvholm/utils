@@ -131,10 +131,10 @@ END
     installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → 🤘 | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n🤘\n$/', 'stdout', 'Use C sorting order');
     installed('exifprobe -V', '/Program: \'exifprobe\' version \d/', 'stdout');
     installed('find --version', '/GNU findutils/', 'stdout');
-    installed('fossil version', '/^This is fossil version 1\.36 /', 'stdout');
+    installed('fossil version', '/^This is fossil version 2\.1 /', 'stdout');
     installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
-    installed('git --version', '/^git version 2\.12/', 'stdout');
+    installed('git --version', '/^git version 2\.13/', 'stdout');
     installed('git-annex version', '/^git-annex version: /', 'stdout');
     installed('gnuplot --version', '/^gnuplot /', 'stdout');
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
@@ -160,7 +160,7 @@ END
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
-    installed('task --version', '/^2\.5\.1$/', 'stdout');
+    installed('task --version', '/^2\.6\.0$/', 'stdout');
     installed('top -v', '/procps(-ng)? version \d/', 'stdout');
     installed('tree --version', '/^tree v\d\./', 'stdout');
     installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
