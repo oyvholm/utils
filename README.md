@@ -698,6 +698,7 @@ the alias somewhere.
 - vd
 - vekt
 - vg
+- vgr – Run a command through Valgrind
 - view\_df
 - vx
 - vy

@@ -683,6 +683,7 @@ INSERT INTO "synced" VALUES('usedchars','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('ustr','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('utc','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('vd','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('vgr','',NULL,NULL);
 INSERT INTO "synced" VALUES('view_df','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('wav_to_flac','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('wav_to_mp3','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');

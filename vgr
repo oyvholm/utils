@@ -1,0 +1,18 @@
+#!/bin/sh
+
+#==============================================================================
+# vgr
+# File ID: 43978e30-3a7f-11e7-b7ff-f74d993421b0
+#
+# Run a command through Valgrind.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
+
+progname=vgr
+VERSION=0.1.0
+
+valgrind -q --leak-check=full --show-leak-kinds=all -- "$@"
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
