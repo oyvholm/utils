@@ -67,11 +67,12 @@ exit(main());
 sub main {
 	my $Retval = $EXIT_OK;
 	my $dest = $Opt{'dest'};
+	my $f;
 
-	while (my $f = <>) {
+	while (($f = <>) && $Retval == $EXIT_OK) {
 		chomp($f);
 		next if (!-f $f);
-		convert_file($f, $dest);
+		$Retval = convert_file($f, $dest);
 	}
 
 	return $Retval;
@@ -107,7 +108,7 @@ sub convert_file {
 	$result = system($CMD_OPUSENC, $f, "$outfile.tmp");
 	if ($result & 127) {
 		warn("\n$progname: Child process interrupted, aborting.\n");
-		exit($EXIT_ERROR);
+		return $EXIT_ERROR;
 	}
 	rename("$outfile.tmp", $outfile);
 
