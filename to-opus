@@ -23,6 +23,9 @@ local $| = 1;
 
 my $STD_DEST = 'opusfiles';
 
+my $EXIT_OK = 0;
+my $EXIT_ERROR = 1;
+
 our %Opt = (
 
 	'dest' => $STD_DEST,
@@ -53,16 +56,16 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'verbose'} -= $Opt{'quiet'};
-$Opt{'help'} && usage(0);
+$Opt{'help'} && usage($EXIT_OK);
 if ($Opt{'version'}) {
 	print_version();
-	exit(0);
+	exit($EXIT_OK);
 }
 
 exit(main());
 
 sub main {
-	my $Retval = 0;
+	my $Retval = $EXIT_OK;
 	my $dest = $Opt{'dest'};
 
 	while (my $f = <>) {
@@ -82,11 +85,11 @@ sub convert_file {
 	if ($f =~ /\.(wav|flac)$/i) {
 		$wav = $f;
 	} else {
-		return 0;
+		return $EXIT_OK;
 	}
 	msg(0, sprintf("Converting $f%s",
 	               $Opt{'dry-run'} ? ' (simulating)' : ''));
-	return 0 if ($Opt{'dry-run'});
+	return $EXIT_OK if ($Opt{'dry-run'});
 
 	$noext = $f;
 	$noext =~ s/(^.*)\.[^\.\/]+?$/$1/;
@@ -98,12 +101,12 @@ sub convert_file {
 
 	if (!-e $subdir && !mkpath($subdir)) {
 		warn("$progname: $subdir Could not create directory $!\n");
-		return 1;
+		return $EXIT_ERROR;
 	}
 	system($CMD_OPUSENC, $f, "$outfile.tmp") && check_sig($?);
 	rename("$outfile.tmp", $outfile);
 
-	return 0;
+	return $EXIT_OK;
 }
 
 sub check_sig {
@@ -111,10 +114,10 @@ sub check_sig {
 
 	if ($retval & 127) {
 		warn("\n$progname: Child process interrupted, aborting.\n");
-		exit(1);
+		exit($EXIT_ERROR);
 	}
 
-	return 0;
+	return $EXIT_OK;
 }
 
 sub print_version {
