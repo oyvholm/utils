@@ -81,6 +81,7 @@ sub convert_file {
 	my ($f, $dest) = @_;
 	my $wav = '';
 	my ($noext, $subdir, $base, $outfile);
+	my $result;
 
 	if ($f =~ /\.(wav|flac)$/i) {
 		$wav = $f;
@@ -103,19 +104,12 @@ sub convert_file {
 		warn("$progname: $subdir Could not create directory $!\n");
 		return $EXIT_ERROR;
 	}
-	system($CMD_OPUSENC, $f, "$outfile.tmp") && check_sig($?);
-	rename("$outfile.tmp", $outfile);
-
-	return $EXIT_OK;
-}
-
-sub check_sig {
-	my $retval = shift;
-
-	if ($retval & 127) {
+	$result = system($CMD_OPUSENC, $f, "$outfile.tmp");
+	if ($result & 127) {
 		warn("\n$progname: Child process interrupted, aborting.\n");
 		exit($EXIT_ERROR);
 	}
+	rename("$outfile.tmp", $outfile);
 
 	return $EXIT_OK;
 }
