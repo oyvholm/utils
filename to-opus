@@ -84,24 +84,24 @@ sub convert_file {
 	} else {
 		return 0;
 	}
+	msg(0, sprintf("Converting $f%s",
+	               $Opt{'dry-run'} ? ' (simulating)' : ''));
+	return 0 if ($Opt{'dry-run'});
+
 	$noext = $f;
 	$noext =~ s/(^.*)\.[^\.\/]+?$/$1/;
 	$subdir = "$dest/$f";
 	$subdir = dirname($subdir);
 	$base = basename($noext);
 
-	msg(0, sprintf("Converting $f%s",
-	               $Opt{'dry-run'} ? ' (simulating)' : ''));
 	$outfile = "$subdir/$base.opus";
-	if (!$Opt{'dry-run'}) {
-		if (!-e $subdir && !mkpath($subdir)) {
-			warn("$progname: $subdir Could not create " .
-			     "directory $!\n");
-			return 1;
-		}
-		system($CMD_OPUSENC, $f, "$outfile.tmp") && check_sig($?);
-		rename("$outfile.tmp", $outfile);
+
+	if (!-e $subdir && !mkpath($subdir)) {
+		warn("$progname: $subdir Could not create directory $!\n");
+		return 1;
 	}
+	system($CMD_OPUSENC, $f, "$outfile.tmp") && check_sig($?);
+	rename("$outfile.tmp", $outfile);
 
 	return 0;
 }
