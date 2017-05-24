@@ -4,7 +4,8 @@
 # to-opus
 # File ID: d4a9dfc6-3fd5-11e7-9638-f74d993421b0
 #
-# [Description]
+# Convert .wav and .flac to .opus and place them under a destination directory 
+# while keeping the original directory structure.
 #
 # Character set: UTF-8
 # ©opyleft 2017– Øyvind A. Holm <sunny@sunbase.org>
@@ -14,12 +15,18 @@
 
 use strict;
 use warnings;
+use File::Basename;
+use File::Path;
 use Getopt::Long;
 
 local $| = 1;
 
+my $STD_DEST = 'opusfiles';
+
 our %Opt = (
 
+	'dest' => $STD_DEST,
+	'dry-run' => 0,
 	'help' => 0,
 	'quiet' => 0,
 	'verbose' => 0,
@@ -29,11 +36,15 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
+
+my $CMD_OPUSENC = 'opusenc';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+	'dest|d=s' => \$Opt{'dest'},
+	'dry-run|n' => \$Opt{'dry-run'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
 	'verbose|v+' => \$Opt{'verbose'},
@@ -52,8 +63,58 @@ exit(main());
 
 sub main {
 	my $Retval = 0;
+	my $dest = $Opt{'dest'};
+
+	while (my $f = <>) {
+		chomp($f);
+		next if (!-f $f);
+		convert_file($f, $dest);
+	}
 
 	return $Retval;
+}
+
+sub convert_file {
+	my ($f, $dest) = @_;
+	my $wav = '';
+	my ($noext, $subdir, $base, $outfile);
+
+	if ($f =~ /\.(wav|flac)$/i) {
+		$wav = $f;
+	} else {
+		return 0;
+	}
+	$noext = $f;
+	$noext =~ s/(^.*)\.[^\.\/]+?$/$1/;
+	$subdir = "$dest/$f";
+	$subdir = dirname($subdir);
+	$base = basename($noext);
+
+	msg(0, sprintf("Converting $f%s",
+	               $Opt{'dry-run'} ? ' (simulating)' : ''));
+	$outfile = "$subdir/$base.opus";
+	if (!$Opt{'dry-run'}) {
+		if (!-e $subdir && !mkpath($subdir)) {
+			warn("$progname: $subdir Could not create " .
+			     "directory $!\n");
+			return 1;
+		}
+		system($CMD_OPUSENC, $f, "$outfile.tmp") && check_sig($?);
+		rename("$outfile.tmp", $outfile);
+	}
+
+	return 0;
+}
+
+sub check_sig {
+	my $retval = shift;
+
+	if ($retval & 127) {
+		warn("\n$progname: Child process interrupted, aborting.\n");
+		exit(1);
+	}
+
+	return 0;
 }
 
 sub print_version {
@@ -72,12 +133,21 @@ sub usage {
 	}
 	print(<<"END");
 
+Convert .wav and .flac to .opus and place them under a destination 
+directory while keeping the original directory structure.
+
 Usage: $progname [options] [file [files [...]]]
 
 Options:
 
+  -d DIR, --dest DIR
+    Store the generated files under directory tree DIR while keeping the 
+    original directory structure relative to DIR.
+    Default directory: "$STD_DEST"
   -h, --help
     Show this help.
+  -n, --dry-run
+    Don't do anything, only print what would happen.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
