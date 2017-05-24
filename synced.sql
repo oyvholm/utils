@@ -659,6 +659,7 @@ INSERT INTO "synced" VALUES('tests/zeropad.t','Lib/std/perl-tests','2f5664774f5b
 INSERT INTO "synced" VALUES('til-ov','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('tm','Lib/std/bash-no-getopt','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
 INSERT INTO "synced" VALUES('tmux_local_install.sh','',NULL,NULL);
+INSERT INTO "synced" VALUES('to-opus','Lib/std/perl-tab','fdb1d01106afe25798e2adb709e1bf89eae091ab','2017-05-23 16:35:28');
 INSERT INTO "synced" VALUES('todos','Lib/std/perl',NULL,NULL);
 INSERT INTO "synced" VALUES('tohex','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO "synced" VALUES('tojson','Lib/std/perl','f3196a371d303f4e800dc0911039dc8b43df7770','2016-10-15 19:55:25');
