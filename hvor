@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=hvor
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -64,4 +64,4 @@ END
     exit 0
 fi
 
-psql gps -c "COPY (SELECT wherepos('$1')) TO STDOUT;"
+psql gps -c "COPY (SELECT wherepos('$*')) TO STDOUT;"
