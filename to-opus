@@ -39,7 +39,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 
 my $CMD_OPUSENC = 'opusenc';
 
@@ -102,12 +102,12 @@ sub convert_file {
 	$outfile = "$subdir/$base.opus";
 
 	if (!-e $subdir && !mkpath($subdir)) {
-		warn("$progname: $subdir Could not create directory $!\n");
+		warn("$progname: $subdir: Could not create directory: $!\n");
 		return $EXIT_ERROR;
 	}
 	$result = system($CMD_OPUSENC, $f, "$outfile.tmp");
 	if ($result & 127) {
-		warn("\n$progname: Child process interrupted, aborting.\n");
+		warn("\n$progname: Child process interrupted, aborting\n");
 		return $EXIT_ERROR;
 	}
 	rename("$outfile.tmp", $outfile);
