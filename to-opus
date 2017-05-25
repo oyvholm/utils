@@ -39,7 +39,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 my $CMD_OPUSENC = 'opusenc';
 
@@ -69,7 +69,7 @@ sub main {
 	my $dest = $Opt{'dest'};
 	my $f;
 
-	while (($f = <>) && $Retval == $EXIT_OK) {
+	while (defined($f = <>) && $Retval == $EXIT_OK) {
 		chomp($f);
 		next if (!-f $f);
 		$Retval = convert_file($f, $dest);
