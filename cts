@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=cts
-VERSION=0.2.0
+VERSION=0.3.0
 
 opt_help=0
 opt_quiet=0
@@ -62,6 +62,8 @@ if test -z "$1"; then
 	echo $progname: No description provided >&2
 	exit 1
 fi
+
+t --is-active || exit 1
 
 tmpfile="/tmp/cts.$(date +%s.$$).tmp"
 

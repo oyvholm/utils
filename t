@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=t
-VERSION=0.4.0
+VERSION=0.5.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -29,11 +29,16 @@ an error.
 Commits the result of every command to Git.
 
 Usage: $progname [options] TASK_COMMAND
+       $progname --is-active
 
 Options:
 
   -h, --help
     Show this help.
+  --is-active
+    Check that the task repository is marked as active, that the t.active Git 
+    config value is set to "true". If it's anything else, the script will abort 
+    with exit value 1.
   --version
     Print version information.
 
@@ -49,17 +54,19 @@ myexit() {
     exit $1
 }
 
-mkdir $lockdir || {
-    echo $progname: $lockdir: Cannot create lockdir >&2
-    exit 1
-}
-trap "myexit 1" INT TERM
+cd $taskdir || { echo $progname: $taskdir: Cannot chdir >&2; exit 1; }
 
-cd $taskdir || { echo $progname: $taskdir: Cannot chdir >&2; myexit 1; }
-if [ ! -f $taskdir/.taskrc -o ! -d $taskdir/.task ]; then
-    echo $progname: Missing files in $taskdir/ >&2
-    myexit 1
+if test "$1" = "--is-active"; then
+    if test "$(git config --get t.active)" != "true"; then
+        echo >&2
+        echo "The task repository ($taskdir) is not marked as active," >&2
+        echo "set the Git config variable t.active to \"true\"." >&2
+        echo >&2
+        exit 1
+    fi
+    exit 0
 fi
+
 base="$(basename "$0")"
 if test "$base" = "t"; then
     cmd=task
@@ -68,6 +75,19 @@ elif test "$base" = "tw"; then
 else
     echo $progname: $base: Unknown script name, must be \"t\" or \"tw\" >&2
     exit 1
+fi
+
+t --is-active || exit 1
+
+mkdir $lockdir || {
+    echo $progname: $lockdir: Cannot create lockdir >&2
+    exit 1
+}
+trap "myexit 1" INT TERM
+
+if [ ! -f $taskdir/.taskrc -o ! -d $taskdir/.task ]; then
+    echo $progname: Missing files in $taskdir/ >&2
+    myexit 1
 fi
 
 $cmd "$@"
