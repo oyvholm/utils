@@ -36,18 +36,20 @@ our %Opt = (
 );
 
 my @opt_artists = ();
+my @opt_comments = ();
 my @opt_genres = ();
 my @opt_performers = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.4.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'album|a=s' => \$Opt{'album'},
 	'artist|A=s' => \@opt_artists,
+	'comment|c=s' => \@opt_comments,
 	'force|f' => \$Opt{'force'},
 	'genre|g=s' => \@opt_genres,
 	'help|h' => \$Opt{'help'},
@@ -83,6 +85,15 @@ sub main {
 	} else {
 		warn("$progname: No .wav file specified\n");
 		return $EXIT_ERROR;
+	}
+
+	for my $curr (@opt_comments) {
+		if ($curr !~ /^\S+=/) {
+			warn("$progname: $curr: Invalid value in " .
+			     "-c/--comment argument, must use the " .
+			     "format \"x=y\".\n");
+			return $EXIT_ERROR;
+		}
 	}
 
 	if (!-r $wav_file) {
@@ -131,6 +142,9 @@ sub main {
 		push(@Params, "--title", $Opt{'title'});
 	length($Opt{'tracknumber'}) &&
 		push(@Params, "--comment", "tracknumber=$Opt{'tracknumber'}");
+	for my $curr (@opt_comments) {
+		push(@Params, "--comment", $curr);
+	}
 
 	push(@Params, sprintf("%s", $wav_file));
 	push(@Params, $out_file);
@@ -177,6 +191,12 @@ Options:
   -A X, --artist X
     Name of artist/group. The option can be repeated if there are 
     several artists involved.
+  -c X=Y, --comment X=Y
+    Add a custom metadata field, using the format "X=Y" where X is the 
+    field name and Y the field value. The option can be repeated to add 
+    several metadata entries. The default behaviour of opusenc(1) is to 
+    use lower case letters for the field names, so you should probably 
+    do the same.
   -f, --force
     Overwrite existing files.
   -g X, --genre X
