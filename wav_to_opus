@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 
 #==============================================================================
-# wav_to_flac
-# File ID: 4507db62-f744-11dd-bbaa-000475e441b9
+# wav_to_opus
+# File ID: a339248e-4e43-11e7-9f40-f74d993421b0
 #
 # [Description]
 #
@@ -85,7 +85,7 @@ sub main {
 		die("$progname: $wav_file: Is a directory\n");
 
 	my $out_file = $wav_file;
-	$out_file =~ s/^(.*)\.wav$/$1.flac/i;
+	$out_file =~ s/^(.*)\.wav$/$1.opus/i;
 
 	if (-e $out_file) {
 		if ($Opt{'force'}) {
@@ -97,50 +97,39 @@ sub main {
 		}
 	}
 
-	my $flac_version = `flac --version`;
-	$flac_version =~ s/^\s+//;
-	$flac_version =~ s/\s+$//;
-
-	my @Params = "flac";
+	my @Params = "opusenc";
 
 	length($Opt{'album'}) &&
-		push(@Params, tag_string("ALBUM", $Opt{'album'}));
+		push(@Params, "--album", $Opt{'album'});
 	length($Opt{'artist'}) &&
-		push(@Params, tag_string("ARTIST", $Opt{'artist'}));
+		push(@Params, "--artist", $Opt{'artist'});
 
 	my $esc_wav_file = shell_escape($wav_file);
+
+	length($Opt{'genre'}) &&
+		push(@Params, "--genre", $Opt{'genre'});
+	length($Opt{'releasedate'}) &&
+		push(@Params, "--comment", "releasedate=$Opt{'releasedate'}");
+	length($Opt{'title'}) &&
+		push(@Params, "--title", $Opt{'title'});
+	length($Opt{'tracknumber'}) &&
+		push(@Params, "--comment", "tracknumber=$Opt{'tracknumber'}");
+
+	push(@Params, sprintf("%s", $wav_file));
+	push(@Params, $out_file);
+
 	my $suuid_cmd = "suuid -m -t encode -w eo " .
-	                "-c \"$progname $esc_wav_file - $flac_version\"";
+	                "-c \"$progname: @Params\"";
 	chomp(my $suuid_str = `$suuid_cmd`);
 	if (!defined($suuid_str) || $suuid_str !~ /^$v1_templ$/) {
 		die("$progname: suuid error\n");
 	}
-	push(@Params, "-TENC_ID=$suuid_str");
-	push(@Params, "-TENCODED_WITH=$flac_version");
 
-	length($Opt{'genre'}) &&
-		push(@Params, tag_string("GENRE", $Opt{'genre'}));
-	length($Opt{'releasedate'}) &&
-		push(@Params, tag_string("RELEASEDATE", $Opt{'releasedate'}));
-	length($Opt{'title'}) &&
-		push(@Params, tag_string("TITLE", $Opt{'title'}));
-	length($Opt{'tracknumber'}) &&
-		push(@Params, tag_string("TRACKNUMBER", $Opt{'tracknumber'}));
-
-	push(@Params, sprintf("%s", $wav_file));
-
+	push(@Params, "--comment", "enc_id=$suuid_str");
 	msg(1, join(" ", @Params));
 	system(@Params);
 
 	return $Retval;
-}
-
-
-sub tag_string {
-	# Return parameter for use with flac(1)
-	my ($Label, $Val) = @_;
-	my $Retval = "-T$Label=$Val";
-	return($Retval);
 }
 
 sub shell_escape {
@@ -170,7 +159,7 @@ sub usage {
 
 Usage: $progname [options] wav_file
 
-Convert .wav to .flac .
+Convert .wav to .opus .
 
 Options:
 
