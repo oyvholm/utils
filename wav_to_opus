@@ -115,8 +115,6 @@ sub main {
 		}
 	}
 
-	my $esc_wav_file = shell_escape($wav_file);
-
 	if (scalar(@opt_genres)) {
 		for my $curr (@opt_genres) {
 			push(@Params, "--genre", $curr);
@@ -144,15 +142,6 @@ sub main {
 	system(@Params);
 
 	return $Retval;
-}
-
-sub shell_escape {
-	my $Txt = shift;
-	$Txt =~ s/"/\\"/g;
-	$Txt =~ s/\$/\\\$/g;
-	$Txt =~ s/!/\\!/g;
-	$Txt =~ s/`/\\`/g;
-	return($Txt);
 }
 
 sub print_version {
