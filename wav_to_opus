@@ -42,7 +42,7 @@ my @opt_performers = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.4.0';
+our $VERSION = '0.4.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -94,6 +94,12 @@ sub main {
 			     "format \"x=y\".\n");
 			return $EXIT_ERROR;
 		}
+	}
+
+	if ($wav_file !~ /\.wav$/i) {
+		warn("$progname: $wav_file: File name does not have a .wav " .
+		     "extension\n");
+		return $EXIT_ERROR;
 	}
 
 	if (!-r $wav_file) {
