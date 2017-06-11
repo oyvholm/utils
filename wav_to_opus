@@ -116,21 +116,14 @@ sub main {
 
 	length($Opt{'album'}) &&
 		push(@Params, "--album", $Opt{'album'});
-	if (scalar(@opt_artists)) {
-		for my $curr (@opt_artists) {
-			push(@Params, "--artist", $curr);
-		}
+	for my $curr (@opt_artists) {
+		push(@Params, "--artist", $curr);
 	}
-	if (scalar(@opt_performers)) {
-		for my $curr (@opt_performers) {
-			push(@Params, "--comment", "performer=$curr");
-		}
+	for my $curr (@opt_performers) {
+		push(@Params, "--comment", "performer=$curr");
 	}
-
-	if (scalar(@opt_genres)) {
-		for my $curr (@opt_genres) {
-			push(@Params, "--genre", $curr);
-		}
+	for my $curr (@opt_genres) {
+		push(@Params, "--genre", $curr);
 	}
 	length($Opt{'releasedate'}) &&
 		push(@Params, "--comment", "releasedate=$Opt{'releasedate'}");
