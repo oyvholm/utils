@@ -34,10 +34,11 @@ our %Opt = (
 
 my @opt_artists = ();
 my @opt_genres = ();
+my @opt_performers = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -47,6 +48,7 @@ GetOptions(
 	'force|f' => \$Opt{'force'},
 	'genre|g=s' => \@opt_genres,
 	'help|h' => \$Opt{'help'},
+	'performer|p=s' => \@opt_performers,
 	'quiet|q+' => \$Opt{'quiet'},
 	'releasedate|r=s' => \$Opt{'releasedate'},
 	'title|t=s' => \$Opt{'title'},
@@ -105,6 +107,11 @@ sub main {
 	if (scalar(@opt_artists)) {
 		for my $curr (@opt_artists) {
 			push(@Params, "--artist", $curr);
+		}
+	}
+	if (scalar(@opt_performers)) {
+		for my $curr (@opt_performers) {
+			push(@Params, "--comment", "performer=$curr");
 		}
 	}
 
@@ -184,6 +191,12 @@ Options:
     Show this help.
   -n X, --tracknumber X
     Track number of this song.
+  -p X, --performer X
+    The artist(s) who performed the work. In classical music this would 
+    be the conductor, orchestra, soloists. In an audio book it would be 
+    the actor who did the reading. In popular music this is typically 
+    the same as the ARTIST and is omitted. The option can be repeated if 
+    there are several performers.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -r X, --releasedate X
