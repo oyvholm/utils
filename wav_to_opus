@@ -18,6 +18,8 @@ use Getopt::Long;
 
 local $| = 1;
 
+my $EXIT_OK = 0;
+
 our %Opt = (
 
 	'album' => "",
@@ -59,16 +61,16 @@ GetOptions(
 ) || die("$progname: Option error. Use -h for help.\n");
 
 $Opt{'verbose'} -= $Opt{'quiet'};
-$Opt{'help'} && usage(0);
+$Opt{'help'} && usage($EXIT_OK);
 if ($Opt{'version'}) {
 	print_version();
-	exit(0);
+	exit($EXIT_OK);
 }
 
 exit(main());
 
 sub main {
-	my $Retval = 0;
+	my $Retval = $EXIT_OK;
 
 	my $Lh = "[0-9a-fA-F]";
 	my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
