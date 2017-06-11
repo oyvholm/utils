@@ -688,6 +688,7 @@ INSERT INTO "synced" VALUES('vgr','',NULL,NULL);
 INSERT INTO "synced" VALUES('view_df','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('wav_to_flac','Lib/std/perl-tab','06e5b04bf25c06b8e4868dd35058a17b0b12bbda','2017-05-29 13:42:14');
 INSERT INTO "synced" VALUES('wav_to_mp3','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO "synced" VALUES('wav_to_opus','Lib/std/perl-tab','06e5b04bf25c06b8e4868dd35058a17b0b12bbda','2017-05-29 13:42:14');
 INSERT INTO "synced" VALUES('wavto16','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('wdiff','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('wdisk','Lib/std/bash',NULL,NULL);
