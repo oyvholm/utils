@@ -42,7 +42,7 @@ my @opt_performers = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.4.1';
+our $VERSION = '0.5.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -83,7 +83,7 @@ sub main {
 	if (defined($ARGV[0])) {
 		$wav_file = $ARGV[0];
 	} else {
-		warn("$progname: No .wav file specified\n");
+		warn("$progname: No .wav or .flac file specified\n");
 		return $EXIT_ERROR;
 	}
 
@@ -96,9 +96,9 @@ sub main {
 		}
 	}
 
-	if ($wav_file !~ /\.wav$/i) {
+	if ($wav_file !~ /\.(wav|flac)$/i) {
 		warn("$progname: $wav_file: File name does not have a .wav " .
-		     "extension\n");
+		     "or .flac extension\n");
 		return $EXIT_ERROR;
 	}
 
@@ -113,7 +113,7 @@ sub main {
 	}
 
 	my $out_file = $wav_file;
-	$out_file =~ s/^(.*)\.wav$/$1.opus/i;
+	$out_file =~ s/^(.*)\.(wav|flac)$/$1.opus/i;
 
 	if (-e $out_file) {
 		if ($Opt{'force'}) {
@@ -186,9 +186,9 @@ sub usage {
 	}
 	print(<<"END");
 
-Usage: $progname [options] wav_file
+Usage: $progname [options] wav_or_flac_file
 
-Convert .wav to .opus .
+Convert .wav or .flac to .opus .
 
 Options:
 
