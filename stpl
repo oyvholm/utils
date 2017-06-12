@@ -176,12 +176,13 @@ END
 plot \\
 "$data_file" using 1:2 title " " with $line_type linetype 1, \\
 "$data_file" using 1:2 smooth bezier title " " with line linetype -1 linewidth 2$line_str
+pause -1 "$0: Press Enter when done..."
 END
 
         close(GnupFP);
         $opt_L && unlink($line_str);
 
-        system("gnuplot -persist $gnuplot_script");
+        system("gnuplot $gnuplot_script");
         if ($opt_k) {
             print(STDERR "Keeping temp file $gnuplot_script\n");
         } else {
