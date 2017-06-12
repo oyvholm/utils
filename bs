@@ -10,4 +10,4 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-grep "$@" ~/.bash_history
+grep -a "$@" ~/.bash_history
