@@ -171,6 +171,41 @@ END
     );
 
     # }}}
+    testcmd("echo The 🧟 wants 🧠, not 🥟 or ₿ | $CMD", # {{{
+        <<'END',
+0054;LATIN CAPITAL LETTER T;Lu;0;L;;;;;N;;;;0074;
+0068;LATIN SMALL LETTER H;Ll;0;L;;;;;N;;;0048;;0048
+0065;LATIN SMALL LETTER E;Ll;0;L;;;;;N;;;0045;;0045
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+1F9DF;ZOMBIE;So;0;ON;;;;;N;;;;;
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+0077;LATIN SMALL LETTER W;Ll;0;L;;;;;N;;;0057;;0057
+0061;LATIN SMALL LETTER A;Ll;0;L;;;;;N;;;0041;;0041
+006E;LATIN SMALL LETTER N;Ll;0;L;;;;;N;;;004E;;004E
+0074;LATIN SMALL LETTER T;Ll;0;L;;;;;N;;;0054;;0054
+0073;LATIN SMALL LETTER S;Ll;0;L;;;;;N;;;0053;;0053
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+1F9E0;BRAIN;So;0;ON;;;;;N;;;;;
+002C;COMMA;Po;0;CS;;;;;N;;;;;
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+006E;LATIN SMALL LETTER N;Ll;0;L;;;;;N;;;004E;;004E
+006F;LATIN SMALL LETTER O;Ll;0;L;;;;;N;;;004F;;004F
+0074;LATIN SMALL LETTER T;Ll;0;L;;;;;N;;;0054;;0054
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+1F95F;DUMPLING;So;0;ON;;;;;N;;;;;
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+006F;LATIN SMALL LETTER O;Ll;0;L;;;;;N;;;004F;;004F
+0072;LATIN SMALL LETTER R;Ll;0;L;;;;;N;;;0052;;0052
+0020;SPACE;Zs;0;WS;;;;;N;;;;;
+20BF;BITCOIN SIGN;Sc;0;ET;;;;;N;;;;;
+000A;<control>;Cc;0;B;;;;;N;LINE FEED (LF);;;;
+END
+        '',
+        0,
+        'Use chars from Unicode 10.0',
+    );
+
+    # }}}
     testcmd("echo U̲l̲i̲n̲e̲ and s̶t̶r̶i̶k̶e̶. | $CMD", # {{{
         <<'END',
 0055;LATIN CAPITAL LETTER U;Lu;0;L;;;;;N;;;;0075;
