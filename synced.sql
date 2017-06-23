@@ -330,6 +330,7 @@ INSERT INTO "synced" VALUES('git-delrembr','Lib/std/sh','34c55d68c647eb5e8f608f8
 INSERT INTO "synced" VALUES('git-dl','Lib/std/bash',NULL,NULL);
 INSERT INTO "synced" VALUES('git-dobranch','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-eb','Lib/std/bash',NULL,NULL);
+INSERT INTO "synced" VALUES('git-empty','Lib/std/sh','e7815c79a9be711dde9bd0811a143d4163aeb210','2017-06-23 07:33:30');
 INSERT INTO "synced" VALUES('git-expand','Lib/std/python',NULL,NULL);
 INSERT INTO "synced" VALUES('git-ifmaster','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO "synced" VALUES('git-ignore','Lib/std/sh','72ce70b258776678432228d6d507de0408381570','2016-11-23 10:45:30');
