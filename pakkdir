@@ -11,13 +11,16 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.12.1
+VERSION=0.13.0
+
+STD_SUFFIX=.pakka
 
 ARGS="$(getopt -o "\
 1\
 h\
 q\
 r\
+S:\
 s:\
 v\
 x\
@@ -26,6 +29,7 @@ z\
 help,\
 quiet,\
 remove-files,\
+suffix:,\
 split:,\
 verbose,\
 version,\
@@ -39,6 +43,7 @@ opt_1=0
 opt_help=0
 opt_quiet=0
 opt_remove_files=0
+opt_suffix="$STD_SUFFIX"
 opt_split=''
 opt_verbose=0
 opt_xz=0
@@ -49,6 +54,7 @@ while :; do
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-r|--remove-files) opt_remove_files=1; shift ;;
+        (-S|--suffix) opt_suffix="$2"; shift 2 ;;
         (-s|--split) opt_split="$2"; shift 2 ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
@@ -64,7 +70,7 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Move a whole subdirectory tree into a single .pakka.tar.gz file.
+Move a whole subdirectory tree into a single $STD_SUFFIX.tar.gz file.
 
 Usage: $progname [options] DIRECTORY [DIRECTORIES [...]]
 
@@ -82,6 +88,9 @@ Options:
     Remove files in DIRECTORY immediately after they've been added to 
     the archive. Can be used when there's not enough disk space for the 
     archive.
+  -S SUFFIX, --suffix SUFFIX
+    Use SUFFIX instead of "$STD_SUFFIX", can be empty to use standard 
+    .tar extension.
   -s SIZE, --split SIZE
     Split the .tar file into files with SIZE bytes each. Allowed values 
     are those understood by the -b/--bytes option in split(1). These 
@@ -141,7 +150,7 @@ for f in "$@"; do
     echo $progname: Packing $f... >&2
 
     dir="$f"
-    tarfile="$f.pakka.tar"
+    tarfile="$f$opt_suffix.tar"
 
     if test $opt_verbose -ge 2; then
         echo $progname: dir = $dir >&2
