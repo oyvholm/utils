@@ -30,6 +30,7 @@ our %Opt = (
 
 	'dest' => $STD_DEST,
 	'dry-run' => 0,
+	'force' => 0,
 	'help' => 0,
 	'quiet' => 0,
 	'verbose' => 0,
@@ -39,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.2';
+our $VERSION = '0.2.0';
 
 my $CMD_OPUSENC = 'opusenc';
 
@@ -48,6 +49,7 @@ GetOptions(
 
 	'dest|d=s' => \$Opt{'dest'},
 	'dry-run|n' => \$Opt{'dry-run'},
+	'force|f' => \$Opt{'force'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
 	'verbose|v+' => \$Opt{'verbose'},
@@ -89,9 +91,6 @@ sub convert_file {
 	} else {
 		return $EXIT_OK;
 	}
-	msg(0, sprintf("Converting $f%s",
-	               $Opt{'dry-run'} ? ' (simulating)' : ''));
-	return $EXIT_OK if ($Opt{'dry-run'});
 
 	$noext = $f;
 	$noext =~ s/(^.*)\.[^\.\/]+?$/$1/;
@@ -100,6 +99,13 @@ sub convert_file {
 	$base = basename($noext);
 
 	$outfile = "$subdir/$base.opus";
+	if (-e $outfile && !$Opt{'force'}) {
+		msg(0, "$f exists, use --force to overwrite");
+		return $EXIT_OK;
+	}
+	msg(0, sprintf("Converting $f%s",
+	               $Opt{'dry-run'} ? ' (simulating)' : ''));
+	return $EXIT_OK if ($Opt{'dry-run'});
 
 	if (!-e $subdir && !mkpath($subdir)) {
 		warn("$progname: $subdir: Could not create directory: $!\n");
@@ -142,6 +148,8 @@ Options:
     Store the generated files under directory tree DIR while keeping the 
     original directory structure relative to DIR.
     Default directory: "$STD_DEST"
+  -f, --force
+    Overwrite existing files.
   -h, --help
     Show this help.
   -n, --dry-run
