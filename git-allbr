@@ -12,7 +12,7 @@
 #==============================================================================
 
 progname=git-allbr
-VERSION=0.6.1
+VERSION=0.6.2
 
 opt_all=0
 opt_commit_branches=0
@@ -114,8 +114,9 @@ for remote in $remotes; do
 	    git branch --no-track $f $remote/$f 2>&1 &&
 	    echo $progname: Created $f
 	) | grep -v '^fatal: A branch named .* already exists.'
-	git push . $remote/$f:refs/heads/$f $force_str 2>&1 |
-	    grep -v '^Everything up-to-date'
+	git log --format=%h refs/heads/$f..$remote/$f | grep -q . && \
+		git push . $remote/$f:refs/heads/$f $force_str 2>&1 |
+		    grep -v '^Everything up-to-date'
 	test -n "$upstream_str" && git branch -u $remote/$f $f
 	done
 	tput el
