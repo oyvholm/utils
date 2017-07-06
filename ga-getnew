@@ -13,17 +13,19 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.4.0
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 h\
 q\
+r\
 v\
 " -l "\
 from:,\
 fsck,\
 help,\
 quiet,\
+resume,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -34,6 +36,7 @@ opt_from=''
 opt_fsck=0
 opt_help=0
 opt_quiet=0
+opt_resume=0
 opt_verbose=0
 while :; do
     case "$1" in
@@ -41,6 +44,7 @@ while :; do
         (--fsck) opt_fsck=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        (-r|--resume) opt_resume=1; shift ;;
         (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         (--version) echo $progname $VERSION; exit 0 ;;
         (--) shift; break ;;
@@ -72,6 +76,9 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -r, --resume
+    Don't execute an initial "ga sync", resume an earlier interrupted 
+    session.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -94,11 +101,13 @@ cd "$toplevel" || {
 
 git wait-until-clean -u
 
-# Using backslash before { and } to suppress folding when editing this 
-# file.
-msg ga sync \{\{\{
-ga sync 2>&1
-echo $progname: ga sync \}\}\}
+if test "$opt_resume" != "1"; then
+    # Using backslash before { and } to suppress folding when editing this 
+    # file.
+    msg ga sync \{\{\{
+    ga sync 2>&1
+    echo $progname: ga sync \}\}\}
+fi
 
 if test -n "$opt_from"; then
     from_str=" --from=$opt_from"
