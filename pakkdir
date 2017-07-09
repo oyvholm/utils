@@ -11,12 +11,13 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.14.0
+VERSION=0.15.0
 
 STD_SUFFIX=.pakka
 
 ARGS="$(getopt -o "\
 1\
+G\
 h\
 q\
 r\
@@ -28,6 +29,7 @@ x\
 z\
 " -l "\
 help,\
+no-git-check,\
 no-xattrs,\
 quiet,\
 remove-files,\
@@ -42,6 +44,7 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_1=0
+opt_no_git_check=0
 opt_help=0
 opt_no_xattrs=0
 opt_quiet=0
@@ -54,6 +57,7 @@ opt_gzip=0
 while :; do
     case "$1" in
         (-1) opt_1=1; shift ;;
+        (-G|--no-git-check) opt_no_git_check=1; shift ;;
         (-h|--help) opt_help=1; shift ;;
         (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         (-r|--remove-files) opt_remove_files=1; shift ;;
@@ -84,6 +88,13 @@ Options:
     Alias for "--split 1GB". No file systems should have problems with 
     this size, and it makes it easy to calculate the size of the .tar 
     file.
+  -G, --no-git-check
+    To protect against potential data loss, it first loops through all 
+    directories to check that no files under the directories are stored 
+    in a parent Git repository. If any files are stored under any of the 
+    directories, it aborts. It is useful for example with git-annex, 
+    where only a symlink would be stored in the archive file. This 
+    option disables the check.
   -h, --help
     Show this help.
   -q, --quiet
@@ -111,12 +122,6 @@ Options:
     Compress the archives with xz(1) after the files are added.
   -z, --gzip
     Compress the archives with gzip(1) after the files are added.
-
-To protect against potential data loss, it first loops through all 
-directories to check that no files under the directories are stored in a 
-parent Git repository. If any files are stored under any of the 
-directories, it aborts. This is useful for example with git-annex, where 
-only a symlink would be stored in the archive files.
 
 END
     exit 0
@@ -148,11 +153,13 @@ fi
 
 for f in "$@"; do
     if test -d "$f"; then
-        git ls-files "$f" | grep -q . >&2 && {
-            echo $progname: $f: \
-                Files are stored in Git below this directory >&2
-            exit 1
-        }
+        if test "$opt_no_git_check" != "1"; then
+            git ls-files "$f" | grep -q . >&2 && {
+                echo $progname: $f: \
+                    Files are stored in Git below this directory >&2
+                exit 1
+            }
+        fi
     else
         echo $progname: $f: Not a directory >&2
     fi
