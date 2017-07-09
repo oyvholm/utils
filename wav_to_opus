@@ -24,6 +24,7 @@ my $EXIT_ERROR = 1;
 our %Opt = (
 
 	'album' => "",
+	'bitrate' => "",
 	'force' => 0,
 	'help' => 0,
 	'quiet' => 0,
@@ -42,13 +43,14 @@ my @opt_performers = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'album|a=s' => \$Opt{'album'},
 	'artist|A=s' => \@opt_artists,
+	'bitrate|b=s' => \$Opt{'bitrate'},
 	'comment|c=s' => \@opt_comments,
 	'force|f' => \$Opt{'force'},
 	'genre|g=s' => \@opt_genres,
@@ -131,6 +133,8 @@ sub main {
 
 	my @Params = "opusenc";
 
+	length($Opt{'bitrate'}) &&
+		push(@Params, "--bitrate", $Opt{'bitrate'});
 	length($Opt{'album'}) &&
 		push(@Params, "--album", $Opt{'album'});
 	for my $curr (@opt_artists) {
@@ -197,6 +201,8 @@ Options:
   -A X, --artist X
     Name of artist/group. The option can be repeated if there are 
     several artists involved.
+  -b X, --bitrate X
+    Use X as encoding bitrate, kbit/sec.
   -c X=Y, --comment X=Y
     Add a custom metadata field, using the format "X=Y" where X is the 
     field name and Y the field value. The option can be repeated to add 
