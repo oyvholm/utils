@@ -43,7 +43,7 @@ my @opt_performers = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.6.0';
+our $VERSION = '0.7.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -136,22 +136,22 @@ sub main {
 	length($Opt{'bitrate'}) &&
 		push(@Params, "--bitrate", $Opt{'bitrate'});
 	length($Opt{'album'}) &&
-		push(@Params, "--album", $Opt{'album'});
+		push(@Params, comment("ALBUM", $Opt{'album'}));
 	for my $curr (@opt_artists) {
-		push(@Params, "--artist", $curr);
+		push(@Params, comment("ARTIST", $curr));
 	}
 	for my $curr (@opt_performers) {
-		push(@Params, "--comment", "performer=$curr");
+		push(@Params, comment("PERFORMER", $curr));
 	}
 	for my $curr (@opt_genres) {
-		push(@Params, "--genre", $curr);
+		push(@Params, comment("GENRE", $curr));
 	}
 	length($Opt{'releasedate'}) &&
-		push(@Params, "--comment", "releasedate=$Opt{'releasedate'}");
+		push(@Params, comment("RELEASEDATE", $Opt{'releasedate'}));
 	length($Opt{'title'}) &&
-		push(@Params, "--title", $Opt{'title'});
+		push(@Params, comment("TITLE", $Opt{'title'}));
 	length($Opt{'tracknumber'}) &&
-		push(@Params, "--comment", "tracknumber=$Opt{'tracknumber'}");
+		push(@Params, comment("TRACKNUMBER", $Opt{'tracknumber'}));
 	for my $curr (@opt_comments) {
 		push(@Params, "--comment", $curr);
 	}
@@ -167,11 +167,18 @@ sub main {
 		return $EXIT_ERROR;
 	}
 
-	push(@Params, "--comment", "enc_id=$suuid_str");
+	push(@Params, "--comment", "ENC_ID=$suuid_str");
 	msg(1, join(" ", @Params));
 	system(@Params);
 
 	return $Retval;
+}
+
+sub comment {
+	my ($name, $val) = @_;
+
+	$name =~ tr/a-z/A-Z/;
+	return("--comment", "$name=$val");
 }
 
 sub print_version {
@@ -206,9 +213,7 @@ Options:
   -c X=Y, --comment X=Y
     Add a custom metadata field, using the format "X=Y" where X is the 
     field name and Y the field value. The option can be repeated to add 
-    several metadata entries. The default behaviour of opusenc(1) is to 
-    use lower case letters for the field names, so you should probably 
-    do the same.
+    several metadata entries.
   -f, --force
     Overwrite existing files.
   -g X, --genre X
