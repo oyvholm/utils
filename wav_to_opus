@@ -25,6 +25,7 @@ our %Opt = (
 
 	'album' => "",
 	'bitrate' => "",
+	'description' => "",
 	'force' => 0,
 	'help' => 0,
 	'quiet' => 0,
@@ -43,7 +44,7 @@ my @opt_performers = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.7.0';
+our $VERSION = '0.8.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -52,6 +53,7 @@ GetOptions(
 	'artist|A=s' => \@opt_artists,
 	'bitrate|b=s' => \$Opt{'bitrate'},
 	'comment|c=s' => \@opt_comments,
+	'description|d=s' => \$Opt{'description'},
 	'force|f' => \$Opt{'force'},
 	'genre|g=s' => \@opt_genres,
 	'help|h' => \$Opt{'help'},
@@ -140,6 +142,8 @@ sub main {
 	for my $curr (@opt_artists) {
 		push(@Params, comment("ARTIST", $curr));
 	}
+	length($Opt{'description'}) &&
+		push(@Params, comment("DESCRIPTION", $Opt{'description'}));
 	for my $curr (@opt_performers) {
 		push(@Params, comment("PERFORMER", $curr));
 	}
@@ -214,6 +218,8 @@ Options:
     Add a custom metadata field, using the format "X=Y" where X is the 
     field name and Y the field value. The option can be repeated to add 
     several metadata entries.
+  -d X, --description X
+    A short text description of the contents.
   -f, --force
     Overwrite existing files.
   -g X, --genre X
