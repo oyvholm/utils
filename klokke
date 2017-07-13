@@ -22,6 +22,7 @@ local $| = 1;
 
 our %Opt = (
 
+    'epoch' => 0,
     'help' => 0,
     'quiet' => 0,
     'verbose' => 0,
@@ -31,11 +32,12 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'epoch|e' => \$Opt{'epoch'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -57,6 +59,7 @@ sub main {
     my $Retval = 0;
 
     my ($Old, $Str) = ("", "");
+    my $time_str = $Opt{'epoch'} ? "%s" : "%04u-%02u-%02u %02u:%02u:%02uZ";
 
     while (1) {
         do {
@@ -64,8 +67,9 @@ sub main {
             my ($Epoch, $Fract) = gettimeofday();
             my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
                 gmtime($Epoch);
-            $Str = sprintf("%04u-%02u-%02u %02u:%02u:%02uZ",
-                $Year+1900, $Mon+1, $Day, $Hour, $Min, $Sec);
+            $Str = sprintf($time_str,
+                $Opt{'epoch'} ? $Epoch
+                              : ($Year+1900, $Mon+1, $Day, $Hour, $Min, $Sec));
         } while ($Str eq $Old);
         print("$Str\r");
         $Old = $Str;
@@ -100,6 +104,9 @@ Usage: $progname [options]
 
 Options:
 
+  -e, --epoch
+    Display Unix time (seconds since 1970-01-01 00:00:00 UTC) instead of 
+    the default ISO 8601 format.
   -h, --help
     Show this help.
   -q, --quiet
