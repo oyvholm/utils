@@ -24,6 +24,10 @@ $(NAME).mp3: $(NAME).wav
 	rm -f $(NAME).mp3
 	wav_to_mp3 $(NAME).wav
 
+$(NAME).opus: $(NAME).wav
+	rm -f $(NAME).opus
+	wav_to_opus $(NAME).wav
+
 .version.ily: $(NAME).ly *.ily Makefile
 	git log -1 --date=format:%Y-%m-%d \
 		--format="versioninfo = #(string-append \"%cd, commit %h — Engraved with LilyPond v\" (lilypond-version) \" ❤\")" \
@@ -37,7 +41,7 @@ afv:
 
 .PHONY: clean
 clean:
-	rm -f $(NAME).mp3 $(NAME).pdf $(NAME).wav .version.ily
+	rm -f $(NAME).mp3 $(NAME).opus $(NAME).pdf $(NAME).wav .version.ily
 
 .PHONY: diff
 diff:
@@ -69,6 +73,9 @@ fresco:
 
 .PHONY: mp3
 mp3: $(NAME).mp3
+
+.PHONY: opus
+opus: $(NAME).opus
 
 .PHONY: play
 play: $(NAME).midi
