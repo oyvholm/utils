@@ -32,7 +32,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -63,7 +63,7 @@ sub main {
 
     while (1) {
         do {
-            usleep(1_000);
+            usleep(10);
             my ($Epoch, $Fract) = gettimeofday();
             my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) =
                 gmtime($Epoch);
