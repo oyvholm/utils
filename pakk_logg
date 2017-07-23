@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakk_logg
-VERSION=0.3.3
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 h\
@@ -152,6 +152,10 @@ find -type f | grep -E '\.(scrlog|timing)$' | while read f; do
     uuid=$(echo "$f" | finduuid)
     ps auxw | grep -v "grep $uuid" | grep $uuid | grep -q . || gzip -Nv "$f"
 done
+
+myexit 0
+
+# Disabled, pack the irc logs manually for now
 
 ircdir=$HOME/log/irc
 
