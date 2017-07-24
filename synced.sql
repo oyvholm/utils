@@ -706,6 +706,8 @@ INSERT INTO synced VALUES('xmlstrip','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('xt','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('yd','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('ydd','Lib/std/bash',NULL,NULL);
+INSERT INTO synced VALUES('ydf',NULL,NULL,NULL);
+INSERT INTO synced VALUES('ydw',NULL,NULL,NULL);
 INSERT INTO synced VALUES('youtube-dl','','',NULL);
 INSERT INTO synced VALUES('zero-to-lf','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('zeropad','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');

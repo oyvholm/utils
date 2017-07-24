@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# File ID: 621e2034-7c2b-11e6-a8a3-a7fb3b214061
+
+yd -f 18 "$@"
