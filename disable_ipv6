@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# File ID: 1fcb061a-fa4e-11e6-8927-f74d993421b0
+
+progname=disable_ipv6
+
+test -d /hpelite1/. || {
+    echo $progname: Has to be on hpelite1 to run this script >&2
+    exit 1
+}
+
+for f in $(find /proc/sys/net | grep /disable_ipv6\$); do
+	echo 1 >$f
+done

@@ -247,6 +247,7 @@ INSERT INTO synced VALUES('deep','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('degpg','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('detab','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('dir-elems','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO synced VALUES('disable_ipv6',NULL,NULL,NULL);
 INSERT INTO synced VALUES('doc/build-git.md','',NULL,NULL);
 INSERT INTO synced VALUES('doc/git-init.txt','',NULL,NULL);
 INSERT INTO synced VALUES('doc/mergesvn.1','','',NULL);
