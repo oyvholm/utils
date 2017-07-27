@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mobilstripp
-VERSION=0.3.2
+VERSION=0.3.3
 
 ARGS="$(getopt -o "\
 h\
@@ -68,6 +68,7 @@ grep -i -E -e '\.(flac|gz|jpeg|jpg|m4a|mp3|mp4|pdf|pgn|png|wav)' \
 -e /SMSBackupRestore/ | \
 grep -v \
 -e /Actionmemo/ \
+-e /Android/data/com.amazon.kindle/files/appexpan/ \
 -e /Android/data/com\\.andrewshu\\.android\\.redditdonation/cache/prefetch/ \
 -e /Android/data/com\\.bambuna\\.podcastaddict/files/podcast/ \
 -e /Android/data/com\\.dropbox\\.android/cache/ \
