@@ -238,6 +238,7 @@ INSERT INTO synced VALUES('cutfold','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('cvscat','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('cvse','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('cvsvimdiff','Lib/std/bash',NULL,NULL);
+INSERT INTO synced VALUES('d',NULL,NULL,NULL);
 INSERT INTO synced VALUES('date2iso','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('datefn','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO synced VALUES('dbk','Lib/std/perl',NULL,NULL);
