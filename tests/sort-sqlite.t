@@ -162,10 +162,10 @@ BEGIN TRANSACTION;
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO "t" VALUES('a');
-INSERT INTO "t" VALUES('b');
-INSERT INTO "t" VALUES('d');
-INSERT INTO "t" VALUES('c');
+INSERT INTO t VALUES('a');
+INSERT INTO t VALUES('b');
+INSERT INTO t VALUES('d');
+INSERT INTO t VALUES('c');
 COMMIT;
 END
         "unsorted1.sqlite is not modified",
@@ -187,10 +187,10 @@ BEGIN TRANSACTION;
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO "t" VALUES('a');
-INSERT INTO "t" VALUES('b');
-INSERT INTO "t" VALUES('c');
-INSERT INTO "t" VALUES('d');
+INSERT INTO t VALUES('a');
+INSERT INTO t VALUES('b');
+INSERT INTO t VALUES('c');
+INSERT INTO t VALUES('d');
 COMMIT;
 END
         "unsorted1.sqlite looks ok",
@@ -215,18 +215,18 @@ BEGIN TRANSACTION;
 CREATE TABLE u (
   a TEXT
 );
-INSERT INTO "u" VALUES('0');
-INSERT INTO "u" VALUES('1');
-INSERT INTO "u" VALUES('a');
-INSERT INTO "u" VALUES('aa');
-INSERT INTO "u" VALUES('→');
+INSERT INTO u VALUES('0');
+INSERT INTO u VALUES('1');
+INSERT INTO u VALUES('a');
+INSERT INTO u VALUES('aa');
+INSERT INTO u VALUES('→');
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO "t" VALUES('a');
-INSERT INTO "t" VALUES('b');
-INSERT INTO "t" VALUES('c');
-INSERT INTO "t" VALUES('d');
+INSERT INTO t VALUES('a');
+INSERT INTO t VALUES('b');
+INSERT INTO t VALUES('c');
+INSERT INTO t VALUES('d');
 COMMIT;
 END
         "unsorted2.sqlite looks ok",
@@ -240,22 +240,22 @@ BEGIN TRANSACTION;
 CREATE TABLE u (
   a TEXT
 );
-INSERT INTO "u" VALUES('0');
-INSERT INTO "u" VALUES('1');
-INSERT INTO "u" VALUES('a');
-INSERT INTO "u" VALUES('aa');
-INSERT INTO "u" VALUES('→');
+INSERT INTO u VALUES('0');
+INSERT INTO u VALUES('1');
+INSERT INTO u VALUES('a');
+INSERT INTO u VALUES('aa');
+INSERT INTO u VALUES('→');
 CREATE TABLE one (
   single TEXT
 );
-INSERT INTO "one" VALUES('z');
+INSERT INTO one VALUES('z');
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO "t" VALUES('a');
-INSERT INTO "t" VALUES('b');
-INSERT INTO "t" VALUES('c');
-INSERT INTO "t" VALUES('d');
+INSERT INTO t VALUES('a');
+INSERT INTO t VALUES('b');
+INSERT INTO t VALUES('c');
+INSERT INTO t VALUES('d');
 COMMIT;
 END
         "unsorted3.sqlite looks ok",
@@ -272,32 +272,24 @@ END
     # }}}
     ok(-f "unsorted4.sqlite.20161103T235439Z.bck", "Backup file 4 exists");
     is(dump_db("unsorted4.sqlite"), # {{{
-        <<END,
+        <<'END',
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE u (
   a TEXT
 );
-INSERT INTO "u" VALUES('0');
-INSERT INTO "u" VALUES('1');
-INSERT INTO "u" VALUES('aa');
-INSERT INTO "u" VALUES('multi
-line
-here');
-INSERT INTO "u" VALUES('→');
+INSERT INTO u VALUES('0');
+INSERT INTO u VALUES('1');
+INSERT INTO u VALUES('aa');
+INSERT INTO u VALUES(replace('multi\nline\nhere','\n',char(10)));
+INSERT INTO u VALUES('→');
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO "t" VALUES('
-
-another
-
-multi
-line
-');
-INSERT INTO "t" VALUES('a');
-INSERT INTO "t" VALUES('b');
-INSERT INTO "t" VALUES('c');
+INSERT INTO t VALUES(replace('\n\nanother\n\nmulti\nline\n','\n',char(10)));
+INSERT INTO t VALUES('a');
+INSERT INTO t VALUES('b');
+INSERT INTO t VALUES('c');
 COMMIT;
 END
         "unsorted4.sqlite looks ok",

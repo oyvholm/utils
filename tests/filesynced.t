@@ -392,7 +392,7 @@ END
         <<END,
 $sql_top
 $sql_create_synced
-INSERT INTO "synced" VALUES('tmpfile.txt',NULL,NULL,NULL);
+INSERT INTO synced VALUES('tmpfile.txt',NULL,NULL,NULL);
 $sql_create_todo
 $sql_bottom
 END
@@ -413,7 +413,7 @@ END
         <<END,
 $sql_top
 $sql_create_synced
-INSERT INTO "synced" VALUES('tmpfile.txt',NULL,NULL,NULL);
+INSERT INTO synced VALUES('tmpfile.txt',NULL,NULL,NULL);
 $sql_create_todo
 $sql_bottom
 END
@@ -462,7 +462,7 @@ END
         <<END,
 $sql_top
 $sql_create_synced
-INSERT INTO "synced" VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
+INSERT INTO synced VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
 $sql_create_todo
 $sql_bottom
 END
@@ -553,7 +553,7 @@ END
         <<END,
 $sql_top
 $sql_create_synced
-INSERT INTO "synced" VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
+INSERT INTO synced VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
 $sql_create_todo
 CREATE INDEX idx_synced_file ON synced (file);
 CREATE INDEX idx_synced_orig ON synced (orig);

@@ -170,12 +170,9 @@ END
     );
 
     # }}}
-    testcmd("$CMD --dry-run invalid.sqlite", # {{{
-        '',
-        <<'END',
-Error: file is encrypted or is not a database
-edit-sqlite3: invalid.sqlite: SQLite database contains errors
-END
+    likecmd("$CMD --dry-run invalid.sqlite", # {{{
+        '/^$/',
+        '/edit-sqlite3: invalid\.sqlite: SQLite database contains errors/',
         1,
         'Specify invalid SQLite db with --dry-run',
     );
@@ -262,12 +259,9 @@ END
     # }}}
     diag('Test without --dry-run...');
     $ENV{'EDITOR'} = 'cat';
-    testcmd("$CMD invalid.sqlite", # {{{
-        '',
-        <<'END',
-Error: file is encrypted or is not a database
-edit-sqlite3: invalid.sqlite: SQLite database contains errors
-END
+    likecmd("$CMD invalid.sqlite", # {{{
+        '/^$/',
+        '/edit-sqlite3: invalid\.sqlite: SQLite database contains errors/',
         1,
         'Specify invalid SQLite db without --dry-run',
     );

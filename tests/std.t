@@ -196,7 +196,7 @@ END
             '    CONSTRAINT synced_date_valid\n' .
             '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
             '\);\n' .
-            'INSERT INTO "synced" ' .
+            'INSERT INTO synced ' .
             'VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
             '\'Lib/std/bash\',\'' .
             $commit .
@@ -302,7 +302,7 @@ END
             '    CONSTRAINT synced_date_valid\n' .
             '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
             '\);\n' .
-            'INSERT INTO "synced" ' .
+            'INSERT INTO synced ' .
             'VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
             '\'Lib/std/bash\',\'' .
             $commit .
