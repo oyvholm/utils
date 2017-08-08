@@ -22,6 +22,7 @@ BEGIN {
 
 use Getopt::Long;
 use Cwd;
+use IPC::Open3;
 
 local $| = 1;
 
@@ -67,11 +68,46 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $sql_error = 0;
+
 exit(main());
 
 sub main {
     # {{{
     my $Retval = 0;
+    my $re_create_tables =
+        'CREATE TABLE synced \(\n' .
+        '  file TEXT\n' .
+        '    CONSTRAINT synced_file_length\n' .
+        '      CHECK \(length\(file\) > 0\)\n' .
+        '    UNIQUE\n' .
+        '    NOT NULL\n' .
+        '  ,\n' .
+        '  orig TEXT\n' .
+        '  ,\n' .
+        '  rev TEXT\n' .
+        '    CONSTRAINT synced_rev_length\n' .
+        '      CHECK \(length\(rev\) = 40 OR rev = \'\'\)\n' .
+        '  ,\n' .
+        '  date TEXT\n' .
+        '    CONSTRAINT synced_date_length\n' .
+        '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
+        '    CONSTRAINT synced_date_valid\n' .
+        '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
+        '\);\n' .
+        'CREATE TABLE todo \(\n' .
+        '  file TEXT\n' .
+        '    CONSTRAINT todo_file_length\n' .
+        '      CHECK\(length\(file\) > 0\)\n' .
+        '    UNIQUE\n' .
+        '    NOT NULL\n' .
+        '  ,\n' .
+        '  pri INTEGER\n' .
+        '    CONSTRAINT todo_pri_range\n' .
+        '      CHECK\(pri BETWEEN 1 AND 5\)\n' .
+        '  ,\n' .
+        '  comment TEXT\n' .
+        '\);\n';
 
     diag(sprintf('========== Executing %s v%s ==========',
                  $progname, $VERSION));
@@ -170,53 +206,20 @@ END
         BAIL_OUT("$progname: $ENV{'HOME'}/bin: chdir error");
     }
     chomp(my $commit = `git rev-parse HEAD`);
+    my $re_synced_entry =
+        'synced\|' .
+        'tests/tmp-std-t-\d+-\d+/bashfile\|' .
+        'Lib/std/bash\|' .
+        "$commit\|" .
+        '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\n';
     unless (chdir($orig_dir)) {
         BAIL_OUT("$progname: $orig_dir: chdir error");
     }
     like(sqlite_dump("db.sqlite"), # {{{
         '/^' .
-            'PRAGMA foreign_keys=OFF;\n' .
-            'BEGIN TRANSACTION;\n' .
-            'CREATE TABLE synced \(\n' .
-            '  file TEXT\n' .
-            '    CONSTRAINT synced_file_length\n' .
-            '      CHECK \(length\(file\) > 0\)\n' .
-            '    UNIQUE\n' .
-            '    NOT NULL\n' .
-            '  ,\n' .
-            '  orig TEXT\n' .
-            '  ,\n' .
-            '  rev TEXT\n' .
-            '    CONSTRAINT synced_rev_length\n' .
-            '      CHECK \(length\(rev\) = 40 OR rev = \'\'\)\n' .
-            '  ,\n' .
-            '  date TEXT\n' .
-            '    CONSTRAINT synced_date_length\n' .
-            '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
-            '    CONSTRAINT synced_date_valid\n' .
-            '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
-            '\);\n' .
-            'INSERT INTO synced ' .
-            'VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
-            '\'Lib/std/bash\',\'' .
-            $commit .
-            '\',' .
-            '\'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\'\);\n' .
-            'CREATE TABLE todo \(\n' .
-            '  file TEXT\n' .
-            '    CONSTRAINT todo_file_length\n' .
-            '      CHECK\(length\(file\) > 0\)\n' .
-            '    UNIQUE\n' .
-            '    NOT NULL\n' .
-            '  ,\n' .
-            '  pri INTEGER\n' .
-            '    CONSTRAINT todo_pri_range\n' .
-            '      CHECK\(pri BETWEEN 1 AND 5\)\n' .
-            '  ,\n' .
-            '  comment TEXT\n' .
-            '\);\n' .
-            'COMMIT;\n' .
-            '$/',
+            $re_create_tables .
+            $re_synced_entry .
+            '$/s',
         "db.sqlite looks ok",
     );
 
@@ -281,48 +284,9 @@ END
     # }}}
     like(sqlite_dump("dbfromrc.sqlite"), # {{{
         '/^' .
-            'PRAGMA foreign_keys=OFF;\n' .
-            'BEGIN TRANSACTION;\n' .
-            'CREATE TABLE synced \(\n' .
-            '  file TEXT\n' .
-            '    CONSTRAINT synced_file_length\n' .
-            '      CHECK \(length\(file\) > 0\)\n' .
-            '    UNIQUE\n' .
-            '    NOT NULL\n' .
-            '  ,\n' .
-            '  orig TEXT\n' .
-            '  ,\n' .
-            '  rev TEXT\n' .
-            '    CONSTRAINT synced_rev_length\n' .
-            '      CHECK \(length\(rev\) = 40 OR rev = \'\'\)\n' .
-            '  ,\n' .
-            '  date TEXT\n' .
-            '    CONSTRAINT synced_date_length\n' .
-            '      CHECK \(date IS NULL OR length\(date\) = 19\)\n' .
-            '    CONSTRAINT synced_date_valid\n' .
-            '      CHECK \(date IS NULL OR datetime\(date\) IS NOT NULL\)\n' .
-            '\);\n' .
-            'INSERT INTO synced ' .
-            'VALUES\(\'tests/tmp-std-t-\d+-\d+/bashfile\',' .
-            '\'Lib/std/bash\',\'' .
-            $commit .
-            '\',' .
-            '\'\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\'\);\n' .
-            'CREATE TABLE todo \(\n' .
-            '  file TEXT\n' .
-            '    CONSTRAINT todo_file_length\n' .
-            '      CHECK\(length\(file\) > 0\)\n' .
-            '    UNIQUE\n' .
-            '    NOT NULL\n' .
-            '  ,\n' .
-            '  pri INTEGER\n' .
-            '    CONSTRAINT todo_pri_range\n' .
-            '      CHECK\(pri BETWEEN 1 AND 5\)\n' .
-            '  ,\n' .
-            '  comment TEXT\n' .
-            '\);\n' .
-            'COMMIT;\n' .
-            '$/',
+            $re_create_tables .
+            $re_synced_entry .
+            '$/s',
         "dbfromrc.sqlite looks ok",
     );
 
@@ -361,18 +325,42 @@ END
     # }}}
 } # main()
 
-sub sqlite_dump {
-    # Return SQLite dump of database file {{{
-    my $File = shift;
-    my $Txt;
-    if (open(my $fp, "$SQLITE $File .dump |")) {
-        local $/ = undef;
-        $Txt = <$fp>;
-        close($fp);
-        return($Txt);
-    } else {
-        return;
+sub sql {
+    # {{{
+    my ($db, $sql) = @_;
+    my @retval = ();
+
+    msg(5, "sql(): db = '$db'");
+    local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
+
+    my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, $SQLITE, $db) or (
+        $sql_error = 1,
+        msg(0, "sql(): open3() error: $!"),
+        return("sql() error"),
+    );
+    msg(5, "sql(): sql = '$sql'");
+    print(CHLD_IN "$sql\n") or msg(0, "sql(): print CHLD_IN error: $!");
+    close(CHLD_IN);
+    @retval = <CHLD_OUT>;
+    msg(5, "sql(): retval = '" . join('|', @retval) . "'");
+    my @child_stderr = <CHLD_ERR>;
+    if (scalar(@child_stderr)) {
+        msg(1, "$SQLITE error: " . join('', @child_stderr));
+        $sql_error = 1;
     }
+    return(join('', @retval));
+    # }}}
+} # sql()
+
+sub sqlite_dump {
+    # Return contents of database file {{{
+    my $File = shift;
+
+    return sql($File, <<END);
+.nullvalue NULL
+.schema
+SELECT 'synced', * FROM synced;
+END
     # }}}
 } # sqlite_dump()
 

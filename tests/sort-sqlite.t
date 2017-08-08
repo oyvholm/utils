@@ -21,6 +21,7 @@ BEGIN {
 }
 
 use Getopt::Long;
+use IPC::Open3;
 
 local $| = 1;
 
@@ -63,6 +64,8 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+my $sql_error = 0;
 
 exit(main());
 
@@ -155,18 +158,15 @@ END
     );
 
     # }}}
-    is(dump_db("unsorted1.sqlite"), # {{{
+    is(sqlite_dump("unsorted1.sqlite"), # {{{
         <<END,
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO t VALUES('a');
-INSERT INTO t VALUES('b');
-INSERT INTO t VALUES('d');
-INSERT INTO t VALUES('c');
-COMMIT;
+t|a
+t|b
+t|d
+t|c
 END
         "unsorted1.sqlite is not modified",
     );
@@ -180,18 +180,15 @@ END
     );
 
     # }}}
-    is(dump_db("unsorted1.sqlite"), # {{{
+    is(sqlite_dump("unsorted1.sqlite"), # {{{
         <<END,
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO t VALUES('a');
-INSERT INTO t VALUES('b');
-INSERT INTO t VALUES('c');
-INSERT INTO t VALUES('d');
-COMMIT;
+t|a
+t|b
+t|c
+t|d
 END
         "unsorted1.sqlite looks ok",
     );
@@ -208,55 +205,49 @@ END
     );
 
     # }}}
-    is(dump_db("unsorted2.sqlite"), # {{{
+    is(sqlite_dump("unsorted2.sqlite"), # {{{
         <<END,
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
 CREATE TABLE u (
   a TEXT
 );
-INSERT INTO u VALUES('0');
-INSERT INTO u VALUES('1');
-INSERT INTO u VALUES('a');
-INSERT INTO u VALUES('aa');
-INSERT INTO u VALUES('→');
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO t VALUES('a');
-INSERT INTO t VALUES('b');
-INSERT INTO t VALUES('c');
-INSERT INTO t VALUES('d');
-COMMIT;
+t|a
+t|b
+t|c
+t|d
+u|0
+u|1
+u|a
+u|aa
+u|→
 END
         "unsorted2.sqlite looks ok",
     );
 
     # }}}
-    is(dump_db("unsorted3.sqlite"), # {{{
+    is(sqlite_dump("unsorted3.sqlite"), # {{{
         <<END,
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
 CREATE TABLE u (
   a TEXT
 );
-INSERT INTO u VALUES('0');
-INSERT INTO u VALUES('1');
-INSERT INTO u VALUES('a');
-INSERT INTO u VALUES('aa');
-INSERT INTO u VALUES('→');
 CREATE TABLE one (
   single TEXT
 );
-INSERT INTO one VALUES('z');
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO t VALUES('a');
-INSERT INTO t VALUES('b');
-INSERT INTO t VALUES('c');
-INSERT INTO t VALUES('d');
-COMMIT;
+one|z
+t|a
+t|b
+t|c
+t|d
+u|0
+u|1
+u|a
+u|aa
+u|→
 END
         "unsorted3.sqlite looks ok",
     );
@@ -271,26 +262,23 @@ END
 
     # }}}
     ok(-f "unsorted4.sqlite.20161103T235439Z.bck", "Backup file 4 exists");
-    is(dump_db("unsorted4.sqlite"), # {{{
-        <<'END',
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
+    is(sqlite_dump("unsorted4.sqlite"), # {{{
+        <<END,
 CREATE TABLE u (
   a TEXT
 );
-INSERT INTO u VALUES('0');
-INSERT INTO u VALUES('1');
-INSERT INTO u VALUES('aa');
-INSERT INTO u VALUES(replace('multi\nline\nhere','\n',char(10)));
-INSERT INTO u VALUES('→');
 CREATE TABLE t (
   a TEXT
 );
-INSERT INTO t VALUES(replace('\n\nanother\n\nmulti\nline\n','\n',char(10)));
-INSERT INTO t VALUES('a');
-INSERT INTO t VALUES('b');
-INSERT INTO t VALUES('c');
-COMMIT;
+t|\n\nanother\n\nmulti\nline\n
+t|a
+t|b
+t|c
+u|0
+u|1
+u|aa
+u|multi\nline\nhere
+u|→
 END
         "unsorted4.sqlite looks ok",
     );
@@ -329,20 +317,46 @@ END
     # }}}
 } # main()
 
-sub dump_db {
-    # Return SQLite dump of database file {{{
-    my $File = shift;
-    my $Txt;
-    if (open(my $fp, "$SQLITE $File .dump |")) {
-        local $/ = undef;
-        $Txt = <$fp>;
-        close($fp);
-        return($Txt);
-    } else {
-        return;
+sub sql {
+    # {{{
+    my ($db, $sql) = @_;
+    my @retval = ();
+
+    msg(5, "sql(): db = '$db'");
+    local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
+
+    my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, $SQLITE, $db) or (
+        $sql_error = 1,
+        msg(0, "sql(): open3() error: $!"),
+        return("sql() error"),
+    );
+    msg(5, "sql(): sql = '$sql'");
+    print(CHLD_IN "$sql\n") or msg(0, "sql(): print CHLD_IN error: $!");
+    close(CHLD_IN);
+    @retval = <CHLD_OUT>;
+    msg(5, "sql(): retval = '" . join('|', @retval) . "'");
+    my @child_stderr = <CHLD_ERR>;
+    if (scalar(@child_stderr)) {
+        msg(1, "$SQLITE error: " . join('', @child_stderr));
+        $sql_error = 1;
     }
+    return(join('', @retval));
     # }}}
-} # dump_db()
+} # sql()
+
+sub sqlite_dump {
+    # Return contents of database file {{{
+    my $File = shift;
+
+    return sql($File, <<END);
+.nullvalue NULL
+.schema
+SELECT 'one', * FROM one;
+SELECT 't', * FROM t;
+SELECT 'u', * FROM u;
+END
+    # }}}
+} # sqlite_dump()
 
 sub testcmd {
     # {{{

@@ -21,11 +21,13 @@ BEGIN {
 }
 
 use Getopt::Long;
+use IPC::Open3;
 
 local $| = 1;
 
 our $CMD_BASENAME = "filesynced";
 our $CMD = "../$CMD_BASENAME";
+my $SQLITE = "sqlite3";
 
 our %Opt = (
 
@@ -62,6 +64,8 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
+
+my $sql_error = 0;
 
 exit(main());
 
@@ -154,11 +158,6 @@ END
 
     # }}}
     diag("--init");
-    chomp(my $sql_top = <<END); # {{{
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-END
-    # }}}
     chomp(my $sql_create_synced = <<END); # {{{
 CREATE TABLE synced (
   file TEXT
@@ -197,10 +196,6 @@ CREATE TABLE todo (
 );
 END
     # }}}
-    chomp(my $sql_bottom = <<END); # {{{
-COMMIT;
-END
-    # }}}
     testcmd("$CMD --init", # {{{
         "",
         "",
@@ -209,11 +204,9 @@ END
     );
 
     # }}}
-    is(file_data("synced.sql"), <<END, "synced.sql is ok"); # {{{
-$sql_top
+    is(sql_dump("synced.sql"), <<END, "synced.sql is ok"); # {{{
 $sql_create_synced
 $sql_create_todo
-$sql_bottom
 END
 
     # }}}
@@ -369,12 +362,10 @@ END
     );
 
     # }}}
-    is(file_data("synced.sql"), # {{{
+    is(sql_dump("synced.sql"), # {{{
         <<END,
-$sql_top
 $sql_create_synced
 $sql_create_todo
-$sql_bottom
 END
         "tmpfile.txt is not added to synced.sql yet",
     );
@@ -388,13 +379,11 @@ END
     );
 
     # }}}
-    is(file_data("synced.sql"), # {{{
+    is(sql_dump("synced.sql"), # {{{
         <<END,
-$sql_top
 $sql_create_synced
-INSERT INTO synced VALUES('tmpfile.txt',NULL,NULL,NULL);
 $sql_create_todo
-$sql_bottom
+synced|tmpfile.txt|NULL|NULL|NULL
 END
         "tmpfile.txt is added to synced.sql",
     );
@@ -409,13 +398,11 @@ END
     );
 
     # }}}
-    is(file_data("synced.sql"), # {{{
+    is(sql_dump("synced.sql"), # {{{
         <<END,
-$sql_top
 $sql_create_synced
-INSERT INTO synced VALUES('tmpfile.txt',NULL,NULL,NULL);
 $sql_create_todo
-$sql_bottom
+synced|tmpfile.txt|NULL|NULL|NULL
 END
         "There's only one tmpfile.txt in synced.sql",
     );
@@ -439,12 +426,10 @@ END
     );
 
     # }}}
-    is(file_data("synced.sql"), # {{{
+    is(sql_dump("synced.sql"), # {{{
         <<END,
-$sql_top
 $sql_create_synced
 $sql_create_todo
-$sql_bottom
 END
         "tmpfile.txt is gone from synced.sql",
     );
@@ -458,13 +443,11 @@ END
     );
 
     # }}}
-    is(file_data("synced.sql"), # {{{
+    is(sql_dump("synced.sql"), # {{{
         <<END,
-$sql_top
 $sql_create_synced
-INSERT INTO synced VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
 $sql_create_todo
-$sql_bottom
+synced|tmpfile.txt|Lib/std/bash|NULL|NULL
 END
         "tmpfile.txt is added to synced.sql with orig value",
     );
@@ -549,16 +532,14 @@ END
     );
 
     # }}}
-    is(file_data("synced.sql"), # {{{
+    is(sql_dump("synced.sql"), # {{{
         <<END,
-$sql_top
 $sql_create_synced
-INSERT INTO synced VALUES('tmpfile.txt','Lib/std/bash',NULL,NULL);
 $sql_create_todo
 CREATE INDEX idx_synced_file ON synced (file);
 CREATE INDEX idx_synced_orig ON synced (orig);
 CREATE INDEX idx_synced_rev ON synced (rev);
-$sql_bottom
+synced|tmpfile.txt|Lib/std/bash|NULL|NULL
 END
         "synced.sql contains indexes",
     );
@@ -590,6 +571,60 @@ END
     return $Retval;
     # }}}
 } # main()
+
+sub sql {
+    # {{{
+    my ($db, $sql) = @_;
+    my @retval = ();
+
+    msg(5, "sql(): db = '$db'");
+    local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
+
+    my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, $SQLITE, $db) or (
+        $sql_error = 1,
+        msg(0, "sql(): open3() error: $!"),
+        return("sql() error"),
+    );
+    msg(5, "sql(): sql = '$sql'");
+    print(CHLD_IN "$sql\n") or msg(0, "sql(): print CHLD_IN error: $!");
+    close(CHLD_IN);
+    @retval = <CHLD_OUT>;
+    msg(5, "sql(): retval = '" . join('|', @retval) . "'");
+    my @child_stderr = <CHLD_ERR>;
+    if (scalar(@child_stderr)) {
+        msg(1, "$SQLITE error: " . join('', @child_stderr));
+        $sql_error = 1;
+    }
+    return(join('', @retval));
+    # }}}
+} # sql()
+
+sub sqlite_dump {
+    # Return contents of database file {{{
+    my $File = shift;
+
+    return sql($File, <<END);
+.nullvalue NULL
+.schema
+SELECT 'synced', * FROM synced;
+END
+    # }}}
+} # sqlite_dump()
+
+sub sql_dump {
+    # {{{
+    my $File = shift;
+    my $db = "$File.sqlite";
+    my $Txt;
+
+    is(system("$SQLITE $db <$File"), 0, "Create $db from $File");
+    ok(-f $db, "$db exists");
+    $Txt = sqlite_dump("$db");
+    ok(unlink($db), "Delete $db");
+
+    return $Txt;
+    # }}}
+} # sql_dump()
 
 sub testcmd {
     # {{{
