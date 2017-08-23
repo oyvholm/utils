@@ -57,7 +57,7 @@ INSERT INTO synced VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2.0
 INSERT INTO synced VALUES('Lib/std/Genlog','Lib/std/bash-no-getopt','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
 INSERT INTO synced VALUES('Lib/std/Makefile','','',NULL);
 INSERT INTO synced VALUES('Lib/std/bash','','',NULL);
-INSERT INTO synced VALUES('Lib/std/bash-no-getopt','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO synced VALUES('Lib/std/bash-no-getopt','Lib/std/bash','dfc53cc25da71e37ea8712c1f85eff76d32647a5','2017-08-23 16:34:54');
 INSERT INTO synced VALUES('Lib/std/bash-no-getopt-tab','Lib/std/bash-tab','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
 INSERT INTO synced VALUES('Lib/std/bash-tab','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
 INSERT INTO synced VALUES('Lib/std/bisect','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
