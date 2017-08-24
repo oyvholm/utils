@@ -40,15 +40,15 @@ opt_tempo=''
 opt_verbose=0
 while :; do
     case "$1" in
-        (-a|--amplify) opt_amplify=$2; shift 2 ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-s|--slow) opt_slow=1; shift ;;
-        (-t|--tempo) opt_tempo=$2; shift 2 ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
+        -a|--amplify) opt_amplify=$2; shift 2 ;;
+        -h|--help) opt_help=1; shift ;;
+        -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        -s|--slow) opt_slow=1; shift ;;
+        -t|--tempo) opt_tempo=$2; shift 2 ;;
+        -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        --version) echo $progname $VERSION; exit 0 ;;
+        --) shift; break ;;
+        *) echo $progname: Internal error >&2; exit 1 ;;
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
