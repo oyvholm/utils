@@ -40,15 +40,15 @@ opt_resume=0
 opt_verbose=0
 while :; do
     case "$1" in
-        (--from) opt_from="$2"; shift 2 ;;
-        (--fsck) opt_fsck=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-r|--resume) opt_resume=1; shift ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
+        --from) opt_from="$2"; shift 2 ;;
+        --fsck) opt_fsck=1; shift ;;
+        -h|--help) opt_help=1; shift ;;
+        -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        -r|--resume) opt_resume=1; shift ;;
+        -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        --version) echo $progname $VERSION; exit 0 ;;
+        --) shift; break ;;
+        *) echo $progname: Internal error >&2; exit 1 ;;
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
