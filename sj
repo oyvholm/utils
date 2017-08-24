@@ -37,14 +37,14 @@ opt_space='0'
 opt_verbose=0
 while :; do
     case "$1" in
-        (-h|--help) opt_help=1; shift ;;
-        (--maxtemp) opt_maxtemp=$2; shift 2 ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (--space) opt_space=$2; shift 2 ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
+        -h|--help) opt_help=1; shift ;;
+        --maxtemp) opt_maxtemp=$2; shift 2 ;;
+        -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        --space) opt_space=$2; shift 2 ;;
+        -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        --version) echo $progname $VERSION; exit 0 ;;
+        --) shift; break ;;
+        *) echo $progname: Internal error >&2; exit 1 ;;
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))

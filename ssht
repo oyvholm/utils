@@ -46,17 +46,17 @@ opt_vnc=''
 opt_verbose=0
 while :; do
     case "$1" in
-        (-c|--connect) opt_connect=1; shift ;;
-        (-h|--help) opt_help=1; shift ;;
-        (-k|--kill) opt_kill=1; shift ;;
-        (-l|--list) opt_list=1; shift ;;
-        (-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-        (-t|--tunnel) opt_tunnel=1; shift ;;
-        (-V|--vnc) opt_vnc=$2; shift 2 ;;
-        (-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        (--version) echo $progname $VERSION; exit 0 ;;
-        (--) shift; break ;;
-        (*) echo $progname: Internal error >&2; exit 1 ;;
+        -c|--connect) opt_connect=1; shift ;;
+        -h|--help) opt_help=1; shift ;;
+        -k|--kill) opt_kill=1; shift ;;
+        -l|--list) opt_list=1; shift ;;
+        -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        -t|--tunnel) opt_tunnel=1; shift ;;
+        -V|--vnc) opt_vnc=$2; shift 2 ;;
+        -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        --version) echo $progname $VERSION; exit 0 ;;
+        --) shift; break ;;
+        *) echo $progname: Internal error >&2; exit 1 ;;
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
