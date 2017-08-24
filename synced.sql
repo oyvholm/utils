@@ -300,14 +300,14 @@ INSERT INTO synced VALUES('ga-findkey','Lib/std/perl','4dbab2bf09b9ff111945b0f19
 INSERT INTO synced VALUES('ga-fixnew','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('ga-fsck-size','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO synced VALUES('ga-getnew','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
-INSERT INTO synced VALUES('ga-ignore-remote','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO synced VALUES('ga-ignore-remote','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
 INSERT INTO synced VALUES('ga-key','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('ga-other','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('ga-pwd','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO synced VALUES('ga-set-type','Lib/std/sh','c3a94977337e77874ccdfd4766e970e9d520577e','2017-01-08 20:12:42');
 INSERT INTO synced VALUES('ga-sjekk','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('ga-sumsize','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
-INSERT INTO synced VALUES('ga-tree','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO synced VALUES('ga-tree','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
 INSERT INTO synced VALUES('gammelsvn','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('genpasswd','https://raw.githubusercontent.com/fuktommy/homebin/master/genpasswd','','2015-10-15 17:50:54');
 INSERT INTO synced VALUES('geohashing','',NULL,NULL);
@@ -327,7 +327,7 @@ INSERT INTO synced VALUES('git-context-diff','https://raw.githubusercontent.com/
 INSERT INTO synced VALUES('git-dangling','Lib/std/sh','2f12fadf29dc1a1fe88f2d1d2a91a2ca23cce388','2016-11-19 13:30:46');
 INSERT INTO synced VALUES('git-dbr','Lib/std/perl','f3196a371d303f4e800dc0911039dc8b43df7770','2016-10-15 19:55:25');
 INSERT INTO synced VALUES('git-delete-banned','Lib/std/bash',NULL,NULL);
-INSERT INTO synced VALUES('git-delete-old-branches','Lib/std/bash','a96259fb0e53c1b7d7aa084bb3cb1cb5d1154602','2016-11-12 19:53:26');
+INSERT INTO synced VALUES('git-delete-old-branches','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
 INSERT INTO synced VALUES('git-delrembr','Lib/std/sh','34c55d68c647eb5e8f608f8e3446ba36f0c159b5','2016-11-25 10:01:23');
 INSERT INTO synced VALUES('git-dl','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-dobranch','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
