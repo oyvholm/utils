@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=log_df
-VERSION=0.5.2
+VERSION=0.5.3
 
 opt_dbname=''
 opt_help=0
@@ -76,7 +76,7 @@ fi
 	exit 1
 }
 
-sql_create_table_meta=$(cat <<SQL_END)
+sql_create_table_meta=$(cat <<SQL_END
 CREATE TABLE meta (
   key TEXT
     UNIQUE
@@ -86,6 +86,7 @@ CREATE TABLE meta (
 );
 INSERT INTO meta VALUES ('dbversion', '$dbversion');
 SQL_END
+)
 
 if test ! -f "$db"; then
 	echo $progname: Creating database $db >&2
@@ -180,9 +181,10 @@ upgrade_db() {
 "
 	if test -z "$curr_db_version"; then
 		# First version without meta table
-		sql="$sql$(cat <<SQL_END)"
+		sql="$sql$(cat <<SQL_END
 $sql_create_table_meta
 SQL_END
+)"
 	fi
 
 	sql="$sql
