@@ -58,7 +58,7 @@ INSERT INTO synced VALUES('Lib/std/Genlog','Lib/std/bash-no-getopt','7eefb1c63b9
 INSERT INTO synced VALUES('Lib/std/Makefile','','',NULL);
 INSERT INTO synced VALUES('Lib/std/bash','','',NULL);
 INSERT INTO synced VALUES('Lib/std/bash-no-getopt','Lib/std/bash','dfc53cc25da71e37ea8712c1f85eff76d32647a5','2017-08-23 16:34:54');
-INSERT INTO synced VALUES('Lib/std/bash-no-getopt-tab','Lib/std/bash-tab','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
+INSERT INTO synced VALUES('Lib/std/bash-no-getopt-tab','Lib/std/bash-tab','34b1931514e2ff131b6aabe6193fba0d483a14f2','2017-09-13 17:31:13');
 INSERT INTO synced VALUES('Lib/std/bash-tab','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
 INSERT INTO synced VALUES('Lib/std/bisect','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('Lib/std/book-cmark/.gitattributes','','',NULL);
@@ -505,7 +505,7 @@ INSERT INTO synced VALUES('rmspcbak','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('rmspcforan','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('rmxmlcomm','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('rot13','Lib/std/bash',NULL,NULL);
-INSERT INTO synced VALUES('run-test','Lib/std/bash-tab','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
+INSERT INTO synced VALUES('run-test','Lib/std/bash-tab','34b1931514e2ff131b6aabe6193fba0d483a14f2','2017-09-13 17:31:13');
 INSERT INTO synced VALUES('scrdump','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('screencmd','Lib/std/sh','cef95bc2f24d4ce0485506e12b9011ab17e68e86','2016-11-27 04:23:43');
 INSERT INTO synced VALUES('scrplay','Lib/std/perl',NULL,NULL);
