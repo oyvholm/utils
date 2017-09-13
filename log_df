@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=log_df
-VERSION=0.4.0
+VERSION=0.5.0
 
 opt_dbname=''
 opt_help=0
@@ -65,6 +65,7 @@ fi
 SQLITE=sqlite3
 logdir="$HOME/log"
 db="$logdir/df.sqlite"
+dbversion=1
 if test -n "$opt_dbname"; then
 	db="$opt_dbname"
 	logdir="$(dirname "$db")"
@@ -75,8 +76,22 @@ fi
 	exit 1
 }
 
+sql_create_table_meta=$(cat <<SQL_END)
+CREATE TABLE meta (
+  key TEXT
+    UNIQUE
+    NOT NULL
+  ,
+  value TEXT
+);
+INSERT INTO meta VALUES ('dbversion', '$dbversion');
+SQL_END
+
 if test ! -f "$db"; then
+	echo $progname: Creating database $db >&2
 	cat <<SQL_END | $SQLITE "$db"
+BEGIN EXCLUSIVE TRANSACTION;
+$sql_create_table_meta
 CREATE TABLE df (
   date TEXT
     CONSTRAINT df_date_length
@@ -134,7 +149,58 @@ CREATE TRIGGER nodups
           ORDER BY date DESC
           LIMIT 1) = NEW.used;
   END;
+COMMIT;
 SQL_END
+fi
+
+curr_db_version=$(
+    $SQLITE "$db" "SELECT value FROM meta WHERE key = 'dbversion';"
+)
+
+upgrade_db() {
+	if test "$curr_db_version" = "$dbversion"; then
+		echo $progname: Database $db is already version $dbversion >&2
+		return 0
+	fi
+	echo $progname: Upgrading database $db to version $dbversion >&2
+	backup="$db.$(date +"%Y%m%dT%H%M%SZ").db-upgrade.bck"
+	if test -e "$backup"; then
+		# Shouldn't happen, but keep it safe
+		echo $progname: Database backup $backup already exists, \
+		     aborting >&2
+		return 1
+	fi
+	cp -p "$db" "$backup" || {
+		echo $progname: Could not backup database $db to $backup >&2
+		return 1
+	}
+	echo $progname: Database backup stored as $backup >&2
+
+	sql="BEGIN EXCLUSIVE TRANSACTION;
+"
+	if test -z "$curr_db_version"; then
+		# First version without meta table
+		sql="$sql$(cat <<SQL_END)"
+$sql_create_table_meta
+SQL_END
+	fi
+
+	sql="$sql
+COMMIT;"
+
+	echo "$sql" | $SQLITE "$db" || return 1
+	curr_db_version=$dbversion
+	echo $progname: Database $db successfully upgraded \
+	     to version $dbversion >&2
+	return 0
+}
+
+if test -z "$curr_db_version"; then
+	echo $progname: dbversion not found, upgrading database $db >&2
+	upgrade_db || {
+		echo $progname: Database upgrade failed
+		exit 1
+	}
 fi
 
 df -B 1 -P |
