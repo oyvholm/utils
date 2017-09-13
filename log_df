@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=log_df
-VERSION=0.5.1
+VERSION=0.5.2
 
 opt_dbname=''
 opt_help=0
@@ -163,7 +163,7 @@ upgrade_db() {
 		return 0
 	fi
 	echo $progname: Upgrading database $db to version $dbversion >&2
-	backup="$db.$(date +"%Y%m%dT%H%M%SZ").db-upgrade.bck"
+	backup="$db.$(date -u +"%Y%m%dT%H%M%SZ").db-upgrade.bck"
 	if test -e "$backup"; then
 		# Shouldn't happen, but keep it safe
 		echo $progname: Database backup $backup already exists, \
