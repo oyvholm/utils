@@ -156,7 +156,7 @@ END
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
     installed('screen --version', '/^Screen version \d/', 'stdout');
     installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
-    installed('sqlite3 --version', '/^3\.20\.0 2017-08-01 13:24:15/', 'stdout');
+    installed('sqlite3 --version', '/^3\.20\.1 2017-08-24 16:21:36/', 'stdout');
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
