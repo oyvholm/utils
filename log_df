@@ -11,16 +11,18 @@
 #==============================================================================
 
 progname=log_df
-VERSION=0.5.3
+VERSION=0.6.0
 
 opt_dbname=''
 opt_help=0
+opt_host=''
 opt_quiet=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
 	-d|--dbname) opt_dbname="$2"; shift 2 ;;
 	-h|--help) opt_help=1; shift ;;
+	--host) opt_host="$2"; shift 2 ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
@@ -51,6 +53,8 @@ Options:
     Use DBFILE as database file for SQLite.
   -h, --help
     Show this help.
+  --host HOSTNAME
+    Use HOSTNAME as value in the host column.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -67,9 +71,14 @@ msg() {
 }
 
 SQLITE=sqlite3
+dbversion=2
 logdir="$HOME/log"
 db="$logdir/df.sqlite"
-dbversion=1
+if test -n "$opt_host"; then
+	host="$opt_host"
+else
+	host=$(hostname)
+fi
 if test -n "$opt_dbname"; then
 	db="$opt_dbname"
 	logdir="$(dirname "$db")"
@@ -92,17 +101,18 @@ INSERT INTO meta VALUES ('dbversion', '$dbversion');
 SQL_END
 )
 
-if test ! -f "$db"; then
-	msg Creating database $db
-	cat <<SQL_END | $SQLITE "$db"
-BEGIN EXCLUSIVE TRANSACTION;
-$sql_create_table_meta
+sql_create_table_df=$(cat <<SQL_END
 CREATE TABLE df (
   date TEXT
     CONSTRAINT df_date_length
       CHECK (length(date) = 19)
     CONSTRAINT df_date_valid
       CHECK (datetime(date) IS NOT NULL)
+    NOT NULL
+  ,
+  host TEXT
+    CONSTRAINT df_host_length
+      CHECK (length(host) > 0)
     NOT NULL
   ,
   mountp TEXT
@@ -136,14 +146,13 @@ CREATE TABLE df (
       CHECK (free >= 0)
     NOT NULL
   ,
-  percent REAL
-    CONSTRAINT df_percent_length
-      CHECK (length(percent) > 0)
-    CONSTRAINT df_percent_range
-      CHECK (percent BETWEEN 0 AND 100)
-    NOT NULL,
-  UNIQUE (date, mountp)
+  UNIQUE (date, host, mountp)
+    ON CONFLICT IGNORE
 );
+SQL_END
+)
+
+sql_create_trigger_nodups=$(cat <<SQL_END
 CREATE TRIGGER nodups
   BEFORE INSERT ON df
   BEGIN
@@ -154,6 +163,16 @@ CREATE TRIGGER nodups
           ORDER BY date DESC
           LIMIT 1) = NEW.used;
   END;
+SQL_END
+)
+
+if test ! -f "$db"; then
+	msg Creating database $db
+	cat <<SQL_END | $SQLITE "$db"
+BEGIN EXCLUSIVE TRANSACTION;
+$sql_create_table_meta
+$sql_create_table_df
+$sql_create_trigger_nodups
 COMMIT;
 SQL_END
 fi
@@ -167,7 +186,6 @@ upgrade_db() {
 		msg Database $db is already version $dbversion
 		return 0
 	fi
-	msg Upgrading database $db to version $dbversion
 	backup="$db.$(date -u +"%Y%m%dT%H%M%SZ").db-upgrade.bck"
 	if test -e "$backup"; then
 		# Shouldn't happen, but keep it safe
@@ -184,23 +202,56 @@ upgrade_db() {
 "
 	if test -z "$curr_db_version"; then
 		# First version without meta table
+		msg Upgrading database to version 1
 		sql="$sql$(cat <<SQL_END
 $sql_create_table_meta
 SQL_END
 )"
+		curr_db_version=1
+	fi
+	if test $curr_db_version -lt 2; then
+		# Version 2
+		# - add host column and set all earlier entries to the current
+		#   host name
+		# - delete percent column
+		msg Upgrading database to version 2
+		sql="$sql$(cat <<SQL_END
+CREATE TABLE tmp_df AS
+  SELECT date, '$host' AS host, mountp, device, size, used, free FROM df;
+DROP TABLE df;
+$sql_create_table_df
+$sql_create_trigger_nodups
+INSERT INTO df
+  SELECT *
+    FROM tmp_df;
+DROP TABLE tmp_df;
+UPDATE meta SET value = 2
+  WHERE key = 'dbversion';
+SQL_END
+)"
+		curr_db_version=2
 	fi
 
 	sql="$sql
-COMMIT;"
+COMMIT;
+VACUUM;
+"
 
 	echo "$sql" | $SQLITE "$db" || return 1
-	curr_db_version=$dbversion
 	msg Database $db successfully upgraded to version $dbversion
 	return 0
 }
 
 if test -z "$curr_db_version"; then
 	msg dbversion not found, upgrading database $db
+	upgrade_db || {
+		msg Database upgrade failed
+		exit 1
+	}
+fi
+
+if test $curr_db_version -lt $dbversion; then
+	msg Database $db is version $curr_db_version, needs upgrade
 	upgrade_db || {
 		msg Database upgrade failed
 		exit 1
@@ -214,14 +265,15 @@ df -B 1 -P |
 while (<>) {
 	chomp();
 	if (/^(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)%\\s+(\\S+)\$/) {
-		my (\$device, \$size, \$used, \$free, \$percent, \$mountp) =
-		   (     \$1,    \$2,    \$3,    \$4,       \$5,      \$6);
+		my (\$device, \$size, \$used, \$free, \$mountp) =
+		   (     \$1,    \$2,    \$3,    \$4,      \$6);
 		print(
 		    \"INSERT INTO df \" .
-		      \"(date, mountp, device, size, used, free, percent) \" .
+		      \"(date, host, mountp, \" .
+		        \" device, size, used, free) \" .
 		      \"VALUES (\" .
-		        \"datetime('now'), '\$mountp', '\$device', \" .
-		        \"\$size, \$used, \$free, \$percent\" .
+		        \"datetime('now'), '$host', '\$mountp', \" .
+		        \"'\$device', \$size, \$used, \$free\" .
 		      \");\\n\" .
 		      \"\" .
 		      \"\"
