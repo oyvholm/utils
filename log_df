@@ -62,6 +62,10 @@ END
 	exit 0
 fi
 
+msg() {
+	echo "$progname: $*" >&2
+}
+
 SQLITE=sqlite3
 logdir="$HOME/log"
 db="$logdir/df.sqlite"
@@ -72,7 +76,7 @@ if test -n "$opt_dbname"; then
 fi
 
 [ -d "$logdir" ] || mkdir -p "$logdir" || {
-	echo "$progname: $logdir: Could not create directory" >&2
+	msg $logdir: Could not create directory
 	exit 1
 }
 
@@ -89,7 +93,7 @@ SQL_END
 )
 
 if test ! -f "$db"; then
-	echo $progname: Creating database $db >&2
+	msg Creating database $db
 	cat <<SQL_END | $SQLITE "$db"
 BEGIN EXCLUSIVE TRANSACTION;
 $sql_create_table_meta
@@ -160,22 +164,21 @@ curr_db_version=$(
 
 upgrade_db() {
 	if test "$curr_db_version" = "$dbversion"; then
-		echo $progname: Database $db is already version $dbversion >&2
+		msg Database $db is already version $dbversion
 		return 0
 	fi
-	echo $progname: Upgrading database $db to version $dbversion >&2
+	msg Upgrading database $db to version $dbversion
 	backup="$db.$(date -u +"%Y%m%dT%H%M%SZ").db-upgrade.bck"
 	if test -e "$backup"; then
 		# Shouldn't happen, but keep it safe
-		echo $progname: Database backup $backup already exists, \
-		     aborting >&2
+		msg Database backup $backup already exists, aborting
 		return 1
 	fi
 	cp -p "$db" "$backup" || {
-		echo $progname: Could not backup database $db to $backup >&2
+		msg Could not backup database $db to $backup
 		return 1
 	}
-	echo $progname: Database backup stored as $backup >&2
+	msg Database backup stored as $backup
 
 	sql="BEGIN EXCLUSIVE TRANSACTION;
 "
@@ -192,15 +195,14 @@ COMMIT;"
 
 	echo "$sql" | $SQLITE "$db" || return 1
 	curr_db_version=$dbversion
-	echo $progname: Database $db successfully upgraded \
-	     to version $dbversion >&2
+	msg Database $db successfully upgraded to version $dbversion
 	return 0
 }
 
 if test -z "$curr_db_version"; then
-	echo $progname: dbversion not found, upgrading database $db >&2
+	msg dbversion not found, upgrading database $db
 	upgrade_db || {
-		echo $progname: Database upgrade failed >&2
+		msg Database upgrade failed
 		exit 1
 	}
 fi
