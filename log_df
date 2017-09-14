@@ -11,12 +11,13 @@
 #==============================================================================
 
 progname=log_df
-VERSION=0.6.0
+VERSION=0.7.0
 
 opt_dbname=''
 opt_help=0
 opt_host=''
 opt_quiet=0
+opt_upgrade_db=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
@@ -24,6 +25,7 @@ while test -n "$1"; do
 	-h|--help) opt_help=1; shift ;;
 	--host) opt_host="$2"; shift 2 ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	--upgrade-db) opt_upgrade_db=1; shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
 	--) shift; break ;;
@@ -57,6 +59,9 @@ Options:
     Use HOSTNAME as value in the host column.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  --upgrade-db
+    Upgrade database to the current schema without adding new entries. 
+    Can be used when converting old databases.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -241,6 +246,11 @@ VACUUM;
 	msg Database $db successfully upgraded to version $dbversion
 	return 0
 }
+
+if test "$opt_upgrade_db" = "1"; then
+	upgrade_db
+	exit
+fi
 
 if test -z "$curr_db_version"; then
 	msg dbversion not found, upgrading database $db
