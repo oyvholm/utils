@@ -5,10 +5,13 @@
 progname=disable_ipv6
 
 test -d /hpelite1/. || {
-    echo $progname: Has to be on hpelite1 to run this script >&2
-    exit 1
+	echo $progname: Has to be on hpelite1 to run this script >&2
+	exit 1
 }
 
 for f in $(find /proc/sys/net | grep /disable_ipv6\$); do
+	echo $progname: Old value in $f: $(cat $f)
 	echo 1 >$f
 done
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
