@@ -4,16 +4,16 @@
 # pakkdir
 # File ID: 5818b856-0ba9-11de-b2c1-000475e441b9
 #
-# Move a whole subdirectory tree into a single .pakka.tar.gz file.
+# Move a whole subdirectory tree into a single .tar.gz file.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.15.1
+VERSION=0.16.0
 
-STD_SUFFIX=.pakka
+STD_SUFFIX=''
 
 ARGS="$(getopt -o "\
 1\
@@ -104,8 +104,10 @@ Options:
     the archive. Can be used when there's not enough disk space for the 
     archive.
   -S SUFFIX, --suffix SUFFIX
-    Use SUFFIX instead of "$STD_SUFFIX", can be empty to use standard 
-    .tar extension.
+    Add a custom suffix after the directory name and before the .tar 
+    extension in the output filename. No changes are made to the 
+    resulting tar file, only the file name is different.
+    Default value: "$STD_SUFFIX".
   -s SIZE, --split SIZE
     Split the .tar file into files with SIZE bytes each. Allowed values 
     are those understood by the -b/--bytes option in split(1). These 
