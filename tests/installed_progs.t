@@ -131,7 +131,7 @@ END
     installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → 🤘 | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n🤘\n$/', 'stdout', 'Use C sorting order');
     installed('exifprobe -V', '/Program: \'exifprobe\' version \d/', 'stdout');
     installed('find --version', '/GNU findutils/', 'stdout');
-    installed('fossil version', '/^This is fossil version 2\.1 /', 'stdout');
+    installed('fossil version', '/^This is fossil version 2\.3 /', 'stdout');
     installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
     installed('git --version', '/^git version 2\.14/', 'stdout');
