@@ -160,7 +160,6 @@ END
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
-    installed('task --version', '/^2\.6\.0$/', 'stdout');
     installed('top -v', '/procps(-ng)? version \d/', 'stdout');
     installed('tree --version', '/^tree v\d\./', 'stdout');
     installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
@@ -169,7 +168,6 @@ END
     installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'stdout', 'OSSP uuid');
     installed('vim --version', '/VIM - Vi IMproved 8\../', 'stdout');
     installed('wget --version', '/GNU Wget/', 'stdout');
-    installed('wiggle --version', '/^wiggle v1\.0/', 'stderr');
     installed('zip -v', '/This is Zip \d.*Info-ZIP/', 'stdout');
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
     repeat_test('uuidgen -t', 100, "^$v1_templ\$");
@@ -221,12 +219,14 @@ END
         installed('scriptreplay --help', '/-m, --maxdelay/', 'stdout', 'scriptreplay has -m/--maxdelay');
         installed('strace -V', '/^strace -- version \d/', 'stdout');
         installed('svn --version', '/svn, version /', 'stdout');
+        installed('task --version', '/^2\.6\.0$/', 'stdout');
         installed('texi2html --version', '/^\d\./', 'stdout');
         installed('tig --version', '/^tig version /', 'stdout');
         installed('tmux -V', '/^tmux \d\./', 'stdout');
         installed('trickle -V', '/^trickle: version \d/', 'stderr');
         installed('unrar --version', '/UNRAR \d/', 'stdout');
         installed('whois --version', '/^Version \d/', 'stdout');
+        installed('wiggle --version', '/^wiggle v1\.0/', 'stderr');
         installed('xmllint --version', '/^xmllint: using libxml version /', 'stderr');
         installed('xmlto --version', '/^xmlto version \d/', 'stdout');
         installed('xz --version', '/^xz \(XZ Utils\) \d/s', 'stdout');
