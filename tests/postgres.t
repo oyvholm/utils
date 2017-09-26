@@ -15,8 +15,14 @@
 use strict;
 use warnings;
 
+use Test::More;
+if (`createdb --version 2>/dev/null` !~ /PostgreSQL/) {
+    plan skip_all => "Postgres is not installed here";
+} else {
+    plan "no_plan";
+}
+
 BEGIN {
-    use Test::More qw{no_plan};
     # use_ok() goes here
 }
 
