@@ -11,9 +11,10 @@
 #==============================================================================
 
 progname=run-test
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
+d\
 h\
 q\
 v\
@@ -26,11 +27,13 @@ version,\
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+opt_diff=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while :; do
 	case "$1" in
+		-d|--diff) opt_diff=1; shift ;;
 		-h|--help) opt_help=1; shift ;;
 		-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 		-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -51,6 +54,8 @@ Usage: $progname [options] TESTFILE
 
 Options:
 
+  -d, --diff
+    Show a regular textual diff instead of starting vimdiff.
   -h, --help
     Show this help.
   -q, --quiet
@@ -67,7 +72,11 @@ fi
 script="$1"
 shift
 "$script" 2>&1 | gotexp "$@"
-vimdiff -c "windo set wrap" got exp
+if test "$opt_diff" = "1"; then
+	diff -u exp got
+else
+	vimdiff -c "windo set wrap" got exp
+fi
 rm got exp
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
