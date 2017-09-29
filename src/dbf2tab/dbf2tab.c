@@ -110,7 +110,7 @@ char *s;
 
 /* ------------------------------------------------------------------------- */
 
-fatal_err( msg)
+void fatal_err( msg)
 char *msg;
 {
 	fprintf(stderr,"\ndbf2tab: %s\n", msg);
@@ -119,7 +119,7 @@ char *msg;
 
 /* ------------------------------------------------------------------------- */
 
-get_header()
+void get_header()
 /*
  * read the dbf header
  */
@@ -186,7 +186,7 @@ get_header()
 
 /* ------------------------------------------------------------------------- */
 
-get_rec()
+int get_rec()
 /*
  * get the next record from .DBF file into rec_buf buffer
  */
@@ -227,7 +227,7 @@ get_rec()
 
 /* ------------------------------------------------------------------------- */
 
-usage()
+void usage()
 {
 	fprintf(stderr,"\nusage:\n");
 	fprintf(stderr,"\tdbf2tab [-l] dbffile\n");
@@ -238,7 +238,7 @@ usage()
 
 /* ------------------------------------------------------------------------- */
 
-main(argc, argv)
+void main(argc, argv)
     int     argc;
     char    *argv[];
 {
