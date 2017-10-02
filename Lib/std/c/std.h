@@ -25,9 +25,6 @@
  * Defines
  */
 
-#define VERSION       "0.0.0"
-#define RELEASE_DATE  "STDyearDTS-00-00"
-
 #define FALSE  0
 #define TRUE   1
 
