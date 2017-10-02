@@ -45,7 +45,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.7.1';
+our $VERSION = '0.8.0';
 
 my %descriptions = ();
 
@@ -224,6 +224,19 @@ END
     );
 
     # }}}
+    diag("Test uppercase tags...");
+    ok(unlink("db.sqlite"), "Delete db.sqlite");
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -t exec=fname " .
+            "-d ./db.sqlite c/std.h std.h", # {{{
+        "/^$v1_templ\\n\$/s",
+        '/^std: Creating database \'./db.sqlite\'\n$/',
+        0,
+        "Create std.h, uses STDU",
+    );
+    # }}}
+    ok(-e "std.h", "std.h exists");
+    like(file_data("std.h"), qr/ifndef _FNAME_H/,
+         "Tags in std.h are upper case");
     diag("Check for unused tags...");
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD perl-tests", # {{{
         '/^.*Contains tests for the.*$/s',
@@ -267,6 +280,15 @@ END
     );
 
     # }}}
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -t exec=fname " . # {{{
+            "-T exec c/std.h",
+        '/STDUexecUDTS/s',
+        '/^std: Warning: Undefined tags: exec filename\n.*$/s',
+        0,
+        "Send std.h to stdout, don’t expand uppercase tag",
+    );
+
+    # }}}
     diag("Test --rcfile option...");
     create_file("stdrc", <<END);
 dbname = ./dbfromrc.sqlite
@@ -299,6 +321,7 @@ END
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
     ok(unlink("$Tmptop/bash-no-db"), "unlink('[Tmptop]/bash-no-db')");
     ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
+    ok(unlink("$Tmptop/std.h"), "unlink('[Tmptop]/std.h')");
     ok(unlink("$Tmptop/db.sqlite"), "unlink('[Tmptop]/db.sqlite')");
     ok(unlink("$Tmptop/dbfromrc.sqlite"),
         "unlink('[Tmptop]/dbfromrc.sqlite')");

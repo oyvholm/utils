@@ -18,8 +18,8 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _STDexecDTS_H
-#define _STDexecDTS_H
+#ifndef _STDUexecUDTS_H
+#define _STDUexecUDTS_H
 
 /*
  * Defines
@@ -96,6 +96,6 @@ extern int parse_options(struct Options *dest,
 
 extern char *progname;
 
-#endif /* ifndef _STDexecDTS_H */
+#endif /* ifndef _STDUexecUDTS_H */
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */

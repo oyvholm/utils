@@ -36,7 +36,7 @@ my @Tags = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.7.1';
+our $VERSION = '0.8.0';
 
 my $CMD_GIT = "git";
 my $CMD_SQLITE = "sqlite3";
@@ -164,6 +164,7 @@ sub main {
         if ($Output =~ /STD\S+DTS/s) {
             my ($tmp, $tmp2) = ($Output, "");
             my %Ha = ();
+            $tmp =~ s/STDU(\S+?)UDTS/uc($Ha{$1} = 1)/gse;
             $tmp =~ s/STD(\S+?)DTS/($Ha{$1} = 1)/gse;
             for my $key (sort keys %Ha) {
                 defined($Ha{$key}) && ($tmp2 .= "$key ");
@@ -336,8 +337,10 @@ sub replace_tags {
     my $Txt = shift;
     if (scalar(@Tags)) {
         for my $Curr (keys %Tag) {
-            $Opt{'notag'} =~ /\b$Curr\b/ ||
+            if ($Opt{'notag'} !~ /\b$Curr\b/) {
+                $Txt =~ s/STDU${Curr}UDTS/\U$Tag{$Curr}/g;
                 $Txt =~ s/STD${Curr}DTS/$Tag{$Curr}/g;
+            }
         }
     }
     $Opt{'notag'} =~ /\bfilename\b/ || (length($Dest) &&
@@ -426,8 +429,9 @@ Options:
   --rcfile FILE
     Read initial settings from FILE instead of '\$HOME/.stdrc'.
   -t x, --tag x
-    Replaces strings of the form "STDtagDTS" in the template file with 
-    another string. Examples:
+    Replaces strings of the form "STDtagDTS" or "STDUtagUDTS" in the 
+    template file with another string. The "STDUtagUDTS" version 
+    converts the tag to upper case. Examples:
       -t testcmd=myscript.pl
       -t year=1997 -t "personname=John Lennon" -t os=GNU/Linux
     The option can be specified many times.
