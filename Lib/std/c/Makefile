@@ -10,10 +10,11 @@ CC = cc
 LD = cc
 CCFLAGS = -Wall -Wextra -Werror -O0 -c -g -ansi -pedantic
 LDFLAGS = -Wall
+LIBS =
 EXEC = STDexecDTS
 
 $(EXEC): $(OBJS)
-	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS)
+	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
 
 STDexecDTS.o: STDexecDTS.c $(DEPS)
 	$(CC) $(CCFLAGS) STDexecDTS.c
