@@ -2,6 +2,8 @@
 # File ID: STDuuidDTS
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
+PREFIX = /usr/local
+
 OBJS = STDexecDTS.o
 CFILES = STDexecDTS.c
 HFILES = STDexecDTS.h
@@ -26,6 +28,12 @@ clean:
 .PHONY: edit
 edit: tags
 	$(EDITOR) $$(git ls-files)
+
+.PHONY: install
+install: $(PREFIX)/bin/$(EXEC)
+
+$(PREFIX)/bin/$(EXEC): $(EXEC)
+	install $(EXEC) $(PREFIX)/bin/$(EXEC)
 
 tags: $(CFILES) $(HFILES)
 	ctags $(CFILES) $(HFILES)
