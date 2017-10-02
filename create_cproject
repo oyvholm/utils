@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=create_cproject
-VERSION=0.3.1
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 c\
@@ -74,6 +74,7 @@ fi
 name=$1
 test -z "$name" && { echo $progname: Name not specified as arg 1 >&2; exit 1; }
 echo -n "Makefile: "; std -t exec=$name c/Makefile Makefile
+echo -n "gdbrc: "; std c/gdbrc gdbrc
 echo -n "$name.c: "; std -t exec=$name c/std.c $name.c
 echo -n "$name.h: "; std -t exec=$name c/std.h $name.h
 if test "$opt_copying" = "1"; then

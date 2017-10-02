@@ -29,6 +29,10 @@ clean:
 edit: tags
 	$(EDITOR) $$(git ls-files)
 
+.PHONY: gdb
+gdb: $(EXEC)
+	gdb -tui -x gdbrc $$(cat gdbopts 2>/dev/null) $(EXEC)
+
 .PHONY: install
 install: $(PREFIX)/bin/$(EXEC)
 
