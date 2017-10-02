@@ -25,7 +25,7 @@ clean:
 
 .PHONY: edit
 edit: tags
-	$(EDITOR) *.c *.h Makefile
+	$(EDITOR) $$(git ls-files)
 
 tags: $(CFILES) $(HFILES)
 	ctags $(CFILES) $(HFILES)
