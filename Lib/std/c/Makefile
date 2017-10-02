@@ -21,7 +21,7 @@ STDexecDTS.o: STDexecDTS.c $(DEPS)
 
 .PHONY: clean
 clean:
-	rm -f $(EXEC) $(OBJS) *~ core core.$(EXEC) tags
+	rm -f $(EXEC) $(OBJS)
 
 .PHONY: edit
 edit: tags
