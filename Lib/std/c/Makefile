@@ -8,7 +8,7 @@ HFILES = STDexecDTS.h
 DEPS = $(HFILES) Makefile
 CC = cc
 LD = cc
-CCFLAGS = -Wall -Wextra -Werror -O2 -c -g -ansi -pedantic
+CCFLAGS = -Wall -Wextra -Werror -O0 -c -g -ansi -pedantic
 LDFLAGS = -Wall
 EXEC = STDexecDTS
 
