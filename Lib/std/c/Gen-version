@@ -1,0 +1,47 @@
+#!/bin/sh
+
+#==============================================================================
+# Gen-version
+# File ID: 4784d0b4-a0e3-11e7-99bf-f74d993421b0
+#
+# Generate STDUexecUDTS-VERSION.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
+
+progname=Gen-version
+
+STDexecDTS_version=0.0.0
+STDexecDTS_date=STDyearDTS-00-00
+
+tag_prefix="v$STDexecDTS_version"
+
+if test -d ../.git; then
+	if git tag | grep -q ^$tag_prefix; then
+		numsince=$(
+		    git log --format=%h \
+		        $tag_prefix.. 2>/dev/null |
+		    wc -l |
+		    tr -d '\t '
+		).
+	else
+		numsince=''
+	fi
+	gitsha=$(git rev-parse --short=12 HEAD)
+	test -n "$(git diff-index --name-only HEAD)" &&
+		gitsha="$gitsha-dirty"
+	STDexecDTS_fullversion="$STDexecDTS_version+${numsince}git-$gitsha"
+	STDexecDTS_date=$(git log -1 --format=%ci | cut -c -10)
+else
+	STDexecDTS_fullversion=$STDexecDTS_version
+fi
+
+cat <<END >STDUexecUDTS-VERSION
+STDUexecUDTS_VERSION="$STDexecDTS_fullversion"
+STDUexecUDTS_DATE="$STDexecDTS_date"
+END
+
+exit 0
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
