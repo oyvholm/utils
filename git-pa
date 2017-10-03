@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.0';
+our $VERSION = '0.5.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -154,7 +154,11 @@ sub update_synced {
         chomp($curr);
         next if ($curr =~ /^synced\//);
         if ($local_branches =~ /^synced\/$curr$/m) {
-            mysystem("git", "push", ".", "$curr:synced/$curr");
+            if ($Opt{'force'}) {
+                mysystem("git", "push", "-f", ".", "$curr:synced/$curr");
+            } else {
+                mysystem("git", "push", ".", "$curr:synced/$curr");
+            }
             system("git", "branch", "-q", "-u", $curr, "synced/$curr");
         }
     }
