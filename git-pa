@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.4.0';
+our $VERSION = '0.5.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -85,15 +85,7 @@ For every remote
 
     my @cmdline_args = @ARGV;
     msg(2, "cmdline_args = '" . join('|', @cmdline_args) . "'");
-
-    chomp(my $currbranch = `git rev-parse --abbrev-ref HEAD`);
-    my $local_branches = `git branch`;
-    if ($local_branches =~ / synced\/$currbranch\n/s) {
-        system("git push . $currbranch:synced/$currbranch 2>&1 | " .
-               "grep -v '^Everything up-to-date'");
-        system("git", "branch", "-q", "-u", "synced/$currbranch");
-    }
-
+    update_synced();
     my $config_allremotes = `git config --get git-pa.allremotes`;
     chomp($config_allremotes);
     my @allremotes_elem = split(' ', $config_allremotes);
@@ -152,6 +144,26 @@ For every remote
     # }}}
 } # main()
 
+sub update_synced {
+    # {{{
+    my $pipefp;
+    my $local_branches = `git branch | cut -c 3-`;
+
+    open($pipefp, "git branch | cut -c 3-|");
+    while (my $curr = <$pipefp>) {
+        chomp($curr);
+        next if ($curr =~ /^synced\//);
+        if ($local_branches =~ /^synced\/$curr$/m) {
+            mysystem("git", "push", ".", "$curr:synced/$curr");
+            system("git", "branch", "-q", "-u", $curr, "synced/$curr");
+        }
+    }
+    close($pipefp);
+
+    return;
+    # }}}
+} # update_synced()
+
 sub check_sig {
     # {{{
     my $retval = shift;
@@ -204,12 +216,12 @@ sub usage {
     }
     print(<<"END");
 
-Push to all predefined Git remotes in one go. If any synced/* version of 
-the current branch exists, update that to the same commit as the current 
-branch before the push. Also set the current branch up to track the 
-synced/ branch. This will show up in a Git-aware prompt that new commits 
-have been pushed to the local branch, or there are commits that haven't 
-been pushed yet.
+Push to all predefined Git remotes in one go. If any synced/* branches 
+exist, push the parent branch to them to get them in sync. Also set all 
+branches with a corresponding synced/ branch up to track the synced/ 
+branch. This will show up in a Git-aware prompt that new commits have 
+been pushed to the local branch, or there are commits that haven't been 
+pushed yet.
 
 Usage: $progname [options] [args for git push]
 
