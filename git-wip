@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-wip
-VERSION=0.3.0
+VERSION=0.4.0
 
 opt_delete=0
 opt_help=0
@@ -164,11 +164,11 @@ fi
 
 if test "$use_new_branch" = "1"; then
 	# Create new branch without prefix
-	$CMD_GIT branch "$ext"
+	$CMD_GIT branch "$ext" || exit 1
 	$CMD_GIT checkout "$ext"
 else
 	# Create new branch, use current branch name as prefix
-	$CMD_GIT branch "$curr.$ext"
+	$CMD_GIT branch "$curr.$ext" || exit 1
 	$CMD_GIT checkout "$curr.$ext"
 fi
 

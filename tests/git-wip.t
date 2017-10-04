@@ -41,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.4.0';
 
 my %descriptions = ();
 
@@ -281,6 +281,26 @@ END
         '',
         0,
         "Check current branch status after -p to master",
+    );
+
+    # }}}
+    testcmd("../../$CMD", # {{{
+        "",
+        "fatal: A branch named 'wip' already exists.\n",
+        1,
+        "wip branch already exists",
+    );
+
+    # }}}
+    testcmd("$Opt{'git'} branch", # {{{
+        <<END,
+* master
+  wip
+  wip.more-files
+END
+        '',
+        0,
+        "We're still on master because \"wip\" already exists",
     );
 
     # }}}
