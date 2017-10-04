@@ -107,67 +107,67 @@ ext="wip"
 test -n "$1" && { ext="$1"; shift; }
 
 loop_until_y() {
-    # Loop until the user says 'y'.
-    unset resp
-    until test "$resp" = "y"; do
-        echo -n $progname: Type \'y\' + Enter to $*... >&2
-        read resp
-    done
+	# Loop until the user says 'y'.
+	unset resp
+	until test "$resp" = "y"; do
+		echo -n $progname: Type \'y\' + Enter to $*... >&2
+		read resp
+	done
 }
 
 chkopt="$opt_delete$opt_merge$opt_parent$opt_squash"
 if test -n "$(echo $chkopt | grep 1)"; then
-    if test -n "$(echo "$curr" | grep '\.')"; then
-        # Current branch contains a full stop, so it has a parent
-        parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
-    else
-        # Current branch has no parents, prepare for merge or squash to 
-        # master.
-        test "$opt_squash" = "1" && ms_str=squash || ms_str=merge
-        if test "$curr" = "master"; then
-            echo Is already on master, nowhere to $ms_str branch >&2
-            exit 1
-        fi
-        if test "$opt_parent" = "1"; then
-            loop_until_y set active branch to \'master\' \(git checkout\)
-        else
-            loop_until_y $ms_str $curr to master
-        fi
-        parent=master
-    fi
+	if test -n "$(echo "$curr" | grep '\.')"; then
+		# Current branch contains a full stop, so it has a parent
+		parent="$(echo "$curr" | rev | cut -d . -f 2- | rev)"
+	else
+		# Current branch has no parents, prepare for merge or squash to 
+		# master.
+		test "$opt_squash" = "1" && ms_str=squash || ms_str=merge
+		if test "$curr" = "master"; then
+			echo Is already on master, nowhere to $ms_str branch >&2
+			exit 1
+		fi
+		if test "$opt_parent" = "1"; then
+			loop_until_y set active branch to \'master\' \(git checkout\)
+		else
+			loop_until_y $ms_str $curr to master
+		fi
+		parent=master
+	fi
 
-    $CMD_GIT branch | cut -c 3- | grep "^$parent\$" || {
-        echo $progname: $parent: Parent branch does not exist >&2
-        loop_until_y create the \'$parent\' branch on \'master\'
-        $CMD_GIT branch "$parent" master
-    }
-    $CMD_GIT checkout $parent &&
-    if test "$opt_delete" = "1"; then
-        # Delete current branch after merge to parent, use fast-forward 
-        # if possible.
-        $CMD_GIT merge $curr
-        $CMD_GIT branch -d $curr
-    elif test "$opt_squash" = "1"; then
-        # Squash the current branch to parent, combine all commits into 
-        # one.
-        $CMD_GIT merge --squash $curr
-    elif test "$opt_merge" = "1"; then
-        # Merge current branch into parent, always create merge commit 
-        # even if a fast-forward merge is possible.
-        $CMD_GIT merge --no-ff $curr
-        $CMD_GIT branch -d $curr
-    fi
-    exit
+	$CMD_GIT branch | cut -c 3- | grep "^$parent\$" || {
+		echo $progname: $parent: Parent branch does not exist >&2
+		loop_until_y create the \'$parent\' branch on \'master\'
+		$CMD_GIT branch "$parent" master
+	}
+	$CMD_GIT checkout $parent &&
+	if test "$opt_delete" = "1"; then
+		# Delete current branch after merge to parent, use fast-forward 
+		# if possible.
+		$CMD_GIT merge $curr
+		$CMD_GIT branch -d $curr
+	elif test "$opt_squash" = "1"; then
+		# Squash the current branch to parent, combine all commits into 
+		# one.
+		$CMD_GIT merge --squash $curr
+	elif test "$opt_merge" = "1"; then
+		# Merge current branch into parent, always create merge commit 
+		# even if a fast-forward merge is possible.
+		$CMD_GIT merge --no-ff $curr
+		$CMD_GIT branch -d $curr
+	fi
+	exit
 fi
 
 if test "$use_new_branch" = "1"; then
-    # Create new branch without prefix
-    $CMD_GIT branch "$ext"
-    $CMD_GIT checkout "$ext"
+	# Create new branch without prefix
+	$CMD_GIT branch "$ext"
+	$CMD_GIT checkout "$ext"
 else
-    # Create new branch, use current branch name as prefix
-    $CMD_GIT branch "$curr.$ext"
-    $CMD_GIT checkout "$curr.$ext"
+	# Create new branch, use current branch name as prefix
+	$CMD_GIT branch "$curr.$ext"
+	$CMD_GIT checkout "$curr.$ext"
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
