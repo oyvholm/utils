@@ -193,7 +193,7 @@ END
     # }}}
     diag("Test -D option...");
     likecmd("../../$CMD -D", # {{{
-        '/^wip\\nAlready up-to-date.*Deleted branch wip\.wip.*$/s',
+        '/^wip\\nAlready up[ \-]to[ \-]date.*Deleted branch wip\.wip.*$/s',
         '/^Switched to branch \'wip\'\\n$/',
         0,
         "Delete empty branch with -D",
