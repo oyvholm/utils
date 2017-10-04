@@ -31,6 +31,7 @@ our %Opt = (
     'help' => 0,
     'quiet' => 0,
     'regexpfile' => $Std{'regexpfile'},
+    'synced-only' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -38,7 +39,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.2';
+our $VERSION = '0.6.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -49,6 +50,7 @@ GetOptions(
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'regexpfile=s' => \$Opt{'regexpfile'},
+    'synced-only|s' => \$Opt{'synced-only'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -68,6 +70,11 @@ sub main {
     my $Retval = 0;
 
     $Opt{'dry-run'} && msg(0, "Note: This is just a simulation.");
+
+    if ($Opt{'synced-only'}) {
+        update_synced();
+        return 0;
+    }
 
 =pod
 
@@ -244,6 +251,8 @@ Options:
   --regexpfile X
     Use regexpfile X instead of the default
     '$Std{'regexpfile'}'.
+  -s, --synced-only
+    Don't push, only update the local synced/* branches.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
