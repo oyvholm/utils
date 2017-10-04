@@ -139,6 +139,7 @@ END
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
     installed('grep --version', '/GNU grep/', 'stdout');
     installed('gzip --version', '/^gzip \d/', 'stdout');
+    installed('indent --version', '/GNU indent 2\.2\./', 'stdout');
     installed('lilypond --version', '/^GNU LilyPond 2/', 'stdout');
     installed('make --version', '/GNU Make/', 'stdout');
     installed('mc --version', '/GNU Midnight Commander/', 'stdout');
