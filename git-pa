@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.5.1';
+our $VERSION = '0.5.2';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -159,7 +159,7 @@ sub update_synced {
             } else {
                 mysystem("git", "push", ".", "$curr:synced/$curr");
             }
-            system("git", "branch", "-q", "-u", $curr, "synced/$curr");
+            system("git", "branch", "-q", "-u", "synced/$curr", $curr);
         }
     }
     close($pipefp);
