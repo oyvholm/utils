@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-wip
-VERSION=0.4.0
+VERSION=0.4.1
 
 opt_delete=0
 opt_help=0
@@ -78,7 +78,7 @@ Options:
   --version
     Print version information.
 
-When the -d, -m, -p or -s option is used and there are no parent 
+When the -D, -m, -p or -s option is used and there are no parent 
 branches (there are no full stops ('.') in the current branch name), the 
 branch will be merged or squashed to 'master'.
 
@@ -131,7 +131,7 @@ if test -n "$(echo $chkopt | grep 1)"; then
 		fi
 		if test "$opt_parent" = "1"; then
 			loop_until_y set active branch to \'master\' \
-			             \(git checkout\)
+			             \($CMD_GIT checkout\)
 		else
 			loop_until_y $ms_str $curr to master
 		fi
