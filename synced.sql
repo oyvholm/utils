@@ -71,8 +71,10 @@ INSERT INTO synced VALUES('Lib/std/book-cmark/dat/STDprojnameDTS.sql','','',NULL
 INSERT INTO synced VALUES('Lib/std/book-cmark/index.md','Lib/std/markdown','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO synced VALUES('Lib/std/book-cmark/synced.sql','','',NULL);
 INSERT INTO synced VALUES('Lib/std/c/.gitignore','','',NULL);
+INSERT INTO synced VALUES('Lib/std/c/Gen-version',NULL,NULL,NULL);
 INSERT INTO synced VALUES('Lib/std/c/Makefile','','',NULL);
 INSERT INTO synced VALUES('Lib/std/c/Makefile.std-test','Lib/std/make','9b6170a3820d880572fb9d8ee5f2f6347c0bdf63','2016-12-01 01:46:52');
+INSERT INTO synced VALUES('Lib/std/c/gdbrc',NULL,NULL,NULL);
 INSERT INTO synced VALUES('Lib/std/c/std.c','','',NULL);
 INSERT INTO synced VALUES('Lib/std/c/std.h','','',NULL);
 INSERT INTO synced VALUES('Lib/std/db-Makefile','','',NULL);
