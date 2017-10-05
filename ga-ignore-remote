@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga-ignore-remote
-VERSION=0.4.0
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 h\
@@ -59,7 +59,7 @@ Options:
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -u, --unignore
-    Don't ignore the remote anymore, remove the ignore settings from Git 
+    Enable push to the remotes, remove the annex-readonly value from Git 
     config.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
@@ -79,10 +79,8 @@ ignore_remote() {
     fi
 
     if test "$opt_unignore" = "1"; then
-        git config --unset remote.$remote.annex-ignore
         git config --unset remote.$remote.annex-readonly
     else
-        git config remote.$remote.annex-ignore true
         git config remote.$remote.annex-readonly true
     fi
 
