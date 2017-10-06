@@ -51,7 +51,7 @@ testport:
 	./git-wip.t           # freebsd:ok   netbsd:ok   openbsd:ok
 	./gotexp.t            # freebsd:ok   netbsd:ok   openbsd:ok
 	./hhi.t               # freebsd:ok   netbsd:ok   openbsd:ok
-	./installed_progs.t   # freebsd:hang netbsd:skip openbsd:ok
+	./installed_progs.t   # freebsd:hang netbsd:skip openbsd:skip
 	./jday.t              # freebsd:fail netbsd:ok   openbsd:ok
 	./md-header.t         # freebsd:ok   netbsd:ok   openbsd:ok
 	# ./perlmodules.t     # freebsd:fail netbsd:fail openbsd:fail
