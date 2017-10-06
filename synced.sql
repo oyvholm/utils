@@ -333,7 +333,6 @@ INSERT INTO synced VALUES('git-delete-old-branches','Lib/std/bash','3c2c2aceb2ef
 INSERT INTO synced VALUES('git-delrembr','Lib/std/sh','34c55d68c647eb5e8f608f8e3446ba36f0c159b5','2016-11-25 10:01:23');
 INSERT INTO synced VALUES('git-dl','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-dobranch','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
-INSERT INTO synced VALUES('git-eb','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-empty','Lib/std/sh','e7815c79a9be711dde9bd0811a143d4163aeb210','2017-06-23 07:33:30');
 INSERT INTO synced VALUES('git-expand','Lib/std/python',NULL,NULL);
 INSERT INTO synced VALUES('git-ifmaster','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
@@ -797,7 +796,6 @@ INSERT INTO todo VALUES('git-authoract',1,NULL);
 INSERT INTO todo VALUES('git-bare',3,NULL);
 INSERT INTO todo VALUES('git-delete-banned',3,NULL);
 INSERT INTO todo VALUES('git-dl',3,NULL);
-INSERT INTO todo VALUES('git-eb',3,NULL);
 INSERT INTO todo VALUES('git-lc',3,NULL);
 INSERT INTO todo VALUES('git-listbundle',3,NULL);
 INSERT INTO todo VALUES('git-logdiff',1,NULL);
