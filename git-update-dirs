@@ -55,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.6.2';
+our $VERSION = '0.6.3';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -136,7 +136,7 @@ sub main {
 	my @err_updsub = ();
 
 	if ($Opt{'recursive'}) {
-		my $repos = `find -type d -name .git -print0`;
+		my $repos = `find . -type d -name .git -print0`;
 		$repos =~ s/\/\.git\000/\000/g;
 		my %dupdir;
 		@Dirs = sort(grep { !$dupdir{$_}++ }
