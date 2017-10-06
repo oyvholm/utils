@@ -37,7 +37,7 @@ test:
 .PHONY: testport
 testport:
 	./datefn.t            # freebsd:ok   netbsd:ok   openbsd:ok
-	./edit-sqlite3.t      # freebsd:fail netbsd:ok   openbsd:fail
+	./edit-sqlite3.t      # freebsd:fail netbsd:ok   openbsd:ok
 	./filesynced.t        # freebsd:ok   netbsd:ok   openbsd:ok
 	./findhex.t           # freebsd:ok   netbsd:ok   openbsd:ok
 	./fromhex.t           # freebsd:ok   netbsd:ok   openbsd:ok
@@ -46,13 +46,13 @@ testport:
 	./git-dangling.t      # freebsd:ok   netbsd:ok   openbsd:ok
 	./git-dbr.t           # freebsd:ok   netbsd:ok   openbsd:ok
 	./git-scanrefs.t      # freebsd:ok   netbsd:ok   openbsd:ok
-	./git-testadd.t       # freebsd:fail netbsd:ok   openbsd:fail
+	./git-testadd.t       # freebsd:fail netbsd:ok   openbsd:ok
 	# ./git-update-dirs.t # freebsd:fail netbsd:fail openbsd:fail
 	./git-wip.t           # freebsd:ok   netbsd:ok   openbsd:ok
 	./gotexp.t            # freebsd:ok   netbsd:ok   openbsd:ok
 	./hhi.t               # freebsd:ok   netbsd:ok   openbsd:ok
-	./installed_progs.t   # freebsd:hang netbsd:skip openbsd:fail
-	./jday.t              # freebsd:fail netbsd:ok   openbsd:fail
+	./installed_progs.t   # freebsd:hang netbsd:skip openbsd:ok
+	./jday.t              # freebsd:fail netbsd:ok   openbsd:ok
 	./md-header.t         # freebsd:ok   netbsd:ok   openbsd:ok
 	# ./perlmodules.t     # freebsd:fail netbsd:fail openbsd:fail
 	# ./postgres.t        # freebsd:fail netbsd:fail openbsd:fail
