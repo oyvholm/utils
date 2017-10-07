@@ -1,69 +1,168 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
+#==============================================================================
+# bigsh
 # File ID: b834114a-fa6f-11dd-bf5e-000475e441b9
+#
 # Fyrer opp en stor xterm i X
-
+#
 # Det ender som oftest i
 #
 # --small:
-# xterm -u8 -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -bg black -fg white -bc -geometry 211x67+0+0
+# xterm -u8 -fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+# -fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 -bg black \
+# -fg white -bc -geometry 211x67+0+0
 #
 # --big:
-# xterm -u8 -fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 -bg black -fg white -bc -geometry 140x48+0-8
+# xterm -u8 -fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
+# -bg black -fg white -bc -geometry 140x48+0-8
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
 
-uuid=`suuid -w eo -t c_bigsh -c "bigsh $*"` || { echo bigsh: suuid error >&2; xmessage -center "bigsh: suuid error" & exit 1; }
-smallfont=1
-[ -e /carmbb.mrk ] && { smallfont=1; }
-[ "$1" = "--small" ] && { smallfont=1; shift; }
-[ "$1" = "--big" ] && { smallfont=0; shift; }
+progname=bigsh
+VERSION=0.1.0
+
+opt_all=0
+opt_big=0
+opt_gdb=0
+opt_help=0
+opt_quiet=0
+opt_small=1
+opt_title=''
+opt_verbose=0
+while test -n "$1"; do
+	case "$1" in
+	-a|--all) opt_all=1; shift ;;
+	-b|--big) opt_big=1; opt_small=0; shift ;;
+	-g|--gdb) opt_gdb=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-s|--small) opt_small=1; opt_big=0; shift ;;
+	-T|--title) opt_title="$2"; shift 2 ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
+
+Usage: $progname [options] [COMMAND]
+
+Create xterm windows and execute optional COMMAND in it.
+
+Options:
+
+  -a, --all
+    Create all windows.
+  -b, --big
+    Use big fonts.
+  -g, --gdb
+    Create window for gdb(1).
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -s, --small
+    Use small fonts. This is the default.
+  -T TITLE, --title TITLE
+    Use TITLE as xterm title.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+	exit 0
+fi
+
+winc=''
+wintitle="$opt_title"
+[ -z "$wintitle" ] && wintitle=$(hostname)
+
+start_xterm() {
+	local geom=$1
+	shift
+
+	if [ "$opt_big" = "1" ]; then
+		sess -d $progname.$wintitle -t c_$progname -- xterm \
+		-u8 \
+		-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
+		-bg black \
+		-fg white \
+		-bc \
+		-T "$wintitle" \
+		-geometry $geom "$@" &
+	else
+		sess -d $progname.$wintitle -t c_$progname -- xterm \
+		-u8 \
+		-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+		-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+		-bg black \
+		-fg white \
+		-bc \
+		-T "$wintitle" \
+		-geometry $geom "$@" &
+	fi
+	winc="$winc $wintitle"
+}
 
 if [ -e /carmbb.mrk ]; then
-	if [ "$smallfont" = "1" ]; then
-		geom=131x40+0+0
+	if [ "$opt_small" = "1" ]; then
+		start_xterm 131x40+0+0 "$@"
 	else
-		geom=87x29+0+0
+		start_xterm 87x29+0+0 "$@"
 	fi
 elif [ -e /bellmann ]; then
-	smallfont=0
-	geom=180x56+0+0
+	start_xterm 180x56+0+0 "$@"
 elif [ -e /hpelite1 ]; then
-	smallfont=0
-	geom=180x56+0+0
+	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
+		[ -z "$opt_title" ] && wintitle=gdb
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 39x39+1002+0 "$@"
+		else
+			start_xterm 59x54+1002+0 "$@"
+		fi
+	fi
+	if [ "$opt_all" = "1" ]; then
+		wintitle=sunbase
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 110x39+0+0 "$@"
+		else
+			start_xterm 165x54+0+0 "$@"
+		fi
+	fi
+	if [ "$opt_all" = "1" -o -z "$winc" ]; then
+		[ -z "$opt_title" ] && wintitle=hpelite1
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 110x39+0+0 "$@"
+		else
+			start_xterm 165x54+0+0 "$@"
+		fi
+	fi
 elif [ -e /sunbase ]; then
-	smallfont=0
-	geom=139x36+0+0
+	start_xterm 139x36+0+0 "$@"
 elif [ -e /dundre.mrk ]; then
-	if [ "$smallfont" = "1" ]; then
-		geom=211x55+0+0
+	if [ "$opt_small" = "1" ]; then
+		start_xterm 211x55+0+0 "$@"
 	else
-		geom=87x29+0+0
+		start_xterm 87x29+0+0 "$@"
 	fi
 else
-	if [ "$smallfont" = "1" ]; then
-		geom=211x73+0+0
-	else
-		geom=140x48+0-8
-	fi
+	start_xterm 165x25+0+0 "$@"
 fi
 
-if [ "$smallfont" = "1" ]; then
-	xterm \
-	-u8 \
-	-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
-	-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
-	-bg black \
-	-fg white \
-	-bc \
-	-geometry $geom $*
-else
-	xterm \
-	-u8 \
-	-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
-	-bg black \
-	-fg white \
-	-bc \
-	-geometry $geom $*
-fi
-
-suuid -t c_bigsh -c "Session $uuid ferdig."
-exit
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
