@@ -28,7 +28,6 @@ INSERT INTO synced VALUES('Div/bash-cmds.txt','Lib/std/txt','98a0741e6f3c0079a21
 INSERT INTO synced VALUES('Div/compr-test','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('Div/doc/linux-keyboard.txt','',NULL,NULL);
 INSERT INTO synced VALUES('Div/doc/ssh_tunnelling.html','','',NULL);
-INSERT INTO synced VALUES('Div/drittbrancher.txt','','',NULL);
 INSERT INTO synced VALUES('Div/obsolete-refs.txt','',NULL,NULL);
 INSERT INTO synced VALUES('Div/q3hd-time.txt','',NULL,NULL);
 INSERT INTO synced VALUES('Div/svnprops/branches.xml','','',NULL);
