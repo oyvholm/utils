@@ -12,10 +12,11 @@
 #==============================================================================
 
 progname=git-allbr
-VERSION=0.6.3
+VERSION=0.7.0
 
 opt_all=0
 opt_commit_branches=0
+opt_existing=0
 opt_force=0
 opt_help=0
 opt_dry_run=0
@@ -26,6 +27,7 @@ while test -n "$1"; do
 	case "$1" in
 	-a|--all) opt_all=1; shift ;;
 	-c|--commit-branches) opt_commit_branches=1; shift ;;
+	-e|--existing) opt_existing=1; shift ;;
 	-f|--force) opt_force=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-n|--dry-run) opt_dry_run=1; shift ;;
@@ -64,6 +66,8 @@ Options:
     command line.
   -c, --commit-branches
     Also create commit-* branches created by git-dangling.
+  -e, --existing
+    Only update branches that already exist locally.
   -f, --force
     Allow rewriting of local branches, override fast-forwarding.
   -h, --help
@@ -118,6 +122,7 @@ for remote in $remotes; do
 		test "$create_dangling" != "1" &&
 			echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
 				test "$is_bare" = "0" && continue
+		test "$opt_existing" = "1" -a ! -e "$brfile" && continue
 		(
 			if test -e "$brfile"; then
 				$sim git log --format=%h refs/heads/$f..$remote/$f |
