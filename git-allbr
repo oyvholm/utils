@@ -104,20 +104,20 @@ for remote in $remotes; do
 	        grep -v -E "remotes/$remote/HEAD( |\$)" |
 	        perl -pe "s!remotes/$remote/(.*)\$!\$1!"
 	); do
-	if test $opt_verbose -ge 0; then
-		printf '%s%s\r' "$f" "$t_el"
-	fi
-	test "$create_dangling" != "1" &&
-		echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
-			test "$is_bare" = "0" && continue
-	(
-	    git branch --no-track $f $remote/$f 2>&1 &&
-	    echo $progname: Created $f
-	) | grep -v '^fatal: A branch named .* already exists.'
-	git log --format=%h refs/heads/$f..$remote/$f | grep -q . && \
-		git push . $remote/$f:refs/heads/$f $force_str 2>&1 |
-		    grep -v '^Everything up-to-date'
-	test -n "$upstream_str" && git branch -u $remote/$f $f
+		if test $opt_verbose -ge 0; then
+			printf '%s%s\r' "$f" "$t_el"
+		fi
+		test "$create_dangling" != "1" &&
+			echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
+				test "$is_bare" = "0" && continue
+		(
+		    git branch --no-track $f $remote/$f 2>&1 &&
+		    echo $progname: Created $f
+		) | grep -v '^fatal: A branch named .* already exists.'
+		git log --format=%h refs/heads/$f..$remote/$f | grep -q . && \
+			git push . $remote/$f:refs/heads/$f $force_str 2>&1 |
+			    grep -v '^Everything up-to-date'
+		test -n "$upstream_str" && git branch -u $remote/$f $f
 	done
 	tput el
 	echo
