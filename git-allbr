@@ -4,15 +4,14 @@
 # git-allbr
 # File ID: b8c0ee54-eb71-11df-a07a-fefdb24f8e10
 #
-# Create local Git branches that only exist on remotes and update local 
-# branches against remote branches.
+# Create or update local Git branches that exist in remote repositories.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=git-allbr
-VERSION=0.7.0
+VERSION=0.7.1
 
 opt_all=0
 opt_commit_branches=0
@@ -52,8 +51,7 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Create local Git branches that only exist on remotes and update local 
-branches against remote branches.
+Create or update local Git branches that exist in remote repositories.
 
 Usage: $progname [options] [remote [remotes [...]]]
 
@@ -69,7 +67,7 @@ Options:
   -e, --existing
     Only update branches that already exist locally.
   -f, --force
-    Allow rewriting of local branches, override fast-forwarding.
+    Allow rewriting of local branches if fast-forward is not possible.
   -h, --help
     Show this help.
   -n, --dry-run
