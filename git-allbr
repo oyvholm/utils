@@ -18,6 +18,7 @@ opt_all=0
 opt_commit_branches=0
 opt_force=0
 opt_help=0
+opt_dry_run=0
 opt_quiet=0
 opt_upstream=0
 opt_verbose=0
@@ -27,6 +28,7 @@ while test -n "$1"; do
 	-c|--commit-branches) opt_commit_branches=1; shift ;;
 	-f|--force) opt_force=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
+	-n|--dry-run) opt_dry_run=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-u|--upstream) opt_upstream=1; shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -66,6 +68,8 @@ Options:
     Allow rewriting of local branches, override fast-forwarding.
   -h, --help
     Show this help.
+  -n, --dry-run
+    Don't make any changes, print the commands that would be executed.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
     One -q turns off the constantly updating branch name display.
@@ -83,6 +87,7 @@ END
 	exit 0
 fi
 
+test "$opt_dry_run" = "1" && sim="echo $progname: cmd: " || sim=
 remotes=origin
 test "$opt_all" = "1" && remotes=$(git remote)
 unset create_dangling
@@ -111,13 +116,14 @@ for remote in $remotes; do
 			echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
 				test "$is_bare" = "0" && continue
 		(
-		    git branch --no-track $f $remote/$f 2>&1 &&
+		    $sim git branch --no-track $f $remote/$f 2>&1 &&
 		    echo $progname: Created $f
 		) | grep -v '^fatal: A branch named .* already exists.'
-		git log --format=%h refs/heads/$f..$remote/$f | grep -q . && \
-			git push . $remote/$f:refs/heads/$f $force_str 2>&1 |
-			    grep -v '^Everything up-to-date'
-		test -n "$upstream_str" && git branch -u $remote/$f $f
+		$sim git log --format=%h refs/heads/$f..$remote/$f |
+		     grep -q . && $sim git push . $remote/$f:refs/heads/$f \
+		            $force_str 2>&1 |
+		            grep -v '^Everything up-to-date'
+		test -n "$upstream_str" && $sim git branch -u $remote/$f $f
 	done
 	tput el
 	echo
