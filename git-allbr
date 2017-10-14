@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-allbr
-VERSION=0.8.0
+VERSION=0.8.1
 
 opt_all=0
 opt_create=0
@@ -104,7 +104,6 @@ echo
 is_bare=1
 test "$(git config --get core.bare)" = "true" || is_bare=0
 t_el="$(tput el)"
-top="$(git rev-parse --show-toplevel)"
 
 for remote in $remotes; do
 	echo ==== $progname: remote $remote
@@ -114,16 +113,19 @@ for remote in $remotes; do
 	        grep -v -E "remotes/$remote/HEAD( |\$)" |
 	        perl -pe "s!remotes/$remote/(.*)\$!\$1!"
 	); do
-		brfile="$top/.git/refs/heads/$f"
+		branch_exists=$(
+			git for-each-ref --format='%(refname:short)' \
+			    refs/heads/ | grep -q ^$f\$ && echo 1 || echo 0
+		)
 		if test $opt_verbose -ge 0; then
 			printf '%s%s\r' "$f" "$t_el"
 		fi
 		test "$create_dangling" != "1" &&
 			echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
 				test "$is_bare" = "0" && continue
-		test "$opt_create" = "0" -a ! -e "$brfile" && continue
+		test "$opt_create" = "0" -a "$branch_exists" = "0" && continue
 		(
-			if test -e "$brfile"; then
+			if test "$branch_exists" = "1"; then
 				$sim git log --format=%h refs/heads/$f..$remote/$f |
 				   grep -q . && $sim git push . $remote/$f:refs/heads/$f \
 				     $force_str 2>&1 |
