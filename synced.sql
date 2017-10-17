@@ -42,6 +42,7 @@ INSERT INTO synced VALUES('Div/svnprops/utils-repo.smsum.asc','','',NULL);
 INSERT INTO synced VALUES('Div/unfinished/svnbck','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('Div/unfinished/svnstat','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('Git/Makefile','','',NULL);
+INSERT INTO synced VALUES('Git/nop/Makefile',NULL,NULL,NULL);
 INSERT INTO synced VALUES('Lib/Makefile','','',NULL);
 INSERT INTO synced VALUES('Lib/perllib/.gitignore','','',NULL);
 INSERT INTO synced VALUES('Lib/perllib/Makefile','','',NULL);
