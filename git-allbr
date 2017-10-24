@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-allbr
-VERSION=0.8.1
+VERSION=0.8.2
 
 opt_all=0
 opt_create=0
@@ -111,7 +111,12 @@ for remote in $remotes; do
 	    git branch -a |
 	        grep remotes/$remote/ |
 	        grep -v -E "remotes/$remote/HEAD( |\$)" |
-	        perl -pe "s!remotes/$remote/(.*)\$!\$1!"
+	        perl -pe "s!remotes/$remote/(.*)\$!\$1!" |
+		if test "$opt_commit_branches" = "1"; then
+			cat;
+		else
+			grep -v -E 'commit-[0-9a-f]{40}';
+		fi
 	); do
 		branch_exists=$(
 			git for-each-ref --format='%(refname:short)' \
@@ -120,9 +125,6 @@ for remote in $remotes; do
 		if test $opt_verbose -ge 0; then
 			printf '%s%s\r' "$f" "$t_el"
 		fi
-		test "$create_dangling" != "1" &&
-			echo $f | grep -qE '^commit-[0-9a-f]{40}$' &&
-				test "$is_bare" = "0" && continue
 		test "$opt_create" = "0" -a "$branch_exists" = "0" && continue
 		(
 			if test "$branch_exists" = "1"; then
