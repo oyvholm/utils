@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.14.0
+VERSION=0.14.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -60,13 +60,10 @@ customised:
     Execute "git wait-until-clean -u" before syncing, i.e., wait until 
     the repository is clean before continuing. This is to avoid any 
     accidental commits.
-    Also, if HEAD is not detached from a branch, set it to track the 
-    synced/ branch for the current branch. For example, if the current 
-    HEAD is on the "mystuff" branch, execute a
-      git branch --set-upstream-to=synced/mystuff
-    If you have a Git-aware command line prompt that shows if the 
-    current branch is behind or ahead upstream, it will show when a sync 
-    or merge is needed.
+    Also, update all local synced/* branches by running "git pa -s". If 
+    you have a Git-aware command line prompt that shows if the current 
+    branch is behind or ahead upstream, it will show when a sync or 
+    merge is needed.
   ud
     Shortcut for "update-desc".
   unused
@@ -208,9 +205,5 @@ else
 fi
 
 if test "$1" = "sync"; then
-    git push . git-annex:synced/git-annex
-    currbr="$(git rev-parse --abbrev-ref HEAD)"
-    if test "$currbr" != "HEAD" -a -z "$(echo "$currbr" | grep synced/)"; then
-        git branch --set-upstream-to=synced/$currbr
-    fi
+    git pa -s
 fi
