@@ -81,3 +81,7 @@ update-synced:
 	done | sqlite3 synced.sqlite
 	filesynced --unlock $$(cat .update-synced_token.tmp)
 	rm -f .update-synced_token.tmp
+
+.PHONY: valgrind
+valgrind:
+	cd Git && $(MAKE) valgrind

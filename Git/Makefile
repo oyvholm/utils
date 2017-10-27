@@ -27,3 +27,11 @@ testport:
 	fi
 	if test -f spar/Makefile; then cd spar && $(MAKE) test; fi
 	if test -f suuid/Makefile; then cd suuid && $(MAKE) test; fi
+
+.PHONY: valgrind
+valgrind: $(MAKEFILES)
+	for f in $(DIRS); do \
+		if grep -q ^valgrind: $$f/Makefile; then \
+			(cd $$f && $(MAKE) valgrind) || exit 1; \
+		fi \
+	done
