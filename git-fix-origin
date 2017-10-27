@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# File ID: 9b49059c-b765-11e7-ad1d-db5caa6d21d3
+
+echo "git remote rm origin; git remote add origin $(git config --get remote.origin.url)" | sh
+git fetch origin
