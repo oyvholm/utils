@@ -311,6 +311,7 @@ INSERT INTO synced VALUES('ga-sjekk','Lib/std/bash','7d812a8c821d5e09ded9185ca74
 INSERT INTO synced VALUES('ga-sumsize','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO synced VALUES('ga-tree','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
 INSERT INTO synced VALUES('gammelsvn','Lib/std/bash',NULL,NULL);
+INSERT INTO synced VALUES('gcov-cmt','Lib/std/perl-tab','61e340094bd3514c65fe0cdca4641d3b31e78333','2017-10-30 15:40:27');
 INSERT INTO synced VALUES('genpasswd','https://raw.githubusercontent.com/fuktommy/homebin/master/genpasswd','','2015-10-15 17:50:54');
 INSERT INTO synced VALUES('geohashing','',NULL,NULL);
 INSERT INTO synced VALUES('getapr','Lib/std/bash',NULL,NULL);
