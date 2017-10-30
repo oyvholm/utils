@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -53,7 +53,42 @@ exit(main());
 sub main {
 	my $Retval = 0;
 
+	for my $f (@ARGV) {
+		msg(1, "Processing $f");
+		if (process_file($f)) {
+			print(STDERR "$progname: $f: " .
+			             "Error when processing file: $!\n");
+		}
+	}
 	return $Retval;
+}
+
+sub process_file {
+	my $f = shift;
+	my $line;
+
+	if (!-f "$f.gcov") {
+		printf(STDERR "$progname: $f.gcov not found\n");
+		return 0;
+	}
+	open(from_fp, "<$f.gcov") or return 1;
+	open(to_fp, ">$f.tmp") or return 1;
+	while ($line = <from_fp>) {
+		chomp($line);
+		if ($line =~ /^(.+?): +(\d+):(.*)$/) {
+			my ($c1, $c2, $c3) = ($1, $2, $3);
+			$c2 eq "0" && next;
+			$c3 =~ s! /\* gcov \*/$!!;
+			if ($c1 =~ /\#\#\#\#\#/) {
+				$c3 .= " /* gcov */";
+			}
+			print(to_fp "$c3\n");
+		}
+	}
+	close(to_fp);
+	close(from_fp);
+	rename("$f.tmp", $f);
+	return 0;
 }
 
 sub print_version {
@@ -72,7 +107,14 @@ sub usage {
 	}
 	print(<<"END");
 
-Usage: $progname [options] [file [files [...]]]
+Usage: $progname [options] C_FILES [...]
+
+Add "/* gcov */" markers to lines in .c files reported by gcov(1) as 
+unused.
+
+\$ make
+\$ gcov *.c
+\$ $progname *.c
 
 Options:
 
