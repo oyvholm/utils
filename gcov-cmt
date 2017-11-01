@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -112,7 +112,7 @@ Usage: $progname [options] C_FILES [...]
 Add "/* gcov */" markers to lines in .c files reported by gcov(1) as 
 unused.
 
-\$ make
+\$ make clean test
 \$ gcov *.c
 \$ $progname *.c
 
