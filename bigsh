@@ -22,7 +22,7 @@
 #==============================================================================
 
 progname=bigsh
-VERSION=0.1.0
+VERSION=0.2.0
 
 opt_all=0
 opt_big=0
@@ -154,7 +154,30 @@ elif [ -e /hpelite1 ]; then
 		fi
 	fi
 elif [ -e /sunbase ]; then
-	start_xterm 139x36+0+0 "$@"
+	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
+		[ -z "$opt_title" ] && wintitle=gdb
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 29x36+996+0 "$@"
+		else
+			start_xterm 43x50+996+0 "$@"
+		fi
+	fi
+	if [ "$opt_all" = "1" ]; then
+		wintitle=sunbase
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 110x36+0+0 "$@"
+		else
+			start_xterm 165x50+0+0 "$@"
+		fi
+	fi
+	if [ "$opt_all" = "1" -o -z "$winc" ]; then
+		[ -z "$opt_title" ] && wintitle=xterm
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 110x36+0+0 "$@"
+		else
+			start_xterm 165x50+0+0 "$@"
+		fi
+	fi
 elif [ -e /dundre.mrk ]; then
 	if [ "$opt_small" = "1" ]; then
 		start_xterm 211x55+0+0 "$@"
