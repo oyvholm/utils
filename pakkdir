@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.16.1
+VERSION=0.16.2
 
 STD_SUFFIX=''
 
@@ -208,7 +208,7 @@ for f in "$@"; do
                 mv -vi "$tarfile.split_aa" "$tarfile" || exit 1
             fi
             test "$opt_xz" = "1" && xz -v "$tarfile"*
-            test "$opt_gzip" = "1" && gzip -vN --rsyncable "$tarfile"*
+            test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"*
         else
             echo $progname: tar cf $tarfile $rm_files_str \
                  --sort=name $xattrs_str $dir >&2
@@ -216,7 +216,7 @@ for f in "$@"; do
                    --label=$uuid "$dir" || exit 1
             ls -la "$tarfile" >&2
             test "$opt_xz" = "1" && xz -v "$tarfile"
-            test "$opt_gzip" = "1" && gzip -vN --rsyncable "$tarfile"
+            test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"
         fi
     fi
 done
