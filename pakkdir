@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.16.2
+VERSION=0.16.3
 
 STD_SUFFIX=''
 
@@ -168,8 +168,12 @@ for f in "$@"; do
 done
 
 for f in "$@"; do
-    dir="$f"
-    tarfile="$f$opt_suffix.tar"
+    dir="$(echo -n "$f" | sed 's/\/*$//')"
+    if [ -z "$dir" ]; then
+        echo "$progname: $f: Argument is empty after stripping slash" >&2
+        exit 1
+    fi
+    tarfile="$dir$opt_suffix.tar"
 
     if test $opt_verbose -ge 2; then
         echo $progname: dir = $dir >&2
