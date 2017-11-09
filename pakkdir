@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.16.0
+VERSION=0.16.1
 
 STD_SUFFIX=''
 
@@ -168,9 +168,6 @@ for f in "$@"; do
 done
 
 for f in "$@"; do
-    echo >&2
-    echo $progname: Packing $f... >&2
-
     dir="$f"
     tarfile="$f$opt_suffix.tar"
 
@@ -184,6 +181,9 @@ for f in "$@"; do
     fi
 
     if [ -d "$dir" ]; then
+        echo >&2
+        echo $progname: Packing $dir... >&2
+
         echo "$dir" | grep -q / && {
             echo "$progname: $dir: Slashes not allowed in the file name" >&2
             exit 1
