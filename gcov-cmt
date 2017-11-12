@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -87,7 +87,7 @@ sub process_file {
 	}
 	close(to_fp);
 	close(from_fp);
-	rename("$f.tmp", $f);
+	rename("$f.tmp", $f) or return 1;
 	return 0;
 }
 
