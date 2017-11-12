@@ -20,6 +20,7 @@ local $| = 1;
 
 our %Opt = (
 
+	'delete' => 0,
 	'help' => 0,
 	'quiet' => 0,
 	'verbose' => 0,
@@ -29,11 +30,12 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.2';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+	'delete|d' => \$Opt{'delete'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
 	'verbose|v+' => \$Opt{'verbose'},
@@ -67,22 +69,32 @@ sub process_file {
 	my $f = shift;
 	my $line;
 
-	if (!-f "$f.gcov") {
-		printf(STDERR "$progname: $f.gcov not found\n");
-		return 0;
-	}
-	open(from_fp, "<$f.gcov") or return 1;
-	open(to_fp, ">$f.tmp") or return 1;
-	while ($line = <from_fp>) {
-		chomp($line);
-		if ($line =~ /^(.+?): +(\d+):(.*)$/) {
-			my ($c1, $c2, $c3) = ($1, $2, $3);
-			$c2 eq "0" && next;
-			$c3 =~ s! /\* gcov \*/$!!;
-			if ($c1 =~ /\#\#\#\#\#/) {
-				$c3 .= " /* gcov */";
+	if ($Opt{'delete'}) {
+		open(from_fp, "<$f") or return 1;
+		open(to_fp, ">$f.tmp") or return 1;
+		while ($line = <from_fp>) {
+			chomp($line);
+			$line =~ s! /\* gcov \*/$!!;
+			print(to_fp "$line\n");
+		}
+	} else {
+		if (!-f "$f.gcov") {
+			printf(STDERR "$progname: $f.gcov not found\n");
+			return 0;
+		}
+		open(from_fp, "<$f.gcov") or return 1;
+		open(to_fp, ">$f.tmp") or return 1;
+		while ($line = <from_fp>) {
+			chomp($line);
+			if ($line =~ /^(.+?): +(\d+):(.*)$/) {
+				my ($c1, $c2, $c3) = ($1, $2, $3);
+				$c2 eq "0" && next;
+				$c3 =~ s! /\* gcov \*/$!!;
+				if ($c1 =~ /\#\#\#\#\#/) {
+					$c3 .= " /* gcov */";
+				}
+				print(to_fp "$c3\n");
 			}
-			print(to_fp "$c3\n");
 		}
 	}
 	close(to_fp);
@@ -118,6 +130,8 @@ unused.
 
 Options:
 
+  -d, --delete
+    Delete existing markers.
   -h, --help
     Show this help.
   -q, --quiet
