@@ -18,13 +18,13 @@ test "$1" = "--version" && unset sess_str
 test "$HISTFILE" = "/dev/null" && unset sess_str
 
 if test -x ~/local/bin/mc; then
-	$sess_str ~/local/bin/mc -d -u "$@"
+	$sess_str ~/local/bin/mc -d "$@"
 elif test -x /usr/src-other/bin/mc; then
-	$sess_str /usr/src-other/bin/mc -d -u "$@"
+	$sess_str /usr/src-other/bin/mc -d "$@"
 elif test -x /usr/local/bin/mc; then
-	$sess_str /usr/local/bin/mc -d -u "$@"
+	$sess_str /usr/local/bin/mc -d "$@"
 elif test -x /usr/bin/mc; then
-	$sess_str /usr/bin/mc -d -u "$@"
+	$sess_str /usr/bin/mc -d "$@"
 else
 	echo mc is not installed here. >&2
 	exit 1
