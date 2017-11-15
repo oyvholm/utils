@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.5.0
+VERSION=0.5.1
 
 ARGS="$(getopt -o "\
 h\
@@ -98,8 +98,6 @@ cd "$toplevel" || {
     echo $progname: $toplevel: Cannot chdir to top of repo >&2
     exit 1
 }
-
-git wait-until-clean -u
 
 if test "$opt_resume" != "1"; then
     # Using backslash before { and } to suppress folding when editing this 
