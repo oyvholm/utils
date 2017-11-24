@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=run-test
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 d\
@@ -75,7 +75,7 @@ shift
 if test "$opt_diff" = "1"; then
 	diff -u exp got
 else
-	vimdiff -c "windo set wrap" got exp
+	vimdiff -c "windo set wrap" exp got
 fi
 rm got exp
 
