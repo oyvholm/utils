@@ -4,14 +4,14 @@
 # git-up
 # File ID: 96b89f6a-d1eb-11e7-9056-f74d993421b0
 #
-# [Description]
+# Make a full Git update in the current repository
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=git-up
-VERSION=0.0.0
+VERSION=0.1.0
 
 opt_help=0
 opt_quiet=0
@@ -39,6 +39,10 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
+Make a full Git update in the current repository. Fetch everything, 
+update all local branches, create commit-* branches from dangling heads 
+and push the result to all remotes.
+
 Usage: $progname [options]
 
 Options:
@@ -55,5 +59,13 @@ Options:
 END
 	exit 0
 fi
+
+git fetch --all --prune
+git merge --ff-only
+git checkout $(git rev-parse HEAD)
+git allbr -a
+git checkout -
+git dangling
+git pa
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
