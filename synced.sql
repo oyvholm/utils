@@ -360,6 +360,7 @@ INSERT INTO synced VALUES('git-store-dirs','Lib/std/sh','d73dc58a4af539a8058e885
 INSERT INTO synced VALUES('git-svn-myclone','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-testadd','Lib/std/sh','1bfe49431205e4de6f4603084c3c303455f92460','2016-11-26 10:07:20');
 INSERT INTO synced VALUES('git-tree-size','Lib/std/perl',NULL,NULL);
+INSERT INTO synced VALUES('git-up','Lib/std/sh','7ecf714c69d95f3409d1af61496d18edd8930124','2017-11-25 14:19:03');
 INSERT INTO synced VALUES('git-update-dirs','Lib/std/perl-tab','fc141daa719ef82e36a06437f1017e33e4ff997a','2016-10-16 20:02:25');
 INSERT INTO synced VALUES('git-upstream','Lib/std/sh','62cd08efa0db288c010ffb2d20af752e18f6ac15','2016-11-23 09:41:48');
 INSERT INTO synced VALUES('git-wait-until-clean','Lib/std/sh','9127b24ce5b019ac63da6f5599762971418a17e6','2016-11-26 10:11:48');
