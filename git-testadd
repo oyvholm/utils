@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-testadd
-VERSION=0.11.0
+VERSION=0.11.1
 
 opt_git=''
 opt_help=0
@@ -194,9 +194,10 @@ else
 
 	if test "$opt_pristine" = "1"; then
 		msg 0 Running command with unmodified HEAD
-	elif $GIT diff --cached --binary | grep -q .; then
+	elif $GIT diff --cached --binary --no-textconv | grep -q .; then
 		msg 0 Applying staged changes
-		ap="$GIT diff --cached --binary | (cd \"$tmpdir\" && $GIT apply)"
+		ap="$GIT diff --cached --binary --no-textconv | "
+		ap="$ap(cd \"$tmpdir\" && $GIT apply)"
 		$sim eval "$ap" || {
 			echo $progname: Could not apply patch >&2
 			exit 1

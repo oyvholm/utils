@@ -41,7 +41,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.11.0';
+our $VERSION = '0.11.1';
 
 my %descriptions = ();
 
@@ -298,7 +298,8 @@ sub o_out {
 		my $val = $1;
 
 		$val = length($val) ? "-$val" : "";
-		$retval .= "eval .+ diff --cached --binary \\| " .
+		$retval .= "eval .+ diff --cached --binary " .
+		           "--no-textconv \\| " .
 		           "\\(cd \"\\.testadd$val\\.tmp\" \\&\\& " .
 		           ".+ apply\\)\\n" . "";
 	}
