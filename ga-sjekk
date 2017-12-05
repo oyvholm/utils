@@ -5,22 +5,26 @@
 # File ID: 4d412868-f13b-11e4-be3f-000df06acc56
 #
 # Check if the specified files are already archived in git-annex. Files 
-# that are already archived are moved to ".ga-found/$dir/".
+# that are already archived are moved to "$founddir/$dir/".
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ga-sjekk
-VERSION=0.2.0
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
+n\
 q\
+u\
 v\
 " -l "\
 help,\
+dry-run,\
 quiet,\
+update,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -29,11 +33,14 @@ eval set -- "$ARGS"
 
 opt_help=0
 opt_quiet=0
+opt_update=0
 opt_verbose=0
 while :; do
     case "$1" in
         -h|--help) opt_help=1; shift ;;
+        -n|--dry-run) opt_dry_run=1; shift ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        -u|--update) opt_update=1; shift ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
         --) shift; break ;;
@@ -42,23 +49,37 @@ while :; do
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
+founddir=".ga-found"
+
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Check if the specified files are already archived in git-annex. Files 
-that are already archived are moved to ".ga-found/".
+Check if the specified files are already archived in git-annex. The file 
+information is stored in the directory defined in the GASJEKK_DIR 
+environment variable.
+
+Files that already exist in any of the annexes are moved to "$founddir/" 
+while keeping the original directory structure.
 
 Usage: $progname [options] FILE [FILE [...]]
 
 Options:
 
+  -n, --dry-run
+    Don't move the files to $founddir/, only show if they exist in any 
+    repos.
   -h, --help
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -u, --update
+    Update the SQLite database in \$GASJEKK_DIR. Use the directory name 
+    as name of the repo.
   -v, --verbose
-    Increase level of verbosity. Can be repeated.
+    Increase level of verbosity. Can be repeated. One -v lists file 
+    information of every file on the command line if they exist in the 
+    annex.
   --version
     Print version information.
 
@@ -66,42 +87,122 @@ END
     exit 0
 fi
 
+msg() {
+    test $1 -gt $opt_verbose && return;
+    shift
+    echo "$progname: $*" >&2
+}
+
+err() {
+    echo "$progname: $*"
+    exit 1
+}
+
+is_annex() {
+    if test -z "$(git config --get annex.uuid)"; then
+        echo $progname: Current dir is not an annex, annex.uuid is empty >&2
+        return 1
+    fi
+    return 0
+}
+
+dbdir="$GASJEKK_DIR"
+test -z "$dbdir" && err GASJEKK_DIR environment variable not defined
+
+db="$dbdir/ga-sjekk.sqlite"
+
+if test "$opt_update" = "1"; then
+    is_annex || exit 1
+    if test -e "$db"; then
+        test -w "$db" || err $db: Database is not writable
+    fi
+    toplevel="$(git rev-parse --show-toplevel)"
+    test -z "$toplevel" && err Could not find top of current Git repo
+    cd "$toplevel" || err $toplevel: Could not chdir to top of current Git repo
+    repo=$(basename $(pwd -P))
+    test -z "$repo" && err Could not find repo name, basename returned empty
+    msg 0 Import from repo \"$repo\"
+
+    json="$dbdir/ga-sjekk.$repo.mjson"
+    msg 1 Import JSON from git annex find
+    git annex find --json --include="*" >$json ||
+        err git annex find in $(pwd) failed
+    msg 1 Update $db
+    cat <<SQL_END | tee "$dbdir/ut.ga-sjekk.sql" | sqlite3 "$db"
+BEGIN;
+CREATE TEMPORARY TABLE incoming (
+  j JSON
+    UNIQUE
+      ON CONFLICT IGNORE
+);
+CREATE TABLE IF NOT EXISTS json (
+  repo TEXT,
+  j JSON
+    UNIQUE
+      ON CONFLICT IGNORE
+);
+.separator "\\t"
+.import $json incoming
+CREATE TABLE IF NOT EXISTS files (
+  repo TEXT,
+  key TEXT,
+  size INTEGER,
+  file TEXT,
+  UNIQUE (repo, key, size, file)
+    ON CONFLICT IGNORE
+);
+DELETE FROM files WHERE repo = '$repo';
+INSERT INTO json (repo, j)
+    SELECT '$repo', j FROM incoming;
+INSERT INTO files (repo, key, size, file)
+  SELECT
+      '$repo',
+      json_extract(j, '\$.key'),
+      json_extract(j, '\$.bytesize'),
+      json_extract(j, '\$.file')
+    FROM incoming;
+DROP TABLE incoming;
+CREATE INDEX IF NOT EXISTS idx_files_key ON files (key);
+CREATE INDEX IF NOT EXISTS idx_files_size ON files (size);
+COMMIT;
+SQL_END
+    rm -f "$json"
+
+    exit
+fi
+
+test -e "$db" || err $db: Database not found
+
 for f in "$@"; do
+    test -d "$f" && continue
+    test -e "$f" || continue
+    size=$(wc -c "$f" | awk '{print $1}')
+    test -z "$size" && continue
+    numfound=$(sqlite3 "$db" "SELECT count(*) FROM files WHERE size = $size;")
+    test -z "$numfound" && continue
+    test $numfound -eq 0 && continue
+
     key=$(ga-key -q "$f")
-    test -n "$key" && {
-        echo ======== $f $key
-        # FIXME: Hardcoding
-        for dir in innsp log musikk opptak s usortert; do
-            repodir=''
-            for m in /media/*/annex; do
-                if test -d "$m/$dir"; then
-                    repodir="$m/$dir"
-                fi
-            done
-            if test -d "$HOME/annex/$dir"; then
-                repodir="$HOME/annex/$dir"
-            fi
-            if test -z "$repodir"; then
-                echo $progname: $dir: Repo not found >&2
-                continue
-            fi
-            (
-                cd "$repodir" && {
-                    result="$(
-                        ga whereis --key "$key" 2>/dev/null |
-                        grep -v '(0 copies) failed$'
-                    )"
-                    test -n "$result" && {
-                        echo
-                        echo $dir
-                        ga whereis --key "$key"
-                        cd -
-                        dest=".ga-found/$dir/$(dirname "$f")"
-                        mkdir -p "$dest"
-                        mv -vi "$f" "$dest"
-                    }
-                }
-            )
-        done
-    }
+    test -z "$key" && continue
+    found_in="$(
+        sqlite3 "$db" "
+          SELECT distinct repo FROM files
+            WHERE key = '$key'
+            ORDER BY repo;"
+    )"
+    if test -n "$found_in"; then
+        echo $f: Found in $found_in
+        if test $opt_verbose -ge 1; then
+            sqlite3 "$db" ".mode tabs" \
+                "SELECT '', repo, file FROM files
+                   WHERE key = '$key'
+                   ORDER BY repo, file;"
+        fi
+        if test "$opt_dry_run" != "1"; then
+            dir=$(echo $found_in | tr ' ' +)
+            dest="$founddir/$dir/$(dirname "$f")"
+            mkdir -p "$dest"
+            mv -i "$f" "$dest"
+        fi
+    fi
 done
