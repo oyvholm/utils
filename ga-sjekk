@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=ga-sjekk
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 h\
@@ -128,7 +128,7 @@ if test "$opt_update" = "1"; then
     git annex find --json --include="*" >$json ||
         err git annex find in $(pwd) failed
     msg 1 Update $db
-    cat <<SQL_END | tee "$dbdir/ut.ga-sjekk.sql" | sqlite3 "$db"
+    cat <<SQL_END | sqlite3 "$db"
 BEGIN;
 CREATE TEMPORARY TABLE incoming (
   j JSON
