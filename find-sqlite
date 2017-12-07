@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# find-sqlite
+# File ID: 5c05f2ce-dab9-11e7-8d38-f74d993421b0
+
+find "$@" -type f | while read f; do
+	test "$(head -c 13 "$f")" = "SQLite format" && echo $f
+done
