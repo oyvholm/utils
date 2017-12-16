@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=ga-sjekk
-VERSION=0.3.1
+VERSION=0.4.0
 
 ARGS="$(getopt -o "\
 h\
@@ -60,7 +60,8 @@ information is stored in the directory defined in the GASJEKK_DIR
 environment variable.
 
 Files that already exist in any of the annexes are moved to "$founddir/" 
-while keeping the original directory structure.
+while keeping the original directory structure. Files with size 0 are 
+ignored.
 
 Usage: $progname [options] FILE [FILE [...]]
 
@@ -158,9 +159,10 @@ INSERT INTO files (repo, key, size, file)
   SELECT
       '$repo',
       json_extract(j, '\$.key'),
-      json_extract(j, '\$.bytesize'),
+      json_extract(j, '\$.bytesize') AS size,
       json_extract(j, '\$.file')
-    FROM incoming;
+    FROM incoming
+    WHERE size > 0;
 DROP TABLE incoming;
 CREATE INDEX IF NOT EXISTS idx_files_key ON files (key);
 CREATE INDEX IF NOT EXISTS idx_files_size ON files (size);
