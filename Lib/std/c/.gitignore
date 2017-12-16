@@ -1,4 +1,5 @@
 *.o
+/STDUexecUDTS-VERSION
 /STDexecDTS
 /STDexecDTS.c
 /STDexecDTS.h

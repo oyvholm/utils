@@ -30,6 +30,9 @@ test:
 	cd compile.tmp && \
 	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
 	      -t exec=jada c/Makefile Makefile
+	cd compile.tmp && \
+	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
+	      -t exec=jada c/Gen-version Gen-version
 	cd compile.tmp && $(MAKE) clean
 	cd compile.tmp && $(MAKE)
 	mkdir -p compile.tmp/t

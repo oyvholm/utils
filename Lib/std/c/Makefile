@@ -18,12 +18,18 @@ EXEC = STDexecDTS
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
 
-STDexecDTS.o: STDexecDTS.c $(DEPS)
-	$(CC) $(CCFLAGS) STDexecDTS.c
+STDUexecUDTS-VERSION: Gen-version $(CFILES) $(DEPS)
+	./Gen-version
+
+STDexecDTS.o: STDUexecUDTS-VERSION STDexecDTS.c $(DEPS)
+	$(CC) $(CCFLAGS) STDexecDTS.c \
+	    -D$$(grep STDUexecUDTS_VERSION STDUexecUDTS-VERSION) \
+	    -D$$(grep STDUexecUDTS_DATE STDUexecUDTS-VERSION)
 
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(OBJS)
+	rm -f STDUexecUDTS-VERSION
 
 .PHONY: edit
 edit: tags
