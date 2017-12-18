@@ -30,8 +30,6 @@
 
 #define stddebug  stderr
 
-#undef NDEBUG
-
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>

@@ -138,6 +138,9 @@ int print_license(void)
 int print_version(void)
 {
 	printf("%s %s (%s)\n", progname, STDUexecUDTS_VERSION, STDUexecUDTS_DATE);
+#ifdef NDEBUG
+	printf("has NDEBUG\n");
+#endif
 
 	return EXIT_SUCCESS;
 }

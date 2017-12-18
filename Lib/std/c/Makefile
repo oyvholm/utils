@@ -11,6 +11,7 @@ DEPS = $(HFILES) Makefile
 CC = cc
 LD = cc
 CCFLAGS = -Wall -Wextra -Werror -O0 -c -g -ansi -pedantic
+CCFLAGS += $$(test -n "$(NDEBUG)" && echo -n "-DNDEBUG=1")
 LDFLAGS = -Wall
 LIBS =
 EXEC = STDexecDTS
