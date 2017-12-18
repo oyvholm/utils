@@ -58,3 +58,7 @@ test:
 .PHONY: uninstall
 uninstall:
 	rm -f $(PREFIX)/bin/$(EXEC)
+
+.PHONY: valgrind
+valgrind:
+	cd t && $(MAKE) valgrind

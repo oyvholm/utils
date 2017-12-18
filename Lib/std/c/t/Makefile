@@ -15,3 +15,7 @@ clean:
 .PHONY: test
 test: build
 	./STDexecDTS.t
+
+.PHONY: valgrind
+valgrind: build
+	./STDexecDTS.t --valgrind

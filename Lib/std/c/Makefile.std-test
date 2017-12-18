@@ -35,4 +35,5 @@ test:
 	cd $(TMP)/src && $(MAKE) test
 	cd $(TMP) && test -z "$(git ls-files --exclude-standard -o)"
 	cd $(TMP)/src && $(MAKE) clean
+	cd $(TMP)/src && $(MAKE) valgrind
 	cd $(TMP) && test -z "$(git ls-files -m)"
