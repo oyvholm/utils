@@ -15,6 +15,9 @@ LDFLAGS = -Wall
 LIBS =
 EXEC = STDexecDTS
 
+.PHONY: all
+all: $(EXEC)
+
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
 
