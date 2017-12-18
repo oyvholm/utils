@@ -11,9 +11,12 @@ DEPS = $(HFILES) Makefile
 CC = cc
 LD = cc
 CCFLAGS = -Wall -Wextra -Werror -O0 -c -g -ansi -pedantic
+CCFLAGS += $$(test -n "$(GCOV)" && \
+              echo -n "-fprofile-arcs -ftest-coverage -DGCOV=1")
 CCFLAGS += $$(test -n "$(NDEBUG)" && echo -n "-DNDEBUG=1")
 LDFLAGS = -Wall
 LIBS =
+LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
 EXEC = STDexecDTS
 
 .PHONY: all
@@ -34,12 +37,19 @@ selftest.o: selftest.c $(DEPS)
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(OBJS)
+	rm -f *.gcda *.gcno *.gcov
 	rm -f version.h
 	cd t && $(MAKE) clean
 
 .PHONY: edit
 edit: tags
 	$(EDITOR) $$(git ls-files)
+
+.PHONY: gcov
+gcov: clean
+	$(MAKE) GCOV=1
+	$(MAKE) test
+	gcov $(CFILES)
 
 .PHONY: gdb
 gdb: $(EXEC)

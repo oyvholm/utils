@@ -36,4 +36,5 @@ test:
 	cd $(TMP) && test -z "$(git ls-files --exclude-standard -o)"
 	cd $(TMP)/src && $(MAKE) clean
 	cd $(TMP)/src && $(MAKE) valgrind
+	cd $(TMP)/src && $(MAKE) gcov
 	cd $(TMP) && test -z "$(git ls-files -m)"

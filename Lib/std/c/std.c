@@ -142,6 +142,9 @@ int print_version(void)
 		return EXIT_SUCCESS;
 	}
 	printf("%s %s (%s)\n", progname, STDUexecUDTS_VERSION, STDUexecUDTS_DATE);
+#ifdef GCOV
+	printf("has GCOV\n");
+#endif
 #ifdef NDEBUG
 	printf("has NDEBUG\n");
 #endif
