@@ -53,3 +53,7 @@ tags: $(CFILES) $(HFILES)
 
 .PHONY: test
 test:
+
+.PHONY: uninstall
+uninstall:
+	rm -f $(PREFIX)/bin/$(EXEC)
