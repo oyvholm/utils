@@ -280,8 +280,8 @@ int main(int argc, char *argv[])
 
 	retval = parse_options(&opt, argc, argv);
 	if (retval != EXIT_SUCCESS) {
-		fprintf(stderr, "%s: Option error\n", progname);
-		return EXIT_FAILURE;
+		myerror("Option error");
+		return usage(EXIT_FAILURE);
 	}
 
 	msg(3, "Using verbose level %d", verbose_level(0));
