@@ -78,6 +78,7 @@ INSERT INTO synced VALUES('Lib/std/c/Makefile.std-test','Lib/std/make','9b6170a3
 INSERT INTO synced VALUES('Lib/std/c/gdbrc',NULL,NULL,NULL);
 INSERT INTO synced VALUES('Lib/std/c/std.c','','',NULL);
 INSERT INTO synced VALUES('Lib/std/c/std.h','','',NULL);
+INSERT INTO synced VALUES('Lib/std/c/t/Makefile',NULL,NULL,NULL);
 INSERT INTO synced VALUES('Lib/std/db-Makefile','','',NULL);
 INSERT INTO synced VALUES('Lib/std/db-article','','',NULL);
 INSERT INTO synced VALUES('Lib/std/db-book','Lib/std/db-article','bacb86210fda9f0f7ae461cc0cd8787fa1e1ff29','2016-05-13 15:11:00');

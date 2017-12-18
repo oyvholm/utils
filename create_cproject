@@ -87,3 +87,9 @@ fi
 std -t exec=$name c/.gitignore .gitignore &&
 sort -u .gitignore >.gitignore.tmp &&
 mv .gitignore.tmp .gitignore || exit 1
+
+mkdir -p t &&
+echo -n "t/$name.t: " &&
+cd t &&
+std c-tests $name.t -t progname=$name &&
+std -t exec=$name c/t/Makefile Makefile || exit 1

@@ -32,6 +32,7 @@ STDexecDTS.o: version.h STDexecDTS.c $(DEPS)
 clean:
 	rm -f $(EXEC) $(OBJS)
 	rm -f version.h
+	cd t && $(MAKE) clean
 
 .PHONY: edit
 edit: tags
@@ -52,6 +53,7 @@ tags: $(CFILES) $(HFILES)
 
 .PHONY: test
 test:
+	cd t && $(MAKE) test
 
 .PHONY: uninstall
 uninstall:
