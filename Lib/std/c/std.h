@@ -47,6 +47,7 @@ typedef unsigned char bool;
 struct Options {
 	bool help;
 	bool license;
+	int selftest;
 	int verbose;
 	bool version;
 };
@@ -56,6 +57,10 @@ struct Options {
  */
 
 /* STDexecDTS.c */
+extern int myerror(const char *format, ...);
+
+/* selftest.c */
+extern int selftest(void);
 
 /*
  * Global variables

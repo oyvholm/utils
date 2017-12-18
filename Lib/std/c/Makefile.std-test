@@ -8,7 +8,7 @@ default:
 
 .PHONY: clean
 clean:
-	rm -f STDexecDTS STDexecDTS.o STDexecDTS.c STDexecDTS.h
+	rm -f STDexecDTS STDexecDTS.o STDexecDTS.c STDexecDTS.h selftest.o
 	rm -f *.gcda *.gcno *.gcov
 	rm -f version.h
 	rm -rf $(TMP)

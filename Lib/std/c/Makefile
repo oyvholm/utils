@@ -4,8 +4,8 @@
 
 PREFIX = /usr/local
 
-OBJS = STDexecDTS.o
-CFILES = STDexecDTS.c
+OBJS = STDexecDTS.o selftest.o
+CFILES = STDexecDTS.c selftest.c
 HFILES = STDexecDTS.h
 DEPS = $(HFILES) Makefile
 CC = cc
@@ -27,6 +27,9 @@ version.h: Gen-version $(CFILES) $(DEPS)
 
 STDexecDTS.o: version.h STDexecDTS.c $(DEPS)
 	$(CC) $(CCFLAGS) STDexecDTS.c
+
+selftest.o: selftest.c $(DEPS)
+	$(CC) $(CCFLAGS) selftest.c
 
 .PHONY: clean
 clean:

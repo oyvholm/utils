@@ -173,6 +173,17 @@ sub test_executable {
 	        "../$CMD_BASENAME: Returning from main() with value 0\n",
 	        0,
 	        'One argument');
+	diag("--selftest");
+	testcmd("$CMD --selftest",
+	        <<END,
+1..1
+ok 1 - myerror() when errno is EACCES
+END
+	        <<END,
+../$CMD_BASENAME: errno is EACCES: Permission denied
+END
+	        0,
+	        '--selftest');
 }
 
 sub testcmd {
