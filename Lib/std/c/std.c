@@ -137,6 +137,10 @@ int print_license(void)
 
 int print_version(void)
 {
+	if (verbose_level(0) < 0) {
+		puts(STDUexecUDTS_VERSION);
+		return EXIT_SUCCESS;
+	}
 	printf("%s %s (%s)\n", progname, STDUexecUDTS_VERSION, STDUexecUDTS_DATE);
 #ifdef NDEBUG
 	printf("has NDEBUG\n");

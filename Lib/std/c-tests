@@ -139,6 +139,11 @@ sub test_standard_options {
 	        '/^$/',
 	        0,
 	        'Option --version returns version number');
+	likecmd("$CMD --version --quiet",
+	        '/^\d+\.\d+\.\d+\S*$/',
+	        '/^$/',
+	        0,
+	        '--version with --quiet shows only the version number');
 
 	diag('--license option');
 	likecmd("$CMD --license",
