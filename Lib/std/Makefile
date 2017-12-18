@@ -8,9 +8,7 @@ default:
 .PHONY: clean
 clean:
 	cd book-cmark && $(MAKE) clean
-	cd c && $(MAKE) clean
-	cd c && rm -f STDexecDTS.c STDexecDTS.h
-	cd c && rm -fr t compile.tmp
+	cd c && $(MAKE) -f Makefile.std-test clean
 	cd ly && $(MAKE) clean && rm -f STDprojnameDTS.ly STDprojnameDTS.midi
 
 .PHONY: test
