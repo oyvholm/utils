@@ -1,8 +1,5 @@
 /*.o
 /STDexecDTS
-/STDexecDTS.c
-/STDexecDTS.h
-/compile.tmp/
-/t/STDexecDTS.t
+/gdbopts
 /tags
 /version.h
