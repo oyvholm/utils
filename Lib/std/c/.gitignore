@@ -1,8 +1,8 @@
-*.o
-/STDUexecUDTS-VERSION
+/*.c.gcov
+/*.gcda
+/*.gcno
+/*.o
 /STDexecDTS
-/STDexecDTS.c
-/STDexecDTS.h
-/compile.tmp/
-/t/STDexecDTS.t
+/gdbopts
 /tags
+/version.h

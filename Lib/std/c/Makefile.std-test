@@ -1,41 +1,42 @@
 # Makefile.std-test
 # File ID: 0817d7ec-b768-11e6-a01b-279c2a0468a3
 
+TMP=compile.tmp
+
 .PHONY: default
 default:
 
 .PHONY: clean
 clean:
+	rm -f STDexecDTS STDexecDTS.o STDexecDTS.c STDexecDTS.h selftest.o
+	rm -f *.gcda *.gcno *.gcov
+	rm -f version.h
+	rm -rf $(TMP)
 
 .PHONY: test
 test:
+	rm -f STDexecDTS.c STDexecDTS.h
 	ln -sf std.h STDexecDTS.h
 	ln -sf std.c STDexecDTS.c
 	$(MAKE) clean
 	$(MAKE)
 	./STDexecDTS
-	mkdir -p t
-	rm -f t/STDexecDTS.t
-	cd t && \
-	    std --dbname none perl-tests STDexecDTS.t -t progname=STDexecDTS
-	cd t && ./STDexecDTS.t
-	rm -rf compile.tmp
-	mkdir -p compile.tmp/uuids
-	cd compile.tmp && \
-	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
-	      -t exec=jada c/std.c jada.c
-	cd compile.tmp && \
-	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
-	      -t exec=jada c/std.h jada.h
-	cd compile.tmp && \
-	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
-	      -t exec=jada c/Makefile Makefile
-	cd compile.tmp && \
-	    SUUID_LOGDIR=uuids std -d ./synced.sqlite \
-	      -t exec=jada c/Gen-version Gen-version
-	cd compile.tmp && $(MAKE) clean
-	cd compile.tmp && $(MAKE)
-	mkdir -p compile.tmp/t
-	cd compile.tmp/t && std --dbname none perl-tests jada.t \
-	    -t progname=jada
-	cd compile.tmp/t && ./jada.t
+	rm -rf $(TMP)
+	git init $(TMP)
+	test -d $(TMP)/.git
+	cd $(TMP) && git commit --allow-empty -m "Empty start commit"
+	mkdir -p $(TMP)/src $(TMP)/uuids
+	cd $(TMP)/src && \
+	    SUUID_LOGDIR=$$(pwd)/../uuids ../../../../../create_cproject jada
+	cd $(TMP)/src && git add .
+	cd $(TMP)/src && git commit -m "create_cproject jada"
+	cd $(TMP) && test -z "$(git ls-files --exclude-standard -o)"
+	cd $(TMP)/src && $(MAKE)
+	cd $(TMP)/src && $(MAKE) test
+	cd $(TMP) && test -z "$(git ls-files --exclude-standard -o)"
+	cd $(TMP)/src && $(MAKE) clean
+	cd $(TMP)/src && $(MAKE) valgrind
+	cd $(TMP)/src && $(MAKE) gcov
+	cd $(TMP)/src && $(MAKE) gcov-cmt
+	cd $(TMP) && test -z "$(git ls-files -m)"
+	cd $(TMP)/src && $(MAKE) gcov-cmt-clean

@@ -4,36 +4,60 @@
 
 PREFIX = /usr/local
 
-OBJS = STDexecDTS.o
-CFILES = STDexecDTS.c
+OBJS = STDexecDTS.o selftest.o
+CFILES = STDexecDTS.c selftest.c
 HFILES = STDexecDTS.h
 DEPS = $(HFILES) Makefile
 CC = cc
 LD = cc
 CCFLAGS = -Wall -Wextra -Werror -O0 -c -g -ansi -pedantic
+CCFLAGS += $$(test -n "$(GCOV)" && \
+              echo -n "-fprofile-arcs -ftest-coverage -DGCOV=1")
+CCFLAGS += $$(test -n "$(NDEBUG)" && echo -n "-DNDEBUG=1")
 LDFLAGS = -Wall
 LIBS =
+LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
 EXEC = STDexecDTS
+
+.PHONY: all
+all: $(EXEC)
 
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
 
-STDUexecUDTS-VERSION: Gen-version $(CFILES) $(DEPS)
+version.h: Gen-version $(CFILES) $(DEPS)
 	./Gen-version
 
-STDexecDTS.o: STDUexecUDTS-VERSION STDexecDTS.c $(DEPS)
-	$(CC) $(CCFLAGS) STDexecDTS.c \
-	    -D$$(grep STDUexecUDTS_VERSION STDUexecUDTS-VERSION) \
-	    -D$$(grep STDUexecUDTS_DATE STDUexecUDTS-VERSION)
+STDexecDTS.o: version.h STDexecDTS.c $(DEPS)
+	$(CC) $(CCFLAGS) STDexecDTS.c
+
+selftest.o: selftest.c $(DEPS)
+	$(CC) $(CCFLAGS) selftest.c
 
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(OBJS)
-	rm -f STDUexecUDTS-VERSION
+	rm -f *.gcda *.gcno *.gcov
+	rm -f version.h
+	cd t && $(MAKE) clean
 
 .PHONY: edit
 edit: tags
 	$(EDITOR) $$(git ls-files)
+
+.PHONY: gcov
+gcov: clean
+	$(MAKE) GCOV=1
+	$(MAKE) test
+	gcov $(CFILES)
+
+.PHONY: gcov-cmt
+gcov-cmt: gcov
+	gcov-cmt $(CFILES)
+
+.PHONY: gcov-cmt-clean
+gcov-cmt-clean:
+	gcov-cmt -d $(CFILES)
 
 .PHONY: gdb
 gdb: $(EXEC)
@@ -50,3 +74,12 @@ tags: $(CFILES) $(HFILES)
 
 .PHONY: test
 test:
+	cd t && $(MAKE) test
+
+.PHONY: uninstall
+uninstall:
+	rm -f $(PREFIX)/bin/$(EXEC)
+
+.PHONY: valgrind
+valgrind:
+	cd t && $(MAKE) valgrind

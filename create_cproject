@@ -73,11 +73,24 @@ fi
 
 name=$1
 test -z "$name" && { echo $progname: Name not specified as arg 1 >&2; exit 1; }
-echo -n "Makefile: "; std -t exec=$name c/Makefile Makefile
-echo -n "Gen-version: "; std -t exec=$name c/Gen-version Gen-version
-echo -n "gdbrc: "; std c/gdbrc gdbrc
-echo -n "$name.c: "; std -t exec=$name c/std.c $name.c
-echo -n "$name.h: "; std -t exec=$name c/std.h $name.h
+
+echo -n "Makefile: " && std -t exec=$name c/Makefile Makefile &&
+echo -n "Gen-version: " && std -t exec=$name c/Gen-version Gen-version &&
+echo -n "gdbrc: " && std c/gdbrc gdbrc &&
+echo -n "$name.c: " && std -t exec=$name c/std.c $name.c &&
+echo -n "$name.h: " && std -t exec=$name c/std.h $name.h &&
+echo -n "selftest.c: " && std -t exec=$name c/selftest.c selftest.c || exit 1
+
 if test "$opt_copying" = "1"; then
-    echo -n "COPYING: "; std COPYING COPYING && echo OK || echo ERROR
+    echo -n "COPYING: " && std COPYING COPYING && echo OK || exit 1
 fi
+
+std -t exec=$name c/.gitignore .gitignore &&
+sort -u .gitignore >.gitignore.tmp &&
+mv .gitignore.tmp .gitignore || exit 1
+
+mkdir -p t &&
+echo -n "t/$name.t: " &&
+cd t &&
+std c-tests $name.t -t progname=$name &&
+std -t exec=$name c/t/Makefile Makefile || exit 1

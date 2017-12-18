@@ -21,10 +21,6 @@
 #ifndef _STDUexecUDTS_H
 #define _STDUexecUDTS_H
 
-/*
- * Defines
- */
-
 #define FALSE  0
 #define TRUE   1
 
@@ -34,11 +30,7 @@
 
 #define stddebug  stderr
 
-#undef NDEBUG
-
-/*
- * Standard header files
- */
+#include "version.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -48,44 +40,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
- * Macros
- */
-
 #define DEBL  msg(2, "%s, line %u in %s()", __FILE__, __LINE__, __func__)
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? TRUE : FALSE)
-
-/*
- * Typedefs
- */
 
 typedef unsigned char bool;
 struct Options {
 	bool help;
 	bool license;
+	int selftest;
 	int verbose;
 	bool version;
 };
 
 /*
- * Function prototypes
+ * Public function prototypes
  */
 
-#if 1 /* Set to 0 to test without prototypes */
-
 /* STDexecDTS.c */
-extern int verbose_level(const int action, ...);
-extern int msg(const int verbose, const char *format, ...);
 extern int myerror(const char *format, ...);
-extern int print_license(void);
-extern int print_version(void);
-extern int usage(const int retval);
-extern int choose_opt_action(struct Options *dest,
-                             const int c, const struct option *opts);
-extern int parse_options(struct Options *dest,
-                         const int argc, char * const argv[]);
 
-#endif
+/* selftest.c */
+extern int selftest(void);
 
 /*
  * Global variables

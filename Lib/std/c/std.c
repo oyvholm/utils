@@ -137,7 +137,17 @@ int print_license(void)
 
 int print_version(void)
 {
+	if (verbose_level(0) < 0) {
+		puts(STDUexecUDTS_VERSION);
+		return EXIT_SUCCESS;
+	}
 	printf("%s %s (%s)\n", progname, STDUexecUDTS_VERSION, STDUexecUDTS_DATE);
+#ifdef GCOV
+	printf("has GCOV\n");
+#endif
+#ifdef NDEBUG
+	printf("has NDEBUG\n");
+#endif
 
 	return EXIT_SUCCESS;
 }
@@ -171,6 +181,8 @@ int usage(const int retval)
 	       "    Be more quiet. Can be repeated to increase silence.\n");
 	printf("  -v, --verbose\n"
 	       "    Increase level of verbosity. Can be repeated.\n");
+	printf("  --selftest\n"
+	       "    Run the built-in test suite.\n");
 	printf("  --version\n"
 	       "    Print version information.\n");
 	printf("\n");
@@ -197,6 +209,8 @@ int choose_opt_action(struct Options *dest,
 	case 0:
 		if (!strcmp(opts->name, "license"))
 			dest->license = TRUE;
+		else if (!strcmp(opts->name, "selftest"))
+			dest->selftest = TRUE;
 		else if (!strcmp(opts->name, "version"))
 			dest->version = TRUE;
 		break;
@@ -232,6 +246,7 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 
 	dest->help = FALSE;
 	dest->license = FALSE;
+	dest->selftest = 0;
 	dest->verbose = 0;
 	dest->version = FALSE;
 
@@ -242,6 +257,7 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 			{"help", no_argument, 0, 'h'},
 			{"license", no_argument, 0, 0},
 			{"quiet", no_argument, 0, 'q'},
+			{"selftest", no_argument, 0, 0},
 			{"verbose", no_argument, 0, 'v'},
 			{"version", no_argument, 0, 0},
 			{0, 0, 0, 0}
@@ -277,12 +293,14 @@ int main(int argc, char *argv[])
 
 	retval = parse_options(&opt, argc, argv);
 	if (retval != EXIT_SUCCESS) {
-		fprintf(stderr, "%s: Option error\n", progname);
-		return EXIT_FAILURE;
+		myerror("Option error");
+		return usage(EXIT_FAILURE);
 	}
 
 	msg(3, "Using verbose level %d", verbose_level(0));
 
+	if (opt.selftest)
+		return selftest();
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
 	if (opt.version)
