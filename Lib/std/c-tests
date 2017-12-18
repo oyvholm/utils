@@ -84,6 +84,7 @@ sub main {
 	}
 
 	test_standard_options();
+	test_executable();
 
 	diag('========== BEGIN version info ==========');
 	diag(`$CMD --version`);
@@ -119,6 +120,18 @@ sub test_standard_options {
 	        '/^$/',
 	        0,
 	        'Option -v with -h returns version number and help screen');
+	testcmd("$CMD -vvv --verbose",
+	        "",
+	        "../$CMD_BASENAME: Using verbose level 4\n" .
+	        "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        0,
+	        '-vvv --verbose');
+	testcmd("$CMD -vvqv --verbose",
+	        "",
+	        "../$CMD_BASENAME: Using verbose level 3\n" .
+	        "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        0,
+	        'One -q reduces the verbosity level');
 
 	diag('Testing --version option...');
 	likecmd("$CMD --version",
@@ -126,7 +139,35 @@ sub test_standard_options {
 	        '/^$/',
 	        0,
 	        'Option --version returns version number');
+
+	diag('--license option');
+	likecmd("$CMD --license",
+	        '/GNU General Public License' .
+	        '.*' .
+	        'either version 2 of the License/s',
+	        '/^$/',
+	        0,
+	        'Option --license displays the program license');
+
+	diag('Unknown option');
+	likecmd("$CMD --gurgle",
+	        '/^$/',
+	        "/\\.\\.\\/$CMD_BASENAME: Option error\\n" .
+	        "\\nType \"../$CMD_BASENAME --help\" for help screen\\. " .
+	        "Returning with value 1\\.\\n/s",
+	        1,
+	        'Unknown option specified');
 	return;
+}
+
+sub test_executable {
+	testcmd("$CMD -vvv abc",
+	        "",
+	        "../$CMD_BASENAME: Using verbose level 3\n" .
+	        "../$CMD_BASENAME: Non-option arg: abc\n" .
+	        "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        0,
+	        'One argument');
 }
 
 sub testcmd {
