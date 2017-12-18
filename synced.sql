@@ -70,6 +70,7 @@ INSERT INTO synced VALUES('Lib/std/book-cmark/bin/stats','Lib/std/perl','4dbab2b
 INSERT INTO synced VALUES('Lib/std/book-cmark/dat/STDprojnameDTS.sql','','',NULL);
 INSERT INTO synced VALUES('Lib/std/book-cmark/index.md','Lib/std/markdown','ffe510ea2fbb5baf8f7f5573d86e3168a9ce7df0','2015-12-24 17:11:25');
 INSERT INTO synced VALUES('Lib/std/book-cmark/synced.sql','','',NULL);
+INSERT INTO synced VALUES('Lib/std/c-tests','Lib/std/perl-tests-tab','7aeed1bbb46dba79148f92e84793aa6e6239c8db','2017-12-18 10:24:47');
 INSERT INTO synced VALUES('Lib/std/c/.gitignore','','',NULL);
 INSERT INTO synced VALUES('Lib/std/c/Gen-version',NULL,NULL,NULL);
 INSERT INTO synced VALUES('Lib/std/c/Makefile','','',NULL);
