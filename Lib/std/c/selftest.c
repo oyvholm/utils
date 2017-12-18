@@ -29,11 +29,15 @@ int test_errno(void)
 
 int selftest(void)
 {
-	printf("1..1\n");
-	if (test_errno() == EXIT_SUCCESS)
-		printf("ok 1 - myerror() when errno is EACCES\n");
+	int total = 1; /* Update this when adding or deleting tests */
+	int fail = 0;
 
-	return EXIT_SUCCESS;
+	printf("1..%u\n", total);
+	if (!(fail += test_errno()))
+		printf("ok 1 - myerror() when errno is EACCES\n");
+	fprintf(stderr, "# %u/%u tests failed\n", fail, total);
+
+	return fail;
 }
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */

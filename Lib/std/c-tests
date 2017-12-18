@@ -181,6 +181,7 @@ ok 1 - myerror() when errno is EACCES
 END
 	        <<END,
 ../$CMD_BASENAME: errno is EACCES: Permission denied
+# 0/1 tests failed
 END
 	        0,
 	        '--selftest');
