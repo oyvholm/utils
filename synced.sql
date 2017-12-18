@@ -52,6 +52,7 @@ INSERT INTO synced VALUES('Lib/perllib/suncgi.pm','','',NULL);
 INSERT INTO synced VALUES('Lib/perllib/test.shtml','','',NULL);
 INSERT INTO synced VALUES('Lib/perllib/tricgi.pm','','',NULL);
 INSERT INTO synced VALUES('Lib/perllib/tripwd.pm','','',NULL);
+INSERT INTO synced VALUES('Lib/std/.gitignore',NULL,NULL,NULL);
 INSERT INTO synced VALUES('Lib/std/Add_test','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('Lib/std/COPYING','http://www.gnu.org/licenses/gpl-2.0.txt','',NULL);
 INSERT INTO synced VALUES('Lib/std/Genlog','Lib/std/bash-no-getopt','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
