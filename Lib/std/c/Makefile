@@ -51,6 +51,14 @@ gcov: clean
 	$(MAKE) test
 	gcov $(CFILES)
 
+.PHONY: gcov-cmt
+gcov-cmt: gcov
+	gcov-cmt $(CFILES)
+
+.PHONY: gcov-cmt-clean
+gcov-cmt-clean:
+	gcov-cmt -d $(CFILES)
+
 .PHONY: gdb
 gdb: $(EXEC)
 	gdb -tui -x gdbrc $$(cat gdbopts 2>/dev/null) $(EXEC)
