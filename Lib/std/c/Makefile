@@ -22,18 +22,16 @@ all: $(EXEC)
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
 
-STDUexecUDTS-VERSION: Gen-version $(CFILES) $(DEPS)
+version.h: Gen-version $(CFILES) $(DEPS)
 	./Gen-version
 
-STDexecDTS.o: STDUexecUDTS-VERSION STDexecDTS.c $(DEPS)
-	$(CC) $(CCFLAGS) STDexecDTS.c \
-	    -D$$(grep STDUexecUDTS_VERSION STDUexecUDTS-VERSION) \
-	    -D$$(grep STDUexecUDTS_DATE STDUexecUDTS-VERSION)
+STDexecDTS.o: version.h STDexecDTS.c $(DEPS)
+	$(CC) $(CCFLAGS) STDexecDTS.c
 
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(OBJS)
-	rm -f STDUexecUDTS-VERSION
+	rm -f version.h
 
 .PHONY: edit
 edit: tags

@@ -1,8 +1,8 @@
 /*.o
-/STDUexecUDTS-VERSION
 /STDexecDTS
 /STDexecDTS.c
 /STDexecDTS.h
 /compile.tmp/
 /t/STDexecDTS.t
 /tags
+/version.h
