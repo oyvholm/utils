@@ -4,6 +4,8 @@
 
 PREFIX = /usr/local
 
+EXEC = STDexecDTS
+
 OBJS = STDexecDTS.o selftest.o
 CFILES = STDexecDTS.c selftest.c
 HFILES = STDexecDTS.h
@@ -17,7 +19,6 @@ CCFLAGS += $$(test -n "$(NDEBUG)" && echo -n "-DNDEBUG=1")
 LDFLAGS = -Wall
 LIBS =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
-EXEC = STDexecDTS
 
 .PHONY: all
 all: $(EXEC)
