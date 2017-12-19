@@ -74,7 +74,7 @@ tags: $(CFILES) $(HFILES)
 	ctags $(CFILES) $(HFILES)
 
 .PHONY: test
-test:
+test: $(EXEC)
 	cd t && $(MAKE) test
 
 .PHONY: uninstall
