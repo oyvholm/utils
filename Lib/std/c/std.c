@@ -290,6 +290,7 @@ int main(int argc, char *argv[])
 	struct Options opt;
 
 	progname = argv[0];
+	errno = 0;
 
 	retval = parse_options(&opt, argc, argv);
 	if (retval != EXIT_SUCCESS) {
