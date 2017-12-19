@@ -299,10 +299,10 @@ int main(int argc, char *argv[])
 
 	msg(3, "Using verbose level %d", verbose_level(0));
 
-	if (opt.selftest)
-		return selftest();
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
+	if (opt.selftest)
+		return selftest();
 	if (opt.version)
 		return print_version();
 	if (opt.license)
