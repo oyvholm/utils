@@ -176,12 +176,10 @@ sub test_executable {
 	diag("--selftest");
 	testcmd("$CMD --selftest",
 	        <<END,
-1..1
-ok 1 - myerror() when errno is EACCES
+# test_errno
 END
 	        <<END,
 ../$CMD_BASENAME: errno is EACCES: Permission denied
-# 0/1 tests failed
 END
 	        0,
 	        '--selftest');
