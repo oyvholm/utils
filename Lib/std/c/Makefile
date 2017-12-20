@@ -47,9 +47,8 @@ edit: tags
 	$(EDITOR) $$(git ls-files)
 
 .PHONY: gcov
-gcov: clean
-	$(MAKE) GCOV=1
-	$(MAKE) test
+gcov:
+	$(MAKE) clean test GCOV=1
 	gcov $(CFILES)
 	@echo $$(grep -E '^ +#####:' *.c.gcov | wc -l) untested lines >&2
 
