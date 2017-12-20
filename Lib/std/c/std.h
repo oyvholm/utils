@@ -48,6 +48,7 @@ struct Options {
 	bool help;
 	bool license;
 	int selftest;
+	int simfail;
 	int verbose;
 	bool version;
 };
@@ -67,6 +68,7 @@ extern int selftest(void);
  */
 
 extern char *progname;
+extern int simfail;
 
 #endif /* ifndef _STDUexecUDTS_H */
 
