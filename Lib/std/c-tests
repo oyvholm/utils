@@ -176,7 +176,7 @@ sub test_executable {
 	diag("--selftest");
 	testcmd("$CMD --selftest",
 	        <<END,
-# test_errno
+# myerror("errno is EACCES")
 END
 	        <<END,
 ../$CMD_BASENAME: errno is EACCES: Permission denied

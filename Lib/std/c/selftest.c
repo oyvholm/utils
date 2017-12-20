@@ -21,24 +21,16 @@
 #include "STDexecDTS.h"
 
 /*
- * test_errno() - Test output from myerror() when errno != 0.
- */
-
-void test_errno(void)
-{
-	errno = EACCES;
-	myerror("errno is EACCES");
-}
-
-/*
  * selftest() - Run internal testing to check that it works on the current 
  * system. Executed if --selftest is used.
  */
 
 int selftest(void)
 {
-	printf("# test_errno\n");
-	test_errno();
+	errno = EACCES;
+	puts("# myerror(\"errno is EACCES\")");
+	myerror("errno is EACCES");
+	errno = 0;
 
 	return EXIT_SUCCESS;
 }
