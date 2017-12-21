@@ -47,7 +47,7 @@ typedef unsigned char bool;
 struct Options {
 	bool help;
 	bool license;
-	int selftest;
+	bool selftest;
 	int simfail;
 	int verbose;
 	bool version;
