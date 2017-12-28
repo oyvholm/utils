@@ -1,0 +1,23 @@
+#!/bin/sh
+
+#==============================================================================
+# zmodem_dl
+# File ID: aa120564-eb2d-11e7-bc55-f74d993421b0
+#
+# Wrapper for rz (ZMODEM download) in screen(1), download everything to 
+# ~/dl/zmodem/
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
+
+progname=zmodem_dl
+VERSION=0.1.0
+
+dldir=~/dl/zmodem
+
+test -d "$dldir" || mkdir -p "$dldir"
+cd "$dldir" || exit 1
+rz -vv -b -E
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :

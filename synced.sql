@@ -725,6 +725,7 @@ INSERT INTO synced VALUES('youtube-dl','','',NULL);
 INSERT INTO synced VALUES('zero-to-lf','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('zeropad','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO synced VALUES('zerosplit','Lib/std/perl',NULL,NULL);
+INSERT INTO synced VALUES('zmodem_dl',NULL,NULL,NULL);
 CREATE TABLE todo (
   file TEXT
     CONSTRAINT todo_file_length
