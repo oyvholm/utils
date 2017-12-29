@@ -16,8 +16,9 @@ STDexecDTS_version=0.0.0
 STDexecDTS_date=STDyearDTS-00-00
 
 tag_prefix="v$STDexecDTS_version"
+has_git=$(git --version | grep -q "git version" && echo 1 || echo 0)
 
-if test -d ../.git; then
+if test -d ../.git -a $has_git -eq 1; then
 	if git tag | grep -q ^$tag_prefix; then
 		numsince=$(
 		    git log --format=%h \
