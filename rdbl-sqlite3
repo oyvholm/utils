@@ -10,6 +10,11 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+if test "$(head -c 13 "$1")" != "SQLite format"; then
+	cat "$1"
+	exit
+fi
+
 sqlite3 "$1" .dbinfo
 echo
 sqlite3 "$1" .dump
