@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.17.0
+VERSION=0.18.0
 
 STD_SUFFIX=''
 
@@ -19,6 +19,7 @@ ARGS="$(getopt -o "\
 1\
 G\
 a\
+f\
 h\
 q\
 r\
@@ -30,6 +31,7 @@ x\
 z\
 " -l "\
 all-types,\
+force,\
 help,\
 no-git-check,\
 no-xattrs,\
@@ -48,6 +50,7 @@ eval set -- "$ARGS"
 opt_1=0
 opt_no_git_check=0
 opt_all_types=0
+opt_force=0
 opt_help=0
 opt_no_xattrs=0
 opt_quiet=0
@@ -62,6 +65,7 @@ while :; do
         -1) opt_1=1; shift ;;
         -G|--no-git-check) opt_no_git_check=1; shift ;;
         -a|--all-types) opt_all_types=1; shift ;;
+        -f|--force) opt_force=1; shift ;;
         -h|--help) opt_help=1; shift ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         -r|--remove-files) opt_remove_files=1; shift ;;
@@ -101,6 +105,8 @@ Options:
     option disables the check.
   -a, --all-types
     Also pack other kinds of directory entries, not only directories.
+  -f, --force
+    Don't abort if the .tar file exists, delete it before proceeding.
   -h, --help
     Show this help.
   -q, --quiet
@@ -191,8 +197,12 @@ for f in "$@"; do
     fi
 
     if ls "$tarfile"* 2>/dev/null | grep -q .; then
-        echo "$progname: $tarfile* already exist" >&2
-        exit 1
+        if test "$opt_force" = "1"; then
+            rm -fv "$tarfile"*
+        else
+            echo "$progname: $tarfile* already exist" >&2
+            exit 1
+        fi
     fi
 
     if [ -d "$dir" -o "$opt_all_types" = "1" ]; then
