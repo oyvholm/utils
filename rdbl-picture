@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+# rdbl-picture
+# File ID: 066787c0-ef0d-11e7-a30f-f74d993421b0
+#
+# Display EXIF info and an ASCII representation of a picture on stdout. Can for 
+# example be used as a diff filter in Git.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
+
+progname=rdbl-picture
+VERSION=0.1.0
+
+tmpfile=/tmp/.$progname.$(date +%s).$$.xpm
+exiftool "$1"
+echo
+convert "$1" "$tmpfile"
+cat "$tmpfile"
+rm -f "$tmpfile"

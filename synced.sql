@@ -501,6 +501,7 @@ INSERT INTO synced VALUES('rdbl-gpg','','',NULL);
 INSERT INTO synced VALUES('rdbl-gramps-backup','','',NULL);
 INSERT INTO synced VALUES('rdbl-midi','','',NULL);
 INSERT INTO synced VALUES('rdbl-odt','','',NULL);
+INSERT INTO synced VALUES('rdbl-picture',NULL,NULL,NULL);
 INSERT INTO synced VALUES('rdbl-sort_k5','','',NULL);
 INSERT INTO synced VALUES('rdbl-sqlite3','','',NULL);
 INSERT INTO synced VALUES('rdbl-unzip','','',NULL);
