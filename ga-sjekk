@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=ga-sjekk
-VERSION=0.4.0
+VERSION=0.4.1
 
 ARGS="$(getopt -o "\
 h\
@@ -95,13 +95,13 @@ msg() {
 }
 
 err() {
-    echo "$progname: $*"
+    echo "$progname: $*" >&2
     exit 1
 }
 
 is_annex() {
     if test -z "$(git config --get annex.uuid)"; then
-        echo $progname: Current dir is not an annex, annex.uuid is empty >&2
+        err Current dir is not an annex, annex.uuid is empty
         return 1
     fi
     return 0
