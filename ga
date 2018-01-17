@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.14.3
+VERSION=0.14.4
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -61,9 +61,8 @@ customised:
     "git wait-until-clean -u" before syncing, i.e., wait until the 
     repository is clean before continuing. This is to avoid any 
     accidental commits.
-    Also, run "git pa" before exit to make sure the changes are pushed 
-    to all remotes and all local synced/* branches are updated. If you 
-    have a Git-aware command line prompt that shows if the current 
+    Also, update all local synced/* branches by running "git pa -s". If 
+    you have a Git-aware command line prompt that shows if the current 
     branch is behind or ahead upstream, it will show when a sync or 
     merge is needed.
   ud
@@ -207,5 +206,5 @@ else
 fi
 
 if test "$1" = "sync"; then
-    git pa
+    git pa -s
 fi
