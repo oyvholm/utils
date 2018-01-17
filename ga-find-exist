@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=ga-find-exist
-VERSION=0.0.0
+VERSION=0.1.0
 
 opt_help=0
 opt_quiet=0
@@ -36,10 +36,34 @@ done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
 if test "$opt_help" = "1"; then
+	exname=big.iso
+
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Usage: $progname [options]
+Usage: $progname [options] FILENAME
+
+Go back in time in Git for a specific filename until FILENAME exists and 
+is not a broken symlink. Checks all earlier revisions where FILENAME was 
+modified. Abort if the git command fails.
+
+Very suitable for git-annex, but can also be used with regular git. In 
+git-annex, it keeps scanning the history backwards until the symlink 
+isn't broken anymore. Can be used to find a reference file for rsync 
+transfers. If the files share common data, the transfer speed can be 
+increased dramatically. For example, transfer time for upgraded isofs 
+images can be reduced because not all files have changed, especially if 
+the files are stored in the same order as the previous version.
+
+  \$ $progname $exname # HEAD becomes detached if the file didn't exist
+  \$ git annex edit $exname
+  \$ rsync -avzL --progress user@remotehost:/path/to/$exname $exname
+  \$ git annex reinject --known $exname
+  \$ git checkout -f $exname # Was deleted by git annex reinject
+  \$ git checkout master
+
+Returns 0 if FILENAME exists or it was found in the Git history.
+Returns 1 if the git command failed or the file wasn't found.
 
 Options:
 
@@ -55,5 +79,28 @@ Options:
 END
 	exit 0
 fi
+
+file="$1"
+
+if test -z "$file"; then
+	echo $progname: No file specified >&2
+	exit 1
+fi
+
+test -e "$file" && exit 0
+
+shas="$(git log --format=%h -- "$file")"
+
+if test -z "$shas"; then
+	echo $progname: $file: File not found in the Git history >&2
+	exit 1
+fi
+
+test $opt_verbose -ge 1 && echo $progname: Checking revisions $shas >&2
+
+for s in $shas; do
+	git checkout $s || exit 1
+	test -e "$file" && exit 0
+done
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
