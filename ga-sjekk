@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=ga-sjekk
-VERSION=0.4.1
+VERSION=0.4.2
 
 ARGS="$(getopt -o "\
 h\
@@ -100,11 +100,7 @@ err() {
 }
 
 is_annex() {
-    if test -z "$(git config --get annex.uuid)"; then
-        err Current dir is not an annex, annex.uuid is empty
-        return 1
-    fi
-    return 0
+    test -z "$(git config --get annex.uuid)" && return 1 || return 0
 }
 
 dbdir="$GASJEKK_DIR"
@@ -113,7 +109,7 @@ test -z "$dbdir" && err GASJEKK_DIR environment variable not defined
 db="$dbdir/ga-sjekk.sqlite"
 
 if test "$opt_update" = "1"; then
-    is_annex || exit 1
+    is_annex || err Current dir is not an annex, annex.uuid is empty
     if test -e "$db"; then
         test -w "$db" || err $db: Database is not writable
     fi
