@@ -304,6 +304,7 @@ INSERT INTO synced VALUES('g0','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('g1','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('ga','Lib/std/bash-no-getopt','7eefb1c63b9c7ede6d7fbf46903f426489fae171','2016-11-12 20:03:07');
 INSERT INTO synced VALUES('ga-au','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
+INSERT INTO synced VALUES('ga-find-exist','Lib/std/sh','1d8e4a887d6ee06052aa25591a177fe107d432ec','2018-01-17 02:04:08');
 INSERT INTO synced VALUES('ga-findkey','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO synced VALUES('ga-fixnew','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('ga-fsck-size','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
