@@ -139,10 +139,10 @@ int print_license(void)
 int print_version(void)
 {
 	if (verbose_level(0) < 0) {
-		puts(STDUexecUDTS_VERSION);
+		puts(EXEC_VERSION);
 		return EXIT_SUCCESS;
 	}
-	printf("%s %s (%s)\n", progname, STDUexecUDTS_VERSION, STDUexecUDTS_DATE);
+	printf("%s %s (%s)\n", progname, EXEC_VERSION, EXEC_DATE);
 #ifdef GCOV
 	printf("has GCOV\n");
 #endif
