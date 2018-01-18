@@ -18,6 +18,10 @@ STDexecDTS_date=STDyearDTS-00-00
 tag_prefix="v$STDexecDTS_version"
 has_git=$(git --version | grep -q "git version" && echo 1 || echo 0)
 
+chkdef() {
+	test -n "$1" && echo "#define $1  1" >>version.h
+}
+
 if test -d ../.git -a $has_git -eq 1; then
 	if git tag | grep -q ^$tag_prefix; then
 		numsince=$(
@@ -43,6 +47,8 @@ cat <<END >version.h
 #define STDUexecUDTS_VERSION  "$STDexecDTS_fullversion"
 #define STDUexecUDTS_DATE  "$STDexecDTS_date"
 END
+
+chkdef NDEBUG
 
 exit 0
 

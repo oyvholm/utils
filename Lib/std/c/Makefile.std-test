@@ -37,6 +37,8 @@ test:
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
 	cd $(TMP)/src && $(MAKE) clean
 	cd $(TMP)/src && $(MAKE) valgrind
+	cd $(TMP)/src && $(MAKE) clean valgrind NDEBUG=1
+	cd $(TMP)/src && ./jada --version | grep -q "has NDEBUG"
 	cd $(TMP)/src && $(MAKE) gcov
 	cd $(TMP)/src && $(MAKE) gcov 2>&1 | grep -q '^0 untested lines'
 	cd $(TMP)/src && $(MAKE) clean test gcov
