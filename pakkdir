@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.18.1
+VERSION=0.18.2
 
 STD_SUFFIX=''
 
@@ -118,7 +118,8 @@ Options:
   -S SUFFIX, --suffix SUFFIX
     Add a custom suffix after the directory name and before the .tar 
     extension in the output filename. No changes are made to the 
-    resulting tar file, only the file name is different.
+    resulting tar file, only the file name is different. An intial '.' 
+    is added if it's missing.
     Default value: "$STD_SUFFIX".
   -s SIZE, --split SIZE
     Split the .tar file into files with SIZE bytes each. Allowed values 
@@ -184,13 +185,18 @@ for f in "$@"; do
     fi
 done
 
+suffix="$opt_suffix"
+if test -n "$suffix"; then
+    echo "$suffix" | grep -q '^\.' || suffix=".$suffix"
+fi
+
 for f in "$@"; do
     dir="$(echo -n "$f" | sed 's/\/*$//')"
     if [ -z "$dir" ]; then
         echo "$progname: $f: Argument is empty after stripping slash" >&2
         exit 1
     fi
-    tarfile="$dir$opt_suffix.tar"
+    tarfile="$dir$suffix.tar"
 
     if test $opt_verbose -ge 2; then
         echo $progname: dir = $dir >&2
