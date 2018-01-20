@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.18.2
+VERSION=0.19.0
 
 STD_SUFFIX=''
 
@@ -21,6 +21,7 @@ G\
 a\
 f\
 h\
+P:\
 q\
 r\
 S:\
@@ -35,6 +36,7 @@ force,\
 help,\
 no-git-check,\
 no-xattrs,\
+prefix,\
 quiet,\
 remove-files,\
 suffix:,\
@@ -53,6 +55,7 @@ opt_all_types=0
 opt_force=0
 opt_help=0
 opt_no_xattrs=0
+opt_prefix=''
 opt_quiet=0
 opt_remove_files=0
 opt_suffix="$STD_SUFFIX"
@@ -67,6 +70,7 @@ while :; do
         -a|--all-types) opt_all_types=1; shift ;;
         -f|--force) opt_force=1; shift ;;
         -h|--help) opt_help=1; shift ;;
+        -P|--prefix) opt_prefix="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         -r|--remove-files) opt_remove_files=1; shift ;;
         -S|--suffix) opt_suffix="$2"; shift 2 ;;
@@ -109,6 +113,10 @@ Options:
     Don't abort if the .tar file exists, delete it before proceeding.
   -h, --help
     Show this help.
+  -P PREFIX, --prefix PREFIX
+    Use PREFIX at the beginning of the tar filenames. Doesn't change the 
+    name of the extracted files. Adds a terminating '.' if it doesn't 
+    exist.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -r, --remove-files
@@ -185,6 +193,11 @@ for f in "$@"; do
     fi
 done
 
+prefix="$opt_prefix"
+if test -n "$prefix"; then
+    echo "$prefix" | grep -q '\.$' || prefix="$prefix."
+fi
+
 suffix="$opt_suffix"
 if test -n "$suffix"; then
     echo "$suffix" | grep -q '^\.' || suffix=".$suffix"
@@ -196,7 +209,7 @@ for f in "$@"; do
         echo "$progname: $f: Argument is empty after stripping slash" >&2
         exit 1
     fi
-    tarfile="$dir$suffix.tar"
+    tarfile="$prefix$dir$suffix.tar"
 
     if test $opt_verbose -ge 2; then
         echo $progname: dir = $dir >&2
