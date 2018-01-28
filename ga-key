@@ -4,14 +4,14 @@
 # ga-key
 # File ID: 027211a6-f115-11e4-9e02-000df06acc56
 #
-# Calculate SHA256 key used by git-annex.
+# Generate SHA256 sums, use the same format as SHA256 keys in git-annex.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ga-key
-VERSION=0.1.0
+VERSION=0.2.0
 
 ARGS="$(getopt -o "\
 h\
@@ -45,9 +45,10 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Calculate SHA256 key used by git-annex.
+Generate SHA256 sums, use the format used by the "SHA256" backend in 
+git-annex.
 
-Usage: $progname [options] FILE
+Usage: $progname [options] FILE [FILE ...]
 
 Options:
 
@@ -65,16 +66,13 @@ END
 fi
 
 test -z "$1" && { echo $progname: Missing filename >&2; exit 1; }
-test -n "$2" && {
-    echo $progname: Takes exactly one argument, and that must be a filename >&2
-    exit 1
-}
 
-file="$1"
-
-test -f "$file" || {
-    test "$opt_quiet" = "1" || echo $progname: $file: File not found or is not a readable file >&2
-    exit 1
-}
-
-echo SHA256-s$(wc -c "$file" | cut -f 1 -d ' ')--$(sha256sum "$file" | head -c 64)
+for file in "$@"; do
+    if test ! -f "$file"; then
+        test $opt_verbose -ge 0 && echo $progname: $file: Ignoring non-file >&2
+        continue
+    fi
+    echo SHA256-s$(
+        wc -c "$file" | cut -f 1 -d ' '
+    )--$(sha256sum "$file" | head -c 64)
+done
