@@ -11,14 +11,14 @@
 #=======================================================================
 
 progname=pakkdir
-VERSION=0.20.0
+VERSION=0.21.0
 
 STD_SUFFIX=''
 
 ARGS="$(getopt -o "\
 1\
 G\
-a\
+d\
 f\
 h\
 L\
@@ -32,7 +32,7 @@ X\
 x\
 z\
 " -l "\
-all-types,\
+dirs-only,\
 force,\
 help,\
 dereference,\
@@ -53,7 +53,7 @@ eval set -- "$ARGS"
 
 opt_1=0
 opt_no_git_check=0
-opt_all_types=0
+opt_dirs_only=0
 opt_force=0
 opt_help=0
 opt_dereference=0
@@ -70,7 +70,7 @@ while :; do
     case "$1" in
         -1) opt_1=1; shift ;;
         -G|--no-git-check) opt_no_git_check=1; shift ;;
-        -a|--all-types) opt_all_types=1; shift ;;
+        -d|--dirs-only) opt_dirs_only=1; shift ;;
         -f|--force) opt_force=1; shift ;;
         -h|--help) opt_help=1; shift ;;
         -L|--dereference) opt_dereference=1; shift ;;
@@ -111,8 +111,8 @@ Options:
     directories, it aborts. It is useful for example with git-annex, 
     where only a symlink would be stored in the archive file. This 
     option disables the check.
-  -a, --all-types
-    Also pack other kinds of directory entries, not only directories.
+  -d, --dirs-only
+    Ignore non-directory arguments.
   -f, --force
     Don't abort if the .tar file exists, delete it before proceeding.
   -h, --help
@@ -187,7 +187,7 @@ else
 fi
 
 for f in "$@"; do
-    if test -d "$f" -o "$opt_all_types" = "1"; then
+    if test -d "$dir" -o "$opt_dirs_only" != "1"; then
         if test "$opt_no_git_check" != "1"; then
             git ls-files "$f" | grep -q . >&2 && {
                 echo -n "$progname: $f: " >&2
@@ -236,7 +236,7 @@ for f in "$@"; do
         fi
     fi
 
-    if [ -d "$dir" -o "$opt_all_types" = "1" ]; then
+    if [ -d "$dir" -o "$opt_dirs_only" != "1" ]; then
         echo >&2
         echo $progname: Packing $dir... >&2
 
