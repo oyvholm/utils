@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=scrdump
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -72,6 +72,6 @@ fi
     exit 1
 }
 
-TZ=UTC shutter -e --full \
+TZ=UTC shutter -e --full -n \
     -o $scrdumpdir/%Y%m%dT%H%M%SZ.$(hostname)-screendump.\$wx\$h.png \
     2>/dev/null
