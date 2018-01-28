@@ -541,6 +541,7 @@ the alias somewhere.
 - mklist
 - mkrepo
 - mkt
+- mktar
 - mobilstripp
 - mountusb
 - mp3\_to\_ogg
@@ -563,7 +564,6 @@ the alias somewhere.
 - p
 - pakk
 - pakk\_logg
-- pakkdir
 - pakkings
 - pakkut
 - perldeboff

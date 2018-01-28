@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #=======================================================================
-# pakkdir
+# mktar
 # File ID: 5818b856-0ba9-11de-b2c1-000475e441b9
 #
 # Move a whole subdirectory tree into a single .tar.gz file.
@@ -10,8 +10,8 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-progname=pakkdir
-VERSION=0.21.0
+progname=mktar
+VERSION=0.22.0
 
 STD_SUFFIX=''
 
@@ -246,10 +246,10 @@ for f in "$@"; do
         }
 
         uuid=$(
-            suuid -t pakkdir --raw -w eo \
-                -c "<c_pakkdir> <filename>$tarfile</filename> <host>$(
+            suuid -t mktar --raw -w eo \
+                -c "<c_mktar> <filename>$tarfile</filename> <host>$(
                     hostname
-                )</host> <directory>$(/bin/pwd)</directory> </c_pakkdir>"
+                )</host> <directory>$(/bin/pwd)</directory> </c_mktar>"
         ) || {
             echo $progname: suuid error >&2
             exit 1

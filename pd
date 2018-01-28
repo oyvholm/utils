@@ -4,7 +4,7 @@
 # pd
 # File ID: 77fd7e5e-1fbf-11e6-9a04-02010e0a6634
 #
-# Wrapper for pakkdir -1rz
+# Wrapper for mktar -1rz
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
@@ -45,7 +45,7 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Wrapper for "pakkdir -1rz"
+Wrapper for "mktar -1rz"
 
 Usage: $progname [options] DIRECTORIES
 
@@ -64,4 +64,4 @@ END
     exit 0
 fi
 
-sess -- pakkdir -1rz -- "$@"
+sess -- mktar -1rz -- "$@"
