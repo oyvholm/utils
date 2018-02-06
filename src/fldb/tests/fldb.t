@@ -403,7 +403,7 @@ END
 # }}}
 likecmd("$CMD -jl files/dir1/random_2048", # {{{
     '/^\{\n "files":\{\n  ' .
-        '"random_2048":{' .
+        '"random_2048":\{' .
         '"size":2048,' .
         '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
         '"sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d",' .
