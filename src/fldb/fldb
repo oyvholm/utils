@@ -38,8 +38,8 @@ our %Opt = (
     'help' => 0,
     'json' => 1,
     'long' => 0,
+    'postgres' => 0,
     'quiet' => 0,
-    'sql' => 0,
     'verbose' => 0,
     'version' => 0,
     'xml' => 0,
@@ -63,8 +63,8 @@ GetOptions(
     "help|h" => \$Opt{'help'},
     "json|j" => \$Opt{'json'},
     "long|l" => \$Opt{'long'},
+    "postgres" => \$Opt{'postgres'},
     "quiet|q+" => \$Opt{'quiet'},
-    "sql|s" => \$Opt{'sql'},
     "verbose|v+" => \$Opt{'verbose'},
     "version" => \$Opt{'version'},
     "xml|x" => \$Opt{'xml'},
@@ -74,8 +74,8 @@ GetOptions(
 
 $Opt{'debug'} && ($Debug = 1);
 $Opt{'verbose'} -= $Opt{'quiet'};
-($Opt{'sql'} || $Opt{'xml'}) && ($Opt{'json'} = 0);
-($Opt{'json'}+$Opt{'sql'}+$Opt{'xml'} > 1) && die("$progname: Cannot mix --json, --sql and --xml options\n");
+($Opt{'postgres'} || $Opt{'xml'}) && ($Opt{'json'} = 0);
+($Opt{'json'}+$Opt{'postgres'}+$Opt{'xml'} > 1) && die("$progname: Cannot mix --json, --postgres and --xml options\n");
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -93,7 +93,7 @@ my $safe_hostname = safe_string($Hostname);
 my $has_printed = 0;
 my $use_stdin = ($Opt{'files-from'} eq '-') ? 1 : 0;
 
-if ($Opt{'sql'} && $Opt{'add'}) {
+if ($Opt{'postgres'} && $Opt{'add'}) {
     $dbh = DBI->connect("DBI:Pg:dbname=$postgresql_database;host=$postgresql_host")
         or die("connect: På trynet: $!");
 }
@@ -176,19 +176,19 @@ sub add_entry {
                 $crc32_str = $Opt{'crc32'} ? "<crc32>$Sum{crc32}</crc32> " : "";
             } elsif ($Opt{'json'}) {
                 $crc32_str = $Opt{'crc32'} ? "\"crc32\":\"$Sum{crc32}\"" : "";
-            } elsif ($Opt{'sql'}) {
+            } elsif ($Opt{'postgres'}) {
                 $crc32_str = $Opt{'crc32'} ? "'$Sum{crc32}'" : "NULL";
             }
             D("crc32_str = '$crc32_str'");
             my $latin1_str;
             if (valid_utf8($safe_filename)) {
-                $latin1_str = $Opt{'sql'} ? "FALSE" : "";
+                $latin1_str = $Opt{'postgres'} ? "FALSE" : "";
             } else {
                 if ($Opt{'xml'}) {
                     $latin1_str = '<latin1>1</latin1>';
                 } elsif ($Opt{'json'}) {
                     $latin1_str = '"latin1":"1"';
-                } elsif ($Opt{'sql'}) {
+                } elsif ($Opt{'postgres'}) {
                     $latin1_str = 'TRUE';
                 }
                 $safe_filename = latin1_to_utf8($safe_filename);
@@ -340,7 +340,7 @@ sub add_entry {
                 }
                 length($latin1_str) && push(@json, $latin1_str);
                 $Retval = "\n  {" . join(',', @json) . "}";
-            } elsif ($Opt{'sql'}) {
+            } elsif ($Opt{'postgres'}) {
                 my $descr_str = length($Opt{'description'})
                     ? "E'" . safe_sql($Opt{'description'}) . "'"
                     : "NULL";
@@ -421,7 +421,7 @@ sub safe_string {
         $Str = txt_to_xml($Str);
     } elsif ($Opt{'json'}) {
         $Str = txt_to_json($Str);
-    } elsif ($Opt{'sql'}) {
+    } elsif ($Opt{'postgres'}) {
         $Str = safe_sql($Str);
     }
     return($Str);
@@ -490,10 +490,10 @@ Options:
     Generate JSON output. This is the default output format.
   -l, --long
     Use long format, include local information.
+  --postgres
+    Generate SQL for use with Postgres.
   -q, --quiet
     Be quiet, suppress messages. Can be repeated.
-  -s, --sql
-    Generate SQL (Postgres) output.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version

@@ -210,7 +210,7 @@ is(valid_utf8("\xF8"), # {{{
 diag("Testing widechar()...");
 diag("Testing latin1_to_utf8()...");
 diag("Testing -d (--description) option...");
-testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
+testcmd("$CMD -d Groovy --postgres files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitblob, md5, crc32,
@@ -226,7 +226,7 @@ INSERT INTO files (
 END
     "",
     0,
-    "Output SQL with description",
+    "Output SQL (Postgres) with description",
 );
 
 # }}}
@@ -242,7 +242,7 @@ END
 );
 
 # }}}
-testcmd("$CMD --sql -d \"This is a description with spaces\" files/dir1/random_2048", # {{{
+testcmd("$CMD --postgres -d \"This is a description with spaces\" files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitblob, md5, crc32,
@@ -258,7 +258,7 @@ INSERT INTO files (
 END
     "",
     0,
-    "Output SQL with description with space and apos",
+    "Output SQL (Postgres) with description with space and apos",
 );
 
 # }}}
@@ -274,7 +274,7 @@ END
 );
 
 # }}}
-likecmd("$CMD -sl files/dir1/random_2048", # {{{
+likecmd("$CMD --postgres -l files/dir1/random_2048", # {{{
     '/^INSERT INTO files \(\n' .
         ' sha256, sha1, gitblob, md5, crc32,\n' .
         ' size, filename, mtime, perm, descr, ctime,\n' .
@@ -295,7 +295,7 @@ likecmd("$CMD -sl files/dir1/random_2048", # {{{
         '$/',
     '/^$/',
     0,
-    "Output SQL from random_2048",
+    "Output SQL (Postgres) from random_2048",
 );
 
 # }}}
@@ -361,7 +361,7 @@ END
 
 # }}}
 diag("Use default short format...");
-testcmd("$CMD files/dir1/random_2048 --sql", # {{{
+testcmd("$CMD files/dir1/random_2048 --postgres", # {{{
     <<END,
 INSERT INTO files (
  sha256, sha1, gitblob, md5, crc32,
@@ -377,7 +377,7 @@ INSERT INTO files (
 END
     "",
     0,
-    "Output short SQL from dir1/random_2048",
+    "Output short SQL (Postgres) from dir1/random_2048",
 );
 
 # }}}
