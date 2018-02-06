@@ -46,20 +46,20 @@ sub checksum {
         my $size = $stat_array[7];
         my $sha256 = Digest::SHA->new(256);
         my $sha1 = Digest::SHA->new(1);
-        my $gitsum = Digest::SHA->new(1);
+        my $gitblob = Digest::SHA->new(1);
         my $md5 = Digest::MD5->new;
         my $crc32 = Digest::CRC->new(type => "crc32");
-        $gitsum->add("blob $size\0");
+        $gitblob->add("blob $size\0");
         while (my $Curr = <FP>) {
             $sha256->add($Curr);
             $sha1->add($Curr);
-            $gitsum->add($Curr);
+            $gitblob->add($Curr);
             $md5->add($Curr);
             $crc32->add($Curr) if $use_crc32;
         }
         $Sum{'sha256'} = $sha256->hexdigest;
         $Sum{'sha1'} = $sha1->hexdigest;
-        $Sum{'gitsum'} = $gitsum->hexdigest;
+        $Sum{'gitblob'} = $gitblob->hexdigest;
         $Sum{'md5'} = $md5->hexdigest;
         $use_crc32 && ($Sum{'crc32'} = sprintf("%08x", $crc32->digest));
     } else {

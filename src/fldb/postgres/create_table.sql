@@ -6,7 +6,7 @@ CREATE TABLE files (
     idate timestamptz DEFAULT now(),
     sha256 varchar(64),
     sha1 varchar(40),
-    gitsum varchar(40),
+    gitblob varchar(40),
     md5 varchar(32),
     crc32 varchar(8),
     size bigint,

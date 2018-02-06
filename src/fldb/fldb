@@ -209,7 +209,7 @@ sub add_entry {
                             "<size>%u</size> " .
                             "<sha256>%s</sha256> " .
                             "<sha1>%s</sha1> " .
-                            "<gitsum>%s</gitsum> " .
+                            "<gitblob>%s</gitblob> " .
                             "<md5>%s</md5> " .
                             "%s" . # $crc32_str
                             "<filename>%s</filename> " .
@@ -221,7 +221,7 @@ sub add_entry {
                         $Size,
                         $Sum{'sha256'},
                         $Sum{'sha1'},
-                        $Sum{'gitsum'},
+                        $Sum{'gitblob'},
                         $Sum{'md5'},
                         $crc32_str,
                         $safe_filename,
@@ -238,7 +238,7 @@ sub add_entry {
                             "<size>%s</size> " .
                             "<sha256>%s</sha256> " .
                             "<sha1>%s</sha1> " .
-                            "<gitsum>%s</gitsum> " .
+                            "<gitblob>%s</gitblob> " .
                             "<md5>%s</md5> " .
                             "%s" . # $crc32_str
                             "<filename>%s</filename> " .
@@ -260,7 +260,7 @@ sub add_entry {
                         $Size,
                         $Sum{sha256},
                         $Sum{sha1},
-                        $Sum{gitsum},
+                        $Sum{gitblob},
                         $Sum{md5},
                         $crc32_str,
                         $base_filename,
@@ -292,7 +292,7 @@ sub add_entry {
                         '"size":%u,' .
                         '"sha256":"%s",' .
                         '"sha1":"%s",' .
-                        '"gitsum":"%s",' .
+                        '"gitblob":"%s",' .
                         '"md5":"%s"',
                         $Opt{'long'}
                             ? $base_filename
@@ -300,7 +300,7 @@ sub add_entry {
                         $Size,
                         $Sum{'sha256'},
                         $Sum{'sha1'},
-                        $Sum{'gitsum'},
+                        $Sum{'gitblob'},
                         $Sum{'md5'},
                     )
                 );
@@ -349,7 +349,7 @@ sub add_entry {
                     # {{{
                     $Retval = sprintf(<<END,
 INSERT INTO files (
- sha256, sha1, gitsum, md5, crc32,
+ sha256, sha1, gitblob, md5, crc32,
  size, filename, mtime, perm,
  descr,
  latin1
@@ -360,7 +360,7 @@ INSERT INTO files (
  %s
 );
 END
-                        $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
+                        $Sum{sha256}, $Sum{sha1}, $Sum{gitblob}, $Sum{md5}, $crc32_str,
                         $Size, $base_filename, $Mtime, $Perm,
                         $descr_str,
                         $latin1_str,
@@ -370,7 +370,7 @@ END
                     # {{{
                     $Retval = sprintf(<<END,
 INSERT INTO files (
- sha256, sha1, gitsum, md5, crc32,
+ sha256, sha1, gitblob, md5, crc32,
  size, filename, mtime, perm, descr, ctime,
  path,
  inode, links, device, hostname,
@@ -387,7 +387,7 @@ INSERT INTO files (
  %s
 );
 END
-                        $Sum{sha256}, $Sum{sha1}, $Sum{gitsum}, $Sum{md5}, $crc32_str,
+                        $Sum{sha256}, $Sum{sha1}, $Sum{gitblob}, $Sum{md5}, $crc32_str,
                         $Size, $base_filename, $Mtime, $Perm, $descr_str, $Ctime,
                         $safe_filename,
                         $Inode, $Nlinks, safe_sql($Dev), $safe_hostname,

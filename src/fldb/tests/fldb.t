@@ -213,7 +213,7 @@ diag("Testing -d (--description) option...");
 testcmd("$CMD -d Groovy -s files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha256, sha1, gitsum, md5, crc32,
+ sha256, sha1, gitblob, md5, crc32,
  size, filename, mtime, perm,
  descr,
  latin1
@@ -233,7 +233,7 @@ END
 testcmd("$CMD -d Yess -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> <descr>Yess</descr> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitblob>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitblob> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> <descr>Yess</descr> </file>
 </fldb>
 END
     "",
@@ -245,7 +245,7 @@ END
 testcmd("$CMD --sql -d \"This is a description with spaces\" files/dir1/random_2048", # {{{
     <<END,
 INSERT INTO files (
- sha256, sha1, gitsum, md5, crc32,
+ sha256, sha1, gitblob, md5, crc32,
  size, filename, mtime, perm,
  descr,
  latin1
@@ -265,7 +265,7 @@ END
 testcmd("$CMD -d \"Somewhat & weird < > yepp\" -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitblob>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitblob> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> <descr>Somewhat &amp; weird &lt; &gt; yepp</descr> </file>
 </fldb>
 END
     "",
@@ -276,7 +276,7 @@ END
 # }}}
 likecmd("$CMD -sl files/dir1/random_2048", # {{{
     '/^INSERT INTO files \(\n' .
-        ' sha256, sha1, gitsum, md5, crc32,\n' .
+        ' sha256, sha1, gitblob, md5, crc32,\n' .
         ' size, filename, mtime, perm, descr, ctime,\n' .
         ' path,\n' .
         ' inode, links, device, hostname,\n' .
@@ -304,12 +304,12 @@ testcmd("$CMD -f files/allfiles.txt", # {{{
     <<END,
 {
  "files":[
-  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitsum":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
-  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
-  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitsum":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
-  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitsum":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
-  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
-  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitsum":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
+  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitblob":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
+  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
+  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitblob":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
+  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitblob":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
+  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitblob":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
+  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitblob":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
  ]
 }
 END
@@ -324,12 +324,12 @@ testcmd("cat files/allfiles.txt | $CMD -f -", # {{{
     <<END,
 {
  "files":[
-  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitsum":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
-  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
-  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitsum":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
-  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitsum":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
-  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
-  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitsum":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
+  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitblob":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
+  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
+  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitblob":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
+  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitblob":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
+  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitblob":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
+  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitblob":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
  ]
 }
 END
@@ -344,12 +344,12 @@ testcmd("cat files/allfiles.txt | tr '\\n' '\\0' | $CMD -zf -", # {{{
     <<END,
 {
  "files":[
-  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitsum":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
-  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
-  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitsum":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
-  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitsum":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
-  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
-  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitsum":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
+  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitblob":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
+  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
+  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitblob":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
+  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitblob":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
+  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitblob":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
+  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitblob":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
  ]
 }
 END
@@ -364,7 +364,7 @@ diag("Use default short format...");
 testcmd("$CMD files/dir1/random_2048 --sql", # {{{
     <<END,
 INSERT INTO files (
- sha256, sha1, gitsum, md5, crc32,
+ sha256, sha1, gitblob, md5, crc32,
  size, filename, mtime, perm,
  descr,
  latin1
@@ -386,12 +386,12 @@ testcmd("$CMD -j files/dir1/*", # {{{
     <<END,
 {
  "files":[
-  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitsum":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
-  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
-  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitsum":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
-  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitsum":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
-  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
-  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitsum":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
+  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitblob":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
+  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
+  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitblob":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
+  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitblob":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
+  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitblob":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
+  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitblob":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
  ]
 }
 END
@@ -407,7 +407,7 @@ likecmd("$CMD -jl files/dir1/random_2048", # {{{
         '"size":2048,' .
         '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
         '"sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d",' .
-        '"gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
+        '"gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
         '"md5":"4a3074b2aae565f8558b7ea707ca48d2",' .
         '"mtime":"2008-09-22T00:18:37Z",' .
         '"perm":"0644",' .
@@ -433,7 +433,7 @@ testcmd("$CMD -j files/dir1/random_2048", # {{{
     '"size":2048,' .
     '"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034",' .
     '"sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d",' .
-    '"gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
+    '"gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59",' .
     '"md5":"4a3074b2aae565f8558b7ea707ca48d2",' .
     '"mtime":"2008-09-22T00:18:37Z",' .
     '"perm":"0644"' .
@@ -449,12 +449,12 @@ testcmd("$CMD -q files/dir1/*", # {{{
     <<END,
 {
  "files":[
-  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitsum":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
-  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
-  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitsum":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
-  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitsum":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
-  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
-  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitsum":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
+  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitblob":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
+  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
+  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitblob":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
+  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitblob":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
+  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitblob":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
+  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitblob":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
  ]
 }
 END
@@ -468,12 +468,12 @@ testcmd("$CMD -jq --quiet files/dir1/*", # {{{
     <<END,
 {
  "files":[
-  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitsum":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
-  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitsum":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
-  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitsum":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
-  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitsum":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
-  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
-  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitsum":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
+  {"filename":"files/dir1/empty","size":0,"sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","sha1":"da39a3ee5e6b4b0d3255bfef95601890afd80709","gitblob":"e69de29bb2d1d6434b8b29ae775ad8c2e48c5391","md5":"d41d8cd98f00b204e9800998ecf8427e","mtime":"2008-09-22T00:10:24Z","perm":"0644"},
+  {"filename":"files/dir1/random_2048","size":2048,"sha256":"7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034","sha1":"bd91a93ca0462da03f2665a236d7968b0fd9455d","gitblob":"ddf7d5a5e7a7b493368c2761faddb20a58bfbd59","md5":"4a3074b2aae565f8558b7ea707ca48d2","mtime":"2008-09-22T00:18:37Z","perm":"0644"},
+  {"filename":"files/dir1/random_333","size":333,"sha256":"69fd85e4544d4057edb8954d77dfce2b2ded8177b889a4512a7456caf1a2e78b","sha1":"1fffb088a74a48447ee612dcab91dacae86570ad","gitblob":"935633dc1238e064bf841e02b1a9128d75348ffd","md5":"af6888a81369b7a1ecfbaf14791c5552","mtime":"2008-09-22T00:10:06Z","perm":"0644"},
+  {"filename":"files/dir1/textfile","size":43,"sha256":"7dcd877deb276541bc439e639b2838099406f56ec2d8337da27abab986bfcc50","sha1":"c70053a7b8f6276ff22181364430e729c7f42c5a","gitblob":"d31c8dc43d0efce334ee8099be772347eba54002","md5":"96319d5ea553d5e39fd9c843759d3175","mtime":"2008-09-22T00:09:38Z","perm":"0644"},
+  {"filename":"files/dir1/year_1969","size":41,"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d","sha1":"07b8074463668967f6030016d719ef326eb6382d","gitblob":"fe008e59667b2eb0848d9092f4eceac8725a162b","md5":"6dce58e78b13dab939de6eef142b7543","mtime":"1969-01-21T17:12:15Z","perm":"0644"},
+  {"filename":"files/dir1/year_2038","size":41,"sha256":"0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b","sha1":"2113343435a9aadb458d576396d4f960071f8efd","gitblob":"052a58773edb46b2d494a23718cac040fb38c741","md5":"6babaa47123f4f94ae59ed581a65090b","mtime":"2038-01-19T03:14:07Z","perm":"0644"}
  ]
 }
 END
@@ -516,7 +516,7 @@ likecmd("$CMD -xl files/dir1/random_2048", # {{{
                 '<size>2048<\/size> ' .
                 '<sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> ' .
                 '<sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d<\/sha1> ' .
-                '<gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59<\/gitsum> ' .
+                '<gitblob>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59<\/gitblob> ' .
                 '<md5>4a3074b2aae565f8558b7ea707ca48d2<\/md5> ' .
                 '<filename>random_2048<\/filename> ' .
                 '<mtime>2008-09-22T00:18:37Z<\/mtime> ' .
@@ -539,7 +539,7 @@ likecmd("$CMD -xl files/dir1/random_2048", # {{{
 testcmd("$CMD -x files/dir1/random_2048", # {{{
     <<END,
 <fldb>
-<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitsum>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitsum> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> </file>
+<file> <size>2048</size> <sha256>7706d48f361957858fc567d82f9a765104e0d5383674ce72e946357696127034</sha256> <sha1>bd91a93ca0462da03f2665a236d7968b0fd9455d</sha1> <gitblob>ddf7d5a5e7a7b493368c2761faddb20a58bfbd59</gitblob> <md5>4a3074b2aae565f8558b7ea707ca48d2</md5> <filename>files/dir1/random_2048</filename> <mtime>2008-09-22T00:18:37Z</mtime> <perm>0644</perm> </file>
 </fldb>
 END
     "",
@@ -555,7 +555,7 @@ testcmd("$CMD -j files/dir1/year_1969", # {{{
     '"size":41,' .
     '"sha256":"81fae0df95efba03969fe59e7bbcbc94ed6448276c64770f2b5fab5d64a8932d",' .
     '"sha1":"07b8074463668967f6030016d719ef326eb6382d",' .
-    '"gitsum":"fe008e59667b2eb0848d9092f4eceac8725a162b",' .
+    '"gitblob":"fe008e59667b2eb0848d9092f4eceac8725a162b",' .
     '"md5":"6dce58e78b13dab939de6eef142b7543",' .
     '"mtime":"1969-01-21T17:12:15Z",' .
     '"perm":"0644"' .
@@ -573,7 +573,7 @@ testcmd("$CMD -x files/dir1/year_2038", # {{{
                 '<size>41</size>',
                 '<sha256>0d048aa5dedb88a9198874f8fcf60ac1eaca7365217e074e798f2d5fa03f561b</sha256>',
                 '<sha1>2113343435a9aadb458d576396d4f960071f8efd</sha1>',
-                '<gitsum>052a58773edb46b2d494a23718cac040fb38c741</gitsum>',
+                '<gitblob>052a58773edb46b2d494a23718cac040fb38c741</gitblob>',
                 '<md5>6babaa47123f4f94ae59ed581a65090b</md5>',
                 '<filename>files/dir1/year_2038</filename>',
                 '<mtime>2038-01-19T03:14:07Z</mtime>',
