@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.14.4
+VERSION=0.15.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -38,8 +38,9 @@ customised:
     If annex.uuid isn't already defined, initialise annex.uuid with an 
     UUID v1 (time-based UUID) instead of v4 (random-based). This is done 
     before executing an ordinary "git annex init". If a description is 
-    provided on the command line after the "init" command, use that, 
-    otherwise set the description to the output from the "ga-pwd" 
+    provided on the command line after the "init" command, use that, or 
+    set the description to the value of the ga.description Git config 
+    variable if it exists. Otherwise use the output from the "ga-pwd" 
     command. The script will abort if annex.uuid is already defined. 
     Also, if any other command than init is executed and annex.uuid 
     doesn't exist, the script aborts. This is to make sure no git-annex 
@@ -105,6 +106,8 @@ if test "$1" = "init"; then
         shift
         if test -n "$1"; then
             git-annex init "$@"
+        elif test -n "$(git config --get ga.description)"; then
+            git-annex init "$(git config --get ga.description)"
         else
             git-annex init "$(ga-pwd)"
         fi
