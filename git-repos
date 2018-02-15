@@ -7,4 +7,4 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-find -type d "$@" | grep '/\.git$' | perl -pe 's/\/\.git$//' | LC_ALL=C sort
+find "$@" -type d | grep '/\.git$' | perl -pe 's/\/\.git$//' | LC_ALL=C sort
