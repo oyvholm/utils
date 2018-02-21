@@ -6,10 +6,6 @@ PREFIX = /usr/local
 
 EXEC = STDexecDTS
 
-OBJS = STDexecDTS.o selftest.o
-CFILES = STDexecDTS.c selftest.c
-HFILES = STDexecDTS.h
-DEPS = $(HFILES) Makefile
 CC = cc
 LD = cc
 CCFLAGS = -Wall -Wextra -Werror -O0 -c -g -ansi -pedantic
@@ -18,6 +14,11 @@ CCFLAGS += $$(test -n "$(GCOV)" && \
 LDFLAGS = -Wall -Wextra -Werror
 LIBS =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
+
+OBJS = STDexecDTS.o selftest.o
+CFILES = STDexecDTS.c selftest.c
+HFILES = STDexecDTS.h
+DEPS = $(HFILES) Makefile
 
 .PHONY: all
 all: $(EXEC)
