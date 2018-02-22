@@ -1,4 +1,8 @@
 set args -vvvv
-b main
-r
+set confirm off
+set pagination off
 tui enable
+
+b main
+
+r
