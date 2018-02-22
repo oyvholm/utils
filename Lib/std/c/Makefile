@@ -62,7 +62,7 @@ gcov-cmt-clean:
 
 .PHONY: gdb
 gdb: $(EXEC)
-	gdb -tui -x gdbrc $$(cat gdbopts 2>/dev/null) $(EXEC)
+	gdb -x gdbrc $$(cat gdbopts 2>/dev/null) $(EXEC)
 
 .PHONY: install
 install: $(PREFIX)/bin/$(EXEC)

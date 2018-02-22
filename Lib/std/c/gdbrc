@@ -1,3 +1,4 @@
 set args -vvvv
 b main
 r
+tui enable
