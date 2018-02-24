@@ -21,6 +21,8 @@
 #ifndef _STDUexecUDTS_H
 #define _STDUexecUDTS_H
 
+#include "version.h"
+
 #define FALSE  0
 #define TRUE   1
 
@@ -29,8 +31,6 @@
 #define T_GREEN  "\x1b[32m"
 
 #define stddebug  stderr
-
-#include "version.h"
 
 #include <assert.h>
 #include <errno.h>
