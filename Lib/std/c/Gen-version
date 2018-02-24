@@ -48,6 +48,7 @@ cat <<END >version.h
 #define EXEC_DATE  "$exec_date"
 END
 
+test -n "$GCOV" && newdef GCOV
 test -n "$NDEBUG" && newdef NDEBUG
 
 exit 0
