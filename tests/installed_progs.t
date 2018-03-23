@@ -133,7 +133,7 @@ END
     installed('fossil version', '/^This is fossil version 2\.3 /', 'stdout');
     installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
-    installed('git --version', '/^git version 2\.16/', 'stdout');
+    installed('git --version', '/^git version 2\.17/', 'stdout');
     installed('git-annex version', '/^git-annex version: /', 'stdout');
     installed('gnuplot --version', '/^gnuplot /', 'stdout');
     installed('gpg --version', '/^gpg.+GnuPG\b/', 'stdout');
