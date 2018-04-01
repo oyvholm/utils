@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#==============================================================================
+# rdbl-tar
+# File ID: e6ef3744-32d7-11e8-8f99-f74d993421b0
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+#==============================================================================
+
+progname=rdbl-tar
+VERSION=0.1.0
+
+tar tvf "$1" --full-time
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :

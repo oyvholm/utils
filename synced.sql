@@ -505,6 +505,7 @@ INSERT INTO synced VALUES('rdbl-odt','','',NULL);
 INSERT INTO synced VALUES('rdbl-picture',NULL,NULL,NULL);
 INSERT INTO synced VALUES('rdbl-sort_k5','','',NULL);
 INSERT INTO synced VALUES('rdbl-sqlite3','','',NULL);
+INSERT INTO synced VALUES('rdbl-tar',NULL,NULL,NULL);
 INSERT INTO synced VALUES('rdbl-unzip','','',NULL);
 INSERT INTO synced VALUES('remove_perltestnumbers','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('rensk','Lib/std/bash',NULL,NULL);
