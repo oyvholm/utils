@@ -11,7 +11,15 @@
 #=======================================================================
 
 progname=mkt
-VERSION=0.6.1
+VERSION=0.7.0
+
+cat <<END >&2
+
+$progname: DEPRECATION WARNING: This script will be deleted quite soon, 
+please replace it with mktar or something else asap.
+
+END
+sleep 3
 
 ARGS="$(getopt -o "\
 g\
