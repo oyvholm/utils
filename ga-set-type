@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #==============================================================================
-# ga-set-backup
+# ga-set-type
 # File ID: f703e6f4-cffd-11e6-87a5-f74d993421b0
 #
 # Set the current git-annex repository to one of the standard groups for 
@@ -11,8 +11,8 @@
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
-progname=ga-set-backup
-VERSION=0.1.0
+progname=ga-set-type
+VERSION=0.1.1
 
 opt_help=0
 opt_quiet=0
