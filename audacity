@@ -11,7 +11,14 @@
 #=======================================================================
 
 progname=audacity
-VERSION=0.2.0
+VERSION=0.3.0
+
+conffile=~/.audacity-data/audacity.cfg
+
+if test -e "$conffile"; then
+    # Export audio to the current directory
+    perl -pi -e 's/^(Path=)(\/.*)/$1/' "$conffile" || exit 1
+fi
 
 if test -e /usr/bin/audacity; then
     /usr/bin/audacity "$@" &>/dev/null
