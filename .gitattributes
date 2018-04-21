@@ -2,3 +2,4 @@
 # File ID: 9deb70ae-6d44-11e5-93de-02010e0a6634
 
 *.sqlite diff=sqlite3
+*.tar diff=tar
