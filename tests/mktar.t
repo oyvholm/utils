@@ -15,6 +15,8 @@
 use strict;
 use warnings;
 
+use File::Basename;
+
 BEGIN {
 	use Test::More qw{no_plan};
 	# use_ok() goes here
@@ -67,6 +69,9 @@ exit(main());
 
 sub main {
 	my $Retval = 0;
+	my $logdir = "logdir.tmp";
+
+	$ENV{'SUUID_LOGDIR'} = $logdir;
 
 	diag(sprintf('========== Executing %s v%s ==========',
 	             $progname, $VERSION));
@@ -76,6 +81,33 @@ sub main {
 	}
 
 	test_standard_options();
+
+	ok(chdir("mktar-files"), "chdir mktar-files") or
+		BAIL_OUT("Cannot chdir");
+	$CMD = "../$CMD";
+
+	testcmd("rm -rf d", "", "", 0, "Delete d/");
+	extract_tar_file("d.tar");
+
+	testcmd("rm -rf \"$logdir\"", "", "", 0, "Delete $logdir/");
+
+	ok(mkdir("$logdir"), "mkdir $logdir");
+
+	likecmd("$CMD -P tmp d",
+	        '/^$/',
+	        '/mktar: tar cf tmp\.d\.tar ' .
+	            '--sort=name --sparse --xattrs d\\n/s',
+	        0,
+	        "Use \"tmp\" prefix with -P");
+	ok(-f "tmp.d.tar", "tmp.d.tar exists");
+
+	testcmd("tar df tmp.d.tar", "", "", 0,
+	        "Contents of the tar file is identical to d/");
+	ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
+	diag("Clean up");
+	testcmd("rm -rf \"$logdir\"", "", "", 0,
+	        "Delete $logdir/ before exit");
+	testcmd("rm -rf d", "", "", 0, "Delete d/ before exit");
 
 	todo_section:
 	;
@@ -115,6 +147,14 @@ sub test_standard_options {
 	        0,
 	        'Option --version returns version number');
 	return;
+}
+
+sub extract_tar_file {
+	my $file = shift;
+
+	testcmd("tar xf \"$file\"", "", "", 0, "Extract $file");
+	my $base = basename($file, ".tar");
+	ok(-d $base, "$base/ exists and is a directory");
 }
 
 sub testcmd {
