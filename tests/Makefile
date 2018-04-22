@@ -22,6 +22,7 @@ test:
 	./installed_progs.t
 	./jday.t
 	./md-header.t
+	./mktar.t
 	./perlmodules.t
 	./postgres.t
 	./sident.t
@@ -54,6 +55,7 @@ testport:
 	./installed_progs.t   # freebsd:hang netbsd:skip openbsd:skip
 	./jday.t              # freebsd:fail netbsd:ok   openbsd:ok
 	./md-header.t         # freebsd:ok   netbsd:ok   openbsd:ok
+	./mktar.t             # freebsd:     netbsd:     openbsd:
 	# ./perlmodules.t     # freebsd:fail netbsd:fail openbsd:fail
 	# ./postgres.t        # freebsd:fail netbsd:fail openbsd:fail
 	./sident.t            # freebsd:ok   netbsd:ok   openbsd:ok
@@ -78,4 +80,5 @@ clean:
 	test -d ga-sumsize-files/ga-sumsize-repo && chmod -R +w ga-sumsize-files/ga-sumsize-repo || true
 	rm -rf ga-sumsize-files/ga-sumsize-repo
 	rm -rf sort-sqlite-files/sqlite-dbs
+	cd mktar-files && $(MAKE) clean
 	if test ! -e log/.git; then rm -rf log; fi
