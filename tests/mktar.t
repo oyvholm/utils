@@ -104,6 +104,7 @@ sub main {
 	testcmd("tar df tmp.d.tar", "", "", 0,
 	        "Contents of the tar file is identical to d/");
 	ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
+	# FIXME: Add more tests, cover all options
 	diag("Clean up");
 	testcmd("rm -rf \"$logdir\"", "", "", 0,
 	        "Delete $logdir/ before exit");
