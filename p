@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=p
-VERSION=0.4.1
+VERSION=0.4.2
 
 ARGS="$(getopt -o "\
 a:\
@@ -95,7 +95,7 @@ if test -n "$opt_amplify"; then
         echo $progname: -a needs an integer argument >&2
         exit 1
     }
-    amplify_str=" --af=volume=$opt_amplify:0"
+    amplify_str=" --af=volume=$opt_amplify"
 fi
 test "$opt_slow" = "1" && slow=" -lavdopts fast:skiploopfilter=all"
 if test -n "$opt_tempo"; then
