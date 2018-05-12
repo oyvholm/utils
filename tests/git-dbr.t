@@ -262,6 +262,7 @@ END
     test_branch("repo_a/abc");
     test_branch("abc,");
     test_branch("abc,,,,,");
+    test_branch("has++plus+signs");
     test_branch("repo_a/abc,/,/,,,");
     test_branch("slash/branch_a,");
     test_branch("ab/cd/ef,");
@@ -436,7 +437,7 @@ sub test_branch {
     system("$GIT branch \"$branch\" repo_a/branch_a >/dev/null 2>/dev/null");
     like(`$GIT branch -a`,
         '/.*' .
-            '  ' . $branch . '\n' .
+            '  ' . quotemeta($branch) . '\n' .
             '.*$/s',
         "Branch '$branch' exists",
     );

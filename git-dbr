@@ -31,7 +31,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -84,12 +84,14 @@ sub main {
 sub delete_branch {
     # Delete local or remote branch. Return 1 if ok, 0 if branch not found {{{
     my $arg = shift;
+    my $grep_arg = $arg;
     my $retval = 0;
-    if (grep(/^$arg$/, @local_branches)) {
+    $grep_arg = quotemeta($arg);
+    if (grep(/^$grep_arg$/, @local_branches)) {
         # $arg is a local branch
         mysystem("git", "branch", "-D", $arg);
         $retval = 1;
-    } elsif (grep(/^$arg$/, @remote_branches)) {
+    } elsif (grep(/^$grep_arg$/, @remote_branches)) {
         # $arg is a remote branch
         if ($arg =~ /^(\S+?)\/(\S+)/) {
             my ($remote, $branch) = ($1, $2);
