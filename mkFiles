@@ -22,7 +22,7 @@ if test "$1" = "-m"; then
 fi
 
 tmpjson=/tmp/.mkFiles.$uuid.tmp
-find -type f -print0 | \
+find "$@" -type f -print0 | \
     grep -zv '/\.git/' | \
     LC_COLLATE=C sort -z | \
     fldb -z -f - >>$tmpjson
