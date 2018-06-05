@@ -20,7 +20,7 @@ clean:
 .PHONY: lgd
 lgd:
 	git lg --date-order $$(git branch -a | cut -c3- | \
-	    grep -Ee 'remotes/(Spread|bitbucket|github|repoorcz|sunbase)/' | \
+	    grep -Ee 'remotes/(Spread|bitbucket|repoorcz|sunbase)/' | \
 	    grep -v 'HEAD -> ') $$(git branch | cut -c3-)
 
 .PHONY: obsolete
@@ -34,7 +34,6 @@ remotes:
 	git remote add \
 	    bellmann sunny@bellmann:/home/sunny/repos/Git/utils.git; true
 	git remote add bitbucket git@bitbucket.org:sunny256/utils.git; true
-	git remote add github git@github.com:sunny256/utils.git; true
 	git remote add gitlab git@gitlab.com:sunny256/utils.git; true
 	git remote add \
 	    repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
