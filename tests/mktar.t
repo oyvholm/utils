@@ -96,7 +96,7 @@ sub main {
 	likecmd("$CMD -P tmp d",
 	        '/^$/',
 	        '/mktar: tar cf tmp\.d\.tar ' .
-	            '--sort=name --sparse --xattrs d\\n/s',
+	            '--force-local --sort=name --sparse --xattrs d\\n/s',
 	        0,
 	        "Use \"tmp\" prefix with -P");
 	ok(-f "tmp.d.tar", "tmp.d.tar exists");

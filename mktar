@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.23.0
+VERSION=0.23.1
 
 STD_SUFFIX=''
 
@@ -267,10 +267,12 @@ for f in "$@"; do
             incremental_str=""
         fi
         if test -n "$opt_split"; then
-            echo $progname: tar c $incremental_str $rm_files_str --sort=name \
-                --sparse $dereference_str $xattrs_str $dir \| \
+            echo $progname: tar c $incremental_str $rm_files_str \
+                --force-local --sort=name --sparse \
+                $dereference_str $xattrs_str $dir \| \
                 split -b $opt_split --verbose - $tarfile.split_ >&2
-            tar c $incremental_str $rm_files_str --sort=name --sparse \
+            tar c $incremental_str $rm_files_str \
+                --force-local --sort=name --sparse \
                 $dereference_str $xattrs_str --label=$uuid "$dir" |
                 split -b $opt_split --verbose - "$tarfile.split_" || exit 1
             if test ! -e "$tarfile.split_ab"; then
@@ -280,9 +282,11 @@ for f in "$@"; do
             test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"*
         else
             echo $progname: tar cf $tarfile $incremental_str $rm_files_str \
-                 --sort=name --sparse $dereference_str $xattrs_str $dir >&2
-            tar cf "$tarfile" $incremental_str $rm_files_str --sort=name \
-                   --sparse $dereference_str $xattrs_str \
+                 --force-local --sort=name --sparse \
+                 $dereference_str $xattrs_str $dir >&2
+            tar cf "$tarfile" $incremental_str $rm_files_str \
+                   --force-local --sort=name --sparse \
+                   $dereference_str $xattrs_str \
                    --label=$uuid "$dir" || exit 1
             ls -la "$tarfile" >&2
             test "$opt_xz" = "1" && xz -v "$tarfile"
