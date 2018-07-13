@@ -85,6 +85,6 @@ if test "$opt_filenames" = "1"; then
     cut -f 2- -d .
 else
     ls *.info.json | while read f; do
-        echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"');
+        echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"' -e '"uploader"');
     done | grep . | sort
 fi
