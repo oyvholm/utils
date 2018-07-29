@@ -28,6 +28,8 @@ local $| = 1;
 
 our $CMD_BASENAME = "mktar";
 our $CMD = "../$CMD_BASENAME";
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 
 our %Opt = (
 
@@ -104,6 +106,7 @@ sub main {
 	testcmd("tar df tmp.d.tar", "", "", 0,
 	        "Contents of the tar file is identical to d/");
 	ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
+	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
 	# FIXME: Add more tests, cover all options
 	diag("Clean up");
 	testcmd("rm -rf \"$logdir\"", "", "", 0,
@@ -148,6 +151,47 @@ sub test_standard_options {
 	        0,
 	        'Option --version returns version number');
 	return;
+}
+
+sub test_numeric_owner_option {
+	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+
+	diag("Test --numeric-owner option");
+	SKIP: {
+		skip("Running tests as root", 14) unless ($<);
+
+		extract_tar_file("d.tar");
+		testcmd("mv d has-numeric", "", "", 0, "mv d has-numeric");
+		unlink("has-numeric.tar") if -e "has-numeric.tar";
+		likecmd("$CMD -r --numeric-owner has-numeric",
+			'/^$/',
+			'/^' . join('',
+				'.*',
+				'mktar: Packing has-numeric\.\.\.\n',
+				$v1_templ, '\n',
+				'mktar: tar cf has-numeric\.tar ' .
+					'--remove-files --force-local ' .
+					'--sort=name --sparse ' .
+					'--numeric-owner --xattrs has-numeric',
+				'.*',
+				'has-numeric\.tar',
+			) . '$/s',
+			0,
+			"Use --numeric-owner",
+		);
+
+		my $uid = $>;
+		my $gid = $);
+		$gid =~ s/^(\d+)\b.*/$1/;
+		likecmd("tar tvf has-numeric.tar",
+			'/' . " $uid\\/$gid .+" x 8 . '/s',
+			'/^$/',
+			0,
+			'has-numeric.tar contains numeric UID/GID',
+		);
+
+		ok(unlink("has-numeric.tar"), "Delete has-numeric.tar");
+	}
 }
 
 sub extract_tar_file {
