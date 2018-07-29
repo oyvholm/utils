@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.8.1
+VERSION=0.8.2
 
 ARGS="$(getopt -o "\
 h\
@@ -228,7 +228,7 @@ elif test "$1" = "dfull"; then
         sleep 2
     done
 elif test "$1" = "kern"; then
-    tail -F /var/log/kern.log /var/log/syslog
+    tail -F /var/log/kern.log /var/log/syslog /var/log/auth.log
 elif test "$1" = "space"; then
     unset prevlast
     while :; do
