@@ -154,6 +154,7 @@ sub extract_tar_file {
 	my $file = shift;
 
 	testcmd("tar xf \"$file\"", "", "", 0, "Extract $file");
+	undef $descriptions{"Extract $file"};
 	my $base = basename($file, ".tar");
 	ok(-d $base, "$base/ exists and is a directory");
 }
