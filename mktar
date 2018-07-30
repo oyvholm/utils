@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.24.0
+VERSION=0.25.0
 
 STD_SUFFIX=''
 
@@ -23,6 +23,7 @@ f\
 h\
 i\
 L\
+m\
 P:\
 q\
 r\
@@ -38,6 +39,7 @@ force,\
 help,\
 incremental,\
 dereference,\
+random-mac,\
 no-git-check,\
 no-xattrs,\
 numeric-owner,\
@@ -61,6 +63,7 @@ opt_force=0
 opt_help=0
 opt_incremental=0
 opt_dereference=0
+opt_random_mac=0
 opt_no_xattrs=0
 opt_numeric_owner=0
 opt_prefix=''
@@ -80,6 +83,7 @@ while :; do
         -h|--help) opt_help=1; shift ;;
         -i|--incremental) opt_incremental=1; shift ;;
         -L|--dereference) opt_dereference=1; shift ;;
+        -m|--random-mac) opt_random_mac=1; shift ;;
         --numeric-owner) opt_numeric_owner=1; shift ;;
         -P|--prefix) opt_prefix="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
@@ -129,6 +133,8 @@ Options:
     backups. Uses the -g/--listed-incremental option in GNU tar.
   -L, --dereference
     Don't pack symlinks, include the actual files they point to.
+  -m, --random-mac
+    Use random MAC address in UUID file label.
   --numeric-owner
     Use numbers for user/group names.
   -P PREFIX, --prefix PREFIX
@@ -184,6 +190,12 @@ if test "$opt_dereference" = "1"; then
     dereference_str="--dereference"
 else
     dereference_str=""
+fi
+
+if test "$opt_random_mac" = "1"; then
+    random_mac_str="--random-mac"
+else
+    random_mac_str=""
 fi
 
 if test "$opt_remove_files" = "1"; then
@@ -264,7 +276,7 @@ for f in "$@"; do
         }
 
         uuid=$(
-            suuid -t mktar --raw -w eo \
+            suuid -t mktar --raw -w eo $random_mac_str \
                 -c "<c_mktar> <filename>$tarfile</filename> <host>$(
                     hostname
                 )</host> <directory>$(/bin/pwd)</directory> </c_mktar>"

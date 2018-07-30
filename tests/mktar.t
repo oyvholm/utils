@@ -107,6 +107,7 @@ sub main {
 	        "Contents of the tar file is identical to d/");
 	ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
 	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
+	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
 	# FIXME: Add more tests, cover all options
 	diag("Clean up");
 	testcmd("rm -rf \"$logdir\"", "", "", 0,
@@ -192,6 +193,32 @@ sub test_numeric_owner_option {
 
 		ok(unlink("has-numeric.tar"), "Delete has-numeric.tar");
 	}
+}
+
+sub test_random_mac_option {
+	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+
+	diag("Test -m/--random-mac option");
+	extract_tar_file("d.tar");
+	testcmd("mv d use-random-mac", "", "", 0, "mv d use-random-mac");
+	unlink("use-random-mac.tar") if -e "use-random-mac.tar";
+	likecmd("$CMD -rf --random-mac use-random-mac",
+		'/^$/',
+		'/^' . join('',
+			'\n',
+			'mktar: Packing use-random-mac\.\.\.\n',
+			$v1_templ, '\n',
+			'mktar: tar cf use-random-mac\.tar ' .
+				'--remove-files --force-local ' .
+				'--sort=name --sparse ' .
+				'--xattrs use-random-mac',
+			'.*',
+			'use-random-mac\.tar',
+		) . '$/s',
+		0,
+		"Use --random-mac",
+	);
+	ok(unlink("use-random-mac.tar"), "Delete use-random-mac.tar");
 }
 
 sub extract_tar_file {
