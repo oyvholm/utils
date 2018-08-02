@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.25.0
+VERSION=0.26.0
 
 STD_SUFFIX=''
 
@@ -41,6 +41,7 @@ incremental,\
 dereference,\
 random-mac,\
 no-git-check,\
+no-uuid,\
 no-xattrs,\
 numeric-owner,\
 prefix,\
@@ -64,6 +65,7 @@ opt_help=0
 opt_incremental=0
 opt_dereference=0
 opt_random_mac=0
+opt_no_uuid=0
 opt_no_xattrs=0
 opt_numeric_owner=0
 opt_prefix=''
@@ -84,6 +86,7 @@ while :; do
         -i|--incremental) opt_incremental=1; shift ;;
         -L|--dereference) opt_dereference=1; shift ;;
         -m|--random-mac) opt_random_mac=1; shift ;;
+        --no-uuid) opt_no_uuid=1; shift ;;
         --numeric-owner) opt_numeric_owner=1; shift ;;
         -P|--prefix) opt_prefix="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
@@ -135,6 +138,8 @@ Options:
     Don't pack symlinks, include the actual files they point to.
   -m, --random-mac
     Use random MAC address in UUID file label.
+  --no-uuid
+    Don't create UUID label in the .tar file.
   --numeric-owner
     Use numbers for user/group names.
   -P PREFIX, --prefix PREFIX
@@ -275,15 +280,20 @@ for f in "$@"; do
             exit 1
         }
 
-        uuid=$(
-            suuid -t mktar --raw -w eo $random_mac_str \
-                -c "<c_mktar> <filename>$tarfile</filename> <host>$(
-                    hostname
-                )</host> <directory>$(/bin/pwd)</directory> </c_mktar>"
-        ) || {
-            echo $progname: suuid error >&2
-            exit 1
-        }
+        if test "$opt_no_uuid" = "1"; then
+            label_str=""
+        else
+            uuid=$(
+                suuid -t mktar --raw -w eo $random_mac_str \
+                    -c "<c_mktar> <filename>$tarfile</filename> <host>$(
+                        hostname
+                    )</host> <directory>$(/bin/pwd)</directory> </c_mktar>"
+            ) || {
+                echo $progname: suuid error >&2
+                exit 1
+            }
+            label_str="--label=$uuid"
+        fi
         if test "$opt_incremental" = "1"; then
             incremental_str="--listed-incremental $prefix$dir$suffix.snar"
         else
@@ -297,7 +307,7 @@ for f in "$@"; do
             tar c $incremental_str $rm_files_str \
                 --force-local --sort=name --sparse \
                 $dereference_str $numeric_str $xattrs_str \
-                --label=$uuid "$dir" |
+                $label_str "$dir" |
                 split -b $opt_split --verbose - "$tarfile.split_" || exit 1
             if test ! -e "$tarfile.split_ab"; then
                 mv -vi "$tarfile.split_aa" "$tarfile" || exit 1
@@ -311,7 +321,7 @@ for f in "$@"; do
             tar cf "$tarfile" $incremental_str $rm_files_str \
                    --force-local --sort=name --sparse \
                    $dereference_str $numeric_str $xattrs_str \
-                   --label=$uuid "$dir" || exit 1
+                   $label_str "$dir" || exit 1
             ls -la "$tarfile" >&2
             test "$opt_xz" = "1" && xz -v "$tarfile"
             test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"

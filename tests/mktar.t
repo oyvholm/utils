@@ -108,6 +108,7 @@ sub main {
 	ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
 	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
 	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
+	test_no_uuid_option($CMD, $CMD_BASENAME, $logdir);
 	# FIXME: Add more tests, cover all options
 	diag("Clean up");
 	testcmd("rm -rf \"$logdir\"", "", "", 0,
@@ -219,6 +220,47 @@ sub test_random_mac_option {
 		"Use --random-mac",
 	);
 	ok(unlink("use-random-mac.tar"), "Delete use-random-mac.tar");
+}
+
+sub test_no_uuid_option {
+	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+
+	diag("Test --no-uuid option");
+	extract_tar_file("d.tar");
+	testcmd("mv d no-uuid", "", "", 0, "mv d no-uuid");
+	unlink("no-uuid.tar") if -e "no-uuid.tar";
+	likecmd("$CMD -r --no-uuid no-uuid",
+		'/^$/',
+		'/^' . join('',
+			'\n',
+			'mktar: Packing no-uuid\.\.\.\n',
+			'mktar: tar cf no-uuid\.tar ' .
+				'--remove-files --force-local ' .
+				'--sort=name --sparse ' .
+				'--xattrs no-uuid',
+			'.*',
+			'no-uuid\.tar',
+		) . '$/s',
+		0,
+		"Use --no-uuid",
+	);
+	testcmd("tar tf no-uuid.tar",
+		join("\n",
+			"no-uuid/",
+			"no-uuid/brokenlink.txt",
+			"no-uuid/d/",
+			"no-uuid/d/subfile.txt",
+			"no-uuid/emptydir/",
+			"no-uuid/file.txt",
+			"no-uuid/sublink.txt",
+			"no-uuid/symlink.txt",
+			"",
+		),
+		"",
+		0,
+		"no-uuid.tar doesn't contain UUID label",
+	);
+	ok(unlink("no-uuid.tar"), "Delete no-uuid.tar");
 }
 
 sub extract_tar_file {
