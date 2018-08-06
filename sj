@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.8.3
+VERSION=0.8.4
 
 ARGS="$(getopt -o "\
 h\
@@ -140,7 +140,7 @@ if test "$1" = "allspace"; then
         curr="$(all_free_space)"
         if test "$curr" != "$prev"; then
             echo
-            echo -n "$(date +"%H:%M:%S")  $curr$(tput el)"
+            echo -n "$(date +"%d %H:%M:%S")  $curr$(tput el)"
         fi
         prev="$curr"
         sleep 2
