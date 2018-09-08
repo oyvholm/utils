@@ -725,6 +725,7 @@ INSERT INTO synced VALUES('xmlformat','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('xmlstrip','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('xt','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('yd','Lib/std/bash',NULL,NULL);
+INSERT INTO synced VALUES('ydc',NULL,NULL,NULL);
 INSERT INTO synced VALUES('ydd','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('ydf',NULL,NULL,NULL);
 INSERT INTO synced VALUES('ydw',NULL,NULL,NULL);

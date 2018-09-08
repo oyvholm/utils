@@ -1,0 +1,71 @@
+#!/bin/sh
+
+#==============================================================================
+# ydc
+# File ID: cc9e58bc-9e74-11e8-ae29-db5caa6d21d3
+#
+# Wrapper around the yd* youtube-dl scripts, checks that the video hasn't been 
+# downloaded before.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
+
+progname=ydc
+VERSION=0.1.0
+
+# FIXME: Hardcoding
+dellog=/tmp/musikk-del.log
+delloglock="$dellog.lock"
+repo=/home/annex/musikk
+
+if test "$1" = "--version"; then
+	echo $progname $VERSION
+	exit 0
+fi
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+	cat <<END
+
+Wrapper around the yd* youtube-dl scripts, checks that the video hasn't 
+been downloaded before. Works only with standard Youtube links atm.
+
+Usage: $progname [options] YDPROG YOUTUBE_URL
+
+Options:
+
+  -h, --help
+    Show this help.
+  --version
+    Print version information.
+
+END
+	exit 0
+fi
+
+ydprog=$1
+if [ -z "$ydprog" ]; then
+	echo $progname: Missing ydprog argument >&2
+	exit 1
+fi
+
+until mkdir "$delloglock" 2>/dev/null; do
+	echo $progname: $delloglock: Waiting for lockdir >&2
+	sleep 1
+done
+(
+	cd "$repo" && (
+		git log --name-status --format= | grep ^D >"$dellog" || true
+	)
+)
+rmdir "$delloglock" || exit 1
+
+while :; do
+	read -p "URL: " orig_gr
+	gr=$(echo "$orig_gr" | sed 's/.*v=\(.*\)/\1/')
+	echo grep -- $gr
+	(cd "$repo" && (find *; cat "$dellog")) | grep -- $gr ||
+		($ydprog -- $orig_gr &)
+done
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
