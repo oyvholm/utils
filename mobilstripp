@@ -77,8 +77,10 @@ grep -v \
 -e /Android/data/com\\.duolingo/cache/ \
 -e /Android/data/com\\.evernote/files/announcements/ \
 -e /Android/data/com\\.google\\.android\\.apps\\.docs/files/pinned_docs_files_do_not_edit/ \
+-e /Android/data/com\\.google\\.android\\.apps\\.maps/testdata/voice/ \
 -e /Android/data/com\\.google\\.android\\.gms/files/ \
 -e /Android/data/com\\.google\\.earth/cache/ \
+-e /Android/data/com\\.google\\.vr\\.cyclops/files/samples/ \
 -e /Android/data/com\\.gopro\\.smarty/cache/ \
 -e /Android/data/com\\.handmark\\.tweetcaster/cache/ \
 -e /Android/data/com\\.nianticproject\\.ingress/cache/ \
