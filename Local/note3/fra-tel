@@ -11,15 +11,17 @@
 #==============================================================================
 
 progname=fra-tel
-VERSION=0.1.0
+VERSION=0.2.0
 
 rcfile=~/.fra-telrc
 
+opt_append=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
+	-a|--append) opt_append=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -45,6 +47,9 @@ Usage: $progname [options]
 
 Options:
 
+  -a, --append
+    Don't check downloaded data, only append data to the end of files.
+    Use with care.
   -h, --help
     Show this help.
   -q, --quiet
@@ -74,8 +79,13 @@ if test -z "$url" -o -z "$dest"; then
 	exit 1
 fi
 
+if test "$opt_append" = "1"; then
+	append_str="--append"
+else
+	append_str=""
+fi
 ps | grep -v "grep $cmd_rsync" | grep "$cmd_rsync" && exit 1
-until $cmd_rsync $url $dest; do
+until $cmd_rsync $append_str $url $dest; do
   date;
   sleep 2;
 done
