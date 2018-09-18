@@ -134,6 +134,7 @@ INSERT INTO synced VALUES('Local/dg-vbox/fixskjerm','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('Local/n900/mountloop','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('Local/n900/pods','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('Local/n900/shake','',NULL,NULL);
+INSERT INTO synced VALUES('Local/note3/fra-tel','Lib/std/sh','86ebf58dcf4b48e5289db71f722e9bad6bb30f1e','2018-09-18 05:01:22');
 INSERT INTO synced VALUES('Local/sunbase/start-vncserver','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('Local/ubstud/slowdown','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('Local/vbox-deb/firefox','Lib/std/bash',NULL,NULL);
