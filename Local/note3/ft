@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #==============================================================================
-# fra-tel
+# ft
 # File ID: e2b4cbf2-baff-11e8-97b6-c75b54f489f8
 #
 # Send files from $url to $dest with rsync, retry until it's done.
@@ -10,10 +10,10 @@
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
-progname=fra-tel
+progname=ft
 VERSION=0.2.0
 
-rcfile=~/.fra-telrc
+rcfile=~/.ftrc
 
 opt_append=0
 opt_help=0
