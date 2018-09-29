@@ -11,17 +11,19 @@
 #==============================================================================
 
 progname=ft
-VERSION=0.2.0
+VERSION=0.3.0
 
 rcfile=~/.ftrc
 
 opt_append=0
+opt_copy=0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
 	-a|--append) opt_append=1; shift ;;
+	-c|--copy) opt_copy=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -50,6 +52,9 @@ Options:
   -a, --append
     Don't check downloaded data, only append data to the end of files.
     Use with care.
+  -c, --copy
+    Don't use the --inplace option with rsync, write to a copy of the 
+    destination file before overwriting it.
   -h, --help
     Show this help.
   -q, --quiet
@@ -69,7 +74,7 @@ END
 	exit 0
 fi
 
-cmd_rsync="rsync -rmvLPzz --inplace --timeout=30"
+cmd_rsync="rsync -rmvLPzz --timeout=5"
 
 unset url dest
 test -e "$rcfile" && . "$rcfile"
@@ -84,8 +89,13 @@ if test "$opt_append" = "1"; then
 else
 	append_str=""
 fi
+if test "$opt_copy" = "1"; then
+	copy_str=""
+else
+	copy_str="--inplace"
+fi
 ps | grep -v "grep $cmd_rsync" | grep "$cmd_rsync" && exit 1
-until $cmd_rsync $append_str $url $dest; do
+until $cmd_rsync $append_str $copy_str $url $dest; do
   date;
   sleep 2;
 done
