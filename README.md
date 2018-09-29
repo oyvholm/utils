@@ -540,7 +540,6 @@ the alias somewhere.
 - mkd
 - mklist
 - mkrepo
-- mkt
 - mktar
 - mobilstripp
 - mountusb

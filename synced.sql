@@ -450,7 +450,6 @@ INSERT INTO synced VALUES('mkcvsbck','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('mkd','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('mklist','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('mkrepo','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
-INSERT INTO synced VALUES('mkt','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
 INSERT INTO synced VALUES('mktar','Lib/std/bash','3c2c2aceb2ef29a9635de9b520815cd1f4a7e6e4','2017-08-23 17:11:20');
 INSERT INTO synced VALUES('mobilstripp','Lib/std/bash','7d812a8c821d5e09ded9185ca74d5b285c31b464','2017-08-23 16:11:38');
 INSERT INTO synced VALUES('mountusb','Lib/std/bash',NULL,NULL);
