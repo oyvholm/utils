@@ -3,9 +3,11 @@
 # File ID: 1fcb061a-fa4e-11e6-8927-f74d993421b0
 
 progname=disable_ipv6
+rcfile="$HOME/.${progname}rc"
 
-test -d /hpelite1/. || {
-	echo $progname: Has to be on hpelite1 to run this script >&2
+test -e "$rcfile" || {
+	echo $progname: $rcfile: File not found >&2
+	echo $progname: Create it to enable the script here >&2
 	exit 1
 }
 
