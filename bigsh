@@ -153,6 +153,31 @@ elif [ -e /hpelite1 ]; then
 			start_xterm 165x54+0+0 "$@"
 		fi
 	fi
+elif [ -e /hpelite2 ]; then
+	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
+		[ -z "$opt_title" ] && wintitle=gdb
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 39x39+1002+0 "$@"
+		else
+			start_xterm 59x54+1002+0 "$@"
+		fi
+	fi
+	if [ "$opt_all" = "1" ]; then
+		wintitle=sunbase
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 110x39+0+0 "$@"
+		else
+			start_xterm 165x54+0+0 "$@"
+		fi
+	fi
+	if [ "$opt_all" = "1" -o -z "$winc" ]; then
+		[ -z "$opt_title" ] && wintitle=hpelite1
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 110x39+0+0 "$@"
+		else
+			start_xterm 165x54+0+0 "$@"
+		fi
+	fi
 elif [ -e /sunbase ]; then
 	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
 		[ -z "$opt_title" ] && wintitle=gdb
