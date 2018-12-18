@@ -23,6 +23,7 @@ local $| = 1;
 our %Opt = (
 
     'current-time' => '',
+    'frac' => 0,
     'help' => 0,
     'quiet' => 0,
     'verbose' => 0,
@@ -32,12 +33,13 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.4.0';
+our $VERSION = '0.5.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
     'current-time|c=s' => \$Opt{'current-time'},
+    'frac|F' => \$Opt{'frac'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'verbose|v+' => \$Opt{'verbose'},
@@ -148,7 +150,7 @@ sub sec_to_interval {
     my $seconds = 1.0 * $rem;
     my $retval = sprintf("%s%ud:%02u:%02u:%02u%s",
         $origsecs < 0 ? "-" : "",
-        $days, $hours, $minutes, $seconds, $frac);
+        $days, $hours, $minutes, $seconds, $Opt{'frac'} ? $frac : '');
     return($retval);
     # }}}
 } # sec_to_interval()
@@ -165,7 +167,7 @@ sub sec_to_string {
     my @TA = gmtime($Seconds);
     my($DateString) = sprintf("%04u-%02u-%02u %02u:%02u:%02u%sZ",
                               $TA[5]+1900, $TA[4]+1, $TA[3],
-                              $TA[2], $TA[1], $TA[0], $Secfrac);
+                              $TA[2], $TA[1], $TA[0], $Opt{'frac'} ? $Secfrac : '');
     return($DateString);
     # }}}
 } # sec_to_string()
@@ -191,6 +193,8 @@ Options:
 
   -c DATE, --current-time DATE
     Use DATE as current time.
+  -F, --frac
+    Use fractional seconds.
   -h, --help
     Show this help.
   -q, --quiet
