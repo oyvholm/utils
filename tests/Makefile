@@ -19,7 +19,6 @@ test:
 	./git-wip.t
 	./gotexp.t
 	./hhi.t
-	./installed_progs.t
 	./jday.t
 	./md-header.t
 	./mktar.t
