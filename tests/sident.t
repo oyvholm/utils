@@ -480,21 +480,15 @@ END
     );
 
     # }}}
+    diag("Validate POD (Plain Old Documentation)");
+    testcmd("podchecker $CMD", # {{{
+        "",
+        "$CMD pod syntax OK.\n",
+        0,
+        "$CMD contains valid POD",
+    );
 
-    # Disabled because podchecker(1) from Perl v5.26.1 fails with this error:
-    #   *** ERROR: Non-ASCII character seen before =encoding in '�yvind'. 
-    #   Assuming UTF-8 at line 338 in file ../sident
-    # So it doesn't want to understand UTF-8. That won't fly.
-    #
-    # diag("Validate POD (Plain Old Documentation)");
-    # testcmd("podchecker $CMD", # {{{
-    #     "",
-    #     "$CMD pod syntax OK.\n",
-    #     0,
-    #     "$CMD contains valid POD",
-    # );
-    #
-    # # }}}
+    # }}}
 
     todo_section:
     ;
