@@ -11,7 +11,10 @@
 #==============================================================================
 
 progname=git-up
-VERSION=0.1.0
+VERSION=0.1.1
+
+T_GREEN=$(tput setaf 2)
+T_RESET=$(tput sgr0)
 
 opt_help=0
 opt_quiet=0
@@ -34,6 +37,12 @@ while test -n "$1"; do
 	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
+
+runcmd() {
+	echo >&2
+	echo "$T_GREEN$progname: $*$T_RESET" >&2
+	$@
+}
 
 if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
@@ -60,12 +69,12 @@ END
 	exit 0
 fi
 
-git fetch --all --prune
-git merge --ff-only
-git checkout $(git rev-parse HEAD)
-git allbr -a
-git checkout -
-git dangling
-git pa
+runcmd git fetch --all --prune
+runcmd git merge --ff-only
+runcmd git checkout $(git rev-parse HEAD)
+runcmd git allbr -a
+runcmd git checkout -
+runcmd git dangling
+runcmd git pa
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
