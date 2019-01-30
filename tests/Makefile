@@ -32,6 +32,7 @@ test:
 	./tohex.t
 	./txt2uc.t
 	./ustr.t
+	./ydid.t
 	./zeropad.t
 
 .PHONY: testport

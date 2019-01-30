@@ -1,0 +1,179 @@
+#!/usr/bin/env perl
+
+#==============================================================================
+# ydid
+# File ID: 533a9d38-23d9-11e9-ac41-4f45262dc9b5
+#
+# [Description]
+#
+# Character set: UTF-8
+# ©opyleft 2019– Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later, see end of file for 
+# legal stuff.
+#==============================================================================
+
+use strict;
+use warnings;
+use Getopt::Long;
+
+local $| = 1;
+
+our %Opt = (
+
+	'help' => 0,
+	'quiet' => 0,
+	'verbose' => 0,
+	'version' => 0,
+
+);
+
+our $progname = $0;
+$progname =~ s/^.*\/(.*?)$/$1/;
+our $VERSION = '0.1.0';
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+
+	'help|h' => \$Opt{'help'},
+	'quiet|q+' => \$Opt{'quiet'},
+	'verbose|v+' => \$Opt{'verbose'},
+	'version' => \$Opt{'version'},
+
+) || die("$progname: Option error. Use -h for help.\n");
+
+$Opt{'verbose'} -= $Opt{'quiet'};
+$Opt{'help'} && usage(0);
+if ($Opt{'version'}) {
+	print_version();
+	exit(0);
+}
+
+exit(main());
+
+sub main {
+	my $Retval = 0;
+	my $id = '';
+	my $url = $ARGV[0];
+
+	if (!defined($url)) {
+		print(STDERR "$progname: No URL specified\n");
+		exit(1);
+	}
+	msg(2, "url = \"$url\"");
+
+	if ($url =~ /https?:\/\/www\.youtube\.com\/watch\?.*\bv=.*/) {
+		msg(2, "Found https://www.youtube.com/watch?v=.*");
+		$id = $url;
+		$id =~ s/.*v=(.*)/$1/;
+		$id =~ s/\&.*//;
+		valid_youtube_id($id) || myexit(1, "Invalid URL");
+	} elsif ($url =~ /https?:\/\/youtu\.be\/.*/) {
+		msg(2, "Found https://youtu.be/.*");
+		$id = $url;
+		$id =~ s/.*youtu\.be\/(.*)/$1/;
+		$id =~ s/\&.*//;
+		valid_youtube_id($id) || myexit(1, "Invalid URL");
+	} elsif (length($url) == 11) {
+		msg(2, "Found plain id");
+		$id = $url;
+		valid_youtube_id($id) || myexit(1, "Invalid Youtube ID");
+	} else {
+		print(STDERR "$progname: Unknown URL format\n");
+		exit(1);
+	}
+
+	defined($id) && print("$id\n");
+
+	return $Retval;
+}
+
+sub valid_youtube_id {
+	my $id = shift;
+	my $ytchars = join('',
+	                   '\-' .
+	                   '0123456789' .
+	                   'ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
+	                   '_' .
+	                   'abcdefghijklmnopqrstuvwxyz'
+	              );
+
+	if (length($id) != 11) {
+		return 0;
+	}
+
+	my $strid = $id;
+	$strid =~ s/[$ytchars]//g;
+	if (length($strid)) {
+		return 0;
+	}
+
+	return 1;
+}
+
+sub print_version {
+	# Print program version
+	print("$progname $VERSION\n");
+	return;
+}
+
+sub usage {
+	# Send the help message to stdout
+	my $Retval = shift;
+
+	if ($Opt{'verbose'}) {
+		print("\n");
+		print_version();
+	}
+	print(<<"END");
+
+Usage: $progname [options] URL
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+	exit($Retval);
+}
+
+sub msg {
+	# Print a status message to stderr based on verbosity level
+	my ($verbose_level, $Txt) = @_;
+
+	if ($Opt{'verbose'} >= $verbose_level) {
+		print(STDERR "$progname: $Txt\n");
+	}
+	return;
+}
+
+sub myexit {
+	my ($exitval, $msg) = @_;
+
+	print(STDERR "$progname: $msg\n");
+	exit($exitval);
+}
+
+__END__
+
+# This program is free software; you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free Software 
+# Foundation; either version 2 of the License, or (at your option) any later 
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+# FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with 
+# this program.
+# If not, see L<http://www.gnu.org/licenses/>.
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
