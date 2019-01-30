@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -61,7 +61,7 @@ sub main {
 	}
 	msg(2, "url = \"$url\"");
 
-	if ($url =~ /https?:\/\/www\.youtube\.com\/watch\?.*\bv=.*/) {
+	if ($url =~ /https?:\/\/(www\.)?youtube\.com\/watch\?.*\bv=.*/) {
 		msg(2, "Found https://www.youtube.com/watch?v=.*");
 		$id = $url;
 		$id =~ s/.*v=(.*)/$1/;

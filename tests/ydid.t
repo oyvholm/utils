@@ -172,15 +172,18 @@ sub test_executable {
 			1,
 			"v= contains invalid character, $p");
 
-		$url = "$p://www.youtube.com/watch?v=$id";
-		diag($url);
-		test_yt_url($id, $url, $deburl{'yt1'}, $url);
-		test_yt_url($id, "$url&t=0s", $deburl{'yt1'}, "$url&t=0s");
-		$url = "$p://www.youtube.com/watch?t=0s&v=$id";
-		diag($url);
-		test_yt_url($id, $url, $deburl{'yt1'}, $url);
-		test_yt_url($id, "$url&abc=def", $deburl{'yt1'},
-		            "$url&abc=def");
+		for my $w ("www.", "") {
+			$url = "$p://${w}youtube.com/watch?v=$id";
+			diag($url);
+			test_yt_url($id, $url, $deburl{'yt1'}, $url);
+			test_yt_url($id, "$url&t=0s", $deburl{'yt1'},
+			            "$url&t=0s");
+			$url = "$p://${w}youtube.com/watch?t=0s&v=$id";
+			diag($url);
+			test_yt_url($id, $url, $deburl{'yt1'}, $url);
+			test_yt_url($id, "$url&abc=def", $deburl{'yt1'},
+			            "$url&abc=def");
+		}
 
 		diag($deburl{'yt2'});
 		testcmd("$CMD $p://youtu\.be/",
