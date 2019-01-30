@@ -121,6 +121,7 @@ sub test_standard_options {
 sub test_executable {
 	my ($id, $url);
 	my %deburl = (
+		'tw1' => "https://twitter.com/*/status/*",
 		'yt1' => "https://www.youtube.com/watch?v=.*",
 		'yt2' => "https://youtu.be/.*",
 		'yt3' => "plain id",
@@ -198,6 +199,25 @@ sub test_executable {
 		diag($url);
 		test_yt_url($id, $url, $deburl{'yt2'}, $url);
 		test_yt_url($id, "$url&t=0s", $deburl{'yt2'}, "$url&t=0s");
+
+		my $twid = "1234567890123456789";
+		my $twname = "example";
+		$url = "$p://twitter.com/$twname/status/$twid";
+		test_yt_url($twid, $url, $deburl{'tw1'}, $url);
+		test_yt_url($twid, "$url?abc=def", $deburl{'tw1'},
+		            "$url?abc=def");
+		$url = "$p://twitter.com/$twname/status/";
+		testcmd("$CMD $url",
+			"",
+			"$CMD_BASENAME: Unknown URL format\n",
+			1,
+			"Missing Twitter ID, $p");
+		$url = "$p://twitter.com/$twname/status/abc";
+		testcmd("$CMD $url",
+			"",
+			"$CMD_BASENAME: Unknown URL format\n",
+			1,
+			"Non-digit in Twitter ID, $p");
 	}
 }
 

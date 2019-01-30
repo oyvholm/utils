@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -73,6 +73,11 @@ sub main {
 		$id =~ s/.*youtu\.be\/(.*)/$1/;
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
+	} elsif ($url =~ /https?:\/\/twitter.com\/[^\/]+\/status\/(\d+)/) {
+		msg(2, "Found https://twitter.com/*/status/*");
+		$id = $url;
+		$id =~ s/.*\/status\/(\d+).*?$/$1/;
+		valid_twitter_id($id) || myexit(1, "Invalid Twitter ID");
 	} elsif (length($url) == 11) {
 		msg(2, "Found plain id");
 		$id = $url;
@@ -85,6 +90,15 @@ sub main {
 	defined($id) && print("$id\n");
 
 	return $Retval;
+}
+
+sub valid_twitter_id {
+	my $id = shift;
+
+	($id =~ /\d/) || return 0;
+	($id =~ /\D/) && return 0;
+
+	return 1;
 }
 
 sub valid_youtube_id {
