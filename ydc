@@ -12,7 +12,7 @@
 #==============================================================================
 
 progname=ydc
-VERSION=0.1.0
+VERSION=0.1.1
 
 # FIXME: Hardcoding
 dellog=/tmp/musikk-del.log
@@ -62,7 +62,7 @@ rmdir "$delloglock" || exit 1
 
 while :; do
 	read -p "URL: " orig_gr
-	gr=$(echo "$orig_gr" | sed 's/.*v=\(.*\)/\1/')
+	gr=$(ydid "$orig_gr")
 	echo grep -- $gr
 	(cd "$repo" && (find *; cat "$dellog")) | grep -- $gr ||
 		($ydprog -- $orig_gr &)
