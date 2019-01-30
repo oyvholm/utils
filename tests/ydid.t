@@ -76,6 +76,7 @@ sub main {
 	}
 
 	test_standard_options();
+	test_executable();
 
 	todo_section:
 	;
@@ -115,6 +116,100 @@ sub test_standard_options {
 	        0,
 	        'Option --version returns version number');
 	return;
+}
+
+sub test_executable {
+	my ($id, $url);
+	my %deburl = (
+		'yt1' => "https://www.youtube.com/watch?v=.*",
+		'yt2' => "https://youtu.be/.*",
+		'yt3' => "plain id",
+	);
+	$id = "su045ytF_z4";
+
+	diag("Executing test_executable()");
+	testcmd("$CMD",
+	        "",
+	        "$CMD_BASENAME: No URL specified\n",
+	        1,
+	        'No URL specified');
+	testcmd("$CMD https://doesntexist.invalid",
+	        "",
+	        "$CMD_BASENAME: Unknown URL format\n",
+	        1,
+	        'Unknown URL format');
+	diag("Plain id");
+	test_yt_url($id, $id, $deburl{'yt3'}, "Plain id");
+	testcmd("$CMD " . "a" x 10,
+	        "",
+	        "$CMD_BASENAME: Unknown URL format\n",
+	        1,
+	        'Plain id, one character too short');
+	testcmd("$CMD " . "a" x 12,
+	        "",
+	        "$CMD_BASENAME: Unknown URL format\n",
+	        1,
+	        'Plain id, one character too long');
+	testcmd("$CMD aaaaa,aaaaa",
+	        "",
+	        "$CMD_BASENAME: Invalid Youtube ID\n",
+	        1,
+	        'Plain id with invalid character');
+
+	for my $p (qw{ https http }) {
+		diag("Use $p");
+		diag($deburl{'yt1'});
+		testcmd("$CMD $p://www.youtube.com/watch?v=",
+			"",
+			"$CMD_BASENAME: Invalid URL\n",
+			1,
+			"v= has no id, $p");
+
+		testcmd("$CMD $p://www.youtube.com/watch?v=abcde,ghijk",
+			"",
+			"$CMD_BASENAME: Invalid URL\n",
+			1,
+			"v= contains invalid character, $p");
+
+		$url = "$p://www.youtube.com/watch?v=$id";
+		diag($url);
+		test_yt_url($id, $url, $deburl{'yt1'}, $url);
+		test_yt_url($id, "$url&t=0s", $deburl{'yt1'}, "$url&t=0s");
+		$url = "$p://www.youtube.com/watch?t=0s&v=$id";
+		diag($url);
+		test_yt_url($id, $url, $deburl{'yt1'}, $url);
+		test_yt_url($id, "$url&abc=def", $deburl{'yt1'},
+		            "$url&abc=def");
+
+		diag($deburl{'yt2'});
+		testcmd("$CMD $p://youtu\.be/",
+			"",
+			"$CMD_BASENAME: Invalid URL\n",
+			1,
+			"Missing id in $deburl{'yt2'}, $p");
+
+		testcmd("$CMD $p://youtu\.be/abcde,ghijk",
+			"",
+			"$CMD_BASENAME: Invalid URL\n",
+			1,
+			"Invalid character in $deburl{'yt2'}, $p");
+
+		$url = "$p://youtu.be/$id";
+		diag($url);
+		test_yt_url($id, $url, $deburl{'yt2'}, $url);
+		test_yt_url($id, "$url&t=0s", $deburl{'yt2'}, "$url&t=0s");
+	}
+}
+
+sub test_yt_url {
+	my ($id, $url, $deburl, $desc) = @_;
+
+	testcmd("$CMD -vv '$url'",
+	        "$id\n",
+	        "$CMD_BASENAME: url = \"$url\"\n" .
+	        "$CMD_BASENAME: Found $deburl\n",
+	        0,
+	        $desc);
 }
 
 sub testcmd {
