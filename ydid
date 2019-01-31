@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.3';
+our $VERSION = '0.1.4';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -85,6 +85,14 @@ sub get_id {
 		$id = $url;
 		$id =~ s/.*\/status\/(\d+).*?$/$1/;
 		valid_twitter_id($id) || myexit(1, "Invalid Twitter ID");
+	} elsif ($url =~ /https?:\/\/(www\.)?google.com\/url/) {
+		msg(2, "Found https://www.google.com/url*url=*");
+		$id = $url;
+		$id =~ s/.*\/url\b.*\&url=(.*)/$1/;
+		$id =~ s/(.*?)(\&|$).*/$1/;
+		$id = url2txt($id);
+		$id = get_id($id);
+		valid_youtube_id($id) || myexit(1, "Invalid Google URL");
 	} elsif (length($url) == 11) {
 		msg(2, "Found plain id");
 		$id = $url;
@@ -94,6 +102,13 @@ sub get_id {
 	}
 
 	return $id;
+}
+
+sub url2txt {
+	my $txt = shift;
+
+	$txt =~ s/%([0-9a-f]{2})/chr(hex($1))/gei;
+	return $txt;
 }
 
 sub valid_twitter_id {

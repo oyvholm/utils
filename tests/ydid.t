@@ -121,6 +121,7 @@ sub test_standard_options {
 sub test_executable {
 	my ($id, $url);
 	my %deburl = (
+		'go1' => "https://www.google.com/url*url=*",
 		'tw1' => "https://twitter.com/*/status/*",
 		'yt1' => "https://www.youtube.com/watch?v=.*",
 		'yt2' => "https://youtu.be/.*",
@@ -221,6 +222,54 @@ sub test_executable {
 			"$CMD_BASENAME: Unknown URL format\n",
 			1,
 			"Non-digit in Twitter ID, $p");
+
+		# Google URL, gzip + base64:
+		# H4sIAAAAAAACAx3OzWrCQBQF4H3fI3dXQxMFFS5l1ISogRiKbbaTyTBj1E4zv
+		# +jTmxTO6nDgfNLaP7OO4xDCTCglbnzG1D12+vZpKFrQzGIPAwI3mqEBo5xmHA
+		# NvgXX4AYx2qHsKjo7DJXjeYULl+ZiFC5sPfJEcWkFkcxn25lh8iXKzEvVjew2
+		# kUNmWnOtNDeMXyokRpSRK8jET5qGcde2/ZmqoZTJKcx+lu6fdZ0rketXPwRmB
+		# pPLfNKRs8TyUp6b67Ypd48sf8+6b6u0Fo5rSbeAAAAA=
+		my $goid = "ztIEogFr9j4";
+		for my $w ("www.", "") {
+			my $url = "$p://${w}google.com/url?sa=t" .
+			          "&rct=j" .
+			          "&q=" .
+			          "&esrc=s" .
+			          "&source=web" .
+			          "&cd=1" .
+			          "&cad=rja" .
+			          "&uact=8" .
+			          "&ved=2ahUKEwic4qe52JbgAhXiqIsKHSgLB9gQyCk" .
+			            "wAHoECAUQBQ" .
+			          "&url=https%3A%2F%2Fwww.youtube.com%2F" .
+			            "watch%3Fv%3DztIEogFr9j4" .
+			          "&usg=AOvVaw3c5zJLPXOndHDXvLWs-vXO";
+			testcmd("$CMD -vv '$url'",
+			        "$goid\n",
+			        "$CMD_BASENAME: url = \"$url\"\n" .
+			          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
+			          "$CMD_BASENAME: url = " .
+			            "\"https://www.youtube.com/watch?" .
+			            "v=$goid\"\n" .
+			          "$CMD_BASENAME: Found $deburl{'yt1'}\n",
+			        0,
+			        "$p://${w}google.com url to Youtube video");
+			my $egoid = $goid;
+			$egoid =~ s/g/,/;
+			$url =~ s/$goid/$egoid/;
+			testcmd("$CMD -vv '$url'",
+			        "",
+			        "$CMD_BASENAME: url = \"$url\"\n" .
+			          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
+			          "$CMD_BASENAME: url = " .
+			            "\"https://www.youtube.com/watch?" .
+			            "v=$egoid\"\n" .
+			          "$CMD_BASENAME: Found $deburl{'yt1'}\n" .
+			          "$CMD_BASENAME: Invalid URL\n",
+			        1,
+			        "$p://${w}google.com url has invalid char " .
+			          "in id");
+		}
 	}
 }
 
