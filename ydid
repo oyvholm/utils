@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.5';
+our $VERSION = '0.1.6';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -68,35 +68,31 @@ sub get_id {
 
 	msg(2, "url = \"$url\"");
 
-	if ($url =~ /https?:\/\/(www\.)?youtube\.com\/watch\?.*\bv=.*/) {
+	if ($url =~ /https?:\/\/(?:www\.)?youtube\.com\/watch\?.*\bv=(.*)/) {
+		$id = $1;
 		msg(2, "Found https://www.youtube.com/watch?v=.*");
-		$id = $url;
-		$id =~ s/.*v=(.*)/$1/;
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
-	} elsif ($url =~ /https?:\/\/youtu\.be\/.*/) {
+	} elsif ($url =~ /https?:\/\/youtu\.be\/(.*)/) {
+		$id = $1;
 		msg(2, "Found https://youtu.be/.*");
-		$id = $url;
-		$id =~ s/.*youtu\.be\/(.*)/$1/;
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
-	} elsif ($url =~ /https?:\/\/twitter.com\/[^\/]+\/status\/(\d+)/) {
+	} elsif ($url =~ /https?:\/\/twitter.com\/([^\/]+)\/status\/(\d+)/) {
+		my $user;
+		($user, $id) = ($1, $2);
 		msg(2, "Found https://twitter.com/*/status/*");
-		$id = $url;
-		$id =~ s/.*\/status\/(\d+).*?$/$1/;
 		valid_twitter_id($id) || myexit(1, "Invalid Twitter ID");
-	} elsif ($url =~ /https?:\/\/(www\.)?google.com\/url/) {
+	} elsif ($url =~ /https?:\/\/(?:www\.)?google\.com\/url.*\&url=(.+)/) {
+		$id = $1;
 		msg(2, "Found https://www.google.com/url*url=*");
-		$id = $url;
-		$id =~ s/.*\/url\b.*\&url=(.*)/$1/;
-		$id =~ s/(.*?)(\&|$).*/$1/;
-		$id = url2txt($id);
-		$id = get_id(0, $id);
+		$id =~ s/\&.*//;
+		$id = get_id(0, url2txt($id));
 		valid_youtube_id($id) || myexit(1, "Invalid Google URL");
 	} elsif (length($url) == 11) {
 		msg(2, "Found plain id");
+		valid_youtube_id($url) || myexit(1, "Invalid Youtube ID");
 		$id = $url;
-		valid_youtube_id($id) || myexit(1, "Invalid Youtube ID");
 	} else {
 		myexit(1, "Unknown URL format");
 	}
