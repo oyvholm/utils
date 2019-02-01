@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.4';
+our $VERSION = '0.1.5';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -56,14 +56,14 @@ sub main {
 
 	defined($url) || myexit(1, "No URL specified");
 
-	$id = get_id($url);
+	$id = get_id($Opt{'create-url'}, $url);
 	print("$id\n");
 
 	return 0;
 }
 
 sub get_id {
-	my $url = shift;
+	my ($create_url, $url) = @_;
 	my $id = '';
 
 	msg(2, "url = \"$url\"");
@@ -91,7 +91,7 @@ sub get_id {
 		$id =~ s/.*\/url\b.*\&url=(.*)/$1/;
 		$id =~ s/(.*?)(\&|$).*/$1/;
 		$id = url2txt($id);
-		$id = get_id($id);
+		$id = get_id(0, $id);
 		valid_youtube_id($id) || myexit(1, "Invalid Google URL");
 	} elsif (length($url) == 11) {
 		msg(2, "Found plain id");
