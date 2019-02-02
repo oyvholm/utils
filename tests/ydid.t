@@ -184,44 +184,46 @@ sub test_executable {
 			test_yt_url($id, $url, $deburl{'yt1'}, $url);
 			test_yt_url($id, "$url&abc=def", $deburl{'yt1'},
 			            "$url&abc=def");
+
+			diag($deburl{'yt2'});
+			testcmd("$CMD $p://${w}youtu\.be/",
+				"",
+				"$CMD_BASENAME: Invalid URL\n",
+				1,
+				"Missing id in $deburl{'yt2'}, $p://$w*");
+
+			testcmd("$CMD $p://${w}youtu\.be/abcde,ghijk",
+				"",
+				"$CMD_BASENAME: Invalid URL\n",
+				1,
+				"Invalid character in $deburl{'yt2'}, $p://$w*");
+
+			$url = "$p://${w}youtu.be/$id";
+			diag($url);
+			test_yt_url($id, $url, $deburl{'yt2'}, $url);
+			test_yt_url($id, "$url&t=0s", $deburl{'yt2'}, "$url&t=0s");
 		}
-
-		diag($deburl{'yt2'});
-		testcmd("$CMD $p://youtu\.be/",
-			"",
-			"$CMD_BASENAME: Invalid URL\n",
-			1,
-			"Missing id in $deburl{'yt2'}, $p");
-
-		testcmd("$CMD $p://youtu\.be/abcde,ghijk",
-			"",
-			"$CMD_BASENAME: Invalid URL\n",
-			1,
-			"Invalid character in $deburl{'yt2'}, $p");
-
-		$url = "$p://youtu.be/$id";
-		diag($url);
-		test_yt_url($id, $url, $deburl{'yt2'}, $url);
-		test_yt_url($id, "$url&t=0s", $deburl{'yt2'}, "$url&t=0s");
 
 		my $twid = "1234567890123456789";
 		my $twname = "example";
-		$url = "$p://twitter.com/$twname/status/$twid";
-		test_yt_url($twid, $url, $deburl{'tw1'}, $url);
-		test_yt_url($twid, "$url?abc=def", $deburl{'tw1'},
-		            "$url?abc=def");
-		$url = "$p://twitter.com/$twname/status/";
-		testcmd("$CMD $url",
-			"",
-			"$CMD_BASENAME: Unknown URL format\n",
-			1,
-			"Missing Twitter ID, $p");
-		$url = "$p://twitter.com/$twname/status/abc";
-		testcmd("$CMD $url",
-			"",
-			"$CMD_BASENAME: Unknown URL format\n",
-			1,
-			"Non-digit in Twitter ID, $p");
+		for my $w ("www.", "") {
+			$url = "$p://${w}twitter.com/$twname/status/$twid";
+			test_yt_url($twid, $url, $deburl{'tw1'}, $url);
+			test_yt_url($twid, "$url?abc=def", $deburl{'tw1'},
+			            "$url?abc=def");
+			$url = "$p://${w}twitter.com/$twname/status/";
+			testcmd("$CMD $url",
+				"",
+				"$CMD_BASENAME: Unknown URL format\n",
+				1,
+				"Missing Twitter ID, $p://$w*");
+			$url = "$p://${w}twitter.com/$twname/status/abc";
+			testcmd("$CMD $url",
+				"",
+				"$CMD_BASENAME: Unknown URL format\n",
+				1,
+				"Non-digit in Twitter ID, $p://$w*");
+		}
 
 		# Google URL, gzip + base64:
 		# H4sIAAAAAAACAx3OzWrCQBQF4H3fI3dXQxMFFS5l1ISogRiKbbaTyTBj1E4zv

@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.6';
+our $VERSION = '0.1.7';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -73,12 +73,12 @@ sub get_id {
 		msg(2, "Found https://www.youtube.com/watch?v=.*");
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
-	} elsif ($url =~ /https?:\/\/youtu\.be\/(.*)/) {
+	} elsif ($url =~ /https?:\/\/(?:www\.)?youtu\.be\/(.*)/) {
 		$id = $1;
 		msg(2, "Found https://youtu.be/.*");
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
-	} elsif ($url =~ /https?:\/\/twitter.com\/([^\/]+)\/status\/(\d+)/) {
+	} elsif ($url =~ /https?:\/\/(?:www\.)?twitter.com\/([^\/]+)\/status\/(\d+)/) {
 		my $user;
 		($user, $id) = ($1, $2);
 		msg(2, "Found https://twitter.com/*/status/*");
