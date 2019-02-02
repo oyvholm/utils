@@ -161,19 +161,19 @@ sub test_executable {
 	for my $p (qw{ https http }) {
 		diag("Use $p");
 		diag($deburl{'yt1'});
-		testcmd("$CMD $p://www.youtube.com/watch?v=",
-			"",
-			"$CMD_BASENAME: Invalid URL\n",
-			1,
-			"v= has no id, $p");
-
-		testcmd("$CMD $p://www.youtube.com/watch?v=abcde,ghijk",
-			"",
-			"$CMD_BASENAME: Invalid URL\n",
-			1,
-			"v= contains invalid character, $p");
 
 		for my $w ("www.", "") {
+			testcmd("$CMD $p://${w}youtube.com/watch?v=",
+				"",
+				"$CMD_BASENAME: Invalid URL\n",
+				1,
+				"v= has no id, $p://$w*");
+
+			testcmd("$CMD $p://${w}youtube.com/watch?v=abcde,ghijk",
+				"",
+				"$CMD_BASENAME: Invalid URL\n",
+				1,
+				"v= contains invalid character, $p://$w*");
 			$url = "$p://${w}youtube.com/watch?v=$id";
 			diag($url);
 			test_yt_url($id, $url, $deburl{'yt1'}, $url);
