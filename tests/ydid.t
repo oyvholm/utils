@@ -123,8 +123,8 @@ sub test_executable {
 	my %deburl = (
 		'go1' => "https://www.google.com/url*url=*",
 		'tw1' => "https://twitter.com/*/status/*",
-		'yt1' => "https://www.youtube.com/watch?v=.*",
-		'yt2' => "https://youtu.be/.*",
+		'yt1' => "https://www.youtube.com/watch?v=*",
+		'yt2' => "https://youtu.be/*",
 		'yt3' => "plain id",
 	);
 	$id = "su045ytF_z4";
