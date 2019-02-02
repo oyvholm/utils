@@ -42,6 +42,13 @@ our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.0.0';
 
+my %deburl = (
+	'go1' => "https://www.google.com/url*url=*",
+	'tw1' => "https://twitter.com/*/status/*",
+	'yt1' => "https://www.youtube.com/watch?v=*",
+	'yt2' => "https://youtu.be/*",
+	'yt3' => "plain id",
+);
 my %descriptions = ();
 
 Getopt::Long::Configure('bundling');
@@ -120,13 +127,6 @@ sub test_standard_options {
 
 sub test_executable {
 	my ($id, $url);
-	my %deburl = (
-		'go1' => "https://www.google.com/url*url=*",
-		'tw1' => "https://twitter.com/*/status/*",
-		'yt1' => "https://www.youtube.com/watch?v=*",
-		'yt2' => "https://youtu.be/*",
-		'yt3' => "plain id",
-	);
 	$id = "su045ytF_z4";
 
 	diag("Executing test_executable()");
