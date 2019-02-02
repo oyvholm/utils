@@ -20,6 +20,7 @@ local $| = 1;
 
 our %Opt = (
 
+	'create-url' => 0,
 	'help' => 0,
 	'quiet' => 0,
 	'verbose' => 0,
@@ -29,11 +30,12 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.8';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+	'create-url|c' => \$Opt{'create-url'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
 	'verbose|v+' => \$Opt{'verbose'},
@@ -62,6 +64,18 @@ sub main {
 	return 0;
 }
 
+sub create_url {
+	my ($type, $id, $user) = @_;
+
+	if ($type eq "youtube") {
+		return "https://www.youtube.com/watch?v=$id";
+	} elsif ($type eq "twitter") {
+		return "https://twitter.com/$user/status/$id";
+	} else {
+		myexit(1, "Internal error: create_url(): $type: Unknown type");
+	}
+}
+
 sub get_id {
 	my ($create_url, $url) = @_;
 	my $id = '';
@@ -73,26 +87,30 @@ sub get_id {
 		msg(2, "Found https://www.youtube.com/watch?v=*");
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
+		$create_url && ($id = create_url("youtube", $id));
 	} elsif ($url =~ /https?:\/\/(?:www\.)?youtu\.be\/(.*)/) {
 		$id = $1;
 		msg(2, "Found https://youtu.be/*");
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
+		$create_url && ($id = create_url("youtube", $id));
 	} elsif ($url =~ /https?:\/\/(?:www\.)?twitter.com\/([^\/]+)\/status\/(\d+)/) {
 		my $user;
 		($user, $id) = ($1, $2);
 		msg(2, "Found https://twitter.com/*/status/*");
 		valid_twitter_id($id) || myexit(1, "Invalid Twitter ID");
+		$create_url && ($id = create_url("twitter", $id, $user));
 	} elsif ($url =~ /https?:\/\/(?:www\.)?google\.com\/url.*\&url=(.+)/) {
 		$id = $1;
 		msg(2, "Found https://www.google.com/url*url=*");
 		$id =~ s/\&.*//;
 		$id = get_id(0, url2txt($id));
 		valid_youtube_id($id) || myexit(1, "Invalid Google URL");
+		$Opt{'create-url'} && ($id = create_url("youtube", $id));
 	} elsif (length($url) == 11) {
 		msg(2, "Found plain id");
 		valid_youtube_id($url) || myexit(1, "Invalid Youtube ID");
-		$id = $url;
+		$id = $create_url ? create_url("youtube", $url) : $url;
 	} else {
 		myexit(1, "Unknown URL format");
 	}
@@ -159,6 +177,9 @@ Usage: $progname [options] URL
 
 Options:
 
+  -c, --create-url
+    Generate generic URL instead of ID and remove additional URL 
+    parameters.
   -h, --help
     Show this help.
   -q, --quiet

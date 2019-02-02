@@ -84,6 +84,7 @@ sub main {
 
 	test_standard_options();
 	test_executable();
+	test_create_url_option();
 
 	todo_section:
 	;
@@ -273,6 +274,71 @@ sub test_executable {
 			          "in id");
 		}
 	}
+}
+
+sub test_create_url_option {
+	my $id = "ztIEogFr9j4";
+	my $google_url = "https://google.com/url?sa=t" .
+		  "&rct=j" .
+		  "&url=https%3A%2F%2Fwww.youtube.com%2F" .
+		    "watch%3Fv%3D$id" .
+		  "&q=";
+	my $url_yt1 = "https://www.youtube.com/watch?v=$id";
+	my $url_yt2 = "https://youtu.be/$id";
+
+	for my $o ("-c", "--create-url") {
+		test_c_url($o, $url_yt1, $url_yt1, $id, $deburl{'yt1'});
+		test_c_url($o, $url_yt2, $url_yt1, $id, $deburl{'yt2'});
+		test_c_url($o, $id, $url_yt1, $id, $deburl{'yt3'});
+		test_c_url($o, $google_url, $url_yt1, $id, $deburl{'go1'});
+
+		my $eid = $id;
+		$eid =~ s/g/,/;
+		my $gurl = $google_url;
+		$gurl =~ s/$id/$eid/;
+		testcmd("$CMD -vv $o '$gurl'",
+		        "",
+		        "$CMD_BASENAME: url = \"$gurl\"\n" .
+		          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
+		          "$CMD_BASENAME: url = " .
+		            "\"https://www.youtube.com/watch?" .
+		            "v=$eid\"\n" .
+		          "$CMD_BASENAME: Found $deburl{'yt1'}\n" .
+		          "$CMD_BASENAME: Invalid URL\n",
+		        1,
+		        "Invalid char in google url, $o");
+
+		for my $p ("https", "http") {
+			for my $w ("www.", "") {
+				my $id = "1234567890";
+				my $user = "example";
+				my $genurl = "https://twitter.com/$user/" .
+				             "status/$id";
+				my $url = "$p://${w}twitter.com/$user/" .
+				          "status/$id";
+
+				for (1, 2) {
+					test_c_url($o, $url, $genurl, $id,
+					           $deburl{'tw1'});
+					$url .= "?abc=def&jada=masa";
+				}
+			}
+		}
+	}
+}
+
+sub test_c_url {
+	my ($o, $arg, $url, $id, $deburl) = @_;
+	my $debtxt = "$CMD_BASENAME: url = \"$arg\"\n" .
+	             "$CMD_BASENAME: Found $deburl\n";
+
+	if ($deburl eq $deburl{'go1'}) {
+		$debtxt .= "ydid: url = \"https://www.youtube.com/" .
+		             "watch?v=$id\"\n" .
+		           "ydid: Found $deburl{'yt1'}\n";
+	}
+
+	testcmd("$CMD -vv $o '$arg'", "$url\n", $debtxt, 0, "$o '$arg'");
 }
 
 sub test_yt_url {
