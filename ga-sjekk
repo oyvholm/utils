@@ -12,7 +12,7 @@
 #=======================================================================
 
 progname=ga-sjekk
-VERSION=0.4.3
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 h\
@@ -76,7 +76,8 @@ Options:
     Be more quiet. Can be repeated to increase silence.
   -u, --update
     Update the SQLite database in \$GASJEKK_DIR. Use the directory name 
-    as name of the repo.
+    as name of the repo. No action is taken if the Git config variable 
+    $progname.disable is set to "true".
   -v, --verbose
     Increase level of verbosity. Can be repeated. One -v lists file 
     information of every file on the command line if they exist in the 
@@ -110,6 +111,10 @@ db="$dbdir/ga-sjekk.sqlite"
 
 if test "$opt_update" = "1"; then
     is_annex || err Current dir is not an annex, annex.uuid is empty
+    if test "$(git config --get $progname.disable)" = "true"; then
+        echo "$progname: $progname.disable = true, ignoring repo" >&2
+        exit 0
+    fi
     if test -e "$db"; then
         test -w "$db" || err $db: Database is not writable
     fi
