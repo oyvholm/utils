@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.2.0
+VERSION=0.2.1
 
 ARGS="$(getopt -o "\
 f\
@@ -85,6 +85,9 @@ if test "$opt_filenames" = "1"; then
     cut -f 2- -d .
 else
     ls *.info.json | while read f; do
-        echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"' -e '"uploader"');
+        if test -e "$f"; then
+            echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"' \
+                                              -e '"uploader"');
+        fi
     done | grep . | sort
 fi
