@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=ft
-VERSION=0.3.0
+VERSION=0.3.1
 
 rcfile=~/.ftrc
 
@@ -64,8 +64,8 @@ Options:
   --version
     Print version information.
 
-Create the rcfile and define url (ssh address of source directory) and dest 
-(local directory). For example:
+Create the rcfile and define url (ssh address of source directory) and 
+dest (local directory). For example:
 
 url=user@fromhost:/home/user/tel/
 dest=/sdcard/tel/
