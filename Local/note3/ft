@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=ft
-VERSION=0.3.1
+VERSION=0.4.0
 
 rcfile=~/.ftrc
 
@@ -45,7 +45,7 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Usage: $progname [options]
+Usage: $progname [options] [ -- rsync_options ]
 
 Options:
 
@@ -95,7 +95,7 @@ else
 	copy_str="--inplace"
 fi
 ps | grep -v "grep $cmd_rsync" | grep "$cmd_rsync" && exit 1
-until $cmd_rsync $append_str $copy_str $url $dest; do
+until $cmd_rsync $append_str $copy_str $url $dest "$@"; do
   date;
   sleep 2;
 done
