@@ -11,33 +11,47 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.2.1
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
+d:\
 f\
 h\
+o:\
 q\
 v\
+w:\
 " -l "\
+dbname:,\
 filenames,\
 help,\
+order-by:,\
 quiet,\
 verbose,\
 version,\
+where:,
 " -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
+db=".$progname.sqlite"
+
+opt_dbname=''
 opt_filenames=0
 opt_help=0
+opt_orderby=upload_date
 opt_quiet=0
 opt_verbose=0
+opt_where=''
 while :; do
     case "$1" in
+        -d|--dbname) opt_dbname="$2"; shift 2 ;;
         -f|--filenames) opt_filenames=1; shift ;;
         -h|--help) opt_help=1; shift ;;
+        -o|--order-by) opt_orderby="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+        -w|--where) opt_where="$2"; shift 2 ;;
         --version) echo $progname $VERSION; exit 0 ;;
         --) shift; break ;;
         *) echo $progname: Internal error >&2; exit 1 ;;
@@ -55,39 +69,126 @@ Usage: $progname [options]
 
 Options:
 
+  -d FILE, --dbname FILE
+    Use FILE as database instead of "$db".
   -f, --filenames
     List filenames instead of the default format with date and title. 
     Useful for creating playlists.
   -h, --help
     Show this help.
+  -o COLUMN, --order-by COLUMN
+    Sort output by COLUMN.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -w CLAUSE, --where CLAUSE
+    List only entries specified by CLAUSE.
 
 END
     exit 0
 fi
 
+test -n "$opt_dbname" && db=$opt_dbname
+rm -f "$db" "$db-journal"
+cat <<SQL_END | sqlite3 "$db" || exit 1
+CREATE TABLE t (file TEXT);
+CREATE TABLE yt (
+  average_rating REAL,
+  description TEXT,
+  dir TEXT,
+  dislike_count INTEGER,
+  display_id TEXT,
+  duration INTEGER,
+  extractor TEXT,
+  file TEXT,
+  filesize INTEGER,
+  format TEXT,
+  format_id TEXT,
+  fulltitle TEXT,
+  height INTEGER,
+  like_count INTEGER,
+  resolution TEXT,
+  title TEXT,
+  upload_date TEXT,
+  uploader TEXT,
+  uploader_id TEXT,
+  view_count INTEGER,
+  webpage_url TEXT,
+  width INTEGER,
+  ytid TEXT,
+  j TEXT
+);
+SQL_END
+find -name '*.info.json' | sort | sqlite3 "$db" ".import /dev/stdin t"
+cat <<SQL_END | sqlite3 "$db"
+BEGIN;
+ALTER TABLE t ADD j TEXT;
+UPDATE t SET j = json(readfile(file));
+INSERT INTO yt
+SELECT
+    json_extract(j, '$.average_rating') AS average_rating,
+    json_extract(j, '$.description') AS description,
+    NULL as dir,
+    json_extract(j, '$.dislike_count') AS dislike_count,
+    json_extract(j, '$.display_id') AS display_id,
+    json_extract(j, '$.duration') AS duration,
+    json_extract(j, '$.extractor') AS extractor,
+    file,
+    json_extract(j, '$.filesize') AS filesize,
+    json_extract(j, '$.format') AS format,
+    json_extract(j, '$.format_id') AS format_id,
+    json_extract(j, '$.fulltitle') AS fulltitle,
+    json_extract(j, '$.height') AS height,
+    json_extract(j, '$.like_count') AS like_count,
+    json_extract(j, '$.resolution') AS resolution,
+    json_extract(j, '$.title') AS title,
+    json_extract(j, '$.upload_date') AS upload_date,
+    json_extract(j, '$.uploader') AS uploader,
+    json_extract(j, '$.uploader_id') AS uploader_id,
+    json_extract(j, '$.view_count') AS view_count,
+    json_extract(j, '$.webpage_url') AS webpage_url,
+    json_extract(j, '$.width') AS width,
+    json_extract(j, '$.id') AS ytid,
+    j
+  FROM t;
+UPDATE yt SET upload_date = substr(upload_date, 1, 4) || '-' ||
+  substr(upload_date, 5, 2) || '-' || substr(upload_date, 7, 2);
+COMMIT;
+SQL_END
+
+where_str='WHERE ytid IS NOT NULL'
+if test -n "$opt_where"; then
+    where_str="WHERE $opt_where AND ytid IS NOT NULL"
+fi
+
 if test "$opt_filenames" = "1"; then
-    ls *.info.json | while read f; do
-        echo $(
-            json_reformat <"$f" |
-            grep -e '"upload_date"' |
-            perl -pe 's/^.*"upload_date": "(\d+)".*$/$1/'
-        ).$f;
-    done |
-    grep . |
-    sort |
-    perl -pe 's/\.info\.json$/.mp4/' |
-    cut -f 2- -d .
+    sqlite3 "$db" "DROP TABLE IF EXISTS films;"
+    sqlite3 "$db" "CREATE TABLE films (file TEXT);"
+    find | filmer | sort | sqlite3 "$db" ".import /dev/stdin films"
+    cat <<SQL_END | sqlite3 "$db" | sqlite3 "$db"
+SELECT 'BEGIN;';
+SELECT printf('SELECT file FROM films WHERE file LIKE ''%%-%s%%'';', ytid)
+  FROM yt
+  $where_str
+  ORDER BY $opt_orderby;
+SELECT 'COMMIT;';
+SQL_END
 else
-    ls *.info.json | while read f; do
-        if test -e "$f"; then
-            echo $(json_reformat <"$f" | grep -e '"title"' -e '"upload_date"' \
-                                              -e '"uploader"');
-        fi
-    done | grep . | sort
+    cat <<SQL_END | sqlite3 -header -column "$db"
+.width 10 10 5 -5 -11 20 200
+SELECT
+    upload_date AS ud,
+    resolution,
+    height,
+    duration,
+    filesize,
+    uploader,
+    file
+  FROM yt
+  $where_str
+  ORDER BY $opt_orderby;
+SQL_END
 fi
