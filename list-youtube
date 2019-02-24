@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.3.0
+VERSION=0.3.1
 
 ARGS="$(getopt -o "\
 d:\
@@ -161,7 +161,7 @@ SQL_END
 
 where_str='WHERE ytid IS NOT NULL'
 if test -n "$opt_where"; then
-    where_str="WHERE $opt_where AND ytid IS NOT NULL"
+    where_str="WHERE ($opt_where) AND ytid IS NOT NULL"
 fi
 
 if test "$opt_filenames" = "1"; then
