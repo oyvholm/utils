@@ -212,16 +212,16 @@ int choose_opt_action(struct Options *dest,
 	switch (c) {
 	case 0:
 		if (!strcmp(opts->name, "license"))
-			dest->license = TRUE;
+			dest->license = true;
 		else if (!strcmp(opts->name, "selftest"))
-			dest->selftest = TRUE;
+			dest->selftest = true;
 		else if (!strcmp(opts->name, "simfail"))
 			dest->simfail = simfail = atoi(optarg);
 		else if (!strcmp(opts->name, "version"))
-			dest->version = TRUE;
+			dest->version = true;
 		break;
 	case 'h':
-		dest->help = TRUE;
+		dest->help = true;
 		break;
 	case 'q':
 		dest->verbose--;
@@ -250,12 +250,12 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 	assert(dest);
 	assert(argv);
 
-	dest->help = FALSE;
-	dest->license = FALSE;
+	dest->help = false;
+	dest->license = false;
 	dest->selftest = 0;
 	dest->simfail = 0;
 	dest->verbose = 0;
-	dest->version = FALSE;
+	dest->version = false;
 
 	while (retval == EXIT_SUCCESS) {
 		int c;
