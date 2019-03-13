@@ -36,13 +36,21 @@ test:
 	cd $(TMP)/src && $(MAKE) test
 	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" && exit 1 || exit 0
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
-	cd $(TMP)/src && $(MAKE) clean
-	cd $(TMP)/src && $(MAKE) valgrind
-	cd $(TMP)/src && $(MAKE) clean valgrind NDEBUG=1
+	if valgrind --version 2>/dev/null | grep -q ^valgrind; then \
+		cd $(TMP)/src && $(MAKE) clean valgrind && \
+		$(MAKE) clean valgrind NDEBUG=1 || exit 1; \
+	else \
+		echo "# Skip Valgrind tests, it's not installed here"; \
+		cd $(TMP)/src && $(MAKE) clean test NDEBUG=1 || exit 1; \
+	fi
 	cd $(TMP)/src && ./jada --version | grep -q "has NDEBUG"
-	cd $(TMP)/src && $(MAKE) gcov
-	cd $(TMP)/src && $(MAKE) gcov 2>&1 | grep -q '^0 untested lines'
-	cd $(TMP)/src && $(MAKE) clean test gcov
-	cd $(TMP)/src && $(MAKE) gcov-cmt
-	cd $(TMP) && test -z "$$(git ls-files -m)"
-	cd $(TMP)/src && $(MAKE) gcov-cmt-clean
+	if gcov --version 2>/dev/null | grep -q ^gcov; then \
+		cd $(TMP)/src && $(MAKE) gcov && \
+		$(MAKE) gcov 2>&1 | grep -q '^0 untested lines' && \
+		$(MAKE) clean test gcov && \
+		$(MAKE) gcov-cmt && \
+		test -z "$$(git ls-files -m)" && \
+		$(MAKE) gcov-cmt-clean || exit 1; \
+	else \
+		echo "# gcov(1) not found, skip gcov tests"; \
+	fi
