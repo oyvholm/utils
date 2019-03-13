@@ -48,7 +48,10 @@ cat <<END >version.h
 #define EXEC_DATE  "$exec_date"
 END
 
+# GCOV: Compile with coverage code for gcov(1)
 test -n "$GCOV" && newdef GCOV
+
+# NDEBUG: Disable assert()
 test -n "$NDEBUG" && newdef NDEBUG
 
 exit 0
