@@ -25,7 +25,6 @@
  */
 
 char *progname;
-int simfail = 0;
 
 /*
  * verbose_level() - Get or set the verbosity level. If action is 0, return the 
@@ -95,7 +94,7 @@ int myerror(const char *format, ...)
 	va_start(ap, format);
 	retval += vfprintf(stderr, format, ap);
 	va_end(ap);
-	if (orig_errno || simfail == 1)
+	if (orig_errno)
 		retval += fprintf(stderr, ": %s", strerror(orig_errno));
 	retval += fprintf(stderr, "\n");
 
@@ -184,9 +183,6 @@ int usage(const int retval)
 	       "    Increase level of verbosity. Can be repeated.\n");
 	printf("  --selftest\n"
 	       "    Run the built-in test suite.\n");
-	printf("  --simfail NUM\n"
-	       "    Simulate a failure at position NUM. "
-	       "Used by the test suite.\n");
 	printf("  --version\n"
 	       "    Print version information.\n");
 	printf("\n");
@@ -215,8 +211,6 @@ int choose_opt_action(struct Options *dest,
 			dest->license = true;
 		else if (!strcmp(opts->name, "selftest"))
 			dest->selftest = true;
-		else if (!strcmp(opts->name, "simfail"))
-			dest->simfail = simfail = atoi(optarg);
 		else if (!strcmp(opts->name, "version"))
 			dest->version = true;
 		break;
@@ -253,7 +247,6 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 	dest->help = false;
 	dest->license = false;
 	dest->selftest = 0;
-	dest->simfail = 0;
 	dest->verbose = 0;
 	dest->version = false;
 
@@ -265,7 +258,6 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 			{"license", no_argument, 0, 0},
 			{"quiet", no_argument, 0, 'q'},
 			{"selftest", no_argument, 0, 0},
-			{"simfail", required_argument, 0, 0},
 			{"verbose", no_argument, 0, 'v'},
 			{"version", no_argument, 0, 0},
 			{0, 0, 0, 0}

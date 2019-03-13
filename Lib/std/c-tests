@@ -183,11 +183,6 @@ END
 END
 	        0,
 	        '--selftest');
-	likecmd("$CMD --simfail 1 --nosuchopt",
-	        '/^$/',
-	        '/Option error: Success/s',
-	        1,
-	        '--simfail 1, simulate errno in myerror()');
 }
 
 sub testcmd {
