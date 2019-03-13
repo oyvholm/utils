@@ -17,6 +17,11 @@ clean:
 	cd Git && $(MAKE) clean
 	find . -name .testadd.tmp -type d -print0 | xargs -0r rm -rf
 
+.PHONY: fullclean
+fullclean: clean
+	cd src && $(MAKE) fullclean
+	cd Git && $(MAKE) fullclean
+
 .PHONY: lgd
 lgd:
 	git lg --date-order $$(git branch -a | cut -c3- | \

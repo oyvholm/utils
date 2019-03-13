@@ -9,7 +9,10 @@ default: $(MAKEFILES)
 	for f in $(DIRS); do (cd $$f && $(MAKE)) || exit 1; done
 
 .PHONY: clean
-clean: $(MAKEFILES)
+clean:
+
+.PHONY: fullclean
+fullclean: $(MAKEFILES)
 	for f in $(DIRS); do (cd $$f && $(MAKE) clean) || exit 1; done
 
 .PHONY: test
