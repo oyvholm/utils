@@ -21,6 +21,7 @@ local $| = 1;
 our %Opt = (
 
 	'delete' => 0,
+	'gncov' => 0,
 	'help' => 0,
 	'quiet' => 0,
 	'verbose' => 0,
@@ -30,12 +31,13 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'delete|d' => \$Opt{'delete'},
+	'gncov|g' => \$Opt{'gncov'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
 	'verbose|v+' => \$Opt{'verbose'},
@@ -90,7 +92,12 @@ sub process_file {
 				my ($c1, $c2, $c3) = ($1, $2, $3);
 				$c2 eq "0" && next;
 				$c3 =~ s! /\* gcov \*/$!!;
-				if ($c1 =~ /\#\#\#\#\#/) {
+				if ($c1 =~ /\#\#\#\#\#/ &&
+				    !(
+				        $line =~ m'/\* gncov \*/' &&
+				        !$Opt{'gncov'}
+				    )
+				) {
 					$c3 .= " /* gcov */";
 				}
 				print(to_fp "$c3\n");
@@ -132,6 +139,8 @@ Options:
 
   -d, --delete
     Delete existing markers.
+  -g, --gncov
+    Mark lines even when they contain the gncov marker.
   -h, --help
     Show this help.
   -q, --quiet
@@ -140,6 +149,10 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+
+To suppress the gcov marker for some lines, add the string "/* gncov */" 
+to the relevant lines. This is for lines that are difficult to test 
+(full disk, memory full, long paths, etc).
 
 END
 	exit($Retval);
