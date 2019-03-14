@@ -52,6 +52,9 @@ possible.
 Add or remove `gcov` markers in the source code in lines that are not 
 tested.
 
+These commands need the `gcov-cmt` script, available from 
+<https://gitlab.com/sunny256/utils/raw/master/gcov-cmt>.
+
 ### make gdb
 
 Start gdb with main() as the default breakpoint, this is defined in 
