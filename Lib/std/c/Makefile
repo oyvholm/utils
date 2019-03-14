@@ -19,6 +19,7 @@ OBJS = STDexecDTS.o selftest.o
 CFILES = STDexecDTS.c selftest.c
 HFILES = STDexecDTS.h
 DEPS = $(HFILES) Makefile
+GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 
 .PHONY: all
 all: $(EXEC)
@@ -54,7 +55,7 @@ gcov:
 
 .PHONY: gcov-cmt
 gcov-cmt: gcov
-	gcov-cmt $(CFILES)
+	gcov-cmt $(GNCOV_STR) $(CFILES)
 
 .PHONY: gcov-cmt-clean
 gcov-cmt-clean:

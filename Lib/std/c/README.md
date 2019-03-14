@@ -50,7 +50,12 @@ possible.
 ### make gcov-cmt / make gcov-cmt-clean
 
 Add or remove `gcov` markers in the source code in lines that are not 
-tested.
+tested. Lines that are hard to test, for example full disk, full memory, 
+long paths and so on, can be marked with the string `/* gncov */` to 
+avoid marking them. To mark lines even when marked with gncov, set the 
+GNCOV environment variable to a non-empty value. For example:
+
+    make gcov-cmt GNCOV=1
 
 These commands need the `gcov-cmt` script, available from 
 <https://gitlab.com/sunny256/utils/raw/master/gcov-cmt>.
