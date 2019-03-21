@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.3.1
+VERSION=0.3.2
 
 ARGS="$(getopt -o "\
 d:\
@@ -143,7 +143,8 @@ SELECT
     json_extract(j, '$.fulltitle') AS fulltitle,
     json_extract(j, '$.height') AS height,
     json_extract(j, '$.like_count') AS like_count,
-    json_extract(j, '$.resolution') AS resolution,
+    json_extract(j, '$.width') || 'x' || json_extract(j, '$.height')
+      AS resolution,
     json_extract(j, '$.title') AS title,
     json_extract(j, '$.upload_date') AS upload_date,
     json_extract(j, '$.uploader') AS uploader,
