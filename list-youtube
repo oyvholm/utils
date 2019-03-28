@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.3.2
+VERSION=0.3.3
 
 ARGS="$(getopt -o "\
 d:\
@@ -39,7 +39,7 @@ db=".$progname.sqlite"
 opt_dbname=''
 opt_filenames=0
 opt_help=0
-opt_orderby=upload_date
+opt_orderby=upload_date,file
 opt_quiet=0
 opt_verbose=0
 opt_where=''
