@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.26.1
+VERSION=0.26.2
 
 STD_SUFFIX=''
 
@@ -222,7 +222,7 @@ else
 fi
 
 for f in "$@"; do
-    if test -d "$dir" -o "$opt_dirs_only" != "1"; then
+    if test -d "$f" -o "$opt_dirs_only" != "1"; then
         if test "$opt_no_git_check" != "1"; then
             git ls-files "$f" | grep -q . >&2 && {
                 echo -n "$progname: $f: " >&2
