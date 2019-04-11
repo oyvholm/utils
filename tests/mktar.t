@@ -95,17 +95,21 @@ sub main {
 
 	ok(mkdir("$logdir"), "mkdir $logdir");
 
-	likecmd("$CMD -P tmp d",
-	        '/^$/',
-	        '/mktar: tar cf tmp\.d\.tar ' .
-	            '--force-local --sort=name --sparse --xattrs d\\n/s',
-	        0,
-	        "Use \"tmp\" prefix with -P");
-	ok(-f "tmp.d.tar", "tmp.d.tar exists");
+	for my $p ("-P", "--prefix") {
+		likecmd("$CMD $p tmp d",
+		        '/^$/',
+		        '/mktar: tar cf tmp\.d\.tar ' .
+		            '--force-local --sort=name --sparse --xattrs ' .
+		            'd\\n/s',
+		        0,
+		        "Use \"tmp\" prefix with $p");
+		ok(-f "tmp.d.tar", "tmp.d.tar exists");
 
-	testcmd("tar df tmp.d.tar", "", "", 0,
-	        "Contents of the tar file is identical to d/");
-	ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
+		testcmd("tar df tmp.d.tar", "", "", 0,
+		        "Contents of the tar file is identical to d/ " .
+		        "after $p");
+		ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
+	}
 	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
 	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
 	test_no_uuid_option($CMD, $CMD_BASENAME, $logdir);

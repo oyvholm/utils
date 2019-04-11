@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.26.0
+VERSION=0.26.1
 
 STD_SUFFIX=''
 
@@ -44,7 +44,7 @@ no-git-check,\
 no-uuid,\
 no-xattrs,\
 numeric-owner,\
-prefix,\
+prefix:,\
 quiet,\
 remove-files,\
 suffix:,\
