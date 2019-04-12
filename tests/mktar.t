@@ -111,6 +111,7 @@ sub main {
 		ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
 	}
 	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
+	test_output_dir_option($CMD, $CMD_BASENAME, $logdir);
 	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
 	test_no_uuid_option($CMD, $CMD_BASENAME, $logdir);
 	# FIXME: Add more tests, cover all options
@@ -198,6 +199,48 @@ sub test_numeric_owner_option {
 
 		ok(unlink("has-numeric.tar"), "Delete has-numeric.tar");
 	}
+}
+
+sub test_output_dir_option {
+	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my $pref = "output-dir";
+	my $outd = "outd.tmp";
+
+	diag("Test -o/--output-dir option");
+	if (-e $pref) {
+		diag("NOTICE: $pref exists, deleting it");
+		system("rm -rf $pref")
+	}
+	extract_tar_file("d.tar");
+	testcmd("mv d $pref", "", "", 0, "mv d $pref");
+	unlink("$pref.tar") if -e "$pref.tar";
+	if (-e $outd) {
+		diag("NOTICE: $outd exists, deleting it");
+		system("rm -rf $outd")
+	}
+
+	for my $p ("--output-dir", "-o") {
+		ok(mkdir($outd), "mkdir $outd");
+		likecmd("$CMD $p $outd $pref",
+			'/^$/',
+			'/^' . join('', '\n',
+			  "mktar: Packing $pref\\.\\.\\.\\n",
+			  $v1_templ, '\n',
+			  "mktar: tar cf $outd\\/$pref\\.tar " .
+			    '--force-local ' .
+			    '--sort=name --sparse ' .
+			    "--xattrs $pref\\n" .
+			    '.+',
+			  "$pref\\.tar\\n",
+			) . '$/s',
+			0,
+			"Use $p",
+		);
+		ok(-f "$outd/$pref.tar", "$outd/$pref.tar exists");
+		ok(unlink("$outd/$pref.tar"), "Delete $outd/$pref.tar");
+		testcmd("rm -rf $outd", "", "", 0, "rm -rf $outd after $p");
+	}
+	testcmd("rm -rf $pref", "", "", 0, "rm -rf $pref");
 }
 
 sub test_random_mac_option {

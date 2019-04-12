@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.26.2
+VERSION=0.27.0
 
 STD_SUFFIX=''
 
@@ -24,6 +24,7 @@ h\
 i\
 L\
 m\
+o:\
 P:\
 q\
 r\
@@ -44,6 +45,7 @@ no-git-check,\
 no-uuid,\
 no-xattrs,\
 numeric-owner,\
+output-dir:,\
 prefix:,\
 quiet,\
 remove-files,\
@@ -68,6 +70,7 @@ opt_random_mac=0
 opt_no_uuid=0
 opt_no_xattrs=0
 opt_numeric_owner=0
+opt_output_dir=''
 opt_prefix=''
 opt_quiet=0
 opt_remove_files=0
@@ -88,6 +91,7 @@ while :; do
         -m|--random-mac) opt_random_mac=1; shift ;;
         --no-uuid) opt_no_uuid=1; shift ;;
         --numeric-owner) opt_numeric_owner=1; shift ;;
+        -o|--output-dir) opt_output_dir="$2"; shift 2 ;;
         -P|--prefix) opt_prefix="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         -r|--remove-files) opt_remove_files=1; shift ;;
@@ -142,6 +146,8 @@ Options:
     Don't create UUID label in the .tar file.
   --numeric-owner
     Use numbers for user/group names.
+  -o DIR, --output-dir DIR
+    Store the tar files in DIR instead of the current directory.
   -P PREFIX, --prefix PREFIX
     Use PREFIX at the beginning of the tar filenames. Doesn't change the 
     name of the extracted files. Adds a terminating '.' if it doesn't 
@@ -250,13 +256,23 @@ if test -n "$suffix"; then
     echo "$suffix" | grep -q '^\.' || suffix=".$suffix"
 fi
 
+if test -n "$opt_output_dir"; then
+    if test ! -d "$opt_output_dir/."; then
+        echo "$progname: $opt_output_dir: Directory not found" >&2
+        exit 1
+    fi
+    output_dir="$opt_output_dir/"
+else
+    output_dir="";
+fi
+
 for f in "$@"; do
     dir="$(echo -n "$f" | sed 's/\/*$//')"
     if [ -z "$dir" ]; then
         echo "$progname: $f: Argument is empty after stripping slash" >&2
         exit 1
     fi
-    tarfile="$prefix$dir$suffix.tar"
+    tarfile="$output_dir$prefix$dir$suffix.tar"
 
     if test $opt_verbose -ge 2; then
         echo $progname: dir = $dir >&2
