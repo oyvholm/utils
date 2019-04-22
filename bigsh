@@ -186,6 +186,14 @@ elif [ -e /hpelite2 ]; then
 			start_xterm 165x78+0+0 "$@"
 		fi
 	fi
+	if [ "$opt_all" = "1" -o -z "$winc" ]; then
+		[ -z "$opt_title" ] && wintitle=note3
+		if [ "$opt_big" = "1" ]; then
+			start_xterm 110x56+0+0 "$@"
+		else
+			start_xterm 165x78+0+0 "$@"
+		fi
+	fi
 elif [ -e /sunbase ]; then
 	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
 		[ -z "$opt_title" ] && wintitle=gdb
