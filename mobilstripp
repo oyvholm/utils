@@ -68,6 +68,7 @@ grep -i -E -e '\.(flac|gz|jpeg|jpg|m4a|mp3|mp4|pdf|pgn|png|wav)' \
 -e /SMSBackupRestore/ | \
 grep -v \
 -e /Actionmemo/ \
+-e /Android/data/cgeo\\.geocaching/files/GeocacheData/ \
 -e /Android/data/com\\.amazon\\.kindle/files/appexpan/ \
 -e /Android/data/com\\.andrewshu\\.android\\.redditdonation/cache/prefetch/ \
 -e /Android/data/com\\.bambuna\\.podcastaddict/files/podcast/ \
@@ -95,6 +96,7 @@ grep -v \
 -e /Android/data/com\\.touchtype\\.swiftkey/files/ \
 -e /Android/data/com\\.tripadvisor\\.tripadvisor/files/MapResources/ \
 -e /Android/data/dentex\\.youtube\\.downloader/files/cache/ \
+-e /Android/data/org\\.telegram\\.messenger/cache/ \
 -e /Android/data/org\\.videolan\\.vlc/cache/art/ \
 -e /Android/data/org\\.videolan\\.vlc/files/thumbs/ \
 -e /Android/data/reddit\\.news/cache/ \
@@ -119,5 +121,6 @@ grep -v \
 -e /foursquare/category_cache/ \
 -e /foursquare/photo_cache/ \
 -e /tel/ \
+-e \\./Telegram/ \
 -e \\.pcg\$ \
 -e ☠_her_har_vi_slutten | less
