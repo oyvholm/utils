@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.4.0
+VERSION=0.4.1
 
 ARGS="$(getopt -o "\
 d:\
@@ -97,6 +97,12 @@ END
     exit 0
 fi
 
+mkinsert() {
+    echo "BEGIN;"
+    sed "s/'/''/g; s/.*/INSERT INTO $1 VALUES('&');/;"
+    echo "COMMIT;"
+}
+
 test -n "$opt_dbname" && db=$opt_dbname
 rm -f "$db" "$db-journal"
 cat <<SQL_END | sqlite3 "$db" || exit 1
@@ -132,7 +138,7 @@ if test -n "$opt_from_file"; then
     grep '\.info\.json$' "$opt_from_file"
 else
     find -name '*.info.json'
-fi | sort | sqlite3 "$db" ".import /dev/stdin t"
+fi | sort | mkinsert t | sqlite3 "$db"
 cat <<SQL_END | sqlite3 "$db"
 BEGIN;
 ALTER TABLE t ADD j TEXT;
@@ -178,7 +184,7 @@ fi
 if test "$opt_filenames" = "1"; then
     sqlite3 "$db" "DROP TABLE IF EXISTS films;"
     sqlite3 "$db" "CREATE TABLE films (file TEXT);"
-    find | filmer | sort | sqlite3 "$db" ".import /dev/stdin films"
+    find | filmer | sort | mkinsert films | sqlite3 "$db"
     cat <<SQL_END | sqlite3 "$db" | sqlite3 "$db"
 SELECT 'BEGIN;';
 SELECT printf('SELECT file FROM films WHERE file LIKE ''%%-%s%%'';', ytid)
