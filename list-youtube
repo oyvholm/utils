@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.4.1
+VERSION=0.4.2
 
 ARGS="$(getopt -o "\
 d:\
@@ -35,8 +35,6 @@ where:,
 " -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
-
-db=".$progname.sqlite"
 
 opt_dbname=''
 opt_filenames=0
@@ -74,7 +72,8 @@ Usage: $progname [options]
 Options:
 
   -d FILE, --dbname FILE
-    Use FILE as database instead of "$db".
+    Use FILE as database instead of storing it under 
+    ~/.cache/$progname/[DIR].
   -f, --filenames
     List filenames instead of the default format with date and title. 
     Useful for creating playlists.
@@ -103,7 +102,13 @@ mkinsert() {
     echo "COMMIT;"
 }
 
-test -n "$opt_dbname" && db=$opt_dbname
+if test -n "$opt_dbname"; then
+    db=$opt_dbname
+else
+    odir="$HOME/.cache/$progname$(pwd -P)"
+    mkdir -p "$odir" || exit 1
+    db="$odir/$progname.sqlite"
+fi
 rm -f "$db" "$db-journal"
 cat <<SQL_END | sqlite3 "$db" || exit 1
 CREATE TABLE t (file TEXT);
