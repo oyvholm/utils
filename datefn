@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -111,9 +111,12 @@ sub process_file {
     my $new_name = '';
     my $mod_date = mod_date($File);
     my $start_date = start_date($File);
+    return if (!$mod_date);
+    $mod_date += $Opt{'skew'};
+    $start_date += $Opt{'skew'} if ($start_date);
     my $dates = sprintf("%s%s%s",
-        sec_to_string($start_date),
-        length($start_date) ? "-" : "",
+        $start_date ? sec_to_string($start_date) : "",
+        $start_date ? "-" : "",
         sec_to_string($mod_date),
     );
     if (length($dates)) {
@@ -181,10 +184,10 @@ sub mysystem {
 sub mod_date {
     # Return file modification timestamp {{{
     my $File = shift;
-    my $Retval = "";
+    my $Retval = 0;
     my @stat_array = stat($File);
     if (scalar(@stat_array)) {
-        $Retval = $stat_array[9] + $Opt{'skew'};
+        $Retval = $stat_array[9];
     } else {
         warn("$progname: $File: Cannot stat file: $!\n");
     }
@@ -222,10 +225,10 @@ sub strip_date_from_filename {
 sub start_date {
     # Find start of recording {{{
     my $File = shift;
-    my $Retval = "";
+    my $Retval = 0;
     if ($Opt{'bwf'}) {
         my $bwf_date = bwf_date($File);
-        if (length($bwf_date)) {
+        if ($bwf_date) {
             $Retval = $bwf_date;
         }
     }
@@ -239,10 +242,10 @@ sub bwf_date {
     # This is based on examining .wav files from the Zoom H4n, and it 
     # seems to work there. The file format may vary on other devices.
     my $File = shift;
-    my $Retval = "";
+    my $Retval = 0;
     unless (open(InFP, "<", $File)) {
         warn("$progname: $File: Cannot open file to look for BWF data: $!\n");
-        return("");
+        return 0;
     }
     my $buf;
     my $numread = read(InFP, $buf, 358);
