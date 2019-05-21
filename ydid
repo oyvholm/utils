@@ -30,7 +30,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -105,7 +105,7 @@ sub get_id {
 		msg(2, "Found https://www.google.com/url*url=*");
 		$id =~ s/\&.*//;
 		$id = get_id(0, url2txt($id));
-		valid_youtube_id($id) || myexit(1, "Invalid Google URL");
+		length($id) || myexit(1, "Invalid Google URL");
 		$Opt{'create-url'} && ($id = create_url("youtube", $id));
 	} elsif (length($url) == 11) {
 		msg(2, "Found plain id");

@@ -272,6 +272,21 @@ sub test_executable {
 			        1,
 			        "$p://${w}google.com url has invalid char " .
 			          "in id");
+
+			$twid = '1' x 19;
+			$url = "$p://${w}google.com/url?sa=t&rct=j&" .
+			       "&url=https%3A%2F%2Ftwitter.com%2Fabc%2F" .
+			            "status%2F$twid%3Flang%3Den";
+			testcmd("$CMD -vv '$url'",
+			        "$twid\n",
+			        "$CMD_BASENAME: url = \"$url\"\n" .
+			          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
+			          "$CMD_BASENAME: url = " .
+			            "\"https://twitter.com/abc/status/$twid" .
+			            "?lang=en\"\n" .
+			          "$CMD_BASENAME: Found $deburl{'tw1'}\n",
+			        0,
+			        "$p://${w}google.com url with twitter url");
 		}
 	}
 }
