@@ -38,7 +38,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.2';
+our $VERSION = '0.1.3';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -88,7 +88,7 @@ sub main {
         die("$progname: Missing filenames. Use -h for help.\n");
 
     for my $Curr (@ARGV) {
-        msg(2, "Curr = '$Curr'\n");
+        msg(2, "Curr = '$Curr'");
         process_file($Curr);
     }
 
@@ -107,7 +107,7 @@ sub process_file {
         warn("$progname: $File: Filename already has date\n");
         return;
     }
-    msg(2, sprintf("mod_date(%s) = '%s'\n", $File, mod_date($File)));
+    msg(2, sprintf("mod_date(%s) = '%s'", $File, mod_date($File)));
     my $new_name = '';
     my $mod_date = mod_date($File);
     my $start_date = start_date($File);
@@ -257,7 +257,7 @@ sub bwf_date {
         $Retval = timegm($6, $5, $4, $3, $2-1, $1);
     }
     close(InFP);
-    msg(2, "bwf_date($File) returns '$Retval'\n");
+    msg(2, "bwf_date($File) returns '$Retval'");
     return($Retval);
     # }}}
 } # bwf_date()
