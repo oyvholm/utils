@@ -614,8 +614,10 @@ INSERT INTO synced VALUES('telenorsms','https://raw.githubusercontent.com/b01t/t
 INSERT INTO synced VALUES('testfail','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('tests/.gitignore','','',NULL);
 INSERT INTO synced VALUES('tests/Makefile','','',NULL);
+INSERT INTO synced VALUES('tests/datefn-files/empty',NULL,NULL,NULL);
 INSERT INTO synced VALUES('tests/datefn-files/file.tar.gz','','',NULL);
 INSERT INTO synced VALUES('tests/datefn-files/repo.tar.gz','','',NULL);
+INSERT INTO synced VALUES('tests/datefn-files/small.dsd_5330.jpg',NULL,NULL,NULL);
 INSERT INTO synced VALUES('tests/datefn.t','Lib/std/perl-tests','2f5664774f5bc4a41f7273c6e10d303ffbf2b5d7','2016-10-20 13:01:13');
 INSERT INTO synced VALUES('tests/edit-sqlite3-files/sqlite-databases.tar.gz','','',NULL);
 INSERT INTO synced VALUES('tests/edit-sqlite3.t','Lib/std/perl-tests','2f5664774f5bc4a41f7273c6e10d303ffbf2b5d7','2016-10-20 13:01:13');
