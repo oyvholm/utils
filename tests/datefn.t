@@ -92,6 +92,7 @@ END
 =cut
 
     test_standard_options();
+    test_exif_option();
 
     my $topdir = "datefn-files";
     safe_chdir($topdir);
@@ -337,6 +338,133 @@ sub test_standard_options {
             'Option --version returns version number');
 
     return;
+    # }}}
+}
+
+sub test_exif_option {
+    # {{{
+    my $testpic = "dsd_5330.jpg";
+    my $testdate = "20090706T213604Z";
+    my $tmpdir = "datefn-tmp";
+
+    diag("Testing -e/--exif option...");
+    $CMD = "../$CMD";
+    safe_chdir("datefn-files");
+    if (-e $tmpdir) {
+        diag("NOTICE: $tmpdir/ exists, deleting it.");
+        system("rm -rf \"$tmpdir\"");
+    }
+    ok(mkdir($tmpdir), "mkdir $tmpdir");
+    ok(copy_file("small.$testpic", "$tmpdir/$testpic"),
+       "Copy small.$testpic to $tmpdir/$testpic");
+    for my $e (qw{ -e --exif }) {
+        diag("Test $e option");
+        testcmd("$CMD $e $tmpdir/$testpic",
+                "datefn: '$tmpdir/$testpic' renamed to " .
+                    "'$tmpdir/$testdate.$testpic'\n",
+                "",
+                0,
+                "Use EXIF data from $tmpdir/$testpic ($e)");
+        ok(-f "$tmpdir/$testdate.$testpic",
+           "$tmpdir/$testdate.$testpic exists");
+        ok(rename("$tmpdir/$testdate.$testpic", "$tmpdir/$testpic"),
+           "Remove timestamp from $testpic after $e");
+        testcmd("$CMD $e -vv $tmpdir/$testpic",
+                "datefn: '$tmpdir/$testpic' renamed to " .
+                    "'$tmpdir/$testdate.$testpic'\n",
+                join('',
+                    "datefn: Curr = 'datefn-tmp/dsd_5330.jpg'\n",
+                    "datefn: get_exif_data() found \"  " .
+                        "\"DateTimeOriginal\": \"2009:07:06 21:36:04\",\n",
+                    "\"\n",
+                    "datefn: \$line after regexp: \"2009:07:06 21:36:04\"\n",
+                    "datefn: exif_date(): \$retval before check = " .
+                        "\"2009:07:06 21:36:04\"\n",
+                    "datefn: exif_date() returns \"1246916164\"\n",
+                    "datefn: start_date(datefn-tmp/dsd_5330.jpg) returns " .
+                        "'0'\n",
+                ),
+                0,
+                "Use EXIF data from $tmpdir/$testpic ($e -vv)");
+        ok(rename("$tmpdir/$testdate.$testpic", "$tmpdir/$testpic"),
+           "Remove timestamp from $testpic after $e -vv");
+        diag("Test -s/--skew together with $e");
+        my $skewdate = "20090706T203604Z";
+        testcmd("$CMD -n $e -s -3600 small.$testpic",
+                "datefn: 'small.$testpic' would be renamed to " .
+                    "'$skewdate.small.$testpic'\n",
+                "",
+                0,
+                "Test --skew with EXIF data from small.$testpic ($e)");
+        diag("Try to read EXIF from empty file");
+        testcmd("$CMD -n $e empty",
+                "",
+                "",
+                0,
+                "Try to read EXIF from empty file ($e)");
+        testcmd("$CMD -n -v $e empty",
+                "",
+                "$CMD_BASENAME: empty: No EXIF data found in file\n",
+                0,
+                "Read EXIF from empty file, -v prints message ($e)");
+        diag("Test -E/--exif-tag");
+        testcmd("$CMD -n $e -E CreateDate small.$testpic",
+                "datefn: 'small.$testpic' would be renamed to " .
+                    "'$testdate.small.$testpic'\n",
+                "",
+                0,
+                "Use timestamp from CreateDate EXIF tag ($e)");
+        testcmd("$CMD -n $e -E PowerUpTime small.$testpic",
+                "datefn: 'small.$testpic' would be renamed to " .
+                    "'20090515T164127Z.small.$testpic'\n",
+                "",
+                0,
+                "Use -E PowerUpTime ($e)");
+        testcmd("$CMD -n $e --exif-tag PowerUpTime --skew 86400 " .
+                  "small.$testpic",
+                "datefn: 'small.$testpic' would be renamed to " .
+                    "'20090516T164127Z.small.$testpic'\n",
+                "",
+                0,
+                "Use --skew together with --exif-tag PowerUpTime ($e)");
+        testcmd("$CMD -n $e --exif-tag NotFound small.$testpic",
+                "",
+                "",
+                0,
+                "Use non-existing EXIF tag with --exif-tag ($e)");
+        testcmd("$CMD -nv $e -E NotFound small.$testpic",
+                "",
+                "$CMD_BASENAME: small.$testpic: No EXIF data found in file\n",
+                0,
+                "Non-existing EXIF tag with -E and -v ($e)");
+    }
+    ok(unlink("$tmpdir/$testpic"), "Delete $tmpdir/$testpic");
+    ok(rmdir($tmpdir), "Delete $tmpdir/");
+    safe_chdir("..");
+    $CMD =~ s/^\.\.\///;
+    # }}}
+}
+
+sub copy_file {
+    # {{{
+    my ($from, $to) = @_;
+
+    if (!open(From, "<", $from)) {
+        diag("copy_file(): $from: Cannot open file for read: $!");
+        return 0;
+    }
+    if (!open(To, ">", $to)) {
+        diag("copy_file(): $to: Cannot open file for write: $!");
+        close(From);
+        return 0;
+    }
+    while (my $line = <From>) {
+        print(To $line);
+    }
+    close(To);
+    close(From);
+
+    return 1;
     # }}}
 }
 
