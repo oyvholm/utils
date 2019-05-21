@@ -341,19 +341,23 @@ sub test_standard_options {
 }
 
 sub safe_chdir {
+    # {{{
     my $dir = shift;
 
     ok(chdir($dir), "chdir $dir") ||
         BAIL_OUT("$progname: Can't chdir to $dir, aborting");
     return;
+    # }}}
 }
 
 sub untar {
+    # {{{
     my $fname = shift;
 
     likecmd("tar xzf \"$fname\"", '/.*/', '/.*/', 0, "Untar $fname");
     undef $descriptions{"Untar $fname"};
     return;
+    # }}}
 }
 
 sub testcmd {
