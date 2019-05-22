@@ -334,6 +334,7 @@ INSERT INTO synced VALUES('git-allfiles','','',NULL);
 INSERT INTO synced VALUES('git-authoract','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-bare','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-bs','Lib/std/bash-no-getopt',NULL,NULL);
+INSERT INTO synced VALUES('git-cmark',NULL,NULL,NULL);
 INSERT INTO synced VALUES('git-context-diff','https://raw.githubusercontent.com/postgres/postgres/master/src/tools/git-external-diff','',NULL);
 INSERT INTO synced VALUES('git-dangling','Lib/std/sh','2f12fadf29dc1a1fe88f2d1d2a91a2ca23cce388','2016-11-19 13:30:46');
 INSERT INTO synced VALUES('git-dbr','Lib/std/perl','f3196a371d303f4e800dc0911039dc8b43df7770','2016-10-15 19:55:25');

@@ -1,0 +1,46 @@
+#!/bin/sh
+
+#==============================================================================
+# git-cmark
+# File ID: bb0ba9cc-7c24-11e9-826b-4f45262dc9b5
+#
+# Convert the output from "git log" to Commonmark (Markdown).
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
+
+progname=git-cmark
+VERSION=0.1.0
+
+if test "$1" = "-h" -o "$1" = "--help"; then
+	cat <<END
+
+Convert the output from "git log" to Commonmark (Markdown).
+
+Usage: $progname [-h|--help|args to git log]
+
+Option:
+
+  -h, --help
+    Show this help.
+
+All other options and arguments are sent to "git log".
+
+Examples:
+
+  $progname | cmark | lynx -stdin
+  $progname --name-status --since=1.year | cmark >x.html; firefox x.html
+
+END
+	exit 0
+fi
+
+git log "$@" | \
+    perl -pe '
+        s/^commit/---\n    commit/;
+        s/^([^ -])/        $1/;
+        s/^    //;
+        '
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
