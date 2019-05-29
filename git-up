@@ -11,9 +11,10 @@
 #==============================================================================
 
 progname=git-up
-VERSION=0.1.1
+VERSION=0.1.2
 
 T_GREEN=$(tput setaf 2)
+T_RED=$(tput setaf 1)
 T_RESET=$(tput sgr0)
 
 opt_help=0
@@ -69,11 +70,24 @@ END
 	exit 0
 fi
 
+currbranch=$(git rev-parse --abbrev-ref HEAD)
+
+safe_checkout() {
+	local branch=$1
+
+	if test -n "$currbranch" -a "$currbranch" != "HEAD"; then
+		runcmd git checkout "$branch"
+	else
+		echo -n "$T_RED$progname: " >&2
+		echo "No current branch, skip \"git checkout $branch\"$T_RESET" >&2
+	fi
+}
+
 runcmd git fetch --all --prune
 runcmd git merge --ff-only
-runcmd git checkout $(git rev-parse HEAD)
+safe_checkout $(git rev-parse HEAD)
 runcmd git allbr -a
-runcmd git checkout -
+safe_checkout -
 runcmd git dangling
 runcmd git pa
 
