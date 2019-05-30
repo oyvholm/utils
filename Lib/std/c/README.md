@@ -92,9 +92,9 @@ Should also not fail on master.
 
 The main Git repository is stored at GitLab:
 
-URL: <https://gitlab.com/sunny256/STDexecDTS><br />
-SSH clone: git@gitlab.com:sunny256/STDexecDTS.git<br />
-https clone: <https://gitlab.com/sunny256/STDexecDTS.git><br />
+  - URL: <https://gitlab.com/sunny256/STDexecDTS>
+  - SSH clone: git@gitlab.com:sunny256/STDexecDTS.git
+  - https clone: <https://gitlab.com/sunny256/STDexecDTS.git>
 
 ## License
 
