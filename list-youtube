@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.4.3
+VERSION=0.4.4
 
 ARGS="$(getopt -o "\
 d:\
@@ -199,7 +199,7 @@ SELECT printf('SELECT file FROM films WHERE file LIKE ''%%-%s%%'';', ytid)
 SELECT 'COMMIT;';
 SQL_END
 else
-    cat <<SQL_END | sqlite3 -header -column "$db" | $PAGER
+    cat <<SQL_END | sqlite3 -header -column "$db" | sed 's/ *$//g;' | $PAGER
 .width 10 10 5 -5 -11 20 200
 SELECT
     upload_date AS ud,
