@@ -117,6 +117,9 @@ with this program. If not, see <http://www.gnu.org/licenses/>.
 
 -----
 
-    File ID: STDuuidDTS
-    vim: set ts=2 sw=2 sts=2 tw=72 et fo=tcqw fenc=utf8 :
-    vim: set com=b\:#,fb\:-,fb\:*,n\:> ft=markdown :
+File ID: STDuuidDTS
+
+<!--
+vim: set ts=2 sw=2 sts=2 tw=72 et fo=tcqw fenc=utf8 :
+vim: set com=b\:#,fb\:-,fb\:*,n\:> ft=markdown :
+-->
