@@ -90,7 +90,7 @@ to send the program output to another window.
 `make install` installs `STDexecDTS`
 to the location defined by `PREFIX`
 in `src/Makefile`.
-Default location is `/usr/local/bin/`,
+Default location is `/usr/local`,
 but it can be installed somewhere else
 by specifying `PREFIX`.
 For example:
