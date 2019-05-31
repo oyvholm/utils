@@ -2,6 +2,8 @@
 /*.gcda
 /*.gcno
 /*.o
+/README.html
+/README.pdf
 /STDexecDTS
 /gdbopts
 /tags

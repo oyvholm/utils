@@ -36,16 +36,43 @@ STDexecDTS.o: version.h STDexecDTS.c $(DEPS)
 selftest.o: selftest.c $(DEPS)
 	$(CC) $(CCFLAGS) selftest.c
 
+%.html: FORCE
+	test -e "$*.md"
+	echo '<html>' >$@.tmp
+	echo '<head>' >>$@.tmp
+	echo '<meta charset="UTF-8" />' >>$@.tmp
+	echo '<title>$* - STDexecDTS</title>' >>$@.tmp
+	echo '</head>' >>$@.tmp
+	echo '<body>' >>$@.tmp
+	cmark $*.md >>$@.tmp
+	if test -n "$$(git log -1 --format=%h $*.md 2>/dev/null)"; then \
+		(echo 'Generated from `$*.md`'; \
+		git log -1 --format='revision `%h` (%ci)' \
+		    $*.md) | cmark >>$@.tmp; \
+	fi
+	echo '</body>' >>$@.tmp
+	echo '</html>' >>$@.tmp
+	mv $@.tmp $@
+
+%.pdf: FORCE
+	$(MAKE) $*.html
+	wkhtmltopdf $*.html $@
+
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(OBJS)
 	rm -f *.gcda *.gcno *.gcov
+	rm -f README.html
+	rm -f README.pdf
 	rm -f version.h
 	cd t && $(MAKE) clean
 
 .PHONY: edit
 edit: tags
 	$(EDITOR) $$(git ls-files)
+
+.PHONY: FORCE
+FORCE:
 
 .PHONY: gcov
 gcov:
