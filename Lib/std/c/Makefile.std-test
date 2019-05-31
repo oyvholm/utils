@@ -9,6 +9,7 @@ default:
 
 .PHONY: clean
 clean:
+	rm -f README.md.tmp
 	rm -f STDexecDTS STDexecDTS.o STDexecDTS.c STDexecDTS.h selftest.o
 	rm -f *.gcda *.gcno *.gcov
 	rm -f version.h
@@ -16,6 +17,9 @@ clean:
 
 .PHONY: test
 test:
+	cmark -t commonmark README.md >README.md.tmp
+	test -z "$$(diff -q README.md README.md.tmp)"
+	rm -f README.md.tmp
 	rm -f STDexecDTS.c STDexecDTS.h
 	ln -sf std.h STDexecDTS.h
 	ln -sf std.c STDexecDTS.c
