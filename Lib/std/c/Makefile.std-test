@@ -33,7 +33,7 @@ test:
 	mkdir -p $(TMPUUIDS) $(TMP)/src
 	cd $(TMP)/src && \
 	    SUUID_LOGDIR=$$(pwd)/../../$(TMPUUIDS) ../../../../../create_cproject jada
-	cd $(TMP) && git add src synced.sql
+	cd $(TMP) && git add src
 	cd $(TMP) && git commit -m "create_cproject jada"
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
 	cd $(TMP)/src && $(MAKE)

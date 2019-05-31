@@ -21,7 +21,6 @@ local $| = 1;
 
 our %Opt = (
 
-    'dbname' => '',
     'force' => 0,
     'help' => 0,
     'notag' => "",
@@ -36,13 +35,11 @@ my @Tags = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.8.0';
+our $VERSION = '0.9.0';
 
 my $CMD_GIT = "git";
-my $CMD_SQLITE = "sqlite3";
 my $CMD_WGET = "wget";
 my $CMD_SUUID = "suuid";
-my $ENV_DATABASE = "SYNCFILE_DB";
 
 my $Type = "";
 my $Dest = "";
@@ -52,7 +49,6 @@ my @bck_cmdline = @ARGV;
 Getopt::Long::Configure('bundling');
 GetOptions(
 
-    'dbname|d=s' => \$Opt{'dbname'},
     'force|f' => \$Opt{'force'},
     'help|h' => \$Opt{'help'},
     'notag|T=s' => \$Opt{'notag'},
@@ -100,11 +96,7 @@ if (scalar(@Tags)) {
     }
 }
 
-my $token = '';
 my $retval = main();
-if ($token =~ /^token_/) {
-    mysyst("filesynced", "--unlock", $token);
-}
 exit($retval);
 
 sub main {
@@ -187,127 +179,6 @@ sub main {
 
     unlink($tmpfile) || warn("$progname: $tmpfile: Cannot delete file: $!\n");
 
-    # Add the file to a SQLite database to keep track of which revision 
-    # the file was last synced against.
-
-    my $syncdb;
-
-    if (length($Opt{'dbname'})) {
-        $syncdb = $Opt{'dbname'};
-    } elsif (defined($ENV{$ENV_DATABASE}) && length($ENV{$ENV_DATABASE})) {
-        $syncdb = $ENV{$ENV_DATABASE};
-    } elsif (defined($rc{'dbname'}) && length($rc{'dbname'})) {
-        $syncdb = $rc{'dbname'};
-    } else {
-        $syncdb = "synced.sqlite";
-    }
-
-    if ($syncdb ne "none") {
-        chomp(my $repotop = `git rev-parse --show-toplevel`);
-
-        # If the database name starts with '/' or '.', use it as is, 
-        # because it points to a file in the local file system. 
-        # Otherwise use it as a file relative to the top of the current 
-        # repository.
-
-        msg(2, "syncdb before regexp: '$syncdb'");
-        if ($syncdb !~ /^(\/|\.)/) {
-            $syncdb = "$repotop/$syncdb";
-        }
-        msg(2, "syncdb after regexp: '$syncdb'");
-        my $currdir = getcwd();
-        my $reldir = "$currdir/";
-        $reldir =~ s/^$repotop(.*)/$1/;
-        $reldir =~ s/^\///;
-        my $relfile = "$reldir$Dest";
-        if (length($Dest)) {
-            msg(2, "Dest = '$Dest'");
-            msg(2, "currdir = '$currdir'");
-            msg(2, "reldir = '$reldir'");
-            msg(2, "relfile = '$relfile'");
-            msg(2, "repotop = '$repotop'");
-            msg(2, "syncdb = '$syncdb'");
-
-            chomp ($token = `filesynced --lock`);
-            if ($token !~ /^token_/) {
-                warn("$progname: No token received from filesynced --lock\n");
-                return(1);
-            }
-
-            if (open(my $sqlitefh, "| $CMD_SQLITE \"$syncdb\"")) {
-                my ($Sec, $Min, $Hour, $Day, $Mon, $Year,
-                    $Wday, $Yday, $is_dst) = gmtime(time());
-                my $currtime = sprintf("%04u-%02u-%02u %02u:%02u:%02u",
-                    $Year+1900, $Mon+1, $Day, $Hour, $Min, $Sec);
-                my $commit = '';
-                if (chdir("$ENV{'HOME'}/bin")) {
-                    chomp($commit = `git rev-parse HEAD`);
-                    chdir($currdir);
-                } else {
-                    msg(0, "Could not chdir to $ENV{'HOME'}/bin, " .
-                           "not storing commit\n");
-                }
-                my $sql = '';
-                if (!-f $syncdb) {
-                    msg(0, "Creating database '$syncdb'");
-                    $sql .= <<END;
-CREATE TABLE synced (
-  file TEXT
-    CONSTRAINT synced_file_length
-      CHECK (length(file) > 0)
-    UNIQUE
-    NOT NULL
-  ,
-  orig TEXT
-  ,
-  rev TEXT
-    CONSTRAINT synced_rev_length
-      CHECK (length(rev) = 40 OR rev = '')
-  ,
-  date TEXT
-    CONSTRAINT synced_date_length
-      CHECK (date IS NULL OR length(date) = 19)
-    CONSTRAINT synced_date_valid
-      CHECK (date IS NULL OR datetime(date) IS NOT NULL)
-);
-CREATE TABLE todo (
-  file TEXT
-    CONSTRAINT todo_file_length
-      CHECK(length(file) > 0)
-    UNIQUE
-    NOT NULL
-  ,
-  pri INTEGER
-    CONSTRAINT todo_pri_range
-      CHECK(pri BETWEEN 1 AND 5)
-  ,
-  comment TEXT
-);
-END
-                }
-                if ($Opt{'force'}) {
-                    $sql .= sprintf(
-                        "DELETE FROM synced WHERE file = '%s';\n",
-                        safe_sql($relfile),
-                    );
-                }
-                $sql .= sprintf(
-                    "INSERT INTO synced (file, orig, rev, date) " .
-                    "VALUES ('%s', '%s', '%s', '%s');\n",
-                    safe_sql("$relfile"),
-                    safe_sql("Lib/std/$Type"),
-                    safe_sql($commit),
-                    safe_sql($currtime),
-                );
-                msg(2, "sql = \"$sql\"");
-                print($sqlitefh $sql);
-                close($sqlitefh);
-            } else {
-                warn("$progname: Cannot open $CMD_SQLITE pipe: $!\n");
-            }
-        }
-    }
-
     return $Retval;
     # }}}
 } # main()
@@ -319,9 +190,9 @@ sub read_rcfile {
         if (open(RcFP, "<", $Opt{'rcfile'})) {
             while (my $Line = <RcFP>) {
                 $Line =~ s/^\s*(.*?)\s*$/$1/;
-                if ($Line =~ /^dbname\s*=\s*(\S+)/) {
-                    $Retval{'dbname'} = $1;
-                }
+                # if ($Line =~ /^example\s*=\s*(\S+)/) {
+                #     $Retval{'example'} = $1;
+                # }
             }
             close(RcFP);
         } else {
@@ -350,18 +221,6 @@ sub replace_tags {
     return($Txt);
     # }}}
 } # replace_tags()
-
-sub safe_sql {
-    # {{{
-    my $Text = shift;
-    $Text =~ s/\\/\\\\/g;
-    $Text =~ s/'/''/g;
-    $Text =~ s/\n/\\n/g;
-    $Text =~ s/\r/\\r/g;
-    $Text =~ s/\t/\\t/g;
-    return($Text);
-    # }}}
-} # safe_sql()
 
 sub mysyst {
     # Customised system() {{{
@@ -417,9 +276,6 @@ destination file is specified, output goes to stdout.
 
 Options:
 
-  -d X, --dbname X
-    Use SQLite database file X to store file sync information. See below 
-    for details.
   -h, --help
     Show this help.
   -f, --force
@@ -444,24 +300,9 @@ Options:
   --version
     Print version information.
 
-The created file will be added to an SQLite database to keep track of 
-which revision the file was last synced against.
-
-The file name of the database is set as follows:
-
-- Use the location specified by the -d/--dbname command line option,
-- otherwise use the $ENV_DATABASE environment variable if defined,
-- otherwise read dbname value from '~/.stdrc',
-- otherwise use hardcoded value 'synced.sqlite'.
-
-If the database file name starts with '/' or '.', use it as is, because 
-it points to a location in the local file system. Otherwise use a 
-location relative to the top of the current Git repository.
-To disable this functionality, use 'none' as the database name.
-
 Initial settings can be stored in '~/.stdrc'. The format is:
 
-dbname = foo
+key = value
 
 END
     exit($Retval);

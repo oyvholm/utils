@@ -28,7 +28,6 @@ local $| = 1;
 
 our $CMD_BASENAME = "std";
 our $CMD = "../$CMD_BASENAME";
-my $SQLITE = "sqlite3";
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 
@@ -67,8 +66,6 @@ if ($Opt{'version'}) {
     print_version();
     exit(0);
 }
-
-my $sql_error = 0;
 
 exit(main());
 
@@ -178,58 +175,21 @@ END
     # }}}
     my $suuid_file = glob("tmpuuids/*");
     ok(-e $suuid_file, "suuid log file exists");
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --dbname none " .
-        "bash bash-no-db", # {{{
-        "/^$v1_templ\\n\$/s",
-        '/^' .
-            '$/',
-        0,
-        "--dbname none",
-    );
-
-    # }}}
-    ok(-e "bash-no-db", "bash-no-db exists");
-    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash -d ./db.sqlite " .
+    likecmd("SUUID_LOGDIR=tmpuuids ../$CMD bash " .
             "bashfile", # {{{
         "/^$v1_templ\\n\$/s",
-        '/^std: Creating database \'./db.sqlite\'\n$/',
+        '/^$/',
         0,
         "Create bash script",
     );
     # }}}
     ok(-e "bashfile", "bashfile exists");
     ok(-x "bashfile", "bashfile is executable");
-    ok(-e "db.sqlite", "db.sqlite exists");
-    my $orig_dir = getcwd();
-    # FIXME: Hardcoding of directory
-    unless (chdir("$ENV{'HOME'}/bin")) {
-        BAIL_OUT("$progname: $ENV{'HOME'}/bin: chdir error");
-    }
-    chomp(my $commit = `git rev-parse HEAD`);
-    my $re_synced_entry =
-        'synced\|' .
-        'tests/tmp-std-t-\d+-\d+/bashfile\|' .
-        'Lib/std/bash\|' .
-        "$commit\|" .
-        '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\n';
-    unless (chdir($orig_dir)) {
-        BAIL_OUT("$progname: $orig_dir: chdir error");
-    }
-    like(sqlite_dump("db.sqlite"), # {{{
-        '/^' .
-            $re_create_tables .
-            $re_synced_entry .
-            '$/s',
-        "db.sqlite looks ok",
-    );
-
-    # }}}
     diag("Test uppercase tags...");
-    ok(unlink("db.sqlite"), "Delete db.sqlite");
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -t exec=fname " .
-            "-d ./db.sqlite c/std.h std.h", # {{{
+            "c/std.h std.h", # {{{
         "/^$v1_templ\\n\$/s",
-        '/^std: Creating database \'./db.sqlite\'\n$/',
+        '/^$/',
         0,
         "Create std.h, uses STDU",
     );
@@ -247,7 +207,7 @@ END
 
     # }}}
     diag("Testing -f (--force) option...");
-    likecmd("../$CMD --dbname ./db.sqlite bash bashfile", # {{{
+    likecmd("../$CMD bash bashfile", # {{{
         '/^$/s',
         '/^' .
             'std: bashfile: File already exists, will not overwrite\n' .
@@ -258,7 +218,7 @@ END
 
     # }}}
     likecmd("LC_ALL=C SUUID_LOGDIR=tmpuuids ../$CMD -fv " .
-            "--dbname ./db.sqlite perl bashfile", # {{{
+            "perl bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^std: Overwriting \'bashfile\'\.\.\.\n/s',
         0,
@@ -291,25 +251,14 @@ END
     # }}}
     diag("Test --rcfile option...");
     create_file("stdrc", <<END);
-dbname = ./dbfromrc.sqlite
 END
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD --force --rcfile stdrc " .
             "bash bashfile", # {{{
         "/^$v1_templ\\n\$/s",
         '/^' .
-            'std: Creating database \'./dbfromrc.sqlite\'\n' .
             '$/',
         0,
         "Read dbname from stdrc with --rcfile",
-    );
-
-    # }}}
-    like(sqlite_dump("dbfromrc.sqlite"), # {{{
-        '/^' .
-            $re_create_tables .
-            $re_synced_entry .
-            '$/s',
-        "dbfromrc.sqlite looks ok",
     );
 
     # }}}
@@ -319,12 +268,8 @@ END
     ok(unlink(glob "$Tmptop/tmpuuids/*"),
         "unlink('glob [Tmptop]/tmpuuids/*')");
     ok(rmdir("$Tmptop/tmpuuids"), "rmdir([Tmptop]/tmpuuids)");
-    ok(unlink("$Tmptop/bash-no-db"), "unlink('[Tmptop]/bash-no-db')");
     ok(unlink("$Tmptop/bashfile"), "unlink('[Tmptop]/bashfile')");
     ok(unlink("$Tmptop/std.h"), "unlink('[Tmptop]/std.h')");
-    ok(unlink("$Tmptop/db.sqlite"), "unlink('[Tmptop]/db.sqlite')");
-    ok(unlink("$Tmptop/dbfromrc.sqlite"),
-        "unlink('[Tmptop]/dbfromrc.sqlite')");
     ok(unlink("$Tmptop/stdrc"), "unlink('[Tmptop]/stdrc");
     ok(rmdir($Tmptop), "rmdir([Tmptop])");
 
@@ -347,45 +292,6 @@ END
     return $Retval;
     # }}}
 } # main()
-
-sub sql {
-    # {{{
-    my ($db, $sql) = @_;
-    my @retval = ();
-
-    msg(5, "sql(): db = '$db'");
-    local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
-
-    my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, $SQLITE, $db) or (
-        $sql_error = 1,
-        msg(0, "sql(): open3() error: $!"),
-        return("sql() error"),
-    );
-    msg(5, "sql(): sql = '$sql'");
-    print(CHLD_IN "$sql\n") or msg(0, "sql(): print CHLD_IN error: $!");
-    close(CHLD_IN);
-    @retval = <CHLD_OUT>;
-    msg(5, "sql(): retval = '" . join('|', @retval) . "'");
-    my @child_stderr = <CHLD_ERR>;
-    if (scalar(@child_stderr)) {
-        msg(1, "$SQLITE error: " . join('', @child_stderr));
-        $sql_error = 1;
-    }
-    return(join('', @retval));
-    # }}}
-} # sql()
-
-sub sqlite_dump {
-    # Return contents of database file {{{
-    my $File = shift;
-
-    return sql($File, <<END);
-.nullvalue NULL
-.schema
-SELECT 'synced', * FROM synced;
-END
-    # }}}
-} # sqlite_dump()
 
 sub testcmd {
     # {{{
