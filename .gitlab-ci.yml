@@ -6,6 +6,7 @@ image: gcc
 utils:linux:
   stage: test
   before_script:
+    - test "$CI_COMMIT_REF_NAME" = "synced/master" && exit 0 || true
     - apt-get update -qq
     - apt-get install -y groff
     - apt-get install -y texlive-base
