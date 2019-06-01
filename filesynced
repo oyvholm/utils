@@ -572,7 +572,7 @@ SELECT rev FROM synced
   WHERE
     rev IS NOT NULL;
 END
-		if test "$(git sht ..$f | wc -l)" != "0"; then
+		if test "$(git log --format=%h ..$f | wc -l)" != "0"; then
 			echo $f
 		fi
 	done

@@ -70,9 +70,9 @@ sub main {
 
     chomp(my $begindate = `git log -1 $Opt{'ref'} --format=%ct`);
     msg(2, "begindate = \"$begindate\"");
-    chomp(my $beginvalue = `git sht $Opt{'ref'} | wc -l`);
+    chomp(my $beginvalue = `git log --format=%h $Opt{'ref'} | wc -l`);
     msg(2, "beginvalue = \"$beginvalue\"");
-    chomp(my $currentvalue = `git sht | wc -l`);
+    chomp(my $currentvalue = `git log --format=%h | wc -l`);
 
     system(
         "goal",
