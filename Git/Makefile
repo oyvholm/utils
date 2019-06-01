@@ -2,7 +2,8 @@
 # File ID: 83bbcb90-4aeb-11e6-b612-02010e0a6634
 
 MAKEFILES = */Makefile
-DIRS =  $$(echo $? | fmt -1 | cut -f 1 -d / | sort -u)
+# FIXME: Make gpstools work
+DIRS =  $$(echo $? | fmt -1 | cut -f 1 -d / | grep -v gpstools | sort -u)
 
 .PHONY: default
 default: $(MAKEFILES)
