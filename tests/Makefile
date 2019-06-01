@@ -22,7 +22,6 @@ test:
 	./jday.t
 	./md-header.t
 	./mktar.t
-	./perlmodules.t
 	./postgres.t
 	./sident.t
 	./sort-sqlite.t
