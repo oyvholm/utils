@@ -67,6 +67,7 @@ exit(main());
 
 sub main {
 	my $Retval = 0;
+	my $is_root = $< ? 0 : 1;
 	chomp(my $osname = `uname`);
 
 	diag(sprintf('========== Executing %s v%s ==========',
@@ -105,6 +106,11 @@ sub main {
 
 	diag("No options specified...");
 	testcmd("$CMD files/dir1/*", # {{{
+	    ($is_root
+	        ? "6f7e629acf1a4cfbf460e74bbbe936bd45707f89-" .
+	          "e8445e047ec414591eb5cc06a1322572-32\t" .
+	          "files/dir1/chmod_0000\n"
+	        : "") .
 	    "da39a3ee5e6b4b0d3255bfef95601890afd80709-" .
 	        "d41d8cd98f00b204e9800998ecf8427e-0\t" .
 	        "files/dir1/empty\n" .
@@ -123,8 +129,8 @@ sub main {
 	    "2113343435a9aadb458d576396d4f960071f8efd-" .
 	        "6babaa47123f4f94ae59ed581a65090b-41\t" .
 	        "files/dir1/year_2038\n",
-	    "smsum: files/dir1/chmod_0000: Cannot read file\n",
-	    1,
+	    $is_root ? "" : "smsum: files/dir1/chmod_0000: Cannot read file\n",
+	    $is_root ? 0 : 1,
 	    "Read all files in dir1/",
 	);
 
@@ -140,6 +146,11 @@ sub main {
 	# }}}
 	diag("Testing -m (--with-mtime) option...");
 	testcmd("$CMD -m files/dir1/*", # {{{
+	    ($is_root
+	        ? "6f7e629acf1a4cfbf460e74bbbe936bd45707f89-" .
+	          "e8445e047ec414591eb5cc06a1322572-32\t" .
+	          "files/dir1/chmod_0000\t2008-09-22T00:24:25Z\n"
+	        : "") .
 	    "da39a3ee5e6b4b0d3255bfef95601890afd80709-" .
 	        "d41d8cd98f00b204e9800998ecf8427e-" .
 	        "0\tfiles/dir1/empty\t2008-09-22T00:10:24Z\n" .
@@ -158,8 +169,8 @@ sub main {
 	    "2113343435a9aadb458d576396d4f960071f8efd-" .
 	        "6babaa47123f4f94ae59ed581a65090b-" .
 	        "41\tfiles/dir1/year_2038\t2038-01-19T03:14:07Z\n",
-	    "smsum: files/dir1/chmod_0000: Cannot read file\n",
-	    1,
+	    $is_root ? "" : "smsum: files/dir1/chmod_0000: Cannot read file\n",
+	    $is_root ? 0 : 1,
 	    "Read files from dir1/ with mtime",
 	);
 
