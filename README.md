@@ -1,6 +1,9 @@
 README for utils.git
 ====================
 
+![Pipeline
+status](https://gitlab.com/sunny256/utils/badges/master/pipeline.svg)
+
 This is a collection of scripts I've had in my `~/bin/` directory since 
 the previous century. Some of them are quite specific for my own use, 
 but many of them have evolved into a mature state and could probably 
