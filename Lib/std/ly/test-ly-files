@@ -70,6 +70,11 @@ END
     exit 0
 fi
 
+if test "$GITLAB_CI" = "true"; then
+    echo Lilypond does not exist here in Gitlab CI, skipping tests >&2
+    exit 0
+fi
+
 rm -f STDprojnameDTS.{ly,midi,pdf,wav}
 
 for f in *.ly; do
