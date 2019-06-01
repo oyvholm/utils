@@ -68,6 +68,7 @@ exit(main());
 sub main {
     # {{{
     my $Retval = 0;
+    my $ucfile = "$ENV{'HOME'}/.unichar.sqlite";
 
     diag(sprintf('========== Executing %s v%s ==========',
                  $progname, $VERSION));
@@ -118,6 +119,10 @@ END
     );
 
     # }}}
+    if (!-r $ucfile) {
+        diag("$ucfile not found, skipping tests");
+        return 0;
+    }
     testcmd("echo -n Boring. | $CMD", # {{{
         <<'END',
 0042;LATIN CAPITAL LETTER B;Lu;0;L;;;;;N;;;;0062;
