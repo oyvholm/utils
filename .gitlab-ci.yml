@@ -1,0 +1,28 @@
+# utils.git/.gitlab-ci.yml
+# File ID: be09508c-8383-11e9-bed5-4f45262dc9b5
+
+image: gcc
+
+utils:linux:
+  stage: test
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y groff
+    - apt-get install -y texlive-base
+    - apt-get install -y sqlite3
+    - apt-get install -y exiftool
+    - apt-get install -y libnumber-bytes-human-perl
+    - apt-get install -y git-annex
+    - apt-get install -y bc
+    - apt-get install -y cmark
+    - git config --global user.name "Firstname Lastname"
+    - git config --global user.email "ci@example.com"
+    - git clone https://gitlab.com/sunny256/suuid.git
+    - cd suuid
+    - make install
+    - cd ..
+    - rm -rf suuid
+  script:
+    - export PATH=$(pwd):$PATH
+    - make
+    - make test
