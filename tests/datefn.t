@@ -348,6 +348,11 @@ sub test_exif_option {
     my $tmpdir = "datefn-tmp";
 
     diag("Testing -e/--exif option...");
+    my $exiftool_version = `exiftool -ver 2>/dev/null`;
+    if (!defined($exiftool_version) || $exiftool_version !~ /^\d+\.\d+/) {
+        diag("exiftool(1) not found, skip tests");
+        return 1;
+    }
     $CMD = "../$CMD";
     safe_chdir("datefn-files");
     if (-e $tmpdir) {
