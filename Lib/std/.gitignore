@@ -1,5 +1,7 @@
 /c/README.md.tmp
-/c/STDexecDTS.c
-/c/STDexecDTS.h
-/c/compile.tmp/
-/c/uuids.tmp/
+/c/src/STDexecDTS.c
+/c/src/STDexecDTS.h
+/c/src/STDprognameDTS
+/c/src/compile.tmp/
+/c/src/t/STDexecDTS.t
+/c/src/uuids.tmp/

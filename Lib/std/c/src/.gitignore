@@ -1,0 +1,8 @@
+/*.c.gcov
+/*.gcda
+/*.gcno
+/*.o
+/STDexecDTS
+/gdbopts
+/tags
+/version.h

@@ -1,60 +1,19 @@
 # Makefile.std-test
 # File ID: 0817d7ec-b768-11e6-a01b-279c2a0468a3
 
-TMP=compile.tmp
-TMPUUIDS=uuids.tmp
-
-.PHONY: default
-default:
+.PHONY: all
+all:
+	cd src && $(MAKE) -f Makefile.std-test
 
 .PHONY: clean
 clean:
 	rm -f README.md.tmp
-	rm -f STDexecDTS STDexecDTS.o STDexecDTS.c STDexecDTS.h selftest.o
-	rm -f *.gcda *.gcno *.gcov
-	rm -f version.h
-	rm -rf $(TMP) $(TMPUUIDS)
+	$(MAKE) -f Makefile clean
+	cd src && $(MAKE) -f Makefile.std-test clean
 
 .PHONY: test
 test:
 	cmark -t commonmark README.md >README.md.tmp
 	test -z "$$(diff -q README.md README.md.tmp)"
 	rm -f README.md.tmp
-	rm -f STDexecDTS.c STDexecDTS.h
-	ln -sf std.h STDexecDTS.h
-	ln -sf std.c STDexecDTS.c
-	$(MAKE) clean
-	$(MAKE)
-	./STDexecDTS
-	rm -rf $(TMP)
-	git init $(TMP)
-	test -d $(TMP)/.git
-	cd $(TMP) && git commit --allow-empty -m "Empty start commit"
-	mkdir -p $(TMPUUIDS) $(TMP)/src
-	cd $(TMP)/src && \
-	    SUUID_LOGDIR=$$(pwd)/../../$(TMPUUIDS) ../../../../../create_cproject jada
-	cd $(TMP) && git add src
-	cd $(TMP) && git commit -m "create_cproject jada"
-	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
-	cd $(TMP)/src && $(MAKE)
-	cd $(TMP)/src && $(MAKE) test
-	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" && exit 1 || exit 0
-	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
-	if valgrind --version 2>/dev/null | grep -q ^valgrind; then \
-		cd $(TMP)/src && $(MAKE) clean valgrind && \
-		$(MAKE) clean valgrind NDEBUG=1 || exit 1; \
-	else \
-		echo "# Skip Valgrind tests, it's not installed here"; \
-		cd $(TMP)/src && $(MAKE) clean test NDEBUG=1 || exit 1; \
-	fi
-	cd $(TMP)/src && ./jada --version | grep -q "has NDEBUG"
-	if gcov --version 2>/dev/null | grep -q ^gcov; then \
-		cd $(TMP)/src && $(MAKE) gcov && \
-		$(MAKE) gcov 2>&1 | grep -q '^0 untested lines' && \
-		$(MAKE) clean test gcov && \
-		$(MAKE) gcov-cmt && \
-		test -z "$$(git ls-files -m)" && \
-		$(MAKE) gcov-cmt-clean || exit 1; \
-	else \
-		echo "# gcov(1) not found, skip gcov tests"; \
-	fi
+	cd src && $(MAKE) -f Makefile.std-test test

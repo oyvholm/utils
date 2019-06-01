@@ -1,0 +1,15 @@
+# Makefile.std-test
+# File ID: ac97819e-845e-11e9-aaeb-4f45262dc9b5
+
+.PHONY: all
+all:
+
+.PHONY: clean
+clean:
+	rm -f STDexecDTS.t
+	$(MAKE) -f Makefile clean
+
+.PHONY: test
+test:
+	ln -sf std.t STDexecDTS.t
+	$(MAKE) test

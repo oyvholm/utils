@@ -1,10 +1,2 @@
-/*.c.gcov
-/*.gcda
-/*.gcno
-/*.o
 /README.html
 /README.pdf
-/STDexecDTS
-/gdbopts
-/tags
-/version.h

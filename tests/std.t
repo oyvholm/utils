@@ -187,7 +187,7 @@ END
     ok(-x "bashfile", "bashfile is executable");
     diag("Test uppercase tags...");
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -t exec=fname " .
-            "c/std.h std.h", # {{{
+            "c/src/std.h std.h", # {{{
         "/^$v1_templ\\n\$/s",
         '/^$/',
         0,
@@ -241,7 +241,7 @@ END
 
     # }}}
     likecmd("SUUID_LOGDIR=tmpuuids ../$CMD -t exec=fname " . # {{{
-            "-T exec c/std.h",
+            "-T exec c/src/std.h",
         '/STDUexecUDTS/s',
         '/^std: Warning: Undefined tags: exec filename\n.*$/s',
         0,
