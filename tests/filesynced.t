@@ -123,6 +123,12 @@ END
 
     # }}}
 
+    my $syncfile = "$ENV{'HOME'}/bin/synced.sql";
+    if (!-r $syncfile) {
+        diag("$syncfile not found, skipping tests");
+        return 0;
+    }
+
     my $Tmptop = "tmp-filesynced-t-$$-" . substr(rand, 2, 8);
     my $GIT = "git";
 
