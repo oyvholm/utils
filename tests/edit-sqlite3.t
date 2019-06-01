@@ -72,6 +72,8 @@ sub main {
     diag(sprintf('========== Executing %s v%s ==========',
                  $progname, $VERSION));
 
+    $ENV{'EDITOR'} = 'cat';
+
     if ($Opt{'todo'} && !$Opt{'all'}) {
         goto todo_section;
     }
@@ -179,34 +181,38 @@ END
 
     # }}}
     diag('Test file permissions...');
-    ok(chmod(0444, 'ok.sqlite'), 'Make ok.sqlite read-only');
-    testcmd("$CMD ok.sqlite", # {{{
-        '',
-        "edit-sqlite3: ok.sqlite: File is not writable by you\n",
-        1,
-        'File is not writable, abort',
-    );
+    SKIP: {
+    skip("Running tests as root", 13) unless ($<);
+        ok(chmod(0444, 'ok.sqlite'), 'Make ok.sqlite read-only');
+        testcmd("$CMD ok.sqlite", # {{{
+            '',
+            "edit-sqlite3: ok.sqlite: File is not writable by you\n",
+            1,
+            'File is not writable, abort',
+        );
 
-    # }}}
-    ok(chmod(0222, 'ok.sqlite'), 'Make ok.sqlite unreadable');
-    testcmd("$CMD ok.sqlite", # {{{
-        '',
-        "edit-sqlite3: ok.sqlite: File is not readable by you\n",
-        1,
-        'File is not readable, abort',
-    );
+        # }}}
+        ok(chmod(0222, 'ok.sqlite'), 'Make ok.sqlite unreadable');
+        testcmd("$CMD ok.sqlite", # {{{
+            '',
+            "edit-sqlite3: ok.sqlite: File is not readable by you\n",
+            1,
+            'File is not readable, abort',
+        );
 
-    # }}}
-    ok(chmod(0000, 'ok.sqlite'), 'Make ok.sqlite unreadable and unwritable');
-    testcmd("$CMD ok.sqlite", # {{{
-        '',
-        "edit-sqlite3: ok.sqlite: File is not readable by you\n",
-        1,
-        'File is not readable nor writable, abort',
-    );
+        # }}}
+        ok(chmod(0000, 'ok.sqlite'),
+           'Make ok.sqlite unreadable and unwritable');
+        testcmd("$CMD ok.sqlite", # {{{
+            '',
+            "edit-sqlite3: ok.sqlite: File is not readable by you\n",
+            1,
+            'File is not readable nor writable, abort',
+        );
 
-    # }}}
-    ok(chmod(0644, 'ok.sqlite'), 'Restore permissions of ok.sqlite');
+        # }}}
+        ok(chmod(0644, 'ok.sqlite'), 'Restore permissions of ok.sqlite');
+    }
     diag('Abort if the file is a symlink...');
     ok(symlink('ok.sqlite', 'symlink-to-file.sqlite'), 'Create symlink to ok.sqlite');
     testcmd("$CMD -n symlink-to-file.sqlite", # {{{
