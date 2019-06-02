@@ -14,6 +14,7 @@ clean:
 
 .PHONY: fullclean
 fullclean: $(MAKEFILES)
+	$(MAKE) clean
 	for f in $(DIRS); do (cd $$f && $(MAKE) clean) || exit 1; done
 
 .PHONY: test

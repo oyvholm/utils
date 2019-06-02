@@ -24,7 +24,7 @@ default:
 clean:
 
 .PHONY: fullclean
-fullclean:
+fullclean: clean
 	cd check_utf8 && $(MAKE) clean
 	cd dbf2tab && $(MAKE) clean
 	# cd fldb && $(MAKE) clean
