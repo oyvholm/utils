@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=ft
-VERSION=0.4.0
+VERSION=0.4.1
 
 rcfile=~/.ftrc
 
@@ -74,7 +74,7 @@ END
 	exit 0
 fi
 
-cmd_rsync="rsync -rmvLPzz --timeout=5"
+cmd_rsync="rsync -rmvLPzz --timeout=15"
 
 unset url dest
 test -e "$rcfile" && . "$rcfile"
