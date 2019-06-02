@@ -20,7 +20,7 @@ utils:linux:
     - git config --global user.email "ci@example.com"
     - git clone https://gitlab.com/sunny256/suuid.git
     - cd suuid
-    - make install
+    - script -e -q -c "make test install"
     - cd ..
     - rm -rf suuid
   script:
