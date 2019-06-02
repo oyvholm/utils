@@ -70,8 +70,8 @@ END
     exit 0
 fi
 
-if test "$GITLAB_CI" = "true"; then
-    echo Lilypond does not exist here in Gitlab CI, skipping tests >&2
+if ! lilypond --version 2>/dev/null | grep -q '^GNU LilyPond'; then
+    echo Lilypond not found, skipping tests >&2
     exit 0
 fi
 
