@@ -27,3 +27,4 @@ utils:linux:
     - export PATH=$(pwd):$PATH
     - make
     - make test
+    - make test-clean

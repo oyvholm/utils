@@ -46,7 +46,10 @@ remotes:
 .PHONY: test
 test:
 	test ! -e synced.sql.lock
-	test -z "$$(filesynced --valid-sha 2>&1)"
+	# FIXME: synced.sql is modified in Gitlab CI, disable it for now
+	if test "$(GITLAB_CI)" != "true"; then \
+		test -z "$$(filesynced --valid-sha 2>&1)"; \
+	fi
 	test "$$(git log | grep -- -by: | sort -u | wc -l)" = "2"
 	cd tests && $(MAKE) test
 	cd Lib && $(MAKE) test
