@@ -53,6 +53,14 @@ test:
 	cd src && $(MAKE) test
 	cd Git && $(MAKE) test
 
+.PHONY: test-clean
+test-clean:
+	$(MAKE) fullclean
+	if test -n "$$(git status --porcelain --ignored)"; then \
+		git status --porcelain --ignored; \
+		exit 1; \
+	fi
+
 .PHONY: testport
 testport:
 	cd tests && $(MAKE) testport
