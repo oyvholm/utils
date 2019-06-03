@@ -57,12 +57,8 @@ test:
 	cd Git && $(MAKE) test
 
 .PHONY: test-clean
-test-clean:
-	$(MAKE) fullclean
-	if test -n "$$(git status --porcelain --ignored)"; then \
-		git status --porcelain --ignored; \
-		exit 1; \
-	fi
+test-clean: fullclean
+	git status --porcelain --ignored | grep ^ && exit 1 || true
 
 .PHONY: testport
 testport:
