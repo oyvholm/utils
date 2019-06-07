@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.4.4
+VERSION=0.5.0
 
 ARGS="$(getopt -o "\
 d:\
@@ -20,6 +20,7 @@ F:\
 h\
 o:\
 q\
+r\
 v\
 w:\
 " -l "\
@@ -29,6 +30,7 @@ from-file:,\
 help,\
 order-by:,\
 quiet,\
+reuse,\
 verbose,\
 version,\
 where:,
@@ -42,6 +44,7 @@ opt_from_file=''
 opt_help=0
 opt_orderby=upload_date,file
 opt_quiet=0
+opt_reuse=0
 opt_verbose=0
 opt_where=''
 while :; do
@@ -52,6 +55,7 @@ while :; do
         -h|--help) opt_help=1; shift ;;
         -o|--order-by) opt_orderby="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+        -r|--reuse) opt_reuse=1; shift ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         -w|--where) opt_where="$2"; shift 2 ;;
         --version) echo $progname $VERSION; exit 0 ;;
@@ -85,6 +89,9 @@ Options:
     Sort output by COLUMN.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -r, --reuse
+    Reuse the database for the current directory, don't scan files and 
+    create a new one.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -109,8 +116,9 @@ else
     mkdir -p "$odir" || exit 1
     db="$odir/$progname.sqlite"
 fi
-rm -f "$db" "$db-journal"
-cat <<SQL_END | sqlite3 "$db" || exit 1
+if test "$opt_reuse" != "1" -o ! -e $db; then
+    rm -f "$db" "$db-journal"
+    cat <<SQL_END | sqlite3 "$db" || exit 1
 CREATE TABLE t (file TEXT);
 CREATE TABLE yt (
   average_rating REAL,
@@ -139,12 +147,12 @@ CREATE TABLE yt (
   j TEXT
 );
 SQL_END
-if test -n "$opt_from_file"; then
-    grep '\.info\.json$' "$opt_from_file"
-else
-    find -name '*.info.json'
-fi | sort | mkinsert t | sqlite3 "$db"
-cat <<SQL_END | sqlite3 "$db"
+    if test -n "$opt_from_file"; then
+        grep '\.info\.json$' "$opt_from_file"
+    else
+        find -name '*.info.json'
+    fi | sort | mkinsert t | sqlite3 "$db"
+    cat <<SQL_END | sqlite3 "$db"
 BEGIN;
 ALTER TABLE t ADD j TEXT;
 UPDATE t SET j = json(readfile(file));
@@ -180,6 +188,7 @@ UPDATE yt SET upload_date = substr(upload_date, 1, 4) || '-' ||
   substr(upload_date, 5, 2) || '-' || substr(upload_date, 7, 2);
 COMMIT;
 SQL_END
+fi
 
 where_str='WHERE ytid IS NOT NULL'
 if test -n "$opt_where"; then
