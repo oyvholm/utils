@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.5.0
+VERSION=0.6.0
 
 ARGS="$(getopt -o "\
 d:\
@@ -21,6 +21,7 @@ h\
 o:\
 q\
 r\
+S:\
 v\
 w:\
 " -l "\
@@ -31,6 +32,7 @@ help,\
 order-by:,\
 quiet,\
 reuse,\
+sql:,\
 verbose,\
 version,\
 where:,
@@ -45,6 +47,7 @@ opt_help=0
 opt_orderby=upload_date,file
 opt_quiet=0
 opt_reuse=0
+opt_sql=''
 opt_verbose=0
 opt_where=''
 while :; do
@@ -56,6 +59,7 @@ while :; do
         -o|--order-by) opt_orderby="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         -r|--reuse) opt_reuse=1; shift ;;
+        -S|--sql) opt_sql="$2"; shift 2 ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         -w|--where) opt_where="$2"; shift 2 ;;
         --version) echo $progname $VERSION; exit 0 ;;
@@ -92,6 +96,14 @@ Options:
   -r, --reuse
     Reuse the database for the current directory, don't scan files and 
     create a new one.
+  -S STATEMENT, --sql STATEMENT
+    Execute SQL statement directly against the sqlite3 database. If 
+    STATEMENT is "-", read commands from stdin or if stdin is empty, use 
+    the sqlite3 shell. Examples:
+      $progname -S .schema
+      $progname -S "SELECT view_count AS v, file FROM yt ORDER BY v;"
+      $progname -S -
+      (echo .dbinfo; echo "SELECT file FROM yt;") | $progname -r -S -
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -188,6 +200,15 @@ UPDATE yt SET upload_date = substr(upload_date, 1, 4) || '-' ||
   substr(upload_date, 5, 2) || '-' || substr(upload_date, 7, 2);
 COMMIT;
 SQL_END
+fi
+
+if test -n "$opt_sql"; then
+    if test "$opt_sql" = "-"; then
+        sqlite3 "$db"
+    else
+        sqlite3 "$db" "$opt_sql" | $PAGER
+    fi
+    exit
 fi
 
 where_str='WHERE ytid IS NOT NULL'
