@@ -43,10 +43,10 @@ $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.0.0';
 
 my %deburl = (
-	'go1' => "https://www.google.com/url*url=*",
-	'tw1' => "https://twitter.com/*/status/*",
-	'yt1' => "https://www.youtube.com/watch?v=*",
-	'yt2' => "https://youtu.be/*",
+	'go1' => "google.com/url*url=*",
+	'tw1' => "twitter.com/*/status/*",
+	'yt1' => "youtube.com/watch?v=*",
+	'yt2' => "youtu.be/*",
 	'yt3' => "plain id",
 );
 my %descriptions = ();
@@ -159,47 +159,47 @@ sub test_executable {
 	        1,
 	        'Plain id with invalid character');
 
-	for my $p (qw{ https http }) {
-		diag("Use $p");
+	for my $p ("https://", "http://", "") {
+		diag("Use \"$p\" prefix");
 		diag($deburl{'yt1'});
 
-		for my $w ("www.", "") {
-			testcmd("$CMD $p://${w}youtube.com/watch?v=",
+		for my $w ("www.", "m.", "") {
+			testcmd("$CMD $p${w}youtube.com/watch?v=",
 				"",
 				"$CMD_BASENAME: Invalid URL\n",
 				1,
-				"v= has no id, $p://$w*");
+				"v= has no id, $p$w*");
 
-			testcmd("$CMD $p://${w}youtube.com/watch?v=abcde,ghijk",
+			testcmd("$CMD $p${w}youtube.com/watch?v=abcde,ghijk",
 				"",
 				"$CMD_BASENAME: Invalid URL\n",
 				1,
-				"v= contains invalid character, $p://$w*");
-			$url = "$p://${w}youtube.com/watch?v=$id";
+				"v= contains invalid character, $p$w*");
+			$url = "$p${w}youtube.com/watch?v=$id";
 			diag($url);
 			test_yt_url($id, $url, $deburl{'yt1'}, $url);
 			test_yt_url($id, "$url&t=0s", $deburl{'yt1'},
 			            "$url&t=0s");
-			$url = "$p://${w}youtube.com/watch?t=0s&v=$id";
+			$url = "$p${w}youtube.com/watch?t=0s&v=$id";
 			diag($url);
 			test_yt_url($id, $url, $deburl{'yt1'}, $url);
 			test_yt_url($id, "$url&abc=def", $deburl{'yt1'},
 			            "$url&abc=def");
 
 			diag($deburl{'yt2'});
-			testcmd("$CMD $p://${w}youtu\.be/",
+			testcmd("$CMD $p${w}youtu\.be/",
 				"",
 				"$CMD_BASENAME: Invalid URL\n",
 				1,
-				"Missing id in $deburl{'yt2'}, $p://$w*");
+				"Missing id in $deburl{'yt2'}, $p$w*");
 
-			testcmd("$CMD $p://${w}youtu\.be/abcde,ghijk",
+			testcmd("$CMD $p${w}youtu\.be/abcde,ghijk",
 				"",
 				"$CMD_BASENAME: Invalid URL\n",
 				1,
-				"Invalid character in $deburl{'yt2'}, $p://$w*");
+				"Invalid character in $deburl{'yt2'}, $p$w*");
 
-			$url = "$p://${w}youtu.be/$id";
+			$url = "$p${w}youtu.be/$id";
 			diag($url);
 			test_yt_url($id, $url, $deburl{'yt2'}, $url);
 			test_yt_url($id, "$url&t=0s", $deburl{'yt2'}, "$url&t=0s");
@@ -207,23 +207,23 @@ sub test_executable {
 
 		my $twid = "1234567890123456789";
 		my $twname = "example";
-		for my $w ("www.", "") {
-			$url = "$p://${w}twitter.com/$twname/status/$twid";
+		for my $w ("www.", "m.", "") {
+			$url = "$p${w}twitter.com/$twname/status/$twid";
 			test_yt_url($twid, $url, $deburl{'tw1'}, $url);
 			test_yt_url($twid, "$url?abc=def", $deburl{'tw1'},
 			            "$url?abc=def");
-			$url = "$p://${w}twitter.com/$twname/status/";
+			$url = "$p${w}twitter.com/$twname/status/";
 			testcmd("$CMD $url",
 				"",
 				"$CMD_BASENAME: Unknown URL format\n",
 				1,
-				"Missing Twitter ID, $p://$w*");
-			$url = "$p://${w}twitter.com/$twname/status/abc";
+				"Missing Twitter ID, $p$w*");
+			$url = "$p${w}twitter.com/$twname/status/abc";
 			testcmd("$CMD $url",
 				"",
 				"$CMD_BASENAME: Unknown URL format\n",
 				1,
-				"Non-digit in Twitter ID, $p://$w*");
+				"Non-digit in Twitter ID, $p$w*");
 		}
 
 		# Google URL, gzip + base64:
@@ -233,8 +233,8 @@ sub test_executable {
 		# kUNmWnOtNDeMXyokRpSRK8jET5qGcde2/ZmqoZTJKcx+lu6fdZ0rketXPwRmB
 		# pPLfNKRs8TyUp6b67Ypd48sf8+6b6u0Fo5rSbeAAAAA=
 		my $goid = "ztIEogFr9j4";
-		for my $w ("www.", "") {
-			my $url = "$p://${w}google.com/url?sa=t" .
+		for my $w ("www.", "m.", "") {
+			my $url = "$p${w}google.com/url?sa=t" .
 			          "&rct=j" .
 			          "&q=" .
 			          "&esrc=s" .
@@ -256,7 +256,7 @@ sub test_executable {
 			            "v=$goid\"\n" .
 			          "$CMD_BASENAME: Found $deburl{'yt1'}\n",
 			        0,
-			        "$p://${w}google.com url to Youtube video");
+			        "$p${w}google.com url to Youtube video");
 			my $egoid = $goid;
 			$egoid =~ s/g/,/;
 			$url =~ s/$goid/$egoid/;
@@ -270,11 +270,11 @@ sub test_executable {
 			          "$CMD_BASENAME: Found $deburl{'yt1'}\n" .
 			          "$CMD_BASENAME: Invalid URL\n",
 			        1,
-			        "$p://${w}google.com url has invalid char " .
+			        "$p${w}google.com url has invalid char " .
 			          "in id");
 
 			$twid = '1' x 19;
-			$url = "$p://${w}google.com/url?sa=t&rct=j&" .
+			$url = "$p${w}google.com/url?sa=t&rct=j&" .
 			       "&url=https%3A%2F%2Ftwitter.com%2Fabc%2F" .
 			            "status%2F$twid%3Flang%3Den";
 			testcmd("$CMD -vv '$url'",
@@ -286,7 +286,7 @@ sub test_executable {
 			            "?lang=en\"\n" .
 			          "$CMD_BASENAME: Found $deburl{'tw1'}\n",
 			        0,
-			        "$p://${w}google.com url with twitter url");
+			        "$p${w}google.com url with twitter url");
 		}
 	}
 }
@@ -323,13 +323,13 @@ sub test_create_url_option {
 		        1,
 		        "Invalid char in google url, $o");
 
-		for my $p ("https", "http") {
-			for my $w ("www.", "") {
+		for my $p ("https://", "http://", "") {
+			for my $w ("www.", "m.", "") {
 				my $id = "1234567890";
 				my $user = "example";
 				my $genurl = "https://twitter.com/$user/" .
 				             "status/$id";
-				my $url = "$p://${w}twitter.com/$user/" .
+				my $url = "$p${w}twitter.com/$user/" .
 				          "status/$id";
 
 				for (1, 2) {

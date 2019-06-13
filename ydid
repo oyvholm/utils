@@ -30,7 +30,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.1';
+our $VERSION = '0.2.2';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -81,28 +81,31 @@ sub get_id {
 	my $id = '';
 
 	msg(2, "url = \"$url\"");
+	$url =~ s!^https?://!!;
+	$url =~ s/^www\.//;
+	$url =~ s/^m\.//;
 
-	if ($url =~ /https?:\/\/(?:www\.)?youtube\.com\/watch\?.*\bv=(.*)/) {
+	if ($url =~ /^youtube\.com\/watch\?.*\bv=(.*)/) {
 		$id = $1;
-		msg(2, "Found https://www.youtube.com/watch?v=*");
+		msg(2, "Found youtube.com/watch?v=*");
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
 		$create_url && ($id = create_url("youtube", $id));
-	} elsif ($url =~ /https?:\/\/(?:www\.)?youtu\.be\/(.*)/) {
+	} elsif ($url =~ /^youtu\.be\/(.*)/) {
 		$id = $1;
-		msg(2, "Found https://youtu.be/*");
+		msg(2, "Found youtu.be/*");
 		$id =~ s/\&.*//;
 		valid_youtube_id($id) || myexit(1, "Invalid URL");
 		$create_url && ($id = create_url("youtube", $id));
-	} elsif ($url =~ /https?:\/\/(?:www\.)?twitter.com\/([^\/]+)\/status\/(\d+)/) {
+	} elsif ($url =~ /^twitter.com\/([^\/]+)\/status\/(\d+)/) {
 		my $user;
 		($user, $id) = ($1, $2);
-		msg(2, "Found https://twitter.com/*/status/*");
+		msg(2, "Found twitter.com/*/status/*");
 		valid_twitter_id($id) || myexit(1, "Invalid Twitter ID");
 		$create_url && ($id = create_url("twitter", $id, $user));
-	} elsif ($url =~ /https?:\/\/(?:www\.)?google\.com\/url.*\&url=(.+)/) {
+	} elsif ($url =~ /^google\.com\/url.*\&url=(.+)/) {
 		$id = $1;
-		msg(2, "Found https://www.google.com/url*url=*");
+		msg(2, "Found google.com/url*url=*");
 		$id =~ s/\&.*//;
 		$id = get_id(0, url2txt($id));
 		length($id) || myexit(1, "Invalid Google URL");
