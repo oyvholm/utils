@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mobilstripp
-VERSION=0.3.3
+VERSION=0.3.4
 
 ARGS="$(getopt -o "\
 h\
@@ -89,12 +89,14 @@ grep -v \
 -e /Android/data/com\\.samsung\\.android\\.app\\.episodes/cache/thumbnail \
 -e /Android/data/com\\.samsung\\.android\\.app\\.episodes/files/album/ \
 -e /Android/data/com\\.samsung\\.android\\.snote/cache/sstream_cache/ \
+-e /Android/data/com\\.sec\\.android\\.app\\.FlashBarService/files/Pictures/ \
 -e /Android/data/com\\.sec\\.android\\.app\\.sbrowser/TabManager/ \
 -e /Android/data/com\\.sec\\.android\\.app\\.sbrowser/files/Pictures/com\\.sec\\.android\\.app\\.sbrowser/TabManager/ \
 -e /Android/data/com\\.sec\\.android\\.app\\.shealth/cache/ \
 -e /Android/data/com\\.sec\\.everglades/Files/icons/ \
 -e /Android/data/com\\.touchtype\\.swiftkey/files/ \
 -e /Android/data/com\\.tripadvisor\\.tripadvisor/files/MapResources/ \
+-e /Android/data/com\\.vlingo\\.midas/serial/ \
 -e /Android/data/dentex\\.youtube\\.downloader/files/cache/ \
 -e /Android/data/org\\.telegram\\.messenger/cache/ \
 -e /Android/data/org\\.videolan\\.vlc/cache/art/ \
