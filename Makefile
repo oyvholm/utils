@@ -18,7 +18,8 @@ clean:
 	find . -name .testadd.tmp -type d -print0 | xargs -0r rm -rf
 
 .PHONY: fullclean
-fullclean: clean
+fullclean:
+	$(MAKE) clean
 	cd src && $(MAKE) fullclean
 	cd Git && $(MAKE) fullclean
 
@@ -57,7 +58,8 @@ test:
 	cd Git && $(MAKE) test
 
 .PHONY: test-clean
-test-clean: fullclean
+test-clean:
+	$(MAKE) fullclean
 	git status --porcelain --ignored | grep ^ && exit 1 || true
 
 .PHONY: testport
