@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.6.0
+VERSION=0.6.1
 
 ARGS="$(getopt -o "\
 d:\
@@ -128,7 +128,7 @@ else
     mkdir -p "$odir" || exit 1
     db="$odir/$progname.sqlite"
 fi
-if test "$opt_reuse" != "1" -o ! -e $db; then
+if test "$opt_reuse" != "1" -o ! -e "$db"; then
     rm -f "$db" "$db-journal"
     cat <<SQL_END | sqlite3 "$db" || exit 1
 CREATE TABLE t (file TEXT);
