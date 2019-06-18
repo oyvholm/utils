@@ -16,4 +16,10 @@ test:
 	cmark -t commonmark README.md >README.md.tmp
 	test -z "$$(diff -q README.md README.md.tmp)"
 	rm -f README.md.tmp
+	rm -f README.html
+	$(MAKE) README.html
+	test -e README.html
+	xmllint --noout README.html
+	grep -q '^<p>Generated from <code>README.md</code>' README.html
+	grep -q '^revision <code>' README.html
 	cd src && $(MAKE) -f Makefile.std-test test

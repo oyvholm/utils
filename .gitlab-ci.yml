@@ -17,6 +17,7 @@ utils:linux:
         git-annex
         bc
         cmark
+        libxml2-utils
     - git config --global user.name "Firstname Lastname"
     - git config --global user.email "ci@example.com"
     - git clone https://gitlab.com/sunny256/suuid.git
