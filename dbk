@@ -76,19 +76,23 @@ my @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
 D("$0: \$Opt{'now'} = $Opt{'now'}\n");
 
-my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst) = localtime($curr_time);
+my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst)
+   = localtime($curr_time);
 
 $Year += 1900;
 $Mon += 1;
 
-D("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, \$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst\n");
+D("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, " .
+  "\$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst\n");
 
 # Parameterparsing og initialisering av datovariabler {{{
 my $arg_count;
 my $time_str = ""; # Strengen som det vil bli leita etter og som blir satt inn.
 
 foreach (@ARGV) {
-    /^\d\d:/ && (splice(@ARGV, $arg_count, 1), $time_str = $_, $Opt{'now'} = 1);
+    /^\d\d:/ && (splice(@ARGV, $arg_count, 1),
+                 $time_str = $_,
+                 $Opt{'now'} = 1);
     $arg_count++;
 }
 
@@ -131,16 +135,19 @@ my $lock_dir = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
 
 umask(0);
 unless (-d $dbk_dir) {
-    mkdir($dbk_dir, $dir_mode) || die("$0: $dbk_dir: Kan ikke lage directoryen: $!\n");
+    mkdir($dbk_dir, $dir_mode)
+        || die("$0: $dbk_dir: Kan ikke lage directoryen: $!\n");
 }
 unless (-d $year_dir) {
-    mkdir($year_dir, $dir_mode) || die("$0: $year_dir: Kan ikke lage directoryen: $!\n");
+    mkdir($year_dir, $dir_mode)
+        || die("$0: $year_dir: Kan ikke lage directoryen: $!\n");
 }
 
 D("\$dbk_file = $dbk_file\n");
 
 if ($Opt{'force'}) {
-    rmdir($lock_dir) || warn("$0: $lock_dir: Kan ikke fjerne gammel lockdir med makt: $!\n");
+    rmdir($lock_dir) || warn("$0: $lock_dir: " .
+                             "Kan ikke fjerne gammel lockdir med makt: $!\n");
 }
 # }}}
 
@@ -148,7 +155,8 @@ if ($Opt{'force'}) {
 my $print_ok = 0;
 
 until (mkdir($lock_dir, 0777)) {
-    $print_ok || print(STDERR "Venter på at lockdir $lock_dir skal forsvinne ($!)..");
+    $print_ok || print(STDERR "Venter på at lockdir $lock_dir " .
+                              "skal forsvinne ($!)..");
     print(".");
     sleep(1);
     $print_ok = 1;
@@ -156,12 +164,15 @@ until (mkdir($lock_dir, 0777)) {
 $print_ok && print("OK\n");
 # }}}
 
-open(CheckFP, ">$year_dir/.check") || die("$0: $year_dir/.check: Klarte ikke å lage fila: $!\n");
+open(CheckFP, ">$year_dir/.check")
+    || die("$0: $year_dir/.check: Klarte ikke å lage fila: $!\n");
 close(CheckFP);
 
 unless (-f $dbk_file) {
-    open(FP, ">$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for skriving: $!\n");
-    print(FP "<h1>$day_name[$week_day] $Year-$Mon-$Day</h1>\n") || die("$0: $dbk_file: Kan ikke skrive header til fila: $!\n");
+    open(FP, ">$dbk_file")
+        || die("$0: $dbk_file: Kan ikke åpne fila for skriving: $!\n");
+    print(FP "<h1>$day_name[$week_day] $Year-$Mon-$Day</h1>\n")
+        || die("$0: $dbk_file: Kan ikke skrive header til fila: $!\n");
     close(FP);
 }
 
@@ -176,18 +187,27 @@ if ($Opt{'now'}) {
     } else {
         $time_str = "$Hour:$Min:$Sec$utc_str";
     }
-    open(dbkFP, "+<$dbk_file") || die("$0: $dbk_file: Kan ikke åpne fila for lesing+skriving+flock: $!\n");
-    flock(dbkFP, LOCK_EX) || die("$0: $dbk_file: Klarte ikke flock(): $!\n");
+    open(dbkFP, "+<$dbk_file")
+        || die("$0: $dbk_file: " .
+               "Kan ikke åpne fila for lesing+skriving+flock: $!\n");
+    flock(dbkFP, LOCK_EX)
+        || die("$0: $dbk_file: Klarte ikke flock(): $!\n");
     my $which_line = find_line($time_str);
     if ($time_not_found) {
-        seek(dbkFP, 0, 2) || die("$0: $dbk_file: Klarte ikke å seeke til slutten for å legge til LF: $!\n");
-        print(dbkFP "\n") || warn("$0: $dbk_file: Feil under skriving til fila: $!\n");
+        seek(dbkFP, 0, 2)
+            || die("$0: $dbk_file: Klarte ikke å seeke " .
+                   "til slutten for å legge til LF: $!\n");
+        print(dbkFP "\n")
+            || warn("$0: $dbk_file: Feil under skriving til fila: $!\n");
         $which_line++;
     }
-    length($Opt{'insert-file'}) ? insert_file($Opt{'insert-file'}, $which_line) : insert_time($time_str, $which_line);
+    length($Opt{'insert-file'})
+        ? insert_file($Opt{'insert-file'}, $which_line)
+        : insert_time($time_str, $which_line);
     close(dbkFP);
     $which_line++;
-    system("$Editor +$which_line $dbk_file") unless (length($Opt{'insert-file'}) || length($Opt{'batch'}));
+    system("$Editor +$which_line $dbk_file") unless
+        (length($Opt{'insert-file'}) || length($Opt{'batch'}));
     $min_size = 49;
     # }}}
 } else {
@@ -203,7 +223,8 @@ my @stat_info = stat($dbk_file);
 my $file_size = $stat_info[7];
 if ($file_size < $min_size) {
     print("Ingenting ble skrevet, så jeg sletter driten.\n");
-    unlink($dbk_file) || warn("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
+    unlink($dbk_file)
+        || warn("$0: $dbk_file: Klarte ikke å slette fila: $!\n");
     rmdir($year_dir);
 }
 
@@ -217,7 +238,8 @@ sub find_line {
     my $srch_time = shift;
     my $last_line = 0;
     my $Found = 0;
-    seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila: $!\n");
+    seek(dbkFP, 0, 0)
+        || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila: $!\n");
     while (<dbkFP>) {
         if (/^<p><b>(\d\d:\d\d:\d\d)/i || /^<p><b>(\d\d:\d\d)/i) {
             my $found_time = $1;
@@ -232,13 +254,25 @@ sub find_line {
 sub insert_time {
     # {{{
     my ($time_str, $line_num) = @_;
-    seek(dbkFP, 0, 0) || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_time(): $!\n");
+    seek(dbkFP, 0, 0)
+        || die("$dbk_file: Klarte ikke å gå " .
+               "til begynnelsen av fila i insert_time(): $!\n");
     my @Linjer = <dbkFP>;
-    splice(@Linjer, $line_num-1, 0, sprintf("<p><b>$time_str</b> -\n%s", $time_not_found ? "" : "\n"));
-    seek(dbkFP, 0, 0) || die("$0: $dbk_file: Klarte ikke å seeke til starten i insert_time(): $!\n");
-    truncate(dbkFP, 0) || die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+    splice(
+        @Linjer,
+        $line_num-1,
+        0,
+        sprintf("<p><b>$time_str</b> -\n%s", $time_not_found ? "" : "\n")
+    );
+    seek(dbkFP, 0, 0)
+        || die("$0: $dbk_file: Klarte ikke å seeke til starten " .
+               "i insert_time(): $!\n");
+    truncate(dbkFP, 0)
+        || die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
     foreach (@Linjer) {
-        print(dbkFP $_) || warn("$0: $dbk_file: Å neiiii, katastrofe! Feil under skriving til fila: $!\n");
+        print(dbkFP $_)
+            || warn("$0: $dbk_file: Å neiiii, katastrofe! " .
+                    "Feil under skriving til fila: $!\n");
     }
     # }}}
 } # insert_time()
@@ -252,7 +286,8 @@ sub is_utf8 {
     # Henta fra "find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny" og 
     # modifisert litt. FIXME: Klager ikke på overlange sekvenser og tegn 
     # i UTF-16-surrogatområdet
-    $Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
+    $Str =~ s/([\xFC-\xFD][\x80-\xBF][\x80-\xBF]
+               [\x80-\xBF][\x80-\xBF][\x80-\xBF])//gx;
     $Str =~ s/([\xF8-\xFB][\x80-\xBF][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
     $Str =~ s/([\xF0-\xF7][\x80-\xBF][\x80-\xBF][\x80-\xBF])//g;
     $Str =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
@@ -267,16 +302,23 @@ sub insert_file {
     # {{{
     my ($file_name, $line_num) = @_;
     local *LocFP;
-    seek(dbkFP, 0, 0) || die("$0: $dbk_file: Klarte ikke å gå til begynnelsen av fila i insert_file(): $!\n");
+    seek(dbkFP, 0, 0)
+        || die("$0: $dbk_file: Klarte ikke å gå til begynnelsen av fila " .
+               "i insert_file(): $!\n");
     my @Linjer = <dbkFP>;
     my @InsLinj = "<p><b>$time_str</b> -\n";
-    open(LocFP, "<$file_name") || die("$0: $file_name: Kan ikke åpne fila for lesing: $!\n");
+    open(LocFP, "<$file_name")
+        || die("$0: $file_name: Kan ikke åpne fila for lesing: $!\n");
     push(@InsLinj, <LocFP>);
-    push(@InsLinj, "\n") unless $time_not_found; # Denne likte jeg egentlig fantastisk dårlig, men hvem bruker vel å ha to LF’er på slutten av fila?
+    push(@InsLinj, "\n") unless $time_not_found; # Denne likte jeg egentlig 
+                                                 # fantastisk dårlig, men hvem 
+                                                 # bruker vel å ha to LF’er på 
+                                                 # slutten av fila?
     for (@InsLinj) {
         D("\$_ = \"$_\"\n");
         if (!is_utf8($_)) {
-            warn("$0: Ugyldig UTF-8 funnet, behandler teksten som ISO-8859-1.\n");
+            warn("$0: Ugyldig UTF-8 funnet, " .
+                 "behandler teksten som ISO-8859-1.\n");
             my @Ny = ();
             for my $Curr (@InsLinj) {
                 D("FØR  : \$Curr = \"$Curr\"\n");
@@ -290,13 +332,18 @@ sub insert_file {
     }
     splice(@Linjer, $line_num-1, 0, @InsLinj);
     close(LocFP);
-    seek(dbkFP, 0, 0) || die("$0: $dbk_file: Klarte ikke å seeke til starten i insert_file(): $!\n");
-    truncate(dbkFP, 0) || die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
+    seek(dbkFP, 0, 0)
+        || die("$0: $dbk_file: Klarte ikke å seeke til starten " .
+               "i insert_file(): $!\n");
+    truncate(dbkFP, 0)
+        || die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
     D("scalar(\@Linjer): \"" . scalar(@Linjer) . "\".\n");
     foreach my $Curr (@Linjer) {
         $Curr =~ s/&#(\d{1,10});/widechar($1)/ge;
         $Curr =~ s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
-        print(dbkFP $Curr) || warn("$0: $dbk_file: Knallkrise. Feil under skriving til fila: $!\n");
+        print(dbkFP $Curr)
+            || warn("$0: $dbk_file: Knallkrise. " .
+                    "Feil under skriving til fila: $!\n");
     }
     # }}}
 } # insert_file()
@@ -385,7 +432,9 @@ sub widechar {
                                0x80 | ($Val & 0x3F));
     } elsif ($Val < 0x10000) {
         unless ($allow_invalid) {
-            if  (($Val >= 0xD800 && $Val <= 0xDFFF) || ($Val eq 0xFFFE) || ($Val eq 0xFFFF)) {
+            if  (($Val >= 0xD800 && $Val <= 0xDFFF)
+                    || ($Val eq 0xFFFE)
+                    || ($Val eq 0xFFFF)) {
                 $Val = 0xFFFD;
             }
         }
