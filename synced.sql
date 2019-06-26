@@ -252,7 +252,7 @@ INSERT INTO synced VALUES('cvsvimdiff','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('d',NULL,NULL,NULL);
 INSERT INTO synced VALUES('date2iso','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('datefn','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
-INSERT INTO synced VALUES('dbk','Lib/std/perl',NULL,NULL);
+INSERT INTO synced VALUES('dbk','Lib/std/perl','32188c653d3bda5ecba36c6578d554567a4a9bac','2019-06-23 18:44:18');
 INSERT INTO synced VALUES('dbllf','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('debugprompt','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('deep','Lib/std/perl',NULL,NULL);

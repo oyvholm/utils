@@ -18,19 +18,16 @@ use Getopt::Long;
 use Time::Local;
 use Fcntl ':flock';
 
-$| = 1;
-
-our $Debug = 0;
-D("\$#ARGV = $#ARGV\n");
+local $| = 1;
 
 our %Opt = (
 
     'batch' => 0,
-    'debug' => 0,
     'force' => 0,
     'help' => 0,
     'insert-file' => "",
     'now' => 0,
+    'quiet' => 0,
     'verbose' => 0,
     'version' => 0,
     'zone' => 0,
@@ -39,24 +36,24 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = "0.00";
+our $VERSION = '0.0.0';
 
-Getopt::Long::Configure("bundling");
+Getopt::Long::Configure('bundling');
 GetOptions(
 
-    "batch|b" => \$Opt{'batch'},
-    "debug" => \$Opt{'debug'},
-    "force|f" => \$Opt{'force'},
-    "help|h" => \$Opt{'help'},
-    "insert-file|i=s" => \$Opt{'insert-file'},
-    "now|t" => \$Opt{'now'},
-    "verbose|v+" => \$Opt{'verbose'},
-    "version" => \$Opt{'version'},
-    "zone|z" => \$Opt{'zone'},
+    'batch|b' => \$Opt{'batch'},
+    'force|f' => \$Opt{'force'},
+    'help|h' => \$Opt{'help'},
+    'insert-file|i=s' => \$Opt{'insert-file'},
+    'now|t' => \$Opt{'now'},
+    'quiet|q+' => \$Opt{'quiet'},
+    'verbose|v+' => \$Opt{'verbose'},
+    'version' => \$Opt{'version'},
+    'zone|z' => \$Opt{'zone'},
 
 ) || die("$progname: Option error. Use -h for help.\n");
 
-$Opt{'debug'} && ($Debug = 1);
+$Opt{'verbose'} -= $Opt{'quiet'};
 $Opt{'help'} && usage(0);
 if ($Opt{'version'}) {
     print_version();
@@ -74,7 +71,7 @@ my $curr_time = time;
 my $time_not_found = 0;
 my @day_name = ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
-D("$0: \$Opt{'now'} = $Opt{'now'}\n");
+msg(3, "$0: \$Opt{'now'} = $Opt{'now'}");
 
 my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst)
    = localtime($curr_time);
@@ -82,8 +79,8 @@ my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst)
 $Year += 1900;
 $Mon += 1;
 
-D("\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, " .
-  "\$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst\n");
+msg(3, "\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, " .
+  "\$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst");
 
 # Parameterparsing og initialisering av datovariabler {{{
 my $arg_count;
@@ -123,9 +120,9 @@ my @time_arr = localtime($time_sec);
 my $week_day = $time_arr[6];
 my $utc_diff = ($time_utc-$time_sec)/3600;
 
-D("Etter ARGV: $Year-$Mon-$Day\n");
-D("\$dbk_dir = $dbk_dir\n");
-D("\$Opt{'insert-file'} = \"$Opt{'insert-file'}\"\n");
+msg(3, "Etter ARGV: $Year-$Mon-$Day");
+msg(3, "\$dbk_dir = $dbk_dir");
+msg(3, "\$Opt{'insert-file'} = \"$Opt{'insert-file'}\"");
 # }}}
 
 # Sjekk at alle katalogene er på plass {{{
@@ -143,7 +140,7 @@ unless (-d $year_dir) {
         || die("$0: $year_dir: Kan ikke lage directoryen: $!\n");
 }
 
-D("\$dbk_file = $dbk_file\n");
+msg(3, "\$dbk_file = $dbk_file");
 
 if ($Opt{'force'}) {
     rmdir($lock_dir) || warn("$0: $lock_dir: " .
@@ -293,7 +290,7 @@ sub is_utf8 {
     $Str =~ s/([\xE0-\xEF][\x80-\xBF][\x80-\xBF])//g;
     $Str =~ s/([\xC0-\xDF][\x80-\xBF])//g;
     $Retval = 0 if ($Str =~ /[\x80-\xFD]/);
-    D("is_utf8() returnerer $Retval.\n");
+    msg(3, "is_utf8() returnerer $Retval.");
     return $Retval;
     # }}}
 } # is_utf8()
@@ -315,15 +312,15 @@ sub insert_file {
                                                  # bruker vel å ha to LF’er på 
                                                  # slutten av fila?
     for (@InsLinj) {
-        D("\$_ = \"$_\"\n");
+        msg(3, "\$_ = \"$_\"");
         if (!is_utf8($_)) {
             warn("$0: Ugyldig UTF-8 funnet, " .
                  "behandler teksten som ISO-8859-1.\n");
             my @Ny = ();
             for my $Curr (@InsLinj) {
-                D("FØR  : \$Curr = \"$Curr\"\n");
+                msg(3, "FØR  : \$Curr = \"$Curr\"");
                 $Curr =~ s/([\x80-\xFF])/widechar(ord($1))/ge;
-                D("ETTER: \$Curr = \"$Curr\"\n");
+                msg(3, "ETTER: \$Curr = \"$Curr\"");
                 push(@Ny, $Curr);
             }
             @InsLinj = @Ny;
@@ -337,7 +334,7 @@ sub insert_file {
                "i insert_file(): $!\n");
     truncate(dbkFP, 0)
         || die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
-    D("scalar(\@Linjer): \"" . scalar(@Linjer) . "\".\n");
+    msg(3, "scalar(\@Linjer): \"" . scalar(@Linjer) . "\".");
     foreach my $Curr (@Linjer) {
         $Curr =~ s/&#(\d{1,10});/widechar($1)/ge;
         $Curr =~ s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
@@ -350,7 +347,8 @@ sub insert_file {
 
 sub print_version {
     # Print program version {{{
-    print("$progname v$VERSION\n");
+    print("$progname $VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -362,7 +360,7 @@ sub usage {
         print("\n");
         print_version();
     }
-    print(<<END);
+    print(<<"END");
 
 Syntax: $progname [valg] [dag [måned [år]]] [HH:MM]
 
@@ -377,6 +375,8 @@ Options:
   -i x, --insert-file x
     Sett inn filen x istedenfor å bruke tastatur. Forventer -t eller 
     klokkeslett.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
   -t, --now
     Legg til klokkeslettet akkurat nå i fila og gå inn i editoren
   -v, --verbose
@@ -385,8 +385,6 @@ Options:
     Print version information.
   -z, --zone
     Legg til tidssone til klokkeslett
-  --debug
-    Print debugging messages.
 
 Klokkeslettet kan spesifiseres hvor som helst, men må starte med 
 formatet "HH:" der HH er to siffer.
@@ -403,21 +401,9 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
-
-sub D {
-    # Print a debugging message {{{
-    $Debug || return;
-    my @call_info = caller;
-    chomp(my $Txt = shift);
-    my $File = $call_info[1];
-    $File =~ s#\\#/#g;
-    $File =~ s#^.*/(.*?)$#$1#;
-    print(STDERR "$File:$call_info[2] $$ $Txt\n");
-    return("");
-    # }}}
-} # D()
 
 sub widechar {
     # Konverterer en tegnverdi til UTF-8 {{{
@@ -467,77 +453,18 @@ sub widechar {
 
 __END__
 
-# Plain Old Documentation (POD) {{{
-
-=pod
-
-=head1 NAME
-
-
-
-=head1 SYNOPSIS
-
- [options] [file [files [...]]]
-
-=head1 DESCRIPTION
-
-
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<-h>, B<--help>
-
-Print a brief help summary.
-
-=item B<-v>, B<--verbose>
-
-Increase level of verbosity. Can be repeated.
-
-=item B<--version>
-
-Print version information.
-
-=item B<--debug>
-
-Print debugging messages.
-
-=back
-
-=head1 BUGS
-
-
-
-=head1 AUTHOR
-
-Made by Øyvind A. Holm S<E<lt>sunny@sunbase.orgE<gt>>.
-
-=head1 COPYRIGHT
-
-Copyleft © Øyvind A. Holm E<lt>sunny@sunbase.orgE<gt>
-This is free software; see the file F<COPYING> for legalese stuff.
-
-=head1 LICENCE
-
-This program is free software: you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by the 
-Free Software Foundation, either version 2 of the License, or (at your 
-option) any later version.
-
-This program is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along 
-with this program.
-If not, see L<http://www.gnu.org/licenses/>.
-
-=head1 SEE ALSO
-
-=cut
-
-# }}}
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2 of the License, or (at 
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program.
+# If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
