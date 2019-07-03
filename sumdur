@@ -1,0 +1,178 @@
+#!/bin/sh
+
+#==============================================================================
+# sumdur
+# File ID: a15d6810-9d7d-11e9-b544-4f45262dc9b5
+#
+# Print total duration for multiple video/audio files.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
+
+progname=sumdur
+VERSION=0.1.0
+
+opt_days=0
+opt_no_frac=0
+opt_help=0
+opt_quiet=0
+opt_seconds=0
+opt_verbose=0
+opt_zero_terminated=0
+while test -n "$1"; do
+	case "$1" in
+	-d|--days) opt_days=1; shift ;;
+	-F|--no-frac) opt_no_frac=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-s|--seconds) opt_seconds=1; shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	-z|--zero-terminated) opt_zero_terminated=1; shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
+
+Print total duration for multiple video/audio files. If no files are 
+specified on the command line, read from stdin.
+
+Usage: $progname [options] [files]
+
+Options:
+
+  -d, --days
+    Include days in the output format, "d:hh:mm:ss.ssss".
+  -F, --no-frac
+    Don't use fractional seconds.
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -s, --seconds
+    Print seconds instead of hh:mm:ss.ssss format.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  -z, --zero-terminated
+    Filenames from stdin are separated by a zero byte (NUL) instead of 
+    newline.
+  --version
+    Print version information.
+
+Examples:
+
+  $progname *.opus
+  $progname <playlist.txt
+  find . -name '*.mp4' | $progname
+  find . -name '*.mp3' -print0 | $progname -z -s
+
+END
+	exit 0
+fi
+
+if test -z "$(bc --version 2>/dev/null)"; then
+	echo "$progname: bc(1) not found" >&2
+	exit 1
+fi
+if test -z "$(ffprobe -version 2>/dev/null)"; then
+	echo "$progname: ffprobe(1) from FFmpeg not found" >&2
+	exit 1
+fi
+
+test "$opt_zero_terminated" = "1" && sep_str='-0' || sep_str='-d\n'
+
+secs=$(
+	if test -n "$1"; then
+		sep_str='-d\n'
+		for f in "$@"; do
+			echo "$f"
+		done
+	else
+		cat
+	fi \
+	| xargs $sep_str -L1 \
+	  ffprobe -v quiet -of csv=p=0 -show_entries format=duration \
+	| paste -sd+ \
+	| bc
+)
+
+test -z "$secs" && secs=0
+
+if test "$opt_days" = "1"; then
+	d1_str='days = floor(secs / 86400); secs -= days * 86400;'
+	d2_str="print \"printf '%u:%02u:%02u:%02u' \","
+	d2_str="$d2_str days, \" \", hours, \" \", mins, \" \", secs, \"; \";"
+else
+	d1_str=''
+	d2_str="print \"printf '%02u:%02u:%02u' \","
+	d2_str="$d2_str hours, \" \", mins, \" \", secs, \"; \";"
+fi
+
+cat <<END | bc | sh
+scale = 50;
+
+/* From <http://phodd.net/gnu-bc/code/funcs.bc>, thanks */
+define floor(x) {
+	auto os, xx;
+	os = scale;
+	scale = 0;
+	xx = x / 1;
+	if (xx > x) .=xx--;
+	scale = os;
+	return xx;
+}
+
+/* From <http://phodd.net/gnu-bc/bcfaq.html#bczeroes>, thanks again */
+define trunc(x) {
+	auto os;
+	os = scale;
+	for (scale = 0; scale <= os; scale++) {
+		if (x == x / 1) {
+			x /= 1;
+			scale = os;
+			return x;
+		}
+	}
+}
+
+secs = $secs;
+
+if ($opt_seconds) {
+	if ($opt_no_frac) {
+		print "echo ", floor(trunc(secs));
+	} else {
+		print "echo ", trunc(secs);
+	}
+} else {
+	$d1_str
+	hours = floor(secs / 3600);
+	secs -= hours * 3600;
+
+	mins = floor(secs / 60);
+	secs -= mins * 60;
+
+	frac = secs;
+	secs = floor(secs);
+	frac -= secs;
+	$(test "$opt_no_frac" = "1" && echo "frac = 0;")
+
+	$d2_str
+	if (frac > 0) print "echo -n ", trunc(frac), "; ";
+	print "echo";
+}
+END
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
