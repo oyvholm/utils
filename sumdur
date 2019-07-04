@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=sumdur
-VERSION=0.1.0
+VERSION=0.1.1
 
 opt_days=0
 opt_no_frac=0
@@ -121,7 +121,7 @@ else
 	d2_str="$d2_str hours, \" \", mins, \" \", secs, \"; \";"
 fi
 
-cat <<END | bc | sh
+cat <<END | bc | sh | perl -pe 's/^\./0./'
 scale = 50;
 
 /* From <http://phodd.net/gnu-bc/code/funcs.bc>, thanks */
