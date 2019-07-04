@@ -11,13 +11,13 @@
 #==============================================================================
 
 progname=sumdur
-VERSION=0.1.1
+VERSION=0.2.0
 
 opt_days=0
 opt_no_frac=0
 opt_help=0
 opt_quiet=0
-opt_seconds=0
+opt_unit=''
 opt_verbose=0
 opt_zero_terminated=0
 while test -n "$1"; do
@@ -26,7 +26,7 @@ while test -n "$1"; do
 	-F|--no-frac) opt_no_frac=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
-	-s|--seconds) opt_seconds=1; shift ;;
+	-u|--unit) opt_unit=$2; shift 2 ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 	-z|--zero-terminated) opt_zero_terminated=1; shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
@@ -62,8 +62,11 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
-  -s, --seconds
-    Print seconds instead of hh:mm:ss.ssss format.
+  -u UNIT, --unit UNIT
+    Instead of using the hh:mm:ss.ssss format, display the total 
+    duration as UNIT. Valid values for UNIT are: seconds, minutes, 
+    hours, days, weeks, months, years. Only the first two letters are 
+    used, so the abbreviation "mi" for "minutes" is ok.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   -z, --zero-terminated
@@ -93,6 +96,22 @@ if test -z "$(ffprobe -version 2>/dev/null)"; then
 fi
 
 test "$opt_zero_terminated" = "1" && sep_str='-0' || sep_str='-d\n'
+
+unit_div=0
+if test -n "$opt_unit"; then
+	case "$(echo $opt_unit | tr '[A-Z]' '[a-z]' | head -c 2)" in
+	se) unit_div=1 ;;
+	mi) unit_div=60 ;;
+	ho) unit_div=3600 ;;
+	da) unit_div=86400 ;;
+	we) unit_div=604800 ;;
+	mo) unit_div=2629800 ;;
+	ye) unit_div=31557600 ;;
+	*) echo "$progname: Invalid value in -u/--unit option" >&2
+	   exit 1
+	   break ;;
+	esac
+fi
 
 secs=$(
 	if test -n "$1"; then
@@ -150,11 +169,12 @@ define trunc(x) {
 
 secs = $secs;
 
-if ($opt_seconds) {
+if ($unit_div) {
 	if ($opt_no_frac) {
-		print "echo ", floor(trunc(secs));
+		print "echo ", floor(trunc(secs / $unit_div));
 	} else {
-		print "echo ", trunc(secs);
+		scale = 8;
+		print "echo ", trunc(secs / $unit_div);
 	}
 } else {
 	$d1_str
