@@ -12,7 +12,7 @@
 #==============================================================================
 
 progname=ydc
-VERSION=0.2.1
+VERSION=0.2.2
 
 # FIXME: Hardcoding
 dellog=/tmp/musikk-del.log
@@ -28,9 +28,10 @@ if test "$1" = "-h" -o "$1" = "--help"; then
 	cat <<END
 
 Wrapper around the yd* youtube-dl scripts, checks that the video hasn't 
-been downloaded before. Works only with standard Youtube links atm.
+been downloaded before. Works with links understood by the ydid(1) 
+script.
 
-Usage: $progname [options] YDPROG YOUTUBE_URL
+Usage: $progname [options] YDPROG
 
 Options:
 
