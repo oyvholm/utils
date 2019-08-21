@@ -32,6 +32,7 @@ our %Opt = (
     'force' => 0,
     'git' => 0,
     'help' => 0,
+    'local' => 0,
     'quiet' => 0,
     'replace' => 0,
     'skew' => 0,
@@ -42,7 +43,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -55,6 +56,7 @@ GetOptions(
     'force|f' => \$Opt{'force'},
     'git|g' => \$Opt{'git'},
     'help|h' => \$Opt{'help'},
+    'local|l' => \$Opt{'local'},
     'quiet|q+' => \$Opt{'quiet'},
     'replace|r' => \$Opt{'replace'},
     'skew|s=i' => \$Opt{'skew'},
@@ -203,6 +205,11 @@ sub mod_date {
     my @stat_array = stat($File);
     if (scalar(@stat_array)) {
         $Retval = $stat_array[9];
+        if ($Opt{'local'}) {
+            my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+            = gmtime($Retval);
+            $Retval = timelocal($sec, $min, $hour, $mday, $mon, $year);
+        }
     } else {
         warn("$progname: $File: Cannot stat file: $!\n");
     }
@@ -269,7 +276,8 @@ sub bwf_date {
             "$!\n");
     }
     if ($buf =~ /^.*(\d\d\d\d)-(\d\d)-(\d\d)(\d\d):(\d\d):(\d\d)$/s) {
-        $Retval = timegm($6, $5, $4, $3, $2-1, $1);
+        $Retval = $Opt{'local'} ? timelocal($6, $5, $4, $3, $2-1, $1)
+                                : timegm($6, $5, $4, $3, $2-1, $1);
     }
     close(InFP);
     msg(2, "bwf_date($File) returns '$Retval'");
@@ -285,7 +293,8 @@ sub exif_date {
     $retval = get_exif_data($File, $Opt{'exif-tag'});
     msg(2, "exif_date(): \$retval before check = \"$retval\"");
     if ($retval =~ /^(\d\d\d\d).(\d\d).(\d\d).(\d\d).(\d\d).(\d\d)$/)  {
-        $retval = timegm($6, $5, $4, $3, $2-1, $1);
+        $retval = $Opt{'local'} ? timelocal($6, $5, $4, $3, $2-1, $1)
+                                : timegm($6, $5, $4, $3, $2-1, $1);
     } else {
         $retval = 0;
     }
@@ -386,6 +395,10 @@ Options:
   -g, --git
     Use git commands when dealing with files. For example, execute the 
     command "git mv oldname newname" when renaming files.
+  -l, --local
+    Timestamps are stored in local time, convert to UTC before renaming 
+    the files. If this option is not specified, timestamps in EXIF or 
+    modtime are expected to be in UTC.
   -n, --dry-run
     Don’t rename files, but report what would happen.
   -h, --help

@@ -43,6 +43,7 @@ $progname =~ s/^.*\/(.*?)$/$1/;
 our $VERSION = '0.0.0';
 
 my %descriptions = ();
+my $has_exiftool = 0;
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -72,6 +73,11 @@ sub main {
     diag(sprintf('========== Executing %s v%s ==========',
                  $progname, $VERSION));
 
+    my $exiftool_version = `exiftool -ver 2>/dev/null`;
+    if (defined($exiftool_version) && $exiftool_version =~ /^\d+\.\d+/) {
+        $has_exiftool = 1;
+    }
+
     if ($Opt{'todo'} && !$Opt{'all'}) {
         goto todo_section;
     }
@@ -93,6 +99,7 @@ END
 
     test_standard_options();
     test_exif_option();
+    test_local_option();
 
     my $topdir = "datefn-files";
     safe_chdir($topdir);
@@ -348,8 +355,7 @@ sub test_exif_option {
     my $tmpdir = "datefn-tmp";
 
     diag("Testing -e/--exif option...");
-    my $exiftool_version = `exiftool -ver 2>/dev/null`;
-    if (!defined($exiftool_version) || $exiftool_version !~ /^\d+\.\d+/) {
+    if (!$has_exiftool) {
         diag("exiftool(1) not found, skip tests");
         return 1;
     }
@@ -445,6 +451,91 @@ sub test_exif_option {
     }
     ok(unlink("$tmpdir/$testpic"), "Delete $tmpdir/$testpic");
     ok(rmdir($tmpdir), "Delete $tmpdir/");
+    safe_chdir("..");
+    $CMD =~ s/^\.\.\///;
+    # }}}
+}
+
+sub test_local_option {
+    # {{{
+    my $testpic = "dsd_5330.jpg";
+    my $testdate = "20090706T213604Z";
+    my $tmpdir = "datefn-tmp";
+    my $orig_tz = $ENV{'TZ'};
+
+    my %locdate = (
+
+        'CET' => "20090706T193604Z",
+        'EST' => "20090707T023604Z",
+        'UTC' => "20090706T213604Z",
+
+    );
+
+    diag("Test -l/--local option");
+    if (!$has_exiftool) {
+        diag("exiftool(1) not found, skip tests");
+        return 1;
+    }
+    $CMD = "../$CMD";
+    safe_chdir("datefn-files");
+    if (-e $tmpdir) {
+        diag("NOTICE: $tmpdir/ exists, deleting it.");
+        system("rm -rf \"$tmpdir\"");
+    }
+    ok(mkdir($tmpdir), "mkdir $tmpdir");
+    ok(copy_file("small.$testpic", "$tmpdir/$testpic"),
+       "Copy small.$testpic to $tmpdir/$testpic");
+    for my $l (qw{ -l --local }) {
+        diag("Test $l option");
+        for my $tz (qw{ CET EST UTC }) {
+            diag("Use timezone $tz");
+            $ENV{'TZ'} = $tz;
+            testcmd("$CMD -e $l $tmpdir/$testpic",
+                    "datefn: '$tmpdir/$testpic' renamed to " .
+                        "'$tmpdir/$locdate{$tz}.$testpic'\n",
+                    "",
+                    0,
+                    "Use EXIF data from $tmpdir/$testpic (TZ=$tz, $l)");
+            ok(-f "$tmpdir/$locdate{$tz}.$testpic",
+               "$tmpdir/$locdate{$tz}.$testpic exists");
+            ok(rename("$tmpdir/$locdate{$tz}.$testpic", "$tmpdir/$testpic"),
+               "Remove timestamp from $testpic after $l");
+        }
+    }
+    ok(unlink("$tmpdir/$testpic"), "Delete $tmpdir/$testpic");
+    ok(rmdir($tmpdir), "rmdir $tmpdir/");
+
+    diag("Test -l/--local on file mtimes");
+    untar("file.tar.gz");
+    %locdate = (
+
+        'CET' => '20121223T232858Z',
+        'EST' => '20121224T052858Z',
+        'UTC' => '20121224T002858Z',
+
+    );
+    for my $l (qw{ -l --local }) {
+        for my $tz (qw{ CET EST UTC }) {
+            diag("timezone = $tz");
+            $ENV{'TZ'} = $tz;
+            my $newname = "$locdate{$tz}.file.txt";
+            if (-e $newname) {
+                diag("NOTICE: test_local_option(): $newname exists, "
+                     . "deleting it");
+                unlink($newname);
+            }
+            testcmd("$CMD $l file.txt",
+                "datefn: 'file.txt' renamed to '$newname'\n",
+                "",
+                0,
+                "Use mtime from file.txt with $l, tz = $tz",
+            );
+            ok(-e $newname, "$newname exists after $l and tz = $tz");
+            ok(rename($newname, "file.txt"),
+               "Rename $newname back to file.txt");
+        }
+    }
+    $ENV{'TZ'} = $orig_tz;
     safe_chdir("..");
     $CMD =~ s/^\.\.\///;
     # }}}
