@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=sumdur
-VERSION=0.2.0
+VERSION=0.2.1
 
 opt_days=0
 opt_no_frac=0
@@ -80,7 +80,7 @@ Examples:
   $progname *.opus
   $progname <playlist.txt
   find . -name '*.mp4' | $progname
-  find . -name '*.mp3' -print0 | $progname -z -s
+  find . -name '*.mp3' -print0 | $progname -z -u ho
 
 END
 	exit 0
