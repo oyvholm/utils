@@ -11,12 +11,13 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.27.0
+VERSION=0.28.0
 
 STD_SUFFIX=''
 
 ARGS="$(getopt -o "\
 1\
+A\
 G\
 d\
 f\
@@ -42,6 +43,7 @@ incremental,\
 dereference,\
 random-mac,\
 no-git-check,\
+no-actime,\
 no-uuid,\
 no-xattrs,\
 numeric-owner,\
@@ -68,6 +70,7 @@ opt_incremental=0
 opt_dereference=0
 opt_random_mac=0
 opt_no_uuid=0
+opt_no_actime=0
 opt_no_xattrs=0
 opt_numeric_owner=0
 opt_output_dir=''
@@ -99,6 +102,7 @@ while :; do
         -s|--split) opt_split="$2"; shift 2 ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
+        -A|--no-actime) opt_no_actime=1; shift ;;
         -X|--no-xattrs) opt_no_xattrs=1; shift ;;
         -x|--xz) opt_xz=1; shift ;;
         -z|--gzip) opt_gzip=1; shift ;;
@@ -173,6 +177,9 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -A, --no-actime
+    Don't store atime or ctime in the tar file. Use with --no-uuid to 
+    generate identical tar files.
   -X, --no-xattrs
     Don't use --xattrs with tar(1), create standard tar archive without 
     extended attributes and nanoseconds.
@@ -201,6 +208,12 @@ if test "$opt_dereference" = "1"; then
     dereference_str="--dereference"
 else
     dereference_str=""
+fi
+
+if test "$opt_no_actime" = "1"; then
+    actime_str="--pax-option=delete=atime,delete=ctime"
+else
+    actime_str=""
 fi
 
 if test "$opt_random_mac" = "1"; then
@@ -317,11 +330,11 @@ for f in "$@"; do
         fi
         if test -n "$opt_split"; then
             echo $progname: tar c $incremental_str $rm_files_str \
-                --force-local --sort=name --sparse \
+                --force-local $actime_str --sort=name --sparse \
                 $dereference_str $numeric_str $xattrs_str $dir \| \
                 split -b $opt_split --verbose - $tarfile.split_ >&2
             tar c $incremental_str $rm_files_str \
-                --force-local --sort=name --sparse \
+                --force-local $actime_str --sort=name --sparse \
                 $dereference_str $numeric_str $xattrs_str \
                 $label_str "$dir" |
                 split -b $opt_split --verbose - "$tarfile.split_" || exit 1
@@ -332,10 +345,10 @@ for f in "$@"; do
             test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"*
         else
             echo $progname: tar cf $tarfile $incremental_str $rm_files_str \
-                 --force-local --sort=name --sparse \
+                 --force-local $actime_str --sort=name --sparse \
                  $dereference_str $numeric_str $xattrs_str $dir >&2
             tar cf "$tarfile" $incremental_str $rm_files_str \
-                   --force-local --sort=name --sparse \
+                   --force-local $actime_str --sort=name --sparse \
                    $dereference_str $numeric_str $xattrs_str \
                    $label_str "$dir" || exit 1
             ls -la "$tarfile" >&2
