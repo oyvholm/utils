@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.28.0
+VERSION=0.28.1
 
 STD_SUFFIX=''
 
@@ -123,7 +123,7 @@ Usage: $progname [options] DIRECTORY [DIRECTORIES [...]]
 Options:
 
   -1
-    Alias for "--split 1GB". No file systems should have problems with 
+    Alias for "--split 1G". No file systems should have problems with 
     this size, and it makes it easy to calculate the size of the .tar 
     file.
   -d, --dirs-only
@@ -202,7 +202,7 @@ if test "$opt_1" = "1" -a -n "$opt_split"; then
     exit 1
 fi
 
-test "$opt_1" = "1" && opt_split=1GB
+test "$opt_1" = "1" && opt_split=1G
 
 if test "$opt_dereference" = "1"; then
     dereference_str="--dereference"
