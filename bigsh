@@ -22,7 +22,7 @@
 #==============================================================================
 
 progname=bigsh
-VERSION=0.2.1
+VERSION=0.2.2
 
 opt_all=0
 opt_big=0
@@ -110,7 +110,6 @@ start_xterm() {
 		sess -d $progname.$wintitle -t c_$progname -- xterm \
 		-u8 \
 		-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
-		-fb -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
 		-bg black \
 		-fg white \
 		-bc \
