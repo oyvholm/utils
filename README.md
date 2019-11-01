@@ -274,6 +274,7 @@ time in the file name.
 - git-context-diff
 - git-dl
 - git-dobranch
+- git-eb
 - git-expand
 - git-imerge
 - git-lc
