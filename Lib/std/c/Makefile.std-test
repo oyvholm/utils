@@ -7,15 +7,11 @@ all:
 
 .PHONY: clean
 clean:
-	rm -f README.md.tmp
 	$(MAKE) -f Makefile clean
 	cd src && $(MAKE) -f Makefile.std-test clean
 
 .PHONY: test
 test:
-	cmark -t commonmark README.md >README.md.tmp
-	test -z "$$(diff -q README.md README.md.tmp)"
-	rm -f README.md.tmp
 	rm -f README.html
 	$(MAKE) README.html
 	test -e README.html
