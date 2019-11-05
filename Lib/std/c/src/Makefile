@@ -52,6 +52,10 @@ gcov:
 	$(MAKE) clean test GCOV=1
 	gcov $(CFILES)
 	@echo $$(grep -E '^ +#####:' *.c.gcov | wc -l) untested lines >&2
+	@echo $$(grep -E '^ +#####:' *.c.gcov | grep -F '/* gncov */' \
+	         | wc -l) gncov lines >&2
+	@echo $$(grep -E '^ +#####:' *.c.gcov | grep -vF '/* gncov */' \
+	         | wc -l) testable lines >&2
 
 .PHONY: gcov-cmt
 gcov-cmt: gcov
