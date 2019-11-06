@@ -33,30 +33,34 @@ test:
 	test -d $(TMP)/.git
 	cd $(TMP) && git commit --allow-empty -m "Empty start commit"
 	mkdir -p $(TMPUUIDS) $(TMP)
-	cd $(TMP) && \
-	    SUUID_LOGDIR=$$(pwd)/../$(TMPUUIDS) ../../../../../create_cproject jada
+	cd $(TMP) \
+	&& SUUID_LOGDIR=$$(pwd)/../$(TMPUUIDS) \
+	   ../../../../../create_cproject jada
 	cd $(TMP) && git add .gitignore COPYING Makefile README.md src
 	cd $(TMP) && git commit -m "create_cproject jada"
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
 	cd $(TMP)/src && $(MAKE)
 	cd $(TMP)/src && $(MAKE) test
-	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" && exit 1 || exit 0
+	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" \
+	&& exit 1 \
+	|| exit 0
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
 	if valgrind --version 2>/dev/null | grep -q ^valgrind; then \
-		cd $(TMP)/src && $(MAKE) clean valgrind && \
-		$(MAKE) clean valgrind NDEBUG=1 || exit 1; \
+		cd $(TMP)/src && $(MAKE) clean valgrind \
+		&& $(MAKE) clean valgrind NDEBUG=1 || exit 1; \
 	else \
 		echo "# Skip Valgrind tests, it's not installed here"; \
 		cd $(TMP)/src && $(MAKE) clean test NDEBUG=1 || exit 1; \
 	fi
 	cd $(TMP)/src && ./jada --version | grep -q "has NDEBUG"
 	if gcov --version 2>/dev/null | grep -q ^gcov; then \
-		cd $(TMP)/src && $(MAKE) gcov && \
-		$(MAKE) gcov 2>&1 | grep -q '^0 untested lines' && \
-		$(MAKE) clean test gcov && \
-		$(MAKE) gcov-cmt && \
-		test -z "$$(git ls-files -m)" && \
-		$(MAKE) gcov-cmt-clean || exit 1; \
+		cd $(TMP)/src \
+		&& $(MAKE) gcov \
+		&& $(MAKE) gcov 2>&1 | grep -q '^0 untested lines' \
+		&& $(MAKE) clean test gcov \
+		&& $(MAKE) gcov-cmt \
+		&& test -z "$$(git ls-files -m)" \
+		&& $(MAKE) gcov-cmt-clean || exit 1; \
 	else \
 		echo "# gcov(1) not found, skip gcov tests"; \
 	fi

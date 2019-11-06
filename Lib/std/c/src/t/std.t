@@ -66,8 +66,8 @@ if ($Opt{'version'}) {
 }
 
 if ($Opt{'valgrind'}) {
-	$CMD = "valgrind -q --leak-check=full --show-leak-kinds=all -- " .
-	       "../$CMD_BASENAME";
+	$CMD = "valgrind -q --leak-check=full --show-leak-kinds=all -- "
+	       . "../$CMD_BASENAME";
 }
 
 exit(main());
@@ -122,14 +122,14 @@ sub test_standard_options {
 	        'Option -v with -h returns version number and help screen');
 	testcmd("$CMD -vvv --verbose",
 	        "",
-	        "../$CMD_BASENAME: Using verbose level 4\n" .
-	        "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        "../$CMD_BASENAME: Using verbose level 4\n"
+	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
 	        0,
 	        '-vvv --verbose');
 	testcmd("$CMD -vvqv --verbose",
 	        "",
-	        "../$CMD_BASENAME: Using verbose level 3\n" .
-	        "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        "../$CMD_BASENAME: Using verbose level 3\n"
+	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
 	        0,
 	        'One -q reduces the verbosity level');
 
@@ -147,9 +147,9 @@ sub test_standard_options {
 
 	diag('--license option');
 	likecmd("$CMD --license",
-	        '/GNU General Public License' .
-	        '.*' .
-	        'either version 2 of the License/s',
+	        '/GNU General Public License'
+	        . '.*'
+	        . 'either version 2 of the License/s',
 	        '/^$/',
 	        0,
 	        'Option --license displays the program license');
@@ -157,9 +157,9 @@ sub test_standard_options {
 	diag('Unknown option');
 	likecmd("$CMD --gurgle",
 	        '/^$/',
-	        "/\\.\\.\\/$CMD_BASENAME: Option error\\n" .
-	        "\\nType \"\\.\\.\\/$CMD_BASENAME --help\" for help screen\\. " .
-	        "Returning with value 1\\.\\n/s",
+	        "/\\.\\.\\/$CMD_BASENAME: Option error\\n"
+	        . "\\nType \"\\.\\.\\/$CMD_BASENAME --help\" "
+	        . "for help screen\\. Returning with value 1\\.\\n/s",
 	        1,
 	        'Unknown option specified');
 	return;
@@ -168,9 +168,9 @@ sub test_standard_options {
 sub test_executable {
 	testcmd("$CMD -vvv abc",
 	        "",
-	        "../$CMD_BASENAME: Using verbose level 3\n" .
-	        "../$CMD_BASENAME: Non-option arg: abc\n" .
-	        "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        "../$CMD_BASENAME: Using verbose level 3\n"
+	        . "../$CMD_BASENAME: Non-option arg: abc\n"
+	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
 	        0,
 	        'One argument');
 	diag("--selftest");
@@ -187,8 +187,8 @@ END
 
 sub testcmd {
 	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-	defined($descriptions{$Desc}) &&
-		BAIL_OUT("testcmd(): '$Desc' description is used twice");
+	defined($descriptions{$Desc})
+	&& BAIL_OUT("testcmd(): '$Desc' description is used twice");
 	$descriptions{$Desc} = 1;
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
@@ -215,8 +215,8 @@ sub testcmd {
 
 sub likecmd {
 	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-	defined($descriptions{$Desc}) &&
-		BAIL_OUT("likecmd(): '$Desc' description is used twice");
+	defined($descriptions{$Desc})
+	&& BAIL_OUT("likecmd(): '$Desc' description is used twice");
 	$descriptions{$Desc} = 1;
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';

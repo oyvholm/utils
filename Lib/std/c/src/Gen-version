@@ -26,16 +26,16 @@ if test -d ../.git -a $has_git -eq 1; then
 	if git tag | grep -q ^$tag_prefix; then
 		numsince=$(
 		    git log --format=%h \
-		        $tag_prefix.. 2>/dev/null |
-		    wc -l |
-		    tr -d '\t '
+		        $tag_prefix.. 2>/dev/null \
+		        | wc -l \
+		        | tr -d '\t '
 		).
 	else
 		numsince=''
 	fi
 	gitsha=$(git rev-parse --short=12 HEAD)
-	test -n "$(git diff-index --name-only HEAD)" &&
-		gitsha="$gitsha-dirty"
+	test -n "$(git diff-index --name-only HEAD)" \
+	&& gitsha="$gitsha-dirty"
 	exec_fullversion="$exec_version+${numsince}git-$gitsha"
 	exec_date=$(git log -1 --format=%ci | cut -c -10)
 else
