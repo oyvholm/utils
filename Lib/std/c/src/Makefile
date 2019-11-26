@@ -15,9 +15,16 @@ LDFLAGS = -Wall -Wextra -Werror
 LIBS =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
 
-OBJS = STDexecDTS.o selftest.o
-CFILES = STDexecDTS.c selftest.c
-HFILES = STDexecDTS.h
+OBJS  =
+OBJS += STDexecDTS.o
+OBJS += selftest.o
+CFILES  =
+CFILES += STDexecDTS.c
+CFILES += selftest.c
+
+HFILES  =
+HFILES += STDexecDTS.h
+
 DEPS = $(HFILES) Makefile
 GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 
