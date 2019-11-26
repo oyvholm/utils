@@ -54,6 +54,7 @@ struct Options {
  */
 
 /* STDexecDTS.c */
+extern int msg(const int verbose, const char *format, ...);
 extern int myerror(const char *format, ...);
 
 /* selftest.c */
