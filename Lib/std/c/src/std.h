@@ -23,12 +23,6 @@
 
 #include "version.h"
 
-#define T_RESET  "\x1b[m\x0f"
-#define T_RED    "\x1b[31m"
-#define T_GREEN  "\x1b[32m"
-
-#define stddebug  stderr
-
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
@@ -40,6 +34,12 @@
 
 #define DEBL  msg(2, "%s, line %u in %s()", __FILE__, __LINE__, __func__)
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? true : false)
+
+#define T_GREEN  "\x1b[32m"
+#define T_RED    "\x1b[31m"
+#define T_RESET  "\x1b[m\x0f"
+
+#define stddebug  stderr
 
 struct Options {
 	bool help;
