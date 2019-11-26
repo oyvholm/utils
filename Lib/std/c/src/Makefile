@@ -15,10 +15,17 @@ LDFLAGS = -Wall -Wextra -Werror
 LIBS =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
 
-OBJS = STDexecDTS.o selftest.o
-CFILES = STDexecDTS.c selftest.c
-HFILES = STDexecDTS.h
-DEPS = $(HFILES) Makefile
+OBJS  =
+OBJS += STDexecDTS.o
+OBJS += selftest.o
+CFILES  =
+CFILES += STDexecDTS.c
+CFILES += selftest.c
+
+HFILES  =
+HFILES += STDexecDTS.h
+
+DEPS = version.h $(HFILES) Makefile
 GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 
 .PHONY: all
@@ -27,10 +34,10 @@ all: $(EXEC)
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
 
-version.h: Gen-version $(CFILES) $(DEPS)
+version.h: Gen-version $(CFILES) $(HFILES) Makefile
 	./Gen-version
 
-STDexecDTS.o: version.h STDexecDTS.c $(DEPS)
+STDexecDTS.o: STDexecDTS.c $(DEPS)
 	$(CC) $(CCFLAGS) STDexecDTS.c
 
 selftest.o: selftest.c $(DEPS)
@@ -82,6 +89,17 @@ tags: $(CFILES) $(HFILES)
 test: $(EXEC)
 	cd t && $(MAKE) test
 
+.PHONY: testall
+testall:
+	$(MAKE) testcomb WHAT=test
+
+.PHONY: testcomb
+testcomb:
+	$(MAKE) clean $(WHAT) NDEBUG=1
+	$(MAKE) clean $(WHAT) GCOV=1
+	$(MAKE) clean $(WHAT) GCOV=1 NDEBUG=1
+	$(MAKE) clean $(WHAT)
+
 .PHONY: uninstall
 uninstall:
 	rm -f $(PREFIX)/bin/$(EXEC)
@@ -89,3 +107,7 @@ uninstall:
 .PHONY: valgrind
 valgrind:
 	cd t && $(MAKE) valgrind
+
+.PHONY: valgrindall
+valgrindall:
+	$(MAKE) testcomb WHAT=valgrind

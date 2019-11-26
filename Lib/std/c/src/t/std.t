@@ -158,7 +158,7 @@ sub test_standard_options {
 	likecmd("$CMD --gurgle",
 	        '/^$/',
 	        "/\\.\\.\\/$CMD_BASENAME: Option error\\n"
-	        . "\\nType \"\\.\\.\\/$CMD_BASENAME --help\" "
+	        . "Type \"\\.\\.\\/$CMD_BASENAME --help\" "
 	        . "for help screen\\. Returning with value 1\\.\\n/s",
 	        1,
 	        'Unknown option specified');
@@ -169,10 +169,14 @@ sub test_executable {
 	testcmd("$CMD -vvv abc",
 	        "",
 	        "../$CMD_BASENAME: Using verbose level 3\n"
-	        . "../$CMD_BASENAME: Non-option arg: abc\n"
+	        . "../$CMD_BASENAME: Non-option arg 2: abc\n"
 	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
 	        0,
 	        'One argument');
+	test_selftest();
+}
+
+sub test_selftest {
 	diag("--selftest");
 	testcmd("$CMD --selftest",
 	        <<END,

@@ -159,7 +159,7 @@ int print_version(void)
 int usage(const int retval)
 {
 	if (retval != EXIT_SUCCESS) {
-		fprintf(stderr, "\nType \"%s --help\" for help screen. "
+		fprintf(stderr, "Type \"%s --help\" for help screen. "
 		                "Returning with value %d.\n",
 		                progname, retval);
 		return retval;
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++)
-			msg(3, "Non-option arg: %s", argv[t]);
+			msg(3, "Non-option arg %d: %s", t, argv[t]);
 	}
 
 	msg(3, "Returning from main() with value %d", retval);

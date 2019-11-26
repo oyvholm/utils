@@ -41,6 +41,7 @@ test:
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
 	cd $(TMP)/src && $(MAKE)
 	cd $(TMP)/src && $(MAKE) test
+	cd $(TMP)/src && $(MAKE) testall
 	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" \
 	&& exit 1 \
 	|| exit 0
