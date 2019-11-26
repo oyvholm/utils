@@ -25,7 +25,7 @@ CFILES += selftest.c
 HFILES  =
 HFILES += STDexecDTS.h
 
-DEPS = $(HFILES) Makefile
+DEPS = version.h $(HFILES) Makefile
 GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 
 .PHONY: all
@@ -34,10 +34,10 @@ all: $(EXEC)
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
 
-version.h: Gen-version $(CFILES) $(DEPS)
+version.h: Gen-version $(CFILES) $(HFILES) Makefile
 	./Gen-version
 
-STDexecDTS.o: version.h STDexecDTS.c $(DEPS)
+STDexecDTS.o: STDexecDTS.c $(DEPS)
 	$(CC) $(CCFLAGS) STDexecDTS.c
 
 selftest.o: selftest.c $(DEPS)
