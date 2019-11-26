@@ -1,6 +1,9 @@
 # File ID: STDuuidDTS
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
+IGNFILES  =
+IGNFILES += -e ^COPYING
+
 .PHONY: all
 all:
 	cd src && $(MAKE)
@@ -27,11 +30,18 @@ all:
 	$(MAKE) $*.html
 	wkhtmltopdf $*.html $@
 
+tags: src/*.[ch]
+	ctags src/*.[ch]
+
 .PHONY: clean
 clean:
 	rm -f README.html
 	rm -f README.pdf
 	cd src && $(MAKE) clean
+
+.PHONY: edit
+edit: tags
+	$(EDITOR) $$(git ls-files | grep -v $(IGNFILES))
 
 .PHONY: FORCE
 FORCE:
