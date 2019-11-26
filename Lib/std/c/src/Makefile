@@ -89,6 +89,17 @@ tags: $(CFILES) $(HFILES)
 test: $(EXEC)
 	cd t && $(MAKE) test
 
+.PHONY: testall
+testall:
+	$(MAKE) testcomb WHAT=test
+
+.PHONY: testcomb
+testcomb:
+	$(MAKE) clean $(WHAT) NDEBUG=1
+	$(MAKE) clean $(WHAT) GCOV=1
+	$(MAKE) clean $(WHAT) GCOV=1 NDEBUG=1
+	$(MAKE) clean $(WHAT)
+
 .PHONY: uninstall
 uninstall:
 	rm -f $(PREFIX)/bin/$(EXEC)
@@ -96,3 +107,7 @@ uninstall:
 .PHONY: valgrind
 valgrind:
 	cd t && $(MAKE) valgrind
+
+.PHONY: valgrindall
+valgrindall:
+	$(MAKE) testcomb WHAT=valgrind
