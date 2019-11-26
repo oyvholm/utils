@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++)
-			msg(3, "Non-option arg: %s", argv[t]);
+			msg(3, "Non-option arg %d: %s", t, argv[t]);
 	}
 
 	msg(3, "Returning from main() with value %d", retval);

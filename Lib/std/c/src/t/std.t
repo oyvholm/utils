@@ -169,7 +169,7 @@ sub test_executable {
 	testcmd("$CMD -vvv abc",
 	        "",
 	        "../$CMD_BASENAME: Using verbose level 3\n"
-	        . "../$CMD_BASENAME: Non-option arg: abc\n"
+	        . "../$CMD_BASENAME: Non-option arg 2: abc\n"
 	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
 	        0,
 	        'One argument');
