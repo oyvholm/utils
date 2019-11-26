@@ -173,6 +173,10 @@ sub test_executable {
 	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
 	        0,
 	        'One argument');
+	test_selftest();
+}
+
+sub test_selftest {
 	diag("--selftest");
 	testcmd("$CMD --selftest",
 	        <<END,
