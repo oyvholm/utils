@@ -18,6 +18,7 @@ LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
 OBJS  =
 OBJS += STDexecDTS.o
 OBJS += selftest.o
+
 CFILES  =
 CFILES += STDexecDTS.c
 CFILES += selftest.c
