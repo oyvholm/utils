@@ -12,7 +12,7 @@
 #==============================================================================
 
 progname=ydc
-VERSION=0.2.3
+VERSION=0.2.4
 
 T_BOLD=$(tput bold)
 T_RED=$(tput setaf 1)
@@ -66,7 +66,7 @@ done
 rmdir "$delloglock" || exit 1
 
 while :; do
-	read -p "URL: " orig_gr
+	read -p "$ydprog URL: " orig_gr
 	test -z "$orig_gr" && continue
 	gr=$(ydid "$orig_gr")
 	test -z "$gr" && continue
