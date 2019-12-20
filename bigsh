@@ -22,7 +22,7 @@
 #==============================================================================
 
 progname=bigsh
-VERSION=0.2.2
+VERSION=0.2.3
 
 opt_all=0
 opt_big=0
@@ -89,6 +89,12 @@ END
 	exit 0
 fi
 
+if [ "$opt_big" = "1" ]; then
+	font="-misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1"
+else
+	font="-misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1"
+fi
+
 winc=''
 wintitle="$opt_title"
 [ -z "$wintitle" ] && wintitle=$(hostname)
@@ -100,7 +106,7 @@ start_xterm() {
 	if [ "$opt_big" = "1" ]; then
 		sess -d $progname.$wintitle -t c_$progname -- xterm \
 		-u8 \
-		-fn -Misc-Fixed-Medium-R-Normal--18-120-100-100-C-90-ISO10646-1 \
+		-fn $font \
 		-bg black \
 		-fg white \
 		-bc \
@@ -109,7 +115,7 @@ start_xterm() {
 	else
 		sess -d $progname.$wintitle -t c_$progname -- xterm \
 		-u8 \
-		-fn -misc-fixed-medium-r-semicondensed-*-*-120-*-*-c-*-iso10646-1 \
+		-fn $font \
 		-bg black \
 		-fg white \
 		-bc \
@@ -153,45 +159,26 @@ elif [ -e /hpelite1 ]; then
 		fi
 	fi
 elif [ -e /hpelite2 ]; then
+	font="-gnu-unifont-*-*-*-*-*-*-*-*-*-*-*-*"
 	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
 		[ -z "$opt_title" ] && wintitle=gdb
-		if [ "$opt_big" = "1" ]; then
-			start_xterm 46x56-0+0 "$@"
-		else
-			start_xterm 59x78+1002+0 "$@"
-		fi
+		start_xterm 165x63+0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" ]; then
 		wintitle=sunbase
-		if [ "$opt_big" = "1" ]; then
-			start_xterm 165x56+0+0 "$@"
-		else
-			start_xterm 165x78+0+0 "$@"
-		fi
+		start_xterm 165x63+0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" -o -z "$winc" ]; then
 		[ -z "$opt_title" ] && wintitle=hpelite1
-		if [ "$opt_big" = "1" ]; then
-			start_xterm 165x56+0+0 "$@"
-		else
-			start_xterm 165x78+0+0 "$@"
-		fi
+		start_xterm 165x63+0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" -o -z "$winc" ]; then
 		[ -z "$opt_title" ] && wintitle=hpelite2
-		if [ "$opt_big" = "1" ]; then
-			start_xterm 165x56+0+0 "$@"
-		else
-			start_xterm 165x78+0+0 "$@"
-		fi
+		start_xterm 165x63+0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" -o -z "$winc" ]; then
 		[ -z "$opt_title" ] && wintitle=note3
-		if [ "$opt_big" = "1" ]; then
-			start_xterm 165x56+0+0 "$@"
-		else
-			start_xterm 165x78+0+0 "$@"
-		fi
+		start_xterm 165x63+0+0 "$@"
 	fi
 elif [ -e /sunbase ]; then
 	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
