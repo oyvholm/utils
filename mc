@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mc
-VERSION=0.1.0
+VERSION=0.1.1
 
 sess_str="sess -d mc -t c_mc --"
 test "$1" = "--version" && unset sess_str
@@ -25,6 +25,8 @@ elif test -x /usr/local/bin/mc; then
 	$sess_str /usr/local/bin/mc -d "$@"
 elif test -x /usr/bin/mc; then
 	$sess_str /usr/bin/mc -d "$@"
+elif test -x /data/data/com.termux/files/usr/bin/mc; then
+	$sess_str /data/data/com.termux/files/usr/bin/mc -d "$@"
 else
 	echo mc is not installed here. >&2
 	exit 1
