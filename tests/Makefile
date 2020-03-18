@@ -72,7 +72,7 @@ clean:
 	rm -rf *.tmp tmp-*
 	rm -rf *-files/*.tmp *-files/tmp-*
 	rm -f install-modules
-	rm -rf datefn-files/*.txt datefn-files/repo
+	rm -rf datefn-files/*.txt datefn-files/datefn-tmp datefn-files/repo
 	rm -rf edit-sqlite3-files/sqlite-databases
 	test -d ga-fsck-size-files/annex-backends && chmod -R +w ga-fsck-size-files/annex-backends || true
 	rm -rf ga-fsck-size-files/annex-backends
