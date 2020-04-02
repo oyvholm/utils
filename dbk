@@ -36,7 +36,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.1.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -164,6 +164,8 @@ $print_ok && print("OK\n");
 open(CheckFP, ">$year_dir/.check")
     || die("$0: $year_dir/.check: Klarte ikke å lage fila: $!\n");
 close(CheckFP);
+unlink("$year_dir/.check")
+    || die("$0: $year_dir/.check: Cannot delete file, aborting");
 
 unless (-f $dbk_file) {
     open(FP, ">$dbk_file")
