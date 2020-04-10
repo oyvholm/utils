@@ -4,14 +4,12 @@
 # ga-rdiff
 # File ID: 6317a006-78d9-11ea-8dd3-4f45262dc9b5
 #
-# [Description]
-#
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=ga-rdiff
-VERSION=0.0.0
+VERSION=0.1.0
 
 opt_help=0
 opt_quiet=0
@@ -39,7 +37,10 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Usage: $progname [options]
+Create a rdiff(1) file with differences between the previous and 
+current version of a file stored in git-annex.
+
+Usage: $progname [options] ANNEX_FILE RDIFF_FILE
 
 Options:
 
@@ -52,8 +53,52 @@ Options:
   --version
     Print version information.
 
+For example, to create rdiff files for all files in the current 
+directory tree:
+
+  \$ git annex find | while read f; do ga-rdiff "\$f" "\$f.rdiff"; done
+
+Does not work with files renamed or moved in the newest revision.
+
 END
 	exit 0
 fi
+
+create_rdiff() {
+	local src=$1 dest=$2
+
+	repotop=$(git rev-parse --show-toplevel)
+	if [ -z "$repotop" ]; then
+		echo "$progname: Could not find top of Git repo" >&2
+		return 1
+	fi
+
+	local currfile=$(realpath -e "$src")
+	if [ -z "$currfile" ]; then
+		echo -n "$progname: $src: " >&2
+		echo "Could not find annex data for current revision" >&2
+		return 1
+	fi
+
+	local prevfile=$(git log -1 -p --color=never "$src" \
+	| grep ^- \
+	| grep -F .git/annex/objects/ \
+	| sed 's/^.*\.git/.git/')
+	prevfile=$(cd "$repotop" && realpath -e "$prevfile")
+	if [ -z "$prevfile" ]; then
+		echo -n "$progname: $src: " >&2
+		echo "Could not find annex data for previous revision" >&2
+		return 1
+	fi
+
+	rdiff signature "$prevfile" | rdiff delta - "$currfile" "$dest"
+}
+
+if [ -z "$2" ]; then
+	echo "$progname: Need src and dest command line arguments" >&2
+	exit 1
+fi
+
+create_rdiff "$1" "$2"
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
