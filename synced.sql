@@ -501,6 +501,7 @@ INSERT INTO synced VALUES('q3r','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('r','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('radiolagring','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('random/random.bin','',NULL,NULL);
+INSERT INTO synced VALUES('randsleep','Lib/std/bash-tab','4adb74dccf88517ac2f2b0484fb84d0322cc3d89','2020-04-10 10:39:18');
 INSERT INTO synced VALUES('rcs-extract','Lib/std/perl',NULL,NULL);
 INSERT INTO synced VALUES('rdbl-garmin-gpi','','',NULL);
 INSERT INTO synced VALUES('rdbl-gpg','','',NULL);
