@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.8.5
+VERSION=0.8.6
 
 ARGS="$(getopt -o "\
 h\
@@ -143,7 +143,7 @@ if test "$1" = "allspace"; then
             echo -n "$(date +"%d %H:%M:%S")  $curr$(tput el)"
         fi
         prev="$curr"
-        sleep 2
+        sleep 1
     done
 elif test "$1" = "date"; then
     ntpdate -q pool.ntp.org
