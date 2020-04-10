@@ -4,14 +4,14 @@
 # randsleep
 # File ID: 23f387f0-7b1d-11ea-94a3-db5caa6d21d3
 #
-# [Description]
+# Sleep for a random amount of time.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=randsleep
-VERSION=0.0.0
+VERSION=0.1.0
 
 ARGS="$(getopt -o "\
 h\
@@ -45,7 +45,12 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Usage: $progname [options]
+Sleep for a random amount of time.
+
+Usage: $progname [options] [MIN_SECS [RANDOM_SECS]]
+
+Sleep for MIN_SECS + RANDOM_SECS seconds. If no command line args are 
+specified, use 30 for both values.
 
 Options:
 
@@ -54,12 +59,29 @@ Options:
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
-    Increase level of verbosity. Can be repeated.
+    Increase level of verbosity. Can be repeated. One -v displays a 
+    status message with sleep time.
   --version
     Print version information.
 
 END
 	exit 0
 fi
+
+minsecs=30
+randsecs=30
+
+test -n "$1" && minsecs="$1"
+test -n "$2" && randsecs="$2"
+if echo "$minsecs$randsecs" | tr -d '[0-9]' | grep -q .; then
+	echo $progname: Arguments must be integer only >&2
+	exit 1
+fi
+
+test $randsecs -eq 0 && randsecs=1
+secs=$(($minsecs + $RANDOM % $randsecs))
+test $opt_verbose -ge 1 && echo -n $(date +%H:%M:%S) sleep $secs...
+sleep $secs
+test $opt_verbose -ge 1 && echo done
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
