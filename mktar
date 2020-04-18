@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.28.2
+VERSION=0.28.3
 
 STD_SUFFIX=''
 
@@ -132,11 +132,10 @@ Options:
     Don't abort if the .tar file exists, delete it before proceeding.
   -G, --no-git-check
     To protect against potential data loss, it first loops through all 
-    directories to check that no files under the directories are stored 
-    in a parent Git repository. If any files are stored under any of the 
-    directories, it aborts. It is useful for example with git-annex, 
-    where only a symlink would be stored in the archive file. This 
-    option disables the check.
+    arguments to check that none of them are stored in Git. If any files 
+    are stored under any of the directories, it aborts. Useful with for 
+    example git-annex, where only a symlink would be stored in the 
+    archive file. This option disables the check.
   -h, --help
     Show this help.
   -i, --incremental
