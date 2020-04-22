@@ -95,24 +95,9 @@ sub main {
 
 	ok(mkdir("$logdir"), "mkdir $logdir");
 
-	for my $p ("-P", "--prefix") {
-		likecmd("$CMD $p tmp d",
-		        '/^$/',
-		        '/mktar: tar cf tmp\.d\.tar ' .
-		            '--force-local --sort=name --sparse --xattrs ' .
-		            "--label=$v1_templ " .
-		            'd\\n/s',
-		        0,
-		        "Use \"tmp\" prefix with $p");
-		ok(-f "tmp.d.tar", "tmp.d.tar exists");
-
-		testcmd("tar df tmp.d.tar", "", "", 0,
-		        "Contents of the tar file is identical to d/ " .
-		        "after $p");
-		ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
-	}
 	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
 	test_output_dir_option($CMD, $CMD_BASENAME, $logdir);
+	test_prefix_option($CMD, $CMD_BASENAME, $logdir);
 	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
 	test_no_uuid_option($CMD, $CMD_BASENAME, $logdir);
 	# FIXME: Add more tests, cover all options
@@ -244,6 +229,28 @@ sub test_output_dir_option {
 		testcmd("rm -rf $outd", "", "", 0, "rm -rf $outd after $p");
 	}
 	testcmd("rm -rf $pref", "", "", 0, "rm -rf $pref");
+}
+
+sub test_prefix_option {
+	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+
+	extract_tar_file("d.tar");
+	for my $p ("-P", "--prefix") {
+		likecmd("$CMD $p tmp d",
+		        '/^$/',
+		        '/mktar: tar cf tmp\.d\.tar ' .
+		            '--force-local --sort=name --sparse --xattrs ' .
+		            "--label=$v1_templ " .
+		            'd\\n/s',
+		        0,
+		        "Use \"tmp\" prefix with $p");
+		ok(-f "tmp.d.tar", "tmp.d.tar exists");
+		testcmd("tar df tmp.d.tar", "", "", 0,
+		        "Contents of the tar file is identical to d/ " .
+		        "after $p");
+		ok(unlink("tmp.d.tar"), "Delete tmp.d.tar");
+	}
+	testcmd("rm -rf d", "", "", 0, "Delete d/ after -P/--prefix");
 }
 
 sub test_random_mac_option {
