@@ -88,11 +88,10 @@ sub main {
 		BAIL_OUT("Cannot chdir");
 	$CMD = "../$CMD";
 
-	testcmd("rm -rf d", "", "", 0, "Delete d/");
-	extract_tar_file("d.tar");
-
-	testcmd("rm -rf \"$logdir\"", "", "", 0, "Delete $logdir/");
-
+	if (-e $logdir) {
+		diag("NOTICE: $logdir exists, deleting it");
+		system("rm -rf \"$logdir\"");
+	}
 	ok(mkdir("$logdir"), "mkdir $logdir");
 
 	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
@@ -104,7 +103,6 @@ sub main {
 	diag("Clean up");
 	testcmd("rm -rf \"$logdir\"", "", "", 0,
 	        "Delete $logdir/ before exit");
-	testcmd("rm -rf d", "", "", 0, "Delete d/ before exit");
 
 	todo_section:
 	;
