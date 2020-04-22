@@ -2,6 +2,9 @@
 # File ID: 455af534-fd45-11dd-a4b7-000475e441b9
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
+T_GREEN=$$(tput setaf 2)
+T_RESET=$$(tput sgr0)
+
 .PHONY: default
 default:
 	cd Lib && $(MAKE)
@@ -32,6 +35,32 @@ lgd:
 .PHONY: obsolete
 obsolete:
 	git delrembr $$(cat Div/obsolete-refs.txt); true
+
+.PHONY: push-to-gitlab
+push-to-gitlab:
+	git branch | grep 'tmp-gitlab' && exit 1 || true
+	git fetch gitlab
+	for rev in $$(git sht --reverse gitlab/master..master); do \
+		echo; \
+		GIT_PAGER=cat \
+		git log -1 --format="$(T_GREEN)%h$(T_RESET) %s" $$rev \
+		&& echo git branch tmp-gitlab $$rev \
+		&& git branch tmp-gitlab $$rev \
+		&& echo git branch synced/tmp-gitlab $$rev \
+		&& git branch synced/tmp-gitlab $$rev \
+		&& echo git push gitlab \
+		   tmp-gitlab:master synced/tmp-gitlab:synced/master \
+		&& git push gitlab \
+		   tmp-gitlab:master synced/tmp-gitlab:synced/master \
+		&& echo git branch -D tmp-gitlab synced/tmp-gitlab \
+		&& git branch -D tmp-gitlab synced/tmp-gitlab \
+		&& if git sht gitlab/master..master | grep -q ^; then \
+		       printf '%s sleep 60...' $$(date +%H:%M:%S); \
+		       sleep 60; \
+		       echo ok; \
+		   fi \
+		|| exit 1; \
+	done
 
 .PHONY: remotes
 remotes:
