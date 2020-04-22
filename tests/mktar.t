@@ -100,6 +100,7 @@ sub main {
 		        '/^$/',
 		        '/mktar: tar cf tmp\.d\.tar ' .
 		            '--force-local --sort=name --sparse --xattrs ' .
+		            "--label=$v1_templ " .
 		            'd\\n/s',
 		        0,
 		        "Use \"tmp\" prefix with $p");
@@ -179,7 +180,9 @@ sub test_numeric_owner_option {
 				'mktar: tar cf has-numeric\.tar ' .
 					'--remove-files --force-local ' .
 					'--sort=name --sparse ' .
-					'--numeric-owner --xattrs has-numeric',
+					'--numeric-owner --xattrs ' .
+					"--label=$v1_templ " .
+					'has-numeric',
 				'.*',
 				'has-numeric\.tar',
 			) . '$/s',
@@ -229,7 +232,7 @@ sub test_output_dir_option {
 			  "mktar: tar cf $outd\\/$pref\\.tar " .
 			    '--force-local ' .
 			    '--sort=name --sparse ' .
-			    "--xattrs $pref\\n" .
+			    "--xattrs --label=$v1_templ $pref\\n" .
 			    '.+',
 			  "$pref\\.tar\\n",
 			) . '$/s',
@@ -259,7 +262,9 @@ sub test_random_mac_option {
 			'mktar: tar cf use-random-mac\.tar ' .
 				'--remove-files --force-local ' .
 				'--sort=name --sparse ' .
-				'--xattrs use-random-mac',
+				'--xattrs ' .
+				"--label=$v1_templ " .
+				'use-random-mac',
 			'.*',
 			'use-random-mac\.tar',
 		) . '$/s',
