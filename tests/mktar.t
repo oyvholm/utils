@@ -98,6 +98,7 @@ sub main {
 	test_output_dir_option($CMD, $CMD_BASENAME, $logdir);
 	test_prefix_option($CMD, $CMD_BASENAME, $logdir);
 	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
+	test_remove_files_option($CMD, $CMD_BASENAME, $logdir);
 	test_no_uuid_option($CMD, $CMD_BASENAME, $logdir);
 	# FIXME: Add more tests, cover all options
 	diag("Clean up");
@@ -277,6 +278,64 @@ sub test_random_mac_option {
 		"Use --random-mac",
 	);
 	ok(unlink("use-random-mac.tar"), "Delete use-random-mac.tar");
+}
+
+sub test_remove_files_option {
+	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+
+	diag("Test -r/--remove-files option");
+	for my $opt ("-r", "--remove-files") {
+		extract_tar_file("d.tar");
+		if (-e "dir1") {
+			diag("NOTICE: dir1 exists, deleting it");
+			system("rm -rf dir1");
+		}
+		testcmd("mv d dir1", "", "", 0, "mv d dir1 ($opt)");
+		if (-e "dir1.tar") {
+			diag("NOTICE: dir1.tar exists, deleting it");
+			unlink("dir1.tar");
+		}
+		likecmd("$CMD $opt dir1",
+		        '/^$/',
+		        '/^'
+		        . join('',
+		               '\n',
+		               'mktar: Packing dir1\.\.\.\n',
+		               $v1_templ,
+		               '\n',
+		               'mktar: tar cf dir1\.tar '
+		               . '--remove-files --force-local '
+		               . '--sort=name --sparse '
+		               . '--xattrs '
+		               . "--label=$v1_templ "
+		               . 'dir1',
+		               '.*',
+		               'dir1\.tar',
+		          )
+		        . '$/s',
+		        0,
+		        "Use $opt",
+		);
+		ok(-f "dir1.tar", "dir1.tar exists after $opt");
+		ok(!-e "dir1", "dir1 is gone after $opt");
+		likecmd("tar tf dir1.tar",
+		        '/^'
+		        . $v1_templ . '\n'
+		        . 'dir1\/\n'
+		        . 'dir1\/brokenlink\.txt\n'
+		        . 'dir1\/d\/\n'
+		        . 'dir1\/d\/subfile\.txt\n'
+		        . 'dir1\/emptydir\/\n'
+		        . 'dir1\/file\.txt\n'
+		        . 'dir1\/sublink\.txt\n'
+		        . 'dir1\/symlink\.txt\n'
+		        . '$/',
+		        '/^$/',
+		        0,
+		        "Filenames in dir1.tar are ok after $opt",
+		);
+		ok(unlink("dir1.tar"), "Delete dir1.tar");
+	}
 }
 
 sub test_no_uuid_option {
