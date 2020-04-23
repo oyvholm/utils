@@ -99,6 +99,7 @@ sub main {
 	test_prefix_option($CMD, $CMD_BASENAME, $logdir);
 	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
 	test_remove_files_option($CMD, $CMD_BASENAME, $logdir);
+	test_stdout_option($CMD, $CMD_BASENAME, $logdir);
 	test_no_uuid_option($CMD, $CMD_BASENAME, $logdir);
 	# FIXME: Add more tests, cover all options
 	diag("Clean up");
@@ -336,6 +337,36 @@ sub test_remove_files_option {
 		);
 		ok(unlink("dir1.tar"), "Delete dir1.tar");
 	}
+}
+
+sub test_stdout_option {
+	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+
+	diag("Test -O/--stdout option");
+	if (-e "d") {
+		diag("NOTICE: 'd' exists, deleting it");
+		system("rm -rf d");
+	}
+	extract_tar_file("d.tar");
+	for my $opt ("-O", "--stdout") {
+		testcmd("($CMD $opt --no-uuid d | tar t)",
+			"d/\n"
+			. "d/brokenlink.txt\n"
+			. "d/d/\n"
+			. "d/d/subfile.txt\n"
+			. "d/emptydir/\n"
+			. "d/file.txt\n"
+			. "d/sublink.txt\n"
+			. "d/symlink.txt\n",
+			"\nmktar: Packing d...\n"
+			. "mktar: Sending to stdout\n"
+			. "mktar: tar c --force-local --sort=name --sparse "
+			  . "--xattrs d\n",
+			0,
+			"Filenames in stdout look splendid with $opt",
+		);
+	}
+	testcmd('rm -r d', '', '', 0, 'Delete d/ after -O/--stdout');
 }
 
 sub test_no_uuid_option {

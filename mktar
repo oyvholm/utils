@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.28.4
+VERSION=0.29.0
 
 STD_SUFFIX=''
 
@@ -25,6 +25,7 @@ h\
 i\
 L\
 m\
+O\
 o:\
 P:\
 q\
@@ -53,6 +54,7 @@ quiet,\
 remove-files,\
 suffix:,\
 split:,\
+stdout,\
 verbose,\
 version,\
 xz,\
@@ -79,6 +81,7 @@ opt_quiet=0
 opt_remove_files=0
 opt_suffix="$STD_SUFFIX"
 opt_split=''
+opt_stdout=0
 opt_verbose=0
 opt_xz=0
 opt_gzip=0
@@ -100,6 +103,7 @@ while :; do
         -r|--remove-files) opt_remove_files=1; shift ;;
         -S|--suffix) opt_suffix="$2"; shift 2 ;;
         -s|--split) opt_split="$2"; shift 2 ;;
+        -O|--stdout) opt_stdout=1; shift ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
         -A|--no-actime) opt_no_actime=1; shift ;;
@@ -149,6 +153,10 @@ Options:
     Don't create UUID label in the .tar file.
   --numeric-owner
     Use numbers for user/group names.
+  -O, --stdout
+    Send the .tar output to stdout instead of creating files on disk. 
+    All nonsensical options are ignored, for example --split. Does not 
+    work with compression.
   -o DIR, --output-dir DIR
     Store the tar files in DIR instead of the current directory.
   -P PREFIX, --prefix PREFIX
@@ -198,6 +206,11 @@ fi
 
 if test "$opt_1" = "1" -a -n "$opt_split"; then
     echo $progname: Cannot mix the -1 and --split options >&2
+    exit 1
+fi
+
+if test "$opt_stdout" = "1" -a -n "$(echo $opt_gzip$opt_xz | grep 1)"; then
+    echo $progname: Cannot use compression with -O/--stdout >&2
     exit 1
 fi
 
@@ -294,12 +307,14 @@ for f in "$@"; do
         echo >&2
         echo $progname: Packing $dir... >&2
 
-        if ls "$tarfile"* 2>/dev/null | grep -q .; then
-            if test "$opt_force" = "1"; then
-                rm -fv "$tarfile"*
-            else
-                echo "$progname: $tarfile* already exist" >&2
-                exit 1
+        if test "$opt_stdout" != "1"; then
+            if ls "$tarfile"* 2>/dev/null | grep -q .; then
+                if test "$opt_force" = "1"; then
+                    rm -fv "$tarfile"*
+                else
+                    echo "$progname: $tarfile* already exist" >&2
+                    exit 1
+                fi
             fi
         fi
 
@@ -331,6 +346,12 @@ for f in "$@"; do
         tar_args="$tar_args --force-local $actime_str --sort=name --sparse"
         tar_args="$tar_args $dereference_str $numeric_str $xattrs_str"
         tar_args="$tar_args $label_str"
+        if test "$opt_stdout" = "1"; then
+            echo $progname: Sending to stdout >&2
+            echo $progname: tar c $tar_args $dir >&2
+            tar c $tar_args "$dir" || exit 1
+            continue
+        fi
         if test -n "$opt_split"; then
             echo $progname: tar c $tar_args $dir \
                  \| split -b $opt_split --verbose - $tarfile.split_ >&2
@@ -344,9 +365,11 @@ for f in "$@"; do
         else
             echo $progname: tar cf $tarfile $tar_args $dir >&2
             tar cf "$tarfile" $tar_args "$dir" || exit 1
-            ls -la "$tarfile" >&2
-            test "$opt_xz" = "1" && xz -v "$tarfile"
-            test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"
+            if test "$opt_stdout" != "1"; then
+                ls -la "$tarfile" >&2
+                test "$opt_xz" = "1" && xz -v "$tarfile"
+                test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"
+            fi
         fi
     fi
 done
