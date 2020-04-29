@@ -9,16 +9,20 @@
 #==============================================================================
 
 progname=ga-rdiff
-VERSION=0.1.0
+VERSION=0.2.0
 
 opt_help=0
+opt_old_file=''
 opt_quiet=0
 opt_verbose=0
+opt_whole=0
 while test -n "$1"; do
 	case "$1" in
 	-h|--help) opt_help=1; shift ;;
+	-o|--old-file) opt_old_file=$2; shift 2 ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	-w|--whole) opt_whole=1; shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
 	--) shift; break ;;
 	*)
@@ -46,10 +50,15 @@ Options:
 
   -h, --help
     Show this help.
+  -o FILE, --old-file FILE
+    Use FILE instead of previous version as base for the patch.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -w, --whole
+    Create rdiff patch for the whole file against /dev/null if no 
+    previous version of the file was found.
   --version
     Print version information.
 
@@ -80,15 +89,23 @@ create_rdiff() {
 		return 1
 	fi
 
-	local prevfile=$(git log -1 -p --color=never "$src" \
-	| grep ^- \
-	| grep -F .git/annex/objects/ \
-	| sed 's/^.*\.git/.git/')
-	prevfile=$(cd "$repotop" && realpath -e "$prevfile")
-	if [ -z "$prevfile" ]; then
-		echo -n "$progname: $src: " >&2
-		echo "Could not find annex data for previous revision" >&2
-		return 1
+	local prevfile=$opt_old_file
+	if [ -z "$opt_old_file" ]; then
+		prevfile=$(git log -1 -p --color=never "$src" \
+		| grep ^- \
+		| grep -F .git/annex/objects/ \
+		| sed 's/^.*\.git/.git/')
+		prevfile=$(cd "$repotop" && test -e "$prevfile" \
+		           && realpath -e "$prevfile")
+		if [ -z "$prevfile" ]; then
+			if [ "$opt_whole" = "1" ]; then
+				prevfile=/dev/null
+			else
+				echo -n "$progname: $src: Could not find " >&2
+				echo "annex data for previous revision" >&2
+				return 1
+			fi
+		fi
 	fi
 
 	rdiff signature "$prevfile" | rdiff delta - "$currfile" "$dest"
