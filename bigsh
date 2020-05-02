@@ -22,7 +22,7 @@
 #==============================================================================
 
 progname=bigsh
-VERSION=0.2.3
+VERSION=0.2.4
 
 opt_all=0
 opt_big=0
@@ -162,23 +162,23 @@ elif [ -e /hpelite2 ]; then
 	font="-gnu-unifont-*-*-*-*-*-*-*-*-*-*-*-*"
 	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
 		[ -z "$opt_title" ] && wintitle=gdb
-		start_xterm 165x63+0+0 "$@"
+		start_xterm 62x63-0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" ]; then
 		wintitle=sunbase
-		start_xterm 165x63+0+0 "$@"
+		start_xterm 175x63+0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" -o -z "$winc" ]; then
-		[ -z "$opt_title" ] && wintitle=hpelite1
-		start_xterm 165x63+0+0 "$@"
+		[ -z "$opt_title" ] && wintitle=s
+		start_xterm 175x63+0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" -o -z "$winc" ]; then
 		[ -z "$opt_title" ] && wintitle=hpelite2
-		start_xterm 165x63+0+0 "$@"
+		start_xterm 175x63+0+0 "$@"
 	fi
 	if [ "$opt_all" = "1" -o -z "$winc" ]; then
-		[ -z "$opt_title" ] && wintitle=note3
-		start_xterm 165x63+0+0 "$@"
+		[ -z "$opt_title" ] && wintitle=s10
+		start_xterm 175x63+0+0 "$@"
 	fi
 elif [ -e /sunbase ]; then
 	if [ "$opt_gdb" = "1" -o "$opt_all" = "1" ]; then
