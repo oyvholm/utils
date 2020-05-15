@@ -290,7 +290,7 @@ Create a graph in Gnuplot of the commit activity. Needs `ep`,
 
 FIXME: `ep` is in Nårwidsjn.
 
-- git-realclean
+- git-realgc
 - git-remote-hg
 - git-repos
 - git-savecommit

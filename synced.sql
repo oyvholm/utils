@@ -362,7 +362,7 @@ INSERT INTO synced VALUES('git-pa','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62
 INSERT INTO synced VALUES('git-plot','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-rcmd','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
 INSERT INTO synced VALUES('git-reach-commit','Lib/std/perl','4dbab2bf09b9ff111945b0f19dd62ded8dba0fdd','2016-10-15 19:40:32');
-INSERT INTO synced VALUES('git-realclean','Lib/std/bash',NULL,NULL);
+INSERT INTO synced VALUES('git-realgc','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-remote-hg','https://raw.githubusercontent.com/fingolfin/git-remote-hg/master/git-remote-hg','','2016-05-07 15:08:15');
 INSERT INTO synced VALUES('git-repos','Lib/std/bash',NULL,NULL);
 INSERT INTO synced VALUES('git-restore-dirs','Lib/std/sh','d73dc58a4af539a8058e885f7f5ea11dafd71a16','2016-11-27 06:02:49');
@@ -830,7 +830,7 @@ INSERT INTO todo VALUES('git-listbundle',3,NULL);
 INSERT INTO todo VALUES('git-logdiff',1,NULL);
 INSERT INTO todo VALUES('git-mnff',1,NULL);
 INSERT INTO todo VALUES('git-plot',3,NULL);
-INSERT INTO todo VALUES('git-realclean',1,NULL);
+INSERT INTO todo VALUES('git-realgc',1,NULL);
 INSERT INTO todo VALUES('git-repos',3,NULL);
 INSERT INTO todo VALUES('git-savecommit',1,NULL);
 INSERT INTO todo VALUES('git-svn-myclone',1,NULL);
