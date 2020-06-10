@@ -61,6 +61,7 @@ push-to-gitlab:
 		   fi \
 		|| exit 1; \
 	done
+	git push gitlab
 
 .PHONY: remotes
 remotes:
