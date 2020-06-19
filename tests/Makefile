@@ -4,6 +4,7 @@
 .PHONY: test
 test:
 	test ! -e ../synced.sql.lock
+	./datefmt.t
 	./datefn.t
 	./edit-sqlite3.t
 	./filesynced.t
@@ -36,6 +37,7 @@ test:
 
 .PHONY: testport
 testport:
+	./datefmt.t           # freebsd:     netbsd:     openbsd:
 	./datefn.t            # freebsd:ok   netbsd:ok   openbsd:ok
 	./edit-sqlite3.t      # freebsd:fail netbsd:ok   openbsd:ok
 	./filesynced.t        # freebsd:ok   netbsd:ok   openbsd:ok
