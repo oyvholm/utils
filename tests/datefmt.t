@@ -153,6 +153,8 @@ sub checkval {
 	diag("$in => \"$out\"");
 	testcmd("$CMD $in", "$out\n", "", 0, "arg $in = \"$out\"");
 	testcmd("echo $in | $CMD", "$out\n", "", 0, "stdin $in = \"$out\"");
+	testcmd("$CMD -- -$in", "-$out\n", "", 0, "arg -$in = \"-$out\"");
+	testcmd("echo -$in | $CMD", "-$out\n", "", 0, "stdin -$in = \"-$out\"");
 }
 
 sub test_standard_options {
