@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -69,7 +69,15 @@ sub main {
 
 sub parse_line {
 	my $l = shift;
-	$l =~ s/^(\s*)(\d+)(.*?)$/sprintf("%s%s%s", $1, sec2date($2), $3)/e;
+	$l =~ s{
+		^
+		(\s*)
+		(\d+)
+		(.*?)
+		$
+	}{
+		sprintf("%s%s%s", $1, sec2date($2), $3)
+	}ex;
 	return $l;
 }
 
