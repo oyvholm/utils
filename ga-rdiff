@@ -9,7 +9,7 @@
 #==============================================================================
 
 progname=ga-rdiff
-VERSION=0.2.0
+VERSION=0.2.1
 
 opt_help=0
 opt_old_file=''
@@ -74,7 +74,7 @@ END
 fi
 
 create_rdiff() {
-	local src=$1 dest=$2
+	local src="$1" dest="$2"
 
 	repotop=$(git rev-parse --show-toplevel)
 	if [ -z "$repotop" ]; then
