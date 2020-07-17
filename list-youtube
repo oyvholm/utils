@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.6.2
+VERSION=0.6.3
 
 ARGS="$(getopt -o "\
 d:\
@@ -146,6 +146,7 @@ CREATE TABLE yt (
   format_id TEXT,
   fulltitle TEXT,
   height INTEGER,
+  length TEXT,
   like_count INTEGER,
   resolution TEXT,
   title TEXT,
@@ -183,6 +184,7 @@ INSERT INTO yt
       json_extract(j, '$.format_id') AS format_id,
       json_extract(j, '$.fulltitle') AS fulltitle,
       json_extract(j, '$.height') AS height,
+      NULL AS length,
       json_extract(j, '$.like_count') AS like_count,
       json_extract(j, '$.width') || 'x' || json_extract(j, '$.height')
         AS resolution,
@@ -198,6 +200,10 @@ INSERT INTO yt
     FROM t;
 UPDATE yt SET upload_date = substr(upload_date, 1, 4) || '-'
   || substr(upload_date, 5, 2) || '-' || substr(upload_date, 7, 2);
+UPDATE yt SET length = printf('%02u:%02u:%02u',
+                              duration / 3600,
+                              duration / 60 % 60,
+                              duration % 60);
 COMMIT;
 SQL_END
 fi
@@ -230,12 +236,12 @@ SELECT 'COMMIT;';
 SQL_END
 else
     cat <<SQL_END | sqlite3 -header -column "$db" | sed 's/ *$//g;' | $PAGER
-.width 10 10 5 -5 -11 20 200
+.width 10 10 5 8 -11 20 200
 SELECT
     upload_date AS ud,
     resolution,
     height,
-    duration,
+    length,
     filesize,
     uploader,
     file
