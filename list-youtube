@@ -169,35 +169,35 @@ BEGIN;
 ALTER TABLE t ADD j TEXT;
 UPDATE t SET j = json(readfile(file));
 INSERT INTO yt
-SELECT
-    json_extract(j, '$.average_rating') AS average_rating,
-    json_extract(j, '$.description') AS description,
-    NULL as dir,
-    json_extract(j, '$.dislike_count') AS dislike_count,
-    json_extract(j, '$.display_id') AS display_id,
-    json_extract(j, '$.duration') AS duration,
-    json_extract(j, '$.extractor') AS extractor,
-    file,
-    json_extract(j, '$.filesize') AS filesize,
-    json_extract(j, '$.format') AS format,
-    json_extract(j, '$.format_id') AS format_id,
-    json_extract(j, '$.fulltitle') AS fulltitle,
-    json_extract(j, '$.height') AS height,
-    json_extract(j, '$.like_count') AS like_count,
-    json_extract(j, '$.width') || 'x' || json_extract(j, '$.height')
-      AS resolution,
-    json_extract(j, '$.title') AS title,
-    json_extract(j, '$.upload_date') AS upload_date,
-    json_extract(j, '$.uploader') AS uploader,
-    json_extract(j, '$.uploader_id') AS uploader_id,
-    json_extract(j, '$.view_count') AS view_count,
-    json_extract(j, '$.webpage_url') AS webpage_url,
-    json_extract(j, '$.width') AS width,
-    json_extract(j, '$.id') AS ytid,
-    j
-  FROM t;
-UPDATE yt SET upload_date = substr(upload_date, 1, 4) || '-' ||
-  substr(upload_date, 5, 2) || '-' || substr(upload_date, 7, 2);
+  SELECT
+      json_extract(j, '$.average_rating') AS average_rating,
+      json_extract(j, '$.description') AS description,
+      NULL AS dir,
+      json_extract(j, '$.dislike_count') AS dislike_count,
+      json_extract(j, '$.display_id') AS display_id,
+      json_extract(j, '$.duration') AS duration,
+      json_extract(j, '$.extractor') AS extractor,
+      file,
+      json_extract(j, '$.filesize') AS filesize,
+      json_extract(j, '$.format') AS format,
+      json_extract(j, '$.format_id') AS format_id,
+      json_extract(j, '$.fulltitle') AS fulltitle,
+      json_extract(j, '$.height') AS height,
+      json_extract(j, '$.like_count') AS like_count,
+      json_extract(j, '$.width') || 'x' || json_extract(j, '$.height')
+        AS resolution,
+      json_extract(j, '$.title') AS title,
+      json_extract(j, '$.upload_date') AS upload_date,
+      json_extract(j, '$.uploader') AS uploader,
+      json_extract(j, '$.uploader_id') AS uploader_id,
+      json_extract(j, '$.view_count') AS view_count,
+      json_extract(j, '$.webpage_url') AS webpage_url,
+      json_extract(j, '$.width') AS width,
+      json_extract(j, '$.id') AS ytid,
+      j
+    FROM t;
+UPDATE yt SET upload_date = substr(upload_date, 1, 4) || '-'
+  || substr(upload_date, 5, 2) || '-' || substr(upload_date, 7, 2);
 COMMIT;
 SQL_END
 fi
