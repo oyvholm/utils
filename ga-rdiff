@@ -9,7 +9,7 @@
 #==============================================================================
 
 progname=ga-rdiff
-VERSION=0.3.0
+VERSION=0.3.1
 
 std_block_size=2048
 
@@ -21,9 +21,9 @@ opt_verbose=0
 opt_whole=0
 while test -n "$1"; do
 	case "$1" in
-	-b|--block-size) opt_block_size=$2; shift 2 ;;
+	-b|--block-size) opt_block_size="$2"; shift 2 ;;
 	-h|--help) opt_help=1; shift ;;
-	-o|--old-file) opt_old_file=$2; shift 2 ;;
+	-o|--old-file) opt_old_file="$2"; shift 2 ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 	-w|--whole) opt_whole=1; shift ;;
@@ -84,27 +84,27 @@ fi
 create_rdiff() {
 	local src="$1" dest="$2"
 
-	repotop=$(git rev-parse --show-toplevel)
+	repotop="$(git rev-parse --show-toplevel)"
 	if [ -z "$repotop" ]; then
 		echo "$progname: Could not find top of Git repo" >&2
 		return 1
 	fi
 
-	local currfile=$(realpath -e "$src")
+	local currfile="$(realpath -e "$src")"
 	if [ -z "$currfile" ]; then
 		echo -n "$progname: $src: " >&2
 		echo "Could not find annex data for current revision" >&2
 		return 1
 	fi
 
-	local prevfile=$opt_old_file
+	local prevfile="$opt_old_file"
 	if [ -z "$opt_old_file" ]; then
-		prevfile=$(git log -1 -p --color=never "$src" \
+		prevfile="$(git log -1 -p --color=never "$src" \
 		| grep ^- \
 		| grep -F .git/annex/objects/ \
-		| sed 's/^.*\.git/.git/')
-		prevfile=$(cd "$repotop" && test -e "$prevfile" \
-		           && realpath -e "$prevfile")
+		| sed 's/^.*\.git/.git/')"
+		prevfile="$(cd "$repotop" && test -e "$prevfile" \
+		           && realpath -e "$prevfile")"
 		if [ -z "$prevfile" ]; then
 			if [ "$opt_whole" = "1" ]; then
 				prevfile=/dev/null
