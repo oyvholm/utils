@@ -109,24 +109,24 @@ int print_license(void)
 {
 	puts("(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>");
 	puts("");
-	puts("This program is free software; you can redistribute it "
-	     "and/or modify it \n"
-	     "under the terms of the GNU General Public License as "
-	     "published by the \n"
-	     "Free Software Foundation; either version 2 of the License, "
-	     "or (at your \n"
+	puts("This program is free software; you can redistribute it"
+	     " and/or modify it \n"
+	     "under the terms of the GNU General Public License as"
+	     " published by the \n"
+	     "Free Software Foundation; either version 2 of the License,"
+	     " or (at your \n"
 	     "option) any later version.");
 	puts("");
-	puts("This program is distributed in the hope that it will be "
-	     "useful, but \n"
+	puts("This program is distributed in the hope that it will be"
+	     " useful, but \n"
 	     "WITHOUT ANY WARRANTY; without even the implied warranty of \n"
 	     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
 	puts("See the GNU General Public License for more details.");
 	puts("");
-	puts("You should have received a copy of "
-	     "the GNU General Public License along \n"
-	     "with this program. If not, see "
-	     "<http://www.gnu.org/licenses/>.");
+	puts("You should have received a copy of"
+	     " the GNU General Public License along \n"
+	     "with this program. If not, see"
+	     " <http://www.gnu.org/licenses/>.");
 
 	return EXIT_SUCCESS;
 }
@@ -159,8 +159,8 @@ int print_version(void)
 int usage(const int retval)
 {
 	if (retval != EXIT_SUCCESS) {
-		fprintf(stderr, "Type \"%s --help\" for help screen. "
-		                "Returning with value %d.\n",
+		fprintf(stderr, "Type \"%s --help\" for help screen."
+		                " Returning with value %d.\n",
 		                progname, retval);
 		return retval;
 	}

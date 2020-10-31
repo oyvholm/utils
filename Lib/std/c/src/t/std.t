@@ -66,8 +66,8 @@ if ($Opt{'version'}) {
 }
 
 if ($Opt{'valgrind'}) {
-	$CMD = "valgrind -q --leak-check=full --show-leak-kinds=all -- "
-	       . "../$CMDB";
+	$CMD = "valgrind -q --leak-check=full --show-leak-kinds=all --"
+	       . " ../$CMDB";
 }
 
 exit(main());
@@ -158,8 +158,8 @@ sub test_standard_options {
 	likecmd("$CMD --gurgle",
 	        '/^$/',
 	        "/\\.\\.\\/$CMDB: Option error\\n"
-	        . "Type \"\\.\\.\\/$CMDB --help\" "
-	        . "for help screen\\. Returning with value 1\\.\\n/s",
+	        . "Type \"\\.\\.\\/$CMDB --help\""
+	        . " for help screen\\. Returning with value 1\\.\\n/s",
 	        1,
 	        'Unknown option specified');
 	return;
