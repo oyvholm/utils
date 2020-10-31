@@ -28,6 +28,8 @@ HFILES += STDexecDTS.h
 
 DEPS = version.h $(HFILES) Makefile
 GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
+TESTABLE_LINES = $$(grep -E '^ +\#\#\#\#\#:' *.c.gcov \
+                    | grep -vF '/* gncov */' | wc -l)
 
 .PHONY: all
 all: $(EXEC)
@@ -63,8 +65,7 @@ gcov:
 	@echo $$(grep -E '^ +#####:' *.c.gcov | wc -l) untested lines >&2
 	@echo $$(grep -E '^ +#####:' *.c.gcov | grep -F '/* gncov */' \
 	         | wc -l) gncov lines >&2
-	@echo $$(grep -E '^ +#####:' *.c.gcov | grep -vF '/* gncov */' \
-	         | wc -l) testable lines >&2
+	@echo $(TESTABLE_LINES) testable lines >&2
 
 .PHONY: gcov-cmt
 gcov-cmt: gcov
@@ -101,6 +102,21 @@ testcomb:
 	$(MAKE) clean $(WHAT) GCOV=1
 	$(MAKE) clean $(WHAT) GCOV=1 NDEBUG=1
 	$(MAKE) clean $(WHAT)
+
+.PHONY: tlok
+tlok:
+	@$(MAKE) -s gcov 2>.make-tlok.tmp >&2; res=$$?; \
+	if test $$res -eq 0; then \
+		printf '%u:%u\n' \
+		       "$(TESTABLE_LINES)" \
+		       "$$(grep ^1\\.\\. .make-tlok.tmp \
+		           | perl -pe 's/^1\.\.(\d+).*/$$1/;')"; \
+	else \
+		grep "Looks like you failed" <.make-tlok.tmp \
+		| perl -p \
+		  -e  's/.*failed (\d+) tests? of (\d+).*/$$1\/$$2 FAIL/;'; \
+	fi; \
+	rm .make-tlok.tmp
 
 .PHONY: uninstall
 uninstall:
