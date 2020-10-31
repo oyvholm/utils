@@ -65,6 +65,7 @@ extern int selftest(void);
  */
 
 extern char *progname;
+extern struct Options opt;
 
 #endif /* ifndef _STDUexecUDTS_H */
 

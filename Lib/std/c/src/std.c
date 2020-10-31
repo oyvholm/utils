@@ -25,27 +25,7 @@
  */
 
 char *progname;
-
-/*
- * verbose_level() - Get or set the verbosity level. If action is 0, return the 
- * current level. If action is non-zero, set the level to argument 2 and return 
- * the new level.
- */
-
-int verbose_level(const int action, ...)
-{
-	static int level = 0;
-
-	if (action) {
-		va_list ap;
-
-		va_start(ap, action);
-		level = va_arg(ap, int);
-		va_end(ap);
-	}
-
-	return level;
-}
+struct Options opt;
 
 /*
  * msg() - Print a message prefixed with "[progname]: " to stddebug if the 
@@ -61,7 +41,7 @@ int msg(const int verbose, const char *format, ...)
 	assert(format);
 	assert(strlen(format));
 
-	if (verbose_level(0) >= verbose) {
+	if (opt.verbose >= verbose) {
 		va_list ap;
 		va_start(ap, format);
 		retval = fprintf(stddebug, "%s: ", progname);
@@ -137,7 +117,7 @@ int print_license(void)
 
 int print_version(void)
 {
-	if (verbose_level(0) < 0) {
+	if (opt.verbose < 0) {
 		puts(EXEC_VERSION);
 		return EXIT_SUCCESS;
 	}
@@ -165,7 +145,7 @@ int usage(const int retval)
 		return retval;
 	}
 	puts("");
-	if (verbose_level(0) >= 1) {
+	if (opt.verbose >= 1) {
 		print_version();
 		puts("");
 	}
@@ -275,7 +255,6 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 		retval = choose_opt_action(dest,
 		                           c, &long_options[option_index]);
 	}
-	verbose_level(1, dest->verbose);
 
 	return retval;
 }
@@ -287,7 +266,6 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 int main(int argc, char *argv[])
 {
 	int retval;
-	struct Options opt;
 
 	progname = argv[0];
 	errno = 0;
@@ -298,7 +276,7 @@ int main(int argc, char *argv[])
 		return usage(EXIT_FAILURE);
 	}
 
-	msg(3, "Using verbose level %d", verbose_level(0));
+	msg(3, "Using verbose level %d", opt.verbose);
 
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
