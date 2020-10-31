@@ -42,6 +42,7 @@ clean:
 .PHONY: edit
 edit: tags
 	$(EDITOR) $$(git ls-files | grep -v $(IGNFILES))
+	rm tags
 
 .PHONY: FORCE
 FORCE:
