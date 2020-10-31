@@ -1,5 +1,14 @@
 # README for STDexecDTS.git
 
+## About this document
+
+This file is written in [Commonmark](https://commonmark.org) and all 
+`make` commands use `cmark`(1) to generate HTML and reformat text.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", 
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this 
+document are to be interpreted as described in RFC 2119.
+
 ## Status
 
 In the startup/design phase, does nothing yet.
@@ -9,7 +18,7 @@ In the startup/design phase, does nothing yet.
 The `master` branch is considered stable, no unstable development 
 happens there. Every new functionality or bug fix is created on topic 
 branches which may be rebased now and then. All tests on `master` 
-(executed with "make test") should succeed. If any test fails, it's 
+(executed with "make test") MUST succeed. If any test fails, it's 
 considered a bug. Please report any failing tests in the issue tracker.
 
 To ensure compatibility between versions, the program follows the 
@@ -41,7 +50,7 @@ Open all files in the subtree in your favourite editor defined in
 
 ### make gcov
 
-Generate test coverage with `gcov`(1). Must be as close to 100% as 
+Generate test coverage with `gcov`(1). Should be as close to 100% as 
 possible.
 
 ### make gcov-cmt / make gcov-cmt-clean
@@ -78,7 +87,7 @@ Generate `tags` file, used by Vim and other editors.
 
 ### make test
 
-Run all tests. This command must never fail on purpose on `master`.
+Run all tests. This command MUST NOT fail on purpose on `master`.
 
 ### make uninstall
 
