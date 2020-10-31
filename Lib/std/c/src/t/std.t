@@ -122,14 +122,14 @@ sub test_standard_options {
 	        'Option -v with -h returns version number and help screen');
 	testcmd("$CMD -vvv --verbose",
 	        "",
-	        "../$CMDB: Using verbose level 4\n"
+	        "../$CMDB: main(): Using verbose level 4\n"
+	        . "../$CMDB: main(): argc = 3, optind = 3\n"
 	        . "../$CMDB: Returning from main() with value 0\n",
 	        0,
 	        '-vvv --verbose');
 	testcmd("$CMD -vvqv --verbose",
 	        "",
-	        "../$CMDB: Using verbose level 3\n"
-	        . "../$CMDB: Returning from main() with value 0\n",
+	        "",
 	        0,
 	        'One -q reduces the verbosity level');
 
@@ -166,10 +166,11 @@ sub test_standard_options {
 }
 
 sub test_executable {
-	testcmd("$CMD -vvv abc",
+	testcmd("$CMD -vvvv abc",
 	        "",
-	        "../$CMDB: Using verbose level 3\n"
-	        . "../$CMDB: Non-option arg 2: abc\n"
+	        "../$CMDB: main(): Using verbose level 4\n"
+	        . "../$CMDB: main(): argc = 3, optind = 2\n"
+	        . "../$CMDB: main(): Non-option arg 2: abc\n"
 	        . "../$CMDB: Returning from main() with value 0\n",
 	        0,
 	        'One argument');

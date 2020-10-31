@@ -204,7 +204,8 @@ int choose_opt_action(struct Options *dest,
 		dest->verbose++;
 		break;
 	default:
-		msg(3, "getopt_long() returned character code %d", c);
+		msg(4, "%s(): getopt_long() returned character code %d",
+		       __func__, c);
 		retval = EXIT_FAILURE;
 		break;
 	}
@@ -276,7 +277,8 @@ int main(int argc, char *argv[])
 		return usage(EXIT_FAILURE);
 	}
 
-	msg(3, "Using verbose level %d", opt.verbose);
+	msg(4, "%s(): Using verbose level %d", __func__, opt.verbose);
+	msg(4, "%s(): argc = %d, optind = %d", __func__, argc, optind);
 
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
@@ -291,10 +293,11 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++)
-			msg(3, "Non-option arg %d: %s", t, argv[t]);
+			msg(4, "%s(): Non-option arg %d: %s",
+			       __func__, t, argv[t]);
 	}
 
-	msg(3, "Returning from main() with value %d", retval);
+	msg(4, "Returning from %s() with value %d", __func__, retval);
 	return retval;
 }
 
