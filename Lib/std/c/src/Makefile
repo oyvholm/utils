@@ -13,7 +13,7 @@ CCFLAGS += $$(test -n "$(GCOV)" \
               && echo -n "-fprofile-arcs -ftest-coverage")
 LDFLAGS = -Wall -Wextra -Werror
 LIBS =
-LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage");
+LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage")
 
 OBJS  =
 OBJS += STDexecDTS.o
