@@ -8,11 +8,15 @@ EXEC = STDexecDTS
 
 CC = cc
 LD = cc
-CCFLAGS = -Wall -Wextra -Werror -O0 -c -g
-CCFLAGS += $$(test -n "$(GCOV)" \
-              && echo -n "-fprofile-arcs -ftest-coverage")
-LDFLAGS = -Wall -Wextra -Werror
-LIBS =
+
+CCFLAGS  =
+CCFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
+CCFLAGS += -Wall -Wextra -Werror -O0 -c -g
+
+LDFLAGS  =
+LDFLAGS += -Wall -Wextra -Werror
+
+LIBS  =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage")
 
 OBJS  =
