@@ -55,6 +55,10 @@ test:
 testall:
 	cd src && $(MAKE) testall
 
+.PHONY: tlok
+tlok:
+	@cd src && $(MAKE) -s tlok
+
 .PHONY: valgrind
 valgrind:
 	cd src && $(MAKE) valgrind
