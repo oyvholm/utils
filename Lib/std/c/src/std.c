@@ -232,12 +232,12 @@ int parse_options(const int argc, char * const argv[])
 		int c;
 		int option_index = 0;
 		static struct option long_options[] = {
-			{"help", no_argument, 0, 'h'},
-			{"license", no_argument, 0, 0},
-			{"quiet", no_argument, 0, 'q'},
-			{"selftest", no_argument, 0, 0},
-			{"verbose", no_argument, 0, 'v'},
-			{"version", no_argument, 0, 0},
+			{"help", no_argument, NULL, 'h'},
+			{"license", no_argument, NULL, 0},
+			{"quiet", no_argument, NULL, 'q'},
+			{"selftest", no_argument, NULL, 0},
+			{"verbose", no_argument, NULL, 'v'},
+			{"version", no_argument, NULL, 0},
 			{0, 0, 0, 0}
 		};
 
