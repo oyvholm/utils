@@ -227,7 +227,7 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 
 	dest->help = false;
 	dest->license = false;
-	dest->selftest = 0;
+	dest->selftest = false;
 	dest->verbose = 0;
 	dest->version = false;
 
