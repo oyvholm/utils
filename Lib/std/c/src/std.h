@@ -32,7 +32,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBL  msg(2, "%s, line %u in %s()", __FILE__, __LINE__, __func__)
+#if 1
+#  define DEBL  msg(2, "DEBL: %s, line %u in %s()", \
+                       __FILE__, __LINE__, __func__)
+#else
+#  define DEBL  ;
+#endif
 #define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? true : false)
 
 #define T_GREEN  "\x1b[32m"
@@ -65,6 +70,7 @@ extern int selftest(void);
  */
 
 extern char *progname;
+extern struct Options opt;
 
 #endif /* ifndef _STDUexecUDTS_H */
 

@@ -24,8 +24,8 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD_BASENAME = "STDprognameDTS";
-our $CMD = "../$CMD_BASENAME";
+our $CMDB = "STDprognameDTS";
+our $CMD = "../$CMDB";
 
 our %Opt = (
 
@@ -66,8 +66,8 @@ if ($Opt{'version'}) {
 }
 
 if ($Opt{'valgrind'}) {
-	$CMD = "valgrind -q --leak-check=full --show-leak-kinds=all -- "
-	       . "../$CMD_BASENAME";
+	$CMD = "valgrind -q --leak-check=full --show-leak-kinds=all --"
+	       . " ../$CMDB";
 }
 
 exit(main());
@@ -122,14 +122,14 @@ sub test_standard_options {
 	        'Option -v with -h returns version number and help screen');
 	testcmd("$CMD -vvv --verbose",
 	        "",
-	        "../$CMD_BASENAME: Using verbose level 4\n"
-	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        "../$CMDB: main(): Using verbose level 4\n"
+	        . "../$CMDB: main(): argc = 3, optind = 3\n"
+	        . "../$CMDB: Returning from main() with value 0\n",
 	        0,
 	        '-vvv --verbose');
 	testcmd("$CMD -vvqv --verbose",
 	        "",
-	        "../$CMD_BASENAME: Using verbose level 3\n"
-	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        "",
 	        0,
 	        'One -q reduces the verbosity level');
 
@@ -157,20 +157,20 @@ sub test_standard_options {
 	diag('Unknown option');
 	likecmd("$CMD --gurgle",
 	        '/^$/',
-	        "/\\.\\.\\/$CMD_BASENAME: Option error\\n"
-	        . "Type \"\\.\\.\\/$CMD_BASENAME --help\" "
-	        . "for help screen\\. Returning with value 1\\.\\n/s",
+	        "/\\.\\.\\/$CMDB: Option error\\n"
+	        . "Type \"\\.\\.\\/$CMDB --help\""
+	        . " for help screen\\. Returning with value 1\\.\\n/s",
 	        1,
 	        'Unknown option specified');
-	return;
 }
 
 sub test_executable {
-	testcmd("$CMD -vvv abc",
+	testcmd("$CMD -vvvv abc",
 	        "",
-	        "../$CMD_BASENAME: Using verbose level 3\n"
-	        . "../$CMD_BASENAME: Non-option arg 2: abc\n"
-	        . "../$CMD_BASENAME: Returning from main() with value 0\n",
+	        "../$CMDB: main(): Using verbose level 4\n"
+	        . "../$CMDB: main(): argc = 3, optind = 2\n"
+	        . "../$CMDB: main(): Non-option arg 2: abc\n"
+	        . "../$CMDB: Returning from main() with value 0\n",
 	        0,
 	        'One argument');
 	test_selftest();
@@ -183,7 +183,7 @@ sub test_selftest {
 # myerror("errno is EACCES")
 END
 	        <<END,
-../$CMD_BASENAME: errno is EACCES: Permission denied
+../$CMDB: errno is EACCES: Permission denied
 END
 	        0,
 	        '--selftest');
@@ -197,7 +197,7 @@ sub testcmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -225,7 +225,7 @@ sub likecmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -262,7 +262,7 @@ sub create_file {
 	my ($file, $text) = @_;
 	my $retval = 0;
 
-	open(my $fp, ">$file") or return 0;
+	open(my $fp, ">", $file) or return 0;
 	print($fp $text);
 	close($fp);
 	$retval = is(file_data($file), $text,
@@ -274,7 +274,6 @@ sub create_file {
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
-	return;
 }
 
 sub usage {
@@ -289,7 +288,7 @@ sub usage {
 
 Usage: $progname [options]
 
-Contains tests for the $CMD_BASENAME(1) program.
+Contains tests for the $CMDB(1) program.
 
 Options:
 
@@ -319,7 +318,6 @@ sub msg {
 
 	$verbose_level > $Opt{'verbose'} && return;
 	print(STDERR "$progname: $Txt\n");
-	return;
 }
 
 __END__

@@ -42,6 +42,7 @@ clean:
 .PHONY: edit
 edit: tags
 	$(EDITOR) $$(git ls-files | grep -v $(IGNFILES))
+	rm tags
 
 .PHONY: FORCE
 FORCE:
@@ -49,3 +50,19 @@ FORCE:
 .PHONY: test
 test:
 	cd src && $(MAKE) test
+
+.PHONY: testall
+testall:
+	cd src && $(MAKE) testall
+
+.PHONY: tlok
+tlok:
+	@cd src && $(MAKE) -s tlok
+
+.PHONY: valgrind
+valgrind:
+	cd src && $(MAKE) valgrind
+
+.PHONY: valgrindall
+valgrindall:
+	cd src && $(MAKE) valgrindall

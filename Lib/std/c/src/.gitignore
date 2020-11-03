@@ -2,6 +2,7 @@
 /*.gcda
 /*.gcno
 /*.o
+/.make-tlok.tmp
 /STDexecDTS
 /gdbopts
 /tags

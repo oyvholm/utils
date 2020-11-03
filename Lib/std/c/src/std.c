@@ -25,27 +25,7 @@
  */
 
 char *progname;
-
-/*
- * verbose_level() - Get or set the verbosity level. If action is 0, return the 
- * current level. If action is non-zero, set the level to argument 2 and return 
- * the new level.
- */
-
-int verbose_level(const int action, ...)
-{
-	static int level = 0;
-
-	if (action) {
-		va_list ap;
-
-		va_start(ap, action);
-		level = va_arg(ap, int);
-		va_end(ap);
-	}
-
-	return level;
-}
+struct Options opt;
 
 /*
  * msg() - Print a message prefixed with "[progname]: " to stddebug if the 
@@ -61,7 +41,7 @@ int msg(const int verbose, const char *format, ...)
 	assert(format);
 	assert(strlen(format));
 
-	if (verbose_level(0) >= verbose) {
+	if (opt.verbose >= verbose) {
 		va_list ap;
 		va_start(ap, format);
 		retval = fprintf(stddebug, "%s: ", progname);
@@ -109,24 +89,24 @@ int print_license(void)
 {
 	puts("(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>");
 	puts("");
-	puts("This program is free software; you can redistribute it "
-	     "and/or modify it \n"
-	     "under the terms of the GNU General Public License as "
-	     "published by the \n"
-	     "Free Software Foundation; either version 2 of the License, "
-	     "or (at your \n"
+	puts("This program is free software; you can redistribute it"
+	     " and/or modify it \n"
+	     "under the terms of the GNU General Public License as"
+	     " published by the \n"
+	     "Free Software Foundation; either version 2 of the License,"
+	     " or (at your \n"
 	     "option) any later version.");
 	puts("");
-	puts("This program is distributed in the hope that it will be "
-	     "useful, but \n"
+	puts("This program is distributed in the hope that it will be"
+	     " useful, but \n"
 	     "WITHOUT ANY WARRANTY; without even the implied warranty of \n"
 	     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.");
 	puts("See the GNU General Public License for more details.");
 	puts("");
-	puts("You should have received a copy of "
-	     "the GNU General Public License along \n"
-	     "with this program. If not, see "
-	     "<http://www.gnu.org/licenses/>.");
+	puts("You should have received a copy of"
+	     " the GNU General Public License along \n"
+	     "with this program. If not, see"
+	     " <http://www.gnu.org/licenses/>.");
 
 	return EXIT_SUCCESS;
 }
@@ -137,7 +117,7 @@ int print_license(void)
 
 int print_version(void)
 {
-	if (verbose_level(0) < 0) {
+	if (opt.verbose < 0) {
 		puts(EXEC_VERSION);
 		return EXIT_SUCCESS;
 	}
@@ -159,13 +139,13 @@ int print_version(void)
 int usage(const int retval)
 {
 	if (retval != EXIT_SUCCESS) {
-		fprintf(stderr, "Type \"%s --help\" for help screen. "
-		                "Returning with value %d.\n",
+		fprintf(stderr, "Type \"%s --help\" for help screen."
+		                " Returning with value %d.\n",
 		                progname, retval);
 		return retval;
 	}
 	puts("");
-	if (verbose_level(0) >= 1) {
+	if (opt.verbose >= 1) {
 		print_version();
 		puts("");
 	}
@@ -191,40 +171,39 @@ int usage(const int retval)
 }
 
 /*
- * choose_opt_action() - Decide what to do when option c is found. Store 
- * changes in dest. opts is the struct with the definitions for the long 
- * options.
- * Return EXIT_SUCCESS if ok, EXIT_FAILURE if c is unknown or anything fails.
+ * choose_opt_action() - Decide what to do when option `c` is found. Read 
+ * definitions for long options from `opts`.
+ * Returns EXIT_SUCCESS if ok, EXIT_FAILURE if `c` is unknown or anything 
+ * fails.
  */
 
-int choose_opt_action(struct Options *dest,
-                      const int c, const struct option *opts)
+int choose_opt_action(const int c, const struct option *opts)
 {
 	int retval = EXIT_SUCCESS;
 
-	assert(dest);
 	assert(opts);
 
 	switch (c) {
 	case 0:
 		if (!strcmp(opts->name, "license"))
-			dest->license = true;
+			opt.license = true;
 		else if (!strcmp(opts->name, "selftest"))
-			dest->selftest = true;
+			opt.selftest = true;
 		else if (!strcmp(opts->name, "version"))
-			dest->version = true;
+			opt.version = true;
 		break;
 	case 'h':
-		dest->help = true;
+		opt.help = true;
 		break;
 	case 'q':
-		dest->verbose--;
+		opt.verbose--;
 		break;
 	case 'v':
-		dest->verbose++;
+		opt.verbose++;
 		break;
 	default:
-		msg(3, "getopt_long() returned character code %d", c);
+		msg(4, "%s(): getopt_long() returned character code %d",
+		       __func__, c);
 		retval = EXIT_FAILURE;
 		break;
 	}
@@ -237,29 +216,28 @@ int choose_opt_action(struct Options *dest,
  * Returns EXIT_SUCCESS if ok, EXIT_FAILURE if error.
  */
 
-int parse_options(struct Options *dest, const int argc, char * const argv[])
+int parse_options(const int argc, char * const argv[])
 {
 	int retval = EXIT_SUCCESS;
 
-	assert(dest);
 	assert(argv);
 
-	dest->help = false;
-	dest->license = false;
-	dest->selftest = 0;
-	dest->verbose = 0;
-	dest->version = false;
+	opt.help = false;
+	opt.license = false;
+	opt.selftest = false;
+	opt.verbose = 0;
+	opt.version = false;
 
 	while (retval == EXIT_SUCCESS) {
 		int c;
 		int option_index = 0;
 		static struct option long_options[] = {
-			{"help", no_argument, 0, 'h'},
-			{"license", no_argument, 0, 0},
-			{"quiet", no_argument, 0, 'q'},
-			{"selftest", no_argument, 0, 0},
-			{"verbose", no_argument, 0, 'v'},
-			{"version", no_argument, 0, 0},
+			{"help", no_argument, NULL, 'h'},
+			{"license", no_argument, NULL, 0},
+			{"quiet", no_argument, NULL, 'q'},
+			{"selftest", no_argument, NULL, 0},
+			{"verbose", no_argument, NULL, 'v'},
+			{"version", no_argument, NULL, 0},
 			{0, 0, 0, 0}
 		};
 
@@ -268,14 +246,10 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 		                "q"  /* --quiet */
 		                "v"  /* --verbose */
 		                , long_options, &option_index);
-
 		if (c == -1)
 			break;
-
-		retval = choose_opt_action(dest,
-		                           c, &long_options[option_index]);
+		retval = choose_opt_action(c, &long_options[option_index]);
 	}
-	verbose_level(1, dest->verbose);
 
 	return retval;
 }
@@ -287,18 +261,18 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 int main(int argc, char *argv[])
 {
 	int retval;
-	struct Options opt;
 
 	progname = argv[0];
 	errno = 0;
 
-	retval = parse_options(&opt, argc, argv);
+	retval = parse_options(argc, argv);
 	if (retval != EXIT_SUCCESS) {
 		myerror("Option error");
 		return usage(EXIT_FAILURE);
 	}
 
-	msg(3, "Using verbose level %d", verbose_level(0));
+	msg(4, "%s(): Using verbose level %d", __func__, opt.verbose);
+	msg(4, "%s(): argc = %d, optind = %d", __func__, argc, optind);
 
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
@@ -313,10 +287,11 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++)
-			msg(3, "Non-option arg %d: %s", t, argv[t]);
+			msg(4, "%s(): Non-option arg %d: %s",
+			       __func__, t, argv[t]);
 	}
 
-	msg(3, "Returning from main() with value %d", retval);
+	msg(4, "Returning from %s() with value %d", __func__, retval);
 	return retval;
 }
 
