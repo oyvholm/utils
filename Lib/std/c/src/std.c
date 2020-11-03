@@ -246,10 +246,8 @@ int parse_options(const int argc, char * const argv[])
 		                "q"  /* --quiet */
 		                "v"  /* --verbose */
 		                , long_options, &option_index);
-
 		if (c == -1)
 			break;
-
 		retval = choose_opt_action(c, &long_options[option_index]);
 	}
 
