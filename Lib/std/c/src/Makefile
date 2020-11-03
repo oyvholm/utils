@@ -54,6 +54,7 @@ selftest.o: selftest.c $(DEPS)
 clean:
 	rm -f $(EXEC) $(OBJS)
 	rm -f *.gcda *.gcno *.gcov
+	rm -f .make-tlok.tmp
 	rm -f version.h
 	cd t && $(MAKE) clean
 
