@@ -33,8 +33,8 @@
 #include <string.h>
 
 #if 1
-#  define DEBL  msg(2, "DEBL: %s, line %u in %s()", __FILE__, __LINE__, \
-                       __func__)
+#  define DEBL  msg(2, "DEBL: %s, line %u in %s()", \
+                       __FILE__, __LINE__, __func__)
 #else
 #  define DEBL  ;
 #endif
