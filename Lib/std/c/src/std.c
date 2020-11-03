@@ -171,37 +171,35 @@ int usage(const int retval)
 }
 
 /*
- * choose_opt_action() - Decide what to do when option c is found. Store 
- * changes in dest. opts is the struct with the definitions for the long 
- * options.
- * Return EXIT_SUCCESS if ok, EXIT_FAILURE if c is unknown or anything fails.
+ * choose_opt_action() - Decide what to do when option `c` is found. Read 
+ * definitions for long options from `opts`.
+ * Returns EXIT_SUCCESS if ok, EXIT_FAILURE if `c` is unknown or anything 
+ * fails.
  */
 
-int choose_opt_action(struct Options *dest,
-                      const int c, const struct option *opts)
+int choose_opt_action(const int c, const struct option *opts)
 {
 	int retval = EXIT_SUCCESS;
 
-	assert(dest);
 	assert(opts);
 
 	switch (c) {
 	case 0:
 		if (!strcmp(opts->name, "license"))
-			dest->license = true;
+			opt.license = true;
 		else if (!strcmp(opts->name, "selftest"))
-			dest->selftest = true;
+			opt.selftest = true;
 		else if (!strcmp(opts->name, "version"))
-			dest->version = true;
+			opt.version = true;
 		break;
 	case 'h':
-		dest->help = true;
+		opt.help = true;
 		break;
 	case 'q':
-		dest->verbose--;
+		opt.verbose--;
 		break;
 	case 'v':
-		dest->verbose++;
+		opt.verbose++;
 		break;
 	default:
 		msg(4, "%s(): getopt_long() returned character code %d",
@@ -218,18 +216,17 @@ int choose_opt_action(struct Options *dest,
  * Returns EXIT_SUCCESS if ok, EXIT_FAILURE if error.
  */
 
-int parse_options(struct Options *dest, const int argc, char * const argv[])
+int parse_options(const int argc, char * const argv[])
 {
 	int retval = EXIT_SUCCESS;
 
-	assert(dest);
 	assert(argv);
 
-	dest->help = false;
-	dest->license = false;
-	dest->selftest = false;
-	dest->verbose = 0;
-	dest->version = false;
+	opt.help = false;
+	opt.license = false;
+	opt.selftest = false;
+	opt.verbose = 0;
+	opt.version = false;
 
 	while (retval == EXIT_SUCCESS) {
 		int c;
@@ -253,8 +250,7 @@ int parse_options(struct Options *dest, const int argc, char * const argv[])
 		if (c == -1)
 			break;
 
-		retval = choose_opt_action(dest,
-		                           c, &long_options[option_index]);
+		retval = choose_opt_action(c, &long_options[option_index]);
 	}
 
 	return retval;
@@ -271,7 +267,7 @@ int main(int argc, char *argv[])
 	progname = argv[0];
 	errno = 0;
 
-	retval = parse_options(&opt, argc, argv);
+	retval = parse_options(argc, argv);
 	if (retval != EXIT_SUCCESS) {
 		myerror("Option error");
 		return usage(EXIT_FAILURE);
