@@ -162,7 +162,6 @@ sub test_standard_options {
 	        . " for help screen\\. Returning with value 1\\.\\n/s",
 	        1,
 	        'Unknown option specified');
-	return;
 }
 
 sub test_executable {
@@ -275,7 +274,6 @@ sub create_file {
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
-	return;
 }
 
 sub usage {
@@ -320,7 +318,6 @@ sub msg {
 
 	$verbose_level > $Opt{'verbose'} && return;
 	print(STDERR "$progname: $Txt\n");
-	return;
 }
 
 __END__
