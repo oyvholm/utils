@@ -88,6 +88,7 @@ gdb: $(EXEC)
 install: $(PREFIX)/bin/$(EXEC)
 
 $(PREFIX)/bin/$(EXEC): $(EXEC)
+	mkdir -p $(PREFIX)/bin
 	install $(EXEC) $(PREFIX)/bin/$(EXEC)
 
 tags: $(CFILES) $(HFILES)
