@@ -79,9 +79,10 @@ for f in .gitignore Gen-version Makefile gdbrc selftest.c; do
     echo -n "src/$f: " && std -t exec=$name c/src/$f $f || exit 1
 done
 sort -u .gitignore >.gitignore.tmp && mv .gitignore.tmp .gitignore || exit 1
-echo -n "src/$name.c: " && std -t exec=$name c/src/std.c $name.c &&
-echo -n "src/$name.h: " && std -t exec=$name c/src/std.h $name.h || exit 1
+echo -n "src/$name.c: " && std -t exec=$name c/src/std.c $name.c \
+&& echo -n "src/$name.h: " && std -t exec=$name c/src/std.h $name.h || exit 1
 
 mkdir t && cd t || exit 1
-echo -n "src/t/Makefile: " && std -t exec=$name c/src/t/Makefile Makefile &&
-echo -n "src/t/$name.t: " && std c/src/t/std.t $name.t -t progname=$name || exit 1
+echo -n "src/t/Makefile: " && std -t exec=$name c/src/t/Makefile Makefile \
+&& echo -n "src/t/$name.t: " \
+&& std c/src/t/std.t $name.t -t progname=$name || exit 1
