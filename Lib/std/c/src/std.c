@@ -24,7 +24,7 @@
  * Global variables
  */
 
-char *progname;
+const char *progname;
 struct Options opt;
 
 /*
@@ -65,7 +65,7 @@ int myerror(const char *format, ...)
 {
 	va_list ap;
 	int retval = 0;
-	int orig_errno = errno;
+	const int orig_errno = errno;
 
 	assert(format);
 	assert(strlen(format));
@@ -231,7 +231,7 @@ int parse_options(const int argc, char * const argv[])
 	while (retval == EXIT_SUCCESS) {
 		int c;
 		int option_index = 0;
-		struct option long_options[] = {
+		const struct option long_options[] = {
 			{"help", no_argument, NULL, 'h'},
 			{"license", no_argument, NULL, 0},
 			{"quiet", no_argument, NULL, 'q'},

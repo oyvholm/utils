@@ -69,7 +69,7 @@ extern int selftest(void);
  * Global variables
  */
 
-extern char *progname;
+extern const char *progname;
 extern struct Options opt;
 
 #endif /* ifndef _STDUexecUDTS_H */
