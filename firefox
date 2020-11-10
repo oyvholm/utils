@@ -7,6 +7,9 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
+xmessage -default okay "No. Use Brave."
+exit 1
+
 unset file
 for f in /opt/firefox/firefox /usr/bin/firefox; do
     test -x "$f" && { file="$f"; break; }
