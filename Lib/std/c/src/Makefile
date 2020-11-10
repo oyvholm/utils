@@ -11,7 +11,10 @@ LD = cc
 
 CCFLAGS  =
 CCFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
-CCFLAGS += -Wall -Wextra -Werror -O0 -c -g
+CCFLAGS += -O0 -c -g
+CCFLAGS += -Wall
+CCFLAGS += -Werror
+CCFLAGS += -Wextra
 
 LDFLAGS  =
 LDFLAGS += -Wall -Wextra -Werror
