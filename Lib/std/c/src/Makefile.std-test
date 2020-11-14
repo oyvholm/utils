@@ -47,8 +47,7 @@ test:
 	|| exit 0
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
 	if valgrind --version 2>/dev/null | grep -q ^valgrind; then \
-		cd $(TMP)/src && $(MAKE) clean valgrind \
-		&& $(MAKE) clean valgrind NDEBUG=1 || exit 1; \
+		$(MAKE) -f Makefile.std-test test-valgrind || exit 1; \
 	else \
 		echo "# Skip Valgrind tests, it's not installed here"; \
 		cd $(TMP)/src && $(MAKE) clean test NDEBUG=1 || exit 1; \
@@ -78,3 +77,8 @@ test-gcov:
 	cd $(TMP)/src && $(MAKE) gcov-cmt
 	cd $(TMP)/src && test -z "$$(git ls-files -m)"
 	cd $(TMP)/src && $(MAKE) gcov-cmt-clean
+
+.PHONY: test-valgrind
+test-valgrind:
+	cd $(TMP)/src && $(MAKE) clean valgrind
+	cd $(TMP)/src && $(MAKE) clean valgrind NDEBUG=1
