@@ -62,16 +62,19 @@ test:
 	cd $(TMP)/src && $(MAKE) clean all UNUSED=1
 	cd $(TMP)/src && ./jada --version | grep -q "has UNUSED"
 	if gcov --version 2>/dev/null | grep -q ^gcov; then \
-		cd $(TMP)/src \
-		&& $(MAKE) tlok \
-		&& $(MAKE) gcov \
-		&& $(MAKE) gcov 2>&1 | grep -q '^0 untested lines' \
-		&& $(MAKE) clean test gcov \
-		&& $(MAKE) gcov-cmt \
-		&& test -z "$$(git ls-files -m)" \
-		&& $(MAKE) gcov-cmt-clean || exit 1; \
+		$(MAKE) -f Makefile.std-test test-gcov || exit 1; \
 	else \
 		echo "# gcov(1) not found, skip gcov tests"; \
 	fi
 	cd t && $(MAKE) -f Makefile.std-test test
 	$(MAKE) -f Makefile clean test
+
+.PHONY: test-gcov
+test-gcov:
+	cd $(TMP)/src && $(MAKE) tlok
+	cd $(TMP)/src && $(MAKE) gcov
+	cd $(TMP)/src && $(MAKE) gcov 2>&1 | grep -q '^0 untested lines'
+	cd $(TMP)/src && $(MAKE) clean test gcov
+	cd $(TMP)/src && $(MAKE) gcov-cmt
+	cd $(TMP)/src && test -z "$$(git ls-files -m)"
+	cd $(TMP)/src && $(MAKE) gcov-cmt-clean
