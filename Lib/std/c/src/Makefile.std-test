@@ -72,6 +72,13 @@ test:
 test-gcov:
 	cd $(TMP)/src && $(MAKE) tlok
 	cd $(TMP)/src && $(MAKE) gcov
+	test -e $(TMP)/src/jada
+	test -e $(TMP)/src/jada.c.gcov
+	test -e $(TMP)/src/jada.gcda
+	test -e $(TMP)/src/jada.gcno
+	test -e $(TMP)/src/selftest.c.gcov
+	test -e $(TMP)/src/selftest.gcda
+	test -e $(TMP)/src/selftest.gcno
 	cd $(TMP)/src && $(MAKE) gcov 2>&1 | grep -q '^0 untested lines'
 	cd $(TMP)/src && $(MAKE) clean test gcov
 	cd $(TMP)/src && $(MAKE) gcov-cmt
