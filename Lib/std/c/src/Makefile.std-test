@@ -59,6 +59,8 @@ test:
 	test -e $(TMP)/src/gmon.out
 	cd $(TMP)/src && $(MAKE) test
 	test -e $(TMP)/src/t/gmon.out
+	cd $(TMP)/src && $(MAKE) clean all UNUSED=1
+	cd $(TMP)/src && ./jada --version | grep -q "has UNUSED"
 	if gcov --version 2>/dev/null | grep -q ^gcov; then \
 		cd $(TMP)/src \
 		&& $(MAKE) tlok \

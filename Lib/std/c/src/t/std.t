@@ -65,6 +65,9 @@ if ($Opt{'version'}) {
 	exit(0);
 }
 
+my $exec_version = `$CMD --version`;
+my $UNUSED = ($exec_version =~ /has UNUSED/s) ? 1 : 0;
+
 if ($Opt{'valgrind'}) {
 	$CMD = "valgrind -q --leak-check=full --show-leak-kinds=all --"
 	       . " ../$CMDB";
