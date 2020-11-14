@@ -10,6 +10,7 @@ build:
 
 .PHONY: clean
 clean:
+	rm -f gmon.out gmon.sum
 	rm -rf tmp-* *-stderr.tmp
 
 .PHONY: test

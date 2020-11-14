@@ -129,6 +129,9 @@ static int print_version(void)
 #ifdef NDEBUG
 	printf("has NDEBUG\n");
 #endif
+#ifdef PROF
+	printf("has PROF\n");
+#endif
 
 	return EXIT_SUCCESS;
 }

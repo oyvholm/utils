@@ -5,5 +5,7 @@
 /.make-tlok.tmp
 /STDexecDTS
 /gdbopts
+/gmon.out
+/gmon.sum
 /tags
 /version.h

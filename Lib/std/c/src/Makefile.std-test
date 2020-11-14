@@ -54,6 +54,11 @@ test:
 		cd $(TMP)/src && $(MAKE) clean test NDEBUG=1 || exit 1; \
 	fi
 	cd $(TMP)/src && ./jada --version | grep -q "has NDEBUG"
+	cd $(TMP)/src && $(MAKE) clean all PROF=1
+	cd $(TMP)/src && ./jada --version | grep -q "has PROF"
+	test -e $(TMP)/src/gmon.out
+	cd $(TMP)/src && $(MAKE) test
+	test -e $(TMP)/src/t/gmon.out
 	if gcov --version 2>/dev/null | grep -q ^gcov; then \
 		cd $(TMP)/src \
 		&& $(MAKE) tlok \
