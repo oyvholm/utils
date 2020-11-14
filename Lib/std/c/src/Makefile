@@ -110,8 +110,6 @@ testall:
 .PHONY: testcomb
 testcomb:
 	$(MAKE) clean $(WHAT) NDEBUG=1
-	$(MAKE) clean $(WHAT) GCOV=1
-	$(MAKE) clean $(WHAT) GCOV=1 NDEBUG=1
 	$(MAKE) clean $(WHAT)
 
 .PHONY: tlok
