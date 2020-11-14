@@ -86,7 +86,7 @@ int myerror(const char *format, ...)
  * print_license() - Display the program license. Returns EXIT_SUCCESS.
  */
 
-int print_license(void)
+static int print_license(void)
 {
 	puts("(C)opyleft STDyearDTS- Øyvind A. Holm <sunny@sunbase.org>");
 	puts("");
@@ -116,7 +116,7 @@ int print_license(void)
  * print_version() - Print version information on stdout. Returns EXIT_SUCCESS.
  */
 
-int print_version(void)
+static int print_version(void)
 {
 	if (opt.verbose < 0) {
 		puts(EXEC_VERSION);
@@ -137,7 +137,7 @@ int print_version(void)
  * usage() - Prints a help screen. Returns retval.
  */
 
-int usage(const int retval)
+static int usage(const int retval)
 {
 	if (retval != EXIT_SUCCESS) {
 		fprintf(stderr, "Type \"%s --help\" for help screen."
@@ -178,7 +178,7 @@ int usage(const int retval)
  * fails.
  */
 
-int choose_opt_action(const int c, const struct option *opts)
+static int choose_opt_action(const int c, const struct option *opts)
 {
 	int retval = EXIT_SUCCESS;
 
@@ -217,7 +217,7 @@ int choose_opt_action(const int c, const struct option *opts)
  * Returns EXIT_SUCCESS if ok, EXIT_FAILURE if error.
  */
 
-int parse_options(const int argc, char * const argv[])
+static int parse_options(const int argc, char * const argv[])
 {
 	int retval = EXIT_SUCCESS;
 
