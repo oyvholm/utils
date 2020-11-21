@@ -19,7 +19,9 @@ CCFLAGS += -Wextra
 
 LDFLAGS  =
 LDFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
-LDFLAGS += -Wall -Wextra -Werror
+LDFLAGS += -Wall
+LDFLAGS += -Werror
+LDFLAGS += -Wextra
 
 LIBS  =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage")
