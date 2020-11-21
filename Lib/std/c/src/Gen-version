@@ -24,12 +24,9 @@ newdef() {
 
 if test -d ../.git -a $has_git -eq 1; then
 	if git tag | grep -q ^$tag_prefix; then
-		numsince=$(
-		    git log --format=%h \
-		        $tag_prefix.. 2>/dev/null \
-		        | wc -l \
-		        | tr -d '\t '
-		).
+		numsince=$(git log --format=%h $tag_prefix.. 2>/dev/null \
+		           | wc -l \
+		           | tr -d '\t ').
 	else
 		numsince=''
 	fi
