@@ -238,7 +238,7 @@ static int parse_options(const int argc, char * const argv[])
 	while (retval == EXIT_SUCCESS) {
 		int c;
 		int option_index = 0;
-		const struct option long_options[] = {
+		static const struct option long_options[] = {
 			{"help", no_argument, NULL, 'h'},
 			{"license", no_argument, NULL, 0},
 			{"quiet", no_argument, NULL, 'q'},
