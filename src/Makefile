@@ -12,8 +12,8 @@
 # belong here, there's some old CVS repo I've to dig up with all the old 
 # history and then splice it somehow.
 
-.PHONY: default
-default:
+.PHONY: all
+all:
 	cd check_utf8 && $(MAKE)
 	cd dbf2tab && $(MAKE)
 	# cd fldb && $(MAKE)

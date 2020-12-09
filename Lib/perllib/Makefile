@@ -2,8 +2,8 @@
 # File ID: 143f5222-5d7c-11df-8a0c-90e6ba3022ac
 # Makefile for generating *.3, *.dvi, *.ps and *.html
 
-.PHONY: default
-default: tricgi.dvi tricgi.ps tricgi.html
+.PHONY: all
+all: tricgi.dvi tricgi.ps tricgi.html
 
 tricgi.ps: tricgi.dvi
 	dvips -t a4 -o tricgi.ps tricgi.dvi

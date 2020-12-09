@@ -2,8 +2,8 @@
 # File ID: bfd8fbc6-4b03-11e6-811f-02010e0a6634
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
-.PHONY: default
-default:
+.PHONY: all
+all:
 	cd perllib && $(MAKE)
 	cd std && $(MAKE)
 

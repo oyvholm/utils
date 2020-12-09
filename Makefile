@@ -5,8 +5,8 @@
 T_GREEN=$$(tput setaf 2)
 T_RESET=$$(tput sgr0)
 
-.PHONY: default
-default:
+.PHONY: all
+all:
 	cd Lib && $(MAKE)
 	cd src && $(MAKE)
 	cd Git && $(MAKE)

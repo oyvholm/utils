@@ -1,7 +1,7 @@
 # File ID: d17f6656-459a-11e8-a86d-f74d993421b0
 
-.PHONY: default
-default:
+.PHONY: all
+all:
 
 .PHONY: clean
 clean:

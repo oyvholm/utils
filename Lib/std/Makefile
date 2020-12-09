@@ -2,8 +2,8 @@
 # File ID: 6454cafe-4b04-11e6-8c85-02010e0a6634
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
-.PHONY: default
-default:
+.PHONY: all
+all:
 
 .PHONY: clean
 clean:

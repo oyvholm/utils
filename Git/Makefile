@@ -5,8 +5,8 @@ MAKEFILES = */Makefile
 # FIXME: Make gpstools work
 DIRS =  $$(echo $? | fmt -1 | cut -f 1 -d / | grep -v gpstools | sort -u)
 
-.PHONY: default
-default: $(MAKEFILES)
+.PHONY: all
+all: $(MAKEFILES)
 	for f in $(DIRS); do (cd $$f && $(MAKE)) || exit 1; done
 
 .PHONY: clean

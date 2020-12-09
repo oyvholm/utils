@@ -1,8 +1,8 @@
 # Makefile
 # File ID: STDuuidDTS
 
-.PHONY: default
-default:
+.PHONY: all
+all:
 	@$(MAKE) -s wc
 
 .PHONY: clean

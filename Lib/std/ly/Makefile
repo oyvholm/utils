@@ -8,8 +8,8 @@ MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
 LILYPOND = lilypond
 
-.PHONY: default
-default: $(NAME).midi $(NAME).pdf
+.PHONY: all
+all: $(NAME).midi $(NAME).pdf
 
 $(NAME).midi: .version.ily
 	$(LILYPOND) $(NAME).ly
