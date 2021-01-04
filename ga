@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.15.1
+VERSION=0.15.2
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -62,6 +62,8 @@ customised:
     "git wait-until-clean -u" before syncing, i.e., wait until the 
     repository is clean before continuing. This is to avoid any 
     accidental commits.
+    Run "git-annex merge" before sync to get local modifications in 
+    place in case "git-annex sync" doesn't do it properly.
     Also, update all local synced/* branches by running "git pa -s". If 
     you have a Git-aware command line prompt that shows if the current 
     branch is behind or ahead upstream, it will show when a sync or 
@@ -164,6 +166,7 @@ elif test "$1" = "sync"; then
     if test "$(git config --get annex.autocommit)" != "false"; then
         git wait-until-clean -u
     fi
+    git-annex merge
     git-annex "$@"
     git pa -s
 elif test "$1" = "unused"; then
