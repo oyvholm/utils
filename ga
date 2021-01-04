@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.15.0
+VERSION=0.15.1
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -146,10 +146,6 @@ if test "$1" = "copnum"; then
     exit
 fi
 
-if test "$1" = "sync" -a "$(git config --get annex.autocommit)" != "false"; then
-    git wait-until-clean -u
-fi
-
 if test "$1" = "fsck"; then
     shift
     git-annex fsck "$@" 2>&1 | ga-fsck-size
@@ -164,6 +160,12 @@ elif test "$1" = "max-bytes"; then
 elif test "$1" = "md"; then
     shift
     git-annex metadata "$@"
+elif test "$1" = "sync"; then
+    if test "$(git config --get annex.autocommit)" != "false"; then
+        git wait-until-clean -u
+    fi
+    git-annex "$@"
+    git pa -s
 elif test "$1" = "unused"; then
     shift
     git-annex unused "$@" | ga-sumsize
@@ -206,8 +208,4 @@ elif test "$1" = "update-desc" -o "$1" = "ud"; then
     fi
 else
     git-annex "$@"
-fi
-
-if test "$1" = "sync"; then
-    git pa -s
 fi
