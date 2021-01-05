@@ -5,5 +5,5 @@
 
 file=$1
 
-[ -z "$LC_CTYPE" ] && { export LC_CTYPE=en_GB.utf8; }
+[ -z "$LC_CTYPE" ] && { export LC_CTYPE=en_US.utf8; }
 v -l -- -X -f -c "set ft=mail" $file
