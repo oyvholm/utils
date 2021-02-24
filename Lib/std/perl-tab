@@ -92,9 +92,8 @@ sub msg {
 	# Print a status message to stderr based on verbosity level
 	my ($verbose_level, $Txt) = @_;
 
-	if ($Opt{'verbose'} >= $verbose_level) {
-		print(STDERR "$progname: $Txt\n");
-	}
+	$verbose_level > $Opt{'verbose'} && return;
+	print(STDERR "$progname: $Txt\n");
 }
 
 __END__
