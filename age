@@ -1,9 +1,76 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # age
 # File ID: 9b034192-0a68-11e2-98ae-fefdb24f8e10
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
 
-psql -c "COPY (SELECT age(now(),'$*')) TO STDOUT;"
+progname=age
+VERSION=0.1.0
+
+opt_help=0
+opt_quiet=0
+opt_verbose=0
+while test -n "$1"; do
+	case "$1" in
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
+
+Print number of seconds since the UTC timestamp specified on the command 
+line, use format "YYYY-MM-DD [HH:MM[:SS]]" or any other format 
+understood by sqlite3. If two timestamps are specified, print number of 
+seconds between them.
+
+Usage: $progname [options] date1 [date2]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -u, --utc
+    Use UTC timestamps instead of local time.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+	exit 0
+fi
+
+test -z "$1" && {
+	echo $progname: Missing arguments >&2
+	exit 1
+}
+begin=$1
+end=now # Memento mori
+test -n "$2" && end=$2
+
+cat <<END | sqlite3
+SELECT strftime('%s', datetime('$end'))
+       - strftime('%s', datetime('$begin'));
+END
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
