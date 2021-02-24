@@ -213,7 +213,6 @@ sub file_data {
 sub print_version {
     # Print program version {{{
     print("$progname $VERSION\n");
-    return;
     # }}}
 } # print_version()
 
@@ -257,7 +256,6 @@ sub msg {
 
     $verbose_level > $Opt{'verbose'} && return;
     print(STDERR "$progname: $Txt\n");
-    return;
     # }}}
 } # msg()
 
