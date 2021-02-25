@@ -167,6 +167,7 @@ sub test_standard_options {
 	        "",
 	        0,
 	        'Unknown options after first non-option are ignored');
+	return;
 }
 
 sub testcmd {
@@ -254,6 +255,7 @@ sub create_file {
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
+	return;
 }
 
 sub usage {
@@ -295,6 +297,7 @@ sub msg {
 
 	$verbose_level > $Opt{'verbose'} && return;
 	print(STDERR "$progname: $Txt\n");
+	return;
 }
 
 __END__

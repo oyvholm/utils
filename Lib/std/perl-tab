@@ -59,6 +59,7 @@ sub main {
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
+	return;
 }
 
 sub usage {
@@ -94,6 +95,7 @@ sub msg {
 
 	$verbose_level > $Opt{'verbose'} && return;
 	print(STDERR "$progname: $Txt\n");
+	return;
 }
 
 __END__

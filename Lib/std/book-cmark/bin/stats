@@ -189,6 +189,7 @@ sub word_count {
 sub print_version {
     # Print program version {{{
     print("$progname $VERSION\n");
+    return;
     # }}}
 } # print_version()
 
@@ -233,6 +234,7 @@ sub msg {
     if ($Opt{'verbose'} >= $verbose_level) {
         print(STDERR "$progname: $Txt\n");
     }
+    return;
     # }}}
 } # msg()
 
