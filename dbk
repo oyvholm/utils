@@ -240,7 +240,7 @@ sub find_line {
     seek(dbkFP, 0, 0)
         || die("$dbk_file: Klarte ikke å gå til begynnelsen av fila: $!\n");
     while (<dbkFP>) {
-        if (/^<p><b>(\d\d:\d\d:\d\d)/i || /^<p><b>(\d\d:\d\d)/i) {
+        if (/^(?:<p>)?<b>(\d\d:\d\d:\d\d)/i || /^(?:<p>)?<b>(\d\d:\d\d)/i) {
             my $found_time = $1;
             return($.) if ($srch_time lt $found_time);
         }
@@ -261,7 +261,7 @@ sub insert_time {
         @Linjer,
         $line_num-1,
         0,
-        sprintf("<p><b>$time_str</b> -\n%s", $time_not_found ? "" : "\n")
+        sprintf("<b>$time_str</b> -\n%s", $time_not_found ? "" : "\n")
     );
     seek(dbkFP, 0, 0)
         || die("$0: $dbk_file: Klarte ikke å seeke til starten " .
@@ -305,7 +305,7 @@ sub insert_file {
         || die("$0: $dbk_file: Klarte ikke å gå til begynnelsen av fila " .
                "i insert_file(): $!\n");
     my @Linjer = <dbkFP>;
-    my @InsLinj = "<p><b>$time_str</b> -\n";
+    my @InsLinj = "<b>$time_str</b> -\n";
     open(LocFP, "<$file_name")
         || die("$0: $file_name: Kan ikke åpne fila for lesing: $!\n");
     push(@InsLinj, <LocFP>);
