@@ -7,6 +7,7 @@ test:
 	./age.t
 	./datefmt.t
 	./datefn.t
+	./dbk.t
 	./edit-sqlite3.t
 	./filesynced.t
 	./findhex.t
@@ -41,6 +42,7 @@ testport:
 	./age.t               # freebsd:     netbsd:     openbsd:
 	./datefmt.t           # freebsd:     netbsd:     openbsd:
 	./datefn.t            # freebsd:ok   netbsd:ok   openbsd:ok
+	./dbk.t               # freebsd:     netbsd:     openbsd:
 	./edit-sqlite3.t      # freebsd:fail netbsd:ok   openbsd:ok
 	./filesynced.t        # freebsd:ok   netbsd:ok   openbsd:ok
 	./findhex.t           # freebsd:ok   netbsd:ok   openbsd:ok
