@@ -79,8 +79,8 @@ my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst)
 $Year += 1900;
 $Mon += 1;
 
-msg(3, "\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, " .
-  "\$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst");
+msg(3, "\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec,"
+       . " \$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst");
 
 # Parameterparsing og initialisering av datovariabler
 my $arg_count;
@@ -142,8 +142,8 @@ unless (-d $year_dir) {
 msg(3, "\$dbk_file = $dbk_file");
 
 if ($Opt{'force'}) {
-	rmdir($lock_dir) || warn("$0: $lock_dir: "
-	                         . "Kan ikke fjerne gammel lockdir med makt:"
+	rmdir($lock_dir) || warn("$0: $lock_dir:"
+	                         . " Kan ikke fjerne gammel lockdir med makt:"
 	                         . " $!\n");
 }
 
@@ -151,8 +151,8 @@ if ($Opt{'force'}) {
 my $print_ok = 0;
 
 until (mkdir($lock_dir, 0777)) {
-	$print_ok || print(STDERR "Venter på at lockdir $lock_dir " .
-	                          "skal forsvinne ($!)..");
+	$print_ok || print(STDERR "Venter på at lockdir $lock_dir"
+	                          . " skal forsvinne ($!)..");
 	print(".");
 	sleep(1);
 	$print_ok = 1;
@@ -186,15 +186,15 @@ if ($Opt{'now'}) {
 		$time_str = "$Hour:$Min:$Sec$utc_str";
 	}
 	open(dbkFP, "+<$dbk_file")
-	|| die("$0: $dbk_file: " .
-	       "Kan ikke åpne fila for lesing+skriving+flock: $!\n");
+	|| die("$0: $dbk_file:"
+	       . " Kan ikke åpne fila for lesing+skriving+flock: $!\n");
 	flock(dbkFP, LOCK_EX)
 	|| die("$0: $dbk_file: Klarte ikke flock(): $!\n");
 	my $which_line = find_line($time_str);
 	if ($time_not_found) {
 		seek(dbkFP, 0, 2)
-		|| die("$0: $dbk_file: Klarte ikke å seeke " .
-		           "til slutten for å legge til LF: $!\n");
+		|| die("$0: $dbk_file: Klarte ikke å seeke"
+		       . " til slutten for å legge til LF: $!\n");
 		print(dbkFP "\n")
 		|| warn("$0: $dbk_file: Feil under skriving til fila: $!\n");
 		$which_line++;
@@ -250,8 +250,8 @@ sub find_line {
 sub insert_time {
 	my ($time_str, $line_num) = @_;
 	seek(dbkFP, 0, 0)
-	|| die("$dbk_file: Klarte ikke å gå " .
-	       "til begynnelsen av fila i insert_time(): $!\n");
+	|| die("$dbk_file: Klarte ikke å gå"
+	       . " til begynnelsen av fila i insert_time(): $!\n");
 	my @Linjer = <dbkFP>;
 	splice(
 	    @Linjer,
@@ -260,14 +260,14 @@ sub insert_time {
 	    sprintf("<b>$time_str</b> -\n%s", $time_not_found ? "" : "\n")
 	);
 	seek(dbkFP, 0, 0)
-	|| die("$0: $dbk_file: Klarte ikke å seeke til starten " .
-	       "i insert_time(): $!\n");
+	|| die("$0: $dbk_file: Klarte ikke å seeke til starten"
+	       . " i insert_time(): $!\n");
 	truncate(dbkFP, 0)
 	|| die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
 	foreach (@Linjer) {
 		print(dbkFP $_)
-		|| warn("$0: $dbk_file: Å neiiii, katastrofe! " .
-		        "Feil under skriving til fila: $!\n");
+		|| warn("$0: $dbk_file: Å neiiii, katastrofe!"
+		        . " Feil under skriving til fila: $!\n");
 	}
 }
 
@@ -294,8 +294,8 @@ sub insert_file {
 	my ($file_name, $line_num) = @_;
 	local *LocFP;
 	seek(dbkFP, 0, 0)
-	|| die("$0: $dbk_file: Klarte ikke å gå til begynnelsen av fila " .
-	       "i insert_file(): $!\n");
+	|| die("$0: $dbk_file: Klarte ikke å gå til begynnelsen av fila"
+	       . " i insert_file(): $!\n");
 	my @Linjer = <dbkFP>;
 	my @InsLinj = "<b>$time_str</b> -\n";
 	open(LocFP, "<$file_name")
@@ -309,8 +309,8 @@ sub insert_file {
 	for (@InsLinj) {
 		msg(3, "\$_ = \"$_\"");
 		if (!is_utf8($_)) {
-			warn("$0: Ugyldig UTF-8 funnet, " .
-			     "behandler teksten som ISO-8859-1.\n");
+			warn("$0: Ugyldig UTF-8 funnet,"
+			     . " behandler teksten som ISO-8859-1.\n");
 			my @Ny = ();
 			for my $Curr (@InsLinj) {
 				msg(3, "FØR  : \$Curr = \"$Curr\"");
@@ -325,8 +325,8 @@ sub insert_file {
 	splice(@Linjer, $line_num-1, 0, @InsLinj);
 	close(LocFP);
 	seek(dbkFP, 0, 0)
-	|| die("$0: $dbk_file: Klarte ikke å seeke til starten " .
-	           "i insert_file(): $!\n");
+	|| die("$0: $dbk_file: Klarte ikke å seeke til starten"
+	       . " i insert_file(): $!\n");
 	truncate(dbkFP, 0)
 	|| die("$0: $dbk_file: Klarte ikke å trunce fila til 0: $!\n");
 	msg(3, "scalar(\@Linjer): \"" . scalar(@Linjer) . "\".");
@@ -334,8 +334,8 @@ sub insert_file {
 		$Curr =~ s/&#(\d{1,10});/widechar($1)/ge;
 		$Curr =~ s/&#x([0-9a-f]{1,8});/widechar(hex($1))/gei;
 		print(dbkFP $Curr)
-		|| warn("$0: $dbk_file: Knallkrise. " .
-		        "Feil under skriving til fila: $!\n");
+		|| warn("$0: $dbk_file: Knallkrise."
+		        . " Feil under skriving til fila: $!\n");
 	}
 }
 
