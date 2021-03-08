@@ -82,7 +82,7 @@ $Mon += 1;
 msg(3, "\$curr_time: $Year-$Mon-$Day $Hour:$Min:$Sec, " .
   "\$Wday = $Wday, \$Yday = $Yday, \$is_dst = $is_dst");
 
-# Parameterparsing og initialisering av datovariabler {{{
+# Parameterparsing og initialisering av datovariabler
 my $arg_count;
 my $time_str = ""; # Strengen som det vil bli leita etter og som blir satt inn.
 
@@ -123,9 +123,8 @@ my $utc_diff = ($time_utc-$time_sec)/3600;
 msg(3, "Etter ARGV: $Year-$Mon-$Day");
 msg(3, "\$dbk_dir = $dbk_dir");
 msg(3, "\$Opt{'insert-file'} = \"$Opt{'insert-file'}\"");
-# }}}
 
-# Sjekk at alle katalogene er på plass {{{
+# Sjekk at alle katalogene er på plass
 my $year_dir = "$dbk_dir/$Year";
 my $dbk_file = "$year_dir/${Year}${Mon}${Day}${dbk_ext}";
 my $lock_dir = "$year_dir/${Year}${Mon}${Day}${dbk_lockext}";
@@ -147,9 +146,8 @@ if ($Opt{'force'}) {
 	                         . "Kan ikke fjerne gammel lockdir med makt:"
 	                         . " $!\n");
 }
-# }}}
 
-# Locking {{{
+# Locking
 my $print_ok = 0;
 
 until (mkdir($lock_dir, 0777)) {
@@ -160,7 +158,6 @@ until (mkdir($lock_dir, 0777)) {
 	$print_ok = 1;
 }
 $print_ok && print("OK\n");
-# }}}
 
 open(CheckFP, ">$year_dir/.check")
 || die("$0: $year_dir/.check: Klarte ikke å lage fila: $!\n");
@@ -179,7 +176,7 @@ unless (-f $dbk_file) {
 my $min_size = 0; # Minimum size of file to prevent deletion
 
 if ($Opt{'now'}) {
-	# Legg til klokkeslettet akkurat nå i fila og gå inn i editoren {{{
+	# Legg til klokkeslettet akkurat nå i fila og gå inn i editoren
 	my $utc_str = sprintf("%s%02u00",
 	                      $utc_diff < 0 ? "-" : "+", $utc_diff);
 	$utc_str = "" unless $Opt{'zone'};
@@ -210,7 +207,6 @@ if ($Opt{'now'}) {
 	system("$Editor +$which_line $dbk_file") unless
 	    (length($Opt{'insert-file'}) || length($Opt{'batch'}));
 	$min_size = 49;
-	# }}}
 } else {
 	$min_size = 25;
 }
@@ -235,7 +231,6 @@ exit(0);
 #### SUBRUTINER ####
 
 sub find_line {
-	# {{{
 	my $srch_time = shift;
 	my $last_line = 0;
 	my $Found = 0;
@@ -250,11 +245,9 @@ sub find_line {
 	}
 	$time_not_found = 1;
 	return($. + 1);
-	# }}}
 } # find_line()
 
 sub insert_time {
-	# {{{
 	my ($time_str, $line_num) = @_;
 	seek(dbkFP, 0, 0)
 	|| die("$dbk_file: Klarte ikke å gå " .
@@ -276,13 +269,11 @@ sub insert_time {
 		|| warn("$0: $dbk_file: Å neiiii, katastrofe! " .
 		        "Feil under skriving til fila: $!\n");
 	}
-	# }}}
 } # insert_time()
 
 sub is_utf8 {
 	# Sjekker om en tekst inneholder ulovlige UTF-8-sekvenser og 
 	# returnerer i så fall 0
-	# {{{
 	my $Str = shift;
 	my $Retval = 1;
 	# Henta fra "find_inv_utf8,v 1.1 2001/09/07 08:54:31 sunny" og 
@@ -297,11 +288,9 @@ sub is_utf8 {
 	$Retval = 0 if ($Str =~ /[\x80-\xFD]/);
 	msg(3, "is_utf8() returnerer $Retval.");
 	return $Retval;
-	# }}}
 } # is_utf8()
 
 sub insert_file {
-	# {{{
 	my ($file_name, $line_num) = @_;
 	local *LocFP;
 	seek(dbkFP, 0, 0)
@@ -348,18 +337,16 @@ sub insert_file {
 		|| warn("$0: $dbk_file: Knallkrise. " .
 		        "Feil under skriving til fila: $!\n");
 	}
-	# }}}
 } # insert_file()
 
 sub print_version {
-	# Print program version {{{
+	# Print program version
 	print("$progname $VERSION\n");
 	return;
-	# }}}
 } # print_version()
 
 sub usage {
-	# Send the help message to stdout {{{
+	# Send the help message to stdout
 	my $Retval = shift;
 
 	if ($Opt{'verbose'}) {
@@ -397,22 +384,20 @@ formatet "HH:" der HH er to siffer.
 
 END
 	exit($Retval);
-	# }}}
 } # usage()
 
 sub msg {
-	# Print a status message to stderr based on verbosity level {{{
+	# Print a status message to stderr based on verbosity level
 	my ($verbose_level, $Txt) = @_;
 
 	if ($Opt{'verbose'} >= $verbose_level) {
 		print(STDERR "$progname: $Txt\n");
 	}
 	return;
-	# }}}
 } # msg()
 
 sub widechar {
-	# Konverterer en tegnverdi til UTF-8 {{{
+	# Konverterer en tegnverdi til UTF-8
 	# Henta fra "h2u,v 1.5 2002/11/20 00:09:40 sunny".
 	my $Val = shift;
 	my $allow_invalid = 0;
@@ -454,7 +439,6 @@ sub widechar {
 	} else {
 		return widechar(0xFFFD);
 	}
-	# }}}
 } # widechar()
 
 __END__
