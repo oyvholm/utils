@@ -245,7 +245,7 @@ sub find_line {
 	}
 	$time_not_found = 1;
 	return($. + 1);
-} # find_line()
+}
 
 sub insert_time {
 	my ($time_str, $line_num) = @_;
@@ -269,7 +269,7 @@ sub insert_time {
 		|| warn("$0: $dbk_file: Å neiiii, katastrofe! " .
 		        "Feil under skriving til fila: $!\n");
 	}
-} # insert_time()
+}
 
 sub is_utf8 {
 	# Sjekker om en tekst inneholder ulovlige UTF-8-sekvenser og 
@@ -288,7 +288,7 @@ sub is_utf8 {
 	$Retval = 0 if ($Str =~ /[\x80-\xFD]/);
 	msg(3, "is_utf8() returnerer $Retval.");
 	return $Retval;
-} # is_utf8()
+}
 
 sub insert_file {
 	my ($file_name, $line_num) = @_;
@@ -337,13 +337,13 @@ sub insert_file {
 		|| warn("$0: $dbk_file: Knallkrise. " .
 		        "Feil under skriving til fila: $!\n");
 	}
-} # insert_file()
+}
 
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
 	return;
-} # print_version()
+}
 
 sub usage {
 	# Send the help message to stdout
@@ -384,7 +384,7 @@ formatet "HH:" der HH er to siffer.
 
 END
 	exit($Retval);
-} # usage()
+}
 
 sub msg {
 	# Print a status message to stderr based on verbosity level
@@ -394,7 +394,7 @@ sub msg {
 		print(STDERR "$progname: $Txt\n");
 	}
 	return;
-} # msg()
+}
 
 sub widechar {
 	# Konverterer en tegnverdi til UTF-8
@@ -439,7 +439,7 @@ sub widechar {
 	} else {
 		return widechar(0xFFFD);
 	}
-} # widechar()
+}
 
 __END__
 
