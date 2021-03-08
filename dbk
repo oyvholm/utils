@@ -154,17 +154,7 @@ sub main {
 		                         . " med makt: $!\n");
 	}
 
-	# Locking
-	my $print_ok = 0;
-
-	until (mkdir($lock_dir, 0777)) {
-		$print_ok || print(STDERR "Venter på at lockdir $lock_dir"
-		                          . " skal forsvinne ($!)..");
-		print(".");
-		sleep(1);
-		$print_ok = 1;
-	}
-	$print_ok && print("OK\n");
+	create_lock($lock_dir);
 
 	open(CheckFP, ">$year_dir/.check")
 	|| die("$0: $year_dir/.check: Klarte ikke å lage fila: $!\n");
@@ -235,13 +225,37 @@ sub main {
 		rmdir($year_dir);
 	}
 
-	rmdir($lock_dir)
-	|| die("$0: $lock_dir: Klarte ikke å slette lockdir: $!\n");
+	remove_lock($lock_dir);
 
 	return $Retval;
 }
 
 #### SUBRUTINER ####
+
+sub create_lock {
+	my $lock_dir = shift;
+	my $print_ok = 0;
+
+	until (mkdir($lock_dir, 0777)) {
+		$print_ok || print(STDERR "Venter på at lockdir $lock_dir"
+		                          . " skal forsvinne ($!)..");
+		print(".");
+		sleep(1);
+		$print_ok = 1;
+	}
+	$print_ok && print("OK\n");
+
+	return;
+}
+
+sub remove_lock {
+	my $lock_dir = shift;
+
+	rmdir($lock_dir)
+	|| die("$0: $lock_dir: Klarte ikke å slette lockdir: $!\n");
+
+	return;
+}
 
 sub find_line {
 	my ($dbk_file, $srch_time) = @_;
