@@ -4,14 +4,14 @@
 # mob
 # File ID: cb5687fe-9c5a-11eb-915d-45c42403b986
 #
-# [Description]
+# Keep an eye on mobile data usage
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=mob
-VERSION=0.0.0
+VERSION=0.1.0
 
 opt_help=0
 opt_quiet=0
@@ -39,7 +39,7 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Usage: $progname [options]
+Usage: $progname [options] [bytes_used]
 
 Options:
 
@@ -54,6 +54,26 @@ Options:
 
 END
 	exit 0
+fi
+
+t_bold=$(tput bold)
+t_green=$(tput setaf 2)
+t_red=$(tput setaf 1)
+t_reset=$(tput sgr0)
+
+bytes=$(echo -n "$1" | tr a-z A-Z)
+
+if test -z "$bytes"; then
+	if spar mobil -s | tail -1 | grep -q ^-; then
+		echo -n "$t_bold$t_green"
+	else
+		echo -n "$t_bold$t_red"
+	fi
+	spar mobil -sg | numfmt --to=si --format=%7.2f --invalid=ignore
+	echo -n "$t_reset"
+else
+	spar mobil -sgc $(numfmt --from si $bytes) >/dev/null
+	$0
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
