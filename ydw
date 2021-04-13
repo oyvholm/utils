@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 # File ID: 00efbe06-59d1-11e7-8b5c-db5caa6d21d3
 
-yd -f \
+echo make -s lock\; yd -f \
 160+249/\
 160+250/\
 160+251/\
@@ -17,4 +17,4 @@ yd -f \
 278+worstaudio/\
 worstvideo+worstaudio\
 18\
- "$@"
+ "$@"\; make -s unlock\; randsleep -v 20 20 >>hent.sh

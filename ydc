@@ -12,7 +12,7 @@
 #==============================================================================
 
 progname=ydc
-VERSION=0.2.4
+VERSION=0.3.0
 
 T_BOLD=$(tput bold)
 T_RED=$(tput setaf 1)
@@ -71,8 +71,9 @@ while :; do
 	gr=$(ydid "$orig_gr")
 	test -z "$gr" && continue
 	echo grep -- $gr
-	(cd "$repo" && (find *; cat "$dellog")) | grep -- $gr ||
-		($ydprog -- $(ydid -c "$orig_gr") &)
+	(cd "$repo" \
+	 && (find *; cat "$dellog" $repo/transp/1/hent.sh)) \
+	| grep --color=always -- $gr || ($ydprog -- $(ydid -c "$orig_gr") &)
 	if ls | grep -q -- -$gr\\.temp\\.; then
 		echo -n "$T_RED$T_BOLD"
 		rm -v *-$gr*.temp.*

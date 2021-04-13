@@ -2,7 +2,7 @@
 
 # File ID: 621e2034-7c2b-11e6-a8a3-a7fb3b214061
 
-yd -f \
+echo make -s lock\; yd -f \
 134+249/\
 134+250/\
 134+251/\
@@ -14,4 +14,4 @@ yd -f \
 243+140/\
 243+bestaudio/\
 18\
- "$@"
+ "$@"\; make -s unlock\; randsleep -v 20 20 >>hent.sh

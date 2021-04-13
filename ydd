@@ -7,7 +7,7 @@
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
-yd -f \
+echo make -s lock\; yd -f \
 136+250/\
 136+249/\
 136+251/\
@@ -20,4 +20,4 @@ yd -f \
 247+bestaudio/\
 22/\
 18\
- "$@"
+ "$@"\; make -s unlock\; randsleep -v 20 20 >>hent.sh
