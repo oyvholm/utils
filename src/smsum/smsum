@@ -32,7 +32,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -87,7 +87,9 @@ sub process_file {
 	my $use_stdin = ($Filename eq "-") ? 1 : 0;
 	my @stat_array = ();
 	my $displayed_filename = $Filename;
-	my $tmpfile = "/tmp/$progname." . time . ".$$.tmp";
+	my $tmpdir = (defined($ENV{'TMPDIR'}) && length($ENV{'TMPDIR'}))
+		? $ENV{'TMPDIR'} : "/tmp";
+	my $tmpfile = "$tmpdir/$progname." . time . ".$$.tmp";
 	if ($use_stdin) {
 		open(my $tmpfp, '>', $tmpfile) or
 		    die("$progname: $tmpfile: Cannot create tempfile: $!\n");
