@@ -5,7 +5,9 @@
 # File ID: d01bb3d8-c764-11e1-8e09-00c0a8deee11
 #=======================================================================
 
-youtube-dl -o "%(title)s-%(id)s.%(ext)s" \
+test -z "$YDTITLE" && YDTITLE="%(title)s"
+
+youtube-dl -o "$YDTITLE-%(id)s.%(ext)s" \
   --ignore-errors --no-overwrites \
   --write-description --write-info-json \
   --write-sub --write-thumbnail --sub-lang en,en-US,no,nb \
