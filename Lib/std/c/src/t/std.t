@@ -165,6 +165,8 @@ sub test_standard_options {
 	        . " Returning with value 1\\.\\n/s",
 	        1,
 	        'Unknown option specified');
+
+	return;
 }
 
 sub test_executable {
@@ -177,6 +179,8 @@ sub test_executable {
 	        0,
 	        'One argument');
 	test_selftest();
+
+	return;
 }
 
 sub test_selftest {
@@ -190,6 +194,8 @@ END
 END
 	        0,
 	        '--selftest');
+
+	return;
 }
 
 sub testcmd {
@@ -257,6 +263,7 @@ sub file_data {
 	local $/ = undef;
 	$Txt = <$fp>;
 	close($fp);
+
 	return $Txt;
 }
 
@@ -277,6 +284,8 @@ sub create_file {
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
+
+	return;
 }
 
 sub usage {
@@ -321,6 +330,8 @@ sub msg {
 
 	$verbose_level > $Opt{'verbose'} && return;
 	print(STDERR "$progname: $Txt\n");
+
+	return;
 }
 
 __END__
