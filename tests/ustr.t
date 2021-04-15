@@ -110,19 +110,18 @@ sub test_standard_options {
             'Option -h prints help screen');
 
     likecmd("$CMD --help",
-        '/' .
-            '1\xCC\xB6' .
-            '2\xCC\xB6' .
-            '3\xCC\xB6' .
-            ' \xCC\xB6' .
-            'a\xCC\xB6' .
-            'b\xCC\xB6' .
-            'c\xCC\xB6' .
-            '/',
-        '/^$/',
-        0,
-        'Strikethrough example in usage screen is displayed correctly',
-    );
+            '/'
+            . '1\xCC\xB6'
+            . '2\xCC\xB6'
+            . '3\xCC\xB6'
+            . ' \xCC\xB6'
+            . 'a\xCC\xB6'
+            . 'b\xCC\xB6'
+            . 'c\xCC\xB6'
+            . '/',
+            '/^$/',
+            0,
+            'Strikethrough example in usage screen is displayed correctly');
 
     diag('Testing -v (--verbose) option...');
     likecmd("$CMD -hv",
@@ -143,31 +142,20 @@ sub test_standard_options {
 
 sub test_executable {
     testcmd("echo Dødens pølse ☠ | $CMD",
-        <<'END',
-D̲ø̲d̲e̲n̲s̲ ̲p̲ø̲l̲s̲e̲ ̲☠̲
-END
-        '',
-        0,
-        'Works with UTF-8',
-    );
-
+            "D̲ø̲d̲e̲n̲s̲ ̲p̲ø̲l̲s̲e̲ ̲☠̲\n",
+            '',
+            0,
+            'Works with UTF-8');
     testcmd("echo Sausage of death ☠ | $CMD -s",
-        <<'END',
-S̶a̶u̶s̶a̶g̶e̶ ̶o̶f̶ ̶d̶e̶a̶t̶h̶ ̶☠̶
-END
-        '',
-        0,
-        'Use -s (strikethrough)',
-    );
-
+            "S̶a̶u̶s̶a̶g̶e̶ ̶o̶f̶ ̶d̶e̶a̶t̶h̶ ̶☠̶\n",
+            '',
+            0,
+            'Use -s (strikethrough)');
     testcmd("echo Dødens pølse ☠ | $CMD --strikethrough",
-        <<'END',
-D̶ø̶d̶e̶n̶s̶ ̶p̶ø̶l̶s̶e̶ ̶☠̶
-END
-        '',
-        0,
-        'Use --strikethrough',
-    );
+            "D̶ø̶d̶e̶n̶s̶ ̶p̶ø̶l̶s̶e̶ ̶☠̶\n",
+            '',
+            0,
+            'Use --strikethrough');
     testcmd("echo S̲t̲a̲n̲d̲a̲r̲d̲ ̲A̲S̲C̲I̲I̲ ̲h̲e̲r̲e̲ | $CMD -d",
             "Standard ASCII here\n",
             "",
