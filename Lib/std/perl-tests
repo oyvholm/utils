@@ -79,6 +79,7 @@ sub main {
     }
 
     test_standard_options();
+    test_executable();
 
     diag('========== BEGIN version info ==========');
     diag($exec_version);
@@ -122,6 +123,10 @@ sub test_standard_options {
             0,
             'Option --version returns version number');
 
+    return;
+}
+
+sub test_executable {
     return;
 }
 
