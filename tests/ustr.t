@@ -168,6 +168,36 @@ END
         0,
         'Use --strikethrough',
     );
+    testcmd("echo S̲t̲a̲n̲d̲a̲r̲d̲ ̲A̲S̲C̲I̲I̲ ̲h̲e̲r̲e̲ | $CMD -d",
+            "Standard ASCII here\n",
+            "",
+            0,
+            "-d option deletes underline");
+    testcmd("echo S̶t̶a̶n̶d̶a̶r̶d̶ ̶A̶S̶C̶I̶I̶ ̶h̶e̶r̶e̶ | $CMD -ds",
+            "Standard ASCII here\n",
+            "",
+            0,
+            "-ds deletes strikethrough");
+    testcmd("echo S̲t̲a̲n̲d̲a̲r̲d̲ ̲A̲S̲C̲I̲I̲ ̲h̲e̲r̲e̲ | $CMD -ds",
+            "S̲t̲a̲n̲d̲a̲r̲d̲ ̲A̲S̲C̲I̲I̲ ̲h̲e̲r̲e̲\n",
+            "",
+            0,
+            "-ds doesn't delete underline");
+    testcmd("echo S̶t̶a̶n̶d̶a̶r̶d̶ ̶A̶S̶C̶I̶I̶ ̶h̶e̶r̶e̶ | $CMD -d",
+            "S̶t̶a̶n̶d̶a̶r̶d̶ ̶A̶S̶C̶I̶I̶ ̶h̶e̶r̶e̶\n",
+            "",
+            0,
+            "-d doesn't delete strikethrough");
+    testcmd("echo B̲æ̲æ̲æ̲d̲i̲ ̲🐑̲ | $CMD -d",
+            "Bææædi 🐑\n",
+            "",
+            0,
+            "-d option deletes underline from UTF-8 string");
+    testcmd("echo B̶æ̶æ̶æ̶d̶i̶ ̶🐑̶ | $CMD -ds",
+            "Bææædi 🐑\n",
+            "",
+            0,
+            "-ds option deletes strikethrough from UTF-8 string");
 
     return;
 }

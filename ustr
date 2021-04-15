@@ -23,6 +23,7 @@ local $| = 1;
 
 our %Opt = (
 
+    'delete' => 0,
     'help' => 0,
     'quiet' => 0,
     'strikethrough' => 0,
@@ -33,11 +34,12 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
+    'delete|d' => \$Opt{'delete'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
     'strikethrough|s' => \$Opt{'strikethrough'},
@@ -62,9 +64,16 @@ sub main {
     if ($Opt{'strikethrough'}) {
         $combchar = "\x{0336}";
     }
-    while (<>) {
-        s/([^\n])/$1$combchar/g;
-        print;
+    if ($Opt{'delete'}) {
+        while (<>) {
+            s/$combchar//g;
+            print;
+        }
+    } else {
+        while (<>) {
+            s/([^\n])/$1$combchar/g;
+            print;
+        }
     }
 
     return $Retval;
