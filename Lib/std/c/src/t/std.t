@@ -79,7 +79,7 @@ sub main {
 	my $Retval = 0;
 
 	diag('========== BEGIN version info ==========');
-	diag(`$CMD --version`);
+	diag($exec_version);
 	diag('=========== END version info ===========');
 
 	if ($Opt{'todo'} && !$Opt{'all'}) {
@@ -90,7 +90,7 @@ sub main {
 	test_executable();
 
 	diag('========== BEGIN version info ==========');
-	diag(`$CMD --version`);
+	diag($exec_version);
 	diag('=========== END version info ===========');
 
 	todo_section:
