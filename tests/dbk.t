@@ -21,6 +21,7 @@ BEGIN {
 }
 
 use Getopt::Long;
+use Time::Local;
 
 local $| = 1;
 
@@ -76,6 +77,7 @@ sub main {
 	}
 
 	test_standard_options();
+	test_executable();
 
 	todo_section:
 	;
@@ -115,6 +117,38 @@ sub test_standard_options {
 	        0,
 	        'Option --version returns version number');
 	return;
+}
+
+sub test_executable {
+	my $Tmptop = "tmp-$CMDB-t-$$-" . substr(rand, 2, 8);
+	$ENV{'DBK_VIEWER'} = "echo Viewer:";
+	$ENV{'DBK_DIR'} = $Tmptop;
+	my $currfile = curr_dbk_path();
+	my $curryeardir = $currfile;
+	$curryeardir =~ s!^(.*)/.*?$!$1!;
+
+	ok(!-d $Tmptop, "[Tmptop] doesn't exist");
+	testcmd($CMD,
+	        ""
+	        . "Viewer: $currfile\n"
+	        . "Ingenting ble skrevet, så jeg sletter driten.\n",
+	        "",
+	        0,
+	        "$CMD without args");
+	ok(rmdir($curryeardir), "rmdir [Tmptop]/YEAR/");
+	ok(rmdir($Tmptop), "rmdir [Tmptop]");
+}
+
+sub curr_dbk_path {
+	my $epoch = time();
+	my ($Sec, $Min, $Hour, $Day, $Mon, $Year, $Wday, $Yday, $is_dst)
+	   = localtime($epoch);
+	$Year += 1900;
+	$Mon += 1;
+	$Mon = sprintf("%02u", $Mon);
+	$Day = sprintf("%02u", $Day);
+
+	return "$ENV{'DBK_DIR'}/$Year/$Year$Mon$Day.html";
 }
 
 sub testcmd {

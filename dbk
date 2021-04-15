@@ -36,7 +36,10 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
+
+my $STD_DIR = "$ENV{HOME}/dbk";
+my $STD_VIEWER = "lynx -assume_charset=UTF-8";
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -67,9 +70,19 @@ exit(main());
 sub main {
 	my $Retval = 0;
 
-	my $Editor = "joe";
-	my $dbk_dir = "$ENV{HOME}/dbk";
-	my $Viewer = "lynx -assume_charset=UTF-8 -homepage=file://$dbk_dir";
+	my $Editor = "v --";
+	my $dbk_dir;
+	if (defined($ENV{'DBK_DIR'}) && length($ENV{'DBK_DIR'})) {
+		$dbk_dir = $ENV{'DBK_DIR'};
+	} else {
+		$dbk_dir = $STD_DIR;
+	}
+	my $Viewer;
+	if (defined($ENV{'DBK_VIEWER'}) && length($ENV{'DBK_VIEWER'})) {
+		$Viewer = $ENV{'DBK_VIEWER'};
+	} else {
+		$Viewer = $STD_VIEWER;
+	}
 	my $dbk_ext = ".html";
 	my $dbk_lockext = ".lock";
 	my $dir_mode = 0770;
@@ -407,6 +420,15 @@ Options:
 
 Klokkeslettet kan spesifiseres hvor som helst, men må starte med 
 formatet "HH:" der HH er to siffer.
+
+Environment variables:
+
+  DBK_DIR
+    Path to directory where files will be stored.
+    Default: "$STD_DIR"
+  DBK_VIEWER
+    Specify HTML browser to use when viewing files.
+    Default: "$STD_VIEWER"
 
 END
 	exit($Retval);
