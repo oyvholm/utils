@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-#=======================================================================
+#==============================================================================
 # ustr.t
 # File ID: 01540956-06f4-11e5-bc56-000df06acc56
 #
@@ -8,9 +8,9 @@
 #
 # Character set: UTF-8
 # ©opyleft 2015– Øyvind A. Holm <sunny@sunbase.org>
-# License: GNU General Public License version 2 or later, see end of 
-# file for legal stuff.
-#=======================================================================
+# License: GNU General Public License version 2 or later, see end of file for 
+# legal stuff.
+#==============================================================================
 
 use strict;
 use warnings;
@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.0.0'; # Not used here, $CMD decides
 
 my %descriptions = ();
 
@@ -63,44 +63,53 @@ if ($Opt{'version'}) {
     exit(0);
 }
 
+my $exec_version = `$CMD --version`;
+
 exit(main());
 
 sub main {
-    # {{{
     my $Retval = 0;
 
-    diag(sprintf('========== Executing %s v%s ==========',
-                 $progname, $VERSION));
+    diag('========== BEGIN version info ==========');
+    diag($exec_version);
+    diag('=========== END version info ===========');
 
     if ($Opt{'todo'} && !$Opt{'all'}) {
         goto todo_section;
     }
 
-=pod
+    test_standard_options();
+    test_executable();
 
-    testcmd("$CMD command", # {{{
-        <<'END',
-[expected stdout]
-END
-        '',
-        0,
-        'description',
-    );
+    diag('========== BEGIN version info ==========');
+    diag($exec_version);
+    diag('=========== END version info ===========');
 
-    # }}}
+    todo_section:
+    ;
 
-=cut
+    if ($Opt{'all'} || $Opt{'todo'}) {
+        diag('Running TODO tests...');
+        TODO: {
+            local $TODO = '';
+            # Insert TODO tests here.
+        }
+    }
 
+    diag('Testing finished.');
+
+    return $Retval;
+}
+
+sub test_standard_options {
     diag('Testing -h (--help) option...');
-    likecmd("$CMD -h", # {{{
-        '/  Show this help/i',
-        '/^$/',
-        0,
-        'Option -h prints help screen',
-    );
+    likecmd("$CMD -h",
+            '/  Show this help/i',
+            '/^$/',
+            0,
+            'Option -h prints help screen');
 
-    # }}}
-    likecmd("$CMD --help", # {{{
+    likecmd("$CMD --help",
         '/' .
             '1\xCC\xB6' .
             '2\xCC\xB6' .
@@ -115,27 +124,25 @@ END
         'Strikethrough example in usage screen is displayed correctly',
     );
 
-    # }}}
     diag('Testing -v (--verbose) option...');
-    likecmd("$CMD -hv", # {{{
-        '/^\n\S+ \d+\.\d+\.\d+/s',
-        '/^$/',
-        0,
-        'Option -v with -h returns version number and help screen',
-    );
+    likecmd("$CMD -hv",
+            '/^\n\S+ \d+\.\d+\.\d+/s',
+            '/^$/',
+            0,
+            'Option -v with -h returns version number and help screen');
 
-    # }}}
     diag('Testing --version option...');
-    likecmd("$CMD --version", # {{{
-        '/^\S+ \d+\.\d+\.\d+/',
-        '/^$/',
-        0,
-        'Option --version returns version number',
-    );
+    likecmd("$CMD --version",
+            '/^\S+ \d+\.\d+\.\d+/',
+            '/^$/',
+            0,
+            'Option --version returns version number');
 
-    # }}}
+    return;
+}
 
-    testcmd("echo Dødens pølse ☠ | $CMD", # {{{
+sub test_executable {
+    testcmd("echo Dødens pølse ☠ | $CMD",
         <<'END',
 D̲ø̲d̲e̲n̲s̲ ̲p̲ø̲l̲s̲e̲ ̲☠̲
 END
@@ -144,8 +151,7 @@ END
         'Works with UTF-8',
     );
 
-    # }}}
-    testcmd("echo Sausage of death ☠ | $CMD -s", # {{{
+    testcmd("echo Sausage of death ☠ | $CMD -s",
         <<'END',
 S̶a̶u̶s̶a̶g̶e̶ ̶o̶f̶ ̶d̶e̶a̶t̶h̶ ̶☠̶
 END
@@ -154,8 +160,7 @@ END
         'Use -s (strikethrough)',
     );
 
-    # }}}
-    testcmd("echo Dødens pølse ☠ | $CMD --strikethrough", # {{{
+    testcmd("echo Dødens pølse ☠ | $CMD --strikethrough",
         <<'END',
 D̶ø̶d̶e̶n̶s̶ ̶p̶ø̶l̶s̶e̶ ̶☠̶
 END
@@ -164,33 +169,13 @@ END
         'Use --strikethrough',
     );
 
-    # }}}
-
-    todo_section:
-    ;
-
-    if ($Opt{'all'} || $Opt{'todo'}) {
-        diag('Running TODO tests...'); # {{{
-
-        TODO: {
-
-            local $TODO = '';
-            # Insert TODO tests here.
-
-        }
-        # TODO tests }}}
-    }
-
-    diag('Testing finished.');
-    return $Retval;
-    # }}}
-} # main()
+    return;
+}
 
 sub testcmd {
-    # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) &&
-        BAIL_OUT("testcmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc})
+    && BAIL_OUT("testcmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
@@ -212,14 +197,12 @@ sub testcmd {
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
 
     return $retval;
-    # }}}
-} # testcmd()
+}
 
 sub likecmd {
-    # {{{
     my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-    defined($descriptions{$Desc}) &&
-        BAIL_OUT("likecmd(): '$Desc' description is used twice");
+    defined($descriptions{$Desc})
+    && BAIL_OUT("likecmd(): '$Desc' description is used twice");
     $descriptions{$Desc} = 1;
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
@@ -241,11 +224,10 @@ sub likecmd {
     $retval &= is($ret_val >> 8, $Exp_retval, "$Txt (retval)");
 
     return $retval;
-    # }}}
-} # likecmd()
+}
 
 sub file_data {
-    # Return file content as a string {{{
+    # Return file content as a string
     my $File = shift;
     my $Txt;
 
@@ -253,19 +235,33 @@ sub file_data {
     local $/ = undef;
     $Txt = <$fp>;
     close($fp);
+
     return $Txt;
-    # }}}
-} # file_data()
+}
+
+sub create_file {
+    # Create new file and fill it with data
+    my ($file, $text) = @_;
+    my $retval = 0;
+
+    open(my $fp, ">", $file) or return 0;
+    print($fp $text);
+    close($fp);
+    $retval = is(file_data($file), $text,
+                 "$file was successfully created");
+
+    return $retval; # 0 if error, 1 if ok
+}
 
 sub print_version {
-    # Print program version {{{
+    # Print program version
     print("$progname $VERSION\n");
+
     return;
-    # }}}
-} # print_version()
+}
 
 sub usage {
-    # Send the help message to stdout {{{
+    # Send the help message to stdout
     my $Retval = shift;
 
     if ($Opt{'verbose'}) {
@@ -295,33 +291,32 @@ Options:
 
 END
     exit($Retval);
-    # }}}
-} # usage()
+}
 
 sub msg {
-    # Print a status message to stderr based on verbosity level {{{
+    # Print a status message to stderr based on verbosity level
     my ($verbose_level, $Txt) = @_;
 
     $verbose_level > $Opt{'verbose'} && return;
     print(STDERR "$progname: $Txt\n");
+
     return;
-    # }}}
-} # msg()
+}
 
 __END__
 
-# This program is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2 of the License, or (at 
-# your option) any later version.
+# This program is free software; you can redistribute it and/or modify it under 
+# the terms of the GNU General Public License as published by the Free Software 
+# Foundation; either version 2 of the License, or (at your option) any later 
+# version.
 #
-# This program is distributed in the hope that it will be useful, but 
-# WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# This program is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+# FOR A PARTICULAR PURPOSE.
 # See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
-# along with this program.
+# You should have received a copy of the GNU General Public License along with 
+# this program.
 # If not, see L<http://www.gnu.org/licenses/>.
 
 # vim: set fenc=UTF-8 ft=perl fdm=marker ts=4 sw=4 sts=4 et fo+=w :
