@@ -35,7 +35,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.3.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -74,7 +74,7 @@ sub main {
         }
     } else {
         while (<>) {
-            s/([^\n$space])/$1$combchar/g;
+            s/([^\x00-\x1F$space])/$1$combchar/g;
             print;
         }
     }

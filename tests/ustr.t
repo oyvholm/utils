@@ -196,6 +196,16 @@ sub test_executable {
             "",
             0,
             "-ds option deletes strikethrough from UTF-8 string");
+    testcmd("printf '\x09With tab' | $CMD",
+            "\tW̲i̲t̲h̲ t̲a̲b̲",
+            "",
+            0,
+            "TABs (U+0009) aren't touched");
+    testcmd("printf '\x09With tab\x09' | $CMD --space",
+            "\tW̲i̲t̲h̲ ̲t̲a̲b̲\t",
+            "",
+            0,
+            "TABs (U+0009) aren't touched, even with --space");
 
     return;
 }
