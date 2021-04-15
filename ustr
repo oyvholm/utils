@@ -26,6 +26,7 @@ our %Opt = (
     'delete' => 0,
     'help' => 0,
     'quiet' => 0,
+    'space' => 0,
     'strikethrough' => 0,
     'verbose' => 0,
     'version' => 0,
@@ -34,7 +35,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -42,6 +43,7 @@ GetOptions(
     'delete|d' => \$Opt{'delete'},
     'help|h' => \$Opt{'help'},
     'quiet|q+' => \$Opt{'quiet'},
+    'space|S' => \$Opt{'space'},
     'strikethrough|s' => \$Opt{'strikethrough'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
@@ -60,6 +62,7 @@ exit(main());
 sub main {
     my $Retval = 0;
     my $combchar = "\x{0332}";
+    my $space = $Opt{'space'} ? "" : " ";
 
     if ($Opt{'strikethrough'}) {
         $combchar = "\x{0336}";
@@ -71,7 +74,7 @@ sub main {
         }
     } else {
         while (<>) {
-            s/([^\n])/$1$combchar/g;
+            s/([^\n$space])/$1$combchar/g;
             print;
         }
     }
@@ -104,9 +107,11 @@ Options:
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -s, --strikethrough
-    Use strikethrough (U+0336, '1̶2̶3̶ ̶a̶b̶c̶') instead of underline.
+    Use strikethrough (U+0336, '1̶2̶3̶ a̶b̶c̶') instead of underline.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -S, --space
+    Also underline/overstrike space characters (U+0020).
   --version
     Print version information.
 

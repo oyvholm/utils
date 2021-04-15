@@ -114,7 +114,7 @@ sub test_standard_options {
             . '1\xCC\xB6'
             . '2\xCC\xB6'
             . '3\xCC\xB6'
-            . ' \xCC\xB6'
+            . ' '
             . 'a\xCC\xB6'
             . 'b\xCC\xB6'
             . 'c\xCC\xB6'
@@ -142,46 +142,56 @@ sub test_standard_options {
 
 sub test_executable {
     testcmd("echo Dødens pølse ☠ | $CMD",
-            "D̲ø̲d̲e̲n̲s̲ ̲p̲ø̲l̲s̲e̲ ̲☠̲\n",
+            "D̲ø̲d̲e̲n̲s̲ p̲ø̲l̲s̲e̲ ☠̲\n",
             '',
             0,
             'Works with UTF-8');
     testcmd("echo Sausage of death ☠ | $CMD -s",
-            "S̶a̶u̶s̶a̶g̶e̶ ̶o̶f̶ ̶d̶e̶a̶t̶h̶ ̶☠̶\n",
+            "S̶a̶u̶s̶a̶g̶e̶ o̶f̶ d̶e̶a̶t̶h̶ ☠̶\n",
             '',
             0,
             'Use -s (strikethrough)');
     testcmd("echo Dødens pølse ☠ | $CMD --strikethrough",
-            "D̶ø̶d̶e̶n̶s̶ ̶p̶ø̶l̶s̶e̶ ̶☠̶\n",
+            "D̶ø̶d̶e̶n̶s̶ p̶ø̶l̶s̶e̶ ☠̶\n",
             '',
             0,
             'Use --strikethrough');
-    testcmd("echo S̲t̲a̲n̲d̲a̲r̲d̲ ̲A̲S̲C̲I̲I̲ ̲h̲e̲r̲e̲ | $CMD -d",
+    testcmd("echo Dødens pølse ☠ | $CMD -S",
+            "D̲ø̲d̲e̲n̲s̲ ̲p̲ø̲l̲s̲e̲ ̲☠̲\n",
+            '',
+            0,
+            '-S includes space');
+    testcmd("echo Sausage of death ☠ | $CMD -sS",
+            "S̶a̶u̶s̶a̶g̶e̶ ̶o̶f̶ ̶d̶e̶a̶t̶h̶ ̶☠̶\n",
+            '',
+            0,
+            'Strikethrough, -S includes space');
+    testcmd("echo S̲t̲a̲n̲d̲a̲r̲d̲ A̲S̲C̲I̲I̲ h̲e̲r̲e̲ | $CMD -d",
             "Standard ASCII here\n",
             "",
             0,
             "-d option deletes underline");
-    testcmd("echo S̶t̶a̶n̶d̶a̶r̶d̶ ̶A̶S̶C̶I̶I̶ ̶h̶e̶r̶e̶ | $CMD -ds",
+    testcmd("echo S̶t̶a̶n̶d̶a̶r̶d̶ A̶S̶C̶I̶I̶ h̶e̶r̶e̶ | $CMD -ds",
             "Standard ASCII here\n",
             "",
             0,
             "-ds deletes strikethrough");
-    testcmd("echo S̲t̲a̲n̲d̲a̲r̲d̲ ̲A̲S̲C̲I̲I̲ ̲h̲e̲r̲e̲ | $CMD -ds",
-            "S̲t̲a̲n̲d̲a̲r̲d̲ ̲A̲S̲C̲I̲I̲ ̲h̲e̲r̲e̲\n",
+    testcmd("echo S̲t̲a̲n̲d̲a̲r̲d̲ A̲S̲C̲I̲I̲ h̲e̲r̲e̲ | $CMD -ds",
+            "S̲t̲a̲n̲d̲a̲r̲d̲ A̲S̲C̲I̲I̲ h̲e̲r̲e̲\n",
             "",
             0,
             "-ds doesn't delete underline");
-    testcmd("echo S̶t̶a̶n̶d̶a̶r̶d̶ ̶A̶S̶C̶I̶I̶ ̶h̶e̶r̶e̶ | $CMD -d",
-            "S̶t̶a̶n̶d̶a̶r̶d̶ ̶A̶S̶C̶I̶I̶ ̶h̶e̶r̶e̶\n",
+    testcmd("echo S̶t̶a̶n̶d̶a̶r̶d̶ A̶S̶C̶I̶I̶ h̶e̶r̶e̶ | $CMD -d",
+            "S̶t̶a̶n̶d̶a̶r̶d̶ A̶S̶C̶I̶I̶ h̶e̶r̶e̶\n",
             "",
             0,
             "-d doesn't delete strikethrough");
-    testcmd("echo B̲æ̲æ̲æ̲d̲i̲ ̲🐑̲ | $CMD -d",
+    testcmd("echo B̲æ̲æ̲æ̲d̲i̲ 🐑̲ | $CMD -d",
             "Bææædi 🐑\n",
             "",
             0,
             "-d option deletes underline from UTF-8 string");
-    testcmd("echo B̶æ̶æ̶æ̶d̶i̶ ̶🐑̶ | $CMD -ds",
+    testcmd("echo B̶æ̶æ̶æ̶d̶i̶ 🐑̶ | $CMD -ds",
             "Bææædi 🐑\n",
             "",
             0,
