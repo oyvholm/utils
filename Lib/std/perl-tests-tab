@@ -199,7 +199,7 @@ sub create_file {
 	my ($file, $text) = @_;
 	my $retval = 0;
 
-	open(my $fp, ">$file") or return 0;
+	open(my $fp, ">", $file) or return 0;
 	print($fp $text);
 	close($fp);
 	$retval = is(file_data($file), $text,
