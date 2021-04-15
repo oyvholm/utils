@@ -24,8 +24,8 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD_BASENAME = "age";
-our $CMD = "../$CMD_BASENAME";
+our $CMDB = "age";
+our $CMD = "../$CMDB";
 
 our %Opt = (
 
@@ -160,7 +160,7 @@ sub testcmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -188,7 +188,7 @@ sub likecmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -252,7 +252,7 @@ sub usage {
 
 Usage: $progname [options]
 
-Contains tests for the $CMD_BASENAME(1) program.
+Contains tests for the $CMDB(1) program.
 
 Options:
 

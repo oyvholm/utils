@@ -24,8 +24,8 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD_BASENAME = "ydid";
-our $CMD = "../$CMD_BASENAME";
+our $CMDB = "ydid";
+our $CMD = "../$CMDB";
 
 our %Opt = (
 
@@ -133,29 +133,29 @@ sub test_executable {
 	diag("Executing test_executable()");
 	testcmd("$CMD",
 	        "",
-	        "$CMD_BASENAME: No URL specified\n",
+	        "$CMDB: No URL specified\n",
 	        1,
 	        'No URL specified');
 	testcmd("$CMD https://doesntexist.invalid",
 	        "",
-	        "$CMD_BASENAME: Unknown URL format\n",
+	        "$CMDB: Unknown URL format\n",
 	        1,
 	        'Unknown URL format');
 	diag("Plain id");
 	test_yt_url($id, $id, $deburl{'yt3'}, "Plain id");
 	testcmd("$CMD " . "a" x 10,
 	        "",
-	        "$CMD_BASENAME: Unknown URL format\n",
+	        "$CMDB: Unknown URL format\n",
 	        1,
 	        'Plain id, one character too short');
 	testcmd("$CMD " . "a" x 12,
 	        "",
-	        "$CMD_BASENAME: Unknown URL format\n",
+	        "$CMDB: Unknown URL format\n",
 	        1,
 	        'Plain id, one character too long');
 	testcmd("$CMD aaaaa,aaaaa",
 	        "",
-	        "$CMD_BASENAME: Invalid Youtube ID\n",
+	        "$CMDB: Invalid Youtube ID\n",
 	        1,
 	        'Plain id with invalid character');
 
@@ -166,13 +166,13 @@ sub test_executable {
 		for my $w ("www.", "m.", "") {
 			testcmd("$CMD $p${w}youtube.com/watch?v=",
 				"",
-				"$CMD_BASENAME: Invalid URL\n",
+				"$CMDB: Invalid URL\n",
 				1,
 				"v= has no id, $p$w*");
 
 			testcmd("$CMD $p${w}youtube.com/watch?v=abcde,ghijk",
 				"",
-				"$CMD_BASENAME: Invalid URL\n",
+				"$CMDB: Invalid URL\n",
 				1,
 				"v= contains invalid character, $p$w*");
 			$url = "$p${w}youtube.com/watch?v=$id";
@@ -189,13 +189,13 @@ sub test_executable {
 			diag($deburl{'yt2'});
 			testcmd("$CMD $p${w}youtu\.be/",
 				"",
-				"$CMD_BASENAME: Invalid URL\n",
+				"$CMDB: Invalid URL\n",
 				1,
 				"Missing id in $deburl{'yt2'}, $p$w*");
 
 			testcmd("$CMD $p${w}youtu\.be/abcde,ghijk",
 				"",
-				"$CMD_BASENAME: Invalid URL\n",
+				"$CMDB: Invalid URL\n",
 				1,
 				"Invalid character in $deburl{'yt2'}, $p$w*");
 
@@ -215,13 +215,13 @@ sub test_executable {
 			$url = "$p${w}twitter.com/$twname/status/";
 			testcmd("$CMD $url",
 				"",
-				"$CMD_BASENAME: Unknown URL format\n",
+				"$CMDB: Unknown URL format\n",
 				1,
 				"Missing Twitter ID, $p$w*");
 			$url = "$p${w}twitter.com/$twname/status/abc";
 			testcmd("$CMD $url",
 				"",
-				"$CMD_BASENAME: Unknown URL format\n",
+				"$CMDB: Unknown URL format\n",
 				1,
 				"Non-digit in Twitter ID, $p$w*");
 		}
@@ -249,12 +249,12 @@ sub test_executable {
 			          "&usg=AOvVaw3c5zJLPXOndHDXvLWs-vXO";
 			testcmd("$CMD -vv '$url'",
 			        "$goid\n",
-			        "$CMD_BASENAME: url = \"$url\"\n" .
-			          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
-			          "$CMD_BASENAME: url = " .
+			        "$CMDB: url = \"$url\"\n" .
+			          "$CMDB: Found $deburl{'go1'}\n" .
+			          "$CMDB: url = " .
 			            "\"https://www.youtube.com/watch?" .
 			            "v=$goid\"\n" .
-			          "$CMD_BASENAME: Found $deburl{'yt1'}\n",
+			          "$CMDB: Found $deburl{'yt1'}\n",
 			        0,
 			        "$p${w}google.com url to Youtube video");
 			my $egoid = $goid;
@@ -262,13 +262,13 @@ sub test_executable {
 			$url =~ s/$goid/$egoid/;
 			testcmd("$CMD -vv '$url'",
 			        "",
-			        "$CMD_BASENAME: url = \"$url\"\n" .
-			          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
-			          "$CMD_BASENAME: url = " .
+			        "$CMDB: url = \"$url\"\n" .
+			          "$CMDB: Found $deburl{'go1'}\n" .
+			          "$CMDB: url = " .
 			            "\"https://www.youtube.com/watch?" .
 			            "v=$egoid\"\n" .
-			          "$CMD_BASENAME: Found $deburl{'yt1'}\n" .
-			          "$CMD_BASENAME: Invalid URL\n",
+			          "$CMDB: Found $deburl{'yt1'}\n" .
+			          "$CMDB: Invalid URL\n",
 			        1,
 			        "$p${w}google.com url has invalid char " .
 			          "in id");
@@ -279,12 +279,12 @@ sub test_executable {
 			            "status%2F$twid%3Flang%3Den";
 			testcmd("$CMD -vv '$url'",
 			        "$twid\n",
-			        "$CMD_BASENAME: url = \"$url\"\n" .
-			          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
-			          "$CMD_BASENAME: url = " .
+			        "$CMDB: url = \"$url\"\n" .
+			          "$CMDB: Found $deburl{'go1'}\n" .
+			          "$CMDB: url = " .
 			            "\"https://twitter.com/abc/status/$twid" .
 			            "?lang=en\"\n" .
-			          "$CMD_BASENAME: Found $deburl{'tw1'}\n",
+			          "$CMDB: Found $deburl{'tw1'}\n",
 			        0,
 			        "$p${w}google.com url with twitter url");
 		}
@@ -313,13 +313,13 @@ sub test_create_url_option {
 		$gurl =~ s/$id/$eid/;
 		testcmd("$CMD -vv $o '$gurl'",
 		        "",
-		        "$CMD_BASENAME: url = \"$gurl\"\n" .
-		          "$CMD_BASENAME: Found $deburl{'go1'}\n" .
-		          "$CMD_BASENAME: url = " .
+		        "$CMDB: url = \"$gurl\"\n" .
+		          "$CMDB: Found $deburl{'go1'}\n" .
+		          "$CMDB: url = " .
 		            "\"https://www.youtube.com/watch?" .
 		            "v=$eid\"\n" .
-		          "$CMD_BASENAME: Found $deburl{'yt1'}\n" .
-		          "$CMD_BASENAME: Invalid URL\n",
+		          "$CMDB: Found $deburl{'yt1'}\n" .
+		          "$CMDB: Invalid URL\n",
 		        1,
 		        "Invalid char in google url, $o");
 
@@ -344,8 +344,8 @@ sub test_create_url_option {
 
 sub test_c_url {
 	my ($o, $arg, $url, $id, $deburl) = @_;
-	my $debtxt = "$CMD_BASENAME: url = \"$arg\"\n" .
-	             "$CMD_BASENAME: Found $deburl\n";
+	my $debtxt = "$CMDB: url = \"$arg\"\n" .
+	             "$CMDB: Found $deburl\n";
 
 	if ($deburl eq $deburl{'go1'}) {
 		$debtxt .= "ydid: url = \"https://www.youtube.com/" .
@@ -361,8 +361,8 @@ sub test_yt_url {
 
 	testcmd("$CMD -vv '$url'",
 	        "$id\n",
-	        "$CMD_BASENAME: url = \"$url\"\n" .
-	        "$CMD_BASENAME: Found $deburl\n",
+	        "$CMDB: url = \"$url\"\n" .
+	        "$CMDB: Found $deburl\n",
 	        0,
 	        $desc);
 }
@@ -375,7 +375,7 @@ sub testcmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -403,7 +403,7 @@ sub likecmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -467,7 +467,7 @@ sub usage {
 
 Usage: $progname [options]
 
-Contains tests for the $CMD_BASENAME(1) program.
+Contains tests for the $CMDB(1) program.
 
 Options:
 

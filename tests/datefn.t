@@ -24,8 +24,8 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD_BASENAME = "datefn";
-our $CMD = "../$CMD_BASENAME";
+our $CMDB = "datefn";
+our $CMD = "../$CMDB";
 
 our %Opt = (
 
@@ -415,7 +415,7 @@ sub test_exif_option {
                 "Try to read EXIF from empty file ($e)");
         testcmd("$CMD -n -v $e empty",
                 "",
-                "$CMD_BASENAME: empty: No EXIF data found in file\n",
+                "$CMDB: empty: No EXIF data found in file\n",
                 0,
                 "Read EXIF from empty file, -v prints message ($e)");
         diag("Test -E/--exif-tag");
@@ -445,7 +445,7 @@ sub test_exif_option {
                 "Use non-existing EXIF tag with --exif-tag ($e)");
         testcmd("$CMD -nv $e -E NotFound small.$testpic",
                 "",
-                "$CMD_BASENAME: small.$testpic: No EXIF data found in file\n",
+                "$CMDB: small.$testpic: No EXIF data found in file\n",
                 0,
                 "Non-existing EXIF tag with -E and -v ($e)");
     }
@@ -593,7 +593,7 @@ sub testcmd {
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+    my $TMP_STDERR = "$CMDB-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -622,7 +622,7 @@ sub likecmd {
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+    my $TMP_STDERR = "$CMDB-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -674,7 +674,7 @@ sub usage {
 
 Usage: $progname [options]
 
-Contains tests for the $CMD_BASENAME(1) program.
+Contains tests for the $CMDB(1) program.
 
 Options:
 

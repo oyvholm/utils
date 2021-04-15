@@ -26,8 +26,8 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD_BASENAME = "mktar";
-our $CMD = "../$CMD_BASENAME";
+our $CMDB = "mktar";
+our $CMD = "../$CMDB";
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 
@@ -94,13 +94,13 @@ sub main {
 	}
 	ok(mkdir("$logdir"), "mkdir $logdir");
 
-	test_numeric_owner_option($CMD, $CMD_BASENAME, $logdir);
-	test_output_dir_option($CMD, $CMD_BASENAME, $logdir);
-	test_prefix_option($CMD, $CMD_BASENAME, $logdir);
-	test_random_mac_option($CMD, $CMD_BASENAME, $logdir);
-	test_remove_files_option($CMD, $CMD_BASENAME, $logdir);
-	test_stdout_option($CMD, $CMD_BASENAME, $logdir);
-	test_no_uuid_option($CMD, $CMD_BASENAME, $logdir);
+	test_numeric_owner_option($CMD, $CMDB, $logdir);
+	test_output_dir_option($CMD, $CMDB, $logdir);
+	test_prefix_option($CMD, $CMDB, $logdir);
+	test_random_mac_option($CMD, $CMDB, $logdir);
+	test_remove_files_option($CMD, $CMDB, $logdir);
+	test_stdout_option($CMD, $CMDB, $logdir);
+	test_no_uuid_option($CMD, $CMDB, $logdir);
 	# FIXME: Add more tests, cover all options
 	diag("Clean up");
 	testcmd("rm -rf \"$logdir\"", "", "", 0,
@@ -147,7 +147,7 @@ sub test_standard_options {
 }
 
 sub test_numeric_owner_option {
-	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my ($CMD, $CMDB, $logdir) = @_;
 
 	diag("Test --numeric-owner option");
 	SKIP: {
@@ -190,7 +190,7 @@ sub test_numeric_owner_option {
 }
 
 sub test_output_dir_option {
-	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my ($CMD, $CMDB, $logdir) = @_;
 	my $pref = "output-dir";
 	my $outd = "outd.tmp";
 
@@ -232,7 +232,7 @@ sub test_output_dir_option {
 }
 
 sub test_prefix_option {
-	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my ($CMD, $CMDB, $logdir) = @_;
 
 	extract_tar_file("d.tar");
 	for my $p ("-P", "--prefix") {
@@ -254,7 +254,7 @@ sub test_prefix_option {
 }
 
 sub test_random_mac_option {
-	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my ($CMD, $CMDB, $logdir) = @_;
 
 	diag("Test -m/--random-mac option");
 	extract_tar_file("d.tar");
@@ -282,7 +282,7 @@ sub test_random_mac_option {
 }
 
 sub test_remove_files_option {
-	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my ($CMD, $CMDB, $logdir) = @_;
 
 	diag("Test -r/--remove-files option");
 	for my $opt ("-r", "--remove-files") {
@@ -340,7 +340,7 @@ sub test_remove_files_option {
 }
 
 sub test_stdout_option {
-	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my ($CMD, $CMDB, $logdir) = @_;
 
 	diag("Test -O/--stdout option");
 	if (-e "d") {
@@ -370,7 +370,7 @@ sub test_stdout_option {
 }
 
 sub test_no_uuid_option {
-	my ($CMD, $CMD_BASENAME, $logdir) = @_;
+	my ($CMD, $CMDB, $logdir) = @_;
 
 	diag("Test --no-uuid option");
 	extract_tar_file("d.tar");
@@ -427,7 +427,7 @@ sub testcmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -455,7 +455,7 @@ sub likecmd {
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
 	my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-	my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+	my $TMP_STDERR = "$CMDB-stderr.tmp";
 	my $retval = 1;
 
 	if (defined($Exp_stderr)) {
@@ -519,7 +519,7 @@ sub usage {
 
 Usage: $progname [options]
 
-Contains tests for the $CMD_BASENAME(1) program.
+Contains tests for the $CMDB(1) program.
 
 Options:
 

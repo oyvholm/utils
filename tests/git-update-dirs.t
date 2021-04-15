@@ -24,8 +24,8 @@ use Getopt::Long;
 
 local $| = 1;
 
-our $CMD_BASENAME = "git-update-dirs";
-our $CMD = "../$CMD_BASENAME";
+our $CMDB = "git-update-dirs";
+our $CMD = "../$CMDB";
 
 our %Opt = (
 
@@ -338,7 +338,7 @@ sub test_repo {
     diag("Run tests in $repo");
     $current_repo = $repo;
     ok(chdir($repo), "chdir $repo") || BAIL_OUT('chdir error');
-    $CMD = "../../../$CMD_BASENAME";
+    $CMD = "../../../$CMDB";
     if (!-e $CMD) {
         BAIL_OUT("test_repo(): \$CMD is '$CMD', that's wrong");
     }
@@ -754,7 +754,7 @@ END
 
     # }}}
     ok(chdir('..'), "$repo: chdir ..");
-    $CMD = "../../$CMD_BASENAME";
+    $CMD = "../../$CMDB";
     return;
     # }}}
 } # test_repo()
@@ -796,7 +796,7 @@ sub test_disabled {
     if ($longopt =~ /^(ga-dropget|ga-dropunused|ga-moveunused)$/) {
         system("git config git-update-dirs.no-ga-sync true");
     }
-    defined($command) || ($command = "../../../$CMD_BASENAME -n --$longopt .");
+    defined($command) || ($command = "../../../$CMDB -n --$longopt .");
     testcmd($command,
         "================ . ================\n\n",
         '',
@@ -821,7 +821,7 @@ sub testcmd {
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+    my $TMP_STDERR = "$CMDB-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -850,7 +850,7 @@ sub likecmd {
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+    my $TMP_STDERR = "$CMDB-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -919,7 +919,7 @@ sub usage {
 
 Usage: $progname [options]
 
-Contains tests for the $CMD_BASENAME(1) program.
+Contains tests for the $CMDB(1) program.
 
 Options:
 

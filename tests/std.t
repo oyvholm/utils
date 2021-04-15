@@ -26,8 +26,8 @@ use IPC::Open3;
 
 local $| = 1;
 
-our $CMD_BASENAME = "std";
-our $CMD = "../$CMD_BASENAME";
+our $CMDB = "std";
+our $CMD = "../$CMDB";
 my $Lh = "[0-9a-fA-F]";
 my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
 
@@ -302,7 +302,7 @@ sub testcmd {
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+    my $TMP_STDERR = "$CMDB-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -331,7 +331,7 @@ sub likecmd {
     my $stderr_cmd = '';
     my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
     my $Txt = join('', $cmd_outp_str, defined($Desc) ? $Desc : '');
-    my $TMP_STDERR = "$CMD_BASENAME-stderr.tmp";
+    my $TMP_STDERR = "$CMDB-stderr.tmp";
     my $retval = 1;
 
     if (defined($Exp_stderr)) {
@@ -400,7 +400,7 @@ sub usage {
 
 Usage: $progname [options]
 
-Contains tests for the $CMD_BASENAME(1) program.
+Contains tests for the $CMDB(1) program.
 
 Options:
 
