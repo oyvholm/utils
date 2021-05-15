@@ -98,6 +98,13 @@ END
         BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
     ok(chdir($Tmptop), "chdir [Tmptop]") ||
         BAIL_OUT("$progname: $Tmptop: chdir error, can't continue\n");
+    chomp($ENV{'HOME'} = `pwd`);
+    testcmd('git config --global user.name "Suttleif Fisen"', '', '', 0,
+            'git config --global user.name "Suttleif Fisen"');
+    testcmd('git config --global user.email suttleif@example.com', '', '', 0,
+            'git config --global user.email suttleif@example.com');
+    testcmd('git config --global init.defaultbranch master', '', '', 0,
+            'git config --global init.defaultbranch master');
     $CMD = "../$CMD";
 
     diag('Testing -h (--help) option...');
@@ -306,6 +313,8 @@ END
     );
 
     # }}}
+    ok(unlink(".gitconfig", "Delete .gitconfig"));
+    testcmd("rm -rf .ssh", "", "", 0, "Delete .ssh/, created by git-annex");
     ok(chdir(".."), "chdir ..");
     ok(-d $Tmptop, "[Tmptop] exists");
     ok(rmdir($Tmptop), "rmdir [Tmptop]");
