@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mob
-VERSION=0.1.0
+VERSION=0.1.1
 
 opt_help=0
 opt_quiet=0
@@ -69,10 +69,11 @@ if test -z "$bytes"; then
 	else
 		echo -n "$t_bold$t_red"
 	fi
-	spar mobil -sg | numfmt --to=si --format=%7.2f --invalid=ignore
+	spar mobil -sg | numfmt --to=si --format=%7.2f --invalid=ignore \
+	                        --round=nearest
 	echo -n "$t_reset"
 else
-	spar mobil -sgc $(numfmt --from si $bytes) >/dev/null
+	spar mobil -sgc $(numfmt --from si --round=nearest $bytes) >/dev/null
 	$0
 fi
 
