@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.15.2
+VERSION=0.15.3
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -145,10 +145,7 @@ if test "$1" = "copnum"; then
     else
         git annex numcopies
     fi
-    exit
-fi
-
-if test "$1" = "fsck"; then
+elif test "$1" = "fsck"; then
     shift
     git-annex fsck "$@" 2>&1 | ga-fsck-size
 elif test "$1" = "max-bytes"; then
