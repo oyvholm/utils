@@ -14,6 +14,7 @@ test:
 	./fromhex.t
 	./ga-fsck-size.t
 	./ga-sumsize.t
+	./ga.t
 	./git-dangling.t
 	./git-dbr.t
 	./git-scanrefs.t
@@ -49,6 +50,7 @@ testport:
 	./fromhex.t           # freebsd:ok   netbsd:ok   openbsd:ok
 	# ./ga-fsck-size.t    # freebsd:fail netbsd:fail openbsd:fail
 	# ./ga-sumsize.t      # freebsd:fail netbsd:fail openbsd:fail
+	./ga.t                # freebsd:     netbsd:     openbsd:
 	./git-dangling.t      # freebsd:ok   netbsd:ok   openbsd:ok
 	./git-dbr.t           # freebsd:ok   netbsd:ok   openbsd:ok
 	./git-scanrefs.t      # freebsd:ok   netbsd:ok   openbsd:ok
