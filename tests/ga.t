@@ -121,6 +121,31 @@ sub test_standard_options {
 }
 
 sub test_executable {
+	my $Tmptop = "tmp-$CMDB-t-$$-" . substr(rand, 2, 8);
+
+	ok(mkdir($Tmptop), "mkdir [Tmptop]");
+	safe_chdir($Tmptop);
+
+	diag("Clean up");
+	safe_chdir("..");
+	ok(rmdir($Tmptop), "rmdir [Tmptop]");
+
+	return;
+}
+
+sub safe_chdir {
+	my $dir = shift;
+
+	ok(chdir($dir), "chdir $dir")
+	|| BAIL_OUT("$progname: Can't chdir to $dir, aborting");
+	if ($dir eq "..") {
+		$CMD =~ s!^\.\./!!
+		|| BAIL_OUT('safe_chdir(): $dir is "..",'
+		            . ' but $CMD doesn\'t start with "../"');
+	} else {
+		$CMD = "../$CMD";
+	}
+
 	return;
 }
 
