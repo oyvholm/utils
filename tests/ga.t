@@ -31,6 +31,8 @@ our $CMD = "../$CMDB";
 our %Opt = (
 
 	'all' => 0,
+	'git' => 'git',
+	'git-annex' => 'git-annex',
 	'help' => 0,
 	'quiet' => 0,
 	'todo' => 0,
@@ -49,6 +51,8 @@ Getopt::Long::Configure('bundling');
 GetOptions(
 
 	'all|a' => \$Opt{'all'},
+	'git-annex=s' => \$Opt{'git-annex'},
+	'git=s' => \$Opt{'git'},
 	'help|h' => \$Opt{'help'},
 	'quiet|q+' => \$Opt{'quiet'},
 	'todo|t' => \$Opt{'todo'},
@@ -64,6 +68,8 @@ if ($Opt{'version'}) {
 	exit(0);
 }
 
+my $GIT = $Opt{'git'};
+my $GIT_ANNEX = $Opt{'git-annex'};
 my $exec_version = `$CMD --version`;
 
 exit(main());
@@ -257,6 +263,10 @@ Options:
 
   -a, --all
     Run all tests, also TODOs.
+  --git PATH
+    Specify path to alternative git(1) executable.
+  --git-annex PATH
+    Specify path to alternative git-annex(1) executable.
   -h, --help
     Show this help.
   -q, --quiet
