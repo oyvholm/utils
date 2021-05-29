@@ -159,11 +159,30 @@ sub test_executable {
 	     'SUUID_LOGDIR environment variable contains "suuid_logdir"');
 	ok(mkdir($suuid_logdir), "mkdir suuid_logdir");
 
+	test_init_command();
+	my $suuid_file = glob("$suuid_logdir/*.xml");
+	like($suuid_file, '/.*\.xml$/', 'suuid file found by glob()');
+
 	diag("Clean up");
+	ok(unlink($suuid_file), 'Delete suuid file');
 	ok(rmdir($suuid_logdir), 'Delete suuid_logdir');
+	delete_dir(".ssh");
 	ok(unlink(".gitconfig"), "Delete .gitconfig");
 	safe_chdir("..");
 	ok(rmdir($Tmptop), "rmdir [Tmptop]");
+
+	return;
+}
+
+sub test_init_command {
+	diag("init");
+	init_annex("t_init");
+	safe_chdir("t_init");
+	ok(-d ".git/annex", ".git/annex directory exists");
+	like(`$GIT config --get annex.uuid`, "/^$v1_templ\\n/",
+	     "UUID is version 1");
+	safe_chdir("..");
+	delete_dir("t_init");
 
 	return;
 }
