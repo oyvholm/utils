@@ -146,7 +146,14 @@ sub test_executable {
 	        "$GIT config --global annex.backend SHA256");
 	ok(-f ".gitconfig", ".gitconfig exists");
 
+	my $suuid_logdir = "$ENV{'HOME'}/suuid_logdir";
+	$ENV{'SUUID_LOGDIR'} = $suuid_logdir;
+	like($ENV{'SUUID_LOGDIR'}, "/suuid_logdir\$/",
+	     'SUUID_LOGDIR environment variable contains "suuid_logdir"');
+	ok(mkdir($suuid_logdir), "mkdir suuid_logdir");
+
 	diag("Clean up");
+	ok(rmdir($suuid_logdir), 'Delete suuid_logdir');
 	ok(unlink(".gitconfig"), "Delete .gitconfig");
 	safe_chdir("..");
 	ok(rmdir($Tmptop), "rmdir [Tmptop]");
