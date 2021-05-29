@@ -132,7 +132,22 @@ sub test_executable {
 	ok(mkdir($Tmptop), "mkdir [Tmptop]");
 	safe_chdir($Tmptop);
 
+	chomp($ENV{'HOME'} = `pwd`);
+	like($ENV{'HOME'}, "/$Tmptop\$/",
+	     "HOME environment variable contains [Tmptop]");
+	testcmd("$GIT config --global user.name 'Suttleif Fisen'", "", "", 0,
+	        "$GIT config --global user.name 'Suttleif Fisen'");
+	testcmd("$GIT config --global user.email suttleif\@example.com",
+	        "", "", 0,
+	        "$GIT config --global user.email suttleif\@example.com");
+	testcmd("$GIT config --global init.defaultbranch master", "", "", 0,
+	        "$GIT config --global init.defaultbranch master");
+	testcmd("$GIT config --global annex.backend SHA256", "", "", 0,
+	        "$GIT config --global annex.backend SHA256");
+	ok(-f ".gitconfig", ".gitconfig exists");
+
 	diag("Clean up");
+	ok(unlink(".gitconfig"), "Delete .gitconfig");
 	safe_chdir("..");
 	ok(rmdir($Tmptop), "rmdir [Tmptop]");
 
