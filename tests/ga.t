@@ -162,6 +162,7 @@ sub test_executable {
 	test_init_command();
 	my $suuid_file = glob("$suuid_logdir/*.xml");
 	like($suuid_file, '/.*\.xml$/', 'suuid file found by glob()');
+	test_copnum_command();
 
 	diag("Clean up");
 	ok(unlink($suuid_file), 'Delete suuid file');
@@ -183,6 +184,24 @@ sub test_init_command {
 	     "UUID is version 1");
 	safe_chdir("..");
 	delete_dir("t_init");
+
+	return;
+}
+
+sub test_copnum_command {
+	diag("copnum");
+	init_annex("t_copnum");
+	safe_chdir("t_copnum");
+	testcmd("$CMD copnum", "1\n", "", 0, "copnum is 1 by default");
+	testcmd("$GIT_ANNEX numcopies 3",
+	        "numcopies 3 ok\n"
+	        . "(recording state in git...)\n",
+	        "",
+	        0,
+	        "Set numcopies to 3");
+	testcmd("$CMD copnum", "3\n", "", 0, "copnum is 3");
+	safe_chdir("..");
+	delete_dir("t_copnum");
 
 	return;
 }
