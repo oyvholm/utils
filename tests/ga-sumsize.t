@@ -16,7 +16,13 @@ use strict;
 use warnings;
 
 BEGIN {
-    use Test::More qw{no_plan};
+    use Test::More;
+    if (eval { require Number::Bytes::Human; }) {
+        plan "no_plan";
+    } else {
+        plan "skip_all" => "Number::Bytes::Human is not installed,"
+                           . " skipping tests";
+    }
     # use_ok() goes here
 }
 
