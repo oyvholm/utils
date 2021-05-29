@@ -86,6 +86,10 @@ sub main {
 	}
 
 	test_standard_options();
+	if (`$GIT_ANNEX version 2>/dev/null` !~ /^git-annex version/) {
+		diag("git-annex is not installed here, skipping tests");
+		return 0;
+	}
 	test_executable();
 
 	diag('========== BEGIN version info ==========');
