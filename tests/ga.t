@@ -28,6 +28,9 @@ our $CMDB = "ga";
 
 our $CMD = "../$CMDB";
 
+my $Lh = "[0-9a-fA-F]";
+my $v1_templ = "$Lh\{8}-$Lh\{4}-1$Lh\{3}-$Lh\{4}-$Lh\{12}";
+
 our %Opt = (
 
 	'all' => 0,
@@ -161,6 +164,58 @@ sub test_executable {
 	ok(unlink(".gitconfig"), "Delete .gitconfig");
 	safe_chdir("..");
 	ok(rmdir($Tmptop), "rmdir [Tmptop]");
+
+	return;
+}
+
+sub delete_dir {
+	my $dir = shift;
+
+	SKIP: {
+		skip("delete_dir(): $dir doesn't exist", 6) unless (-d $dir);
+		testcmd("chmod +w -R \"$dir\"", "", "", 0,
+		        "Make everything in $dir/ writable");
+		testcmd("rm -rf \"$dir\"", "", "", 0,
+		        "Delete $dir/");
+	}
+
+	return;
+}
+
+sub git_init {
+	my $dir = shift;
+
+	ok(!-e $dir, "git_init(): $dir doesn't exist")
+	|| BAIL_OUT("git_init(): $dir already exists, aborting");
+	likecmd("$GIT init \"$dir\"", '/.*/', '/^$/', 0, "$GIT init \"$dir\"");
+
+	return;
+}
+
+sub init_annex {
+	my $dir = shift;
+
+	git_init($dir);
+	safe_chdir($dir);
+	likecmd("$CMD init",
+	        '/^'
+	        . 'init \S+@\S+:~\/'
+	        . $dir
+	        . " .*" # New versions print "(scanning for unlocked files...)"
+	        . 'ok\n'
+	        . '.*'
+	        . '/s',
+	        "/^$v1_templ\\n\$/",
+	        0,
+	        "ga init in $dir");
+	likecmd("$CMD info",
+	        "/$v1_templ -- "
+	        . '\S+@\S+:~\/' . $dir . ' \[here\]\n'
+	        . '/',
+	        '/Have disabled git annex pre-commit/',
+	        0,
+	        "ga info in $dir");
+	safe_chdir("..");
 
 	return;
 }
