@@ -345,14 +345,17 @@ sub file_data {
 
 sub create_file {
 	# Create new file and fill it with data
-	my ($file, $text) = @_;
+	my ($file, $text, $desc) = @_;
 	my $retval = 0;
+
+	if (!defined($desc) || !length($desc)) {
+		$desc = "$file was successfully created";
+	}
 
 	open(my $fp, ">", $file) or return 0;
 	print($fp $text);
 	close($fp);
-	$retval = is(file_data($file), $text,
-	             "$file was successfully created");
+	$retval = is(file_data($file), $text, $desc);
 
 	return $retval; # 0 if error, 1 if ok
 }
