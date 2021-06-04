@@ -220,6 +220,59 @@ sub delete_dir {
 	return;
 }
 
+sub ga_add {
+	my ($file, $desc) = @_;
+
+	if (!defined($desc) || !length($desc)) {
+		$desc = "ga add $file";
+	}
+
+	likecmd("$CMD add $file",
+	        '/^add .*ok\n/s',
+	        '/^$/',
+	        0,
+	        $desc);
+
+	return;
+}
+
+sub ga_drop {
+	my ($file, $desc) = @_;
+
+	if (!defined($desc) || !length($desc)) {
+		$desc = "ga add $file";
+	}
+
+	ok(-e $file, "$file exists");
+	likecmd("$CMD drop --force $file",
+	        '/^drop .* ok\n/',
+	        '/^$/',
+	        0,
+	        $desc);
+
+	return;
+}
+
+sub git_commit {
+	my ($logmsg, $desc) = @_;
+
+	if (!defined($logmsg) || !length($logmsg)) {
+		BAIL_OUT('git_commit(): $logmsg not defined');
+	}
+
+	likecmd("$GIT commit -m \"$logmsg\"",
+	        '/'
+	        . '.*'
+	        . quotemeta($logmsg)
+	        . '.*'
+	        . '/',
+	        '/^$/',
+	        0,
+	        $desc);
+
+	return;
+}
+
 sub git_init {
 	my $dir = shift;
 
