@@ -77,6 +77,7 @@ testport:
 
 .PHONY: clean
 clean:
+	chmod -R +w tmp-* 2>/dev/null || true
 	rm -rf *.tmp tmp-*
 	rm -rf *-files/*.tmp *-files/tmp-*
 	rm -f install-modules

@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.15.3
+VERSION=0.16.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -28,6 +28,9 @@ Usage: $progname [options] git-annex_commands_and_options
 The following commands (first non-option on the command line) are 
 customised:
 
+  chk
+    Verify the file contents with ga-key(1) against the key stored in 
+    the symlink. Only supports SHA256 for now.
   copnum
     Like "git annex numcopies", but always return a number. If numcopies 
     is not defined, return 1.
@@ -139,7 +142,52 @@ if test -f "$precommit"; then
     }
 fi
 
-if test "$1" = "copnum"; then
+exitval=0
+sha256key_regexp='/SHA256-s[0-9]+--[0-9a-f]{64}$'
+
+if test "$1" = "chk"; then
+    shift
+    for f in "$@"; do
+        if test -L "$f" -a -d "$f"; then
+            echo $progname: $f: Is a symlink to a directory >&2
+            continue
+        fi
+        if test -d "$f"; then
+            echo $progname: $f: Is a directory >&2
+            continue
+        fi
+        if test -L "$f" -a ! -e "$f"; then
+            if readlink "$f" | grep -Eq $sha256key_regexp; then
+                echo $progname: $f: File not present here >&2
+            else
+                echo $progname: $f: Broken symlink >&2
+            fi
+            continue
+        fi
+        if test ! -e "$f"; then
+            echo $progname: $f: File not found >&2
+            exitval=1
+            continue
+        fi
+        if test ! -L "$f"; then
+            echo $progname: $f: Not a symbolic link >&2
+            continue
+        fi
+        if ! readlink "$f" | grep -Eq $sha256key_regexp; then
+            echo $progname: $f: SHA256 key not found in symlink >&2
+            continue
+        fi
+        if test ! -r "$f"; then
+            echo $progname: $f: File is not readable by you >&2
+            exitval=1
+            continue
+        fi
+        key=$(ga-key "$f")
+        echo -n "$f "
+        readlink "$f" | grep -q $key && echo ok || { echo fail; exitval=1; }
+    done
+    exit $exitval
+elif test "$1" = "copnum"; then
     if test -n "$(ga numcopies | grep "is not set")"; then
         echo 1
     else
