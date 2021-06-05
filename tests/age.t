@@ -40,7 +40,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.0.0';
+our $VERSION = '0.0.0'; # Not used here, $CMD decides
 
 my %descriptions = ();
 
@@ -63,13 +63,16 @@ if ($Opt{'version'}) {
 	exit(0);
 }
 
+my $exec_version = `$CMD --version`;
+
 exit(main());
 
 sub main {
 	my $Retval = 0;
 
-	diag(sprintf('========== Executing %s v%s ==========',
-	             $progname, $VERSION));
+	diag('========== BEGIN version info ==========');
+	diag($exec_version);
+	diag('=========== END version info ===========');
 
 	if ($Opt{'todo'} && !$Opt{'all'}) {
 		goto todo_section;
@@ -77,6 +80,10 @@ sub main {
 
 	test_standard_options();
 	test_executable();
+
+	diag('========== BEGIN version info ==========');
+	diag($exec_version);
+	diag('=========== END version info ===========');
 
 	todo_section:
 	;
@@ -115,6 +122,7 @@ sub test_standard_options {
 	        '/^$/',
 	        0,
 	        'Option --version returns version number');
+
 	return;
 }
 
@@ -139,6 +147,8 @@ sub test_executable {
 	test_range("1904-02-28", "1904-03-01", 2 * $d, "");
 	test_range("1976-02-28", "1976-03-01", 2 * $d, "");
 	test_range("2000-02-28", "2000-03-01", 2 * $d, "");
+
+	return;
 }
 
 sub test_range {
@@ -150,12 +160,14 @@ sub test_range {
 	        "",
 	        0,
 	        "$CMD$opts \"$begin\" \"$end\"");
+
+	return;
 }
 
 sub testcmd {
 	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-	defined($descriptions{$Desc}) &&
-		BAIL_OUT("testcmd(): '$Desc' description is used twice");
+	defined($descriptions{$Desc})
+	&& BAIL_OUT("testcmd(): '$Desc' description is used twice");
 	$descriptions{$Desc} = 1;
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
@@ -182,8 +194,8 @@ sub testcmd {
 
 sub likecmd {
 	my ($Cmd, $Exp_stdout, $Exp_stderr, $Exp_retval, $Desc) = @_;
-	defined($descriptions{$Desc}) &&
-		BAIL_OUT("likecmd(): '$Desc' description is used twice");
+	defined($descriptions{$Desc})
+	&& BAIL_OUT("likecmd(): '$Desc' description is used twice");
 	$descriptions{$Desc} = 1;
 	my $stderr_cmd = '';
 	my $cmd_outp_str = $Opt{'verbose'} >= 1 ? "\"$Cmd\" - " : '';
@@ -217,6 +229,7 @@ sub file_data {
 	local $/ = undef;
 	$Txt = <$fp>;
 	close($fp);
+
 	return $Txt;
 }
 
@@ -225,7 +238,7 @@ sub create_file {
 	my ($file, $text) = @_;
 	my $retval = 0;
 
-	open(my $fp, ">$file") or return 0;
+	open(my $fp, ">", $file) or return 0;
 	print($fp $text);
 	close($fp);
 	$retval = is(file_data($file), $text,
@@ -237,6 +250,7 @@ sub create_file {
 sub print_version {
 	# Print program version
 	print("$progname $VERSION\n");
+
 	return;
 }
 
@@ -279,6 +293,7 @@ sub msg {
 
 	$verbose_level > $Opt{'verbose'} && return;
 	print(STDERR "$progname: $Txt\n");
+
 	return;
 }
 
