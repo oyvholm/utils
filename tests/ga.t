@@ -169,6 +169,7 @@ sub test_executable {
 	diag("Clean up");
 	ok(unlink($suuid_file), 'Delete suuid file');
 	ok(rmdir($suuid_logdir), 'Delete suuid_logdir');
+	delete_dir(".cache");
 	delete_dir(".ssh");
 	ok(unlink(".gitconfig"), "Delete .gitconfig");
 	safe_chdir("..");

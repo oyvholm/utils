@@ -314,6 +314,7 @@ END
 
     # }}}
     ok(unlink(".gitconfig", "Delete .gitconfig"));
+    testcmd("rm -rf .cache", "", "", 0, "Delete .cache/, created by git-annex");
     testcmd("rm -rf .ssh", "", "", 0, "Delete .ssh/, created by git-annex");
     ok(chdir(".."), "chdir ..");
     ok(-d $Tmptop, "[Tmptop] exists");
