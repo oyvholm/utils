@@ -155,11 +155,21 @@ sub test_range {
 	my ($begin, $end, $secs, $opts) = @_;
 
 	length($opts) && ($opts = " $opts");
+	chomp (my $dfmt = `echo $secs | datefmt`);
+
 	testcmd("$CMD$opts \"$begin\" \"$end\"",
-	        "$secs\n",
+	        "$dfmt\n",
 	        "",
 	        0,
 	        "$CMD$opts \"$begin\" \"$end\"");
+
+	for my $o ('-s', '--seconds') {
+		testcmd("$CMD $o$opts \"$begin\" \"$end\"",
+		        "$secs\n",
+		        "",
+		        0,
+		        "$CMD $o$opts \"$begin\" \"$end\"");
+	}
 
 	return;
 }

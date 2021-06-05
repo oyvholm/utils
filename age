@@ -8,15 +8,17 @@
 #==============================================================================
 
 progname=age
-VERSION=0.1.1
+VERSION=0.2.0
 
 opt_help=0
 opt_quiet=0
+opt_seconds=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-s|--seconds) opt_seconds=1; shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
 	--) shift; break ;;
@@ -49,6 +51,8 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -s, --seconds
+    Display seconds instead of the default datefmt(1) output.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -66,7 +70,7 @@ begin=$1
 end=now # Memento mori
 test -n "$2" && end=$2
 
-cat <<END | sqlite3
+cat <<END | sqlite3 | (test "$opt_seconds" = "1" && cat || datefmt)
 SELECT strftime('%s', datetime('$end'))
        - strftime('%s', datetime('$begin'));
 END
