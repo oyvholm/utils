@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=ga
-VERSION=0.16.0
+VERSION=0.17.0
 
 if test "$1" = "--version"; then
     echo $progname $VERSION
@@ -60,6 +60,8 @@ customised:
     on.
   md
     Shortcut for "metadata".
+  snp
+    Shortcut for "ga sync --no-push".
   sync
     If the Git config variable annex.autocommit is not "false", execute 
     "git wait-until-clean -u" before syncing, i.e., wait until the 
@@ -207,6 +209,9 @@ elif test "$1" = "max-bytes"; then
 elif test "$1" = "md"; then
     shift
     git-annex metadata "$@"
+elif test "$1" = "snp"; then
+    shift
+    ga sync --no-push "$@"
 elif test "$1" = "sync"; then
     if test "$(git config --get annex.autocommit)" != "false"; then
         git wait-until-clean -u
