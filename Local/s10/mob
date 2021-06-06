@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mob
-VERSION=0.1.1
+VERSION=0.2.0
 
 opt_help=0
 opt_quiet=0
@@ -40,6 +40,7 @@ if test "$opt_help" = "1"; then
 	cat <<END
 
 Usage: $progname [options] [bytes_used]
+       $progname [options] undo
 
 Options:
 
@@ -52,14 +53,34 @@ Options:
   --version
     Print version information.
 
+The "undo" command deletes the newest entry in the database. It also 
+prints an INSERT statement to stdout in case you regret the deletion.
+
 END
 	exit 0
 fi
 
+db=~/spar/mobil.spar
 t_bold=$(tput bold)
 t_green=$(tput setaf 2)
 t_red=$(tput setaf 1)
 t_reset=$(tput sgr0)
+
+if [ "$1" = "undo" ]; then
+	edate=$(sqlite3 $db "SELECT max(date) FROM account;")
+	ecurr=$(sqlite3 $db "SELECT current FROM account
+	                       WHERE date = '$edate';")
+	if [ -z "$edate" ]; then
+		echo $progname: $db: No entries found in account table >&2
+		exit
+	fi
+	echo $progname: Deleting entry \"$edate\" >&2
+	cat <<END | sqlite3 $db
+SELECT printf('INSERT INTO account VALUES(''%s'', %u);', '$edate', $ecurr);
+DELETE FROM account WHERE date = '$edate';
+END
+	exit
+fi
 
 bytes=$(echo -n "$1" | tr a-z A-Z)
 
