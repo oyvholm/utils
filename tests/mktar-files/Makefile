@@ -6,6 +6,10 @@ all:
 .PHONY: clean
 clean:
 	rm -rf d
+	rm -rf dir1
+	rm -rf has-numeric
+	rm -rf no-uuid
+	rm -rf use-random-mac
 
 .PHONY: test
 test:
