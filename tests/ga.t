@@ -138,7 +138,7 @@ sub test_executable {
 	my $Tmptop = "tmp-$CMDB-t-$$-" . substr(rand, 2, 8);
 
 	ok(mkdir($Tmptop), "mkdir [Tmptop]");
-	safe_chdir($Tmptop);
+	safe_chdir($Tmptop, "chdir [Tmptop]");
 
 	chomp($ENV{'HOME'} = `pwd`);
 	like($ENV{'HOME'}, "/$Tmptop\$/",
@@ -454,9 +454,10 @@ sub init_annex {
 }
 
 sub safe_chdir {
-	my $dir = shift;
+	my ($dir, $desc) = @_;
+	defined($desc) || ($desc = '');
 
-	ok(chdir($dir), "chdir $dir")
+	ok(chdir($dir), length($desc) ? $desc : "chdir $dir")
 	|| BAIL_OUT("$progname: Can't chdir to $dir, aborting");
 	if ($dir eq "..") {
 		$CMD =~ s!^\.\./!!
