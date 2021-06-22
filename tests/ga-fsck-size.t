@@ -125,6 +125,11 @@ END
 
     # }}}
 
+    if (`git-annex version 2>/dev/null` !~ /^git-annex version/) {
+        diag("git-annex is not installed here, skipping tests");
+        return 0;
+    }
+
     diag("Initialise temprepo...");
     ok(chdir('ga-fsck-size-files'), 'chdir ga-fsck-size-files');
     testcmd('tar xzf annex-backends.tar.gz', '', '', 0, 'Untar annex-backends.tar.gz');

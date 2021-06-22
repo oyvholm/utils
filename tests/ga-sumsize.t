@@ -233,6 +233,12 @@ END
     );
 
     # }}}
+
+    if (`git-annex version 2>/dev/null` !~ /^git-annex version/) {
+        diag("git-annex is not installed here, skipping tests");
+        return 0;
+    }
+
     ok(chdir("ga-sumsize-files"), "chdir ga-sumsize-files");
     testcmd("tar xzf ga-sumsize-repo.tar.gz", # {{{
         '',
