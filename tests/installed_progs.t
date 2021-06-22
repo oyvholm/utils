@@ -151,7 +151,7 @@ END
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
     installed('screen --version', '/^Screen version \d/', 'stdout');
     installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
-    installed('sqlite3 --version', '/^3\.2/', 'stdout');
+    installed('sqlite3 --version', '/^3\.(2|3)/', 'stdout');
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
@@ -214,7 +214,7 @@ END
         installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
         installed('rzip --version', '/^rzip version \d/', 'stdout');
         installed('scriptreplay --help', '/-m, --maxdelay/', 'stdout', 'scriptreplay has -m/--maxdelay');
-        installed('strace -V', '/^strace -- version \d/', 'stdout');
+        installed('strace -V', '/^strace -- version (\d+|UNKNOWN)/', 'stdout');
         installed('svn --version', '/svn, version /', 'stdout');
         installed('task --version', '/^2\.6\.0$/', 'stdout');
         installed('texi2html --version', '/^\d\./', 'stdout');
@@ -225,7 +225,7 @@ END
         installed('unrar --version', '/UNRAR \d/', 'stdout');
         installed('uuencode --version', '/^uuencode \(GNU sharutils\)/', 'stdout');
         installed('whois --version', '/^Version \d/', 'stdout');
-        installed('wiggle --version', '/^wiggle v1\.0/', 'stderr');
+        installed('wiggle --version', '/^wiggle v?1\.0/', 'stderr');
         installed('xmllint --version', '/^xmllint: using libxml version /', 'stderr');
         installed('xmlto --version', '/^xmlto version \d/', 'stdout');
         installed('xz --version', '/^xz \(XZ Utils\) \d/s', 'stdout');
@@ -248,7 +248,7 @@ END
         installed('mplayer -V', '/^MPlayer2 /', 'stdout');
         installed('okular --version', '/okular:? \d/i', 'stdout');
         installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
-        installed('shutter -v', '/^\d+\.\d+\.\d+ Rev\.\d+/', 'stdout');
+        installed('shutter -v', '/^\d+\.\d+(\.\d+)? Rev\.\d+/', 'stdout');
         installed('ufraw --version', '/^ufraw \d/', 'stderr');
         installed('vlc --version', '/^VLC version \d/', 'stdout');
         installed('wireshark --version', '/^wireshark \d/i', 'stdout');
