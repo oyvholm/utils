@@ -36,6 +36,11 @@ lgd:
 obsolete:
 	git delrembr $$(cat Div/obsolete-refs.txt); true
 
+.PHONY: push
+push:
+	$(MAKE) push-to-gitlab
+	git pa
+
 .PHONY: push-to-gitlab
 push-to-gitlab:
 	git branch | grep 'tmp-gitlab' && exit 1 || true
