@@ -117,7 +117,6 @@ END
     });
 
     diag("Checking important software...");
-    installed('archivemount --version', '/^archivemount version \d/', 'stderr');
     installed('autoconf --version', '/GNU Autoconf/', 'stdout');
     installed('bash --version', '/^GNU bash/', 'stdout');
     installed('bc --version', '/^bc \d.*Free Software Foundation/s', 'stdout');
@@ -130,7 +129,6 @@ END
     installed('echo ABC ZZZ aabel abbel abc bbbe © Å Æ Ø å æ ø → 🤘 | fmt -1 | sort', '/^ABC\nZZZ\naabel\nabbel\nabc\nbbbe\n©\nÅ\nÆ\nØ\nå\næ\nø\n→\n🤘\n$/', 'stdout', 'Use C sorting order');
     installed('exifprobe -V', '/Program: \'exifprobe\' version \d/', 'stdout');
     installed('find --version', '/GNU findutils/', 'stdout');
-    installed('fossil version', '/^This is fossil version 2\.3 /', 'stdout');
     installed('gadu --version', '/git-annex-utils \d/', 'stdout');
     installed('gcc --version', '/^gcc /', 'stdout');
     installed('git --version', '/^git version 2\./', 'stdout');
@@ -147,9 +145,7 @@ END
     installed('ncdu -v', '/^ncdu \d/', 'stdout');
     installed('perl --version', '/This is perl( |, v)5/', 'stdout');
     installed('pinfo --version', '/^Przemek\'s Info Viewer /', 'stdout');
-    installed('pip --version', '/^pip \d/', 'stdout');
     installed('pv --version', '/^pv \d/', 'stdout');
-    installed('pylint --version', '/^pylint \d/', 'stdout');
     installed('python --version', '/Python (2|3)/', 'stderr');
     installed('python3 --version', '/^Python 3/', 'both');
     installed('recode --version', '/^Free recode \d/', 'stdout');
@@ -160,11 +156,9 @@ END
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
-    installed('top -v', '/procps(-ng)? version \d/', 'stdout');
     installed('tree --version', '/^tree v\d\./', 'stdout');
     installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
     installed('uprecords -v', '/^uprecords \d/', 'stdout');
-    installed('uuencode --version', '/^uuencode \(GNU sharutils\)/', 'stdout');
     installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'stdout', 'OSSP uuid');
     installed('vim --version', '/VIM - Vi IMproved 8\../', 'stdout');
     installed('wget --version', '/GNU Wget/', 'stdout');
@@ -180,6 +174,7 @@ END
     if ($Opt{'other'} || $Opt{'all'}) {
 
         diag("Checking other software...");
+        installed('archivemount --version', '/^archivemount version \d/', 'stderr');
         installed('arj', '/^ARJ\S*? v \d/', 'stdout');
         installed('asciidoc --version', '/^asciidoc \d/', 'stdout');
         installed('bison --version', '/^bison\b.+GNU Bison\b/', 'stdout');
@@ -194,6 +189,7 @@ END
         installed('flac --version', '/^flac /', 'stdout');
         installed('flex --version', '/^flex \d/', 'stdout');
         installed('fontforge --version', '/^fontforge 20/', 'stdout');
+        installed('fossil version', '/^This is fossil version 2\.3 /', 'stdout');
         installed('gettext --version', '/GNU gettext/', 'stdout');
         installed('gpsbabel --version', '/GPSBabel Version \d/', 'stdout');
         installed('groff --version', '/^GNU groff version \d/', 'stdout');
@@ -211,8 +207,10 @@ END
         installed('nodejs --version', '/^v\d+\.\d+\.\d+$/', 'stdout');
         installed('npm --version', '/^\d+\.\d+\.\d+$/', 'stdout');
         installed('pandoc --version', '/^pandoc \d\./', 'stdout');
+        installed('pip --version', '/^pip \d/', 'stdout');
         installed('pip3 --version', '/^pip \d/', 'stdout');
         installed('psql --version', '/psql \(PostgreSQL\)/', 'stdout');
+        installed('pylint --version', '/^pylint \d/', 'stdout');
         installed('quilt --version', '/^\d\./', 'stdout');
         installed('rtorrent -h', '/BitTorrent client version /', 'stdout');
         installed('rzip --version', '/^rzip version \d/', 'stdout');
@@ -223,8 +221,10 @@ END
         installed('texi2html --version', '/^\d\./', 'stdout');
         installed('tig --version', '/^tig version /', 'stdout');
         installed('tmux -V', '/^tmux \d\./', 'stdout');
+        installed('top -v', '/procps(-ng)?( version)? \d/', 'stdout');
         installed('trickle -V', '/^trickle: version \d/', 'stderr');
         installed('unrar --version', '/UNRAR \d/', 'stdout');
+        installed('uuencode --version', '/^uuencode \(GNU sharutils\)/', 'stdout');
         installed('whois --version', '/^Version \d/', 'stdout');
         installed('wiggle --version', '/^wiggle v1\.0/', 'stderr');
         installed('xmllint --version', '/^xmllint: using libxml version /', 'stderr');
