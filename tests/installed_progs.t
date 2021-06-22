@@ -197,7 +197,7 @@ END
         installed('lame --version', '/LAME .* version /', 'stdout');
         installed('lftp --version', '/^LFTP .+Version \d/', 'stdout');
         installed('lynx --version', '/^Lynx Version \d/', 'stdout');
-        installed('lzip --version', '/^Lzip \d/', 'stdout');
+        installed('lzip --version', '/^Lzip \d/i', 'stdout');
         installed('mftrace --version', '/^mftrace \d\./', 'stdout');
         installed('mosh --version', '/^mosh \d/', 'stderr');
         installed('mutt -h', '/^Mutt \d/', 'stdout');
@@ -246,14 +246,14 @@ END
         installed('gource --help', '/Gource v\d/', 'stdout');
         installed('inkscape -V', '/^Inkscape \d/', 'stdout');
         installed('mplayer -V', '/^MPlayer2 /', 'stdout');
-        installed('okular --version', '/Okular: \d/', 'stdout');
+        installed('okular --version', '/okular:? \d/i', 'stdout');
         installed('qemu-system-i386 --version', '/QEMU emulator version \d/', 'stdout');
         installed('shutter -v', '/^\d+\.\d+\.\d+ Rev\.\d+/', 'stdout');
         installed('ufraw --version', '/^ufraw \d/', 'stderr');
         installed('vlc --version', '/^VLC version \d/', 'stdout');
-        installed('wireshark --version', '/^wireshark \d/', 'stdout');
+        installed('wireshark --version', '/^wireshark \d/i', 'stdout');
         installed('x264 --version', '/^x264 \d/', 'stdout');
-        installed('xdot --help', '/Usage:.*\bxdot\b/s', 'stdout');
+        installed('xdot --help', '/Usage:.*\bxdot\b/si', 'stdout');
         installed('xtightvncviewer -h', '/^TightVNC Viewer /', 'stderr');
 
     }
