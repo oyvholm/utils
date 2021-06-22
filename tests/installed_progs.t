@@ -199,7 +199,7 @@ END
         installed('lynx --version', '/^Lynx Version \d/', 'stdout');
         installed('lzip --version', '/^Lzip \d/i', 'stdout');
         installed('mftrace --version', '/^mftrace \d\./', 'stdout');
-        installed('mosh --version', '/^mosh \d/', 'stderr');
+        installed('mosh --version', '/^mosh \d/', 'stdout');
         installed('mutt -h', '/^Mutt \d/', 'stdout');
         installed('ncftp -v', '/Program version:\s+NcFTP /', 'stderr');
         installed('nmap --version', '/Nmap version /', 'stdout');
