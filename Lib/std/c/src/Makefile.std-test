@@ -53,11 +53,11 @@ test:
 		cd $(TMP)/src && $(MAKE) clean test NDEBUG=1 || exit 1; \
 	fi
 	cd $(TMP)/src && ./jada --version | grep -q "has NDEBUG"
-	cd $(TMP)/src && $(MAKE) clean all PROF=1
-	cd $(TMP)/src && ./jada --version | grep -q "has PROF"
-	test -e $(TMP)/src/gmon.out
-	cd $(TMP)/src && $(MAKE) test
-	test -e $(TMP)/src/t/gmon.out
+	if cc --version | grep -q "Free Software Foundation"; then \
+		$(MAKE) -f Makefile.std-test test-prof || exit 1; \
+	else \
+		echo "# Skip profiling tests, no GNU cc here"; \
+	fi
 	cd $(TMP)/src && $(MAKE) clean all UNUSED=1
 	cd $(TMP)/src && ./jada --version | grep -q "has UNUSED"
 	if gcov --version 2>/dev/null | grep -q ^gcov; then \
@@ -84,6 +84,14 @@ test-gcov:
 	cd $(TMP)/src && $(MAKE) gcov-cmt
 	cd $(TMP)/src && test -z "$$(git ls-files -m)"
 	cd $(TMP)/src && $(MAKE) gcov-cmt-clean
+
+.PHONY: test-prof
+test-prof:
+	cd $(TMP)/src && $(MAKE) clean all PROF=1
+	cd $(TMP)/src && ./jada --version | grep -q "has PROF"
+	test -e $(TMP)/src/gmon.out
+	cd $(TMP)/src && $(MAKE) test
+	test -e $(TMP)/src/t/gmon.out
 
 .PHONY: test-valgrind
 test-valgrind:
