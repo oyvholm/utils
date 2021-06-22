@@ -142,6 +142,11 @@ END
     ) || BAIL_OUT("git is not installed, cannot continue");
 
     # }}}
+    if (`git-annex version 2>/dev/null` !~ /^git-annex version/) {
+        # FIXME: Use with existing annex tests instead
+        diag("git-annex is not installed here, skipping tests");
+        return 0;
+    }
     likecmd("git annex version", # {{{
         '/^git-annex version:/',
         '/^$/',
