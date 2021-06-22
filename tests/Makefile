@@ -1,6 +1,25 @@
 # tests/Makefile
 # File ID: 4c99dd2c-5d7c-11df-86e2-90e6ba3022ac
 
+.PHONY: all
+all:
+
+.PHONY: clean
+clean:
+	chmod -R +w tmp-* 2>/dev/null || true
+	rm -rf *.tmp tmp-*
+	rm -rf *-files/*.tmp *-files/tmp-*
+	rm -f install-modules
+	rm -rf datefn-files/*.txt datefn-files/datefn-tmp datefn-files/repo
+	rm -rf edit-sqlite3-files/sqlite-databases
+	test -d ga-fsck-size-files/annex-backends && chmod -R +w ga-fsck-size-files/annex-backends || true
+	rm -rf ga-fsck-size-files/annex-backends
+	test -d ga-sumsize-files/ga-sumsize-repo && chmod -R +w ga-sumsize-files/ga-sumsize-repo || true
+	rm -rf ga-sumsize-files/ga-sumsize-repo
+	rm -rf sort-sqlite-files/sqlite-dbs
+	cd mktar-files && $(MAKE) clean
+	if test ! -e log/.git; then rm -rf log; fi
+
 .PHONY: genlog
 genlog:
 	test -d log/.git
@@ -80,19 +99,3 @@ testport:
 	./txt2uc.t            # freebsd:hang netbsd:ok   openbsd:fail
 	./ustr.t              # freebsd:ok   netbsd:ok   openbsd:ok
 	./zeropad.t           # freebsd:ok   netbsd:ok   openbsd:ok
-
-.PHONY: clean
-clean:
-	chmod -R +w tmp-* 2>/dev/null || true
-	rm -rf *.tmp tmp-*
-	rm -rf *-files/*.tmp *-files/tmp-*
-	rm -f install-modules
-	rm -rf datefn-files/*.txt datefn-files/datefn-tmp datefn-files/repo
-	rm -rf edit-sqlite3-files/sqlite-databases
-	test -d ga-fsck-size-files/annex-backends && chmod -R +w ga-fsck-size-files/annex-backends || true
-	rm -rf ga-fsck-size-files/annex-backends
-	test -d ga-sumsize-files/ga-sumsize-repo && chmod -R +w ga-sumsize-files/ga-sumsize-repo || true
-	rm -rf ga-sumsize-files/ga-sumsize-repo
-	rm -rf sort-sqlite-files/sqlite-dbs
-	cd mktar-files && $(MAKE) clean
-	if test ! -e log/.git; then rm -rf log; fi
