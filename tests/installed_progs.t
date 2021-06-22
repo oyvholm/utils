@@ -317,7 +317,7 @@ sub coreutils {
             }
         }
         installed("$cmd --version",
-            "/^$curr .*?\\bcoreutils\\b/",
+            "/^$curr .*?\\b(coreutils|procps-ng)\\b/",
             'stdout') || ($retval = 1);
     }
     return($retval);
