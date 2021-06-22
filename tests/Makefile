@@ -1,6 +1,12 @@
 # tests/Makefile
 # File ID: 4c99dd2c-5d7c-11df-86e2-90e6ba3022ac
 
+.PHONY: genlog
+genlog:
+	test -d log/.git
+	cd log && git-wait-until-clean
+	sess "Genlog *.t"
+
 .PHONY: test
 test:
 	test ! -e ../synced.sql.lock
