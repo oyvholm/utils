@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-up
-VERSION=0.1.3
+VERSION=0.1.4
 
 T_GREEN=$(tput setaf 2)
 T_RED=$(tput setaf 1)
@@ -49,9 +49,9 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
-Make a full Git update in the current repository. Fetch everything, 
-update all local branches, create commit-* branches from dangling heads 
-and push the result to all remotes.
+Make a full Git update in the current repository. Fetch everything from 
+all remotes, update all local branches and create commit-* branches from 
+dangling heads.
 
 Usage: $progname [options]
 
@@ -100,6 +100,5 @@ safe_checkout $(git rev-parse HEAD)
 runcmd git allbr -a
 safe_checkout -
 runcmd git dangling
-runcmd git pa
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
