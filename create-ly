@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=create-ly
-VERSION=0.2.1
+VERSION=0.3.0
 
 ARGS="$(getopt -o "\
 h\
@@ -107,5 +107,6 @@ else
     exit 1
 fi
 
+std ly/defs.ily defs.ily
 std ly/Makefile Makefile -t "projname=$projname"
 git ignore .version.ily $projname.pdf $projname.wav

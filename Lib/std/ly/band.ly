@@ -2,30 +2,7 @@
 % File ID: STDuuidDTS
 % Author: Øyvind A. Holm <sunny@sunbase.org>
 
-\version "2.18.2"
-
-\header {
-  copyright = ""
-  title = ""
-  subtitle = ""
-  composer = ""
-  poet = ""
-}
-
-% showFirstLength = R1*1
-% showLastLength = R1*1
-
-\include ".version.ily"
-
-\paper {
-  oddFooterMarkup = \markup {
-    \fill-line {
-      \center-column { \versioninfo }
-    }
-  }
-}
-
-initTempo = { \tempo 4 = 120 }
+\include "defs.ily"
 
 \include "bass.ily"
 \include "drums.ily"
@@ -34,10 +11,6 @@ initTempo = { \tempo 4 = 120 }
 \include "piano-lower.ily"
 \include "piano-upper.ily"
 \include "vocal1.ily"
-
-countOff = \repeat unfold 4 \drummode { ss4 }
-
-metronome = \repeat unfold 4 \drummode { ss4 }
 
 \score {
   \new StaffGroup <<
