@@ -2,11 +2,11 @@
 # File ID: STDuuidDTS
 
 NAME = STDprojnameDTS
+
 AFVLOCKDIR = $(HOME)/.$(NAME)-afv.lock
 FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
-MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
-
 LILYPOND = lilypond
+MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
 .PHONY: all
 all: $(NAME).midi $(NAME).pdf
