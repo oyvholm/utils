@@ -11,22 +11,25 @@ MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 .PHONY: all
 all: $(NAME).midi $(NAME).pdf
 
-$(NAME).midi: .version.ily
-	$(LILYPOND) $(NAME).ly
+%.midi: .version.ily
+	$(LILYPOND) $*.ly
 
-$(NAME).pdf: .version.ily
-	$(LILYPOND) $(NAME).ly
+%.pdf: .version.ily
+	$(LILYPOND) $*.ly
 
-$(NAME).wav: $(NAME).midi
-	timidity --output-24bit -Ow $(NAME).midi
+%.wav:
+	$(MAKE) $*.midi
+	timidity --output-24bit -Ow $*.midi
 
-$(NAME).mp3: $(NAME).wav
-	rm -f $(NAME).mp3
-	wav_to_mp3 $(NAME).wav
+%.mp3:
+	$(MAKE) $*.wav
+	rm -f $*.mp3
+	wav_to_mp3 $*.wav
 
-$(NAME).opus: $(NAME).wav
-	rm -f $(NAME).opus
-	wav_to_opus $(NAME).wav
+%.opus:
+	$(MAKE) $*.wav
+	rm -f $*.opus
+	wav_to_opus $*.wav
 
 .version.ily: $(NAME).ly *.ily Makefile
 	git log -1 --date=format:%Y-%m-%d \
