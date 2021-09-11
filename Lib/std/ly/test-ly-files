@@ -13,6 +13,8 @@
 progname=test-ly-files
 VERSION=0.3.0
 
+TMPLOGDIR=.logdir
+
 ARGS="$(getopt -o "\
 a\
 h\
@@ -77,6 +79,10 @@ fi
 
 rm -f STDprojnameDTS.{ly,midi,pdf,wav}
 
+rm -rf $TMPLOGDIR
+mkdir $TMPLOGDIR || exit 1
+export SUUID_LOGDIR=$TMPLOGDIR
+
 for f in *.ly; do
     echo
     echo === $f
@@ -88,8 +94,12 @@ for f in *.ly; do
         echo $progname: STDprojnameDTS.wav does not exist >&2
         exit 1
     }
+    make STDprojnameDTS.opus || exit 1
+    make STDprojnameDTS.mp3 || exit 1
     if test "$opt_all" = "1"; then
         tm STDprojnameDTS.midi
         evince STDprojnameDTS.pdf
     fi
 done
+
+rm -rf $TMPLOGDIR
