@@ -77,7 +77,11 @@ if ! lilypond --version 2>/dev/null | grep -q '^GNU LilyPond'; then
     exit 0
 fi
 
-rm -f STDprojnameDTS.{ly,midi,pdf,wav}
+delgen() {
+    rm -f STDprojnameDTS.{ly,midi,mp3,opus,pdf,wav}
+}
+
+delgen
 
 rm -rf $TMPLOGDIR
 mkdir $TMPLOGDIR || exit 1
@@ -100,6 +104,7 @@ for f in *.ly; do
         tm STDprojnameDTS.midi
         evince STDprojnameDTS.pdf
     fi
+    delgen
 done
 
 rm -rf $TMPLOGDIR
