@@ -26,6 +26,7 @@
       % \bar "|."
     }
     %}
+
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -36,6 +37,7 @@
       % \bar "|."
     }
   >>
+
   \layout { }
 }
 
@@ -52,6 +54,7 @@
       \countOff
       \unfoldRepeats \guitar
     }
+
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -63,6 +66,7 @@
       \unfoldRepeats \metronome
     }
   >>
+
   \midi { }
 }
 

@@ -7,7 +7,6 @@
 \include "piano-lower.ily"
 \include "piano-upper.ily"
 
-
 \score {
   \new StaffGroup <<
     \new PianoStaff <<
@@ -23,6 +22,7 @@
         % \bar "|."
       }
     >>
+
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -33,6 +33,7 @@
       % \bar "|."
     }
   >>
+
   \layout { }
 }
 
@@ -52,6 +53,7 @@
         \unfoldRepeats \pianoLower
       >>
     }
+
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -63,6 +65,7 @@
       \unfoldRepeats \metronome
     }
   >>
+
   \midi { }
 }
 

@@ -22,8 +22,10 @@
       \vocalOne
       % \bar "|."
     }
+
     \addlyrics {
     }
+
     \new Staff \with {
       instrumentName = "Guitar 1"
       shortInstrumentName = "Gt1"
@@ -42,6 +44,7 @@
       % \bar "|."
     }
     %}
+
     \new Staff \with {
       instrumentName = "Guitar 2"
       shortInstrumentName = "Gt2"
@@ -60,6 +63,7 @@
       % \bar "|."
     }
     %}
+
     \new Staff \with {
       instrumentName = "Bass"
       shortInstrumentName = "Bs."
@@ -78,6 +82,7 @@
       % \bar "|."
     }
     %}
+
     \new PianoStaff <<
       \set PianoStaff.instrumentName = #"Piano"
       \new Staff = "upper" {
@@ -91,6 +96,7 @@
         % \bar "|."
       }
     >>
+
     \new DrumStaff \with {
       instrumentName = "Drums"
       shortInstrumentName = "Drm"
@@ -99,6 +105,7 @@
       \theDrums
       % \bar "|."
     }
+
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -109,6 +116,7 @@
       % \bar "|."
     }
   >>
+
   \layout { }
 }
 
@@ -125,6 +133,7 @@
       \countOff
       \unfoldRepeats \vocalOne
     }
+
     \new Staff = "Guitar 1" \with {
       instrumentName = "Guitar 1"
       shortInstrumentName = "Gt1"
@@ -136,6 +145,7 @@
       \countOff
       \unfoldRepeats \guitarOne
     }
+
     \new Staff = "Guitar 2" \with {
       instrumentName = "Guitar 2"
       shortInstrumentName = "Gt2"
@@ -147,6 +157,7 @@
       \countOff
       \unfoldRepeats \guitarTwo
     }
+
     \new Staff \with {
       instrumentName = "Bass"
       shortInstrumentName = "Bs."
@@ -158,6 +169,7 @@
       \countOff
       \unfoldRepeats \bassGuitar
     }
+
     \new Staff = "Piano" \with {
       instrumentName = "Piano"
       shortInstrumentName = "Pn."
@@ -172,6 +184,7 @@
         \unfoldRepeats \pianoLower
       >>
     }
+
     \new DrumStaff \with {
       instrumentName = "Drums"
       shortInstrumentName = "Drm"
@@ -181,6 +194,7 @@
       \countOff
       \unfoldRepeats \theDrums
     }
+
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -192,6 +206,7 @@
       \unfoldRepeats \metronome
     }
   >>
+
   \midi { }
 }
 
