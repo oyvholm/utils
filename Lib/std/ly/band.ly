@@ -5,6 +5,7 @@
 \include "defs.ily"
 
 \include "bass.ily"
+\include "click.ily"
 \include "drums.ily"
 \include "guitar1.ily"
 \include "guitar2.ily"

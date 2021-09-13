@@ -1,0 +1,42 @@
+% STDfilenameDTS
+% File ID: STDuuidDTS
+% Author: Øyvind A. Holm <sunny@sunbase.org>
+
+\include "defs.ily"
+
+\include "click.ily"
+
+\score {
+  \new StaffGroup <<
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+    } {
+      \initTempo
+      \clef percussion
+      \metronome
+      % \bar "|."
+    }
+  >>
+
+  \layout { }
+}
+
+\score {
+  \new StaffGroup <<
+    \new DrumStaff \with {
+      instrumentName = "Metronome"
+      shortInstrumentName = "Mt."
+      midiReverbLevel = #0
+      % midiMaximumVolume = #1.00
+    } {
+      \initTempo
+      \countOff
+      \unfoldRepeats \metronome
+    }
+  >>
+
+  \midi { }
+}
+
+% vim: set tw=0 :

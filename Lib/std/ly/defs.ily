@@ -27,4 +27,3 @@
 
 initTempo = { \tempo 4 = 120 }
 countOff = \repeat unfold 4 \drummode { ss4 }
-metronome = \repeat unfold 4 \drummode { ss4 }

@@ -4,6 +4,7 @@
 
 \include "defs.ily"
 
+\include "click.ily"
 \include "guitar.ily"
 
 \score {
