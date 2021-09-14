@@ -10,7 +10,8 @@ pianoUpper = \relative c'' {
   \key c \major
   \time 4/4
 
-  s1 |
+  s1
+  |
 
 % End
 

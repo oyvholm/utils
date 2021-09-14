@@ -9,7 +9,8 @@ theDrums = \drummode {
   \initTempo
   \time 4/4
 
-  s1 |
+  s1
+  |
 
 % End
 

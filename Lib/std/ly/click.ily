@@ -11,7 +11,8 @@ metronome = {
   \initTempo
   \time 4/4
 
-  \mbar |
+  \mbar
+  |
 
 % End
 
