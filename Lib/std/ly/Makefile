@@ -4,6 +4,7 @@
 NAME = STDprojnameDTS
 
 AFVLOCKDIR = $(HOME)/.$(NAME)-afv.lock
+ENGR = \"Engraved with LilyPond v\" (lilypond-version) \" ❤\"
 FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
 IGNFILES  =
 IGNFILES += -e '\.midi$$'
@@ -13,6 +14,8 @@ IGNFILES += -e '\.pdf$$'
 IGNFILES += -e '\.wav$$'
 LILYPOND = lilypond
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
+SA_GIT = \#(string-append \"%cd, commit %h — \" $(ENGR))
+SA_NOGIT = \#(string-append \"Compiled $$(date +%Y-%m-%d) — \" $(ENGR))
 
 .PHONY: all
 all: midi pdf
@@ -38,9 +41,13 @@ all: midi pdf
 	wav_to_opus $*.wav
 
 .version.ily: $(NAME).ly *.ily Makefile
-	git log -1 --date=format:%Y-%m-%d \
-		--format="versioninfo = #(string-append \"%cd, commit %h — Engraved with LilyPond v\" (lilypond-version) \" ❤\")" \
-		. >.version.ily
+	if [ -z "$$(git log -1 --format=%h . 2>/dev/null)" ]; then \
+		echo "versioninfo = $(SA_NOGIT)"; \
+	else \
+		git log -1 --date=format:%Y-%m-%d \
+		        --format="versioninfo = $(SA_GIT)" \
+		        .; \
+	fi >.version.ily
 
 .PHONY: afv
 afv:
