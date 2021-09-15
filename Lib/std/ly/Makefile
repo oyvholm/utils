@@ -5,6 +5,12 @@ NAME = STDprojnameDTS
 
 AFVLOCKDIR = $(HOME)/.$(NAME)-afv.lock
 FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
+IGNFILES  =
+IGNFILES += -e '\.midi$$'
+IGNFILES += -e '\.mp3$$'
+IGNFILES += -e '\.opus$$'
+IGNFILES += -e '\.pdf$$'
+IGNFILES += -e '\.wav$$'
 LILYPOND = lilypond
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
@@ -65,7 +71,7 @@ dww:
 
 .PHONY: edit
 edit:
-	$(EDITOR) $(NAME).ly *.ily
+	$(EDITOR) $$(git ls-files | grep -v $(IGNFILES))
 
 .PHONY: fresco
 fresco:
