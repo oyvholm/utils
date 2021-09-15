@@ -15,7 +15,7 @@ LILYPOND = lilypond
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 
 .PHONY: all
-all: $(NAME).midi $(NAME).pdf
+all: midi pdf
 
 %.midi: .version.ily
 	$(LILYPOND) $*.ly
@@ -80,11 +80,17 @@ fresco:
 		sess ./frescobaldi $(MTDIR)/$(NAME).ly; \
 		rmdir $(FRESCOLOCKDIR)) &
 
+.PHONY: midi
+midi: $(NAME).midi
+
 .PHONY: mp3
 mp3: $(NAME).mp3
 
 .PHONY: opus
 opus: $(NAME).opus
+
+.PHONY: pdf
+pdf: $(NAME).pdf
 
 .PHONY: play
 play: $(NAME).midi
