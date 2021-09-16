@@ -20,7 +20,7 @@ SA_NOGIT = \#(string-append \"Compiled $$(date +%Y-%m-%d) — \" $(ENGR))
 .PHONY: all
 all: midi pdf
 
-.version.ily: $(NAME).ly *.ily Makefile
+.version.ily: *.ily *.ly Makefile
 	if [ -z "$$(git log -1 --format=%h . 2>/dev/null)" ]; then \
 		echo "versioninfo = $(SA_NOGIT)"; \
 	else \
