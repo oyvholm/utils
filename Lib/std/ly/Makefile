@@ -20,6 +20,15 @@ SA_NOGIT = \#(string-append \"Compiled $$(date +%Y-%m-%d) — \" $(ENGR))
 .PHONY: all
 all: midi pdf
 
+.version.ily: $(NAME).ly *.ily Makefile
+	if [ -z "$$(git log -1 --format=%h . 2>/dev/null)" ]; then \
+		echo "versioninfo = $(SA_NOGIT)"; \
+	else \
+		git log -1 --date=format:%Y-%m-%d \
+		        --format="versioninfo = $(SA_GIT)" \
+		        .; \
+	fi >.version.ily
+
 %.midi: .version.ily
 	$(LILYPOND) $*.ly
 
@@ -39,15 +48,6 @@ all: midi pdf
 	$(MAKE) $*.wav
 	rm -f $*.opus
 	wav_to_opus $*.wav
-
-.version.ily: $(NAME).ly *.ily Makefile
-	if [ -z "$$(git log -1 --format=%h . 2>/dev/null)" ]; then \
-		echo "versioninfo = $(SA_NOGIT)"; \
-	else \
-		git log -1 --date=format:%Y-%m-%d \
-		        --format="versioninfo = $(SA_GIT)" \
-		        .; \
-	fi >.version.ily
 
 .PHONY: afv
 afv:
