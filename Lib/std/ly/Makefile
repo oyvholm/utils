@@ -4,6 +4,7 @@
 NAME = STDprojnameDTS
 
 AFVLOCKDIR = $(HOME)/.$(NAME)-afv.lock
+DEPS = .version.ily *.ily *.ly Makefile
 ENGR = \"Engraved with LilyPond v\" (lilypond-version) \" ❤\"
 FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
 IGNFILES  =
@@ -29,22 +30,22 @@ all: midi pdf
 		        .; \
 	fi >.version.ily
 
-%.midi: .version.ily
+%.midi: $(DEPS)
 	$(LILYPOND) $*.ly
 
-%.pdf: .version.ily
+%.pdf: $(DEPS)
 	$(LILYPOND) $*.ly
 
-%.wav:
+%.wav: $(DEPS)
 	$(MAKE) $*.midi
 	timidity --output-24bit -Ow $*.midi
 
-%.mp3:
+%.mp3: $(DEPS)
 	$(MAKE) $*.wav
 	rm -f $*.mp3
 	wav_to_mp3 $*.wav
 
-%.opus:
+%.opus: $(DEPS)
 	$(MAKE) $*.wav
 	rm -f $*.opus
 	wav_to_opus $*.wav
