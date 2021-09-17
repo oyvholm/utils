@@ -15,6 +15,7 @@ IGNFILES += -e '\.pdf$$'
 IGNFILES += -e '\.wav$$'
 LILYPOND = lilypond
 MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
+PLAYER = mpv
 SA_GIT = \#(string-append \"%cd, commit %h — \" $(ENGR))
 SA_NOGIT = \#(string-append \"Compiled $$(date +%Y-%m-%d) — \" $(ENGR))
 
@@ -101,8 +102,8 @@ opus: $(NAME).opus
 pdf: $(NAME).pdf
 
 .PHONY: play
-play: $(NAME).midi
-	timidity --output-24bit $(NAME).midi
+play: $(NAME).wav
+	$(PLAYER) $(NAME).wav
 
 .PHONY: slow
 slow: $(NAME).midi
@@ -125,4 +126,3 @@ view: $(NAME).pdf
 
 .PHONY: wav
 wav: $(NAME).wav
-	p $(NAME).wav
