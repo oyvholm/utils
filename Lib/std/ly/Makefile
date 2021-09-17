@@ -119,7 +119,7 @@ touch:
 
 .PHONY: view
 view: $(NAME).pdf
-	sess evince $(NAME).pdf &>/dev/null &
+	sess okular $(NAME).pdf &>/dev/null &
 
 .PHONY: wav
 wav: $(NAME).wav
