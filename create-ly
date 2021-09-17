@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=create-ly
-VERSION=0.3.2
+VERSION=0.3.3
 
 ARGS="$(getopt -o "\
 h\
@@ -91,20 +91,24 @@ cd "$projname" || {
 }
 
 if test "$projtype" = "band"; then
-    for f in bass click drums guitar1 guitar2 \
+    for f in bass chords click drums guitar1 guitar2 \
              piano-lower piano-upper vocal1; do
         std ly/$f.ily $f.ily -t "projname=$projname"
     done
     std ly/band.ly "$projname.ly" -t "projname=$projname"
-    for f in bass click drums guitar1 guitar2 piano vocal1; do
+    for f in bass chords click drums guitar1 guitar2 piano vocal1; do
         std ly/$f.ly $f.ly -t "projname=$projname"
     done
 elif test "$projtype" = "guitar"; then
+    std ly/chords.ily chords.ily -t "projname=$projname"
+    std ly/chords.ly chords.ly -t "projname=$projname"
     std ly/click.ily click.ily -t "projname=$projname"
     std ly/click.ly click.ly -t "projname=$projname"
     std ly/guitar.ily guitar.ily -t "projname=$projname"
     std ly/guitar.ly "$projname.ly" -t "projname=$projname"
 elif test "$projtype" = "piano"; then
+    std ly/chords.ily chords.ily -t "projname=$projname"
+    std ly/chords.ly chords.ly -t "projname=$projname"
     std ly/click.ily click.ily -t "projname=$projname"
     std ly/click.ly click.ly -t "projname=$projname"
     std ly/piano-lower.ily piano-lower.ily -t "projname=$projname"

@@ -4,11 +4,16 @@
 
 \include "defs.ily"
 
+\include "chords.ily"
 \include "click.ily"
 \include "guitar1.ily"
 
 \score {
   \new StaffGroup <<
+    \chords {
+      \set chordChanges = ##t
+      \theChords
+    }
     \new Staff \with {
       instrumentName = "Guitar 1"
       shortInstrumentName = "Gt1"

@@ -5,10 +5,15 @@
 \include "defs.ily"
 
 \include "bass.ily"
+\include "chords.ily"
 \include "click.ily"
 
 \score {
   \new StaffGroup <<
+    \chords {
+      \set chordChanges = ##t
+      \theChords
+    }
     \new Staff \with {
       instrumentName = "Bass"
       shortInstrumentName = "Bs."

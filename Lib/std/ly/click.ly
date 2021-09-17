@@ -4,10 +4,15 @@
 
 \include "defs.ily"
 
+\include "chords.ily"
 \include "click.ily"
 
 \score {
   \new StaffGroup <<
+    \chords {
+      \set chordChanges = ##t
+      \theChords
+    }
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."

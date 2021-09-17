@@ -4,12 +4,17 @@
 
 \include "defs.ily"
 
+\include "chords.ily"
 \include "click.ily"
 \include "piano-lower.ily"
 \include "piano-upper.ily"
 
 \score {
   \new StaffGroup <<
+    \chords {
+      \set chordChanges = ##t
+      \theChords
+    }
     \new PianoStaff <<
       \set PianoStaff.instrumentName = #"Piano"
       \new Staff = "upper" {

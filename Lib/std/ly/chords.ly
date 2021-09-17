@@ -6,7 +6,6 @@
 
 \include "chords.ily"
 \include "click.ily"
-\include "vocal1.ily"
 
 \score {
   \new StaffGroup <<
@@ -14,19 +13,7 @@
       \set chordChanges = ##t
       \theChords
     }
-    \new Staff \with {
-      instrumentName = "Vocal 1"
-      shortInstrumentName = "Vc1"
-    } {
-      \clef treble
-      \vocalOne
-      % \bar "|."
-    }
 
-    \addlyrics {
-    }
-
-    %{
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -36,7 +23,6 @@
       \metronome
       % \bar "|."
     }
-    %}
   >>
 
   \layout { }
@@ -44,19 +30,18 @@
 
 \score {
   \new StaffGroup <<
-    \new Staff = "Vocal 1" \with {
-      instrumentName = "Vocal 1"
-      shortInstrumentName = "Vc1"
-      midiInstrument = "voice oohs"
+    \new Staff = "Chords" \with {
+      instrumentName = "Chords"
+      shortInstrumentName = "Ch."
+      midiInstrument = "acoustic grand"
       % midiMaximumVolume = #1.00
       % midiPanPosition = 0
     } {
       \initTempo
       \countOff
-      \unfoldRepeats \vocalOne
+      \unfoldRepeats \theChords
     }
 
-    %{
     \new DrumStaff \with {
       instrumentName = "Metronome"
       shortInstrumentName = "Mt."
@@ -67,7 +52,6 @@
       \countOff
       \unfoldRepeats \metronome
     }
-    %}
   >>
 
   \midi { }
