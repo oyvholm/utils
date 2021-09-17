@@ -14,7 +14,6 @@ IGNFILES += -e '\.opus$$'
 IGNFILES += -e '\.pdf$$'
 IGNFILES += -e '\.wav$$'
 LILYPOND = lilypond
-MTDIR = $(HOME)/src/git/lyrics/sunny/$(NAME)
 PLAYER = mpv
 SA_GIT = \#(string-append \"%cd, commit %h — \" $(ENGR))
 SA_NOGIT = \#(string-append \"Compiled $$(date +%Y-%m-%d) — \" $(ENGR))
@@ -85,9 +84,7 @@ edit:
 .PHONY: fresco
 fresco:
 	mkdir $(FRESCOLOCKDIR)
-	(cd $(HOME)/src/other/frescobaldi; \
-		sess ./frescobaldi $(MTDIR)/$(NAME).ly; \
-		rmdir $(FRESCOLOCKDIR)) &
+	(sess frescobaldi $(NAME).ly; rmdir $(FRESCOLOCKDIR)) &
 
 .PHONY: midi
 midi: $(NAME).midi
