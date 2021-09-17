@@ -5,6 +5,7 @@ NAME = STDprojnameDTS
 
 AFVLOCKDIR = $(HOME)/.$(NAME)-afv.lock
 DEPS = .version.ily *.ily *.ly Makefile
+DIRTYSTR = $$(git diff-index --name-only HEAD . | grep -q . && echo -n -dirty)
 ENGR = \"Engraved with LilyPond v\" (lilypond-version) \" ❤\"
 FRESCOLOCKDIR = $(HOME)/.$(NAME)-fresco.lock
 IGNFILES  =
@@ -15,7 +16,7 @@ IGNFILES += -e '\.pdf$$'
 IGNFILES += -e '\.wav$$'
 LILYPOND = lilypond
 PLAYER = mpv
-SA_GIT = \#(string-append \"%cd, commit %h — \" $(ENGR))
+SA_GIT = \#(string-append \"%cd, commit %h$(DIRTYSTR) — \" $(ENGR))
 SA_NOGIT = \#(string-append \"Compiled $$(date +%Y-%m-%d) — \" $(ENGR))
 
 .PHONY: all
