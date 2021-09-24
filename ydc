@@ -4,8 +4,8 @@
 # ydc
 # File ID: cc9e58bc-9e74-11e8-ae29-db5caa6d21d3
 #
-# Wrapper around the yd* youtube-dl scripts, checks that the video hasn't been 
-# downloaded before.
+# Wrapper around the yd* youtube-dl / yt-dlp scripts, checks that the video 
+# hasn't been downloaded before.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
@@ -31,9 +31,9 @@ fi
 if test "$1" = "-h" -o "$1" = "--help"; then
 	cat <<END
 
-Wrapper around the yd* youtube-dl scripts, checks that the video hasn't 
-been downloaded before. Works with links understood by the ydid(1) 
-script.
+Wrapper around the yd* youtube-dl / yt-dlp scripts, checks that the 
+video hasn't been downloaded before. Works with links understood by the 
+ydid(1) script.
 
 Usage: $progname [options] YDPROG
 
