@@ -16,7 +16,7 @@ IGNFILES += -e '\.pdf$$'
 IGNFILES += -e '\.wav$$'
 LILYPOND = lilypond
 PLAYER = mpv
-SA_GIT = \#(string-append \"%cd, commit %h$(DIRTYSTR) — \" $(ENGR))
+SA_GIT = \#(string-append \"Commit %h$(DIRTYSTR) (%cs) — \" $(ENGR))
 SA_NOGIT = \#(string-append \"Compiled $$(date +%Y-%m-%d) — \" $(ENGR))
 
 .PHONY: all
@@ -26,9 +26,7 @@ all: midi pdf
 	if [ -z "$$(git log -1 --format=%h . 2>/dev/null)" ]; then \
 		echo "versioninfo = $(SA_NOGIT)"; \
 	else \
-		git log -1 --date=format:%Y-%m-%d \
-		        --format="versioninfo = $(SA_GIT)" \
-		        .; \
+		git log -1 --format="versioninfo = $(SA_GIT)" .; \
 	fi >.version.ily
 
 %.midi: $(DEPS)
