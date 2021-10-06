@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=start-vncserver
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -66,4 +66,4 @@ fi
 
 vncserver -kill :1
 rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
-sess -- vncserver -depth 16 -geometry 1260x720 :1
+sess -- vncserver -geometry 1490x1020 :1
