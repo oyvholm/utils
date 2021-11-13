@@ -178,6 +178,9 @@ sub main {
 	unless (-f $dbk_file) {
 		open(FP, ">$dbk_file")
 		|| die("$0: $dbk_file: Kan ikke åpne fila for skriving: $!\n");
+		chomp(my $file_id = `suuid -t fileid,dbk`);
+		print(FP "<!-- File ID: $file_id -->\n\n")
+		|| die("$0: $dbk_file: Cannot write suuid to file: $!\n");
 		print(FP "<h1>$day_name[$week_day] $Year-$Mon-$Day</h1>\n")
 		|| die("$0: $dbk_file: Kan ikke skrive header til fila: $!\n");
 		close(FP);
@@ -219,9 +222,9 @@ sub main {
 		$which_line++;
 		system("$Editor +$which_line $dbk_file") unless
 		    (length($Opt{'insert-file'}) || length($Opt{'batch'}));
-		$min_size = 49;
+		$min_size = 100;
 	} else {
-		$min_size = 25;
+		$min_size = 81;
 	}
 
 	unless ($Opt{'batch'}) {

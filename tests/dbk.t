@@ -122,12 +122,17 @@ sub test_standard_options {
 sub test_executable {
 	my $Tmptop = "tmp-$CMDB-t-$$-" . substr(rand, 2, 8);
 	$ENV{'DBK_VIEWER'} = "echo Viewer:";
-	$ENV{'DBK_DIR'} = $Tmptop;
+	my $dbkdir = "$Tmptop/dbk";
+	$ENV{'DBK_DIR'} = $dbkdir;
+	my $suuid_logdir = "$Tmptop/uuids";
+	$ENV{'SUUID_LOGDIR'} = $suuid_logdir;
 	my $currfile = curr_dbk_path();
 	my $curryeardir = $currfile;
 	$curryeardir =~ s!^(.*)/.*?$!$1!;
 
 	ok(!-d $Tmptop, "[Tmptop] doesn't exist");
+	ok(mkdir($Tmptop), "mkdir [Tmptop]");
+	ok(mkdir($suuid_logdir), "Create suuid log directory");
 	testcmd($CMD,
 	        ""
 	        . "Viewer: $currfile\n"
@@ -135,7 +140,13 @@ sub test_executable {
 	        "",
 	        0,
 	        "$CMD without args");
+	my $suuid_file = glob("$suuid_logdir/*.xml");
+	like($suuid_file, qr/\/.*\.xml$/, "[suuid_file] contains filename");
+	ok(-f $suuid_file, "[suuid_file] exists and is a file");
+	ok(unlink($suuid_file), "Delete suuid file");
+	ok(rmdir($suuid_logdir), "Delete suuid log directory");
 	ok(rmdir($curryeardir), "rmdir [Tmptop]/YEAR/");
+	ok(rmdir($dbkdir), "rmdir dbk directory");
 	ok(rmdir($Tmptop), "rmdir [Tmptop]");
 }
 
