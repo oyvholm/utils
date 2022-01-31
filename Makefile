@@ -73,8 +73,6 @@ push-to-gitlab:
 remotes:
 	git remote add \
 	    sunbase sunny@git.sunbase.org:/home/sunny/Git/utils.git; true
-	git remote add \
-	    bellmann sunny@bellmann:/home/sunny/repos/Git/utils.git; true
 	git remote add bitbucket git@bitbucket.org:sunny256/utils.git; true
 	git remote add gitlab git@gitlab.com:sunny256/utils.git; true
 	git remote add \
