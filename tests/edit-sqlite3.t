@@ -310,16 +310,18 @@ COMMIT;
 END
 
 # }}}
-    testcmd("echo q | $CMD ok.sqlite", # {{{
-        <<'END',
-ok
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-dCREATE TABLE t (a integer);
-COMMIT;
-END
-        "Error: near line 3: near \"dCREATE\": syntax error\n" .
-            "edit-sqlite3: Press Enter to edit again, or q to abort...",
+    likecmd("echo q | $CMD ok.sqlite", # {{{
+        '/^'
+        . 'ok\n'
+        . 'PRAGMA foreign_keys=OFF;\n'
+        . 'BEGIN TRANSACTION;\n'
+        . 'dCREATE TABLE t \(a integer\);\n'
+        . 'COMMIT;\n'
+        . '$/',
+        '/^'
+        . 'Error: near line 3:.* near \"dCREATE\": syntax error.*\n'
+        . 'edit-sqlite3: Press Enter to edit again, or q to abort\.\.\.'
+        . '$/',
         0,
         'Display "edit again" message if invalid SQL',
     );

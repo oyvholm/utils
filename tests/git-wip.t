@@ -219,11 +219,11 @@ END
 
     # }}}
     likecmd("../../$CMD -m", # {{{
-        '/^wip\\nMerge made by (the \')?recursive(\' strategy)?.*' .
-        ' create mode 100644 file2\.txt\\n' .
-        ' create mode 100644 file3\.txt\\n' .
-        'Deleted branch wip\.add-files .*' .
-        '/s',
+        '/^wip\\nMerge made by .*'
+        . ' create mode 100644 file2\.txt\\n'
+        . ' create mode 100644 file3\.txt\\n'
+        . 'Deleted branch wip\.add-files .*'
+        . '/s',
         '/^Switched to branch \'wip\'\\n$/',
         0,
         "Merge wip.add-files to parent (wip)",
@@ -284,9 +284,9 @@ END
     );
 
     # }}}
-    testcmd("../../$CMD", # {{{
-        "",
-        "fatal: A branch named 'wip' already exists.\n",
+    likecmd("../../$CMD", # {{{
+        '/^$/',
+        '/^fatal: [Aa] branch named \'wip\' already exists\.?\n$/',
         1,
         "wip branch already exists",
     );
@@ -371,19 +371,14 @@ END
 
     # }}}
     likecmd("echo y | ../../$CMD -m", # {{{
-        '/^master\\n' .
-        'Merge made by (the \')?recursive(\' strategy)?\.\\n' .
-        ' file2\.txt \| +1 \+\\n' .
-        ' file3\.txt \| +1 \+\\n' .
-        ' file4\.txt \| +1 \+\\n' .
-        ' file5\.txt \| +1 \+\\n' .
-        ' 4 files changed, 4 insertions\(\+\)(, 0 deletions\(-\))?\\n' .
-        ' create mode 100644 file2\.txt\\n' .
-        ' create mode 100644 file3\.txt\\n' .
-        ' create mode 100644 file4\.txt\\n' .
-        ' create mode 100644 file5\.txt\\n' .
-        'Deleted branch wip \(was [0-9a-f]+\)\.\\n$' .
-        '/s',
+        '/^master\\n'
+        . 'Merge made by .*'
+        . ' create mode 100644 file2\.txt\\n'
+        . ' create mode 100644 file3\.txt\\n'
+        . ' create mode 100644 file4\.txt\\n'
+        . ' create mode 100644 file5\.txt\\n'
+        . 'Deleted branch wip \(was [0-9a-f]+\)\.\\n$'
+        . '/s',
         '/^git-wip: Type \'y\' \+ Enter to merge wip to master\.\.\.' .
             'Switched to branch \'master\'\\n$/',
         0,
