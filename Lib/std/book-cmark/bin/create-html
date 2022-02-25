@@ -80,11 +80,16 @@ cat <<END >"$destfile.tmp"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8" />
     <title>$destfile</title>
     <style type="text/css">
       <!--
-      body { background-color: white; color: black; font-family: sans-serif; }
+      body {
+        background-color: white;
+        color: black;
+        font-family: sans-serif;
+      }
       a:link { color: blue; background-color: white; }
       a:visited { color: maroon; background-color: white; }
       a:active { color: fuchsia; background-color: white; }

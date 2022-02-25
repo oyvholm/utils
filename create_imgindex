@@ -147,15 +147,22 @@ $is_svn_wc && unlink($ignorefile);
 
 print(OutFP <<END);
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="$Opt{'language'}" lang="$Opt{'language'}">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="$Opt{'language'}" lang="$Opt{'language'}">
   <!-- File ID: $uuid -->
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8" />
     <title>$Title</title>
     <style type="text/css">
       <!--
-      body { background-color: white; color: black; font-family: sans-serif; }
+      body {
+        background-color: white;
+        color: black;
+        font-family: sans-serif;
+      }
       a:link { color: blue; background-color: white; }
       a:visited { color: maroon; background-color: white; }
       a:active { color: fuchsia; background-color: white; }
@@ -164,12 +171,33 @@ print(OutFP <<END);
       table.main { margin: 0 auto; }
       td.head { text-align: center; vertical-align: middle; }
       td.dirtxt { text-align: left; vertical-align: middle; }
-      td.dirs { text-align: center; vertical-align: middle; width: 25%; }
+      td.dirs {
+        text-align: center;
+        vertical-align: middle;
+        width: 25%;
+      }
       td.image { text-align: center; vertical-align: middle; }
-      td.text { text-align: center; vertical-align: top; font-size: 80%; }
-      td.lefticon { text-align: center; vertical-align: middle; font-size: 80%; }
-      td.righticon { text-align: center; vertical-align: middle; font-size: 80%; }
-      td.footer { text-align: center; vertical-align: top; width: 100%; font-size: 100%; }
+      td.text {
+        text-align: center;
+        vertical-align: top;
+        font-size: 80%;
+      }
+      td.lefticon {
+        text-align: center;
+        vertical-align: middle;
+        font-size: 80%;
+      }
+      td.righticon {
+        text-align: center;
+        vertical-align: middle;
+        font-size: 80%;
+      }
+      td.footer {
+        text-align: center;
+        vertical-align: top;
+        width: 100%;
+        font-size: 100%;
+      }
       -->
     </style>
     <meta name="author" content="Øyvind A. Holm — sunny\@sunbase.org" />

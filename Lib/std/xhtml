@@ -10,11 +10,16 @@
   <!-- File ID: STDuuidDTS -->
   <!-- Author: Øyvind A. Holm (sunny@sunbase.org) -->
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8" />
     <title></title>
     <style type="text/css">
       <!--
-      body { background-color: white; color: black; font-family: sans-serif; }
+      body {
+        background-color: white;
+        color: black;
+        font-family: sans-serif;
+      }
       a:link { color: blue; background-color: white; }
       a:visited { color: maroon; background-color: white; }
       a:active { color: fuchsia; background-color: white; }
