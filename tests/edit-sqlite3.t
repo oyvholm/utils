@@ -319,9 +319,9 @@ END
         . 'COMMIT;\n'
         . '$/',
         '/^'
-        . 'Error: near line 3:.* near \"dCREATE\": syntax error.*\n'
+        . '.*dCREATE.*\n'
         . 'edit-sqlite3: Press Enter to edit again, or q to abort\.\.\.'
-        . '$/',
+        . '$/s',
         0,
         'Display "edit again" message if invalid SQL',
     );
