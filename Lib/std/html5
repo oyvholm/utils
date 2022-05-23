@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <title></title>
-    <style type="text/css">
+    <style>
       <!--
       body {
         background-color: white;
