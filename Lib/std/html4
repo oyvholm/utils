@@ -11,6 +11,7 @@
   <!-- STDfilenameDTS -->
   <!-- File ID: STDuuidDTS -->
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title></title>
     <style type="text/css">
       <!--
@@ -24,7 +25,6 @@
       a:active { color: fuchsia; background-color: white; }
       -->
     </style>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="author" content="Øyvind A. Holm — sunny@sunbase.org">
     <meta name="copyright" content="©STDyearDTS Øyvind A. Holm">
   </head>

@@ -3,6 +3,7 @@
   <!-- STDfilenameDTS -->
   <!-- File ID: STDuuidDTS -->
   <head>
+    <meta charset="UTF-8" />
     <title></title>
     <style type="text/css">
       <!--
@@ -16,7 +17,6 @@
       a:active { color: fuchsia; background-color: white; }
       -->
     </style>
-    <meta charset="utf-8" />
     <meta name="author" content="Øyvind A. Holm — sunny@sunbase.org" />
   </head>
   <body>
