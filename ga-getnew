@@ -13,12 +13,13 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.5.1
+VERSION=0.6.0
 
 ARGS="$(getopt -o "\
 h\
 q\
 r\
+s:\
 v\
 " -l "\
 from:,\
@@ -26,6 +27,7 @@ fsck,\
 help,\
 quiet,\
 resume,\
+since:,\
 verbose,\
 version,\
 " -n "$progname" -- "$@")"
@@ -37,6 +39,7 @@ opt_fsck=0
 opt_help=0
 opt_quiet=0
 opt_resume=0
+opt_since=1.month
 opt_verbose=0
 while :; do
     case "$1" in
@@ -45,6 +48,7 @@ while :; do
         -h|--help) opt_help=1; shift ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         -r|--resume) opt_resume=1; shift ;;
+        -s|--since) opt_since="$2"; shift 2 ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
         --) shift; break ;;
@@ -79,6 +83,8 @@ Options:
   -r, --resume
     Don't execute an initial "ga sync", resume an earlier interrupted 
     session.
+  -s TIMESPAN, --since TIMESPAN
+    Get new files since TIMESPAN, same syntax as --since in "git log".
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
@@ -113,15 +119,15 @@ else
     from_str=''
 fi
 
-msg git allfiles --since=1.month $*
+msg git allfiles --since=$opt_since $*
 msg ga get --auto$from_str
-git allfiles --since=1.month "$@" |
+git allfiles --since=$opt_since "$@" |
     strip-nonexisting |
     xargs -d \\n --no-run-if-empty ga get --auto$from_str
 
 if test "$opt_fsck" = "1"; then
     msg ga fsck --fast --quiet
-    git allfiles --since=1.month "$@" |
+    git allfiles --since=$opt_since "$@" |
         strip-nonexisting |
         xargs -d \\n --no-run-if-empty ga fsck --fast --quiet
 fi
