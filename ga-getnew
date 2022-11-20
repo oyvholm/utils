@@ -13,7 +13,7 @@
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.6.0
+VERSION=0.7.0
 
 ARGS="$(getopt -o "\
 h\
@@ -57,6 +57,8 @@ while :; do
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
+var_disable=ga-getnew.disable
+
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
@@ -90,6 +92,11 @@ Options:
   --version
     Print version information.
 
+If the Git option $var_disable is set to a non-empty value in a repo, 
+the repo is skipped. For example:
+
+  git config $var_disable 1
+
 END
     exit 0
 fi
@@ -98,6 +105,11 @@ msg() {
     echo
     echo ==== $progname: $*
 }
+
+if test -n "$(git config --get $var_disable)"; then
+    echo $progname: $var_disable is set, skipping repo
+    exit 0
+fi
 
 toplevel="$(git rev-parse --show-toplevel)"
 cd "$toplevel" || {
