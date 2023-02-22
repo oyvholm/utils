@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.8.6
+VERSION=0.8.7
 
 ARGS="$(getopt -o "\
 h\
@@ -104,7 +104,7 @@ END
     exit 0
 fi
 
-space_val="$(numfmt --from=auto -- $opt_space)"
+space_val="$(numfmt --from=auto --round=nearest -- $opt_space)"
 test -z "$space_val" && {
     echo "$progname: Invalid value in --space argument" >&2
     exit 1
