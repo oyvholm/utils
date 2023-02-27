@@ -151,7 +151,7 @@ END
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
     installed('screen --version', '/^Screen version \d/', 'stdout');
     installed('script --version', '/^script .+\butil-linux\b/', 'stdout');
-    installed('sqlite3 --version', '/^3\.(2|3)/', 'stdout');
+    installed('sqlite3 --version', '/^3\.[2-4]/', 'stdout');
     installed('ssh -V', '/OpenSSH/', 'stderr');
     installed('sshfs --version', '/SSHFS version \d/', 'stdout');
     installed('tar --version', '/GNU tar\b/', 'stdout');
@@ -159,7 +159,7 @@ END
     installed('unzip -v', '/^UnZip \d.*Info-ZIP/', 'stdout');
     installed('uprecords -v', '/^uprecords \d/', 'stdout');
     installed('uuid -d ac89d100-5809-11e0-b3ff-00023faf1383', '/2011-03-27 00:32:19\.377792\.0 UTC/', 'stdout', 'OSSP uuid');
-    installed('vim --version', '/VIM - Vi IMproved 8\../', 'stdout');
+    installed('vim --version', '/VIM - Vi IMproved [89]\../', 'stdout');
     installed('wget --version', '/GNU Wget/', 'stdout');
     installed('zip -v', '/This is Zip \d.*Info-ZIP/', 'stdout');
     repeat_test('uuidgen -r', 100, "^$v4_templ\$");
