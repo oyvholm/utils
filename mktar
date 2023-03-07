@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.29.0
+VERSION=0.29.1
 
 STD_SUFFIX=''
 
@@ -366,7 +366,7 @@ for f in "$@"; do
             echo $progname: tar cf $tarfile $tar_args $dir >&2
             tar cf "$tarfile" $tar_args "$dir" || exit 1
             if test "$opt_stdout" != "1"; then
-                ls -la "$tarfile" >&2
+                du --si "$tarfile" >&2
                 test "$opt_xz" = "1" && xz -v "$tarfile"
                 test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"
             fi
