@@ -148,7 +148,7 @@ INSERT OR IGNORE INTO meta (key, value)
   VALUES('program', 'git-delete-old-branches');
 INSERT OR IGNORE INTO meta (key, value)
   VALUES('url',
-   'https://gitlab.com/sunny256/utils/blob/master/git-delete-old-branches');
+   'https://gitlab.com/oyvholm/utils/blob/master/git-delete-old-branches');
 INSERT OR IGNORE INTO meta (key, value)
   VALUES('dbversion', '$dbversion');
 CREATE TABLE IF NOT EXISTS refs (

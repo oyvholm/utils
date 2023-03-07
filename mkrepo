@@ -104,7 +104,7 @@ sub main {
         }
     }
     if ($Opt{'gitlab-remote'}) {
-        mysystem("git", "remote", "add", "gitlab", "git\@gitlab.com:sunny256/$repo.git");
+        mysystem("git", "remote", "add", "gitlab", "git\@gitlab.com:oyvholm/$repo.git");
     }
     if ($Opt{'exthd-remote'}) {
         -d "$exthd_dir/$repo.git/." || mysystem("git", "init", "--bare", "$exthd_dir/$repo.git");

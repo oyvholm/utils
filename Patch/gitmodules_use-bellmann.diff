@@ -5,15 +5,15 @@ index a293c5087c09..0b4ad0978ddd 100644
 @@ -1,18 +1,18 @@
  [submodule "Git/gpstools"]
  	path = Git/gpstools
--	url = https://gitlab.com/sunny256/gpstools.git
+-	url = https://gitlab.com/oyvholm/gpstools.git
 +	url = sunny@bellmann:~/bin/Git/gpstools
  	branch = master
  [submodule "Git/suuid"]
  	path = Git/suuid
--	url = https://gitlab.com/sunny256/suuid.git
+-	url = https://gitlab.com/oyvholm/suuid.git
 +	url = sunny@bellmann:~/bin/Git/suuid
  	branch = master
  [submodule "Git/spar"]
  	path = Git/spar
--	url = https://gitlab.com/sunny256/spar.git
+-	url = https://gitlab.com/oyvholm/spar.git
 +	url = sunny@bellmann:~/bin/Git/spar

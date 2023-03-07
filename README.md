@@ -2,7 +2,7 @@ README for utils.git
 ====================
 
 ![Pipeline
-status](https://gitlab.com/sunny256/utils/badges/master/pipeline.svg)
+status](https://gitlab.com/oyvholm/utils/badges/master/pipeline.svg)
 
 This is a collection of scripts I've had in my `~/bin/` directory since 
 the previous century. Some of them are quite specific for my own use, 
@@ -27,13 +27,13 @@ Download
 
 This repository can be cloned from
 
-- `git@gitlab.com:sunny256/utils.git` / 
-  <https://gitlab.com/sunny256/utils.git> (Main repo)
+- `git@gitlab.com:oyvholm/utils.git` / 
+  <https://gitlab.com/oyvholm/utils.git> (Main repo)
 - `git@bitbucket.org:sunny256/utils.git`
 - `ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git`
 
 The repositories are synced with 
-[Gitspread](https://gitlab.com/sunny256/gitspread).
+[Gitspread](https://gitlab.com/oyvholm/gitspread).
 
 Stable utilities
 ----------------

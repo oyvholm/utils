@@ -134,7 +134,7 @@ fetch_remotes() {
         git config --add remote.gitster.fetch +refs/notes/*:refs/notes/*
     }
     git remote | grep -q '^gitlab$' ||
-        git remote add gitlab git@gitlab.com:sunny256/git.git
+        git remote add gitlab git@gitlab.com:oyvholm/git.git
     git remote | grep -q '^peff$' ||
         git remote add peff git://github.com/peff/git.git
     git remote | grep -q '^sunbase$' ||

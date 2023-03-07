@@ -1,4 +1,4 @@
-# sunny256/utils.git/Makefile
+# oyvholm/utils.git/Makefile
 # File ID: 455af534-fd45-11dd-a4b7-000475e441b9
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
@@ -74,7 +74,7 @@ remotes:
 	git remote add \
 	    sunbase sunny@git.sunbase.org:/home/sunny/Git/utils.git; true
 	git remote add bitbucket git@bitbucket.org:sunny256/utils.git; true
-	git remote add gitlab git@gitlab.com:sunny256/utils.git; true
+	git remote add gitlab git@gitlab.com:oyvholm/utils.git; true
 	git remote add \
 	    repoorcz ssh://sunny256@repo.or.cz/srv/git/sunny256-utils.git; true
 

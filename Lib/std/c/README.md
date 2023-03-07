@@ -64,7 +64,7 @@ GNCOV environment variable to a non-empty value. For example:
     make gcov-cmt GNCOV=1
 
 These commands need the `gcov-cmt` script, available from 
-<https://gitlab.com/sunny256/utils/raw/master/gcov-cmt>.
+<https://gitlab.com/oyvholm/utils/raw/master/gcov-cmt>.
 
 ### make gdb
 
@@ -119,9 +119,9 @@ with [`wkhtmltopdf`](https://wkhtmltopdf.org/).
 
 The main Git repository is stored at GitLab:
 
-  - URL: <https://gitlab.com/sunny256/STDexecDTS>
-  - SSH clone: git@gitlab.com:sunny256/STDexecDTS.git
-  - https clone: <https://gitlab.com/sunny256/STDexecDTS.git>
+  - URL: <https://gitlab.com/oyvholm/STDexecDTS>
+  - SSH clone: git@gitlab.com:oyvholm/STDexecDTS.git
+  - https clone: <https://gitlab.com/oyvholm/STDexecDTS.git>
 
 ## License
 

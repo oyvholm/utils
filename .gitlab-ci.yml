@@ -21,7 +21,7 @@ utils:linux:
     - git config --global user.name "Firstname Lastname"
     - git config --global user.email "ci@example.com"
     - git config --global safe.directory "*"
-    - git clone https://gitlab.com/sunny256/suuid.git
+    - git clone https://gitlab.com/oyvholm/suuid.git
     - cd suuid
     - script -e -q -c "make test install"
     - cd ..

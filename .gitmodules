@@ -1,11 +1,11 @@
 [submodule "Git/gpstools"]
 	path = Git/gpstools
-	url = https://gitlab.com/sunny256/gpstools.git
+	url = https://gitlab.com/oyvholm/gpstools.git
 	branch = master
 [submodule "Git/suuid"]
 	path = Git/suuid
-	url = https://gitlab.com/sunny256/suuid.git
+	url = https://gitlab.com/oyvholm/suuid.git
 	branch = master
 [submodule "Git/spar"]
 	path = Git/spar
-	url = https://gitlab.com/sunny256/spar.git
+	url = https://gitlab.com/oyvholm/spar.git
