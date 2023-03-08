@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mob
-VERSION=0.3.0
+VERSION=0.3.1
 
 opt_help=0
 opt_month=0
@@ -50,7 +50,7 @@ Options:
   -h, --help
     Show this help.
   -m YEAR MONTH QUOTA, --month YEAR MONTH QUOTA
-    Initialize statistics for a new month. SI or binary prefixes can be 
+    Initialize statistics for a new month. SI or binary units can be 
     used for quota, for example "100G" or "100Gi".
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
