@@ -43,7 +43,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.3.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -312,7 +312,7 @@ sub get_exif_data {
     my $retval = "";
     my $line;
 
-    if (!open(FromFP, "exiftool -j \"$file\" |")) {
+    if (!open(FromFP, "exiftool -j -api LargeFileSupport=1 \"$file\" |")) {
         printf(STDERR "$progname: $file: Cannot open file for read\n");
         return 1;
     }
