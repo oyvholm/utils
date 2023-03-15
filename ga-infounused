@@ -4,21 +4,28 @@
 # ga-infounused
 # File ID: fce5f46e-c0a5-11ed-ae82-5582e081d110
 #
-# [Description]
+# Create a list in the style of "git annex info" showing in which repositories 
+# unused data is stored.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=ga-infounused
-VERSION=0.0.0
+VERSION=0.1.0
 
+opt_bytes=0
 opt_help=0
+opt_json=0
+opt_keep=0
 opt_quiet=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
+	-b|--bytes) opt_bytes=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
+	-j|--json) opt_json=1; shift ;;
+	-k|--keep) opt_keep=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
@@ -39,12 +46,22 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
+Create a list in the style of "git annex info" showing in which 
+repositories unused data is stored.
+
 Usage: $progname [options]
 
 Options:
 
+  -b/--bytes
+    Output sizes as bytes instead of SI units.
   -h, --help
     Show this help.
+  -k, --keep
+    Keep the temporary clone (stored in the top directory of the repo) 
+    after exit. Useful if you want to have a look at the key lists.
+  -j/--json
+    Output information as JSON.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -54,6 +71,73 @@ Options:
 
 END
 	exit 0
+fi
+
+EMPTYTREE=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+KEYSALL=keys-all.txt
+KEYSCURRENT=keys-current.txt
+KEYSUNUSED=keys-unused.txt
+TMPCLONE=.tmpclone.tmp
+TMPGADIR=.tmpgadir.tmp
+
+cd "$(git rev-parse --show-toplevel)" \
+|| { echo $progname: Cannot chdir to top of repo >&2; exit 1; }
+
+if test -e $TMPCLONE -o -e $TMPCLONE.part; then
+	echo $progname: $TMPCLONE or $TMPCLONE.part already exist >&2
+	exit 1
+fi
+
+git clone . $TMPCLONE.part >&2 \
+|| { echo $progname: Cannot clone current repo to $TMPCLONE >&2; exit 1; }
+mv $TMPCLONE.part $TMPCLONE
+cd $TMPCLONE || { echo $progname: $TMPCLONE: Cannot chdir >&2; exit 1; }
+
+if ! git branch git-annex origin/git-annex >&2; then
+	echo $progname: Cannot create git-annex branch >&2
+	exit 1
+fi
+git remote rm origin >&2
+if test -n "$(git remote)"; then
+	echo $progname: Some remotes still exist >&2
+	exit 1
+fi
+
+git ls-tree -r git-annex | ga-findkey -u | sort -u >$KEYSALL.new
+mv $KEYSALL.new $KEYSALL
+
+git diff HEAD $EMPTYTREE | grep \\.git/annex/objects/ \
+| ga-findkey -u | sort -u >$KEYSCURRENT.new
+mv $KEYSCURRENT.new $KEYSCURRENT
+
+diff -u $KEYSALL $KEYSCURRENT | grep ^- | ga-findkey -u \
+| sort -u >$KEYSUNUSED.new
+mv $KEYSUNUSED.new $KEYSUNUSED
+
+git annex init >&2
+git annex merge >&2
+mkdir $TMPGADIR
+for f in $(cat $KEYSUNUSED); do \
+	ln -s .git/annex/objects/$f $TMPGADIR/$f; \
+done
+git add $TMPGADIR >&2
+echo $(git annex fix $TMPGADIR 2>&1 | grep ^fix | wc -l) unused files >&2
+
+test "$opt_bytes" = "1" && bytes_str=" --bytes" || bytes_str=""
+
+if test "$opt_json" = "1"; then
+	git annex info$bytes_str -j $TMPGADIR
+else
+	git annex info$bytes_str $TMPGADIR \
+	| grep " -- " \
+	| perl -pe 's/ \[\S+\]$//;'
+fi
+
+cd ..
+if test "$opt_keep" = "1"; then
+	echo $progname: Keeping temporary clone $TMPCLONE >&2
+else
+	rm -rf $TMPCLONE
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
