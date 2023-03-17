@@ -12,10 +12,10 @@
 #==============================================================================
 
 progname=rdbl-picture
-VERSION=0.1.0
+VERSION=0.1.1
 
 tmpfile=/tmp/.$progname.$(date +%s).$$.xpm
-exiftool "$1"
+exiftool -api LargeFileSupport=1 "$1"
 echo
 convert "$1" "$tmpfile"
 cat "$tmpfile"

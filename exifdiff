@@ -6,8 +6,9 @@
 #==============================================================================
 
 progname=exifdiff
-VERSION=0.1.0
+VERSION=0.1.1
 
-vimdiff <(exiftool "$1") <(exiftool "$2")
+vimdiff <(exiftool -api LargeFileSupport=1 "$1") \
+        <(exiftool -api LargeFileSupport=1 "$2")
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
