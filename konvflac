@@ -79,7 +79,7 @@ test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
 chkfile="/tmp/konvflac.$tmpuuid.tmp"
 for curr in "$@"; do
     echo
-    echo ======== $(ls -l "$curr")
+    echo ======== $(ls -lh "$curr")
     rm -f "$chkfile"
     noext="$(basename "$curr" .wav)"
     wavfile="$noext.wav"

@@ -61,9 +61,9 @@ fi
 osname="$(uname)"
 
 if test "$osname" = "Linux"; then
-	ls -la --color=always --full-time "$@" | $PAGER
+	ls -lah --color=always --full-time "$@" | $PAGER
 else
-	ls -la "$@" | $PAGER
+	ls -lah "$@" | $PAGER
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
