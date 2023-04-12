@@ -432,7 +432,7 @@ sub init_annex {
 	safe_chdir($dir);
 	likecmd("$CMD init",
 	        '/^'
-	        . 'init \S+@\S+:~\/'
+	        . 'init \S+:.*\/'
 	        . $dir
 	        . " .*" # New versions print "(scanning for unlocked files...)"
 	        . 'ok\n'
@@ -443,7 +443,7 @@ sub init_annex {
 	        "ga init in $dir");
 	likecmd("$CMD info",
 	        "/$v1_templ -- "
-	        . '\S+@\S+:~\/' . $dir . ' \[here\]\n'
+	        . '\S+:.*\/' . $dir . ' \[here\]\n'
 	        . '/',
 	        '/Have disabled git annex pre-commit/',
 	        0,

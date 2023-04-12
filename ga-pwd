@@ -22,7 +22,9 @@ local $| = 1;
 our %Opt = (
 
     'help' => 0,
+    'hostname' => 0,
     'quiet' => 0,
+    'username' => 0,
     'verbose' => 0,
     'version' => 0,
 
@@ -30,13 +32,15 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
 
     'help|h' => \$Opt{'help'},
+    'hostname|H' => \$Opt{'hostname'},
     'quiet|q+' => \$Opt{'quiet'},
+    'username|u' => \$Opt{'username'},
     'verbose|v+' => \$Opt{'verbose'},
     'version' => \$Opt{'version'},
 
@@ -56,16 +60,19 @@ sub main {
     my $Retval = 0;
     my $abs_path = abs_path('.');
     my $home_path = abs_path($ENV{'HOME'});
-    my $user = getpwuid($<);
-    chomp(my $hostname = `hostname`);
-    msg(3, "abs_path = '$abs_path', home_path = '$home_path', user = '$user'");
     my $outpath = $abs_path;
-    $outpath =~ s/^$home_path/~/;
-    msg(3, "outpath after regexp: '$outpath'");
-    unless ($outpath =~ /^\/media\//) {
-        $outpath = "$user\@$hostname:" . $outpath;
+
+    if ($Opt{'username'}) {
+        print(getpwuid($<) . '@');
+        $outpath =~ s/^$home_path/~/;
     }
-    print("$outpath\n");
+    chomp(my $hostname = `hostname`);
+    if ($abs_path =~ /^\/media\//) {
+        $Opt{'hostname'} && print($hostname . ':');
+        printf("%s\n", $abs_path);
+        return $Retval;
+    }
+    print("$hostname:$outpath\n");
 
     return $Retval;
     # }}}
@@ -88,19 +95,27 @@ sub usage {
     }
     print(<<"END");
 
-Print name of current directory, using the format "user\@host:pwd". Use 
-the "physical" directory location, ignore symlinks. If the current 
-directory is below \$HOME, replace the first part with '~'. If current 
-dir is below /media/, don't print username and hostname.
+Print path of current directory, using the format "host:pwd". Use the 
+"physical" directory location, ignore parent symlinks.
+
+If the current directory is below \$HOME and -u/--username is specified, 
+replace the first part with '~'.
+
+If the current directory is below /media/, don't print username or 
+hostname by default.
 
 Usage: $progname [options]
 
 Options:
 
+  -H, --hostname
+    Include hostname in output even under "/media/".
   -h, --help
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -u, --username
+    Include local user name in output.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
   --version
