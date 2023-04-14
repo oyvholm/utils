@@ -1,4 +1,4 @@
-# oyvholm/utils.git/Makefile
+# oyvholm/utils/Makefile
 # File ID: 455af534-fd45-11dd-a4b7-000475e441b9
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 

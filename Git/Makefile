@@ -1,4 +1,4 @@
-# sunny256/utils.git/Git/Makefile
+# oyvholm/utils/Git/Makefile
 # File ID: 83bbcb90-4aeb-11e6-b612-02010e0a6634
 
 MAKEFILES = */Makefile

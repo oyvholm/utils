@@ -1,4 +1,4 @@
-# utils.git/.gitlab-ci.yml
+# oyvholm/utils/.gitlab-ci.yml
 # File ID: be09508c-8383-11e9-bed5-4f45262dc9b5
 
 image: gcc

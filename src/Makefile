@@ -1,4 +1,4 @@
-# sunny256/utils.git/src/Makefile
+# oyvholm/utils/src/Makefile
 # File ID: 89595d4a-4aed-11e6-8641-02010e0a6634
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
