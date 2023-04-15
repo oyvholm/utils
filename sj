@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.8.7
+VERSION=0.8.8
 
 ARGS="$(getopt -o "\
 h\
@@ -171,7 +171,7 @@ elif test "$1" = "dfull"; then
         goaltime=$(echo $goal_output | awk '{print $3}' | sed 's/\..*//')
         cl_goalint=$(echo $goalint | wc -L)
         cl_goaltime=$(echo $goaltime | wc -L)
-        cl_dfdiff=$(echo $dfdiff | commify | wc -L)
+        cl_dfdiff=$(echo $dfdiff | hum | wc -L)
         seconds=$(echo $currsec-$origsec | bc)
 
         test $cl_goalint -gt $ml_goalint && ml_goalint=$cl_goalint
@@ -203,24 +203,24 @@ elif test "$1" = "dfull"; then
                 "$goaldate" \
                 "$goaltime" \
                 "$t_diskfree" \
-                "$(echo $dfdiff | commify)" \
+                "$(echo $dfdiff | hum)" \
                 "$t_diskfree_reset" \
                 "$t_diskfree" \
-                "$(echo $currdf | commify)" \
+                "$(echo $currdf | hum)" \
                 "$t_diskfree_reset" \
                 "$(tput el)" \
                 "$(
                     if test $seconds -gt 0; then
                         printf " %s B/s" $(
                             printf 'scale=0; %d/%u\n' $dfdiff $seconds |
-                                bc | commify
+                                bc | hum
                         )
                     fi
                 )"
         else
             printf "\\n$progname dfull: No changes yet, %s%s%s bytes free%s" \
                 "$t_diskfree" \
-                "$(echo $currdf | commify)" \
+                "$(echo $currdf | hum)" \
                 "$t_diskfree_reset" \
                 "$(tput el)"
         fi
