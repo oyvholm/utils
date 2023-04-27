@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.8.8
+VERSION=0.9.0
 
 ARGS="$(getopt -o "\
 h\
@@ -74,9 +74,6 @@ Options:
   --version
     Print version information.
 
-If no command is specified, it checks that the network is up by issuing 
-a ping command until interrupted. These commands are also available:
-
   allspace
     Display free space of all local disks every 2nd second until 
     interrupted.
@@ -91,6 +88,9 @@ a ping command until interrupted. These commands are also available:
   kern
     Follow the kernel log and display new entries immediately when they 
     occur.
+  ping
+    Check that the network is up by issuing a ping command until 
+    interrupted.
   space
     Display free space of the current disk every second until 
     interrupted.
@@ -134,6 +134,7 @@ all_free_space() {
     echo
 }
 
+[ -z "$1" ] && { echo $progname: No command specified >&2; exit 1; }
 if test "$1" = "allspace"; then
     unset prev
     while :; do
@@ -290,11 +291,14 @@ elif test "$1" = "temp-warn" -o "$1" = "tw"; then
         fi
         sleep 2
     done
-else
+elif test "$1" = "ping"; then
     test -d /n900/. && sudo=sudo || unset sudo
     while :; do
         $sudo ping 178.79.142.16
         sleep 1
         echo ============================================
     done
+else
+    echo $progname: $1: Unknown command >&2
+    exit 1
 fi
