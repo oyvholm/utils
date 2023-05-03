@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=scrdump
-VERSION=0.1.1
+VERSION=0.1.2
 
 ARGS="$(getopt -o "\
 h\
@@ -41,7 +41,7 @@ while :; do
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
-scrdumpdir=$HOME/annex/opptak/alt/$(date -u +"%Y/%m")
+scrdumpdir="$HOME/annex/opptak/alt/$(date -u +"%Y/%m")"
 
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
@@ -67,11 +67,13 @@ END
     exit 0
 fi
 
-[ -d $scrdumpdir/. ] || mkdir -p $scrdumpdir || {
+[ -d "$scrdumpdir/." ] || mkdir -p "$scrdumpdir" || {
     echo "$0: $scrdumpdir: Cannot create directory" >&2
     exit 1
 }
 
-TZ=UTC shutter -e --full -n \
-    -o $scrdumpdir/%Y%m%dT%H%M%SZ.$(hostname)-screendump.\$wx\$h.png \
-    2>/dev/null
+res=$(xdpyinfo -display $DISPLAY | awk '/dimensions:/ { print($2) }')
+echo "$res" | grep -Eq '^[0-9]+x[0-9]+$' || res=RES_UNKNOWN
+
+xfce4-screenshooter --fullscreen \
+  -s "$scrdumpdir/$(date -u +"%Y%m%dT%H%M%SZ").$(hostname)-screendump.$res.png"
