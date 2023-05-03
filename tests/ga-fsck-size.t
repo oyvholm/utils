@@ -185,7 +185,7 @@ END
             'Only 1 of 2 trustworthy copies exist of SHA256\.txt \(7(\.0)? bytes\)\n' .
             'failed\n' .
             '.+' .
-            'git-annex: fsck: 25 failed\n' .
+            'fsck: 25 failed\n' .
             '\n' .
             'Total size of files that need more copies: 199\n' .
             'Total space needed to get enough copies  : 199\n' .
