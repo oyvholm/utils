@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.9.0
+VERSION=0.9.1
 
 ARGS="$(getopt -o "\
 h\
@@ -113,7 +113,8 @@ test $opt_verbose -ge 1 &&
     echo "$progname: Using --space $space_val" >&2
 
 free_space() {
-    df -h --si "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' | tr -d '\n'
+    df -B1 "$1" -P | tail -1 | tr -s ' ' | cut -f 4 -d ' ' \
+    | hum | rmspcall | tr -d '\n'
 }
 
 free_space_bytes() {
@@ -122,6 +123,8 @@ free_space_bytes() {
 
 all_free_space() {
     mount | grep ^/dev/ | cut -f 3 -d ' ' | sort | while read f; do
+        [ "$f" = "/boot" -o "$f" = "/boot/efi" ] && continue
+        echo -n " ║ "
         if test "$f" = "/"; then
             echo -n "/ ";
             free_space /
@@ -129,7 +132,6 @@ all_free_space() {
             echo "$f " | rev | cut -f 1 -d / | rev | tr -d '\n'
             free_space "$f"
         fi
-        echo -n "  "
     done
     echo
 }
@@ -141,7 +143,7 @@ if test "$1" = "allspace"; then
         curr="$(all_free_space)"
         if test "$curr" != "$prev"; then
             echo
-            echo -n "$(date +"%d %H:%M:%S")  $curr$(tput el)"
+            echo -n "$(date +"%d %H:%M:%S")$curr$(tput el)"
         fi
         prev="$curr"
         sleep 1
