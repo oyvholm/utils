@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=ll
-VERSION=0.4.0
+VERSION=0.4.1
 
 opt_help=0
 opt_quiet=0
@@ -61,9 +61,9 @@ fi
 osname="$(uname)"
 
 if test "$osname" = "Linux"; then
-	ls -artlh --color=always --full-time "$@" | $PAGER
+	ls -artl --si --color=always --full-time "$@" | $PAGER
 else
-	ls -artlh "$@" | $PAGER
+	ls -artl --si "$@" | $PAGER
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :

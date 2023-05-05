@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=konvflac
-VERSION=0.2.0
+VERSION=0.2.1
 
 CMD_FLAC=flac
 
@@ -79,7 +79,7 @@ test -z "$tmpuuid" && { echo "konvflac: Broken suuid(1)" >&2; exit 1; }
 chkfile="/tmp/konvflac.$tmpuuid.tmp"
 for curr in "$@"; do
     echo
-    echo ======== $(ls -lh "$curr")
+    echo ======== $(ls -l --si "$curr")
     rm -f "$chkfile"
     noext="$(basename "$curr" .wav)"
     wavfile="$noext.wav"

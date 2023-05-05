@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=wav_to_mp3
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -70,7 +70,7 @@ tmpuuid=$(suuid -m -t c_wav_to_mp3 -wa -c "Starting conversion")
 test -z "$tmpuuid" && { echo "$progname: Broken suuid(1)" >&2; exit 1; }
 for curr in "$@"; do
     echo
-    echo ======== $(ls -lh "$curr")
+    echo ======== $(ls -l --si "$curr")
     noext=$(basename "$curr" .wav)
     wavfile="$noext.wav"
     mp3file="$noext.mp3"
