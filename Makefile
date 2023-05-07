@@ -53,9 +53,9 @@ push-to-gitlab:
 		&& git branch tmp-gitlab $$rev \
 		&& echo git branch synced/tmp-gitlab $$rev \
 		&& git branch synced/tmp-gitlab $$rev \
-		&& echo git push gitlab \
+		&& echo git push -f gitlab \
 		   tmp-gitlab:master synced/tmp-gitlab:synced/master \
-		&& git push gitlab \
+		&& git push -f gitlab \
 		   tmp-gitlab:master synced/tmp-gitlab:synced/master \
 		&& echo git branch -D tmp-gitlab synced/tmp-gitlab \
 		&& git branch -D tmp-gitlab synced/tmp-gitlab \
