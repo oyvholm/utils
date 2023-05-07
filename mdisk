@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.1.0
+VERSION=0.1.1
 
 opt_help=0
 opt_quiet=0
@@ -81,7 +81,7 @@ is_mounted() {
 disk=$1
 [ -z "$disk" ] && err No disk specified
 
-blkid | grep -q "LABEL=\"$disk\"" || err $disk: Disk not found in blkid
+sudo blkid | grep -q "LABEL=\"$disk\"" || err $disk: Disk not found in blkid
 
 if [ "$opt_umount" != "1" ]; then
 	is_mounted $disk && err $disk: Already mounted
