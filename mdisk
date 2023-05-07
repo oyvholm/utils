@@ -4,22 +4,24 @@
 # mdisk
 # File ID: 0548a2d2-ea04-11ed-b5e0-83850402c3ce
 #
-# [Description]
+# Mount a LUKS-encrypted disk under /media/
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #==============================================================================
 
 progname=mdisk
-VERSION=0.0.0
+VERSION=0.1.0
 
 opt_help=0
 opt_quiet=0
+opt_umount=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-u|--umount) opt_umount=1; shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
 	--) shift; break ;;
@@ -39,6 +41,8 @@ if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
 
+Mount a LUKS-encrypted disk under /media/.
+
 Usage: $progname [options]
 
 Options:
@@ -49,11 +53,53 @@ Options:
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -u, --umount
+    Unmount the disk.
   --version
     Print version information.
 
 END
 	exit 0
+fi
+
+msg() {
+	test $1 -gt $opt_verbose && return;
+	shift
+	echo "$progname: $*" >&2
+}
+
+err() {
+	echo "$progname: $*" >&2
+	exit 1
+}
+
+is_mounted() {
+	df | grep -q "/media/$disk\$" && return 0
+	return 1
+}
+
+disk=$1
+[ -z "$disk" ] && err No disk specified
+
+blkid | grep -q "LABEL=\"$disk\"" || err $disk: Disk not found in blkid
+
+if [ "$opt_umount" != "1" ]; then
+	is_mounted $disk && err $disk: Already mounted
+	device=$(blkid -L $disk)
+	msg 1 device = \"$device\"
+	[ -z "$device" ] && err Cannot get device for $disk
+	echo "$device" | grep -q ^/dev/ || err $device: Malformed device name
+	sudo cryptsetup status $disk \
+	| grep -q "/dev/mapper/$disk is active" \
+	|| sudo cryptsetup luksOpen $device $disk && mount /media/$disk
+	is_mounted $disk && msg 0 $disk mounted on /media/$disk \
+	|| err $disk: mount failed
+else
+	is_mounted $disk && umount /media/$disk
+	is_mounted $disk && err /media/$disk: umount failed
+	sudo cryptsetup luksClose $disk
+	sync
+	msg 0 $disk is unmounted and closed
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
