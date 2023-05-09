@@ -90,7 +90,7 @@ export SUUID_LOGDIR=$TMPLOGDIR
 for f in *.ly; do
     echo
     echo === $f
-    ln -fns $f STDprojnameDTS.ly
+    ln -fnsv $f STDprojnameDTS.ly
     make touch
     make || exit 1
     make STDprojnameDTS.wav
