@@ -6,5 +6,5 @@
 if [ "$1" = "-d" ]; then
     base64 -di | gunzip --stdout --force
 else
-    gzip -9 | base64 -w 0 "$@"
+    gzip -9 | base64 -w 8 "$@" | tr '\n' ' ' | sed 's/ $//'
 fi
