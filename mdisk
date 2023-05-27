@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.1.1
+VERSION=0.1.2
 
 opt_help=0
 opt_quiet=0
@@ -78,7 +78,7 @@ is_mounted() {
 	return 1
 }
 
-disk=$1
+disk=$(echo "$1" | sed 's.^/media/..; s./$..')
 [ -z "$disk" ] && err No disk specified
 
 sudo blkid | grep -q "LABEL=\"$disk\"" || err $disk: Disk not found in blkid
