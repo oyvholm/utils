@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.1.2
+VERSION=0.1.3
 
 opt_help=0
 opt_quiet=0
@@ -73,6 +73,10 @@ err() {
 	exit 1
 }
 
+is_active() {
+	sudo cryptsetup status $disk | grep -q "/dev/mapper/$disk is active"
+}
+
 is_mounted() {
 	df | grep -q "/media/$disk\$" && return 0
 	return 1
@@ -89,8 +93,7 @@ if [ "$opt_umount" != "1" ]; then
 	msg 1 device = \"$device\"
 	[ -z "$device" ] && err Cannot get device for $disk
 	echo "$device" | grep -q ^/dev/ || err $device: Malformed device name
-	sudo cryptsetup status $disk \
-	| grep -q "/dev/mapper/$disk is active" \
+	is_active $disk \
 	|| sudo cryptsetup luksOpen $device $disk && mount /media/$disk
 	is_mounted $disk && msg 0 $disk mounted on /media/$disk \
 	|| err $disk: mount failed
@@ -99,6 +102,7 @@ else
 	is_mounted $disk && err /media/$disk: umount failed
 	sudo cryptsetup luksClose $disk
 	sync
+	is_active $disk && err $disk is still active
 	msg 0 $disk is unmounted and closed
 fi
 
