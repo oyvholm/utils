@@ -11,12 +11,13 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.9.1
+VERSION=0.10.0
 
 ARGS="$(getopt -o "\
 h\
 q\
 v\
+W\
 " -l "\
 help,\
 maxtemp:,\
@@ -24,6 +25,7 @@ quiet,\
 space:,\
 verbose,\
 version,\
+wait,\
 " -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
@@ -35,6 +37,7 @@ opt_maxtemp=$std_maxtemp
 opt_quiet=0
 opt_space='0'
 opt_verbose=0
+opt_wait=0
 while :; do
     case "$1" in
         -h|--help) opt_help=1; shift ;;
@@ -43,6 +46,7 @@ while :; do
         --space) opt_space=$2; shift 2 ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
+        -W|--wait) opt_wait=1; shift ;;
         --) shift; break ;;
         *) echo $progname: Internal error >&2; exit 1 ;;
     esac
@@ -73,6 +77,10 @@ Options:
     Increase level of verbosity. Can be repeated.
   --version
     Print version information.
+  -W, --wait
+    When used with "dfull":
+      Wait until the amount of free space changes before starting the 
+      measurement.
 
   allspace
     Display free space of all local disks every 2nd second until 
@@ -154,6 +162,16 @@ elif test "$1" = "df"; then
     df -h --si | grep ^Filesystem
     df -h --si --total | grep -e /dev/ -e ^total | sort -h -k4
 elif test "$1" = "dfull"; then
+    if test "$opt_wait" = "1"; then
+        beg_df="$(df -B1 .)"
+        curr_df="$(df -B1 .)"
+        echo -n $progname: Waiting for change in free space... >&2
+        while test "$beg_df" = "$curr_df"; do
+            sleep 2
+            curr_df="$(df -B1 .)"
+        done
+        echo ok >&2
+    fi
     origsec=$(date +%s)
     origtime="$(date -u +"%Y-%m-%d %H:%M:%S.%N")"
     origdf=$(( $(free_space_bytes .) - $space_val ))
