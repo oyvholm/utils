@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.1.5
+VERSION=0.1.6
 
 opt_help=0
 opt_quiet=0
@@ -60,6 +60,11 @@ Options:
   --version
     Print version information.
 
+Environment variables
+
+  MDISK_KEY_FILE
+    Full path to text file with passphrase for encrypted drives.
+
 Files
 
   \$HOME/.mdiskrc
@@ -103,7 +108,9 @@ if [ "$opt_umount" != "1" ]; then
 	[ -z "$device" ] && err Cannot get device for $disk
 	echo "$device" | grep -q ^/dev/ || err $device: Malformed device name
 	is_active $disk \
-	|| sudo cryptsetup luksOpen $device $disk && mount /media/$disk
+	|| sudo cryptsetup luksOpen \
+	$([ -n "$MDISK_KEY_FILE" ] && echo "--key-file $MDISK_KEY_FILE") \
+	$device $disk && mount /media/$disk
 	is_mounted $disk && msg 0 $disk mounted on /media/$disk \
 	|| err $disk: mount failed
 else
