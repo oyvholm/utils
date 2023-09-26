@@ -29,7 +29,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.2';
+our $VERSION = '0.2.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -91,7 +91,7 @@ sub sec2date {
 		'hour' => 3600,
 		'day' => 86400
 	);
-	$secc{'year'} = $secc{'day'} * 365.25;
+	$secc{'year'} = $secc{'day'} * 365.2425;
 	my $retval = "";
 	my $years = int($ss / $secc{'year'});
 	$ss -= $years * $secc{'year'};
