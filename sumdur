@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=sumdur
-VERSION=0.2.1
+VERSION=0.2.2
 
 opt_days=0
 opt_no_frac=0
@@ -105,8 +105,8 @@ if test -n "$opt_unit"; then
 	ho) unit_div=3600 ;;
 	da) unit_div=86400 ;;
 	we) unit_div=604800 ;;
-	mo) unit_div=2629800 ;;
-	ye) unit_div=31557600 ;;
+	mo) unit_div=2629746 ;;
+	ye) unit_div=31556952 ;;
 	*) echo "$progname: Invalid value in -u/--unit option" >&2
 	   exit 1
 	   break ;;
