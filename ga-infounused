@@ -12,7 +12,7 @@
 #==============================================================================
 
 progname=ga-infounused
-VERSION=0.1.0
+VERSION=0.1.1
 
 opt_bytes=0
 opt_help=0
@@ -106,7 +106,7 @@ fi
 git ls-tree -r git-annex | ga-findkey -u | sort -u >$KEYSALL.new
 mv $KEYSALL.new $KEYSALL
 
-git diff HEAD $EMPTYTREE | grep \\.git/annex/objects/ \
+git diff --no-textconv HEAD $EMPTYTREE | grep \\.git/annex/objects/ \
 | ga-findkey -u | sort -u >$KEYSCURRENT.new
 mv $KEYSCURRENT.new $KEYSCURRENT
 
