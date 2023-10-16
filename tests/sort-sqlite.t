@@ -325,6 +325,7 @@ sub sql {
     msg(5, "sql(): db = '$db'");
     local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
 
+    $sql_error = 0;
     my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, $SQLITE, $db) or (
         $sql_error = 1,
         msg(0, "sql(): open3() error: $!"),

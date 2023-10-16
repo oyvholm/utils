@@ -31,7 +31,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 
 my $ERROR = 0;
 my $OK = 1;
@@ -172,6 +172,7 @@ sub sql {
     msg(3, "sql(): db = '$db'");
     local(*CHLD_IN, *CHLD_OUT, *CHLD_ERR);
 
+    $sql_error = 0;
     my $pid = open3(*CHLD_IN, *CHLD_OUT, *CHLD_ERR, $SQLITE, $db) or (
         $sql_error = 1,
         msg(0, "sql(): open3() error: $!"),
