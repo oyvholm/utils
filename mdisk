@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.1.7
+VERSION=0.1.8
 
 opt_help=0
 opt_quiet=0
@@ -107,7 +107,10 @@ disk=$(echo "$1" | sed 's.^/media/..; s./$..')
 sudo blkid | grep -q "LABEL=\"$disk\"" || err $disk: Disk not found in blkid
 
 if [ "$opt_umount" != "1" ]; then
-	is_mounted $disk && err $disk: Already mounted
+	is_mounted $disk && {
+		msg 0 $T_BOLD$T_GREEN$disk: Already mounted$T_RESET
+		exit 0
+	}
 	device=$(blkid -L $disk)
 	msg 1 device = \"$device\"
 	[ -z "$device" ] && err Cannot get device for $disk
