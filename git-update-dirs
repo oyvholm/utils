@@ -55,7 +55,7 @@ our @opt_exec_before = ();
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.6.5';
+our $VERSION = '0.6.6';
 
 my $archive_disk = "seagate-3tb"; # FIXME: Hardcoding
 
@@ -171,13 +171,14 @@ sub main {
 		-d "$f/objects/." && ($object_dir = "objects");
 		msg(2, "object_dir = '$object_dir'");
 		if (length($object_dir)) {
-			$Opt{'verbose'} >= -1 &&
-				print("================ $f " .
-				      "================\n");
 			if (!chdir($f)) {
 				warn("$progname: $f: Cannot chdir: $!\n");
 				next LOOP;
 			}
+			$Opt{'verbose'} >= -1 &&
+				printf("================ %s "
+				       . "================\n",
+				       abs_path(getcwd()));
 			inside_git_dir() &&
 				(chdir('..'), $object_dir = ".git/objects");
 			my $is_bare = (get_config('core.bare') =~ /^true/)

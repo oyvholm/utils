@@ -20,6 +20,7 @@ BEGIN {
     # use_ok() goes here
 }
 
+use Cwd qw{ abs_path getcwd };
 use Getopt::Long;
 
 local $| = 1;
@@ -45,6 +46,7 @@ our $VERSION = '0.0.0';
 my $current_repo;
 my %descriptions = ();
 my %disable_already_tested = ();
+my $abspwd = abs_path(getcwd());
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -94,6 +96,7 @@ END
 =cut
 
     my $Tmptop = "tmp-git-update-dirs-t-$$-" . substr(rand, 2, 8);
+    my $abstop = "$abspwd/$Tmptop";
     ok(mkdir($Tmptop), "mkdir [Tmptop]") ||
         BAIL_OUT("$Tmptop: mkdir error, can't continue\n");
     ok(chdir($Tmptop), "chdir [Tmptop]") ||
@@ -173,8 +176,8 @@ END
 
     # }}}
 
-    test_repo('repo', 0);
-    test_repo('bare.git', 1);
+    test_repo('repo', 0, $abspwd, $Tmptop);
+    test_repo('bare.git', 1, $abspwd, $Tmptop);
 
     my @dir_list = qw {
         repo/sub2
@@ -196,13 +199,13 @@ END
 
     testcmd("$CMD --recursive -nf", # {{{
         <<END,
-================ ./repo ================
+================ $abstop/repo ================
 
-================ ./repo/sub1 ================
+================ $abstop/repo/sub1 ================
 
-================ ./repo/sub1/subrepo1 ================
+================ $abstop/repo/sub1/subrepo1 ================
 
-================ ./repo/sub2 ================
+================ $abstop/repo/sub2 ================
 
 END
         "git-update-dirs: Simulating 'git fetch --all'...\n" x 4,
@@ -213,13 +216,13 @@ END
     # }}}
     testcmd("$CMD -rfn", # {{{
         <<END,
-================ ./repo ================
+================ $abstop/repo ================
 
-================ ./repo/sub1 ================
+================ $abstop/repo/sub1 ================
 
-================ ./repo/sub1/subrepo1 ================
+================ $abstop/repo/sub1/subrepo1 ================
 
-================ ./repo/sub2 ================
+================ $abstop/repo/sub2 ================
 
 END
         "git-update-dirs: Simulating 'git fetch --all'...\n" x 4,
@@ -231,15 +234,15 @@ END
     create_file("filelist.txt", join("\n", @dir_list));
     testcmd("$CMD --dirs-from filelist.txt -nf", # {{{
         <<END,
-================ repo/sub2 ================
+================ $abstop/repo/sub2 ================
 
-================ repo/sub1 ================
+================ $abstop/repo/sub1 ================
 
-================ repo/sub1/subrepo1 ================
+================ $abstop/repo/sub1/subrepo1 ================
 
-================ repo/bare1.git ================
+================ $abstop/repo/bare1.git ================
 
-================ repo/sub1/subrepo1/subsubrepo1.git ================
+================ $abstop/repo/sub1/subrepo1/subsubrepo1.git ================
 
 END
         "git-update-dirs: Simulating 'git fetch --all'...\n" x 5,
@@ -250,15 +253,15 @@ END
     # }}}
     testcmd("$CMD --fetch -n --dirs-from - <filelist.txt", # {{{
         <<END,
-================ repo/sub2 ================
+================ $abstop/repo/sub2 ================
 
-================ repo/sub1 ================
+================ $abstop/repo/sub1 ================
 
-================ repo/sub1/subrepo1 ================
+================ $abstop/repo/sub1/subrepo1 ================
 
-================ repo/bare1.git ================
+================ $abstop/repo/bare1.git ================
 
-================ repo/sub1/subrepo1/subsubrepo1.git ================
+================ $abstop/repo/sub1/subrepo1/subsubrepo1.git ================
 
 END
         "git-update-dirs: Simulating 'git fetch --all'...\n" x 5,
@@ -275,21 +278,21 @@ END
     testcmd("$CMD --fetch -n --dirs-from filelist.txt " .
         "--dirs-from filelist2.txt", # {{{
         <<END,
-================ repo/sub2 ================
+================ $abstop/repo/sub2 ================
 
-================ repo/sub1 ================
+================ $abstop/repo/sub1 ================
 
-================ repo/sub1/subrepo1 ================
+================ $abstop/repo/sub1/subrepo1 ================
 
-================ repo/bare1.git ================
+================ $abstop/repo/bare1.git ================
 
-================ repo/sub1/subrepo1/subsubrepo1.git ================
+================ $abstop/repo/sub1/subrepo1/subsubrepo1.git ================
 
-================ repo/sub2 ================
+================ $abstop/repo/sub2 ================
 
-================ repo/bare1.git ================
+================ $abstop/repo/bare1.git ================
 
-================ repo/sub1 ================
+================ $abstop/repo/sub1 ================
 
 END
         "git-update-dirs: Simulating 'git fetch --all'...\n" x 8,
@@ -348,7 +351,8 @@ END
 
 sub test_repo {
     # {{{
-    my ($repo, $is_bare) = @_;
+    my ($repo, $is_bare, $abspwd, $Tmptop) = @_;
+    my $absrepo = "$abspwd/$Tmptop/$repo";
 
     diag("Run tests in $repo");
     $current_repo = $repo;
@@ -391,7 +395,7 @@ sub test_repo {
     );
 
     # }}}
-    my $sep = "================ . ================\n";
+    my $sep = "================ $absrepo ================\n";
 
     diag('--exec-before');
     testcmd("$CMD -E 'echo This is nice' .", # {{{
@@ -410,7 +414,7 @@ sub test_repo {
     );
 
     # }}}
-    test_disabled("exec-before", "$CMD --exec-before echo .");
+    test_disabled("exec-before", "$CMD --exec-before echo .", $absrepo);
     diag('--lpar');
     testcmd("$CMD -n -l .", # {{{
         "$sep\n",
@@ -430,29 +434,29 @@ sub test_repo {
     );
 
     # }}}
-    test_disabled("lpar");
+    test_disabled("lpar", undef, $absrepo);
     diag('--test');
-    test_option('-t', 'git fsck');
-    test_option('--test', 'git fsck');
+    test_option('-t', 'git fsck', $absrepo);
+    test_option('--test', 'git fsck', $absrepo);
     diag('--fetch-prune');
-    test_option('-F', 'git fetch --all --prune');
-    test_option('--fetch-prune', 'git fetch --all --prune');
+    test_option('-F', 'git fetch --all --prune', $absrepo);
+    test_option('--fetch-prune', 'git fetch --all --prune', $absrepo);
     diag('--fetch');
-    test_option('-f', 'git fetch --all');
-    test_option('--fetch', 'git fetch --all');
+    test_option('-f', 'git fetch --all', $absrepo);
+    test_option('--fetch', 'git fetch --all', $absrepo);
     diag('--pull');
     if ($is_bare) {
         testcmd("$CMD -n -p", '', '', 0, "$repo: Test -p");
         testcmd("$CMD -n --pull", '', '', 0, "$repo: Test --pull");
     } else {
-        test_option('-p', 'git pull --ff-only');
-        test_option('--pull', 'git pull --ff-only');
+        test_option('-p', 'git pull --ff-only', $absrepo);
+        test_option('--pull', 'git pull --ff-only', $absrepo);
     }
     diag('--ga-sync');
-    test_option('-g', 'ga sync');
-    test_option('--ga-sync', 'ga sync');
+    test_option('-g', 'ga sync', $absrepo);
+    test_option('--ga-sync', 'ga sync', $absrepo);
     diag('--ga-dropget');
-    test_option('-G', nolf(<<END)); # {{{
+    test_option('-G', nolf(<<END), $absrepo); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga drop --auto'...
 git-update-dirs: Simulating 'ga sync'...
@@ -461,7 +465,7 @@ git-update-dirs: Simulating 'ga sync
 END
 
     # }}}
-    test_option('--ga-dropget', nolf(<<END)); # {{{
+    test_option('--ga-dropget', nolf(<<END), $absrepo); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga drop --auto'...
 git-update-dirs: Simulating 'ga sync'...
@@ -471,7 +475,7 @@ END
 
     # }}}
     diag('--ga-dropunused');
-    test_option('-u', nolf(<<END)); # {{{
+    test_option('-u', nolf(<<END), $absrepo); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga dropunused all'...
@@ -479,7 +483,7 @@ git-update-dirs: Simulating 'ga sync
 END
 
     # }}}
-    test_option('--ga-dropunused', nolf(<<END)); # {{{
+    test_option('--ga-dropunused', nolf(<<END), $absrepo); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga dropunused all'...
@@ -488,7 +492,7 @@ END
 
     # }}}
     diag('--ga-moveunused');
-    test_option('-U', nolf(<<END)); # {{{
+    test_option('-U', nolf(<<END), $absrepo); # {{{
 ga sync
 END
 
@@ -501,7 +505,7 @@ END
     );
 
     # }}}
-    test_option('--ga-moveunused', nolf(<<END)); # {{{
+    test_option('--ga-moveunused', nolf(<<END), $absrepo); # {{{
 ga sync'...
 git-update-dirs: Simulating 'ga unused'...
 git-update-dirs: Simulating 'ga move --unused --to seagate-3tb'...
@@ -510,24 +514,24 @@ END
 
     # }}}
     diag('--ga-getnew');
-    test_option('-N', 'ga-getnew');
-    test_option('--ga-getnew', 'ga-getnew');
+    test_option('-N', 'ga-getnew', $absrepo);
+    test_option('--ga-getnew', 'ga-getnew', $absrepo);
     diag('--ga-update-desc');
-    test_option('-S', 'ga update-desc');
-    test_option('--ga-update-desc', 'ga update-desc');
+    test_option('-S', 'ga update-desc', $absrepo);
+    test_option('--ga-update-desc', 'ga update-desc', $absrepo);
     diag('--dangling');
-    test_option('-d', 'git dangling');
-    test_option('--dangling', 'git dangling');
+    test_option('-d', 'git dangling', $absrepo);
+    test_option('--dangling', 'git dangling', $absrepo);
     diag('--allbr');
     if ($is_bare) {
-        test_option('-a', nolf(<<END)); # {{{
+        test_option('-a', nolf(<<END), $absrepo); # {{{
 git nobr'...
 git-update-dirs: Simulating 'git allbr -a'...
 git-update-dirs: Simulating 'git checkout -
 END
 
         # }}}
-        test_option('--allbr', nolf(<<END)); # {{{
+        test_option('--allbr', nolf(<<END), $absrepo); # {{{
 git nobr'...
 git-update-dirs: Simulating 'git allbr -a'...
 git-update-dirs: Simulating 'git checkout -
@@ -565,11 +569,11 @@ END
 
     # }}}
     diag('--push');
-    test_option('-P', 'git pa');
-    test_option('--push', 'git pa');
+    test_option('-P', 'git pa', $absrepo);
+    test_option('--push', 'git pa', $absrepo);
     diag('--submodule');
     testcmd("$CMD --dry-run -s .", # {{{
-        "================ . ================\n\n",
+        "================ $absrepo ================\n\n",
         '',
         0,
         "$repo: Test -s option, .gitmodules is missing",
@@ -577,7 +581,7 @@ END
 
     # }}}
     testcmd("touch .gitmodules", '', '', 0, "$repo: Create empty .gitmodules");
-    test_option('--submodule', nolf(<<END)); # {{{
+    test_option('--submodule', nolf(<<END), $absrepo); # {{{
 git submodule init'...
 git-update-dirs: Simulating 'git submodule update
 END
@@ -585,9 +589,11 @@ END
     # }}}
     diag('--compress');
     my $objects = $is_bare ? 'objects' : '.git\/objects';
+    my $absrepo_r = $absrepo;
+    $absrepo_r =~ s,/,\\/,g;
     my $compress_output = # {{{
         '/^' .
-        '================ \. ================\n' .
+        "================ $absrepo_r ================\\n" .
         '\n' .
         'Before: \d+\n' .
         'After : \d+\n' .
@@ -627,7 +633,7 @@ END
     # }}}
     system("git config git-update-dirs.no-compress true");
     likecmd("$CMD -n -c .", # {{{
-        '/^================ \. ================\n\n' .
+        "/^================ $absrepo_r ================\\n\\n" .
         'Before: \d+\n' .
         'After : \d+\n' .
         'Number of object files: before: \d+, after: \d+, saved: \d+\n/',
@@ -663,7 +669,7 @@ END
     # }}}
     system("git config git-update-dirs.no-aggressive-compress true");
     likecmd("$CMD -n -C .", # {{{
-        '/^================ \. ================\n\n' .
+        "/^================ $absrepo_r ================\\n\\n" .
         'Before: \d+\n' .
         'After : \d+\n' .
         'Number of object files: before: \d+, after: \d+, saved: \d+\n/',
@@ -695,8 +701,8 @@ END
 
         # }}}
     } else {
-        test_option('-D', 'git dangling -D');
-        test_option('--delete-dangling', 'git dangling -D');
+        test_option('-D', 'git dangling -D', $absrepo);
+        test_option('--delete-dangling', 'git dangling -D', $absrepo);
     }
     diag('--exec-after');
     testcmd("$CMD -e 'echo This is nice' .", # {{{
@@ -715,7 +721,7 @@ END
     );
 
     # }}}
-    test_disabled("exec-after", "$CMD --exec-after echo .");
+    test_disabled("exec-after", "$CMD --exec-after echo .", $absrepo);
     diag('--all-options');
     my ($allbr_str, $pull_str);
     if ($is_bare) {
@@ -784,19 +790,19 @@ sub nolf {
 
 sub test_option {
     # {{{
-    my ($option, $cmd) = @_;
+    my ($option, $cmd, $absrepo) = @_;
 
     if (!-e $CMD) {
         BAIL_OUT("\$CMD is '$CMD', that's wrong");
     }
     testcmd("$CMD -n $option .",
-        "================ . ================\n\n",
+        "================ $absrepo ================\n\n",
         "git-update-dirs: Simulating '$cmd'...\n",
         0,
         "$current_repo: Test $option option",
     );
     if ($option =~ /^--(.+)$/ && !defined($disable_already_tested{$1})) {
-        test_disabled($1);
+        test_disabled($1, undef, $absrepo);
     }
     return;
     # }}}
@@ -804,7 +810,7 @@ sub test_option {
 
 sub test_disabled {
     # Test disabling of commands {{{
-    my ($longopt, $command) = @_;
+    my ($longopt, $command, $absrepo) = @_;
     system("git config git-update-dirs.no-$longopt true");
     # Some commands calls "ga sync", so also disable "ga sync" to 
     # avoid that single line appear in the output.
@@ -813,7 +819,7 @@ sub test_disabled {
     }
     defined($command) || ($command = "../../../$CMDB -n --$longopt .");
     testcmd($command,
-        "================ . ================\n\n",
+        "================ $absrepo ================\n\n",
         '',
         0,
         "$current_repo: --$longopt is disabled",
