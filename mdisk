@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.1.8
+VERSION=0.2.0
 
 opt_help=0
 opt_quiet=0
@@ -19,6 +19,7 @@ opt_umount=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
+	-a|--all) opt_all=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-u|--umount) opt_umount=1; shift ;;
@@ -54,6 +55,9 @@ Usage: $progname [options] DISKNAME
 
 Options:
 
+  -a, --all
+    Loop through all directory names under /media/ and mount or unmount 
+    all corresponding disks.
   -h, --help
     Show this help.
   -q, --quiet
@@ -96,15 +100,38 @@ is_active() {
 	sudo cryptsetup status $disk | grep -q "/dev/mapper/$disk is active"
 }
 
+is_in_blkid() {
+	sudo blkid | grep -q "LABEL=\"$1\"" && return 0
+	return 1
+}
+
 is_mounted() {
 	df | grep -q "/media/$disk\$" && return 0
 	return 1
 }
 
+strip_diskname() {
+	echo $(echo "$1" | sed 's.^/media/..; s./$..')
+}
+
+disk=$(strip_diskname $1)
+
+if [ "$opt_all" = "1" ]; then
+	for f in /media/*; do
+		is_in_blkid $(strip_diskname $f) || continue
+		if [ "$opt_umount" = "1" ]; then
+			$0 -u $f
+		else
+			$0 $f
+		fi
+	done
+	exit
+fi
+
 disk=$(echo "$1" | sed 's.^/media/..; s./$..')
 [ -z "$disk" ] && err No disk specified
 
-sudo blkid | grep -q "LABEL=\"$disk\"" || err $disk: Disk not found in blkid
+is_in_blkid $disk || err $disk: Disk not found in blkid
 
 if [ "$opt_umount" != "1" ]; then
 	is_mounted $disk && {
