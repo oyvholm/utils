@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=logging
-VERSION=0.1.0
+VERSION=0.1.1
 
 ARGS="$(getopt -o "\
 h\
@@ -67,10 +67,11 @@ END
     exit 0
 fi
 
+host=$1
+test -z "$host" && host=$([ -f ~/.compname ] && cat ~/.compname || hostname)
+
 [ -d $LOGDIR/. ] || mkdir -p $LOGDIR || { echo logging: $LOGDIR: Cannot create log directory >&2; exit 1; }
 export LDATE=`u`
-host=$1
-test -z "$host" && host=$(hostname)
 uuid=`suuid -t logging -w eo -c "logging $host"` || { echo logging: Error when generating UUID, logging not started >&2; exit 1; }
 export LNAME="$LOGDIR/$LDATE.$uuid.$host"
 SESS_UUID="${SESS_UUID}logging/$uuid," script -ft $LNAME.scrlog 2>$LNAME.timing
