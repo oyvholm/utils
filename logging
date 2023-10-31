@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=logging
-VERSION=0.1.1
+VERSION=0.1.2
 
 ARGS="$(getopt -o "\
 h\
@@ -67,8 +67,43 @@ END
     exit 0
 fi
 
+hex="[0-9A-Fa-f]"
+v1_templ="$hex{8}-$hex{4}-1$hex{3}-$hex{4}-$hex{12}";
+
+scriptprocs() {
+    ps auxw | grep -E "script .*/[0-9]{8}T[0-9]{6}Z\.$v1_templ\.$1\.scrlog"
+}
+
+kill_dups() {
+    local pids=$(scriptprocs $1 | tr -s ' ' | cut -f 2 -d ' ')
+    kill $pids
+}
+
 host=$1
 test -z "$host" && host=$([ -f ~/.compname ] && cat ~/.compname || hostname)
+
+runcheck="$(scriptprocs $host)"
+if [ -n "$runcheck" ]; then
+    scrcount=$(echo "$runcheck" | wc -l)
+    if [ "$scrcount" = "1" ]; then
+        pl_s=""
+        pl_are="is"
+        pl_them="it"
+    else
+        pl_s="s"
+        pl_are="are"
+        pl_them="them"
+    fi
+    echo -n $progname: $scrcount >&2
+    echo " typescript$pl_s with the same name $pl_are already running" >&2
+    echo -n "Kill $pl_them? " >&2
+    while :; do
+        echo -n "[y/n]: " >&2
+        read choice
+        [ "$choice" = "y" ] && { kill_dups $host; break; }
+        [ "$choice" = "n" ] && break
+    done
+fi
 
 [ -d $LOGDIR/. ] || mkdir -p $LOGDIR || { echo logging: $LOGDIR: Cannot create log directory >&2; exit 1; }
 export LDATE=`u`
