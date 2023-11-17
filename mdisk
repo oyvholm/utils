@@ -114,8 +114,6 @@ strip_diskname() {
 	echo $(echo "$1" | sed 's.^/media/..; s./$..')
 }
 
-disk=$(strip_diskname $1)
-
 if [ "$opt_all" = "1" ]; then
 	for f in /media/*; do
 		is_in_blkid $(strip_diskname $f) || continue
@@ -128,7 +126,7 @@ if [ "$opt_all" = "1" ]; then
 	exit
 fi
 
-disk=$(echo "$1" | sed 's.^/media/..; s./$..')
+disk=$(strip_diskname $1)
 [ -z "$disk" ] && err No disk specified
 
 is_in_blkid $disk || err $disk: Disk not found in blkid
