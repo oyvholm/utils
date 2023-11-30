@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.2.0
+VERSION=0.2.1
 
 opt_help=0
 opt_quiet=0
@@ -74,12 +74,20 @@ Environment variables
   MDISK_KEY_FILE
     Full path to text file with passphrase for encrypted drives.
 
-Files
+Files and directories
 
   \$HOME/.mdiskrc
     Init file. A regular shell script that can be used to initialize 
     environment variables and run commands before normal program 
     execution.
+  .dontsleep/
+    If this directory exists at the top of the disk, the disk is 
+    prevented from sleeping. When a disk with this directory is mounted, 
+    a background process is started that writes 512 random bytes to a 
+    file in this directory every two minutes. The current user must have 
+    write permission in this directory, otherwise sleeping is not 
+    prevented. When the disk is unmounted with -u/--umount, the process 
+    is killed.
 
 END
 	exit 0
@@ -114,6 +122,48 @@ strip_diskname() {
 	echo $(echo "$1" | sed 's.^/media/..; s./$..')
 }
 
+create_ds_script() {
+	echo >$ds_script || err $ds_dir/: Cannot write to directory, \
+	                        disk sleep is not prevented
+	cat <<'END' >$ds_script
+#!/bin/sh
+
+outfile=.dontsleep.bin
+
+rm -f $outfile
+echo $$ >pid || {
+	echo -n "$T_BOLD$T_RED$0: Cannot write pid file to $ds_dir," >&2
+	echo " unable to prevent sleep$T_RESET" >&2
+	exit 1
+}
+while :; do
+	head -c 512 /dev/urandom >>$outfile
+	(cd; sleep 120)
+done
+END
+}
+
+prevent_sleep() {
+	local disk=$1
+
+	msg 0 Preventing $disk from sleeping
+	cd "$ds_dir" || err $ds_dir: chdir error
+	create_ds_script
+	sh $ds_script $disk &
+}
+
+kill_prevent() {
+	local disk=$1
+
+	pidfile="$ds_dir/pid"
+	if [ ! -f "$pidfile" ]; then
+		echo $progname: PID file $pidfile not found >&2
+		return
+	fi
+	kill $(cat $pidfile)
+	rm $pidfile
+}
+
 if [ "$opt_all" = "1" ]; then
 	for f in /media/*; do
 		is_in_blkid $(strip_diskname $f) || continue
@@ -131,6 +181,9 @@ disk=$(strip_diskname $1)
 
 is_in_blkid $disk || err $disk: Disk not found in blkid
 
+ds_dir="/media/$disk/.dontsleep"
+ds_script=dontsleep
+
 if [ "$opt_umount" != "1" ]; then
 	is_mounted $disk && {
 		msg 0 $T_BOLD$T_GREEN$disk: Already mounted$T_RESET
@@ -147,7 +200,9 @@ if [ "$opt_umount" != "1" ]; then
 	is_mounted $disk \
 	&& msg 0 $T_BOLD$T_GREEN$disk mounted on /media/$disk$T_RESET \
 	|| err $disk: mount failed
+	[ -d "$ds_dir" ] && prevent_sleep $disk
 else
+	[ -d "$ds_dir" ] && kill_prevent $disk
 	is_mounted $disk && umount /media/$disk
 	is_mounted $disk && err /media/$disk: umount failed
 	sudo cryptsetup luksClose $disk
