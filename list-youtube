@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=list-youtube
-VERSION=0.6.5
+VERSION=0.6.6
 
 ARGS="$(getopt -o "\
 d:\
@@ -238,7 +238,7 @@ else
     cat <<SQL_END | sqlite3 -header -column "$db" | sed 's/ *$//g;' | $PAGER
 SELECT
     upload_date AS ud,
-    resolution,
+    format_id,
     length,
     uploader,
     file
