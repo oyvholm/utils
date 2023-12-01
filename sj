@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=sj
-VERSION=0.10.0
+VERSION=0.10.1
 
 ARGS="$(getopt -o "\
 h\
@@ -249,7 +249,7 @@ elif test "$1" = "dfull"; then
         sleep 2
     done
 elif test "$1" = "kern"; then
-    tail -Fq /var/log/kern.log /var/log/syslog /var/log/auth.log \
+    tail -Fq /var/log/kern.log \
     | grep -v " $(hostname) CRON"
 elif test "$1" = "space"; then
     unset prevlast
