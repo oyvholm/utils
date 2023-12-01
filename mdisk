@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.2.1
+VERSION=0.2.2
 
 opt_help=0
 opt_quiet=0
@@ -204,6 +204,7 @@ if [ "$opt_umount" != "1" ]; then
 else
 	[ -d "$ds_dir" ] && kill_prevent $disk
 	is_mounted $disk && umount /media/$disk
+	[ -d "$ds_dir" ] && prevent_sleep $disk
 	is_mounted $disk && err /media/$disk: umount failed
 	sudo cryptsetup luksClose $disk
 	sync
