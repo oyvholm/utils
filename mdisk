@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.2.2
+VERSION=0.2.3
 
 opt_help=0
 opt_quiet=0
@@ -186,7 +186,7 @@ ds_script=dontsleep
 
 if [ "$opt_umount" != "1" ]; then
 	is_mounted $disk && {
-		msg 0 $T_BOLD$T_GREEN$disk: Already mounted$T_RESET
+		msg 0 $disk: Already mounted
 		exit 0
 	}
 	device=$(blkid -L $disk)
