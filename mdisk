@@ -128,6 +128,9 @@ create_ds_script() {
 	cat <<'END' >$ds_script
 #!/bin/sh
 
+T_BOLD=$(tput bold)
+T_RED=$(tput setaf 1)
+T_RESET=$(tput sgr0)
 outfile=.dontsleep.bin
 
 rm -f $outfile
