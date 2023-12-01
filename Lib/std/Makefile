@@ -11,6 +11,10 @@ clean:
 	cd c && $(MAKE) -f Makefile.std-test clean
 	cd ly && $(MAKE) clean && rm -f STDprojnameDTS.ly STDprojnameDTS.midi
 
+.PHONY: format
+format:
+	black -l 79 python
+
 .PHONY: test
 test: test-c test-ly test-sh
 	cd book-cmark && $(MAKE) test
