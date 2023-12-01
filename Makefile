@@ -2,6 +2,10 @@
 # File ID: 455af534-fd45-11dd-a4b7-000475e441b9
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
+PYFILES  =
+PYFILES += git-expand
+PYFILES += jsonfmt.py
+PYFILES += line_exec.py
 T_GREEN=$$(tput setaf 2)
 T_RESET=$$(tput sgr0)
 
@@ -19,6 +23,11 @@ clean:
 	cd src && $(MAKE) clean
 	cd Git && $(MAKE) clean
 	find . -name .testadd.tmp -type d -print0 | xargs -0r rm -rf
+
+.PHONY: format
+format:
+	black -l 79 $(PYFILES)
+	cd Lib && $(MAKE) $@
 
 .PHONY: fullclean
 fullclean:

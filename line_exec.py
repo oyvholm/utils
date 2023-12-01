@@ -14,27 +14,44 @@ License: GNU General Public License version 2 or later.
 import sys
 import subprocess
 
+
 def exec_line(line, args):
     for cmd in args:
-        pipe = subprocess.Popen(cmd, stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pipe = subprocess.Popen(
+            cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
         (stdout, stderr) = pipe.communicate(line)
         sys.stdout.write(stdout)
         sys.stdout.flush()
         sys.stderr.write(stderr)
         sys.stderr.flush()
 
-def main(args = None):
+
+def main(args=None):
     from optparse import OptionParser
+
     parser = OptionParser()
-    parser.add_option("-A", "--after", type="string", dest="after",
-                    default='',
-                    help="Text string to add after every line output",
-                    metavar="TEXT")
-    parser.add_option("-B", "--before", type="string", dest="before",
-                    default='',
-                    help="Text string to add before every line output",
-                    metavar="TEXT")
+    parser.add_option(
+        "-A",
+        "--after",
+        type="string",
+        dest="after",
+        default="",
+        help="Text string to add after every line output",
+        metavar="TEXT",
+    )
+    parser.add_option(
+        "-B",
+        "--before",
+        type="string",
+        dest="before",
+        default="",
+        help="Text string to add before every line output",
+        metavar="TEXT",
+    )
     (opt, args) = parser.parse_args()
 
     fp = sys.__stdin__
@@ -44,6 +61,7 @@ def main(args = None):
         exec_line(line, args)
         sys.stdout.write(opt.after)
         line = fp.readline()
+
 
 if __name__ == "__main__":
     main()

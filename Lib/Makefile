@@ -12,6 +12,10 @@ clean:
 	cd perllib && $(MAKE) clean
 	cd std && $(MAKE) clean
 
+.PHONY: format
+format:
+	cd std && $(MAKE) format
+
 .PHONY: test
 test:
 	cd perllib && $(MAKE) test
