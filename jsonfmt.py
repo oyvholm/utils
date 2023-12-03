@@ -10,7 +10,7 @@ Author: Øyvind A. Holm <sunny@sunbase.org>
 """
 
 
-def format_json(text, indent=2):
+def format_json(text, indent=2, sort=False):
     """Return formatted JSON"""
     import json
 
@@ -18,7 +18,7 @@ def format_json(text, indent=2):
         json.loads(text),
         ensure_ascii=False,
         indent=indent,
-        sort_keys=True,
+        sort_keys=sort,
     )
 
 
@@ -40,6 +40,13 @@ def main():
         metavar="X",
         type=int,
     )
+    parser.add_argument(
+        "-s",
+        "--sort",
+        action="store_true",
+        default=False,
+        help="Sort JSON elements alphabetically",
+    )
     args = parser.parse_args()
 
     try:
@@ -47,6 +54,7 @@ def main():
             format_json(
                 "".join(sys.stdin.readlines()),
                 indent=args.indent,
+                sort=args.sort,
             )
         )
     except ValueError:
