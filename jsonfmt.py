@@ -10,7 +10,7 @@ Author: Øyvind A. Holm <sunny@sunbase.org>
 """
 
 
-def format_json(text, indent=4):
+def format_json(text, indent=2):
     """Return formatted JSON"""
     import json
 
