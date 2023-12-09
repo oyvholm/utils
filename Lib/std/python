@@ -1,53 +1,64 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""STDfilenameDTS - STDdescDTS
-
+"""
+STDfilenameDTS
 File ID: STDuuidDTS
 
 [Description]
 
 License: GNU General Public License version 2 or later.
 Author: Øyvind A. Holm <sunny@sunbase.org>
-
 """
 
 import argparse
+import logging
 import os
 import sys
 
 progname = os.path.basename(__file__)
 __version__ = "0.0.0"
 
-parser = argparse.ArgumentParser(
-    description="",
-)
-parser.add_argument(
-    "-v",
-    "--verbose",
-    action="count",
-    default=0,
-    help="verbose level, can be repeated",
-)
-parser.add_argument(
-    "--version",
-    action="count",
-    default=0,
-    help="print version information",
-)
-args = parser.parse_args()
+
+def parse_arguments():
+    """Parse command-line arguments.
+
+    Returns a Namespace object with the arguments as attributes.
+    """
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity level. Can be repeated.",
+    )
+    parser.add_argument(
+        "--version", action="store_true", help="Print version information."
+    )
+    return parser.parse_args()
 
 
-def main():
-    retval = 0
+def main(args):
+    """Main function.
 
-    if args.version:
-        print("%s %s" % (progname, __version__))
-        sys.exit(0)
-
-    return retval
+    Args:
+        args: Namespace object with command line arguments as attributes.
+    Returns:
+        0 on success, non-zero error code on failure.
+    """
+    return 0
 
 
 if __name__ == "__main__":
-    main_result = main()
-    sys.exit(main_result)
+    args = parse_arguments()
+    if args.version:
+        print(f"{progname} {__version__}")
+        sys.exit(0)
+
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose >= 3 else logging.INFO,
+        format=f"{progname}: %(message)s",
+    )
+
+    sys.exit(main(args))
