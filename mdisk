@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.2.3
+VERSION=0.2.4
 
 opt_help=0
 opt_quiet=0
@@ -151,8 +151,7 @@ prevent_sleep() {
 
 	msg 0 Preventing $disk from sleeping
 	cd "$ds_dir" || err $ds_dir: chdir error
-	create_ds_script
-	sh $ds_script $disk &
+	(create_ds_script && sh $ds_script $disk) &
 }
 
 kill_prevent() {
