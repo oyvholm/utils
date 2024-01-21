@@ -30,7 +30,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -55,8 +55,8 @@ sub main {
     # {{{
     my $Retval = 0;
 
-    my $FOLD_BEGIN = "\x7B\x7B\x7B";
-    my $FOLD_END = "\x7D\x7D\x7D";
+    my $FOLD_BEGIN = "\\{\\{\\{";
+    my $FOLD_END = "\\}\\}\\}";
     my $fold_dir = "/tmp/folds";
 
     my $count = 0;
