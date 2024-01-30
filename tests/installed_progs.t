@@ -145,7 +145,7 @@ END
     installed('perl --version', '/This is perl( |, v)5/', 'stdout');
     installed('pinfo --version', '/^Przemek\'s Info Viewer /', 'stdout');
     installed('pv --version', '/^pv \d/', 'stdout');
-    installed('python --version', '/Python (2|3)/', 'stderr');
+    installed('python --version', '/Python (2|3)/', 'both');
     installed('python3 --version', '/^Python 3/', 'both');
     installed('recode --version', '/^Free recode \d/', 'stdout');
     installed('rsync --version', '/^rsync\s+version \d/', 'stdout');
