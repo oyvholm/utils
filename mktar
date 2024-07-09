@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.29.2
+VERSION=0.29.3
 
 STD_SUFFIX=''
 
@@ -115,6 +115,13 @@ while :; do
     esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if [ -n "$POSIXLY_CORRECT" ]; then
+    tput bold
+    tput setaf 1
+    echo $progname: POSIXLY_CORRECT = \"$POSIXLY_CORRECT\" >&2
+    tput sgr0
+fi
 
 if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
