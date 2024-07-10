@@ -124,7 +124,7 @@ if test -z "$bytes"; then
 	else
 		echo -n "$t_bold$t_red"
 	fi
-	spar mobil -sg | numfmt --to=si --format=%7.2f --invalid=ignore \
+	spar mobil -sg | numfmt --to=si --format=%7.4f --invalid=ignore \
 	                        --round=nearest
 	echo -n "$t_reset"
 else
