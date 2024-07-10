@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.2.4
+VERSION=0.2.5
 
 opt_help=0
 opt_quiet=0
@@ -140,7 +140,7 @@ echo $$ >pid || {
 	exit 1
 }
 while :; do
-	head -c 512 /dev/urandom >>$outfile
+	touch $outfile
 	(cd; sleep 120)
 done
 END
