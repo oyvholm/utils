@@ -140,6 +140,8 @@ if test -z "$bytes"; then
 	fi
 	spar $dbname -sg | numfmt --to=si --format=%7.4f --invalid=ignore \
 	                          --round=nearest
+	spar $dbname -W et | numfmt --to=si --format=%7.4f --invalid=ignore \
+	                            --round=nearest
 	echo -n "$t_reset"
 else
 	spar $dbname -sgc $(numfmt --from si --round=nearest $bytes) >/dev/null
