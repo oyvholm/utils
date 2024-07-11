@@ -17,12 +17,14 @@ opt_help=0
 opt_month=0
 opt_quiet=0
 opt_verbose=0
+opt_wifi=0
 while test -n "$1"; do
 	case "$1" in
 	-h|--help) opt_help=1; shift ;;
 	-m|--month) opt_month=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	-w|--wifi) opt_wifi=1; shift ;;
 	--version) echo $progname $VERSION; exit 0 ;;
 	--) shift; break ;;
 	*)
@@ -56,6 +58,8 @@ Options:
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -w. --wifi
+    Use database "wifi.spar" instead of "mobil.spar".
   --version
     Print version information.
 
@@ -66,7 +70,8 @@ END
 	exit 0
 fi
 
-db=~/spar/mobil.spar
+[ "$opt_wifi" = "1" ] && dbname=wifi || dbname=mobil
+db=~/spar/$dbname.spar
 t_bold=$(tput bold)
 t_green=$(tput setaf 2)
 t_red=$(tput setaf 1)
@@ -95,8 +100,17 @@ if test "$opt_month" = "1"; then
 	| grep -q . \
 	&& { echo $progname: Month already registered >&2; exit 1; }
 
-	spar mobil --now "$start" --bt "$start" --et "$end" \
-	           --bv 0 --ev $quota -c 0 -sgv
+	if [ "$opt_wifi" = "1" ]; then
+		c_str=$quota
+		bv_str=$quota
+		ev_str=0
+	else
+		c_str=0
+		bv_str=0
+		ev_str=$quota
+	fi
+	spar $dbname --now "$start" --bt "$start" --et "$end" \
+	             --bv $bv_str --ev $ev_str -c $c_str -sgv
 	exit 0
 fi
 
@@ -119,17 +133,17 @@ fi
 bytes=$(echo -n "$1" | tr a-z A-Z)
 
 if test -z "$bytes"; then
-	if spar mobil -s | tail -1 | grep -q ^-; then
+	if spar $dbname -s | tail -1 | grep -q ^-; then
 		echo -n "$t_bold$t_green"
 	else
 		echo -n "$t_bold$t_red"
 	fi
-	spar mobil -sg | numfmt --to=si --format=%7.4f --invalid=ignore \
-	                        --round=nearest
+	spar $dbname -sg | numfmt --to=si --format=%7.4f --invalid=ignore \
+	                          --round=nearest
 	echo -n "$t_reset"
 else
-	spar mobil -sgc $(numfmt --from si --round=nearest $bytes) >/dev/null
-	$0
+	spar $dbname -sgc $(numfmt --from si --round=nearest $bytes) >/dev/null
+	$0 $([ "$opt_wifi" = "1" ] && echo -w)
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
