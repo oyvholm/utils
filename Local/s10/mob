@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mob
-VERSION=0.3.1
+VERSION=0.4.0
 
 opt_help=0
 opt_month=0
@@ -38,6 +38,8 @@ while test -n "$1"; do
 	esac
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
+
+rcfile=.mobrc
 
 if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
@@ -66,16 +68,24 @@ Options:
 The "undo" command deletes the newest entry in the database. It also 
 prints an INSERT statement to stdout in case you regret the deletion.
 
+If ~/$rcfile exists, it's executed in the beginning of the script and 
+can be used to redefine variables. For example:
+
+default_si=G
+
 END
 	exit 0
 fi
 
 [ "$opt_wifi" = "1" ] && dbname=wifi || dbname=mobil
 db=~/spar/$dbname.spar
+default_si=
 t_bold=$(tput bold)
 t_green=$(tput setaf 2)
 t_red=$(tput setaf 1)
 t_reset=$(tput sgr0)
+
+[ -e ~/$rcfile ] && . ~/$rcfile
 
 test -e "$db" || { echo $progname: $db: Database not found >&2; exit 1; }
 
@@ -83,7 +93,7 @@ if test "$opt_month" = "1"; then
 	test -z "$3" && { echo $progname: Missing arguments >&2; exit 1; }
 	year=$1
 	month=$2
-	quota=$(echo "$3" | tr a-hj-z A-HJ-Z \
+	quota=$(echo "$3$default_si" | tr a-hj-z A-HJ-Z \
 	        | numfmt --from=auto --round=nearest)
 	test -z "$quota" \
 	&& { echo $progname: Invalid quota value >&2; exit 1; }
@@ -130,7 +140,7 @@ END
 	exit
 fi
 
-bytes=$(echo -n "$1" | tr a-z A-Z)
+[ -n "$1" ] && bytes=$(echo -n "$1$default_si" | tr a-z A-Z)
 
 if test -z "$bytes"; then
 	if spar $dbname -s | tail -1 | grep -q ^-; then
