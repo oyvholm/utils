@@ -142,8 +142,6 @@ END
         'JSON::XS' => 'libjson-xs-perl',
         'MIME::Base64' => 'libmime-base64-urlsafe-perl',
         'Math::Round' => 'libmath-round-perl',
-        'Module::Starter' => 'libmodule-starter-perl',
-        'Module::Starter::Plugin::CGIApp' => 'libmodule-starter-plugin-cgiapp-perl',
         'Net::SMTP::SSL' => 'libnet-smtp-ssl-perl',
         'Number::Bytes::Human' => 'libnumber-bytes-human-perl',
         'OSSP::uuid' => 'libossp-uuid-perl',
