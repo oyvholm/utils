@@ -35,9 +35,13 @@ while test -n "$1"; do
 done
 opt_verbose=$(($opt_verbose - $opt_quiet))
 
+GIT=git
+
 if test "$opt_help" = "1"; then
 	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
 	cat <<END
+
+Move files downloaded by yt-dlp and youtube-dl to Kron/YYYY/MM/DD/.
 
 Usage: $progname [options]
 
@@ -55,5 +59,28 @@ Options:
 END
 	exit 0
 fi
+
+topdir="$($GIT rev-parse --show-toplevel)"
+tmpfile=".$progname.tmp"
+ls -1N *.json | sort >"$tmpfile"
+
+cmd="SELECT printf("
+cmd="$cmd'unset y m d;"
+cmd="$cmd y=%s; m=%s; d=%s;"
+cmd="$cmd if [ -n \"\$y\" -a -n \"\$m\" -a -n \"\$d\" ]; then"
+cmd="$cmd mkdir -p \"$topdir/Kron/\$y/\$m/\$d\";"
+cmd="$cmd $GIT mv -v"
+cmd="$cmd *\"%s\"*"
+cmd="$cmd \"$topdir/Kron/\$y/\$m/\$d/\";"
+cmd="$cmd fi;',"
+cmd="$cmd substr(upload_date, 1, 4),"
+cmd="$cmd substr(upload_date, 6, 2),"
+cmd="$cmd substr(upload_date, 9, 2),"
+cmd="$cmd ytid"
+cmd="$cmd)"
+cmd="$cmd FROM yt;"
+
+list-youtube -F "$tmpfile" -S "$cmd" | sh
+rm -f "$tmpfile"
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
