@@ -11,9 +11,10 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.2.5
+VERSION=0.3.0
 
 opt_help=0
+opt_interactive=0
 opt_quiet=0
 opt_umount=0
 opt_verbose=0
@@ -21,6 +22,7 @@ while test -n "$1"; do
 	case "$1" in
 	-a|--all) opt_all=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
+	-i|--interactive) opt_interactive=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-u|--umount) opt_umount=1; shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -60,6 +62,8 @@ Options:
     all corresponding disks.
   -h, --help
     Show this help.
+  -i, --interactive
+    When used with -a/--all, ask for confirmation for each mountpoint.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
   -v, --verbose
@@ -166,13 +170,24 @@ kill_prevent() {
 	rm $pidfile
 }
 
+prompt() {
+	[ "$opt_interactive" = "0" ] && return 0
+	echo -n "$1 " >&2
+	while :; do
+		echo -n "[y/n]: " >&2
+		read choice
+		[ "$choice" = "n" ] && return 1
+		[ "$choice" = "y" ] && return 0
+	done
+}
+
 if [ "$opt_all" = "1" ]; then
 	for f in /media/*; do
 		is_in_blkid $(strip_diskname $f) || continue
 		if [ "$opt_umount" = "1" ]; then
-			$0 -u $f
+			prompt "Unmount $f?" && $0 -u $f
 		else
-			$0 $f
+			prompt "Mount $f?" && $0 $f
 		fi
 	done
 	exit
