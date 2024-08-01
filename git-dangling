@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-dangling
-VERSION=0.3.0
+VERSION=0.3.1
 
 opt_blobs=0
 opt_checkpart=0
@@ -108,7 +108,7 @@ cd "$(git rev-parse --show-toplevel)" || {
 }
 test -d .git/. || dangfile=$(basename $dangfile)
 
-git fsck --no-reflogs >$dangfile
+git fsck --connectivity-only --no-reflogs >$dangfile
 for f in `grep "^dangling commit" $dangfile | cut -f 3 -d ' '`; do
     git branch commit-$f $f && echo $progname: Creating commit-$f
 done
