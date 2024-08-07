@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.3.0
+VERSION=0.3.1
 
 opt_help=0
 opt_interactive=0
@@ -87,11 +87,10 @@ Files and directories
   .dontsleep/
     If this directory exists at the top of the disk, the disk is 
     prevented from sleeping. When a disk with this directory is mounted, 
-    a background process is started that writes 512 random bytes to a 
-    file in this directory every two minutes. The current user must have 
-    write permission in this directory, otherwise sleeping is not 
-    prevented. When the disk is unmounted with -u/--umount, the process 
-    is killed.
+    a background process is started that touches a file in this 
+    directory every two minutes. The current user must have write 
+    permission in this directory, otherwise sleeping is not prevented. 
+    When the disk is unmounted with -u/--umount, the process is killed.
 
 END
 	exit 0
