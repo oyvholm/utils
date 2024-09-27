@@ -9,13 +9,13 @@ EXEC = STDexecDTS
 CC = cc
 LD = cc
 
-CCFLAGS  =
-CCFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
-CCFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
-CCFLAGS += -O0 -c -g
-CCFLAGS += -Wall
-CCFLAGS += -Werror
-CCFLAGS += -Wextra
+CFLAGS  =
+CFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
+CFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
+CFLAGS += -O0 -c -g
+CFLAGS += -Wall
+CFLAGS += -Werror
+CFLAGS += -Wextra
 
 LDFLAGS  =
 LDFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
@@ -52,10 +52,10 @@ version.h: Gen-version $(CFILES) $(HFILES) Makefile
 	./Gen-version
 
 STDexecDTS.o: STDexecDTS.c $(DEPS)
-	$(CC) $(CCFLAGS) STDexecDTS.c
+	$(CC) $(CFLAGS) STDexecDTS.c
 
 selftest.o: selftest.c $(DEPS)
-	$(CC) $(CCFLAGS) selftest.c
+	$(CC) $(CFLAGS) selftest.c
 
 .PHONY: clean
 clean:
