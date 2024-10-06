@@ -20,6 +20,7 @@ opt_help=0
 opt_quiet=0
 opt_size=$std_size
 opt_verbose=0
+opt_wrap=0
 
 while test -n "$1"; do
 	case "$1" in
@@ -28,6 +29,7 @@ while test -n "$1"; do
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-s|--size) opt_size="$2"; shift 2 ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	-w|--wrap) opt_wrap="$2"; shift 2 ;;
 	--version) echo $progname $VERSION; exit 0 ;;
 	--) shift; break ;;
 	*)
@@ -63,6 +65,8 @@ Options:
     use 0. Default: $std_size.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
+  -w WIDTH, --wrap WIDTH
+    Wrap lines to WIDTH length. If "-" is specified, use terminal size.
   --version
     Print version information.
 
@@ -75,7 +79,12 @@ if [ "$opt_decode" = "1" ]; then
 	exit
 fi
 
-gzip -9 | base64 -w $opt_size | tr '\n' ' ' | sed 's/ $//'
-echo
+(gzip -9 | base64 -w $opt_size | tr '\n' ' ' | sed 's/ $//'; echo) \
+| if [ "$opt_wrap" = "0" ]; then
+	cat
+else
+	[ "$opt_wrap" = "-" ] && opt_wrap=$(tput cols)
+	fold -s -w $opt_wrap
+fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
