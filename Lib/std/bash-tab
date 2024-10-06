@@ -29,6 +29,7 @@ eval set -- "$ARGS"
 opt_help=0
 opt_quiet=0
 opt_verbose=0
+
 while :; do
 	case "$1" in
 		-h|--help) opt_help=1; shift ;;

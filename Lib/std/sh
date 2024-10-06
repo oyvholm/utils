@@ -16,6 +16,7 @@ VERSION=0.0.0
 opt_help=0
 opt_quiet=0
 opt_verbose=0
+
 while test -n "$1"; do
 	case "$1" in
 	-h|--help) opt_help=1; shift ;;
