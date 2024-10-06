@@ -1,11 +1,81 @@
 #!/bin/sh
 
+#==============================================================================
 # bpakk
 # File ID: 2a4e251e-7b6f-11df-b25f-00219bfade9b
+#
+# Pack stdin with gzip and encapsulate it in base64.
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
+# License: GNU General Public License version 2 or later.
+#==============================================================================
 
-if [ "$1" = "-d" ]; then
-    base64 -di | gunzip --stdout --force
-else
-    gzip -9 | base64 -w 8 "$@" | tr '\n' ' ' | sed 's/ $//'
-    echo
+progname=bpakk
+VERSION=0.0.0
+
+std_w=8
+
+opt_decode=0
+opt_help=0
+opt_quiet=0
+opt_verbose=0
+opt_w=$std_w
+
+while test -n "$1"; do
+	case "$1" in
+	-d|--decode) opt_decode=1; shift ;;
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	-w) opt_w="$2"; shift 2 ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
+
+Pack stdin with gzip and encapsulate it in base64.
+
+Usage: $progname [options]
+
+Options:
+
+  -d, --decode
+    Decode gzipped base64.
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  -w SIZE
+    Create base64 using SIZE character chunks. To get one long chunk, 
+    use 0. Default: $std_w.
+  --version
+    Print version information.
+
+END
+	exit 0
 fi
+
+if [ "$opt_decode" = "1" ]; then
+	base64 -di | gunzip --stdout --force
+	exit
+fi
+
+gzip -9 | base64 -w $opt_w | tr '\n' ' ' | sed 's/ $//'
+echo
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
