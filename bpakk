@@ -13,21 +13,21 @@
 progname=bpakk
 VERSION=0.0.0
 
-std_w=8
+std_size=8
 
 opt_decode=0
 opt_help=0
 opt_quiet=0
+opt_size=$std_size
 opt_verbose=0
-opt_w=$std_w
 
 while test -n "$1"; do
 	case "$1" in
 	-d|--decode) opt_decode=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-s|--size) opt_size="$2"; shift 2 ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-	-w) opt_w="$2"; shift 2 ;;
 	--version) echo $progname $VERSION; exit 0 ;;
 	--) shift; break ;;
 	*)
@@ -58,11 +58,11 @@ Options:
     Show this help.
   -q, --quiet
     Be more quiet. Can be repeated to increase silence.
+  -s SIZE, --size SIZE
+    Create base64 using SIZE character chunks. To get one long chunk, 
+    use 0. Default: $std_size.
   -v, --verbose
     Increase level of verbosity. Can be repeated.
-  -w SIZE
-    Create base64 using SIZE character chunks. To get one long chunk, 
-    use 0. Default: $std_w.
   --version
     Print version information.
 
@@ -75,7 +75,7 @@ if [ "$opt_decode" = "1" ]; then
 	exit
 fi
 
-gzip -9 | base64 -w $opt_w | tr '\n' ' ' | sed 's/ $//'
+gzip -9 | base64 -w $opt_size | tr '\n' ' ' | sed 's/ $//'
 echo
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
