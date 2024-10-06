@@ -106,8 +106,7 @@ static int print_license(void)
 	puts("");
 	puts("You should have received a copy of"
 	     " the GNU General Public License along \n"
-	     "with this program. If not, see"
-	     " <http://www.gnu.org/licenses/>.");
+	     "with this program. If not, see <http://www.gnu.org/licenses/>.");
 
 	return EXIT_SUCCESS;
 }
