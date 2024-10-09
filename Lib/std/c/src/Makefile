@@ -113,6 +113,14 @@ testcomb:
 	$(MAKE) clean $(WHAT) NDEBUG=1 UNUSED=1
 	$(MAKE) clean $(WHAT)
 
+.PHONY: testsrc
+testsrc:
+	@echo Check files for long lines >&2
+	@for f in $(CFILES) $(HFILES) Gen-version Makefile; do \
+		[ -f "$$f" ] && expand "$$f" | sed 's/ $$//;' \
+		| grep -q -E '.{80}' && echo "$$f"; \
+	done | grep . && exit 1 || true
+
 .PHONY: tlok
 tlok:
 	@$(MAKE) -s gcov 2>.make-tlok.tmp >&2; res=$$?; \

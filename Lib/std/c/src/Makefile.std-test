@@ -26,6 +26,7 @@ test:
 	rm -f STDprognameDTS
 	ln -sf STDexecDTS STDprognameDTS
 	$(MAKE) clean
+	$(MAKE) testsrc
 	$(MAKE)
 	./STDexecDTS
 	rm -rf $(TMP)
