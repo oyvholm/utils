@@ -179,13 +179,12 @@ static int usage(const int retval)
 /*
  * choose_opt_action() - Decide what to do when option `c` is found. Read 
  * definitions for long options from `opts`.
- * Returns EXIT_SUCCESS if ok, EXIT_FAILURE if `c` is unknown or anything 
- * fails.
+ * Returns 0 if ok, or 1 if `c` is unknown or anything fails.
  */
 
 static int choose_opt_action(const int c, const struct option *opts)
 {
-	int retval = EXIT_SUCCESS;
+	int retval = 0;
 
 	assert(opts);
 
@@ -210,7 +209,7 @@ static int choose_opt_action(const int c, const struct option *opts)
 	default:
 		msg(4, "%s(): getopt_long() returned character code %d",
 		       __func__, c);
-		retval = EXIT_FAILURE;
+		retval = 1;
 		break;
 	}
 
@@ -219,12 +218,12 @@ static int choose_opt_action(const int c, const struct option *opts)
 
 /*
  * parse_options() - Parse command line options.
- * Returns EXIT_SUCCESS if ok, EXIT_FAILURE if error.
+ * Returns 0 if succesful, or 1 if an error occurs.
  */
 
 static int parse_options(const int argc, char * const argv[])
 {
-	int retval = EXIT_SUCCESS;
+	int retval = 0;
 
 	assert(argv);
 
@@ -234,7 +233,7 @@ static int parse_options(const int argc, char * const argv[])
 	opt.verbose = 0;
 	opt.version = false;
 
-	while (retval == EXIT_SUCCESS) {
+	while (!retval) {
 		int c;
 		int option_index = 0;
 		static const struct option long_options[] = {
@@ -266,13 +265,12 @@ static int parse_options(const int argc, char * const argv[])
 
 int main(int argc, char *argv[])
 {
-	int retval;
+	int retval = EXIT_SUCCESS;
 
 	progname = argv[0];
 	errno = 0;
 
-	retval = parse_options(argc, argv);
-	if (retval != EXIT_SUCCESS) {
+	if (parse_options(argc, argv)) {
 		myerror("Option error");
 		return usage(EXIT_FAILURE);
 	}
