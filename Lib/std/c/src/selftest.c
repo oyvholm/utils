@@ -22,17 +22,20 @@
 
 /*
  * selftest() - Run internal testing to check that it works on the current 
- * system. Executed if --selftest is used.
+ * system. Executed if --selftest is used. Returns EXIT_FAILURE any tests fail; 
+ * otherwise, return EXIT_SUCCESS.
  */
 
 int selftest(void)
 {
+	unsigned int errcount = 0;
+
 	errno = EACCES;
 	puts("# myerror(\"errno is EACCES\")");
 	myerror("errno is EACCES");
 	errno = 0;
 
-	return EXIT_SUCCESS;
+	return errcount ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */
