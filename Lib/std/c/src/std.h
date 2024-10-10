@@ -54,11 +54,11 @@ struct Options {
  */
 
 /* STDexecDTS.c */
-extern int msg(const int verbose, const char *format, ...);
-extern int myerror(const char *format, ...);
+int msg(const int verbose, const char *format, ...);
+int myerror(const char *format, ...);
 
 /* selftest.c */
-extern int selftest(void);
+int selftest(void);
 
 /*
  * Global variables
