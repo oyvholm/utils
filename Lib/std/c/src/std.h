@@ -38,11 +38,6 @@
 #else
 #  define DEBL  ;
 #endif
-#define in_range(a,b,c)  ((a) >= (b) && (a) <= (c) ? true : false)
-
-#define T_GREEN  "\x1b[32m"
-#define T_RED    "\x1b[31m"
-#define T_RESET  "\x1b[m\x0f"
 
 #define stddebug  stderr
 
