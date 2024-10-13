@@ -12,10 +12,12 @@ LD = cc
 CFLAGS  =
 CFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
 CFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
-CFLAGS += -O0 -c -g
+CFLAGS += -O0
 CFLAGS += -Wall
 CFLAGS += -Werror
 CFLAGS += -Wextra
+CFLAGS += -c
+CFLAGS += -g
 
 LDFLAGS  =
 LDFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
