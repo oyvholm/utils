@@ -11,12 +11,12 @@
 #==============================================================================
 
 progname=unichar
-VERSION=0.5.0
+VERSION=0.5.1
 
 db="$HOME/.unichar.sqlite"
 guipdf="$HOME/bin/Lib/unicode/current/charts/CodeCharts.pdf"
 uc_url="ftp://unicode.org/Public/UNIDATA/UnicodeData.txt"
-pdfprog=evince
+pdfprog=okular
 
 opt_convert=0
 opt_get=0
