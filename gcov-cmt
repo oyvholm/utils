@@ -4,7 +4,7 @@
 # gcov-cmt
 # File ID: a6fde67c-bd88-11e7-93f2-f74d993421b0
 #
-# [Description]
+# Add "/* gcov */" markers to lines in .c files reported by gcov(1) as unused.
 #
 # Character set: UTF-8
 # ©opyleft 2017– Øyvind A. Holm <sunny@sunbase.org>
@@ -31,7 +31,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.0';
+our $VERSION = '0.3.1';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -60,8 +60,8 @@ sub main {
 	for my $f (@ARGV) {
 		msg(1, "Processing $f");
 		if (process_file($f)) {
-			print(STDERR "$progname: $f: " .
-			             "Error when processing file: $!\n");
+			print(STDERR "$progname: $f: "
+			             . "Error when processing file: $!\n");
 		}
 	}
 	return $Retval;
@@ -92,11 +92,10 @@ sub process_file {
 				my ($c1, $c2, $c3) = ($1, $2, $3);
 				$c2 eq "0" && next;
 				$c3 =~ s! /\* gcov \*/$!!;
-				if ($c1 =~ /\#\#\#\#\#/ &&
-				    !(
-				        $line =~ m'/\* gncov \*/' &&
-				        !$Opt{'gncov'}
-				    )
+				if ($c1 =~ /\#\#\#\#\#/
+				    && !($line =~ m'/\* gncov \*/'
+				         && !$Opt{'gncov'}
+				       )
 				) {
 					$c3 .= " /* gcov */";
 				}
