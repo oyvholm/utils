@@ -55,6 +55,26 @@ int msg(const VerboseLevel verbose, const char *format, ...)
 }
 
 /*
+ * std_strerror() - Replacement for `strerror()` that returns a predictable 
+ * error message on every platform so the tests work everywhere.
+ */
+
+static const char *std_strerror(const int errnum)
+{
+	switch (errnum) {
+	case EACCES:
+		return "Permission denied";
+	default:
+		/*
+		 * Should never happen. If this line is executed, an `errno` 
+		 * value is missing from `std_strerror()`, and tests may fail 
+		 * on other platforms.
+		 */
+		return strerror(errnum);
+	}
+}
+
+/*
  * myerror() - Print an error message to stderr using this format:
  *
  *     a: b: c
@@ -79,7 +99,7 @@ int myerror(const char *format, ...)
 	retval += vfprintf(stderr, format, ap);
 	va_end(ap);
 	if (orig_errno)
-		retval += fprintf(stderr, ": %s", strerror(orig_errno));
+		retval += fprintf(stderr, ": %s", std_strerror(orig_errno));
 	retval += fprintf(stderr, "\n");
 
 	return retval;

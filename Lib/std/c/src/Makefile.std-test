@@ -80,10 +80,10 @@ test-gcov:
 	test -e $(TMP)/src/selftest.c.gcov
 	test -e $(TMP)/src/selftest.gcda
 	test -e $(TMP)/src/selftest.gcno
-	cd $(TMP)/src && $(MAKE) gcov 2>&1 | grep -q '^0 untested lines'
+	cd $(TMP)/src && $(MAKE) gcov 2>&1 | grep -q '^2 untested lines'
 	cd $(TMP)/src && $(MAKE) clean test gcov
 	cd $(TMP)/src && $(MAKE) gcov-cmt
-	cd $(TMP)/src && test -z "$$(git ls-files -m)"
+	cd $(TMP)/src && test "$$(git diff HEAD | wc -l)" = "20"
 	cd $(TMP)/src && $(MAKE) gcov-cmt-clean
 
 .PHONY: test-prof
