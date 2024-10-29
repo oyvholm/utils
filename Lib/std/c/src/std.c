@@ -34,7 +34,7 @@ struct Options opt;
  * Returns the number of characters written.
  */
 
-int msg(const int verbose, const char *format, ...)
+int msg(const VerboseLevel verbose, const char *format, ...)
 {
 	int retval = 0;
 
@@ -121,7 +121,7 @@ static int print_license(void)
 
 static int print_version(void)
 {
-	if (opt.verbose < 0) {
+	if (opt.verbose <= VERBOSE_QUIET) {
 		puts(EXEC_VERSION);
 		return EXIT_SUCCESS;
 	}
@@ -211,8 +211,9 @@ static int choose_opt_action(const int c, const struct option *opts)
 		opt.verbose++;
 		break;
 	default:
-		msg(4, "%s(): getopt_long() returned character code %d",
-		       __func__, c);
+		msg(VERBOSE_DEBUG,
+		    "%s(): getopt_long() returned character code %d",
+		    __func__, c);
 		retval = 1;
 		break;
 	}
@@ -279,8 +280,10 @@ int main(int argc, char *argv[])
 		return usage(EXIT_FAILURE);
 	}
 
-	msg(4, "%s(): Using verbose level %d", __func__, opt.verbose);
-	msg(4, "%s(): argc = %d, optind = %d", __func__, argc, optind);
+	msg(VERBOSE_DEBUG, "%s(): Using verbose level %d",
+	    __func__, opt.verbose);
+	msg(VERBOSE_DEBUG, "%s(): argc = %d, optind = %d",
+	    __func__, argc, optind);
 
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
@@ -295,12 +298,13 @@ int main(int argc, char *argv[])
 		int t;
 
 		for (t = optind; t < argc; t++) {
-			msg(4, "%s(): Non-option arg %d: %s",
+			msg(VERBOSE_DEBUG, "%s(): Non-option arg %d: %s",
 			       __func__, t, argv[t]);
 		}
 	}
 
-	msg(4, "Returning from %s() with value %d", __func__, retval);
+	msg(VERBOSE_DEBUG, "Returning from %s() with value %d",
+	    __func__, retval);
 	return retval;
 }
 
