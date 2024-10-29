@@ -39,8 +39,6 @@
 #  define DEBL  ;
 #endif
 
-#define stddebug  stderr
-
 struct Options {
 	bool help;
 	bool license;

@@ -28,7 +28,7 @@ const char *progname;
 struct Options opt;
 
 /*
- * msg() - Print a message prefixed with "[progname]: " to stddebug if the 
+ * msg() - Print a message prefixed with "[progname]: " to stderr if the 
  * current verbose level is equal or higher than the first argument. The rest 
  * of the arguments are delivered to vfprintf().
  * Returns the number of characters written.
@@ -45,9 +45,9 @@ int msg(const int verbose, const char *format, ...)
 		va_list ap;
 
 		va_start(ap, format);
-		retval = fprintf(stddebug, "%s: ", progname);
-		retval += vfprintf(stddebug, format, ap);
-		retval += fprintf(stddebug, "\n");
+		retval = fprintf(stderr, "%s: ", progname);
+		retval += vfprintf(stderr, format, ap);
+		retval += fprintf(stderr, "\n");
 		va_end(ap);
 	}
 
