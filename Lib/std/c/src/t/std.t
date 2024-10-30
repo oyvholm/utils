@@ -161,7 +161,8 @@ sub test_standard_options {
 	likecmd("$CMD --gurgle",
 	        '/^$/',
 	        "/\\.\\.\\/$CMDB: Option error\\n"
-	        . "Type \"\\.\\.\\/$CMDB --help\" for help screen\\."
+	        . "\\.\\.\\/$CMDB: Type \"\\.\\.\\/$CMDB --help\""
+	        . " for help screen\\."
 	        . " Returning with value 1\\.\\n/s",
 	        1,
 	        'Unknown option specified');
