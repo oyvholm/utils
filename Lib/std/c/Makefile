@@ -48,6 +48,10 @@ edit: tags
 .PHONY: FORCE
 FORCE:
 
+.PHONY: install
+install:
+	cd src && $(MAKE) $@
+
 .PHONY: test
 test:
 	cd src && $(MAKE) $@
@@ -59,6 +63,10 @@ testall:
 .PHONY: tlok
 tlok:
 	@cd src && $(MAKE) -s $@
+
+.PHONY: uninstall
+uninstall:
+	cd src && $(MAKE) $@
 
 .PHONY: valgrind
 valgrind:
