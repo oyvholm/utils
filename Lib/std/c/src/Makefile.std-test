@@ -6,7 +6,7 @@ TMPUUIDS=uuids.tmp
 
 .PHONY: all
 all:
-	cd t && $(MAKE) -f Makefile.std-test
+	cd t && $(MAKE) -f Makefile.std-test $@
 
 .PHONY: clean
 clean:
@@ -16,7 +16,7 @@ clean:
 	rm -f *.gcda *.gcno *.gcov
 	rm -f version.h
 	rm -rf $(TMP) $(TMPUUIDS)
-	cd t && $(MAKE) -f Makefile.std-test clean
+	cd t && $(MAKE) -f Makefile.std-test $@
 
 .PHONY: test
 test:

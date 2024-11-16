@@ -55,7 +55,7 @@ clean:
 	rm -f *.gcda *.gcno *.gcov
 	rm -f gmon.out gmon.sum
 	rm -f version.h
-	cd t && $(MAKE) clean
+	cd t && $(MAKE) $@
 
 .PHONY: edit
 edit: tags
@@ -95,7 +95,7 @@ tags: $(CFILES) $(HFILES)
 
 .PHONY: test
 test: $(EXEC)
-	cd t && $(MAKE) test
+	cd t && $(MAKE) $@
 
 .PHONY: testall
 testall:
@@ -137,7 +137,7 @@ uninstall:
 
 .PHONY: valgrind
 valgrind:
-	cd t && $(MAKE) valgrind
+	cd t && $(MAKE) $@
 
 .PHONY: valgrindall
 valgrindall:

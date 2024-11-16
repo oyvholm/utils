@@ -6,7 +6,7 @@ IGNFILES += -e ^COPYING
 
 .PHONY: all
 all:
-	cd src && $(MAKE)
+	cd src && $(MAKE) $@
 
 %.html: FORCE
 	test -e "$*.md"
@@ -37,7 +37,7 @@ tags: src/*.[ch]
 clean:
 	rm -f README.html
 	rm -f README.pdf
-	cd src && $(MAKE) clean
+	cd src && $(MAKE) $@
 
 .PHONY: edit
 edit: tags
@@ -49,20 +49,20 @@ FORCE:
 
 .PHONY: test
 test:
-	cd src && $(MAKE) test
+	cd src && $(MAKE) $@
 
 .PHONY: testall
 testall:
-	cd src && $(MAKE) testall
+	cd src && $(MAKE) $@
 
 .PHONY: tlok
 tlok:
-	@cd src && $(MAKE) -s tlok
+	@cd src && $(MAKE) -s $@
 
 .PHONY: valgrind
 valgrind:
-	cd src && $(MAKE) valgrind
+	cd src && $(MAKE) $@
 
 .PHONY: valgrindall
 valgrindall:
-	cd src && $(MAKE) valgrindall
+	cd src && $(MAKE) $@
