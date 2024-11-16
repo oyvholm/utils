@@ -2,13 +2,14 @@
 # File ID: STDuuidDTS
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 
+CC = cc
+EXEC = STDexecDTS
+LD = cc
 PREFIX = /usr/local
 
-EXEC = STDexecDTS
-
-CC = cc
-LD = cc
-
+CFILES  =
+CFILES += STDexecDTS.c
+CFILES += selftest.c
 CFLAGS  =
 CFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
 CFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
@@ -18,26 +19,18 @@ CFLAGS += -Werror
 CFLAGS += -Wextra
 CFLAGS += -c
 CFLAGS += -g
-
+DEPS = version.h $(HFILES) Makefile
+GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
+HFILES  =
+HFILES += STDexecDTS.h
 LDFLAGS  =
 LDFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
-
 LIBS  =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage")
-
 OBJS  =
 OBJS += STDexecDTS.o
 OBJS += selftest.o
 
-CFILES  =
-CFILES += STDexecDTS.c
-CFILES += selftest.c
-
-HFILES  =
-HFILES += STDexecDTS.h
-
-DEPS = version.h $(HFILES) Makefile
-GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 TESTABLE_LINES = $$(grep -E '^ +\#\#\#\#\#:' *.c.gcov \
                     | grep -vF '/* gncov */' | wc -l)
 
