@@ -23,6 +23,8 @@ DEPS = version.h $(HFILES) Makefile
 GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 HFILES  =
 HFILES += STDexecDTS.h
+INSTALL_TARGETS  =
+INSTALL_TARGETS += $(PREFIX)/bin/$(EXEC)
 LDFLAGS  =
 LDFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
 LIBS  =
@@ -84,7 +86,7 @@ gdb: $(EXEC)
 	gdb -x gdbrc $$(cat gdbopts 2>/dev/null) $(EXEC)
 
 .PHONY: install
-install: $(PREFIX)/bin/$(EXEC)
+install: $(INSTALL_TARGETS)
 
 $(PREFIX)/bin/$(EXEC): $(EXEC)
 	mkdir -p $(PREFIX)/bin
@@ -133,7 +135,7 @@ tlok:
 
 .PHONY: uninstall
 uninstall:
-	rm -f $(PREFIX)/bin/$(EXEC)
+	rm -f $(INSTALL_TARGETS)
 
 .PHONY: valgrind
 valgrind:
