@@ -28,15 +28,16 @@ all:
 
 %.pdf: FORCE
 	$(MAKE) $*.html
-	wkhtmltopdf $*.html $@
+	wkhtmltopdf $*.html $@.tmp
+	mv $@.tmp $@
 
 tags: src/*.[ch]
 	ctags src/*.[ch]
 
 .PHONY: clean
 clean:
-	rm -f README.html
-	rm -f README.pdf
+	rm -f README.html README.html.tmp
+	rm -f README.pdf README.pdf.tmp
 	cd src && $(MAKE) $@
 
 .PHONY: edit
