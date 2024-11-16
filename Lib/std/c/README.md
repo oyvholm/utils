@@ -98,22 +98,19 @@ Delete the installed version from `PREFIX`.
 Run all tests with Valgrind to find memory leaks and other problems. 
 Should also not fail on master.
 
-### Create HTML
+### Create HTML or PDF
 
-All `*.md` files can be converted to HTML by replacing the `.md` 
-extension with `.html`. For example, use `make README.html` to generate 
-an HTML file from the `.md` file. If the `.md` file is stored in Git, an 
-extra footer with the text "Generated from *filename* revision *git-id* 
+`make html` creates HTML versions of all documentation in the current 
+directory tree, and `make pdf` creates PDF versions.
+
+All `*.md` files can be converted to HTML or PDF by replacing the `.md` 
+extension with `.html` or `.pdf`. For example, use `make README.html` to 
+generate an HTML file from the `.md` file, or `make README.pdf` to 
+create a PDF version. If the `.md` file is stored in Git, an extra 
+footer with the text "Generated from *filename* revision *git-id* 
 (*date*)" is added.
 
 Uses `cmark`, available from <https://commonmark.org/>.
-
-### Create PDF
-
-PDF files can be created from `.md` files by replacing `.md` with 
-`.pdf`. To create `README.pdf`, execute `make README.pdf`. This will 
-create an HTML file from the `.md` file which is then converted to PDF 
-with [`wkhtmltopdf`](https://wkhtmltopdf.org/).
 
 ## Download
 
