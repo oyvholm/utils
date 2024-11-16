@@ -1,8 +1,23 @@
-# README for STDexecDTS.git
+<!-- STDfilenameDTS -->
+# STDexecDTS
+
+TBD: Short description
+
+## Features
+
+- TBD: Feature 1
+- TBD: Feature 2
 
 ## Status
 
 In the startup/design phase, does nothing yet.
+
+## Examples
+
+- `STDexecDTS`\
+  TBD: Example 1
+- `STDexecDTS`\
+  TBD: Example 2
 
 ## Development
 
@@ -16,13 +31,13 @@ To ensure compatibility between versions, the program follows the
 Semantic Versioning Specification described at <http://semver.org>. 
 Using the version number `X.Y.Z` as an example:
 
-  - `X` is the *major version*.
-    This number is only incremented when backwards-incompatible changes 
-    are introduced.
-  - `Y` is the *minor version*.
-    Increased when new backwards-compatible features are added.
-  - `Z` is the *patch level*.
-    Increased when new backwards-compatible bugfixes are added.
+- `X` is the *major version*.
+  This number is only incremented when backwards-incompatible changes 
+  are introduced.
+- `Y` is the *minor version*.
+  Increased when new backwards-compatible features are added.
+- `Z` is the *patch level*.
+  Increased when new backwards-compatible bugfixes are added.
 
 ## `make` commands
 
@@ -107,9 +122,9 @@ Uses `cmark`, available from <https://commonmark.org/>.
 
 The main Git repository is stored at GitLab:
 
-  - URL: <https://gitlab.com/oyvholm/STDexecDTS>
-  - SSH clone: git@gitlab.com:oyvholm/STDexecDTS.git
-  - https clone: <https://gitlab.com/oyvholm/STDexecDTS.git>
+- URL: <https://gitlab.com/oyvholm/STDexecDTS>
+- SSH clone: git@gitlab.com:oyvholm/STDexecDTS.git
+- https clone: <https://gitlab.com/oyvholm/STDexecDTS.git>
 
 ## License
 
