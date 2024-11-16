@@ -1,14 +1,5 @@
 # README for STDexecDTS.git
 
-## About this document
-
-This file is written in [Commonmark](https://commonmark.org) and all 
-`make` commands use `cmark`(1) to generate HTML and reformat text.
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", 
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this 
-document are to be interpreted as described in RFC 2119.
-
 ## Status
 
 In the startup/design phase, does nothing yet.
@@ -138,6 +129,15 @@ with this program. If not, see <http://www.gnu.org/licenses/>.
 ## Author
 
 Øyvind A. Holm \<<sunny@sunbase.org>\>
+
+## About this document
+
+This file is written in [Commonmark](https://commonmark.org) and all 
+`make` commands use `cmark`(1) to generate HTML and reformat text.
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", 
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this 
+document are to be interpreted as described in RFC 2119.
 
 -----
 
