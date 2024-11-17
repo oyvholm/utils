@@ -51,6 +51,7 @@ FORCE:
 .PHONY: html
 html:
 	$(MAKE) README.html
+	cd src && $(MAKE) $@
 
 .PHONY: install
 install:
@@ -59,6 +60,7 @@ install:
 .PHONY: pdf
 pdf:
 	$(MAKE) README.pdf
+	cd src && $(MAKE) $@
 
 .PHONY: test
 test:

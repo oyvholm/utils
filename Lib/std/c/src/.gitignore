@@ -4,6 +4,12 @@
 /*.o
 /.make-tlok.tmp
 /STDexecDTS
+/STDexecDTS.1
+/STDexecDTS.1.tmp
+/STDexecDTS.html
+/STDexecDTS.html.tmp
+/STDexecDTS.pdf
+/STDexecDTS.pdf.tmp
 /gdbopts
 /gmon.out
 /gmon.sum

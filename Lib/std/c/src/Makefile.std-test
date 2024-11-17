@@ -12,6 +12,7 @@ all:
 clean:
 	$(MAKE) -f Makefile clean
 	rm -f STDexecDTS STDexecDTS.o STDexecDTS.c STDexecDTS.h selftest.o
+	rm -f STDexecDTS.1.man
 	rm -f STDprognameDTS
 	rm -f *.gcda *.gcno *.gcov
 	rm -f version.h
@@ -23,6 +24,7 @@ test:
 	rm -f STDexecDTS.c STDexecDTS.h
 	ln -sf std.h STDexecDTS.h
 	ln -sf std.c STDexecDTS.c
+	ln -sf std.1.man STDexecDTS.1.man
 	rm -f STDprognameDTS
 	ln -sf STDexecDTS STDprognameDTS
 	$(MAKE) clean
@@ -41,6 +43,8 @@ test:
 	cd $(TMP) && git commit -m "create_cproject jada"
 	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
 	cd $(TMP)/src && $(MAKE)
+	[ -e $(TMP)/src/jada ]
+	[ -e $(TMP)/src/jada.1 ]
 	cd $(TMP)/src && $(MAKE) test
 	cd $(TMP)/src && $(MAKE) testall
 	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" \

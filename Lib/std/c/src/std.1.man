@@ -1,0 +1,66 @@
+.\" STDfilenameDTS
+.\" File ID: STDuuidDTS
+.TH STDUexecUDTS 1 "RPL_DATE" "STDexecDTS\-RPL_VERSION"
+.SH NAME
+STDexecDTS \- TBD
+.SH SYNOPSIS
+.B STDexecDTS
+[\fIOPTIONS\fP] <\fICOMMAND\fP> [\fIARGS\fP]
+.SH DESCRIPTION
+TBD: STDexecDTS ...
+.SS Features
+.IP \[bu] 2
+TBD: Feature 1
+.IP \[bu] 2
+TBD: Feature 2
+.SH OPTIONS
+.TP
+\fB\-h\fP, \fB\-\-help\fP
+Show a help summary.
+.TP
+\fB\-\-license\fP
+Print the software license.
+.TP
+\fB\-q\fP, \fB\-\-quiet\fP
+Be more quiet. Can be repeated to increase silence.
+.TP
+\fB\-v\fP, \fB\-\-verbose\fP
+Increase level of verbosity. Can be repeated.
+.TP
+\fB\-\-selftest\fP
+Run the built-in test suite.
+.TP
+\fB\-\-version\fP
+Print version information.
+.SH EXIT STATUS
+.TP
+0
+No error.
+.TP
+1
+Some kind of error occurred.
+.SH EXAMPLES
+.TP
+\fCSTDexecDTS\fP
+TBD: Example 1
+.TP
+\fCSTDexecDTS\fP
+TBD: Example 2
+.SH AUTHOR
+Written by \[/O]yvind A.\& Holm <sunny@sunbase.org>
+.SH COPYRIGHT
+(C)opyleft 2024\- \[/O]yvind A.\& Holm <sunny@sunbase.org>
+.PP
+This program is free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public License as published by the Free Software 
+Foundation; either version 2 of the License, or (at your option) any later 
+version.
+.PP
+This program is distributed in the hope that it will be useful, but WITHOUT ANY 
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+PARTICULAR PURPOSE.
+.PP
+See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with 
+this program. If not, see <http://www.gnu.org/licenses/>.
