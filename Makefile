@@ -49,6 +49,7 @@ obsolete:
 push:
 	git push-to-gitlab
 	git pa
+	git push bitbucket
 
 .PHONY: remotes
 remotes:
