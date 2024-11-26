@@ -300,9 +300,9 @@ int main(int argc, char *argv[])
 	}
 
 	msg(VERBOSE_DEBUG, "%s(): Using verbose level %d",
-	    __func__, opt.verbose);
+	                   __func__, opt.verbose);
 	msg(VERBOSE_DEBUG, "%s(): argc = %d, optind = %d",
-	    __func__, argc, optind);
+	                   __func__, argc, optind);
 
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
@@ -318,12 +318,12 @@ int main(int argc, char *argv[])
 
 		for (t = optind; t < argc; t++) {
 			msg(VERBOSE_DEBUG, "%s(): Non-option arg %d: %s",
-			       __func__, t, argv[t]);
+			                   __func__, t, argv[t]);
 		}
 	}
 
 	msg(VERBOSE_DEBUG, "Returning from %s() with value %d",
-	    __func__, retval);
+	                   __func__, retval);
 	return retval;
 }
 
