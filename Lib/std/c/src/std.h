@@ -111,7 +111,7 @@ int msg(const VerboseLevel verbose, const char *format, ...);
 int myerror(const char *format, ...);
 
 /* selftest.c */
-int selftest(void);
+int opt_selftest(void);
 
 /*
  * Global variables

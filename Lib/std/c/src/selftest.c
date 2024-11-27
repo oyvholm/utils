@@ -21,12 +21,12 @@
 #include "STDexecDTS.h"
 
 /*
- * selftest() - Run internal testing to check that it works on the current 
+ * opt_selftest() - Run internal testing to check that it works on the current 
  * system. Executed if --selftest is used. Returns EXIT_FAILURE any tests fail; 
  * otherwise, return EXIT_SUCCESS.
  */
 
-int selftest(void)
+int opt_selftest(void)
 {
 	unsigned int errcount = 0;
 
