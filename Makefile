@@ -15,6 +15,10 @@ all:
 	cd src && $(MAKE)
 	cd Git && $(MAKE)
 
+.PHONY: c-demo
+c-demo:
+	@cd Lib/std/c/src && $(MAKE) -s -f Makefile.std-test demo
+
 .PHONY: clean
 clean:
 	rm -f synced.sqlite.*.bck *.pyc
@@ -84,6 +88,10 @@ testport:
 	cd Lib && $(MAKE) testport
 	cd src && $(MAKE) testport
 	cd Git && $(MAKE) testport
+
+.PHONY: tlok
+tlok: c-demo
+	@cd Lib/std/c/src/compile.tmp && $(MAKE) -s tlok
 
 .PHONY: unmerged
 unmerged:

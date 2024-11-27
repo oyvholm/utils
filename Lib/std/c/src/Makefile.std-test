@@ -19,6 +19,23 @@ clean:
 	rm -rf $(TMP) $(TMPUUIDS)
 	cd t && $(MAKE) -f Makefile.std-test $@
 
+.PHONY: demo
+demo:
+	rm -rf $(TMP)
+	git init $(TMP) >&2
+	test -d $(TMP)/.git
+	cd $(TMP) && git commit --allow-empty -m "Empty start commit" >&2
+	mkdir -p $(TMPUUIDS) $(TMP)
+	cd $(TMP) \
+	&& SUUID_LOGDIR=$$(pwd)/../$(TMPUUIDS) \
+	   ../../../../../create_cproject jada >&2
+	cd $(TMP) && git add .gitignore COPYING Makefile README.md src
+	cd $(TMP) && git commit -m "create_cproject jada" >&2
+	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
+	cd $(TMP)/src && $(MAKE)
+	[ -e $(TMP)/src/jada ]
+	[ -e $(TMP)/src/jada.1 ]
+
 .PHONY: test
 test:
 	rm -f STDexecDTS.c STDexecDTS.h
@@ -31,20 +48,7 @@ test:
 	$(MAKE) testsrc
 	$(MAKE)
 	./STDexecDTS
-	rm -rf $(TMP)
-	git init $(TMP)
-	test -d $(TMP)/.git
-	cd $(TMP) && git commit --allow-empty -m "Empty start commit"
-	mkdir -p $(TMPUUIDS) $(TMP)
-	cd $(TMP) \
-	&& SUUID_LOGDIR=$$(pwd)/../$(TMPUUIDS) \
-	   ../../../../../create_cproject jada
-	cd $(TMP) && git add .gitignore COPYING Makefile README.md src
-	cd $(TMP) && git commit -m "create_cproject jada"
-	cd $(TMP) && test -z "$$(git ls-files --exclude-standard -o)"
-	cd $(TMP)/src && $(MAKE)
-	[ -e $(TMP)/src/jada ]
-	[ -e $(TMP)/src/jada.1 ]
+	$(MAKE) -f Makefile.std-test demo
 	cd $(TMP)/src && $(MAKE) test
 	cd $(TMP)/src && $(MAKE) testall
 	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" \
