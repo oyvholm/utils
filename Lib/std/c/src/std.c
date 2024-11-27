@@ -141,11 +141,21 @@ static int print_license(void)
 
 static int print_version(void)
 {
+#ifdef FAKE_MEMLEAK
+	char *p;
+
+	p = malloc(100);
+	if (p) { }
+#endif
+
 	if (opt.verbose <= VERBOSE_QUIET) {
 		puts(EXEC_VERSION);
 		return EXIT_SUCCESS;
 	}
 	printf("%s %s (%s)\n", progname, EXEC_VERSION, EXEC_DATE);
+#ifdef FAKE_MEMLEAK
+	printf("has FAKE_MEMLEAK\n");
+#endif
 #ifdef GCOV
 	printf("has GCOV\n");
 #endif
