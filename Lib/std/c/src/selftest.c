@@ -235,6 +235,40 @@ static int tc_cmp(const int identical, const char *got, const char *exp)
 }
 
 /*
+ * valgrind_lines() - Searches for Valgrind markers ("\n==DIGITS==") in `s`, 
+ * used by test_command(). If a marker is found or `s` is NULL, it returns 1. 
+ * Otherwise, it returns 0.
+ */
+
+static int valgrind_lines(const char *s)
+{
+	const char *p = s;
+
+	if (!s)
+		return ok(1, "%s(): s == NULL", __func__); /* gncov */
+
+	while (*p) {
+		p = strstr(p, "\n==");
+		if (!p)
+			return 0;
+		p += 3;
+		if (!*p)
+			return 0;
+		if (!isdigit(*p))
+			continue;
+		while (isdigit(*p))
+			p++;
+		if (!*p)
+			return 0;
+		if (!strncmp(p, "==", 2))
+			return 1;
+		p++;
+	}
+
+	return 0;
+}
+
+/*
  * test_command() - Run the executable with arguments in `cmd` and verify 
  * stdout, stderr and the return value against `exp_stdout`, `exp_stderr` and 
  * `exp_retval`. Returns the number of failed tests, or 1 if `cmd` is NULL.
@@ -288,6 +322,8 @@ static int test_command(const char identical, char *cmd[],
 		free(e); /* gncov */
 		free(g); /* gncov */
 	}
+	if (valgrind_lines(ss.err.buf))
+		r += ok(1, "Found valgrind output"); /* gncov */
 	streams_free(&ss);
 
 	return r;
@@ -428,6 +464,59 @@ static int test_gotexp_output(void)
 }
 
 /*
+ * test_valgrind_lines() - Test the behavior of valgrind_lines(). Returns the 
+ * number of failed tests.
+ */
+
+static int test_valgrind_lines(void)
+{
+	int r = 0, i;
+	const char
+	*has[] = {
+		"\n==123==",
+		"\n==154363456657465745674567456523==maybe",
+		"\n==\n==123==maybe",
+		"\n==\n==123==maybe==456==",
+		"indeed\n==1==",
+		NULL
+	},
+	*hasnot[] = {
+		"",
+		"==123==",
+		"\n=",
+		"\n=123== \n234==",
+		"\n=123==",
+		"\n== 234==",
+		"\n==",
+		"\n==12.3==",
+		"\n==123",
+		"\n==123=",
+		"\n==jj==",
+		"abc",
+		"abc\n==",
+		NULL
+	};
+
+	diag("Test valgrind_lines()");
+
+	i = 0;
+	while (has[i]) {
+		r += ok(!valgrind_lines(has[i]),
+		        "valgrind_lines(): Has valgrind marker, string %d", i);
+		i++;
+	}
+
+	i = 0;
+	while (hasnot[i]) {
+		r += ok(valgrind_lines(hasnot[i]),
+		        "valgrind_lines(): No valgrind marker, string %d", i);
+		i++;
+	}
+
+	return r;
+}
+
+/*
  * test_allocstr() - Tests the allocstr() function. Returns the number of 
  * failed tests.
  */
@@ -527,6 +616,7 @@ static int test_functions(void)
 	r += ok(!ok(0, NULL), "ok(0, NULL)");
 	r += test_diag();
 	r += test_gotexp_output();
+	r += test_valgrind_lines();
 
 	diag("Test various routines");
 	diag("Test myerror()");
