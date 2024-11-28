@@ -30,6 +30,9 @@ Increase level of verbosity. Can be repeated.
 \fB\-\-selftest\fP
 Run the built-in test suite.
 .TP
+\fB\-\-valgrind\fP [\fIARG\fP]
+Run the built-in test suite with Valgrind memory checking.
+.TP
 \fB\-\-version\fP
 Print version information.
 .SH EXIT STATUS

@@ -46,6 +46,11 @@ OBJS += selftest.o
 OBJS += strings.o
 PDFFILE = $(EXEC).pdf
 
+CMD_VALGRIND  = valgrind
+CMD_VALGRIND += -q
+CMD_VALGRIND += --leak-check=full
+CMD_VALGRIND += --show-leak-kinds=all
+CMD_VALGRIND += --
 MAN_VERSION = $$(grep EXEC_VERSION version.h | cut -d '"' -f 2 \
                  | sed 's/-/\\\\-/g;')
 TESTABLE_LINES = $$(grep -E '^ +\#\#\#\#\#:' *.c.gcov \
@@ -189,8 +194,9 @@ uninstall:
 	rm -f $(INSTALL_TARGETS)
 
 .PHONY: valgrind
-valgrind:
-	cd t && $(MAKE) $@
+valgrind: $(EXEC)
+	./$(EXEC) --valgrind
+	$(CMD_VALGRIND) ./$(EXEC) --selftest | grep -v ^ok
 
 .PHONY: valgrindall
 valgrindall:

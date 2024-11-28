@@ -473,6 +473,48 @@ free_p:
 }
 
 /*
+ ****************
+ * Option tests *
+ ****************
+ */
+
+/*
+ * test_valgrind_option() - Tests the --valgrind command line option. Returns 
+ * the number of failed tests.
+ */
+
+static int test_valgrind_option(void)
+{
+	int r = 0;
+	struct streams ss;
+
+	diag("Test --valgrind");
+
+	if (opt.valgrind) {
+		opt.valgrind = false; /* gncov */
+		streams_init(&ss); /* gncov */
+		streams_exec(&ss, chp{"valgrind", "--version", /* gncov */
+		                      NULL});
+		if (!strstr(ss.out.buf, "valgrind-")) { /* gncov */
+			r += ok(1, "Valgrind is not installed," /* gncov */
+			           " disabling Valgrind checks.");
+		} else {
+			ok(0, "Valgrind is installed"); /* gncov */
+			opt.valgrind = true; /* gncov */
+		}
+		streams_free(&ss); /* gncov */
+	}
+
+	r += sc(chp{progname, "--valgrind", "-h", NULL},
+	        "Show this",
+	        "",
+	        EXIT_SUCCESS,
+	        "--valgrind -h");
+
+	return r;
+}
+
+/*
  * test_functions() - Tests various functions directly. Returns the number of 
  * failed tests.
  */
@@ -507,9 +549,11 @@ static int test_executable(void)
 {
 	int r = 0;
 	struct streams ss;
+	bool orig_valgrind;
 	char *s;
 
 	diag("Test the executable");
+	r += test_valgrind_option();
 	r += sc(chp{ progname, "abc", NULL },
 	        "",
 	        "",
@@ -520,7 +564,10 @@ static int test_executable(void)
 	streams_init(&ss);
 	ss.in.buf = "This is sent to stdin.\n";
 	ss.in.len = strlen(ss.in.buf);
+	orig_valgrind = opt.valgrind;
+	opt.valgrind = false;
 	streams_exec(&ss, chp{ progname, NULL });
+	opt.valgrind = orig_valgrind;
 	s = "streams_exec(progname) with stdin data";
 	r += ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
 	r += ok(!strstr(ss.err.buf, ""),

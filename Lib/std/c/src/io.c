@@ -90,6 +90,43 @@ char *read_from_fp(FILE *fp, struct binbuf *dest)
 }
 
 /*
+ * prepare_valgrind_cmd() - Creates command array for valgrind execution. 
+ * Returns a new allocated array that starts with `valgrind_args` followed by 
+ * `cmd`. Returns NULL on error. Caller must free the returned array after use.
+ */
+
+static char **prepare_valgrind_cmd(char *cmd[]) /* gncov */
+{
+	static const char *valgrind_args[] = {
+		"valgrind",
+		"-q",
+		"--leak-check=full",
+		"--show-leak-kinds=all",
+		"--"
+	};
+	const size_t argnum = sizeof(valgrind_args) /* gncov */
+	                      / sizeof(valgrind_args[0]);
+	size_t cmd_len = 0; /* gncov */
+	char **valgrind_cmd;
+
+	while (cmd[cmd_len]) /* gncov */
+		cmd_len++; /* gncov */
+	valgrind_cmd = malloc((cmd_len + argnum + 1) /* gncov */
+	                      * sizeof(char *));
+	if (!valgrind_cmd) { /* gncov */
+		myerror("%s(): malloc() failed", __func__); /* gncov */
+		return NULL; /* gncov */
+	}
+
+	memcpy(valgrind_cmd, valgrind_args, /* gncov */
+	       argnum * sizeof(char *));
+	memcpy(valgrind_cmd + argnum, cmd, /* gncov */
+	       (cmd_len + 1) * sizeof(char *)); /* gncov */
+
+	return valgrind_cmd; /* gncov */
+}
+
+/*
  * streams_exec() - Execute a command and store stdout, stderr and the return 
  * value into `dest`. `cmd` is an array of arguments, and the last element must 
  * be NULL. The return value is somewhat undefined at this point in time.
@@ -158,7 +195,14 @@ int streams_exec(struct streams *dest, char *cmd[])
 		close(errfd[0]);
 		close(errfd[1]);
 
-		execvp(cmd[0], cmd); /* gncov */
+		if (opt.valgrind) { /* gncov */
+			char **valgrind_cmd
+			= prepare_valgrind_cmd(cmd); /* gncov */
+			execvp(valgrind_cmd[0], valgrind_cmd); /* gncov */
+			free(valgrind_cmd); /* gncov */
+		} else {
+			execvp(cmd[0], cmd); /* gncov */
+		}
 
 		myerror("%s():%d: execvp() failed", /* gncov */
 		        __func__, __LINE__);
