@@ -25,6 +25,8 @@
  * in Perl 5 as far as possible.
  */
 
+#define chp  (char *[])
+
 static int testnum = 0;
 
 /*
@@ -204,6 +206,104 @@ static int print_gotexp(const char *got, const char *exp)
 	free(s); /* gncov */
 
 	return 0; /* gncov */
+}
+
+/*
+ * tc_cmp() - Comparison function used by test_command(). There are 2 types of 
+ * verification: One that demands that the whole output must be identical to 
+ * the expected value, and the other is just a substring search. `got` is the 
+ * actual output from the program, and `exp` is the expected output or 
+ * substring.
+ *
+ * If `identical` is 0 (substring search) and `exp` is empty, the output in 
+ * `got` must also be empty for the test to succeed.
+ *
+ * Returns 0 if the string was found, otherwise 1.
+ */
+
+static int tc_cmp(const int identical, const char *got, const char *exp)
+{
+	assert(got);
+	assert(exp);
+	if (!got || !exp)
+		return 1; /* gncov */
+
+	if (identical || !strlen(exp))
+		return !!strcmp(got, exp);
+
+	return !strstr(got, exp);
+}
+
+/*
+ * test_command() - Run the executable with arguments in `cmd` and verify 
+ * stdout, stderr and the return value against `exp_stdout`, `exp_stderr` and 
+ * `exp_retval`. Returns the number of failed tests, or 1 if `cmd` is NULL.
+ */
+
+static int test_command(const char identical, char *cmd[],
+                        const char *exp_stdout, const char *exp_stderr,
+                        const int exp_retval, const char *desc)
+{
+	int r = 0;
+	struct streams ss;
+
+	assert(cmd);
+	if (!cmd)
+		return 1; /* gncov */
+
+	if (opt.verbose >= VERBOSE_DEBUG) {
+		int i = -1; /* gncov */
+		fprintf(stderr, "# %s(", __func__); /* gncov */
+		while (cmd[++i]) /* gncov */
+			fprintf(stderr, "%s\"%s\"", /* gncov */
+			                i ? ", " : "", cmd[i]); /* gncov */
+		fprintf(stderr, ")\n"); /* gncov */
+	}
+
+	streams_init(&ss);
+	streams_exec(&ss, cmd);
+	if (exp_stdout) {
+		r += ok(tc_cmp(identical, ss.out.buf, exp_stdout),
+		        "%s (stdout)", desc);
+		if (tc_cmp(identical, ss.out.buf, exp_stdout)) {
+			print_gotexp(ss.out.buf, exp_stdout); /* gncov */
+		}
+	}
+	if (exp_stderr) {
+		r += ok(tc_cmp(identical, ss.err.buf, exp_stderr),
+		        "%s (stderr)", desc);
+		if (tc_cmp(identical, ss.err.buf, exp_stderr)) {
+			print_gotexp(ss.err.buf, exp_stderr); /* gncov */
+		}
+	}
+	r += ok(!(ss.ret == exp_retval), "%s (retval)", desc);
+	if (ss.ret != exp_retval) {
+		char *g = allocstr("%d", ss.ret), /* gncov */
+		     *e = allocstr("%d", exp_retval); /* gncov */
+		if (!g || !e) /* gncov */
+			r += ok(1, "%s(): allocstr() failed", /* gncov */
+			           __func__); /* gncov */
+		else
+			print_gotexp(g, e); /* gncov */
+		free(e); /* gncov */
+		free(g); /* gncov */
+	}
+	streams_free(&ss);
+
+	return r;
+}
+
+/*
+ * sc() - Execute command `cmd` and verify that stdout, stderr and the return 
+ * value corresponds to the expected values. The `exp_*` variables are 
+ * substrings that must occur in the actual output. Returns the number of 
+ * failed tests.
+ */
+
+static int sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
+              const int exp_retval, const char *desc)
+{
+	return test_command(0, cmd, exp_stdout, exp_stderr, exp_retval, desc);
 }
 
 /*
@@ -398,6 +498,40 @@ static int test_functions(void)
 }
 
 /*
+ * test_executable() - Run various tests with the executable and verify that 
+ * stdout, stderr and the return value are as expected. Returns the number of 
+ * failed tests.
+ */
+
+static int test_executable(void)
+{
+	int r = 0;
+	struct streams ss;
+	char *s;
+
+	diag("Test the executable");
+	r += sc(chp{ progname, "abc", NULL },
+	        "",
+	        "",
+	        EXIT_SUCCESS,
+	        "1 argument");
+
+	diag("Send input to the program");
+	streams_init(&ss);
+	ss.in.buf = "This is sent to stdin.\n";
+	ss.in.len = strlen(ss.in.buf);
+	streams_exec(&ss, chp{ progname, NULL });
+	s = "streams_exec(progname) with stdin data";
+	r += ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
+	r += ok(!strstr(ss.err.buf, ""),
+	        "%s (stderr)", s);
+	r += ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
+	streams_free(&ss);
+
+	return r;
+}
+
+/*
  * opt_selftest() - Run internal testing to check that it works on the current 
  * system. Executed if --selftest is used. Returns `EXIT_FAILURE` if any tests 
  * fail; otherwise, it returns `EXIT_SUCCESS`.
@@ -411,6 +545,7 @@ int opt_selftest(void)
 	     progname, EXEC_VERSION, EXEC_DATE);
 
 	r += test_functions();
+	r += test_executable();
 
 	printf("1..%d\n", testnum);
 	if (r)
@@ -419,5 +554,7 @@ int opt_selftest(void)
 
 	return r ? EXIT_FAILURE : EXIT_SUCCESS;
 }
+
+#undef chp
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */

@@ -26,11 +26,17 @@
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include "binbuf.h"
 
 #if 1
 #  define DEBL  msg(VERBOSE_TRACE, "DEBL: %s, line %u in %s()", \
@@ -102,6 +108,13 @@ struct Options {
 	bool version;
 };
 
+struct streams {
+	struct binbuf in;
+	struct binbuf out;
+	struct binbuf err;
+	int ret;
+};
+
 /*
  * Public function prototypes
  */
@@ -109,6 +122,11 @@ struct Options {
 /* STDexecDTS.c */
 int msg(const VerboseLevel verbose, const char *format, ...);
 int myerror(const char *format, ...);
+
+/* io.c */
+void streams_init(struct streams *dest);
+void streams_free(struct streams *dest);
+int streams_exec(struct streams *dest, char *cmd[]);
 
 /* selftest.c */
 int opt_selftest(void);
@@ -120,7 +138,7 @@ char *allocstr(const char *format, ...);
  * Global variables
  */
 
-extern const char *progname;
+extern char *progname;
 extern struct Options opt;
 
 #endif /* ifndef _STDUexecUDTS_H */

@@ -8,7 +8,9 @@ LD = cc
 PREFIX = /usr/local
 
 CFILES  =
+CFILES += binbuf.c
 CFILES += STDexecDTS.c
+CFILES += io.c
 CFILES += selftest.c
 CFILES += strings.c
 CFLAGS  =
@@ -24,6 +26,7 @@ DEPS = version.h $(HFILES) Makefile
 GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 HFILES  =
 HFILES += STDexecDTS.h
+HFILES += binbuf.h
 HTMLFILE = $(EXEC).html
 INSTALL_TARGETS  =
 INSTALL_TARGETS += $(PREFIX)/bin/$(EXEC)
@@ -37,6 +40,8 @@ MANSRC = $(MANPAGE).man
 MAN_DATE = $$(grep EXEC_DATE version.h | cut -d '"' -f 2 | sed 's/-/\\\\-/g;')
 OBJS  =
 OBJS += STDexecDTS.o
+OBJS += binbuf.o
+OBJS += io.o
 OBJS += selftest.o
 OBJS += strings.o
 PDFFILE = $(EXEC).pdf
@@ -68,8 +73,14 @@ $(PDFFILE): $(MANPAGE)
 version.h: Gen-version $(CFILES) $(HFILES) Makefile
 	./Gen-version
 
+binbuf.o: binbuf.c $(DEPS)
+	$(CC) $(CFLAGS) binbuf.c
+
 STDexecDTS.o: STDexecDTS.c $(DEPS)
 	$(CC) $(CFLAGS) STDexecDTS.c
+
+io.o: io.c $(DEPS)
+	$(CC) $(CFLAGS) io.c
 
 selftest.o: selftest.c $(DEPS)
 	$(CC) $(CFLAGS) selftest.c
