@@ -131,7 +131,7 @@ tags: $(CFILES) $(HFILES)
 
 .PHONY: test
 test: $(EXEC)
-	cd t && $(MAKE) $@
+	./$(EXEC) --selftest
 
 .PHONY: testall
 testall:
