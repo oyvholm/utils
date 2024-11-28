@@ -21,21 +21,68 @@
 #include "STDexecDTS.h"
 
 /*
+ * The functions in this file are supposed to be compatible with `Test::More` 
+ * in Perl 5 as far as possible.
+ */
+
+static int testnum = 0;
+
+/*
+ * ok() - Print a log line to stdout. If `i` is 0, an "ok" line is printed, 
+ * otherwise a "not ok" line is printed. `desc` is the test description and can 
+ * use printf sequences.
+ *
+ * If `desc` is NULL, it returns 1. Otherwise, it returns `i`.
+ */
+
+static int ok(const int i, const char *desc, ...)
+{
+	va_list ap;
+
+	if (!desc)
+		return 1;
+	va_start(ap, desc);
+	printf("%sok %d - ", (i ? "not " : ""), ++testnum);
+	vprintf(desc, ap);
+	puts("");
+	va_end(ap);
+	fflush(stdout);
+
+	return i;
+}
+
+/*
+ * test_functions() - Tests various functions directly. Returns the number of 
+ * failed tests.
+ */
+
+static int test_functions(void)
+{
+	int r = 0;
+
+	r += ok(!ok(0, NULL), "ok(0, NULL)");
+
+	errno = EACCES;
+	r += ok(!(myerror("errno is EACCES") > 37),
+	        "myerror(): errno is EACCES");
+	errno = 0;
+
+	return r;
+}
+
+/*
  * opt_selftest() - Run internal testing to check that it works on the current 
- * system. Executed if --selftest is used. Returns EXIT_FAILURE any tests fail; 
- * otherwise, return EXIT_SUCCESS.
+ * system. Executed if --selftest is used. Returns `EXIT_FAILURE` if any tests 
+ * fail; otherwise, it returns `EXIT_SUCCESS`.
  */
 
 int opt_selftest(void)
 {
-	unsigned int errcount = 0;
+	int r = 0;
 
-	errno = EACCES;
-	puts("# myerror(\"errno is EACCES\")");
-	myerror("errno is EACCES");
-	errno = 0;
+	r += test_functions();
 
-	return errcount ? EXIT_FAILURE : EXIT_SUCCESS;
+	return r ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */

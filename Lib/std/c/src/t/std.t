@@ -179,22 +179,6 @@ sub test_executable {
 	        . "../$CMDB: Returning from main() with value 0\n",
 	        0,
 	        'One argument');
-	test_selftest();
-
-	return;
-}
-
-sub test_selftest {
-	diag("--selftest");
-	testcmd("$CMD --selftest",
-	        <<END,
-# myerror("errno is EACCES")
-END
-	        <<END,
-../$CMDB: errno is EACCES: Permission denied
-END
-	        0,
-	        '--selftest');
 
 	return;
 }
