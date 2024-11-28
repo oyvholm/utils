@@ -113,6 +113,9 @@ int myerror(const char *format, ...);
 /* selftest.c */
 int opt_selftest(void);
 
+/* strings.c */
+char *allocstr(const char *format, ...);
+
 /*
  * Global variables
  */

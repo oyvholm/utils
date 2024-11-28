@@ -10,6 +10,7 @@ PREFIX = /usr/local
 CFILES  =
 CFILES += STDexecDTS.c
 CFILES += selftest.c
+CFILES += strings.c
 CFLAGS  =
 CFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
 CFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
@@ -37,6 +38,7 @@ MAN_DATE = $$(grep EXEC_DATE version.h | cut -d '"' -f 2 | sed 's/-/\\\\-/g;')
 OBJS  =
 OBJS += STDexecDTS.o
 OBJS += selftest.o
+OBJS += strings.o
 PDFFILE = $(EXEC).pdf
 
 MAN_VERSION = $$(grep EXEC_VERSION version.h | cut -d '"' -f 2 \
@@ -71,6 +73,9 @@ STDexecDTS.o: STDexecDTS.c $(DEPS)
 
 selftest.o: selftest.c $(DEPS)
 	$(CC) $(CFLAGS) selftest.c
+
+strings.o: strings.c $(DEPS)
+	$(CC) $(CFLAGS) strings.c
 
 .PHONY: clean
 clean:

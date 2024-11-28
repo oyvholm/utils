@@ -163,6 +163,50 @@ static int diag(const char *format, ...)
 }
 
 /*
+ * gotexp_output() - Generate the output used by print_gotexp(). The output is 
+ * returned as an allocated string that must be free()'ed after use. Returns 
+ * NULL if `got` or `exp` is NULL or allocstr() fails. Otherwise, it returns a 
+ * pointer to the string with the output.
+ */
+
+static char *gotexp_output(const char *got, const char *exp)
+{
+	char *s;
+
+	if (!got || !exp)
+		return NULL;
+
+	s = allocstr("         got: '%s'\n"
+	             "    expected: '%s'",
+	             got, exp);
+	if (!s)
+		ok(1, "%s(): allocstr() failed", __func__); /* gncov */
+
+	return s;
+}
+
+/*
+ * print_gotexp() - Print the value of the actual and exepected data. Used when 
+ * a test fails. Returns 1 if `got` or `exp` is NULL, otherwise 0.
+ */
+
+static int print_gotexp(const char *got, const char *exp)
+{
+	char *s;
+
+	if (!got || !exp)
+		return 1;
+	if (!strcmp(got, exp))
+		return 0;
+
+	s = gotexp_output(got, exp); /* gncov */
+	diag(s); /* gncov */
+	free(s); /* gncov */
+
+	return 0; /* gncov */
+}
+
+/*
  ******************
  * Function tests *
  ******************
@@ -226,6 +270,7 @@ static int test_diag(void) {
 	s = "# Text with\n# newline";
 	r += ok(p ? !!strcmp(p, s) : 1,
 	        "diag_output() with newline, output is ok");
+	print_gotexp(p, s);
 	free(p);
 
 	p = diag_output("%d = %s, %d = %s, %d = %s",
@@ -233,9 +278,96 @@ static int test_diag(void) {
 	r += ok(!p, "diag_output() with %%d and %%s didn't return NULL");
 	s = "# 1 = one, 2 = two, 3 = three";
 	r += ok(p ? !!strcmp(p, s) : 1, "diag_output() with %%d and %%s");
+	print_gotexp(p, s);
 	free(p);
 
 	r += test_diag_big();
+
+	return r;
+}
+
+/*
+ * test_gotexp_output() - Tests the gotexp_output() function. print_gotexp() 
+ * can't be tested directly because it would pollute stderr. Returns the number 
+ * of failed tests.
+ */
+
+static int test_gotexp_output(void)
+{
+	int r = 0;
+	char *p, *s;
+
+	diag("Test gotexp_output()");
+
+	r += ok(!!gotexp_output(NULL, "a"), "gotexp_output(NULL, \"a\")");
+
+	r += ok(!!strcmp((p = gotexp_output("got this", "expected this")),
+	                 "         got: 'got this'\n"
+	                 "    expected: 'expected this'"),
+	        "gotexp_output(\"got this\", \"expected this\")");
+	free(p);
+
+	r += ok(!print_gotexp(NULL, "expected this"),
+	        "print_gotexp(): Arg is NULL");
+
+	s = "gotexp_output(\"a\", \"a\")";
+	r += ok(!(p = gotexp_output("a", "a")), "%s doesn't return NULL", s);
+	r += ok(!!strcmp(p, "         got: 'a'\n    expected: 'a'"),
+	        "%s: Contents is ok", s);
+	free(p);
+
+	s = "gotexp_output() with newline";
+	r += ok(!(p = gotexp_output("with\nnewline", "also with\nnewline")),
+	        "%s: Doesn't return NULL", s);
+	r += ok(!!strcmp(p, "         got: 'with\nnewline'\n"
+	                    "    expected: 'also with\nnewline'"),
+	        "%s: Contents is ok", s);
+	free(p);
+
+	return r;
+}
+
+/*
+ * test_allocstr() - Tests the allocstr() function. Returns the number of 
+ * failed tests.
+ */
+
+static int test_allocstr(void)
+{
+	const size_t bufsize = BUFSIZ * 2 + 1;
+	char *p, *p2, *p3;
+	int r = 0;
+	size_t alen;
+
+	diag("Test allocstr()");
+	p = malloc(bufsize);
+	if (!p) {
+		r += ok(1, "%s(): malloc() failed", __func__); /* gncov */
+		return r; /* gncov */
+	}
+	memset(p, 'a', bufsize - 1);
+	p[bufsize - 1] = '\0';
+	p2 = allocstr("%s", p);
+	if (!p2) {
+		r += ok(1, "%s(): allocstr() failed" /* gncov */
+		           " with BUFSIZ * 2",
+		           __func__);
+		goto free_p; /* gncov */
+	}
+	alen = strlen(p2);
+	r += ok(!(alen == BUFSIZ * 2), "allocstr(): strlen is correct");
+	p3 = p2;
+	while (*p3) {
+		if (*p3 != 'a') {
+			p3 = NULL; /* gncov */
+			break; /* gncov */
+		}
+		p3++;
+	}
+	r += ok(!(p3 != NULL), "allocstr(): Content of string is correct");
+	free(p2);
+free_p:
+	free(p);
 
 	return r;
 }
@@ -252,6 +384,7 @@ static int test_functions(void)
 	diag("Test selftest routines");
 	r += ok(!ok(0, NULL), "ok(0, NULL)");
 	r += test_diag();
+	r += test_gotexp_output();
 
 	diag("Test various routines");
 	diag("Test myerror()");
@@ -259,6 +392,7 @@ static int test_functions(void)
 	r += ok(!(myerror("errno is EACCES") > 37),
 	        "myerror(): errno is EACCES");
 	errno = 0;
+	r += test_allocstr();
 
 	return r;
 }
