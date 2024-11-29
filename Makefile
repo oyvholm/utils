@@ -93,6 +93,10 @@ testport:
 tlok: c-demo
 	@cd Lib/std/c/src/compile.tmp && $(MAKE) -s tlok
 
+.PHONY: tlokall
+tlokall: c-demo
+	@cd Lib/std/c/src/compile.tmp && $(MAKE) -s tlokall
+
 .PHONY: unmerged
 unmerged:
 	git log --graph --date-order --format=fuller -p --decorate=short \
