@@ -6,7 +6,6 @@ TMPUUIDS=uuids.tmp
 
 .PHONY: all
 all:
-	cd t && $(MAKE) -f Makefile.std-test $@
 
 .PHONY: clean
 clean:
@@ -17,7 +16,6 @@ clean:
 	rm -f *.gcda *.gcno *.gcov
 	rm -f version.h
 	rm -rf $(TMP) $(TMPUUIDS)
-	cd t && $(MAKE) -f Makefile.std-test $@
 
 .PHONY: demo
 demo:
@@ -74,7 +72,6 @@ test:
 	else \
 		echo "# gcov(1) not found, skip gcov tests"; \
 	fi
-	cd t && $(MAKE) -f Makefile.std-test test
 	$(MAKE) -f Makefile clean test
 
 .PHONY: test-gcov

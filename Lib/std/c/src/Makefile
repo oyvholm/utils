@@ -103,7 +103,6 @@ clean:
 	rm -f *.gcda *.gcno *.gcov
 	rm -f gmon.out gmon.sum
 	rm -f version.h
-	cd t && $(MAKE) $@
 
 .PHONY: edit
 edit: tags
