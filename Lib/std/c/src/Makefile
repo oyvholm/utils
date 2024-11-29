@@ -45,6 +45,7 @@ OBJS += io.o
 OBJS += selftest.o
 OBJS += strings.o
 PDFFILE = $(EXEC).pdf
+TESTS = all
 
 CMD_VALGRIND  = valgrind
 CMD_VALGRIND += -q
@@ -152,7 +153,7 @@ tags: $(CFILES) $(HFILES)
 
 .PHONY: test
 test: $(EXEC)
-	./$(EXEC) --selftest
+	./$(EXEC) --selftest $(TESTS)
 
 .PHONY: testall
 testall:
@@ -195,8 +196,8 @@ uninstall:
 
 .PHONY: valgrind
 valgrind: $(EXEC)
-	./$(EXEC) --valgrind
-	$(CMD_VALGRIND) ./$(EXEC) --selftest | grep -v ^ok
+	./$(EXEC) --valgrind $(TESTS)
+	$(CMD_VALGRIND) ./$(EXEC) --selftest $(TESTS) | grep -v ^ok
 
 .PHONY: valgrindall
 valgrindall:

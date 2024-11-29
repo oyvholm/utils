@@ -612,6 +612,9 @@ static int test_functions(void)
 {
 	int r = 0;
 
+	if (!opt.testfunc)
+		return r; /* gncov */
+
 	diag("Test selftest routines");
 	r += ok(!ok(0, NULL), "ok(0, NULL)");
 	r += test_diag();
@@ -641,6 +644,9 @@ static int test_executable(void)
 	struct streams ss;
 	bool orig_valgrind;
 	char *s;
+
+	if (!opt.testexec)
+		return r; /* gncov */
 
 	diag("Test the executable");
 	r += test_valgrind_option();

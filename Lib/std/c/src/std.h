@@ -105,6 +105,8 @@ struct Options {
 	bool help;
 	bool license;
 	bool selftest;
+	bool testexec;
+	bool testfunc;
 	bool valgrind;
 	VerboseLevel verbose;
 	bool version;

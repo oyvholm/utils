@@ -27,11 +27,15 @@ Be more quiet. Can be repeated to increase silence.
 \fB\-v\fP, \fB\-\-verbose\fP
 Increase level of verbosity. Can be repeated.
 .TP
-\fB\-\-selftest\fP
-Run the built-in test suite.
+\fB\-\-selftest\fP [\fIARG\fP]
+Run the built-in test suite. If specified, the argument can contain one or more 
+of these strings: \fBexec\fP (the tests use the executable file), \fBfunc\fP 
+(runs function tests), or \fBall\fP. Multiple strings should be separated by 
+commas. If no argument is specified, default is \fBall\fP.
 .TP
 \fB\-\-valgrind\fP [\fIARG\fP]
-Run the built-in test suite with Valgrind memory checking.
+Run the built-in test suite with Valgrind memory checking. Accepts the same 
+optional argument as \fB\-\-selftest\fP, with the same defaults.
 .TP
 \fB\-\-version\fP
 Print version information.
