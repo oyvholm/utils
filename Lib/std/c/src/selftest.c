@@ -731,6 +731,7 @@ static int test_functions(void)
 	r += ok(!(myerror("errno is EACCES") > 37),
 	        "myerror(): errno is EACCES");
 	errno = 0;
+	r += ok(!(std_strerror(0) != NULL), "std_strerror(0)");
 	r += test_allocstr();
 
 	return r;

@@ -125,6 +125,7 @@ struct streams {
 
 /* STDexecDTS.c */
 int msg(const VerboseLevel verbose, const char *format, ...);
+const char *std_strerror(const int errnum);
 int myerror(const char *format, ...);
 
 /* io.c */

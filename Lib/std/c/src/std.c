@@ -59,7 +59,7 @@ int msg(const VerboseLevel verbose, const char *format, ...)
  * error message on every platform so the tests work everywhere.
  */
 
-static const char *std_strerror(const int errnum)
+const char *std_strerror(const int errnum)
 {
 	switch (errnum) {
 	case EACCES:
@@ -70,6 +70,9 @@ static const char *std_strerror(const int errnum)
 		 * value is missing from `std_strerror()`, and tests may fail 
 		 * on other platforms.
 		 */
+		fprintf(stderr,
+		        "%s: %s(): Unknown errnum received: %d, \"%s\"\n",
+		        progname, __func__, errnum, strerror(errnum));
 		return strerror(errnum);
 	}
 }
