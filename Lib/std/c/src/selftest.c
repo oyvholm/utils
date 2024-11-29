@@ -343,6 +343,19 @@ static int sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
 }
 
 /*
+ * tc() - Execute command `cmd` and verify that stdout, stderr and the return 
+ * value are identical to the expected values. The `exp_*` variables are 
+ * strings that must be identical to the actual output. Returns the number of 
+ * failed tests.
+ */
+
+static int tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
+              const int exp_retval, const char *desc)
+{
+	return test_command(1, cmd, exp_stdout, exp_stderr, exp_retval, desc);
+}
+
+/*
  ******************
  * Function tests *
  ******************
@@ -604,6 +617,97 @@ static int test_valgrind_option(void)
 }
 
 /*
+ * test_standard_options() - Tests the various generic options available in 
+ * most programs. Returns the number of failed tests.
+ */
+
+static int test_standard_options(void) {
+	int r = 0;
+	char *s;
+
+	diag("Test standard options");
+
+	diag("Test -h/--help");
+	r += sc(chp{ progname, "-h", NULL },
+	        "  Show this help",
+	        "",
+	        EXIT_SUCCESS,
+	        "-h");
+	r += sc(chp{ progname, "--help", NULL },
+	        "  Show this help",
+	        "",
+	        EXIT_SUCCESS,
+	        "--help");
+
+	diag("Test -v/--verbose");
+	r += sc(chp{ progname, "-h", "--verbose", NULL },
+	        "  Show this help",
+	        "",
+	        EXIT_SUCCESS,
+	        "-hv: Help text is displayed");
+	r += sc(chp{ progname, "-hv", NULL },
+	        EXEC_VERSION,
+	        "",
+	        EXIT_SUCCESS,
+	        "-hv: Version number is printed along with the help text");
+	r += sc(chp{ progname, "-vvv", "--verbose", NULL },
+	        "",
+	        ": main(): Using verbose level 4\n",
+	        EXIT_SUCCESS,
+	        "-vvv --verbose: Using correct verbose level");
+	r += sc(chp{ progname, "-vvvvq", "--verbose", "--verbose", NULL },
+	        "",
+	        ": main(): Using verbose level 5\n",
+	        EXIT_SUCCESS,
+	        "--verbose: One -q reduces the verbosity level");
+
+	diag("Test --version");
+	s = allocstr("%s %s (%s)\n", progname, EXEC_VERSION, EXEC_DATE);
+	if (s) {
+		r += sc(chp{ progname, "--version", NULL },
+		        s,
+		        "",
+		        EXIT_SUCCESS,
+		        "--version");
+		free(s);
+	} else {
+		r += ok(1, "%s(): allocstr() 1 failed", __func__); /* gncov */
+	}
+	s = EXEC_VERSION "\n";
+	r += tc(chp{ progname, "--version", "-q", NULL },
+	        s,
+	        "",
+	        EXIT_SUCCESS,
+	        "--version with -q shows only the version number");
+
+	diag("Test --license");
+	r += sc(chp{ progname, "--license", NULL },
+	        "GNU General Public License",
+	        "",
+	        EXIT_SUCCESS,
+	        "--license: It's GPL");
+	r += sc(chp{ progname, "--license", NULL },
+	        "either version 2 of the License",
+	        "",
+	        EXIT_SUCCESS,
+	        "--license: It's version 2 of the GPL");
+
+	diag("Unknown option");
+	r += sc(chp{ progname, "--gurgle", NULL },
+	        "",
+	        ": Option error\n",
+	        EXIT_FAILURE,
+	        "Unknown option: \"Option error\" message is printed");
+	r += sc(chp{ progname, "--gurgle", NULL },
+	        "",
+	        " --help\" for help screen. Returning with value 1.\n",
+	        EXIT_FAILURE,
+	        "Unknown option mentions --help");
+
+	return r;
+}
+
+/*
  * test_functions() - Tests various functions directly. Returns the number of 
  * failed tests.
  */
@@ -670,6 +774,8 @@ static int test_executable(void)
 	        "%s (stderr)", s);
 	r += ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
 	streams_free(&ss);
+
+	r += test_standard_options();
 
 	return r;
 }
