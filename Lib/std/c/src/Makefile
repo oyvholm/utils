@@ -93,7 +93,7 @@ $(HTMLFILE): $(MANPAGE)
 
 $(MANPAGE): $(MANSRC) version.h
 	sed "s/RPL_DATE/$(MAN_DATE)/g; s/RPL_VERSION/$(MAN_VERSION)/g;" \
-	<$< >$@.tmp
+	<$(MANSRC) >$@.tmp
 	mv $@.tmp $@
 
 $(PDFFILE): $(MANPAGE)
