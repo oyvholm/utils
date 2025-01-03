@@ -184,7 +184,7 @@ test: $(EXEC)
 
 .PHONY: testall
 testall:
-	$(MAKE) testcomb WHAT=test
+	$(MAKE) -s testcomb WHAT=test
 
 .PHONY: testcomb
 testcomb:

@@ -72,7 +72,7 @@ test:
 
 .PHONY: testall
 testall:
-	cd src && $(MAKE) $@
+	cd src && $(MAKE) -s $@
 
 .PHONY: tlok
 tlok:
