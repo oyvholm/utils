@@ -76,6 +76,14 @@ $(PDFFILE): $(MANPAGE)
 	man -Tpdf ./$(MANPAGE) >$@.tmp
 	mv $@.tmp $@
 
+$(PREFIX)/bin/$(EXEC): $(EXEC)
+	mkdir -p $(PREFIX)/bin
+	install $(EXEC) $(PREFIX)/bin/$(EXEC)
+
+$(PREFIX)/share/man/man1/$(MANPAGE): $(MANPAGE)
+	mkdir -p $(PREFIX)/share/man/man1
+	install $(MANPAGE) $(PREFIX)/share/man/man1/$(MANPAGE)
+
 version.h: Gen-version $(CFILES) $(HFILES) Makefile
 	./Gen-version
 
@@ -93,6 +101,9 @@ selftest.o: selftest.c $(DEPS)
 
 strings.o: strings.c $(DEPS)
 	$(CC) $(CFLAGS) strings.c
+
+tags: $(CFILES) $(HFILES)
+	ctags $(CFILES) $(HFILES)
 
 .PHONY: clean
 clean:
@@ -138,17 +149,6 @@ install: $(INSTALL_TARGETS)
 
 .PHONY: pdf
 pdf: $(PDFFILE)
-
-$(PREFIX)/bin/$(EXEC): $(EXEC)
-	mkdir -p $(PREFIX)/bin
-	install $(EXEC) $(PREFIX)/bin/$(EXEC)
-
-$(PREFIX)/share/man/man1/$(MANPAGE): $(MANPAGE)
-	mkdir -p $(PREFIX)/share/man/man1
-	install $(MANPAGE) $(PREFIX)/share/man/man1/$(MANPAGE)
-
-tags: $(CFILES) $(HFILES)
-	ctags $(CFILES) $(HFILES)
 
 .PHONY: test
 test: $(EXEC)
