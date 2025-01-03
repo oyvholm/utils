@@ -175,6 +175,13 @@ html: $(HTMLFILE)
 .PHONY: install
 install: $(INSTALL_TARGETS)
 
+.PHONY: longlines
+longlines:
+	@for f in $(CFILES) $(HFILES) $(MANSRC) Gen-version Makefile; do \
+		[ -f "$$f" ] && expand "$$f" | sed 's/ $$//;' \
+		| grep -q -E '.{80}' && echo "$$f"; \
+	done | grep . && exit 1 || true
+
 .PHONY: pdf
 pdf: $(PDFFILE)
 
@@ -195,11 +202,8 @@ testcomb:
 
 .PHONY: testsrc
 testsrc:
-	@echo Check files for long lines >&2
-	@for f in $(CFILES) $(HFILES) $(MANSRC) Gen-version Makefile; do \
-		[ -f "$$f" ] && expand "$$f" | sed 's/ $$//;' \
-		| grep -q -E '.{80}' && echo "$$f"; \
-	done | grep . && exit 1 || true
+	@echo Check files for long lines
+	@$(MAKE) -s longlines
 
 .PHONY: tlok
 tlok:
