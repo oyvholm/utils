@@ -39,6 +39,23 @@ Using the version number `X.Y.Z` as an example:
 - `Z` is the *patch level*.
   Increased when new backwards-compatible bugfixes are added.
 
+## Compiler flags for development
+
+To avoid complications on various systems, the default build only uses 
+`-Wall -O2`. Additional warning flags are enabled if any of these 
+conditions are true:
+
+- The file `src/.devel` or `.git/.devel` exists
+- The environment variable `DEVEL` is set to any value
+
+These development flags can be explicitly disabled by setting the 
+`NODEVEL` environment variable, regardless of the conditions above. The 
+current `CFLAGS` can be checked with `make cflags`. For example:
+
+- `make cflags`
+- `make cflags DEVEL=1`
+- `make cflags NODEVEL=true`
+
 ## `make` commands
 
 ### make / make all
