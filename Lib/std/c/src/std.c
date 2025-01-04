@@ -394,6 +394,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	check_errno;
+
 	msg(VERBOSE_DEBUG, "Returning from %s() with value %d",
 	                   __func__, retval);
 	return retval;
