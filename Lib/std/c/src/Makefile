@@ -8,8 +8,8 @@ LD = cc
 PREFIX = /usr/local
 
 CFILES  =
-CFILES += binbuf.c
 CFILES += STDexecDTS.c
+CFILES += binbuf.c
 CFILES += io.c
 CFILES += selftest.c
 CFILES += strings.c
