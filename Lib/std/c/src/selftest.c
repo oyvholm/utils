@@ -154,9 +154,10 @@ static int diag(const char *format, ...)
 	va_start(ap, format);
 	converted_buffer = diag_output_va(format, ap);
 	va_end(ap);
-	if (!converted_buffer)
+	if (!converted_buffer) {
 		return ok(1, "%s(): diag_output_va() failed", /* gncov */
 		             __func__);
+	}
 	fprintf(stderr, "%s\n", converted_buffer);
 	fflush(stderr);
 	free(converted_buffer);
@@ -299,16 +300,14 @@ static int test_command(const char identical, char *cmd[],
 	if (exp_stdout) {
 		r += ok(tc_cmp(identical, ss.out.buf, exp_stdout),
 		        "%s (stdout)", desc);
-		if (tc_cmp(identical, ss.out.buf, exp_stdout)) {
+		if (tc_cmp(identical, ss.out.buf, exp_stdout))
 			print_gotexp(ss.out.buf, exp_stdout); /* gncov */
-		}
 	}
 	if (exp_stderr) {
 		r += ok(tc_cmp(identical, ss.err.buf, exp_stderr),
 		        "%s (stderr)", desc);
-		if (tc_cmp(identical, ss.err.buf, exp_stderr)) {
+		if (tc_cmp(identical, ss.err.buf, exp_stderr))
 			print_gotexp(ss.err.buf, exp_stderr); /* gncov */
-		}
 	}
 	r += ok(!(ss.ret == exp_retval), "%s (retval)", desc);
 	if (ss.ret != exp_retval) {
@@ -378,9 +377,10 @@ static int test_diag_big(void)
 
 	size = BUFSIZ * 2;
 	p = malloc(size + 1);
-	if (!p)
+	if (!p) {
 		return ok(1, "%s(): malloc(%zu) failed", /* gncov */
 		             __func__, size + 1);
+	}
 
 	memset(p, 'a', size);
 	p[3] = 'b';
@@ -731,6 +731,7 @@ static int test_functions(void)
 	r += ok(!(myerror("errno is EACCES") > 37),
 	        "myerror(): errno is EACCES");
 	errno = 0;
+	diag("Test std_strerror()");
 	r += ok(!(std_strerror(0) != NULL), "std_strerror(0)");
 	r += test_allocstr();
 
@@ -798,9 +799,10 @@ int opt_selftest(void)
 	r += test_executable();
 
 	printf("1..%d\n", testnum);
-	if (r)
+	if (r) {
 		diag("Looks like you failed %d test%s of %d.", /* gncov */
 		     r, (r == 1) ? "" : "s", testnum);
+	}
 
 	return r ? EXIT_FAILURE : EXIT_SUCCESS;
 }

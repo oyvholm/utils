@@ -2,6 +2,7 @@
 /*.gcda
 /*.gcno
 /*.o
+/.devel
 /.make-tlok.tmp
 /STDexecDTS
 /STDexecDTS.1

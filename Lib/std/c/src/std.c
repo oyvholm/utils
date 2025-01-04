@@ -239,14 +239,15 @@ static int choose_opt_action(const int c, const struct option *opts)
 
 	switch (c) {
 	case 0:
-		if (!strcmp(opts->name, "license"))
+		if (!strcmp(opts->name, "license")) {
 			opt.license = true;
-		else if (!strcmp(opts->name, "selftest"))
+		} else if (!strcmp(opts->name, "selftest")) {
 			opt.selftest = true;
-		else if (!strcmp(opts->name, "valgrind"))
+		} else if (!strcmp(opts->name, "valgrind")) {
 			opt.valgrind = opt.selftest = true;
-		else if (!strcmp(opts->name, "version"))
+		} else if (!strcmp(opts->name, "version")) {
 			opt.version = true;
+		}
 		break;
 	case 'h':
 		opt.help = true;

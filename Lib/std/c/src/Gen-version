@@ -54,7 +54,7 @@ test -n "$GCOV" && newdef GCOV
 # NDEBUG: Disable assert()
 test -n "$NDEBUG" && newdef NDEBUG
 
-# Compile with profiling code for gprof(1) to find bottlenecks
+# PROF: Compile with profiling code for gprof(1) to find bottlenecks
 test -n "$PROF" && newdef PROF
 
 # UNUSED: Compile unused code
