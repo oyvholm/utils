@@ -60,6 +60,9 @@ test -n "$PROF" && newdef PROF
 # UNUSED: Compile unused code
 test -n "$UNUSED" && newdef UNUSED
 
+# USE_NEW: Compile with new unstable code
+test -n "$USE_NEW" && newdef USE_NEW
+
 exit 0
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
