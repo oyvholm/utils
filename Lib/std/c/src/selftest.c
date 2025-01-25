@@ -286,7 +286,7 @@ static int test_command(const char identical, char *cmd[],
 	if (!cmd)
 		return 1; /* gncov */
 
-	if (opt.verbose >= VERBOSE_DEBUG) {
+	if (opt.verbose >= 4) {
 		int i = -1; /* gncov */
 		fprintf(stderr, "# %s(", __func__); /* gncov */
 		while (cmd[++i]) /* gncov */
