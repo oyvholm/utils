@@ -23,6 +23,7 @@ demo:
 	git init $(TMP) >&2
 	test -d $(TMP)/.git
 	cd $(TMP) && git commit --allow-empty -m "Empty start commit" >&2
+	touch $(TMP)/.git/.devel
 	mkdir -p $(TMPUUIDS) $(TMP)
 	cd $(TMP) \
 	&& SUUID_LOGDIR=$$(pwd)/../$(TMPUUIDS) \
@@ -48,6 +49,7 @@ test:
 	$(MAKE) -f Makefile.std-test demo
 	cd $(TMP)/src && $(MAKE) test
 	cd $(TMP)/src && $(MAKE) testall
+	cd $(TMP)/src && $(MAKE) testall NODEVEL=1
 	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" \
 	&& exit 1 \
 	|| exit 0
