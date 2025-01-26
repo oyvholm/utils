@@ -376,7 +376,7 @@ int main(int argc, char *argv[])
 	if (opt.help)
 		return usage(EXIT_SUCCESS);
 	if (opt.selftest)
-		return opt_selftest();
+		return opt_selftest(progname);
 	if (opt.version)
 		return print_version();
 	if (opt.license)

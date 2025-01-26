@@ -585,7 +585,7 @@ free_p:
  * the number of failed tests.
  */
 
-static int test_valgrind_option(void)
+static int test_valgrind_option(char *execname)
 {
 	int r = 0;
 	struct streams ss;
@@ -607,7 +607,7 @@ static int test_valgrind_option(void)
 		streams_free(&ss); /* gncov */
 	}
 
-	r += sc(chp{progname, "--valgrind", "-h", NULL},
+	r += sc(chp{execname, "--valgrind", "-h", NULL},
 	        "Show this",
 	        "",
 	        EXIT_SUCCESS,
@@ -621,50 +621,51 @@ static int test_valgrind_option(void)
  * most programs. Returns the number of failed tests.
  */
 
-static int test_standard_options(void) {
+static int test_standard_options(char *execname)
+{
 	int r = 0;
 	char *s;
 
 	diag("Test standard options");
 
 	diag("Test -h/--help");
-	r += sc(chp{ progname, "-h", NULL },
+	r += sc(chp{ execname, "-h", NULL },
 	        "  Show this help",
 	        "",
 	        EXIT_SUCCESS,
 	        "-h");
-	r += sc(chp{ progname, "--help", NULL },
+	r += sc(chp{ execname, "--help", NULL },
 	        "  Show this help",
 	        "",
 	        EXIT_SUCCESS,
 	        "--help");
 
 	diag("Test -v/--verbose");
-	r += sc(chp{ progname, "-h", "--verbose", NULL },
+	r += sc(chp{ execname, "-h", "--verbose", NULL },
 	        "  Show this help",
 	        "",
 	        EXIT_SUCCESS,
 	        "-hv: Help text is displayed");
-	r += sc(chp{ progname, "-hv", NULL },
+	r += sc(chp{ execname, "-hv", NULL },
 	        EXEC_VERSION,
 	        "",
 	        EXIT_SUCCESS,
 	        "-hv: Version number is printed along with the help text");
-	r += sc(chp{ progname, "-vvv", "--verbose", NULL },
+	r += sc(chp{ execname, "-vvv", "--verbose", NULL },
 	        "",
 	        ": main(): Using verbose level 4\n",
 	        EXIT_SUCCESS,
 	        "-vvv --verbose: Using correct verbose level");
-	r += sc(chp{ progname, "-vvvvq", "--verbose", "--verbose", NULL },
+	r += sc(chp{ execname, "-vvvvq", "--verbose", "--verbose", NULL },
 	        "",
 	        ": main(): Using verbose level 5\n",
 	        EXIT_SUCCESS,
 	        "--verbose: One -q reduces the verbosity level");
 
 	diag("Test --version");
-	s = allocstr("%s %s (%s)\n", progname, EXEC_VERSION, EXEC_DATE);
+	s = allocstr("%s %s (%s)\n", execname, EXEC_VERSION, EXEC_DATE);
 	if (s) {
-		r += sc(chp{ progname, "--version", NULL },
+		r += sc(chp{ execname, "--version", NULL },
 		        s,
 		        "",
 		        EXIT_SUCCESS,
@@ -674,31 +675,31 @@ static int test_standard_options(void) {
 		r += ok(1, "%s(): allocstr() 1 failed", __func__); /* gncov */
 	}
 	s = EXEC_VERSION "\n";
-	r += tc(chp{ progname, "--version", "-q", NULL },
+	r += tc(chp{ execname, "--version", "-q", NULL },
 	        s,
 	        "",
 	        EXIT_SUCCESS,
 	        "--version with -q shows only the version number");
 
 	diag("Test --license");
-	r += sc(chp{ progname, "--license", NULL },
+	r += sc(chp{ execname, "--license", NULL },
 	        "GNU General Public License",
 	        "",
 	        EXIT_SUCCESS,
 	        "--license: It's GPL");
-	r += sc(chp{ progname, "--license", NULL },
+	r += sc(chp{ execname, "--license", NULL },
 	        "either version 2 of the License",
 	        "",
 	        EXIT_SUCCESS,
 	        "--license: It's version 2 of the GPL");
 
 	diag("Unknown option");
-	r += sc(chp{ progname, "--gurgle", NULL },
+	r += sc(chp{ execname, "--gurgle", NULL },
 	        "",
 	        ": Option error\n",
 	        EXIT_FAILURE,
 	        "Unknown option: \"Option error\" message is printed");
-	r += sc(chp{ progname, "--gurgle", NULL },
+	r += sc(chp{ execname, "--gurgle", NULL },
 	        "",
 	        " --help\" for help screen. Returning with value 1.\n",
 	        EXIT_FAILURE,
@@ -744,7 +745,7 @@ static int test_functions(void)
  * failed tests.
  */
 
-static int test_executable(void)
+static int test_executable(char *execname)
 {
 	int r = 0;
 	struct streams ss;
@@ -755,8 +756,8 @@ static int test_executable(void)
 		return r; /* gncov */
 
 	diag("Test the executable");
-	r += test_valgrind_option();
-	r += sc(chp{ progname, "abc", NULL },
+	r += test_valgrind_option(execname);
+	r += sc(chp{ execname, "abc", NULL },
 	        "",
 	        "",
 	        EXIT_SUCCESS,
@@ -768,16 +769,16 @@ static int test_executable(void)
 	ss.in.len = strlen(ss.in.buf);
 	orig_valgrind = opt.valgrind;
 	opt.valgrind = false;
-	streams_exec(&ss, chp{ progname, NULL });
+	streams_exec(&ss, chp{ execname, NULL });
 	opt.valgrind = orig_valgrind;
-	s = "streams_exec(progname) with stdin data";
+	s = "streams_exec(execname) with stdin data";
 	r += ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
 	r += ok(!strstr(ss.err.buf, ""),
 	        "%s (stderr)", s);
 	r += ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
 	streams_free(&ss);
 
-	r += test_standard_options();
+	r += test_standard_options(execname);
 
 	return r;
 }
@@ -788,15 +789,15 @@ static int test_executable(void)
  * fail; otherwise, it returns `EXIT_SUCCESS`.
  */
 
-int opt_selftest(void)
+int opt_selftest(char *execname)
 {
 	int r = 0;
 
 	diag("Running tests for %s %s (%s)",
-	     progname, EXEC_VERSION, EXEC_DATE);
+	     execname, EXEC_VERSION, EXEC_DATE);
 
 	r += test_functions();
-	r += test_executable();
+	r += test_executable(execname);
 
 	printf("1..%d\n", testnum);
 	if (r) {
