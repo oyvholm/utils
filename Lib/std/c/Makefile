@@ -80,6 +80,7 @@ test:
 
 .PHONY: testall
 testall:
+	$(MAKE) -s testsrc
 	cd src && $(MAKE) -s $@
 
 .PHONY: testsrc
