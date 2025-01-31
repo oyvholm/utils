@@ -264,8 +264,8 @@ static int choose_opt_action(struct Options *dest,
 		dest->verbose++;
 		break;
 	default:
-		msg(4, "%s(): getopt_long() returned character code %d",
-		       __func__, c);
+		myerror("%s(): getopt_long() returned character code %d",
+		        __func__, c);
 		retval = 1;
 		break;
 	}
