@@ -740,6 +740,33 @@ static int test_functions(void)
 }
 
 /*
+ * print_version_info() - Display output from the --version command. Returns 0 
+ * if ok, or 1 if streams_exec() failed.
+ */
+
+static int print_version_info(char *execname)
+{
+	struct streams ss;
+	int res;
+
+	streams_init(&ss);
+	res = streams_exec(&ss, chp{ execname, "--version", NULL });
+	ok(!!res, "streams_exec() with --version works");
+	if (res) {
+		diag("%s(): streams_exec() failed:\n%s", /* gncov */
+		     __func__, ss.err.buf ? ss.err.buf : "(null)"); /* gncov */
+		return 1; /* gncov */
+	}
+	diag("========== BEGIN version info ==========\n"
+	     "%s"
+	     "=========== END version info ===========",
+	     ss.out.buf ? ss.out.buf : "(null)");
+	streams_free(&ss);
+
+	return 0;
+}
+
+/*
  * test_executable() - Run various tests with the executable and verify that 
  * stdout, stderr and the return value are as expected. Returns the number of 
  * failed tests.
@@ -756,6 +783,7 @@ static int test_executable(char *execname)
 		return r; /* gncov */
 
 	diag("Test the executable");
+	print_version_info(execname);
 	r += test_valgrind_option(execname);
 	r += sc(chp{ execname, "abc", NULL },
 	        "",
