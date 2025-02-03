@@ -300,31 +300,30 @@ static int test_command(const char identical, char *cmd[],
 	streams_init(&ss);
 	streams_exec(&ss, cmd);
 	if (exp_stdout) {
-		r += ok(tc_cmp(identical, ss.out.buf, exp_stdout),
-		        "%s (stdout)", desc);
+		ok(tc_cmp(identical, ss.out.buf, exp_stdout),
+		   "%s (stdout)", desc);
 		if (tc_cmp(identical, ss.out.buf, exp_stdout))
 			print_gotexp(ss.out.buf, exp_stdout); /* gncov */
 	}
 	if (exp_stderr) {
-		r += ok(tc_cmp(identical, ss.err.buf, exp_stderr),
-		        "%s (stderr)", desc);
+		ok(tc_cmp(identical, ss.err.buf, exp_stderr),
+		   "%s (stderr)", desc);
 		if (tc_cmp(identical, ss.err.buf, exp_stderr))
 			print_gotexp(ss.err.buf, exp_stderr); /* gncov */
 	}
-	r += ok(!(ss.ret == exp_retval), "%s (retval)", desc);
+	ok(!(ss.ret == exp_retval), "%s (retval)", desc);
 	if (ss.ret != exp_retval) {
 		char *g = allocstr("%d", ss.ret), /* gncov */
 		     *e = allocstr("%d", exp_retval); /* gncov */
 		if (!g || !e) /* gncov */
-			r += ok(1, "%s(): allocstr() failed", /* gncov */
-			           __func__); /* gncov */
+			ok(1, "%s(): allocstr() failed", __func__); /* gncov */
 		else
 			print_gotexp(g, e); /* gncov */
 		free(e); /* gncov */
 		free(g); /* gncov */
 	}
 	if (valgrind_lines(ss.err.buf))
-		r += ok(1, "Found valgrind output"); /* gncov */
+		ok(1, "Found valgrind output"); /* gncov */
 	streams_free(&ss);
 
 	return r;
@@ -390,11 +389,9 @@ static int test_diag_big(void)
 	p[size] = '\0';
 
 	outp = diag_output("%s", p);
-	r += ok(!outp, "diag_big: diag_output() returns ok");
-	r += ok(!(strlen(outp) == size + 2),
-	        "diag_big: String length is correct");
-	r += ok(!!strncmp(outp, "# aaabcaaa", 10),
-	        "diag_big: Beginning is ok");
+	ok(!outp, "diag_big: diag_output() returns ok");
+	ok(!(strlen(outp) == size + 2), "diag_big: String length is correct");
+	ok(!!strncmp(outp, "# aaabcaaa", 10), "diag_big: Beginning is ok");
 	free(outp);
 	free(p);
 
@@ -413,26 +410,25 @@ static int test_diag(void) {
 
 	diag("Test diag()");
 
-	r += ok(!diag(NULL), "diag(NULL)");
-	r += ok(!(diag_output(NULL) == NULL), "diag_output() receives NULL");
+	ok(!diag(NULL), "diag(NULL)");
+	ok(!(diag_output(NULL) == NULL), "diag_output() receives NULL");
 
 	p = diag_output("Text with\nnewline");
-	r += ok(!p, "diag_output() with newline didn't return NULL");
+	ok(!p, "diag_output() with newline didn't return NULL");
 	s = "# Text with\n# newline";
-	r += ok(p ? !!strcmp(p, s) : 1,
-	        "diag_output() with newline, output is ok");
+	ok(p ? !!strcmp(p, s) : 1, "diag_output() with newline, output is ok");
 	print_gotexp(p, s);
 	free(p);
 
 	p = diag_output("%d = %s, %d = %s, %d = %s",
 	                1, "one", 2, "two", 3, "three");
-	r += ok(!p, "diag_output() with %%d and %%s didn't return NULL");
+	ok(!p, "diag_output() with %%d and %%s didn't return NULL");
 	s = "# 1 = one, 2 = two, 3 = three";
-	r += ok(p ? !!strcmp(p, s) : 1, "diag_output() with %%d and %%s");
+	ok(p ? !!strcmp(p, s) : 1, "diag_output() with %%d and %%s");
 	print_gotexp(p, s);
 	free(p);
 
-	r += test_diag_big();
+	test_diag_big();
 
 	return r;
 }
@@ -450,29 +446,29 @@ static int test_gotexp_output(void)
 
 	diag("Test gotexp_output()");
 
-	r += ok(!!gotexp_output(NULL, "a"), "gotexp_output(NULL, \"a\")");
+	ok(!!gotexp_output(NULL, "a"), "gotexp_output(NULL, \"a\")");
 
-	r += ok(!!strcmp((p = gotexp_output("got this", "expected this")),
-	                 "         got: 'got this'\n"
-	                 "    expected: 'expected this'"),
-	        "gotexp_output(\"got this\", \"expected this\")");
+	ok(!!strcmp((p = gotexp_output("got this", "expected this")),
+	            "         got: 'got this'\n"
+	            "    expected: 'expected this'"),
+	   "gotexp_output(\"got this\", \"expected this\")");
 	free(p);
 
-	r += ok(!print_gotexp(NULL, "expected this"),
-	        "print_gotexp(): Arg is NULL");
+	ok(!print_gotexp(NULL, "expected this"),
+	   "print_gotexp(): Arg is NULL");
 
 	s = "gotexp_output(\"a\", \"a\")";
-	r += ok(!(p = gotexp_output("a", "a")), "%s doesn't return NULL", s);
-	r += ok(!!strcmp(p, "         got: 'a'\n    expected: 'a'"),
-	        "%s: Contents is ok", s);
+	ok(!(p = gotexp_output("a", "a")), "%s doesn't return NULL", s);
+	ok(!!strcmp(p, "         got: 'a'\n    expected: 'a'"),
+	   "%s: Contents is ok", s);
 	free(p);
 
 	s = "gotexp_output() with newline";
-	r += ok(!(p = gotexp_output("with\nnewline", "also with\nnewline")),
-	        "%s: Doesn't return NULL", s);
-	r += ok(!!strcmp(p, "         got: 'with\nnewline'\n"
-	                    "    expected: 'also with\nnewline'"),
-	        "%s: Contents is ok", s);
+	ok(!(p = gotexp_output("with\nnewline", "also with\nnewline")),
+	   "%s: Doesn't return NULL", s);
+	ok(!!strcmp(p, "         got: 'with\nnewline'\n"
+	               "    expected: 'also with\nnewline'"),
+	   "%s: Contents is ok", s);
 	free(p);
 
 	return r;
@@ -516,15 +512,15 @@ static int test_valgrind_lines(void)
 
 	i = 0;
 	while (has[i]) {
-		r += ok(!valgrind_lines(has[i]),
-		        "valgrind_lines(): Has valgrind marker, string %d", i);
+		ok(!valgrind_lines(has[i]),
+		   "valgrind_lines(): Has valgrind marker, string %d", i);
 		i++;
 	}
 
 	i = 0;
 	while (hasnot[i]) {
-		r += ok(valgrind_lines(hasnot[i]),
-		        "valgrind_lines(): No valgrind marker, string %d", i);
+		ok(valgrind_lines(hasnot[i]),
+		   "valgrind_lines(): No valgrind marker, string %d", i);
 		i++;
 	}
 
@@ -546,20 +542,19 @@ static int test_allocstr(void)
 	diag("Test allocstr()");
 	p = malloc(bufsize);
 	if (!p) {
-		r += ok(1, "%s(): malloc() failed", __func__); /* gncov */
+		ok(1, "%s(): malloc() failed", __func__); /* gncov */
 		return r; /* gncov */
 	}
 	memset(p, 'a', bufsize - 1);
 	p[bufsize - 1] = '\0';
 	p2 = allocstr("%s", p);
 	if (!p2) {
-		r += ok(1, "%s(): allocstr() failed" /* gncov */
-		           " with BUFSIZ * 2",
-		           __func__);
+		ok(1, "%s(): allocstr() failed with BUFSIZ * 2", /* gncov */
+		      __func__);
 		goto free_p; /* gncov */
 	}
 	alen = strlen(p2);
-	r += ok(!(alen == BUFSIZ * 2), "allocstr(): strlen is correct");
+	ok(!(alen == BUFSIZ * 2), "allocstr(): strlen is correct");
 	p3 = p2;
 	while (*p3) {
 		if (*p3 != 'a') {
@@ -568,7 +563,7 @@ static int test_allocstr(void)
 		}
 		p3++;
 	}
-	r += ok(!(p3 != NULL), "allocstr(): Content of string is correct");
+	ok(!(p3 != NULL), "allocstr(): Content of string is correct");
 	free(p2);
 free_p:
 	free(p);
@@ -600,8 +595,8 @@ static int test_valgrind_option(char *execname)
 		streams_exec(&ss, chp{"valgrind", "--version", /* gncov */
 		                      NULL});
 		if (!strstr(ss.out.buf, "valgrind-")) { /* gncov */
-			r += ok(1, "Valgrind is not installed," /* gncov */
-			           " disabling Valgrind checks.");
+			ok(1, "Valgrind is not installed," /* gncov */
+			      " disabling Valgrind checks.");
 		} else {
 			ok(0, "Valgrind is installed"); /* gncov */
 			opt.valgrind = true; /* gncov */
@@ -609,11 +604,11 @@ static int test_valgrind_option(char *execname)
 		streams_free(&ss); /* gncov */
 	}
 
-	r += sc(chp{execname, "--valgrind", "-h", NULL},
-	        "Show this",
-	        "",
-	        EXIT_SUCCESS,
-	        "--valgrind -h");
+	sc(chp{execname, "--valgrind", "-h", NULL},
+	   "Show this",
+	   "",
+	   EXIT_SUCCESS,
+	   "--valgrind -h");
 
 	return r;
 }
@@ -631,81 +626,81 @@ static int test_standard_options(char *execname)
 	diag("Test standard options");
 
 	diag("Test -h/--help");
-	r += sc(chp{ execname, "-h", NULL },
-	        "  Show this help",
-	        "",
-	        EXIT_SUCCESS,
-	        "-h");
-	r += sc(chp{ execname, "--help", NULL },
-	        "  Show this help",
-	        "",
-	        EXIT_SUCCESS,
-	        "--help");
+	sc(chp{ execname, "-h", NULL },
+	   "  Show this help",
+	   "",
+	   EXIT_SUCCESS,
+	   "-h");
+	sc(chp{ execname, "--help", NULL },
+	   "  Show this help",
+	   "",
+	   EXIT_SUCCESS,
+	   "--help");
 
 	diag("Test -v/--verbose");
-	r += sc(chp{ execname, "-h", "--verbose", NULL },
-	        "  Show this help",
-	        "",
-	        EXIT_SUCCESS,
-	        "-hv: Help text is displayed");
-	r += sc(chp{ execname, "-hv", NULL },
-	        EXEC_VERSION,
-	        "",
-	        EXIT_SUCCESS,
-	        "-hv: Version number is printed along with the help text");
-	r += sc(chp{ execname, "-vvv", "--verbose", NULL },
-	        "",
-	        ": main(): Using verbose level 4\n",
-	        EXIT_SUCCESS,
-	        "-vvv --verbose: Using correct verbose level");
-	r += sc(chp{ execname, "-vvvvq", "--verbose", "--verbose", NULL },
-	        "",
-	        ": main(): Using verbose level 5\n",
-	        EXIT_SUCCESS,
-	        "--verbose: One -q reduces the verbosity level");
+	sc(chp{ execname, "-h", "--verbose", NULL },
+	   "  Show this help",
+	   "",
+	   EXIT_SUCCESS,
+	   "-hv: Help text is displayed");
+	sc(chp{ execname, "-hv", NULL },
+	   EXEC_VERSION,
+	   "",
+	   EXIT_SUCCESS,
+	   "-hv: Version number is printed along with the help text");
+	sc(chp{ execname, "-vvv", "--verbose", NULL },
+	   "",
+	   ": main(): Using verbose level 4\n",
+	   EXIT_SUCCESS,
+	   "-vvv --verbose: Using correct verbose level");
+	sc(chp{ execname, "-vvvvq", "--verbose", "--verbose", NULL },
+	   "",
+	   ": main(): Using verbose level 5\n",
+	   EXIT_SUCCESS,
+	   "--verbose: One -q reduces the verbosity level");
 
 	diag("Test --version");
 	s = allocstr("%s %s (%s)\n", execname, EXEC_VERSION, EXEC_DATE);
 	if (s) {
-		r += sc(chp{ execname, "--version", NULL },
-		        s,
-		        "",
-		        EXIT_SUCCESS,
-		        "--version");
+		sc(chp{ execname, "--version", NULL },
+		   s,
+		   "",
+		   EXIT_SUCCESS,
+		   "--version");
 		free(s);
 	} else {
-		r += ok(1, "%s(): allocstr() 1 failed", __func__); /* gncov */
+		ok(1, "%s(): allocstr() 1 failed", __func__); /* gncov */
 	}
 	s = EXEC_VERSION "\n";
-	r += tc(chp{ execname, "--version", "-q", NULL },
-	        s,
-	        "",
-	        EXIT_SUCCESS,
-	        "--version with -q shows only the version number");
+	tc(chp{ execname, "--version", "-q", NULL },
+	   s,
+	   "",
+	   EXIT_SUCCESS,
+	   "--version with -q shows only the version number");
 
 	diag("Test --license");
-	r += sc(chp{ execname, "--license", NULL },
-	        "GNU General Public License",
-	        "",
-	        EXIT_SUCCESS,
-	        "--license: It's GPL");
-	r += sc(chp{ execname, "--license", NULL },
-	        "either version 2 of the License",
-	        "",
-	        EXIT_SUCCESS,
-	        "--license: It's version 2 of the GPL");
+	sc(chp{ execname, "--license", NULL },
+	   "GNU General Public License",
+	   "",
+	   EXIT_SUCCESS,
+	   "--license: It's GPL");
+	sc(chp{ execname, "--license", NULL },
+	   "either version 2 of the License",
+	   "",
+	   EXIT_SUCCESS,
+	   "--license: It's version 2 of the GPL");
 
 	diag("Unknown option");
-	r += sc(chp{ execname, "--gurgle", NULL },
-	        "",
-	        ": Option error\n",
-	        EXIT_FAILURE,
-	        "Unknown option: \"Option error\" message is printed");
-	r += sc(chp{ execname, "--gurgle", NULL },
-	        "",
-	        " --help\" for help screen. Returning with value 1.\n",
-	        EXIT_FAILURE,
-	        "Unknown option mentions --help");
+	sc(chp{ execname, "--gurgle", NULL },
+	   "",
+	   ": Option error\n",
+	   EXIT_FAILURE,
+	   "Unknown option: \"Option error\" message is printed");
+	sc(chp{ execname, "--gurgle", NULL },
+	   "",
+	   " --help\" for help screen. Returning with value 1.\n",
+	   EXIT_FAILURE,
+	   "Unknown option mentions --help");
 
 	return r;
 }
@@ -723,20 +718,20 @@ static int test_functions(void)
 		return r; /* gncov */
 
 	diag("Test selftest routines");
-	r += ok(!ok(0, NULL), "ok(0, NULL)");
-	r += test_diag();
-	r += test_gotexp_output();
-	r += test_valgrind_lines();
+	ok(!ok(0, NULL), "ok(0, NULL)");
+	test_diag();
+	test_gotexp_output();
+	test_valgrind_lines();
 
 	diag("Test various routines");
 	diag("Test myerror()");
 	errno = EACCES;
-	r += ok(!(myerror("errno is EACCES") > 37),
+	ok(!(myerror("errno is EACCES") > 37),
 	        "myerror(): errno is EACCES");
 	errno = 0;
 	diag("Test std_strerror()");
-	r += ok(!(std_strerror(0) != NULL), "std_strerror(0)");
-	r += test_allocstr();
+	ok(!(std_strerror(0) != NULL), "std_strerror(0)");
+	test_allocstr();
 
 	return r;
 }
@@ -786,12 +781,12 @@ static int test_executable(char *execname)
 
 	diag("Test the executable");
 	print_version_info(execname);
-	r += test_valgrind_option(execname);
-	r += sc(chp{ execname, "abc", NULL },
-	        "",
-	        "",
-	        EXIT_SUCCESS,
-	        "1 argument");
+	test_valgrind_option(execname);
+	sc(chp{ execname, "abc", NULL },
+	   "",
+	   "",
+	   EXIT_SUCCESS,
+	   "1 argument");
 
 	diag("Send input to the program");
 	streams_init(&ss);
@@ -802,13 +797,12 @@ static int test_executable(char *execname)
 	streams_exec(&ss, chp{ execname, NULL });
 	opt.valgrind = orig_valgrind;
 	s = "streams_exec(execname) with stdin data";
-	r += ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
-	r += ok(!strstr(ss.err.buf, ""),
-	        "%s (stderr)", s);
-	r += ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
+	ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
+	ok(!strstr(ss.err.buf, ""), "%s (stderr)", s);
+	ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
 	streams_free(&ss);
 
-	r += test_standard_options(execname);
+	test_standard_options(execname);
 
 	return r;
 }
