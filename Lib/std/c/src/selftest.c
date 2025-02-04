@@ -274,19 +274,20 @@ static int valgrind_lines(const char *s)
 /*
  * test_command() - Run the executable with arguments in `cmd` and verify 
  * stdout, stderr and the return value against `exp_stdout`, `exp_stderr` and 
- * `exp_retval`. Returns the number of failed tests, or 1 if `cmd` is NULL.
+ * `exp_retval`. Returns nothing.
  */
 
-static int test_command(const char identical, char *cmd[],
-                        const char *exp_stdout, const char *exp_stderr,
-                        const int exp_retval, const char *desc)
+static void test_command(const char identical, char *cmd[],
+                         const char *exp_stdout, const char *exp_stderr,
+                         const int exp_retval, const char *desc)
 {
-	int r = 0;
 	struct streams ss;
 
 	assert(cmd);
-	if (!cmd)
-		return 1; /* gncov */
+	if (!cmd) {
+		ok(1, "%s(): cmd is NULL", __func__); /* gncov */
+		return; /* gncov */
+	}
 
 	if (opt.verbose >= 4) {
 		int i = -1; /* gncov */
@@ -325,34 +326,30 @@ static int test_command(const char identical, char *cmd[],
 	if (valgrind_lines(ss.err.buf))
 		ok(1, "Found valgrind output"); /* gncov */
 	streams_free(&ss);
-
-	return r;
 }
 
 /*
  * sc() - Execute command `cmd` and verify that stdout, stderr and the return 
  * value corresponds to the expected values. The `exp_*` variables are 
- * substrings that must occur in the actual output. Returns the number of 
- * failed tests.
+ * substrings that must occur in the actual output. Returns nothing.
  */
 
-static int sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
-              const int exp_retval, const char *desc)
+static void sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
+               const int exp_retval, const char *desc)
 {
-	return test_command(0, cmd, exp_stdout, exp_stderr, exp_retval, desc);
+	test_command(0, cmd, exp_stdout, exp_stderr, exp_retval, desc);
 }
 
 /*
  * tc() - Execute command `cmd` and verify that stdout, stderr and the return 
  * value are identical to the expected values. The `exp_*` variables are 
- * strings that must be identical to the actual output. Returns the number of 
- * failed tests.
+ * strings that must be identical to the actual output. Returns nothing.
  */
 
-static int tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
-              const int exp_retval, const char *desc)
+static void tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
+               const int exp_retval, const char *desc)
 {
-	return test_command(1, cmd, exp_stdout, exp_stderr, exp_retval, desc);
+	test_command(1, cmd, exp_stdout, exp_stderr, exp_retval, desc);
 }
 
 /*
@@ -367,20 +364,19 @@ static int tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
 
 /*
  * test_diag_big() - Tests diag_output() with a string larger than BUFSIZ. 
- * Returns the number of failed tests.
+ * Returns nothing.
  */
 
-static int test_diag_big(void)
+static void test_diag_big(void)
 {
-	int r = 0;
 	size_t size;
 	char *p, *outp;
 
 	size = BUFSIZ * 2;
 	p = malloc(size + 1);
 	if (!p) {
-		return ok(1, "%s(): malloc(%zu) failed", /* gncov */
-		             __func__, size + 1);
+		ok(1, "%s(): malloc(%zu) failed", /* gncov */
+		       __func__, size + 1);
 	}
 
 	memset(p, 'a', size);
@@ -394,18 +390,14 @@ static int test_diag_big(void)
 	ok(!!strncmp(outp, "# aaabcaaa", 10), "diag_big: Beginning is ok");
 	free(outp);
 	free(p);
-
-	return r;
 }
 
 /*
  * test_diag() - Tests the diag_output() function. diag() can't be tested 
- * directly because it would pollute the the test output. Returns the number of 
- * failed tests.
+ * directly because it would pollute the the test output. Returns nothing.
  */
 
-static int test_diag(void) {
-	int r = 0;
+static void test_diag(void) {
 	char *p, *s;
 
 	diag("Test diag()");
@@ -429,19 +421,15 @@ static int test_diag(void) {
 	free(p);
 
 	test_diag_big();
-
-	return r;
 }
 
 /*
  * test_gotexp_output() - Tests the gotexp_output() function. print_gotexp() 
- * can't be tested directly because it would pollute stderr. Returns the number 
- * of failed tests.
+ * can't be tested directly because it would pollute stderr. Returns nothing.
  */
 
-static int test_gotexp_output(void)
+static void test_gotexp_output(void)
 {
-	int r = 0;
 	char *p, *s;
 
 	diag("Test gotexp_output()");
@@ -470,18 +458,16 @@ static int test_gotexp_output(void)
 	               "    expected: 'also with\nnewline'"),
 	   "%s: Contents is ok", s);
 	free(p);
-
-	return r;
 }
 
 /*
- * test_valgrind_lines() - Test the behavior of valgrind_lines(). Returns the 
- * number of failed tests.
+ * test_valgrind_lines() - Test the behavior of valgrind_lines(). Returns 
+ * nothing.
  */
 
-static int test_valgrind_lines(void)
+static void test_valgrind_lines(void)
 {
-	int r = 0, i;
+	int i;
 	const char
 	*has[] = {
 		"\n==123==",
@@ -523,27 +509,23 @@ static int test_valgrind_lines(void)
 		   "valgrind_lines(): No valgrind marker, string %d", i);
 		i++;
 	}
-
-	return r;
 }
 
 /*
- * test_allocstr() - Tests the allocstr() function. Returns the number of 
- * failed tests.
+ * test_allocstr() - Tests the allocstr() function. Returns nothing.
  */
 
-static int test_allocstr(void)
+static void test_allocstr(void)
 {
 	const size_t bufsize = BUFSIZ * 2 + 1;
 	char *p, *p2, *p3;
-	int r = 0;
 	size_t alen;
 
 	diag("Test allocstr()");
 	p = malloc(bufsize);
 	if (!p) {
 		ok(1, "%s(): malloc() failed", __func__); /* gncov */
-		return r; /* gncov */
+		return; /* gncov */
 	}
 	memset(p, 'a', bufsize - 1);
 	p[bufsize - 1] = '\0';
@@ -567,8 +549,6 @@ static int test_allocstr(void)
 	free(p2);
 free_p:
 	free(p);
-
-	return r;
 }
 
 /*
@@ -579,12 +559,11 @@ free_p:
 
 /*
  * test_valgrind_option() - Tests the --valgrind command line option. Returns 
- * the number of failed tests.
+ * nothing.
  */
 
-static int test_valgrind_option(char *execname)
+static void test_valgrind_option(char *execname)
 {
-	int r = 0;
 	struct streams ss;
 
 	diag("Test --valgrind");
@@ -609,18 +588,15 @@ static int test_valgrind_option(char *execname)
 	   "",
 	   EXIT_SUCCESS,
 	   "--valgrind -h");
-
-	return r;
 }
 
 /*
  * test_standard_options() - Tests the various generic options available in 
- * most programs. Returns the number of failed tests.
+ * most programs. Returns nothing.
  */
 
-static int test_standard_options(char *execname)
+static void test_standard_options(char *execname)
 {
-	int r = 0;
 	char *s;
 
 	diag("Test standard options");
@@ -701,21 +677,16 @@ static int test_standard_options(char *execname)
 	   " --help\" for help screen. Returning with value 1.\n",
 	   EXIT_FAILURE,
 	   "Unknown option mentions --help");
-
-	return r;
 }
 
 /*
- * test_functions() - Tests various functions directly. Returns the number of 
- * failed tests.
+ * test_functions() - Tests various functions directly. Returns nothing.
  */
 
-static int test_functions(void)
+static void test_functions(void)
 {
-	int r = 0;
-
 	if (!opt.testfunc)
-		return r; /* gncov */
+		return; /* gncov */
 
 	diag("Test selftest routines");
 	ok(!ok(0, NULL), "ok(0, NULL)");
@@ -732,8 +703,6 @@ static int test_functions(void)
 	diag("Test std_strerror()");
 	ok(!(std_strerror(0) != NULL), "std_strerror(0)");
 	test_allocstr();
-
-	return r;
 }
 
 /*
@@ -765,19 +734,17 @@ static int print_version_info(char *execname)
 
 /*
  * test_executable() - Run various tests with the executable and verify that 
- * stdout, stderr and the return value are as expected. Returns the number of 
- * failed tests.
+ * stdout, stderr and the return value are as expected. Returns nothing.
  */
 
-static int test_executable(char *execname)
+static void test_executable(char *execname)
 {
-	int r = 0;
 	struct streams ss;
 	bool orig_valgrind;
 	char *s;
 
 	if (!opt.testexec)
-		return r; /* gncov */
+		return; /* gncov */
 
 	diag("Test the executable");
 	print_version_info(execname);
@@ -803,8 +770,6 @@ static int test_executable(char *execname)
 	streams_free(&ss);
 
 	test_standard_options(execname);
-
-	return r;
 }
 
 /*
