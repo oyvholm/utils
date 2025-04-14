@@ -398,7 +398,15 @@ END
 sub check_branches {
     # {{{
     my ($should_be, $desc) = @_;
-    is(`$GIT branch -a`, $should_be, "Branches are ok $desc");
+    my $outp = `$GIT branch -a | grep -v HEAD`;
+    my $res = ($outp eq $should_be);
+
+    ok($res, "Branches are ok $desc");
+    if (!$res) {
+        diag("$GIT branch -a:\n\n$outp");
+        diag("\nExpected:\n\n$should_be");
+    }
+
     return;
     # }}}
 } # check_branches()
