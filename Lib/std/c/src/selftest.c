@@ -554,6 +554,33 @@ free_p:
 }
 
 /*
+ * test_streams_exec() - Tests the streams_exec() function. Returns nothing.
+ */
+
+static void test_streams_exec(char *execname)
+{
+	bool orig_valgrind;
+	struct streams ss;
+	char *s;
+
+	diag("Test streams_exec()");
+
+	diag("Send input to the program");
+	streams_init(&ss);
+	ss.in.buf = "This is sent to stdin.\n";
+	ss.in.len = strlen(ss.in.buf);
+	orig_valgrind = opt.valgrind;
+	opt.valgrind = false;
+	streams_exec(&ss, chp{ execname, NULL });
+	opt.valgrind = orig_valgrind;
+	s = "streams_exec(execname) with stdin data";
+	ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
+	ok(!strstr(ss.err.buf, ""), "%s (stderr)", s);
+	ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
+	streams_free(&ss);
+}
+
+/*
  ****************
  * Option tests *
  ****************
@@ -739,36 +766,18 @@ static int print_version_info(char *execname)
 
 static void test_executable(char *execname)
 {
-	struct streams ss;
-	bool orig_valgrind;
-	char *s;
-
 	if (!opt.testexec)
 		return; /* gncov */
 
 	diag("Test the executable");
 	test_valgrind_option(execname);
 	print_version_info(execname);
+	test_streams_exec(execname);
 	sc(chp{ execname, "abc", NULL },
 	   "",
 	   "",
 	   EXIT_SUCCESS,
 	   "1 argument");
-
-	diag("Send input to the program");
-	streams_init(&ss);
-	ss.in.buf = "This is sent to stdin.\n";
-	ss.in.len = strlen(ss.in.buf);
-	orig_valgrind = opt.valgrind;
-	opt.valgrind = false;
-	streams_exec(&ss, chp{ execname, NULL });
-	opt.valgrind = orig_valgrind;
-	s = "streams_exec(execname) with stdin data";
-	ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
-	ok(!strstr(ss.err.buf, ""), "%s (stderr)", s);
-	ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
-	streams_free(&ss);
-
 	test_standard_options(execname);
 	print_version_info(execname);
 }
