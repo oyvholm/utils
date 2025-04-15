@@ -71,6 +71,11 @@ Remove all generated files except `tags`.
 Open all files in the subtree in your favourite editor defined in 
 `EDITOR`.
 
+### make asm
+
+Generate assembly code for all `.c` files. On many Unix-like systems, 
+the assembly files are stored with a `.s` extension.
+
 ### make gcov
 
 Generate test coverage with `gcov`(1). Should be as close to 100% as 

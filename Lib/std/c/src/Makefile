@@ -145,6 +145,10 @@ strings.o: strings.c $(DEPS)
 tags: $(CFILES) $(HFILES)
 	ctags $(CFILES) $(HFILES)
 
+.PHONY: asm
+asm: $(DEPS)
+	$(CC) $(CFLAGS) -fverbose-asm -S $(CFILES)
+
 .PHONY: cflags
 cflags:
 	@echo $(CFLAGS)
@@ -156,6 +160,7 @@ clean:
 	rm -f $(MANPAGE) $(MANPAGE).tmp
 	rm -f $(PDFFILE) $(PDFFILE).tmp
 	rm -f *.gcda *.gcno *.gcov
+	rm -f *.s
 	rm -f gmon.out gmon.sum
 	rm -f version.h
 
