@@ -378,6 +378,7 @@ static void test_diag_big(void)
 	if (!p) {
 		ok(1, "%s(): malloc(%zu) failed", /* gncov */
 		       __func__, size + 1);
+		return; /* gncov */
 	}
 
 	memset(p, 'a', size);
