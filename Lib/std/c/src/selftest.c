@@ -747,8 +747,8 @@ static void test_executable(char *execname)
 		return; /* gncov */
 
 	diag("Test the executable");
-	print_version_info(execname);
 	test_valgrind_option(execname);
+	print_version_info(execname);
 	sc(chp{ execname, "abc", NULL },
 	   "",
 	   "",
