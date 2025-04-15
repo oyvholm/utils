@@ -119,7 +119,8 @@ static char *diag_output_va(const char *format, va_list ap)
 
 /*
  * diag_output() - Frontend against diag_output_va(), used by the tests. 
- * Returns number of failed tests.
+ * Returns the value from diag_output_va(); a pointer to the allocated string, 
+ * or NULL if anything failed.
  */
 
 static char *diag_output(const char *format, ...)
@@ -575,7 +576,7 @@ static void test_valgrind_option(char *execname)
 		                      NULL});
 		if (!strstr(ss.out.buf, "valgrind-")) { /* gncov */
 			ok(1, "Valgrind is not installed," /* gncov */
-			      " disabling Valgrind checks.");
+			      " disabling Valgrind checks");
 		} else {
 			ok(0, "Valgrind is installed"); /* gncov */
 			opt.valgrind = true; /* gncov */
@@ -697,8 +698,7 @@ static void test_functions(void)
 	diag("Test various routines");
 	diag("Test myerror()");
 	errno = EACCES;
-	ok(!(myerror("errno is EACCES") > 37),
-	        "myerror(): errno is EACCES");
+	ok(!(myerror("errno is EACCES") > 37), "myerror(): errno is EACCES");
 	errno = 0;
 	diag("Test std_strerror()");
 	ok(!(std_strerror(0) != NULL), "std_strerror(0)");
