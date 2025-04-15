@@ -653,13 +653,13 @@ static void test_standard_options(char *execname)
 	   "",
 	   EXIT_SUCCESS,
 	   "-hv: Version number is printed along with the help text");
-	sc(chp{ execname, "-vvv", "--verbose", NULL },
-	   "",
+	sc(chp{ execname, "-vvv", "--verbose", "--help", NULL },
+	   "  Show this help",
 	   ": main(): Using verbose level 4\n",
 	   EXIT_SUCCESS,
 	   "-vvv --verbose: Using correct verbose level");
-	sc(chp{ execname, "-vvvvq", "--verbose", "--verbose", NULL },
-	   "",
+	sc(chp{ execname, "-vvvvq", "--verbose", "--verbose", "--help", NULL },
+	   "  Show this help",
 	   ": main(): Using verbose level 5\n",
 	   EXIT_SUCCESS,
 	   "--verbose: One -q reduces the verbosity level");
