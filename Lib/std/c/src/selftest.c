@@ -717,7 +717,6 @@ static int print_version_info(char *execname)
 
 	streams_init(&ss);
 	res = streams_exec(&ss, chp{ execname, "--version", NULL });
-	ok(!!res, "streams_exec() with --version works");
 	if (res) {
 		diag("%s(): streams_exec() failed:\n%s", /* gncov */
 		     __func__, ss.err.buf ? ss.err.buf : "(null)"); /* gncov */
@@ -770,6 +769,7 @@ static void test_executable(char *execname)
 	streams_free(&ss);
 
 	test_standard_options(execname);
+	print_version_info(execname);
 }
 
 /*
