@@ -73,6 +73,12 @@ LDFLAGS  =
 LDFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
 LIBS  =
 LIBS += $$(test -n "$(GCOV)" && echo "-lgcov --coverage")
+LONGLINES_FILES  =
+LONGLINES_FILES += $$(echo $(CFILES) | fmt -1 | grep -vF selftest.c)
+LONGLINES_FILES += $(HFILES)
+LONGLINES_FILES += $(MANSRC)
+LONGLINES_FILES += Gen-version
+LONGLINES_FILES += Makefile
 MANPAGE = $(EXEC).1
 MANSRC = $(MANPAGE).man
 MAN_DATE = $$(grep EXEC_DATE version.h | cut -d '"' -f 2 | sed 's/-/\\\\-/g;')
@@ -205,7 +211,7 @@ install: $(INSTALL_TARGETS)
 
 .PHONY: longlines
 longlines:
-	@for f in $(CFILES) $(HFILES) $(MANSRC) Gen-version Makefile; do \
+	@for f in $(LONGLINES_FILES); do \
 		[ -f "$$f" ] && expand "$$f" | sed 's/ $$//;' \
 		| grep -q -E '.{80}' && echo "$$f"; \
 	done | grep . && exit 1 || true
