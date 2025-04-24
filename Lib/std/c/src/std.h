@@ -45,6 +45,7 @@
 #else
 #  define DEBL  ;
 #endif
+
 #define check_errno  do { \
 	if (errno) { \
 		myerror("%s():%s:%d: errno = %d (\"%s\")", \
@@ -76,6 +77,8 @@ struct streams {
  */
 
 /* STDexecDTS.c */
+extern char *progname;
+extern struct Options opt;
 int msg(const int verbose, const char *format, ...);
 const char *std_strerror(const int errnum);
 int myerror(const char *format, ...);
@@ -90,13 +93,6 @@ int opt_selftest(char *execname);
 
 /* strings.c */
 char *allocstr(const char *format, ...);
-
-/*
- * Global variables
- */
-
-extern char *progname;
-extern struct Options opt;
 
 #endif /* ifndef _STDUexecUDTS_H */
 

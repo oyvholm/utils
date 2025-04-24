@@ -1,6 +1,6 @@
-/*.c.gcov
 /*.gcda
 /*.gcno
+/*.gcov
 /*.o
 /*.s
 /.devel

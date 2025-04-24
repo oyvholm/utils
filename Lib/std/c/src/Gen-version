@@ -60,7 +60,7 @@ test -n "$PROF" && newdef PROF
 # UNUSED: Compile unused code
 test -n "$UNUSED" && newdef UNUSED
 
-# USE_NEW: Compile with new unstable code
+# USE_NEW: Use new functionality, potentially unstable
 test -n "$USE_NEW" && newdef USE_NEW
 
 exit 0

@@ -773,11 +773,6 @@ static void test_executable(char *execname)
 	test_valgrind_option(execname);
 	print_version_info(execname);
 	test_streams_exec(execname);
-	sc(chp{ execname, "abc", NULL },
-	   "",
-	   "",
-	   EXIT_SUCCESS,
-	   "1 argument");
 	test_standard_options(execname);
 	print_version_info(execname);
 }

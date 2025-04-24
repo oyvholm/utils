@@ -21,6 +21,8 @@ CFLAGS += $(DEVFLAGS_STR)
 CFLAGS += -Wall
 CFLAGS += -c
 DEPS = version.h $(HFILES) Makefile
+DEVEL =
+DEVFLAGS  =
 DEVFLAGS += $$(test "$$(uname -o)" = "Android" || echo -fcf-protection=full)
 DEVFLAGS += -Wbad-function-cast
 DEVFLAGS += -Wcast-align
@@ -133,11 +135,11 @@ $(PREFIX)/share/man/man1/$(MANPAGE): $(MANPAGE)
 version.h: Gen-version $(CFILES) $(HFILES) Makefile
 	./Gen-version
 
-binbuf.o: binbuf.c $(DEPS)
-	$(CC) $(CFLAGS) binbuf.c
-
 STDexecDTS.o: STDexecDTS.c $(DEPS)
 	$(CC) $(CFLAGS) STDexecDTS.c
+
+binbuf.o: binbuf.c $(DEPS)
+	$(CC) $(CFLAGS) binbuf.c
 
 io.o: io.c $(DEPS)
 	$(CC) $(CFLAGS) io.c
@@ -244,7 +246,7 @@ testsrc:
 
 .PHONY: tlok
 tlok:
-	@$(MAKE) -s gcov 2>.make-tlok.tmp >&2; res=$$?; \
+	@$(MAKE) -s gcov DEVEL=1 2>.make-tlok.tmp >&2; res=$$?; \
 	if test $$res -eq 0; then \
 		printf '%u:%u\n' \
 		       "$(TESTABLE_LINES)" \

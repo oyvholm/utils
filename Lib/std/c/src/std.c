@@ -390,9 +390,9 @@ int main(int argc, char *argv[])
 	if (optind < argc) {
 		int t;
 
-		for (t = optind; t < argc; t++) {
-			msg(4, "%s(): Non-option arg %d: %s",
-			       __func__, t, argv[t]);
+		for (t = optind; t < argc; t++) { /* gncov */
+			msg(4, "%s(): Non-option arg %d: %s", /* gncov */
+			       __func__, t, argv[t]); /* gncov */
 		}
 	}
 

@@ -90,11 +90,13 @@ testport:
 	cd Git && $(MAKE) testport
 
 .PHONY: tlok
-tlok: c-demo
+tlok:
+	@$(MAKE) -s c-demo 2>/dev/null || (echo FAIL; false)
 	@cd Lib/std/c/src/compile.tmp && $(MAKE) -s tlok
 
 .PHONY: tlokall
-tlokall: c-demo
+tlokall:
+	@$(MAKE) -s c-demo 2>/dev/null || (echo FAIL; false)
 	@cd Lib/std/c/src/compile.tmp && $(MAKE) -s tlokall
 
 .PHONY: unmerged
