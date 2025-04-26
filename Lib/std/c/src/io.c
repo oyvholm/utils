@@ -112,14 +112,14 @@ static char **prepare_valgrind_cmd(char *cmd[]) /* gncov */
 	while (cmd[cmd_len]) /* gncov */
 		cmd_len++; /* gncov */
 	valgrind_cmd = malloc((cmd_len + argnum + 1) /* gncov */
-	                      * sizeof(char *));
+	                      * sizeof(char *)); /* gncov */
 	if (!valgrind_cmd) { /* gncov */
 		myerror("%s(): malloc() failed", __func__); /* gncov */
 		return NULL; /* gncov */
 	}
 
 	memcpy(valgrind_cmd, valgrind_args, /* gncov */
-	       argnum * sizeof(char *));
+	       argnum * sizeof(char *)); /* gncov */
 	memcpy(valgrind_cmd + argnum, cmd, /* gncov */
 	       (cmd_len + 1) * sizeof(char *)); /* gncov */
 

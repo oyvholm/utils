@@ -1,3 +1,8 @@
+/*
+ * dbf2tab.c
+ * File ID: e1ba0f8c-2290-11f0-a0ea-77173ddd7235
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,8 +81,7 @@ struct FIELD_DESC *field;
 
 /* ------------------------------------------------------------------------- */
 
-char *rtrim( s)
-char *s;
+char *rtrim(char *s)
 {
 	char *ptr;
 	static char t[MAXSTR];
@@ -94,8 +98,7 @@ char *s;
 
 /* ------------------------------------------------------------------------- */
 
-char *ltrim( s)
-char *s;
+char *ltrim(char *s)
 {
 	char *ptr;
 	static char t[MAXSTR];
@@ -110,8 +113,7 @@ char *s;
 
 /* ------------------------------------------------------------------------- */
 
-void fatal_err( msg)
-char *msg;
+void fatal_err(char *msg)
 {
 	fprintf(stderr,"\ndbf2tab: %s\n", msg);
 	exit(1);
@@ -238,9 +240,7 @@ void usage()
 
 /* ------------------------------------------------------------------------- */
 
-void main(argc, argv)
-    int     argc;
-    char    *argv[];
+int main(int argc, char *argv[])
 {
 	/* parse the command line */
 	if (argc == 3)
@@ -277,5 +277,6 @@ void main(argc, argv)
 	}
 	fclose(dfile);
 	free( (char *) field);
-	exit(0);
+
+	return EXIT_SUCCESS;
 }
