@@ -92,6 +92,7 @@ int streams_exec(struct streams *dest, char *cmd[]);
 int opt_selftest(char *execname);
 
 /* strings.c */
+char *allocstr_va(const char *format, va_list ap);
 char *allocstr(const char *format, ...);
 
 #endif /* ifndef _STDUexecUDTS_H */
