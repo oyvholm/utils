@@ -77,7 +77,7 @@ static char *diag_output_va(const char *format, va_list ap)
 	}
 
 	/* Prepare for worst case, every char is a newline. */
-	converted_size = strlen(buffer) * 3 + 1;
+	converted_size = strlen("# ") + strlen(buffer) * 3 + 1;
 	converted_buffer = malloc(converted_size);
 	if (!converted_buffer) {
 		free(buffer); /* gncov */
@@ -413,6 +413,13 @@ static void test_diag(void) {
 	ok(!p, "diag_output() with newline didn't return NULL");
 	s = "# Text with\n# newline";
 	ok(p ? !!strcmp(p, s) : 1, "diag_output() with newline, output is ok");
+	print_gotexp(p, s);
+	free(p);
+
+	p = diag_output("\n\n\n\n\n\n\n\n\n\n");
+	ok(!p, "diag_output() with only newlines didn't return NULL");
+	s = "# \n# \n# \n# \n# \n# \n# \n# \n# \n# \n# ";
+	ok(p ? !!strcmp(p, s) : 1, "diag_output() with only newlines");
 	print_gotexp(p, s);
 	free(p);
 
