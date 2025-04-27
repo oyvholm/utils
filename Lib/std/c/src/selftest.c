@@ -267,9 +267,10 @@ static int valgrind_lines(const char *s)
 
 static void test_command(const char identical, char *cmd[],
                          const char *exp_stdout, const char *exp_stderr,
-                         const int exp_retval, const char *desc)
+                         const int exp_retval, const char *desc, va_list ap)
 {
 	struct streams ss;
+	char *descbuf;
 
 	assert(cmd);
 	if (!cmd) {
@@ -286,21 +287,27 @@ static void test_command(const char identical, char *cmd[],
 		fprintf(stderr, ")\n"); /* gncov */
 	}
 
+	descbuf = allocstr_va(desc, ap);
+	if (!descbuf) {
+		ok(1, "%s(): allocstr_va() failed", __func__); /* gncov */
+		return; /* gncov */
+	}
 	streams_init(&ss);
 	streams_exec(&ss, cmd);
 	if (exp_stdout) {
 		ok(tc_cmp(identical, ss.out.buf, exp_stdout),
-		   "%s (stdout)", desc);
+		   "%s (stdout)", descbuf);
 		if (tc_cmp(identical, ss.out.buf, exp_stdout))
 			print_gotexp(ss.out.buf, exp_stdout); /* gncov */
 	}
 	if (exp_stderr) {
 		ok(tc_cmp(identical, ss.err.buf, exp_stderr),
-		   "%s (stderr)", desc);
+		   "%s (stderr)", descbuf);
 		if (tc_cmp(identical, ss.err.buf, exp_stderr))
 			print_gotexp(ss.err.buf, exp_stderr); /* gncov */
 	}
-	ok(!(ss.ret == exp_retval), "%s (retval)", desc);
+	ok(!(ss.ret == exp_retval), "%s (retval)", descbuf);
+	free(descbuf);
 	if (ss.ret != exp_retval) {
 		char *g = allocstr("%d", ss.ret), /* gncov */
 		     *e = allocstr("%d", exp_retval); /* gncov */
@@ -323,9 +330,13 @@ static void test_command(const char identical, char *cmd[],
  */
 
 static void sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
-               const int exp_retval, const char *desc)
+               const int exp_retval, const char *desc, ...)
 {
-	test_command(0, cmd, exp_stdout, exp_stderr, exp_retval, desc);
+	va_list ap;
+
+	va_start(ap, desc);
+	test_command(0, cmd, exp_stdout, exp_stderr, exp_retval, desc, ap);
+	va_end(ap);
 }
 
 /*
@@ -335,9 +346,13 @@ static void sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
  */
 
 static void tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
-               const int exp_retval, const char *desc)
+               const int exp_retval, const char *desc, ...)
 {
-	test_command(1, cmd, exp_stdout, exp_stderr, exp_retval, desc);
+	va_list ap;
+
+	va_start(ap, desc);
+	test_command(1, cmd, exp_stdout, exp_stderr, exp_retval, desc, ap);
+	va_end(ap);
 }
 
 /*
