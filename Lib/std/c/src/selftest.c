@@ -678,9 +678,8 @@ static void test_standard_options(char *execname)
 	} else {
 		ok(1, "%s(): allocstr() 1 failed", __func__); /* gncov */
 	}
-	s = EXEC_VERSION "\n";
 	tc(chp{ execname, "--version", "-q", NULL },
-	   s,
+	   EXEC_VERSION "\n",
 	   "",
 	   EXIT_SUCCESS,
 	   "--version with -q shows only the version number");
