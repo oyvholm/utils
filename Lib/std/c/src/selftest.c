@@ -65,29 +65,16 @@ static char *diag_output_va(const char *format, va_list ap)
 {
 	const char *src;
 	char *buffer, *converted_buffer, *dst;
-	int needed;
-	size_t buffer_size = BUFSIZ, converted_size;
-	va_list ap_copy;
+	size_t converted_size;
 
 	if (!format)
 		return NULL; /* gncov */
 
-	buffer = malloc(buffer_size);
-	if (!buffer)
+	buffer = allocstr_va(format, ap);
+	if (!buffer) {
+		ok(1, "%s(): allocstr_va() failed", __func__); /* gncov */
 		return NULL; /* gncov */
-
-	va_copy(ap_copy, ap);
-	needed = vsnprintf(buffer, buffer_size, format, ap);
-
-	if ((size_t)needed >= buffer_size) {
-		free(buffer);
-		buffer_size = (size_t)needed + 1;
-		buffer = malloc(buffer_size);
-		if (!buffer)
-			return NULL; /* gncov */
-		vsnprintf(buffer, buffer_size, format, ap_copy);
 	}
-	va_end(ap_copy);
 
 	/* Prepare for worst case, every char is a newline. */
 	converted_size = strlen(buffer) * 3 + 1;
