@@ -24,9 +24,6 @@ Print the software license.
 \fB\-q\fP, \fB\-\-quiet\fP
 Be more quiet. Can be repeated to increase silence.
 .TP
-\fB\-v\fP, \fB\-\-verbose\fP
-Increase level of verbosity. Can be repeated.
-.TP
 \fB\-\-selftest\fP [\fIARG\fP]
 Run the built-in test suite. If specified, the argument can contain one or more 
 of these strings: \fBexec\fP (the tests use the executable file), \fBfunc\fP 
@@ -36,6 +33,9 @@ commas. If no argument is specified, default is \fBall\fP.
 \fB\-\-valgrind\fP [\fIARG\fP]
 Run the built-in test suite with Valgrind memory checking. Accepts the same 
 optional argument as \fB\-\-selftest\fP, with the same defaults.
+.TP
+\fB\-v\fP, \fB\-\-verbose\fP
+Increase level of verbosity. Can be repeated.
 .TP
 \fB\-\-version\fP
 Print version information.
