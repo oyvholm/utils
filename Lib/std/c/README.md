@@ -1,27 +1,31 @@
 <!-- STDfilenameDTS -->
+<!-- File ID: STDuuidDTS -->
+
 # STDexecDTS
+
+## Overview
 
 TBD: Short description
 
-## Features
+### Features
 
 - TBD: Feature 1
 - TBD: Feature 2
 
-## Status
+### Status
 
 In the startup/design phase, does nothing yet.
 
-## Examples
+### Examples
 
-- `STDexecDTS`\
+- **`STDexecDTS`**\
   TBD: Example 1
-- `STDexecDTS`\
+- **`STDexecDTS`**\
   TBD: Example 2
 
 ## Development
 
-The `master` branch is considered stable, no unstable development 
+The `master` branch is considered stable; no unstable development 
 happens there. Every new functionality or bug fix is created on topic 
 branches which may be rebased now and then. All tests on `master` 
 (executed with "make test") MUST succeed. If any test fails, it's 
@@ -39,11 +43,11 @@ Using the version number `X.Y.Z` as an example:
 - `Z` is the *patch level*.
   Increased when new backwards-compatible bugfixes are added.
 
-## Compiler flags for development
+### Compiler flags for development
 
 To avoid complications on various systems, the default build only uses 
-`-Wall -O2`. Additional warning flags are enabled if any of these 
-conditions are true:
+`-Wall -O2`. Additional warning flags are enabled if any of the 
+following conditions are met:
 
 - The file `src/.devel` or `.git/.devel` exists
 - The environment variable `DEVEL` is set to any value
@@ -179,8 +183,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 document are to be interpreted as described in RFC 2119.
 
 -----
-
-File ID: STDuuidDTS
 
 <!--
 vim: set ts=2 sw=2 sts=2 tw=72 et fo=tcqw fenc=utf8 :
