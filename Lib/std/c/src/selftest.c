@@ -27,8 +27,8 @@
 
 #define chp  (char *[])
 
-static int testnum = 0;
 static int failcount = 0;
+static int testnum = 0;
 
 /*
  * ok() - Print a log line to stdout. If `i` is 0, an "ok" line is printed, 
