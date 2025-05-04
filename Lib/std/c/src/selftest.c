@@ -735,7 +735,7 @@ static void test_functions(void)
 	diag("Test myerror()");
 	errno = EACCES;
 	ok(!(myerror("errno is EACCES") > 37), "myerror(): errno is EACCES");
-	errno = 0;
+	ok(!!errno, "errno is set to 0 by myerror()");
 	diag("Test std_strerror()");
 	ok(!(std_strerror(0) != NULL), "std_strerror(0)");
 	test_allocstr();
