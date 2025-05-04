@@ -65,8 +65,7 @@ char *read_from_fp(FILE *fp, struct binbuf *dest)
 		size_t bytes_read;
 
 		if (!new_mem) {
-			myerror("%s(): Cannot allocate" /* gncov */
-			        " memory for stream buffer", __func__);
+			failed("Stream buffer memory allocation"); /* gncov */
 			binbuf_free(&buf); /* gncov */
 			return NULL; /* gncov */
 		}
@@ -77,7 +76,7 @@ char *read_from_fp(FILE *fp, struct binbuf *dest)
 		buf.len += bytes_read;
 		p[bytes_read] = '\0';
 		if (ferror(fp)) {
-			myerror("%s(): Read error", __func__); /* gncov */
+			failed("Read error, fread()"); /* gncov */
 			binbuf_free(&buf); /* gncov */
 			return NULL; /* gncov */
 		}
@@ -114,7 +113,7 @@ static char **prepare_valgrind_cmd(char *cmd[]) /* gncov */
 	valgrind_cmd = malloc((cmd_len + argnum + 1) /* gncov */
 	                      * sizeof(char *)); /* gncov */
 	if (!valgrind_cmd) { /* gncov */
-		myerror("%s(): malloc() failed", __func__); /* gncov */
+		failed("malloc()"); /* gncov */
 		return NULL; /* gncov */
 	}
 
@@ -154,24 +153,20 @@ int streams_exec(struct streams *dest, char *cmd[])
 	}
 
 	if (pipe(infd) == -1) {
-		myerror("%s():%d: Failed to create input pipe", /* gncov */
-		        __func__, __LINE__);
+		failed("Creation of stdin pipe"); /* gncov */
 		goto cleanup; /* gncov */
 	}
 	if (pipe(outfd) == -1) {
-		myerror("%s():%d: Failed to create output pipe", /* gncov */
-		        __func__, __LINE__);
+		failed("Creation of stdout pipe"); /* gncov */
 		goto cleanup; /* gncov */
 	}
 	if (pipe(errfd) == -1) {
-		myerror("%s():%d: Failed to create error pipe", /* gncov */
-		        __func__, __LINE__);
+		failed("Creation of stderr pipe"); /* gncov */
 		goto cleanup; /* gncov */
 	}
 
 	if ((pid = fork()) == -1) {
-		myerror("%s():%d: fork() failed", /* gncov */
-		        __func__, __LINE__);
+		failed("fork()"); /* gncov */
 		goto cleanup; /* gncov */
 	}
 
@@ -183,8 +178,7 @@ int streams_exec(struct streams *dest, char *cmd[])
 		if (dup2(infd[0], STDIN_FILENO) == -1
 		    || dup2(outfd[1], STDOUT_FILENO) == -1
 		    || dup2(errfd[1], STDERR_FILENO) == -1) {
-			myerror("%s():%d: dup2() failed", /* gncov */
-			        __func__, __LINE__);
+			failed("dup2()"); /* gncov */
 			_exit(EXIT_FAILURE); /* gncov */
 		}
 
@@ -204,8 +198,7 @@ int streams_exec(struct streams *dest, char *cmd[])
 			execvp(cmd[0], cmd); /* gncov */
 		}
 
-		myerror("%s():%d: execvp() failed", /* gncov */
-		        __func__, __LINE__);
+		failed("execvp()"); /* gncov */
 		_exit(EXIT_FAILURE); /* gncov */
 	}
 
@@ -222,8 +215,7 @@ int streams_exec(struct streams *dest, char *cmd[])
 	if (!(infp = fdopen(infd[1], "w"))
 	    || !(outfp = fdopen(outfd[0], "r"))
 	    || !(errfp = fdopen(errfd[0], "r"))) {
-		myerror("%s():%d: fdopen() failed", /* gncov */
-		        __func__, __LINE__);
+		failed("fdopen()"); /* gncov */
 		goto cleanup; /* gncov */
 	}
 
@@ -245,10 +237,8 @@ cleanup:
 	new_action.sa_handler = SIG_IGN;
 	sigemptyset(&new_action.sa_mask);
 	new_action.sa_flags = 0;
-	if (sigaction(SIGPIPE, &new_action, &old_action) == -1) {
-		myerror("%s():%d: Failed to set SIGPIPE handler", /* gncov */
-		        __func__, __LINE__);
-	}
+	if (sigaction(SIGPIPE, &new_action, &old_action) == -1)
+		failed("Cannot set SIGPIPE handler, sigaction()"); /* gncov */
 
 	if (errfp)
 		fclose(errfp);
@@ -264,10 +254,8 @@ cleanup:
 		close(errfd[0]);
 
 	/* Restore original signal handling */
-	if (sigaction(SIGPIPE, &old_action, NULL) == -1) {
-		myerror("%s():%d: Failed to restore" /* gncov */
-		        " SIGPIPE handler", __func__, __LINE__);
-	}
+	if (sigaction(SIGPIPE, &old_action, NULL) == -1)
+		failed("Restoration of SIGPIPE handler"); /* gncov */
 
 	return retval;
 }

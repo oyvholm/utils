@@ -48,8 +48,7 @@ char *allocstr_va(const char *format, va_list ap)
 	va_copy(ap_copy, ap);
 	needed = vsnprintf(p, size, format, ap);
 	if (needed < 0) {
-		myerror("%s():%d: vsnprintf() failed", /* gncov */
-		        __func__, __LINE__);
+		failed("vsnprintf()"); /* gncov */
 		free(p); /* gncov */
 		va_end(ap_copy); /* gncov */
 		return NULL; /* gncov */
@@ -66,8 +65,7 @@ char *allocstr_va(const char *format, va_list ap)
 		}
 		needed = vsnprintf(p, size, format, ap_copy);
 		if (needed < 0) {
-			myerror("%s():%d: vsnprintf() failed", /* gncov */
-			        __func__, __LINE__);
+			failed("vsnprintf()"); /* gncov */
 			free(p); /* gncov */
 			va_end(ap_copy); /* gncov */
 			return NULL; /* gncov */
@@ -92,7 +90,7 @@ char *allocstr(const char *format, ...)
 	retval = allocstr_va(format, ap);
 	va_end(ap);
 	if (!retval)
-		myerror("%s(): allocstr_va() failed", __func__); /* gncov */
+		failed("allocstr_va()"); /* gncov */
 
 	return retval;
 }

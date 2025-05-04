@@ -53,6 +53,8 @@
 	} \
 } while (0)
 
+#define failed(a)  myerror("%s():%d: %s failed", __func__, __LINE__, (a))
+
 struct Options {
 	bool help;
 	bool license;
