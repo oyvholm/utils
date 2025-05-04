@@ -130,7 +130,7 @@ static char *diag_output(const char *format, ...)
  * sequences can be used. All `\n` characters are converted to "\n# ".
  *
  * A terminating `\n` is automatically added to the string. Returns 0 if 
- * successful, or 1 if `format` is NULL.
+ * successful, or 1 if `format` is NULL or diag_output_va() failed.
  */
 
 static int diag(const char *format, ...)
