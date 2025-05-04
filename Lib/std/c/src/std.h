@@ -82,6 +82,7 @@ extern struct Options opt;
 int msg(const int verbose, const char *format, ...);
 const char *std_strerror(const int errnum);
 int myerror(const char *format, ...);
+void init_opt(struct Options *dest);
 
 /* io.c */
 void streams_init(struct streams *dest);

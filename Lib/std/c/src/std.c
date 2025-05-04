@@ -274,6 +274,22 @@ static int choose_opt_action(struct Options *dest,
 }
 
 /*
+ * init_opt() - Initializes a `struct Options` with default values. Returns 
+ * nothing.
+ */
+
+void init_opt(struct Options *dest) {
+	dest->help = false;
+	dest->license = false;
+	dest->selftest = false;
+	dest->testexec = false;
+	dest->testfunc = false;
+	dest->valgrind = false;
+	dest->verbose = 0;
+	dest->version = false;
+}
+
+/*
  * parse_options() - Parse command line options.
  * Returns 0 if succesful, or 1 if an error occurs.
  */
@@ -286,14 +302,7 @@ static int parse_options(struct Options *dest,
 	assert(dest);
 	assert(argv);
 
-	dest->help = false;
-	dest->license = false;
-	dest->selftest = false;
-	dest->testexec = false;
-	dest->testfunc = false;
-	dest->valgrind = false;
-	dest->verbose = 0;
-	dest->version = false;
+	init_opt(dest);
 
 	while (!retval) {
 		int c;
