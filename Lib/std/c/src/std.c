@@ -284,7 +284,10 @@ static int choose_opt_action(struct Options *dest,
  * nothing.
  */
 
-void init_opt(struct Options *dest) {
+void init_opt(struct Options *dest)
+{
+	assert(dest);
+
 	dest->help = false;
 	dest->license = false;
 	dest->selftest = false;
