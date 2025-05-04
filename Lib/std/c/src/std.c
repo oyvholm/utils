@@ -71,7 +71,7 @@ const char *std_strerror(const int errnum)
 		 * on other platforms.
 		 */
 		fprintf(stderr,
-		        "%s: %s(): Unknown errnum received: %d, \"%s\"\n",
+		        "\n%s: %s(): Unknown errnum received: %d, \"%s\"\n",
 		        progname, __func__, errnum, strerror(errnum));
 		return strerror(errnum);
 	}

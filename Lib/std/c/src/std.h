@@ -48,9 +48,8 @@
 
 #define check_errno  do { \
 	if (errno) { \
-		myerror("%s():%s:%d: errno = %d (\"%s\")", \
-		        __func__, __FILE__, __LINE__, \
-		        errno, strerror(errno)); \
+		myerror("%s():%s:%d: errno = %d", \
+		        __func__, __FILE__, __LINE__, errno); \
 	} \
 } while (0)
 
