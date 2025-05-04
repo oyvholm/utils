@@ -215,7 +215,7 @@ install: $(INSTALL_TARGETS)
 longlines:
 	@for f in $(LONGLINES_FILES); do \
 		[ -f "$$f" ] && expand "$$f" | sed 's/ $$//;' \
-		| grep -q -E '.{80}' && echo "$$f"; \
+		| grep -E -n '.{80}' && echo "$$f"; \
 	done | grep . && exit 1 || true
 
 .PHONY: pdf
