@@ -56,6 +56,7 @@
 #define failed(a)  myerror("%s():%d: %s failed", __func__, __LINE__, (a))
 
 struct Options {
+	/* sort -d -k2 */
 	bool help;
 	bool license;
 	bool selftest;
@@ -88,6 +89,7 @@ void init_opt(struct Options *dest);
 /* io.c */
 void streams_init(struct streams *dest);
 void streams_free(struct streams *dest);
+char *read_from_fp(FILE *fp, struct binbuf *dest);
 int streams_exec(struct streams *dest, char *cmd[]);
 
 /* selftest.c */
