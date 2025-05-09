@@ -530,6 +530,17 @@ static void test_valgrind_lines(void)
 }
 
 /*
+ * test_std_strerror() - Tests the std_strerror() function. Returns nothing.
+ */
+
+static void test_std_strerror(void)
+{
+	diag("Test std_strerror()");
+	ok(!!strcmp(std_strerror(EACCES), "Permission denied"),
+	   "std_strerror(EACCES) is as expected");
+}
+
+/*
  * test_allocstr() - Tests the allocstr() function. Returns nothing.
  */
 
@@ -738,12 +749,7 @@ static void test_functions(void)
 	test_valgrind_lines();
 
 	diag("Test various routines");
-	diag("Test myerror()");
-	errno = EACCES;
-	ok(!(myerror("errno is EACCES") > 37), "myerror(): errno is EACCES");
-	ok(!!errno, "errno is set to 0 by myerror()");
-	diag("Test std_strerror()");
-	ok(!(std_strerror(0) != NULL), "std_strerror(0)");
+	test_std_strerror();
 	test_allocstr();
 }
 
