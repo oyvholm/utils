@@ -227,7 +227,7 @@ static int tc_cmp(const int identical, const char *got, const char *exp)
 	if (!got || !exp)
 		return 1; /* gncov */
 
-	if (identical || !strlen(exp))
+	if (identical || !*exp)
 		return !!strcmp(got, exp);
 
 	return !strstr(got, exp);

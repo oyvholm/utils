@@ -39,7 +39,7 @@ int msg(const int verbose, const char *format, ...)
 	int retval = 0;
 
 	assert(format);
-	assert(strlen(format));
+	assert(*format);
 
 	if (opt.verbose >= verbose) {
 		va_list ap;
@@ -99,7 +99,7 @@ int myerror(const char *format, ...)
 	const int orig_errno = errno;
 
 	assert(format);
-	assert(strlen(format));
+	assert(*format);
 
 	retval = fprintf(stderr, "%s: ", progname);
 	va_start(ap, format);
