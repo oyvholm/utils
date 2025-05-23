@@ -135,7 +135,7 @@ static char *diag_output(const char *format, ...)
 }
 
 /*
- * diag() - Prints a diagnostic message prefixed with "# " to stdout. `printf` 
+ * diag() - Prints a diagnostic message prefixed with "# " to stderr. `printf` 
  * sequences can be used. All `\n` characters are converted to "\n# ".
  *
  * A terminating `\n` is automatically added to the string. Returns 0 if 
@@ -536,6 +536,10 @@ static void test_valgrind_lines(void)
 		i++;
 	}
 }
+
+/*
+ * Various functions
+ */
 
 /*
  * test_std_strerror() - Tests the std_strerror() function. Returns nothing.

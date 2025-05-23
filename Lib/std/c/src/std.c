@@ -380,7 +380,7 @@ static int setup_options(struct Options *o, const int argc, char *argv[])
 				return 1; /* gncov */
 			}
 			if (strstr(s, "all"))
-				o->testexec = o->testfunc = true; /* gncov */
+				o->testexec = o->testfunc = true;
 			if (strstr(s, "exec"))
 				o->testexec = true; /* gncov */
 			if (strstr(s, "func"))
