@@ -33,22 +33,16 @@ char *allocstr_va(const char *format, va_list ap)
 	va_list ap_copy;
 
 	assert(format);
-	if (!format) {
-		myerror("%s(): format is NULL", __func__); /* gncov */
+	if (!format)
 		return NULL; /* gncov */
-	}
 
 	p = malloc(size);
-	if (!p) {
-		myerror("%s():%d: Cannot allocate %zu bytes", /* gncov */
-		        __func__, __LINE__, size);
+	if (!p)
 		return NULL; /* gncov */
-	}
 
 	va_copy(ap_copy, ap);
 	needed = vsnprintf(p, size, format, ap);
 	if (needed < 0) {
-		failed("vsnprintf()"); /* gncov */
 		free(p); /* gncov */
 		va_end(ap_copy); /* gncov */
 		return NULL; /* gncov */
@@ -58,14 +52,11 @@ char *allocstr_va(const char *format, va_list ap)
 		size = (size_t)needed + 1;
 		p = malloc(size);
 		if (!p) {
-			myerror("%s():%d: Cannot allocate %zu" /* gncov */
-			        " bytes", __func__, __LINE__, size);
 			va_end(ap_copy); /* gncov */
 			return NULL; /* gncov */
 		}
 		needed = vsnprintf(p, size, format, ap_copy);
 		if (needed < 0) {
-			failed("vsnprintf()"); /* gncov */
 			free(p); /* gncov */
 			va_end(ap_copy); /* gncov */
 			return NULL; /* gncov */
@@ -93,8 +84,6 @@ char *allocstr(const char *format, ...)
 	va_start(ap, format);
 	retval = allocstr_va(format, ap);
 	va_end(ap);
-	if (!retval)
-		failed("allocstr_va()"); /* gncov */
 
 	return retval;
 }
