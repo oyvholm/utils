@@ -75,6 +75,7 @@ static char *diag_output_va(const char *format, va_list ap)
 	char *buffer, *converted_buffer, *dst;
 	size_t converted_size;
 
+	assert(format);
 	if (!format)
 		return NULL; /* gncov */
 
@@ -342,6 +343,9 @@ static void sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
 {
 	va_list ap;
 
+	assert(cmd);
+	assert(desc);
+
 	va_start(ap, desc);
 	test_command(0, cmd, exp_stdout, exp_stderr, exp_retval, desc, ap);
 	va_end(ap);
@@ -357,6 +361,9 @@ static void tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
                const int exp_retval, const char *desc, ...)
 {
 	va_list ap;
+
+	assert(cmd);
+	assert(desc);
 
 	va_start(ap, desc);
 	test_command(1, cmd, exp_stdout, exp_stderr, exp_retval, desc, ap);
@@ -589,6 +596,7 @@ static void test_streams_exec(char *execname)
 	struct streams ss;
 	char *s;
 
+	assert(execname);
 	diag("Test streams_exec()");
 
 	diag("Send input to the program");
@@ -621,6 +629,7 @@ static void test_valgrind_option(char *execname)
 {
 	struct streams ss;
 
+	assert(execname);
 	diag("Test --valgrind");
 
 	if (opt.valgrind) {
@@ -654,6 +663,7 @@ static void test_standard_options(char *execname)
 {
 	char *s;
 
+	assert(execname);
 	diag("Test standard options");
 
 	diag("Test -h/--help");
@@ -763,6 +773,7 @@ static int print_version_info(char *execname)
 	struct streams ss;
 	int res;
 
+	assert(execname);
 	streams_init(&ss);
 	res = streams_exec(&ss, chp{ execname, "--version", NULL });
 	if (res) {
@@ -787,6 +798,7 @@ static int print_version_info(char *execname)
 
 static void test_executable(char *execname)
 {
+	assert(execname);
 	if (!opt.testexec)
 		return; /* gncov */
 
@@ -806,6 +818,7 @@ static void test_executable(char *execname)
 
 int opt_selftest(char *execname)
 {
+	assert(execname);
 	diag("Running tests for %s %s (%s)",
 	     execname, EXEC_VERSION, EXEC_DATE);
 

@@ -353,6 +353,8 @@ static int parse_options(struct Options *dest,
 
 static int setup_options(struct Options *o, const int argc, char *argv[])
 {
+	assert(argv);
+
 	if (o->selftest) {
 		if (optind < argc) {
 			const char *s = argv[optind];

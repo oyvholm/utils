@@ -86,6 +86,10 @@ char *allocstr(const char *format, ...)
 	va_list ap;
 	char *retval;
 
+	assert(format);
+	if (!format)
+		return NULL; /* gncov */
+
 	va_start(ap, format);
 	retval = allocstr_va(format, ap);
 	va_end(ap);
