@@ -137,7 +137,7 @@ static char **prepare_valgrind_cmd(char *cmd[]) /* gncov */
  * be NULL. The return value is somewhat undefined at this point in time.
  */
 
-int streams_exec(struct streams *dest, char *cmd[])
+int streams_exec(const struct Options *o, struct streams *dest, char *cmd[])
 {
 	int retval = 1;
 	int infd[2] = { -1, -1 };
@@ -147,8 +147,9 @@ int streams_exec(struct streams *dest, char *cmd[])
 	FILE *infp = NULL, *outfp = NULL, *errfp = NULL;
 	struct sigaction old_action, new_action;
 
+	assert(o);
 	assert(cmd);
-	if (opt.verbose >= 10) {
+	if (o->verbose >= 10) {
 		int i = -1; /* gncov */
 
 		fprintf(stderr, "# %s(", __func__); /* gncov */
@@ -195,7 +196,7 @@ int streams_exec(struct streams *dest, char *cmd[])
 		close(errfd[0]);
 		close(errfd[1]);
 
-		if (opt.valgrind) { /* gncov */
+		if (o->valgrind) { /* gncov */
 			char **valgrind_cmd
 			= prepare_valgrind_cmd(cmd); /* gncov */
 			execvp(valgrind_cmd[0], valgrind_cmd); /* gncov */

@@ -79,7 +79,7 @@ struct streams {
  */
 
 /* STDexecDTS.c */
-extern struct Options opt;
+struct Options opt_struct(void);
 int msg(const int verbose, const char *format, ...);
 const char *std_strerror(const int errnum);
 int myerror(const char *format, ...);
@@ -89,10 +89,10 @@ void init_opt(struct Options *dest);
 void streams_init(struct streams *dest);
 void streams_free(struct streams *dest);
 char *read_from_fp(FILE *fp, struct binbuf *dest);
-int streams_exec(struct streams *dest, char *cmd[]);
+int streams_exec(const struct Options *o, struct streams *dest, char *cmd[]);
 
 /* selftest.c */
-int opt_selftest(char *execname);
+int opt_selftest(char *execname, const struct Options *o);
 
 /* strings.c */
 char *allocstr_va(const char *format, va_list ap);

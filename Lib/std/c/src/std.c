@@ -25,7 +25,19 @@
  */
 
 static char *progname;
-struct Options opt;
+static struct Options opt;
+
+/*
+ * opt_struct() - Returns a copy of `opt`. It can be used by functions outside 
+ * this file who need to inspect the values of various members of `opt`. It is 
+ * currently used by test_command() in the test suite for use with 
+ * streams_exec().
+ */
+
+struct Options opt_struct(void)
+{
+	return opt;
+}
 
 /*
  * msg() - Print a message prefixed with "[progname]: " to stderr if the 
@@ -149,7 +161,7 @@ static int print_license(void)
  * the version number is printed. Returns `EXIT_SUCCESS`.
  */
 
-static int print_version(void)
+static int print_version(const struct Options *o)
 {
 #ifdef FAKE_MEMLEAK
 	char *p;
@@ -158,7 +170,8 @@ static int print_version(void)
 	if (p) { }
 #endif
 
-	if (opt.verbose < 0) {
+	assert(o);
+	if (o->verbose < 0) {
 		puts(EXEC_VERSION);
 		return EXIT_SUCCESS;
 	}
@@ -189,16 +202,18 @@ static int print_version(void)
  * usage() - Prints a help screen. Returns `retval`.
  */
 
-static int usage(const int retval)
+static int usage(const struct Options *o, const int retval)
 {
+	assert(o);
+
 	if (retval != EXIT_SUCCESS) {
 		myerror("Type \"%s --help\" for help screen."
 		        " Returning with value %d.", progname, retval);
 		return retval;
 	}
 	puts("");
-	if (opt.verbose >= 1) {
-		print_version();
+	if (o->verbose >= 1) {
+		print_version(o);
 		puts("");
 	}
 	printf("Usage: %s [options]\n", progname);
@@ -353,6 +368,7 @@ static int parse_options(struct Options *dest,
 
 static int setup_options(struct Options *o, const int argc, char *argv[])
 {
+	assert(o);
 	assert(argv);
 
 	if (o->selftest) {
@@ -390,7 +406,7 @@ int main(int argc, char *argv[])
 
 	if (parse_options(&opt, argc, argv)) {
 		myerror("Option error");
-		return usage(EXIT_FAILURE);
+		return usage(&opt, EXIT_FAILURE);
 	}
 
 	msg(4, "%s(): Using verbose level %d", __func__, opt.verbose);
@@ -400,11 +416,11 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE; /* gncov */
 
 	if (opt.help)
-		return usage(EXIT_SUCCESS);
+		return usage(&opt, EXIT_SUCCESS);
 	if (opt.selftest)
-		return opt_selftest(progname);
+		return opt_selftest(progname, &opt);
 	if (opt.version)
-		return print_version();
+		return print_version(&opt);
 	if (opt.license)
 		return print_license();
 
