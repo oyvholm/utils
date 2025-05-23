@@ -66,8 +66,6 @@ test:
 	else \
 		echo "# Skip profiling tests, no GNU cc here"; \
 	fi
-	cd $(TMP)/src && $(MAKE) clean all UNUSED=1
-	cd $(TMP)/src && ./jada --version | grep -q "has UNUSED"
 	if gcov --version 2>/dev/null | grep -q ^gcov; then \
 		$(MAKE) -f Makefile.std-test test-gcov || exit 1; \
 	else \

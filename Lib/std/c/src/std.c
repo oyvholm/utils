@@ -188,9 +188,6 @@ static int print_version(const struct Options *o)
 #ifdef PROF
 	printf("has PROF\n");
 #endif
-#ifdef UNUSED
-	printf("has UNUSED\n");
-#endif
 #ifdef USE_NEW
 	printf("has USE_NEW\n");
 #endif
