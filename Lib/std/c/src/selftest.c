@@ -648,6 +648,7 @@ static void test_valgrind_option(char *execname, const struct Options *o)
 		if (!strstr(ss.out.buf, "valgrind-")) { /* gncov */
 			ok(1, "Valgrind is not installed," /* gncov */
 			      " disabling Valgrind checks");
+			set_opt_valgrind(false); /* gncov */
 		} else {
 			ok(0, "Valgrind is installed"); /* gncov */
 		}

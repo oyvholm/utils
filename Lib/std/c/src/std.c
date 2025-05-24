@@ -312,6 +312,18 @@ void init_opt(struct Options *dest)
 }
 
 /*
+ * set_opt_valgrind() - Change the value of `opt.valgrind`. Used by 
+ * test_valgrind_option() in case --valgrind is used and Valgrind isn't 
+ * installed.
+ */
+
+void set_opt_valgrind(bool b) /* gncov */
+{
+	assert(b == false || b == true); /* gncov */
+	opt.valgrind = b; /* gncov */
+} /* gncov */
+
+/*
  * parse_options() - Parse command line options and store the result in `dest`. 
  * Returns 0 if successful, or 1 if an error occurs.
  */
