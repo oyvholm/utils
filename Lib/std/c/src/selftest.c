@@ -283,6 +283,7 @@ static void test_command(const char identical, char *cmd[],
 	char *descbuf;
 
 	assert(cmd);
+	assert(desc);
 	if (!cmd) {
 		ok(1, "%s(): cmd is NULL", __func__); /* gncov */
 		return; /* gncov */

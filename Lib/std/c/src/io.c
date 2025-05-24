@@ -148,6 +148,7 @@ int streams_exec(const struct Options *o, struct streams *dest, char *cmd[])
 	struct sigaction old_action, new_action;
 
 	assert(o);
+	assert(dest);
 	assert(cmd);
 	if (o->verbose >= 10) {
 		int i = -1; /* gncov */
