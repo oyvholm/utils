@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.31.1
+VERSION=0.31.2
 
 STD_SUFFIX=''
 
@@ -266,6 +266,11 @@ if test "$opt_no_sparse" = "1"; then
     sparse_str=""
 else
     sparse_str="--sparse"
+fi
+
+if [ "$opt_no_uuid" = "0" -a -z "$(suuid --version 2>/dev/null)" ]; then
+    echo "$progname: suuid is not installed, use --no-uuid" >&2
+    exit 1
 fi
 
 if test "$opt_remove_files" = "1"; then
