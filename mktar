@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.31.0
+VERSION=0.31.1
 
 STD_SUFFIX=''
 
@@ -133,16 +133,17 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Move a whole subdirectory tree into a single $STD_SUFFIX.tar.gz file.
+Create a .tar file of a file or directory with optional UUID label, 
+prefix, suffix, splitting, or compression.
 
-Usage: $progname [options] DIRECTORY [DIRECTORIES [...]]
+Usage: $progname [options] FILE_OR_DIRECTORY [...]
 
 Options:
 
   -1
-    Alias for "--split 1G". No file systems should have problems with 
-    this size, and it makes it easy to calculate the size of the .tar 
-    file.
+    Alias for "--split 1G". No modern file systems should have any 
+    problems with this size, and it makes it easy to calculate the size 
+    of the .tar file.
   -d, --dirs-only
     Ignore non-directory arguments.
   -f, --force
@@ -202,8 +203,8 @@ Options:
   --version
     Print version information.
   -A, --no-actime
-    Don't store atime or ctime in the tar file. Use with --no-uuid to 
-    generate identical tar files.
+    Don't store the access time or creation time of the members in the 
+    tar archive. Use with --no-uuid to generate identical tar files.
   -X, --no-xattrs
     Don't use --xattrs with tar(1), create standard tar archive without 
     extended attributes and nanoseconds.
