@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.31.2
+VERSION=0.31.3
 
 STD_SUFFIX=''
 
@@ -365,11 +365,15 @@ for f in "$@"; do
         if test "$opt_no_uuid" = "1"; then
             label_str=""
         else
+            h_tarfile=$(echo "$tarfile" \
+                        | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;')
+            h_cwd=$(echo "$(/bin/pwd)" \
+                    | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;')
             uuid=$(
                 suuid -t mktar --raw -w eo $random_mac_str \
-                    -c "<c_mktar> <filename>$tarfile</filename> <host>$(
+                    -c "<c_mktar> <filename>$h_tarfile</filename> <host>$(
                         hostname
-                    )</host> <directory>$(/bin/pwd)</directory> </c_mktar>"
+                    )</host> <directory>$h_cwd</directory> </c_mktar>"
             ) || {
                 echo $progname: suuid error >&2
                 exit 1
