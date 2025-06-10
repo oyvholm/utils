@@ -19,95 +19,95 @@ ARGS="$(getopt -o "\
 1\
 A\
 G\
+L\
+O\
+P:\
+S:\
+X\
 d\
 f\
 h\
 i\
-L\
 m\
-O\
 o:\
-P:\
 q\
 r\
-S:\
 s:\
 v\
-X\
 x\
 z\
 " -l "\
+dereference,\
 dirs-only,\
 force,\
+gzip,\
 help,\
 incremental,\
-dereference,\
-random-mac,\
-no-git-check,\
 no-actime,\
+no-git-check,\
 no-uuid,\
 no-xattrs,\
 numeric-owner,\
 output-dir:,\
 prefix:,\
 quiet,\
+random-mac,\
 remove-files,\
-suffix:,\
 split:,\
 stdout,\
+suffix:,\
 verbose,\
 version,\
 xz,\
-gzip,\
 " -n "$progname" -- "$@")"
 test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_1=0
-opt_no_git_check=0
+opt_dereference=0
 opt_dirs_only=0
 opt_force=0
+opt_gzip=0
 opt_help=0
 opt_incremental=0
-opt_dereference=0
-opt_random_mac=0
-opt_no_uuid=0
 opt_no_actime=0
+opt_no_git_check=0
+opt_no_uuid=0
 opt_no_xattrs=0
 opt_numeric_owner=0
 opt_output_dir=''
 opt_prefix=''
 opt_quiet=0
+opt_random_mac=0
 opt_remove_files=0
-opt_suffix="$STD_SUFFIX"
 opt_split=''
 opt_stdout=0
+opt_suffix="$STD_SUFFIX"
 opt_verbose=0
 opt_xz=0
-opt_gzip=0
 while :; do
     case "$1" in
+        --no-uuid) opt_no_uuid=1; shift ;;
+        --numeric-owner) opt_numeric_owner=1; shift ;;
+        --version) echo $progname $VERSION; exit 0 ;;
         -1) opt_1=1; shift ;;
+        -A|--no-actime) opt_no_actime=1; shift ;;
         -G|--no-git-check) opt_no_git_check=1; shift ;;
+        -L|--dereference) opt_dereference=1; shift ;;
+        -O|--stdout) opt_stdout=1; shift ;;
+        -P|--prefix) opt_prefix="$2"; shift 2 ;;
+        -S|--suffix) opt_suffix="$2"; shift 2 ;;
+        -X|--no-xattrs) opt_no_xattrs=1; shift ;;
         -d|--dirs-only) opt_dirs_only=1; shift ;;
         -f|--force) opt_force=1; shift ;;
         -h|--help) opt_help=1; shift ;;
         -i|--incremental) opt_incremental=1; shift ;;
-        -L|--dereference) opt_dereference=1; shift ;;
         -m|--random-mac) opt_random_mac=1; shift ;;
-        --no-uuid) opt_no_uuid=1; shift ;;
-        --numeric-owner) opt_numeric_owner=1; shift ;;
         -o|--output-dir) opt_output_dir="$2"; shift 2 ;;
-        -P|--prefix) opt_prefix="$2"; shift 2 ;;
         -q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
         -r|--remove-files) opt_remove_files=1; shift ;;
-        -S|--suffix) opt_suffix="$2"; shift 2 ;;
         -s|--split) opt_split="$2"; shift 2 ;;
-        -O|--stdout) opt_stdout=1; shift ;;
         -v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
-        --version) echo $progname $VERSION; exit 0 ;;
-        -A|--no-actime) opt_no_actime=1; shift ;;
-        -X|--no-xattrs) opt_no_xattrs=1; shift ;;
         -x|--xz) opt_xz=1; shift ;;
         -z|--gzip) opt_gzip=1; shift ;;
         --) shift; break ;;
