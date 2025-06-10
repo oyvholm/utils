@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.30.0
+VERSION=0.31.0
 
 STD_SUFFIX=''
 
@@ -54,6 +54,7 @@ prefix:,\
 quiet,\
 random-mac,\
 remove-files,\
+rsyncable,\
 split:,\
 stdout,\
 suffix:,\
@@ -82,6 +83,7 @@ opt_prefix=''
 opt_quiet=0
 opt_random_mac=0
 opt_remove_files=0
+opt_rsyncable=0
 opt_split=''
 opt_stdout=0
 opt_suffix="$STD_SUFFIX"
@@ -92,6 +94,7 @@ while :; do
         --no-sparse) opt_no_sparse=1; shift ;;
         --no-uuid) opt_no_uuid=1; shift ;;
         --numeric-owner) opt_numeric_owner=1; shift ;;
+        --rsyncable) opt_rsyncable=1; shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
         -1) opt_1=1; shift ;;
         -A|--no-actime) opt_no_actime=1; shift ;;
@@ -181,6 +184,8 @@ Options:
     Remove files in DIRECTORY immediately after they've been added to 
     the archive. Can be used when there's not enough disk space for the 
     archive.
+  --rsyncable
+    Use --rsyncable option with gzip.
   -S SUFFIX, --suffix SUFFIX
     Add a custom suffix after the directory name and before the .tar 
     extension in the output filename. No changes are made to the 
@@ -244,6 +249,16 @@ if test "$opt_random_mac" = "1"; then
     random_mac_str="--random-mac"
 else
     random_mac_str=""
+fi
+
+if test "$opt_rsyncable" = "1"; then
+    if [ "$opt_gzip" = "0" ]; then
+        echo "$progname: --rsyncable needs the -z/--gzip option" >&2
+        exit 1
+    fi
+    rsyncable_str="--rsyncable"
+else
+    rsyncable_str=""
 fi
 
 if test "$opt_no_sparse" = "1"; then
@@ -379,7 +394,7 @@ for f in "$@"; do
                 mv -vi "$tarfile.split_aa" "$tarfile" || exit 1
             fi
             test "$opt_xz" = "1" && xz -v "$tarfile"*
-            test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"*
+            test "$opt_gzip" = "1" && gzip -vn $rsyncable_str "$tarfile"*
         else
             echo $progname: tar cf $tarfile $tar_args $dir >&2
             tar cf "$tarfile" $tar_args "$dir" || exit 1
@@ -387,7 +402,7 @@ for f in "$@"; do
                 wc -c "$tarfile" \
                 | numfmt --to=si --format=%7.2f --round=nearest >&2
                 test "$opt_xz" = "1" && xz -v "$tarfile"
-                test "$opt_gzip" = "1" && gzip -vn --rsyncable "$tarfile"
+                test "$opt_gzip" = "1" && gzip -vn $rsyncable_str "$tarfile"
             fi
         fi
     fi
