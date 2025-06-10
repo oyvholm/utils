@@ -11,7 +11,7 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.29.3
+VERSION=0.30.0
 
 STD_SUFFIX=''
 
@@ -45,6 +45,7 @@ help,\
 incremental,\
 no-actime,\
 no-git-check,\
+no-sparse,\
 no-uuid,\
 no-xattrs,\
 numeric-owner,\
@@ -72,6 +73,7 @@ opt_help=0
 opt_incremental=0
 opt_no_actime=0
 opt_no_git_check=0
+opt_no_sparse=0
 opt_no_uuid=0
 opt_no_xattrs=0
 opt_numeric_owner=0
@@ -87,6 +89,7 @@ opt_verbose=0
 opt_xz=0
 while :; do
     case "$1" in
+        --no-sparse) opt_no_sparse=1; shift ;;
         --no-uuid) opt_no_uuid=1; shift ;;
         --numeric-owner) opt_numeric_owner=1; shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
@@ -156,6 +159,8 @@ Options:
     Don't pack symlinks, include the actual files they point to.
   -m, --random-mac
     Use random MAC address in UUID file label.
+  --no-sparse
+    Don't create sparse tar file.
   --no-uuid
     Don't create UUID label in the .tar file.
   --numeric-owner
@@ -239,6 +244,12 @@ if test "$opt_random_mac" = "1"; then
     random_mac_str="--random-mac"
 else
     random_mac_str=""
+fi
+
+if test "$opt_no_sparse" = "1"; then
+    sparse_str=""
+else
+    sparse_str="--sparse"
 fi
 
 if test "$opt_remove_files" = "1"; then
@@ -350,7 +361,7 @@ for f in "$@"; do
             incremental_str=""
         fi
         tar_args="$incremental_str $rm_files_str"
-        tar_args="$tar_args --force-local $actime_str --sort=name --sparse"
+        tar_args="$tar_args --force-local $actime_str --sort=name $sparse_str"
         tar_args="$tar_args $dereference_str $numeric_str $xattrs_str"
         tar_args="$tar_args $label_str"
         if test "$opt_stdout" = "1"; then
