@@ -11,12 +11,13 @@
 #=======================================================================
 
 progname=mktar
-VERSION=0.31.4
+VERSION=0.32.0
 
 STD_SUFFIX=''
 
 ARGS="$(getopt -o "\
 1\
+2\
 A\
 G\
 L\
@@ -66,6 +67,7 @@ test "$?" = "0" || exit 1
 eval set -- "$ARGS"
 
 opt_1=0
+opt_2=0
 opt_dereference=0
 opt_dirs_only=0
 opt_force=0
@@ -99,6 +101,7 @@ while :; do
         --rsyncable) opt_rsyncable=1; shift ;;
         --version) echo $progname $VERSION; exit 0 ;;
         -1) opt_1=1; shift ;;
+        -2) opt_2=1; shift ;;
         -A|--no-actime) opt_no_actime=1; shift ;;
         -G|--no-git-check) opt_no_git_check=1; shift ;;
         -L|--dereference) opt_dereference=1; shift ;;
@@ -147,6 +150,8 @@ Options:
     Alias for "--split 1G". No modern file systems should have any 
     problems with this size, and it makes it easy to calculate the size 
     of the .tar file.
+  -2
+    Alias for "--split 2G".
   -d, --dirs-only
     Ignore non-directory arguments.
   -f, --force
@@ -225,8 +230,9 @@ if test "$opt_xz" = "1" -a "$opt_gzip" = "1"; then
     exit 1
 fi
 
-if test "$opt_1" = "1" -a -n "$opt_split"; then
-    echo $progname: Cannot mix the -1 and --split options >&2
+split_chk=$([ -n "$opt_split" ] && echo 1 || echo 0)
+if echo "$opt_1$opt_2$split_chk" | tr -d 0 | grep -q ..; then
+    echo $progname: Cannot use the -1, -2, and --split options together >&2
     exit 1
 fi
 
@@ -236,6 +242,7 @@ if test "$opt_stdout" = "1" -a -n "$(echo $opt_gzip$opt_xz | grep 1)"; then
 fi
 
 test "$opt_1" = "1" && opt_split=1G
+test "$opt_2" = "1" && opt_split=2G
 
 if test "$opt_dereference" = "1"; then
     dereference_str="--dereference"
