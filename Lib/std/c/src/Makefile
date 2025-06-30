@@ -232,7 +232,9 @@ longlines:
 	@for f in $(LONGLINES_FILES); do \
 		if [ -f "$$f" ]; then \
 			d="$$(expand "$$f" | sed 's/ $$//;' \
-			  | grep -E -n '.{80}')"; \
+			      | perl -C3 -ne \
+			        'chomp; \
+			        print("$$.:$$_\n") if length > 79;')"; \
 			echo "$$d" | grep -q . \
 			&& (echo "$$f"; printf "%s\\n" "$$d"; echo " "); \
 		fi; \
