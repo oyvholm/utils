@@ -98,6 +98,8 @@ int opt_selftest(char *execname, const struct Options *o);
 /* strings.c */
 char *allocstr_va(const char *format, va_list ap);
 char *allocstr(const char *format, ...);
+size_t count_substr(const char *s, const char *substr);
+char *str_replace(const char *s, const char *s1, const char *s2);
 
 #endif /* ifndef _STDUexecUDTS_H */
 

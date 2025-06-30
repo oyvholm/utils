@@ -88,4 +88,74 @@ char *allocstr(const char *format, ...)
 	return retval;
 }
 
+/*
+ * count_substr() - Returns the number of non-overlapping occurrences of 
+ * substring `substr` in string `s`.
+ */
+
+size_t count_substr(const char *s, const char *substr)
+{
+	size_t count = 0, len_ss;
+	const char *p = s;
+
+	if (!s || !substr || !*s || !*substr)
+		return 0;
+
+	len_ss = strlen(substr);
+	while ((p = strstr(p, substr)) != NULL) {
+		count++;
+		p += len_ss;
+	}
+
+	return count;
+}
+
+/*
+ * str_replace() - Returns an allocated string where all substrings `s1` are 
+ * replaced with the string `s2` in string `s`.
+ *
+ * Returns NULL if any errors occur or if `s`, `s1` or `s2` are NULL.
+ *
+ * If `s1` is empty, an allocated copy of `s` is returned.
+ */
+
+char *str_replace(const char *s, const char *s1, const char *s2)
+{
+	size_t len_s1, len_s2, count, new_len;
+	const char *tmp, *src;
+	char *buf, *dest;
+
+	if (!s || !s1 || !s2)
+		return NULL;
+
+	len_s1 = strlen(s1);
+	len_s2 = strlen(s2);
+	count = count_substr(s, s1);
+
+	if (!*s || !*s1 || !count)
+		return allocstr("%s", s);
+
+	new_len = strlen(s) + count * (len_s2 - len_s1);
+	buf = malloc(new_len + 1);
+	if (!buf)
+		return NULL; /* gncov */
+
+	dest = buf;
+	src = s;
+	while ((tmp = strstr(src, s1)) != NULL) {
+		size_t len_before = (size_t)(tmp - src);
+
+		memcpy(dest, src, len_before);
+		dest += len_before;
+
+		memcpy(dest, s2, len_s2);
+		dest += len_s2;
+
+		src = tmp + len_s1;
+	}
+	strcpy(dest, src);
+
+	return buf;
+}
+
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */

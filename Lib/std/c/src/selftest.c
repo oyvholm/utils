@@ -25,6 +25,7 @@
  * in Perl 5 as far as possible.
  */
 
+#define EXECSTR  "__EXSTR__"
 #define chp  (char *[])
 #define failed_ok(a)  do { \
 	if (errno) \
@@ -281,7 +282,7 @@ static void test_command(const char identical, char *cmd[],
 {
 	const struct Options o = opt_struct();
 	struct streams ss;
-	char *descbuf;
+	char *e_stdout, *e_stderr, *descbuf;
 
 	assert(cmd);
 	assert(desc);
@@ -299,6 +300,8 @@ static void test_command(const char identical, char *cmd[],
 		fprintf(stderr, ")\n"); /* gncov */
 	}
 
+	e_stdout = str_replace(exp_stdout, EXECSTR, execname);
+	e_stderr = str_replace(exp_stderr, EXECSTR, execname);
 	descbuf = allocstr_va(desc, ap);
 	if (!descbuf) {
 		failed_ok("allocstr_va()"); /* gncov */
@@ -306,20 +309,22 @@ static void test_command(const char identical, char *cmd[],
 	}
 	streams_init(&ss);
 	streams_exec(&o, &ss, cmd);
-	if (exp_stdout) {
-		ok(tc_cmp(identical, ss.out.buf, exp_stdout),
+	if (e_stdout) {
+		ok(tc_cmp(identical, ss.out.buf, e_stdout),
 		   "%s (stdout)", descbuf);
-		if (tc_cmp(identical, ss.out.buf, exp_stdout))
-			print_gotexp(ss.out.buf, exp_stdout); /* gncov */
+		if (tc_cmp(identical, ss.out.buf, e_stdout))
+			print_gotexp(ss.out.buf, e_stdout); /* gncov */
 	}
-	if (exp_stderr) {
-		ok(tc_cmp(identical, ss.err.buf, exp_stderr),
+	if (e_stderr) {
+		ok(tc_cmp(identical, ss.err.buf, e_stderr),
 		   "%s (stderr)", descbuf);
-		if (tc_cmp(identical, ss.err.buf, exp_stderr))
-			print_gotexp(ss.err.buf, exp_stderr); /* gncov */
+		if (tc_cmp(identical, ss.err.buf, e_stderr))
+			print_gotexp(ss.err.buf, e_stderr); /* gncov */
 	}
 	ok(!(ss.ret == exp_retval), "%s (retval)", descbuf);
 	free(descbuf);
+	free(e_stderr);
+	free(e_stdout);
 	if (ss.ret != exp_retval) {
 		char *g = allocstr("%d", ss.ret), /* gncov */
 		     *e = allocstr("%d", exp_retval); /* gncov */
@@ -540,6 +545,86 @@ static void test_valgrind_lines(void)
 }
 
 /*
+ * chk_sr() - Used by test_str_replace(). Verifies that all non-overlapping 
+ * occurrences of substring `s1` are replaced with the string `s2` in the 
+ * string `s`, resulting in the string `exp`. Returns nothing.
+ */
+
+static void chk_sr(const char *s, const char *s1, const char *s2,
+                   const char *exp, const char *desc)
+{
+	char *result;
+
+	assert(desc);
+
+	result = str_replace(s, s1, s2);
+	if (!result || !exp) {
+		ok(!(result == exp), "str_replace(): %s", desc);
+	} else {
+		ok(!!strcmp(result, exp), "str_replace(): %s", desc);
+		print_gotexp(result, exp);
+	}
+	free(result);
+}
+
+/*
+ * test_str_replace() - Tests the str_replace() function. Returns nothing.
+ */
+
+static void test_str_replace(void)
+{
+	char *s;
+	size_t bsize = 10000;
+
+	diag("Test str_replace()");
+
+	chk_sr("", "", "", "", "s, s1, and s2 are empty");
+	chk_sr("abc", "", "b", "abc", "s1 is empty");
+	chk_sr("", "a", "b", "", "s is empty");
+	chk_sr("", "a", "", "", "s and s2 is empty");
+
+	chk_sr(NULL, "a", "b", NULL, "s is NULL");
+	chk_sr("abc", NULL, "b", NULL, "s1 is NULL");
+	chk_sr("abc", "a", NULL, NULL, "s2 is NULL");
+	chk_sr(NULL, NULL, NULL, NULL, "s, s1, and s2 is NULL");
+
+	chk_sr("test", "test", "test", "test", "s, s1, and s2 are identical");
+	chk_sr("abc", "b", "DEF", "aDEFc", "abc, replace b with DEF");
+	chk_sr("abcabcabc", "b", "DEF", "aDEFcaDEFcaDEFc",
+	       "abcabcabc, replace all b with DEF");
+	chk_sr("abcdefgh", "defg", "", "abch", "Replace defg with nothing");
+	chk_sr("abcde", "bcd", "X", "aXe", "Replace bcd with X");
+	chk_sr("abc", "d", "X", "abc", "d not in abc");
+	chk_sr("ababab", "aba", "X", "Xbab", "Replace aba in ababab");
+	chk_sr("abc", "b", "", "ac", "Replace b with nothing");
+	chk_sr("abc", "", "X", "abc", "Replace empty with X");
+	chk_sr("Ḡṹṛḡḷḗ", "ḡ", "X", "ḠṹṛXḷḗ", "Replace UTF-8 character with X");
+
+	s = malloc(bsize + 1);
+	if (!s) {
+		failed_ok("malloc()"); /* gncov */
+		return; /* gncov */
+	}
+	memset(s, '!', bsize);
+	s[bsize] = '\0';
+	chk_sr(s, "!!!!!!!!!!", "", "", "Replace all text in large buffer");
+	free(s);
+
+	s = malloc(bsize + 1);
+	if (!s) {
+		failed_ok("malloc()"); /* gncov */
+		return; /* gncov */
+	}
+	memset(s, '!', bsize);
+	s[1234] = 'y';
+	s[bsize - 1] = 'z';
+	s[bsize] = '\0';
+	chk_sr(s, "!!!!!!!!!!", "", "!!!!y!!!!z",
+	       "Large buffer with y and z");
+	free(s);
+}
+
+/*
  * Various functions
  */
 
@@ -591,6 +676,75 @@ static void test_allocstr(void)
 	free(p2);
 free_p:
 	free(p);
+}
+
+/*
+ * chk_cs() - Used by test_count_substr(). Verifies that the number of 
+ * non-overlapping substrings `substr` inside string `s` is `count`. `desc` is 
+ * the test description. Returns nothing.
+ */
+
+static void chk_cs(const char *s, const char *substr, const size_t count,
+                   const char *desc)
+{
+	size_t result;
+
+	result = count_substr(s, substr);
+	ok(!(result == count), "count_substr(): %s", desc);
+	if (result != count) {
+		char *s_result = allocstr("%zu", result), /* gncov */
+		     *s_count = allocstr("%zu", count); /* gncov */
+		if (s_result && s_count) /* gncov */
+			print_gotexp(s_result, s_count); /* gncov */
+		else
+			failed_ok("allocstr()"); /* gncov */
+		free(s_count); /* gncov */
+		free(s_result); /* gncov */
+	}
+}
+
+/*
+ * test_count_substr() - Tests the count_substr() function. Returns nothing.
+ */
+
+static void test_count_substr(void)
+{
+	char *s;
+	size_t bsize = 10000;
+
+	diag("Test count_substr()");
+
+	chk_cs("", "", 0, "s and substr are empty");
+	chk_cs("", "a", 0, "s is empty");
+	chk_cs("aaa", "", 0, "substr is empty");
+
+	chk_cs("", NULL, 0, "substr is NULL");
+	chk_cs(NULL, "abcdef", 0, "s is NULL");
+	chk_cs(NULL, NULL, 0, "s and substr is NULL");
+
+	chk_cs("Abc", "abc", 0, "Case sensitivity");
+	chk_cs("a", "aa", 0, "substr is longer than s");
+	chk_cs("aaa", "a", 3, "3 \"a\" in \"aaa\"");
+	chk_cs("aaa", "aa", 1, "Non-overlapping \"aa\" in \"aaa\"");
+	chk_cs("aaabaaa", "aaa", 2, "Non-overlapping \"aaa\" split by \"b\"");
+	chk_cs("abababab", "ab", 4, "4 \"ab\" in s");
+	chk_cs("abc", "b", 1, "Single character substring");
+	chk_cs("abc", "d", 0, "Substring not found");
+	chk_cs("abcdeabc", "abc", 2, "Substring at start and end");
+	chk_cs("abcdef" "abcdef" "abcdef", "abc", 3, "3 \"abc\" in s");
+	chk_cs("abcdef", "abcdef", 1, "s and substr are identical");
+	chk_cs("zzzGHJ\nabc\nGHJ\nabcGHJ", "GHJ", 3, "s with newlines");
+	chk_cs("Ḡṹṛḡḷḗ", "ḡ", 1, "UTF-8, U+1Exx area");
+
+	s = malloc(bsize + 1);
+	if (!s) {
+		failed_ok("malloc()"); /* gncov */
+		return; /* gncov */
+	}
+	memset(s, '!', bsize);
+	s[bsize] = '\0';
+	chk_cs(s, "!!!!!!!!!!", bsize / 10, "Large buffer");
+	free(s);
 }
 
 /*
@@ -766,10 +920,12 @@ static void test_functions(const struct Options *o)
 	test_diag();
 	test_gotexp_output();
 	test_valgrind_lines();
+	test_str_replace();
 
 	diag("Test various routines");
 	test_std_strerror();
 	test_allocstr();
+	test_count_substr();
 }
 
 /*
@@ -847,6 +1003,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 	return failcount ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
+#undef EXECSTR
 #undef chp
 #undef failed_ok
 
