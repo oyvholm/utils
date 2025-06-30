@@ -26,6 +26,9 @@
  */
 
 #define EXECSTR  "__EXSTR__"
+#define OPTION_ERROR_STR  EXECSTR ": Option error\n" \
+                          EXECSTR ": Type \"" EXECSTR " --help\" for help screen." \
+                          " Returning with value 1.\n"
 #define chp  (char *[])
 #define failed_ok(a)  do { \
 	if (errno) \
@@ -852,12 +855,12 @@ static void test_standard_options(void)
 	   "-hv: Version number is printed along with the help text");
 	sc(chp{ execname, "-vvv", "--verbose", "--help", NULL },
 	   "  Show this help",
-	   ": main(): Using verbose level 4\n",
+	   EXECSTR ": main(): Using verbose level 4\n",
 	   EXIT_SUCCESS,
 	   "-vvv --verbose: Using correct verbose level");
 	sc(chp{ execname, "-vvvvq", "--verbose", "--verbose", "--help", NULL },
 	   "  Show this help",
-	   ": main(): Using verbose level 5\n",
+	   EXECSTR ": main(): Using verbose level 5\n",
 	   EXIT_SUCCESS,
 	   "--verbose: One -q reduces the verbosity level");
 
@@ -894,14 +897,9 @@ static void test_standard_options(void)
 	diag("Unknown option");
 	sc(chp{ execname, "--gurgle", NULL },
 	   "",
-	   ": Option error\n",
+	   OPTION_ERROR_STR,
 	   EXIT_FAILURE,
 	   "Unknown option: \"Option error\" message is printed");
-	sc(chp{ execname, "--gurgle", NULL },
-	   "",
-	   " --help\" for help screen. Returning with value 1.\n",
-	   EXIT_FAILURE,
-	   "Unknown option mentions --help");
 }
 
 /*
@@ -1004,6 +1002,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 }
 
 #undef EXECSTR
+#undef OPTION_ERROR_STR
 #undef chp
 #undef failed_ok
 
