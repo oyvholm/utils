@@ -95,6 +95,14 @@ GNCOV environment variable to a non-empty value. For example:
 
     make gcov-cmt GNCOV=1
 
+### make gncov-refresh
+
+Remove `gncov` markers from lines that no longer need to be excluded 
+from coverage testing. This might be necessary if code changes or 
+compiler optimizations make previously untestable lines testable. For 
+example, if a function is inlined or optimized differently, lines that 
+were once skipped might now be covered by tests.
+
 These commands need the `gcov-cmt` script, available from 
 <https://gitlab.com/oyvholm/utils/raw/master/gcov-cmt>.
 

@@ -221,6 +221,12 @@ gcov-cmt-clean:
 gdb: $(EXEC)
 	gdb -x gdbrc $$(cat gdbopts 2>/dev/null) $(EXEC)
 
+.PHONY: gncov-refresh
+gncov-refresh:
+	perl -pi -e 's, /\* gncov \*/,,g;' $(CFILES)
+	$(MAKE) gcov-cmt DEVEL=1
+	perl -pi -e 's, /\* gcov \*/, /\* gncov \*/,g;' $(CFILES)
+
 .PHONY: html
 html: $(HTMLFILE)
 
