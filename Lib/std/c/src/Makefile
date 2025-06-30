@@ -234,7 +234,7 @@ longlines:
 			d="$$(expand "$$f" | sed 's/ $$//;' \
 			  | grep -E -n '.{80}')"; \
 			echo "$$d" | grep -q . \
-			&& (echo "$$f"; echo "$$d"; echo " "); \
+			&& (echo "$$f"; printf "%s\\n" "$$d"; echo " "); \
 		fi; \
 	done | grep . && exit 1 || true
 
