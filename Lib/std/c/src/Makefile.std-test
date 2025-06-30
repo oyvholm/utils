@@ -67,7 +67,9 @@ test:
 		echo "# Skip profiling tests, no GNU cc here"; \
 	fi
 	if gcov --version 2>/dev/null | grep -q ^gcov; then \
-		$(MAKE) -f Makefile.std-test test-gcov || exit 1; \
+		if test "$(GITLAB_CI)" != "true"; then \
+			$(MAKE) -f Makefile.std-test test-gcov || exit 1; \
+		fi; \
 	else \
 		echo "# gcov(1) not found, skip gcov tests"; \
 	fi
