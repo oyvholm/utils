@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-cmark
-VERSION=0.1.1
+VERSION=0.1.2
 
 if test "$1" = "-h" -o "$1" = "--help"; then
 	cat <<END
@@ -30,7 +30,7 @@ All other options and arguments are sent to "git log".
 Examples:
 
   $progname | cmark | lynx -stdin
-  $progname --name-status --since=1.year | cmark >x.html; firefox x.html
+  $progname --name-status | cmark >x.html; brave-browser x.html
 
 END
 	exit 0
