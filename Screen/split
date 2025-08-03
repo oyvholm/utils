@@ -5,7 +5,7 @@ select -
 only
 split
 # cursor in upper win
-resize 15
+resize 10
 # top win is 15 high
 split -v
 # top win split vert, cursor in left
