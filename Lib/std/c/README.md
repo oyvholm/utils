@@ -3,25 +3,35 @@
 
 # STDexecDTS
 
+<!--
 ## Overview
 
 TBD: Short description
+-->
 
+<!--
 ### Features
 
 - TBD: Feature 1
 - TBD: Feature 2
+-->
+
+<!--
+### Use cases
+-->
 
 ### Status
 
 In the startup/design phase, does nothing yet.
 
+<!--
 ### Examples
 
 - **`STDexecDTS`**\
   TBD: Example 1
 - **`STDexecDTS`**\
   TBD: Example 2
+-->
 
 ## Development
 
