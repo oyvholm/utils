@@ -15,6 +15,7 @@ VERSION=0.0.0
 
 std_size=8
 
+opt_comment=""
 opt_decode=0
 opt_help=0
 opt_quiet=0
@@ -24,6 +25,7 @@ opt_wrap=0
 
 while test -n "$1"; do
 	case "$1" in
+	-c|--comment) opt_comment="$2"; shift 2 ;;
 	-d|--decode) opt_decode=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
@@ -54,6 +56,8 @@ Usage: $progname [options]
 
 Options:
 
+  -c CMT_STRING, --comment CMT_STRING
+    Prefix all base64 lines with CMT_STRING.
   -d, --decode
     Decode gzipped base64.
   -h, --help
@@ -85,6 +89,13 @@ fi
 else
 	[ "$opt_wrap" = "-" ] && opt_wrap=$(tput cols)
 	fold -s -w $opt_wrap
+fi \
+| if [ -z "$opt_comment" ]; then
+	cat
+else
+	while IFS= read -r line; do
+		printf '%s %s\n' "$opt_comment" "$line"
+	done
 fi
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
