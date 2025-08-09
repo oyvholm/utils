@@ -1,12 +1,31 @@
 # split
 # File ID: b785d050-7c7a-11e0-90c2-00023faf1383
 
+# Creates multiple split windows in GNU Screen with this layout:
+#
+# +---------------------------------+---------------------------------+
+# |          win 21, 2 high         |                                 |
+# +---------------------------------+                                 |
+# |          win 22, 2 high         |          win 25, 9 high         |
+# +----------------+----------------+       50% of screen width       |
+# | win 23, 3 high | win 24, 3 high |                                 |
+# |                |                |                                 |
+# +----------------+----------------+---------------------------------+
+# |                                                                   |
+# |                                                                   |
+# |                                                                   |
+# |                        Rest of the screen                         |
+# |                                                                   |
+# |                                                                   |
+# |                                                                   |
+# +-------------------------------------------------------------------+
+
 select -
 only
 split
 # cursor in upper win
 resize 10
-# top win is 15 high
+# top win is 9 high
 split -v
 # top win split vert, cursor in left
 split
@@ -14,14 +33,14 @@ split
 split
 # split upper left win, cursor top left
 resize 3
-# top left win is 3 high
+# top left win is 2 high
 select 21
 focus
 # cursor in small win below
 resize 3
 select 22
 focus
-# cursor in win23
+# cursor in win 23
 split -v
 # cursor in left empty window
 select 23
