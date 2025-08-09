@@ -23,4 +23,4 @@ elif [ $V1 -eq 2 ]; then
   fi
 fi
 
-indent $PARAM "$@"
+indent $PARAM "$@" | perl -pe 's/([^\t])\t+/$1 /g'
