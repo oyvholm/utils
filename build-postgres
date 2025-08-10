@@ -246,6 +246,7 @@ if test -d "$prefix/.git/."; then
     commitmsg=$(
         echo $progname installed $pgdir on $(hostname)
         echo
+        echo -n "Commit ID: "
         suuid -t commit,$progname
     ) &&
     cd "$prgdir" &&

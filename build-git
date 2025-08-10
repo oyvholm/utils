@@ -431,6 +431,7 @@ if [ -d $pref/.git/. ]; then
     commitmsg=$(
         echo $progname installed $globalgit on $(hostname)
         echo
+        echo -n "Commit ID: "
         suuid -t commit,$progname
     )
     cd $pref/prg

@@ -130,6 +130,7 @@ LC_ALL=C git status . | grep "^nothing to commit" || (
 		git commit -m "$logmsg$(
 		    echo
 		    echo
+		    echo -n "Commit ID: "
 		    suuid -t $progname -c "$logmsg" -wa
 		)"
 	)

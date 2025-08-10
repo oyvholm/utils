@@ -19,5 +19,5 @@ logmsg="Initial empty commit"
 }
 git symbolic-ref HEAD refs/heads/"$1"
 rm -f .git/index
-git commit --allow-empty -m "$logmsg$(echo; echo;
+git commit --allow-empty -m "$logmsg$(echo; echo; echo -n "Commit ID: ";
                              suuid -t commit,git-eb -c "$logmsg")"

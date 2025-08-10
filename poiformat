@@ -23,7 +23,8 @@ commit() {
         return;
     fi
     git add $files
-    git commit -m "$msg$(echo; echo; suuid -t c_poiformat -c "$msg")"
+    git commit -m "$msg$(echo; echo; echo -n "Commit ID: ";
+                         suuid -t c_poiformat -c "$msg")"
 }
 
 git checkout -b $branch

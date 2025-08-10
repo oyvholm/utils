@@ -350,6 +350,7 @@ if test -d "$prefix/.git/."; then
         echo $progname installed vim-$desc on $(hostname)
         if suuid --version 2>/dev/null | grep -q "^suuid v"; then
             echo
+            echo -n "Commit ID: "
             $sim suuid -t commit,$progname
         fi || true
     ) &&
