@@ -50,28 +50,85 @@ static int testnum = 0;
 ******************************************************************************/
 
 /*
- * ok() - Print a log line to stdout. If `i` is 0, an "ok" line is printed, 
+ * bail_out() - Aborts the test suite with an optional message written to 
+ * stdout. To abort without a message, use NULL in `msg`. Returns nothing.
+ */
+
+static void bail_out(const char *msg, ...) /* gncov */
+{
+	va_list ap;
+
+	fputs("Bail out!", stdout); /* gncov */
+	if (msg) { /* gncov */
+		fputs("  ", stdout); /* gncov */
+		va_start(ap, msg); /* gncov */
+		vprintf(msg, ap); /* gncov */
+		va_end(ap); /* gncov */
+	}
+	fputc('\n', stdout); /* gncov */
+
+	exit(EXIT_FAILURE); /* gncov */
+}
+
+/*
+ * ok_va() - Print a log line to stdout. If `i` is 0, an "ok" line is printed, 
  * otherwise a "not ok" line is printed. `desc` is the test description and can 
  * use printf sequences.
  *
- * If `desc` is NULL, it returns 1. Otherwise, it returns `i`.
+ * Returns 0 if `i` is 0, otherwise it returns 1.
+ */
+
+static int ok_va(const int i, const char *desc, va_list ap)
+{
+	va_list ap_copy;
+	char *s, *s2;
+
+	assert(desc);
+
+	if (!desc)
+		bail_out("%s(): desc is NULL", __func__); /* gncov */
+
+	printf("%sok %d - ", (i ? "not " : ""), ++testnum);
+	va_copy(ap_copy, ap);
+	s = allocstr_va(desc, ap_copy);
+	va_end(ap_copy);
+	if (!s)
+		bail_out("allocstr_va() failed: %s", /* gncov */
+		         strerror(errno)); /* gncov */
+	s2 = str_replace(s, "\n", "\\n");
+	if (!s2) {
+		free(s); /* gncov */
+		bail_out("str_replace() failed: %s", /* gncov */
+		         strerror(errno)); /* gncov */
+	}
+	puts(s2);
+	free(s2);
+	free(s);
+	fflush(stdout);
+	failcount += !!i;
+
+	return !!i;
+}
+
+/*
+ * ok() - Frontend against ok_va(). Refer to the description for that function 
+ * for more info. Returns 0 if `i` is 0, otherwise it returns 1.
  */
 
 static int ok(const int i, const char *desc, ...)
 {
 	va_list ap;
 
-	if (!desc)
-		return 1;
-	va_start(ap, desc);
-	printf("%sok %d - ", (i ? "not " : ""), ++testnum);
-	vprintf(desc, ap);
-	puts("");
-	va_end(ap);
-	fflush(stdout);
-	failcount += !!i;
+	assert(desc);
 
-	return i;
+	if (!desc)
+		bail_out("%s(): desc is NULL", __func__); /* gncov */
+
+	va_start(ap, desc);
+	ok_va(i, desc, ap);
+	va_end(ap);
+
+	return !!i;
 }
 
 /*
@@ -1014,7 +1071,6 @@ static void test_functions(const struct Options *o)
 	diag("Test selftest routines");
 
 	/* selftest.c */
-	ok(!ok(0, NULL), "ok(0, NULL)");
 	test_diag();
 	test_gotexp_output();
 	test_valgrind_lines();
