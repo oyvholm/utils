@@ -39,6 +39,8 @@
 	errno = 0; \
 } while (0)
 
+#define TMPDIR  ".STDexecDTS-test.tmp"
+
 static char *execname;
 static int failcount = 0;
 static int testnum = 0;
@@ -947,6 +949,58 @@ static void test_standard_options(void)
 ******************************************************************************/
 
 /*
+ * functests_with_tempdir() - Tests functions that need a temporary directory 
+ * to store the output from stderr and stdout. Returns nothing.
+ */
+
+static void functests_with_tempdir(void)
+{
+	int result;
+
+	diag("Test functions that need a temporary directory for stdout and"
+	     " stderr");
+	result = mkdir(TMPDIR, 0755);
+	ok(!!result, "mkdir " TMPDIR " for function tests");
+	if (result) {
+		diag("test %d: %s, skipping tests", /* gncov */
+		     testnum, strerror(errno)); /* gncov */
+		errno = 0; /* gncov */
+		return; /* gncov */
+	}
+
+	result = rmdir(TMPDIR);
+	ok(!!result, "rmdir " TMPDIR " after function tests");
+	if (result) {
+		diag("test %d: %s", testnum, strerror(errno)); /* gncov */
+		errno = 0; /* gncov */
+		return; /* gncov */
+	}
+}
+
+/*
+ * tests_with_tempdir() - Executes tests on the executable with a temporary 
+ * directory. The temporary directory uses a standard name, defined in TMPDIR. 
+ * If the directory already exists or it's unable to create it, it aborts. 
+ * Returns nothing.
+ */
+
+static void tests_with_tempdir(void)
+{
+	int result;
+
+	result = mkdir(TMPDIR, 0777);
+	ok(!!result, "%s(): Create temporary directory %s", __func__, TMPDIR);
+	if (result) {
+		diag("Cannot create directory \"%s\", skipping" /* gncov */
+		     " tests: %s", TMPDIR, strerror(errno)); /* gncov */
+		errno = 0; /* gncov */
+		return; /* gncov */
+	}
+
+	ok(!!rmdir(TMPDIR), "Delete temporary directory %s", TMPDIR);
+}
+
+/*
  * test_functions() - Tests various functions directly. Returns nothing.
  */
 
@@ -976,6 +1030,8 @@ static void test_functions(const struct Options *o)
 	/* strings.c */
 	test_allocstr();
 	test_count_substr();
+
+	functests_with_tempdir();
 }
 
 /*
@@ -994,6 +1050,7 @@ static void test_executable(const struct Options *o)
 	print_version_info(o);
 	test_streams_exec(o);
 	test_standard_options();
+	tests_with_tempdir();
 	print_version_info(o);
 }
 
@@ -1027,6 +1084,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 
 #undef EXECSTR
 #undef OPTION_ERROR_STR
+#undef TMPDIR
 #undef chp
 #undef failed_ok
 
