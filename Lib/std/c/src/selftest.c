@@ -949,8 +949,7 @@ static int print_version_info(const struct Options *o)
 	}
 	diag("========== BEGIN version info ==========\n"
 	     "%s"
-	     "=========== END version info ===========",
-	     ss.out.buf ? ss.out.buf : "(null)");
+	     "=========== END version info ===========", no_null(ss.out.buf));
 	streams_free(&ss);
 
 	return 0;
