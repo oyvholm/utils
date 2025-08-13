@@ -592,6 +592,27 @@ static void tc_func(const int linenum, char *cmd[], const char *exp_stdout,
                              /*** selftest.c ***/
 
 /*
+ * test_ok_macros() - Tests the OK_*() macros. Returns nothing.
+ */
+
+static void test_ok_macros(void)
+{
+	diag("Test the OK_*() macros");
+
+	OK_EQUAL(3.14, 3.14, "OK_EQUAL(%.2f, %.2f, ...)", 3.14, 3.14);
+	/* OK_ERROR("OK_ERROR(...), can't be tested"); */
+	OK_FAILURE(1, "OK_FAILURE(1, ...)");
+	OK_FALSE(5 == 9, "OK_FALSE(5 == 9, ...)");
+	OK_NOTEQUAL(19716, 1916, "OK_NOTEQUAL(%u, %u, ...)", 19716, 1916);
+	OK_NOTNULL(strstr("abcdef", "cde"), "OK_NOTNULL(strstr(\"abcdef\", \"cde\"), ...)");
+	OK_NULL(strstr("abcdef", "notfound"), "OK_NULL(strstr(\"abcdef\", \"notfound\"), ...)");
+	OK_STRCMP("str", "str", "OK_STRCMP(\"%s\", \"%s\", ...)", "str", "str");
+	OK_STRNCMP("abcde", "abcyz", 3, "OK_STRNCMP(\"abcde\", \"abcyz\", 3, ...)");
+	OK_SUCCESS(0, "OK_SUCCESS(0, ...)");
+	OK_TRUE(9 > -4, "OK_TRUE(%d > %d, ...)", 9, -4);
+}
+
+/*
  * test_diag_big() - Tests diag_output() with a string larger than BUFSIZ. 
  * Returns nothing.
  */
@@ -1318,6 +1339,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 	diag("Running tests for %s %s (%s)",
 	     execname, EXEC_VERSION, EXEC_DATE);
 
+	test_ok_macros();
 	test_functions(o);
 	test_executable(o);
 
