@@ -43,6 +43,10 @@ static char *execname;
 static int failcount = 0;
 static int testnum = 0;
 
+/******************************************************************************
+                             --selftest functions
+******************************************************************************/
+
 /*
  * ok() - Print a log line to stdout. If `i` is 0, an "ok" line is printed, 
  * otherwise a "not ok" line is printed. `desc` is the test description and can 
@@ -381,15 +385,15 @@ static void tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
 	va_end(ap);
 }
 
-/*
- ******************
- * Function tests *
- ******************
- */
+/******************************************************************************
+                    STDexecDTS-specific selftest functions
+******************************************************************************/
 
-/*
- * selftest functions
- */
+/******************************************************************************
+                 Function tests, no temporary directory needed
+******************************************************************************/
+
+                             /*** selftest.c ***/
 
 /*
  * test_diag_big() - Tests diag_output() with a string larger than BUFSIZ. 
@@ -548,10 +552,6 @@ static void test_valgrind_lines(void)
 }
 
 /*
- * Various functions
- */
-
-/*
  * test_std_strerror() - Tests the std_strerror() function. Returns nothing.
  */
 
@@ -561,6 +561,10 @@ static void test_std_strerror(void)
 	ok(!!strcmp(std_strerror(EACCES), "Permission denied"),
 	   "std_strerror(EACCES) is as expected");
 }
+
+                                /*** io.c ***/
+
+                              /*** strings.c ***/
 
 /*
  * test_allocstr() - Tests the allocstr() function. Returns nothing.
@@ -777,11 +781,15 @@ static void test_streams_exec(const struct Options *o)
 	streams_free(&ss);
 }
 
-/*
- ****************
- * Option tests *
- ****************
- */
+/******************************************************************************
+                   Function tests, use a temporary directory
+******************************************************************************/
+
+                                /*** io.c ***/
+
+/******************************************************************************
+            Test the executable file, no temporary directory needed
+******************************************************************************/
 
 /*
  * test_valgrind_option() - Tests the --valgrind command line option. Returns 
@@ -930,6 +938,14 @@ static void test_standard_options(void)
 	   "Unknown option: \"Option error\" message is printed");
 }
 
+/******************************************************************************
+              Test the executable file with a temporary directory
+******************************************************************************/
+
+/******************************************************************************
+                        Top-level --selftest functions
+******************************************************************************/
+
 /*
  * test_functions() - Tests various functions directly. Returns nothing.
  */
@@ -942,6 +958,8 @@ static void test_functions(const struct Options *o)
 		return; /* gncov */
 
 	diag("Test selftest routines");
+
+	/* selftest.c */
 	ok(!ok(0, NULL), "ok(0, NULL)");
 	test_diag();
 	test_gotexp_output();
@@ -949,7 +967,13 @@ static void test_functions(const struct Options *o)
 	test_str_replace();
 
 	diag("Test various routines");
+
+	/* STDexecDTS.c */
 	test_std_strerror();
+
+	/* io.c */
+
+	/* strings.c */
 	test_allocstr();
 	test_count_substr();
 }
