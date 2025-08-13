@@ -69,7 +69,6 @@ char *read_from_fp(FILE *fp, struct binbuf *dest)
 		size_t bytes_read;
 
 		if (!new_mem) {
-			failed("Stream buffer memory allocation"); /* gncov */
 			binbuf_free(&buf); /* gncov */
 			return NULL; /* gncov */
 		}
@@ -80,7 +79,6 @@ char *read_from_fp(FILE *fp, struct binbuf *dest)
 		buf.len += bytes_read;
 		p[bytes_read] = '\0';
 		if (ferror(fp)) {
-			failed("Read error, fread()"); /* gncov */
 			binbuf_free(&buf); /* gncov */
 			return NULL; /* gncov */
 		}
