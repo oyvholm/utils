@@ -30,16 +30,134 @@
                           EXECSTR ": Type \"" EXECSTR " --help\" for help screen." \
                           " Returning with value 1.\n"
 #define chp  (char *[])
+/*
+ * Main test macros, meant to be a human-friendly frontend against ok(). Unlike 
+ * most other testing frameworks that return 1 for success and 0 for error, 
+ * these functions and macros return 0 for success and 1 if the test fails. The 
+ * reasoning behind this is:
+ *
+ * We don't look for successful tests, but tests that fail. By returning 1 when 
+ * the test fails, the return value can be used to increase a fail counter to 
+ * find the total number of failed tests, or take special action based on the 
+ * outcome of a single test or a series of previous tests. If the macros or 
+ * ok() had returned 0 for failure and non-zero for success, we would need an 
+ * additional counter to keep track of the number of executed tests and then 
+ * use subtraction to see if any tests failed. Besides, C typically returns 0 
+ * for success and non-zero for failure, so this convention should feel natural 
+ * to C programmers. The `ok(expr, desc, ...)` function is a frontend to 
+ * `ok_va()`, which evaluates `expr`, printing an "ok" line to stdout if `expr` 
+ * is 0 (success, returning 0) or "not ok" if `expr` is non-zero (failure, 
+ * returning 1), using `desc` with any additional arguments for the test 
+ * description.
+ *
+ * All macros have a description parameter at the end which supports printf() 
+ * sequences and additional optional arguments.
+ *
+ * In addition to the regular macros, the same macros exist as `OK_*_L()` 
+ * variants. The functionality is identical, but they have an extra `linenum` 
+ * parameter before the `desc` parameter. This is used to communicate to ok() 
+ * and ok_va() the line number of the test. If the test is inside a helper 
+ * function that's repeated many times, the line number inside the helper 
+ * function is sent to ok(), and that's not what's usually wanted. By having a 
+ * `const int linenumber` parameter in the helper function, the scopes above 
+ * can deliver the actual line the test is executed from.
+ *
+ * This is a list of the various macros, with a description of which types of 
+ * tests they're intended for, and the criteria for success:
+ *
+ * OK_EQUAL(a, b, desc, ...) - Verifies that the values `a` and `b` are 
+ * identical. It uses `==` for comparison and is intended for variables of any 
+ * type that supports the `==` operator.
+ * Example: OK_EQUAL(num_found, expected, "Found %u elements", expected);
+ *
+ * OK_ERROR(msg, ...) - Generates a test failure with `msg` as the description. 
+ * Used for unexpected errors that can't be ignored, incrementing the failure 
+ * counter and failing the test run. Typically used in conditional checks.
+ * Example: if (valgrind_lines(stderr_output))
+ *                  OK_ERROR("Found Valgrind output in stderr");
+ *
+ * OK_FAILURE(func, desc, ...) - Used for functions that return 0 for success 
+ * and non-zero for failure. Expects the function to fail (return non-zero). 
+ * Example: OK_FAILURE(stat(file), "File is unreadable or doesn't exist");
+ *
+ * OK_FALSE(val, desc, ...) - Used for boolean values or expressions expected 
+ * to be false. Negated expressions can be confusing, so `OK_TRUE` is usually a 
+ * clearer choice for complex checks.
+ * Examples: OK_FALSE(user_exists(user), "User %s doesn't exist", user);
+ *           OK_FALSE(result == 5, "Result is not 5");
+ *
+ * OK_NOTEQUAL(a, b, desc, ...) - Expects the values `a` and `b` to be 
+ * different. The `!=` operator is used for the comparison.
+ * Example: OK_NOTEQUAL(userid1, userid2, "The users have different IDs");
+ *
+ * OK_NOTNULL(p, desc, ...) - Succeeds if the pointer `p` is non-NULL.
+ * Examples: OK_NOTNULL(strstr(txt, substr), "Substring was found in text");
+ *           OK_NOTNULL(fp, "File pointer is not NULL");
+ *
+ * OK_NULL(p, desc, ...) - Expects the pointer `p` to be NULL.
+ * Examples: OK_NULL(getenv(var), "Environment variable %s is undefined", var);
+ *           OK_NULL(strchr(file, '/'), "No slash in file name \"%s\"", file);
+ *
+ * OK_STRCMP(a, b, desc, ...) - Compares the strings `a` and `b` and succeeds 
+ * if they're identical.
+ * Example: OK_STRCMP(file, "index.html", "File name is correct");
+ *
+ * OK_STRNCMP(a, b, len, desc, ...) - Compares the first `len` characters of 
+ * the strings `a` and `b` and succeeds if the substrings are identical.
+ * Example: OK_STRNCMP(file, "tmp", 3, "File name has \"tmp\" prefix");
+ *
+ * OK_SUCCESS(func, desc, ...) - Used for functions that return 0 for success 
+ * and non-zero for failure. Expects the function to succeed (return zero).
+ * Example: OK_SUCCESS(rmdir(tempdir), "Delete temporary directory");
+ *
+ * OK_TRUE(val, desc, ...) - Expects the boolean value `val` to be true. This 
+ * macro can also be used for comparisons or expressions not covered by other 
+ * macros, like checking if a value is larger or smaller than another.
+ * Examples: OK_TRUE(file_exists(file), "File %s was created", file);
+ *           OK_TRUE(errcount < 10, "Error count %d is below 10", errcount);
+ */
+
+#define OK_EQUAL_L(a, b, linenum, desc, ...)  ok(!((a) == (b)), (linenum), (desc), ##__VA_ARGS__)
+#define OK_ERROR_L(linenum, msg, ...)  ok(1, (linenum), (msg), ##__VA_ARGS__)
+#define OK_FAILURE_L(func, linenum, desc, ...)  ok(!(func), (linenum), (desc), ##__VA_ARGS__)
+#define OK_FALSE_L(val, linenum, desc, ...)  ok(!!(val), (linenum), (desc), ##__VA_ARGS__)
+#define OK_NOTEQUAL_L(a, b, linenum, desc, ...)  ok(!((a) != (b)), (linenum), (desc), ##__VA_ARGS__)
+#define OK_NOTNULL_L(p, linenum, desc, ...)  ok(!(p), (linenum), (desc), ##__VA_ARGS__)
+#define OK_NULL_L(p, linenum, desc, ...)  ok(!!(p), (linenum), (desc), ##__VA_ARGS__)
+#define OK_STRCMP_L(a, b, linenum, desc, ...)  ok(!!strcmp((a), (b)), (linenum), (desc), ##__VA_ARGS__)
+#define OK_STRNCMP_L(a, b, len, linenum, desc, ...)  ok(!!strncmp((a), (b), (len)), (linenum), (desc), ##__VA_ARGS__)
+#define OK_SUCCESS_L(func, linenum, desc, ...)  ok(!!(func), (linenum), (desc), ##__VA_ARGS__)
+#define OK_TRUE_L(val, linenum, desc, ...)  ok(!(val), (linenum), (desc), ##__VA_ARGS__)
+
+#define OK_EQUAL(a, b, desc, ...)  OK_EQUAL_L((a), (b), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_ERROR(msg, ...)  OK_ERROR_L(__LINE__, (msg), ##__VA_ARGS__)
+#define OK_FAILURE(func, desc, ...)  OK_FAILURE_L((func), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_FALSE(val, desc, ...)  OK_FALSE_L((val), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_NOTEQUAL(a, b, desc, ...)  OK_NOTEQUAL_L((a), (b), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_NOTNULL(p, desc, ...)  OK_NOTNULL_L((p), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_NULL(p, desc, ...)  OK_NULL_L((p), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_STRCMP(a, b, desc, ...)  OK_STRCMP_L((a), (b), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_STRNCMP(a, b, len, desc, ...)  OK_STRNCMP_L((a), (b), (len), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_SUCCESS(func, desc, ...)  OK_SUCCESS_L((func), __LINE__, (desc), ##__VA_ARGS__)
+#define OK_TRUE(val, desc, ...)  OK_TRUE_L((val), __LINE__, (desc), ##__VA_ARGS__)
+
 #define failed_ok(a)  do { \
 	if (errno) \
-		ok(1, "%s():%d: %s failed: %s", \
-		      __func__, __LINE__, (a), std_strerror(errno)); \
+		OK_ERROR("%s():%d: %s failed: %s", \
+		         __func__, __LINE__, (a), strerror(errno)); \
 	else \
-		ok(1, "%s():%d: %s failed", __func__, __LINE__, (a)); \
+		OK_ERROR("%s():%d: %s failed", __func__, __LINE__, (a)); \
 	errno = 0; \
 } while (0)
 
 #define TMPDIR  ".STDexecDTS-test.tmp"
+
+#define sc(cmd, num_stdout, num_stderr, desc, ...)  \
+        sc_func(__LINE__, (cmd), (num_stdout), (num_stderr), \
+                (desc), ##__VA_ARGS__);
+#define tc(cmd, num_stdout, num_stderr, desc, ...)  \
+        tc_func(__LINE__, (cmd), (num_stdout), (num_stderr), \
+                (desc), ##__VA_ARGS__);
 
 static char *execname;
 static int failcount = 0;
@@ -78,7 +196,7 @@ static void bail_out(const char *msg, ...) /* gncov */
  * Returns 0 if `i` is 0, otherwise it returns 1.
  */
 
-static int ok_va(const int i, const char *desc, va_list ap)
+static int ok_va(const int i, const int linenum, const char *desc, va_list ap)
 {
 	va_list ap_copy;
 	char *s, *s2;
@@ -88,7 +206,7 @@ static int ok_va(const int i, const char *desc, va_list ap)
 	if (!desc)
 		bail_out("%s(): desc is NULL", __func__); /* gncov */
 
-	printf("%sok %d - ", (i ? "not " : ""), ++testnum);
+	printf("%sok %d - %d: ", (i ? "not " : ""), ++testnum, linenum);
 	va_copy(ap_copy, ap);
 	s = allocstr_va(desc, ap_copy);
 	va_end(ap_copy);
@@ -115,7 +233,7 @@ static int ok_va(const int i, const char *desc, va_list ap)
  * for more info. Returns 0 if `i` is 0, otherwise it returns 1.
  */
 
-static int ok(const int i, const char *desc, ...)
+static int ok(const int i, const int linenum, const char *desc, ...)
 {
 	va_list ap;
 
@@ -125,7 +243,7 @@ static int ok(const int i, const char *desc, ...)
 		bail_out("%s(): desc is NULL", __func__); /* gncov */
 
 	va_start(ap, desc);
-	ok_va(i, desc, ap);
+	ok_va(i, linenum,  desc, ap);
 	va_end(ap);
 
 	return !!i;
@@ -285,7 +403,7 @@ static int valgrind_lines(const char *s)
 	const char *p = s;
 
 	if (!s)
-		return ok(1, "%s(): s == NULL", __func__); /* gncov */
+		return OK_ERROR("%s(): s == NULL", __func__); /* gncov */
 
 	while (*p) {
 		p = strstr(p, "\n==");
@@ -340,7 +458,7 @@ static int tc_cmp(const int identical, const char *got, const char *exp)
  * `exp_retval`. Returns nothing.
  */
 
-static void test_command(const char identical, char *cmd[],
+static void test_command(const int linenum, const char identical, char *cmd[],
                          const char *exp_stdout, const char *exp_stderr,
                          const int exp_retval, const char *desc, va_list ap)
 {
@@ -351,7 +469,7 @@ static void test_command(const char identical, char *cmd[],
 	assert(cmd);
 	assert(desc);
 	if (!cmd) {
-		ok(1, "%s(): cmd is NULL", __func__); /* gncov */
+		OK_ERROR_L(linenum, "%s(): cmd is NULL", __func__); /* gncov */
 		return; /* gncov */
 	}
 
@@ -374,18 +492,18 @@ static void test_command(const char identical, char *cmd[],
 	streams_init(&ss);
 	streams_exec(&o, &ss, cmd);
 	if (e_stdout) {
-		ok(tc_cmp(identical, ss.out.buf, e_stdout),
-		   "%s (stdout)", descbuf);
+		OK_FALSE_L(tc_cmp(identical, ss.out.buf, e_stdout), linenum,
+		         "%s (stdout)", descbuf);
 		if (tc_cmp(identical, ss.out.buf, e_stdout))
 			print_gotexp(ss.out.buf, e_stdout); /* gncov */
 	}
 	if (e_stderr) {
-		ok(tc_cmp(identical, ss.err.buf, e_stderr),
-		   "%s (stderr)", descbuf);
+		OK_FALSE_L(tc_cmp(identical, ss.err.buf, e_stderr), linenum,
+		                  "%s (stderr)", descbuf);
 		if (tc_cmp(identical, ss.err.buf, e_stderr))
 			print_gotexp(ss.err.buf, e_stderr); /* gncov */
 	}
-	ok(!(ss.ret == exp_retval), "%s (retval)", descbuf);
+	OK_EQUAL_L(ss.ret, exp_retval, linenum, "%s (retval)", descbuf);
 	free(descbuf);
 	free(e_stderr);
 	free(e_stdout);
@@ -400,18 +518,21 @@ static void test_command(const char identical, char *cmd[],
 		free(g); /* gncov */
 	}
 	if (valgrind_lines(ss.err.buf))
-		ok(1, "Found valgrind output"); /* gncov */
+		OK_ERROR_L(linenum, "Found valgrind output"); /* gncov */
 	streams_free(&ss);
 }
 
 /*
- * sc() - Execute command `cmd` and verify that stdout, stderr and the return 
- * value corresponds to the expected values. The `exp_*` variables are 
- * substrings that must occur in the actual output. Returns nothing.
+ * sc_func() - Execute command `cmd` and verify that stdout, stderr and the 
+ * return value corresponds to the expected values. The `exp_*` variables are 
+ * substrings that must occur in the actual output. Not meant to be called 
+ * directly, but via the uc() macro that logs the line number automatically. 
+ * Returns nothing.
  */
 
-static void sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
-               const int exp_retval, const char *desc, ...)
+static void sc_func(const int linenum, char *cmd[], const char *exp_stdout,
+                    const char *exp_stderr, const int exp_retval,
+                    const char *desc, ...)
 {
 	va_list ap;
 
@@ -419,18 +540,22 @@ static void sc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
 	assert(desc);
 
 	va_start(ap, desc);
-	test_command(0, cmd, exp_stdout, exp_stderr, exp_retval, desc, ap);
+	test_command(linenum, 0, cmd, exp_stdout, exp_stderr, exp_retval,
+	             desc, ap);
 	va_end(ap);
 }
 
 /*
- * tc() - Execute command `cmd` and verify that stdout, stderr and the return 
- * value are identical to the expected values. The `exp_*` variables are 
- * strings that must be identical to the actual output. Returns nothing.
+ * tc_func() - Execute command `cmd` and verify that stdout, stderr and the 
+ * return value are identical to the expected values. The `exp_*` variables are 
+ * strings that must be identical to the actual output. Not meant to be called 
+ * directly, but via the tc() macro that logs the line number automatically. 
+ * Returns nothing.
  */
 
-static void tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
-               const int exp_retval, const char *desc, ...)
+static void tc_func(const int linenum, char *cmd[], const char *exp_stdout,
+                    const char *exp_stderr, const int exp_retval,
+                    const char *desc, ...)
 {
 	va_list ap;
 
@@ -438,7 +563,8 @@ static void tc(char *cmd[], const char *exp_stdout, const char *exp_stderr,
 	assert(desc);
 
 	va_start(ap, desc);
-	test_command(1, cmd, exp_stdout, exp_stderr, exp_retval, desc, ap);
+	test_command(linenum, 1, cmd, exp_stdout, exp_stderr, exp_retval,
+	             desc, ap);
 	va_end(ap);
 }
 
@@ -475,9 +601,9 @@ static void test_diag_big(void)
 	p[size] = '\0';
 
 	outp = diag_output("%s", p);
-	ok(!outp, "diag_big: diag_output() returns ok");
-	ok(!(strlen(outp) == size + 2), "diag_big: String length is correct");
-	ok(!!strncmp(outp, "# aaabcaaa", 10), "diag_big: Beginning is ok");
+	OK_NOTNULL(outp, "diag_big: diag_output() returns ok");
+	OK_EQUAL(strlen(outp), size + 2, "diag_big: String length is correct");
+	OK_STRNCMP(outp, "# aaabcaaa", 10, "diag_big: Beginning is ok");
 	free(outp);
 	free(p);
 }
@@ -489,31 +615,44 @@ static void test_diag_big(void)
 
 static void test_diag(void) {
 	char *p, *s;
+	const char *desc;
 
 	diag("Test diag()");
 
-	ok(!diag(NULL), "diag(NULL)");
-	ok(!(diag_output(NULL) == NULL), "diag_output() receives NULL");
+	OK_EQUAL(diag(NULL), 1, "diag(NULL)");
+	OK_NULL(diag_output(NULL), "diag_output() receives NULL");
 
 	p = diag_output("Text with\nnewline");
-	ok(!p, "diag_output() with newline didn't return NULL");
+	OK_NOTNULL(p, "diag_output() with newline didn't return NULL");
 	s = "# Text with\n# newline";
-	ok(p ? !!strcmp(p, s) : 1, "diag_output() with newline, output is ok");
+	desc = "diag_output() with newline, output is ok";
+	if (p)
+		OK_STRCMP(p, s, desc);
+	else
+		OK_ERROR(desc); /* gncov */
 	print_gotexp(p, s);
 	free(p);
 
 	p = diag_output("\n\n\n\n\n\n\n\n\n\n");
-	ok(!p, "diag_output() with only newlines didn't return NULL");
+	OK_NOTNULL(p, "diag_output() with only newlines didn't return NULL");
 	s = "# \n# \n# \n# \n# \n# \n# \n# \n# \n# \n# ";
-	ok(p ? !!strcmp(p, s) : 1, "diag_output() with only newlines");
+	desc = "diag_output() with only newlines";
+	if (p)
+		OK_STRCMP(p, s, desc);
+	else
+		OK_ERROR(desc); /* gncov */
 	print_gotexp(p, s);
 	free(p);
 
 	p = diag_output("%d = %s, %d = %s, %d = %s",
 	                1, "one", 2, "two", 3, "three");
-	ok(!p, "diag_output() with %%d and %%s didn't return NULL");
+	OK_NOTNULL(p, "diag_output() with %%d and %%s didn't return NULL");
 	s = "# 1 = one, 2 = two, 3 = three";
-	ok(p ? !!strcmp(p, s) : 1, "diag_output() with %%d and %%s");
+	desc = "diag_output() with %%d and %%s";
+	if (p)
+		OK_STRCMP(p, s, desc);
+	else
+		OK_ERROR(desc); /* gncov */
 	print_gotexp(p, s);
 	free(p);
 
@@ -526,7 +665,7 @@ static void test_diag(void) {
  * values, or an empty string if the strings are identical. Returns nothing.
  */
 
-static void chk_go(const char *got, const char *exp,
+static void chk_go(const int linenum, const char *got, const char *exp,
                    const char *exp_got, const char *exp_exp)
 {
 	char *s, *exp_str;
@@ -551,8 +690,8 @@ static void chk_go(const char *got, const char *exp,
 		free(s); /* gncov */
 		return; /* gncov */
 	}
-	ok(!!strcmp(s, exp_str), "gotexp_output(\"%s\", \"%s\")",
-	                         no_null(got), no_null(exp));
+	OK_STRCMP_L(s, exp_str, linenum, "gotexp_output(\"%s\", \"%s\")",
+	            no_null(got), no_null(exp));
 	if (strcmp(s, exp_str))
 		diag("Got:\n%s\nExpected:\n%s", s, exp_str); /* gncov */
 	free(exp_str);
@@ -568,6 +707,8 @@ static void test_gotexp_output(void)
 {
 	diag("Test gotexp_output()");
 
+#define chk_go(got, exp, exp_got, exp_exp)  chk_go(__LINE__, (got), (exp), \
+                                                   (exp_got), (exp_exp))
 	chk_go("", "", "", "");
 	chk_go("a", "a", "", "");
 	chk_go("a", "b", "a", "b");
@@ -578,6 +719,7 @@ static void test_gotexp_output(void)
 	chk_go("a", NULL, "a", "(null)");
 	chk_go(NULL, "b", "(null)", "b");
 	chk_go(NULL, NULL, "", "");
+#undef chk_go
 }
 
 /*
@@ -618,15 +760,15 @@ static void test_valgrind_lines(void)
 
 	i = 0;
 	while (has[i]) {
-		ok(!valgrind_lines(has[i]),
-		   "valgrind_lines(): Has valgrind marker, string %d", i);
+		OK_TRUE(valgrind_lines(has[i]),
+		        "valgrind_lines(): Has valgrind marker, string %d", i);
 		i++;
 	}
 
 	i = 0;
 	while (hasnot[i]) {
-		ok(valgrind_lines(hasnot[i]),
-		   "valgrind_lines(): No valgrind marker, string %d", i);
+		OK_FALSE(valgrind_lines(hasnot[i]),
+		         "valgrind_lines(): No valgrind marker, string %d", i);
 		i++;
 	}
 }
@@ -638,8 +780,8 @@ static void test_valgrind_lines(void)
 static void test_std_strerror(void)
 {
 	diag("Test std_strerror()");
-	ok(!!strcmp(std_strerror(EACCES), "Permission denied"),
-	   "std_strerror(EACCES) is as expected");
+	OK_STRCMP(std_strerror(EACCES), "Permission denied",
+	          "std_strerror(EACCES) is as expected");
 }
 
                                 /*** io.c ***/
@@ -656,14 +798,14 @@ static void test_mystrdup(void)
 	char *s;
 
 	diag("Test mystrdup()");
-	ok(!(mystrdup(NULL) == NULL), "mystrdup(NULL) == NULL");
+	OK_NULL(mystrdup(NULL), "mystrdup(NULL) == NULL");
 
 	s = mystrdup(txt);
 	if (!s) {
 		failed_ok("mystrdup()"); /* gncov */
 		return; /* gncov */
 	}
-	ok(!!strcmp(s, txt), "mystrdup(): Strings are identical");
+	OK_STRCMP(s, txt, "mystrdup(): Strings are identical");
 	free(s);
 }
 
@@ -691,7 +833,7 @@ static void test_allocstr(void)
 		goto free_p; /* gncov */
 	}
 	alen = strlen(p2);
-	ok(!(alen == BUFSIZ * 2), "allocstr(): strlen is correct");
+	OK_EQUAL(alen, BUFSIZ * 2, "allocstr(): strlen is correct");
 	p3 = p2;
 	while (*p3) {
 		if (*p3 != 'a') {
@@ -700,7 +842,7 @@ static void test_allocstr(void)
 		}
 		p3++;
 	}
-	ok(!(p3 != NULL), "allocstr(): Content of string is correct");
+	OK_NOTNULL(p3, "allocstr(): Content of string is correct");
 	free(p2);
 free_p:
 	free(p);
@@ -712,13 +854,13 @@ free_p:
  * the test description. Returns nothing.
  */
 
-static void chk_cs(const char *s, const char *substr, const size_t count,
-                   const char *desc)
+static void chk_cs(const int linenum, const char *s, const char *substr,
+                   const size_t count, const char *desc)
 {
 	size_t result;
 
 	result = count_substr(s, substr);
-	ok(!(result == count), "count_substr(): %s", desc);
+	OK_EQUAL_L(result, count, linenum, "count_substr(): %s", desc);
 	if (result != count) {
 		char *s_result = allocstr("%zu", result), /* gncov */
 		     *s_count = allocstr("%zu", count); /* gncov */
@@ -742,6 +884,8 @@ static void test_count_substr(void)
 
 	diag("Test count_substr()");
 
+#define chk_cs(s, substr, count, desc)  chk_cs(__LINE__, (s), (substr), \
+                                               (count), (desc))
 	chk_cs("", "", 0, "s and substr are empty");
 	chk_cs("", "a", 0, "s is empty");
 	chk_cs("aaa", "", 0, "substr is empty");
@@ -773,6 +917,7 @@ static void test_count_substr(void)
 	s[bsize] = '\0';
 	chk_cs(s, "!!!!!!!!!!", bsize / 10, "Large buffer");
 	free(s);
+#undef chk_cs
 }
 
 /*
@@ -781,20 +926,19 @@ static void test_count_substr(void)
  * string `s`, resulting in the string `exp`. Returns nothing.
  */
 
-static void chk_sr(const char *s, const char *s1, const char *s2,
-                   const char *exp, const char *desc)
+static void chk_sr(const int linenum, const char *s, const char *s1,
+                   const char *s2, const char *exp, const char *desc)
 {
 	char *result;
 
 	assert(desc);
 
 	result = str_replace(s, s1, s2);
-	if (!result || !exp) {
-		ok(!(result == exp), "str_replace(): %s", desc);
-	} else {
-		ok(!!strcmp(result, exp), "str_replace(): %s", desc);
-		print_gotexp(result, exp);
-	}
+	if (!result || !exp)
+		OK_EQUAL_L(result, exp, linenum, "str_replace(): %s", desc);
+	else
+		OK_STRCMP_L(result, exp, linenum, "str_replace(): %s", desc);
+	print_gotexp(result, exp);
 	free(result);
 }
 
@@ -809,6 +953,7 @@ static void test_str_replace(void)
 
 	diag("Test str_replace()");
 
+#define chk_sr(s, s1, s2, exp, desc)  chk_sr(__LINE__, (s), (s1), (s2), (exp), (desc))
 	chk_sr("", "", "", "", "s, s1, and s2 are empty");
 	chk_sr("abc", "", "b", "abc", "s1 is empty");
 	chk_sr("", "a", "b", "", "s is empty");
@@ -853,6 +998,7 @@ static void test_str_replace(void)
 	chk_sr(s, "!!!!!!!!!!", "", "!!!!y!!!!z",
 	       "Large buffer with y and z");
 	free(s);
+#undef chk_sr
 }
 
 /*
@@ -876,9 +1022,9 @@ static void test_streams_exec(const struct Options *o)
 	mod_opt.valgrind = false;
 	streams_exec(&mod_opt, &ss, chp{ execname, NULL });
 	s = "streams_exec() with stdin data";
-	ok(!!strcmp(ss.out.buf, ""), "%s (stdout)", s);
-	ok(!strstr(ss.err.buf, ""), "%s (stderr)", s);
-	ok(!(ss.ret == EXIT_SUCCESS), "%s (retval)", s);
+	OK_STRCMP(ss.out.buf, "", "%s (stdout)", s);
+	OK_STRCMP(ss.err.buf, "", "%s (stderr)", s);
+	OK_EQUAL(ss.ret, EXIT_SUCCESS, "%s (retval)", s);
 	streams_free(&ss);
 }
 
@@ -912,16 +1058,16 @@ static void test_valgrind_option(const struct Options *o)
 		streams_exec(&mod_opt, &ss, chp{ "valgrind", /* gncov */
 		                                 "--version", NULL });
 		if (!strstr(ss.out.buf, "valgrind-")) { /* gncov */
-			ok(1, "Valgrind is not installed," /* gncov */
-			      " disabling Valgrind checks");
+			OK_ERROR("Valgrind is not installed," /* gncov */
+			         " disabling Valgrind checks");
 			set_opt_valgrind(false); /* gncov */
 		} else {
-			ok(0, "Valgrind is installed"); /* gncov */
+			OK_SUCCESS(0, "Valgrind is installed"); /* gncov */
 		}
 		streams_free(&ss); /* gncov */
 	}
 
-	sc(chp{ execname, "--valgrind", "-h", NULL },
+	sc((chp{ execname, "--valgrind", "-h", NULL }),
 	   "Show this",
 	   "",
 	   EXIT_SUCCESS,
@@ -967,34 +1113,34 @@ static void test_standard_options(void)
 	diag("Test standard options");
 
 	diag("Test -h/--help");
-	sc(chp{ execname, "-h", NULL },
+	sc((chp{ execname, "-h", NULL }),
 	   "  Show this help",
 	   "",
 	   EXIT_SUCCESS,
 	   "-h");
-	sc(chp{ execname, "--help", NULL },
+	sc((chp{ execname, "--help", NULL }),
 	   "  Show this help",
 	   "",
 	   EXIT_SUCCESS,
 	   "--help");
 
 	diag("Test -v/--verbose");
-	sc(chp{ execname, "-h", "--verbose", NULL },
+	sc((chp{ execname, "-h", "--verbose", NULL }),
 	   "  Show this help",
 	   "",
 	   EXIT_SUCCESS,
 	   "-hv: Help text is displayed");
-	sc(chp{ execname, "-hv", NULL },
+	sc((chp{ execname, "-hv", NULL }),
 	   EXEC_VERSION,
 	   "",
 	   EXIT_SUCCESS,
 	   "-hv: Version number is printed along with the help text");
-	sc(chp{ execname, "-vvv", "--verbose", "--help", NULL },
+	sc((chp{ execname, "-vvv", "--verbose", "--help", NULL }),
 	   "  Show this help",
 	   EXECSTR ": main(): Using verbose level 4\n",
 	   EXIT_SUCCESS,
 	   "-vvv --verbose: Using correct verbose level");
-	sc(chp{ execname, "-vvvvq", "--verbose", "--verbose", "--help", NULL },
+	sc((chp{ execname, "-vvvvq", "--verbose", "--verbose", "--help", NULL }),
 	   "  Show this help",
 	   EXECSTR ": main(): Using verbose level 5\n",
 	   EXIT_SUCCESS,
@@ -1003,7 +1149,7 @@ static void test_standard_options(void)
 	diag("Test --version");
 	s = allocstr("%s %s (%s)\n", execname, EXEC_VERSION, EXEC_DATE);
 	if (s) {
-		sc(chp{ execname, "--version", NULL },
+		sc((chp{ execname, "--version", NULL }),
 		   s,
 		   "",
 		   EXIT_SUCCESS,
@@ -1012,26 +1158,26 @@ static void test_standard_options(void)
 	} else {
 		failed_ok("allocstr()"); /* gncov */
 	}
-	tc(chp{ execname, "--version", "-q", NULL },
+	tc((chp{ execname, "--version", "-q", NULL }),
 	   EXEC_VERSION "\n",
 	   "",
 	   EXIT_SUCCESS,
 	   "--version with -q shows only the version number");
 
 	diag("Test --license");
-	sc(chp{ execname, "--license", NULL },
+	sc((chp{ execname, "--license", NULL }),
 	   "GNU General Public License",
 	   "",
 	   EXIT_SUCCESS,
 	   "--license: It's GPL");
-	sc(chp{ execname, "--license", NULL },
+	sc((chp{ execname, "--license", NULL }),
 	   "either version 2 of the License",
 	   "",
 	   EXIT_SUCCESS,
 	   "--license: It's version 2 of the GPL");
 
 	diag("Unknown option");
-	sc(chp{ execname, "--gurgle", NULL },
+	sc((chp{ execname, "--gurgle", NULL }),
 	   "",
 	   OPTION_ERROR_STR,
 	   EXIT_FAILURE,
@@ -1058,7 +1204,7 @@ static void functests_with_tempdir(void)
 	diag("Test functions that need a temporary directory for stdout and"
 	     " stderr");
 	result = mkdir(TMPDIR, 0755);
-	ok(!!result, "mkdir " TMPDIR " for function tests");
+	OK_SUCCESS(result, "mkdir " TMPDIR " for function tests");
 	if (result) {
 		diag("test %d: %s, skipping tests", /* gncov */
 		     testnum, strerror(errno)); /* gncov */
@@ -1067,7 +1213,7 @@ static void functests_with_tempdir(void)
 	}
 
 	result = rmdir(TMPDIR);
-	ok(!!result, "rmdir " TMPDIR " after function tests");
+	OK_SUCCESS(result, "rmdir " TMPDIR " after function tests");
 	if (result) {
 		diag("test %d: %s", testnum, strerror(errno)); /* gncov */
 		errno = 0; /* gncov */
@@ -1087,7 +1233,8 @@ static void tests_with_tempdir(void)
 	int result;
 
 	result = mkdir(TMPDIR, 0777);
-	ok(!!result, "%s(): Create temporary directory %s", __func__, TMPDIR);
+	OK_SUCCESS(result, "%s(): Create temporary directory %s",
+	                   __func__, TMPDIR);
 	if (result) {
 		diag("Cannot create directory \"%s\", skipping" /* gncov */
 		     " tests: %s", TMPDIR, strerror(errno)); /* gncov */
@@ -1095,7 +1242,7 @@ static void tests_with_tempdir(void)
 		return; /* gncov */
 	}
 
-	ok(!!rmdir(TMPDIR), "Delete temporary directory %s", TMPDIR);
+	OK_SUCCESS(rmdir(TMPDIR), "Delete temporary directory %s", TMPDIR);
 }
 
 /*
@@ -1181,9 +1328,33 @@ int opt_selftest(char *main_execname, const struct Options *o)
 }
 
 #undef EXECSTR
+#undef OK_EQUAL
+#undef OK_EQUAL_L
+#undef OK_ERROR
+#undef OK_ERROR_L
+#undef OK_FAILURE
+#undef OK_FAILURE_L
+#undef OK_FALSE
+#undef OK_FALSE_L
+#undef OK_NOTEQUAL
+#undef OK_NOTEQUAL_L
+#undef OK_NOTNULL
+#undef OK_NOTNULL_L
+#undef OK_NULL
+#undef OK_NULL_L
+#undef OK_STRCMP
+#undef OK_STRCMP_L
+#undef OK_STRNCMP
+#undef OK_STRNCMP_L
+#undef OK_SUCCESS
+#undef OK_SUCCESS_L
+#undef OK_TRUE
+#undef OK_TRUE_L
 #undef OPTION_ERROR_STR
 #undef TMPDIR
 #undef chp
 #undef failed_ok
+#undef sc
+#undef tc
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */
