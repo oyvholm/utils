@@ -808,6 +808,8 @@ static void test_valgrind_lines(void)
 	}
 }
 
+                            /*** STDexecDTS.c ***/
+
 /*
  * test_std_strerror() - Tests the std_strerror() function. Returns nothing.
  */
@@ -1232,8 +1234,8 @@ static void functests_with_tempdir(void)
 	result = mkdir(TMPDIR, 0755);
 	OK_SUCCESS(result, "mkdir " TMPDIR " for function tests");
 	if (result) {
-		diag("test %d: %s, skipping tests", /* gncov */
-		     testnum, strerror(errno)); /* gncov */
+		diag("Cannot create directory \"%s\", skipping" /* gncov */
+		     " tests: %s", TMPDIR, strerror(errno)); /* gncov */
 		errno = 0; /* gncov */
 		return; /* gncov */
 	}
@@ -1288,7 +1290,6 @@ static void test_functions(const struct Options *o)
 	test_diag();
 	test_gotexp_output();
 	test_valgrind_lines();
-	test_str_replace();
 
 	diag("Test various routines");
 
@@ -1301,6 +1302,7 @@ static void test_functions(const struct Options *o)
 	test_mystrdup();
 	test_allocstr();
 	test_count_substr();
+	test_str_replace();
 
 	functests_with_tempdir();
 }
