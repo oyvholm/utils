@@ -294,9 +294,9 @@ static int valgrind_lines(const char *s)
 		p += 3;
 		if (!*p)
 			return 0;
-		if (!isdigit(*p))
+		if (!isdigit((unsigned char)*p))
 			continue;
-		while (isdigit(*p))
+		while (isdigit((unsigned char)*p))
 			p++;
 		if (!*p)
 			return 0;
