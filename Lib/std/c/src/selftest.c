@@ -233,47 +233,45 @@ static int diag(const char *format, ...)
 }
 
 /*
- * gotexp_output() - Generate the output used by print_gotexp(). The output is 
- * returned as an allocated string that must be free()'ed after use. Returns 
- * NULL if `got` or `exp` is NULL or allocstr() fails. Otherwise, it returns a 
- * pointer to the string with the output.
+ * gotexp_output() - Generate the output used by print_gotexp(). Returns NULL 
+ * if allocstr() or mystrdup() fails. Otherwise, it returns a pointer to an 
+ * allocated string with the output.
  */
 
 static char *gotexp_output(const char *got, const char *exp)
 {
 	char *s;
 
-	if (!got || !exp)
-		return NULL;
-
-	s = allocstr("         got: '%s'\n"
-	             "    expected: '%s'",
-	             got, exp);
-	if (!s)
-		failed_ok("allocstr()"); /* gncov */
+	if (got == exp || (got && exp && !strcmp(got, exp))) {
+		s = mystrdup("");
+		if (!s)
+			failed_ok("mystrdup()"); /* gncov */
+	} else {
+		s = allocstr("         got: '%s'\n"
+		             "    expected: '%s'",
+		             no_null(got), no_null(exp));
+		if (!s)
+			failed_ok("allocstr()"); /* gncov */
+	}
 
 	return s;
 }
 
 /*
  * print_gotexp() - Print the value of the actual and exepected data. Used when 
- * a test fails. Returns 1 if `got` or `exp` is NULL, otherwise 0.
+ * a test fails. Returns 1 if `got` or `exp` are different, otherwise 0.
  */
 
 static int print_gotexp(const char *got, const char *exp)
 {
 	char *s;
 
-	if (!got || !exp)
-		return 1;
-	if (!strcmp(got, exp))
-		return 0;
+	s = gotexp_output(got, exp);
+	if (s && *s)
+		diag(s); /* gncov */
+	free(s);
 
-	s = gotexp_output(got, exp); /* gncov */
-	diag(s); /* gncov */
-	free(s); /* gncov */
-
-	return 0; /* gncov */
+	return 0;
 }
 
 /*
@@ -523,40 +521,63 @@ static void test_diag(void) {
 }
 
 /*
+ * chk_go() - Used by test_gotexp_output(). Verifies that `gotexp_output(got, 
+ * exp)` returns the correct output with the correct `exp_got` and `exp_exp` 
+ * values, or an empty string if the strings are identical. Returns nothing.
+ */
+
+static void chk_go(const char *got, const char *exp,
+                   const char *exp_got, const char *exp_exp)
+{
+	char *s, *exp_str;
+
+	assert(exp_got);
+	assert(exp_exp);
+
+	s = gotexp_output(got, exp);
+	if (!s) {
+		failed_ok("gotexp_output()"); /* gncov */
+		return; /* gncov */
+	}
+	if (exp_got == exp_exp
+	    || (exp_got && exp_exp && !strcmp(exp_got, exp_exp))) {
+		exp_str = mystrdup("");
+	} else {
+		exp_str = allocstr("         got: '%s'\n"
+		                   "    expected: '%s'", exp_got, exp_exp);
+	}
+	if (!exp_str) {
+		failed_ok("mystrdup() or allocstr()"); /* gncov */
+		free(s); /* gncov */
+		return; /* gncov */
+	}
+	ok(!!strcmp(s, exp_str), "gotexp_output(\"%s\", \"%s\")",
+	                         no_null(got), no_null(exp));
+	if (strcmp(s, exp_str))
+		diag("Got:\n%s\nExpected:\n%s", s, exp_str); /* gncov */
+	free(exp_str);
+	free(s);
+}
+
+/*
  * test_gotexp_output() - Tests the gotexp_output() function. print_gotexp() 
  * can't be tested directly because it would pollute stderr. Returns nothing.
  */
 
 static void test_gotexp_output(void)
 {
-	char *p, *s;
-
 	diag("Test gotexp_output()");
 
-	ok(!!gotexp_output(NULL, "a"), "gotexp_output(NULL, \"a\")");
+	chk_go("", "", "", "");
+	chk_go("a", "a", "", "");
+	chk_go("a", "b", "a", "b");
+	chk_go("got this", "expected this", "got this", "expected this");
+	chk_go("with\nnewline", "also with\nnewline",
+	       "with\nnewline", "also with\nnewline");
 
-	ok(!!strcmp((p = gotexp_output("got this", "expected this")),
-	            "         got: 'got this'\n"
-	            "    expected: 'expected this'"),
-	   "gotexp_output(\"got this\", \"expected this\")");
-	free(p);
-
-	ok(!print_gotexp(NULL, "expected this"),
-	   "print_gotexp(): Arg is NULL");
-
-	s = "gotexp_output(\"a\", \"a\")";
-	ok(!(p = gotexp_output("a", "a")), "%s doesn't return NULL", s);
-	ok(!!strcmp(p, "         got: 'a'\n    expected: 'a'"),
-	   "%s: Contents is ok", s);
-	free(p);
-
-	s = "gotexp_output() with newline";
-	ok(!(p = gotexp_output("with\nnewline", "also with\nnewline")),
-	   "%s: Doesn't return NULL", s);
-	ok(!!strcmp(p, "         got: 'with\nnewline'\n"
-	               "    expected: 'also with\nnewline'"),
-	   "%s: Contents is ok", s);
-	free(p);
+	chk_go("a", NULL, "a", "(null)");
+	chk_go(NULL, "b", "(null)", "b");
+	chk_go(NULL, NULL, "", "");
 }
 
 /*
@@ -624,6 +645,27 @@ static void test_std_strerror(void)
                                 /*** io.c ***/
 
                               /*** strings.c ***/
+
+/*
+ * test_mystrdup() - Tests the mystrdup() function. Returns nothing.
+ */
+
+static void test_mystrdup(void)
+{
+	const char *txt = "Test string";
+	char *s;
+
+	diag("Test mystrdup()");
+	ok(!(mystrdup(NULL) == NULL), "mystrdup(NULL) == NULL");
+
+	s = mystrdup(txt);
+	if (!s) {
+		failed_ok("mystrdup()"); /* gncov */
+		return; /* gncov */
+	}
+	ok(!!strcmp(s, txt), "mystrdup(): Strings are identical");
+	free(s);
+}
 
 /*
  * test_allocstr() - Tests the allocstr() function. Returns nothing.
@@ -1084,6 +1126,7 @@ static void test_functions(const struct Options *o)
 	/* io.c */
 
 	/* strings.c */
+	test_mystrdup();
 	test_allocstr();
 	test_count_substr();
 
