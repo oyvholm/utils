@@ -51,6 +51,7 @@
 	if ((got) != (exp)) \
 		print_gotexp_nostr("%lu", (got), (exp)); \
 } while (0)
+#define DIAG_DEBL  diag("DEBL: %s:%s():%d", __FILE__, __func__, __LINE__)
 /*
  * Main test macros, meant to be a human-friendly frontend against ok(). Unlike 
  * most other testing frameworks that return 1 for success and 0 for error, 
@@ -1353,6 +1354,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 	return failcount ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
+#undef DIAG_DEBL
 #undef EXECSTR
 #undef OK_EQUAL
 #undef OK_EQUAL_L
