@@ -269,6 +269,12 @@ testsrc:
 	@$(MAKE) -s longlines
 	@echo Check for duplicated test descriptions
 	@$(MAKE) -s dupdesc
+	@echo "Count #define and #undef in selftest.c"
+	@(grep '^#define' selftest.c | wc -l; \
+	  grep '^#undef' selftest.c | wc -l) | uniq | fmt \
+	  | grep ' ' | grep --color=always . && exit 1 || true
+	@echo "Search for failed() in selftest.c"
+	@grep -n '\<failed(' --color=always selftest.c && exit 1 || true
 
 .PHONY: tlok
 tlok:
