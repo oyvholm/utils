@@ -130,9 +130,38 @@ static char **prepare_valgrind_cmd(char *cmd[]) /* gncov */
 }
 
 /*
+ * write_stdin_to_child() - Writes `len` bytes from `buf` to `fp` and uses a 
+ * loop to make sure the whole input is received by the child process. Returns 
+ * 0 if successful, or 1 if write() fails.
+ */
+
+static int write_stdin_to_child(const int fd, const char *buf,
+                                const size_t len)
+{
+	size_t total_written = 0;
+
+	assert(buf);
+
+	while (total_written < len) {
+		ssize_t written = write(fd, buf + total_written,
+		                        len - total_written);
+
+		if (written == -1) {
+			if (errno == EINTR) /* gncov */
+				continue; /* gncov */
+			failed("write() to stdin pipe"); /* gncov */
+			return 1; /* gncov */
+		}
+		total_written += (size_t)written;
+	}
+
+	return 0;
+}
+
+/*
  * streams_exec() - Execute a command and store stdout, stderr and the return 
  * value into `dest`. `cmd` is an array of arguments, and the last element must 
- * be NULL. The return value is somewhat undefined at this point in time.
+ * be NULL. Returns the exit value from the process.
  */
 
 int streams_exec(const struct Options *o, struct streams *dest, char *cmd[])
@@ -142,12 +171,13 @@ int streams_exec(const struct Options *o, struct streams *dest, char *cmd[])
 	int outfd[2] = { -1, -1 };
 	int errfd[2] = { -1, -1 };
 	pid_t pid;
-	FILE *infp = NULL, *outfp = NULL, *errfp = NULL;
+	FILE *outfp = NULL, *errfp = NULL;
 	struct sigaction old_action, new_action;
 
 	assert(o);
 	assert(dest);
 	assert(cmd);
+
 	if (o->verbose >= 10) {
 		int i = -1; /* gncov */
 
@@ -218,21 +248,27 @@ int streams_exec(const struct Options *o, struct streams *dest, char *cmd[])
 		goto cleanup; /* gncov */
 	}
 
-	if (!(infp = fdopen(infd[1], "w"))
-	    || !(outfp = fdopen(outfd[0], "r"))
+	if (!(outfp = fdopen(outfd[0], "r"))
 	    || !(errfp = fdopen(errfd[0], "r"))) {
 		failed("fdopen()"); /* gncov */
 		goto cleanup; /* gncov */
 	}
 
-	if (dest->in.buf && dest->in.len)
-		fwrite(dest->in.buf, 1, dest->in.len, infp);
+	/* Write to stdin using direct write() call and close immediately */
+	if (dest->in.buf && dest->in.len) {
+		if (write_stdin_to_child(infd[1], dest->in.buf, dest->in.len))
+			goto cleanup; /* gncov */
+	}
+	close(infd[1]);
+	infd[1] = -1;
+
+	/* Now read from stdout and stderr */
 	read_from_fp(errfp, &dest->err);
 	read_from_fp(outfp, &dest->out);
 	msg(10, "%s():%d: dest->out.buf = \"%s\"",
-	        __func__, __LINE__, dest->out.buf);
+	        __func__, __LINE__, no_null(dest->out.buf));
 	msg(10, "%s():%d: dest->err.buf = \"%s\"",
-	        __func__, __LINE__, dest->err.buf);
+	        __func__, __LINE__, no_null(dest->err.buf));
 
 	wait(&dest->ret);
 	dest->ret = dest->ret >> 8;
@@ -250,14 +286,8 @@ cleanup:
 		fclose(errfp);
 	if (outfp)
 		fclose(outfp);
-	if (infp)
-		fclose(infp);
 	if (infd[1] != -1)
-		close(infd[1]);
-	if (outfd[0] != -1)
-		close(outfd[0]);
-	if (errfd[0] != -1)
-		close(errfd[0]);
+		close(infd[1]); /* gncov */
 
 	/* Restore original signal handling */
 	if (sigaction(SIGPIPE, &old_action, NULL) == -1)
