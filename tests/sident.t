@@ -481,9 +481,12 @@ END
 
     # }}}
     diag("Validate POD (Plain Old Documentation)");
-    testcmd("podchecker $CMD", # {{{
-        "",
+    # Redirecting stderr to stdout because it apparently has started to print 
+    # to stdout in newer versions instead of stderr. This should work with all 
+    # of them.
+    testcmd("(podchecker $CMD 2>&1)", # {{{
         "$CMD pod syntax OK.\n",
+        "",
         0,
         "$CMD contains valid POD",
     );
