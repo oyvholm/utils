@@ -51,41 +51,31 @@ char *mystrdup(const char *s)
 char *allocstr_va(const char *format, va_list ap)
 {
 	char *p;
-	size_t size = BUFSIZ;
 	int needed;
 	va_list ap_copy;
+	size_t size;
 
 	assert(format);
 	if (!format)
 		return NULL; /* gncov */
 
+	va_copy(ap_copy, ap);
+	needed = vsnprintf(NULL, 0, format, ap_copy);
+	va_end(ap_copy);
+
+	if (needed < 0)
+		return NULL; /* gncov */
+
+	size = (size_t)needed + 1;
 	p = malloc(size);
 	if (!p)
 		return NULL; /* gncov */
 
-	va_copy(ap_copy, ap);
 	needed = vsnprintf(p, size, format, ap);
 	if (needed < 0) {
 		free(p); /* gncov */
-		va_end(ap_copy); /* gncov */
 		return NULL; /* gncov */
 	}
-	if ((size_t)needed >= size) {
-		free(p);
-		size = (size_t)needed + 1;
-		p = malloc(size);
-		if (!p) {
-			va_end(ap_copy); /* gncov */
-			return NULL; /* gncov */
-		}
-		needed = vsnprintf(p, size, format, ap_copy);
-		if (needed < 0) {
-			free(p); /* gncov */
-			va_end(ap_copy); /* gncov */
-			return NULL; /* gncov */
-		}
-	}
-	va_end(ap_copy);
 
 	return p;
 }
