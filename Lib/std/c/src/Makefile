@@ -204,7 +204,7 @@ edit: tags
 
 .PHONY: gcov
 gcov:
-	$(MAKE) clean test GCOV=1
+	$(MAKE) -s clean test GCOV=1 DEVEL=1
 	gcov $(CFILES)
 	@echo $$(grep -E '^ +#####:' *.c.gcov | wc -l) untested lines >&2
 	@echo $$(grep -E '^ +#####:' *.c.gcov | grep -F '/* gncov */' \
