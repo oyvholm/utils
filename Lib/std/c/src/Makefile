@@ -19,6 +19,7 @@ CFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
 CFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
 CFLAGS += $(DEVFLAGS_STR)
 CFLAGS += -Wall
+CFLAGS += -Wno-gnu-zero-variadic-macro-arguments
 CFLAGS += -c
 DEPS = version.h $(HFILES) Makefile
 DEVEL =
