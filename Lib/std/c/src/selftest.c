@@ -214,32 +214,6 @@ static int print_gotexp(const char *got, const char *exp)
 }
 
 /*
- * tc_cmp() - Comparison function used by test_command(). There are 2 types of 
- * verification: One that demands that the whole output must be identical to 
- * the expected value, and the other is just a substring search. `got` is the 
- * actual output from the program, and `exp` is the expected output or 
- * substring.
- *
- * If `identical` is 0 (substring search) and `exp` is empty, the output in 
- * `got` must also be empty for the test to succeed.
- *
- * Returns 0 if the string was found, otherwise 1.
- */
-
-static int tc_cmp(const int identical, const char *got, const char *exp)
-{
-	assert(got);
-	assert(exp);
-	if (!got || !exp)
-		return 1; /* gncov */
-
-	if (identical || !*exp)
-		return !!strcmp(got, exp);
-
-	return !strstr(got, exp);
-}
-
-/*
  * valgrind_lines() - Searches for Valgrind markers ("\n==DIGITS==") in `s`, 
  * used by test_command(). If a marker is found or `s` is NULL, it returns 1. 
  * Otherwise, it returns 0.
@@ -271,6 +245,32 @@ static int valgrind_lines(const char *s)
 	}
 
 	return 0;
+}
+
+/*
+ * tc_cmp() - Comparison function used by test_command(). There are 2 types of 
+ * verification: One that demands that the whole output must be identical to 
+ * the expected value, and the other is just a substring search. `got` is the 
+ * actual output from the program, and `exp` is the expected output or 
+ * substring.
+ *
+ * If `identical` is 0 (substring search) and `exp` is empty, the output in 
+ * `got` must also be empty for the test to succeed.
+ *
+ * Returns 0 if the string was found, otherwise 1.
+ */
+
+static int tc_cmp(const int identical, const char *got, const char *exp)
+{
+	assert(got);
+	assert(exp);
+	if (!got || !exp)
+		return 1; /* gncov */
+
+	if (identical || !*exp)
+		return !!strcmp(got, exp);
+
+	return !strstr(got, exp);
 }
 
 /*
@@ -548,86 +548,6 @@ static void test_valgrind_lines(void)
 }
 
 /*
- * chk_sr() - Used by test_str_replace(). Verifies that all non-overlapping 
- * occurrences of substring `s1` are replaced with the string `s2` in the 
- * string `s`, resulting in the string `exp`. Returns nothing.
- */
-
-static void chk_sr(const char *s, const char *s1, const char *s2,
-                   const char *exp, const char *desc)
-{
-	char *result;
-
-	assert(desc);
-
-	result = str_replace(s, s1, s2);
-	if (!result || !exp) {
-		ok(!(result == exp), "str_replace(): %s", desc);
-	} else {
-		ok(!!strcmp(result, exp), "str_replace(): %s", desc);
-		print_gotexp(result, exp);
-	}
-	free(result);
-}
-
-/*
- * test_str_replace() - Tests the str_replace() function. Returns nothing.
- */
-
-static void test_str_replace(void)
-{
-	char *s;
-	size_t bsize = 10000;
-
-	diag("Test str_replace()");
-
-	chk_sr("", "", "", "", "s, s1, and s2 are empty");
-	chk_sr("abc", "", "b", "abc", "s1 is empty");
-	chk_sr("", "a", "b", "", "s is empty");
-	chk_sr("", "a", "", "", "s and s2 is empty");
-
-	chk_sr(NULL, "a", "b", NULL, "s is NULL");
-	chk_sr("abc", NULL, "b", NULL, "s1 is NULL");
-	chk_sr("abc", "a", NULL, NULL, "s2 is NULL");
-	chk_sr(NULL, NULL, NULL, NULL, "s, s1, and s2 is NULL");
-
-	chk_sr("test", "test", "test", "test", "s, s1, and s2 are identical");
-	chk_sr("abc", "b", "DEF", "aDEFc", "abc, replace b with DEF");
-	chk_sr("abcabcabc", "b", "DEF", "aDEFcaDEFcaDEFc",
-	       "abcabcabc, replace all b with DEF");
-	chk_sr("abcdefgh", "defg", "", "abch", "Replace defg with nothing");
-	chk_sr("abcde", "bcd", "X", "aXe", "Replace bcd with X");
-	chk_sr("abc", "d", "X", "abc", "d not in abc");
-	chk_sr("ababab", "aba", "X", "Xbab", "Replace aba in ababab");
-	chk_sr("abc", "b", "", "ac", "Replace b with nothing");
-	chk_sr("abc", "", "X", "abc", "Replace empty with X");
-	chk_sr("Ḡṹṛḡḷḗ", "ḡ", "X", "ḠṹṛXḷḗ", "Replace UTF-8 character with X");
-
-	s = malloc(bsize + 1);
-	if (!s) {
-		failed_ok("malloc()"); /* gncov */
-		return; /* gncov */
-	}
-	memset(s, '!', bsize);
-	s[bsize] = '\0';
-	chk_sr(s, "!!!!!!!!!!", "", "", "Replace all text in large buffer");
-	free(s);
-
-	s = malloc(bsize + 1);
-	if (!s) {
-		failed_ok("malloc()"); /* gncov */
-		return; /* gncov */
-	}
-	memset(s, '!', bsize);
-	s[1234] = 'y';
-	s[bsize - 1] = 'z';
-	s[bsize] = '\0';
-	chk_sr(s, "!!!!!!!!!!", "", "!!!!y!!!!z",
-	       "Large buffer with y and z");
-	free(s);
-}
-
-/*
  * Various functions
  */
 
@@ -751,6 +671,86 @@ static void test_count_substr(void)
 }
 
 /*
+ * chk_sr() - Used by test_str_replace(). Verifies that all non-overlapping 
+ * occurrences of substring `s1` are replaced with the string `s2` in the 
+ * string `s`, resulting in the string `exp`. Returns nothing.
+ */
+
+static void chk_sr(const char *s, const char *s1, const char *s2,
+                   const char *exp, const char *desc)
+{
+	char *result;
+
+	assert(desc);
+
+	result = str_replace(s, s1, s2);
+	if (!result || !exp) {
+		ok(!(result == exp), "str_replace(): %s", desc);
+	} else {
+		ok(!!strcmp(result, exp), "str_replace(): %s", desc);
+		print_gotexp(result, exp);
+	}
+	free(result);
+}
+
+/*
+ * test_str_replace() - Tests the str_replace() function. Returns nothing.
+ */
+
+static void test_str_replace(void)
+{
+	char *s;
+	size_t bsize = 10000;
+
+	diag("Test str_replace()");
+
+	chk_sr("", "", "", "", "s, s1, and s2 are empty");
+	chk_sr("abc", "", "b", "abc", "s1 is empty");
+	chk_sr("", "a", "b", "", "s is empty");
+	chk_sr("", "a", "", "", "s and s2 is empty");
+
+	chk_sr(NULL, "a", "b", NULL, "s is NULL");
+	chk_sr("abc", NULL, "b", NULL, "s1 is NULL");
+	chk_sr("abc", "a", NULL, NULL, "s2 is NULL");
+	chk_sr(NULL, NULL, NULL, NULL, "s, s1, and s2 is NULL");
+
+	chk_sr("test", "test", "test", "test", "s, s1, and s2 are identical");
+	chk_sr("abc", "b", "DEF", "aDEFc", "abc, replace b with DEF");
+	chk_sr("abcabcabc", "b", "DEF", "aDEFcaDEFcaDEFc",
+	       "abcabcabc, replace all b with DEF");
+	chk_sr("abcdefgh", "defg", "", "abch", "Replace defg with nothing");
+	chk_sr("abcde", "bcd", "X", "aXe", "Replace bcd with X");
+	chk_sr("abc", "d", "X", "abc", "d not in abc");
+	chk_sr("ababab", "aba", "X", "Xbab", "Replace aba in ababab");
+	chk_sr("abc", "b", "", "ac", "Replace b with nothing");
+	chk_sr("abc", "", "X", "abc", "Replace empty with X");
+	chk_sr("Ḡṹṛḡḷḗ", "ḡ", "X", "ḠṹṛXḷḗ", "Replace UTF-8 character with X");
+
+	s = malloc(bsize + 1);
+	if (!s) {
+		failed_ok("malloc()"); /* gncov */
+		return; /* gncov */
+	}
+	memset(s, '!', bsize);
+	s[bsize] = '\0';
+	chk_sr(s, "!!!!!!!!!!", "", "", "Replace all text in large buffer");
+	free(s);
+
+	s = malloc(bsize + 1);
+	if (!s) {
+		failed_ok("malloc()"); /* gncov */
+		return; /* gncov */
+	}
+	memset(s, '!', bsize);
+	s[1234] = 'y';
+	s[bsize - 1] = 'z';
+	s[bsize] = '\0';
+	chk_sr(s, "!!!!!!!!!!", "", "!!!!y!!!!z",
+	       "Large buffer with y and z");
+	free(s);
+}
+
+/*
  * test_streams_exec() - Tests the streams_exec() function. Returns nothing.
  */
 
@@ -817,6 +817,34 @@ static void test_valgrind_option(const struct Options *o)
 	   "",
 	   EXIT_SUCCESS,
 	   "--valgrind -h");
+}
+
+/*
+ * print_version_info() - Display output from the --version command. Returns 0 
+ * if ok, or 1 if streams_exec() failed.
+ */
+
+static int print_version_info(const struct Options *o)
+{
+	struct streams ss;
+	int res;
+
+	assert(o);
+	streams_init(&ss);
+	res = streams_exec(o, &ss, chp{ execname, "--version", NULL });
+	if (res) {
+		failed_ok("streams_exec()"); /* gncov */
+		if (ss.err.buf) /* gncov */
+			diag(ss.err.buf); /* gncov */
+		return 1; /* gncov */
+	}
+	diag("========== BEGIN version info ==========\n"
+	     "%s"
+	     "=========== END version info ===========",
+	     ss.out.buf ? ss.out.buf : "(null)");
+	streams_free(&ss);
+
+	return 0;
 }
 
 /*
@@ -924,34 +952,6 @@ static void test_functions(const struct Options *o)
 	test_std_strerror();
 	test_allocstr();
 	test_count_substr();
-}
-
-/*
- * print_version_info() - Display output from the --version command. Returns 0 
- * if ok, or 1 if streams_exec() failed.
- */
-
-static int print_version_info(const struct Options *o)
-{
-	struct streams ss;
-	int res;
-
-	assert(o);
-	streams_init(&ss);
-	res = streams_exec(o, &ss, chp{ execname, "--version", NULL });
-	if (res) {
-		failed_ok("streams_exec()"); /* gncov */
-		if (ss.err.buf) /* gncov */
-			diag(ss.err.buf); /* gncov */
-		return 1; /* gncov */
-	}
-	diag("========== BEGIN version info ==========\n"
-	     "%s"
-	     "=========== END version info ===========",
-	     ss.out.buf ? ss.out.buf : "(null)");
-	streams_free(&ss);
-
-	return 0;
 }
 
 /*
