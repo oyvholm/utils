@@ -47,12 +47,16 @@
 #  define DEBL  ;
 #endif
 
+#ifdef CHECK_ERRNO
 #define check_errno  do { \
 	if (errno) { \
 		myerror("%s():%s:%d: errno = %d", \
 		        __func__, __FILE__, __LINE__, errno); \
 	} \
 } while (0)
+#else
+#define check_errno  do { } while (0)
+#endif
 
 #define failed(a)  myerror("%s():%d: %s failed", __func__, __LINE__, (a))
 #define no_null(a)  ((a) ? (a) : "(null)")

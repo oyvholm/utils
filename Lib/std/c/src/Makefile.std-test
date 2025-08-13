@@ -48,7 +48,7 @@ test:
 	./STDexecDTS
 	$(MAKE) -f Makefile.std-test demo
 	cd $(TMP)/src && $(MAKE) test
-	cd $(TMP)/src && $(MAKE) testall
+	cd $(TMP)/src && $(MAKE) testall CHECK_ERRNO=1
 	cd $(TMP)/src && $(MAKE) testall NODEVEL=1
 	cd $(TMP)/src && ./jada --version | grep "has NDEBUG" \
 	&& exit 1 \
