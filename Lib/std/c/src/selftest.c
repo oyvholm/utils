@@ -163,6 +163,10 @@
 #define OK_SUCCESS(func, desc, ...)  OK_SUCCESS_L((func), __LINE__, (desc), ##__VA_ARGS__)
 #define OK_TRUE(val, desc, ...)  OK_TRUE_L((val), __LINE__, (desc), ##__VA_ARGS__)
 
+#define diag_errno()  do { \
+	diag("errno = %d (%s)", errno, strerror(errno)); \
+	errno = 0; \
+} while (0)
 #define failed_ok(a)  do { \
 	if (errno) \
 		OK_ERROR("%s():%d: %s failed: %s", \
@@ -1243,8 +1247,7 @@ static void functests_with_tempdir(void)
 	result = rmdir(TMPDIR);
 	OK_SUCCESS(result, "rmdir " TMPDIR " after function tests");
 	if (result) {
-		diag("test %d: %s", testnum, strerror(errno)); /* gncov */
-		errno = 0; /* gncov */
+		diag_errno(); /* gncov */
 		return; /* gncov */
 	}
 }
@@ -1383,6 +1386,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 #undef OPTION_ERROR_STR
 #undef TMPDIR
 #undef chp
+#undef diag_errno
 #undef failed_ok
 #undef print_gotexp_int
 #undef print_gotexp_nostr
