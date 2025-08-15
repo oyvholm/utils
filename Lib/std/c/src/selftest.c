@@ -584,6 +584,15 @@ static void tc_func(const int linenum, char *cmd[], const char *exp_stdout,
 }
 
 /*
+ * is_root() - Returns 1 if the current user is root, otherwise it returns 0.
+ */
+
+static int is_root(void)
+{
+	return !getuid();
+}
+
+/*
  * print_version_info() - Display output from the --version command. Returns 0 
  * if ok, or 1 if streams_exec() failed.
  */
@@ -852,6 +861,29 @@ static void test_std_strerror(void)
                                 /*** io.c ***/
 
 /*
+ * test_read_from_file() - Tests the read_from_file() function. Returns 
+ * nothing.
+ */
+
+static void test_read_from_file(void)
+{
+	char *p = NULL;
+	int orig_errno;
+
+	diag("Test read_from_file()");
+
+	p = read_from_file(TMPDIR "/non-existing");
+	orig_errno = errno;
+	errno = 0;
+	OK_NULL(p, "read_from_file(): Non-existing file, NULL is returned");
+	OK_EQUAL(orig_errno, ENOENT, "read_from_file(): errno is ENOENT");
+	if (orig_errno != ENOENT) {
+		diag("errno was %d (%s)", /* gncov */
+		     orig_errno, strerror(orig_errno));
+	}
+}
+
+/*
  * test_streams_exec() - Tests the streams_exec() function. Returns nothing.
  */
 
@@ -1090,6 +1122,113 @@ static void test_str_replace(void)
 
                                 /*** io.c ***/
 
+/*
+ * test_file_exists() - Tests the file_exists() function. Returns nothing.
+ */
+
+static void test_file_exists(void)
+{
+	diag("Test file_exists()");
+
+	OK_FALSE(file_exists(TMPDIR "/nonexisting"),
+	         "%s/nonexisting does not exist", TMPDIR);
+
+	OK_NOTNULL(create_file(TMPDIR "/regfile", NULL),
+	           "Create regular file %s/regfile", TMPDIR);
+	OK_TRUE(file_exists(TMPDIR "/regfile"),
+	        "File %s/regfile does exist", TMPDIR);
+
+	OK_SUCCESS(mkdir(TMPDIR "/dir", 0777), "mkdir %s/dir", TMPDIR);
+	OK_TRUE(file_exists(TMPDIR "/dir"),
+	        "Directory %s/dir does exist", TMPDIR);
+
+	OK_SUCCESS(symlink("regfile", TMPDIR "/symlink"),
+	           "Create %s/symlink, points to regfile", TMPDIR);
+	OK_TRUE(file_exists(TMPDIR "/symlink"),
+	        "%s/symlink does exist", TMPDIR);
+
+	OK_SUCCESS(symlink("dir", TMPDIR "/dirlink"),
+	           "Create %s/dirlink, points to dir", TMPDIR);
+	OK_TRUE(file_exists(TMPDIR "/dirlink"),
+	        "%s/dirlink does exist", TMPDIR);
+
+	OK_SUCCESS(symlink("nonexisting", TMPDIR "/broken"),
+	           "Create broken symlink %s/broken", TMPDIR);
+	OK_TRUE(file_exists(TMPDIR "/broken"),
+	        "Broken symlink %s/broken does exist", TMPDIR);
+
+	OK_SUCCESS(mkdir(TMPDIR "/nopermdir", 0),
+	                 "mkdir %s/nopermdir with no permissions", TMPDIR);
+	OK_TRUE(file_exists(TMPDIR "/nopermdir"),
+	        "Directory %s/nopermdir does exist", TMPDIR);
+	OK_FALSE(file_exists(TMPDIR "/nopermdir/inaccessible"),
+	        "Tries to check %s/nopermdir/inaccessible", TMPDIR);
+	if (is_root()) {
+		OK_TRUE(1, "errno is EACCES (%s)" /* gncov */
+		           " # SKIP Running as root", strerror(EACCES));
+	} else {
+		OK_EQUAL(errno, EACCES,
+		         "errno is EACCES (%s)", strerror(EACCES));
+	}
+	errno = 0;
+
+	OK_SUCCESS(remove(TMPDIR "/regfile"), "Delete %s/regfile", TMPDIR);
+	OK_SUCCESS(rmdir(TMPDIR "/dir"), "rmdir %s/dir", TMPDIR);
+	OK_SUCCESS(remove(TMPDIR "/symlink"), "Delete %s/symlink", TMPDIR);
+	OK_SUCCESS(remove(TMPDIR "/dirlink"), "Delete %s/dirlink", TMPDIR);
+	OK_SUCCESS(remove(TMPDIR "/broken"), "Delete %s/broken", TMPDIR);
+	OK_SUCCESS(rmdir(TMPDIR "/nopermdir"), "rmdir %s/nopermdir", TMPDIR);
+}
+
+/*
+ * test_create_file() - Tests the create_file() function. Returns nothing.
+ */
+
+static void test_create_file(void)
+{
+	const char *desc, *file, *res, *data;
+	struct stat sb;
+	char *s;
+
+	diag("Test create_file()");
+
+	OK_TRUE(file_exists(TMPDIR), "%s exists", TMPDIR);
+	OK_NULL(create_file(TMPDIR, NULL),
+	        "create_file(%s), but it's already a directory", TMPDIR);
+	OK_EQUAL(errno, EISDIR, "errno is EISDIR");
+	if (errno != EISDIR)
+		diag_errno(); /* gncov */
+	errno = 0;
+
+	desc = "create_file() with NULL creates empty file";
+	file = TMPDIR "/emptyfile";
+	OK_NOTNULL(res = create_file(file, NULL), "%s (exec)", desc);
+	if (!res)
+		diag_errno(); /* gncov */
+	OK_STRCMP(res, "", "%s (retval)", desc);
+	if (stat(file, &sb)) {
+		failed_ok("stat()"); /* gncov */
+		return; /* gncov */
+	}
+	OK_EQUAL(sb.st_size, 0, "%s is empty", file);
+	OK_SUCCESS(remove(file), "Delete %s", file);
+
+	desc = "create_file() with test data";
+	data = "Test data\n";
+	file = TMPDIR "/datafile";
+	OK_NOTNULL(res = create_file(file, data), "%s (exec)", desc);
+	if (!res)
+		diag_errno(); /* gncov */
+	OK_STRCMP(res, data, "%s (retval)", desc);
+	OK_NOTNULL(s = read_from_file(file), "Read data from file");
+	if (!s)
+		failed_ok("read_from_file()"); /* gncov */
+	else
+		OK_STRCMP(s, data, "Data from file is correct");
+	free(s);
+	OK_SUCCESS(remove(file), "Delete %s", file);
+}
+
 /******************************************************************************
             Test the executable file, no temporary directory needed
 ******************************************************************************/
@@ -1241,6 +1380,10 @@ static void functests_with_tempdir(void)
 		return; /* gncov */
 	}
 
+	/* io.c */
+	test_file_exists();
+	test_create_file();
+
 	result = rmdir(TMPDIR);
 	OK_SUCCESS(result, "rmdir " TMPDIR " after function tests");
 	if (result) {
@@ -1297,6 +1440,7 @@ static void test_functions(const struct Options *o)
 	test_std_strerror();
 
 	/* io.c */
+	test_read_from_file();
 
 	/* strings.c */
 	test_mystrdup();

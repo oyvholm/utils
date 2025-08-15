@@ -93,9 +93,12 @@ void init_opt(struct Options *dest);
 void set_opt_valgrind(bool b);
 
 /* io.c */
+bool file_exists(const char *s);
 void streams_init(struct streams *dest);
 void streams_free(struct streams *dest);
 char *read_from_fp(FILE *fp, struct binbuf *dest);
+char *read_from_file(const char *fname);
+const char *create_file(const char *file, const char *txt);
 int streams_exec(const struct Options *o, struct streams *dest, char *cmd[]);
 
 /* selftest.c */
