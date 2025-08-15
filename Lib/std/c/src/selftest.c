@@ -248,7 +248,6 @@ static int ok_va(const int i, const int linenum, const char *desc, va_list ap)
 	puts(s2);
 	free(s2);
 	free(s);
-	fflush(stdout);
 	failcount += !!i;
 
 	return !!i;
@@ -347,7 +346,7 @@ static char *diag_output(const char *format, ...)
 }
 
 /*
- * diag() - Prints a diagnostic message prefixed with "# " to stderr. `printf` 
+ * diag() - Prints a diagnostic message prefixed with "# " to stdout. `printf` 
  * sequences can be used. All `\n` characters are converted to "\n# ".
  *
  * A terminating `\n` is automatically added to the string. Returns 0 if 
@@ -369,8 +368,7 @@ static int diag(const char *format, ...)
 		failed_ok("diag_output_va()"); /* gncov */
 		return 1; /* gncov */
 	}
-	fprintf(stderr, "%s\n", converted_buffer);
-	fflush(stderr);
+	printf("%s\n", converted_buffer);
 	free(converted_buffer);
 
 	return 0;
@@ -501,11 +499,10 @@ static void test_command(const int linenum, const char identical, char *cmd[],
 
 	if (o.verbose >= 4) {
 		int i = -1; /* gncov */
-		fprintf(stderr, "# %s(", __func__); /* gncov */
+		printf("# %s(", __func__); /* gncov */
 		while (cmd[++i]) /* gncov */
-			fprintf(stderr, "%s\"%s\"", /* gncov */
-			                i ? ", " : "", cmd[i]); /* gncov */
-		fprintf(stderr, ")\n"); /* gncov */
+			printf("%s\"%s\"", i ? ", " : "", cmd[i]); /* gncov */
+		printf(")\n"); /* gncov */
 	}
 
 	e_stdout = str_replace(exp_stdout, EXECSTR, execname);

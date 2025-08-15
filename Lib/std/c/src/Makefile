@@ -193,7 +193,7 @@ clean:
 .PHONY: dupdesc
 dupdesc:
 	@$(MAKE) -s clean all \
-	&& ./$(EXEC) --selftest 2>/dev/null | cut -f 4- -d ' ' | sort \
+	&& ./$(EXEC) --selftest | grep -v '^#' | cut -f 4- -d ' ' | sort \
 	   | uniq -c | sed 's/^[[:space:]]*//g;' | grep -v '^1 ' \
 	   | grep . && exit 1 || true
 
