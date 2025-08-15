@@ -182,6 +182,7 @@ cflags:
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(OBJS)
+	rm -f $(EXEC).core
 	rm -f $(HTMLFILE) $(HTMLFILE).tmp
 	rm -f $(MANPAGE) $(MANPAGE).tmp
 	rm -f $(PDFFILE) $(PDFFILE).tmp
