@@ -45,6 +45,9 @@ cat <<END >version.h
 #define EXEC_DATE  "$exec_date"
 END
 
+# CHECK_ERRNO: Use errno checks in strategic places in the code
+test -n "$CHECK_ERRNO" && newdef CHECK_ERRNO
+
 # FAKE_MEMLEAK: Insert memleak in print_version(), used for Valgrind testing.
 test -n "$FAKE_MEMLEAK" && newdef FAKE_MEMLEAK
 

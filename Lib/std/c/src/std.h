@@ -26,6 +26,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <getopt.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -33,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -46,14 +48,19 @@
 #  define DEBL  ;
 #endif
 
+#ifdef CHECK_ERRNO
 #define check_errno  do { \
 	if (errno) { \
 		myerror("%s():%s:%d: errno = %d", \
 		        __func__, __FILE__, __LINE__, errno); \
 	} \
 } while (0)
+#else
+#define check_errno  do { } while (0)
+#endif
 
 #define failed(a)  myerror("%s():%d: %s failed", __func__, __LINE__, (a))
+#define no_null(a)  ((a) ? (a) : "(null)")
 
 struct Options {
 	/* sort -d -k2 */
@@ -87,15 +94,19 @@ void init_opt(struct Options *dest);
 void set_opt_valgrind(bool b);
 
 /* io.c */
+bool file_exists(const char *s);
 void streams_init(struct streams *dest);
 void streams_free(struct streams *dest);
 char *read_from_fp(FILE *fp, struct binbuf *dest);
+char *read_from_file(const char *fname);
+const char *create_file(const char *file, const char *txt);
 int streams_exec(const struct Options *o, struct streams *dest, char *cmd[]);
 
 /* selftest.c */
 int opt_selftest(char *execname, const struct Options *o);
 
 /* strings.c */
+char *mystrdup(const char *s);
 char *allocstr_va(const char *format, va_list ap);
 char *allocstr(const char *format, ...);
 size_t count_substr(const char *s, const char *substr);

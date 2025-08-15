@@ -19,6 +19,7 @@ CFLAGS += $$(test -n "$(GCOV)" && echo -n "-fprofile-arcs -ftest-coverage")
 CFLAGS += $$(test -n "$(PROF)" && echo -n "-pg")
 CFLAGS += $(DEVFLAGS_STR)
 CFLAGS += -Wall
+CFLAGS += -Wno-gnu-zero-variadic-macro-arguments
 CFLAGS += -c
 DEPS = version.h $(HFILES) Makefile
 DEVEL =
@@ -126,6 +127,7 @@ all: $(EXEC) $(MANPAGE)
 
 $(EXEC): $(OBJS)
 	$(LD) -o $(EXEC) $(LDFLAGS) $(OBJS) $(LIBS)
+	[ -z "$(STRIP)" ] || strip $(EXEC)
 
 $(HTMLFILE): $(MANPAGE)
 	man -Thtml ./$(MANPAGE) >$@.tmp
@@ -180,6 +182,7 @@ cflags:
 .PHONY: clean
 clean:
 	rm -f $(EXEC) $(OBJS)
+	rm -f $(EXEC).core
 	rm -f $(HTMLFILE) $(HTMLFILE).tmp
 	rm -f $(MANPAGE) $(MANPAGE).tmp
 	rm -f $(PDFFILE) $(PDFFILE).tmp
@@ -191,7 +194,7 @@ clean:
 .PHONY: dupdesc
 dupdesc:
 	@$(MAKE) -s clean all \
-	&& ./$(EXEC) --selftest 2>/dev/null | cut -f 4- -d ' ' | sort \
+	&& ./$(EXEC) --selftest | grep -v '^#' | cut -f 4- -d ' ' | sort \
 	   | uniq -c | sed 's/^[[:space:]]*//g;' | grep -v '^1 ' \
 	   | grep . && exit 1 || true
 
@@ -202,7 +205,7 @@ edit: tags
 
 .PHONY: gcov
 gcov:
-	$(MAKE) clean test GCOV=1
+	$(MAKE) -s clean test GCOV=1 DEVEL=1
 	gcov $(CFILES)
 	@echo $$(grep -E '^ +#####:' *.c.gcov | wc -l) untested lines >&2
 	@echo $$(grep -E '^ +#####:' *.c.gcov | grep -F '/* gncov */' \
@@ -223,9 +226,13 @@ gdb: $(EXEC)
 
 .PHONY: gncov-refresh
 gncov-refresh:
-	perl -pi -e 's, /\* gncov \*/,,g;' $(CFILES)
-	$(MAKE) gcov-cmt DEVEL=1
+	$(MAKE) -s gncov-remove
+	$(MAKE) -s gcov-cmt DEVEL=1
 	perl -pi -e 's, /\* gcov \*/, /\* gncov \*/,g;' $(CFILES)
+
+.PHONY: gncov-remove
+gncov-remove:
+	perl -pi -e 's, /\* gncov \*/,,g;' $(CFILES)
 
 .PHONY: html
 html: $(HTMLFILE)
@@ -269,6 +276,12 @@ testsrc:
 	@$(MAKE) -s longlines
 	@echo Check for duplicated test descriptions
 	@$(MAKE) -s dupdesc
+	@echo "Count #define and #undef in selftest.c"
+	@(grep '^#define' selftest.c | wc -l; \
+	  grep '^#undef' selftest.c | wc -l) | uniq | fmt \
+	  | grep ' ' | grep --color=always . && exit 1 || true
+	@echo "Search for failed() in selftest.c"
+	@grep -n '\<failed(' --color=always selftest.c && exit 1 || true
 
 .PHONY: tlok
 tlok:

@@ -82,9 +82,11 @@ const char *std_strerror(const int errnum)
 		 * value is missing from `std_strerror()`, and tests may fail 
 		 * on other platforms.
 		 */
+#ifdef CHECK_ERRNO
 		fprintf(stderr, /* gncov */
 		        "\n%s: %s(): Unknown errno received: %d, \"%s\"\n",
 		        progname, __func__, errnum, strerror(errnum));
+#endif
 		return strerror(errnum); /* gncov */
 	}
 }
@@ -176,6 +178,9 @@ static int print_version(const struct Options *o)
 		return EXIT_SUCCESS;
 	}
 	printf("%s %s (%s)\n", progname, EXEC_VERSION, EXEC_DATE);
+#ifdef CHECK_ERRNO
+	printf("has CHECK_ERRNO\n");
+#endif
 #ifdef FAKE_MEMLEAK
 	printf("has FAKE_MEMLEAK\n");
 #endif
@@ -256,8 +261,6 @@ static int usage(const struct Options *o, const int retval)
 static int choose_opt_action(struct Options *dest,
                              const int c, const struct option *opts)
 {
-	int retval = 0;
-
 	assert(dest);
 	assert(opts);
 
@@ -285,11 +288,11 @@ static int choose_opt_action(struct Options *dest,
 	default:
 		myerror("%s(): getopt_long() returned character code %d",
 		        __func__, c);
-		retval = 1;
+		return 1;
 		break;
 	}
 
-	return retval;
+	return 0;
 }
 
 /*
