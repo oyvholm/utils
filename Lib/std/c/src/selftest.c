@@ -52,6 +52,7 @@
 		print_gotexp_nostr("%lu", (got), (exp)); \
 } while (0)
 #define DIAG_DEBL  diag("DEBL: %s:%s():%d", __FILE__, __func__, __LINE__)
+
 /*
  * Main test macros, meant to be a human-friendly frontend against ok(). Unlike 
  * most other testing frameworks that return 1 for success and 0 for error, 
@@ -1241,7 +1242,8 @@ static void test_str_replace(void)
 
 	diag("Test str_replace()");
 
-#define chk_sr(s, s1, s2, exp, desc)  chk_sr(__LINE__, (s), (s1), (s2), (exp), (desc))
+#define chk_sr(s, s1, s2, exp, desc)  chk_sr(__LINE__, (s), (s1), (s2), \
+                                             (exp), (desc))
 	chk_sr("", "", "", "", "s, s1, and s2 are empty");
 	chk_sr("abc", "", "b", "abc", "s1 is empty");
 	chk_sr("", "a", "b", "", "s is empty");
@@ -1283,8 +1285,7 @@ static void test_str_replace(void)
 	s[1234] = 'y';
 	s[bsize - 1] = 'z';
 	s[bsize] = '\0';
-	chk_sr(s, "!!!!!!!!!!", "", "!!!!y!!!!z",
-	       "Large buffer with y and z");
+	chk_sr(s, "!!!!!!!!!!", "", "!!!!y!!!!z", "Large buffer with y and z");
 	free(s);
 #undef chk_sr
 }
