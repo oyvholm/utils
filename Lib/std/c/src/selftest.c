@@ -39,6 +39,10 @@
 	free(e); \
 	free(g); \
 } while (0)
+#define print_gotexp_double(got, exp)  do { \
+	if ((got) != (exp)) \
+		print_gotexp_nostr("%.8f", (got), (exp)); \
+} while (0)
 #define print_gotexp_int(got, exp)  do { \
 	if ((got) != (exp)) \
 		print_gotexp_nostr("%d", (got), (exp)); \
@@ -1745,6 +1749,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 #undef chp
 #undef diag_errno
 #undef failed_ok
+#undef print_gotexp_double
 #undef print_gotexp_int
 #undef print_gotexp_nostr
 #undef print_gotexp_size_t
