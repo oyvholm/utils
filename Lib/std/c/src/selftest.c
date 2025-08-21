@@ -866,6 +866,7 @@ static void test_diag_big(void)
 	outp = diag_output("%s", p);
 	OK_NOTNULL(outp, "diag_big: diag_output() returns ok");
 	OK_EQUAL(strlen(outp), size + 2, "diag_big: String length is correct");
+	print_gotexp_size_t(strlen(outp), size + 2);
 	OK_STRNCMP(outp, "# aaabcaaa", 10, "diag_big: Beginning is ok");
 	free(outp);
 	free(p);
@@ -1312,7 +1313,7 @@ static void test_str_replace(void)
                    Function tests, use a temporary directory
 ******************************************************************************/
 
-                              /* STDexecDTS.c */
+                            /*** STDexecDTS.c ***/
 
 /*
  * test_myerror() - Tests the myerror() function. Returns nothing.
@@ -1457,7 +1458,7 @@ static void test_create_file(void)
 	OK_STRCMP(res, data, "%s (retval)", desc);
 	OK_NOTNULL(s = read_from_file(file), "Read data from file");
 	if (!s)
-		failed_ok("read_from_file()"); /* gncov */
+		diag_errno(); /* gncov */
 	else
 		OK_STRCMP(s, data, "Data from file is correct");
 	free(s);
@@ -1469,6 +1470,8 @@ cleanup:
 /******************************************************************************
             Test the executable file, no temporary directory needed
 ******************************************************************************/
+
+                             /*** --valgrind ***/
 
 /*
  * test_valgrind_option() - Tests the --valgrind command line option. Returns 
@@ -1505,6 +1508,8 @@ static void test_valgrind_option(const struct Options *o)
 	   EXIT_SUCCESS,
 	   "--valgrind -h");
 }
+
+                          /*** Standard options ***/
 
 /*
  * test_standard_options() - Tests the various generic options available in 
@@ -1545,7 +1550,7 @@ static void test_standard_options(void)
 	   EXECSTR ": main(): Using verbose level 4\n",
 	   EXIT_SUCCESS,
 	   "-vvv --verbose: Using correct verbose level");
-	sc((chp{ execname, "-vvvvq", "--verbose", "--verbose", "--help", NULL }),
+	sc((chp{ execname, "-vvvvq", "-v", "--verbose", "--help", NULL }),
 	   "  Show this help",
 	   EXECSTR ": main(): Using verbose level 5\n",
 	   EXIT_SUCCESS,
@@ -1681,6 +1686,7 @@ static void test_functions(const struct Options *o)
 
 	/* io.c */
 	test_read_from_file();
+	test_streams_exec(o);
 
 	/* strings.c */
 	test_mystrdup();
@@ -1705,7 +1711,6 @@ static void test_executable(const struct Options *o)
 	diag("Test the executable");
 	test_valgrind_option(o);
 	print_version_info(o);
-	test_streams_exec(o);
 	test_standard_options();
 	tests_with_tempdir();
 	print_version_info(o);
