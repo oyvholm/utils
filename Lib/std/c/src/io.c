@@ -114,30 +114,6 @@ char *read_from_fp(FILE *fp, struct binbuf *dest)
 }
 
 /*
- * read_from_file() - Read contents of file fname and return a pointer to a 
- * allocated string with the contents, or NULL if error.
- */
-
-char *read_from_file(const char *fname)
-{
-	FILE *fp;
-	char *retval;
-
-	assert(fname);
-	assert(*fname);
-
-	fp = fopen(fname, "rb");
-	if (!fp)
-		return NULL;
-	retval = read_from_fp(fp, NULL);
-	if (!retval)
-		retval = NULL; /* gncov */
-	fclose(fp);
-
-	return retval;
-}
-
-/*
  * create_file() - Create file `file` and write the string `txt` to it. If any 
  * error occurred, NULL is returned. Otherwise, it returns `txt`. If `txt` is 
  * NULL, an empty file is created and an empty string is returned.
@@ -166,6 +142,28 @@ const char *create_file(const char *file, const char *txt)
 	}
 
 out:
+	fclose(fp);
+
+	return retval;
+}
+
+/*
+ * read_from_file() - Read contents of file `fname` and return a pointer to a 
+ * allocated string with the contents, or NULL if error.
+ */
+
+char *read_from_file(const char *fname)
+{
+	FILE *fp;
+	char *retval;
+
+	assert(fname);
+	assert(*fname);
+
+	fp = fopen(fname, "rb");
+	if (!fp)
+		return NULL;
+	retval = read_from_fp(fp, NULL);
 	fclose(fp);
 
 	return retval;
