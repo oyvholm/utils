@@ -214,27 +214,27 @@ static char **prepare_valgrind_cmd(char *cmd[]) /* gncov */
  * 0 if successful, or 1 if write() fails.
  */
 
-static int write_stdin_to_child(const int fd, const char *buf,
+static int write_stdin_to_child(const int fd, const char *buf, /* gncov */
                                 const size_t len)
 {
-	size_t total_written = 0;
+	size_t total_written = 0; /* gncov */
 
-	assert(buf);
+	assert(buf); /* gncov */
 
-	while (total_written < len) {
-		ssize_t written = write(fd, buf + total_written,
+	while (total_written < len) { /* gncov */
+		ssize_t written = write(fd, buf + total_written, /* gncov */
 		                        len - total_written);
 
-		if (written == -1) {
+		if (written == -1) { /* gncov */
 			if (errno == EINTR) /* gncov */
 				continue; /* gncov */
 			failed("write() to stdin pipe"); /* gncov */
 			return 1; /* gncov */
 		}
-		total_written += (size_t)written;
+		total_written += (size_t)written; /* gncov */
 	}
 
-	return 0;
+	return 0; /* gncov */
 }
 
 /*
@@ -335,8 +335,10 @@ int streams_exec(const struct Options *o, struct streams *dest, char *cmd[])
 
 	/* Write to stdin using direct write() call and close immediately */
 	if (dest->in.buf && dest->in.len) {
-		if (write_stdin_to_child(infd[1], dest->in.buf, dest->in.len))
+		if (write_stdin_to_child(infd[1], dest->in.buf, /* gncov */
+			                 dest->in.len)) {
 			goto cleanup; /* gncov */
+		}
 	}
 	close(infd[1]);
 	infd[1] = -1;

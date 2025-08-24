@@ -436,7 +436,7 @@ int main(int argc, char *argv[])
 	if (opt.license)
 		return print_license();
 
-	if (optind < argc) {
+	if (optind < argc) { /* gncov */
 		int t;
 
 		for (t = optind; t < argc; t++) { /* gncov */
@@ -447,8 +447,9 @@ int main(int argc, char *argv[])
 
 	check_errno;
 
-	msg(4, "Returning from %s() with value %d", __func__, retval);
-	return retval;
+	msg(4, "Returning from %s() with value %d", /* gncov */
+	       __func__, retval);
+	return retval; /* gncov */
 }
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */
