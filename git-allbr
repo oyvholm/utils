@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-allbr
-VERSION=0.8.2
+VERSION=0.8.3
 
 opt_all=0
 opt_create=0
@@ -90,11 +90,44 @@ END
 	exit 0
 fi
 
+local_branches_pattern() {
+	local remote=$1
+
+	git branch | grep -v "HEAD detached" \
+	| sed "s,^..,-e remotes/$remote/," | grep . || printf "%s" "-e ////"
+}
+
+remote_branches() {
+	local remote=$1
+
+	git branch -a \
+	| grep remotes/$remote/ \
+	| grep -v -E "remotes/$remote/HEAD( |\$)" \
+	| if [ "$opt_create" = "1" ]; then
+		cat
+	  else
+		grep $(local_branches_pattern $remote)
+	  fi \
+	| perl -pe "s!remotes/$remote/(.*)\$!\$1!" \
+	| if [ "$opt_commit_branches" = "1" ]; then
+		cat
+	  else
+		grep -v -E 'commit-[0-9a-f]{40}'
+	  fi
+}
+
+branch_exists() {
+	local branch=$1
+
+	git for-each-ref --format='%(refname:short)' refs/heads/ \
+	| grep -q ^$branch\$ && return 0
+
+	return 1
+}
+
 test "$opt_dry_run" = "1" && sim="echo $progname: cmd: " || sim=
 remotes=origin
 test "$opt_all" = "1" && remotes=$(git remote)
-unset create_dangling
-test "$opt_commit_branches" = "1" && create_dangling=1
 unset force_str
 test "$opt_force" = "1" && force_str="--force"
 unset upstream_str
@@ -107,36 +140,19 @@ t_el="$(tput el)"
 
 for remote in $remotes; do
 	echo ==== $progname: remote $remote
-	for f in $(
-	    git branch -a |
-	        grep remotes/$remote/ |
-	        grep -v -E "remotes/$remote/HEAD( |\$)" |
-	        perl -pe "s!remotes/$remote/(.*)\$!\$1!" |
-		if test "$opt_commit_branches" = "1"; then
-			cat;
+	for f in $(remote_branches $remote); do
+		[ $opt_verbose -ge 0 ] && printf '%s%s\r' "$f" "$t_el"
+		if branch_exists $f; then
+			$sim git log --format=%h refs/heads/$f..$remote/$f \
+			| grep -q . \
+			  && $sim git push . $remote/$f:refs/heads/$f \
+			              $force_str \
+			     | grep -v '^Everything up-to-date'
 		else
-			grep -v -E 'commit-[0-9a-f]{40}';
+			[ "$opt_create" = "1" ] || continue;
+			$sim git branch --no-track $f $remote/$f 2>&1 \
+			&& echo $progname: Created $f
 		fi
-	); do
-		branch_exists=$(
-			git for-each-ref --format='%(refname:short)' \
-			    refs/heads/ | grep -q ^$f\$ && echo 1 || echo 0
-		)
-		if test $opt_verbose -ge 0; then
-			printf '%s%s\r' "$f" "$t_el"
-		fi
-		test "$opt_create" = "0" -a "$branch_exists" = "0" && continue
-		(
-			if test "$branch_exists" = "1"; then
-				$sim git log --format=%h refs/heads/$f..$remote/$f |
-				   grep -q . && $sim git push . $remote/$f:refs/heads/$f \
-				     $force_str 2>&1 |
-				     grep -v '^Everything up-to-date'
-			else
-				$sim git branch --no-track $f $remote/$f 2>&1 &&
-				   echo $progname: Created $f
-			fi
-		) | grep -v '^fatal: A branch named .* already exists.'
 		test -n "$upstream_str" && $sim git branch -u $remote/$f $f
 	done
 	tput el
