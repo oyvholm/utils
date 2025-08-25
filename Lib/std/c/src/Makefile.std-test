@@ -88,6 +88,10 @@ test-gcov:
 	test -e $(TMP)/src/selftest.gcno
 	cd $(TMP)/src && $(MAKE) gcov-cmt
 	cd $(TMP)/src && GIT_PAGER=cat git diff
+	cd $(TMP)/src && test -z "$$(git ls-files -m)"
+	cd $(TMP)/src && $(MAKE) gncov-refresh
+	cd $(TMP)/src && GIT_PAGER=cat git diff
+	cd $(TMP)/src && test -z "$$(git ls-files -m)"
 	cd $(TMP)/src && $(MAKE) gcov 2>&1 | grep -q '^0 testable lines'
 	cd $(TMP)/src && $(MAKE) clean test gcov
 	cd $(TMP)/src && test -z "$$(git ls-files -m)"

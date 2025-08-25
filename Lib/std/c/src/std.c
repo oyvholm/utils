@@ -83,7 +83,7 @@ const char *std_strerror(const int errnum)
 		 * on other platforms.
 		 */
 #ifdef CHECK_ERRNO
-		fprintf(stderr, /* gncov */
+		fprintf(stderr,
 		        "\n%s: %s(): Unknown errno received: %d, \"%s\"\n",
 		        progname, __func__, errnum, strerror(errnum));
 #endif
@@ -120,9 +120,9 @@ int myerror(const char *format, ...)
 	retval += vfprintf(stderr, format, ap);
 	va_end(ap);
 	if (orig_errno) {
-		retval += fprintf(stderr, ": %s", /* gncov */
+		retval += fprintf(stderr, ": %s",
 		                          std_strerror(orig_errno));
-		errno = 0; /* gncov */
+		errno = 0;
 	}
 	retval += fprintf(stderr, "\n");
 
