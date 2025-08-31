@@ -1322,13 +1322,16 @@ static void test_myerror(void)
 
 static void test_file_exists(void)
 {
+	FILE *fp;
+
 	diag("Test file_exists()");
 
 	OK_FALSE(file_exists(TMPDIR "/nonexisting"),
 	         "%s/nonexisting does not exist", TMPDIR);
 
-	OK_NOTNULL(create_file(TMPDIR "/regfile", NULL),
+	OK_NOTNULL(fp = fopen(TMPDIR "/regfile", "w"),
 	           "Create regular file %s/regfile", TMPDIR);
+	OK_SUCCESS(fclose(fp), "Close " TMPDIR "/regfile");
 	OK_TRUE(file_exists(TMPDIR "/regfile"),
 	        "File %s/regfile does exist", TMPDIR);
 
