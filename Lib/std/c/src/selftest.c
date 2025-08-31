@@ -1060,31 +1060,6 @@ static void test_std_strerror(void)
 	          "std_strerror(EACCES) is as expected");
 }
 
-                                /*** io.c ***/
-
-/*
- * test_read_from_file() - Tests the read_from_file() function. Returns 
- * nothing.
- */
-
-static void test_read_from_file(void)
-{
-	char *p = NULL;
-	int orig_errno;
-
-	diag("Test read_from_file()");
-
-	p = read_from_file(TMPDIR "/non-existing");
-	orig_errno = errno;
-	errno = 0;
-	OK_NULL(p, "read_from_file(): Non-existing file, NULL is returned");
-	OK_EQUAL(orig_errno, ENOENT, "read_from_file(): errno is ENOENT");
-	if (orig_errno != ENOENT) {
-		diag("errno was %d (%s)", /* gncov */
-		     orig_errno, strerror(orig_errno));
-	}
-}
-
                               /*** strings.c ***/
 
 /*
@@ -1454,6 +1429,29 @@ cleanup:
 	OK_SUCCESS(remove(file), "Delete %s", file);
 }
 
+/*
+ * test_read_from_file() - Tests the read_from_file() function. Returns 
+ * nothing.
+ */
+
+static void test_read_from_file(void)
+{
+	char *p = NULL;
+	int orig_errno;
+
+	diag("Test read_from_file()");
+
+	p = read_from_file(TMPDIR "/non-existing");
+	orig_errno = errno;
+	errno = 0;
+	OK_NULL(p, "read_from_file(): Non-existing file, NULL is returned");
+	OK_EQUAL(orig_errno, ENOENT, "read_from_file(): errno is ENOENT");
+	if (orig_errno != ENOENT) {
+		diag("errno was %d (%s)", /* gncov */
+		     orig_errno, strerror(orig_errno));
+	}
+}
+
 /******************************************************************************
             Test the executable file, no temporary directory needed
 ******************************************************************************/
@@ -1615,6 +1613,7 @@ static void functests_with_tempdir(void)
 	/* io.c */
 	test_file_exists();
 	test_create_file();
+	test_read_from_file();
 
 	result = rmdir(TMPDIR);
 	OK_SUCCESS(result, "rmdir " TMPDIR " after function tests");
@@ -1670,9 +1669,6 @@ static void test_functions(const struct Options *o)
 
 	/* STDexecDTS.c */
 	test_std_strerror();
-
-	/* io.c */
-	test_read_from_file();
 
 	/* strings.c */
 	test_mystrdup();
