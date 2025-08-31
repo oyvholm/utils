@@ -190,6 +190,7 @@ clean:
 	rm -f *.s
 	rm -f gmon.out gmon.sum
 	rm -f version.h
+	rm -fr .STDexecDTS-test.tmp
 
 .PHONY: dupdesc
 dupdesc:
@@ -323,4 +324,4 @@ valgrind: $(EXEC)
 
 .PHONY: valgrindall
 valgrindall:
-	$(MAKE) testcomb WHAT=valgrind
+	$(MAKE) -s testcomb WHAT=valgrind

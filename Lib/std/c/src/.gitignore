@@ -3,6 +3,7 @@
 /*.gcov
 /*.o
 /*.s
+/.STDexecDTS-test.tmp/
 /.devel
 /.make-tlok.tmp
 /STDexecDTS

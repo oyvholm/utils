@@ -26,9 +26,9 @@
  */
 
 #define EXECSTR  "__EXSTR__"
-#define OPTION_ERROR_STR  EXECSTR ": Option error\n" \
-                          EXECSTR ": Type \"" EXECSTR " --help\" for help screen." \
-                          " Returning with value 1.\n"
+#define TYPE_HELP_STR  EXECSTR ": Type \"" EXECSTR " --help\" for help" \
+                       " screen. Returning with value 1.\n"
+#define OPTION_ERROR_STR  EXECSTR ": Option error\n" TYPE_HELP_STR
 #define chp  (char *[])
 #define print_gotexp_nostr(seq, got, exp)  do { \
 	char *g = allocstr((seq), (got)), *e = allocstr((seq), (exp)); \
@@ -1759,6 +1759,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 #undef OK_TRUE_L
 #undef OPTION_ERROR_STR
 #undef TMPDIR
+#undef TYPE_HELP_STR
 #undef chp
 #undef diag_errno
 #undef failed_ok
