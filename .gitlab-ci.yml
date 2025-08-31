@@ -8,16 +8,16 @@ utils:linux:
   before_script:
     - test "$CI_COMMIT_REF_NAME" = "synced/master" && exit 0 || true
     - apt-get update -qq
-    - apt-get install -y
-        groff
-        texlive-base
-        sqlite3
-        exiftool
-        libnumber-bytes-human-perl
-        git-annex
+    - apt-get install -y -q
         bc
         cmark
+        exiftool
+        git-annex
+        groff
+        libnumber-bytes-human-perl
         libxml2-utils
+        sqlite3
+        texlive-base
     - git config --global user.name "Firstname Lastname"
     - git config --global user.email "ci@example.com"
     - git config --global safe.directory "*"
