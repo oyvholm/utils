@@ -44,7 +44,7 @@ bool file_exists(const char *s)
 }
 
 /*
- * streams_init() - Initialize a `struct streams` struct. Returns nothing.
+ * streams_init() - Initializes a `struct streams` struct. Returns nothing.
  */
 
 void streams_init(struct streams *dest)
@@ -58,7 +58,7 @@ void streams_init(struct streams *dest)
 }
 
 /*
- * streams_free() - Deallocate and set a `struct streams` struct to default 
+ * streams_free() - Deallocates and sets a `struct streams` struct to default 
  * values. Returns nothing.
  */
 
@@ -73,7 +73,7 @@ void streams_free(struct streams *dest)
 }
 
 /*
- * read_from_fp() - Read data from fp into an allocated buffer and return a 
+ * read_from_fp() - Reads data from fp into an allocated buffer and returns a 
  * pointer to the allocated memory or NULL if something failed.
  */
 
@@ -170,7 +170,7 @@ char *read_from_file(const char *fname)
 }
 
 /*
- * prepare_valgrind_cmd() - Creates command array for valgrind execution. 
+ * prepare_valgrind_cmd() - Creates a command array for valgrind execution. 
  * Returns a new allocated array that starts with `valgrind_args` followed by 
  * `cmd`. Returns NULL on error. Caller must free the returned array after use.
  */
@@ -238,7 +238,7 @@ static int write_stdin_to_child(const int fd, const char *buf, /* gncov */
 }
 
 /*
- * streams_exec() - Execute a command and store stdout, stderr and the return 
+ * streams_exec() - Executes a command and stores stdout, stderr and the return 
  * value into `dest`. `cmd` is an array of arguments, and the last element must 
  * be NULL. Returns the exit value from the process.
  */

@@ -21,7 +21,7 @@
 #include "STDexecDTS.h"
 
 /*
- * binbuf_init() - Prepare a `struct binbuf` for use, returns nothing.
+ * binbuf_init() - Prepares a `struct binbuf` for use, returns nothing.
  */
 
 void binbuf_init(struct binbuf *sb)
@@ -32,8 +32,8 @@ void binbuf_init(struct binbuf *sb)
 }
 
 /*
- * binbuf_free() - Deallocate a `struct binbuf` and set struct values to 
- * initial state.
+ * binbuf_free() - Deallocates a `struct binbuf` and sets the struct values to 
+ * their initial state.
  */
 
 void binbuf_free(struct binbuf *sb)

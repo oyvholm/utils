@@ -234,7 +234,7 @@ static void bail_out(const char *msg, ...) /* gncov */
 }
 
 /*
- * ok_va() - Print a log line to stdout. If `i` is 0, an "ok" line is printed, 
+ * ok_va() - Prints a log line to stdout. If `i` is 0, an "ok" line is printed, 
  * otherwise a "not ok" line is printed. `desc` is the test description and can 
  * use printf sequences.
  *
@@ -347,7 +347,7 @@ static char *diag_output_va(const char *format, va_list ap)
 
 /*
  * diag_output() - Frontend against diag_output_va(), used by the tests. 
- * Returns the value from diag_output_va(); a pointer to the allocated string, 
+ * Returns the value from diag_output_va() (a pointer to the allocated string), 
  * or NULL if anything failed.
  */
 
@@ -396,7 +396,7 @@ static int diag(const char *format, ...)
 }
 
 /*
- * gotexp_output() - Generate the output used by print_gotexp(). Returns NULL 
+ * gotexp_output() - Generates the output used by print_gotexp(). Returns NULL 
  * if allocstr() or mystrdup() fails. Otherwise, it returns a pointer to an 
  * allocated string with the output.
  */
@@ -421,8 +421,9 @@ static char *gotexp_output(const char *got, const char *exp)
 }
 
 /*
- * print_gotexp() - Print the value of the actual and exepected data. Used when 
- * a test fails. Returns 1 if `got` or `exp` are different, otherwise 0.
+ * print_gotexp() - Prints the value of the actual and exepected data if the 
+ * strings `got` and `exp` are different. Used when a test fails. Returns 1 if 
+ * `got` or `exp` are different, otherwise 0.
  */
 
 static int print_gotexp(const char *got, const char *exp)
@@ -498,7 +499,7 @@ static int tc_cmp(const int identical, const char *got, const char *exp)
 }
 
 /*
- * test_command() - Run the executable with arguments in `cmd` and verify 
+ * test_command() - Runs the executable with arguments in `cmd` and verifies 
  * stdout, stderr and the return value against `exp_stdout`, `exp_stderr` and 
  * `exp_retval`. Returns nothing.
  */
@@ -561,7 +562,7 @@ static void test_command(const int linenum, const char identical, char *cmd[],
 }
 
 /*
- * sc_func() - Execute command `cmd` and verify that stdout, stderr and the 
+ * sc_func() - Executes command `cmd` and verifies that stdout, stderr and the 
  * return value corresponds to the expected values. The `exp_*` variables are 
  * substrings that must occur in the actual output. Not meant to be called 
  * directly, but via the uc() macro that logs the line number automatically. 
@@ -586,7 +587,7 @@ static void sc_func(const int linenum, char *cmd[], const char *exp_stdout,
 }
 
 /*
- * tc_func() - Execute command `cmd` and verify that stdout, stderr and the 
+ * tc_func() - Executes command `cmd` and verifies that stdout, stderr and the 
  * return value are identical to the expected values. The `exp_*` variables are 
  * strings that must be identical to the actual output. Not meant to be called 
  * directly, but via the tc() macro that logs the line number automatically. 
@@ -772,7 +773,7 @@ static int is_root(void)
 }
 
 /*
- * print_version_info() - Display output from the --version command. Returns 0 
+ * print_version_info() - Displays output from the --version command. Returns 0 
  * if ok, or 1 if streams_exec() failed.
  */
 
@@ -997,7 +998,7 @@ static void test_gotexp_output(void)
 }
 
 /*
- * test_valgrind_lines() - Test the behavior of valgrind_lines(). Returns 
+ * test_valgrind_lines() - Tests the behavior of valgrind_lines(). Returns 
  * nothing.
  */
 
@@ -1683,7 +1684,7 @@ static void test_functions(const struct Options *o)
 }
 
 /*
- * test_executable() - Run various tests with the executable and verify that 
+ * test_executable() - Runs various tests with the executable and verifies that 
  * stdout, stderr and the return value are as expected. Returns nothing.
  */
 
@@ -1702,9 +1703,9 @@ static void test_executable(const struct Options *o)
 }
 
 /*
- * opt_selftest() - Run internal testing to check that it works on the current 
+ * opt_selftest() - Runs internal testing to check that it works on the current 
  * system. Executed if --selftest is used. Returns `EXIT_FAILURE` if any tests 
- * fail; otherwise, it returns `EXIT_SUCCESS`.
+ * fail. Otherwise, it returns `EXIT_SUCCESS`.
  */
 
 int opt_selftest(char *main_execname, const struct Options *o)
