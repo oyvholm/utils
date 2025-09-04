@@ -11,9 +11,9 @@
 #=======================================================================
 
 progname=konvflac
-VERSION=0.2.1
+VERSION=0.2.2
 
-CMD_FLAC=flac
+CMD_FLAC="flac -s --keep-foreign-metadata"
 
 ARGS="$(getopt -o "\
 h\
@@ -96,22 +96,14 @@ for curr in "$@"; do
     $CMD_FLAC -T FILEID=$(
         suuid -m -t encode,c_konvflac -wa \
         -c "Converting $wavfile$wavid_str to flac"
-    ) --keep-foreign-metadata "$wavfile" 2>&1 |
-        grep -v \
-            -e "keep-foreign-metadata is a new feature" \
-            -e "2000,2001,2002,2003,2004,2005,2006,2007" \
-            -e "2000-2009, 2011-2013" \
-            -e "flac comes with ABSOLUTELY NO WARRANTY" \
-            -e "welcome to redistribute it under certain conditions" \
-            -e '^$'
-    $CMD_FLAC -d -o "$chkfile" --keep-foreign-metadata "$flacfile" 2>&1 |
-        grep -v \
-            -e "keep-foreign-metadata is a new feature" \
-            -e "2000,2001,2002,2003,2004,2005,2006,2007" \
-            -e "2000-2009, 2011-2013" \
-            -e "flac comes with ABSOLUTELY NO WARRANTY" \
-            -e "welcome to redistribute it under certain conditions" \
-            -e '^$'
+    ) "$wavfile" 2>&1 \
+    | grep -v \
+        -e "keep-foreign-metadata is a new feature" \
+        -e '^$'
+    $CMD_FLAC -d -o "$chkfile" "$flacfile" 2>&1 \
+    | grep -v \
+        -e "keep-foreign-metadata is a new feature" \
+        -e '^$'
     flacsha=$(sha1sum "$chkfile" | cut -f 1 -d ' ')
     if test "$wavsha" = "$flacsha"; then
         echo Verification OK
