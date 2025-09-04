@@ -11,19 +11,21 @@
 #==============================================================================
 
 progname=git-dangling
-VERSION=0.3.1
+VERSION=0.4.0
 
 opt_blobs=0
 opt_checkpart=0
 opt_deleteonly=0
 opt_help=0
 opt_quiet=0
+opt_realgc=0
 opt_verbose=0
 while test -n "$1"; do
 	case "$1" in
 	-b|--blobs) opt_blobs=1; shift ;;
 	-c|--check-part) opt_checkpart=1; shift ;;
 	-D|--delete-only) opt_deleteonly=1; shift ;;
+	-g|--realgc) opt_realgc=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
 	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
 	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
@@ -60,6 +62,9 @@ Options:
   -D, --delete-only
     Only delete commit-* branches and tag-* tags, don't check for 
     dangling branches, tags or blobs.
+  -g, --realgc
+    Run "git-realgc" at the end, it packs the repository and gets rid of 
+    loose objects.
   -h, --help
     Show this help.
   -q, --quiet
@@ -122,6 +127,7 @@ if test "$store_blobs" = "1"; then
 fi
 git delete-banned
 test "$dangfile" = "$(basename $dangfile)" && rm $dangfile
+[ "$opt_realgc" = "1" ] && git-realgc
 exit 0
 
 # vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
