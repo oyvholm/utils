@@ -555,7 +555,6 @@ static void test_command(const int linenum, const char identical, char *cmd[],
 	free(descbuf);
 	free(e_stderr);
 	free(e_stdout);
-	print_gotexp_int(ss.ret, exp_retval);
 	if (valgrind_lines(ss.err.buf))
 		OK_ERROR_L(linenum, "Found valgrind output"); /* gncov */
 	streams_free(&ss);
