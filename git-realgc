@@ -1,11 +1,61 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-#=======================================================================
+#==============================================================================
 # git-realgc
 # File ID: a0e45088-d9f3-11e1-b9d0-00c0a8deee11
+#
 # Compress a Git repo really good
+#
+# Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
-#=======================================================================
+#==============================================================================
+
+progname=git-realgc
+VERSION=0.0.0
+
+opt_help=0
+opt_quiet=0
+opt_verbose=0
+
+while test -n "$1"; do
+	case "$1" in
+	-h|--help) opt_help=1; shift ;;
+	-q|--quiet) opt_quiet=$(($opt_quiet + 1)); shift ;;
+	-v|--verbose) opt_verbose=$(($opt_verbose + 1)); shift ;;
+	--version) echo $progname $VERSION; exit 0 ;;
+	--) shift; break ;;
+	*)
+		if printf '%s\n' "$1" | grep -q ^-; then
+			echo "$progname: $1: Unknown option" >&2
+			exit 1
+		else
+			break
+		fi
+	break ;;
+	esac
+done
+opt_verbose=$(($opt_verbose - $opt_quiet))
+
+if test "$opt_help" = "1"; then
+	test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
+	cat <<END
+
+Usage: $progname [options]
+
+Options:
+
+  -h, --help
+    Show this help.
+  -q, --quiet
+    Be more quiet. Can be repeated to increase silence.
+  -v, --verbose
+    Increase level of verbosity. Can be repeated.
+  --version
+    Print version information.
+
+END
+	exit 0
+fi
 
 if [ -d .git/. ]; then
     dudir=.git
@@ -13,20 +63,27 @@ else
     dudir=.
 fi
 
-test -d $dudir/objects/. || { echo git-realgc: .git/objects/ or objects/ not found >&2; exit 1; }
+test -d $dudir/objects/. \
+|| { echo git-realgc: .git/objects/ or objects/ not found >&2; exit 1; }
 git count-objects -vH
 echo -----------
-tot_before=$((find $dudir/objects -type f -printf '%s+' ; echo 0) | bc)
+tot_before=$( (find $dudir/objects -type f -printf '%s+' ; echo 0) | bc)
 echo tot_before: $(echo $tot_before | commify)
 echo ==== git reflog expire --expire=now --expire-unreachable=now --all
 git reflog expire --expire=now --expire-unreachable=now --all
 echo ==== git gc --prune=now "$@"
 git gc --prune=now "$@"
-tot_after=$((find $dudir/objects -type f -printf '%s+' ; echo 0) | bc)
+tot_after=$( (find $dudir/objects -type f -printf '%s+' ; echo 0) | bc)
 saved=$(echo "$tot_before-$tot_after" | bc)
 echo -----------
 echo tot_before: $(echo $tot_before | commify)
 echo tot_after: $(echo $tot_after | commify)
 echo -----------
 git count-objects -vH
-[ "$tot_before" != "0" ] && echo "Totally saved: $(echo $saved | commify) ($(echo "scale=4; 100*$saved/$tot_before" | bc -l)%)"
+if [ "$tot_before" != "0" ]; then
+	printf 'Totally saved: %s (%s%%)\n' \
+	"$(echo $saved | commify)" \
+	"$(echo "scale=4; 100*$saved/$tot_before" | bc -l)"
+fi
+
+# vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 :
