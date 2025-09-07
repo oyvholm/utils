@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=git-realgc
-VERSION=0.0.0
+VERSION=0.1.0
 
 opt_help=0
 opt_quiet=0
@@ -57,23 +57,42 @@ END
 	exit 0
 fi
 
-if [ -d .git/. ]; then
-    dudir=.git
-else
-    dudir=.
+objects_dir() {
+	local retval=""
+	if [ -d .git/. ]; then
+		retval=.git/objects
+	elif [ -f .git ]; then
+		retval="$(grep gitdir: .git | awk '{ print $2; }')/objects"
+	elif [ "$(git config --get core.bare)" = "true" ]; then
+		retval=objects
+	fi
+
+	echo -n "$retval"
+}
+
+if [ "$(git config --get core.bare)" != "true" ]; then
+	cd "$(git rev-parse --show-toplevel)" \
+	|| { echo $progname: Cannot chdir to top of Git repo >&2; exit 1; }
 fi
 
-test -d $dudir/objects/. \
-|| { echo git-realgc: .git/objects/ or objects/ not found >&2; exit 1; }
+dudir="$(objects_dir)"
+if [ -z "$dudir" ]; then
+	echo $progname: Cannot determine location of objects directory >&2
+	exit 1
+fi
+if [ ! -d "$dudir" ]; then
+	echo "$progname: $dudir: Directory not found" >&2
+	exit 1
+fi
 git count-objects -vH
 echo -----------
-tot_before=$( (find $dudir/objects -type f -printf '%s+' ; echo 0) | bc)
+tot_before=$( (find "$dudir" -type f -printf '%s+' ; echo 0) | bc)
 echo tot_before: $(echo $tot_before | commify)
 echo ==== git reflog expire --expire=now --expire-unreachable=now --all
 git reflog expire --expire=now --expire-unreachable=now --all
 echo ==== git gc --prune=now "$@"
 git gc --prune=now "$@"
-tot_after=$( (find $dudir/objects -type f -printf '%s+' ; echo 0) | bc)
+tot_after=$( (find "$dudir" -type f -printf '%s+' ; echo 0) | bc)
 saved=$(echo "$tot_before-$tot_after" | bc)
 echo -----------
 echo tot_before: $(echo $tot_before | commify)
