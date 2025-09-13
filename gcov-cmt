@@ -31,7 +31,7 @@ our %Opt = (
 
 our $progname = $0;
 $progname =~ s/^.*\/(.*?)$/$1/;
-our $VERSION = '0.3.1';
+our $VERSION = '0.4.0';
 
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -93,7 +93,7 @@ sub process_file {
 				$c2 eq "0" && next;
 				$c3 =~ s! /\* gcov \*/$!!;
 				if ($c1 =~ /\#\#\#\#\#/
-				    && !($line =~ m'/\* gncov \*/'
+				    && !($line =~ m'/\* gncov \*/'i
 				         && !$Opt{'gncov'}
 				       )
 				) {
@@ -151,7 +151,8 @@ Options:
 
 To suppress the gcov marker for some lines, add the string "/* gncov */" 
 to the relevant lines. This is for lines that are difficult to test 
-(full disk, memory full, long paths, etc).
+(full disk, memory full, long paths, etc). The "gncov" markers are case 
+insensitive, so variants like "Gncov" or "GNCOV" can be used.
 
 END
 	exit($Retval);
