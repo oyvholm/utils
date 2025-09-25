@@ -171,4 +171,34 @@ char *str_replace(const char *s, const char *s1, const char *s2)
 	return buf;
 }
 
+/*
+ * re_check() - Tests that the regular expression in `pattern` matches the 
+ * input string `s`. Returns 0 if it matches, or 1 if it doesn't. If regcomp() 
+ * fails, it prints an error message and returns -1.
+ */
+
+int re_check(const char *pattern, const char *s)
+{
+	regex_t regexp;
+	int result;
+
+	assert(pattern);
+	assert(*pattern);
+	assert(s);
+
+	result = regcomp(&regexp, pattern, REG_EXTENDED);
+	if (result) {
+		char errbuf[1024];
+
+		regerror(result, &regexp, errbuf, sizeof(errbuf));
+		myerror("%s(): regcomp() failed: %s", __func__, errbuf);
+		regfree(&regexp);
+		return -1;
+	}
+	result = regexec(&regexp, s, 0, NULL, 0);
+	regfree(&regexp);
+
+	return !!result;
+}
+
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */

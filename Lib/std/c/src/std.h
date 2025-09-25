@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <regex.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -112,6 +113,7 @@ char *allocstr_va(const char *format, va_list ap);
 char *allocstr(const char *format, ...);
 size_t count_substr(const char *s, const char *substr);
 char *str_replace(const char *s, const char *s1, const char *s2);
+int re_check(const char *pattern, const char *s);
 
 #endif /* ifndef _STDUexecUDTS_H */
 

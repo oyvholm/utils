@@ -1465,6 +1465,71 @@ static void test_read_from_file(void)
 	}
 }
 
+                                /* strings.c */
+
+/*
+ * chk_rc() - Used by test_re_check(). Verifies that `re_check(pattern, s)` 
+ * succeeds and returns 0.
+ */
+
+static void chk_rc(const int linenum, const char *pattern, const char *s)
+{
+	OK_SUCCESS_L(re_check(pattern, s), linenum,
+	             "re_check(\"%s\", \"%s\")", pattern, s);
+}
+
+/*
+ * test_re_check() - Tests the re_check() function. Returns nothing.
+ */
+
+static void test_re_check(void)
+{
+	char *desc, *orig_progname, *err_s = NULL, *exp = NULL;
+	int res;
+
+	diag("Test re_check()");
+
+#define chk_rc(pattern, s)  chk_rc(__LINE__, (pattern), (s))
+	chk_rc("^$", "");
+	chk_rc("abc.*yz", "123abcdefghixyz321");
+	chk_rc("with\nlf", "123with\nlf321");
+	chk_rc("^a(b|c)d", "acdef");
+	chk_rc("^ab?cd", "acdef");
+	chk_rc("^a.*z$", "a\nb\ncdefz");
+#undef chk_rc
+
+	desc = "re_check(\"ab(c\", \"abc\")";
+	if (init_output_files()) {
+		restore_output_files(); /* gncov */
+		failed_ok("init_output_files()"); /* gncov */
+		return; /* gncov */
+	}
+	orig_progname = progname;
+	progname = execname;
+	res = re_check("ab(c", "abc");
+	progname = orig_progname;
+	restore_output_files();
+	OK_EQUAL(res, -1, "%s (retval)", desc);
+	verify_output_files(desc, "", NULL);
+	exp = allocstr("%s: re_check(): regcomp() failed: ", execname);
+	if (!exp) {
+		failed_ok("allocstr()"); /* gncov */
+		goto cleanup; /* gncov */
+	}
+	err_s = read_from_file(stderr_file);
+	if (!err_s) {
+		failed_ok("read_from_file()"); /* gncov */
+		goto cleanup; /* gncov */
+	}
+	if (OK_STRNCMP(err_s, exp, strlen(exp), "%s (stderr)", desc))
+		print_gotexp(err_s, exp); /* gncov */
+
+cleanup:
+	free(err_s);
+	free(exp);
+	cleanup_tempdir(__LINE__);
+}
+
 /******************************************************************************
             Test the executable file, no temporary directory needed
 ******************************************************************************/
@@ -1667,6 +1732,9 @@ static void functests_with_tempdir(void)
 	test_file_exists();
 	test_create_file();
 	test_read_from_file();
+
+	/* strings.c */
+	test_re_check();
 
 	result = rmdir(TMPDIR);
 	OK_SUCCESS(result, "rmdir " TMPDIR " after function tests");
