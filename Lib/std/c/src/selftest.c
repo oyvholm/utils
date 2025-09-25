@@ -1383,15 +1383,16 @@ static void test_file_exists(void)
 
 static void test_create_file(void)
 {
-	const char *desc, *file, *res, *data;
+	const char *desc, *file, *data;
+	int res;
 	struct stat sb;
 	char *s;
 
 	diag("Test create_file()");
 
 	OK_TRUE(file_exists(TMPDIR), "%s exists", TMPDIR);
-	OK_NULL(create_file(TMPDIR, NULL),
-	        "create_file(%s), but it's already a directory", TMPDIR);
+	OK_FAILURE(create_file(TMPDIR, NULL),
+	           "create_file(%s), but it's already a directory", TMPDIR);
 	OK_EQUAL(errno, EISDIR, "errno is EISDIR");
 	if (errno != EISDIR)
 		diag_errno(); /* gncov */
@@ -1399,12 +1400,11 @@ static void test_create_file(void)
 
 	desc = "create_file() with NULL creates empty file";
 	file = TMPDIR "/emptyfile";
-	OK_NOTNULL(res = create_file(file, NULL), "%s (exec)", desc);
-	if (!res) {
+	OK_SUCCESS(res = create_file(file, NULL), "%s (exec)", desc);
+	if (res) {
 		diag_errno(); /* gncov */
 		goto cleanup; /* gncov */
 	}
-	OK_STRCMP(res, "", "%s (retval)", desc);
 	if (stat(file, &sb)) {
 		failed_ok("stat()"); /* gncov */
 		goto cleanup; /* gncov */
@@ -1415,12 +1415,11 @@ static void test_create_file(void)
 	desc = "create_file() with test data";
 	data = "Test data\n";
 	file = TMPDIR "/datafile";
-	OK_NOTNULL(res = create_file(file, data), "%s (exec)", desc);
-	if (!res) {
+	OK_SUCCESS(res = create_file(file, "%s", data), "%s (exec)", desc);
+	if (res) {
 		diag_errno(); /* gncov */
 		goto cleanup; /* gncov */
 	}
-	OK_STRCMP(res, data, "%s (retval)", desc);
 	OK_NOTNULL(s = read_from_file(file), "Read data from file");
 	if (!s)
 		diag_errno(); /* gncov */

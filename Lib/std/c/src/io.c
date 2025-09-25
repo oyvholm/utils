@@ -114,14 +114,14 @@ char *read_from_fp(FILE *fp, struct binbuf *dest)
 }
 
 /*
- * create_file() - Create file `file` and write the string `txt` to it. If any 
- * error occurred, NULL is returned. Otherwise, it returns `txt`. If `txt` is 
- * NULL, an empty file is created and an empty string is returned.
+ * create_file() - Create file `file` and write the printf-formatted string 
+ * `txt` to it. If any error occurred, it returns 1. Otherwise, it returns 0. 
+ * If `txt` is NULL, an empty file is created and 0 is returned.
  */
 
-const char *create_file(const char *file, const char *txt)
+int create_file(const char *file, const char *txt, ...)
 {
-	const char *retval = NULL;
+	int retval = 1;
 	FILE *fp = NULL;
 
 	assert(file);
@@ -129,17 +129,20 @@ const char *create_file(const char *file, const char *txt)
 
 	fp = fopen(file, "w");
 	if (!fp)
-		return NULL;
+		return 1;
 	if (txt) {
 		int i;
+		va_list ap;
 
-		i = fputs(txt, fp);
-		if (i == EOF)
+		va_start(ap, txt);
+		i = vfprintf(fp, txt, ap);
+		va_end(ap);
+		if (i < 0) {
+			failed("vfprintf()"); /* gncov */
 			goto out; /* gncov */
-		retval = txt;
-	} else {
-		retval = "";
+		}
 	}
+	retval = 0;
 
 out:
 	fclose(fp);
