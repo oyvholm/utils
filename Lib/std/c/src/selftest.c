@@ -196,6 +196,9 @@
 #define tc(cmd, num_stdout, num_stderr, desc, ...)  \
         tc_func(__LINE__, (cmd), (num_stdout), (num_stderr), \
                 (desc), ##__VA_ARGS__);
+#define Tc(cmd, num_stdout, num_stderr, desc, ...) \
+        tc_func(linenum, (cmd), (num_stdout), (num_stderr), \
+        (desc), ##__VA_ARGS__)
 #define verify_output_files(desc, exp_stdout, exp_stderr)  \
         verify_output_files_func(__LINE__, desc, exp_stdout, exp_stderr)
 
@@ -1759,6 +1762,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 #undef OPTION_ERROR_STR
 #undef TMPDIR
 #undef TYPE_HELP_STR
+#undef Tc
 #undef chp
 #undef diag_errno
 #undef failed_ok
