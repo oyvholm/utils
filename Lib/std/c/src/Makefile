@@ -65,6 +65,7 @@ DEVFLAGS += -fwrapv
 DEVFLAGS += -g3
 DEVFLAGS += -pedantic
 DEVFLAGS_STR = $$($(IS_DEV) && echo $(DEVFLAGS))
+GCOV_TESTS = test
 GNCOV_STR = $$(test -n "$(GNCOV)" && echo "-g")
 HFILES  =
 HFILES += STDexecDTS.h
@@ -208,7 +209,7 @@ edit: tags
 
 .PHONY: gcov
 gcov:
-	$(MAKE) -s clean test GCOV=1 DEVEL=1
+	$(MAKE) -s clean $(GCOV_TESTS) GCOV=1 DEVEL=1
 	gcov $(CFILES)
 	@echo $$(grep -E '^ +#####:' *.c.gcov | wc -l) untested lines >&2
 	@echo $$(grep -E '^ +#####:' *.c.gcov | grep -Fi '/* gncov */' \
