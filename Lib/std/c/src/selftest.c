@@ -1288,7 +1288,7 @@ static void test_myerror(void)
 {
 	int res, len_stderr;
 	const char *desc;
-	char *exp_stderr;
+	char *orig_progname, *exp_stderr;
 
 	diag("Test myerror()");
 
@@ -1299,7 +1299,10 @@ static void test_myerror(void)
 		return; /* gncov */
 	}
 	errno = EACCES;
+	orig_progname = progname;
+	progname = execname;
 	res = myerror("Test with float: %.5f", 3.14159);
+	progname = orig_progname;
 	restore_output_files();
 	OK_EQUAL(errno, 0, "%s (errno)", desc);
 	print_gotexp_int(errno, 0);
@@ -1593,6 +1596,46 @@ static void test_standard_options(void)
 ******************************************************************************/
 
 /*
+ * get_execname() - Returns a pointer to an allocated string with the value 
+ * `execname` should be initialized with. `ename` is the value of the path to 
+ * the executable (the value of `progname`). If `ename` doesn't contain a slash 
+ * ('/'), no changes are made and a copy of `ename` is returned. If `ename` 
+ * contains a slash, a string with full path to the executable is returned. If 
+ * anything fails, it returns NULL.
+ */
+
+static char *get_execname(const char *ename)
+{
+	char *s = NULL, *p, *path = NULL, *retval = NULL;
+
+	assert(ename);
+	assert(*ename);
+
+	s = mystrdup(ename);
+	if (!s) {
+		failed_ok("mystrdup()"); /* gncov */
+		return NULL; /* gncov */
+	}
+	if (!(p = strrchr(s, '/')))
+		return s; /* gncov */
+	*p = '\0';
+	path = realpath(s, NULL);
+	if (!path) {
+		failed_ok("realpath()"); /* gncov */
+		goto cleanup; /* gncov */
+	}
+	retval = allocstr("%s/%s", path, ++p);
+	if (!retval)
+		failed_ok("allocstr()"); /* gncov */
+
+cleanup:
+	free(path);
+	free(s);
+
+	return retval;
+}
+
+/*
  * functests_with_tempdir() - Tests functions that need a temporary directory 
  * to store the output from stderr and stdout. Returns nothing.
  */
@@ -1715,7 +1758,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 	assert(*main_execname);
 	assert(o);
 
-	execname = main_execname;
+	execname = get_execname(main_execname);
 	diag("Running tests for %s %s (%s)",
 	     execname, EXEC_VERSION, EXEC_DATE);
 
@@ -1729,6 +1772,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 		     failcount, (failcount == 1) ? "" : "s", /* gncov */
 		     testnum);
 	}
+	free(execname);
 
 	return failcount ? EXIT_FAILURE : EXIT_SUCCESS;
 }

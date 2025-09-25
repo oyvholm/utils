@@ -24,7 +24,7 @@
  * Global variables
  */
 
-static char *progname;
+char *progname;
 static struct Options opt;
 
 /*

@@ -86,6 +86,7 @@ struct streams {
  */
 
 /* STDexecDTS.c */
+extern char *progname;
 struct Options opt_struct(void);
 int msg(const int verbose, const char *format, ...);
 const char *std_strerror(const int errnum);
