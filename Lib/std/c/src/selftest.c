@@ -731,7 +731,8 @@ static void restore_output_files(void)
 
 /*
  * verify_output_files_func() - Verify that the contents of stdout_file and 
- * stderr_file is equal to `exp_stdout` and `exp_stderr`, respectively. Returns 
+ * stderr_file is equal to `exp_stdout` and `exp_stderr`, respectively. To 
+ * avoid checking either stdout or stderr, use NULL as the value. Returns 
  * nothing.
  */
 
@@ -743,25 +744,29 @@ static void verify_output_files_func(const int linenum, const char *desc,
 
 	assert(desc);
 	assert(*desc);
-	assert(exp_stdout);
-	assert(exp_stderr);
 
-	result = read_from_file(stdout_file);
-	if (result) {
-		OK_STRCMP_L(result, exp_stdout, linenum, "%s (stdout)", desc);
-		print_gotexp(result, exp_stdout);
-		free(result);
-	} else {
-		failed_ok("read_from_file(stdout_file)"); /* gncov */
+	if (exp_stdout) {
+		result = read_from_file(stdout_file);
+		if (result) {
+			OK_STRCMP_L(result, exp_stdout, linenum,
+			            "%s (stdout)", desc);
+			print_gotexp(result, exp_stdout);
+			free(result);
+		} else {
+			failed_ok("read_from_file(stdout_file)"); /* gncov */
+		}
 	}
 
-	result = read_from_file(stderr_file);
-	if (result) {
-		OK_STRCMP_L(result, exp_stderr, linenum, "%s (stderr)", desc);
-		print_gotexp(result, exp_stderr);
-		free(result);
-	} else {
-		failed_ok("read_from_file(stderr_file)"); /* gncov */
+	if (exp_stderr) {
+		result = read_from_file(stderr_file);
+		if (result) {
+			OK_STRCMP_L(result, exp_stderr, linenum,
+			            "%s (stderr)", desc);
+			print_gotexp(result, exp_stderr);
+			free(result);
+		} else {
+			failed_ok("read_from_file(stderr_file)"); /* gncov */
+		}
 	}
 }
 
