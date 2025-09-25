@@ -199,6 +199,9 @@
 #define Tc(cmd, num_stdout, num_stderr, desc, ...) \
         tc_func(linenum, (cmd), (num_stdout), (num_stderr), \
         (desc), ##__VA_ARGS__)
+#define rc(cmd, num_stdout, num_stderr, desc, ...)  \
+        rc_func(__LINE__, (cmd), (num_stdout), (num_stderr), \
+                (desc), ##__VA_ARGS__);
 #define verify_output_files(desc, exp_stdout, exp_stderr)  \
         verify_output_files_func(__LINE__, desc, exp_stdout, exp_stderr)
 
@@ -476,27 +479,35 @@ static int valgrind_lines(const char *s)
 }
 
 /*
- * tc_cmp() - Comparison function used by test_command(). There are 2 types of 
- * verification: One that demands that the whole output must be identical to 
- * the expected value, and the other is just a substring search. `got` is the 
- * actual output from the program, and `exp` is the expected output or 
- * substring.
+ * tc_cmp() - Comparison function used by test_command(). There are 3 types of 
+ * verification, set via the `type` parameter:
  *
- * If `identical` is 0 (substring search) and `exp` is empty, the output in 
- * `got` must also be empty for the test to succeed.
+ * - 0: substring search, `exp` must exist within `got`
+ * - 1: the whole output must be identical to the expected value
+ * - 2: regexp search, `got` must match the pattern `exp`
+ *
+ * `got` is the actual output from the program, and `exp` is the expected 
+ * output, substring, or regexp pattern.
+ *
+ * If `type` is 0 (substring search) and `exp` is empty, the output in `got` 
+ * must also be empty for the test to succeed.
  *
  * Returns 0 if the string was found, otherwise 1.
  */
 
-static int tc_cmp(const int identical, const char *got, const char *exp)
+static int tc_cmp(const int type, const char *got, const char *exp)
 {
 	assert(got);
 	assert(exp);
 	if (!got || !exp)
 		return 1; /* gncov */
 
-	if (identical || !*exp)
-		return !!strcmp(got, exp);
+	if (type || !*exp) {
+		if (type == 1)
+			return !!strcmp(got, exp);
+		else if (type == 2)
+			return !!re_check(exp, got);
+	}
 
 	return !strstr(got, exp);
 }
@@ -507,7 +518,7 @@ static int tc_cmp(const int identical, const char *got, const char *exp)
  * `exp_retval`. Returns nothing.
  */
 
-static void test_command(const int linenum, const char identical, char *cmd[],
+static void test_command(const int linenum, const char type, char *cmd[],
                          const char *exp_stdout, const char *exp_stderr,
                          const int exp_retval, const char *desc, va_list ap)
 {
@@ -542,15 +553,15 @@ static void test_command(const int linenum, const char identical, char *cmd[],
 	streams_init(&ss);
 	streams_exec(&o, &ss, cmd);
 	if (e_stdout) {
-		OK_FALSE_L(tc_cmp(identical, ss.out.buf, e_stdout), linenum,
-		         "%s (stdout)", descbuf);
-		if (tc_cmp(identical, ss.out.buf, e_stdout))
+		OK_SUCCESS_L(tc_cmp(type, ss.out.buf, e_stdout), linenum,
+		             "%s (stdout)", descbuf);
+		if (tc_cmp(type, ss.out.buf, e_stdout))
 			print_gotexp(ss.out.buf, e_stdout); /* gncov */
 	}
 	if (e_stderr) {
-		OK_FALSE_L(tc_cmp(identical, ss.err.buf, e_stderr), linenum,
-		                  "%s (stderr)", descbuf);
-		if (tc_cmp(identical, ss.err.buf, e_stderr))
+		OK_SUCCESS_L(tc_cmp(type, ss.err.buf, e_stderr), linenum,
+		                    "%s (stderr)", descbuf);
+		if (tc_cmp(type, ss.err.buf, e_stderr))
 			print_gotexp(ss.err.buf, e_stderr); /* gncov */
 	}
 	OK_EQUAL_L(ss.ret, exp_retval, linenum, "%s (retval)", descbuf);
@@ -609,6 +620,31 @@ static void tc_func(const int linenum, char *cmd[], const char *exp_stdout,
 
 	va_start(ap, desc);
 	test_command(linenum, 1, cmd, exp_stdout, exp_stderr, exp_retval,
+	             desc, ap);
+	va_end(ap);
+}
+
+/*
+ * rc_func() - Executes command `cmd` and verifies that stdout and stderr 
+ * matches the regexp patterns in `exp_stdout` and `exp_stderr` and that the 
+ * return value is identical to `exp_retval`. Not meant to be called directly, 
+ * but via the rc() macro that logs the line number automatically. Returns 
+ * nothing.
+ */
+
+static void rc_func(const int linenum, char *cmd[], const char *exp_stdout,
+                    const char *exp_stderr, const int exp_retval,
+                    const char *desc, ...)
+{
+	va_list ap;
+
+	assert(cmd);
+	assert(*cmd);
+	assert(desc);
+	assert(*desc);
+
+	va_start(ap, desc);
+	test_command(linenum, 2, cmd, exp_stdout, exp_stderr, exp_retval,
 	             desc, ap);
 	va_end(ap);
 }
@@ -1638,14 +1674,9 @@ static void test_standard_options(void)
 	   "--version with -q shows only the version number");
 
 	diag("Test --license");
-	sc((chp{ execname, "--license", NULL }),
-	   "GNU General Public License",
-	   "",
-	   EXIT_SUCCESS,
-	   "--license: It's GPL");
-	sc((chp{ execname, "--license", NULL }),
-	   "either version 2 of the License",
-	   "",
+	rc((chp{ execname, "--license", NULL }),
+	   "GNU General Public License.*either version 2 of the License",
+	   "^$",
 	   EXIT_SUCCESS,
 	   "--license: It's version 2 of the GPL");
 
@@ -1888,6 +1919,7 @@ int opt_selftest(char *main_execname, const struct Options *o)
 #undef print_gotexp_nostr
 #undef print_gotexp_size_t
 #undef print_gotexp_ulong
+#undef rc
 #undef sc
 #undef tc
 #undef verify_output_files
