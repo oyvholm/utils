@@ -336,7 +336,7 @@ int streams_exec(const struct Options *o, struct streams *dest, char *cmd[])
 	/* Write to stdin using direct write() call and close immediately */
 	if (dest->in.buf && dest->in.len) {
 		if (write_stdin_to_child(infd[1], dest->in.buf, /* gncov */
-			                 dest->in.len)) {
+		                         dest->in.len)) {
 			goto cleanup; /* gncov */
 		}
 	}
