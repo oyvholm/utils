@@ -11,7 +11,7 @@
 #==============================================================================
 
 progname=mdisk
-VERSION=0.3.1
+VERSION=0.3.2
 
 opt_help=0
 opt_interactive=0
@@ -211,7 +211,8 @@ if [ "$opt_umount" != "1" ]; then
 	echo "$device" | grep -q ^/dev/ || err $device: Malformed device name
 	is_active $disk \
 	|| sudo cryptsetup luksOpen \
-	$([ -n "$MDISK_KEY_FILE" ] && echo "--key-file $MDISK_KEY_FILE") \
+	$([ -n "$MDISK_KEY_FILE" -a -r "$MDISK_KEY_FILE" ] \
+	  && echo "--key-file $MDISK_KEY_FILE") \
 	$device $disk && mount /media/$disk
 	is_mounted $disk \
 	&& msg 0 $T_BOLD$T_GREEN$disk mounted on /media/$disk$T_RESET \
