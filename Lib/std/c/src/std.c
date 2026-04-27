@@ -344,14 +344,14 @@ static int parse_options(struct Options *dest,
 		int c;
 		int option_index = 0;
 		static const struct option long_options[] = {
-			{"help", no_argument, NULL, 'h'},
-			{"license", no_argument, NULL, 0},
-			{"quiet", no_argument, NULL, 'q'},
-			{"selftest", no_argument, NULL, 0},
-			{"valgrind", no_argument, NULL, 0},
-			{"verbose", no_argument, NULL, 'v'},
-			{"version", no_argument, NULL, 0},
-			{0, 0, 0, 0}
+			{ "help", no_argument, NULL, 'h' },
+			{ "license", no_argument, NULL, 0 },
+			{ "quiet", no_argument, NULL, 'q' },
+			{ "selftest", no_argument, NULL, 0 },
+			{ "valgrind", no_argument, NULL, 0 },
+			{ "verbose", no_argument, NULL, 'v' },
+			{ "version", no_argument, NULL, 0 },
+			{ 0, 0, 0, 0 }
 		};
 
 		c = getopt_long(argc, argv,
