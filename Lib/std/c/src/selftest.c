@@ -31,13 +31,13 @@
 #define OPTION_ERROR_STR  EXECSTR ": Option error\n" TYPE_HELP_STR
 #define chp  (char *[])
 #define print_gotexp_nostr(seq, got, exp)  do { \
-	char *g = allocstr((seq), (got)), *e = allocstr((seq), (exp)); \
-	if (!g || !e) \
+	char *n_g = allocstr((seq), (got)), *n_e = allocstr((seq), (exp)); \
+	if (!n_g || !n_e) \
 		failed_ok("allocstr()"); \
 	else \
-		print_gotexp(g, e); \
-	free(e); \
-	free(g); \
+		print_gotexp(n_g, n_e); \
+	free(n_e); \
+	free(n_g); \
 } while (0)
 #define print_gotexp_double(got, exp)  do { \
 	if ((got) != (exp)) \
