@@ -27,8 +27,8 @@ struct binbuf {
 	char *buf;
 };
 
-void binbuf_init(struct binbuf *sb);
-void binbuf_free(struct binbuf *sb);
+void binbuf_init(struct binbuf *bb);
+void binbuf_free(struct binbuf *bb);
 
 #endif /* ifndef _BINBUF_H */
 

@@ -24,11 +24,11 @@
  * binbuf_init() - Prepares a `struct binbuf` for use, returns nothing.
  */
 
-void binbuf_init(struct binbuf *sb)
+void binbuf_init(struct binbuf *bb)
 {
-	assert(sb);
-	sb->alloc = sb->len = 0;
-	sb->buf = NULL;
+	assert(bb);
+	bb->alloc = bb->len = 0;
+	bb->buf = NULL;
 }
 
 /*
@@ -36,12 +36,12 @@ void binbuf_init(struct binbuf *sb)
  * their initial state.
  */
 
-void binbuf_free(struct binbuf *sb)
+void binbuf_free(struct binbuf *bb)
 {
-	assert(sb);
-	if (sb->alloc)
-		free(sb->buf);
-	binbuf_init(sb);
+	assert(bb);
+	if (bb->alloc)
+		free(bb->buf);
+	binbuf_init(bb);
 }
 
 /* vim: set ts=8 sw=8 sts=8 noet fo+=w tw=79 fenc=UTF-8 : */

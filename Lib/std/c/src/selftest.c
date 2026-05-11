@@ -1432,7 +1432,7 @@ static void test_create_file(void)
 {
 	const char *desc, *file, *data;
 	int res;
-	struct stat sb;
+	struct stat bb;
 	char *s;
 
 	diag("Test create_file()");
@@ -1452,11 +1452,11 @@ static void test_create_file(void)
 		diag_errno(); /* gncov */
 		goto cleanup; /* gncov */
 	}
-	if (stat(file, &sb)) {
+	if (stat(file, &bb)) {
 		failed_ok("stat()"); /* gncov */
 		goto cleanup; /* gncov */
 	}
-	OK_EQUAL(sb.st_size, 0, "%s is empty", file);
+	OK_EQUAL(bb.st_size, 0, "%s is empty", file);
 	OK_SUCCESS(remove(file), "Delete %s", file);
 
 	desc = "create_file() with test data";
