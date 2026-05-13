@@ -6,6 +6,6 @@
 use warnings;
 
 while (<>) {
-    s/^((not )?ok)( \d+ )- /$1 - /;
+    s/^((not )?ok)( \d+ )- (\d+: )?/$1 - /;
     print;
 }
