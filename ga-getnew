@@ -4,16 +4,16 @@
 # ga-getnew
 # File ID: 8af4d956-f358-11e4-b717-000df06acc56
 #
-# Get new files from the last month (can be overridden) that haven't got 
-# enough copies in git-annex yet, then optionally execute a fast fsck to 
-# check that the files have enough copies.
+# Get new files from the last `opt_since` months (can be overridden) that 
+# haven't got enough copies in git-annex yet, then optionally execute a fast 
+# fsck to check that the files have enough copies.
 #
 # Author: Øyvind A. Holm <sunny@sunbase.org>
 # License: GNU General Public License version 2 or later.
 #=======================================================================
 
 progname=ga-getnew
-VERSION=0.7.0
+VERSION=0.7.1
 
 ARGS="$(getopt -o "\
 h\
@@ -39,7 +39,7 @@ opt_fsck=0
 opt_help=0
 opt_quiet=0
 opt_resume=0
-opt_since=1.month
+opt_since=6.months
 opt_verbose=0
 while :; do
     case "$1" in
@@ -63,9 +63,9 @@ if test "$opt_help" = "1"; then
     test $opt_verbose -gt 0 && { echo; echo $progname $VERSION; }
     cat <<END
 
-Get new files from the last month (can be overridden) that haven't got 
-enough copies in git-annex yet, then optionally execute a fast fsck to 
-check that the files have enough copies.
+Get new files that haven't got enough copies in git-annex yet, then 
+optionally execute a fast fsck to check that the files have enough 
+copies. Default value: $opt_since
 
 Arguments and options after " -- " are delivered to git-allfiles(1) 
 which delivers them further to "git log".
