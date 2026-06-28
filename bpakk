@@ -18,6 +18,7 @@ std_size=8
 opt_comment=""
 opt_decode=0
 opt_help=0
+opt_no_compress=0
 opt_quiet=0
 opt_size=$std_size
 opt_verbose=0
@@ -25,6 +26,7 @@ opt_wrap=0
 
 while test -n "$1"; do
 	case "$1" in
+	-C|--no-compress) opt_no_compress=1; shift ;;
 	-c|--comment) opt_comment="$2"; shift 2 ;;
 	-d|--decode) opt_decode=1; shift ;;
 	-h|--help) opt_help=1; shift ;;
@@ -56,6 +58,9 @@ Usage: $progname [options]
 
 Options:
 
+  -C, --no-compress
+    Don't pack with gzip, only create base64. When used with 
+    -d/--decode, don't unpack with gunzip.
   -c CMT_STRING, --comment CMT_STRING
     Prefix all base64 lines with CMT_STRING.
   -d, --decode
@@ -79,11 +84,13 @@ END
 fi
 
 if [ "$opt_decode" = "1" ]; then
-	base64 -di | gunzip --stdout --force
+	base64 -di \
+	| ([ "$opt_no_compress" = "1" ] && cat || gunzip --stdout --force)
 	exit
 fi
 
-(gzip -9 | base64 -w $opt_size | tr '\n' ' ' | sed 's/ $//'; echo) \
+(([ "$opt_no_compress" = "1" ] && cat || gzip -9) \
+ | base64 -w $opt_size | tr '\n' ' ' | sed 's/ $//'; echo) \
 | if [ "$opt_wrap" = "0" ]; then
 	cat
 else
